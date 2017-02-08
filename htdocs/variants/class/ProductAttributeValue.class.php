@@ -68,7 +68,7 @@ class ProductAttributeValue
 	 */
 	public function fetch($valueid)
 	{
-		require_once __DIR__.'/../lib/product_attributes.lib.php';
+		require_once __DIR__.'/../lib/product_variants.lib.php';
 
 		$sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE rowid = ".(int) $valueid." AND entity IN (".getProductEntities($this->db).")";
 
@@ -101,7 +101,7 @@ class ProductAttributeValue
 	 */
 	public function fetchAllByProductAttribute($prodattr_id, $only_used = false)
 	{
-		require_once __DIR__.'/../lib/product_attributes.lib.php';
+		require_once __DIR__.'/../lib/product_variants.lib.php';
 
 		$return = array();
 

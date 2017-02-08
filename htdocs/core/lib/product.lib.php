@@ -94,16 +94,16 @@ function product_prepare_head($object)
 	$head[$h][2] = 'referers';
 	$h++;
 
-	if (!empty($conf->attributes->enabled) && $object->isProduct()) {
+	if (!empty($conf->variants->enabled) && $object->isProduct()) {
 
 		global $db;
 
-		require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 
 		$prodcomb = new ProductCombination($db);
 
 		if ($prodcomb->fetchByFkProductChild($object->id) == -1) {
-			$head[$h][0] = DOL_URL_ROOT."/attributes/combinations.php?id=".$object->id;
+			$head[$h][0] = DOL_URL_ROOT."/variants/combinations.php?id=".$object->id;
 			$head[$h][1] = $langs->trans('ProductCombinations');
 			$head[$h][2] = 'combinations';
 		}

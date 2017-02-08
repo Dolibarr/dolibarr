@@ -24,8 +24,7 @@ define('NOREQUIRESOC','1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductAttribute.class.php';
-require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductAttributeValue.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 
 header('Content-Type: application/json');
 
@@ -38,24 +37,14 @@ if (!$id) {
 	die;
 }
 
-$prodattr = new ProductAttribute($db);
+$product = new Product($db);
 
-if ($prodattr->fetch($id) < 0) {
+if ($product->fetch($id) < 0) {
 	print json_encode(array(
-		'error' => 'Attribute not found'
+		'error' => 'Product not found'
 	));
-	die;
 }
 
-$prodattrval = new ProductAttributeValue($db);
+$prodcomb = new ProductCombination($db);
 
-$res = $prodattrval->fetchAllByProductAttribute($id);
-
-if ($res == -1) {
-	print json_encode(array(
-		'error' => 'Internal error'
-	));
-	die;
-}
-
-print json_encode($res);
+echo json_encode($prodcomb->getUniqueAttributesAndValuesByFkProductParent($product->id));

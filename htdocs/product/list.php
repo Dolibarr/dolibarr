@@ -249,7 +249,7 @@ else
     $sql.= ' p.datec as date_creation, p.tms as date_update,';
     //$sql.= ' pfp.ref_fourn as ref_supplier, ';
     $sql.= ' MIN(pfp.unitprice) as minsellprice';
-	if (!empty($conf->attributes->enabled) && $search_hidechildproducts && ($type === 0)) {
+	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($type === 0)) {
 		$sql .= ', pac.rowid prod_comb_id';
 	}
 	// Add fields from extrafields
@@ -264,7 +264,7 @@ else
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 	// multilang
 	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$langs->getDefaultLang() ."'";
-	if (!empty($conf->attributes->enabled) && $search_hidechildproducts && ($type === 0)) {
+	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($type === 0)) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 	}
 
@@ -292,7 +292,7 @@ else
     if ($search_accountancy_code_sell)   $sql.= natural_search('p.accountancy_code_buy', $search_accountancy_code_buy);
     // Add where from extra fields
 
-	if (!empty($conf->attributes->enabled) && $search_hidechildproducts && ($type === 0)) {
+	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($type === 0)) {
 		$sql .= " AND pac.rowid IS NULL";
 	}
 
@@ -316,7 +316,7 @@ else
     $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
     $sql.= " p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
     $sql.= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy';
-	if (!empty($conf->attributes->enabled) && $search_hidechildproducts && ($type === 0)) {
+	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($type === 0)) {
 		$sql .= ', pac.rowid';
 	}
 	// Add fields from extrafields
@@ -451,7 +451,7 @@ else
     		}
 
 			//Show/hide child products. Hidden by default
-			if (!empty($conf->attributes->enabled) && $type === 0) {
+			if (!empty($conf->variants->enabled) && $type === 0) {
 				$moreforfilter.='<div class="divsearchfield">';
 				$moreforfilter.= '<input type="checkbox" id="search_hidechildproducts" name="search_hidechildproducts" value="on"'.($search_hidechildproducts ? 'checked="checked"' : '').'>';
 				$moreforfilter.= ' <label for="search_hidechildproducts">'.$langs->trans('HideChildProducts').'</label>';

@@ -44,7 +44,7 @@ if ($_POST) {
 
 		if ($prodattrval->create() > 0) {
 			setEventMessage($langs->trans('RecordSaved'));
-			header('Location: '.dol_buildpath('/attributes/card.php?id='.$prodattr->id, 2));
+			header('Location: '.dol_buildpath('/variants/card.php?id='.$prodattr->id, 2));
 			die;
 		} else {
 			setEventMessage($langs->trans('ErrorCreatingProductAttributeValue'), 'errors');

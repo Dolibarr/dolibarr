@@ -19,10 +19,10 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductAttribute.class.php';
-require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductAttributeValue.class.php';
-require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination.class.php';
-require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination2ValuePair.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
 $langs->load("products");
 $langs->load("other");
@@ -102,7 +102,7 @@ if ($_POST) {
 				if (ProductCombination::createProductCombination($product, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact)) {
 					$db->commit();
 					setEventMessage($langs->trans('RecordSaved'));
-					header('Location: '.dol_buildpath('/attributes/combinations.php?id='.$id, 2));
+					header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
 					die;
 				} else {
 					setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
@@ -180,7 +180,7 @@ if ($_POST) {
 
 		if ($prodcomb->update() > 0) {
 			setEventMessage($langs->trans('RecordSaved'));
-			header('Location: '.dol_buildpath('/attributes/combinations.php?id='.$id, 2));
+			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
 			die;
 		} else {
 			setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
@@ -199,7 +199,7 @@ if ($action === 'confirm_deletecombination') {
 		if ($prodcomb->delete() > 0 && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete() > 0) {
 			$db->commit();
 			setEventMessage($langs->trans('RecordSaved'));
-			header('Location: '.dol_buildpath('/attributes/combinations.php?id='.$product->id, 2));
+			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$product->id, 2));
 			die;
 		}
 
@@ -229,7 +229,7 @@ if ($action === 'confirm_deletecombination') {
 		//To prevent from copying to the same product
 		if ($prodstatic->ref != $product->ref) {
 			if ($prodcomb->copyAll($product->id, $prodstatic) > 0) {
-				header('Location: '.dol_buildpath('/attributes/combinations.php?id='.$prodstatic->id, 2));
+				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$prodstatic->id, 2));
 				die;
 			} else {
 				setEventMessage($langs->trans('ErrorCopyProductCombinations'), 'errors');
@@ -313,8 +313,8 @@ if (! empty($id) || ! empty($ref)) {
 
 		<script>
 
-			attributes_available = <?php echo json_encode($prodattr_alljson) ?>;
-			attributes_selected = {
+			variants_available = <?php echo json_encode($prodattr_alljson) ?>;
+			variants_selected = {
 				index: [],
 				info: []
 			};
@@ -322,9 +322,9 @@ if (! empty($id) || ! empty($ref)) {
 			<?php foreach ($productCombination2ValuePairs1 as $pc2v):
 			$prodattr_val->fetch($pc2v->fk_prod_attr_val);
 			?>
-			attributes_selected.index.push(<?php echo $pc2v->fk_prod_attr ?>);
-			attributes_selected.info[<?php echo $pc2v->fk_prod_attr ?>] = {
-				attribute: attributes_available[<?php echo $pc2v->fk_prod_attr ?>],
+			variants_selected.index.push(<?php echo $pc2v->fk_prod_attr ?>);
+			variants_selected.info[<?php echo $pc2v->fk_prod_attr ?>] = {
+				attribute: variants_available[<?php echo $pc2v->fk_prod_attr ?>],
 				value: {
 					id: <?php echo $pc2v->fk_prod_attr_val ?>,
 					label: '<?php echo $prodattr_val->value ?>'
@@ -335,8 +335,8 @@ if (! empty($id) || ! empty($ref)) {
 			restoreAttributes = function() {
 				jQuery("select[name=attribute]").empty().append('<option value=""></option>');
 
-				jQuery.each(attributes_available, function (key, val) {
-					if (jQuery.inArray(val.id, attributes_selected.index) == -1) {
+				jQuery.each(variants_available, function (key, val) {
+					if (jQuery.inArray(val.id, variants_selected.index) == -1) {
 						jQuery("select[name=attribute]").append('<option value="' + val.id + '">' + val.label + '</option>');
 					}
 				});
@@ -348,8 +348,8 @@ if (! empty($id) || ! empty($ref)) {
 				select.empty();
 				jQuery("form#combinationform input[type=hidden]").detach();
 
-				jQuery.each(attributes_selected.index, function (key, val) {
-					var attr_info = attributes_selected.info[val];
+				jQuery.each(variants_selected.index, function (key, val) {
+					var attr_info = variants_selected.info[val];
 
 					var opt_key = val + ':' + attr_info.value.id;
 					var opt_label = attr_info.attribute.label + ': ' + attr_info.value.label;
@@ -374,7 +374,7 @@ if (! empty($id) || ! empty($ref)) {
 
 					select.empty().append('<option value="">Loading...</option>');
 
-					jQuery.getJSON("<?php echo dol_buildpath('/attributes/ajax/get_attribute_values.php', 2) ?>", {
+					jQuery.getJSON("<?php echo dol_buildpath('/variants/ajax/get_attribute_values.php', 2) ?>", {
 						id: jQuery(this).val()
 					}, function(data) {
 						if (data.error) {
@@ -400,13 +400,13 @@ if (! empty($id) || ! empty($ref)) {
 
 					var selectedattr_val = parseInt(selectedattr.val());
 
-					if (jQuery.inArray(selectedattr_val, attributes_selected.index) != -1) {
+					if (jQuery.inArray(selectedattr_val, variants_selected.index) != -1) {
 						return;
 					}
 
-					attributes_selected.index.push(selectedattr_val);
-					attributes_selected.info[selectedattr_val] = {
-						attribute: attributes_available[selectedattr_val],
+					variants_selected.index.push(selectedattr_val);
+					variants_selected.info[selectedattr_val] = {
+						attribute: variants_available[selectedattr_val],
 						value: {
 							id: selectedvalu.val(),
 							label: selectedvalu.html()
@@ -422,11 +422,11 @@ if (! empty($id) || ! empty($ref)) {
 				jQuery("#delfeature").click(function() {
 					jQuery("#features option:selected").each(function (key, val) {
 						var explode = jQuery(val).val().split(':');
-						var indexOf = attributes_selected.index.indexOf(parseInt(explode[0]));
+						var indexOf = variants_selected.index.indexOf(parseInt(explode[0]));
 
 						if (indexOf != -1) {
-							attributes_selected.index.splice(indexOf, 1);
-							jQuery(attributes_selected.info[parseInt(explode[0])]).detach();
+							variants_selected.index.splice(indexOf, 1);
+							jQuery(variants_selected.info[parseInt(explode[0])]).detach();
 						}
 
 						jQuery(val).detach();
@@ -505,7 +505,7 @@ if (! empty($id) || ! empty($ref)) {
 				print $form->formconfirm(
 					"combinations.php?id=".$id."&valueid=".$valueid,
 					$langs->trans('Delete'),
-					$langs->trans('ProductCombinationDeleteDialog', $prodstatic->getNomUrl(1)),
+					$langs->trans('ProductCombinationDeleteDialog', $prodstatic->ref),
 					"confirm_deletecombination",
 					'',
 					0,
@@ -568,7 +568,7 @@ if (! empty($id) || ! empty($ref)) {
 			<option value="delete"><?php echo $langs->trans('Delete') ?></option>
 		</select>
 		<input type="hidden" name="action" value="bulk_actions">
-		<input type="submit" value="Aplicar" class="button">
+		<input type="submit" value="<?php echo $langs->trans("Apply") ?>" class="button">
 		<br>
 		<br>
 		<?php endif; ?>
@@ -612,8 +612,8 @@ if (! empty($id) || ! empty($ref)) {
 				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 0) ?></td>
 				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
 				<td style="text-align: right">
-					<a href="<?php echo dol_buildpath('/attributes/combinations.php?id='.$id.'&action=edit&valueid='.$currcomb->id, 2) ?>"><?php echo img_edit() ?></a>
-					<a href="<?php echo dol_buildpath('/attributes/combinations.php?id='.$id.'&action=delete&valueid='.$currcomb->id, 2) ?>"><?php echo img_delete() ?></a>
+					<a href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=edit&valueid='.$currcomb->id, 2) ?>"><?php echo img_edit() ?></a>
+					<a href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=delete&valueid='.$currcomb->id, 2) ?>"><?php echo img_delete() ?></a>
 				</td>
 			</tr>
 			<?php $var = !$var; endforeach ?>

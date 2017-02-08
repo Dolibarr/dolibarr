@@ -20,7 +20,7 @@
  */
 
 /**
- * 	\defgroup   produit     Module product attributes
+ * 	\defgroup   produit     Module product variants
  *  \brief      Module to manage product combinations based on product attributes
  *  \file       htdocs/core/modules/modAttributes.class.php
  *  \ingroup    produit
@@ -30,9 +30,9 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *  Description and activation class for module Product attributes
+ *  Description and activation class for module Product variants
  */
-class modAttributes extends DolibarrModules
+class modVariants extends DolibarrModules
 {
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
@@ -49,7 +49,7 @@ class modAttributes extends DolibarrModules
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 610;
 		// Key text used to identify module (for permissions, menus, etc...)
-		$this->rights_class = 'attributes';
+		$this->rights_class = 'variants';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
@@ -57,9 +57,9 @@ class modAttributes extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
-		$this->description = 'Allows creating product combinations based on product attributes';
+		$this->description = 'Allows creating products variant based on new attributes';
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
+		$this->version = 'experimental';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -78,7 +78,7 @@ class modAttributes extends DolibarrModules
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
 		$this->config_page_url = array(
-			'admin.php@attributes'
+			'admin.php@variants'
 		);
 
 		// Dependencies
@@ -97,7 +97,7 @@ class modAttributes extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		$this->tabs = array(
-//			'product:+combinations:Combinaciones:products:1:/attributes/combinations.php?id=__ID__'
+//			'product:+combinations:Combinaciones:products:1:/variants/combinations.php?id=__ID__'
 		);
 
 		// Dictionaries
@@ -120,10 +120,10 @@ class modAttributes extends DolibarrModules
 			array(
 				'fk_menu' => 'fk_mainmenu=products,fk_leftmenu=product',
 				'type' => 'left',
-				'titre' => $langs->trans('Attributes'),
+				'titre' => 'VariantAttributes',
 				'mainmenu' => 'products',
 				'leftmenu' => 'product',
-				'url' => '/attributes/list.php',
+				'url' => '/variants/list.php',
 				'langs' => 'products',
 				'position' => 100,
 				'enabled' => '$conf->product->enabled',

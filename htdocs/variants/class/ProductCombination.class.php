@@ -86,7 +86,7 @@ class ProductCombination
 	 */
 	public function fetch($rowid)
 	{
-		require_once __DIR__.'/../lib/product_attributes.lib.php';
+		require_once __DIR__.'/../lib/product_variants.lib.php';
 
 		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE rowid = ".(int) $rowid." AND entity IN (".getProductEntities($this->db).")";
 
@@ -120,7 +120,7 @@ class ProductCombination
 	 */
 	public function fetchByFkProductChild($fk_child)
 	{
-		require_once __DIR__.'/../lib/product_attributes.lib.php';
+		require_once __DIR__.'/../lib/product_variants.lib.php';
 
 		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_child = ".(int) $fk_child." AND entity IN (".getProductEntities($this->db).")";
 
@@ -154,7 +154,7 @@ class ProductCombination
 	 */
 	public function fetchAllByFkProductParent($fk_product_parent)
 	{
-		require_once __DIR__.'/../lib/product_attributes.lib.php';
+		require_once __DIR__.'/../lib/product_variants.lib.php';
 
 		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".(int) $fk_product_parent." AND entity IN (".getProductEntities($this->db).")";
 
@@ -361,7 +361,7 @@ class ProductCombination
 	 */
 	public function fetchByProductCombination2ValuePairs($prodid, array $features)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination2ValuePair.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
 		$actual_comp = array();
 
@@ -399,10 +399,10 @@ class ProductCombination
 	 */
 	public function getUniqueAttributesAndValuesByFkProductParent($productid)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductAttribute.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductAttributeValue.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
 
-		$attributes = array();
+		$variants = array();
 
 		//Attributes
 		$sql = "SELECT DISTINCT fk_prod_attr, a.rang
@@ -432,10 +432,10 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 				$tmp->values[] = $val;
 			}
 
-			$attributes[] = $tmp;
+			$variants[] = $tmp;
 		}
 
-		return $attributes;
+		return $variants;
 	}
 
 	/**
@@ -459,12 +459,12 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 	 * @param bool|float $forced_weightvar If the weight variation is forced
 	 * @return int <0 KO, >0 OK
 	 */
-	public static function createProductCombination(Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false)
+	public function createProductCombination(Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false)
 	{
 		global $db, $user;
 
-		require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductAttribute.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductAttributeValue.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
 
 		$db->begin();
 
@@ -552,6 +552,8 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 
 			//In case the error is not related with an already existing product
 			if ($newproduct->error != 'ErrorProductAlreadyExists') {
+			    $this->error[] = $newproduct->error;
+			    $this->errors = $newproduct->errors;
 				$db->rollback();
 				return -1;
 			}
@@ -572,6 +574,7 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 					$res = $newproduct->create($user);
 
 					if ($newproduct->error != 'ErrorProductAlreadyExists') {
+					    $this->errors[] = $newproduct->error;
 						break;
 					}
 
@@ -607,7 +610,7 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 	 */
 	public function copyAll($origProductId, Product $destProduct)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination2ValuePair.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
 		//To prevent a loop
 		if ($origProductId == $destProduct->id) {

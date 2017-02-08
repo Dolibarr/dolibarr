@@ -34,7 +34,7 @@ if ($_POST) {
 
 		if ($prodattr->create()) {
 			setEventMessage($langs->trans('RecordSaved'));
-			header('Location: '.dol_buildpath('/attributes/list.php', 2));
+			header('Location: '.dol_buildpath('/variants/list.php', 2));
 		} else {
 			setEventMessage($langs->trans('ErrorRecordAlreadyExists'), 'errors');
 		}

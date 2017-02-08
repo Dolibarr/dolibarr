@@ -1604,7 +1604,7 @@ else
             print '</td></tr>';
 
             //Parent product.
-            if (!empty($conf->attributes->enabled) && $object->isProduct()) {
+            if (!empty($conf->variants->enabled) && $object->isProduct()) {
 
                 $combination = new ProductCombination($db);
 

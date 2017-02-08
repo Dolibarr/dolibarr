@@ -19,10 +19,10 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductAttribute.class.php';
-require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductAttributeValue.class.php';
-require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination.class.php';
-require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination2ValuePair.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
 $langs->load("products");
 $langs->load('other');
@@ -103,22 +103,21 @@ if ($_POST) {
 
 			$res = 1;
 
-			foreach (cartesianArray($adapted_values) as $currcomb) {
-
-				$res = ProductCombination::createProductCombination($product, $currcomb, $sanitized_values, $price_var_percent);
-
+			foreach (cartesianArray($adapted_values) as $currcomb) 
+			{
+				$res = $combination->createProductCombination($product, $currcomb, $sanitized_values, $price_var_percent);
 				if ($res < 0) {
-					break;
+				    $error++;
+				    setEventMessages($combination->error, $combination->errors, 'errors');
+				    break;
 				}
 			}
 
 			if ($res > 0) {
 				$db->commit();
 				setEventMessage($langs->trans('RecordSaved'));
-				header('Location: '.dol_buildpath('/attributes/combinations.php?id='.$id, 2));
-				die;
-			} else {
-				setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
+				exit;
 			}
 		} else {
 			setEventMessage($langs->trans('ErrorDeletingGeneratedProducts'), 'errors');

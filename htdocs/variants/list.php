@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,11 +16,17 @@
  */
 
 require '../main.inc.php';
-require 'class/ProductAttribute.class.php';
+require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
 $rowid = GETPOST('rowid');
 $action = GETPOST('action');
 $object = new ProductAttribute($db);
+
+
+
+/*
+ * Actions
+ */
 
 if ($action == 'up') {
 	$object->fetch($rowid);
@@ -37,12 +42,18 @@ if ($action == 'up') {
 	die;
 }
 
+
+
+/*
+ * View
+ */
+
 $langs->load('products');
 
 $var = false;
 $title = $langs->trans($langs->trans('ProductAttributes'));
 
-$attributes = $object->fetchAll();
+$variants = $object->fetchAll();
 
 llxHeader('', $title);
 
@@ -71,7 +82,7 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 					console.log('drop');
 					var reloadpage = "<?php echo $forcereloadpage; ?>";
 					var roworder = cleanSerialize($("#tablelines").tableDnDSerialize());
-					$.post("<?php echo DOL_URL_ROOT; ?>/attributes/ajax/orderAttribute.php",
+					$.post("<?php echo DOL_URL_ROOT; ?>/variants/ajax/orderAttribute.php",
 						{
 							roworder: roworder
 						},
@@ -101,7 +112,7 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 			<th class="liste_titre"><?php print $langs->trans('NbProducts') ?></th>
 			<th class="liste_titre" colspan="2"></th>
 		</tr>
-		<?php foreach ($attributes as $key => $attribute): ?>
+		<?php foreach ($variants as $key => $attribute): ?>
 		<tr id="row-<?php echo $attribute->id ?>" <?php echo $bcdd[$var] ?>>
 			<td><a href="card.php?id=<?php echo $attribute->id ?>"><?php echo dol_htmlentities($attribute->ref) ?></a></td>
 			<td><a href="card.php?id=<?php echo $attribute->id ?>"><?php echo dol_htmlentities($attribute->label) ?></a></td>
@@ -115,7 +126,7 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 				<a class="lineupdown"
 				   href="<?php echo $_SERVER['PHP_SELF'] ?>?action=up&amp;rowid=<?php echo $attribute->id ?>"><?php echo img_up('default', 0, 'imgupforline'); ?></a>
 				<?php endif ?>
-				<?php if ($key < count($attributes)-1): ?>
+				<?php if ($key < count($variants)-1): ?>
 				<a class="lineupdown"
 				   href="<?php echo $_SERVER['PHP_SELF'] ?>?action=down&amp;rowid=<?php echo $attribute->id ?>"><?php echo img_down('default', 0, 'imgdownforline'); ?></a>
 				<?php endif ?>
@@ -127,8 +138,6 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 		?>
 
 	</table>
-
-	<br>
 
 	<div class="tabsAction">
 		<div class="inline-block divButAction">

@@ -46,7 +46,7 @@ if (isset($_POST['roworder'])) {
 		}
 	}
 
-	require DOL_DOCUMENT_ROOT.'/attributes/class/ProductAttribute.class.php';
+	require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
 	ProductAttribute::bulkUpdateOrder($db, $newrowordertab);
 }

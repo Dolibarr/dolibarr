@@ -26,6 +26,7 @@ $action = GETPOST('action');
 $label = GETPOST('label');
 $ref = GETPOST('ref');
 $confirm = GETPOST('confirm');
+$cancel = GETPOST('cancel');
 
 $prodattr = new ProductAttribute($db);
 $prodattrval = new ProductAttributeValue($db);
@@ -34,6 +35,12 @@ if ($prodattr->fetch($id) < 1) {
 	dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 	die;
 }
+
+/*
+ * Actions
+ */
+
+if ($cancel) $action='';
 
 if ($_POST) {
 
@@ -46,7 +53,7 @@ if ($_POST) {
 			setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
 		} else {
 			setEventMessage($langs->trans('RecordSaved'));
-			header('Location: '.dol_buildpath('/attributes/card.php?id='.$id, 2));
+			header('Location: '.dol_buildpath('/variants/card.php?id='.$id, 2));
 			die;
 		}
 	} elseif ($action == 'edit_value') {
@@ -63,7 +70,7 @@ if ($_POST) {
 			}
 		}
 
-		header('Location: '.dol_buildpath('/attributes/card.php?id='.$prodattr->id, 2));
+		header('Location: '.dol_buildpath('/variants/card.php?id='.$prodattr->id, 2));
 		die;
 	}
 
@@ -79,11 +86,11 @@ if ($confirm == 'yes') {
 		if ($res < 1 || ($prodattr->delete() < 1)) {
 			$db->rollback();
 			setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
-			header('Location: '.dol_buildpath('/attributes/card.php?id='.$prodattr->id, 2));
+			header('Location: '.dol_buildpath('/variants/card.php?id='.$prodattr->id, 2));
 		} else {
 			$db->commit();
 			setEventMessage($langs->trans('RecordSaved'));
-			header('Location: '.dol_buildpath('/attributes/list.php', 2));
+			header('Location: '.dol_buildpath('/variants/list.php', 2));
 		}
 
 		die;
@@ -97,7 +104,7 @@ if ($confirm == 'yes') {
 				setEventMessage($langs->trans('RecordSaved'));
 			}
 
-			header('Location: '.dol_buildpath('/attributes/card.php?id='.$prodattr->id, 2));
+			header('Location: '.dol_buildpath('/variants/card.php?id='.$prodattr->id, 2));
 			die;
 		}
 	}
@@ -150,7 +157,8 @@ if ($action == 'edit') { ?>
 	<div style="text-align: center;">
 		<div class="inline-block divButAction">
 			<input type="submit" class="button" value="<?php echo $langs->trans('Save') ?>">
-			<a href="card.php?id=<?php echo $prodattr->id ?>" class="butAction"><?php echo $langs->trans('Cancel') ?></a>
+			&nbsp; &nbsp;
+			<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans('Cancel') ?>">
 		</div>
 	</div></form>
 <?php } else {
@@ -212,7 +220,8 @@ if ($action == 'edit') { ?>
 				<td><input type="text" name="value" value="<?php echo $attrval->value ?>"></td>
 				<td style="text-align: right">
 					<input type="submit" value="<?php echo $langs->trans('Save') ?>" class="button">
-					<a href="card.php?id=<?php echo $prodattr->id ?>" class="butAction"><?php echo $langs->trans('Cancel') ?></a>
+					&nbsp; &nbsp; 
+					<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel') ?>" class="button">
 				</td>
 			<?php else: ?>
 				<td><?php echo dol_htmlentities($attrval->ref) ?></td>

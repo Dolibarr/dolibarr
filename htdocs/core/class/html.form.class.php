@@ -1673,7 +1673,7 @@ class Form
             }
             print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 
-			if (!empty($conf->attributes->enabled)) {
+			if (!empty($conf->variants->enabled)) {
 				?>
 				<script>
 
@@ -1695,7 +1695,7 @@ class Form
 								return;
 							}
 
-							jQuery.getJSON("<?php echo dol_buildpath('/attributes/ajax/getCombinations.php', 2) ?>", {
+							jQuery.getJSON("<?php echo dol_buildpath('/variants/ajax/getCombinations.php', 2) ?>", {
 								id: jQuery(this).val()
 							}, function (data) {
 								jQuery('div#attributes_box').empty();

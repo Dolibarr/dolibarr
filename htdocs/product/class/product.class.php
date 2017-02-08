@@ -960,9 +960,9 @@ class Product extends CommonObject
 
 				if (! $error)
 				{
-					if ($conf->attributes->enabled) {
+					if ($conf->variants->enabled) {
 
-						require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination.class.php';
+						require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 
 						$comb = new ProductCombination($this->db);
 
@@ -1094,8 +1094,8 @@ class Product extends CommonObject
 
 			if (!$error) {
 
-				require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination.class.php';
-				require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination2ValuePair.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
 				//If it is a parent product, then we remove the association with child products
 				$prodcomb = new ProductCombination($this->db);

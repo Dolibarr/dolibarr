@@ -73,7 +73,7 @@ class ProductAttribute
 			return -1;
 		}
 
-		require_once __DIR__.'/../lib/product_attributes.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/variants/lib/product_variants.lib.php';
 
 		$sql = "SELECT rowid, ref, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $id." AND entity IN (".getProductEntities($this->db).")";
 
@@ -94,31 +94,34 @@ class ProductAttribute
 	}
 
 	/**
-	 * Returns an array of all product attributes
+	 * Returns an array of all product variants
 	 *
 	 * @return ProductAttribute[]
 	 */
 	public function fetchAll()
 	{
-		require_once __DIR__.'/../lib/product_attributes.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/variants/lib/product_variants.lib.php';
 
 		$return = array();
 
 		$sql = 'SELECT rowid, ref, label, rang FROM '.MAIN_DB_PREFIX."product_attribute WHERE entity IN (".getProductEntities($this->db).')';
 		$sql .= $this->db->order('rang', 'asc');
 		$query = $this->db->query($sql);
-
-		while ($result = $this->db->fetch_object($query)) {
-
-			$tmp = new ProductAttribute($this->db);
-			$tmp->id = $result->rowid;
-			$tmp->ref = $result->ref;
-			$tmp->label = $result->label;
-			$tmp->rang = $result->rang;
-
-			$return[] = $tmp;
+		if ($query)
+		{
+    		while ($result = $this->db->fetch_object($query)) {
+    
+    			$tmp = new ProductAttribute($this->db);
+    			$tmp->id = $result->rowid;
+    			$tmp->ref = $result->ref;
+    			$tmp->label = $result->label;
+    			$tmp->rang = $result->rang;
+    
+    			$return[] = $tmp;
+    		}
 		}
-
+		else dol_print_error($this->db);
+		
 		return $return;
 	}
 
@@ -187,7 +190,7 @@ class ProductAttribute
 	 */
 	public function countChildProducts()
 	{
-		require_once __DIR__.'/../lib/product_attributes.lib.php';
+		require_once __DIR__.'/../lib/product_variants.lib.php';
 
 		$sql = "SELECT COUNT(*) count FROM ".MAIN_DB_PREFIX."product_attribute_combination2val pac2v
 		LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac2v.fk_prod_combination = pac.rowid WHERE pac2v.fk_prod_attr = ".(int) $this->id." AND pac.entity IN (".getProductEntities($this->db).")";
@@ -200,7 +203,7 @@ class ProductAttribute
 	}
 
 	/**
-	 * Reorders the order of the attributes.
+	 * Reorders the order of the variants.
 	 * This is an internal function used by moveLine function
 	 *
 	 * @return int <0 KO >0 OK
@@ -294,7 +297,7 @@ class ProductAttribute
 	}
 
 	/**
-	 * Updates the order of all attributes. Used by AJAX page for drag&drop
+	 * Updates the order of all variants. Used by AJAX page for drag&drop
 	 *
 	 * @param DoliDB $db Database handler
 	 * @param array $order Array with row id ordered in ascendent mode

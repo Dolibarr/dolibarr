@@ -51,8 +51,8 @@ if (! empty($conf->projet->enabled)) {
 }
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 
-if (!empty($conf->attributes->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination.class.php';
+if (!empty($conf->variants->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
 $langs->load('orders');
@@ -693,7 +693,7 @@ if (empty($reshook))
 			$error++;
 		}
 
-		if (!$error && !empty($conf->attributes->enabled) && $prod_entry_mode != 'free') {
+		if (!$error && !empty($conf->variants->enabled) && $prod_entry_mode != 'free') {
 			if ($combinations = GETPOST('combinations', 'array')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
