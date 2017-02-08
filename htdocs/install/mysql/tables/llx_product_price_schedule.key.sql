@@ -17,4 +17,4 @@
 -- ========================================================================
 
 
-ALTER TABLE llx_product_price_schedule ADD INDEX uk_llx_product_price_schedule (fk_product, schedule_type, schedule_year);
+ALTER TABLE llx_product_price_schedule ADD UNIQUE INDEX uk_llx_product_price_schedule (fk_product, schedule_type, schedule_year);
