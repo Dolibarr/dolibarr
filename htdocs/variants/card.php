@@ -33,7 +33,7 @@ $prodattrval = new ProductAttributeValue($db);
 
 if ($prodattr->fetch($id) < 1) {
 	dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
-	die;
+	exit();
 }
 
 /*
@@ -54,7 +54,7 @@ if ($_POST) {
 		} else {
 			setEventMessage($langs->trans('RecordSaved'));
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$id, 2));
-			die;
+			exit();
 		}
 	} elseif ($action == 'edit_value') {
 
@@ -71,7 +71,7 @@ if ($_POST) {
 		}
 
 		header('Location: '.dol_buildpath('/variants/card.php?id='.$prodattr->id, 2));
-		die;
+		exit();
 	}
 
 }
@@ -93,7 +93,7 @@ if ($confirm == 'yes') {
 			header('Location: '.dol_buildpath('/variants/list.php', 2));
 		}
 
-		die;
+		exit();
 	} elseif ($action == 'confirm_deletevalue') {
 
 		if ($prodattrval->fetch($valueid) > 0) {
@@ -105,7 +105,7 @@ if ($confirm == 'yes') {
 			}
 
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$prodattr->id, 2));
-			die;
+			exit();
 		}
 	}
 }

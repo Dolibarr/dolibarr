@@ -35,9 +35,9 @@
 class FormFile
 {
     private $db;
-    private $numoffiles;
     
-    public $error;   
+    public $error;
+    public $numoffiles;
     public $infofiles;			// Used to return informations by function getDocumentsLink
 
 

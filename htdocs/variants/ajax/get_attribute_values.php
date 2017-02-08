@@ -35,7 +35,7 @@ if (!$id) {
 	print json_encode(array(
 		'error' => 'ID not set'
 	));
-	die;
+	exit();
 }
 
 $prodattr = new ProductAttribute($db);
@@ -44,7 +44,7 @@ if ($prodattr->fetch($id) < 0) {
 	print json_encode(array(
 		'error' => 'Attribute not found'
 	));
-	die;
+	exit();
 }
 
 $prodattrval = new ProductAttributeValue($db);
@@ -55,7 +55,7 @@ if ($res == -1) {
 	print json_encode(array(
 		'error' => 'Internal error'
 	));
-	die;
+	exit();
 }
 
 print json_encode($res);

@@ -46,14 +46,21 @@ $prodstatic = new Product($db);
 $prodattr = new ProductAttribute($db);
 $prodattr_val = new ProductAttributeValue($db);
 
-$product = new Product($db);
-
-$product->fetch($id);
-
-if (!$product->isProduct()) {
-	header('Location: '.dol_buildpath('/product/card.php?id='.$product->id, 2));
-	die;
+$object = new Product($db);
+if ($id > 0 || $ref)
+{
+    $object->fetch($id, $ref);
 }
+
+/*
+ * Actions
+ */
+
+if (! $object->isProduct()) {
+	header('Location: '.dol_buildpath('/product/card.php?id='.$object->id, 2));
+	exit();
+}
+
 
 $prodcomb = new ProductCombination($db);
 $prodcomb2val = new ProductCombination2ValuePair($db);
@@ -103,7 +110,7 @@ if ($_POST) {
 					$db->commit();
 					setEventMessage($langs->trans('RecordSaved'));
 					header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
-					die;
+					exit();
 				} else {
 					setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
 				}
@@ -171,7 +178,7 @@ if ($_POST) {
 
 		if ($prodcomb->fetch($valueid) < 0) {
 			dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
-			die;
+			exit();
 		}
 
 		$prodcomb->variation_price_percentage = $price_impact_percent;
@@ -181,14 +188,14 @@ if ($_POST) {
 		if ($prodcomb->update() > 0) {
 			setEventMessage($langs->trans('RecordSaved'));
 			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
-			die;
+			exit();
 		} else {
 			setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
 		}
 	}
 }
 
-$productCombinations = $prodcomb->fetchAllByFkProductParent($id);
+$productCombinations = $prodcomb->fetchAllByFkProductParent($object->id);
 
 if ($action === 'confirm_deletecombination') {
 
@@ -199,8 +206,8 @@ if ($action === 'confirm_deletecombination') {
 		if ($prodcomb->delete() > 0 && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete() > 0) {
 			$db->commit();
 			setEventMessage($langs->trans('RecordSaved'));
-			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$product->id, 2));
-			die;
+			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$object->id, 2));
+			exit();
 		}
 
 		$db->rollback();
@@ -211,7 +218,7 @@ if ($action === 'confirm_deletecombination') {
 
 	if ($prodcomb->fetch($valueid) < 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
-		die;
+		exit();
 	}
 
 	$weight_impact = $prodcomb->variation_weight;
@@ -227,10 +234,10 @@ if ($action === 'confirm_deletecombination') {
 	if ($prodstatic->fetch('', $dest_product) > 0) {
 
 		//To prevent from copying to the same product
-		if ($prodstatic->ref != $product->ref) {
-			if ($prodcomb->copyAll($product->id, $prodstatic) > 0) {
+		if ($prodstatic->ref != $object->ref) {
+			if ($prodcomb->copyAll($object->id, $prodstatic) > 0) {
 				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$prodstatic->id, 2));
-				die;
+				exit();
 			} else {
 				setEventMessage($langs->trans('ErrorCopyProductCombinations'), 'errors');
 			}
@@ -242,47 +249,31 @@ if ($action === 'confirm_deletecombination') {
 
 }
 
+
+
 /*
  *	View
  */
 
 if (! empty($id) || ! empty($ref)) {
-	$object = new Product($db);
-	$result = $object->fetch($id, $ref);
 
 	llxHeader("", "", $langs->trans("CardProduct".$object->type));
 
-	if ($result) {
-		$head = product_prepare_head($object);
-		$titre = $langs->trans("CardProduct".$object->type);
-		$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
-
-		dol_fiche_head($head, 'combinations', $titre, 0, $picto);
-
-		print '<table class="border" width="100%">';
-
-		// Reference
-		print '<tr>';
-		print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($object, 'id', '', 0);
-		print '</td>';
-		print '</tr>';
-
-		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
-
-		// Status (to sell)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
-		print $object->getLibStatut(2, 0);
-		print '</td></tr>';
-
-		// Status (to buy)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
-		print $object->getLibStatut(2, 1);
-		print '</td></tr>';
-
-		print '</table>';
-
+	if ($result) 
+	{
+	    $showbarcode=empty($conf->barcode->enabled)?0:1;
+	    if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
+	    
+	    $head=product_prepare_head($object);
+	    $titre=$langs->trans("CardProduct".$object->type);
+	    $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
+	    dol_fiche_head($head, 'combinations', $titre, 0, $picto);
+	    
+	    $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
+	    $object->next_prev_filter=" fk_product_type = ".$object->type;
+	    
+	    dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
+	     
 		dol_fiche_end();
 	}
 
@@ -535,7 +526,9 @@ if (! empty($id) || ! empty($ref)) {
 
 		$comb2val = new ProductCombination2ValuePair($db);
 
-		if ($productCombinations): ?>
+		if ($productCombinations) 
+		{
+		?>
 
 			<script type="text/javascript">
 				jQuery(document).ready(function() {
@@ -571,7 +564,7 @@ if (! empty($id) || ! empty($ref)) {
 		<input type="submit" value="<?php echo $langs->trans("Apply") ?>" class="button">
 		<br>
 		<br>
-		<?php endif; ?>
+		<?php } ?>
 
 		<table class="liste">
 			<tr class="liste_titre">

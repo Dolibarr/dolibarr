@@ -44,7 +44,7 @@ $product->fetch($id);
 
 if (!$product->isProduct()) {
 	header('Location: '.dol_buildpath('/product/card.php?id='.$product->id, 2));
-	die;
+	exit();
 }
 
 /**

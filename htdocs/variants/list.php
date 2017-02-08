@@ -33,13 +33,13 @@ if ($action == 'up') {
 	$object->moveUp();
 
 	header('Location: '.$_SERVER['PHP_SELF']);
-	die;
+	exit();
 } elseif ($action == 'down') {
 	$object->fetch($rowid);
 	$object->moveDown();
 
 	header('Location: '.$_SERVER['PHP_SELF']);
-	die;
+	exit();
 }
 
 

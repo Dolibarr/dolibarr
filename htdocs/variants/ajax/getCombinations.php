@@ -34,7 +34,7 @@ if (!$id) {
 	print json_encode(array(
 		'error' => 'ID not set'
 	));
-	die;
+	exit();
 }
 
 $product = new Product($db);

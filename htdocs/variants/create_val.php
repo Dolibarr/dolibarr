@@ -29,7 +29,7 @@ $prodattrval = new ProductAttributeValue($db);
 
 if ($prodattr->fetch($id) < 1) {
 	dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
-	die;
+	exit();
 }
 
 if ($_POST) {
@@ -45,7 +45,7 @@ if ($_POST) {
 		if ($prodattrval->create() > 0) {
 			setEventMessage($langs->trans('RecordSaved'));
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$prodattr->id, 2));
-			die;
+			exit();
 		} else {
 			setEventMessage($langs->trans('ErrorCreatingProductAttributeValue'), 'errors');
 		}
