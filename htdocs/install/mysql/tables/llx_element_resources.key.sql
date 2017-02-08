@@ -17,6 +17,5 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_element_resources ADD INDEX idx_element_element_element_id (element_id);
--- Pas de contraite sur resource_id et element_id car pointe sur differentes tables
-	
+ALTER TABLE llx_element_resources ADD INDEX idx_element_resources_resource (resource_id, resource_type);
+ALTER TABLE llx_element_resources ADD INDEX idx_element_resources_element (element_id, element_type);

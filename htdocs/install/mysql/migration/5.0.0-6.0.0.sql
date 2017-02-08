@@ -56,6 +56,9 @@ ALTER TABLE llx_resource ADD INDEX idx_resource_fk_country (fk_country);
 ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_country FOREIGN KEY (fk_country) REFERENCES llx_c_country (rowid);
 ALTER TABLE llx_element_resources DROP COLUMN busy;
 ALTER TABLE llx_element_resources DROP INDEX idx_element_resources_idx1;
+ALTER TABLE llx_element_resources DROP INDEX idx_element_element_element_id;
+ALTER TABLE llx_element_resources ADD INDEX idx_element_resources_resource (resource_id, resource_type);
+ALTER TABLE llx_element_resources ADD INDEX idx_element_resources_element (element_id, element_type);
 ALTER TABLE llx_element_resources ADD fk_parent INTEGER DEFAULT 0 NOT NULL AFTER rowid;
 ALTER TABLE llx_element_resources ADD dependency INTEGER DEFAULT 0 NOT NULL;
 
