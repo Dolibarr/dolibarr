@@ -39,8 +39,16 @@ $element 	= GETPOST('element','alpha');
 $element_id	= GETPOST('element_id','int');
 $resource_id= GETPOST('resource_id','int');
 
-$sortorder      = GETPOST('sortorder','alpha');
-$sortfield      = GETPOST('sortfield','alpha');
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield="t.ref";
+if (! $sortorder) $sortorder="ASC";
 
 // Initialize context for list
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'resourcelist';
@@ -49,14 +57,17 @@ $object = new Dolresource($db);
 
 $extrafields = new ExtraFields($db);
 
+
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 $search_ref=GETPOST("search_ref");
 $search_type=GETPOST("search_type");
 
+$param='';
 $filter=array();
-
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 if ($search_ref != ''){
 	$param.='&search_ref='.$search_ref;
 	$filter['t.ref']=$search_ref;
@@ -86,22 +97,6 @@ if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&con
 
 
 $hookmanager->initHooks(array('resource', 'resource_list'));
-
-if (empty($sortorder)) $sortorder="ASC";
-if (empty($sortfield)) $sortfield="t.rowid";
-if (empty($arch)) $arch = 0;
-
-$page           = GETPOST('page','int');
-if ($page == -1) {
-	$page = 0 ;
-}
-$page = is_numeric($page) ? $page : 0;
-$page = $page == -1 ? 0 : $page;
-if (! $sortfield) $sortfield="p.ref";
-if (! $sortorder) $sortorder="ASC";
-$offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 if( ! $user->rights->resource->read) {
         accessforbidden();
@@ -177,10 +172,8 @@ if ($action == 'delete_resource')
 // Load object list
 $ret = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
 if($ret == -1) {
-        dol_print_error($db,$object->error);
-        exit;
-} else {
-    print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $ret+1, $object->num_all,'title_generic.png');
+    dol_print_error($db,$object->error);
+    exit;
 }
 
 $var=true;
@@ -189,7 +182,7 @@ $management_types = Dolresource::management_types_trans();
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -198,6 +191,8 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
+print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $object->num_all,'title_generic.png', 0, '', '', $limit);
+
 $moreforfilter = '';
 
 print '<div class="div-table-responsive">';
@@ -205,7 +200,7 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 
 print '<tr class="liste_titre">';
 if (! empty($arrayfields['t.ref']['checked']))              print_liste_field_titre($arrayfields['t.ref']['label'],$_SERVER["PHP_SELF"],"t.ref","",$param,"",$sortfield,$sortorder);
-if (! empty($arrayfields['ty.label']['checked']))           print_liste_field_titre($arrayfields['ty.label']['label'],$_SERVER["PHP_SELF"],"t.code","",$param,"",$sortfield,$sortorder);
+if (! empty($arrayfields['ty.label']['checked']))           print_liste_field_titre($arrayfields['ty.label']['label'],$_SERVER["PHP_SELF"],"ty.label","",$param,"",$sortfield,$sortorder);
 if (! empty($arrayfields['t.available']['checked']))        print_liste_field_titre($arrayfields['t.available']['label'],$_SERVER["PHP_SELF"],"t.available","",$param,"",$sortfield,$sortorder);
 if (! empty($arrayfields['t.management_type']['checked']))  print_liste_field_titre($arrayfields['t.management_type']['label'],$_SERVER["PHP_SELF"],"t.available","",$param,"",$sortfield,$sortorder);
 // Extra fields
@@ -350,12 +345,12 @@ if ($ret)
     }
 
     print '</table>';
-    print "</form>\n";
 }
 else
 {
     print '<tr><td class="opacitymedium">'.$langs->trans('NoResourceInDatabase').'</td></tr>';
 }
+print "</form>\n";
 
 llxFooter();
 
