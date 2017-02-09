@@ -87,6 +87,17 @@ if ($action == 'delete')
 {
 	if (GETPOST('categid'))
 	{
+		// Delete bank class
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
+		$sql.= " WHERE fk_categ = '".GETPOST('categid')."'";
+
+		$result = $db->query($sql);
+		if (!$result)
+		{
+			dol_print_error($db);
+		}
+		
+		// Delete bank categ
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
 		$sql.= " WHERE rowid = '".GETPOST('categid')."'";
 		$sql.= " AND entity = ".$conf->entity;
