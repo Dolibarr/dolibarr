@@ -36,6 +36,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 if (! empty($conf->categorie->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
@@ -267,7 +268,7 @@ else
 
 	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 	$sql.= ' p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
-	$sql.= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy,';
+	$sql.= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy, p.fk_price_expression,';
 	$sql.= ' p.datec as date_creation, p.tms as date_update, p.pmp,';
 	//$sql.= ' pfp.ref_fourn as ref_supplier, ';
 	$sql.= ' MIN(pfp.unitprice) as minsellprice';
@@ -819,6 +820,16 @@ else
 					print '<td align="right">';
 					if ($obj->tosell)
 					{
+						if (!empty($conf->dynamicprices->enabled) && !empty($obj->fk_price_expression))
+						{
+							$product = new Product($db);
+							$product->fetch($obj->rowid);
+							$priceparser = new PriceParser($db);
+							$price_result = $priceparser->parseProduct($product);
+							if ($price_result >= 0) {
+								$obj->price = $price_result;
+							}
+						}
 						if ($obj->price_base_type == 'TTC') print price($obj->price_ttc).' '.$langs->trans("TTC");
 						else print price($obj->price).' '.$langs->trans("HT");
 					}
