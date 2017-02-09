@@ -73,11 +73,15 @@ print '<br>';
 // Modified or missing files
 $file_list = array('missing' => array(), 'updated' => array());
 
-// File to analyze
-//$xmlfile = DOL_DOCUMENT_ROOT.'/install/filelist-'.DOL_VERSION.'.xml';
+// Local file to compare to
 $xmlshortfile = GETPOST('xmlshortfile')?GETPOST('xmlshortfile'):'/install/filelist-'.DOL_VERSION.'.xml';
 $xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
-$xmlremote = GETPOST('xmlremote')?GETPOST('xmlremote'):'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
+// Remote file to compare to
+$xmlremote = GETPOST('xmlremote');
+if (empty($xmlremote) && ! empty($conf->global->MAIN_FILECHECK_URL)) $xmlremote = $conf->global->MAIN_FILECHECK_URL;
+$param='MAIN_FILECHECK_URL_'.DOL_VERSION;
+if (empty($xmlremote) && ! empty($conf->global->$param)) $xmlremote = $conf->global->$param;
+if (empty($xmlremote)) $xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
 
 
 // Test if remote test is ok
