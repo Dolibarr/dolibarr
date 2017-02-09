@@ -351,6 +351,14 @@ PaymentConditionShortPT_ORDER=Bestellung
 PaymentConditionPT_ORDER=Bei Bestellung
 PaymentConditionShortPT_5050=50-50
 PaymentConditionPT_5050=50%% im Voraus, 50%% bei Lieferung
+PaymentConditionShort10D=10 Tage
+PaymentCondition10D=10 Tage netto
+PaymentConditionShort10DENDMONTH=10 Tage ab Monatsende
+PaymentCondition10DENDMONTH=Innerhalb von 10 Tagen, nach Monatsende
+PaymentConditionShort14D=14 Tage
+PaymentCondition14D=14 Tage netto
+PaymentConditionShort14DENDMONTH=14 Tage ab Monatsende
+PaymentCondition14DENDMONTH=Innerhalb von 14 Tagen, nach Monatsende
 FixAmount=Fester Betrag
 VarAmount=Variabler Betrag (%% tot.)
 # PaymentType

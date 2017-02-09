@@ -4556,7 +4556,7 @@ abstract class CommonObject
 								var parent = $(this).find("option[parent]:first").attr("parent");
 								var infos = parent.split(":");
 								var parent_list = infos[0];
-								$("select[name=\"options_"+parent_list+"\"]").change(function() {
+								$("select[name=\""+parent_list+"\"]").change(function() {
 									showOptions(child_list, parent_list);
 								});
 					    	});
