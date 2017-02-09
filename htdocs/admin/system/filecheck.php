@@ -184,6 +184,7 @@ if ($xml)
             }
         }
         
+        // Files missings
         $out.=load_fiche_titre($langs->trans("FilesMissing"));
         
         $out.='<table class="noborder">';
@@ -216,8 +217,10 @@ if ($xml)
 
         $out.='<br>';
 
+        // Files modified
         $out.=load_fiche_titre($langs->trans("FilesModified"));
         
+        $totalsize=0;
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
@@ -241,10 +244,20 @@ if ($xml)
 	            $out.='<td>'.$file['filename'].'</td>' . "\n";
 	            $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
 	            $out.='<td align="center">'.$file['md5'].'</td>' . "\n";
-	            $out.='<td align="right">'.dol_print_size(dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename'])).'</td>' . "\n";
+	            $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
+	            $totalsize += $size;
+	            $out.='<td align="right">'.dol_print_size($size).'</td>' . "\n";
 	            $out.='<td align="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']),'dayhour').'</td>' . "\n";
 	            $out.="</tr>\n";
 	        }
+            $out.='<tr class="liste_total">';
+            $out.='<td></td>' . "\n";
+            $out.='<td>'.$langs->trans("Total").'</td>' . "\n";
+            $out.='<td align="center"></td>' . "\n";
+            $out.='<td align="center"></td>' . "\n";
+            $out.='<td align="right">'.dol_print_size($totalsize).'</td>' . "\n";
+            $out.='<td align="right"></td>' . "\n";
+            $out.="</tr>\n";
         }
         else 
         {
@@ -254,8 +267,10 @@ if ($xml)
         
         $out.='<br>';
         
+        // Files added
         $out.=load_fiche_titre($langs->trans("FilesAdded"));
         
+        $totalsize = 0;
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
@@ -279,10 +294,20 @@ if ($xml)
                 $out.='<td>'.$file['filename'].'</td>' . "\n";
                 $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
                 $out.='<td align="center">'.$file['md5'].'</td>' . "\n";
-                $out.='<td align="right">'.dol_print_size(dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename'])).'</td>' . "\n";
+                $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
+                $totalsize += $size;
+                $out.='<td align="right">'.dol_print_size($size).'</td>' . "\n";
                 $out.='<td align="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']),'dayhour').'</td>' . "\n";
                 $out.="</tr>\n";
             }
+            $out.='<tr class="liste_total">';
+            $out.='<td></td>' . "\n";
+            $out.='<td>'.$langs->trans("Total").'</td>' . "\n";
+            $out.='<td align="center"></td>' . "\n";
+            $out.='<td align="center"></td>' . "\n";
+            $out.='<td align="right">'.dol_print_size($totalsize).'</td>' . "\n";
+            $out.='<td align="right"></td>' . "\n";
+            $out.="</tr>\n";
         }
         else
         {
