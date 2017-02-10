@@ -3939,7 +3939,7 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// Send by mail
-			if (($object->statut == 1 || $object->statut == 2) || ! empty($conf->global->FACTURE_SENDBYEMAIL_FOR_ALL_STATUS)) {
+			if (($object->statut == Facture::STATUS_VALIDATED || $object->statut == Facture::STATUS_CLOSED) || ! empty($conf->global->FACTURE_SENDBYEMAIL_FOR_ALL_STATUS)) {
 				if ($objectidnext) {
 					print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('SendByMail') . '</span></div>';
 				} else {
@@ -3950,21 +3950,27 @@ else if ($id > 0 || ! empty($ref))
 				}
 			}
 
-			// deprecated. Useless because now we can use templates
-			if (! empty($conf->global->FACTURE_SHOW_SEND_REMINDER)) 			// For backward compatibility
+			// Request a direct debit order
+			if ($object->statut > Facture::STATUS_DRAFT && $object->paye == 0 && $num == 0)
 			{
-				if (($object->statut == 1 || $object->statut == 2) && $resteapayer > 0) {
-					if ($objectidnext) {
-						print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('SendRemindByMail') . '</span></div>';
-					} else {
-						if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->send) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=prerelance&amp;mode=init">' . $langs->trans('SendRemindByMail') . '</a></div>';
-						} else
-							print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendRemindByMail') . '</a></div>';
-					}
-				}
+			    if ($resteapayer > 0)
+			    {
+			        if ($user->rights->prelevement->bons->creer)
+			        {
+			            $langs->load("withdrawals");
+			            print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MakeWithdrawRequest")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			        }
+			        else
+			        {
+			            //print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			        }
+			    }
+			    else
+			    {
+			        //print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			    }
 			}
-
+			
 			// Create payment
 			if ($object->type != Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement) {
 				if ($objectidnext) {
