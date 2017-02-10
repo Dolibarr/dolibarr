@@ -114,7 +114,7 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 		$newdiscount2->amount_ttc=price2num($discount->amount_ttc-$newdiscount1->amount_ttc);
 		$newdiscount1->amount_ht=price2num($newdiscount1->amount_ttc/(1+$newdiscount1->tva_tx/100),'MT');
 		$newdiscount2->amount_ht=price2num($newdiscount2->amount_ttc/(1+$newdiscount2->tva_tx/100),'MT');
-		$newdiscount1->amount_tva=price2num($newdiscount1->amount_ttc-$newdiscount2->amount_ht);
+		$newdiscount1->amount_tva=price2num($newdiscount1->amount_ttc-$newdiscount1->amount_ht);
 		$newdiscount2->amount_tva=price2num($newdiscount2->amount_ttc-$newdiscount2->amount_ht);
 
 		$db->begin();

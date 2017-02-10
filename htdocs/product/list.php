@@ -82,8 +82,8 @@ if (! $sortorder) $sortorder="ASC";
 
 // Initialize context for list
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'productservicelist';
-if ($type === '1') { $contextpage='servicelist'; if ($search_type=='') $search_type='1'; }
-if ($type === '0') { $contextpage='productlist'; if ($search_type=='') $search_type='0'; }
+if ((string) $type == '1') { $contextpage='servicelist'; if ($search_type=='') $search_type='1'; }
+if ((string) $type == '0') { $contextpage='productlist'; if ($search_type=='') $search_type='0'; }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array($contextpage));
