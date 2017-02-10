@@ -160,6 +160,52 @@ if ($xml)
     $file_list = array();
     $out = '';
     
+    // Forced constants
+    if (is_object($xml->dolibarr_constants[0]))
+    {
+        $out.=load_fiche_titre($langs->trans("ForcedConstants"));
+        
+        $out.='<table class="noborder">';
+        $out.='<tr class="liste_titre">';
+        $out.='<td>#</td>';
+        $out.='<td>' . $langs->trans("Constant") . '</td>';
+        $out.='<td align="center">' . $langs->trans("ExpectedValue") . '</td>';
+        $out.='<td align="center">' . $langs->trans("Value") . '</td>';
+        $out.='</tr>'."\n";
+        $var = true;
+
+        $i = 0;
+        foreach ($xml->dolibarr_constants[0]->constant as $constant)    // $constant is a simpleXMLElement
+        {
+            $constname=$constant['name'];
+            $constvalue=(string) $constant;
+            $constvalue = (empty($constvalue)?'0':$constvalue);
+            // Value found                
+            $value='';
+            if ($constname && $conf->global->$constname != '') $value=$conf->global->$constname;
+            $valueforchecksum=(empty($value)?'0':$value);
+            
+            $checksumconcat[]=$valueforchecksum;
+            
+            $i++;
+            $var = !$var;
+            $out.='<tr ' . $bc[$var] . '>';
+            $out.='<td>'.$i.'</td>' . "\n";
+            $out.='<td>'.$constname.'</td>' . "\n";
+            $out.='<td align="center">'.$constvalue.'</td>' . "\n";
+            $out.='<td align="center">'.$valueforchecksum.'</td>' . "\n";
+            $out.="</tr>\n";
+        }
+
+        if ($i==0)
+        {
+            $out.='<tr ' . $bc[false] . '><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        }
+        $out.='</table>';
+        
+        $out.='<br>';
+    }
+    
     // Scan htdocs
     if (is_object($xml->dolibarr_htdocs_dir[0]))
     {
