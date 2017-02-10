@@ -26,6 +26,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -143,6 +144,7 @@ llxHeader();
 $result=$object->fetch($id);
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 
 $head = payment_supplier_prepare_head($object);
 
@@ -344,6 +346,34 @@ if ($result > 0)
 		}
 	}
 	print '</div>';
+	
+	print '<div class="fichecenter"><div class="fichehalfleft">';
+
+	/*
+     * Documents generes
+     */
+    $ref=dol_sanitizeFileName($object->ref);
+    $subdir = get_exdir($object->id,2,0,0,$object,'supplier_payment').$ref;
+    $filedir = $conf->fournisseur->paiement->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'supplier_payment').$ref;
+    $urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
+    $genallowed=$user->rights->fournisseur->facture->creer;
+    $delallowed=$user->rights->fournisseur->facture->supprimer;
+    $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF)?'':$conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+
+    print $formfile->showdocuments('supplier_payment',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,40,0,'','','',$societe->default_lang);
+    $somethingshown=$formfile->numoffiles;
+
+	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+    //print '</td><td valign="top" width="50%">';
+    //print '<br>';
+
+    // List of actions on element
+    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+    $formactions=new FormActions($db);
+    $somethingshown=$formactions->showactions($object,'supplier_payment',$socid,0,'listaction'.($genallowed?'largetitle':''));
+
+	print '</div></div></div>';
+    //print '</td></tr></table>';
 
 }
 else

@@ -466,6 +466,15 @@ class FormFile
                     $modellist=ModelePDFSuppliersInvoices::liste_modeles($this->db);
                 }
             }
+			else if ($modulepart == 'supplier_payment')
+			{
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
+                    $modellist=ModelePDFSuppliersPayments::liste_modeles($this->db);
+                }
+			}
             else if ($modulepart == 'remisecheque')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;

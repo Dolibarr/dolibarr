@@ -40,6 +40,7 @@ $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 $label = GETPOST('label','alpha');
 $scandir = GETPOST('scandir','alpha');
+$type='supplier_payment';
 
 
 /*
@@ -62,11 +63,112 @@ if ($action == 'updateMask')
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-
-    if ($action == 'setmod')
+}else  if ($action == 'setmod')
 {
     dolibarr_set_const($db, "SUPPLIER_PAYMENT_ADDON",$value,'chaine',0,'',$conf->entity);
+}
+
+// define constants for models generator that need parameters
+else if ($action == 'setModuleOptions')
+{
+    $post_size=count($_POST);
+    for($i=0;$i < $post_size;$i++)
+    {
+        if (array_key_exists('param'.$i,$_POST))
+        {
+            $param=GETPOST("param".$i,'alpha');
+            $value=GETPOST("value".$i,'alpha');
+            if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+        }
+    }
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+}
+
+// Activate a model
+else if ($action == 'set')
+{
+	$ret = addDocumentModel($value, $type, $label, $scandir);
+}
+
+else if ($action == 'del')
+{
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+        if ($conf->global->FACTURE_ADDON_PDF == "$value") dolibarr_del_const($db, 'SUPPLIER_PAYMENT_ADDON_PDF',$conf->entity);
+	}
+}
+
+// Set default model
+else if ($action == 'setdoc')
+{
+	if (dolibarr_set_const($db, "SUPPLIER_PAYMENT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+	{
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
+		$conf->global->FACTURE_ADDON_PDF = $value;
+	}
+
+	// On active le modele
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+		$ret = addDocumentModel($value, $type, $label, $scandir);
+	}
+}
+
+else if ($action == 'specimen')
+{
+    $modele=GETPOST('module','alpha');
+
+    $facture = new Facture($db);
+    $facture->initAsSpecimen();
+
+	// Search template files
+	$file=''; $classname=''; $filefound=0;
+	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
+	{
+	    $file=dol_buildpath($reldir."core/modules/supplier_payment/pdf/pdf_".$modele.".modules.php",0);
+    	if (file_exists($file))
+    	{
+    		$filefound=1;
+    		$classname = "pdf_".$modele;
+    		break;
+    	}
+    }
+
+    if ($filefound)
+    {
+    	require_once $file;
+
+    	$module = new $classname($db);
+
+    	if ($module->write_file($facture,$langs) > 0)
+    	{
+    		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=supplier_payment&file=SPECIMEN.pdf");
+    		return;
+    	}
+    	else
+    	{
+    		setEventMessages($module->error, $module->errors, 'errors');
+    		dol_syslog($module->error, LOG_ERR);
+    	}
+    }
+    else
+    {
+    	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+    	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+    }
 }
 
 /*
@@ -95,6 +197,35 @@ dol_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), 0, 'company
 if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) $conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
     
 print load_fiche_titre($langs->trans("PaymentsNumberingModule"), '', '');
+
+/*
+ *  Document templates generators
+ */
+print '<br>';
+print load_fiche_titre($langs->trans("BillsPDFModules"),'','');
+
+// Load array def with activated templates
+$def = array();
+$sql = "SELECT nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql.= " WHERE type = '".$type."'";
+$sql.= " AND entity = ".$conf->entity;
+$resql=$db->query($sql);
+if ($resql)
+{
+    $i = 0;
+    $num_rows=$db->num_rows($resql);
+    while ($i < $num_rows)
+    {
+        $array = $db->fetch_array($resql);
+        array_push($def, $array[0]);
+        $i++;
+    }
+}
+else
+{
+    dol_print_error($db);
+}
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -140,7 +271,7 @@ foreach ($dirmodels as $reldir)
                         require_once $dir.$filebis;
 
                         $module = new $classname($db);
-
+						
                         // Show modules according to features level
                         if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
                         if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
@@ -216,6 +347,119 @@ foreach ($dirmodels as $reldir)
 }
 
 print '</table>';
+
+
+print '<table class="noborder" width="100%">'."\n";
+print '<tr class="liste_titre">'."\n";
+print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
+print '<td>'.$langs->trans("Description").'</td>'."\n";
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>'."\n";
+print '<td align="center" width="60">'.$langs->trans("Default").'</td>'."\n";
+print '<td align="center" width="40">'.$langs->trans("ShortInfo").'</td>';
+print '<td align="center" width="40">'.$langs->trans("Preview").'</td>';
+print '</tr>'."\n";
+
+clearstatcache();
+
+foreach ($dirmodels as $reldir)
+{
+	$dir = dol_buildpath($reldir."core/modules/supplier_payment/pdf/");
+
+    if (is_dir($dir))
+    {
+        $var=true;
+
+        $handle=opendir($dir);
+
+
+        if (is_resource($handle))
+        {
+            while (($file = readdir($handle))!==false)
+            {
+                if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))            	
+                {
+                    $name = substr($file, 4, dol_strlen($file) -16);
+                    $classname = substr($file, 0, dol_strlen($file) -12);
+
+	                require_once $dir.'/'.$file;
+	                $module = new $classname($db, new PaiementFourn($db));
+
+                    $var=!$var;
+                    print "<tr ".$bc[$var].">\n";
+                    print "<td>";
+	                print (empty($module->name)?$name:$module->name);
+	                print "</td>\n";
+                    print "<td>\n";
+                    require_once $dir.$file;
+                    $module = new $classname($db,$specimenthirdparty);
+                    if (method_exists($module,'info')) print $module->info($langs);
+	                else print $module->description;
+
+                    print "</td>\n";
+
+                    // Active
+                    if (in_array($name, $def))
+                    {
+                        print '<td align="center">'."\n";
+                        //if ($conf->global->SUPPLIER_PAYMENT_ADDON_PDF != "$name")
+                        //{
+                            // Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
+                            print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=SUPPLIER_PAYMENT">';
+                            print img_picto($langs->trans("Enabled"),'switch_on');
+                            print '</a>';
+                        /*}
+                        else
+                        {
+                            print img_picto($langs->trans("Enabled"),'switch_on');
+                        }*/
+                        print "</td>";
+                    }
+                    else
+                    {
+                        print '<td align="center">'."\n";
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=SUPPLIER_PAYMENT">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+                        print "</td>";
+                    }
+
+                    // Default
+                    print '<td align="center">';
+                    if ($conf->global->SUPPLIER_PAYMENT_ADDON_PDF == "$name")
+                    {
+                        //print img_picto($langs->trans("Default"),'on');
+                        // Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=SUPPLIER_PAYMENT"" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+                    }
+                    else
+                    {
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=SUPPLIER_PAYMENT"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+                    }
+                    print '</td>';
+
+                    // Info
+                    $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+                    $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+                    $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+                    $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+                    $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+                    $htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
+                    $htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
+                    print '<td align="center">';
+                    print $form->textwithpicto('',$htmltooltip,1,0);
+                    print '</td>';
+                    print '<td align="center">';
+                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
+                    print '</td>';
+
+                    print "</tr>\n";
+                }
+            }
+
+            closedir($handle);
+        }
+    }
+}
+
+print '</table><br>';
 
 dol_fiche_end();
 
