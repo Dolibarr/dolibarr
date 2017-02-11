@@ -274,6 +274,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		return array(
 		'tasktime_rowid'=>$tasktime['rowid'],
 		'tasktime_task_date'=>dol_print_date($tasktime['task_date'],'day'),
+		'tasktime_task_duration_sec'=>$tasktime['task_duration'],
 		'tasktime_task_duration'=>convertSecondToTime($tasktime['task_duration'],'all'),
 		'tasktime_note'=>$tasktime['note'],
 		'tasktime_fk_user'=>$tasktime['fk_user'],
