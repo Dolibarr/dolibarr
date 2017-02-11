@@ -868,13 +868,23 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
 
 	$result=0;
 
-	dol_syslog("files.lib.php::dolCopyr srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
+	dol_syslog("files.lib.php::dolCopyDir srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
 
 	if (empty($srcfile) || empty($destfile)) return -1;
 
 	$destexists=dol_is_dir($destfile);
 	if (! $overwriteifexists && $destexists) return 0;
-
+    
+    if (! $destexists)
+    {
+        // We must set mask just before creating dir, becaause it can be set differently by dol_copy
+        umask(0);
+        $dirmaskdec=octdec($newmask);
+        if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);
+        $dirmaskdec |= octdec('0200');  // Set w bit required to be able to create content for recursive subdirs files
+        dol_mkdir($destfile."/".$file, '', decoct($dirmaskdec));
+    }
+    
 	$srcfile=dol_osencode($srcfile);
 	$destfile=dol_osencode($destfile);
 
@@ -891,6 +901,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
                 {
                     if (!is_dir($destfile."/".$file))
                     {
+                        // We must set mask just before creating dir, becaause it can be set differently by dol_copy
                     	umask(0);
 						$dirmaskdec=octdec($newmask);
 						if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);
