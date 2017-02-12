@@ -2346,8 +2346,11 @@ class CommandeFournisseur extends CommonOrder
 
             $subprice = price2num($pu_ht,'MU');
 
+            //Fetch current line from the database and then clone the object and set it in $oldline property
             $this->line=new CommandeFournisseurLigne($this->db);
             $this->line->fetch($rowid);
+            $oldline = clone $this->line;
+            $this->line->oldline = $oldline;
 
             $this->line->context = $this->context;
 
