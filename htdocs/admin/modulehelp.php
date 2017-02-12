@@ -290,42 +290,6 @@ $moduledesc=$objMod->getDesc();
 $moduledesclong=$objMod->getDescLong();
 $moduleauthor=$objMod->getPublisher();
 
-// We discard showing according to filters
-if ($search_keyword)
-{
-    $qualified=0;
-    if (preg_match('/'.preg_quote($search_keyword).'/i', $modulename)
-        || preg_match('/'.preg_quote($search_keyword).'/i', $moduledesc)
-        || preg_match('/'.preg_quote($search_keyword).'/i', $moduledesclong)
-        || preg_match('/'.preg_quote($search_keyword).'/i', $moduleauthor)
-        ) $qualified=1;
-    if (! $qualified) continue;
-}
-if ($search_status)
-{
-    if ($search_status == 'active' && empty($conf->global->$const_name)) continue;
-    if ($search_status == 'disabled' && ! empty($conf->global->$const_name)) continue;
-}
-if ($search_nature)
-{
-    if (preg_match('/^external/',$search_nature) && $objMod->isCoreOrExternalModule() != 'external') continue;
-    if (preg_match('/^external_(.*)$/',$search_nature, $reg))
-    {
-        //print $reg[1].'-'.dol_escape_htmltag($objMod->getPublisher());
-        $publisher=dol_escape_htmltag($objMod->getPublisher());
-        if ($reg[1] && dol_escape_htmltag($reg[1]) != $publisher) continue;
-        if (! $reg[1] && ! empty($publisher)) continue;
-    }
-    if ($search_nature == 'core' && $objMod->isCoreOrExternalModule() == 'external') continue;
-}
-if ($search_version)
-{
-    if (($objMod->version == 'development' || $objMod->version == 'experimental' || preg_match('/deprecated/', $objMod->version)) && $search_version == 'stable') continue;
-    if ($objMod->version != 'development'  && ($search_version == 'development')) continue;
-    if ($objMod->version != 'experimental' && ($search_version == 'experimental')) continue;
-    if (! preg_match('/deprecated/', $objMod->version) && ($search_version == 'deprecated')) continue;
-}
-
 // Load all lang files of module
 if (isset($objMod->langfiles) && is_array($objMod->langfiles))
 {
