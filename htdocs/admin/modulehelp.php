@@ -46,9 +46,10 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 $langs->load("errors");
 $langs->load("admin");
 
-$mode=GETPOST('mode', 'alpha')?GETPOST('mode', 'alpha'):0;
+$mode=GETPOST('mode', 'alpha');
 $action=GETPOST('action','alpha');
 $id = GETPOST('id', 'int');
+if (empty($mode)) $mode='desc';
 
 if (! $user->admin)
 	accessforbidden();
@@ -232,17 +233,15 @@ asort($orders);
 
 $h = 0;
 
-$categidx='desc';    // Main
 $head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=desc';
 $head[$h][1] = $langs->trans("Description");
 $head[$h][2] = 'desc';
 $h++;
 
-/*$categidx='feature';
 $head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=feature';
 $head[$h][1] = $langs->trans("Features");
 $head[$h][2] = 'feature';
-$h++;*/
+$h++;
 
 
 $i=0;
@@ -356,159 +355,165 @@ if ($objMod->isCoreOrExternalModule() == 'external')
 
 // Define text of description of module
 $text='';
-
-if ($objMod->getDescLong()) $text.=$objMod->getDesc().'<br>';
-
-$text.='<br><strong>'.$langs->trans("Version").':</strong> '.$version;
-
-$textexternal='';
-if ($objMod->isCoreOrExternalModule() == 'external')
+   
+if ($mode == 'desc')
 {
-    $textexternal.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule",$dirofmodule);
-    if ($objMod->editor_name != 'dolibarr') $textexternal.='<br><strong>'.$langs->trans("Publisher").':</strong> '.(empty($objMod->editor_name)?$langs->trans("Unknown"):$objMod->editor_name);
-    if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i',$objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> '.$objMod->editor_url;
-    $text.=$textexternal;
+    $text.='<strong>'.$langs->trans("Version").':</strong> '.$version;
+    
+    $textexternal='';
+    if ($objMod->isCoreOrExternalModule() == 'external')
+    {
+        $textexternal.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule",$dirofmodule);
+        if ($objMod->editor_name != 'dolibarr') $textexternal.='<br><strong>'.$langs->trans("Publisher").':</strong> '.(empty($objMod->editor_name)?$langs->trans("Unknown"):$objMod->editor_name);
+        if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i',$objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> '.$objMod->editor_url;
+        $text.=$textexternal;
+        $text.='<br>';
+    }
+    else
+    {
+        $text.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("Core").'<br>';
+    }
+    $text.='<br><strong>'.$langs->trans("LastActivationDate").':</strong> ';
+    if (! empty($conf->global->$const_name)) $text.=dol_print_date($objMod->getLastActivationDate(), 'dayhour');
+    else $text.=$langs->trans("Disabled");
     $text.='<br>';
-}
-else
-{
-    $text.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("Core").'<br>';
-}
-$text.='<br><strong>'.$langs->trans("LastActivationDate").':</strong> ';
-if (! empty($conf->global->$const_name)) $text.=dol_print_date($objMod->getLastActivationDate(), 'dayhour');
-else $text.=$langs->trans("Disabled");
-$text.='<br>';
 
-$text.='<br><strong>'.$langs->trans("AddRemoveTabs").':</strong> ';
-if (isset($objMod->tabs) && is_array($objMod->tabs) && count($objMod->tabs))
+    if ($objMod->getDescLong()) $text.=$objMod->getDesc().'<br>';
+}
+
+if ($mode == 'feature')
 {
-    $i=0;
-    foreach($objMod->tabs as $val)
+    $text.='<strong>'.$langs->trans("AddRemoveTabs").':</strong> ';
+    if (isset($objMod->tabs) && is_array($objMod->tabs) && count($objMod->tabs))
     {
-        $tmp=explode(':',$val,3);
-        $text.=($i?', ':'').$tmp[0].':'.$tmp[1];
-        $i++;
+        $i=0;
+        foreach($objMod->tabs as $val)
+        {
+            $tmp=explode(':',$val,3);
+            $text.=($i?', ':'').$tmp[0].':'.$tmp[1];
+            $i++;
+        }
     }
-}
-else $text.=$langs->trans("No");
-
-$text.='<br><strong>'.$langs->trans("AddDictionaries").':</strong> ';
-if (isset($objMod->dictionaries) && isset($objMod->dictionaries['tablib']) && is_array($objMod->dictionaries['tablib']) && count($objMod->dictionaries['tablib']))
-{
-    $i=0;
-    foreach($objMod->dictionaries['tablib'] as $val)
+    else $text.=$langs->trans("No");
+    
+    $text.='<br><strong>'.$langs->trans("AddDictionaries").':</strong> ';
+    if (isset($objMod->dictionaries) && isset($objMod->dictionaries['tablib']) && is_array($objMod->dictionaries['tablib']) && count($objMod->dictionaries['tablib']))
     {
-        $text.=($i?', ':'').$val;
-        $i++;
+        $i=0;
+        foreach($objMod->dictionaries['tablib'] as $val)
+        {
+            $text.=($i?', ':'').$val;
+            $i++;
+        }
     }
-}
-else $text.=$langs->trans("No");
-
-$text.='<br><strong>'.$langs->trans("AddBoxes").':</strong> ';
-if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes))
-{
-    $i=0;
-    foreach($objMod->boxes as $val)
+    else $text.=$langs->trans("No");
+    
+    $text.='<br><strong>'.$langs->trans("AddBoxes").':</strong> ';
+    if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes))
     {
-        $text.=($i?', ':'').($val['file']?$val['file']:$val[0]);
-        $i++;
+        $i=0;
+        foreach($objMod->boxes as $val)
+        {
+            $text.=($i?', ':'').($val['file']?$val['file']:$val[0]);
+            $i++;
+        }
     }
-}
-else $text.=$langs->trans("No");
-
-$text.='<br><strong>'.$langs->trans("AddModels").':</strong> ';
-if (isset($objMod->module_parts) && isset($objMod->module_parts['models']) && $objMod->module_parts['models'])
-{
-    $text.=$langs->trans("Yes");
-}
-else $text.=$langs->trans("No");
-
-$text.='<br><strong>'.$langs->trans("AddSubstitutions").':</strong> ';
-if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions'])
-{
-    $text.=$langs->trans("Yes");
-}
-else $text.=$langs->trans("No");
-
-$text.='<br><strong>'.$langs->trans("AddSheduledJobs").':</strong> ';
-if (isset($objMod->cronjobs) && is_array($objMod->cronjobs) && count($objMod->cronjobs))
-{
-    $i=0;
-    foreach($objMod->cronjobs as $val)
+    else $text.=$langs->trans("No");
+    
+    $text.='<br><strong>'.$langs->trans("AddModels").':</strong> ';
+    if (isset($objMod->module_parts) && isset($objMod->module_parts['models']) && $objMod->module_parts['models'])
     {
-        $text.=($i?', ':'').($val['label']);
-        $i++;
+        $text.=$langs->trans("Yes");
     }
-}
-else $text.=$langs->trans("No");
-
-$text.='<br><strong>'.$langs->trans("AddTriggers").':</strong> ';
-if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers'])
-{
-    $text.=$langs->trans("Yes");
-}
-else $text.=$langs->trans("No");
-
-$text.='<br><strong>'.$langs->trans("AddHooks").':</strong> ';
-if (isset($objMod->module_parts) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks']))
-{
-    $i=0;
-    foreach($objMod->module_parts['hooks'] as $val)
+    else $text.=$langs->trans("No");
+    
+    $text.='<br><strong>'.$langs->trans("AddSubstitutions").':</strong> ';
+    if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions'])
     {
-        $text.=($i?', ':'').($val);
-        $i++;
+        $text.=$langs->trans("Yes");
     }
-}
-else $text.=$langs->trans("No");
-
-$text.='<br><strong>'.$langs->trans("AddPermissions").':</strong> ';
-if (isset($objMod->rights) && is_array($objMod->rights) && count($objMod->rights))
-{
-    $i=0;
-    foreach($objMod->rights as $val)
+    else $text.=$langs->trans("No");
+    
+    $text.='<br><strong>'.$langs->trans("AddSheduledJobs").':</strong> ';
+    if (isset($objMod->cronjobs) && is_array($objMod->cronjobs) && count($objMod->cronjobs))
     {
-        $text.=($i?', ':'').($val[1]);
-        $i++;
+        $i=0;
+        foreach($objMod->cronjobs as $val)
+        {
+            $text.=($i?', ':'').($val['label']);
+            $i++;
+        }
     }
-}
-else $text.=$langs->trans("No");
-
-$text.='<br><strong>'.$langs->trans("AddMenus").':</strong> ';
-if (isset($objMod->menu) && ! empty($objMod->menu)) // objMod can be an array or just an int 1
-{
-    $text.=$langs->trans("Yes");
-}
-else $text.=$langs->trans("No");
-
-$text.='<br><strong>'.$langs->trans("AddExportProfiles").':</strong> ';
-if (isset($objMod->export_label) && is_array($objMod->export_label) && count($objMod->export_label))
-{
-    $i=0;
-    foreach($objMod->export_label as $val)
+    else $text.=$langs->trans("No");
+    
+    $text.='<br><strong>'.$langs->trans("AddTriggers").':</strong> ';
+    if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers'])
     {
-        $text.=($i?', ':'').($val);
-        $i++;
+        $text.=$langs->trans("Yes");
     }
-}
-else $text.=$langs->trans("No");
-
-$text.='<br><strong>'.$langs->trans("AddImportProfiles").':</strong> ';
-if (isset($objMod->import_label) && is_array($objMod->import_label) && count($objMod->import_label))
-{
-    $i=0;
-    foreach($objMod->import_label as $val)
+    else $text.=$langs->trans("No");
+    
+    $text.='<br><strong>'.$langs->trans("AddHooks").':</strong> ';
+    if (isset($objMod->module_parts) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks']))
     {
-        $text.=($i?', ':'').($val);
-        $i++;
+        $i=0;
+        foreach($objMod->module_parts['hooks'] as $val)
+        {
+            $text.=($i?', ':'').($val);
+            $i++;
+        }
     }
+    else $text.=$langs->trans("No");
+    
+    $text.='<br><strong>'.$langs->trans("AddPermissions").':</strong> ';
+    if (isset($objMod->rights) && is_array($objMod->rights) && count($objMod->rights))
+    {
+        $i=0;
+        foreach($objMod->rights as $val)
+        {
+            $text.=($i?', ':'').($val[1]);
+            $i++;
+        }
+    }
+    else $text.=$langs->trans("No");
+    
+    $text.='<br><strong>'.$langs->trans("AddMenus").':</strong> ';
+    if (isset($objMod->menu) && ! empty($objMod->menu)) // objMod can be an array or just an int 1
+    {
+        $text.=$langs->trans("Yes");
+    }
+    else $text.=$langs->trans("No");
+    
+    $text.='<br><strong>'.$langs->trans("AddExportProfiles").':</strong> ';
+    if (isset($objMod->export_label) && is_array($objMod->export_label) && count($objMod->export_label))
+    {
+        $i=0;
+        foreach($objMod->export_label as $val)
+        {
+            $text.=($i?', ':'').($val);
+            $i++;
+        }
+    }
+    else $text.=$langs->trans("No");
+    
+    $text.='<br><strong>'.$langs->trans("AddImportProfiles").':</strong> ';
+    if (isset($objMod->import_label) && is_array($objMod->import_label) && count($objMod->import_label))
+    {
+        $i=0;
+        foreach($objMod->import_label as $val)
+        {
+            $text.=($i?', ':'').($val);
+            $i++;
+        }
+    }
+    else $text.=$langs->trans("No");
+    
+    $text.='<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
+    $text.=$langs->trans("DetectionNotPossible");
 }
-else $text.=$langs->trans("No");
 
-$text.='<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
-$text.=$langs->trans("DetectionNotPossible");
 
 print $text;
-        
 
 
 dol_fiche_end();
