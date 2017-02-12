@@ -94,12 +94,12 @@ if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) $tabfield[25]
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
 $tabfieldvalue[25]= "label,type_template,private,position,topic,content";
-if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) $tabfield[25].=',content_lines';
+if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) $tabfieldvalue[25].=',content_lines';
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
 $tabfieldinsert[25]= "label,type_template,private,position,topic,content";
-if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) $tabfield[25].=',content_lines';
+if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) $tabfieldinsert[25].=',content_lines';
 $tabfieldinsert[25].=',entity';     // Must be at end because not into other arrays
 
 // Nom du rowid si le champ n'est pas de type autoincrement
@@ -290,8 +290,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $i = 0;
         foreach ($listfieldmodify as $field)
         {
-            if ($value == 'content') $_POST['content']=$_POST['content-'.$rowid];
-            if ($value == 'content_lines') $_POST['content_lines']=$_POST['content_lines-'.$rowid];
+            if ($field == 'content') $_POST['content']=$_POST['content-'.$rowid];
+            if ($field == 'content_lines') $_POST['content_lines']=$_POST['content_lines-'.$rowid];
             if ($field == 'entity') {
             	$_POST[$listfieldvalue[$i]] = $conf->entity;
             }
@@ -537,10 +537,9 @@ if ($action != 'edit')
     foreach ($fieldsforcontent as $tmpfieldlist)
     {
         print '<tr class="impair nodrag nodrop nohover"><td colspan="5">';
-        if ($tmpfieldlist == 'content')
-        {
-            print '<strong>'.$form->textwithpicto($langs->trans("Content"),$tabhelp[$id][$tmpfieldlist]).'</strong><br>';
-        }
+        if ($tmpfieldlist == 'content') print '<strong>'.$form->textwithpicto($langs->trans("Content"),$tabhelp[$id][$tmpfieldlist]).'</strong><br>';
+        if ($tmpfieldlist == 'content_lines') print '<strong>'.$form->textwithpicto($langs->trans("ContentForLines"),$tabhelp[$id][$tmpfieldlist]).'</strong><br>';
+    
         if ($context != 'hide')
         {
             //print '<textarea cols="3" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
@@ -640,7 +639,7 @@ if ($resql)
     {
         if (! in_array($field, array('content', 'content_lines'))) print '<td class="liste_titre"></td>';
     }
-    print '<td class="liste_titre"></td>';
+    if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) print '<td class="liste_titre"></td>';
     print '<td class="liste_titre"></td>';
     print '<td class="liste_titre"></td>';
     print '</tr>';
@@ -688,11 +687,11 @@ if ($resql)
                     // Show value for field
                     if ($showfield) {
                 
-                        print '</tr><tr '.$bc[$var].' nohover tr-'.$tmpfieldlist.'-'.($i+1).' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
+                        print '</tr><tr '.$bc[$var].' nohover tr-'.$tmpfieldlist.'-'.$rowid.' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
                         $okforextended = true;
                         if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
                             $okforextended = false;
-                            $doleditor = new DolEditor($tmpfieldlist.'-'.($i+1), (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
+                            $doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
                             print $doleditor->Create(1);
                             print '</td>';
                             print '<td></td><td></td><td></td>';
