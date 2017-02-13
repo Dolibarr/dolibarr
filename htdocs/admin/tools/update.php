@@ -174,7 +174,7 @@ print load_fiche_titre($langs->trans("Upgrade"),'','title_setup');
 
 print $langs->trans("CurrentVersion").' : <b>'.DOL_VERSION.'</b><br>';
 
-if (!function_exists('curl_init'))
+if (function_exists('curl_init'))
 {
     $result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
     //var_dump($result['content']);
