@@ -44,8 +44,8 @@ $includeconstants=array();
 
 if (empty($argv[1])) 
 {
-    print "Usage:   ".$script_file." release=x.y.z[-...] [includecustom=1] [includeconstant=MY_CONF_NAME:value]\n";
-    print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=INVOICE_CAN_ALWAYS_BE_REMOVED:0 includeconstant=MAILING_NO_USING_PHPMAIL:1\n";
+    print "Usage:   ".$script_file." release=x.y.z[-...] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+    print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=FR:INVOICE_CAN_ALWAYS_BE_REMOVED:0 includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
     exit -1;
 }
 $i=0;
@@ -54,8 +54,13 @@ while ($i < $argc)
     if (! empty($argv[$i])) parse_str($argv[$i]);
     if (preg_match('/includeconstant=/',$argv[$i]))
     {
-        $tmp=explode(':', $includeconstant);
-        if (count($tmp) == 2) $includeconstants[$tmp[0]] = $tmp[1];
+        $tmp=explode(':', $includeconstant, 3);
+        if (count($tmp) != 3) 
+        {
+            print "Error: Bad parameter includeconstant ".$includeconstant."\n";
+            exit -1;
+        }
+        $includeconstants[$tmp[0]][$tmp[1]] = $tmp[2];
     }
     $i++;
 }
@@ -84,9 +89,12 @@ else
 print "Release          : ".$release."\n";
 print "Include custom   : ".$includecustom."\n";
 print "Include constants: ";
-foreach ($includeconstants as $constname => $constvalue)
+foreach ($includeconstants as $countrycode => $tmp)
 {
-    print $constname.'='.$constvalue." ";
+    foreach($tmp as $constname => $constvalue)
+    {
+        print $constname.'='.$constvalue." ";
+    }
 }
 print "\n";
 
@@ -100,16 +108,19 @@ $checksumconcat=array();
 $outputfile=$outputdir.'/filelist-'.$release.'.xml';
 $fp = fopen($outputfile,'w');
 fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
-fputs($fp, '<checksum_list version="'.$release.'">'."\n");
+fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'">'."\n");
 
-fputs($fp, '<dolibarr_constants>'."\n");
-foreach($includeconstants as $constname => $constvalue)
+foreach ($includeconstants as $countrycode => $tmp)
 {
-    $valueforchecksum=(empty($constvalue)?'0':$constvalue);
-    $checksumconcat[]=$valueforchecksum;
-    fputs($fp, '    <constant name="'.$constname.'" value="'.$valueforchecksum.'">'.$valueforchecksum.'</constant>'."\n");
+    fputs($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");
+    foreach($tmp as $constname => $constvalue)
+    {
+        $valueforchecksum=(empty($constvalue)?'0':$constvalue);
+        $checksumconcat[]=$valueforchecksum;
+        fputs($fp, '    <constant name="'.$constname.'">'.$valueforchecksum.'</constant>'."\n");
+    }
+    fputs($fp, '</dolibarr_constants>'."\n");
 }
-fputs($fp, '</dolibarr_constants>'."\n");
 
 fputs($fp, '<dolibarr_htdocs_dir includecustom="'.$includecustom.'">'."\n");
 
