@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
 VATIsUsed=GST is used
 VATIsNotUsed=GST is not used
-VATIntra=GST number
-VATIntraShort=GST number
-VATIntraVeryShort=GST
+VATIntraCheck=Cheque

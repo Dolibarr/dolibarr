@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2007, 2015 Yannick Warnier      <ywarnier@beeznest.org>
- * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
+/* Copyright (C) 2001-2003        Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004             Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2013        Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2007, 2015  Yannick Warnier      <ywarnier@beeznest.org>
+ * Copyright (C) 2014	          Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,7 +135,7 @@ $product_static=new Product($db);
 $payment_static=new Paiement($db);
 $paymentfourn_static=new PaiementFourn($db);
 
-//print_fiche_titre($langs->trans("VAT"),"");
+//print load_fiche_titre($langs->trans("VAT"),"");
 
 //$fsearch.='<br>';
 $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
@@ -252,7 +252,7 @@ $vatsup=$langs->trans("VATPaid");
 
 // VAT Received and paid
 
-echo '<table class="noborder" width="100%">';
+print '<table class="noborder" width="100%">';
 
 $y = $year_current;
 $total = 0;
@@ -378,10 +378,12 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$parameters["mode"] = $modetax;
 	$parameters["start"] = $date_start;
 	$parameters["end"] = $date_end;
+	$parameters["type"] = 'vat';
+	
 	$object = array(&$x_coll, &$x_paye, &$x_both);
 	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
-	$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	
 	foreach (array_keys($x_coll) as $rate) {
 		$subtot_coll_total_ht = 0;
@@ -538,8 +540,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	// Blank line
 	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
 
-	//print table headers for this quadri - expenses now
-	//imprime les en-tete de tables pour ce quadri - maintenant les d�penses
+	// Print table headers for this quadri - expenses now
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$elementsup.'</td>';
 	print '<td align="left">'.$langs->trans("Date").'</td>';
@@ -680,7 +681,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 		print '</tr>';
 	}
 
-	if (count($x_paye) == 0) {  // Show a total ine if nothing shown
+	if (count($x_paye) == 0) {  // Show a total line if nothing shown
 		print '<tr class="liste_total">';
 		print '<td colspan="'.$span.'"></td>';
 		print '<td align="right">'.$langs->trans("Total").':</td>';
@@ -706,8 +707,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 	$i++;
 }
-echo '</table>';
-
-$db->close();
+print '</table>';
 
 llxFooter();
+$db->close();

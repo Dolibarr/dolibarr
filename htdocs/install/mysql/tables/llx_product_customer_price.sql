@@ -36,7 +36,9 @@ create table llx_product_customer_price
   tva_tx					double(6,3),
   recuperableonly           integer NOT NULL DEFAULT '0',   -- Other NPR VAT
   localtax1_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 1 
+  localtax1_type            varchar(10)  NOT NULL DEFAULT '0',
   localtax2_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 2
+  localtax2_type            varchar(10)  NOT NULL DEFAULT '0',
   fk_user				integer,
   import_key			varchar(14)                  -- Import key
 )ENGINE=innodb;

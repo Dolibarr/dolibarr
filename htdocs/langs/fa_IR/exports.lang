@@ -18,23 +18,14 @@ ExportableFields=زمینه های صادراتی
 ExportedFields=زمینه های صادراتی
 ImportModelName=پروفایل واردات
 ImportModelSaved=مشخصات واردات تحت <b>نام٪ s را</b> نجات داد.
-ImportableFields=زمینه واردات
-ImportedFields=رشته های وارداتی
 DatasetToExport=مجموعه داده برای صادرات
 DatasetToImport=واردات فایل را به مجموعه داده
-NoDiscardedFields=بدون زمینه در فایل منبع دور انداخته شده
-Dataset=مجموعه داده
 ChooseFieldsOrdersAndTitle=رشته های سفارش ...
-FieldsOrder=منظور زمینه
 FieldsTitle=عنوان زمینه
-FieldOrder=منظور درست است
 FieldTitle=عنوان درست
-ChooseExportFormat=فرمت صادرات را انتخاب کنید
 NowClickToGenerateToBuildExportFile=در حال حاضر، فرمت فایل را انتخاب کنید در جعبه دسته کوچک موسیقی جاز و کلیک بر روی "ایجاد" برای ساخت فایل صادرات ...
 AvailableFormats=فرمت های موجود
 LibraryShort=کتابخانه
-LibraryUsed=کتابخانه استفاده می شود
-LibraryVersion=نسخه
 Step=گام
 FormatedImport=دستیار واردات
 FormatedImportDesc1=این منطقه اجازه می دهد تا برای وارد کردن داده های شخصی، با استفاده از یک دستیار برای کمک به شما در فرایند بدون دانش فنی.
@@ -45,9 +36,10 @@ FormatedExportDesc2=گام اول برای انتخاب یک مجموعه داد
 FormatedExportDesc3=هنگامی که داده به صادرات انتخاب می شوند، شما می توانید فرمت فایل خروجی شما می خواهید به صادرات داده خود را به کار گیرید.
 Sheet=ورق
 NoImportableData=بدون اطلاعات واردات (بدون ماژول با تعاریف به اجازه واردات داده ها)
-FileSuccessfullyBuilt=فایل صادرات تولید
+FileSuccessfullyBuilt=File generated
 SQLUsedForExport=درخواست SQL مورد استفاده برای ایجاد فایل صادرات
 LineId=کد خط
+LineLabel=Label of line
 LineDescription=شرح خط
 LineUnitPrice=قیمت واحد خط
 LineVATRate=نرخ مالیات بر ارزش افزوده از خط
@@ -71,13 +63,10 @@ MoveField=درست است حرکت شماره ستون از٪ s
 ExampleOfImportFile=مثالی از فایل ورودی
 SaveImportProfile=ذخیره سازی این مشخصات واردات
 ErrorImportDuplicateProfil=برای صرفه جویی در این پروفایل واردات با این نام انجام نشد. مشخصات موجود در حال حاضر با این نام وجود دارد.
-ImportSummary=خلاصه راه اندازی واردات
 TablesTarget=جداول هدفمند
 FieldsTarget=رشته های هدفمند
-TableTarget=جدول هدفمند
 FieldTarget=درست هدفمند
 FieldSource=درست است منبع
-DoNotImportFirstLine=آیا خط اول از فایل منبع وارد نشده است
 NbOfSourceLines=تعداد خطوط در فایل منبع
 NowClickToTestTheImport=پارامترهای واردات شما تعریف شده اند را بررسی کنید. اگر آنها درست هستند، بر روی دکمه کلیک کنید <b>"٪ s"</b> را برای راه اندازی یک شبیه سازی از روند واردات (هیچ داده ای را در پایگاه داده خود را تغییر، آن را تنها یک شبیه سازی برای لحظه ای) ...
 RunSimulateImportFile=راه اندازی شبیه سازی واردات
@@ -89,14 +78,14 @@ SelectAtLeastOneField=تغییر حداقل یکی از فیلد منبع در �
 SelectFormat=را انتخاب کنید این فرمت فایل واردات
 RunImportFile=راه اندازی فایل واردات
 NowClickToRunTheImport=نتیجه شبیه سازی واردات را بررسی کنید. اگر همه چیز خوب است، راه اندازی واردات قطعی.
-DataLoadedWithId=همه داده خواهد شد با شناسه (شماره) واردات زیر آپلود <b>شده:٪ s را</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=اطلاعات اجباری خالی در فایل منبع را برای <b>فیلد٪ s</b> است.
 TooMuchErrors=هنوز هم وجود دارد <b>از٪ s</b> خط منبع دیگر با اشتباهات اما خروجی محدود بوده است.
 TooMuchWarnings=هنوز هم وجود دارد <b>از٪ s</b> خط منبع دیگر با هشدارهای اما خروجی محدود بوده است.
 EmptyLine=خط خالی (دور ریخته خواهد شد)
 CorrectErrorBeforeRunningImport=ابتدا باید، درست قبل از اجرای واردات قطعی تمام خطا است.
 FileWasImported=فایل را با <b>تعداد٪ s را</b> وارد شد.
-YouCanUseImportIdToFindRecord=شما می توانید تمام پرونده های وارد شده در پایگاه داده خود را از طریق فیلتر کردن در <b>import_key</b> درست پیدا <b>= '٪ s' را.</b>
+YouCanUseImportIdToFindRecord=You can find all imported record in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=تعداد خطوط بدون خطا و بدون <b>اخطار:٪ است.</b>
 NbOfLinesImported=شماره خطوط با موفقیت وارد <b>کنید:٪ s.</b>
 DataComeFromNoWhere=ارزش برای وارد می آید از هیچ جا در فایل منبع.
@@ -114,21 +103,25 @@ CSVFormatDesc=<b>کاما جدا</b> فرمت فایل <b>ارزش</b> (CSV). <b
 Excel95FormatDesc=فرمت فایل <b>اکسل</b> (. XLS) <br> این مادری اکسل 95 فرمت (BIFF5) است.
 Excel2007FormatDesc=فرمت فایل <b>اکسل</b> (. XLSX) <br> این مادری اکسل 2007 فرمت (SpreadsheetML) است.
 TsvFormatDesc=فرمت <b>تب</b> فایل <b>مقادیر جدا شده</b> (. TSV) <br> این فرمت یک فایل متنی که در آن زمینه توسط یک جدول نویس [تب] از هم جدا شده است.
-ExportFieldAutomaticallyAdded=<b>٪</b> درست <b>ها</b> به طور خودکار اضافه شده است. اجتناب از آن شما را به خطوط مشابه به عنوان رکورد تکراری درمان می شود (با این رشته اضافه شده است، تمام خطوط شناسه (شماره) آن خودشان و متفاوت خواهد بود).
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ).
 CsvOptions=گزینه CSV
 Separator=تفکیک کننده
 Enclosure=محوطه
-SuppliersProducts=تولید کنندگان محصولات
-BankCode=کد بانک
-DeskCode=کد میز
-BankAccountNumber=شماره حساب
-BankAccountNumberKey=کلید
 SpecialCode=کد ویژه
 ExportStringFilter=٪٪ اجازه می دهد تا به جای یک یا چند کاراکتر در متن
 ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD : filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD : filters on all previous years/months/days
-ExportNumericFilter=فیلتر 'NNNNN توسط یک ارزش <br> فیلتر 'NNNNN + NNNNN' بیش از یک طیف وسیعی از مقادیر <br> '> NNNNN' فیلتر شده توسط مقادیر پایین تر <br> '> NNNNN' فیلتر شده توسط ارزش بالاتر
+ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
+ImportFromLine=Import starting from line number
+EndAtLineNb=End at line number
+SetThisValueTo2ToExcludeFirstLine=For example, set this value to 3 to exclude the 2 first lines
+KeepEmptyToGoToEndOfFile=Keep this field empty to go up to the end of file
 ## filters
 SelectFilterFields=اگر می خواهید برای فیلتر کردن در برخی از ارزش ها، فقط مقادیر ورودی در اینجا.
-FilterableFields=شانزه Filtrables
 FilteredFields=رشته های فیلتر شده
 FilteredFieldsValues=ارزش فیلتر
+FormatControlRule=Format control rule
+## imports updates
+KeysToUseForUpdates=Key to use for updating data
+NbInsert=Number of inserted lines: %s
+NbUpdate=Number of updated lines: %s
+MultipleRecordFoundWithTheseFilters=Multiple records have been found with these filters: %s

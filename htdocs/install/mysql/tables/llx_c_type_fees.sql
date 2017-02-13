@@ -1,7 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004           Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2014           Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+-- Copyright (C) 2014           Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,5 +25,6 @@ create table llx_c_type_fees
   label				varchar(30),
   accountancy_code	varchar(32) NULL,
   active    		tinyint DEFAULT 1   NOT NULL,
-  module    		varchar(32) NULL
+  module    		varchar(32) NULL,
+  position          integer NOT NULL DEFAULT 0
 )ENGINE=innodb;

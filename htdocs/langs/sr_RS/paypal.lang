@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Podešavanja modula PayPal
+PaypalDesc=Ovaj modul omogućava uplatu preko <a href="http://www.paypal.com" target="_blank">PayPal</a>-a od strane klijenata. Može biti korisna za besplatne uplate ili za uplate vezane za određene Dolibarr objekte (račun, narudžbina, ...)
+PaypalOrCBDoPayment=Uplati kreditnom karticom ili putem PayPal-a
+PaypalDoPayment=Uplati putem PayPal-a
+PAYPAL_API_SANDBOX=Test/sandbox mod
+PAYPAL_API_USER=API username
+PAYPAL_API_PASSWORD=API password
+PAYPAL_API_SIGNATURE=API signature
+PAYPAL_SSLVERSION=Curl SSL verzija
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ponudi "integralno" plaćanje (kreditna kartca + PayPal) ili samo "PayPal"
+PaypalModeIntegral=Integralno
+PaypalModeOnlyPaypal=Samo PayPal
+PAYPAL_CSS_URL=Optionnal URL of CSS style sheet on payment page
+ThisIsTransactionId=Ovo je ID transakcije: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Ubaci URL PayPal uplate prilikom slanja dokumenta putem mail-a
+PredefinedMailContentLink=Možete kliknuti na secure link ispod da biste izvršili uplatu putem PayPal-a (ukoliko to još niste učinili).\n\n%s\n\n
+YouAreCurrentlyInSandboxMode=Trenutno ste u "sandbox" modu
+NewPaypalPaymentReceived=Nova Paypal uplata je primljena
+NewPaypalPaymentFailed=Novi pokušaj uplate Paypal-om nije uspeo
+PAYPAL_PAYONLINE_SENDEMAIL=Email obaveštenja nakon uplate (uspešne ili ne)
+ReturnURLAfterPayment=Povratni URL posle plaćanja
+ValidationOfPaypalPaymentFailed=Potvrda neuspešne Paypal uplate
+PaypalConfirmPaymentPageWasCalledButFailed=Paypal strana za konfirmaciju uplate je pozvana, ali je konfirmacija neuspela
+SetExpressCheckoutAPICallFailed=Greška u pozivu SetExpressCheckout API.
+DoExpressCheckoutPaymentAPICallFailed=Greška u pozivu DoExpressCheckoutPayment API.
+DetailedErrorMessage=Detaljna poruka greške
+ShortErrorMessage=Kratka poruka greške
+ErrorCode=Kod greške
+ErrorSeverityCode=Kod ozbiljnosti greške

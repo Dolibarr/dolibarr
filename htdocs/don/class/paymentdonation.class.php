@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro	  	<alexandre.spangaro@gmail.com>
+/* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,36 +24,34 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/**     \class      PaymentDonation
- *		\brief      Class to manage payments of donations
+/**
+ *	Class to manage payments of donations
  */
 class PaymentDonation extends CommonObject
 {
 	public $element='payment_donation';			//!< Id that identify managed objects
 	public $table_element='payment_donation';	//!< Name of table without prefix where object is stored
+    public $picto = 'payment';
+    
+	public $rowid;
 
-	var $id;
-	var $rowid;
-	var $ref;
-
-	var $fk_donation;
-	var $datec='';
-	var $tms='';
-	var $datep='';
-    var $amount;            // Total amount of payment
-    var $amounts=array();   // Array of amounts
-	var $typepayment;
-	var $num_payment;
-	var $note;
-	var $fk_bank;
-	var $fk_user_creat;
-	var $fk_user_modif;
+	public $fk_donation;
+	public $datec='';
+	public $tms='';
+	public $datep='';
+    public $amount;            // Total amount of payment
+    public $amounts=array();   // Array of amounts
+	public $typepayment;
+	public $num_payment;
+	public $fk_bank;
+	public $fk_user_creat;
+	public $fk_user_modif;
 
 	/**
 	 * @deprecated
 	 * @see amount, amounts
 	 */
-	var $total;
+	public $total;
 
 	/**
 	 *	Constructor
@@ -90,8 +88,8 @@ class PaymentDonation extends CommonObject
 		// Clean parameters
 		if (isset($this->fk_donation)) 		$this->fk_donation=trim($this->fk_donation);
 		if (isset($this->amount))			$this->amount=trim($this->amount);
-		if (isset($this->typepayment))	    $this->typepayment=trim($this->typepayment);
-		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
+		if (isset($this->fk_typepayment))   $this->fk_typepayment=trim($this->fk_typepayment);
+		if (isset($this->num_payment))      $this->num_payment=trim($this->num_payment);
 		if (isset($this->note))				$this->note=trim($this->note);
 		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
 		if (isset($this->fk_user_creat))	$this->fk_user_creat=trim($this->fk_user_creat);
@@ -435,6 +433,32 @@ class PaymentDonation extends CommonObject
 	}
 
 
+	/**
+	 * 	Retourne le libelle du statut d'un don (brouillon, validee, abandonnee, payee)
+	 *
+	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @return string        		Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+	    return '';
+	}
+	
+	/**
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int		$statut        	Id statut
+	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string 			       	Libelle du statut
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+	    global $langs;
+	
+	    return '';
+	}
+	
+	
 	/**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.

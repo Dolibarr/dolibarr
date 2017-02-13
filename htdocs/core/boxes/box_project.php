@@ -2,6 +2,7 @@
 /* Copyright (C) 2012-2014 Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
  * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
+ * Copyright (C) 2016      Juan José Menent       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,8 +80,10 @@ class box_project extends ModeleBoxes
 
 			$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut ";
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+            if($user->socid) $sql.= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=p.fk_soc";
 			$sql.= " WHERE p.entity = ".$conf->entity;
-			$sql.= " AND p.fk_statut = 1"; // Seulement les projets ouverts
+            if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
+            $sql.= " AND p.fk_statut = 1"; // Seulement les projets ouverts
 			$sql.= " ORDER BY p.datec DESC";
 			$sql.= $db->plimit($max, 0);
 
@@ -104,7 +107,7 @@ class box_project extends ModeleBoxes
                         'td' => 'align="left"',
                         'text' => $objp->ref,
                         'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid,
+                        'url' => DOL_URL_ROOT."/projet/card.php?id=".$objp->rowid,
                     );
 
                     $this->info_box_contents[$i][2] = array(
@@ -115,7 +118,7 @@ class box_project extends ModeleBoxes
 					$sql ="SELECT count(*) as nb, sum(progress) as totprogress";
 					$sql.=" FROM ".MAIN_DB_PREFIX."projet as p LEFT JOIN ".MAIN_DB_PREFIX."projet_task as pt on pt.fk_projet = p.rowid";
 					$sql.=" WHERE p.entity = ".$conf->entity;
-
+					$sql.=" AND p.rowid = ".$objp->rowid;
 					$resultTask = $db->query($sql);
 					if ($resultTask) {
 						$objTask = $db->fetch_object($resultTask);
@@ -173,11 +176,12 @@ class box_project extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
 

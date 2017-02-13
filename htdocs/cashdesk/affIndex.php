@@ -34,6 +34,8 @@ if ( $_SESSION['uid'] <= 0 )
 	exit;
 }
 
+$langs->load("companies");
+$langs->load("compta");
 $langs->load("cashdesk");
 
 
@@ -41,8 +43,10 @@ $langs->load("cashdesk");
  * View
  */
 
+$form = new Form($db);
+
 //header("Content-type: text/html; charset=UTF-8");
-header("Content-type: text/html; charset=".$conf->file->character_set_client);
+//header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 $arrayofjs=array();
 $arrayofcss=array('/cashdesk/css/style.css');
@@ -61,8 +65,6 @@ if (!empty($error))
 print '<div class="conteneur">'."\n";
 print '<div class="conteneur_img_gauche">'."\n";
 print '<div class="conteneur_img_droite">'."\n";
-
-print '<h1 class="entete"><span>POINT OF SALE</span></h1>'."\n";
 
 print '<div class="menu_principal">'."\n";
 include_once 'tpl/menu.tpl.php';

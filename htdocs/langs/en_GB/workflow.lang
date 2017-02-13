@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions within the application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
+ThereIsNoWorkflowToModify=There is no workflow modifications available within the activated modules.

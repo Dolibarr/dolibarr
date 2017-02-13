@@ -27,6 +27,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+global $conf;
+
 if (!$user->admin) accessforbidden();
 
 $langs->load("admin");
@@ -40,34 +42,37 @@ $activeModules = array();
 
 if (defined('SYSLOG_HANDLERS')) $activeModules = json_decode(constant('SYSLOG_HANDLERS'));
 
-$dir = dol_buildpath('/core/modules/syslog/');
+$dirsyslogs = array_merge(array('/core/modules/syslog/'), $conf->modules_parts['syslog']);
+foreach ($dirsyslogs as $reldir) {
+	$dir = dol_buildpath($reldir, 0);
+	$newdir = dol_osencode($dir);
+	if (is_dir($newdir)) {
+		$handle = opendir($newdir);
 
-if (is_dir($dir))
-{
-	$handle = opendir($dir);
+		if (is_resource($handle)) {
+			$var = true;
 
-	if (is_resource($handle))
-	{
-		$var=true;
+			while (($file = readdir($handle)) !== false) {
+				if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
+					$file = substr($file, 0, dol_strlen($file) - 4);
 
-		while (($file = readdir($handle))!==false)
-		{
-			if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file)-3, 3) == 'php')
-			{
-				$file = substr($file, 0, dol_strlen($file)-4);
+					require_once $newdir . $file . '.php';
 
-				require_once $dir.$file.'.php';
+					$module = new $file;
 
-				$module = new $file;
+					// Show modules according to features level
+					if ($module->getVersion() == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						continue;
+					}
+					if ($module->getVersion() == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						continue;
+					}
 
-				// Show modules according to features level
-				if ($module->getVersion() == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-				if ($module->getVersion() == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
-				$syslogModules[] = $file;
+					$syslogModules[] = $file;
+				}
 			}
+			closedir($handle);
 		}
-		closedir($handle);
 	}
 }
 
@@ -106,16 +111,26 @@ if ($action == 'set')
 	$activeModules = $newActiveModules;
 	dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine',0,'',0);
 
+	// Check configuration
+	foreach ($activeModules as $modulename) {
+		/**
+		 * @var LogHandler
+		 */
+		$module = new $modulename;
+		$error = $module->checkConfiguration();
+	}
 
-    if (! $error)
+
+	if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
 		$db->rollback();
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($error, $errors, 'errors');
+
 	}
 
 }
@@ -130,11 +145,11 @@ if ($action == 'setlevel')
 	if (! $res > 0) $error++;
 	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -147,7 +162,7 @@ llxHeader();
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("SyslogSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("SyslogSetup"),$linkback,'title_setup');
 print '<br>';
 
 $def = array();
@@ -168,7 +183,7 @@ if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity)
 //print "conf->global->MAIN_FEATURES_LEVEL = ".$conf->global->MAIN_FEATURES_LEVEL."<br><br>\n";
 
 // Output mode
-print_titre($langs->trans("SyslogOutput"));
+print load_fiche_titre($langs->trans("SyslogOutput"));
 
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -215,7 +230,11 @@ foreach ($syslogModules as $moduleName)
 	print '<td align="left">';
 	if ($module->getInfo())
 	{
-		print $form->textwithpicto('', $module->getInfo());
+		print $form->textwithpicto('', $module->getInfo(), 1, 'help');
+	}
+	if ($module->getWarning())
+	{
+		print $form->textwithpicto('', $module->getWarning(), 1, 'warning');
 	}
 	print '</td>';
 	print "</tr>\n";
@@ -226,7 +245,7 @@ print "</form>\n";
 
 print '<br>'."\n\n";
 
-print_titre($langs->trans("SyslogLevel"));
+print load_fiche_titre($langs->trans("SyslogLevel"));
 
 // Level
 print '<form action="syslog.php" method="post">';

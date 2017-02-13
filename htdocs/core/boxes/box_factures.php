@@ -95,7 +95,7 @@ class box_factures extends ModeleBoxes
 				$now=dol_now();
 
 				$line = 0;
-				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
+				$l_due_date = $langs->trans('Late').' ('.$langs->trans('DateDue').': %s)';
 
                 while ($line < $num) {
                     $objp = $db->fetch_object($result);
@@ -108,12 +108,18 @@ class box_factures extends ModeleBoxes
                     $facturestatic->total_ht = $objp->total_ht;
                     $facturestatic->total_tva = $objp->total_tva;
                     $facturestatic->total_ttc = $objp->total_ttc;
+                    $facturestatic->statut = $objp->fk_statut;
+                    $facturestatic->date_lim_reglement = $db->jdate($objp->datelimite);
+
                     $societestatic->id = $objp->socid;
                     $societestatic->name = $objp->name;
                     $societestatic->code_client = $objp->code_client;
 
+
 					$late = '';
-					if ($objp->paye == 0 && ($objp->fk_statut != 2 && $objp->fk_statut != 3) && $datelimite < ($now - $conf->facture->client->warning_delay)) { $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));}
+					if ($facturestatic->hasDelay()) {
+                        $late = img_warning(sprintf($l_due_date, dol_print_date($datelimite,'day')));
+                    }
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
@@ -174,11 +180,12 @@ class box_factures extends ModeleBoxes
 	 *
 	 *  @param  array   $head       Array with properties of box title
 	 *  @param  array   $contents   Array with properties of box lines
-	 *  @return void
+	 *  @param	int		$nooutput	No print, only return string
+	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

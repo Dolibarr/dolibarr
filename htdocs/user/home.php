@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ $fuserstatic = new User($db);
 llxHeader();
 
 
-print_fiche_titre($langs->trans("MenuUsersAndGroups"));
+print load_fiche_titre($langs->trans("MenuUsersAndGroups"));
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
@@ -63,33 +63,24 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Search User
 $var=false;
-print '<form method="post" action="'.DOL_URL_ROOT.'/user/index.php">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAUser").'</td></tr>';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("Ref").':</td><td><input class="flat" type="text" name="search_user" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td></tr>';
-print "</table><br>\n";
-print '</form>';
+print $langs->trans("User").':</td><td><input class="flat inputsearch" type="text" name="search_user" size="18"></td><td'.($canreadperms?' rowspan="2"':'').'><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 
 // Search Group
 if ($canreadperms)
 {
 	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/user/group/index.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAGroup").'</td></tr>';
 	print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("Ref").':</td><td><input class="flat" type="text" name="search_group" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td></tr>';
-	print "</table><br>\n";
-	print '</form>';
+	print $langs->trans("Group").':</td><td><input class="flat inputsearch" type="text" name="search_group" size="18"></td></tr>';
 }
 
+print "</table><br>\n";
+print '</form>';
 
-//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
@@ -148,7 +139,7 @@ if ($resql)
         $fuserstatic->email = $obj->email;
         $fuserstatic->skype = $obj->skype;
         $fuserstatic->societe_id = $obj->fk_soc;
-        print $fuserstatic->getNomUrl(1);
+        print $fuserstatic->getNomUrl(-1);
 		if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
 		{
 			print img_picto($langs->trans("SuperAdministrator"),'redstar');
@@ -180,21 +171,18 @@ if ($resql)
 		$entity=$obj->entity;
 		$entitystring='';
         // TODO Set of entitystring should be done with a hook
-        if (is_object($mc))
-        {
-			if (! empty($conf->multicompany->enabled))
-	        {
-	        	if (empty($entity))
-	        	{
-	        		$entitystring=$langs->trans("AllEntities");
-	        	}
-	        	else
-	        	{
-	        		$mc->getInfo($entity);
-	        		$entitystring=$mc->label;
-	        	}
-	        }
-        }
+		if (! empty($conf->multicompany->enabled) && is_object($mc))
+		{
+			if (empty($entity))
+			{
+				$entitystring=$langs->trans("AllEntities");
+			}
+			else
+			{
+				$mc->getInfo($entity);
+				$entitystring=$mc->label;
+			}
+		}
         print ($entitystring?' ('.$entitystring.')':'');
 
 		print '</td>';
@@ -259,7 +247,7 @@ if ($canreadperms)
 				print img_picto($langs->trans("GlobalGroup"),'redstar');
 			}
 			print "</td>";
-			if (! empty($conf->multicompany->enabled))
+			if (! empty($conf->multicompany->enabled) && is_object($mc))
 			{
 	        	$mc->getInfo($obj->entity);
 	        	print '<td>';

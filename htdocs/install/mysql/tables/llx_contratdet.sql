@@ -62,6 +62,12 @@ create table llx_contratdet
   fk_user_ouverture     integer,
   fk_user_cloture       integer,
   commentaire           text,
-  fk_unit               integer       DEFAULT NULL
+  fk_unit               integer       DEFAULT NULL,
 
+  fk_multicurrency		integer,
+  multicurrency_code			varchar(255),
+  multicurrency_subprice		double(24,8) DEFAULT 0,
+  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_tva	double(24,8) DEFAULT 0,
+  multicurrency_total_ttc	double(24,8) DEFAULT 0  
 )ENGINE=innodb;

@@ -40,29 +40,33 @@ $id=GETPOST('id');
 
 llxHeader();
 
-$paiement = new Paiement($db);
-$paiement->fetch($id);
-$paiement->info($id);
+$object = new Paiement($db);
+$object->fetch($id);
+$object->info($id);
 
-$head = payment_prepare_head($paiement);
+$head = payment_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("PaymentCustomerInvoice"), 0, 'payment');
 
 print '<table class="border" width="100%">';
 
+$linkback = '<a href="' . DOL_URL_ROOT . '/compta/paiement/list.php">' . $langs->trans("BackToList") . '</a>';
+
+
 // Ref
-print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
+print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td><td colspan="3">';
+print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
+print '</td></tr>';
 
 print '</table>';
 
 print '<br>';
 
 print '<table width="100%"><tr><td>';
-dol_print_object_info($paiement);
+dol_print_object_info($object);
 print '</td></tr></table>';
 
 print '</div>';
 
-$db->close();
-
 llxFooter();
+$db->close();

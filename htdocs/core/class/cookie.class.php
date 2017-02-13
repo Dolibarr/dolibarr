@@ -43,9 +43,10 @@ class DolCookie
 	var $cookie;
 
 	/**
-	 *  Constructor
+	 * Constructor
 	 *
-	 *  @param      string		$key      Personnal key
+	 * @param string $key Personnal key
+	 * @deprecated
 	 */
 	function __construct($key = '')
 	{

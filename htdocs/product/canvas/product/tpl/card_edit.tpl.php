@@ -23,7 +23,7 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 <!-- BEGIN PHP TEMPLATE -->
 
 <?php
-print_fiche_titre($langs->trans("Product"));
+print load_fiche_titre($langs->trans("Product"));
 
 dol_htmloutput_errors($object->error,$object->errors);
 ?>
@@ -90,7 +90,7 @@ dol_htmloutput_errors($object->error,$object->errors);
 <?php echo $object->volume_units; ?>
 </td></tr>
 
-<tr><td valign="top"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
+<tr><td class="tdtop"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
 <?php echo $object->textarea_note; ?>
 </td></tr>
 </table>

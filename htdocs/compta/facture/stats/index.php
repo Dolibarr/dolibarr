@@ -36,6 +36,8 @@ $mode=GETPOST("mode")?GETPOST("mode"):'customer';
 if ($mode == 'customer' && ! $user->rights->facture->lire) accessforbidden();
 if ($mode == 'supplier' && ! $user->rights->fournisseur->facture->lire) accessforbidden();
 
+$object_status=GETPOST('object_status');
+
 $userid=GETPOST('userid','int');
 $socid=GETPOST('socid','int');
 // Security check
@@ -75,12 +77,19 @@ if ($mode == 'supplier')
 	$dir=$conf->fournisseur->dir_output.'/facture/temp';
 }
 
-print_fiche_titre($title, $mesg, 'title_accountancy.png');
+print load_fiche_titre($title, $mesg, 'title_accountancy.png');
 
 dol_mkdir($dir);
 
 $stats = new FactureStats($db, $socid, $mode, ($userid>0?$userid:0));
-
+if ($mode == 'customer')
+{
+    if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND f.fk_statut IN ('.$object_status.')';
+}
+if ($mode == 'supplier')
+{
+    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$object_status.')';
+}
 
 // Build graphic number of object
 // $data = array(array('Lib',val1,val2,val3),...)
@@ -218,6 +227,13 @@ complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
 
+$tmp_companies = $form->select_thirdparty_list($socid,'socid',$filter,1, 0, 0, array(), '', 1);
+//Array passed as an argument to Form::selectarray to build a proper select input
+$companies = array();
+
+foreach ($tmp_companies as $value) {
+	$companies[$value['value']] = $value['label'];
+}
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -227,17 +243,30 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	// Show filter box
 	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
-	print '<table class="border" width="100%">';
+	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 	if ($mode == 'customer') $filter='s.client in (1,2,3)';
 	if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print $form->select_company($socid,'socid',$filter,1);
+	print $form->selectarray('socid', $companies, $socid, 1, 0, 0, 'style="width: 95%"', 0, 0, 0, '', '', 1);
 	print '</td></tr>';
 	// User
 	print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
-	print $form->select_dolusers($userid,'userid',1);
+	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	print '</td></tr>';
+	// Status
+	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
+	if ($mode == 'customer')
+	{
+	    $liststatus=array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"), '3'=>$langs->trans("BillStatusCanceled"));
+	    print $form->selectarray('object_status', $liststatus, $object_status, 1);
+	}
+	if ($mode == 'supplier')
+	{
+	    $liststatus=array('0'=>$langs->trans("BillStatusDraft"),'1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"));
+	    print $form->selectarray('object_status', $liststatus, $object_status, 1);
+	}
 	print '</td></tr>';
 	// Year
 	print '<tr><td>'.$langs->trans("Year").'</td><td>';
@@ -252,33 +281,45 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<br><br>';
 //}
 
-print '<table class="border" width="100%">';
-print '<tr height="24">';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="center">'.$langs->trans("NumberOfBills").'</td>';
-print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
+print '<td align="right">'.$langs->trans("NumberOfBills").'</td>';
+print '<td align="right">%</td>';
+print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="right">%</td>';
+print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
+print '<td align="right">%</td>';
 print '</tr>';
 
 $oldyear=0;
+$var=true;
 foreach ($data as $val)
 {
 	$year = $val['year'];
 	while ($year && $oldyear > $year+1)
 	{	// If we have empty year
 		$oldyear--;
-		print '<tr height="24">';
+		$var=!$var;
+		print '<tr '.$bc[$var].' height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		print '<td align="right">0</td>';
+		print '<td align="right"></td>';
 		print '<td align="right">0</td>';
+		print '<td align="right"></td>';
 		print '<td align="right">0</td>';
+		print '<td align="right"></td>';
 		print '</tr>';
 	}
-	print '<tr height="24">';
+	$var=!$var;
+	print '<tr '.$bc[$var].' height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
+	print '<td align="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
 	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+	print '<td align="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['total_diff']).'</td>';
 	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+	print '<td align="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['avg_diff']).'</td>';
 	print '</tr>';
 	$oldyear=$year;
 }

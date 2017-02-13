@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Računovodstveni kod za isplate zarada
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Računovodstveni kod za finansijske troškove
+Salary=Plata
+Salaries=Plate
+NewSalaryPayment=Nova isplata zarade
+SalaryPayment=Isplata zarade
+SalariesPayments=Isplate zarada
+ShowSalaryPayment=Prikaži isplatu zarade
+THM=Average hourly rate
+TJM=Average daily rate
+CurrentSalary=Trenutna plata
+THMDescription=Ova vrednost može biti korišćena za procenu cene vremena provedenog na projektu koje su korisnici uneli (ukoliko se koristi modul projekti)
+TJMDescription=Ova vrednost se trenutno koristi samo informativno i ne uzima se u obzir ni za koji obračun.

@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - companies
+AliasNames=Nom de l'alias (commercial, marque, ... )
+AliasNameShort=Nom de l'alias
+State=États/Provinces
+StateShort=États
+PhoneShort=Téléphone
+VATIsUsed=Assujetti à la TPS/TVH
+VATIsNotUsed=Non assujetti à la TPS/TVH
+LocalTax1IsUsed=Assujeti à la TVQ
+LocalTax2IsUsed=Assujeti à une troisième taxe
+ProfId6Short=TVQ
+ProfId6=TVQ
+VATIntra=Numéro de TPS/TVH
+VATIntraShort=TPS/TVH
+ContactForOrdersOrShipments=Contact de commandes ou de livraison
+NoContactForAnyOrderOrShipments=Ce contact n'est contact d'aucune commande ou livraison
+ImportDataset_company_4=Tiers/ventes représentatives (ventes représentatives affectées aux utilisateurs aux entreprises )
+ProductsIntoElements=Liste des produits/services en %s
+MergeOriginThirdparty=Dupliquer tiers (tiers que vous souhaitez supprimer)
+MergeThirdparties=Fusionner des tiers
+ThirdpartiesMergeSuccess=Les tiers ont été fusionnées
+ErrorThirdpartiesMerge=Il y avait une erreur lors de la suppression des les tiers. S'il vous plaît vérifier le journal. Des modifications ont été annulées.

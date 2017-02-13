@@ -1,21 +1,22 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Leverans
-Deliveries=Leveranser
-DeliveryCard=Leverans kort
+DeliveryRef=Ref Delivery
+DeliveryCard=Receipt card
 DeliveryOrder=Leveransorder
-DeliveryOrders=Leveransorder
 DeliveryDate=Leveransdatum
-DeliveryDateShort=Leve. datum
-CreateDeliveryOrder=Generera leveransorder
-QtyDelivered=Antal levererade
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
 SetDeliveryDate=Ställ in leveransdatum
 ValidateDeliveryReceipt=ttestera kvitto
-ValidateDeliveryReceiptConfirm=Är du säker på att du vill godkänna detta kvitto?
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=Radera leveranskvittens
-DeleteDeliveryReceiptConfirm=Är du säker på att du vill ta bort <b>%s</b> kvitto?
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
 DeliveryMethod=Leveransmetod
 TrackingNumber=Spårningsnummer
 DeliveryNotValidated=Leverans är inte attesterad
+StatusDeliveryCanceled=Annullerad
+StatusDeliveryDraft=Utkast
+StatusDeliveryValidated=Mottagna
 # merou PDF model
 NameAndSignature=Namn och namnteckning:
 ToAndDate=To___________________________________ den ____ / _____ / __________
@@ -26,3 +27,4 @@ Recipient=Mottagare
 ErrorStockIsNotEnough=Det finns inte tillräckligt i lager
 Shippable=Sändbara
 NonShippable=Inte sändbara
+ShowReceiving=Show delivery receipt

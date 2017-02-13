@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - languages
-
 Language_ar_AR=Arabisk
 Language_ar_SA=Arabisk
 Language_bn_BD=Bengalsk
@@ -23,6 +22,7 @@ Language_en_US=Engelsk (USA)
 Language_en_ZA=Engelsk (Sør-Afrika)
 Language_es_ES=Spansk
 Language_es_AR=Spansk (Argentina)
+Language_es_BO=Spansk (Bolivia)
 Language_es_CL=Spansk (Chile)
 Language_es_CO=Spansk (Colombia)
 Language_es_DO=Spansk (Den Dominikanske republikk)
@@ -31,6 +31,7 @@ Language_es_MX=Spansk (Mexico)
 Language_es_PY=Spansk (Paraguay)
 Language_es_PE=Spansk (Peru)
 Language_es_PR=Spansk (Puerto Rico)
+Language_es_VE=Spansk (Venezuela)
 Language_et_EE=Estonsk
 Language_eu_ES=Baskisk
 Language_fa_IR=Persisk
@@ -40,6 +41,7 @@ Language_fr_CA=Fransk (Canada)
 Language_fr_CH=Fransk (Sveits)
 Language_fr_FR=Fransk
 Language_fr_NC=Fransk (Ny Caledonia)
+Language_fy_NL=Frisisk
 Language_he_IL=Hebraisk
 Language_hr_HR=Kroatisk
 Language_hu_HU=Ungarsk
@@ -69,6 +71,7 @@ Language_sv_SV=Svensk
 Language_sv_SE=Svensk
 Language_sq_AL=Albansk
 Language_sk_SK=Slovakisk
+Language_sr_RS=Serbisk
 Language_sw_SW=Kiswahili
 Language_th_TH=Thai
 Language_uk_UA=Ukrainsk

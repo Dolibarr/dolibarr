@@ -14,6 +14,5 @@ BehaviourOnClick=Postopek po kliku na URL
 CreateBookmark=Kreiraj zaznamek
 SetHereATitleForLink=Nastavi naziv zaznamka
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Uporabi zunanji http URL ali odvisni Dolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Izberi, če se mora stran, odprta z linkom, prikazati v trenutnem ali novem oknu
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Urejanje zaznamkov
-ListOfBookmarks=Seznam zaznamkov

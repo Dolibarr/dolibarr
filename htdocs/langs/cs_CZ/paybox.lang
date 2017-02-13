@@ -12,7 +12,6 @@ Creditor=Věřitel
 PaymentCode=Platební kód
 PayBoxDoPayment=Jít na platbu
 YouWillBeRedirectedOnPayBox=Budete přesměrováni na zabezpečené stránky Paybox pro vstupní informace o kreditní kartě
-PleaseBePatient=Prosím, buďte trpěliví
 Continue=Další
 ToOfferALinkForOnlinePayment=URL pro %s platby
 ToOfferALinkForOnlinePaymentOnOrder=URL nabízí %s on-line platební uživatelské rozhraní pro objednávky zákazníka

@@ -14,6 +14,5 @@ BehaviourOnClick=Поведение при нажатии на ссылку
 CreateBookmark=Создать закладку
 SetHereATitleForLink=Установите название для закладки
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Используйте внешний HTTP URL или относительный Dolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Выберите, где должна открыться страница при нажатии на ссылку: в текущем или в новом окне
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Управление закладками
-ListOfBookmarks=Список закладок

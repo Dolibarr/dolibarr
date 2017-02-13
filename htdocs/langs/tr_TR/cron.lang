@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = Hakkında
-CronAbout = Cron hakkında
-CronAboutPage = Cron hakkında sayfası
 # Right
 Permission23101 = Planlı işleri oku
 Permission23102 = Planlı iş oluştur/güncelle
@@ -10,21 +7,18 @@ Permission23103 = Planlı iş sil
 Permission23104 = Planlı iş yürüt
 # Admin
 CronSetup= Planlı iş yönetimi ayarları
-URLToLaunchCronJobs=Gerekliyse, Cron işlerini denetleyen ve başlatan İnternet adresi
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=Ya da özel bir işi denetlemek ve başlatmak için
 KeyForCronAccess=Cron işlerini başlatacak URL için güvenlik anahtarı
 FileToLaunchCronJobs=Cron işlerini başlatacak komut satırı
 CronExplainHowToRunUnix=Unix ortamında komut satırını her 5 dakikada bir çalıştırmak için kron sekmesi girişini kullanmalısınız
 CronExplainHowToRunWin=Mikrosot (tm) Windows ortamında komut satırını her 5 dakikada bir çalıştırmak için Planlanmış görev araçlarını kullanmalısınız
+CronMethodDoesNotExists=Sınıf %s hiçbir %s yöntemi içermiyor
 # Menu
-CronJobs=Planlı işler
-CronListActive=Etkin/programlı işler listesi
-CronListInactive=Etkin olmayan işler listesi
+EnabledAndDisabled=Etkin ve engelli
 # Page list
-CronDateLastRun=Son çalıştırma
 CronLastOutput=Son çalıştırma çıktısı
 CronLastResult=Son sonuç kodu
-CronListOfCronJobs=Planlı işler listesi
 CronCommand=Komut
 CronList=Planlı işler
 CronDelete=Planlı işleri sil
@@ -32,30 +26,26 @@ CronConfirmDelete=Bu planlı işleri silmek istediğinizden emin misiniz?
 CronExecute=Planlı işleri yükle
 CronConfirmExecute=Bu planlı işleri şimdi yürütmek istediğinizden emin misiniz?
 CronInfo=Planlı iş modülü planlanmış işlerin yürütülmesini sağlar
-CronWaitingJobs=İş bekliyor
 CronTask=İş
 CronNone=Hiçbiri
-CronDtStart=Başlama tarihi
-CronDtEnd=Son tarih
+CronDtStart=Bundan önce değil
+CronDtEnd=Bundan sonra değil
 CronDtNextLaunch=Sonraki yürütme
-CronDtLastLaunch=Son yürütme
+CronDtLastLaunch=Son yürütmenin başlama tarihi
+CronDtLastResult=Son yürütmenin bitiş tarihi
 CronFrequency=Sıklık
 CronClass=Sınıf
 CronMethod=Yöntem
 CronModule=Modül
-CronAction=İşlem
-CronStatus=Durum
-CronStatusActive=Etkin
-CronStatusInactive=Engelli
 CronNoJobs=Kayıtlı iş yok
 CronPriority=Öncelik
 CronLabel=Açıklama
 CronNbRun=Başlatma sayısı
+CronMaxRun=Maksimum başlatma sayısı
 CronEach=Her
 JobFinished=İş başlatıldı ve bitirildi
 #Page card
 CronAdd= İş ekle
-CronHourStart= İşin başlama saati ve tarihi
 CronEvery=İş yürütme zamanı
 CronObject=Oluşturulacak durum/nesne
 CronArgs=Parametreler
@@ -66,7 +56,6 @@ CronErrEndDateStartDt=Bitiş tarihi başlama tarihinden önce olamaz
 CronStatusActiveBtn=Etkin
 CronStatusInactiveBtn=Engelle
 CronTaskInactive=Bu iş devre dışı
-CronDtLastResult=Son sonuç tarihi
 CronId=Kimlik
 CronClassFile=Sınıflar (dosyaadı.sınıf.php)
 CronModuleHelp=Dolibarr modül dizini adı (aynı zamanda dış Dolibarr modülü ile de çalışır). <BR> Örneğin; Dolibarr Ürün nesnesi alım yöntemi /htdocs/<u>product</u>/class/product.class.php, modül değeri <i>product</i>
@@ -76,14 +65,15 @@ CronMethodHelp=Çalıştırılacak nesne yöntemi. <BR> Örneğin; Dolibarr Ür�
 CronArgsHelp=Yöntem parametreleri. <BR> Örneğin; Dolibarr Ürün nesnesi alım yöntemi /htdocs/product/class/product.class.php, parametre değerleri <i>0, ProductRef</i> olabilir
 CronCommandHelp=Yürütülecek sistem komut satırı.
 CronCreateJob=Yeni Planlı İş oluştur
-CronFrom=From
+CronFrom=Gönderen
 # Info
-CronInfoPage=Bilgi
 # Common
 CronType=İş türü
 CronType_method=Dolibarr Sınıfı çağırma yöntemi
 CronType_command=Kabuk komutu
-CronMenu=Kron
 CronCannotLoadClass=%s sınıfı ya da %s nesnesi yüklenemiyor
-UseMenuModuleToolsToAddCronJobs=Planlı işleri görmek ve düzenlemek için "Giriş - Modül araçları - İş listesi" menüsüne gidin.
-TaskDisabled=İş engellendi
+UseMenuModuleToolsToAddCronJobs=Planlı işleri görmek ve düzenlemek için "Giriş - Yönetici Ayarları - Planlı işler" menüsüne git.
+JobDisabled=İş engellendi
+MakeLocalDatabaseDumpShort=Yerel veritabanı yedeklemesi
+MakeLocalDatabaseDump=Yerel bir veritabanı dökümü oluştur
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of active jobs, your jobs may be delayed to a maximum of %s hours before being run.

@@ -9,3 +9,5 @@ FailedToConnectToFTPServer=Falha na conexão ao servidor FTP (server% s, porta% 
 FailedToConnectToFTPServerWithCredentials=Falha ao efetuar login no servidor FTP com login/senha
 FTPFailedToRemoveFile=Falha ao remover o arquivo <b>%s</ b>.
 FTPFailedToRemoveDir=Falha ao remover diretório <b>%s</ b> (verifique as permissões e se o diretório está vazio).
+ChooseAFTPEntryIntoMenu=Escolha uma entrada de FTP em menu ...
+FailedToGetFile=Falha ao obter arquivos %s

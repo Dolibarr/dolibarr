@@ -14,6 +14,5 @@ BehaviourOnClick=Comportamento quando clica num URL
 CreateBookmark=Criar Favorito
 SetHereATitleForLink=Defina um título para o Favorito
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Indicar um URL externo para o URL relativo do Dolibarr
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Escolha se a página abre na janela actual ou na nova janela
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Gestão de Favoritos
-ListOfBookmarks=Lista de Favoritos

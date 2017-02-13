@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,7 @@ print '<br>';
 // Load attribute_label
 $extrafields->fetch_name_optionals_label($elementtype);
 
+print '<div class="div-table-responsive">';
 print "<table summary=\"listofattributes\" class=\"noborder\" width=\"100%\">";
 
 print '<tr class="liste_titre">';
@@ -44,6 +45,7 @@ print '<td align="right">'.$langs->trans("Size").'</td>';
 print '<td align="center">'.$langs->trans("Unique").'</td>';
 print '<td align="center">'.$langs->trans("Required").'</td>';
 print '<td align="center">'.$langs->trans("AlwaysEditable").'</td>';
+if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) print '<td align="center">'.$langs->trans("Hidden").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
@@ -60,13 +62,13 @@ foreach($extrafields->attribute_type as $key => $value)
     print '<td align="center">'.yn($extrafields->attribute_unique[$key])."</td>\n";
     print '<td align="center">'.yn($extrafields->attribute_required[$key])."</td>\n";
     print '<td align="center">'.yn($extrafields->attribute_alwayseditable[$key])."</td>\n";
+	if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) print '<td align="center">'.yn($extrafields->attribute_hidden[$key])."</td>\n";	// Add hidden option on not working feature. Why hide if user can't see it.
     print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
     print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
     print "</tr>";
-    //      $i++;
 }
 
 print "</table>";
-
+print '</div>';
 ?>
 <!-- END PHP TEMPLATE admin_extrafields_view.tpl.php -->

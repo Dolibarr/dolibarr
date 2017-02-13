@@ -1,0 +1,17 @@
+# Dolibarr language file - Source file is en_US - stocks
+WarehouseCard=Warenlagerkarte
+CancelSending=Lieferung abbrechen
+StockTransfer=Lagerumbuchung
+MassStockTransferShort=Massen Lagerumbuchungen
+StockLowerThanLimit=Bestand unterhalb des Sicherungsbestandes
+DeStockOnShipmentOnClosing=Verringere echten Bestände bei Lieferbestätigung
+ReStockOnDispatchOrder=Reale Bestände auf manuelle Dispatching in Hallen, nach Erhalt Lieferanten bestellen
+StockLimitShort=Alarmschwelle
+StockLimit=Sicherungsbestand für autom. Benachrichtigung
+AverageUnitPricePMP=Gewichteter Durchschnittpreis bei Erwerb
+DesiredStock=Gewünschter idealer Lagerbestand
+DesiredStockDesc=Dieser Bestand wird für die Nachbestellfunktion verwendet.
+UseVirtualStockByDefault=Nutze theoretische Lagerbestände anstatt des physischem Bestands für die Nachbestellungsfunktion
+ReplenishmentOrdersDesc=Das ist eine Liste aller offenen Lieferantenbestellungen inklusive vordefinierter Produkte. Nur geöffnete Bestellungen mit vordefinierten Produkten, sofern es den Lagerbestand betrifft, sind hier sichtbar.
+ThisSerialAlreadyExistWithDifferentDate=Diese Charge- / Seriennummer (<strong>%s</strong>) ist bereits vorhanden, jedoch mit unterschiedlichen Haltbarkeits- oder Verfallsdatum. \n(Gefunden: <strong>%s</strong> Erfasst: <strong>%s</strong>)
+OpenAll=Für alle Aktionen freigeben

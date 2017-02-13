@@ -2,7 +2,7 @@
 -- Copyright (C) 2000-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2014	Laurent Destailleur 	<eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2012	Regis Houssin       	<regis.houssin@capnetworks.com>
--- Copyright (C) 2014		Alexandre Spangaro		<alexandre.spangaro@gmail.com>
+-- Copyright (C) 2014		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ create table llx_bank_account
   fk_user_author		integer,
   fk_user_modif			integer,
   bank					varchar(60),
-  code_banque			varchar(8),
+  code_banque			varchar(128),
   code_guichet			varchar(6),
   number				varchar(255),
   cle_rib				varchar(5),
@@ -51,9 +51,12 @@ create table llx_bank_account
   rappro				smallint DEFAULT 1,
   url					varchar(128),
   account_number		varchar(32),				-- bank accountancy number
-  accountancy_journal	varchar(3) DEFAULT NULL,	-- bank accountancy journal
+  accountancy_journal	varchar(16) DEFAULT NULL,	-- bank accountancy journal
   currency_code			varchar(3) NOT NULL,
   min_allowed			integer DEFAULT 0,
   min_desired			integer DEFAULT 0,
-  comment				text
+  comment				text,						-- TODO rename in note_private
+  note_public     		text,
+  model_pdf       		varchar(255),
+  import_key      		varchar(14)
 )ENGINE=innodb;

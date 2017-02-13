@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /*
  * Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>

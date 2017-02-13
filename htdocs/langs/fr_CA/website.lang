@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - website
+WebsiteSetupDesc=Créer ici autant d'entrée que le nombre de différents sites Web dont vous avez besoin. Ensuite, allez dans le menu Sites Web pour les éditer.
+DeleteWebsite=Supprimer site internet
+ConfirmDeleteWebsite=Etes-vous sûr de vouloir supprimer ce site Web. Toutes ses pages et le contenu seront également supprimés.

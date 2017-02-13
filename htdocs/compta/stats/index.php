@@ -39,7 +39,7 @@ $userid=GETPOST('userid','int');
 $socid = GETPOST('socid','int');
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->global->ACCOUNTING_MODE;
-if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
+if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta",'alpha');
 
 // Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;
@@ -84,6 +84,11 @@ else {
 $moreparam=array();
 if (! empty($modecompta)) $moreparam['modecompta']=$modecompta;
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam,$calcmode);
+
+if (! empty($conf->accounting->enabled))
+{
+    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+}
 
 
 if ($modecompta == 'CREANCES-DETTES')
@@ -135,7 +140,7 @@ else {
 	dol_print_error($db);
 }
 
-// On ajoute les paiements anciennes version, non lies par paiement_facture
+// On ajoute les paiements anciennes version, non lies par paiement_facture (very old versions)
 if ($modecompta != 'CREANCES-DETTES')
 {
 	$sql = "SELECT date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount_ttc";
@@ -173,12 +178,11 @@ if ($modecompta != 'CREANCES-DETTES')
 	}
 }
 
+$moreforfilter='';
 
-/*
- * Show result array
- */
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre"><td>&nbsp;</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -193,13 +197,13 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 print '</tr>';
 
-print '<tr class="liste_titre"><td>'.$langs->trans("Month").'</td>';
+print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.$langs->trans("AmountHT").'</td>';
-	print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-	print '<td align="right" class="borderrightlight">'.$langs->trans("Delta").'</td>';
-	if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
+	if ($modecompta == 'CREANCES-DETTES') print '<td class="liste_titre" align="right">'.$langs->trans("AmountHT").'</td>';
+	print '<td class="liste_titre" align="right">'.$langs->trans("AmountTTC").'</td>';
+	print '<td class="liste_titre" align="right" class="borderrightlight">'.$langs->trans("Delta").'</td>';
+	if ($annee != $year_end) print '<td class="liste_titre" width="15">&nbsp;</td>';
 }
 print '</tr>';
 
@@ -428,6 +432,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 print "</tr>\n";
 print "</table>";
+print '</div>';
 
 
 /*

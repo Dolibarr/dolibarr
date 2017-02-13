@@ -43,7 +43,7 @@ llxHeader("",$langs->trans("Tools"),"");
 
 $text=$langs->trans("Tools");
 
-print_fiche_titre($text);
+print load_fiche_titre($text);
 
 // Show description of content
 print $langs->trans("ToolsDesc").'<br><br>';

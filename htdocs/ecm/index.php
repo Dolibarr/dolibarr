@@ -100,7 +100,13 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	if (empty($_FILES['userfile']['tmp_name']))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("File")), 'errors');
+		if($_FILES['userfile']['error'] == 1 || $_FILES['userfile']['error'] == 2){
+			setEventMessages($langs->trans('ErrorFileSizeTooLarge'),null, 'errors');
+		}
+		else {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+		}
+
 	}
 
 	if (! $error)
@@ -117,22 +123,22 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 				$langs->load("errors");
 				if ($resupload < 0)	// Unknown error
 				{
-					setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
+					setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 				}
 				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 				{
-					setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
+					setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 				}
 				else	// Known error
 				{
-					setEventMessage($langs->trans($resupload), 'errors');
+					setEventMessages($langs->trans($resupload), null, 'errors');
 				}
 			}
 		}
 		else
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFailToCreateDir",$upload_dir), 'errors');
+			setEventMessages($langs->trans("ErrorFailToCreateDir",$upload_dir), null, 'errors');
 		}
 	}
 }
@@ -154,7 +160,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 	}
 	else
 	{
-		setEventMessage('Error '.$langs->trans($ecmdir->error), 'errors');
+		setEventMessages('Error '.$langs->trans($ecmdir->error), null, 'errors');
 		$action = "create";
 	}
 
@@ -175,15 +181,14 @@ if ($action == 'confirm_deletefile')
 	    		dol_print_error($db,$ecmdir->error);
 	    		exit;
 	    	}
-	    	$relativepath=$ecmdir->getRelativePath();
     	}
     	else $relativepath='';
-    	$upload_dir = $conf->ecm->dir_output.($relativepath?'/'.$relativepath:'');
+    	$upload_dir = $conf->ecm->dir_output;
     	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
 
     	$ret=dol_delete_file($file);
-    	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-    	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+    	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+    	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 
     	$result=$ecmdir->changeNbOfFiles('-');
 
@@ -196,14 +201,17 @@ if ($action == 'confirm_deletefile')
 if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
 {
 	$result=$ecmdir->delete($user);
-	setEventMessage($langs->trans("ECMSectionWasRemoved", $ecmdir->label));
+	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
 
     clearstatcache();
 }
 
 // Refresh directory view
+// This refresh list of dirs, not list of files (for preformance reason). List of files is refresh only if dir was not synchronized.
+// To refresh content of dir with cache, just open the dir in edit mode.
 if ($action == 'refreshmanual')
 {
+
     $ecmdirtmp = new EcmDirectory($db);
 
 	// This part of code is same than into file ecm/ajax/ecmdatabase.php TODO Remove duplicate
@@ -345,7 +353,7 @@ if ($action == 'refreshmanual')
 
 // Define height of file area (depends on $_SESSION["dol_screenheight"])
 //print $_SESSION["dol_screenheight"];
-$maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-186):660;	// Also into index_auto.php file
+$maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-136):660;	// Also into index_auto.php file
 
 $morejs=array();
 if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs=array("/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js");
@@ -372,7 +380,7 @@ $moreheadjs=empty($conf->use_javascript_ajax)?"":"
         ,   north__paneSelector:    \"#ecm-layout-north\"
         ,   west__paneSelector:     \"#ecm-layout-west\"
         ,   resizable: true
-        ,   north__size:        32
+        ,   north__size:        37     /* 2 are removed by js */
         ,   north__resizable:   false
         ,   north__closable:    false
         ,   west__size:         340
@@ -414,7 +422,7 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	if (! empty($conf->projet->enabled))      { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'project', 'test'=>$conf->projet->enabled, 'label'=>$langs->trans("Projects"),     'desc'=>$langs->trans("ECMDocsByProjects")); }
 }
 
-print_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
+//print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
 
 /*
 print '<div class="hideonsmartphone">';
@@ -435,11 +443,8 @@ if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
 else $classviewhide='visible';
 
 
-if (empty($conf->dol_use_jmobile))
-{
 $head = ecm_prepare_dasboard_head('');
-dol_fiche_head($head, 'index', '', 1, '');
-}
+dol_fiche_head($head, 'index', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), 1, '');
 
 // Start container of all panels
 ?>
@@ -463,8 +468,8 @@ else
     print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
     print '</a>';
 }
-$url=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
-print '<a href="'.$url.'" class="toolbarbutton" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
+$relativeurl=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
+print '<a href="'.$relativeurl.'" class="toolbarbutton" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
 print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
 print '</a>';
 
@@ -489,12 +494,13 @@ if ($action == 'delete_section')
 
 if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
 {
-	print '<table width="100%" class="nobordernopadding">';
+	print '<table width="100%" class="liste noborderbottom">'."\n";
 
-	print '<tr class="liste_titre">';
-    print '<td class="liste_titre" align="left" colspan="6">';
+	print '<!-- Title for manual directories -->'."\n";
+	print '<tr class="liste_titre">'."\n";
+    print '<th class="liste_titre" align="left" colspan="6">';
     print '&nbsp;'.$langs->trans("ECMSections");
-	print '</td></tr>';
+	print '</th></tr>';
 
     $showonrightsize='';
 
@@ -503,24 +509,17 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 
 	// Root of manual section
-	print '<tr><td>';
-	print '<table class="nobordernopadding"><tr class="nobordernopadding">';
-	print '<td align="left" width="24px">';
-	print img_picto_common('','treemenu/base.gif');
-	print '</td><td align="left">';
+	print '<tr class="ecmroot">';
+	print '<td class="ecmroot">';
+	print img_picto_common('','treemenu/base.gif','class="inline-block valignmiddle"');
 	$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsManual").')';
 	print $form->textwithpicto($txt, $htmltooltip, 1, 'info');
 	print '</td>';
-	print '</tr></table></td>';
-	print '<td align="right">';
-	print '</td>';
-	print '<td align="right">&nbsp;</td>';
-	//print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.img_edit_add().'</a></td>';
-	print '<td align="right">&nbsp;</td>';
-	print '<td align="right">&nbsp;</td>';
-	print '<td align="center">';
-	//print $form->textwithpicto('',$htmltooltip,1,"info");
-	print '</td>';
+	print '<td class="ecmroot"></td>';
+	print '<td class="ecmroot">&nbsp;</td>';
+	print '<td class="ecmroot">&nbsp;</td>';
+	print '<td class="ecmroot">&nbsp;</td>';
+	print '<td class="ecmroot"></td>';
 	print '</tr>';
 
     if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
@@ -715,6 +714,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 
 $mode='noajax';
+$url=DOL_URL_ROOT.'/ecm/index.php';
 include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 
 
@@ -757,7 +757,7 @@ else print '&nbsp;';
 // End of page
 
 
-//dol_fiche_end();
+dol_fiche_end();
 
 
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {

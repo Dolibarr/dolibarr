@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Failed to login to FTP server with def
 FTPFailedToRemoveFile=Failed to remove file <b>%s</b>.
 FTPFailedToRemoveDir=Failed to remove directory <b>%s</b> (Check permissions and that directory is empty).
 FTPPassiveMode=Passive mode
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s

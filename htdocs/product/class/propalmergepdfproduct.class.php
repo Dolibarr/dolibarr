@@ -31,13 +31,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class Propalmergepdfproduct extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
 	var $element='propal_merge_pdf_product';			//!< Id that identify managed objects
 	var $table_element='propal_merge_pdf_product';		//!< Name of table without prefix where object is stored
-
-    var $id;
     
 	var $fk_product;
 	var $file_name;
@@ -45,7 +40,6 @@ class Propalmergepdfproduct extends CommonObject
 	var $fk_user_mod;
 	var $datec='';
 	var $tms='';
-	var $import_key;
 	var $lang;
 	
 	var $lines=array();

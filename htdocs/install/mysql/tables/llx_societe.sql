@@ -47,6 +47,7 @@ create table llx_societe
   town                     varchar(50),                         		-- town
   fk_departement           integer        DEFAULT 0,            		--
   fk_pays                  integer        DEFAULT 0,            		--
+  fk_account               integer        DEFAULT 0,            		--
   phone                    varchar(20),                         		-- phone number
   fax                      varchar(20),                         		-- fax number
   url                      varchar(255),                        		--
@@ -67,6 +68,7 @@ create table llx_societe
   fk_stcomm                integer        DEFAULT 0 NOT NULL,      	-- commercial statut
   note_private             text,                                		--
   note_public              text,                                        --
+  model_pdf				   varchar(255),
   prefix_comm              varchar(5),                          		-- prefix commercial
   client                   tinyint        DEFAULT 0,            		-- client 0/1/2
   fournisseur              tinyint        DEFAULT 0,            		-- fournisseur 0/1
@@ -84,6 +86,7 @@ create table llx_societe
   cond_reglement           tinyint,                             		-- condition de reglement
   mode_reglement_supplier  tinyint,                             		-- mode de reglement fournisseur
   cond_reglement_supplier  tinyint,                             		-- condition de reglement fournisseur
+  fk_shipping_method       integer,                                     -- preferred shipping method id
   tva_assuj                tinyint        DEFAULT 1,	        		-- assujeti ou non a la TVA
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
   localtax1_value 		   double(6,3),
@@ -98,5 +101,8 @@ create table llx_societe
   canvas				   varchar(32),			                        -- type of canvas if used (null by default)
   import_key               varchar(14),                          		-- import key
   webservices_url          varchar(255),                            -- supplier webservice url
-  webservices_key          varchar(128)                            -- supplier webservice key
+  webservices_key          varchar(128),                            -- supplier webservice key
+  
+  fk_multicurrency			integer,
+  multicurrency_code		varchar(255)
 )ENGINE=innodb;

@@ -46,7 +46,7 @@ if ($action == 'convert')
 
 llxHeader();
 
-print_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type),'','title_setup');
+print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type),'','title_setup');
 
 
 // Define request to get table description
@@ -81,7 +81,8 @@ else
 {
 	if ($base == 1)
 	{
-		print '<table class="noborder">';
+        print '<div class="div-table-responsive-no-min">';
+	    print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td colspan="2">'.$langs->trans("Type").'</td>';
@@ -134,11 +135,13 @@ else
 			}
 		}
 		print '</table>';
+		print '</div>';
 	}
 
 	if ($base == 2)
 	{
-		print '<table class="noborder">';
+        print '<div class="div-table-responsive-no-min">';
+	    print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td>Nb of tuples</td>';
@@ -173,12 +176,14 @@ else
 			}
 		}
 		print '</table>';
+		print '</div>';
 	}
 
 	if ($base == 4)
 	{
 		// Sqlite by PDO or by Sqlite3
-		print '<table class="noborder">';
+        print '<div class="div-table-responsive-no-min">';
+	    print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td>'.$langs->trans("NbOfRecord").'</td>';
@@ -207,6 +212,8 @@ else
 			}
 		}
 
+		print '</table>';
+		print '</div>';
 	}
 }
 

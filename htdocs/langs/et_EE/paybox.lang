@@ -12,7 +12,6 @@ Creditor=Kreeditor
 PaymentCode=Makse kood
 PayBoxDoPayment=Mine maksmisele
 YouWillBeRedirectedOnPayBox=Teid suunatakse turvalisele Payboxi lehele krediitkaardi info sisestamiseks
-PleaseBePatient=Palun olge kannatli
 Continue=Järgmine
 ToOfferALinkForOnlinePayment=Makse %s URL
 ToOfferALinkForOnlinePaymentOnOrder=Müügitellimuse eest maksmiseks kasutatava %s online makseteenuse URL

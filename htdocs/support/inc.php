@@ -62,13 +62,21 @@ $conffiletoshow = "htdocs/conf/conf.php";
 //$conffiletoshow = "/etc/dolibarr/conf.php";
 
 
-if (! defined('DONOTLOADCONF') && file_exists($conffile))
+// Load conf file if it is already defined
+if (! defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) > 8) // Test on filesize is to ensure that conf file is more that an empty template with just <?php in first line
 {
 	$result=include_once $conffile;	// Load conf file
 	if ($result)
 	{
 
 		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
+
+		//Mysql driver support has been removed in favor of mysqli
+		if ($dolibarr_main_db_type == 'mysql') {
+			$dolibarr_main_db_type = 'mysqli';
+		}
+
+		if (empty($dolibarr_main_db_port) && ($dolibarr_main_db_type=='mysqli')) $dolibarr_main_db_port='3306'; // For backward compatibility
 
 		// Clean parameters
 		$dolibarr_main_data_root        =isset($dolibarr_main_data_root)?trim($dolibarr_main_data_root):'';
@@ -176,7 +184,7 @@ function conf($dolibarr_main_document_root)
 	$conf->db->user = trim($dolibarr_main_db_user);
 	$conf->db->pass = trim($dolibarr_main_db_pass);
 
-	if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='utf8_general_ci';
+	if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='utf8_unicode_ci';
 
 	return 1;
 }

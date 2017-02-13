@@ -55,18 +55,21 @@ create table llx_actioncomm
   label				varchar(256) NOT NULL,			-- label/title of event or topic of email
   note				text,							-- note of event or content of email
   
+  email_subject		varchar(256),					-- when event was an email, we store here the subject. content is stored into note.
   email_msgid		varchar(256),					-- when event was an email, we store here the msgid
   email_from		varchar(256),					-- when event was an email, we store here the from
   email_sender		varchar(256),					-- when event was an email, we store here the sender
   email_to			varchar(256),					-- when event was an email, we store here the email_to
+  email_tocc		varchar(256),					-- when event was an email, we store here the email_tocc
+  email_tobcc		varchar(256),					-- when event was an email, we store here the email_tobcc
   errors_to			varchar(256),					-- when event was an email, we store here the erros_to
   
   recurid           varchar(128),                  -- used to store event id to link all recurring event records each other  
   recurrule         varchar(128),					-- contains string with ical format recurring rule like "FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=19" or "FREQ=WEEKLY;BYDAY=MO"
   recurdateend      datetime,
      
-  fk_element		integer DEFAULT NULL,
-  elementtype		varchar(32) DEFAULT NULL
+  fk_element		integer DEFAULT NULL,			-- For link to an element (proposal, invoice, order, ...)
+  elementtype		varchar(255) DEFAULT NULL		-- For link to an element (proposal, invoice, order, ...)
 
 )ENGINE=innodb;
 

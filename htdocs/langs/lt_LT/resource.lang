@@ -1,7 +1,6 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Resursai
 MenuResourceAdd=Naujas resursas
-MenuResourcePlanning=Resursų planavimas
 DeleteResource=Panaikinti resursą
 ConfirmDeleteResourceElement=Patvirtinti resurso panaikinimą šiam elementui
 NoResourceInDatabase=Duomenų bazėje resurso nėra
@@ -17,8 +16,7 @@ ResourceFormLabel_description=Resurso aprašymas
 
 ResourcesLinkedToElement=Resursai susiję su elementu
 
-ShowResourcePlanning=Parodyti resurso planavimą
-GotoDate=Eiti į datą
+ShowResource=Show resource
 
 ResourceElementPage=Elemento resursai
 ResourceCreatedWithSuccess=Resursas sėkmingai sukurtas
@@ -26,7 +24,6 @@ RessourceLineSuccessfullyDeleted=Resurso eilutė sėkmingai panaikinta
 RessourceLineSuccessfullyUpdated=Resurso eilutė sėkmingai atnaujinta
 ResourceLinkedWithSuccess=Resursas sėkmingai susietas
 
-TitleResourceCard=Resurso kortelė
 ConfirmDeleteResource=Patvirtinti resurso panaikinimą
 RessourceSuccessfullyDeleted=Resursas sėkmingai panaikintas
 DictionaryResourceType=Resursų tipas

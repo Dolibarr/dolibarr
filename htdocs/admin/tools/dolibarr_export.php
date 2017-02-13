@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,7 +37,7 @@ $page = GETPOST('page','int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";
 if ($page < 0) { $page = 0; }
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 if (! $user->admin)
@@ -52,8 +52,8 @@ if ($action == 'delete')
 {
 	$file=$conf->admin->dir_output.'/'.GETPOST('urlfile');
     $ret=dol_delete_file($file, 1);
-    if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-    else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+    else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
     $action='';
 }
 
@@ -66,6 +66,8 @@ $form=new Form($db);
 $formfile = new FormFile($db);
 
 $label=$db::LABEL;
+$type=$db->type;
+//var_dump($db);
 
 $help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
 llxHeader('','',$help_url);
@@ -101,14 +103,14 @@ jQuery(document).ready(function() {
 	});
 
 	<?php
-	    if ($label == 'MySQL')      print 'jQuery("#radio_dump_mysql").click();';
-	    if ($label == 'PostgreSQL') print 'jQuery("#radio_dump_postgresql").click();';
+	    if (in_array($type, array('mysql', 'mysqli')))  print 'jQuery("#radio_dump_mysql").click();';
+	    if (in_array($type, array('pgsql'))) print 'jQuery("#radio_dump_postgresql").click();';
 	?>
 });
 </script>
 <?php
 
-print_fiche_titre($langs->trans("Backup"),'','title_setup');
+print load_fiche_titre($langs->trans("Backup"),'','title_setup');
 
 print $langs->trans("BackupDesc",DOL_DATA_ROOT).'<br><br>';
 
@@ -131,9 +133,9 @@ print '<br>';
 
 <?php
 
-print_titre($title?$title:$langs->trans("BackupDumpWizard"));
+print load_fiche_titre($title?$title:$langs->trans("BackupDumpWizard"));
 
-print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">';
+print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').' nohover">';
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
@@ -143,12 +145,12 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 ?>
 <table class="centpercent">
 	<tr>
-		<td valign="top">
+		<td class="tdtop">
 
 		<div id="div_container_exportoptions">
 		<fieldset id="exportoptions"><legend><?php echo $langs->trans("ExportMethod"); ?></legend>
 		<?php
-		if ($label == 'MySQL')
+		if (in_array($type, array('mysql', 'mysqli')))
 		{
 			?>
 			<div class="formelementrow"><input type="radio" name="what" value="mysql" id="radio_dump_mysql" />
@@ -160,7 +162,7 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 			</div>
 			<?php
 		}
-		else if ($label == 'PostgreSQL')
+		else if (in_array($type, array('pgsql')))
 		{
 			?>
 			<div class="formelementrow"><input type="radio" name="what"	value="postgresql" id="radio_dump_postgresql" />
@@ -177,12 +179,12 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 		</div>
 
 		</td>
-		<td valign="top">
+		<td class="tdtop">
 
 
 		<div id="div_container_sub_exportoptions">
 		<?php
-		if ($label == 'MySQL')
+		if (in_array($type, array('mysql', 'mysqli')))
 		{
 			?> <!--  Fieldset mysqldump -->
 			<fieldset id="mysql_options"><legend><?php echo $langs->trans("MySqlExportParameters"); ?></legend>
@@ -317,7 +319,7 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 		<?php
 		}
 
-		if ($label == 'PostgreSQL')
+		if (in_array($type, array('pgsql')))
 		{
 			?> <!--  Fieldset pg_dump -->
 			<fieldset id="postgresql_options"><legend><?php echo $langs->trans("PostgreSqlExportParameters"); ?></legend>
@@ -382,9 +384,9 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 	value="<?php
 $prefix='dump';
 $ext='.sql';
-if ($label == 'MySQL')      { $prefix='mysqldump'; $ext='sql'; }
+if (in_array($type, array('mysql', 'mysqli')))  { $prefix='mysqldump'; $ext='sql'; }
 //if ($label == 'PostgreSQL') { $prefix='pg_dump'; $ext='dump'; }
-if ($label == 'PostgreSQL') { $prefix='pg_dump'; $ext='sql'; }
+if (in_array($type, array('pgsql'))) { $prefix='pg_dump'; $ext='sql'; }
 $file=$prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.'.$ext;
 echo $file;
 ?>" /> <br>
@@ -394,7 +396,7 @@ echo $file;
 
 // Define compressions array
 $compression=array();
-if ($label == 'MySQL')
+if (in_array($type, array('mysql', 'mysqli')))
 {
 	$compression['none'] = array('function' => '',       'id' => 'radio_compression_none', 'label' => $langs->trans("None"));
 	$compression['gz'] = array('function' => 'gzopen', 'id' => 'radio_compression_gzip', 'label' => $langs->trans("Gzip"));

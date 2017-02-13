@@ -25,8 +25,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
 
 /**
- *		\class 		CommonOrder
- *       \brief 		Superclass for orders classes
+ *      Superclass for orders classes
  */
 abstract class CommonOrder extends CommonObject
 {
@@ -34,8 +33,7 @@ abstract class CommonOrder extends CommonObject
 }
 
 /**
- *		\class 		CommonOrderLine
- *       \brief 		Superclass for orders classes
+ *      Superclass for orders classes
  */
 abstract class CommonOrderLine extends CommonObjectLine
 {
@@ -136,36 +134,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	public $localtax1_type;
 	public $localtax2_type;
-
-	/**
-	 * Total amount before taxes
-	 * @var float
-	 */
-	public $total_ht;
-
-	/**
-	 * Total VAT amount
-	 * @var float
-	 */
-	public $total_tva;
-
-	/**
-	 * Total local tax 1 amount
-	 * @var float
-	 */
-	public $total_localtax1;
-
-	/**
-	 * Total local tax 2 amount
-	 * @var float
-	 */
-	public $total_localtax2;
-
-	/**
-	 * Total amount with taxes
-	 * @var float
-	 */
-	public $total_ttc;
 
 	/**
 	 * Liste d'options cumulables:

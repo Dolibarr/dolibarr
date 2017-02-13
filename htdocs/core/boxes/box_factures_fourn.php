@@ -93,10 +93,9 @@ class box_factures_fourn extends ModeleBoxes
 			if ($result)
 			{
 				$num = $db->num_rows($result);
-				$now=dol_now();
 
 				$line = 0;
-				$l_due_date =  $langs->trans('Late').' ('.$langs->trans('DateEcheance').': %s)';
+				$l_due_date =  $langs->trans('Late').' ('.$langs->trans('DateDue').': %s)';
 
                 while ($line < $num) {
 					$objp = $db->fetch_object($result);
@@ -108,6 +107,8 @@ class box_factures_fourn extends ModeleBoxes
                     $facturestatic->total_ht = $objp->total_ht;
                     $facturestatic->total_tva = $objp->total_tva;
                     $facturestatic->total_ttc = $objp->total_ttc;
+                    $facturestatic->date_echeance = $datelimite;
+                    $facturestatic->statut = $objp->fk_statut;
                     $thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
                     $thirdpartytmp->fournisseur = 1;
@@ -115,7 +116,10 @@ class box_factures_fourn extends ModeleBoxes
                     $thirdpartytmp->logo = $objp->logo;
 
 					$late = '';
-					if ($objp->paye == 0 && $datelimite && $datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date, dol_print_date($datelimite,'day')));
+
+					if ($facturestatic->hasDelay()) {
+                        $late=img_warning(sprintf($l_due_date, dol_print_date($datelimite,'day')));
+                    }
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
@@ -185,11 +189,12 @@ class box_factures_fourn extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

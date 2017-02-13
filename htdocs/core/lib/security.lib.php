@@ -74,7 +74,7 @@ function dol_decode($chain)
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt.
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		int			$type		Type of hash (0:auto, 1:sha1, 2:sha1+md5, 3:md5)
+ * 	@param		int			$type		Type of hash (0:auto, 1:sha1, 2:sha1+md5, 3:md5). Use 3 here, if hash is not needed for security purpose, for security need, prefer 0.
  * 	@return		string					Hash of string
  */
 function dol_hash($chain,$type=0)
@@ -90,7 +90,7 @@ function dol_hash($chain,$type=0)
 	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1') return sha1($chain);
 	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1md5') return sha1(md5($chain));
 
-	// No enconding defined
+	// No particular enconding defined, use default
 	return md5($chain);
 }
 
@@ -339,19 +339,20 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 }
 
 /**
- * Check access by user to object
+ * Check access by user to object.
+ * This function is also called by restrictedArea
  *
  * @param User		$user			User to check
- * @param array		$featuresarray	Features/modules to check
+ * @param array		$featuresarray	Features/modules to check. Example: ('user','service') 
  * @param int		$objectid		Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
  * @param string	$tableandshare	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
  * @param string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
  * @param string	$dbt_keyfield	Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  * @param string	$dbt_select		Field name for select if not rowid. Not used if objectid is null (optional)
- *
  * @return	bool		True if user has access, False otherwise
+ * @see restrictedArea
  */
-function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='', $dbt_select='')
+function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='', $dbt_select='rowid')
 {
 	global $db, $conf;
 
@@ -364,6 +365,9 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 	{
 		$sql='';
 
+		// For backward compatibility
+		if ($feature == 'member') $feature='adherent';
+		
 		$check = array('adherent','banque','user','usergroup','produit','service','produit|service','categorie'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe');	 // Test for societe object
 		$checkother = array('contact');	 // Test on entity and link to societe. Allowed if link is empty (Ex: contacts...).
@@ -416,32 +420,32 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 				$sql.= " AND s.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
-		else if (in_array($feature,$checkother))
+		else if (in_array($feature,$checkother))	// Test on entity and link to societe. Allowed if link is empty (Ex: contacts...).
 		{
 			// If external user: Check permission for external users
 			if ($user->societe_id > 0)
 			{
-				$sql = "SELECT dbt.rowid";
+				$sql = "SELECT dbt.".$dbt_select;
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql.= " WHERE dbt.rowid = ".$objectid;
+				$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
 				$sql.= " AND dbt.fk_soc = ".$user->societe_id;
 			}
 			// If internal user: Check permission for internal users that are restricted on their objects
 			else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))
 			{
-				$sql = "SELECT dbt.rowid";
+				$sql = "SELECT dbt.".$dbt_select;
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON dbt.fk_soc = sc.fk_soc AND sc.fk_user = '".$user->id."'";
-				$sql.= " WHERE dbt.rowid = ".$objectid;
+				$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
 				$sql.= " AND (dbt.fk_soc IS NULL OR sc.fk_soc IS NOT NULL)";	// Contact not linked to a company or to a company of user
 				$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 			// If multicompany and internal users with all permissions, check user is in correct entity
 			else if (! empty($conf->multicompany->enabled))
 			{
-				$sql = "SELECT dbt.rowid";
+				$sql = "SELECT dbt.".$dbt_select;
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql.= " WHERE dbt.rowid = ".$objectid;
+				$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
 				$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}

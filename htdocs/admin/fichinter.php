@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2014 Regis Houssin                <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
- * Copyright (C) 2011-2013 Philippe Grand			    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015 Philippe Grand			    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,11 +60,11 @@ if ($action == 'updateMask')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -102,13 +102,13 @@ else if ($action == 'specimen') // For fiche inter
 		}
 		else
 		{
-			setEventMessage($obj->error,'errors');
-			dol_syslog($obj->error, LOG_ERR);
+			setEventMessages($module->error, $module->errors, 'errors');
+			dol_syslog($module->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -133,12 +133,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
 		$db->rollback();
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -185,36 +185,35 @@ else if ($action == 'setmod')
 
 else if ($action == 'set_FICHINTER_FREE_TEXT')
 {
-	$freetext= GETPOST('FICHINTER_FREE_TEXT','alpha');
+	$freetext= GETPOST('FICHINTER_FREE_TEXT');	// No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "FICHINTER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
 else if ($action == 'set_FICHINTER_DRAFT_WATERMARK')
 {
 	$draft= GETPOST('FICHINTER_DRAFT_WATERMARK','alpha');
-
 	$res = dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -227,12 +226,26 @@ elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
+} elseif ($action == 'set_FICHINTER_USE_SERVICE_DURATION') {
+	$val = GETPOST('FICHINTER_USE_SERVICE_DURATION', 'alpha');
+	$res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '',
+		$conf->entity);
+
+	if (!$res > 0) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 
@@ -247,7 +260,7 @@ llxHeader();
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'title_setup');
 
 
 $head=fichinter_admin_prepare_head();
@@ -256,7 +269,7 @@ dol_fiche_head($head, 'ficheinter', $langs->trans("Interventions"), 0, 'interven
 
 // Interventions numbering model
 
-print_titre($langs->trans("FicheinterNumberingModules"));
+print load_fiche_titre($langs->trans("FicheinterNumberingModules"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -358,7 +371,7 @@ print '</table><br>';
  *  Documents models for Interventions
  */
 
-print_titre($langs->trans("TemplatePDFInterventions"));
+print load_fiche_titre($langs->trans("TemplatePDFInterventions"),'','');
 
 // Defini tableau def des modeles
 $type='ficheinter';
@@ -512,7 +525,7 @@ print "<br>";
  *
  */
 
-print_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -526,8 +539,18 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnInterventions").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-print '<textarea name="FICHINTER_FREE_TEXT" class="flat" cols="120">'.$conf->global->FICHINTER_FREE_TEXT.'</textarea>';
+print $langs->trans("FreeLegalTextOnInterventions").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
+$variablename='FICHINTER_FREE_TEXT';
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+{
+    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+}
+else
+{
+    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
+    print $doleditor->Create();
+}
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
@@ -538,13 +561,13 @@ $var=!$var;
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_FICHINTER_DRAFT_WATERMARK\">";
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("WatermarkOnDraftInterventionCards").'<br>';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("WatermarkOnDraftInterventionCards").'</td><td>';
 print '<input size="50" class="flat" type="text" name="FICHINTER_DRAFT_WATERMARK" value="'.$conf->global->FICHINTER_DRAFT_WATERMARK.'">';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
-
+print '</form>';
 // print products on fichinter
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -559,7 +582,22 @@ print '/>';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
-
+// Use services duration
+$var = !$var;
+print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="set_FICHINTER_USE_SERVICE_DURATION">';
+print '<tr ' . $bc[$var] . '>';
+print '<td>';
+print $langs->trans("UseServicesDurationOnFichinter");
+print '</td>';
+print '<td align="center">';
+print '<input type="checkbox" name="FICHINTER_USE_SERVICE_DURATION"' . ($conf->global->FICHINTER_USE_SERVICE_DURATION?' checked':'') . '>';
+print '</td>';
+print '<td align="right">';
+print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+print '</td>';
+print '</tr>';
 print '</form>';
 
 
@@ -567,6 +605,5 @@ print '</table>';
 
 print '<br>';
 
-$db->close();
-
 llxFooter();
+$db->close();

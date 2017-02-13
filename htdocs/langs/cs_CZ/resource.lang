@@ -1,7 +1,6 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Zdroje
 MenuResourceAdd=Nový zdroj
-MenuResourcePlanning=Plánování zdrojů
 DeleteResource=Smazat zdroj
 ConfirmDeleteResourceElement=Potvrďte odstranění zdroje pro tento element
 NoResourceInDatabase=Žádný zdroj v databázi.
@@ -17,8 +16,7 @@ ResourceFormLabel_description=Popis zdroje
 
 ResourcesLinkedToElement=Zdroje propojené s prvkem
 
-ShowResourcePlanning=Zobrazení plánování zdrojů
-GotoDate=Jdi na datum
+ShowResource=Show resource
 
 ResourceElementPage=Prvky zdrojů
 ResourceCreatedWithSuccess=Zdroj úspěšně vytvořen
@@ -26,7 +24,6 @@ RessourceLineSuccessfullyDeleted=Propojení zdrojů bylo úspěšně odstraněno
 RessourceLineSuccessfullyUpdated=Propojení zdrojů bylo úspěšně aktualizováno
 ResourceLinkedWithSuccess=Zdroj úspěšně propojen
 
-TitleResourceCard=Karta zdroje
 ConfirmDeleteResource=Potvrďte odstranění tohoto zdroje
 RessourceSuccessfullyDeleted=Zdroj úspěšně odstraněn
 DictionaryResourceType=Typy zdrojů

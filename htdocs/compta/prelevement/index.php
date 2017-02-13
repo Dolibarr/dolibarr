@@ -59,12 +59,10 @@ llxHeader('',$langs->trans("CustomersStandingOrdersArea"));
 if (prelevement_check_config() < 0)
 {
 	$langs->load("errors");
-	print '<div class="error">';
-	print $langs->trans("ErrorModuleSetupNotComplete");
-	print '</div>';
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
 }
 
-print_fiche_titre($langs->trans("CustomersStandingOrdersArea"));
+print load_fiche_titre($langs->trans("CustomersStandingOrdersArea"));
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -159,7 +157,7 @@ if ($resql)
     }
     else
     {
-        print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("NoInvoiceToWithdraw").'</td></tr>';
+        print '<tr '.$bc[false].'><td colspan="2" class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw").'</td></tr>';
     }
     print "</table><br>";
 }

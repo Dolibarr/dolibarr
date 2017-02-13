@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - cashdesk
+NoVAT=Pas de TVA (TAXE) pour cette vente
+BankToPay=Account for payment
+DolibarrReceiptPrinter=Imprimante de reçu Dolibarr

@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2009 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ $object = new Facture($db);
 
 
 /*
- * Ajout d'un nouveau contact
+ * Add a new contact
  */
 
 if ($action == 'addcontact' && $user->rights->facture->creer)
@@ -71,16 +71,16 @@ if ($action == 'addcontact' && $user->rights->facture->creer)
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
+			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		}
 		else
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
 
-// Bascule du statut d'un contact
+// Toggle the status of a contact
 else if ($action == 'swapstatut' && $user->rights->facture->creer)
 {
 	if ($object->fetch($id))
@@ -93,7 +93,7 @@ else if ($action == 'swapstatut' && $user->rights->facture->creer)
 	}
 }
 
-// Efface un contact
+// Deletes a contact
 else if ($action == 'deletecontact' && $user->rights->facture->creer)
 {
 	$object->fetch($id);
@@ -114,7 +114,9 @@ else if ($action == 'deletecontact' && $user->rights->facture->creer)
  * View
  */
 
-llxHeader('', $langs->trans("Bill"), "Facture");
+$title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('ContactsAddresses');
+$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -124,7 +126,7 @@ $userstatic=new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* View and edit mode                                                         */
 /*                                                                             */
 /* *************************************************************************** */
 
@@ -136,48 +138,59 @@ if ($id > 0 || ! empty($ref))
 
 		$head = facture_prepare_head($object);
 
+		$totalpaye = $object->getSommePaiement();
+		
 		dol_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'), 0, 'bill');
 
-		/*
-		 *   Facture synthese pour rappel
-		 */
-		print '<table class="border" width="100%">';
-
-		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-
-		// Ref
-		print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
-		print '<td colspan="3">';
-		$morehtmlref='';
-		$discount=new DiscountAbsolute($db);
-		$result=$discount->fetch(0,$object->id);
-		if ($result > 0)
-		{
-			$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
-		}
-		if ($result < 0)
-		{
-			dol_print_error('',$discount->error);
-		}
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
-		print '</td></tr>';
-
+		// Invoice content
+		
+		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	
+		$morehtmlref='<div class="refidno">';
 		// Ref customer
-		print '<tr><td width="20%">';
-        print '<table class="nobordernopadding" width="100%"><tr><td>';
-        print $langs->trans('RefCustomer');
-        print '</td>';
-        print '</tr></table>';
-        print '</td>';
-        print '<td colspan="5">';
-        print $object->ref_client;
-		print '</td></tr>';
-
-		// Customer
-		print "<tr><td>".$langs->trans("Company")."</td>";
-		print '<td colspan="3">'.$object->client->getNomUrl(1,'compta').'</td></tr>';
-		print "</table>";
-
+		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
+		$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+		// Thirdparty
+		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+		// Project
+		if (! empty($conf->projet->enabled))
+		{
+		    $langs->load("projects");
+		    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+		    if ($user->rights->facture->creer)
+		    {
+		        if ($action != 'classify')
+		            //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+		            $morehtmlref.=' : ';
+		        	if ($action == 'classify') {
+		                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+		                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+		                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+		                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+		                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		                $morehtmlref.='</form>';
+		            } else {
+		                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+		            }
+		    } else {
+		        if (! empty($object->fk_project)) {
+		            $proj = new Project($db);
+		            $proj->fetch($object->fk_project);
+		            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+		            $morehtmlref.=$proj->ref;
+		            $morehtmlref.='</a>';
+		        } else {
+		            $morehtmlref.='';
+		        }
+		    }
+		}
+		$morehtmlref.='</div>';
+	
+		$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
+	
+		dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0, '', '', 1);
+		
 		dol_fiche_end();
 
 		print '<br>';

@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=Sms
-SmsSetup=Sms setup
+SmsSetup=Sms beállítás
 SmsDesc=Ez az oldal lehetővé teszi, hogy meghatározza globals opciók SMS funkciók
 SmsCard=SMS-kártya
-AllSms=Minden SMS campains
+AllSms=Minden SMS kampány
 SmsTargets=Célok
 SmsRecipients=Célok
 SmsRecipient=Cél
@@ -38,10 +38,7 @@ SmsStatusNotSent=Nem küldött
 SmsSuccessfulySent=Sms helyesen küldött (a %s %s a)
 ErrorSmsRecipientIsEmpty=Számú cél üres
 WarningNoSmsAdded=Nincs új telefonszámot, amelyhez a tűztábla
-ConfirmValidSms=Ön megerősíti érvényesítése campain ez?
-ConfirmResetMailing=Figyelem, ha reinit hogy az SMS campain <b>%s,</b> akkor lehetővé teszi, hogy egy tömeges elküldésével még egyszer. Tényleg, mit wan tenni?
-ConfirmDeleteMailing=Ön megerősíti eltávolítása campain?
-NbOfRecipients=Célok száma
+ConfirmValidSms=Do you confirm validation of this campain?
 NbOfUniqueSms=Nb dof egyedi telefonszámok
 NbOfSms=Nbre a fon szám
 ThisIsATestMessage=Ez egy teszt üzenet
@@ -49,5 +46,6 @@ SendSms=SMS küldése
 SmsInfoCharRemain=Nb a fennmaradó karakterek
 SmsInfoNumero= (Nemzetközi formátum, azaz: 33899701761)
 DelayBeforeSending=Késleltetett küldés előtt (perc)
+SmsNoPossibleSenderFound=A küldő nem elérhető. Ellenőrizze az SMS szolgáltató beállításait.
 SmsNoPossibleRecipientFound=Nincs cél elérhető. Ellenőrizze beállítása az SMS szolgáltató.
 

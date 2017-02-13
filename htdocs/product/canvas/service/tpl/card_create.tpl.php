@@ -23,7 +23,7 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 
 <!-- BEGIN PHP TEMPLATE CREATE.TPL -->
 
-<?php print_fiche_titre($langs->trans("Service")); ?>
+<?php print load_fiche_titre($langs->trans("Service")); ?>
 
 <?php dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']); ?>
 
@@ -63,10 +63,7 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 <?php echo $object->duration_unit; ?>
 </td></tr>
 
-<tr><td><?php echo $langs->trans("Hidden"); ?></td>
-<td><?php echo $object->hidden; ?></td></tr>
-
-<tr><td valign="top"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
+<tr><td class="tdtop"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
 <?php echo $object->textarea_note; ?>
 </td></tr>
 </table>

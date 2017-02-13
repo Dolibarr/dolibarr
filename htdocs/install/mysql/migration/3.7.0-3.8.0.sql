@@ -9,19 +9,20 @@
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
 -- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
--- To restrict request to Mysql version x.y use -- VMYSQLx.y
--- To restrict request to Pgsql version x.y use -- VPGSQLx.y
+-- To restrict request to Mysql version x.y or more: -- VMYSQLx.y
+-- To restrict request to Pgsql version x.y or more: -- VPGSQLx.y
 -- To make pk to be auto increment (mysql):    VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- To make pk to be auto increment (postgres): VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
 -- To set a field as NULL:                     VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
--- To set a field as default NULL:             VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
--- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
--- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
+-- To set a field as DEFAULT NULL:             VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
+-- To delete orphelins:                        VMYSQL4.1 DELETE FROM llx_usergroup_user WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
+-- To delete orphelins:                        VPGSQL8.2 DELETE FROM llx_usergroup_user WHERE fk_user NOT IN (SELECT rowid from llx_user);
 
 
 UPDATE llx_facture_fourn set ref=rowid where ref IS NULL;
 ALTER TABLE llx_facture_fourn MODIFY COLUMN ref varchar(255) NOT NULL;
 
+ALTER TABLE llx_bank_url MODIFY COLUMN type varchar(24) NOT NULL;
 
 -- IVORY COST (id country=21)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (211, 21,  '0','0',0,0,0,0,'IVA Rate 0',1);
@@ -29,8 +30,8 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_typ
 -- Taiwan VAT Rates
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2131, 213, '5', '0', 'VAT 5%', 1);
 
-ALTER TABLE llx_societe_rib ADD COLUMN rum varchar(32) after default_rib;
-ALTER TABLE llx_societe_rib ADD COLUMN frstrecur varchar(16) default 'FRST' after rum;
+ALTER TABLE llx_societe_rib ADD COLUMN rum varchar(32) AFTER default_rib;
+ALTER TABLE llx_societe_rib ADD COLUMN frstrecur varchar(16) DEFAULT 'FRST' AFTER rum;
 
 ALTER TABLE llx_cronjob ADD COLUMN entity integer DEFAULT 0;
 ALTER TABLE llx_cronjob MODIFY COLUMN params text NULL;
@@ -44,16 +45,16 @@ create table llx_loan
   tms							timestamp,
   label							varchar(80) NOT NULL,
   fk_bank						integer,
-  capital						real     default 0 NOT NULL,
+  capital						real     DEFAULT 0 NOT NULL,
   datestart						date,
   dateend						date,
   nbterm						real,
   rate							double  NOT NULL,
   note_private                  text,
   note_public                   text,
-  capital_position				real     default 0,
+  capital_position				real     DEFAULT 0,
   date_position					date,
-  paid							smallint default 0 NOT NULL,
+  paid							smallint DEFAULT 0 NOT NULL,
   accountancy_account_capital	varchar(32),
   accountancy_account_insurance	varchar(32),
   accountancy_account_interest	varchar(32),
@@ -82,10 +83,10 @@ create table llx_payment_loan
 )ENGINE=innodb;
 
 ALTER TABLE llx_extrafields ADD COLUMN fieldrequired integer DEFAULT 0;
-ALTER TABLE llx_extrafields ADD COLUMN perms varchar(255) after fieldrequired;
-ALTER TABLE llx_extrafields ADD COLUMN list integer DEFAULT 0 after perms;
+ALTER TABLE llx_extrafields ADD COLUMN perms varchar(255) AFTER fieldrequired;
+ALTER TABLE llx_extrafields ADD COLUMN list integer DEFAULT 0 AFTER perms;
 
-ALTER TABLE llx_payment_salary ADD COLUMN salary real after datev;
+ALTER TABLE llx_payment_salary ADD COLUMN salary real AFTER datev;
 
 ALTER TABLE llx_payment_salary ADD INDEX idx_payment_salary_ref (num_payment);
 ALTER TABLE llx_payment_salary ADD INDEX idx_payment_salary_user (fk_user, entity);
@@ -97,7 +98,7 @@ ALTER TABLE llx_payment_salary ADD CONSTRAINT fk_payment_salary_user FOREIGN KEY
 
 
 UPDATE llx_projet_task_time SET task_datehour = task_date where task_datehour IS NULL;
-ALTER TABLE llx_projet_task_time ADD COLUMN task_date_withhour integer DEFAULT 0 after task_datehour;
+ALTER TABLE llx_projet_task_time ADD COLUMN task_date_withhour integer DEFAULT 0 AFTER task_datehour;
 
 ALTER TABLE llx_projet_task MODIFY COLUMN duration_effective real DEFAULT 0 NULL;
 ALTER TABLE llx_projet_task MODIFY COLUMN planned_workload real DEFAULT 0 NULL;
@@ -128,8 +129,8 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_supplier_price_expressio
 ALTER TABLE llx_product ADD COLUMN fk_price_expression integer DEFAULT NULL;
 ALTER TABLE llx_product_price ADD COLUMN fk_price_expression integer DEFAULT NULL;
 
-ALTER TABLE llx_product ADD COLUMN fifo double(24,8) after pmp;
-ALTER TABLE llx_product ADD COLUMN lifo double(24,8) after fifo;
+ALTER TABLE llx_product ADD COLUMN fifo double(24,8) AFTER pmp;
+ALTER TABLE llx_product ADD COLUMN lifo double(24,8) AFTER fifo;
 
   
 --create table for user conf of printing driver
@@ -147,8 +148,6 @@ CREATE TABLE llx_printing
  userid integer
 )ENGINE=innodb;
 
-ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_price_expression integer DEFAULT NULL;
-
 -- Add situation invoices
 ALTER TABLE llx_facture ADD COLUMN situation_cycle_ref smallint;
 ALTER TABLE llx_facture ADD COLUMN situation_counter smallint;
@@ -164,6 +163,8 @@ UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 A
 UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SMTPS_PW";
 UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_EMAIL_TLS";
 
+-- This option with this value is not compatible with 3.8. Value must be set to 'mutiselect', 'select2'...
+DELETE from llx_const where name = 'MAIN_USE_JQUERY_MULTISELECT' and value = '1';
 
 create table llx_bank_account_extrafields
 (
@@ -241,7 +242,7 @@ CREATE TABLE llx_expensereport (
   fk_user_cancel 	integer DEFAULT NULL,
   fk_statut			integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
   fk_c_paiement 	integer DEFAULT NULL,
-  paid 				smallint default 0 NOT NULL,
+  paid 				smallint DEFAULT 0 NOT NULL,
   note_public		text,
   note_private 		text,
   detail_refuse 	varchar(255) DEFAULT NULL,
@@ -327,15 +328,15 @@ ALTER TABLE llx_facture_fourn_det_extrafields ADD INDEX idx_facture_fourn_det_ex
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN special_code	 integer DEFAULT 0;
 ALTER TABLE llx_facture_fourn_det ADD COLUMN rang integer DEFAULT 0;
-ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_parent_line integer NULL after fk_facture_fourn;
+ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_parent_line integer NULL AFTER fk_facture_fourn;
 
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN special_code	 integer DEFAULT 0;
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN rang integer DEFAULT 0;
-ALTER TABLE llx_commande_fournisseurdet ADD COLUMN fk_parent_line integer NULL after fk_commande;
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN fk_parent_line integer NULL AFTER fk_commande;
 
 ALTER TABLE llx_projet ADD COLUMN date_close datetime DEFAULT NULL;
 ALTER TABLE llx_projet ADD COLUMN fk_user_close integer DEFAULT NULL;
-ALTER TABLE llx_projet ADD COLUMN fk_opp_status integer DEFAULT NULL after fk_statut;
+ALTER TABLE llx_projet ADD COLUMN fk_opp_status integer DEFAULT NULL AFTER fk_statut;
 ALTER TABLE llx_projet ADD COLUMN opp_amount double(24,8) DEFAULT NULL;
 
 
@@ -427,8 +428,8 @@ CREATE TABLE llx_askpricesupplierdet_extrafields (
 -- End Module AskPriceSupplier --
 
 
-ALTER TABLE llx_commande_fournisseur ADD COLUMN date_approve2 datetime after date_approve;
-ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_user_approve2 integer after fk_user_approve;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN date_approve2 datetime AFTER date_approve;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_user_approve2 integer AFTER fk_user_approve;
 
 ALTER TABLE llx_societe ADD COLUMN fk_incoterms integer;
 ALTER TABLE llx_societe ADD COLUMN location_incoterms varchar(255);
@@ -473,9 +474,9 @@ ALTER TABLE llx_societe_extrafields DROP INDEX idx_societe_extrafields;
 ALTER TABLE llx_societe_extrafields ADD UNIQUE INDEX uk_societe_extrafields (fk_object);
 
 -- Module Donation
-ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL after country;
+ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 AFTER country;
 ALTER TABLE llx_don CHANGE COLUMN fk_paiement fk_payment integer;
-ALTER TABLE llx_don ADD COLUMN paid smallint default 0 NOT NULL after fk_payment;
+ALTER TABLE llx_don ADD COLUMN paid smallint DEFAULT 0 NOT NULL AFTER fk_payment;
 ALTER TABLE llx_don CHANGE COLUMN fk_don_projet fk_projet integer NULL;
 ALTER TABLE llx_don CHANGE COLUMN fk_project fk_projet integer NULL;
 
@@ -566,7 +567,7 @@ create table llx_c_price_global_variable_updater
 )ENGINE=innodb;
 
 ALTER TABLE llx_adherent CHANGE COLUMN note note_private text DEFAULT NULL;
-ALTER TABLE llx_adherent ADD COLUMN note_public text DEFAULT NULL after note_private;
+ALTER TABLE llx_adherent ADD COLUMN note_public text DEFAULT NULL AFTER note_private;
 
 CREATE TABLE IF NOT EXISTS llx_propal_merge_pdf_product (
   rowid integer NOT NULL auto_increment PRIMARY KEY,
@@ -604,28 +605,28 @@ INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('M2','square
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('M3','cubic meter','m3', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('L','liter','l', 1);
 
-alter table llx_product add fk_unit integer default NULL;
+alter table llx_product add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
-alter table llx_facturedet_rec add fk_unit integer default NULL;
+alter table llx_facturedet_rec add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_facturedet_rec ADD CONSTRAINT fk_facturedet_rec_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
-alter table llx_facturedet add fk_unit integer default NULL;
+alter table llx_facturedet add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_facturedet ADD CONSTRAINT fk_facturedet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
-alter table llx_propaldet add fk_unit integer default NULL;
+alter table llx_propaldet add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_propaldet ADD CONSTRAINT fk_propaldet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
-alter table llx_commandedet add fk_unit integer default NULL;
+alter table llx_commandedet add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
-alter table llx_contratdet add fk_unit integer default NULL;
+alter table llx_contratdet add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_contratdet ADD CONSTRAINT fk_contratdet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
-alter table llx_commande_fournisseurdet add fk_unit integer default NULL;
+alter table llx_commande_fournisseurdet add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_commande_fournisseurdet ADD CONSTRAINT fk_commande_fournisseurdet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
-alter table llx_facture_fourn_det add fk_unit integer default NULL;
+alter table llx_facture_fourn_det add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_facture_fourn_det ADD CONSTRAINT fk_facture_fourn_det_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
 
@@ -674,7 +675,8 @@ ALTER TABLE llx_c_stcomm ADD COLUMN picto varchar(128);
 INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('BILL_SUPPLIER_UNVALIDATE','Supplier invoice unvalidated','Executed when a supplier invoice status is set back to draft','invoice_supplier',15);
 
 
-ALTER TABLE llx_holiday_users DROP PRIMARY KEY;
+--VMYSQL4.1 ALTER TABLE llx_holiday_users DROP PRIMARY KEY;
+--VPGSQL8.2 ALTER TABLE llx_holiday_users DROP CONSTRAINT llx_holiday_users_pkey;
 
 DROP TABLE llx_holiday_types;
 
@@ -722,10 +724,90 @@ INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (
 INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (3,'PROPO'  ,'Proposal',     30, 40,1);
 INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (4,'NEGO'   ,'Negotiation',  40, 60,1);
 INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (5,'PENDING','Pending',      50, 50,0);
-INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (6,'WIN'    ,'Won',          60, 100,1);
+INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (6,'WON'    ,'Won',          60, 100,1);
 INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (7,'LOST'   ,'Lost',         70, 0,1);
 
 
 DELETE FROM llx_c_action_trigger where code = 'PROPAL_CLASSIFYBILLED';
 DELETE FROM llx_c_action_trigger where code = 'FICHINTER_CLASSIFYBILLED';
+
+-- Spain provinces to ISO codes
+UPDATE llx_c_departements SET code_departement='VI' WHERE ncc='ALAVA' AND fk_region=419;
+UPDATE llx_c_departements SET code_departement='AB' WHERE ncc='ALBACETE' AND fk_region=404;
+UPDATE llx_c_departements SET code_departement='A' WHERE ncc='ALICANTE' AND fk_region=411;
+UPDATE llx_c_departements SET code_departement='AL' WHERE ncc='ALMERIA' AND fk_region=401;
+UPDATE llx_c_departements SET code_departement='AV' WHERE ncc='AVILA' AND fk_region=403;
+UPDATE llx_c_departements SET code_departement='BA' WHERE ncc='BADAJOZ' AND fk_region=412;
+UPDATE llx_c_departements SET code_departement='PM' WHERE ncc='ISLAS BALEARES' AND fk_region=414;
+UPDATE llx_c_departements SET code_departement='B' WHERE ncc='BARCELONA' AND fk_region=406;
+UPDATE llx_c_departements SET code_departement='BU' WHERE ncc='BURGOS' AND fk_region=403;
+UPDATE llx_c_departements SET code_departement='CC' WHERE ncc='CACERES' AND fk_region=412;
+UPDATE llx_c_departements SET code_departement='CA' WHERE ncc='CADIZ' AND fk_region=401;
+UPDATE llx_c_departements SET code_departement='CS' WHERE ncc='CASTELLON' AND fk_region=411;
+UPDATE llx_c_departements SET code_departement='CR' WHERE ncc='CIUDAD REAL' AND fk_region=404;
+UPDATE llx_c_departements SET code_departement='CO' WHERE ncc='CORDOBA' AND fk_region=401;
+UPDATE llx_c_departements SET code_departement='C' WHERE ncc='LA CORUÑA' AND fk_region=413;
+UPDATE llx_c_departements SET code_departement='CU' WHERE ncc='CUENCA' AND fk_region=404;
+UPDATE llx_c_departements SET code_departement='GI' WHERE ncc='GERONA' AND fk_region=406;
+UPDATE llx_c_departements SET code_departement='GR' WHERE ncc='GRANADA' AND fk_region=401;
+UPDATE llx_c_departements SET code_departement='GU' WHERE ncc='GUADALAJARA' AND fk_region=404;
+UPDATE llx_c_departements SET code_departement='SS' WHERE ncc='GUIPUZCOA' AND fk_region=419;
+UPDATE llx_c_departements SET code_departement='H' WHERE ncc='HUELVA' AND fk_region=401;
+UPDATE llx_c_departements SET code_departement='HU' WHERE ncc='HUESCA' AND fk_region=402;
+UPDATE llx_c_departements SET code_departement='J' WHERE ncc='JAEN' AND fk_region=401;
+UPDATE llx_c_departements SET code_departement='LE' WHERE ncc='LEON' AND fk_region=403;
+UPDATE llx_c_departements SET code_departement='L' WHERE ncc='LERIDA' AND fk_region=406;
+UPDATE llx_c_departements SET code_departement='LO' WHERE ncc='LA RIOJA' AND fk_region=415;
+UPDATE llx_c_departements SET code_departement='LU' WHERE ncc='LUGO' AND fk_region=413;
+UPDATE llx_c_departements SET code_departement='M' WHERE ncc='MADRID' AND fk_region=416;
+UPDATE llx_c_departements SET code_departement='MA' WHERE ncc='MALAGA' AND fk_region=401;
+UPDATE llx_c_departements SET code_departement='MU' WHERE ncc='MURCIA' AND fk_region=417;
+UPDATE llx_c_departements SET code_departement='NA' WHERE ncc='NAVARRA' AND fk_region=408;
+UPDATE llx_c_departements SET code_departement='OR' WHERE ncc='ORENSE' AND fk_region=413;
+UPDATE llx_c_departements SET code_departement='VI' WHERE ncc='ALAVA' AND fk_region=419;
+UPDATE llx_c_departements SET code_departement='O' WHERE ncc='ASTURIAS' AND fk_region=418;
+UPDATE llx_c_departements SET code_departement='P' WHERE ncc='PALENCIA' AND fk_region=403;
+UPDATE llx_c_departements SET code_departement='GC' WHERE ncc='LAS PALMAS' AND fk_region=405;
+UPDATE llx_c_departements SET code_departement='PO' WHERE ncc='PONTEVEDRA' AND fk_region=413;
+UPDATE llx_c_departements SET code_departement='SA' WHERE ncc='SALAMANCA' AND fk_region=403;
+UPDATE llx_c_departements SET code_departement='TF' WHERE ncc='STA. CRUZ DE TENERIFE' AND fk_region=405;
+UPDATE llx_c_departements SET code_departement='S' WHERE ncc='CANTABRIA' AND fk_region=410;
+UPDATE llx_c_departements SET code_departement='SG' WHERE ncc='SEGOVIA' AND fk_region=403;
+UPDATE llx_c_departements SET code_departement='SE' WHERE ncc='SEVILLA' AND fk_region=401;
+UPDATE llx_c_departements SET code_departement='SO' WHERE ncc='SORIA' AND fk_region=403;
+UPDATE llx_c_departements SET code_departement='T' WHERE ncc='TARRAGONA' AND fk_region=406;
+UPDATE llx_c_departements SET code_departement='TE' WHERE ncc='TERUEL' AND fk_region=402;
+UPDATE llx_c_departements SET code_departement='TO' WHERE ncc='TOLEDO' AND fk_region=404;
+UPDATE llx_c_departements SET code_departement='V' WHERE ncc='VALENCIA' AND fk_region=411;
+UPDATE llx_c_departements SET code_departement='VA' WHERE ncc='VALLADOLID' AND fk_region=403;
+UPDATE llx_c_departements SET code_departement='BI' WHERE ncc='VIZCAYA' AND fk_region=419;
+UPDATE llx_c_departements SET code_departement='ZA' WHERE ncc='ZAMORA' AND fk_region=403;
+UPDATE llx_c_departements SET code_departement='Z' WHERE ncc='ZARAGOZA' AND fk_region=402;
+UPDATE llx_c_departements SET code_departement='VI' WHERE ncc='ALAVA' AND fk_region=419;
+UPDATE llx_c_departements SET code_departement='CE' WHERE ncc='CEUTA' AND fk_region=407;
+UPDATE llx_c_departements SET code_departement='ML' WHERE ncc='MELILLA' AND fk_region=409;
+DELETE FROM llx_c_departements WHERE ncc='OTROS' AND fk_region=420;
+DELETE FROM llx_c_regions WHERE code_region=420 and fk_pays=4;
+
+ALTER TABLE llx_c_paiement MODIFY COLUMN libelle varchar(62);
+
+ALTER TABLE llx_societe_remise_except MODIFY COLUMN description text NOT NULL;
+
+-- Fix bad data
+update llx_opensurvey_sondage set format = 'D' where format = 'D+';
+update llx_opensurvey_sondage set format = 'A' where format = 'A+';
+
+
+--Deal with holidays_user that do not have rowid
+-- Disabled: too dangerous patch. rowid is a primary key. How is it possible to have no rowid ?
+--CREATE TABLE llx_holiday_users_tmp
+--(
+--	rowid       integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+--	fk_user     integer NOT NULL,
+--	fk_type     integer NOT NULL,
+--	nb_holiday  real NOT NULL DEFAULT '0'
+--) ENGINE=innodb;
+--INSERT INTO llx_holiday_users_tmp(fk_user,fk_type,nb_holiday) SELECT fk_user,fk_type,nb_holiday FROM llx_holiday_users;
+--DROP TABLE llx_holiday_users;
+--ALTER TABLE llx_holiday_users_tmp RENAME TO llx_holiday_users;
 

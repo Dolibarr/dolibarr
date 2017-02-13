@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - agenda
+ToUserOfGroup=À n'importe quel utilisateur du groupe
+OrderDeliveredInDolibarr=Commande %s classée Délivrée
+ShippingSentByEMail=Bon expédition %s envoyé par EMail
+InterventionSentByEMail=Intervention %s envoyée par EMail
+ProposalDeleted=Proposition supprimée
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pour restreindre aux écévements associés au projet <b>PROJECT_ID</b>.
+AgendaShowBirthdayEvents=Afficher les dates d'anniversaire des contacts
+AgendaHideBirthdayEvents=Cacher les dates d'anniversaire des contacts
+ExportDataset_event1=Liste évênements de l'agenda
+AgendaExtNb=Calendrier no %s
+VisibleTimeRange=Plage d'heures visibles
+VisibleDaysRange=Plage de jours visibles
+CloneAction=Dupliquer événement
+RepeatEvent=Répéter événement
+DateStartPlusOne=Date de début +1 heure

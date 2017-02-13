@@ -126,14 +126,16 @@ if ($action == 'activate_encryptdbpassconf')
 	$result = encodedecode_dbpassconf(1);
 	if ($result > 0)
 	{
-		// database value not required
+	    sleep(3);  // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
+	    
+	    // database value not required
 		//dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
 		header("Location: security.php");
 		exit;
 	}
 	else
 	{
-		setEventMessage($langs->trans('InstrucToEncodePass',dol_encode($dolibarr_main_db_pass)),'warnings');	
+		setEventMessages($langs->trans('InstrucToEncodePass',dol_encode($dolibarr_main_db_pass)), null, 'warnings');	
 	}
 }
 else if ($action == 'disable_encryptdbpassconf')
@@ -141,6 +143,8 @@ else if ($action == 'disable_encryptdbpassconf')
 	$result = encodedecode_dbpassconf(0);
 	if ($result > 0)
 	{
+	    sleep(3);  // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
+	    
 		// database value not required
 		//dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED",$conf->entity);
 		header("Location: security.php");
@@ -148,7 +152,7 @@ else if ($action == 'disable_encryptdbpassconf')
 	}
 	else
 	{
-		setEventMessage($langs->trans('InstrucToClearPass',$dolibarr_main_db_pass),'warnings');
+		setEventMessages($langs->trans('InstrucToClearPass',$dolibarr_main_db_pass), null, 'warnings');
 	}
 }
 
@@ -183,9 +187,10 @@ if ($action == 'maj_pattern')
  */
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Passwords"));
+$wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+llxHeader('',$langs->trans("Passwords"),$wikihelp);
 
-print_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
+print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
 print $langs->trans("GeneratedPasswordDesc")."<br>\n";
 print "<br>\n";
@@ -217,7 +222,7 @@ if (is_resource($handle))
     {
         if (preg_match('/(modGeneratePass[a-z]+)\.class\.php/i',$file,$reg))
         {
-            // Chargement de la classe de numerotation
+            // Charging the numbering class
             $classname = $reg[1];
             require_once $dir.'/'.$file;
 
@@ -288,6 +293,7 @@ $var=!$var;
 	$this->NbRepeat = $tabConf[4];
 	$this->WithoutAmbi = $tabConf[5];
 	*/
+	print '<br>';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="3"> '.$langs->trans("PasswordPatternDesc").'</td>';
@@ -328,12 +334,16 @@ $var=!$var;
 	print '<td>' . $langs->trans("NoAmbiCaracAutoGeneration")."</td>";
 	print '<td colspan="2"><input type="checkbox" id="NoAmbiCaracAutoGeneration" '.($tabConf[5] ? "checked" : "").' min="0"> <span id="textcheckbox">'.($tabConf[5] ? $langs->trans("Activated") : $langs->trans("Disabled")).'</span></td>';
 	print '</tr>';
-
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
-	print '<td colspan="2"></td><td width="103" align="center"><a id="linkChangePattern">'.$langs->trans("Save").'</a></td>';
-	print '</tr>';
+	
 	print '</table>';
+
+	print '<br>';
+	print '<table align="right">';
+	print '<tr><td>';
+	print '<a class="button" id="linkChangePattern">'.$langs->trans("Save").'</a>';
+	print '</td></tr>';
+	print '</table>';
+	print '<br><br>';
 
 	print '<script type="text/javascript">';
 	print '	function getStringArg(){';
@@ -385,7 +395,7 @@ $var=!$var;
 // Cryptage mot de passe
 print '<br>';
 $var=true;
-print "<form method=\"post\" action=\"security.php\">";
+print "<form method=\"post\" action=\"" . $_SERVER["PHP_SELF"] . "\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
 

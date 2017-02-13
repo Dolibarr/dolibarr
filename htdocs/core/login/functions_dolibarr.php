@@ -91,7 +91,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				if (! $passok)
 				{
 					if ((! $passcrypted || $passtyped)
-						&& ($passtyped == $passclear))
+						&& ($passclear && ($passtyped == $passclear)))
 					{
 						$passok=true;
 						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - found pass in database");
@@ -106,7 +106,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				else
 				{
 					dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko bad password for '".$usertotest."'");
-					sleep(1);
+					sleep(2);      // Anti brut force protection
 					$langs->load('main');
 					$langs->load('errors');
 					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");

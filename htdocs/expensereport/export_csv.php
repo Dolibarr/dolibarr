@@ -69,7 +69,7 @@ if($num < 1) {
 
 llxHeader();
 
-print_fiche_titre($langs->trans("ExportTripCSV"));
+print load_fiche_titre($langs->trans("ExportTripCSV"));
 
 print '<div class="tabBar">';
 
@@ -128,6 +128,7 @@ if (isset($_POST['action']))
 
 		$sql = "SELECT d.rowid, d.ref, d.total_ht, d.total_tva, d.total_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
+        $sql.= ' AND d.entity IN ('.getEntity('expensereport', 1).')';
 		$sql.= " ORDER BY d.rowid";
 
 		$result = $db->query($sql);

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Jean-François Ferry <jfefe@aternatik.fr>
+ * Copyright (C) 2015      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,12 +48,14 @@ class modResource extends DolibarrModules
 		// Use a free id here
 		// (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 63000;
+
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'resource';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "projects";
+		$this->module_position = 20;
 		// Module label (no space allowed)
 		// used if translation string 'ModuleXXXName' not found
 		// (where XXX is value of numeric property 'numero' of module)
@@ -106,7 +109,7 @@ class modResource extends DolibarrModules
 
 		// Config pages. Put here list of php pages
 		// stored into resource/admin directory, used to setup module.
-		//$this->config_page_url = array("admin_resource.php@resource");
+		$this->config_page_url = array("resource.php");
 
 		// Dependencies
 		// List of modules id that must be enabled if this module is enabled
@@ -116,7 +119,7 @@ class modResource extends DolibarrModules
 		// Minimum version of PHP required by module
 		$this->phpmin = array(5, 3);
 
-		$this->langfiles = array("resource@resource"); // langfiles@resource
+		$this->langfiles = array("resource"); // langfiles@resource
 		// Constants
 		// List of particular constants to add when module is enabled
 		// (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -150,10 +153,6 @@ class modResource extends DolibarrModules
 		// 'contact'			to add a tab in contact view
 		// 'categories_x'		to add a tab in category view
 		// (reresource 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
-
-		$this->tabs = array(
-//			'thirdparty:+resources:Resources:resource:$user->rights->resource->read:/resource/element_resource.php?element=societe&element_id=__ID__'
-		);
 
 		// Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
@@ -191,10 +190,15 @@ class modResource extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 63004;
-		$this->rights[$r][1] = 'Link resources';
+		$this->rights[$r][1] = 'Link resources to agenda events';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'link';
 		$r++;
+
+
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
 
 
 		// Add here list of permission defined by
@@ -205,7 +209,7 @@ class modResource extends DolibarrModules
 		//// Permission label
 		//$this->rights[$r][1] = 'Permision label';
 		//// Permission by default for new user (0/1)
-		//$this->rights[$r][3] = 1;
+		//$this->rights[$r][3] = 0;
 		//// In php code, permission will be checked by test
 		//// if ($user->rights->permkey->level1->level2)
 		//$this->rights[$r][4] = 'level1';
@@ -242,6 +246,21 @@ class modResource extends DolibarrModules
 			'url'=> '/resource/add.php',
 			'langs'=> 'resource',
 			'position'=> 101,
+			'enabled'=> '1',
+			'perms'=> '$user->rights->resource->read',
+			'target'=> '',
+			'user'=> 0
+		);
+
+		$this->menu[$r++]=array(
+			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'type'=> 'left', // Toujours un menu gauche
+			'titre'=> 'List',
+			'mainmenu'=> 'tools',
+			'leftmenu'=> '', // On n'indique rien ici car on ne souhaite pas intégrer de sous-menus à ce menu
+			'url'=> '/resource/list.php',
+			'langs'=> 'resource',
+			'position'=> 102,
 			'enabled'=> '1',
 			'perms'=> '$user->rights->resource->read',
 			'target'=> '',

@@ -28,13 +28,23 @@ class LogHandler
 	/**
 	 * Content of the info tooltip.
 	 *
-	 * @return false|string
+	 * @return string
 	 */
 	public function getInfo()
 	{
-		return false;
+		return '';
 	}
 
+	/**
+	 * Return warning if something is wrong with logger
+	 *
+	 * @return string
+	 */
+	public function getWarning()
+	{
+		return '';
+	}
+	
 	/**
 	 * Version of the module ('x.y.z' or 'dolibarr' or 'experimental' or 'development')
 	 *

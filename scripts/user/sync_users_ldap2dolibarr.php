@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /**
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
@@ -48,7 +48,7 @@ $version=DOL_VERSION;
 $error=0;
 $forcecommit=0;
 $excludeuser=array();
-
+$confirmed=0;
 
 /*
  * Main
@@ -85,7 +85,7 @@ $required_fields = array(
 $required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
 
 if (! isset($argv[1])) {
-	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...]\n";
+	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...] [-y]\n";
     exit(-1);
 }
 
@@ -94,6 +94,7 @@ foreach($argv as $key => $val)
 	if ($val == 'commitiferror') $forcecommit=1;
 	if (preg_match('/--server=([^\s]+)$/',$val,$reg)) $conf->global->LDAP_SERVER_HOST=$reg[1];
 	if (preg_match('/--excludeuser=([^\s]+)$/',$val,$reg)) $excludeuser=explode(',',$reg[1]);
+	if (preg_match('/-y$/',$val,$reg)) $confirmed=1;
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
@@ -105,7 +106,8 @@ print "port=".$conf->global->LDAP_SERVER_PORT."\n";
 print "login=".$conf->global->LDAP_ADMIN_DN."\n";
 print "pass=".preg_replace('/./i','*',$conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=".$conf->global->LDAP_USER_DN."\n";
-print 'Filter=('.$conf->global->LDAP_KEY_USERS.'=*)'."\n";
+if (! empty($conf->global->LDAP_FILTER_CONNECTION)) print 'Filter=('.$conf->global->LDAP_FILTER_CONNECTION.')'."\n";	// Note: filter is defined into function getRecords
+else print 'Filter=('.$conf->global->LDAP_KEY_USERS.'=*)'."\n";
 print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
@@ -118,9 +120,11 @@ print "excludeuser=".join(',',$excludeuser)."\n";
 print "Mapped LDAP fields=".join(',',$required_fields)."\n";
 print "\n";
 
-print "Hit Enter to continue or CTRL+C to stop...\n";
-$input = trim(fgets(STDIN));
-
+if (! $confirmed)
+{
+	print "Hit Enter to continue or CTRL+C to stop...\n";
+	$input = trim(fgets(STDIN));
+}
 
 if (empty($conf->global->LDAP_USER_DN))
 {
@@ -174,7 +178,7 @@ if ($result >= 0)
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_SYNCHRO_ACTIVE=0;
 
-	$ldaprecords = $ldap->getRecords('*',$conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 0);
+	$ldaprecords = $ldap->getRecords('*',$conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 'user');	// Fiter on 'user' filter param
 	if (is_array($ldaprecords))
 	{
 		$db->begin();

@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - products
+ProductRef=Référence produit
+ProductLabel=Désignation du produit
+ProductServiceCard=Carte du produits/services
+ProductId=Identification du produit/service
+ProductOrService=Produit et service
+ProductsAndServices=Produits et services
+ProductsOrServices=Produits ou services
+ProductsOnSell=Produit à la vente ou à l'achat
+ProductsNotOnSell=Produit non destiné à la vente et non à l'achat
+ServicesOnSell=Produit à la vente ou à l'achat
+ServicesNotOnSell=Les services non destinés à la vente
+CardProduct0=Carte du produit
+CardProduct1=Carte du service
+OnSell=À vendre
+OnBuy=À acheter
+NotOnSell=Pas à vendre
+ProductStatusOnSell=À vendre
+ProductStatusNotOnSell=Pas à vendre
+ProductStatusOnSellShort=À vendre
+ProductStatusNotOnSellShort=Pas à vendre
+ProductStatusOnBuy=À acheter
+ProductStatusNotOnBuy=Pas à acheter
+ProductStatusOnBuyShort=À acheter
+ProductStatusNotOnBuyShort=Pas à acheter
+ContractStatusClosed=Fermées
+PriceNumeric=Numéro

@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2015      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,19 +33,22 @@
  */
 function facture_prepare_head($object)
 {
-	global $langs, $conf;
+	global $db, $langs, $conf;
+	
 	$h = 0;
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$object->id;
-	$head[$h][1] = $langs->trans('CardBill');
+	$head[$h][1] = $langs->trans('Card');
 	$head[$h][2] = 'compta';
 	$h++;
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.$object->id;
+	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+	    $head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
+		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
 		$head[$h][2] = 'contact';
 		$h++;
 	}
@@ -60,8 +64,20 @@ function facture_prepare_head($object)
 	//if ($fac->mode_reglement_code == 'PRE')
 	if (! empty($conf->prelevement->enabled))
 	{
+	    $nbStandingOrders=0;
+	    $sql = "SELECT COUNT(pfd.rowid) as nb";
+	    $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+	    $sql .= " WHERE pfd.fk_facture = ".$object->id;
+        $resql=$db->query($sql);
+        if ($resql) 
+        {
+            $obj=$db->fetch_object($resql);
+            if ($obj) $nbStandingOrders = $obj->nb;
+        }
+        else dol_print_error($db);
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id;
 		$head[$h][1] = $langs->trans('StandingOrders');
+		if ($nbStandingOrders > 0) $head[$h][1].= ' <span class="badge">'.$nbStandingOrders.'</span>';
 		$head[$h][2] = 'standingorders';
 		$h++;
 	}
@@ -85,11 +101,13 @@ function facture_prepare_head($object)
     }
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/document.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -118,6 +136,11 @@ function invoice_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT.'/admin/facture.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/payment.php';
+	$head[$h][1] = $langs->trans("Payments");
+	$head[$h][2] = 'payment';
 	$h++;
 
 	// Show more tabs from modules

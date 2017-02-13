@@ -14,6 +14,5 @@ BehaviourOnClick=Behaviour when a URL is clicked
 CreateBookmark=ブックマークを作成します。
 SetHereATitleForLink=ブックマークのタイトルを設定する
 UseAnExternalHttpLinkOrRelativeDolibarrLink=外部のhttp URLまたは相対DolibarrのURLを使用して、
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=リンクで開いたページは、現在または新しいウィンドウに表示される必要がある場合に選択します。
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=ブックマークの管理
-ListOfBookmarks=ブックマークのリスト

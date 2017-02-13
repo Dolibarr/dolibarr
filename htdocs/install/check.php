@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2004-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2013-2014	Juanjo Menent			<jmenent@2byte.es>
+/* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,11 @@
  */
 include_once 'inc.php';
 
+global $langs;
+
 $err = 0;
 $allowinstall = 0;
-$allowupgrade = 0;
+$allowupgrade = false;
 $checksok = 1;
 
 $setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):$langs->getDefaultLang();
@@ -42,7 +44,10 @@ $langs->load("install");
 $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
-if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
+if (@file_exists($forcedfile)) {
+	$useforcedwizard = true;
+	include_once $forcedfile;
+}
 
 dolibarr_install_syslog("--- check: Dolibarr install/upgrade process started");
 
@@ -71,14 +76,16 @@ if (! empty($useragent))
 
 
 // Check PHP version
-if (versioncompare(versionphparray(),array(5,2,3)) < 0)        // Minimum to use (error if lower)
+$arrayphpminversionerror = array(5,3,0);
+$arrayphpminversionwarning = array(5,3,0);
+if (versioncompare(versionphparray(),$arrayphpminversionerror) < 0)        // Minimum to use (error if lower)
 {
-	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'5.2.3');
+	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 	$checksok=0;	// 0=error, 1=warning
 }
-else if (versioncompare(versionphparray(),array(5,3,0)) < 0)    // Minimum supported (warning if lower)
+else if (versioncompare(versionphparray(),$arrayphpminversionwarning) < 0)    // Minimum supported (warning if lower)
 {
-    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'5.3.0');
+    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",versiontostring($arrayphpminversionwarning));
     $checksok=0;	// 0=error, 1=warning
 }
 else
@@ -115,7 +122,7 @@ else
 }
 
 
-// Check if GD supported
+// Check if GD supported (we need GD for image conversion)
 if (! function_exists("imagecreate"))
 {
 	$langs->load("errors");
@@ -125,6 +132,19 @@ if (! function_exists("imagecreate"))
 else
 {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportGD")."<br>\n";
+}
+
+
+// Check if Curl supported
+if (! function_exists("curl_init"))
+{
+    $langs->load("errors");
+    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportCurl")."<br>\n";
+    // $checksok=0;		// If image ko, just warning. So check must still be 1 (otherwise no way to install)
+}
+else
+{
+    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportCurl")."<br>\n";
 }
 
 
@@ -179,11 +199,11 @@ if (is_readable($conffile) && filesize($conffile) > 8)
 	if ($databaseok)
 	{
 		// Already installed for all parts (config and database). We can propose upgrade.
-		$allowupgrade=1;
+		$allowupgrade=true;
 	}
 	else
 	{
-		$allowupgrade=0;
+		$allowupgrade=false;
 	}
 }
 else
@@ -214,7 +234,7 @@ else
 	}
 
 	// First install, we can't upgrade
-	$allowupgrade=0;
+	$allowupgrade=false;
 }
 
 
@@ -380,6 +400,7 @@ else
 			$allowupgrade=false;
 		}
 		if (defined("MAIN_NOT_INSTALLED")) $allowupgrade=false;
+		if (GETPOST('allowupgrade')) $allowupgrade=true;
 		$migrationscript=array(	array('from'=>'3.0.0', 'to'=>'3.1.0'),
 								array('from'=>'3.1.0', 'to'=>'3.2.0'),
 								array('from'=>'3.2.0', 'to'=>'3.3.0'),
@@ -387,7 +408,11 @@ else
 								array('from'=>'3.4.0', 'to'=>'3.5.0'),
 								array('from'=>'3.5.0', 'to'=>'3.6.0'),
 								array('from'=>'3.6.0', 'to'=>'3.7.0'),
-								array('from'=>'3.7.0', 'to'=>'3.8.0')
+								array('from'=>'3.7.0', 'to'=>'3.8.0'),
+		                        array('from'=>'3.8.0', 'to'=>'3.9.0'),
+		                        array('from'=>'3.9.0', 'to'=>'4.0.0'),
+		                        array('from'=>'4.0.0', 'to'=>'5.0.0'),
+		                        array('from'=>'5.0.0', 'to'=>'6.0.0')
 		);
 
 		$count=0;
@@ -532,5 +557,5 @@ $(".runupgrade").click(function() {
 </script>';
 
 dolibarr_install_syslog("--- check: end");
-pFooter(true);	// Never display next button
+pFooter(1);	// Never display next button
 

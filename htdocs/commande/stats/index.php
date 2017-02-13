@@ -28,6 +28,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
@@ -36,6 +37,8 @@ $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 $mode=GETPOST("mode")?GETPOST("mode"):'customer';
 if ($mode == 'customer' && ! $user->rights->commande->lire) accessforbidden();
 if ($mode == 'supplier' && ! $user->rights->fournisseur->commande->lire) accessforbidden();
+
+$object_status=GETPOST('object_status');
 
 $userid=GETPOST('userid','int');
 $socid=GETPOST('socid','int');
@@ -63,8 +66,7 @@ $langs->load('suppliers');
  */
 
 $form=new Form($db);
-
-llxHeader();
+$formorder=new FormOrder($db);
 
 if ($mode == 'customer')
 {
@@ -77,14 +79,26 @@ if ($mode == 'supplier')
     $dir=$conf->fournisseur->dir_output.'/commande/temp';
 }
 
-print_fiche_titre($title,'','title_commercial.png');
+llxHeader('', $title);
+
+print load_fiche_titre($title,'','title_commercial.png');
 
 dol_mkdir($dir);
 
 $stats = new CommandeStats($db, $socid, $mode, ($userid>0?$userid:0));
+if ($mode == 'customer')
+{
+    if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND c.fk_statut IN ('.$object_status.')';
+}
+if ($mode == 'supplier')
+{
+    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND c.fk_statut IN ('.$object_status.')';
+}
+
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
+
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
@@ -245,65 +259,91 @@ dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-//if (empty($socid))
-//{
-	// Show filter box
-	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="mode" value="'.$mode.'">';
-	print '<table class="border" width="100%">';
-	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
-	// Company
-	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
-	if ($mode == 'customer') $filter='s.client in (1,2,3)';
-	if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print $form->select_company($socid,'socid',$filter,1);
-	print '</td></tr>';
-	// User
-	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
-	print $form->select_dolusers($userid,'userid',1);
-	print '</td></tr>';
-	// Year
-	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
-	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
-	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
-	arsort($arrayyears);
-	print $form->selectarray('year',$arrayyears,$year,0);
-	print '</td></tr>';
-	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
-	print '</table>';
-	print '</form>';
-	print '<br><br>';
-//}
+// Show filter box
+print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+// Company
+print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
+if ($mode == 'customer') $filter='s.client in (1,2,3)';
+if ($mode == 'supplier') $filter='s.fournisseur = 1';
+print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
+print '</td></tr>';
+// User
+print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
+print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+// Status
+print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
+if ($mode == 'customer')
+{
+    $liststatus=array(
+        Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraft"),
+        Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
+        Commande::STATUS_ACCEPTED=>$langs->trans("StatusOrderSent"),
+        Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
+        Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceled")
+    );
+    print $form->selectarray('object_status', $liststatus, GETPOST('object_status'), -4);
+}
+if ($mode == 'supplier')
+{
+    $formorder->selectSupplierOrderStatus((strstr($object_status, ',')?-1:$object_status), 0, 'object_status');
+}
+print '</td></tr>';
+// Year
+print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
+if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
+if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
+arsort($arrayyears);
+print $form->selectarray('year',$arrayyears,$year,0);
+print '</td></tr>';
+print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+print '</table>';
+print '</form>';
+print '<br><br>';
 
-print '<table class="border" width="100%">';
-print '<tr height="24">';
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="center">'.$langs->trans("NbOfOrders").'</td>';
-print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
+print '<td align="right">'.$langs->trans("NbOfOrders").'</td>';
+print '<td align="right">%</td>';
+print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="right">%</td>';
+print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
+print '<td align="right">%</td>';
 print '</tr>';
 
 $oldyear=0;
+$var=true;
 foreach ($data as $val)
 {
 	$year = $val['year'];
 	while (! empty($year) && $oldyear > $year+1)
 	{ // If we have empty year
-	$oldyear--;
-	print '<tr height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
-
-	print '<td align="right">0</td>';
-	print '<td align="right">0</td>';
-	print '<td align="right">0</td>';
-	print '</tr>';
+		$oldyear--;
+		$var=!$var;
+		print '<tr '.$bc[$var].' height="24">';
+		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
+		print '<td align="right">0</td>';
+		print '<td align="right"></td>';
+		print '<td align="right">0</td>';
+		print '<td align="right"></td>';
+		print '<td align="right">0</td>';
+		print '<td align="right"></td>';
+		print '</tr>';
 	}
 
-	print '<tr height="24">';
+	$var=!$var;
+	print '<tr '.$bc[$var].' height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
+	print '<td align="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
 	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+	print '<td align="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['total_diff']).'</td>';
 	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+	print '<td align="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['avg_diff']).'</td>';
 	print '</tr>';
 	$oldyear=$year;
 }

@@ -33,12 +33,10 @@ class Task extends CommonObject
 {
     public $element='project_task';		//!< Id that identify managed objects
     public $table_element='projet_task';	//!< Name of table without prefix where object is stored
-
-    var $id;
-
-	var $ref;
-
-    var $fk_project;
+    public $fk_element='fk_task';
+    public $picto = 'task';
+    protected $childtables=array('projet_task_time');    // To test if we can delete object
+    
     var $fk_task_parent;
     var $label;
     var $description;
@@ -48,14 +46,21 @@ class Task extends CommonObject
     var $date_start;
     var $date_end;
     var $progress;
+    var $fk_statut;
     var $priority;
     var $fk_user_creat;
     var $fk_user_valid;
-    var $statut;
-    var $note_private;
-    var $note_public;
 	var $rang;
 
+	var $timespent_min_date;
+	var $timespent_max_date;
+	var $timespent_total_duration;
+	var $timespent_total_amount;
+	var $timespent_nblinesnull;
+	var $timespent_nblines;
+	// For detail of lines of timespent record, there is the property ->lines in common
+	
+	// Var used to call method addTimeSpent(). Bad practice.
     var $timespent_id;
     var $timespent_duration;
     var $timespent_old_duration;
@@ -64,6 +69,8 @@ class Task extends CommonObject
     var $timespent_withhour;		// 1 = we entered also start hours for timesheet line
     var $timespent_fk_user;
     var $timespent_note;
+
+    public $oldcopy;
 
 
     /**
@@ -180,7 +187,7 @@ class Task extends CommonObject
      *
      *  @param	int		$id			Id object
      *  @param	int		$ref		ref object
-     *  @return int 		        <0 if KO, >0 if OK
+     *  @return int 		        <0 if KO, 0 if not found, >0 if OK
      */
     function fetch($id,$ref='')
     {
@@ -218,7 +225,9 @@ class Task extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if ($this->db->num_rows($resql))
+            $num_rows = $this->db->num_rows($resql);
+            
+            if ($num_rows)
             {
                 $obj = $this->db->fetch_object($resql);
 
@@ -245,7 +254,8 @@ class Task extends CommonObject
 
             $this->db->free($resql);
 
-            return 1;
+            if ($num_rows) return 1;
+            else return 0;
         }
         else
         {
@@ -260,7 +270,7 @@ class Task extends CommonObject
      *
      *  @param	User	$user        	User that modify
      *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-     *  @return int			         	<0 if KO, >0 if OK
+     *  @return int			         	<=0 if KO, >0 if OK
      */
     function update($user=null, $notrigger=0)
     {
@@ -323,6 +333,30 @@ class Task extends CommonObject
         	}
         }
 
+        if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref))
+        {
+            // We remove directory
+            if ($conf->projet->dir_output)
+            {
+                $project = new Project($this->db);
+                $project->fetch($this->fk_project);
+
+                $olddir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->oldcopy->ref);
+                $newdir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->ref);
+                if (file_exists($olddir))
+                {
+                    include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+                    $res=dol_move($olddir, $newdir);
+                    if (! $res)
+                    {
+                        $langs->load("errors");
+                        $this->error=$langs->trans('ErrorFailToRenameDir',$olddir,$newdir);
+                        $error++;
+                    }
+                }
+            }
+        }
+
         // Commit or rollback
         if ($error)
         {
@@ -361,12 +395,21 @@ class Task extends CommonObject
 
         if ($this->hasChildren() > 0)
         {
+            dol_syslog(get_class($this)."::delete Can't delete record as it has some sub tasks", LOG_WARNING);
+            $this->error='ErrorRecordHasSubTasks';
+            $this->db->rollback();
+            return 0;
+        }
+
+        $objectisused = $this->isObjectUsed($this->id);
+        if (! empty($objectisused))
+        {
             dol_syslog(get_class($this)."::delete Can't delete record as it has some child", LOG_WARNING);
             $this->error='ErrorRecordHasChildren';
             $this->db->rollback();
             return 0;
         }
-
+        
         if (! $error)
         {
             // Delete linked contacts
@@ -491,6 +534,40 @@ class Task extends CommonObject
             return -1;
         }
     }
+    
+	/**
+     *	Return nb of time spent
+     *
+     *	@return	int		<0 if KO, 0 if no children, >0 if OK
+     */
+    function hasTimeSpent()
+    {
+    	$error=0;
+        $ret=0;
+
+        $sql = "SELECT COUNT(*) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time";
+        $sql.= " WHERE fk_task=".$this->id;
+
+        dol_syslog(get_class($this)."::hasTimeSpent", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        else
+        {
+            $obj=$this->db->fetch_object($resql);
+            if ($obj) $ret=$obj->nb;
+            $this->db->free($resql);
+        }
+
+        if (! $error)
+        {
+            return $ret;
+        }
+        else
+        {
+            return -1;
+        }
+    }
 
 
     /**
@@ -501,12 +578,15 @@ class Task extends CommonObject
      *  @param	string	$mode			Mode 'task', 'time', 'contact', 'note', document' define page to link to.
      * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
      *  @param	string	$sep			Separator between ref and label if option addlabel is set
+     *  @param	int   	$notooltip		1=Disable tooltip
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$option='',$mode='task', $addlabel=0, $sep=' - ')
+    function getNomUrl($withpicto=0,$option='',$mode='task', $addlabel=0, $sep=' - ', $notooltip=0)
     {
-        global $langs;
+        global $conf, $langs, $user;
 
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        
         $result='';
         $label = '<u>' . $langs->trans("ShowTask") . '</u>';
         if (! empty($this->ref))
@@ -517,17 +597,30 @@ class Task extends CommonObject
         {
         	$label .= "<br>".get_date_range($this->date_start,$this->date_end,'',$langs,0);
         }
-        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        
+        $url = DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'');
 
-        $link = '<a href="'.DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'').$linkclose;
+        $linkclose = '';
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowTask");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
+        }
+        
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
         $linkend='</a>';
-
+        
         $picto='projecttask';
 
-
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.$this->ref.$linkend . (($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+        if ($withpicto != 2) $result.=$linkstart.$this->ref.$linkend . (($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
         return $result;
     }
 
@@ -543,13 +636,14 @@ class Task extends CommonObject
         $this->id=0;
 
         $this->fk_projet='';
-		$this->ref='';
+		$this->ref='TK01';
         $this->fk_task_parent='';
-        $this->title='';
+        $this->label='Specimen task TK01';
         $this->duration_effective='';
         $this->fk_user_creat='';
-        $this->statut='';
-        $this->note='';
+        $this->progress='25';
+        $this->fk_statut='';
+        $this->note='This is a specimen task not';
     }
 
     /**
@@ -563,12 +657,12 @@ class Task extends CommonObject
      * @param	int		$mode				0=Return list of tasks and their projects, 1=Return projects and tasks if exists
      * @param	string	$filteronprojref	Filter on project ref
      * @param	string	$filteronprojstatus	Filter on project status
-     * @param	string	$morewherefilter	Add more filter into where SQL request
+     * @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
      * @param	string	$filteronprojuser	Filter on user that is a contact of project
-     * @param	string	$filterontaskuse	Filter on user assigned to task
+     * @param	string	$filterontaskuser	Filter on user assigned to task
      * @return 	array						Array of tasks
      */
-    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1, $morewherefilter='',$filteronprojuser=0,$filterontaskuse=0)
+    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1, $morewherefilter='',$filteronprojuser=0,$filterontaskuser=0)
     {
         global $conf;
 
@@ -577,31 +671,67 @@ class Task extends CommonObject
         //print $usert.'-'.$userp.'-'.$projectid.'-'.$socid.'-'.$mode.'<br>';
 
         // List of tasks (does not care about permissions. Filtering will be done later)
-        $sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut,";
-        $sql.= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress,";
-        $sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang";
+        $sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus,";
+        $sql.= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
+        $sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
+        $sql.= " s.rowid as thirdparty_id, s.nom as thirdparty_name";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
         if ($mode == 0)
         {
-            $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+            if ($filteronprojuser > 0)
+            {
+                $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
+                $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
+            }
             $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
-            $sql.= " WHERE p.entity = ".$conf->entity;
+            if ($filterontaskuser > 0)
+            {
+                $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec2";
+                $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
+            }
+            $sql.= " WHERE p.entity IN (".getEntity('project',1).")";
             $sql.= " AND t.fk_projet = p.rowid";
         }
         elseif ($mode == 1)
         {
-            $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
-            $sql.= " WHERE p.entity = ".$conf->entity;
+            if ($filteronprojuser > 0)
+            {
+                $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
+                $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
+            }
+            if ($filterontaskuser > 0)
+            {
+                $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+                $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec2";
+                $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
+            }
+            else 
+            {
+                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
+            }
+            $sql.= " WHERE p.entity IN (".getEntity('project',1).")";
         }
         else return 'BadValueForParameterMode';
 
-        if ($filteronprojuser)
+        if ($filteronprojuser > 0)
         {
-			// TODO
+            $sql.= " AND p.rowid = ec.element_id";
+            $sql.= " AND ctc.rowid = ec.fk_c_type_contact";
+            $sql.= " AND ctc.element = 'project'";
+            $sql.= " AND ec.fk_socpeople = ".$filteronprojuser;
+            $sql.= " AND ec.statut = 4";
+            $sql.= " AND ctc.source = 'internal'";
         }
-        if ($filterontaskuser)
+        if ($filterontaskuser > 0)
         {
-			// TODO
+            $sql.= " AND t.fk_projet = p.rowid";
+            $sql.= " AND p.rowid = ec2.element_id";
+            $sql.= " AND ctc2.rowid = ec2.fk_c_type_contact";
+            $sql.= " AND ctc2.element = 'project_task'";
+            $sql.= " AND ec2.fk_socpeople = ".$filterontaskuser;
+            $sql.= " AND ec2.statut = 4";
+            $sql.= " AND ctc2.source = 'internal'";
         }
         if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
         if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
@@ -647,17 +777,22 @@ class Task extends CommonObject
                     $tasks[$i]->fk_project		= $obj->projectid;
                     $tasks[$i]->projectref		= $obj->ref;
                     $tasks[$i]->projectlabel	= $obj->plabel;
-                    $tasks[$i]->projectstatus	= $obj->fk_statut;
+                    $tasks[$i]->projectstatus	= $obj->projectstatus;
                     $tasks[$i]->label			= $obj->label;
                     $tasks[$i]->description		= $obj->description;
-                    $tasks[$i]->fk_parent		= $obj->fk_task_parent;
+                    $tasks[$i]->fk_parent		= $obj->fk_task_parent;      // deprecated
+                    $tasks[$i]->fk_task_parent	= $obj->fk_task_parent;
                     $tasks[$i]->duration		= $obj->duration_effective;
                     $tasks[$i]->planned_workload= $obj->planned_workload;
                     $tasks[$i]->progress		= $obj->progress;
+                    $tasks[$i]->fk_statut		= $obj->status;
                     $tasks[$i]->public			= $obj->public;
                     $tasks[$i]->date_start		= $this->db->jdate($obj->date_start);
                     $tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
                     $tasks[$i]->rang	   		= $obj->rang;
+                    
+                    $tasks[$i]->thirdparty_id	= $obj->thirdparty_id;
+                    $tasks[$i]->thirdparty_name	= $obj->thirdparty_name;
                 }
 
                 $i++;
@@ -673,15 +808,16 @@ class Task extends CommonObject
     }
 
     /**
-     * Return list of roles for a user for each projects or each tasks (or a particular project or task).
+     * Return list of roles for a user for each projects or each tasks (or a particular project or a particular task).
      *
-     * @param	User	$userp			Return roles on project for this internal user (task id can't be defined)
-     * @param	User	$usert			Return roles on task for this internal user
-     * @param 	int		$projectid		Project id list separated with , to filter on project
-     * @param 	int		$taskid			Task id to filter on a task
-     * @return 	array					Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
+     * @param	User	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
+     * @param	User	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
+     * @param 	int		$projectid		      Project id list separated with , to filter on project
+     * @param 	int		$taskid			      Task id to filter on a task
+     * @param	integer	$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
+     * @return 	array					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
      */
-    function getUserRolesForProjectsOrTasks($userp,$usert,$projectid='',$taskid=0)
+    function getUserRolesForProjectsOrTasks($userp, $usert, $projectid='', $taskid=0, $filteronprojstatus=-1)
     {
         $arrayroles = array();
 
@@ -702,10 +838,13 @@ class Task extends CommonObject
         /* Liste des taches et role sur les projets ou taches */
         $sql = "SELECT pt.rowid as pid, ec.element_id, ctc.code, ctc.source";
         if ($userp) $sql.= " FROM ".MAIN_DB_PREFIX."projet as pt";
-        if ($usert) $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
+        if ($usert && $filteronprojstatus > -1) $sql.= " FROM ".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."projet_task as pt";
+        if ($usert && $filteronprojstatus <= -1) $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
         $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
         $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
         $sql.= " WHERE pt.rowid = ec.element_id";
+        if ($userp && $filteronprojstatus > -1) $sql.= " AND pt.fk_statut = ".$filteronprojstatus;
+        if ($usert && $filteronprojstatus > -1) $sql.= " AND pt.fk_projet = p.rowid AND p.fk_statut = ".$filteronprojstatus;
         if ($userp) $sql.= " AND ctc.element = 'project'";
         if ($usert) $sql.= " AND ctc.element = 'project_task'";
         $sql.= " AND ctc.rowid = ec.fk_c_type_contact";
@@ -725,7 +864,7 @@ class Task extends CommonObject
         }
         //print $sql;
 
-        dol_syslog(get_class($this)."::getUserRolesForProjectsOrTasks", LOG_DEBUG);
+        dol_syslog(get_class($this)."::getUserRolesForProjectsOrTasks execute request", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -777,7 +916,7 @@ class Task extends CommonObject
      *
      *  @param	User	$user           User object
      *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-     *  @return	void
+     *  @return	int                     <=0 if KO, >0 if OK
      */
     function addTimeSpent($user, $notrigger=0)
     {
@@ -823,7 +962,8 @@ class Task extends CommonObject
         {
             $tasktime_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task_time");
             $ret = $tasktime_id;
-
+			$this->timespent_id = $ret;
+			
             if (! $notrigger)
             {
                 // Call trigger
@@ -838,7 +978,7 @@ class Task extends CommonObject
             $ret = -1;
         }
 
-        if ($ret >= 0)
+        if ($ret > 0)
         {
         	// Recalculate amount of time spent for task and update denormalized field
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
@@ -865,7 +1005,7 @@ class Task extends CommonObject
             }
         }
 
-        if ($ret >=0)
+        if ($ret >0)
         {
         	$this->db->commit();
         }
@@ -879,51 +1019,66 @@ class Task extends CommonObject
     /**
      *  Calculate total of time spent for task
      *
-     *  @param	int		$id 		Id of object (here task)
-     *  @return array		        Array of info for task array('min_date', 'max_date', 'total_duration')
+     *  @param  int     $userid     Filter on user id. 0=No filter
+     *  @return array		        Array of info for task array('min_date', 'max_date', 'total_duration', 'total_amount', 'nblines', 'nblinesnull')
      */
-    function getSummaryOfTimeSpent($id='')
+    function getSummaryOfTimeSpent($userid=0)
     {
         global $langs;
 
-        if (empty($id)) $id=$this->id;
+        $id=$this->id;
+        if (empty($id)) 
+        {
+            dol_syslog("getSummaryOfTimeSpent called on a not loaded task", LOG_ERR);
+            return -1; 
+        }
 
         $result=array();
 
         $sql = "SELECT";
         $sql.= " MIN(t.task_datehour) as min_date,";
         $sql.= " MAX(t.task_datehour) as max_date,";
-        $sql.= " SUM(t.task_duration) as total_duration";
+        $sql.= " SUM(t.task_duration) as total_duration,";
+        $sql.= " SUM(t.task_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", 0, "t.thm").") as total_amount,";
+        $sql.= " COUNT(t.rowid) as nblines,";
+        $sql.= " SUM(".$this->db->ifsql("t.thm IS NULL", 1, 0).") as nblinesnull";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
         $sql.= " WHERE t.fk_task = ".$id;
-
+        if ($userid > 0) $sql.=" AND t.fk_user = ".$userid;
+        
         dol_syslog(get_class($this)."::getSummaryOfTimeSpent", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
 
-            $result['min_date'] = $obj->min_date;
-            $result['max_date'] = $obj->max_date;
-            $result['total_duration'] = $obj->total_duration;
-
+            $result['min_date'] = $obj->min_date;               // deprecated. use the ->timespent_xxx instead
+            $result['max_date'] = $obj->max_date;               // deprecated. use the ->timespent_xxx instead
+            $result['total_duration'] = $obj->total_duration;   // deprecated. use the ->timespent_xxx instead
+            
+            $this->timespent_min_date=$this->db->jdate($obj->min_date);
+            $this->timespent_max_date=$this->db->jdate($obj->max_date);
+            $this->timespent_total_duration=$obj->total_duration;
+            $this->timespent_total_amount=$obj->total_amount;
+            $this->timespent_nblinesnull=($obj->nblinesnull?$obj->nblinesnull:0);
+            $this->timespent_nblines=($obj->nblines?$obj->nblines:0);
+            
             $this->db->free($resql);
-            return $result;
         }
         else
         {
             dol_print_error($this->db);
-            return $result;
         }
+        return $result;
     }
 
     /**
-     *  Calculate vamue of time consumed using the thm (hourly amount value of work for user entering time)
+     *  Calculate quantity and value of time consumed using the thm (hourly amount value of work for user entering time)
      *
      *	@param		User		$fuser		Filter on a dedicated user
      *  @param		string		$dates		Start date (ex 00:00:00)
      *  @param		string		$datee		End date (ex 23:59:59)
-     *  @return 	array	        		Array of info for task array('amount')
+     *  @return 	array	        		Array of info for task array('amount','nbseconds','nblinesnull')
      */
     function getSumOfAmount($fuser='', $dates='', $datee='')
     {
@@ -934,6 +1089,7 @@ class Task extends CommonObject
         $result=array();
 
         $sql = "SELECT";
+        $sql.= " SUM(t.task_duration) as nbseconds,";
         $sql.= " SUM(t.task_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", 0, "t.thm").") as amount, SUM(".$this->db->ifsql("t.thm IS NULL", 1, 0).") as nblinesnull";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
         $sql.= " WHERE t.fk_task = ".$id;
@@ -960,6 +1116,7 @@ class Task extends CommonObject
             $obj = $this->db->fetch_object($resql);
 
             $result['amount'] = $obj->amount;
+            $result['nbseconds'] = $obj->nbseconds;
             $result['nblinesnull'] = $obj->nblinesnull;
 
             $this->db->free($resql);
@@ -973,7 +1130,7 @@ class Task extends CommonObject
     }
 
     /**
-     *  Load object in memory from database
+     *  Load one record of time spent
      *
      *  @param	int		$id 	Id object
      *  @return int		        <0 if KO, >0 if OK
@@ -1045,7 +1202,7 @@ class Task extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
         $sql.= " task_date = '".$this->db->idate($this->timespent_date)."',";
         $sql.= " task_datehour = '".$this->db->idate($this->timespent_datehour)."',";
-        $sql.= " task_date_withhour = ".(empty($this->timespent_withhour)?0:1);
+        $sql.= " task_date_withhour = ".(empty($this->timespent_withhour)?0:1).",";
         $sql.= " task_duration = ".$this->timespent_duration.",";
         $sql.= " fk_user = ".$this->timespent_fk_user.",";
         $sql.= " note = ".(isset($this->timespent_note)?"'".$this->db->escape($this->timespent_note)."'":"null");
@@ -1198,6 +1355,9 @@ class Task extends CommonObject
 
 		// Load source object
 		$clone_task->fetch($fromid);
+		$clone_task->fetch_optionals();
+		//var_dump($clone_task->array_options);exit;
+		
 		$origin_task->fetch($fromid);
 
 		$defaultref='';
@@ -1485,25 +1645,22 @@ class Task extends CommonObject
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
-	 *  @param  HookManager	$hookmanager	Hook manager instance
 	 *  @return int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
 		global $conf,$langs;
 
 		$langs->load("projects");
 
-		// Positionne modele sur le nom du modele de projet a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->PROJECT_TASK_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'nodefault';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;
-			}
-			else
-			{
-				$modele='nodefault';
 			}
 		}
 
@@ -1512,4 +1669,93 @@ class Task extends CommonObject
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
+	
+	/**
+	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *
+	 * @param	User	$user   Objet user
+	 * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 */
+	function load_board($user)
+	{
+	    global $conf, $langs;
+	
+	    $mine=0; $socid=$user->societe_id;
+	    
+	    $projectstatic = new Project($this->db);
+	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
+	    
+	    // List of tasks (does not care about permissions. Filtering will be done later)
+	    $sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
+	    $sql.= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
+	    $sql.= " t.dateo as date_start, t.datee as datee";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+        if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
+        $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+        $sql.= " WHERE p.entity IN (".getEntity('project').')';
+        $sql.= " AND p.fk_statut = 1";
+        $sql.= " AND t.fk_projet = p.rowid";
+        $sql.= " AND t.progress < 100";         // tasks to do
+        if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
+        // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
+        //if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+        if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+        if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
+        //print $sql;
+	    $resql=$this->db->query($sql);
+	    if ($resql)
+	    {
+	        $task_static = new Task($this->db);
+	
+	        $response = new WorkboardResponse();
+	        $response->warning_delay = $conf->projet->task->warning_delay/60/60/24;
+	        $response->label = $langs->trans("OpenedTasks");
+	        if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
+	        else $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mode=mine&amp;mainmenu=project';
+	        $response->img = img_object($langs->trans("Tasks"),"task");
+	
+	        // This assignment in condition is not a bug. It allows walking the results.
+	        while ($obj=$this->db->fetch_object($resql))
+	        {
+	            $response->nbtodo++;
+	
+	            $task_static->projectstatus = $obj->projectstatus;
+	            $task_static->progress = $obj->progress;
+	            $task_static->fk_statut = $obj->status;
+	            $task_static->date_end = $this->db->jdate($obj->datee);
+	
+	            if ($task_static->hasDelay()) {
+	                $response->nbtodolate++;
+	            }
+	        }
+	
+	        return $response;
+	    }
+	    else
+	    {
+	        $this->error=$this->db->error();
+	        return -1;
+	    }
+	}
+	
+	/**
+	 * Is the task delayed?
+	 *
+	 * @return bool
+	 */
+	public function hasDelay()
+	{
+	    global $conf;
+	
+        if (! ($this->progress >= 0 && $this->progress < 100)) {
+            return false;
+        }
+
+        $now = dol_now();
+
+        $datetouse = ($this->date_end > 0) ? $this->date_end : ($this->datee > 0 ? $this->datee : 0);
+
+        return ($datetouse > 0 && ($datetouse < ($now - $conf->projet->task->warning_delay)));
+	}	
 }

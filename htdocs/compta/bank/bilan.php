@@ -58,7 +58,7 @@ function valeur($sql)
 
 llxHeader();
 
-print_titre("Bilan");
+print load_fiche_titre("Bilan");
 print '<br>';
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
@@ -89,6 +89,5 @@ print "<tr ".$bc[$var]."><td>".$langs->trans("BankBalance")."</td><td align=\"ri
 
 print "</table>";
 
-$db->close();
-
 llxFooter();
+$db->close();

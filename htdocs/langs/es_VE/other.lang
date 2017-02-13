@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - other
+PredefinedMailContentSendSupplierProposal=__CONTACTCIVNAME__\n\nLe adjuntamos la solicitud de precios __ASKREF__\n\n__PERSONALIZED__Cordialmente\n\n__SIGNATURE__
+PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__\n\nLe adjuntamos nuestro pedido __ORDERREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+SourcesRepository=Repositorio de fuentes
+WEBSITE_DESCRIPTION=Descripcion

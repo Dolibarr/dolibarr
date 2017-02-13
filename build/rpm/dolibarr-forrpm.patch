@@ -25,7 +25,7 @@ diff -up htdocs/install/inc.php.patch htdocs/install/inc.php
 +$conffiletoshow = "/etc/dolibarr/conf.php";
  
  
- if (! defined('DONOTLOADCONF') && file_exists($conffile))
+ // Load conf file if it is already defined
 diff -up htdocs/support/inc.php.patch htdocs/support/inc.php
 --- htdocs/support/inc.php.patch	2011-09-03 02:34:39.606952000 +0200
 +++ htdocs/support/inc.php	2011-09-03 02:33:59.814952000 +0200
@@ -39,4 +39,4 @@ diff -up htdocs/support/inc.php.patch htdocs/support/inc.php
 +$conffiletoshow = "/etc/dolibarr/conf.php";
  
  
- if (! defined('DONOTLOADCONF') && file_exists($conffile))
+ // Load conf file if it is already defined

@@ -39,18 +39,30 @@ $result=restrictedArea($user,'stock');
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("",$langs->trans("Stocks"),$help_url);
 
-$entrepot = new Entrepot($db);
-$entrepot->fetch($_GET["id"]);
-$entrepot->info($_GET["id"]);
+$object = new Entrepot($db);
+$object->fetch($_GET["id"]);
+$object->info($_GET["id"]);
 
-$head = stock_prepare_head($entrepot);
+$head = stock_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("Warehouse"), 0, 'stock');
 
 
-print '<table width="100%"><tr><td>';
-dol_print_object_info($entrepot);
-print '</td></tr></table>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
+
+$morehtmlref='<div class="refidno">';
+$morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
+$morehtmlref.='</div>';
+
+dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'libelle', $morehtmlref);
+
+ 
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
+
+print '<br>';
+
+dol_print_object_info($object);
 
 print '</div>';
 

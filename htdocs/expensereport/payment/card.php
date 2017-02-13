@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro	  	<alexandre.spangaro@gmail.com>
+/* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expensere
 	}
 	else
 	{
-		setEventMessage($payment->error, 'errors');
+		setEventMessages($payment->error, $payment->errors, 'errors');
         $db->rollback();
 	}
 }
@@ -104,7 +104,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->expensere
 	}
 	else
 	{
-		setEventMessage($payment->error);
+		setEventMessages($payment->error, $payment->errors, 'errors');
 		$db->rollback();
 	}
 }
@@ -157,19 +157,19 @@ print $form->showrefnav($payment,'id','',1,'rowid','id');
 print '</td></tr>';
 
 // Date
-print '<tr><td valign="top">'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($payment->datep,'day').'</td></tr>';
+print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($payment->datep,'day').'</td></tr>';
 
 // Mode
-print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$payment->type_code).'</td></tr>';
+print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$payment->type_code).'</td></tr>';
 
 // Number
-print '<tr><td valign="top">'.$langs->trans('Number').'</td><td colspan="3">'.$payment->num_payment.'</td></tr>';
+print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$payment->num_payment.'</td></tr>';
 
 // Amount
-print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($payment->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($payment->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
-print '<tr><td valign="top">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($payment->note).'</td></tr>';
+print '<tr><td class="tdtop">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($payment->note).'</td></tr>';
 
 // Bank account
 if (! empty($conf->banque->enabled))
@@ -199,7 +199,7 @@ $disable_delete = 0;
 $sql = 'SELECT er.rowid as did, er.paid, er.total_ttc, per.amount';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as per,'.MAIN_DB_PREFIX.'expensereport as er';
 $sql.= ' WHERE per.fk_expensereport = er.rowid';
-$sql.= ' AND er.entity = '.$conf->entity;
+$sql.= ' AND er.entity IN ('.getEntity('expensereport', 1).')';
 $sql.= ' AND per.rowid = '.$id;
 
 dol_syslog("expensereport/payment/card.php", LOG_DEBUG);

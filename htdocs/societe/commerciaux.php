@@ -33,7 +33,7 @@ $langs->load("suppliers");
 $langs->load("banks");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 
@@ -43,56 +43,52 @@ $hookmanager->initHooks(array('salesrepresentativescard','globalcard'));
  *	Actions
  */
 
-if($_GET["socid"] && $_GET["commid"])
+if (! empty($socid) && $_GET["commid"])
 {
 	$action = 'add';
 
 	if ($user->rights->societe->creer)
 	{
-
-		$soc = new Societe($db);
-		$soc->id = $_GET["socid"];
-		$soc->fetch($_GET["socid"]);
-
+		$object = new Societe($db);
+		$object->fetch($socid);
 
 		$parameters=array('id'=>$_GET["commid"]);
-		$reshook=$hookmanager->executeHooks('doActions',$parameters,$soc,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-		if (empty($reshook)) $soc->add_commercial($user, $_GET["commid"]);
+		if (empty($reshook)) $object->add_commercial($user, $_GET["commid"]);
 
-		header("Location: commerciaux.php?socid=".$soc->id);
+		header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$object->id);
 		exit;
 	}
 	else
 	{
-		header("Location: commerciaux.php?socid=".$_GET["socid"]);
+		header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
 		exit;
 	}
 }
 
-if($_GET["socid"] && $_GET["delcommid"])
+if (! empty($socid) && $_GET["delcommid"])
 {
 	$action = 'delete';
 
 	if ($user->rights->societe->creer)
 	{
-		$soc = new Societe($db);
-		$soc->id = $_GET["socid"];
-		$soc->fetch($_GET["socid"]);
+		$object = new Societe($db);
+		$object->fetch($socid);
 
 		$parameters=array('id'=>$_GET["delcommid"]);
-		$reshook=$hookmanager->executeHooks('doActions',$parameters,$soc,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-		if (empty($reshook)) $soc->del_commercial($user, $_GET["delcommid"]);
+		if (empty($reshook)) $object->del_commercial($user, $_GET["delcommid"]);
 
-		header("Location: commerciaux.php?socid=".$soc->id);
+		header("Location: commerciaux.php?socid=".$object->id);
 		exit;
 	}
 	else
 	{
-		header("Location: commerciaux.php?socid=".$_GET["socid"]);
+		header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
 		exit;
 	}
 }
@@ -107,65 +103,62 @@ llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $form = new Form($db);
 
-if ($_GET["socid"])
+if (! empty($socid))
 {
-	$soc = new Societe($db);
-	$soc->id = $_GET["socid"];
-	$result=$soc->fetch($_GET["socid"]);
+	$object = new Societe($db);
+	$result=$object->fetch($socid);
 
 	$action='view';
 
-	$head=societe_prepare_head2($soc);
+	$head=societe_prepare_head2($object);
 
 	dol_fiche_head($head, 'salesrepresentative', $langs->trans("ThirdParty"),0,'company');
 
-	/*
-	 * Fiche societe en mode visu
-	 */
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	
+    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+        
+	print '<div class="fichecenter">';
 
-	print '<table class="border" width="100%">';
-
-    print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
-    print '<td colspan="3">';
-    print $form->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
-    print '</td></tr>';
+    print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent">';
 
 	print '<tr>';
-    print '<td>'.$langs->trans('CustomerCode').'</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
-    print $soc->code_client;
-    if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+    print '<td class="titlefield">'.$langs->trans('CustomerCode').'</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
+    print $object->code_client;
+    if ($object->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
     print '</td>';
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
-       print '<td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td>';
+       print '<td>'.$langs->trans('Prefix').'</td><td>'.$object->prefix_comm.'</td>';
     }
     print '</td>';
     print '</tr>';
 
-	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->address)."</td></tr>";
-
-	print '<tr><td>'.$langs->trans('Zip').'</td><td width="20%">'.$soc->zip."</td>";
-	print '<td>'.$langs->trans('Town').'</td><td>'.$soc->town."</td></tr>";
-
-	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->country.'</td>';
-
-	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->phone,$soc->country_code,0,$soc->id,'AC_TEL').'</td>';
-	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->country_code,0,$soc->id,'AC_FAX').'</td></tr>';
-
-	print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
-	if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
-	print '</td></tr>';
-
 	// Liste les commerciaux
-	print '<tr><td valign="top">'.$langs->trans("SalesRepresentatives").'</td>';
+	print '<tr><td>'.$langs->trans("SalesRepresentatives").'</td>';
 	print '<td colspan="3">';
 
-	$sql = "SELECT u.rowid, u.lastname, u.firstname";
+	$sql = "SELECT DISTINCT u.rowid, u.login, u.fk_soc, u.lastname, u.firstname, u.statut, u.entity, u.photo";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 	$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE sc.fk_soc =".$soc->id;
+	if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+	{
+	    $sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+	}
+	$sql .= " WHERE sc.fk_soc =".$object->id;
 	$sql .= " AND sc.fk_user = u.rowid";
+	if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+	{
+		$sql.= " AND ((ug.fk_user = sc.fk_user";
+		$sql.= " AND ug.entity = ".$conf->entity.")";
+		$sql.= " OR u.admin = 1)";
+	}
+	else
+		$sql.= " AND u.entity IN (0,".$conf->entity.")";
+
 	$sql .= " ORDER BY u.lastname ASC ";
+
 	dol_syslog('societe/commerciaux.php::list salesman sql = '.$sql,LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
@@ -173,24 +166,37 @@ if ($_GET["socid"])
 		$num = $db->num_rows($resql);
 		$i = 0;
 
+		$tmpuser = new User($db);
+		
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
 
- 			$parameters=array('socid'=>$soc->id);
+ 			$parameters=array('socid'=>$object->id);
         	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$obj,$action);    // Note that $action and $object may have been modified by hook
       		if (empty($reshook)) {
 
 				null; // actions in normal case
       		}
 
-			print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
+      		$tmpuser->id = $obj->rowid;
+      		$tmpuser->firstname = $obj->firstname;
+      		$tmpuser->lastname = $obj->lastname;
+      		$tmpuser->statut = $obj->statut;
+      		$tmpuser->login = $obj->login;
+      		$tmpuser->entity = $obj->entity;
+      		$tmpuser->societe_id = $obj->fk_soc;
+      		$tmpuser->photo = $obj->photo;
+      		print $tmpuser->getNomUrl(-1);
+      		
+			/*print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
 			print img_object($langs->trans("ShowUser"),"user").' ';
 			print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
-			print '</a>&nbsp;';
+			print '</a>';*/
+			print '&nbsp;';
 			if ($user->rights->societe->creer)
 			{
-			    print '<a href="commerciaux.php?socid='.$_GET["socid"].'&amp;delcommid='.$obj->rowid.'">';
+			    print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;delcommid='.$obj->rowid.'">';
 			    print img_delete();
 			    print '</a>';
 			}
@@ -210,6 +216,8 @@ if ($_GET["socid"])
 
 	print '</table>';
 	print "</div>\n";
+	
+	dol_fiche_end();
 
 
 	if ($user->rights->societe->creer && $user->rights->societe->client->voir)
@@ -222,9 +230,17 @@ if ($_GET["socid"])
 		$langs->load("users");
 		$title=$langs->trans("ListOfUsers");
 
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.login";
+		$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.login, u.email, u.statut, u.fk_soc, u.photo";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+		{
+			$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+			$sql.= " WHERE ((ug.fk_user = u.rowid";
+			$sql.= " AND ug.entity = ".$conf->entity.")";
+			$sql.= " OR u.admin = 1)";
+		}
+		else
+			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 		if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND u.statut<>0 ";
 		$sql.= " ORDER BY u.lastname ASC ";
 
@@ -234,29 +250,38 @@ if ($_GET["socid"])
 			$num = $db->num_rows($resql);
 			$i = 0;
 
-			print_titre($title);
+			print load_fiche_titre($title);
 
 			// Lignes des titres
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Name").'</td>';
 			print '<td>'.$langs->trans("Login").'</td>';
+			print '<td>'.$langs->trans("Status").'</td>';
 			print '<td>&nbsp;</td>';
 			print "</tr>\n";
 
 			$var=True;
-
+			$tmpuser=new User($db);
+				
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr ".$bc[$var]."><td>";
-				print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
-				print img_object($langs->trans("ShowUser"),"user").' ';
-				print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
-				print '</a>';
-				print '</td><td>'.$obj->login.'</td>';
-				print '<td><a href="commerciaux.php?socid='.$_GET["socid"].'&amp;commid='.$obj->rowid.'">'.$langs->trans("Add").'</a></td>';
+				$tmpuser->id=$obj->rowid;
+				$tmpuser->firstname=$obj->firstname;
+				$tmpuser->lastname=$obj->lastname;
+				$tmpuser->statut=$obj->statut;
+				$tmpuser->login=$obj->login;
+				$tmpuser->email=$obj->email;
+				$tmpuser->societe_id=$obj->fk_soc;
+				$tmpuser->photo=$obj->photo;
+				print $tmpuser->getNomUrl(-1);
+				print '</td>';
+				print '<td>'.$obj->login.'</td>';
+				print '<td>'.$tmpuser->getLibStatut(2).'</td>';
+				print '<td><a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;commid='.$obj->rowid.'">'.$langs->trans("Add").'</a></td>';
 
 				print '</tr>'."\n";
 				$i++;
@@ -273,7 +298,5 @@ if ($_GET["socid"])
 
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

@@ -4,7 +4,6 @@ EMailSupport=Asistencia E-Mail
 RemoteControlSupport=Asistencia en tiempo real a distancia
 OtherSupport=Otros tipos de asistencia
 ToSeeListOfAvailableRessources=Para contactar/ver los recursos disponibles:
-ClickHere=Click aquí
 HelpCenter=Centro de asistencia
 DolibarrHelpCenter=Centro de soporte y ayuda Dolibarr
 ToGoBackToDolibarr=Haga clic <a href="%s">aquí para utilizar Dolibarr</a>
@@ -12,7 +11,7 @@ TypeOfSupport=Tipo de soporte
 TypeSupportCommunauty=Comunitario (gratuito)
 TypeSupportCommercial=Comercial
 TypeOfHelp=Tipo
-NeedHelpCenter=¿Necesita soporte o ayuda?
+NeedHelpCenter=¿Necesita ayuda o soporte?
 Efficiency=Eficacia
 TypeHelpOnly=Sólamente ayuda
 TypeHelpDev=Ayuda+Desarrollo
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=En ocasiones, ningún operador se encuentra disponible
 BackToHelpCenter=Sino, haga clic aquí para <a href="%s"> volver al centro de asistencia</a>.
 LinkToGoldMember=En caso contrario, puede llamar inmediatamente a uno de los asistentes preseleccionados por Dolibarr para su idioma (%s) haciendo clic en su widget (disponibilidad y tarifa máxima actualizadas automáticamente):
 PossibleLanguages=Idiomas disponibles
-MakeADonation=Ayude al proyecto Dolibarr, haga una donación
 SubscribeToFoundation=Ayude al proyecto Dolibarr, adhiérase a la asociación Dolibarr
 SeeOfficalSupport=Para obtener soporte oficial Dolibarr en su idioma: <br><b><a href="%s" target="_blank">%s</a></b>

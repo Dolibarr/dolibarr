@@ -35,6 +35,19 @@ $element		= GETPOST('element','alpha',2);
 $table_element	= GETPOST('table_element','alpha',2);
 $fk_element		= GETPOST('fk_element','alpha',2);
 
+/* Example:
+field:editval_ref_customer (8 first chars will removed to know name of property)
+element:contrat
+table_element:contrat
+fk_element:4
+type:string
+value:aaa
+loadmethod:
+savemethod:
+savemethodname:
+*/
+
+
 /*
  * View
  */
@@ -81,7 +94,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 	}
 	else $newelement = $element;
 
-	if (! empty($user->rights->$newelement->creer) || ! empty($user->rights->$newelement->write)
+	if (! empty($user->rights->$newelement->creer) || ! empty($user->rights->$newelement->create) || ! empty($user->rights->$newelement->write)
 	|| (isset($subelement) && (! empty($user->rights->$newelement->$subelement->creer) || ! empty($user->rights->$newelement->$subelement->write)))
 	|| ($element == 'payment' && $user->rights->facture->paiement)
 	|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->creer))

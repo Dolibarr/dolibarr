@@ -48,7 +48,7 @@ class InterfaceDemo extends DolibarrTriggers
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
      *
      * @param string		$action		Event action code
-     * @param Object		$object     Object
+     * @param Object		$object     Object concerned. Some context information may also be provided into array property object->context.
      * @param User		    $user       Object user
      * @param Translate 	$langs      Object langs
      * @param conf		    $conf       Object conf
@@ -62,24 +62,18 @@ class InterfaceDemo extends DolibarrTriggers
 	    switch ($action) {
 		    
 		    // Users
-		    case 'USER_LOGIN':
-		    case 'USER_UPDATE_SESSION':
 		    case 'USER_CREATE':
-		    case 'USER_CREATE_FROM_CONTACT':
-		    case 'USER_LOGIN':
-			// Warning: To increase performances, this action is triggered only if
-			// constant MAIN_ACTIVATE_UPDATESESSIONTRIGGER is set to 1.
-		    case 'USER_UPDATE_SESSION':
-		    case 'USER_CREATE':
-		    case 'USER_CREATE_FROM_CONTACT':
 		    case 'USER_MODIFY':
 		    case 'USER_NEW_PASSWORD':
 		    case 'USER_ENABLEDISABLE':
 		    case 'USER_DELETE':
-		    case 'USER_LOGOUT':
 		    case 'USER_SETINGROUP':
 		    case 'USER_REMOVEFROMGROUP':
 				
+		    case 'USER_LOGIN':
+		    case 'USER_LOGIN_FAILED':
+		    case 'USER_LOGOUT':
+
 		    // Actions
 		    case 'ACTION_MODIFY':
 		    case 'ACTION_CREATE':
@@ -106,6 +100,8 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'PRODUCT_MODIFY':
 		    case 'PRODUCT_DELETE':
 		    case 'PRODUCT_PRICE_MODIFY':
+		    case 'PRODUCT_SET_MULTILANGS':
+		    case 'PRODUCT_DEL_MULTILANGS':
 
 			//Stock mouvement
 		    case 'STOCK_MOVEMENT':
@@ -123,6 +119,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'ORDER_CANCEL':
 		    case 'ORDER_SENTBYMAIL':
 		    case 'ORDER_CLASSIFY_BILLED':
+		    case 'ORDER_SETDRAFT':
 		    case 'LINEORDER_INSERT':
 		    case 'LINEORDER_UPDATE':
 		    case 'LINEORDER_DELETE':
@@ -154,18 +151,18 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'LINEPROPAL_UPDATE':
 		    case 'LINEPROPAL_DELETE':
 
-			// Askpricesupplier
-		    case 'ASKPRICESUPPLIER_CREATE':
-		    case 'ASKPRICESUPPLIER_CLONE':
-		    case 'ASKPRICESUPPLIER_MODIFY':
-		    case 'ASKPRICESUPPLIER_VALIDATE':
-		    case 'ASKPRICESUPPLIER_SENTBYMAIL':
-		    case 'ASKPRICESUPPLIER_CLOSE_SIGNED':
-		    case 'ASKPRICESUPPLIER_CLOSE_REFUSED':
-		    case 'ASKPRICESUPPLIER_DELETE':
-		    case 'LINEASKPRICESUPPLIER_INSERT':
-		    case 'LINEASKPRICESUPPLIER_UPDATE':
-		    case 'LINEASKPRICESUPPLIER_DELETE':
+			// SupplierProposal
+		    case 'SUPPLIER_PROPOSAL_CREATE':
+		    case 'SUPPLIER_PROPOSAL_CLONE':
+		    case 'SUPPLIER_PROPOSAL_MODIFY':
+		    case 'SUPPLIER_PROPOSAL_VALIDATE':
+		    case 'SUPPLIER_PROPOSAL_SENTBYMAIL':
+		    case 'SUPPLIER_PROPOSAL_CLOSE_SIGNED':
+		    case 'SUPPLIER_PROPOSAL_CLOSE_REFUSED':
+		    case 'SUPPLIER_PROPOSAL_DELETE':
+		    case 'LINESUPPLIER_PROPOSAL_INSERT':
+		    case 'LINESUPPLIER_PROPOSAL_UPDATE':
+		    case 'LINESUPPLIER_PROPOSAL_DELETE':
 		    
 			// Contracts
 		    case 'CONTRACT_CREATE':
@@ -173,7 +170,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'CONTRACT_CANCEL':
 		    case 'CONTRACT_CLOSE':
 		    case 'CONTRACT_DELETE':
-		    case 'LINECONTRACT_CREATE':
+		    case 'LINECONTRACT_INSERT':
 		    case 'LINECONTRACT_UPDATE':
 		    case 'LINECONTRACT_DELETE':
 
@@ -208,8 +205,12 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'PAYMENT_SUPPLIER_CREATE':
 		    case 'PAYMENT_ADD_TO_BANK':
 		    case 'PAYMENT_DELETE':
-
-			//Donation
+		    
+		    // Online  
+		    case 'PAYMENT_PAYBOX_OK':
+		    case 'PAYMENT_PAYPAL_OK':
+		    
+			// Donation
 		    case 'DON_CREATE':
 		    case 'DON_UPDATE':
 		    case 'DON_DELETE':
@@ -236,6 +237,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'CATEGORY_CREATE':
 		    case 'CATEGORY_MODIFY':
 		    case 'CATEGORY_DELETE':
+		    case 'CATEGORY_SET_MULTILANGS':
 
 			// Projects
 		    case 'PROJECT_CREATE':
@@ -257,6 +259,9 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'SHIPPING_MODIFY':
 		    case 'SHIPPING_VALIDATE':
 		    case 'SHIPPING_SENTBYMAIL':
+		    case 'SHIPPING_BILLED':
+		    case 'SHIPPING_CLOSED':
+		    case 'SHIPPING_REOPEN':
 		    case 'SHIPPING_DELETE':
 		        dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			    break;

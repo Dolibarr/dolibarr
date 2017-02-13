@@ -1,15 +1,14 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Kód pro platby mezd v účetnictví
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Kód pro finanční poplatek v účetnictví
 Salary=Mzda
 Salaries=Mzdy
-Employee=Zaměstnanec
 NewSalaryPayment=Nová platba mzdy
 SalaryPayment=Platba mzdy
 SalariesPayments=Platby mezd
 ShowSalaryPayment=Ukázat platbu mzdy
-THM=Průměrná hodinová mzda
-TJM=Průměrná denní cena
+THM=Average hourly rate
+TJM=Average daily rate
 CurrentSalary=Současná mzda
 THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
 TJMDescription=This value is currently as information only and is not used for any calculation

@@ -24,7 +24,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 <!-- BEGIN PHP TEMPLATE ADHERENTCARD_EDIT.TPL.PHP DEFAULT -->
 
 <?php
-print_fiche_titre($this->control->tpl['title']);
+print load_fiche_titre($this->control->tpl['title']);
 
 dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
 
@@ -117,7 +117,7 @@ echo $this->control->tpl['ajax_selectcountry'];
 </tr>
 
 <tr>
-	<td valign="top"><?php echo $langs->trans("Note"); ?></td>
+	<td class="tdtop"><?php echo $langs->trans("Note"); ?></td>
 	<td colspan="3" valign="top"><textarea name="note" cols="70" rows="<?php echo ROWS_3; ?>"><?php echo $this->control->tpl['note']; ?></textarea></td>
 </tr>
 

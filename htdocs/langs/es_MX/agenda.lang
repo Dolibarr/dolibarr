@@ -1,0 +1,52 @@
+# Dolibarr language file - Source file is en_US - agenda
+ActionsOwnedBy=Evento propiedad de
+Event=Evento
+ListOfActions=Lista de eventos
+EventOnFullDay=Evento de todo el día(s)
+MenuToDoActions=Todos los eventos incompletos
+MenuDoneActions=Todos los eventos finalizados
+MenuDoneMyActions=Mis eventos finalizados
+ListOfEvents=Lista de eventos (calendario interno)
+ActionsAskedBy=Eventos reportados por
+ActionsDoneBy=Eventos realizado por
+ViewCal=Vista del mes
+ViewDay=Vista de día
+ViewWeek=Vista de la semana
+AutoActions=Llenado automático
+AgendaSetupOtherDesc=Esta página contiene opciones para permitir la exportación de sus eventos de Dolibarr en un calendario externo (Thunderbird, Google Calendar, ...)
+AgendaExtSitesDesc=Esta página permite declarar las fuentes externas de calendarios para ver sus eventos en la agenda de Dolibarr.
+ActionsEvents=Eventos para los que Dolibarr creará una acción en la agenda de forma automática
+PropalValidatedInDolibarr=Propuesta %s validada
+InvoiceValidatedInDolibarrFromPos=Factura %s validada desde POS
+InvoiceBackToDraftInDolibarr=Regresar factura %s al estado de borrador
+ShipmentValidatedInDolibarr=Envío %s validado
+OrderValidatedInDolibarr=Orden %s validada
+OrderDeliveredInDolibarr=Orden %s clasificado como entregado
+OrderCanceledInDolibarr=Orden %s cancelada
+OrderBilledInDolibarr=Orden %s clasificada como facturada
+OrderApprovedInDolibarr=Orden %s aprovada
+OrderRefusedInDolibarr=Orden %s rechazada
+OrderBackToDraftInDolibarr=Regresar orden %s al estado de borrador
+ProposalSentByEMail=Propuesta comercial %s enviada por correo electrónico
+OrderSentByEMail=Orden de cliente %s enviada por correo electrónico
+InvoiceSentByEMail=Factura de cliente %s enviada por correo electrónico
+SupplierOrderSentByEMail=Orden de proveedor %s enviada por correo electrónico
+SupplierInvoiceSentByEMail=Factura de proveedor %s enviada por correo electrónico
+ShippingSentByEMail=Envío %s enviado por correo electrónico
+ShippingValidated=Envío %s validado
+InterventionSentByEMail=Intervención %s enviada por correo electrónico
+DateActionEnd=Fecha de finalización
+AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
+AgendaUrlOptions2=<b>login=%s</b> para restringir la salida a acciones creadas por o asignadas al usuario <b>%s</b>
+AgendaUrlOptions3=<b>logina=%s</b> para restringir la salida a las acciones propiedad del usuario <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> para restringir la salida a acciones asignadas al usuario <b>%s</b>.
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> para restringir la salida a acciones asociadas al proyecto <b>PROJECT_ID</b>.
+ExportDataset_event1=Lista de eventos de la agenda
+DefaultWorkingDays=Rango de días laborales por defecto en una semana (Example: 1-5, 1-6)
+DefaultWorkingHours=Horas laborales por defecto en un día (Ejemplo: 9-18)
+ExtSites=Importar calendarios externos
+ExtSitesEnableThisTool=Mostrar calendarios externos (definidos en la configuración global) en la agenda. No afecta a los calendarios externos definidos por los usuarios.
+AgendaExtNb=Número de calendario %s
+ExtSiteUrlAgenda=URL para acceder al archivo .iCal
+DateActionBegin=Fecha inicial del evento
+DateStartPlusOne=Fecha de inicio + 1 hr

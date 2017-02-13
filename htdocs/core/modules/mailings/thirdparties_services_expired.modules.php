@@ -23,6 +23,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 class mailing_thirdparties_services_expired extends MailingTargets
 {
     var $name='DolibarrContractsLinesExpired';
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
     var $desc='Third parties with expired contract\'s lines';
     var $require_admin=0;
 
@@ -128,8 +129,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
 					'lastname' => $obj->name,	// For thirdparties, lastname must be name
                     'firstname' => '',			// For thirdparties, firstname is ''
 					'other' =>
-                    ('StartDate='.dol_print_date($this->db->jdate($obj->date_ouverture),'day')).';'.
-                    ('EndDate='.dol_print_date($this->db->jdate($obj->date_fin_validite),'day')).';'.
+                    ('DateStart='.dol_print_date($this->db->jdate($obj->date_ouverture),'day')).';'.
+                    ('DateEnd='.dol_print_date($this->db->jdate($obj->date_fin_validite),'day')).';'.
                     ('Contract='.$obj->fk_contrat).';'.
                     ('ContactLine='.$obj->cdid),
 					'source_url' => $this->url($obj->id),

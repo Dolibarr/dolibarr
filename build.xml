@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Script build for hudson CI -->
 <project name="dolibarr" default="hudson" basedir=".">
-fdfds
 <!-- Exclude/ignore paths -->
  <property name="ignorepaths" value="${basedir}/htdocs/conf,${basedir}/htdocs/core/filemanagerdol,${basedir}/htdocs/includes" />
  <property name="ignoreregexp" value="**/PEAR/*,**/NET/*,**/HTTP/*,**/zendgdata/*,**/reportico/*" />

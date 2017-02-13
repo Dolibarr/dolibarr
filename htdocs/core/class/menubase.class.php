@@ -28,30 +28,30 @@
  */
 class Menubase
 {
-    var $db;							// To store db handler
-    var $error;							// To return error code (or message)
-    var $errors=array();				// To return several error codes (or messages)
+    public $db;							// To store db handler
+    public $error;							// To return error code (or message)
+    public $errors=array();				// To return several error codes (or messages)
 
-    var $id;
+    public $id;
 
-    var $menu_handler;
-    var $module;
-    var $type;
-    var $mainmenu;
-    var $fk_menu;
-    var $fk_mainmenu;
-    var $fk_leftmenu;
-    var $position;
-    var $url;
-    var $target;
-    var $titre;
-    var $langs;
-    var $level;
-    var $leftmenu;		//<! Not used
-    var $perms;
-    var $enabled;
-    var $user;
-    var $tms;
+    public $menu_handler;
+    public $module;
+    public $type;
+    public $mainmenu;
+    public $fk_menu;
+    public $fk_mainmenu;
+    public $fk_leftmenu;
+    public $position;
+    public $url;
+    public $target;
+    public $titre;
+    public $langs;
+    public $level;
+    public $leftmenu;		//<! Not used
+    public $perms;
+    public $enabled;
+    public $user;
+    public $tms;
 
 
     /**
@@ -264,6 +264,8 @@ class Menubase
         $sql.= " t.mainmenu,";
         $sql.= " t.leftmenu,";
         $sql.= " t.fk_menu,";
+        $sql.= " t.fk_mainmenu,";
+        $sql.= " t.fk_leftmenu,";
         $sql.= " t.position,";
         $sql.= " t.url,";
         $sql.= " t.target,";
@@ -293,6 +295,8 @@ class Menubase
                 $this->mainmenu = $obj->mainmenu;
                 $this->leftmenu = $obj->leftmenu;
                 $this->fk_menu = $obj->fk_menu;
+                $this->fk_mainmenu = $obj->fk_mainmenu;
+                $this->fk_leftmenu = $obj->fk_leftmenu;
                 $this->position = $obj->position;
                 $this->url = $obj->url;
                 $this->target = $obj->target;
@@ -445,7 +449,7 @@ class Menubase
 
         		if (empty($val['fk_leftmenu']))
         		{
-        			$this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);	// TODO Add position
+        			$this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position']);
         			//var_dump($this->newmenu->liste);
         		}
         		else
@@ -474,7 +478,7 @@ class Menubase
         				}
         			}
         			//print 'We must insert menu entry between entry '.$lastid.' and '.$nextid.'<br>';
-        			if ($found) $this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);
+        			if ($found) $this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position']);
         		}
         	}
         }
@@ -511,7 +515,7 @@ class Menubase
         $sql.= " ORDER BY m.position, m.rowid";
 		//print $sql;
 
-//$tmp1=dol_microtime_float();
+//$tmp1=microtime(true);
 //print '>>> 1 0<br>';
         dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -575,7 +579,7 @@ class Menubase
                             $title = $langs->trans($menu['titre']);
                         }
                     }
-//$tmp4=dol_microtime_float();
+//$tmp4=microtime(true);
 //print '>>> 3 '.($tmp4 - $tmp3).'<br>';
 
                     // We complete tabMenu

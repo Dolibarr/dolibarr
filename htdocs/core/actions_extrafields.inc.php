@@ -41,10 +41,16 @@ if ($action == 'add')
 		{
 			$error++;
 			$langs->load("errors");
-			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
+			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type"));
 			$action = 'create';
 		}
-
+		if (GETPOST('type')=='varchar' && $extrasize <= 0)
+		{
+		    $error++;
+		    $langs->load("errors");
+		    $mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Size"));
+		    $action = 'edit';
+		}
         if (GETPOST('type')=='varchar' && $extrasize > $maxsizestring)
         {
             $error++;
@@ -125,7 +131,7 @@ if ($action == 'add')
 	    if (! $error)
 	    {
     		// attrname must be alphabetical and lower case only
-    		if (isset($_POST["attrname"]) && preg_match("/^[a-z0-9-_]+$/",$_POST['attrname']))
+    		if (isset($_POST["attrname"]) && preg_match("/^[a-z0-9-_]+$/",$_POST['attrname']) && !is_numeric($_POST["attrname"]))
     		{
     			// Construct array for parameter (value of select list)
         		$default_value = GETPOST('default_value');
@@ -161,11 +167,12 @@ if ($action == 'add')
                 	$params,
                 	(GETPOST('alwayseditable')?1:0),
                 	(GETPOST('perms')?GETPOST('perms'):''),
-                	(GETPOST('list')?1:0)
+                	(GETPOST('list')?1:0),
+					(GETPOST('ishidden')?1:0)
                 );
     			if ($result > 0)
     			{
-    				setEventMessage($langs->trans('SetupSaved'));
+    				setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
     				header("Location: ".$_SERVER["PHP_SELF"]);
     				exit;
     			}
@@ -173,7 +180,7 @@ if ($action == 'add')
     			{
                     $error++;
     			    $mesg=$extrafields->error;
-                    setEventMessage($mesg,'errors');
+                    setEventMessages($mesg, null, 'errors');
     			}
     		}
     		else
@@ -181,13 +188,13 @@ if ($action == 'add')
                 $error++;
     		    $langs->load("errors");
     			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialNorUpperCharacters",$langs->transnoentities("AttributeCode"));
-    			setEventMessage($mesg,'errors');
+    			setEventMessages($mesg, null, 'errors');
     			$action = 'create';
     		}
 	    }
 	    else
 	    {
-	    	setEventMessage($mesg,'errors');
+	    	setEventMessages($mesg, null, 'errors');
 	    }
 	}
 }
@@ -202,8 +209,15 @@ if ($action == 'update')
 		{
 			$error++;
 			$langs->load("errors");
-			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
-			$action = 'create';
+			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type"));
+			$action = 'edit';
+		}
+		if (GETPOST('type')=='varchar' && $extrasize <= 0)
+		{
+		    $error++;
+		    $langs->load("errors");
+		    $mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Size"));
+		    $action = 'edit';
 		}
 		if (GETPOST('type')=='varchar' && $extrasize > $maxsizestring)
         {
@@ -299,6 +313,7 @@ if ($action == 'update')
     					$params['options'][$key] = $value;
     				}
     			}
+
     			$result=$extrafields->update(
     				GETPOST('attrname'),
     				GETPOST('label'),
@@ -311,11 +326,12 @@ if ($action == 'update')
     				$params,
     				(GETPOST('alwayseditable')?1:0),
     				(GETPOST('perms')?GETPOST('perms'):''),
-                	(GETPOST('list')?1:0)
+                	(GETPOST('list')?1:0),
+					(GETPOST('ishidden')?1:0)
     			);
     			if ($result > 0)
     			{
-    				setEventMessage($langs->trans('SetupSaved'));
+    				setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
     				header("Location: ".$_SERVER["PHP_SELF"]);
     				exit;
     			}
@@ -323,7 +339,7 @@ if ($action == 'update')
     			{
                     $error++;
     			    $mesg=$extrafields->error;
-    			    setEventMessage($mesg,'errors');
+    			    setEventMessages($mesg, null, 'errors');
     			}
     		}
     		else
@@ -331,12 +347,12 @@ if ($action == 'update')
     		    $error++;
     			$langs->load("errors");
     			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
-    			setEventMessage($mesg,'errors');
+    			setEventMessages($mesg, null, 'errors');
     		}
 	    }
 	    else
 	    {
-	    	setEventMessage($mesg,'errors');
+	    	setEventMessages($mesg, null, 'errors');
 	    }
 	}
 }

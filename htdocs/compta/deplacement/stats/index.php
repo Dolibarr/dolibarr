@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacementstats.class.php';
 
 $langs->load("trips");
+$langs->load("companies");
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
@@ -78,7 +79,7 @@ llxHeader();
 $title=$langs->trans("TripsAndExpensesStatistics");
 $dir=$conf->deplacement->dir_temp;
 
-print_fiche_titre($title, $mesg);
+print load_fiche_titre($title, $mesg);
 
 dol_mkdir($dir);
 
@@ -236,13 +237,13 @@ print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->tra
 // Company
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 $filter='';
-print $form->select_company($socid,'socid',$filter,1,1);
+print $form->select_company($socid,'socid',$filter,1,1,0,array(),0,'','style="width: 95%"');
 print '</td></tr>';
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';
 $include='';
 if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $include='hierarchy';
-print $form->select_dolusers($userid,'userid',1,'',0,$include);
+print $form->select_dolusers($userid, 'userid', 1, '', 0, $include, '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';

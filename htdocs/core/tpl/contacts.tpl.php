@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2012      Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2012      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2015-2016 Charlie BENKE 	<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,15 +27,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $module = $object->element;
 
 // Special cases
-if ($module == 'propal')				{ $permission=$user->rights->propale->creer; }
-elseif ($module == 'fichinter')			{ $permission=$user->rights->ficheinter->creer; }
+if ($module == 'propal')		{ $permission=$user->rights->propale->creer; }
+elseif ($module == 'fichinter')		{ $permission=$user->rights->ficheinter->creer; }
 elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur->facture->creer; }
 elseif ($module == 'order_supplier')	{ $permission=$user->rights->fournisseur->commande->creer; }
-elseif ($module == 'project')			{ $permission=$user->rights->projet->creer; }
-elseif ($module == 'action')			{ $permission=$user->rights->agenda->myactions->create; }
-elseif ($module == 'shipping')			{ $permission=$user->rights->expedition->creer; }
-elseif ($module == 'project_task')		{ $permission=$user->rights->projet->creer; }
-elseif (! isset($permission))			{ $permission=$user->rights->$module->creer; } // If already defined by caller page
+elseif ($module == 'project')		{ $permission=$user->rights->projet->creer; }
+elseif ($module == 'action')		{ $permission=$user->rights->agenda->myactions->create; }
+elseif ($module == 'shipping')		{ $permission=$user->rights->expedition->creer; }
+elseif ($module == 'project_task')	{ $permission=$user->rights->projet->creer; }
+elseif (! isset($permission) && isset($user->rights->$module->creer))			
+{ 
+	$permission=$user->rights->$module->creer; 
+}
+elseif (! isset($permission)  && isset($user->rights->$module->write))
+{
+	$permission=$user->rights->$module->write; 
+}
 
 $formcompany= new FormCompany($db);
 $companystatic=new Societe($db);
@@ -44,16 +52,19 @@ $userstatic=new User($db);
 ?>
 
 <!-- BEGIN PHP TEMPLATE CONTACTS -->
+<div class="div-table-responsive">
 <div class="tagtable centpercent noborder allwidth">
 
-<?php if ($permission) { ?>
+<?php 
+if ($permission) { 
+?>
 	<form class="tagtr liste_titre">
-		<div class="tagtd"><?php echo $langs->trans("Source"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("Company"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("Contacts"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("ContactType"); ?></div>
-		<div class="tagtd">&nbsp;</div>
-		<div class="tagtd">&nbsp;</div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("Nature"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
+		<div class="tagtd liste_titre">&nbsp;</div>
+		<div class="tagtd liste_titre">&nbsp;</div>
 	</form>
 
 	<?php
@@ -72,7 +83,12 @@ $userstatic=new User($db);
 		<div class="nowrap tagtd"><?php echo img_object('','user').' '.$langs->trans("Users"); ?></div>
 		<div class="tagtd"><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></div>
 		<div class="tagtd maxwidthonsmartphone"><?php echo $form->select_dolusers($user->id, 'userid', 0, (! empty($userAlreadySelected)?$userAlreadySelected:null), 0, null, null, 0, 56); ?></div>
-		<div class="tagtd maxwidthonsmartphone"><?php echo $formcompany->selectTypeContact($object, '', 'type','internal'); ?></div>
+		<div class="tagtd maxwidthonsmartphone">
+		<?php
+		$tmpobject=$object;
+		if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;
+		echo $formcompany->selectTypeContact($tmpobject, '', 'type','internal'); 
+		?></div>
 		<div class="tagtd">&nbsp;</div>
 		<div class="tagtd" align="right"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></div>
 	</form>
@@ -94,10 +110,17 @@ $userstatic=new User($db);
 		<div class="tagtd nowrap"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>
 		<div class="tagtd nowrap maxwidthonsmartphone">
 			<?php $selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
+			<?php 
+			// add company icon before select list 
+			if ($selectedCompany) 
+			{
+			    echo img_object('', 'company', 'class="hideonsmartphone"');
+			}
+			?>
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone">
-			<?php $nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid'); ?>
+			<?php $nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid', 0, '', '', 0, 'minwidth200'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone">
 			<?php
@@ -111,16 +134,18 @@ $userstatic=new User($db);
 		</div>
 	</form>
 
-<?php }
-	} ?>
+<?php 
+	}
+} 
+?>
 
-	<form class="tagtr liste_titre">
-		<div class="tagtd"><?php echo $langs->trans("Source"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("Company"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("Contacts"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("ContactType"); ?></div>
-		<div class="tagtd" align="center"><?php echo $langs->trans("Status"); ?></div>
-		<div class="tagtd">&nbsp;</div>
+	<form class="tagtr liste_titre liste_titre_add formnoborder">
+		<div class="tagtd liste_titre"><?php echo $langs->trans("Nature"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
+		<div class="tagtd liste_titre" align="center"><?php echo $langs->trans("Status"); ?></div>
+		<div class="tagtd liste_titre">&nbsp;</div>
 	</form>
 
 	<?php $var=true; ?>
@@ -214,4 +239,14 @@ $userstatic=new User($db);
 <?php } } ?>
 
 </div>
+</div>
+<!-- TEMPLATE CONTACTS HOOK BEGIN HERE -->
+<?php
+	if (is_object($hookmanager))
+	{
+		$hookmanager->initHooks(array('contacttpl'));
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('formContactTpl',$parameters,$object,$action);
+	}
+?>
 <!-- END PHP TEMPLATE CONTACTS -->

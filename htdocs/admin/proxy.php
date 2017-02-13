@@ -44,12 +44,12 @@ if (GETPOST("action") == 'set_proxy')
 {
     if (GETPOST("MAIN_USE_CONNECT_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_CONNECT_TIMEOUT")))
     {
-        setEventMessage($langs->trans("ErrorValueMustBeInteger"),'errors');
+        setEventMessages($langs->trans("ErrorValueMustBeInteger"), null, 'errors');
         $error++;
     }
     if (GETPOST("MAIN_USE_RESPONSE_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_RESPONSE_TIMEOUT")))
     {
-        setEventMessage($langs->trans("ErrorValueMustBeInteger"),'errors');
+        setEventMessages($langs->trans("ErrorValueMustBeInteger"), null, 'errors');
         $error++;
     }
 
@@ -68,7 +68,7 @@ if (GETPOST("action") == 'set_proxy')
 
     if (! $error)
     {
-        setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+        setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
     }
 }
 
@@ -79,9 +79,10 @@ if (GETPOST("action") == 'set_proxy')
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Proxy"));
+$wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+llxHeader('',$langs->trans("Proxy"), $wikihelp);
 
-print_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
+print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
 print $langs->trans("ProxyDesc")."<br>\n";
 print "<br>\n";
@@ -207,6 +208,5 @@ print '</div>';
 
 print '</form>';
 
-$db->close();
-
 llxFooter();
+$db->close();

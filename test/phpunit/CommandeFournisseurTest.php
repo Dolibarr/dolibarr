@@ -145,7 +145,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         // Create supplier price
         $result=$product->add_fournisseur($user, $societe->id, $ref_fourn, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
         $this->assertGreaterThanOrEqual(1, $result);
-        $result=$product->update_buyprice($quantity, 10, $user, 'HT', $societe, '', $ref_fourn, $tva_tx, 0, 0);
+        $result=$product->update_buyprice($quantity, 20, $user, 'HT', $societe, '', $ref_fourn, $tva_tx, 0, 0);
         $this->assertGreaterThanOrEqual(0, $result);
 
         // Create supplier order with a too low quantity

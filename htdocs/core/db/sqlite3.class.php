@@ -305,8 +305,9 @@ class DoliDBSqlite3 extends DoliDB
     function select_db($database)
     {
         dol_syslog(get_class($this)."::select_db database=".$database, LOG_DEBUG);
-	    // FIXME: sqlite_select_db() does not exist
-        return sqlite_select_db($this->db,$database);
+	    // sqlite_select_db() does not exist
+        //return sqlite_select_db($this->db,$database);
+        return true;
     }
 
 
@@ -831,9 +832,12 @@ class DoliDBSqlite3 extends DoliDB
         $sql="SHOW TABLES FROM ".$database." ".$like.";";
         //print $sql;
         $result = $this->query($sql);
-        while($row = $this->fetch_row($result))
+        if ($result)
         {
-            $listtables[] = $row[0];
+            while($row = $this->fetch_row($result))
+            {
+                $listtables[] = $row[0];
+            }
         }
         return $listtables;
     }
@@ -853,9 +857,12 @@ class DoliDBSqlite3 extends DoliDB
 
         dol_syslog($sql,LOG_DEBUG);
         $result = $this->query($sql);
-        while($row = $this->fetch_row($result))
+        if ($result)
         {
-            $infotables[] = $row;
+            while($row = $this->fetch_row($result))
+            {
+                $infotables[] = $row;
+            }
         }
         return $infotables;
     }
@@ -1272,158 +1279,6 @@ class DoliDBSqlite3 extends DoliDB
     }
 
     /**
-     * Cette fonction est l'equivalent de la fonction MONTH de MySql.
-     *
-     * @param 	string 		$date		Date
-     * @return 	string
-     */
-    public static function dbMONTH($date)
-    {
-        return date('n', strtotime($date));
-    }
-
-    /**
-     *  calcule du numéro de semaine
-     *
-     *  @param 	string	 	$date		Date
-     *  @param 	int 		$mode		Mode
-     *  @return	string
-     */
-    public static function dbWEEK($date, $mode = 0)
-    {
-        $arr = date_parse($date);
-        $calc_year = 0;
-        return self::calc_week($arr['year'], $arr['month'], $arr['day'], self::week_mode($mode), $calc_year);
-    }
-
-    /**
-     *  db_CURDATE
-     *
-     *  @return	string
-     */
-    public static function dbCURDATE() {
-        return date('Y-m-d');
-    }
-
-    /**
-     *  db_CURTIME
-     *
-     *  @return	string
-     */
-    public static function dbCURTIME() {
-        return date('H:i:s');
-    }
-
-    /**
-     *  dbWEEKDAY
-     *
-     *  @param	int		$date			Date
-     *  @return	double
-     */
-    public static function dbWEEKDAY($date) {
-        $arr = date_parse($date);
-        return self::calc_weekday(self::calc_daynr($arr['year'], $arr['month'], $arr['day']), 0);
-
-    }
-
-    /**
-     * Cette fonction est l'equivelent de la fonction date_format de MySQL.
-	 * @staticvar string $mysql_replacement	Les symboles formatage a remplacer
-	 *
-     * @param 	string $date 	la date dans un format ISO
-     * @param 	string $format 	la chaine de formatage
-     * @return 	string 			La date formatee.
-     */
-    public static function dbdateformat($date, $format)
-    {
-        static $mysql_replacement;
-        if (! isset($mysql_replacement)) {
-            $mysql_replacement = array(
-                '%' => '%',
-                'a' => 'D',
-                'b' => 'M',
-                'c' => 'n',
-                'D' => 'jS',
-                'd' => 'd',
-                'e' => 'j',
-                'f' => 'u',
-                'H' => 'H',
-                'h' => 'h',
-                'I' => 'h',
-                'i' => 'i',
-                'k' => 'H',
-                'l' => 'g',
-                'M' => 'F',
-                'm' => 'm',
-                'p' => 'A',
-                'r' => 'h:i:s A',
-                'S' => 's',
-                's' => 's',
-                'T' => 'H:i:s',
-                'W' => 'l',
-                'w' => 'w',
-                'Y' => 'Y',
-                'y' => 'y',
-            );
-        }
-
-        $fmt = '';
-        $lg = strlen($format);
-        $state = 0;
-        $timestamp = strtotime($date);
-        $yday = date('z', $timestamp);
-        $month = (integer) date("n", $timestamp);
-        $year = (integer) date("Y", $timestamp);
-        $day = (integer) date("d", $timestamp);
-        for($idx = 0; $idx < $lg; ++$idx) {
-            $char = $format[$idx];
-            if ($state == 0) {
-                if ($char == '%') {
-                    $state = 1;
-                } else {
-                    $fmt .= $char;
-                }
-            }
-            elseif ($state == 1) {
-                if (array_key_exists($char, $mysql_replacement)) {
-                    $fmt .= $mysql_replacement[$char];
-                } else {
-                    $calc_year = 0;
-                    switch ($char) {
-						case 'j':	// day of the year 001
-                            $char = sprintf("%03d", $yday+1);
-                            break;
-                        case 'U': // mode 0: semaine 0 = premiere semaine complète qui commence un dimanche
-                            $char = sprintf("%02d", self::calc_week($year, $month, $day, 4, $calc_year));
-                            break;
-                        case 'u': // mode 1: semaine 0 = première semaine de 4 jours. Début le dimanche
-                            $char = sprintf("%02d", self::calc_week($year, $month, $day, 1, $calc_year));
-                            break;
-                        case 'V': // mode 2: semaine 1 = premiere semaine complète qui commence un dimanche
-                            $char = sprintf("%02d", self::calc_week($year, $month, $day, 6, $calc_year));
-                            break;
-                        case 'v':  // mode 3: semaine 1 = premiere semaine de 4 jours. Début le lundi
-                            $char = sprintf("%02d", self::calc_week($year, $month, $day, 3, $calc_year));
-                            break;
-                        case 'X':
-                            self::calc_week($year, $month, $day, 6, $calc_year);
-                            $char = sprintf("%04d", $calc_year);
-                            break;
-                        case 'x':
-                            self::calc_week($year, $month, $day, 3, $calc_year);
-                            $char = sprintf("%04d", $calc_year);
-                            break;
-                    }
-                    $fmt .= $char;
-                }
-                $state = 0;
-            }
-        }
-        return date($fmt, strtotime($date));
-    }
-
-
-    /**
      * calc_daynr
      *
      * @param 	int 	$year		Year
@@ -1465,20 +1320,6 @@ class DoliDBSqlite3 extends DoliDB
     private static function calc_days_in_year($year)
     {
       return (($year & 3) == 0 && ($year%100 || ($year%400 == 0 && $year)) ? 366 : 365);
-    }
-
-    /**
-     * week_mode
-     *
-     * @param 	string	$mode		Mode
-     * @return	integer				Week format
-     */
-    private static function week_mode($mode) {
-        $week_format= ($mode & 7);
-        if (!($week_format & self::WEEK_MONDAY_FIRST)) {
-            $week_format^= self::WEEK_FIRST_WEEKDAY;
-        }
-        return $week_format;
     }
 
 	/**

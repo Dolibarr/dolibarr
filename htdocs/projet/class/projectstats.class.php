@@ -19,29 +19,33 @@ include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 
+/**
+ * Class to manage statistics on projects
+ */
 class ProjectStats extends Stats
 {
-	protected $db;
 	private $project;
 	public $userid;
 	public $socid;
 	public $year;
-	function __construct($db) {
+	
+	function __construct($db) 
+	{
 		global $conf, $user;
 
 		$this->db = $db;
 
 		require_once 'project.class.php';
-
 		$this->project = new Project($this->db);
 	}
 
 
 	/**
-	 * Return all leads grouped by status
+	 * Return all leads grouped by status.
+	 * Warning: There is no filter on WON/LOST because we want this for statistics.
 	 *
-	 * @param int $limit Limit results
-	 * @return array|int
+	 * @param  int             $limit Limit results
+	 * @return array|int       Array with value or -1 if error
 	 * @throws Exception
 	 */
 	function getAllProjectByStatus($limit = 5)
@@ -51,11 +55,12 @@ class ProjectStats extends Stats
 		$datay = array ();
 
 		$sql = "SELECT";
-		$sql .= " count(DISTINCT t.rowid), t.fk_opp_status";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "projet as t";
+		$sql .= " SUM(t.opp_amount), t.fk_opp_status, cls.code, cls.label";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "projet as t, ".MAIN_DB_PREFIX."c_lead_status as cls";
 		$sql .= $this->buildWhere();
-		$sql .= " AND t.fk_statut = 1";
-		$sql .= " GROUP BY t.fk_opp_status";
+		$sql .= " AND t.fk_opp_status = cls.rowid";
+		$sql .= " AND t.fk_statut <> 0";     // We want historic also, so all projects not draft
+		$sql .= " GROUP BY t.fk_opp_status, cls.code, cls.label";
 
 		$result = array ();
 		$res = array ();
@@ -69,13 +74,16 @@ class ProjectStats extends Stats
 			while ( $i < $num ) {
 				$row = $this->db->fetch_row($resql);
 				if ($i < $limit || $num == $limit)
-					$result[$i] = array (
-							$this->projet->status[$row[1]] . '(' . $row[0] . ')',
-							$row[0]
+				{
+				    $label = (($langs->trans("OppStatus".$row[2]) != "OppStatus".$row[2]) ? $langs->trans("OppStatus".$row[2]) : $row[2]);
+					$result[$i] = array(
+						$label. ' (' . price(price2num($row[0], 'MT'), 1, $langs, 1, -1, -1, $conf->currency) . ')',
+						$row[0]
 					);
+				}
 				else
 					$other += $row[1];
-				$i ++;
+				$i++;
 			}
 			if ($num > $limit)
 				$result[$i] = array (
@@ -86,7 +94,7 @@ class ProjectStats extends Stats
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(get_class($this) . '::' . __METHOD__ . ' ' . $this->error, LOG_ERR);
-			return - 1;
+			return -1;
 		}
 
 		return $result;
@@ -103,21 +111,28 @@ class ProjectStats extends Stats
 
 		$datay = array ();
 
-		$sql = "SELECT date_format(t.datec,'%Y') as year, COUNT(t.rowid) as nb, SUM(t.opp_amount) as total, AVG(t.opp_amount) as avg";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "projet as t";
+		$wonlostfilter=0; // No filter on status WON/LOST
+		
+		$sql = "SELECT date_format(t.datec,'%Y') as year, COUNT(t.rowid) as nb, SUM(t.opp_amount) as total, AVG(t.opp_amount) as avg,";
+		$sql.= " SUM(t.opp_amount * ".$this->db->ifsql("t.opp_percent IS NULL".($wonlostfilter?" OR cls.code IN ('WON','LOST')":""), '0', 't.opp_percent')." / 100) as weighted";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "projet as t LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls ON cls.rowid = t.fk_opp_status";
 		if (! $user->rights->societe->client->voir && ! $user->societe_id)
 			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=" . $user->id;
-		$sql .= $this->buildWhere();
-		$sql .= " GROUP BY year";
-		$sql .= $this->db->order('year', 'DESC');
+		$sql.= $this->buildWhere();
+		$sql.= " GROUP BY year";
+		$sql.= $this->db->order('year', 'DESC');
 
 		return $this->_getAllByYear($sql);
 	}
+	
+	
 	/**
-	 *
+	 * Build the where part
+	 * 
 	 * @return string
 	 */
-	public function buildWhere() {
+	public function buildWhere() 
+	{
 		$sqlwhere_str = '';
 		$sqlwhere = array();
 
@@ -148,7 +163,8 @@ class ProjectStats extends Stats
 	 * @param int $year scan
 	 * @return array of values
 	 */
-	function getNbByMonth($year) {
+	function getNbByMonth($year) 
+	{
 		global $user;
 
 		$this->yearmonth = $year;
@@ -174,7 +190,8 @@ class ProjectStats extends Stats
 	 * @param int $year scan
 	 * @return array with amount by month
 	 */
-	function getAmountByMonth($year) {
+	function getAmountByMonth($year) 
+	{
 		global $user;
 
 		$this->yearmonth = $year;
@@ -200,9 +217,10 @@ class ProjectStats extends Stats
 	 * @param	int		$endyear		Start year
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
+	 * @param   int     $wonlostfilter  Add a filter on status won/lost
 	 * @return 	array					Array of values
 	 */
-	function getWeightedAmountByMonthWithPrevYear($endyear,$startyear,$cachedelay=0)
+	function getWeightedAmountByMonthWithPrevYear($endyear,$startyear,$cachedelay=0,$wonlostfilter=1)
 	{
 		global $conf,$user,$langs;
 
@@ -249,7 +267,7 @@ class ProjectStats extends Stats
 			$year=$startyear;
 			while($year <= $endyear)
 			{
-				$datay[$year] = $this->getWeightedAmountByMonth($year);
+				$datay[$year] = $this->getWeightedAmountByMonth($year,$wonlostfilter);
 				$year++;
 			}
 
@@ -289,18 +307,20 @@ class ProjectStats extends Stats
 
 
 	/**
-	 * Return the Project amount by month for a year
+	 * Return the Project weighted opp amount by month for a year.
 	 *
-	 * @param int $year scan
-	 * @return array with amount by month
+	 * @param  int $year               Year to scan
+	 * @param  int $wonlostfilter      Add a filter on status won/lost
+	 * @return array                   Array with amount by month
 	 */
-	function getWeightedAmountByMonth($year) {
+	function getWeightedAmountByMonth($year, $wonlostfilter=1) 
+	{
 		global $user;
 
 		$this->yearmonth = $year;
 
-		$sql = "SELECT date_format(t.datec,'%m') as dm, SUM(t.opp_amount)";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "projet as t";
+		$sql = "SELECT date_format(t.datec,'%m') as dm, SUM(t.opp_amount * ".$this->db->ifsql("t.opp_percent IS NULL".($wonlostfilter?" OR cls.code IN ('WON','LOST')":""), '0', 't.opp_percent')." / 100)";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "projet as t LEFT JOIN ".MAIN_DB_PREFIX.'c_lead_status as cls ON t.fk_opp_status = cls.rowid';
 		if (! $user->rights->societe->client->voir && ! $user->societe_id)
 			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=" . $user->id;
 		$sql .= $this->buildWhere();
@@ -357,7 +377,7 @@ class ProjectStats extends Stats
 		if ($foundintocache) // Cache file found and is not too old
 		{
 			dol_syslog(get_class($this) . '::' . __FUNCTION__ . " read data from cache file " . $newpathofdestfile . " " . $filedate . ".");
-			$data = dol_json_decode(file_get_contents($newpathofdestfile), true);
+			$data = json_decode(file_get_contents($newpathofdestfile), true);
 		} else {
 			$year = $startyear;
 			while ( $year <= $endyear ) {
@@ -383,7 +403,7 @@ class ProjectStats extends Stats
 			if (! dol_is_dir($conf->user->dir_temp))
 				dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
-			fwrite($fp, dol_json_encode($data));
+			fwrite($fp, json_encode($data));
 			fclose($fp);
 			if (! empty($conf->global->MAIN_UMASK))
 				$newmask = $conf->global->MAIN_UMASK;
@@ -401,7 +421,8 @@ class ProjectStats extends Stats
 	 * @param int $year scan
 	 * @return array with amount by month
 	 */
-	function getTransformRateByMonth($year) {
+	function getTransformRateByMonth($year) 
+	{
 		global $user;
 
 		$this->yearmonth = $year;

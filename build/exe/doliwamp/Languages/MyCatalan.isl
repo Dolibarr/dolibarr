@@ -20,7 +20,7 @@ DoYouWantToStart=Vol iniciar el procés d'instal·lació/actualització?
 TechnicalParameters=Paràmetres tècnics
 IfFirstInstall=Si es tracta de la primera instal lació, haurà d'especificar alguns paràmetres tècnics. Si no els entén, no sabeu o va a procedir a una actualització, deixi els camps amb els valors proposats per defecte.
 
-; WARNING !!! STRINGS HERE MUST BE LOWER THAN 60 CHARACTERS
+; WARNING !!! STRINGS HERE MUST BE LOWER THAN 70 CHARACTERS
 SMTPServer=Servidor SMTP (El seu o el del seu ISP, únicament primera instal.lació) :
 ApachePort=Puerto Apache (únicament primera instal.lació, normalment és el 80) :
 MySqlPort=Puerto Mysql (únicament primera instal.lació, normalment és el 3306) :
@@ -31,6 +31,7 @@ FailedToDeleteLock=FailedToDeleteLock=Error en l'eliminació del fitxer %1/www/do
 PortAlreadyInUse=Sembla que el port %1 ja està sent utilitzat. Es recomana cancel·lar, tornar enrere i especificar un altre valor per al port% 2. Cancel·lar i escollir un altre valor?
 
 FirefoxDetected=S'ha detectat Firefox al seu ordinador. Voleu activar per defecte com a navegador per Dolibarr?
+ChromeDetected=S'ha detectat Chrome al seu ordinador. Voleu activar per defecte com a navegador per Dolibarr?
 ChooseDefaultBrowser=Esculli el seu navegador per defecte. Si no està segur, simplement feu clic a Obrir:
 
 LaunchNow=Llançar ara Dolibarr

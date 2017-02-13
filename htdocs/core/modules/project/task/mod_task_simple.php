@@ -101,10 +101,10 @@ class mod_task_simple extends ModeleNumRefTask
 	*  Return next value
 	*
 	*  @param   Societe	$objsoc		Object third party
-	*  @param   Task	$task		Object Task
+	*  @param   Task	$object		Object Task
 	*  @return	string				Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc,$task)
+    function getNextValue($objsoc,$object)
     {
 		global $db,$conf;
 
@@ -127,7 +127,7 @@ class mod_task_simple extends ModeleNumRefTask
 			return -1;
 		}
 
-		$date=empty($task->date_c)?dol_now():$task->date_c;
+		$date=empty($object->date_c)?dol_now():$object->date_c;
 
 		//$yymm = strftime("%y%m",time());
 		$yymm = strftime("%y%m",$date);
@@ -144,12 +144,12 @@ class mod_task_simple extends ModeleNumRefTask
      * 	Return next reference not yet used as a reference
      *
      *  @param	Societe	$objsoc     Object third party
-     *  @param  Task	$task		Object task
+     *  @param  Task	$object		Object task
      *  @return string      		Next not used reference
      */
-    function task_get_num($objsoc=0,$task='')
+    function task_get_num($objsoc=0,$object='')
     {
-        return $this->getNextValue($objsoc,$task);
+        return $this->getNextValue($objsoc,$object);
     }
 }
 

@@ -1,8 +1,8 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /**
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/subscription.class.php");
 
 $langs->load("main");
 $langs->load("errors");
@@ -48,7 +48,7 @@ $langs->load("errors");
 $version=DOL_VERSION;
 $error=0;
 $forcecommit=0;
-
+$confirmed=0;
 
 
 /*
@@ -94,7 +94,7 @@ $required_fields=array_unique(array_values(array_filter($required_fields, "dolVa
 
 
 if (! isset($argv[2]) || ! is_numeric($argv[2])) {
-    print "Usage:  $script_file (nocommitiferror|commitiferror) id_member_type  [--server=ldapserverhost]\n";
+    print "Usage:  $script_file (nocommitiferror|commitiferror) id_member_type  [--server=ldapserverhost] [-y]\n";
 	exit(-1);
 }
 
@@ -103,6 +103,7 @@ foreach($argv as $key => $val)
 {
 	if ($val == 'commitiferror') $forcecommit=1;
 	if (preg_match('/--server=([^\s]+)$/',$val,$reg)) $conf->global->LDAP_SERVER_HOST=$reg[1];
+	if (preg_match('/-y$/',$val,$reg)) $confirmed=1;
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
@@ -114,7 +115,8 @@ print "port=".$conf->global->LDAP_SERVER_PORT."\n";
 print "login=".$conf->global->LDAP_ADMIN_DN."\n";
 print "pass=".preg_replace('/./i','*',$conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=".$conf->global->LDAP_MEMBER_DN."\n";
-print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS.'=*)'."\n";
+if (! empty($conf->global->LDAP_MEMBER_FILTER)) print 'Filter=('.$conf->global->LDAP_MEMBER_FILTER.')'."\n";	// Note: filter is defined into function getRecords
+else print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS.'=*)'."\n";
 print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
@@ -139,9 +141,11 @@ if ($typeid <= 0)
 }
 
 
-print "Hit Enter to continue or CTRL+C to stop...\n";
-$input = trim(fgets(STDIN));
-
+if (! $confirmed)
+{
+	print "Hit Enter to continue or CTRL+C to stop...\n";
+	$input = trim(fgets(STDIN));
+}
 
 // Load table of correspondence of countries
 $hashlib2rowid=array();
@@ -188,7 +192,7 @@ if ($result >= 0)
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_MEMBER_ACTIVE=0;
 
-	$ldaprecords = $ldap->getRecords('*',$conf->global->LDAP_MEMBER_DN, $conf->global->LDAP_KEY_MEMBERS, $required_fields, 0);
+	$ldaprecords = $ldap->getRecords('*',$conf->global->LDAP_MEMBER_DN, $conf->global->LDAP_KEY_MEMBERS, $required_fields, 'member');	// Fiter on 'member' filter param
 	if (is_array($ldaprecords))
 	{
 		$db->begin();
@@ -287,7 +291,7 @@ if ($result >= 0)
 			{
 				// Cree premiere cotisation et met a jour datefin dans adherent
 				//print "xx".$datefirst."\n";
-				$crowid=$member->cotisation($datefirst, $pricefirst, 0);
+				$crowid=$member->subscription($datefirst, $pricefirst, 0);
 			}
 
 			// Insert last subscription
@@ -295,7 +299,7 @@ if ($result >= 0)
 			{
 				// Cree derniere cotisation et met a jour datefin dans adherent
 				//print "yy".dol_print_date($datelast)."\n";
-				$crowid=$member->cotisation($datelast, $pricelast, 0);
+				$crowid=$member->subscription($datelast, $pricelast, 0);
 			}
 
 		}

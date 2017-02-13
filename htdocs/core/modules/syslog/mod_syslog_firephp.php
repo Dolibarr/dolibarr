@@ -1,4 +1,20 @@
 <?php
+/* Copyright (C) 2012   Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2015   Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
 
@@ -7,7 +23,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
  */
 class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 {
-	var $code = 'firephp';
+	public $code = 'firephp';
+	private static $firephp_include_path = '/includes/firephp/firephp-core/lib/';
+	private static $firephp_class_path = 'FirePHPCore/FirePHP.class.php';
 
 	/**
 	 * 	Return name of logger
@@ -38,7 +56,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	{
 		global $langs;
 
-		return $this->isActive()?'':$langs->trans('ClassNotFoundIntoPathWarning','FirePHPCore/FirePHP.class.php');
+		return $this->isActive()?'':$langs->trans('ClassNotFoundIntoPathWarning', self::$firephp_class_path);
 	}
 
 	/**
@@ -48,42 +66,48 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	 */
 	public function isActive()
 	{
+		global $conf;
 		try
 		{
-		    set_include_path('/usr/share/php/');
-		    $res = @include_once 'FirePHPCore/FirePHP.class.php';
-		    restore_include_path();
-		    if ($res)
-		    {
-		        return 1;
-		    }
+			if (empty($conf->global->SYSLOG_FIREPHP_INCLUDEPATH)) {
+				$conf->global->SYSLOG_FIREPHP_INCLUDEPATH = DOL_DOCUMENT_ROOT . self::$firephp_include_path;
+			}
+			set_include_path($conf->global->SYSLOG_FIREPHP_INCLUDEPATH);
+			$res = @include_once self::$firephp_class_path;
+			restore_include_path();
+			if ($res) {
+				return 1;
+			} else {
+				return 0;
+			}
 		}
 		catch(Exception $e)
 		{
-		    print '<!-- FirePHP not available into PHP -->'."\n";
+			print '<!-- FirePHP not available into PHP -->'."\n";
 		}
 
 		return -1;
 	}
 
-	///**
-	// * 	Return array of configuration data
-	// *
-	// * 	@return	array		Return array of configuration data
-	// */
-	// public function configure()
-	// {
-	// 	global $langs;
+	/**
+	 * Return array of configuration data
+	 *
+	 * @return array Return array of configuration data
+	 */
+	public function configure()
+	{
+		global $langs;
 
-	// 	return array(
-	// 		array(
-	// 			'name' => $langs->trans('IncludePath'),
-	// 			'constant' => 'SYSLOG_FIREPHP_INCLUDEPATH',
-	// 			'default' => '/usr/share/php',
-	// 			'attr' => 'size="40"'
-	// 		)
-	// 	);
-	// }
+		return array(
+			array(
+				'name' => $langs->trans('IncludePath', 'SYSLOG_FIREPHP_INCLUDEPATH'),
+				'constant' => 'SYSLOG_FIREPHP_INCLUDEPATH',
+				'default' => DOL_DOCUMENT_ROOT . self::$firephp_include_path,
+				'attr' => 'size="60"',
+				'example' => '/usr/share/php, ' . DOL_DOCUMENT_ROOT . self::$firephp_include_path
+			)
+		);
+	}
 
 	/**
 	 * 	Return if configuration is valid
@@ -92,19 +116,14 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	 */
 	public function checkConfiguration()
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$errors = array();
 
-		$oldinclude = get_include_path();
-		set_include_path('/usr/share/php/');
-
-		if (!file_exists('FirePHPCore/FirePHP.class.php'))
+		if (!file_exists($conf->global->SYSLOG_FIREPHP_INCLUDEPATH . self::$firephp_class_path))
 		{
-			$errors[] = $langs->trans("ErrorFailedToOpenFile", 'FirePhp.php');
+			$errors[] = $langs->trans("ErrorFailedToOpenFile", self::$firephp_class_path);
 		}
-
-		set_include_path($oldinclude);
 
 		return $errors;
 	}
@@ -129,8 +148,8 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 			// Warning FirePHPCore must be into PHP include path. It is not possible to use into require_once() a constant from
 			// database or config file because we must be able to log data before database or config file read.
 			$oldinclude=get_include_path();
-			set_include_path('/usr/share/php/');
-			include_once 'FirePHPCore/FirePHP.class.php';
+			set_include_path($conf->global->SYSLOG_FIREPHP_INCLUDEPATH);
+			include_once self::$firephp_class_path;
 			set_include_path($oldinclude);
 			ob_start();	// To be sure headers are not flushed until all page is completely processed
 			$firephp = FirePHP::getInstance(true);

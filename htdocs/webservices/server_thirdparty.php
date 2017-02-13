@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
 require_once '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
@@ -685,9 +684,9 @@ function getListOfThirdParties($authentication,$filterthirdparty)
         foreach($filterthirdparty as $key => $val)
         {
             if ($key == 'name'     && $val != '')  $sql.=" AND s.name LIKE '%".$db->escape($val)."%'";
-        	if ($key == 'client'   && $val != '')  $sql.=" AND s.client = ".$db->escape($val);
-            if ($key == 'supplier' && $val != '')  $sql.=" AND s.fournisseur = ".$db->escape($val);
-            if ($key == 'category' && $val != '')  $sql.=" AND s.rowid IN (SELECT fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie=".$db->escape($val).") ";
+        	if ($key == 'client'   && (int) $val > 0)  $sql.=" AND s.client = ".$db->escape($val);
+            if ($key == 'supplier' && (int) $val > 0)  $sql.=" AND s.fournisseur = ".$db->escape($val);
+            if ($key == 'category' && (int) $val > 0)  $sql.=" AND s.rowid IN (SELECT fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie=".$db->escape($val).") ";
         }
         dol_syslog("Function: getListOfThirdParties", LOG_DEBUG);
 

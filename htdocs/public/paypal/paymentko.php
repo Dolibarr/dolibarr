@@ -51,6 +51,13 @@ $langs->load("companies");
 $langs->load("paybox");
 $langs->load("paypal");
 
+$PAYPALTOKEN=GETPOST('TOKEN');
+if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');
+$PAYPALPAYERID=GETPOST('PAYERID');
+if (empty($PAYPALPAYERID)) $PAYPALPAYERID=GETPOST('PayerID');
+$PAYPALFULLTAG=GETPOST('FULLTAG');
+if (empty($PAYPALFULLTAG)) $PAYPALFULLTAG=GETPOST('fulltag');
+
 
 /*
  * Actions
@@ -73,6 +80,18 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paypal');
 // Send an email
 if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
 {
+    // Get on url call
+    $token              = $PAYPALTOKEN;
+    $fulltag            = $PAYPALFULLTAG;
+    $payerID            = $PAYPALPAYERID;
+    // Set by newpayment.php
+    $paymentType        = $_SESSION['PaymentType'];
+    $currencyCodeType   = $_SESSION['currencyCodeType'];
+    $FinalPaymentAmt    = $_SESSION["Payment_Amount"];
+    // From env
+    $ipaddress          = $_SESSION['ipaddress'];
+    
+    
 	$sendto=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
 	$from=$conf->global->MAILING_EMAIL_FROM;
 
@@ -101,11 +120,6 @@ llxHeaderPaypal($langs->trans("PaymentForm"));
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div id="dolpaymentdiv" align="center">'."\n";
 print $langs->trans("YourPaymentHasNotBeenRecorded")."<br><br>";
-
-$PAYPALTOKEN=GETPOST('TOKEN');
-if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');
-$PAYPALFULLTAG=GETPOST('FULLTAG');
-if (empty($PAYPALFULLTAG)) $PAYPALFULLTAG=GETPOST('fulltag');
 
 if (! empty($conf->global->PAYPAL_MESSAGE_KO)) print $conf->global->PAYPAL_MESSAGE_KO;
 print "\n</div>\n";

@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2014		Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+-- Copyright (C) 2014		Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
 -- Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,9 @@ create table llx_loan
   accountancy_account_insurance	varchar(32),
   accountancy_account_interest	varchar(32),
   
+  fk_projet						integer DEFAULT NULL,
+  
   fk_user_author				integer DEFAULT NULL,
-  fk_user_modif					integer DEFAULT NULL,
+  fk_user_modif					integer DEFAULT NULL, 
   active						tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;

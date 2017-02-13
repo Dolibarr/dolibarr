@@ -14,6 +14,5 @@ BehaviourOnClick=Hegðun þegar slóðin er smellt
 CreateBookmark=Búa til bókamerki
 SetHereATitleForLink=Setja inn titil fyrir bókamerkið
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Notaðu utanáliggjandi http URL eða ættingja Dolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Veldu hvort á síðu opnar tengil á að birtast á núverandi eða nýr gluggi
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Bókamerki stjórnun
-ListOfBookmarks=Listi yfir bókamerki

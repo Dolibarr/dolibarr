@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015      Bahfir Abbes         <contact@dolibarrpar.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,13 +94,13 @@ if ($action == 'setvalue' && $user->admin)
     {
     	$db->commit();
 
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
 	{
 		$db->rollback();
 
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -115,9 +116,13 @@ $notify = new Notify($db);
 llxHeader('',$langs->trans("NotificationSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("NotificationSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("NotificationSetup"),$linkback,'title_setup');
 
-print $langs->trans("NotificationsDesc").'<br><br>';
+print $langs->trans("NotificationsDesc").'<br>';
+print $langs->trans("NotificationsDescUser").'<br>';
+if (! empty($conf->societe->enabled)) print $langs->trans("NotificationsDescContact").'<br>';
+print $langs->trans("NotificationsDescGlobal").'<br>';
+print '<br>';
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -132,61 +137,64 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("NotificationEMailFrom").'</td><td>';
+print $langs->trans("NotificationEMailFrom").'</td>';
+print '<td>';
 print '<input size="32" type="email" name="email_from" value="'.$conf->global->NOTIFICATION_EMAIL_FROM.'">';
 if (! empty($conf->global->NOTIFICATION_EMAIL_FROM) && ! isValidEmail($conf->global->NOTIFICATION_EMAIL_FROM)) print ' '.img_warning($langs->trans("ErrorBadEMail"));
-print '</td></tr>';
+print '</td>';
+print '</tr>';
 print '</table>';
 
-print '<br>';
+print '<br><br>';
 
 
-if ($conf->societe->enabled)
+// Notification per contacts
+$title=$langs->trans("ListOfNotificationsPerUser");
+if (! empty($conf->societe->enabled)) $title=$langs->trans("ListOfNotificationsPerUserOrContact");
+print load_fiche_titre($title,'','');
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Label").'</td>';
+/*print '<td>'.$langs->trans("Code").'</td>';
+ print '<td>'.$langs->trans("Label").'</td>';*/
+//print '<td align="right">'.$langs->trans("NbOfTargetedContacts").'</td>';
+print "</tr>\n";
+
+// Load array of available notifications
+$notificationtrigger=new InterfaceNotification($db);
+$listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
+
+print '<tr '.$bc[$var].'>';
+print '<td>';
+
+$var=true;
+$i=0;
+foreach($listofnotifiedevents as $notifiedevent)
 {
-	print_fiche_titre($langs->trans("ListOfNotificationsPerContact"),'','');
+    $var=!$var;
+    $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Module").'</td>';
-	print '<td>'.$langs->trans("Code").'</td>';
-	print '<td>'.$langs->trans("Label").'</td>';
-	print '<td align="right">'.$langs->trans("NbOfTargetedContacts").'</td>';
-	print '<td>'.'</td>';
-	print "</tr>\n";
+    if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
+    elseif ($notifiedevent['elementtype'] == 'propal') $elementLabel = $langs->trans('Proposal');
+    elseif ($notifiedevent['elementtype'] == 'facture') $elementLabel = $langs->trans('Bill');
+    elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
+    elseif ($notifiedevent['elementtype'] == 'ficheinter') $elementLabel = $langs->trans('Intervention');
 
-	// Load array of available notifications
-	$notificationtrigger=new InterfaceNotification($db);
-	$listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
-
-	$var=true;
-	foreach($listofnotifiedevents as $notifiedevent)
-	{
-	    $var=!$var;
-	    $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
-
-	    if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
-	    elseif ($notifiedevent['elementtype'] == 'propal') $elementLabel = $langs->trans('Proposal');
-	    elseif ($notifiedevent['elementtype'] == 'facture') $elementLabel = $langs->trans('Bill');
-	    elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
-
-	    print '<tr '.$bc[$var].'>';
-	    print '<td>'.$elementLabel.'</td>';
-	    print '<td>'.$notifiedevent['code'].'</td>';
-	    print '<td>'.$label.'</td>';
-	    print '<td align="right">';
-		$tmparray = $notify->getNotificationsArray($notifiedevent['code'], 0);
-		print count($tmparray);
-	    print '</td>';
-	    print '</tr>';
-	}
-
-	print '</table>';
-	print '* '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
-	print '<br>';
+    if ($i) print ', ';
+    print $label;
+     
+    $i++;
 }
+print '</td></tr>';
+
+print '</table>';
+print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
+if (! empty($conf->societe->enabled)) print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+print '<br><br>';
 
 
-print_fiche_titre($langs->trans("ListOfFixedNotifications"),'','');
+print load_fiche_titre($langs->trans("ListOfFixedNotifications"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -212,6 +220,7 @@ foreach($listofnotifiedevents as $notifiedevent)
     elseif ($notifiedevent['elementtype'] == 'propal') $elementLabel = $langs->trans('Proposal');
     elseif ($notifiedevent['elementtype'] == 'facture') $elementLabel = $langs->trans('Bill');
     elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
+	elseif ($notifiedevent['elementtype'] == 'ficheinter') $elementLabel = $langs->trans('Intervention');
 
     print '<tr '.$bc[$var].'>';
     print '<td>'.$elementLabel.'</td>';

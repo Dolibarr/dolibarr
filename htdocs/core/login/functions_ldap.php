@@ -138,7 +138,7 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
         $ldap->searchUser=$ldapuserattr."=".$usertotest.",".$ldapdn;  // Default dn (will work if LDAP accept a dn with login value inside)
 		// But if LDAP need a dn with name like "cn=Jhon Bloggs,ou=People,dc=foo,dc=com", previous part must have been executed to have
 		// dn detected into ldapUserDN.
-		if ($resultFetchLdapUser) $ldap->searchUser = $ldap->ldapUserDN;
+		if ($resultFetchLdapUser AND !empty($ldap->ldapUserDN)) $ldap->searchUser = $ldap->ldapUserDN;
         $ldap->searchPassword=$passwordtotest;
 
 		// Test with this->seachUser and this->searchPassword
@@ -229,7 +229,7 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
                 $ldap->ldapErrorText = ldap_error($ldap->connection);
                 dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorCode." ".$ldap->ldapErrorText);
 		    }
-			sleep(1);
+			sleep(2);      // Anti brut force protection
 			$langs->load('main');
 			$langs->load('other');
 			$langs->load('errors');

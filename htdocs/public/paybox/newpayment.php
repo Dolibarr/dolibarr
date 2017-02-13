@@ -167,7 +167,7 @@ else if (! empty($conf->global->PAYBOX_CREDITOR)) $creditor=$conf->global->PAYBO
 
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">';
-print '<form id="dolpaymentform" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="dopayment">';
 print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">';
@@ -180,7 +180,7 @@ print '<!-- urlok = '.$urlok.' -->'."\n";
 print '<!-- urlko = '.$urlko.' -->'."\n";
 print "\n";
 
-print '<table id="dolpaymenttable" summary="Payment form">'."\n";
+print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
 // Show logo (search order: logo defined by PAYBOX_LOGO_suffix, then PAYBOX_LOGO, then small company logo, large company logo, theme logo, common logo)
 $width=0;
@@ -583,7 +583,7 @@ if (GETPOST("source") == 'contractline' && $valid)
 	$duration='';
 	if ($contractline->fk_product)
 	{
-		if ($product->isservice() && $product->duration_value > 0)
+		if ($product->isService() && $product->duration_value > 0)
 		{
 			$label=$langs->trans("Duration");
 
@@ -649,7 +649,7 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 	$langs->load("members");
 
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
 	$member=new Adherent($db);
 	$result=$member->fetch('',$ref);
@@ -660,7 +660,7 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 	}
 	else
 	{
-		$subscription=new Cotisation($db);
+		$subscription=new Subscription($db);
 	}
 
 	$amount=$subscription->total_ttc;

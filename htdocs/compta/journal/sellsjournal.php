@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
  * Copyright (C) 2011-2014	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012  Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2011-2012  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -114,8 +114,13 @@ $sql.= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = '".$idpays."'";
 $sql.= " WHERE f.entity = ".$conf->entity;
 $sql.= " AND f.fk_statut > 0";
-if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
-else $sql.= " AND f.type IN (0,1,2,3,5)";
+if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$sql.= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_SITUATION.")";
+}
+else {
+	$sql.= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_STANDARD.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_DEPOSIT.",".Facture::TYPE_SITUATION.")";
+}
+
 $sql.= " AND fd.product_type IN (0,1)";
 if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 $sql.= " ORDER BY f.rowid";
@@ -161,12 +166,18 @@ if ($result)
 
 		// Situation invoices handling
 		$line = new FactureLigne($db);
-		$line->fetch($obj->id);
-		$prev_progress = $line->get_prev_progress();
-		if ($obj->situation_percent == 0) { // Avoid divide by 0
-			$situation_ratio = 0;
+		$line->fetch($obj->id);   // id of line
+		$prev_progress = 0;
+		if ($obj->type==Facture::TYPE_SITUATION) {
+			// Avoid divide by 0
+			if ($obj->situation_percent == 0) { 
+				$situation_ratio = 0;
+			} else {
+		        $prev_progress = $line->get_prev_progress($obj->rowid);   // id on invoice
+			    $situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+			}
 		} else {
-			$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+			$situation_ratio = 1;
 		}
 
     	//la ligne facture
@@ -205,7 +216,7 @@ print '<td>'.$langs->trans('Account').'</td>';
 print '<td>'.$langs->trans('Type').'</td><td align="right">'.$langs->trans('Debit').'</td><td align="right">'.$langs->trans('Credit').'</td>';
 print "</tr>\n";
 
-$var=true;
+$var=false;
 
 $invoicestatic=new Facture($db);
 $companystatic=new Client($db);
@@ -252,7 +263,7 @@ foreach ($tabfac as $key => $val)
 			if (isset($line['nomtcheck']) || $mt)
 			{
 				print "<tr ".$bc[$var]." >";
-				print "<td>".dol_print_date($val["date"])."</td>";
+				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
 

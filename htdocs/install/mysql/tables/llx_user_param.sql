@@ -22,8 +22,8 @@ create table llx_user_param
 (
   fk_user       integer      NOT NULL,
   entity        integer DEFAULT 1 NOT NULL,	-- multi company id
-  param         varchar(64)  NOT NULL,
-  value         varchar(255) NOT NULL
+  param         varchar(255)  NOT NULL,
+  value         text NOT NULL
 )ENGINE=innodb;
 
 -- 

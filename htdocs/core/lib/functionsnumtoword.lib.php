@@ -37,7 +37,9 @@ function dolNumberToWord($numero, $langs, $numorcurrency='number')
 		return -1;
 	// Get 2 decimals to cents, another functions round or truncate
 	$strnumber = number_format ($numero,10);
-	for ($i=0; $i<strlen($strnumber); $i++){
+	$len=strlen($strnumber);
+	for ($i=0; $i<$len; $i++)
+	{
 		if ($strnumber[$i]=='.') {
 			$parte_decimal = $strnumber[$i+1].$strnumber[$i+2];
 			break;
@@ -109,7 +111,15 @@ function dolNumberToWord($numero, $langs, $numorcurrency='number')
 	}
 }
 
-function hundreds2text ($hundreds, $tens, $units){
+/**
+ * hundreds2text
+ * 
+ * @param integer $hundreds     Hundreds
+ * @param integer $tens         Tens
+ * @param integer $units        Units
+ */
+function hundreds2text($hundreds, $tens, $units)
+{
 	if ($hundreds==1 && $tens==0 && $units==0){
 		return "CIEN";
 	}

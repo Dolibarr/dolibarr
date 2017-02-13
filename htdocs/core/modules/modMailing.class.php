@@ -29,7 +29,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Mailing
+ *	Class to describe and enable module Mailing
  */
 class modMailing extends DolibarrModules
 {
@@ -56,7 +56,7 @@ class modMailing extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/mailing/temp");
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->langfiles = array("mails");
@@ -64,10 +64,10 @@ class modMailing extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("mailing.php");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions
@@ -79,7 +79,7 @@ class modMailing extends DolibarrModules
 		$this->rights[$r][0] = 221; // id de la permission
 		$this->rights[$r][1] = 'Consulter les mailings'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
@@ -127,6 +127,10 @@ class modMailing extends DolibarrModules
 		$this->rights[$r][4] = 'mailing_advance';		// Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'delete';
 
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
 	}
 
 

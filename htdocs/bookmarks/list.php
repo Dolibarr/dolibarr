@@ -31,6 +31,7 @@ $langs->load("admin");
 if (! $user->rights->bookmark->lire) {
     restrictedArea($user, 'bookmarks');
 }
+$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -59,7 +60,7 @@ if ($_GET["action"] == 'delete')
     }
     else
     {
-        setEventMessage($bookmark->error, 'errors');
+        setEventMessages($bookmark->error, $bookmark->errors, 'errors');
     }
 }
 
@@ -72,7 +73,7 @@ $userstatic=new User($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("Bookmarks"));
+print load_fiche_titre($langs->trans("Bookmarks"));
 
 $sql = "SELECT b.fk_soc as rowid, b.dateb, b.rowid as bid, b.fk_user, b.url, b.target, b.title, b.favicon, b.position,";
 $sql.= " u.login, u.lastname, u.firstname";
@@ -88,21 +89,26 @@ if ($resql)
 {
     $num = $db->num_rows($resql);
     $i = 0;
+    $param = "";
+    if ($optioncss != '') $param ='&optioncss='.$optioncss;
 
-    print "<table class=\"noborder\" width=\"100%\">";
-
+    $moreforfilter='';
+    
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    
     print "<tr class=\"liste_titre\">";
     //print "<td>&nbsp;</td>";
-    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bid","","",'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bid","", $param,'align="left"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Title"),'','');
     print "</td>";
     print_liste_field_titre($langs->trans("Link"),'','');
     print "</td>";
     print_liste_field_titre($langs->trans("Target"),'','','','','align="center"');
     print "</td>";
-    print_liste_field_titre($langs->trans("Owner"),$_SERVER["PHP_SELF"],"u.lastname","","",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"b.dateb","","",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Position"),$_SERVER["PHP_SELF"],"b.position","","",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Owner"),$_SERVER["PHP_SELF"],"u.lastname","", $param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"b.dateb","", $param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Position"),$_SERVER["PHP_SELF"],"b.position","", $param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('');
     print "</tr>\n";
 
@@ -197,6 +203,8 @@ if ($resql)
         $i++;
     }
     print "</table>";
+    print '</div>';
+    
     $db->free($resql);
 }
 else
@@ -215,7 +223,7 @@ if ($user->rights->bookmark->creer)
 
 print '</div>';
 
-
+llxFooter();
 $db->close();
 
-llxFooter();
+

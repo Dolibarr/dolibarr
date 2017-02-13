@@ -28,6 +28,7 @@ create table llx_commande_fournisseurdet
   ref                        varchar(50),  -- supplier product ref
   label                      varchar(255), -- product label
   description                text,
+  vat_src_code				 varchar(10)  DEFAULT '',	-- Vat code used as source of vat fields. Not strict foreign key here.
   tva_tx                     double(6,3)  DEFAULT 0,    -- taux tva
   localtax1_tx               double(6,3)  DEFAULT 0,    -- localtax1 rate
   localtax1_type			 varchar(10)	  NULL, 		-- localtax1 type
@@ -49,5 +50,12 @@ create table llx_commande_fournisseurdet
   special_code				 integer      DEFAULT 0,      -- code pour les lignes speciales
   rang						 integer      DEFAULT 0,
   import_key				 varchar(14),
-  fk_unit         integer    DEFAULT NULL
+  fk_unit         integer    DEFAULT NULL,
+  
+  fk_multicurrency		integer,
+  multicurrency_code			varchar(255),
+  multicurrency_subprice		double(24,8) DEFAULT 0,
+  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_tva	double(24,8) DEFAULT 0,
+  multicurrency_total_ttc	double(24,8) DEFAULT 0
 )ENGINE=innodb;

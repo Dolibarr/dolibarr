@@ -43,7 +43,7 @@ if ($user->societe_id > 0)
 $dir = $conf->facture->dir_output.'/payments';
 if (! $user->rights->societe->client->voir || $socid) $dir.='/private/'.$user->id;	// If user has no permission to see all, output dir is specific to user
 
-$year = $_GET["year"];
+$year = GETPOST('year', 'int');
 if (! $year) { $year=date("Y"); }
 
 
@@ -88,7 +88,7 @@ $formother=new FormOther($db);
 llxHeader();
 
 $titre=($year?$langs->trans("PaymentsReportsForYear",$year):$langs->trans("PaymentsReports"));
-print_fiche_titre($titre,'','title_accountancy.png');
+print load_fiche_titre($titre,'','title_accountancy.png');
 
 // Formulaire de generation
 print '<form method="post" action="rapport.php?year='.$year.'">';
@@ -128,7 +128,7 @@ if (is_dir($dir))
 asort($linkforyear);
 foreach($linkforyear as $cursoryear)
 {
-    print '<a href="rapport.php?year='.$cursoryear.'">'.$cursoryear.'</a> &nbsp;';
+    print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$cursoryear.'">'.$cursoryear.'</a> &nbsp;';
 }
 
 if ($year)

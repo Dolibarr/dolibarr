@@ -64,24 +64,27 @@ class ExportExcel extends ModeleExports
         $this->picto='mime/xls';					// Picto
 		$this->version='1.30';             // Driver version
 
-		// If driver use an external library, put its name here
-		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
-		{
-			require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_workbookbig.inc.php';
-            require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_worksheet.inc.php';
-            require_once PHP_WRITEEXCEL_PATH.'functions.writeexcel_utility.inc.php';
-			$this->label_lib='PhpWriteExcel';
-            $this->version_lib='unknown';
-		}
-		else
-		{
-            require_once PHPEXCEL_PATH.'PHPExcel.php';
-            require_once PHPEXCEL_PATH.'PHPExcel/Style/Alignment.php';
-			$this->label_lib='PhpExcel';
-            $this->version_lib='1.8.0';		// No way to get info from library
-		}
-
 		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
+		
+		if (empty($this->disabled))
+		{
+    		// If driver use an external library, put its name here
+    		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
+    		{
+    			require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_workbookbig.inc.php';
+                require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_worksheet.inc.php';
+                require_once PHP_WRITEEXCEL_PATH.'functions.writeexcel_utility.inc.php';
+    			$this->label_lib='PhpWriteExcel';
+                $this->version_lib='unknown';
+    		}
+    		else
+    		{
+                require_once PHPEXCEL_PATH.'PHPExcel.php';
+                require_once PHPEXCEL_PATH.'PHPExcel/Style/Alignment.php';
+    			$this->label_lib='PhpExcel';
+                $this->version_lib='1.8.0';		// No way to get info from library
+    		}
+		}
 
 		$this->row=0;
 	}
@@ -284,7 +287,7 @@ class ExportExcel extends ModeleExports
     		else
     		{
                 $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, $outputlangs->transnoentities($alias));
-    		    if (! empty($array_types[$code]) && in_array($array_types[$code],array('Date','Number','TextAuto')))		// Set autowidth for some types
+    		    if (! empty($array_types[$code]) && in_array($array_types[$code],array('Date','Numeric','TextAuto')))		// Set autowidth for some types
                 {
                 	$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
                 }
@@ -319,14 +322,21 @@ class ExportExcel extends ModeleExports
 
 		foreach($array_selected_sorted as $code => $value)
 		{
-			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-'),'_',$code);
+			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-','(',')'),'_',$code);
 			else $alias=substr($code, strpos($code, ' as ') + 4);
             if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
             $newvalue=$objp->$alias;
 
 			$newvalue=$this->excel_clean($newvalue);
 			$typefield=isset($array_types[$code])?$array_types[$code]:'';
-
+			
+			if (preg_match('/^Select:/i', $typefield, $reg) && $typefield = substr($typefield, 7))
+			{
+				$array = unserialize($typefield);
+				$array = $array['options'];
+				$newvalue = $array[$newvalue];
+			}
+			
 			// Traduction newvalue
 			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
 			{

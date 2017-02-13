@@ -91,24 +91,24 @@ function CreateFolderCallBack( fckXml )
 
 	switch ( iErrorNumber )
 	{
-		case 0 :
+		case 0:
 			window.parent.frames['frmResourcesList'].Refresh();
-			break ;
-		case 101 :
+			break;
+		case 101:
 			alert( 'Folder already exists' );
-			break ;
-		case 102 :
+			break;
+		case 102:
 			alert( 'Invalid folder name' );
-			break ;
-		case 103 :
+			break;
+		case 103:
 			alert( 'You have no permissions to create the folder' );
-			break ;
-		case 110 :
+			break;
+		case 110:
 			alert( 'Unknown error creating folder' );
-			break ;
-		default :
+			break;
+		default:
 			alert( 'Error creating folder. Error number: ' + iErrorNumber );
-			break ;
+			break;
 	}
 	*/
 }

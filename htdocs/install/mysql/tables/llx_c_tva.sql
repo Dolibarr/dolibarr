@@ -1,7 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2005           Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2010-2015      Juanjo Menent        <jmenent@2byte.es>
--- Copyright (C) 2011-2012      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+-- Copyright (C) 2011-2012      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ create table llx_c_tva
 (
   rowid             integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   fk_pays           integer NOT NULL,
+  code              varchar(10) DEFAULT '',                         -- a key to describe vat entry, for example FR20
   taux              double  NOT NULL,
   localtax1         varchar(20)  NOT NULL DEFAULT '0',
   localtax1_type	varchar(10)	 NOT NULL DEFAULT '0',

@@ -4,7 +4,6 @@ EMailSupport=E-mailová podpora
 RemoteControlSupport=Online / vzdialená podpora v reálnom čase
 OtherSupport=Ďalšia podpora
 ToSeeListOfAvailableRessources=Ak chcete kontaktovať / zobrazenie dostupných zdrojov:
-ClickHere=Kliknite tu
 HelpCenter=Nápoveda centrum
 DolibarrHelpCenter=Dolibarr Help and Support Center
 ToGoBackToDolibarr=Inak kliknite <a href="%s">tu využiť Dolibarr</a>
@@ -12,7 +11,7 @@ TypeOfSupport=Zdrojom podpory
 TypeSupportCommunauty=Spoločenstva (zadarmo)
 TypeSupportCommercial=Obchodné
 TypeOfHelp=Typ
-NeedHelpCenter=Potrebujete pomoc alebo podporu?
+NeedHelpCenter=Need help or support?
 Efficiency=Účinnosť
 TypeHelpOnly=Nápoveda iba
 TypeHelpDev=Nápoveda + Development
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Niekedy nie je spoločnosť k dispozícii v okamihu, k
 BackToHelpCenter=V opačnom prípade, choďte späť <a href="%s">vrátiť na pomoc strednej domovskú stránku</a> .
 LinkToGoldMember=Môžete zavolať jednu z predvolených trénera o Dolibarr pre požadovaný jazyk (%s) kliknutím na jeho widget (stav a maximálna cena automaticky aktualizované):
 PossibleLanguages=Podporované jazyky
-MakeADonation=Nápoveda Dolibarr projekt, aby sa darcovstvo
 SubscribeToFoundation=Nápoveda Dolibarr projekt, prihláste sa do základu
 SeeOfficalSupport=Oficiálna podpora Dolibarr vo Vašom jayzku: 

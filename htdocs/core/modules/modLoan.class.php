@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro	 <alexandre.spangaro@gmail.com>
+/* Copyright (C) 2014		Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ class modLoan extends DolibarrModules
 		$this->description = "Loans management";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
@@ -63,7 +63,7 @@ class modLoan extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array('loan.php');
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
@@ -99,7 +99,7 @@ class modLoan extends DolibarrModules
 		$this->rights[$r][0] = 520;
 		$this->rights[$r][1] = 'Read loans';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
 		$this->rights[$r][5] = '';
 
@@ -135,7 +135,12 @@ class modLoan extends DolibarrModules
 		$this->rights[$r][4] = 'export';
 		$this->rights[$r][5] = '';
 
-
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Exports
 		//--------
 		$r=0;

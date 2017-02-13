@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - margins
+MARGIN_TYPE=Kaufpreis / Kosten standardmässig vorgeschlagen für Standardmargenkalkulation empfohlen\n
+MargeType3=Spanne vom Einstandspreis
+ShowMarginInfos=Zeige Spannen-Informationen
+CheckMargins=Details zur Gewinnspanne

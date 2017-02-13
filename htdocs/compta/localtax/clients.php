@@ -106,7 +106,7 @@ $fsearch.='  <input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
 $calc=$conf->global->MAIN_INFO_LOCALTAX_CALC.$local;
 // Affiche en-tete du rapport
-if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice for goods and services
+if ($calc==0 || $calc==1)	// Calculate on invoice for goods and services
 {
     $nom=$langs->transcountry($local==1?"LT1ReportByCustomersInInputOutputMode":"LT2ReportByCustomersInInputOutputMode",$mysoc->country_code);
     $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT".$local."Rec");
@@ -124,7 +124,7 @@ if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice 
 	$productsup=$langs->trans("Description");
 	$amountsup=$langs->trans("AmountHT");
 }
-if ($conf->global->$calc==2) 	// Invoice for goods, payment for services
+if ($calc==2) 	// Invoice for goods, payment for services
 {
     $nom=$langs->transcountry($local==1?"LT1ReportByCustomersInInputOutputMode":"LT2ReportByCustomersInInputOutputMode",$mysoc->country_code);
     $calcmode=$langs->trans("CalcModeLT2Debt");
@@ -149,7 +149,7 @@ $vatcust=$langs->transcountry($local==1?"LT1":"LT2",$mysoc->country_code);
 $vatsup=$langs->transcountry($local==1?"LT1":"LT2",$mysoc->country_code);
 
 // IRPF that the customer has retained me
-if($conf->global->$calc ==0 || $conf->global->$calc == 2)
+if($calc ==0 || $calc == 2)
 {
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
@@ -168,9 +168,11 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 2)
 	$parameters["start"] = $date_start;
 	$parameters["end"] = $date_end;
 	$parameters["direction"] = 'sell';
+	$parameters["type"] = 'localtax'.$local;
+	
 	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
-	$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 	if (is_array($coll_list))
 	{
@@ -230,7 +232,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 2)
 }
 
 // IRPF I retained my supplier
-if($conf->global->$calc ==0 || $conf->global->$calc == 1){
+if($calc ==0 || $calc == 1){
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
 	print '<td align="left">'.$langs->trans("Num")."</td>";
@@ -244,7 +246,9 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 1){
 
 	$coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
 	$parameters["direction"] = 'buy';
-	$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	$parameters["type"] = 'localtax'.$local;
+	
+	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	if (is_array($coll_list))
 	{
 		$var=true;
@@ -305,7 +309,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 1){
 	}
 }
 
-if($conf->global->$calc ==0){
+if($calc ==0){
 	// Total to pay
 	print '<br><br>';
 	print '<table class="noborder" width="100%">';
@@ -318,7 +322,5 @@ if($conf->global->$calc ==0){
 }
 print '</table>';
 
-
-$db->close();
-
 llxFooter();
+$db->close();

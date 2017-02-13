@@ -134,19 +134,19 @@ class modGeneratePassPerso extends ModeleGenPassword
 	{
 		$pass = "";
 		for($i=0; $i<$this->NbMaj; $i++){ // Y
-			$pass .= $this->Maj[rand(0,strlen($this->Maj) - 1)];
+			$pass .= $this->Maj[mt_rand(0,strlen($this->Maj) - 1)];
 		}
 
 		for($i=0; $i<$this->NbNum; $i++){ // X
-			$pass .= $this->Nb[rand(0,strlen($this->Nb) - 1)];
+			$pass .= $this->Nb[mt_rand(0,strlen($this->Nb) - 1)];
 		}
 
 		for($i=0; $i<$this->NbSpe; $i++){ // @
-			$pass .= $this->Spe[rand(0,strlen($this->Spe) - 1)];
+			$pass .= $this->Spe[mt_rand(0,strlen($this->Spe) - 1)];
 		}
 
 		for($i=strlen($pass);$i<$this->length2; $i++){ // y
-			$pass .= $this->All[rand(0,strlen($this->All) -1)];
+			$pass .= $this->All[mt_rand(0,strlen($this->All) -1)];
 		}
 
 		$pass = str_shuffle($pass);

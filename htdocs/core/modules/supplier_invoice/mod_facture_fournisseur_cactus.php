@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +22,14 @@
 /**
  *    	\file       htdocs/core/modules/supplier_invoice/mod_facture_fournisseur_cactus.php
  *		\ingroup    supplier invoice
- *		\brief      File containing the Cactus Class of numbering models of suppliers invoices references
+ *		\brief      File containing class for the numbering module Cactus
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_invoice/modules_facturefournisseur.php';
 
 
 /**
- *	Cactus Class of numbering models of suppliers invoices references
+ *  Cactus Class of numbering models of suppliers invoices references
  */
 class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 {
@@ -36,6 +37,8 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	var $error = '';
 	var $nom = 'Cactus';
 	var $prefixinvoice='SI';
+	var $prefixcreditnote='SA';
+	var $prefixdeposit='SD';
 
 
     /**
@@ -46,7 +49,8 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
     function info()
     {
     	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc",$this->prefixinvoice);
+		$langs->load("bills");
+      	return $langs->trans("CactusNumRefModelDesc1",$this->prefixinvoice,$this->prefixcreditnote,$this->prefixdeposit);
     }
 
 
@@ -61,45 +65,86 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
     }
 
 
-    /**
-     * 	Tests if the numbers already in force in the database do not cause conflicts that would prevent this numbering.
-     *
-     *  @return     boolean     false if conflict, true if ok
-     */
-    function canBeActivated()
-    {
-    	global $conf,$langs,$db;
+	/**
+	 * 	Tests if the numbers already in force in the database do not cause conflicts that would prevent this numbering.
+	 *
+	 *  @return     boolean     false if conflict, true if ok
+	 */
+	function canBeActivated()
+	{
+		global $conf,$langs,$db;
 
-        $siyymm=''; $max='';
+		$langs->load("bills");
+
+		// Check invoice num
+		$siyymm=''; $max='';
 
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
 		$sql.= " WHERE ref LIKE '".$this->prefixinvoice."____-%'";
-        $sql.= " AND entity = ".$conf->entity;
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $row = $db->fetch_row($resql);
-            if ($row) { $siyymm = substr($row[0],0,6); $max=$row[0]; }
-        }
-        if (! $siyymm || preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i',$siyymm))
-        {
-            return true;
-        }
-        else
-        {
+		$sql.= " AND entity = ".$conf->entity;
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$row = $db->fetch_row($resql);
+			if ($row) { $siyymm = substr($row[0],0,6); $max=$row[0]; }
+		}
+		if ($siyymm && ! preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i',$siyymm))
+		{
 			$langs->load("errors");
 			$this->error=$langs->trans('ErrorNumRefModel',$max);
-            return false;
-        }
+			return false;
+		}
+
+		// Check credit note num
+		$siyymm='';
+
+		$posindice=8;
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
+		$sql.= " WHERE ref LIKE '".$this->prefixcreditnote."____-%'";
+		$sql.= " AND entity = ".$conf->entity;
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$row = $db->fetch_row($resql);
+			if ($row) { $siyymm = substr($row[0],0,6); $max=$row[0]; }
+		}
+		if ($siyymm && ! preg_match('/'.$this->prefixcreditnote.'[0-9][0-9][0-9][0-9]/i',$siyymm))
+		{
+			$this->error=$langs->trans('ErrorNumRefModel',$max);
+			return false;
+		}
+
+		// Check deposit num
+		$siyymm='';
+
+		$posindice=8;
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
+		$sql.= " WHERE ref LIKE '".$this->prefixdeposit."____-%'";
+		$sql.= " AND entity = ".$conf->entity;
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$row = $db->fetch_row($resql);
+			if ($row) { $siyymm = substr($row[0],0,6); $max=$row[0]; }
+		}
+		if ($siyymm && ! preg_match('/'.$this->prefixdeposit.'[0-9][0-9][0-9][0-9]/i',$siyymm))
+		{
+			$this->error=$langs->trans('ErrorNumRefModel',$max);
+			return false;
+		}
     }
 
     /**
      * Return next value
 	 *
 	 * @param	Societe		$objsoc     Object third party
-	 * @param  	Object		$object		Object
+	 * @param  	Object		$object		Object invoice
      * @param   string		$mode       'next' for next value or 'last' for last value
 	 * @return 	string      			Value if OK, 0 if KO
      */
@@ -108,6 +153,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
         global $db,$conf;
 
         if ($object->type == 2) $prefix=$this->prefixcreditnote;
+        else if ($facture->type == 3) $prefix=$this->prefixdeposit;
         else $prefix=$this->prefixinvoice;
 
         // D'abord on recupere la valeur max

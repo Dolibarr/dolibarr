@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Isporuka
+DeliveryRef=Ref Delivery
+DeliveryCard=Receipt card
+DeliveryOrder=Narudžbenica isporuke
+DeliveryDate=Datum isporuke
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Status isporuke sačuvan
+SetDeliveryDate=Zadaj datum isporuke
+ValidateDeliveryReceipt=Odobri prijemnicu isporuke
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Obriši prijemnicu isporuke
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Način isporuke
+TrackingNumber=Referenca isporuke
+DeliveryNotValidated=Isporuka nije odobrena
+StatusDeliveryCanceled=Poništeno
+StatusDeliveryDraft=Nacrt
+StatusDeliveryValidated=Primljeno
+# merou PDF model
+NameAndSignature=Ime i potpis:
+ToAndDate=Za___________________________________ dana ____/_____/__________
+GoodStatusDeclaration=Roba navedena iznad je primljena u dobrom stanju,
+Deliverer=Isporučio:
+Sender=Pošiljalac
+Recipient=Primalac
+ErrorStockIsNotEnough=Nema dovoljno zaliha
+Shippable=Isporučivo
+NonShippable=Nije isporučivo
+ShowReceiving=Show delivery receipt

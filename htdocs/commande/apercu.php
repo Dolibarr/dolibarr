@@ -47,6 +47,8 @@ $result=restrictedArea($user,'commande',$id,'');
  * View Mode
  */
 
+$form = new Form($db);
+
 llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 if ($id > 0 || ! empty($ref))
@@ -64,9 +66,12 @@ if ($id > 0 || ! empty($ref))
 
         print '<table class="border" width="100%">';
 
-        // Ref
-        print '<tr><td width="25%">'.$langs->trans("Ref")."</td>";
-        print '<td colspan="5">'.$object->ref.'</td></tr>';
+    	//$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+    
+    	// Ref
+    	print '<tr><td>' . $langs->trans('Ref') . '</td><td colspan="5">';
+    	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
+    	print '</td></tr>';
 
         // Ref cde client
         print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
@@ -142,7 +147,7 @@ if ($id > 0 || ! empty($ref))
 			print "</table>\n";
 
 			// Conversion du PDF en image png si fichier png non existant
-			if (! file_exists($fileimage) && ! file_exists($fileimagebis))
+			if ((! file_exists($fileimage) && ! file_exists($fileimagebis)) || (filemtime($fileimage) < filemtime($file)))
 			{
 				if (class_exists("Imagick"))
 				{

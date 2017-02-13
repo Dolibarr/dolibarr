@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - bookmarks
+AddThisPageToBookmarks=Añadir esta página a marcadores
+NewBookmark=Nuevo favorito
+ShowBookmark=Mostrar marcador
+OpenANewWindow=Abra una nueva ventana
+ReplaceWindow=Reemplace ventana actual
+BookmarkTitle=Bookmark título
+BehaviourOnClick=Comportamiento al hacer clic en una URL
+SetHereATitleForLink=Establezca un título para el marcador
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Utilice una dirección URL http externo o una URL relativa Dolibarr
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elija si una página abierta por enlace debe aparecer en la ventana actual o nuevo

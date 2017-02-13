@@ -42,7 +42,7 @@ $result=restrictedArea($user,'mailing');
 $help_url='EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
 llxHeader('','EMailing',$help_url);
 
-print_fiche_titre($langs->trans("MailingArea"));
+print load_fiche_titre($langs->trans("MailingArea"));
 
 //print '<table class="notopnoleftnoright" width="100%">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -56,10 +56,10 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAMailing").'</td></tr>';
 print '<tr '.$bc[$var].'><td class="nowrap">';
-print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sref" size="18"></td>';
+print $langs->trans("Ref").':</td><td><input type="text" class="flat inputsearch" name="sref"></td>';
 print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print '<tr '.$bc[$var].'><td class="nowrap">';
-print $langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+print $langs->trans("Other").':</td><td><input type="text" class="flat inputsearch" name="sall"></td>';
 
 print "</table></form><br>\n";
 
@@ -83,7 +83,7 @@ if (is_resource($handle))
                 $modulename=$reg[1];
        			if ($modulename == 'example') continue;
 
-                // Chargement de la classe
+                // Loading Class
                 $file = $dir."/".$modulename.".modules.php";
                 $classname = "mailing_".$modulename;
                 require_once $file;
@@ -189,7 +189,7 @@ if ($result)
     }
   else
     {
-     print '<tr><td>'.$langs->trans("None").'</td></tr>';
+     print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
   print "</table><br>";
   $db->free($result);

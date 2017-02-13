@@ -325,23 +325,22 @@ class ActionsCardProduct
 
         $this->list_datas = array();
 
-		//$_GET["sall"] = 'LL';
 		// Clean parameters
-		$sall=trim(isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"]);
+		$sall=trim(GETPOST("sall"));
 
 		foreach($this->field_list as $field)
 		{
 			if ($field['enabled'])
 			{
 				$fieldname = "s".$field['alias'];
-				$$fieldname = trim(isset($_GET[$fieldname])?$_GET[$fieldname]:$_POST[$fieldname]);
+				$$fieldname = trim(GETPOST($fieldname));
 			}
 		}
 
 		$sql = 'SELECT DISTINCT ';
 
 		// Fields requiered
-		$sql.= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte';
+		$sql.= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte, p.entity';
 
 		// Fields not requiered
 		foreach($this->field_list as $field)
@@ -417,6 +416,7 @@ class ActionsCardProduct
 							$this->id 		= $obj->rowid;
 							$this->ref 		= $obj->$alias;
 							$this->type 	= $obj->fk_product_type;
+							$this->entity	= $obj->entity;
 							$datas[$alias] 	= $this->getNomUrl(1,'',24);
 						}
 						else if ($alias == 'stock')

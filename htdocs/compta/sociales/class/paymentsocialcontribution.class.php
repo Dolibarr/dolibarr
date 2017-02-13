@@ -23,6 +23,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 
 
 /**
@@ -32,9 +33,6 @@ class PaymentSocialContribution extends CommonObject
 {
 	public $element='paiementcharge';			//!< Id that identify managed objects
 	public $table_element='paiementcharge';	//!< Name of table without prefix where object is stored
-
-	var $id;
-	var $ref;
 
 	var $fk_charge;
 	var $datec='';
@@ -49,7 +47,6 @@ class PaymentSocialContribution extends CommonObject
     var $amounts=array();   // Array of amounts
 	var $fk_typepaiement;
 	var $num_paiement;
-	var $note;
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;
@@ -68,10 +65,11 @@ class PaymentSocialContribution extends CommonObject
 	 *  Create payment of social contribution into database.
      *  Use this->amounts to have list of lines for the payment
      *
-	 *  @param      User		$user   User making payment
-	 *  @return     int     			<0 if KO, id of payment if OK
+	 *  @param      User	$user   				User making payment
+	 *	@param		int		$closepaidcontrib   	1=Also close payed contributions to paid, 0=Do nothing more
+	 *  @return     int     						<0 if KO, id of payment if OK
 	 */
-	function create($user)
+	function create($user, $closepaidcontrib=0)
 	{
 		global $conf, $langs;
 
@@ -79,7 +77,9 @@ class PaymentSocialContribution extends CommonObject
 
         $now=dol_now();
 
-        // Validate parametres
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        
+		// Validate parametres
 		if (! $this->datepaye)
 		{
 			$this->error='ErrorBadValueForParameterCreatePaymentSocialContrib';
@@ -121,11 +121,40 @@ class PaymentSocialContribution extends CommonObject
 			$sql.= " ".$this->paiementtype.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($this->note)."', ".$user->id.",";
 			$sql.= " 0)";
 
-			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."paiementcharge");
+				
+				// Insere tableau des montants / factures
+				foreach ($this->amounts as $key => $amount)
+				{
+					$contribid = $key;
+					if (is_numeric($amount) && $amount <> 0)
+					{
+						$amount = price2num($amount);
+
+						// If we want to closed payed invoices
+						if ($closepaidcontrib)
+						{
+							
+							$contrib=new ChargeSociales($this->db);
+							$contrib->fetch($contribid);
+							$paiement = $contrib->getSommePaiement();
+							//$creditnotes=$contrib->getSumCreditNotesUsed();
+							$creditnotes=0;
+							//$deposits=$contrib->getSumDepositsUsed();
+							$deposits=0;
+							$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+							$remaintopay=price2num($contrib->amount - $paiement - $creditnotes - $deposits,'MT');
+							if ($remaintopay == 0)
+							{
+								$result=$contrib->set_paid($user, '', '');
+							}
+							else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
+						}
+					}
+				}
 			}
 			else
 			{
@@ -317,16 +346,19 @@ class PaymentSocialContribution extends CommonObject
 		global $conf, $langs;
 		$error=0;
 
+		dol_syslog(get_class($this)."::delete");
+
 		$this->db->begin();
 
-	    if (! $error)
+	    if ($this->bank_line > 0)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-            $sql.= " WHERE type='payment_sc' AND url_id=".$this->id;
-
-            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-            $resql = $this->db->query($sql);
-            if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        	$accline = new AccountLine($this->db);
+			$accline->fetch($this->bank_line);
+			$result = $accline->delete();
+			if($result < 0) {
+				$this->errors[] = $accline->error;
+				$error++;
+			}
         }
 
 		if (! $error)

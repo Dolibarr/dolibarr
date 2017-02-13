@@ -60,11 +60,11 @@ if ($action == 'update')
 
  	if (! $error)
     {
-	    setEventMessage($langs->trans("SetupSaved"));
+	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-	    setEventMessage($langs->trans("Error"), 'errors');
+	    setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -80,7 +80,7 @@ llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("MembersSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("MembersSetup"),$linkback,'title_setup');
 
 $head = member_admin_prepare_head();
 
@@ -200,7 +200,7 @@ if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
     print '<tr '.$bc[$var].' id="tremail"><td>';
     print $langs->trans("MEMBER_PAYONLINE_SENDEMAIL");
     print '</td><td align="right">';
-	print '<input type="text" id="MEMBER_PAYONLINE_SENDEMAIL" name="MEMBER_PAYONLINE_SENDEMAIL" size="24" value="'.(! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL)?$conf->global->MEMBER_PAYONLINE_SENDEMAIL:'').'">';;
+    print '<input type="text" id="MEMBER_PAYONLINE_SENDEMAIL" name="MEMBER_PAYONLINE_SENDEMAIL" size="24" value="'.(! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL)?$conf->global->MEMBER_PAYONLINE_SENDEMAIL:'').'">';
     print "</td></tr>\n";
 }
 
@@ -219,7 +219,12 @@ print '</form>';
 print '<br>';
 //print $langs->trans('FollowingLinksArePublic').'<br>';
 print img_picto('','object_globe.png').' '.$langs->trans('BlankSubscriptionForm').':<br>';
-print '<a target="_blank" href="'.DOL_URL_ROOT.'/public/members/new.php">'.DOL_MAIN_URL_ROOT.'/public/members/new.php</a>';
+if ($conf->multicompany->enabled) {
+	$entity_qr='?entity='.$conf->entity;
+} else {
+	$entity_qr='';
+}
+print '<a target="_blank" href="'.DOL_URL_ROOT.'/public/members/new.php'.$entity_qr.'">'.DOL_MAIN_URL_ROOT.'/public/members/new.php'.$entity_qr.'</a>';
 
 /*
 print '<table class="border" cellspacing="0" cellpadding="3">';

@@ -1,0 +1,19 @@
+# Dolibarr language file - Source file is en_US - errors
+ErrorBadEMail=Le courriel %s n'est pas bon
+ErrorBadUrl=L'adresse Url %s n'est pas bonne
+ErrorRecordNotFound=L'enregistrement n'a pas été trouvé.
+ErrorFailToCopyFile=Impossible de copier le fichier '<b>%s</b>' en '<b>%s</b>'.
+ErrorFailToRenameFile=Impossible de renommer le fichier '<b>%s</b>' en '<b>%s</b>'.
+ErrorFailToDeleteFile=Impossible de supprimer le fichier '<b>%s</b>'.
+ErrorFailToCreateFile=Impossible de créer le fichier '<b>%s</b>'.
+ErrorCashAccountAcceptsOnlyCashMoney=Ce compte bancaire est de type comptant, alors, il n'accepte que les paiements de type comptant.
+ErrorFromToAccountsMustDiffers=Le compte bancaire d'origine et celui de la cible doivent être différents.
+ErrorBadCustomerCodeSyntax=Mauvaise syntaxe du code client
+ErrorCustomerCodeRequired=Code client requis
+ErrorPrefixRequired=Préfixe requis
+ErrorBadParameters=Mauvais paramètres
+ErrorBadImageFormat=Le format de votre fichier image n'est pas supporté (Votre logiciel PHP ne supporte pas les fonctions de conversion d'images de ce format)
+ErrorBadDateFormat=La valeur '%s' a un mauvais format de date
+ErrorFailedToWriteInDir=Erreur d'écriture dans le répertoire %s
+ErrorQtyTooLowForThisSupplier=Quantité trop faible pour ce fournisseur ou pas de prix défini sur ce produit pour ce fournisseur
+ErrorSupplierCountryIsNotDefined=Le pays pour ce fournisseur n'est pas défini. Veuillez premièrement corriger cet élément.

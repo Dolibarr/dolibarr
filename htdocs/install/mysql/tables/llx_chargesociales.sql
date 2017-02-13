@@ -26,10 +26,16 @@ create table llx_chargesociales
   tms                   timestamp,
   date_creation         datetime,						-- date de creation 
   date_valid            datetime,						-- date de validation
+  fk_user_author		integer,						-- user making creation
+  fk_user_modif         integer,                        -- user making last change
+  fk_user_valid			integer,						-- user validating
   fk_type    integer NOT NULL,
+  fk_account integer,                       -- bank account
+  fk_mode_reglement integer,                -- mode de reglement
   amount     real     default 0 NOT NULL,
   paye       smallint default 0 NOT NULL,
-  periode    date
+  periode    date,
+  import_key varchar(14)
 )ENGINE=innodb;
 
 -- 

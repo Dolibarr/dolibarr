@@ -109,7 +109,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 */
 	function getExample($langs,$objproduct=0)
 	{
-		$examplebarcode = $this->getNextValue($objproduct,0);
+		$examplebarcode = $this->getNextValue($objproduct,'');
 		if (! $examplebarcode)
 		{
 			$examplebarcode = $langs->trans('NotConfigured');
@@ -127,10 +127,10 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 * Return next value
 	 *
 	 * @param	Product		$objproduct     Object product
-	 * @param	string		$type       	type of barcode (EAN, ISBN, ...)
+	 * @param	string		$type       	Type of barcode (EAN, ISBN, ...)
 	 * @return 	string      				Value if OK, '' if module not configured, <0 if KO
 	 */
-	function getNextValue($objproduct,$type='')
+	function getNextValue($objproduct=null,$type='')
 	{
 		global $db,$conf;
 
@@ -227,7 +227,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 *		Return if a code is used (by other element)
 	 *
 	 *		@param	DoliDB		$db			Handler acces base
-	 *		@param	string		$code		Code a verifier
+	 *		@param	string		$code		Code to check
 	 *		@param	Product		$product	Objet product
 	 *		@return	int						0 if available, <0 if KO
 	 */
@@ -277,10 +277,18 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 			return '';
 		}
 
+		dol_syslog(get_class($this).'::verif_syntax codefortest='.$codefortest." typefortest=".$typefortest);
+
 		$newcodefortest=$codefortest;
+
+		// Special case, if mask is on 12 digits instead of 13, we remove last char into code to test
 		if (in_array($typefortest,array('EAN13','ISBN')))	// We remove the CRC char not included into mask
 		{
-			$newcodefortest=substr($newcodefortest,0,12);
+    		if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$mask,$reg))
+    	    {
+    	        if (strlen($reg[1]) == 12) $newcodefortest=substr($newcodefortest,0,12);
+    	        dol_syslog(get_class($this).'::verif_syntax newcodefortest='.$newcodefortest);
+    	    }
 		}
 
 		$result=check_value($mask,$newcodefortest);

@@ -1,34 +1,31 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=مصادر
+MenuResourceAdd=مورد جديد
+DeleteResource=حذف الموارد
+ConfirmDeleteResourceElement=تأكيد حذف المورد لهذا العنصر
+NoResourceInDatabase=أي مورد في قاعدة البيانات.
+NoResourceLinked=ربط أي مورد
 
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-MenuResourcePlanning=Resource planning
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+ResourcePageIndex=قائمة الموارد
+ResourceSingular=مورد
+ResourceCard=بطاقة الموارد
+AddResource=إنشاء مورد
+ResourceFormLabel_ref=اسم المورد
+ResourceType=نوع المورد
+ResourceFormLabel_description=وصف المصادر
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcesLinkedToElement=موارد مرتبطة عنصر
 
-ResourcesLinkedToElement=Resources linked to element
+ShowResource=مشاهدة الموارد
 
-ShowResourcePlanning=Show resource planning
-GotoDate=Go to date
+ResourceElementPage=الموارد العنصر
+ResourceCreatedWithSuccess=الموارد التي تم إنشاؤها بنجاح
+RessourceLineSuccessfullyDeleted=خط الموارد حذف بنجاح
+RessourceLineSuccessfullyUpdated=تحديث خط الموارد بنجاح
+ResourceLinkedWithSuccess=ربط الموارد بنجاح
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ConfirmDeleteResource=تأكيد لحذف هذا المورد
+RessourceSuccessfullyDeleted=الموارد حذف بنجاح
+DictionaryResourceType=نوع الموارد
 
-TitleResourceCard=Resource card
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
-
-SelectResource=Select resource
+SelectResource=حدد الموارد

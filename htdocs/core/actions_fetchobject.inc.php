@@ -28,7 +28,7 @@
 // $cancel must be defined
 // $id or $ref must be defined (object is loaded in this file with fetch)
 
-if (($id > 0 || ! empty($ref)) && empty($cancel))
+if (($id > 0 || (! empty($ref) && ! in_array($action, array('create','createtask')))) && empty($cancel))
 {
     $ret = $object->fetch($id,$ref);
     if ($ret > 0)

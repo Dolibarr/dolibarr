@@ -45,7 +45,8 @@ class modCashDesk extends DolibarrModules
 		// Key text used to identify module (for permission, menus, etc...)
 		$this->rights_class = 'cashdesk';
 
-		$this->family = "products";
+		$this->family = "portal";
+		$this->module_position = 10;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "CashDesk module";
@@ -70,7 +71,7 @@ class modCashDesk extends DolibarrModules
 		$this->need_dolibarr_version = array(2,4);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("cashdesk");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Boxes
@@ -85,7 +86,7 @@ class modCashDesk extends DolibarrModules
 		$this->rights[$r][0] = 50101;
 		$this->rights[$r][1] = 'Use point of sale';
 		$this->rights[$r][2] = 'a';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'use';
 
 		// Main menu entries
@@ -99,7 +100,7 @@ class modCashDesk extends DolibarrModules
 									'mainmenu'=>'cashdesk',
 									'url'=>'/cashdesk/index.php?user=__LOGIN__',
 									'langs'=>'cashdesk',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-									'position'=>100,
+									'position'=>900,
                                     'enabled'=>'$conf->cashdesk->enabled',
 		                            'perms'=>'$user->rights->cashdesk->use',		// Use 'perms'=>'1' if you want your menu with no permission rules
 									'target'=>'pointofsale',

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2012		Charles-Fr BENKE	<charles.fr@benke.fr>
+/* Copyright (C) 2005-2011  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Charles-Fr BENKE    <charles.fr@benke.fr>
+ * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,8 @@ class Export
 	var $array_export_entities=array();         // Tableau des listes de champ+alias a exporter
 	var $array_export_dependencies=array();     // array of list of entities that must take care of the DISTINCT if a field is added into export
 	var $array_export_special=array();          // Tableau des operations speciales sur champ
-
+    var $array_export_examplevalues=array();    // array with examples
+    
 	// To store export modules
 	var $hexa;
 	var $hexafiltervalue;
@@ -106,7 +108,7 @@ class Export
 
 						if ($enabled)
 						{
-							// Chargement de la classe
+							// Loading Class
 							$file = $dir.$modulename.".class.php";
 							$classname = $modulename;
 							require_once $file;
@@ -130,11 +132,11 @@ class Export
     									//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
     									if (! empty($perm[2]))
     									{
-    										$bool=$user->rights->$perm[0]->$perm[1]->$perm[2];
+    										$bool=$user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]};
     									}
     									else
     									{
-    										$bool=$user->rights->$perm[0]->$perm[1];
+    										$bool=$user->rights->{$perm[0]}->{$perm[1]};
     									}
     									if ($perm[0]=='user' && $user->admin) $bool=true;
     									if (! $bool) break;
@@ -174,7 +176,9 @@ class Export
 									$this->array_export_dependencies[$i]=(! empty($module->export_dependencies_array[$r])?$module->export_dependencies_array[$r]:'');
 									// Tableau des operations speciales sur champ
 									$this->array_export_special[$i]=(! empty($module->export_special_array[$r])?$module->export_special_array[$r]:'');
-
+            						// Array of examples
+            						$this->array_export_examplevalues[$i]=$module->export_examplevalues_array[$r];
+									
 									// Requete sql du dataset
 									$this->array_export_sql_start[$i]=$module->export_sql_start[$r];
 									$this->array_export_sql_end[$i]=$module->export_sql_end[$r];
@@ -221,7 +225,7 @@ class Export
 			else $i++;
 
 			if (strpos($key, ' as ')===false) {
-				$newfield=$key.' as '.str_replace(array('.', '-'),'_',$key);
+				$newfield=$key.' as '.str_replace(array('.', '-','(',')'),'_',$key);
 			} else {
 				$newfield=$key;
 			}
@@ -230,19 +234,32 @@ class Export
 		}
 		$sql.=$this->array_export_sql_end[$indice];
 
-		//construction du filtrage si le parametrage existe
+		// Add the WHERE part. Filtering into sql if a filtering array is provided
 		if (is_array($array_filterValue) && !empty($array_filterValue))
 		{
 			$sqlWhere='';
-			// pour ne pas a gerer le nombre de condition
+			// Loop on each condition to add
 			foreach ($array_filterValue as $key => $value)
 			{
+			    if (preg_match('/GROUP_CONCAT/i', $key)) continue;
 				if ($value != '') $sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
 			}
 			$sql.=$sqlWhere;
 		}
+		
+		// Add the order
 		$sql.=$this->array_export_sql_order[$indice];
 
+		// Add the HAVING part.
+		if (is_array($array_filterValue) && !empty($array_filterValue))
+		{
+		    // Loop on each condition to add
+		    foreach ($array_filterValue as $key => $value)
+		    {
+		        if (preg_match('/GROUP_CONCAT/i', $key) and $value != '') $sql.=" HAVING ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+		    }
+		}
+		
 		return $sql;
 	}
 
@@ -271,15 +288,15 @@ class Export
 				{
 					// mode plage
 					$ValueArray = explode("+", $ValueField);
-					$szFilterQuery ="(".$this->conditionDate($NameField,$ValueArray[0],">=");
-					$szFilterQuery.=" AND ".$this->conditionDate($NameField,$ValueArray[1],"<=").")";
+					$szFilterQuery ="(".$this->conditionDate($NameField,trim($ValueArray[0]),">=");
+					$szFilterQuery.=" AND ".$this->conditionDate($NameField,trim($ValueArray[1]),"<=").")";
 				}
 				else
 				{
 					if (is_numeric(substr($ValueField,0,1)))
-						$szFilterQuery=$this->conditionDate($NameField,$ValueField,"=");
+						$szFilterQuery=$this->conditionDate($NameField,trim($ValueField),"=");
 					else
-						$szFilterQuery=$this->conditionDate($NameField,substr($ValueField,1),substr($ValueField,0,1));
+						$szFilterQuery=$this->conditionDate($NameField,trim(substr($ValueField,1)),substr($ValueField,0,1));
 				}
 				break;
 			case 'Duree':
@@ -311,6 +328,8 @@ class Export
 				else
 					$szFilterQuery=" ".$NameField."='".$ValueField."'";
 				break;
+			default:
+			    dol_syslog("Error we try to forge an sql export request with a condition on a field with type '".$InfoFieldList[0]."' (defined into module descriptor) but this type is unknown/not supported. It looks like a bug into module descriptor.", LOG_ERROR);
 		}
 
 		return $szFilterQuery;
@@ -358,6 +377,9 @@ class Export
 			case 'Duree':
 			case 'Numeric':
 			case 'Number':
+				// Must be a string text to allow to use comparison strings like "<= 999"
+			    $szFilterField='<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
+				break;
 			case 'Status':
 				if (! empty($conf->global->MAIN_ACTIVATE_HTML5)) $szFilterField='<input type="number" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				else $szFilterField='<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
@@ -507,7 +529,7 @@ class Export
 			return -1;
 		}
 
-		// Creation de la classe d'export du model ExportXXX
+		// Creation of class to export using model ExportXXX
 		$dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
 		$file = "export_".$model.".modules.php";
 		$classname = "Export".$model;
@@ -551,7 +573,7 @@ class Export
 			$filename.='.'.$objmodel->getDriverExtension();
 			$dirname=$conf->export->dir_temp.'/'.$user->id;
 
-			$outputlangs=dol_clone($langs);	// We clone to have an object we can modify (for example to change output charset by csv handler) without changing original value
+			$outputlangs = clone $langs; // We clone to have an object we can modify (for example to change output charset by csv handler) without changing original value
 
 			// Open file
 			dol_mkdir($dirname);
@@ -581,14 +603,14 @@ class Export
 							if ($this->array_export_special[$indice][$key]=='NULLIFNEG')
 							{
 								//$alias=$this->array_export_alias[$indice][$key];
-								$alias=str_replace(array('.', '-'),'_',$key);
+								$alias=str_replace(array('.', '-','(',')'),'_',$key);
 								if ($objp->$alias < 0) $objp->$alias='';
 							}
 							// Operation ZEROIFNEG
 							if ($this->array_export_special[$indice][$key]=='ZEROIFNEG')
 							{
 								//$alias=$this->array_export_alias[$indice][$key];
-								$alias=str_replace(array('.', '-'),'_',$key);
+								$alias=str_replace(array('.', '-','(',')'),'_',$key);
 								if ($objp->$alias < 0) $objp->$alias='0';
 							}
 						}

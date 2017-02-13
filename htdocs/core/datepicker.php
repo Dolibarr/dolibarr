@@ -56,7 +56,7 @@ print '<html>'."\n";
 print '<head>'."\n";
 if (GETPOST('mode') && GETPOST('mode') == 'test')
 {
-	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js"></script>'."\n";
+	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php"></script>'."\n";
 }
 else
 {
@@ -108,7 +108,7 @@ if (isset($_GET["m"]) && isset($_GET["y"]))
 if ($qualified)
 {
 	//print $_GET["cm"].",".$_GET["sd"].",".$_GET["m"].",".$_GET["y"];exit;
-	displayBox($_GET["sd"],$_GET["m"],$_GET["y"]);
+	displayBox(GETPOST("sd",'alpha'),GETPOST("m",'int'),GETPOST("y",'int'));
 }
 else
 {

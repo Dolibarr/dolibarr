@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2006-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2015		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,17 +33,17 @@
  */
 function bank_prepare_head(Account $object)
 {
-    global $langs, $conf, $user;
+    global $db, $langs, $conf, $user;
     $h = 0;
     $head = array();
 
     $head[$h][0] = DOL_URL_ROOT . '/compta/bank/card.php?id=' . $object->id;
-    $head[$h][1] = $langs->trans("AccountCard");
+    $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'bankname';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT . "/compta/bank/account.php?id=" . $object->id;
-    $head[$h][1] = $langs->trans("Transactions");
+    $head[$h][0] = DOL_URL_ROOT . "/compta/bank/bankentries.php?id=" . $object->id;
+    $head[$h][1] = $langs->trans("BankTransactions");
     $head[$h][2] = 'journal';
     $h++;
 
@@ -64,13 +65,25 @@ function bank_prepare_head(Account $object)
     $head[$h][2] = 'graph';
     $h++;
 
-    if ($object->courant != 2)
+    if ($object->courant != Account::TYPE_CASH)
     {
     	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$object->id;
 	    $head[$h][1] = $langs->trans("AccountStatements");
 	    $head[$h][2] = 'statement';
 	    $h++;
 	}
+
+    // Attached files
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+    $upload_dir = $conf->bank->dir_output . "/" . dol_sanitizeFileName($object->ref);
+    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbLinks=Link::count($db, $object->element, $object->id);
+    $head[$h][0] = DOL_URL_ROOT . "/compta/bank/document.php?account=" . $object->id;
+    $head[$h][1] = $langs->trans("Documents");
+    if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+    $head[$h][2] = 'document';
+    $h++;
 
 	// Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -98,6 +111,11 @@ function bank_admin_prepare_head($object)
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
+
+    $head[$h][0] = DOL_URL_ROOT . '/admin/chequereceipts.php';
+    $head[$h][1] = $langs->trans("CheckReceiptShort");
+    $head[$h][2] = 'checkreceipts';
+    $h++;
 
 
 	// Show more tabs from modules
@@ -179,9 +197,10 @@ function checkBanForAccount($account)
         $rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz", "12345678912345678923456789");
         // Separation du rib en 3 groupes de 7 + 1 groupe de 2.
         // Multiplication de chaque groupe par les coef du tableau
+    
         for ($i = 0, $s = 0; $i < 3; $i++) {
             $code = substr($rib, 7 * $i, 7);
-            $s += (0 + $code) * $coef[$i];
+            $s += (0 + (int) $code) * $coef[$i];
         }
         // Soustraction du modulo 97 de $s a 97 pour obtenir la cle
         $cle_rib = 97 - ($s % 97);

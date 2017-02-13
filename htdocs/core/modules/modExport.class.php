@@ -28,7 +28,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module export
+ *	Class to describe and enable module export
  */
 class modExport extends DolibarrModules
 {
@@ -44,13 +44,15 @@ class modExport extends DolibarrModules
 		$this->numero = 240;
 
 		$this->family = "technic";
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->module_position = 72;
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Outils d'exports de donnees Dolibarr (via un assistant)";
+		// Possible values for version are: 'experimental' or 'dolibarr' or version
 		$this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
-		$this->picto='technic';
+		$this->picto = 'technic';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/export/temp");
@@ -58,13 +60,13 @@ class modExport extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array();
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->phpmin = array(4,2,0);
 		$this->phpmax = array();
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Boxes
@@ -79,7 +81,7 @@ class modExport extends DolibarrModules
 		$this->rights[$r][0] = 1201;
 		$this->rights[$r][1] = 'Lire les exports';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
@@ -88,5 +90,11 @@ class modExport extends DolibarrModules
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
+		
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
 	}
 }

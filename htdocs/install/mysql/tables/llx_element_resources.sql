@@ -26,6 +26,7 @@ CREATE TABLE llx_element_resources
   resource_type	  varchar(64),		-- resource or user
   busy			  integer,
   mandatory		  integer,
+  duree				real,               -- total duration of using ressource
   fk_user_create  integer,
   tms             timestamp
 )ENGINE=innodb;

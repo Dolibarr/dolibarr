@@ -32,8 +32,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 class mailing_contacts4 extends MailingTargets
 {
 	var $name='ContactsByCategory';
-    // This label is used if no translation is found for key MailingModuleDescXXX where XXX=name is found
-    var $desc='Add contacts by category';
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	var $desc='Add contacts by category';
     var $require_admin=0;
 
     var $require_module=array();
@@ -85,6 +85,7 @@ class mailing_contacts4 extends MailingTargets
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
     	$sql.= " WHERE sp.email != ''";     // Note that null != '' is false
     	$sql.= " AND sp.no_email = 0";
+    	$sql.= " AND sp.statut = 1";
     	$sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
     	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$this->db->escape($filtersarray[0])."'";
     	$sql.= " ORDER BY sp.lastname, sp.firstname";
@@ -173,6 +174,7 @@ class mailing_contacts4 extends MailingTargets
         $sql.= " WHERE c.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND c.email != ''"; // Note that null != '' is false
         $sql.= " AND c.no_email = 0";
+        $sql.= " AND c.statut = 1";
         /*
     	$sql = "SELECT count(distinct(sp.email)) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
@@ -208,6 +210,7 @@ class mailing_contacts4 extends MailingTargets
         $sql.= " INNER JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
         $sql.= " WHERE sp.email != ''";     // Note that null != '' is false
         $sql.= " AND sp.no_email = 0";
+        $sql.= " AND sp.statut = 1";
         $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
         $sql.= " GROUP BY c.label";
         $sql.= " ORDER BY c.label";
@@ -219,16 +222,21 @@ class mailing_contacts4 extends MailingTargets
 	        $s='';
 	        $s.='<select name="filter" class="flat">';
 	        $s.='<option value="all"></option>';
-	        if ($resql)
+
+	        $num = $this->db->num_rows($resql);
+	        if ($num)
 	        {
-	            $num = $this->db->num_rows($resql);
-	            $i = 0;
-	            while ($i < $num)
-	            {
-	                $obj = $this->db->fetch_object($resql);
-	                $s.='<option value="'.$obj->label.'">'.$obj->label.' ('.$obj->nb.')</option>';
-	                $i++;
-	            }
+    	        $i = 0;
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    $s.='<option value="'.$obj->label.'">'.$obj->label.' ('.$obj->nb.')</option>';
+                    $i++;
+                }
+	        }
+	        else
+	        {
+                $s.='<option value="-1" disabled="disabled">'.$langs->trans("NoContactWithCategoryFound").'</option>';
 	        }
 	        $s.='</select>';
 	        return $s;

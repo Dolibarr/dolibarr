@@ -4,7 +4,6 @@ EMailSupport=Tölvupóst stuðning
 RemoteControlSupport=Online rauntíma / fjarlægur styðja
 OtherSupport=Annar stuðningur
 ToSeeListOfAvailableRessources=Til að hafa samband / sjá lista yfir auðlindir:
-ClickHere=Smelltu hér
 HelpCenter=Hjálparmiðstöð AdWords
 DolibarrHelpCenter=Dolibarr aðstoð og stuðning sent
 ToGoBackToDolibarr=Annars skaltu smella <a href="%s">hér til að nota Dolibarr</a>
@@ -12,7 +11,7 @@ TypeOfSupport=Heimild stuðning
 TypeSupportCommunauty=Samfélag (frítt)
 TypeSupportCommercial=Auglýsing
 TypeOfHelp=Tegund
-NeedHelpCenter=Þarftu aðstoð eða stuðning?
+NeedHelpCenter=Need help or support?
 Efficiency=Nýtni
 TypeHelpOnly=Hjálp aðeins
 TypeHelpDev=Hjálp + Development
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Stundum er ekkert fyrirtæki sem til eru um þessar mu
 BackToHelpCenter=Annars skaltu smella hér til að fara <a href="%s">til baka til að hjálpa miðstöð heimasíðu</a> .
 LinkToGoldMember=Þú getur hringt í einn þjálfara preselected eftir Dolibarr fyrir þitt tungumál ( %s ) með því að smella Búnaður hans (staða og hámarksverð eru sjálfkrafa uppfærðar):
 PossibleLanguages=Styður tungumálum
-MakeADonation=Hjálp Dolibarr verkefni, gera a framlag
-# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

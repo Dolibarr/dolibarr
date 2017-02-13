@@ -76,7 +76,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 				'sublink'=>'',
 				'subtext'=>$langs->trans("Filter"),
 				'subpicto'=>'filter.png',
-				'subclass'=>'linkobject',
+				'subclass'=>'linkobject boxfilter',
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
@@ -169,6 +169,8 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 				$mesg = $px2->isGraphKo();
 				if (! $mesg)
 				{
+				    $langs->load("bills");
+
 					$px2->SetData($data2);
 					unset($data2);
 					$px2->SetPrecisionY(0);
@@ -260,11 +262,12 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

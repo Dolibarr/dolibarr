@@ -155,7 +155,6 @@ class box_prospect extends ModeleBoxes
                 );
             }
         } else {
-			dol_syslog("box_prospect::loadBox not allowed de read this box content",LOG_ERR);
             $this->info_box_contents[0][0] = array(
                 'td' => 'align="left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed"),
@@ -168,11 +167,12 @@ class box_prospect extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

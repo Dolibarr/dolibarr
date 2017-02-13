@@ -14,6 +14,5 @@ BehaviourOnClick=Zachowaj po kliknięciu na adres URL
 CreateBookmark=Stwórz zakładkę
 SetHereATitleForLink=Zdefiniuj nazwę zakładki
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Użyj zewnętrznego adresu http lub względnego adresu URL Dolibarr
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Wybierz czy strona ma się otwierać w bieżącym czy w nowym oknie
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Zarządzanie zakładkami
-ListOfBookmarks=Lista zakładek

@@ -26,33 +26,36 @@
 /**
 *	Show header of a VAT report
 *
-*	@param		string				$nom            Name of report
+*	@param	string				$nom            Name of report
 *	@param 	string				$variante       Link for alternate report
 *	@param 	string				$period         Period of report
 *	@param 	string				$periodlink     Link to switch period
 *	@param 	string				$description    Description
 *	@param 	timestamp|integer	$builddate      Date generation
 *	@param 	string				$exportlink     Link for export or ''
-*	@param		array				$moreparam		Array with list of params to add into form
-*	@param		string				$calcmode		Calculation mode
+*	@param	array				$moreparam		Array with list of params to add into form
+*	@param	string				$calcmode		Calculation mode
+*   @param  string              $varlink        Add a variable into the address of the page
 *	@return	void
 */
-function report_header($nom,$variante,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array(),$calcmode='')
+function report_header($nom,$variante,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array(),$calcmode='', $varlink='')
 {
 	global $langs;
 
 	if (empty($hselected)) $hselected='report';
 	
 	print "\n\n<!-- debut cartouche rapport -->\n";
+	
+	if(! empty($varlink)) $varlink = '?'.$varlink;
 
 	$h=0;
-	$head[$h][0] = $_SERVER["PHP_SELF"];
+	$head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
 	$head[$h][1] = $langs->trans("Report");
 	$head[$h][2] = 'report';
 
 	dol_fiche_head($head, 'report');
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
 	foreach($moreparam as $key => $value)
 	{
 		 print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
@@ -61,7 +64,7 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 
 	// Ligne de titre
 	print '<tr>';
-	print '<td valign="top" width="110">'.$langs->trans("ReportName").'</td>';
+	print '<td width="110">'.$langs->trans("ReportName").'</td>';
 	if (! $variantexxx) print '<td colspan="3">';
 	else print '<td>';
 	print $nom;
@@ -73,7 +76,7 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 	if ($calcmode)
 	{
 		print '<tr>';
-		print '<td valign="top" width="110">'.$langs->trans("CalculationMode").'</td>';
+		print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
 		if (! $variante) print '<td colspan="3">';
 		else print '<td>';
 		print $calcmode;
@@ -94,7 +97,7 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 
 	// Ligne de description
 	print '<tr>';
-	print '<td valign="top">'.$langs->trans("ReportDescription").'</td>';
+	print '<td>'.$langs->trans("ReportDescription").'</td>';
 	print '<td colspan="3">'.$description.'</td>';
 	print '</tr>';
 
@@ -107,15 +110,13 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 	if ($exportlink) print '</td><td>'.$langs->trans("Export").'</td><td>'.$exportlink;
 	print '</td></tr>';
 
-	print '<tr>';
-	print '<td colspan="4" align="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></td>';
-	print '</tr>';
-
 	print '</table>';
 
+	print '<br><div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
 	print '</form>';
 
-	print '</div>';
+	dol_fiche_end();
+	
 	print "\n<!-- fin cartouche rapport -->\n\n";
 }
 

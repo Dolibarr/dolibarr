@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro	  	<alexandre.spangaro@gmail.com>
+/* Copyright (C) 2015       Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,7 @@ $langs->load("bills");
 $chid=GETPOST("id");
 $action=GETPOST('action');
 $amounts = array();
+$accountid=GETPOST('accountid','int');
 
 // Security check
 $socid=0;
@@ -55,6 +57,9 @@ if ($action == 'add_payment')
 		exit;
 	}
 
+	$expensereport = new ExpenseReport($db);
+	$expensereport->fetch($chid);
+
 	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
 	if (! $_POST["fk_typepayment"] > 0)
@@ -67,7 +72,7 @@ if ($action == 'add_payment')
 		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Date"));
 		$error++;
 	}
-    if (! empty($conf->banque->enabled) && ! $_POST["accountid"] > 0)
+    if (! empty($conf->banque->enabled) && ! $accountid > 0)
     {
         $mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToCredit"));
         $error++;
@@ -76,14 +81,15 @@ if ($action == 'add_payment')
 	if (! $error)
 	{
 		$paymentid = 0;
+		$total = 0;
 
 		// Read possible payments
 		foreach ($_POST as $key => $value)
 		{
 			if (substr($key,0,7) == 'amount_')
 			{
-				$other_chid = substr($key,7);
-				$amounts[$other_chid] = price2num($_POST[$key]);
+				$amounts[$expensereport->fk_user_author] = price2num($_POST[$key]);
+				$total += price2num($_POST[$key]);
 			}
 		}
 
@@ -102,6 +108,7 @@ if ($action == 'add_payment')
     		$payment->chid           = $chid;
     		$payment->datepaid       = $datepaid;
     		$payment->amounts        = $amounts;   // Tableau de montant
+    		$payment->total          = $total;
     		$payment->fk_typepayment = $_POST["fk_typepayment"];
     		$payment->num_payment    = $_POST["num_payment"];
     		$payment->note           = $_POST["note"];
@@ -118,7 +125,7 @@ if ($action == 'add_payment')
 
             if (! $error)
             {
-                $result=$payment->addPaymentToBank($user,'payment_expensereport','(ExpenseReportPayment)',$_POST['accountid'],'','');
+                $result=$payment->addPaymentToBank($user,'payment_expensereport','(ExpenseReportPayment)',$accountid,'','');
                 if (! $result > 0)
                 {
                     $errmsg=$payment->error;
@@ -162,7 +169,7 @@ if (GETPOST("action") == 'create')
 
 	$total = $expensereport->total_ttc;
 
-	print_fiche_titre($langs->trans("DoPayment"));
+	print load_fiche_titre($langs->trans("DoPayment"));
 
 	if ($mesg)
 	{
@@ -186,8 +193,9 @@ if (GETPOST("action") == 'create')
 	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">'.price($expensereport->total_ttc,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	$sql = "SELECT sum(p.amount) as total";
-	$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p";
-	$sql.= " WHERE p.fk_expensereport = ".$chid;
+	$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
+	$sql.= " WHERE p.fk_expensereport = e.rowid AND p.fk_expensereport = ".$chid;
+    $sql.= ' AND e.entity IN ('.getEntity('expensereport', 1).')';
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -196,7 +204,7 @@ if (GETPOST("action") == 'create')
 		$db->free();
 	}
 	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2">'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
-	print '<tr><td valign="top">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	print '<tr class="liste_titre">';
 	print "<td colspan=\"3\">".$langs->trans("Payment").'</td>';
@@ -227,7 +235,7 @@ if (GETPOST("action") == 'create')
 	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
 
 	print '<tr>';
-	print '<td valign="top">'.$langs->trans("Comments").'</td>';
+	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
 	print '<td valign="top" colspan="2"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
 	print '</tr>';
 
@@ -308,7 +316,5 @@ if (GETPOST("action") == 'create')
 	print "</form>\n";
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

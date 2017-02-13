@@ -2,9 +2,9 @@
 /* Copyright (C) 2005     	Patrick Rouillon    <patrick@rouillon.net>
  * Copyright (C) 2005-2011	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012	Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015	Philippe Grand      <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Charles-Fr Benke	<charles.fr@benke.fr>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,14 +148,18 @@ if ($id > 0 || ! empty($ref))
 
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<table class="border" width="100%">';
-		print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
-		print '<td colspan="3">';
-		print $form->showrefnav($object,'id','',($user->societe_id?0:1),'rowid','nom');
-		print '</td></tr>';
+
+        $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+		
+        dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+            
+    	print '<div class="fichecenter">';
+    
+        print '<div class="underbanner clearboth"></div>';
+		print '<table class="border centpercent">';
 
 		// Alias names (commercial, trademark or alias names)
-		print '<tr><td valign="top">'.$langs->trans('AliasNames').'</td><td colspan="3">';
+		print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
 		print $object->name_alias;
 		print "</td></tr>";
 
@@ -181,7 +185,11 @@ if ($id > 0 || ! empty($ref))
 		    if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
 		    print '</td></tr>';
 		}
-		print '</table></form>';
+		print '</table>';
+		
+		print '</div>';
+		
+		print '</form>';
 		print '<br>';
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
@@ -205,7 +213,7 @@ if ($id > 0 || ! empty($ref))
 			$sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.societe as company, d.fk_soc,";
 			$sql.= " d.datefin,";
 			$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
-			$sql.= " t.libelle as type, t.cotisation";
+			$sql.= " t.libelle as type, t.subscription";
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
 			$sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql.= " WHERE d.fk_soc=".$id;
@@ -246,6 +254,8 @@ if ($id > 0 || ! empty($ref))
 						$memberstatic->ref=$objp->rowid;
 						$memberstatic->lastname=$objp->lastname;
 						$memberstatic->firstname=$objp->firstname;
+						$memberstatic->statut=$objp->statut;
+						$memberstatic->datefin=$db->jdate($objp->datefin);
 
 						$companyname=$objp->company;
 
@@ -282,7 +292,7 @@ if ($id > 0 || ! empty($ref))
 
 						// Statut
 						print '<td class="nowrap">';
-						print $memberstatic->LibStatut($objp->statut,$objp->cotisation,$datefin,2);
+						print $memberstatic->LibStatut($objp->statut,$objp->subscription,$datefin,2);
 						print "</td>";
 
 						// End of subscription date
@@ -290,13 +300,15 @@ if ($id > 0 || ! empty($ref))
 						{
 							print '<td align="center" class="nowrap">';
 							print dol_print_date($datefin,'day');
-							if ($datefin < ($now -  $conf->adherent->cotisation->warning_delay) && $objp->statut > 0) print " ".img_warning($langs->trans("SubscriptionLate"));
+							if ($memberstatic->hasDelay()) {
+								print " ".img_warning($langs->trans("SubscriptionLate"));
+							}
 							print '</td>';
 						}
 						else
 						{
 							print '<td align="left" class="nowrap">';
-							if ($objp->cotisation == 'yes')
+							if ($objp->subscription == 'yes')
 							{
 								print $langs->trans("SubscriptionNotReceived");
 								if ($objp->statut > 0) print " ".img_warning();
@@ -323,5 +335,5 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-$db->close();
 llxFooter();
+$db->close();

@@ -44,7 +44,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("ExportsArea"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
-print_fiche_titre($langs->trans("ExportsArea"));
+print load_fiche_titre($langs->trans("ExportsArea"));
 
 print $langs->trans("FormatedExportDesc1").'<br>';
 print $langs->trans("FormatedExportDesc2").' ';
@@ -123,7 +123,7 @@ print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
 print '</tr>';
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
-$model=new ModeleExports();
+$model=new ModeleExports($db);
 $liste=$model->liste_modeles($db);    // This is not a static method for exports because method load non static properties
 
 $var=true;

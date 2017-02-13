@@ -12,7 +12,6 @@ Creditor=Lánveitandi
 PaymentCode=Greiðsla kóða
 PayBoxDoPayment=Fara á greiðslu
 YouWillBeRedirectedOnPayBox=Þú verður vísað á að tryggja Paybox síðu til inntak þú upplýsingar um greiðslukort
-PleaseBePatient=Vinsamlegast sýndu þolinmæði
 Continue=Næsti
 ToOfferALinkForOnlinePayment=Slóð fyrir %s greiðslu
 ToOfferALinkForOnlinePaymentOnOrder=URL að bjóða upp á %s inni greiðslu notandi tengi fyrir röð

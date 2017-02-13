@@ -1,6 +1,6 @@
 [main]
 host = https://www.transifex.com
-lang_map = uz: uz_UZ, sw: sw_SW
+lang_map = uz: uz_UZ, sw: sw_SW, sr@latin: sr_RS
 
 [dolibarr.accountancy]
 file_filter = htdocs/langs/<lang>/accountancy.lang
@@ -146,6 +146,12 @@ source_file = htdocs/langs/en_US/holiday.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.hrm]
+file_filter = htdocs/langs/<lang>/hrm.lang
+source_file = htdocs/langs/en_US/hrm.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.incoterm]
 file_filter = htdocs/langs/<lang>/incoterm.lang
 source_file = htdocs/langs/en_US/incoterm.lang
@@ -164,7 +170,7 @@ source_file = htdocs/langs/en_US/interventions.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
-[dolibarr.languages]
+[dolibarr.languages-not-res]
 file_filter = htdocs/langs/<lang>/languages.lang
 source_file = htdocs/langs/en_US/languages.lang
 source_lang = en_US
@@ -215,6 +221,12 @@ type = MOZILLAPROPERTIES
 [dolibarr.members]
 file_filter = htdocs/langs/<lang>/members.lang
 source_file = htdocs/langs/en_US/members.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.oauth]
+file_filter = htdocs/langs/<lang>/oauth.lang
+source_file = htdocs/langs/en_US/oauth.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
@@ -278,6 +290,12 @@ source_file = htdocs/langs/en_US/propal.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.receiptprinter]
+file_filter = htdocs/langs/<lang>/receiptprinter.lang
+source_file = htdocs/langs/en_US/receiptprinter.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.resource]
 file_filter = htdocs/langs/<lang>/resource.lang
 source_file = htdocs/langs/en_US/resource.lang
@@ -314,6 +332,12 @@ source_file = htdocs/langs/en_US/suppliers.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.supplier_proposal]
+file_filter = htdocs/langs/<lang>/supplier_proposal.lang
+source_file = htdocs/langs/en_US/supplier_proposal.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.trips]
 file_filter = htdocs/langs/<lang>/trips.lang
 source_file = htdocs/langs/en_US/trips.lang
@@ -329,6 +353,12 @@ type = MOZILLAPROPERTIES
 [dolibarr.withdrawals]
 file_filter = htdocs/langs/<lang>/withdrawals.lang
 source_file = htdocs/langs/en_US/withdrawals.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.website]
+file_filter = htdocs/langs/<lang>/website.lang
+source_file = htdocs/langs/en_US/website.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 

@@ -28,7 +28,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module de Click to Dial
+ *	Class to describe and enable module Click to Dial
  */
 class modMailmanSpip extends DolibarrModules
 {
@@ -76,5 +76,10 @@ class modMailmanSpip extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'clicktodial';
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
 	}
 }

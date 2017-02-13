@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro	  	<alexandre.spangaro@gmail.com>
+/* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +162,7 @@ if (GETPOST("action") == 'create')
 
 	$total = $don->amount;
 
-	print_fiche_titre($langs->trans("DoPayment"));
+	print load_fiche_titre($langs->trans("DoPayment"));
 
 	if ($mesg)
 	{
@@ -196,7 +196,7 @@ if (GETPOST("action") == 'create')
 		$db->free();
 	}
 	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2">'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
-	print '<tr><td valign="top">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	print '<tr class="liste_titre">';
 	print "<td colspan=\"3\">".$langs->trans("Payment").'</td>';
@@ -227,7 +227,7 @@ if (GETPOST("action") == 'create')
 	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
 
 	print '<tr>';
-	print '<td valign="top">'.$langs->trans("Comments").'</td>';
+	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
 	print '<td valign="top" colspan="2"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
 	print '</tr>';
 
@@ -308,7 +308,5 @@ if (GETPOST("action") == 'create')
 	print "</form>\n";
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

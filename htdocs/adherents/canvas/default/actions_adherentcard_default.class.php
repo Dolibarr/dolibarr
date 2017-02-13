@@ -30,12 +30,6 @@ include_once DOL_DOCUMENT_ROOT.'/adherents/canvas/actions_adherentcard_common.cl
  */
 class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 {
-	var $db;
-	var $dirmodule;
-    var $targetmodule;
-    var $canvas;
-    var $card;
-
 	/**
      *	Constructor
      *

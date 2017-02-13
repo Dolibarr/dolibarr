@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+/* Copyright (C) 2014-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,12 +34,12 @@ class Fiscalyear extends CommonObject
 	public $fk_element = '';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $id;
 	var $rowid;
 
 	var $label;
 	var $date_start;
 	var $date_end;
+	var $datec;
 	var $statut;		// 0=open, 1=closed
 	var $entity;
 
@@ -89,7 +89,7 @@ class Fiscalyear extends CommonObject
 		$sql.= " '".$this->label."'";
 		$sql.= ", '".$this->db->idate($this->date_start)."'";
 		$sql.= ", ".($this->date_end ? "'".$this->db->idate($this->date_end)."'":"null");
-		$sql.= ", ".$this->statut;
+		$sql.= ", 0";
 		$sql.= ", ".$conf->entity;
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ". $user->id;

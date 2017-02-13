@@ -42,7 +42,7 @@ function SendError($number, $text)
 
 // Check if this uploader has been enabled.
 if ( !$Config['Enabled'] )
-	SendUploadResults('1', '', '', 'This file uploader is disabled. Please check the "editor/filemanager/connectors/php/config.php" file');
+	SendUploadResults('1', '', '', 'This file uploader is disabled. Please check the "filemanagerdol/connectors/php/config.php" file');
 
 $sCommand = 'QuickUpload' ;
 

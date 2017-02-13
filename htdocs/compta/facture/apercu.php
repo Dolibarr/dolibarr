@@ -29,6 +29,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -49,7 +50,9 @@ $result = restrictedArea($user, 'facture', $id);
 
 $now=dol_now();
 
-llxHeader('',$langs->trans("Bill"),'Facture');
+$title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('Preview');
+$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 
@@ -79,10 +82,21 @@ if ($id > 0 || ! empty($ref))
          */
         print '<table class="border" width="100%">';
 
-        // Ref
-        print '<tr><td width="25%">'.$langs->trans('Ref').'</td>';
-        print '<td colspan="5">'.$object->ref.'</td>';
-        print '</tr>';
+    	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+    
+    	// Ref
+    	print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td><td colspan="5">';
+    	$morehtmlref = '';
+    	$discount = new DiscountAbsolute($db);
+    	$result = $discount->fetch(0, $object->id);
+    	if ($result > 0) {
+    		$morehtmlref = ' (' . $langs->trans("CreditNoteConvertedIntoDiscount", $discount->getNomUrl(1, 'discount')) . ')';
+    	}
+    	if ($result < 0) {
+    		dol_print_error('', $discount->error);
+    	}
+    	print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
+    	print '</td></tr>';
 
         // Ref customer
         print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
@@ -174,7 +188,7 @@ if ($id > 0 || ! empty($ref))
                 // Remise dispo de type remise fixe (not credit note)
                 $filter='fk_facture_source IS NULL';
                 print '<br>';
-                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer, ' - '.$addabsolutediscount);
+                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer, ' - '.$addabsolutediscount, 1);
             }
         }
         else
@@ -206,7 +220,7 @@ if ($id > 0 || ! empty($ref))
                 // Remise dispo de type avoir
                 $filter='fk_facture_source IS NOT NULL';
                 if (! $absolute_discount) print '<br>';
-                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filter, $resteapayer);
+                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filter, $resteapayer, '', 1);
             }
         }
         if (! $absolute_discount && ! $absolute_creditnote)
@@ -226,7 +240,7 @@ if ($id > 0 || ! empty($ref))
         print '</tr>';
 
         // Dates
-        print '<tr><td>'.$langs->trans("Date").'</td>';
+        print '<tr><td>'.$langs->trans("DateInvoice").'</td>';
         print '<td>'.dol_print_date($object->date,"daytext").'</td>';
 
         // Right part with $rowspan lines
@@ -280,7 +294,7 @@ if ($id > 0 || ! empty($ref))
             print "</table>\n";
 
             // Conversion du PDF en image png si fichier png non existant
-            if (! file_exists($fileimage) && ! file_exists($fileimagebis))
+			if ((! file_exists($fileimage) && ! file_exists($fileimagebis)) || (filemtime($fileimage) < filemtime($file)))
             {
                 if (class_exists("Imagick"))
                 {

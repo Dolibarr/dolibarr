@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,6 @@
  *	\file       htdocs/ftp/index.php
  *	\ingroup    ftp
  *	\brief      Main page for FTP section area
- *	\author		Laurent Destailleur
  */
 
 require('../main.inc.php');
@@ -38,12 +37,13 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ftp','');
 
 // Get parameters
-$action = isset($_GET["action"])?$_GET["action"]:$_POST['action'];
-$section=isset($_GET["section"])?$_GET["section"]:$_POST['section'];
+$action=GETPOST('action');
+$section=GETPOST('section');
 if (! $section) $section='/';
 $numero_ftp = GETPOST("numero_ftp");
-if (! $numero_ftp) $numero_ftp=1;
-$file=isset($_GET["file"])?$_GET["file"]:$_POST['file'];
+/* if (! $numero_ftp) $numero_ftp=1; */
+$file=GETPOST("file");
+$confirm=GETPOST('confirm');
 
 $upload_dir = $conf->ftp->dir_temp;
 $download_dir = $conf->ftp->dir_temp;
@@ -71,18 +71,19 @@ $ftp_user=$conf->global->$s_ftp_user;
 $ftp_password=$conf->global->$s_ftp_password;
 $ftp_passive=$conf->global->$s_ftp_passive;
 
+// For result on connection
+$ok=0;
 $conn_id=null;	// FTP connection ID
+$mesg='';
 
 
 
-/*******************************************************************
+/*
  * ACTIONS
- *
- * Put here all code to do according to value of "action" parameter
- ********************************************************************/
+ */
 
-// Envoie fichier
-if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+// Submit file
+if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -106,15 +107,15 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 			$langs->load("errors");
 			if ($resupload < 0)	// Unknown error
 			{
-				setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
+				setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 			}
 			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 			{
-				setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
+				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 			}
 			else	// Known error
 			{
-				setEventMessage($langs->trans($resupload), 'errors');
+				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
 		}
 	}
@@ -122,12 +123,12 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
 		// Echec transfert (fichier depassant la limite ?)
 		$langs->load("errors");
-		setEventMessage($langs->trans("ErrorFailToCreateDir",$upload_dir), 'errors');
+		setEventMessages($langs->trans("ErrorFailToCreateDir",$upload_dir), null, 'errors');
 	}
 }
 
 // Action ajout d'un rep
-if ($_POST["action"] == 'add' && $user->rights->ftp->setup)
+if ($action == 'add' && $user->rights->ftp->setup)
 {
 	$ecmdir->ref                = $_POST["ref"];
 	$ecmdir->label              = $_POST["label"];
@@ -141,14 +142,13 @@ if ($_POST["action"] == 'add' && $user->rights->ftp->setup)
 	}
 	else
 	{
-		//TODO: Translate
-		setEventMessage('Error '.$langs->trans($ecmdir->error));
-		$_GET["action"] = "create";
+		setEventMessages($langs->trans("ErrorFailToCreateDir"), null, 'errors');
+		$action = "create";
 	}
 }
 
 // Remove file
-if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes')
+if ($action == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes')
 {
 	// set up a connection or die
 	if (! $conn_id)
@@ -174,12 +174,12 @@ if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes'
 		$result=@ftp_delete($conn_id, $newremotefileiso);
 		if ($result)
 		{
-			setEventMessage($langs->trans("FileWasRemoved",$file));
+			setEventMessages($langs->trans("FileWasRemoved",$file), null, 'mesgs');
 		}
 		else
 		{
 			dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
-			setEventMessage($langs->trans("FTPFailedToRemoveFile",$file), 'errors');
+			setEventMessages($langs->trans("FTPFailedToRemoveFile",$file), null, 'errors');
 		}
 
 		//ftp_close($conn_id);	Close later
@@ -224,12 +224,12 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 				$result=@ftp_delete($conn_id, $newremotefileiso);
 				if ($result)
 				{
-					setEventMessage($langs->trans("FileWasRemoved",$file));
+					setEventMessages($langs->trans("FileWasRemoved",$file), null, 'mesgs');
 				}
 				else
 				{
 					dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
-					setEventMessage($langs->trans("FTPFailedToRemoveFile",$file), 'errors');
+					setEventMessages($langs->trans("FTPFailedToRemoveFile",$file), null, 'errors');
 				}
 
 				//ftp_close($conn_id);	Close later
@@ -246,7 +246,7 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 }
 
 // Remove directory
-if ($_REQUEST['action'] == 'confirm_deletesection' && $_REQUEST['confirm'] == 'yes')
+if ($action == 'confirm_deletesection' && $confirm == 'yes')
 {
 	// set up a connection or die
 	if (! $conn_id)
@@ -268,11 +268,11 @@ if ($_REQUEST['action'] == 'confirm_deletesection' && $_REQUEST['confirm'] == 'y
 		$result=@ftp_rmdir($conn_id, $newremotefileiso);
 		if ($result)
 		{
-			setEventMessage($langs->trans("DirWasRemoved",$file));
+			setEventMessages($langs->trans("DirWasRemoved",$file), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("FTPFailedToRemoveDir",$file), 'errors');
+			setEventMessages($langs->trans("FTPFailedToRemoveDir",$file), null, 'errors');
 		}
 
 		//ftp_close($conn_id);	Close later
@@ -286,7 +286,7 @@ if ($_REQUEST['action'] == 'confirm_deletesection' && $_REQUEST['confirm'] == 'y
 }
 
 // Download directory
-if ($_REQUEST['action'] == 'download')
+if ($action == 'download')
 {
 	// set up a connection or die
 	if (! $conn_id)
@@ -339,8 +339,7 @@ if ($_REQUEST['action'] == 'download')
 		}
 		else
 		{
-			//TODO: Translate
-			setEventMessage('Failed to get file '.$remotefile, 'errors');
+			setEventMessages($langs->transnoentitiesnoconv('FailedToGetFile',$remotefile), null, 'errors');
 		}
 
 	}
@@ -355,11 +354,9 @@ if ($_REQUEST['action'] == 'download')
 
 
 
-/*******************************************************************
- * PAGE
- *
- * Put here all code to do according to value of "action" parameter
- ********************************************************************/
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -370,11 +367,24 @@ if ($conf->use_javascript_ajax)
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery("#delconst").hide();
+
 	jQuery(".checkboxfordelete").click(function() {
 		jQuery("#delconst").show();
 	});
+
+	$("#checkall").click(function() {
+		$(".checkboxfordelete").prop('checked', true);
+		jQuery("#delconst").show();
+	});
+	$("#checknone").click(function() {
+		$(".checkboxfordelete").prop('checked', false);
+		jQuery("#delconst").hide();
+	});
+	
 });
+
 </script>
+
 <?php
 }
 
@@ -383,11 +393,8 @@ $formfile=new FormFile($db);
 $userstatic = new User($db);
 
 
-
-//***********************
 // List
-//***********************
-print_fiche_titre($langs->trans("FTPArea"));
+print load_fiche_titre($langs->trans("FTPArea"));
 
 print $langs->trans("FTPAreaDesc")."<br>";
 
@@ -397,28 +404,27 @@ if (! function_exists('ftp_connect'))
 }
 else
 {
-	if (! empty($ftp_server))
+    if (! empty($ftp_server))
 	{
-
 		// Confirm remove file
-		if ($_GET['action'] == 'delete')
+		if ($action == 'delete')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
 			
 		}
 
 		// Confirmation de la suppression d'une ligne categorie
-		if ($_GET['action'] == 'delete_section')
+		if ($action == 'delete_section')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
-			
 		}
 
 		print $langs->trans("Server").': <b>'.$ftp_server.'</b><br>';
 		print $langs->trans("Port").': <b>'.$ftp_port.'</b> '.($ftp_passive?"(Passive)":"(Active)").'<br>';
 		print $langs->trans("User").': <b>'.$ftp_user.'</b><br>';
-
-		print $langs->trans("Directory").': ';
+        print $langs->trans("FTPs (FTP over SSH)").': <b>'.yn($conf->global->FTP_CONNECT_WITH_SSL).'</b><br>';
+        print $langs->trans("SFTP (FTP as a subsytem of SSH)").': <b>'.yn($conf->global->FTP_CONNECT_WITH_SFTP).'</b><br>';
+        print $langs->trans("Directory").': ';
 		$sectionarray=preg_split('|[\/]|',$section);
 		// For /
 		$newsection='/';
@@ -450,7 +456,7 @@ else
 
 
 		// Construit liste des repertoires
-		print '<table width="100%" class="nobordernopadding">'."\n";
+		print '<table width="100%" class="noborder">'."\n";
 
 		print '<tr class="liste_titre">'."\n";
 		print '<td class="liste_titre" align="left">'.$langs->trans("Content").'</td>'."\n";
@@ -459,30 +465,50 @@ else
 		print '<td class="liste_titre" align="center">'.$langs->trans("Owner").'</td>'."\n";
 		print '<td class="liste_titre" align="center">'.$langs->trans("Group").'</td>'."\n";
 		print '<td class="liste_titre" align="center">'.$langs->trans("Permissions").'</td>'."\n";
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre nowrap" align="right">';
+		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a> ';
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&numero_ftp='.$numero_ftp.($section?'&section='.urlencode($section):'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>&nbsp;';
 		print '</td>'."\n";
 		print '</tr>'."\n";
 
 		// set up a connection or die
-		if (! $conn_id)
+		if (empty($conn_id))
 		{
 			$resultarray=dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section, $ftp_passive);
+
 			$conn_id=$resultarray['conn_id'];
 			$ok=$resultarray['ok'];
 			$mesg=$resultarray['mesg'];
-
 		}
 
 		if ($ok)
 		{
 			//$type = ftp_systype($conn_id);
 
-			$newsectioniso=utf8_decode($section);
-			$buff = ftp_rawlist($conn_id, $newsectioniso);
-			$contents = ftp_nlist($conn_id, $newsectioniso);	// Sometimes rawlist fails but never nlist
-			//var_dump($contents);
-			//var_dump($buff);
+			$newsection=$section;
+		    $newsectioniso=utf8_decode($section);
+			//$newsection='/home';
+			
+			// List content of directory ($newsection = '/', '/home', ...)
+			if (! empty($conf->global->FTP_CONNECT_WITH_SFTP))
+			{
+			    if ($newsection == '/') $newsection='/./';  // workaround for bug https://bugs.php.net/bug.php?id=64169
+			    //$dirHandle = opendir("ssh2.sftp://$conn_id".$newsection);
+			    //var_dump($dirHandle);
+                $contents = scandir('ssh2.sftp://' . $conn_id . $newsection);
+                $buff=array();
+                foreach($contents as $i => $key)
+                {
+                    $buff[$i]="---------- - root root 1234 Aug 01 2000 ".$key;
+                }
+    		}
+    		else
+    		{
+                $buff = ftp_rawlist($conn_id, $newsectioniso);
+                $contents = ftp_nlist($conn_id, $newsectioniso);	// Sometimes rawlist fails but never nlist
+        		//var_dump($contents);
+		        //var_dump($buff);
+    		}
 
 			$nboflines=count($contents);
 			$var=true;
@@ -590,9 +616,16 @@ else
 
 		}
 
-
 		print "</table>";
 
+		
+		if (! $ok)
+		{
+		      print $mesg.'<br>'."\n";
+		      setEventMessages($mesg, null, 'errors');
+		}
+		
+		
 		// Actions
 		/*
 		if ($user->rights->ftp->write && ! empty($section))
@@ -611,19 +644,55 @@ else
 	}
 	else
 	{
-		print $langs->trans("SetupOfFTPClientModuleNotComplete");
+		$foundsetup=false;
+		$MAXFTP=20;
+		$i=1;
+		while ($i <= $MAXFTP)
+		{
+			$paramkey='FTP_NAME_'.$i;
+			//print $paramkey;
+			if (! empty($conf->global->$paramkey))
+			{
+				$foundsetup=true;
+				break;
+			}
+			$i++;
+		}		
+	    if (! $foundsetup)
+	    {
+            print $langs->trans("SetupOfFTPClientModuleNotComplete");
+	    }
+	    else
+	    {
+	        print $langs->trans("ChooseAFTPEntryIntoMenu");
+	    }
 	}
 }
 
 print '<br>';
 
 // Close FTP connection
-if ($conn_id) ftp_close($conn_id);
-
-// End of page
-$db->close();
+if ($conn_id) 
+{
+    if (! empty($conf->global->FTP_CONNECT_WITH_SFTP))
+    {
+        
+    }
+    else if (! empty($conf->global->FTP_CONNECT_WITH_SSL))
+    {
+        ftp_close($conn_id);
+    }
+    else
+    {
+        ftp_close($conn_id);
+    }
+}
+    
 
 llxFooter();
+
+$db->close();
+
 
 
 /**
@@ -642,46 +711,90 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 	global $langs, $conf;
 
 	$ok=1;
-
+    $conn_id=null;
+    
 	if (! is_numeric($ftp_port))
 	{
-		$mesg=$langs->trans("FailedToConnectToFTPServer",$ftp_server,$ftp_port);
+		$mesg=$langs->transnoentitiesnoconv("FailedToConnectToFTPServer",$ftp_server,$ftp_port);
 		$ok=0;
 	}
 
 	if ($ok)
 	{
 		$connecttimeout=(empty($conf->global->FTP_CONNECT_TIMEOUT)?40:$conf->global->FTP_CONNECT_TIMEOUT);
-		if (! empty($conf->global->FTP_CONNECT_WITH_SSL)) $conn_id = ftp_ssl_connect($ftp_server, $ftp_port, $connecttimeout);
-		else $conn_id = ftp_connect($ftp_server, $ftp_port, $connecttimeout);
-		if ($conn_id)
+		if (! empty($conf->global->FTP_CONNECT_WITH_SFTP)) 
+		{
+		    dol_syslog('Try to connect with ssh2_ftp');
+		    $tmp_conn_id = ssh2_connect($ftp_server, $ftp_port);
+		}
+		else if (! empty($conf->global->FTP_CONNECT_WITH_SSL)) 
+		{
+		    dol_syslog('Try to connect with ftp_ssl_connect');
+		    $conn_id = ftp_ssl_connect($ftp_server, $ftp_port, $connecttimeout);
+		}
+		else 
+		{
+		    dol_syslog('Try to connect with ftp_connect');
+		    $conn_id = ftp_connect($ftp_server, $ftp_port, $connecttimeout);
+		}
+		if ($conn_id || $tmp_conn_id)
 		{
 			if ($ftp_user)
 			{
-				if (ftp_login($conn_id, $ftp_user, $ftp_password))
+				if (! empty($conf->global->FTP_CONNECT_WITH_SFTP))
 				{
-					// Turn on passive mode transfers (must be after a successful login
-					if ($ftp_passive) ftp_pasv($conn_id, true);
-
-					// Change the dir
-					$newsectioniso=utf8_decode($section);
-					ftp_chdir($conn_id, $newsectioniso);
-				}
+				    if (ssh2_auth_password($tmp_conn_id, $ftp_user, $ftp_password))
+    				{
+    					// Turn on passive mode transfers (must be after a successful login
+    					//if ($ftp_passive) ftp_pasv($conn_id, true);
+    
+    					// Change the dir
+    					$newsectioniso=utf8_decode($section);
+    					//ftp_chdir($conn_id, $newsectioniso);
+		                $conn_id = ssh2_sftp($tmp_conn_id);
+		                if (! $conn_id)
+		                {
+        					$mesg=$langs->transnoentitiesnoconv("FailedToConnectToSFTPAfterSSHAuthentication");
+    	   				    $ok=0;
+        				    $error++;
+		                }
+    				}
+    				else 
+    				{
+    					$mesg=$langs->transnoentitiesnoconv("FailedToConnectToFTPServerWithCredentials");
+	   				    $ok=0;
+    				    $error++;
+    				}
+				}   
 				else
 				{
-					$mesg=$langs->trans("FailedToConnectToFTPServerWithCredentials");
-					$ok=0;
+				    if (ftp_login($conn_id, $ftp_user, $ftp_password))
+    				{
+    					// Turn on passive mode transfers (must be after a successful login
+    					if ($ftp_passive) ftp_pasv($conn_id, true);
+    
+    					// Change the dir
+    					$newsectioniso=utf8_decode($section);
+    					ftp_chdir($conn_id, $newsectioniso);
+    				}
+    				else 
+    				{
+    					$mesg=$langs->transnoentitiesnoconv("FailedToConnectToFTPServerWithCredentials");
+	   				    $ok=0;
+    				    $error++;
+    				}
 				}
 			}
 		}
 		else
 		{
-			$mesg=$langs->trans("FailedToConnectToFTPServer",$ftp_server,$ftp_port);
+		    dol_syslog('FailedToConnectToFTPServer '.$ftp_server.' '.$ftp_port, LOG_ERR);
+			$mesg=$langs->transnoentitiesnoconv("FailedToConnectToFTPServer",$ftp_server,$ftp_port);
 			$ok=0;
 		}
 	}
 
-	$arrayresult=array('conn_id'=>$conn_id, 'ok'=>$ok, 'mesg'=>$mesg);
+	$arrayresult=array('conn_id'=>$conn_id, 'ok'=>$ok, 'mesg'=>$mesg, 'curdir'=>$section, 'curdiriso'=>$newsectioniso);
 	return $arrayresult;
 }
 

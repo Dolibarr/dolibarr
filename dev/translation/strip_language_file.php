@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /* Copyright (C) 2014 by FromDual GmbH, licensed under GPL v2
  * Copyright (C) 2014 Laurent Destailleur  <eldy@users.sourceforge.net>

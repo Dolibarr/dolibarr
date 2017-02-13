@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - orders
+CustomersOrders=Pedidos de los clientes
+StatusOrderCanceledShort=Cancelado
+StatusOrderCanceled=Cancelado

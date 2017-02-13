@@ -71,7 +71,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer)
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
 }
@@ -89,7 +89,7 @@ else if ($action == 'classifyrefunded' && $user->rights->deplacement->creer)
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
 }
@@ -104,7 +104,7 @@ else if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->depl
     }
     else
     {
-	    setEventMessage($object->error, 'errors');
+	    setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 
@@ -115,7 +115,7 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
         $error=0;
 
         $object->date			= dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
-        $object->km				= GETPOST('km','int');
+        $object->km				= price2num(GETPOST('km','alpha'), 'MU'); // Not 'int', it may be a formated amount
         $object->type			= GETPOST('type','alpha');
         $object->socid			= GETPOST('socid','int');
         $object->fk_user		= GETPOST('fk_user','int');
@@ -125,17 +125,17 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
 
         if (! $object->date)
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
             $error++;
         }
         if ($object->type == '-1')
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
             $error++;
         }
         if (! ($object->fk_user > 0))
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Person")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Person")), null, 'errors');
             $error++;
         }
 
@@ -150,7 +150,7 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
             }
             else
             {
-	            setEventMessage($object->error, 'errors');
+	            setEventMessages($object->error, $object->errors, 'errors');
                 $action='create';
             }
         }
@@ -174,7 +174,7 @@ else if ($action == 'update' && $user->rights->deplacement->creer)
         $result = $object->fetch($id);
 
         $object->date			= dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
-        $object->km				= GETPOST('km','int');
+        $object->km				= price2num(GETPOST('km','alpha'), 'MU'); // Not 'int', it may be a formated amount
         $object->type			= GETPOST('type','alpha');
         $object->socid			= GETPOST('socid','int');
         $object->fk_user		= GETPOST('fk_user','int');
@@ -190,7 +190,7 @@ else if ($action == 'update' && $user->rights->deplacement->creer)
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
     else
@@ -213,13 +213,13 @@ else if ($action == 'setdated' && $user->rights->deplacement->creer)
 {
     $dated=dol_mktime(GETPOST('datedhour','int'), GETPOST('datedmin','int'), GETPOST('datedsec','int'), GETPOST('datedmonth','int'), GETPOST('datedday','int'), GETPOST('datedyear','int'));
     $object->fetch($id);
-    $result=$object->setValueFrom('dated',$dated,'','','date');
+    $result=$object->setValueFrom('dated', $dated, '', '', 'date', '', $user, 'DEPLACEMENT_MODIFY');
     if ($result < 0) dol_print_error($db, $object->error);
 }
 else if ($action == 'setkm' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    $result=$object->setValueFrom('km',GETPOST('km','int'));
+    $result=$object->setValueFrom('km', GETPOST('km','int'), '', null, 'text', '', $user, 'DEPLACEMENT_MODIFY');
     if ($result < 0) dol_print_error($db, $object->error);
 }
 
@@ -240,7 +240,7 @@ if ($action == 'create')
     //WYSIWYG Editor
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-    print_fiche_titre($langs->trans("NewTrip"));
+    print load_fiche_titre($langs->trans("NewTrip"));
 
     $datec = dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
 
@@ -257,12 +257,12 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-    print $form->select_dolusers(GETPOST('fk_user','int'),'fk_user',1);
+    print $form->select_dolusers(GETPOST('fk_user','int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
     print '</td></tr>';
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-    print $form->select_date($datec?$datec:-1,'','','','','add',1,1);
+    print $form->select_date($datec?$datec:-1,'','','','','add',1,1,1);
     print '</td></tr>';
 
     // Km
@@ -279,7 +279,7 @@ if ($action == 'create')
     print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
 
-    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
+    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8,'90%');
     print $doleditor->Create(1);
 
     print '</td></tr>';
@@ -291,7 +291,7 @@ if ($action == 'create')
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
 
-        $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
+        $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
         print $doleditor->Create(1);
 
         print '</td></tr>';
@@ -353,12 +353,12 @@ else if ($id)
             // Who
             print "<tr>";
             print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-            print $form->select_dolusers(GETPOST('fk_user','int')?GETPOST('fk_user','int'):$object->fk_user,'fk_user',0);
+            print $form->select_dolusers(GETPOST('fk_user','int')?GETPOST('fk_user','int'):$object->fk_user, 'fk_user', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
             print '</td></tr>';
 
             // Date
             print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-            print $form->select_date($object->date,'','','','','update');
+            print $form->select_date($object->date,'',0,0,0,'update',1,0,1);
             print '</td></tr>';
 
             // Km
@@ -373,10 +373,10 @@ else if ($id)
             print '</td></tr>';
 
             // Public note
-            print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
+            print '<tr><td class="tdtop">'.$langs->trans("NotePublic").'</td>';
             print '<td valign="top" colspan="3">';
 
-            $doleditor = new DolEditor('note_public', $object->note_public, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
+            $doleditor = new DolEditor('note_public', $object->note_public, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
             print $doleditor->Create(1);
 
             print "</td></tr>";
@@ -384,10 +384,10 @@ else if ($id)
             // Private note
             if (empty($user->societe_id))
             {
-                print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
+                print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td>';
                 print '<td valign="top" colspan="3">';
 
-                $doleditor = new DolEditor('note_private', $object->note_private, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
+                $doleditor = new DolEditor('note_private', $object->note_private, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
                 print $doleditor->Create(1);
 
                 print "</td></tr>";
@@ -411,8 +411,8 @@ else if ($id)
         }
         else
         {
-            /*
-             * Confirmation de la suppression du deplacement
+           /*
+            * Confirm delete trip 
             */
             if ($action == 'delete')
             {
@@ -433,7 +433,7 @@ else if ($id)
             print '</td></tr>';
 
 	        $form->load_cache_types_fees();
-            
+
 	        // Type
             print '<tr><td>';
             print $form->editfieldkey("Type",'type',$langs->trans($object->type),$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'select:types_fees');
@@ -456,7 +456,7 @@ else if ($id)
             print '</td></tr>';
 
             // Km/Price
-            print '<tr><td valign="top">';
+            print '<tr><td class="tdtop">';
             print $form->editfieldkey("FeesKilometersOrAmout",'km',$object->km,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'numeric:6');
             print '</td><td>';
             print $form->editfieldval("FeesKilometersOrAmout",'km',$object->km,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'numeric:6');

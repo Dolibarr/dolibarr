@@ -58,6 +58,7 @@ if (GETPOST('action','alpha') == 'set')
 	$res = dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",(GETPOST('CASHDESK_ID_WAREHOUSE','alpha') > 0 ? GETPOST('CASHDESK_ID_WAREHOUSE','alpha') : ''),'chaine',0,'',$conf->entity);
 	$res = dolibarr_set_const($db,"CASHDESK_NO_DECREASE_STOCK",GETPOST('CASHDESK_NO_DECREASE_STOCK','alpha'),'chaine',0,'',$conf->entity);
 	$res = dolibarr_set_const($db,"CASHDESK_SERVICES", GETPOST('CASHDESK_SERVICES','alpha'),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_DOLIBAR_RECEIPT_PRINTER", GETPOST('CASHDESK_DOLIBAR_RECEIPT_PRINTER','alpha'),'chaine',0,'',$conf->entity);
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level','alpha'));
 
@@ -66,12 +67,12 @@ if (GETPOST('action','alpha') == 'set')
  	if (! $error)
     {
         $db->commit();
-	    setEventMessage($langs->trans("SetupSaved"));
+	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
         $db->rollback();
-	    setEventMessage($langs->trans("Error"), 'errors');
+	    setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -85,7 +86,7 @@ $formproduct=new FormProduct($db);
 llxHeader('',$langs->trans("CashDeskSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("CashDeskSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("CashDeskSetup"),$linkback,'title_setup');
 print '<br>';
 
 
@@ -169,6 +170,17 @@ if (! empty($conf->service->enabled))
     print "</td></tr>\n";
 }
 
+// Use Dolibarr Receipt Printer
+if (! empty($conf->receiptprinter->enabled))
+{
+    $var=! $var;
+    print '<tr '.$bc[$var].'><td>';
+    print $langs->trans("DolibarrReceiptPrinter").' ('.$langs->trans("FeatureNotYetAvailable").')';
+    print '<td colspan="2">';
+    print $form->selectyesno("CASHDESK_DOLIBAR_RECEIPT_PRINTER",$conf->global->CASHDESK_DOLIBAR_RECEIPT_PRINTER,1);
+    print "</td></tr>\n";
+}
+
 print '</table>';
 print '<br>';
 
@@ -176,6 +188,5 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print "</form>\n";
 
-$db->close();
-
 llxFooter();
+$db->close();

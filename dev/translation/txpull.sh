@@ -42,4 +42,4 @@ else
 fi
 
 echo Think to launch also: 
-echo "> dev/fixaltlanguages.sh fix all"
+echo "> dev/tools/fixaltlanguages.sh fix all"

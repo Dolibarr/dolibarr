@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - paybox
+YourPaymentHasNotBeenRecorded=Die Zahlung wurde abgebrochen und nicht ausgeführt. Vielen Dank.
+MessageKO=Nachrichtenseite für abgebrochene Zahlung
+PAYBOX_PAYONLINE_SENDEMAIL=Status-Email nach einer Zahlung (erfolgreich oder nicht)

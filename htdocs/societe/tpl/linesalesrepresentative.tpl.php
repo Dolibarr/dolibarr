@@ -5,7 +5,7 @@
         print $langs->trans('SalesRepresentatives');
         print '<td><td align="right">';
         if ($user->rights->societe->creer && $user->rights->societe->client->voir)
-        print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$object->id.'">'.img_edit().'</a>';
+        print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$object->id.'">'.img_edit('',1).'</a>';
         else
         print '&nbsp;';
         print '</td></tr></table>';
@@ -27,9 +27,12 @@
             foreach($listsalesrepresentatives as $val)
             {
                 $userstatic->id=$val['id'];
+                $userstatic->login=$val['login'];
                 $userstatic->lastname=$val['lastname'];
                 $userstatic->firstname=$val['firstname'];
-                print $userstatic->getNomUrl(1);
+                $userstatic->statut=$val['statut'];
+                $userstatic->photo=$val['photo'];
+                print $userstatic->getNomUrl(-1);
                 $i++;
                 if ($i < $nbofsalesrepresentative) print ', ';
             }

@@ -57,7 +57,7 @@ class modApi extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "REST interface";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
-		$this->version = 'development';
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -72,10 +72,10 @@ class modApi extends DolibarrModules
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/api/temp");
-		$this->dirs = array();
+		$this->dirs = array('/api/temp');
 
 		// Config pages. Put here list of php page, stored into api/admin directory, to use to setup module.
-		$this->config_page_url = array("api.php@api");
+		$this->config_page_url = array("index.php@api");
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
@@ -155,7 +155,7 @@ class modApi extends DolibarrModules
 		// Example:
 		// $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		// $this->rights[$r][1] = 'Permision label';	// Permission label
-		// $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		// $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $r++;

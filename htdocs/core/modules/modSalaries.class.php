@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014		Alexandre Spangaro	 <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014		Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ class modSalaries extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
-		$this->description = "Employees salaries management";
+		$this->description = "Employees contracts and salaries management";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -69,11 +69,11 @@ class modSalaries extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array('salaries.php');
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
-		$this->langfiles = array("salaries");
+		$this->langfiles = array("salaries","bills");
 
 		// Constants
 		$this->const = array();
@@ -97,8 +97,8 @@ class modSalaries extends DolibarrModules
 		$r=0;
 
 		$r++;
-		$this->rights[$r][0] = 510;
-		$this->rights[$r][1] = 'Read salaries';
+		$this->rights[$r][0] = 511;
+		$this->rights[$r][1] = 'Read employee contracts/salaries';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
@@ -106,15 +106,23 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 512;
-		$this->rights[$r][1] = 'Create/modify salaries';
+		$this->rights[$r][1] = 'Create/modify employee contracts/salaries';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 		$this->rights[$r][5] = '';
-
+		
+		$r++;
+		$this->rights[$r][0] = 513;
+		$this->rights[$r][1] = 'Create/modify payment of salaries';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'write';
+		$this->rights[$r][5] = '';
+		
 		$r++;
 		$this->rights[$r][0] = 514;
-		$this->rights[$r][1] = 'Delete salaries';
+		$this->rights[$r][1] = 'Delete contracts/salaries';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'delete';
@@ -122,13 +130,18 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 517;
-		$this->rights[$r][1] = 'Export salaries';
+		$this->rights[$r][1] = 'Export employee contracts and salaries payments';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
 		$this->rights[$r][5] = '';
 
 
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Exports
 		//--------
 		$r=0;
@@ -138,7 +151,7 @@ class modSalaries extends DolibarrModules
 		$this->export_label[$r]='Salaries and payments';
 		$this->export_permission[$r]=array(array("salaries","export"));
 		$this->export_fields_array[$r]=array('u.firstname'=>"Firstname",'u.lastname'=>"Lastname",'u.login'=>"Login",'u.salary'=>'CurrentSalary','p.datep'=>'DatePayment','p.datesp'=>'DateStartPeriod','p.dateep'=>'DateEndPeriod','p.amount'=>'AmountPayment','p.num_payment'=>'Numero','p.label'=>'Label','p.note'=>'Note');
-		$this->export_TypeFields_array[$r]=array('u.firstname'=>"Text",'u.lastname'=>"Text",'u.login'=>'Text','u.salary'=>"Number",'p.datep'=>'Date','p.datesp'=>'Date','p.dateep'=>'Date','p.amount'=>'Number','p.num_payment'=>'Number','p.label'=>'Text');
+		$this->export_TypeFields_array[$r]=array('u.firstname'=>"Text",'u.lastname'=>"Text",'u.login'=>'Text','u.salary'=>"Numeric",'p.datep'=>'Date','p.datesp'=>'Date','p.dateep'=>'Date','p.amount'=>'Numeric','p.num_payment'=>'Numeric','p.label'=>'Text');
 		$this->export_entities_array[$r]=array('u.firstname'=>'user','u.lastname'=>'user','u.login'=>'user','u.salary'=>'user','p.datep'=>'payment','p.datesp'=>'payment','p.dateep'=>'payment','p.amount'=>'payment','p.label'=>'payment','p.note'=>'payment','p.num_payment'=>'payment');
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';

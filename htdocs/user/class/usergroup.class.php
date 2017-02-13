@@ -38,23 +38,20 @@ class UserGroup extends CommonObject
 	public $table_element='usergroup';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $id;			// Group id
-	var $entity;		// Entity of group
+	public $entity;		// Entity of group
 	/**
 	 * @deprecated
 	 * @see name
 	 */
-	var $nom;			// Name of group
-	var $name;			// Name of group
-	var $globalgroup;	// Global group
-	var $note;			// Note on group
-	var $datec;			// Creation date of group
-	var $datem;			// Modification date of group
-	var $members=array();	// Array of users
+	public $nom;			// Name of group
+	public $globalgroup;	// Global group
+	public $datec;			// Creation date of group
+	public $datem;			// Modification date of group
+	public $members=array();	// Array of users
 
 	private $_tab_loaded=array();		// Array of cache of already loaded permissions
 
-	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
+	public $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
 
 	/**
@@ -787,11 +784,8 @@ class UserGroup extends CommonObject
 			{
 				$muser=new User($this->db);
 				$muser->fetch($val->id);
-                if ($conf->global->LDAP_KEY_USERS == 'cn') $ldapuserid=$muser->getFullName($langs);
-                elseif ($conf->global->LDAP_KEY_USERS == 'sn') $ldapuserid=$muser->lastname;
-                elseif ($conf->global->LDAP_KEY_USERS == 'uid') $ldapuserid=$muser->login;
-
-				$valueofldapfield[] = $conf->global->LDAP_KEY_USERS.'='.$ldapuserid.','.$conf->global->LDAP_USER_DN;
+				$info2 = $muser->_load_ldap_info();
+                                $valueofldapfield[] = $muser->_load_ldap_dn($info2);
 			}
 			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield)?$valueofldapfield:'');
 		}

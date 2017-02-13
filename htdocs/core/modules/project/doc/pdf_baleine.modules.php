@@ -79,7 +79,7 @@ class pdf_baleine extends ModelePDFProjects
 		$this->posxref=$this->marge_gauche+1;
 		$this->posxlabel=$this->marge_gauche+25;
 		$this->posxworkload=$this->marge_gauche+100;
-		$this->posxprogress=$this->marge_gauche+140;
+		$this->posxprogress=$this->marge_gauche+130;
 		$this->posxdatestart=$this->marge_gauche+150;
 		$this->posxdateend=$this->marge_gauche+170;
 	}
@@ -154,6 +154,11 @@ class pdf_baleine extends ModelePDFProjects
 				$task = new Task($this->db);
 				$tasksarray = $task->getTasksArray(0,0,$object->id);
 
+                if (! $object->id > 0)  // Special case when used with object = specimen, we may return all lines 
+                {
+                    $tasksarray=array_slice($tasksarray, 0, min(5, count($tasksarray)));
+                }
+                
 				$object->lines=$tasksarray;
 				$nblignes=count($object->lines);
 
@@ -218,7 +223,7 @@ class pdf_baleine extends ModelePDFProjects
 					$progress=$object->lines[$i]->progress.'%';
 					$datestart=dol_print_date($object->lines[$i]->date_start,'day');
 					$dateend=dol_print_date($object->lines[$i]->date_end,'day');
-					$planned_workload=convertSecondToTime($object->lines[$i]->planned_workload,'allhourmin');
+					$planned_workload=convertSecondToTime((int) $object->lines[$i]->planned_workload,'allhourmin');
 
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
@@ -230,11 +235,11 @@ class pdf_baleine extends ModelePDFProjects
 					$pdf->MultiCell($this->posxprogress-$this->posxworkload, 3, $planned_workload, 0, 'R');
 					$pdf->SetXY($this->posxprogress, $curY);
 					$pdf->MultiCell($this->posxdatestart-$this->posxprogress, 3, $progress, 0, 'R');
+
 					$pdf->SetXY($this->posxdatestart, $curY);
 					$pdf->MultiCell($this->posxdateend-$this->posxdatestart, 3, $datestart, 0, 'C');
 					$pdf->SetXY($this->posxdateend, $curY);
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxdateend, 3, $dateend, 0, 'C');
-
 
 					$pageposafter=$pdf->getPage();
 
@@ -245,7 +250,7 @@ class pdf_baleine extends ModelePDFProjects
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(210,210,210)));
+						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
 						$pdf->SetLineStyle(array('dash'=>0));
@@ -483,7 +488,8 @@ class pdf_baleine extends ModelePDFProjects
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		$showdetails=0;
+		global $conf;
+		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'PROJECT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 

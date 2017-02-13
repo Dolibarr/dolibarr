@@ -1,0 +1,24 @@
+# Dolibarr language file - Source file is en_US - errors
+ErrorBadValueForParamNotAString=Ungültiger Wert für ihre Parameter. Das passiert normalerweise, wenn die Übersetzung fehlt.
+ErrorBadThirdPartyName=Der für den Geschäftspartner eingegebene Name ist ungültig.
+ErrorBadValueForParameter=Ungültiger Wert '%s' für Parameter '%s'
+ErrorUserCannotBeDelete=Benutzer kann nicht gelöscht werden. Eventuell ist er noch mit Einträgen verknüpft.
+ErrorFieldsRequired=Ein oder mehrere erforderliche Felder wurden nicht ausgefüllt-
+ErrorFileSizeTooLarge=Die Grösse der gewählten Datei übersteigt den zulässigen Maximalwert.
+ErrorSizeTooLongForIntType=Die Grösse überschreitet das Maximum für den Typ 'int' (%s Ziffern maximal)
+ErrorSizeTooLongForVarcharType=Die Grösse überschreitet das Maximum für den Typ 'string' (%s Zeichen maximal)
+ErrorNoValueForCheckBoxType=Bitte Wert für Checkbox-Liste eingeben
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Das Feld <b>%s</b> darf keine Sonderzeichen, Grossbuchstaben und Zahlen enthalten.
+ErrorModuleSetupNotComplete=Das Setup des Moduls scheint unvollständig zu sein. Führen Sie nochmal das Setup aus um das Modul zu vervollständigen.
+ErrorMaxNumberReachForThisMask=Maximum Grösse für diese Maske erreicht
+ErrorProdIdAlreadyExist=%s wurde bereits einem Geschäftspartner zugewiesen
+ErrorForbidden3=Es scheint keine ordnungsgemässe Authentifizierung für das System vorzuliegen. Bitte werfen Sie einen Blick auf die Systemdokumentation um die entsprechenden Authentifizierungsoptionen zu verwalten (htaccess, mod_auth oder andere...)
+ErrorDateMustBeBeforeToday=Datum darf nicht in der Zukunft sein
+ErrorWarehouseRequiredIntoShipmentLine=Warenlager ist auf der Lieferzeile erforderlich.
+ErrorFileMustHaveFormat=Datei muss das Format %s haben
+ErrorSupplierCountryIsNotDefined=Zu diesem Lieferant ist kein Land definiert. Bitte korrigieren Sie dies zuerst.
+ErrorsThirdpartyMerge=Die zwei Einträge können nicht zusammengeführt werden. Aktion abgebrochen.
+WarningPassIsEmpty=Warnung: Derzeit ist kein Datenbankpasswort gesetzt. Dies ist eine Sicherheitslücke. Konfigurieren Sie ehestmöglich ein Passwort für den Datenbankzugriff und passen Sie Ihre conf.php entsprechend an.
+WarningNoDocumentModelActivated=Für das Erstellen von Dokumenten ist keine Vorlage gewählt. Eine Vorlage wird standardmässig ausgewählt, bis Sie die Moduleinstellungen angepasst haben.
+WarningSomeLinesWithNullHourlyRate=Einige Zeiten wurden durch Benutzer erfasst bei denen der Stundenansatz nicht definiert war. Ein Stundenansatz von 0 %s pro Stunde wird verwendet, was aber Fehlerhafte Zeitauswertungen zur Folge haben kann.
+WarningYourLoginWasModifiedPleaseLogin=Ihr Login wurde verändert. Aus Sicherheitsgründen müssen sie sich vor der nächsten Aktion neu anmelden.

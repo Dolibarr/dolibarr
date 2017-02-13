@@ -1,7 +1,7 @@
 -- ============================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
--- Copyright (C) 2009 Laurent Destailleur	<eldy@users.sourceforge.net>
--- Copyright (C) 2012 Juanjo Menent			<jmenent@2byte.es>
+-- Copyright (C) 2003      Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+-- Copyright (C) 2009-2016 Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,8 +24,7 @@ create table llx_product_stock
   tms             timestamp,
   fk_product      integer NOT NULL,
   fk_entrepot     integer NOT NULL,
-  reel            real,           					-- physical stock
-  pmp             double(24,8) default 0 NOT NULL,	-- PMP value for product in this warehouse (deprecated. no sens for warehouse)
-  import_key      varchar(14)                  -- Import key
+  reel            real,           			-- physical stock
+  import_key      varchar(14)               -- Import key
 )ENGINE=innodb;
 

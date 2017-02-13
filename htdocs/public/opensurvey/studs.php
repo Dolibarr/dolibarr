@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García				<marcosgdf@gmail.com>
+/* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,12 +41,11 @@ if (GETPOST('sondage'))
 
 $object=new Opensurveysondage($db);
 $result=$object->fetch(0,$numsondage);
-if ($result <= 0) dol_print_error('','Failed to get survey id '.$numsondage);
 
 $nblignes=$object->fetch_lines();
 
 //If the survey has not yet finished, then it can be modified
-$canbemodified = ($object->date_fin > dol_now());
+$canbemodified = ((empty($object->date_fin) || $object->date_fin > dol_now()) && $object->status != Opensurveysondage::STATUS_CLOSED);
 
 
 /*
@@ -67,12 +66,12 @@ if (GETPOST('ajoutcomment'))
 	if (! GETPOST('comment'))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Comment")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Comment")), null, 'errors');
 	}
 	if (! GETPOST('commentuser'))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("User")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("User")), null, 'errors');
 	}
 
 	if (! $error)
@@ -122,7 +121,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 		$num_rows = $db->num_rows($resql);
 		if ($num_rows > 0)
 		{
-			setEventMessage($langs->trans("VoteNameAlreadyExists"),'errors');
+			setEventMessages($langs->trans("VoteNameAlreadyExists"), null, 'errors');
 			$error++;
 		}
 		else
@@ -164,7 +163,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
 	}
 }
 
@@ -181,7 +180,7 @@ for ($i=0; $i<$nblignes; $i++)
 		$testligneamodifier=true;
 	}
 
-	//test pour voir si une ligne est a modifier
+	//test to see if a line is to be modified
 	if (isset($_POST['validermodifier'.$i]))
 	{
 		$modifier=$i;
@@ -241,6 +240,16 @@ $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
 llxHeaderSurvey($object->titre, "", 0, 0, $arrayofjs, $arrayofcss);
 
+if (empty($object->ref))     // For survey, id is a hex string
+{
+    $langs->load("errors");
+    print $langs->trans("ErrorRecordNotFound");
+
+    llxFooterSurvey();
+
+    $db->close();
+    exit();
+}
 
 // Define format of choices
 $toutsujet=explode(",",$object->sujet);
@@ -278,7 +287,7 @@ if (!$canbemodified) {
 	llxFooterSurvey();
 
 	$db->close();
-	die;
+	exit;
 }
 
 print '<form name="formulaire" action="studs.php?sondage='.$numsondage.'"'.'#bas" method="POST">'."\n";
@@ -293,11 +302,11 @@ print '<table class="resultats">'."\n";
 // Show choice titles
 if ($object->format=="D")
 {
-	//affichage des sujets du sondage
+	//display of survey topics
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 
-	//affichage des années
+	//display of years
 	$colspan=1;
 	$nbofsujet=count($toutsujet);
 	for ($i=0;$i<$nbofsujet;$i++)
@@ -314,7 +323,7 @@ if ($object->format=="D")
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 
-	//affichage des mois
+	//display of months
 	$colspan=1;
 	for ($i=0;$i<$nbofsujet;$i++) {
 		$cur = intval($toutsujet[$i]);	// intval() est utiliser pour supprimer le suffixe @* qui déplaît logiquement à strftime()
@@ -337,7 +346,7 @@ if ($object->format=="D")
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 
-	//affichage des jours
+	//display of days
 	$colspan=1;
 	for ($i=0;$i<$nbofsujet;$i++) {
 		$cur = intval($toutsujet[$i]);
@@ -356,7 +365,7 @@ if ($object->format=="D")
 
 	print '</tr>'."\n";
 
-	//affichage des horaires
+	//Display schedules
 	if (strpos($object->sujet, '@') !== false) {
 		print '<tr>'."\n";
 		print '<td></td>'."\n";
@@ -375,7 +384,7 @@ if ($object->format=="D")
 }
 else
 {
-	//affichage des sujets du sondage
+	//display of survey topics
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 

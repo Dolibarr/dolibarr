@@ -1,0 +1,44 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marža
+Margins=Marže
+TotalMargin=Ukupna marža
+MarginOnProducts=Marža / Proizvodi
+MarginOnServices=Marža / Usluge
+MarginRate=Stopa marže
+MarkRate=Stopa marže
+DisplayMarginRates=Prikaži stope marže
+DisplayMarkRates=Prikaži stope marže
+InputPrice=Ulazna cena
+margin=Upravljanje maržama profita
+margesSetup=Podešavanja upravljanja maržama profita
+MarginDetails=Detalji marže
+ProductMargins=Marže proizvoda
+CustomerMargins=Marže klijenta
+SalesRepresentativeMargins=Marže agenta prodaje
+UserMargins=Korisničke marže
+ProductService=Proizvod ili Usluga
+AllProducts=Svi proizvodi i usluge
+ChooseProduct/Service=Izaberi proizvod ili uslugu
+ForceBuyingPriceIfNull=Frsiraj nabavnu cenu na prodajnu cenu ukoliko nije definisana
+ForceBuyingPriceIfNullDetails=Ukoliko nabavna cena nije definisana i ova opcija je aktivna, marža će biti nula za ovu liniju (nabavna cena = prodajna cena). U suprotnom, marža će biti jednaka default vrednosti.
+MARGIN_METHODE_FOR_DISCOUNT=Metoda marže za globalne popuste
+UseDiscountAsProduct=Kao proizvod
+UseDiscountAsService=Kao usluga
+UseDiscountOnTotal=Pod-zbir
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definiše da li je globalni popust tretiran kao proizvod, usluga ili se primenjuje samo na pod-zbiru za uračunanje marže.
+MARGIN_TYPE=Default nabavna cena za računanje marže
+MargeType1=Marža na najpovoljniju cenu dobavljača
+MargeType2=Marža na prosečnu cenu (PC)
+MargeType3=Marža na cenu koštanja
+MarginTypeDesc=* Marža na najbolju kupovnu cenu = Prodajna cena - Najbolja cena dobavljača definisana na kartici proizvoda<br>* Marža na izračunatu prosečnu cenu (WAP) = Prodajna cena - Proivod izračun na osnovu prosečne cene  (WAP)  ili najbolja cena dobavljača ako WAP nije još definisan<br>* Marža na cenu koštanja = Prodajna cena definisana na kratici proizvoda ili WAP ako cena koštanja nije definisana, ili najbolja cena dobavjlača ako WAP nije još definisan
+CostPrice=Cena koštanja
+UnitCharges=Unitarni troškovi
+Charges=Troškovi
+AgentContactType=Tip kontakta komercijalnog agenta
+AgentContactTypeDetails=Definiše tip kontakta (povezan sa fakturom) koji će biti korišćen za izveštaj marže po agentu prodaje
+rateMustBeNumeric=Stopa mora biti numerička
+markRateShouldBeLesserThan100=Stopa marže mora biti niža od 100
+ShowMarginInfos=Prikaži informacije marže
+CheckMargins=Margins detail
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between thirdparties and sale representatives to calculate the margin of each user. Because some thirdparties may not be linked to any sale representative and some thirdparties may be linked to several users, some margins may not appears in these report or may appears in several different lines.

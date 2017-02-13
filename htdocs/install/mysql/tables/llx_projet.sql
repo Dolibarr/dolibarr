@@ -33,6 +33,7 @@ create table llx_projet
   public           integer,						-- project is public or not
   fk_statut        integer DEFAULT 0 NOT NULL,	-- open or close
   fk_opp_status    integer DEFAULT NULL,	        -- if project is used to manage opportunities
+  opp_percent	   double(5,2),
   date_close       datetime DEFAULT NULL,    
   fk_user_close    integer DEFAULT NULL,
   note_private     text,
@@ -40,5 +41,6 @@ create table llx_projet
   --budget_days      real,                      -- budget in days is sum of field planned_workload of tasks
   opp_amount       double(24,8),
   budget_amount    double(24,8),				
-  model_pdf        varchar(255)
+  model_pdf        varchar(255),
+  import_key	   varchar(14)					-- Import key
 )ENGINE=innodb;

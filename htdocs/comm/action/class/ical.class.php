@@ -208,7 +208,7 @@ class ICal
 
         //print 'type='.$type.' key='.$key.' value='.$value.'<br>'."\n";
 
-        if ($key == false)
+        if (empty($key))
         {
             $key = $this->last_key;
             switch ($type)

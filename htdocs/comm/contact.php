@@ -34,7 +34,7 @@ $page=GETPOST('page', 'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.name";
 if ($page < 0) { $page = 0; }
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 $type=GETPOST('type', 'alpha');
@@ -51,10 +51,10 @@ $result = restrictedArea($user, 'societe',$socid,'');
 
 
 /*
-*	View
-*/
+ * View
+ */
 
-llxHeader('','Contacts');
+llxHeader('',$langs->trans("Contacts"));
 
 if ($type == "c" || $type == "p")
 {
@@ -68,8 +68,7 @@ if ($type == "f")
 }
 
 /*
- * Mode liste
- *
+ * List mode
  */
 
 $sql = "SELECT s.rowid, s.nom as name, st.libelle as stcomm";
@@ -126,6 +125,8 @@ if ($resql)
 	$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
 	print_barre_liste($title.($label?" (".$label.")":""),$page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,"",$num);
 
+	print '<form action="'.$_SERVER["PHP_SELF"].'?type='.GETPOST("type", "alpha").'" method="GET">';
+	
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.name", $begin, $param,"",$sortfield,$sortorder);
@@ -135,7 +136,6 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Phone"));
 	print "</tr>\n";
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'?type='.$_GET["type"].'" method="GET">';
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"><input class="flat" name="search_lastname" size="12" value="'.$search_lastname.'"></td>';
 	print '<td class="liste_titre"><input class="flat" name="search_firstname" size="12"  value="'.$search_firstname.'"></td>';
@@ -143,7 +143,6 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 	print "</tr>\n";
-	print '</form>';
 
 	$var=True;
 	$i = 0;
@@ -168,7 +167,10 @@ if ($resql)
 		print "</tr>\n";
 		$i++;
 	}
-	print "</table></p>";
+	print "</table>";
+	
+	print '</form>';
+	
 	$db->free($resql);
 }
 else

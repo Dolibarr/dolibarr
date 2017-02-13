@@ -48,7 +48,7 @@ $langs->load("cashdesk");
 				onfocus="javascript: this.select(); verifResultat('resultats_dhtml', this.value, <?php echo (isset($conf->global->BARCODE_USE_SEARCH_TO_SELECT) ? (int) $conf->global->BARCODE_USE_SEARCH_TO_SELECT : 1) ?>);"
 				onBlur="javascript: document.getElementById('resultats_dhtml').innerHTML = '';"/>
 			</td>
-			<td class="select_design">
+			<td class="select_design maxwidthonsmartphone">
             <?php /*
             $selected='';
             $htmlname='idprod';
@@ -60,7 +60,7 @@ $langs->load("cashdesk");
             */
             ?>
 
-				<select id="selProduit" name="selProduit" onchange="javascript: setSource('LISTE');">
+				<select id="selProduit" class="maxwidthonsmartphone" name="selProduit" onchange="javascript: setSource('LISTE');">
 					<?php
                         print '<option value="0">'.$top_liste_produits.'</option>'."\n";
 
@@ -80,7 +80,7 @@ $langs->load("cashdesk");
 
 							$label = $tab_designations[$i]['label'];
 
-							print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'],7).' - '.dol_trunc($label,35,'middle');
+							print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'],16).' - '.dol_trunc($label,35,'middle');
 							if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot) && $tab_designations[$i]['fk_product_type']==0) print ' ('.$langs->trans("CashDeskStock").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
 							print '</option>'."\n";
 
@@ -106,41 +106,32 @@ $langs->load("cashdesk");
             <th><?php echo $langs->trans("VATRate"); ?></th>
             </tr>
 			<tr>
-				<td><input class="texte1" type="text" id="txtQte" name="txtQte" value="1" onkeyup="javascript: modif();" onfocus="javascript: this.select();" />
+				<td><input class="texte1 maxwidth50onsmartphone" type="text" id="txtQte" name="txtQte" value="1" onkeyup="javascript: modif();" onfocus="javascript: this.select();" />
 <?php print genkeypad("txtQte", "frmQte");?>
 				</td>
 				<!-- Affichage du stock pour l'article courant -->
 				<td>
-				<input class="texte1_off" type="text" name="txtStock" value="<?php echo $obj_facturation->stock() ?>" disabled />
+				<input class="texte1_off maxwidth50onsmartphone" type="text" name="txtStock" value="<?php echo $obj_facturation->stock() ?>" disabled />
 				</td>
 				<!-- Show unit price -->
 				<?php // TODO Remove the disabled and use this value when adding product into cart ?>
-				<td><input class="texte1_off" type="text" name="txtPrixUnit" value="<?php echo price2num($obj_facturation->prix(), 'MU'); ?>" onchange="javascript: modif();" disabled /></td>
-				<td><?php echo $conf->currency; ?></td>
+				<td><input class="texte1_off maxwidth50onsmartphone" type="text" name="txtPrixUnit" value="<?php echo price2num($obj_facturation->prix(), 'MU'); ?>" onchange="javascript: modif();" disabled /></td>
+				<td></td>
     			<!-- Choix de la remise -->
-    			<td><input class="texte1" type="text" id="txtRemise" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/>
-<?php print genkeypad("txtRemise", "frmQte");?>
+    			<td><input class="texte1 maxwidth50onsmartphone" type="text" id="txtRemise" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/>
+					<?php print genkeypad("txtRemise", "frmQte");?>
     			</td>
     			<!-- Affichage du total HT -->
-    			<td><input class="texte1_off" type="text" name="txtTotal" value="" disabled /></td><td><?php echo $conf->currency; ?></td>
+    			<td><input class="texte1_off maxwidth50onsmartphone" type="text" name="txtTotal" value="" disabled /></td><td></td>
                 <!-- Choix du taux de TVA -->
                 <td class="select_tva">
-                <?php //var_dump($tab_tva); ?>
-                <select name="selTva" onchange="javascript: modif();" >
-                    <?php
-                        $tva_tx = $obj_facturation->tva();
-                        $tab_tva_size=count($tab_tva);
-                        for($i=0;$i < $tab_tva_size;$i++) {
-
-                            if ( $tva_tx == $tab_tva[$i]['taux'] )
-                                $selected = 'selected';
-                            else
-                            $selected = '';
-
-                            echo ('<option '.$selected.' value="'.$tab_tva[$i]['rowid'].'">'.$tab_tva[$i]['taux'].'</option>'."\n               ");
-                        }
-                    ?>
-                </select>
+                <?php //var_dump($tab_tva); 
+					$tva_tx = $obj_facturation->tva();  // Try to get a previously entered VAT rowid. First time, this will return empty.
+					$buyer = new Societe($db);
+					if ($_SESSION["CASHDESK_ID_THIRDPARTY"] > 0) $buyer->fetch($_SESSION["CASHDESK_ID_THIRDPARTY"]);
+					
+					echo $form->load_tva('selTva', (isset($_POST["selTva"])?GETPOST("selTva",'alpha',2):-1), $mysoc, $buyer, 0, 0, '', false, -1);
+			    ?>
                 </td>
 			</tr>
 		</table>
@@ -154,65 +145,59 @@ $langs->load("cashdesk");
 	<input type="hidden" name="hdnChoix" value="" />
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Amount"); ?></legend>
-		<table>
+		<table class="centpercent">
 			<tr><th class="label1"><?php echo $langs->trans("TotalTicket"); ?></th><th class="label1"><?php echo $langs->trans("Received"); ?></th><th class="label1"><?php echo $langs->trans("Change"); ?></th></tr>
 			<tr>
 			<!-- Affichage du montant du -->
-			<td><input class="texte2_off" type="text" name="txtDu" value="<?php echo price2num($obj_facturation->prixTotalTtc(), 'MT'); ?>" disabled /></td>
+			<td><input class="texte2_off maxwidthonsmartphone" type="text" name="txtDu" value="<?php echo price2num($obj_facturation->prixTotalTtc(), 'MT'); ?>" disabled /></td>
 			<!-- Choix du montant encaisse -->
-			<td><input class="texte2" type="text" id="txtEncaisse" name="txtEncaisse" value="" onkeyup="javascript: verifDifference();" onfocus="javascript: this.select();" />
+			<td><input class="texte2 maxwidthonsmartphone" type="text" id="txtEncaisse" name="txtEncaisse" value="" onkeyup="javascript: verifDifference();" onfocus="javascript: this.select();" />
 <?php print genkeypad("txtEncaisse", "frmDifference");?>
 			</td>
 			<!-- Affichage du montant rendu -->
-			<td><input class="texte2_off" type="text" name="txtRendu" value="0" disabled /></td>
+			<td><input class="texte2_off maxwidthonsmartphone" type="text" name="txtRendu" value="0" disabled /></td>
 			</tr>
 			<tr>
 		</table>
 </fieldset>
 
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("PaymentMode"); ?></legend>
-		<table>
-			<tr>
+		<div class="inline-block">
 			<?php
-			print '<td>';
+			print '<div class="inline-block" style="margin: 6px;">';
 			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CASH']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CASH'] < 0)
 			{
 				$langs->load("errors");
 				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("Cash").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
 			}
 			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("Cash").'" onclick="javascript: verifClic(\'ESP\');" />';
-			print '</td>';
-			print '<td>';
+			print '</div>';
+			print '<div class="inline-block" style="margin: 6px;">';
 			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE'] < 0)
 			{
 				$langs->load("errors");
 				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
 			}
 			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" onclick="javascript: verifClic(\'CB\');" />';
-			print '</td>';
-			print '<td>';
+			print '</div>';
+			print '<div class="inline-block" style="margin: 6px;">';
 			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CB']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CB'] < 0)
 			{
 				$langs->load("errors");
 				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CheckBank").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
 			}
 			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("CheckBank").'" onclick="javascript: verifClic(\'CHQ\');" />';
-			print '</td>';
+			print '</div>';
+			print '<div class="clearboth">';
+			print '<div class="inline-block" style="margin: 6px;">';
 			?>
-			</tr>
-		</table>
-		<table>
-			<tr>
-				<td>
 				<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="javascript: verifClic('DIF');" />
-				<?php
-				echo $langs->trans("DateEcheance").' :';
-				print $form->select_date(-1,'txtDatePaiement');
-				?>
- 				</td>
-			</tr>
-
-		</table>
+			<?php
+			print $langs->trans("DateDue").' :';
+			print $form->select_date(-1,'txtDatePaiement',0,0,0,'paymentmode',1,0,1);
+			print '</div>';
+			?>
+		</div>
 </fieldset>
 </form>
 

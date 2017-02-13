@@ -266,7 +266,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         $result=$localobject->update_note($localobject->note,'_private');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
-        $result=$localobject->update_note_public($localobject->note,'_public');
+		$result=$localobject->update_note($localobject->note,'_public');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
 

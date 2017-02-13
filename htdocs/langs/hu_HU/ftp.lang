@@ -9,4 +9,6 @@ FailedToConnectToFTPServer=Nem sikerült csatlakozni az FTP szerverhez (szerver 
 FailedToConnectToFTPServerWithCredentials=Nem sikerült bejelentkezni FTP szerverre a megadott felhasználó névvel/jelszóval.
 FTPFailedToRemoveFile=Nem sikerült eltávolítani: <b>%s</b>.
 FTPFailedToRemoveDir=Nem sikerült eltávolítani <b>%s</b> (Engedélyek? Üres a könyvtár?).
-# FTPPassiveMode=Passive mode
+FTPPassiveMode=Passive mode
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s

@@ -28,12 +28,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
  */
 class Productcustomerprice extends CommonObject
 {
-	var $db; // !< To store db handler
-	var $error; // !< To return error code (or message)
-	var $errors = array (); // !< To return several error codes (or messages)
 	var $element = 'product_customer_price'; // !< Id that identify managed objects
 	var $table_element = 'product_customer_price'; // !< Name of table without prefix where object is stored
-	var $id;
 	var $entity;
 	var $datec = '';
 	var $tms = '';
@@ -46,10 +42,11 @@ class Productcustomerprice extends CommonObject
 	var $price_base_type;
 	var $tva_tx;
 	var $recuperableonly;
+	var $localtax1_type;
 	var $localtax1_tx;
+	var $localtax2_type;
 	var $localtax2_tx;
 	var $fk_user;
-	var $import_key;
 	var $lines = array ();
 
 	/**
@@ -155,7 +152,9 @@ class Productcustomerprice extends CommonObject
 		$sql .= "price_base_type,";
 		$sql .= "tva_tx,";
 		$sql .= "recuperableonly,";
+		$sql .= "localtax1_type,";
 		$sql .= "localtax1_tx,";
+		$sql .= "localtax2_type,";
 		$sql .= "localtax2_tx,";
 		$sql .= "fk_user,";
 		$sql .= "import_key";
@@ -173,7 +172,9 @@ class Productcustomerprice extends CommonObject
 		$sql .= " " . (! isset($this->price_base_type) ? 'NULL' : "'" . $this->db->escape($this->price_base_type) . "'") . ",";
 		$sql .= " " . (! isset($this->tva_tx) ? 'NULL' : "'" . $this->tva_tx . "'") . ",";
 		$sql .= " " . (! isset($this->recuperableonly) ? 'NULL' : "'" . $this->recuperableonly . "'") . ",";
+		$sql .= " " . (empty($this->localtax1_type) ? "'0'" : "'" . $this->localtax1_type . "'") . ",";
 		$sql .= " " . (! isset($this->localtax1_tx) ? 'NULL' : "'" . $this->localtax1_tx . "'") . ",";
+		$sql .= " " . (empty($this->localtax2_type) ? "'0'" : "'" . $this->localtax2_type . "'") . ",";
 		$sql .= " " . (! isset($this->localtax2_tx) ? 'NULL' : "'" . $this->localtax2_tx . "'") . ",";
 		$sql .= " " . $user->id . ",";
 		$sql .= " " . (! isset($this->import_key) ? 'NULL' : "'" . $this->db->escape($this->import_key) . "'") . "";
@@ -232,9 +233,10 @@ class Productcustomerprice extends CommonObject
 	 * @param int $id object
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function fetch($id) {
-
+	function fetch($id)
+	{
 		global $langs;
+
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 
@@ -293,18 +295,22 @@ class Productcustomerprice extends CommonObject
 	}
 
 	/**
-	 * Load all objects in memory from database
+	 * Load all customer prices in memory from database
 	 *
-	 * @param string $sortorder order
-	 * @param string $sortfield field
-	 * @param int $limit page
-	 * @param int $offset offset
-	 * @param array $filter output
-	 * @return int <0 if KO, >0 if OK
+	 * @param 	string 	$sortorder 	order
+	 * @param 	string 	$sortfield 	field
+	 * @param 	int 	$limit 		page
+	 * @param 	int 	$offset 	offset
+	 * @param 	array 	$filter 	Filter for select
+	 * @return 	int 				<0 if KO, >0 if OK
 	 */
-	function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array()) {
-
+	function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
+	{
 		global $langs;
+
+		if ( empty($sortfield)) $sortfield = "t.rowid";
+		if ( empty($sortorder)) $sortorder = "DESC";
+
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 
@@ -341,18 +347,15 @@ class Productcustomerprice extends CommonObject
 					$sql .= ' AND ' . $key . ' = \'' . $value . '\'';
 				} elseif ($key == 'soc.nom') {
 					$sql .= ' AND ' . $key . ' LIKE \'%' . $value . '%\'';
+				} elseif ($key == 'prod.ref') {
+					$sql .= ' AND ' . $key . ' LIKE \'%' . $value . '%\'';
 				} else {
 					$sql .= ' AND ' . $key . ' = ' . $value;
 				}
 			}
 		}
-
-		if (! empty($sortfield)) {
-			$sql .= " ORDER BY " . $sortfield . ' ' . $sortorder;
-		}
-		if (! empty($limit)) {
-			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
-		}
+		$sql.= $this->db->order($sortfield, $sortorder);
+		if (! empty($limit)) $sql .= ' ' . $this->db->plimit($limit + 1, $offset);
 
 		dol_syslog(get_class($this) . "::fetch_all", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -400,16 +403,20 @@ class Productcustomerprice extends CommonObject
 	/**
 	 * Load all objects in memory from database
 	 *
-	 * @param string $sortorder order
-	 * @param string $sortfield field
-	 * @param int $limit page
-	 * @param int $offset offset
-	 * @param array $filter output
-	 * @return int <0 if KO, >0 if OK
+	 * @param 	string 	$sortorder 	order
+	 * @param 	string 	$sortfield 	field
+	 * @param 	int 	$limit 		page
+	 * @param 	int 	$offset 	offset
+	 * @param 	array 	$filter 	Filter for sql request
+	 * @return 	int 			<0 if KO, >0 if OK
 	 */
-	function fetch_all_log($sortorder, $sortfield, $limit, $offset, $filter = array()) {
-
+	function fetch_all_log($sortorder, $sortfield, $limit, $offset, $filter = array())
+	{
 		global $langs;
+
+		if (! empty($sortfield)) $sortfield = "t.rowid";
+		if (! empty($sortorder)) $sortorder = "DESC";
+
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 
@@ -451,12 +458,8 @@ class Productcustomerprice extends CommonObject
 			}
 		}
 
-		if (! empty($sortfield)) {
-			$sql .= " ORDER BY " . $sortfield . ' ' . $sortorder;
-		}
-		if (! empty($limit)) {
-			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
-		}
+		$sql.= $this->db->order($sortfield, $sortorder);
+		if (! empty($limit)) $sql .= ' ' . $this->db->plimit($limit + 1, $offset);
 
 		dol_syslog(get_class($this) . "::fetch_all_log", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -596,6 +599,8 @@ class Productcustomerprice extends CommonObject
 		$sql .= "recuperableonly,";
 		$sql .= "localtax1_tx,";
 		$sql .= "localtax2_tx,";
+		$sql .= "localtax1_type,";
+		$sql .= "localtax2_type,";
 		$sql .= "fk_user,";
 		$sql .= "import_key";
 
@@ -615,6 +620,8 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.recuperableonly,";
 		$sql .= " t.localtax1_tx,";
 		$sql .= " t.localtax2_tx,";
+		$sql .= " t.localtax1_type,";
+		$sql .= " t.localtax2_type,";
 		$sql .= " t.fk_user,";
 		$sql .= " t.import_key";
 
@@ -646,6 +653,8 @@ class Productcustomerprice extends CommonObject
 		$sql .= " recuperableonly=" . (isset($this->recuperableonly) ? $this->recuperableonly : "null") . ",";
 		$sql .= " localtax1_tx=" . (isset($this->localtax1_tx) ? $this->localtax1_tx : "null") . ",";
 		$sql .= " localtax2_tx=" . (isset($this->localtax2_tx) ? $this->localtax2_tx : "null") . ",";
+		$sql .= " localtax1_type=" . (! empty($this->localtax1_type) ? "'".$this->localtax1_type."'": "'0'") . ",";
+		$sql .= " localtax2_type=" . (! empty($this->localtax2_type) ? "'".$this->localtax2_type."'": "'0'") . ",";
 		$sql .= " fk_user=" . $user->id . ",";
 		$sql .= " import_key=" . (isset($this->import_key) ? "'" . $this->db->escape($this->import_key) . "'" : "null") . "";
 

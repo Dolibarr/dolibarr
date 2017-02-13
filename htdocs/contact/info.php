@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
 $langs->load("companies");
 
+
 // Security check
-$contactid = GETPOST("id",'int');
+$id = GETPOST("id",'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contact', $contactid, 'socpeople&societe');
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
+
+$object = new Contact($db);
 
 
 
@@ -41,25 +44,40 @@ $result = restrictedArea($user, 'contact', $contactid, 'socpeople&societe');
  * 	View
  */
 
-llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+$form=new Form($db);
+
+$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+
+llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+
+if ($id > 0)
+{
+	$result = $object->fetch($id, $user);
+
+	$object->info($id);
 
 
-$contact = new Contact($db);
-$contact->fetch($contactid, $user);
-$contact->info($contactid);
+	$head = contact_prepare_head($object);
+
+	dol_fiche_head($head, 'info', $title, 0, 'contact');
+
+	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 
 
-$head = contact_prepare_head($contact);
+	print '<div class="fichecenter">';
 
-dol_fiche_head($head, 'info', $langs->trans("ContactsAddresses"), 0, 'contact');
+	print '<div class="underbanner clearboth"></div>';
 
+	print '<br>';
+	
+	dol_print_object_info($object);
 
-print '<table width="100%"><tr><td>';
-print '</td></tr></table>';
-
-dol_print_object_info($contact);
-
-print "</div>";
+	print '</div>';
+	
+	dol_fiche_end();
+}
 
 llxFooter();
 

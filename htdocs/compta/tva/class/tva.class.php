@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2011-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +35,6 @@ class Tva extends CommonObject
 	//public $element='tva';			//!< Id that identify managed objects
 	//public $table_element='tva';	//!< Name of table without prefix where object is stored
 
-    var $id;
-    var $ref;
-
 	var $tms;
 	var $datep;
 	var $datev;
@@ -45,7 +42,6 @@ class Tva extends CommonObject
 	var $type_payment;
 	var $num_payment;
 	var $label;
-	var $note;
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;
@@ -508,7 +504,7 @@ class Tva extends CommonObject
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
 			return -3;
 		}
-        if ($this->amount < 0 || $this->amount == '')
+        if ($this->amount == '')
         {
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
             return -4;
@@ -553,7 +549,7 @@ class Tva extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");    // TODO should be called paiementtva
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");    // TODO should be called 'payment_vat'
 
             // Call trigger
             //XXX: Should be done just befor commit no ?
@@ -577,8 +573,12 @@ class Tva extends CommonObject
 					$result=$acc->fetch($this->accountid);
 					if ($result <= 0) dol_print_error($this->db);
 
-                    $bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, -abs($this->amount), '', '', $user);
-
+					if ($this->amount > 0) {
+						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, -abs($this->amount), '', '', $user);
+					} else {
+						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, abs($this->amount), '', '', $user);
+					}
+						
                     // Update fk_bank into llx_tva. So we know vat line used to generate bank transaction
                     if ($bank_line_id > 0)
 					{
@@ -670,5 +670,53 @@ class Tva extends CommonObject
 		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
+
+	/**
+	 *	Informations of vat payment object
+	 *
+	 *	@param	int		$id     Id of vat payment
+	 *	@return	int				<0 if KO, >0 if OK
+	 */
+    function info($id)
+    {
+        $sql = "SELECT t.rowid, t.tms as datec, t.fk_user_creat";
+        $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
+        $sql.= " WHERE t.rowid = ".$id;
+
+        dol_syslog(get_class($this)."::info", LOG_DEBUG);
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
+
+                $this->id = $obj->rowid;
+
+                if ($obj->fk_user_creat) {
+                    $cuser = new User($this->db);
+                    $cuser->fetch($obj->fk_user_creat);
+                    $this->user_creation = $cuser;
+                }
+
+                if ($obj->fk_user_modif) {
+                    $muser = new User($this->db);
+                    $muser->fetch($obj->fk_user_modif);
+                    $this->user_modification = $muser;
+                }
+
+                $this->date_creation     = $this->db->jdate($obj->datec);
+                $this->date_modification = $this->db->jdate($obj->datec);
+                $this->import_key        = $obj->import_key;
+            }
+
+            $this->db->free($result);
+
+        }
+        else
+        {
+            dol_print_error($this->db);
+        }
+    }
 
 }

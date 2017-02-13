@@ -1,5 +1,13 @@
 # Dolibarr language file - Source file is en_US - bookmarks
 AddThisPageToBookmarks=Fügen Sie diese Seite zu Lesezeichen
+NewBookmark=neues Lesezeichen
+ShowBookmark=zeige Lesezeichen
+OpenANewWindow=öffne neues Fenster
+ReplaceWindow=ersetze derzeitiges Fenster
+BookmarkTargetNewWindowShort=neues Fenster
 BookmarkTargetReplaceWindowShort=Aktuelles ersetzen
+BookmarkTitle=Lesezeichen-Titel
 UrlOrLink=URL oder Link
+CreateBookmark=erzeuge Lesezeichen
+SetHereATitleForLink=Titel für Lesezeichen erstellen
 BookmarksManagement=Bookmarks-Verwaltung

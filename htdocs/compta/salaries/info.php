@@ -44,9 +44,7 @@ $result = restrictedArea($user, 'salaries', '', '', '');
  * View
  */
 
-$help_url='EN:Module_Salaries|FR:Module Fiche de paie|ES:M&oacute;dulo Salarios';
-llxHeader("",$langs->trans("Salaries"),$help_url);
-
+llxHeader("",$langs->trans("SalaryPayment"));
 
 $salpayment = new PaymentSalary($db);
 $result = $salpayment->fetch($id);

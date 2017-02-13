@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C)    2013      Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 
 $langs->load("link");
 if (empty($relativepathwithnofile)) $relativepathwithnofile='';
-
+if (empty($permtoedit)) $permtoedit=-1;
 
 /*
  * Confirm form to delete
@@ -47,9 +48,9 @@ $savingdocmask='';
 if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX))
 {
 	//var_dump($modulepart);
-	if (in_array($modulepart,array('facture_fournisseur','commande_fournisseur','facture','commande','propal','askpricesupplier','ficheinter','contract','project','project_task','expensereport')))
+	if (in_array($modulepart,array('facture_fournisseur','commande_fournisseur','facture','commande','propal','supplier_proposal','ficheinter','contract','project','project_task','expensereport')))
 	{
-		$savingdocmask=$object->ref.'-__file__';
+		$savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
 	}
 	/*if (in_array($modulepart,array('member')))
 	{
@@ -64,13 +65,16 @@ $formfile->form_attach_new_file(
     0,
     0,
     $permission,
-    50,
+    $conf->browser->layout == 'phone' ? 40 : 60,
     $object,
 	'',
 	1,
 	$savingdocmask
 );
 
+$disablemove=1;
+if ($modulepart == 'produit') $disablemove=0;
+    
 // List of document
 $formfile->list_of_documents(
     $filearray,
@@ -78,8 +82,19 @@ $formfile->list_of_documents(
     $modulepart,
     $param,
     0,
-    $relativepathwithnofile,		// relative path with no file. For example "moduledir/0/1"
-    $permission
+    $relativepathwithnofile,		// relative path with no file. For example "0/1"
+    $permission,
+    0,
+    '',
+    0,
+    '',
+    '',
+    0,
+    $permtoedit,
+    $upload_dir,
+    $sortfield,
+    $sortorder,
+    $disablemove
 );
 
 print "<br>";

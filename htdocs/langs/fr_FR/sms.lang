@@ -39,9 +39,6 @@ SmsSuccessfulySent=SMS correctement envoyé (de %s à %s)
 ErrorSmsRecipientIsEmpty=Le numéro du destinataire est vide
 WarningNoSmsAdded=Aucun nouveau numéro de téléphone à ajouter à la liste des destinataires.
 ConfirmValidSms=Confirmez-vous la validation de cette campagne ?
-ConfirmResetMailing=Attention, en réinitialisant la campagne SMS <b>%s</b>, vous autorisez son émission en masse une nouvelle fois. Est-ce bien ce que vous voulez faire ?
-ConfirmDeleteMailing=Confirmez-vous la suppression de la campagne ?
-NbOfRecipients=Nombre de destinataires
 NbOfUniqueSms=Nombre de numéros téléphone uniques
 NbOfSms=Nombre de numéros de téléphone
 ThisIsATestMessage=Ceci est un message de test
@@ -49,5 +46,6 @@ SendSms=Envoyer SMS
 SmsInfoCharRemain=Nombre de caractères restant
 SmsInfoNumero= (format international ex : +33899701761)
 DelayBeforeSending=Délai avant envoi (en minutes)
+SmsNoPossibleSenderFound=Aucun émetteur disponible. Vérifier la configuration de votre fournisseur de SMS.
 SmsNoPossibleRecipientFound=Aucun destinataire disponible. Vérifier la configuration de votre fournisseur de SMS.
 

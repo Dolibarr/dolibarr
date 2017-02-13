@@ -42,12 +42,13 @@ $form=new Form($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("InfoBrowser"),'','title_setup');
+print load_fiche_titre($langs->trans("InfoBrowser"),'','title_setup');
 
 $tmp=getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
 
 // Browser
 $var=true;
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
@@ -71,8 +72,8 @@ print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("Screen").'</td><td col
 print $_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
 print '</td></tr>'."\n";
 print '</table>';
+print '</div>';
 print '<br>';
-
 
 
 llxFooter();

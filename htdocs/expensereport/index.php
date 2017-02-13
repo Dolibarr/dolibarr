@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.date_create";
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 
 /*
@@ -99,7 +100,7 @@ if ($result)
 }
 
 
-print_fiche_titre($langs->trans("ExpensesArea"));
+print load_fiche_titre($langs->trans("ExpensesArea"));
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -120,7 +121,7 @@ if ($conf->use_javascript_ajax)
 {
     print '<tr '.$bc[0].'><td align="center" colspan="4">';
     $data=array('series'=>$dataseries);
-    dol_print_graph('stats',320,180,$data,1,'pie',0);
+    dol_print_graph('stats',320,180,$data,1,'pie',0,'',0);
     print '</td></tr>';
 }
 
@@ -141,12 +142,12 @@ $max=10;
 
 $langs->load("boxes");
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.rowid, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as fk_status";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut, u.photo, d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as fk_status";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE u.rowid = d.fk_user_author";
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $sql.=' AND d.fk_user_author IN ('.join(',',$childids).')';
-//$sql.= " AND d.entity = ".$conf->entity;
+$sql.= ' AND d.entity IN ('.getEntity('expensereport', 1).')';
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_user_author = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND d.fk_user_author = ".$socid;
 $sql.= $db->order($sortfield,$sortorder);
@@ -177,14 +178,17 @@ if ($result)
         while ($i < $num && $i < $max)
         {
             $obj = $db->fetch_object($result);
-            $expensereportstatic->ref=$obj->rowid;
             $expensereportstatic->id=$obj->rowid;
+            $expensereportstatic->ref=$obj->ref;
             $userstatic->id=$obj->uid;
             $userstatic->lastname=$obj->lastname;
             $userstatic->firstname=$obj->firstname;
+            $userstatic->login=$obj->login;
+            $userstatic->statut=$obj->statut;
+            $userstatic->photo=$obj->photo;
             print '<tr '.$bc[$var].'>';
             print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
-            print '<td>'.$userstatic->getNomUrl(1).'</td>';
+            print '<td>'.$userstatic->getNomUrl(-1).'</td>';
             print '<td align="right">'.price($obj->total_ht).'</td>';
             print '<td align="right">'.price($obj->total_ttc).'</td>';
             print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
@@ -200,7 +204,7 @@ if ($result)
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+        print '<tr '.$bc[$var].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
     print '</table><br>';
 }

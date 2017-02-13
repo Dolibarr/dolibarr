@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005       Matthieu Valleton	<mv@seeschloss.org>
- * Copyright (C) 2006-2010  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -29,6 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 
 $langs->load("categories");
@@ -66,6 +67,7 @@ $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
+
 
 /*
  *	Actions
@@ -106,7 +108,21 @@ if ($id > 0 && $removeelem > 0)
 		$tmpobject = new Contact($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'contact';
-	}
+    }
+    else if ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer)
+    {
+        require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+        $tmpobject = new Account($db);
+        $result = $tmpobject->fetch($removeelem);
+        $elementtype = 'account';
+    }
+    else if ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer)
+    {
+        require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+        $tmpobject = new Project($db);
+        $result = $tmpobject->fetch($removeelem);
+        $elementtype = 'project';
+    }
 
 	$result=$object->del_type($tmpobject,$elementtype);
 	if ($result < 0) dol_print_error('',$object->error);
@@ -121,7 +137,7 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 	}
 	else
 	{
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -136,13 +152,13 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 	$result=$object->add_type($newobject,$elementtype);
 	if ($result >= 0)
 	{
-		setEventMessage($langs->trans("WasAddedSuccessfully",$newobject->ref));
+		setEventMessages($langs->trans("WasAddedSuccessfully",$newobject->ref), null, 'mesgs');
 	}
 	else
 	{
 		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
-			setEventMessage($langs->trans("ObjectAlreadyLinkedToCategory"),'warnings');
+			setEventMessages($langs->trans("ObjectAlreadyLinkedToCategory"), null, 'warnings');
 		}
 		else
 		{
@@ -159,19 +175,37 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
-llxHeader("","",$langs->trans("Categories"));
+$helpurl='';
+llxHeader("",$langs->trans("Categories"),$helpurl);
 
 if ($type == Categorie::TYPE_PRODUCT)       $title=$langs->trans("ProductsCategoryShort");
 elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCategoryShort");
 elseif ($type == Categorie::TYPE_CUSTOMER)  $title=$langs->trans("CustomersCategoryShort");
 elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategoryShort");
 elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
+elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesShort");
+elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesShort");
 else                                        $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
 
+
 dol_fiche_head($head, 'card', $title, 0, 'category');
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
+
+$object->ref = $object->label;
+$morehtmlref='<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
+$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
+foreach ($ways as $way)
+{
+    $morehtmlref.=$way."<br>\n";
+}
+$morehtmlref.='</div>';
+
+dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 
 /*
@@ -180,26 +214,24 @@ dol_fiche_head($head, 'card', $title, 0, 'category');
 
 if ($action == 'delete')
 {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type, $langs->trans('DeleteCategory'), $langs->trans('ConfirmDeleteCategory'), 'confirm_delete', '', '', 1);
 }
 
-print '<table border="0" width="100%" class="border">';
+print '<br>';
 
-// Path of category
-print '<tr><td width="20%" class="notopnoleft">';
-$ways = $object->print_all_ways();
-print $langs->trans("Ref").'</td><td>';
-print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
-foreach ($ways as $way)
-{
-	print $way."<br>\n";
-}
-print '</td></tr>';
+print '<div class="underbanner clearboth"></div>';
+print '<table width="100%" class="border">';
 
 // Description
-print '<tr><td width="20%" class="notopnoleft">';
+print '<tr><td class="titlefield notopnoleft">';
 print $langs->trans("Description").'</td><td>';
 print dol_htmlentitiesbr($object->description);
+print '</td></tr>';
+
+// Color
+print '<tr><td class="notopnoleft">';
+print $langs->trans("Color").'</td><td>';
+print $formother->showColor($object->color);
 print '</td></tr>';
 
 $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -281,10 +313,11 @@ else
 	}
 	else
 	{
-		print "<tr ".$bc[false].'><td colspan="3">'.$langs->trans("NoSubCat")."</td></tr>";
+		print "<tr ".$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoSubCat")."</td></tr>";
 	}
 	print "</table>\n";
 }
+
 
 // List of products or services (type is type of category)
 if ($object->type == Categorie::TYPE_PRODUCT)
@@ -331,9 +364,9 @@ if ($object->type == Categorie::TYPE_PRODUCT)
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
-				print $prod->getNomUrl(1,'category');
+				print $prod->getNomUrl(1);
 				print "</td>\n";
-				print '<td valign="top">'.$prod->label."</td>\n";
+				print '<td class="tdtop">'.$prod->label."</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
 				$typeid=$object->type;
@@ -342,6 +375,7 @@ if ($object->type == Categorie::TYPE_PRODUCT)
 				if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
 				if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
 				if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
+				if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$prod->id."'>";
@@ -354,7 +388,7 @@ if ($object->type == Categorie::TYPE_PRODUCT)
 		}
 		else
 		{
-			print "<tr ".$bc[false].'><td colspan="2">'.$langs->trans("ThisCategoryHasNoProduct")."</td></tr>";
+			print "<tr ".$bc[false].'><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoProduct")."</td></tr>";
 		}
 		print "</table>\n";
 	}
@@ -382,7 +416,7 @@ if ($object->type == Categorie::TYPE_SUPPLIER)
 				print "\t<tr ".$bc[$var].">\n";
 
 				print '<td class="nowrap" valign="top">';
-				print $soc->getNomUrl(1,'category_supplier');
+				print $soc->getNomUrl(1);
 				print "</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
@@ -392,6 +426,7 @@ if ($object->type == Categorie::TYPE_SUPPLIER)
 				if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
 				if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
 				if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
+				if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$soc->id."'>";
@@ -405,7 +440,7 @@ if ($object->type == Categorie::TYPE_SUPPLIER)
 		}
 		else
 		{
-			print "<tr ".$bc[false]."><td>".$langs->trans("ThisCategoryHasNoSupplier")."</td></tr>";
+			print '<tr '.$bc[false].'><td class="opacitymedium">'.$langs->trans("ThisCategoryHasNoSupplier").'</td></tr>';
 		}
 		print "</table>\n";
 	}
@@ -436,7 +471,7 @@ if($object->type == Categorie::TYPE_CUSTOMER)
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
-				print $soc->getNomUrl(1,'category');
+				print $soc->getNomUrl(1);
 				print "</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
@@ -446,6 +481,7 @@ if($object->type == Categorie::TYPE_CUSTOMER)
 				if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
 				if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
 				if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
+				if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$soc->id."'>";
@@ -458,7 +494,7 @@ if($object->type == Categorie::TYPE_CUSTOMER)
 		}
 		else
 		{
-			print "<tr ".$bc[false]."><td>".$langs->trans("ThisCategoryHasNoCustomer")."</td></tr>";
+			print '<tr '.$bc[false].'><td class="opacitymedium">'.$langs->trans("ThisCategoryHasNoCustomer").'</td></tr>';
 		}
 		print "</table>\n";
 	}
@@ -489,10 +525,10 @@ if ($object->type == Categorie::TYPE_MEMBER)
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
 				$member->ref=$member->login;
-				print $member->getNomUrl(1,0,'category');
+				print $member->getNomUrl(1,0);
 				print "</td>\n";
-				print '<td valign="top">'.$member->lastname."</td>\n";
-				print '<td valign="top">'.$member->firstname."</td>\n";
+				print '<td class="tdtop">'.$member->lastname."</td>\n";
+				print '<td class="tdtop">'.$member->firstname."</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
 				$typeid=$object->type;
@@ -501,6 +537,7 @@ if ($object->type == Categorie::TYPE_MEMBER)
 				if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
 				if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
 				if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
+				if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$member->id."'>";
@@ -512,13 +549,13 @@ if ($object->type == Categorie::TYPE_MEMBER)
 		}
 		else
 		{
-			print "<tr ".$bc[false].'><td colspan="3">'.$langs->trans("ThisCategoryHasNoMember")."</td></tr>";
+			print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoMember").'</td></tr>';
 		}
 		print "</table>\n";
 	}
 }
 
-//Categorie contact
+// Categorie contact
 if($object->type == Categorie::TYPE_CONTACT)
 {
 	$contacts = $object->getObjectsInCateg("contact");
@@ -553,6 +590,7 @@ if($object->type == Categorie::TYPE_CONTACT)
 				if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
 				if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
 				if ($typeid == Categorie::TYPE_CONTACT)     $permission=$user->rights->societe->creer;
+				if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$contact->id."'>";
@@ -565,12 +603,121 @@ if($object->type == Categorie::TYPE_CONTACT)
 		}
 		else
 		{
-			print "<tr ".$bc[false]."><td>".$langs->trans("ThisCategoryHasNoContact")."</td></tr>";
+			print '<tr '.$bc[false].'><td class="opacitymedium">'.$langs->trans("ThisCategoryHasNoContact").'</td></tr>';
 		}
 		print "</table>\n";
 	}
 }
 
+// List of accounts
+if ($object->type == Categorie::TYPE_ACCOUNT)
+{
+    require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+    $accounts = $object->getObjectsInCateg("account");
+    if ($accounts < 0)
+    {
+        dol_print_error($db, $accounts->error, $accounts->errors);
+    }
+    else
+    {
+        print "<br>";
+        print "<table class='noborder' width='100%'>\n";
+        print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Account")."</td></tr>\n";
+
+        if (count($accounts) > 0)
+        {
+            $var=true;
+            foreach ($accounts as $key => $account)
+            {
+                $var=!$var;
+                print "\t<tr ".$bc[$var].">\n";
+                print '<td class="nowrap" valign="top">';
+                print $account->getNomUrl(1,0);
+                print "</td>\n";
+                print '<td class="tdtop">'.$account->bank."</td>\n";
+                print '<td class="tdtop">'.$account->number."</td>\n";
+                // Link to delete from category
+                print '<td align="right">';
+                $typeid=$object->type;
+                $permission=0;
+                if ($typeid == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
+                if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
+                if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
+                if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
+                if ($typeid == Categorie::TYPE_ACCOUNT)      $permission=$user->rights->banque->configurer;
+                if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
+                if ($permission)
+                {
+                    print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$account->id."'>";
+                    print img_delete($langs->trans("DeleteFromCat")).' ';
+                    print $langs->trans("DeleteFromCat")."</a>";
+                }
+                print "</tr>\n";
+            }
+        }
+        else
+        {
+            print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoAccount").'</td></tr>';
+        }
+        print "</table>\n";
+    }
+}
+
+// List of Project
+if ($object->type == Categorie::TYPE_PROJECT)
+{
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+	$projects = $object->getObjectsInCateg("project");
+	if ($projects < 0)
+	{
+		dol_print_error($db, $object->error, $object->errors);
+	}
+	else
+	{
+		print "<br>";
+		print "<table class='noborder' width='100%'>\n";
+		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Project")."</td></tr>\n";
+
+		if (count($projects) > 0)
+		{
+			$var=true;
+			foreach ($projects as $key => $project)
+			{
+				$var=!$var;
+				print "\t<tr ".$bc[$var].">\n";
+				print '<td class="nowrap" valign="top">';
+				print $project->getNomUrl(1,0);
+				print "</td>\n";
+				print '<td class="tdtop">'.$project->ref."</td>\n";
+				print '<td class="tdtop">'.$project->title."</td>\n";
+				// Link to delete from category
+				print '<td align="right">';
+				$typeid=$object->type;
+				$permission=0;
+				if ($typeid == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
+				if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
+				if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
+				if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
+				if ($typeid == Categorie::TYPE_ACCOUNT)      $permission=$user->rights->banque->configurer;
+				if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
+				if ($permission)
+				{
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$project->id."'>";
+					print img_delete($langs->trans("DeleteFromCat")).' ';
+					print $langs->trans("DeleteFromCat")."</a>";
+				}
+				print "</tr>\n";
+			}
+		}
+		else
+		{
+			print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoProject").'</td></tr>';
+		}
+		print "</table>\n";
+	}
+}
 
 llxFooter();
 

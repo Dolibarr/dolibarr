@@ -31,7 +31,7 @@ $langs->load("compta");
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
-$ltt=$_REQUEST["localTaxType"];
+$ltt=GETPOST("localTaxType");
 
 /*
  * View
@@ -41,11 +41,11 @@ llxHeader();
 
 $localtax_static = new Localtax($db);
 
-print_fiche_titre($langs->transcountry($ltt==2?"LT2Payments":"LT1Payments",$mysoc->country_code));
+print load_fiche_titre($langs->transcountry($ltt==2?"LT2Payments":"LT1Payments",$mysoc->country_code));
 
 $sql = "SELECT rowid, amount, label, f.datev as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."localtax as f ";
-$sql.= " WHERE f.entity = ".$conf->entity." AND localtaxtype=".$ltt;
+$sql.= " WHERE f.entity = ".$conf->entity." AND localtaxtype=".$db->escape($ltt);
 $sql.= " ORDER BY dm DESC";
 
 $result = $db->query($sql);
@@ -92,6 +92,5 @@ else
     dol_print_error($db);
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

@@ -28,7 +28,8 @@ create table llx_commandedet
   fk_product					integer	 NULL,
   label							varchar(255) DEFAULT NULL,
   description					text,
-  tva_tx						double(6,3),	                 -- vat rate
+  vat_src_code					varchar(10)  DEFAULT '',		 -- Vat code used as source of vat fields. Not strict foreign key here.
+  tva_tx						double(6,3),	                 -- Vat rate
   localtax1_tx               	double(6,3)  DEFAULT 0,    		 -- localtax1 rate
   localtax1_type			 	varchar(10)	  	 NULL, 			 -- localtax1 type
   localtax2_tx               	double(6,3)  DEFAULT 0,    		 -- localtax2 rate
@@ -55,7 +56,16 @@ create table llx_commandedet
   special_code					integer      DEFAULT 0,      -- code pour les lignes speciales
   rang							integer      DEFAULT 0,
   fk_unit            integer      DEFAULT NULL,           -- lien vers table des unités
-  import_key					varchar(14)
+  import_key					varchar(14),
+  
+  fk_commandefourndet			integer DEFAULT NULL,       -- link to detail line of commande fourn (resplenish)
+  
+  fk_multicurrency		integer,
+  multicurrency_code			varchar(255),
+  multicurrency_subprice		double(24,8) DEFAULT 0,
+  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_tva	double(24,8) DEFAULT 0,
+  multicurrency_total_ttc	double(24,8) DEFAULT 0
 )ENGINE=innodb;
 
 -- 

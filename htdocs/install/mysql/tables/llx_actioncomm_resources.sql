@@ -16,8 +16,8 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
 -- ============================================================================
--- Table used for relations between elements of different types:
--- invoice-propal, propal-order, etc...
+-- Table used for relations between an action event and a resource (in most cases
+-- a 'user', but can also be a 'resource' like a room, or a hardware)
 -- ============================================================================
 
 create table llx_actioncomm_resources

@@ -25,6 +25,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/doleditor.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load("admin");
@@ -45,27 +46,27 @@ if (!$user->admin) accessforbidden();
 $modules = array(
 'SOCIETE' => 'FCKeditorForCompany',
 'PRODUCTDESC' => 'FCKeditorForProduct',
-'MAILING' => 'FCKeditorForMailing',
 'DETAILS' => 'FCKeditorForProductDetails',
 'USERSIGN' => 'FCKeditorForUserSignature',
+'MAILING' => 'FCKeditorForMailing',
 'MAIL' => 'FCKeditorForMail'
 );
 // Conditions pour que l'option soit proposee
 $conditions = array(
 'SOCIETE' => 1,
 'PRODUCTDESC' => (! empty($conf->product->enabled) || ! empty($conf->service->enabled)),
-'MAILING' => ! empty($conf->mailing->enabled),
-'DETAILS' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled)),
+'DETAILS' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->supplier_proposal->enabled) || ! empty($conf->fournisseur->enabled)),
 'USERSIGN' => 1,
+'MAILING' => ! empty($conf->mailing->enabled),
 'MAIL' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled))
 );
 // Picto
 $picto = array(
 'SOCIETE' => 'generic',
 'PRODUCTDESC' => 'product',
-'MAILING' => 'email',
-'DETAILS' => 'generic',
+'DETAILS' => 'product',
 'USERSIGN' => 'user',
+'MAILING' => 'email',
 'MAIL' => 'email'
 );
 
@@ -98,12 +99,35 @@ foreach($modules as $const => $desc)
 
 if (GETPOST('save','alpha'))
 {
-    $res=dolibarr_set_const($db, "FCKEDITOR_TEST", GETPOST('formtestfield'),'chaine',0,'',$conf->entity);
+	$error = 0;
 
-    if ($res > 0) setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+	$fckeditor_skin = GETPOST('fckeditor_skin', 'alpha');
+	if (! empty($fckeditor_skin)) {
+		if (! dolibarr_set_const($db, 'FCKEDITOR_SKIN', $fckeditor_skin, 'chaine', 0, '', $conf->entity)) {
+			$error ++;
+		}
+	} else {
+		$error ++;
+	}
+	
+	$fckeditor_test = GETPOST('formtestfield');
+    if (! empty($fckeditor_test)) {
+		if (! dolibarr_set_const($db, 'FCKEDITOR_TEST', $fckeditor_test, 'chaine', 0, '', $conf->entity)) {
+			$error ++;
+		}
+	} else {
+		$error ++;
+	}
+
+	if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
-
-
 
 /*
  * View
@@ -112,14 +136,14 @@ if (GETPOST('save','alpha'))
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("AdvancedEditor"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("AdvancedEditor"),$linkback,'title_setup');
 print '<br>';
 
 $var=true;
 
 if (empty($conf->use_javascript_ajax))
 {
-	setEventMessage(array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), 'errors');
+	setEventMessages(array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), null, 'errors');
 }
 else
 {
@@ -157,9 +181,27 @@ else
 
     print '</table>'."\n";
 
+	print '<br>'."\n";
+
+	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    
+	// Skins
+    show_skin(null,1);
     print '<br>'."\n";
-    print_fiche_titre($langs->trans("TestSubmitForm"),'(mode='.$mode.')','');
-    print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    
+    $listofmodes=array('dolibarr_mailings','dolibarr_notes','dolibarr_details','Full');
+    $linkstomode='';
+    foreach($listofmodes as $newmode)
+    {
+        if ($linkstomode) $linkstomode.=' - ';
+        $linkstomode.='<a href="'.$_SERVER["PHP_SELF"].'?mode='.$newmode.'">';
+        if ($mode == $newmode) $linkstomode.='<strong>';
+        $linkstomode.=$newmode;
+        if ($mode == $newmode) $linkstomode.='</strong>';
+        $linkstomode.='</a>';
+    }
+    $linkstomode.='';
+	print load_fiche_titre($langs->trans("TestSubmitForm"),$linkstomode,'');
     print '<input type="hidden" name="mode" value="'.dol_escape_htmltag($mode).'">';
     $uselocalbrowser=true;
     $readonly=($mode=='dolibarr_readonly'?1:0);

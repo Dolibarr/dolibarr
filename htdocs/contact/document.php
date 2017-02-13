@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014       Alexandre Spangaro  <alexandre.spangaro@gmail.com>
+/* Copyright (C) 2014       Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,9 +37,22 @@ $id = GETPOST('id','int');
 $action = GETPOST("action");
 $confirm = GETPOST('confirm', 'alpha');
 
+$object = new Contact($db);
+
+// Get object canvas (By default, this is not defined, so standard usage of dolibarr)
+$object->getCanvas($id);
+$objcanvas=null;
+$canvas = (! empty($object->canvas)?$object->canvas:GETPOST("canvas"));
+if (! empty($canvas))
+{
+    require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
+    $objcanvas = new Canvas($db, $action);
+    $objcanvas->getCanvas('contact', 'contactcard', $canvas);
+}
+
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contact', $id, '','');
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
@@ -54,7 +67,6 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
-$object = new Contact($db);
 if ($id > 0) $object->fetch($id);
 
 $upload_dir = $conf->societe->dir_output.'/contact/'.dol_sanitizeFileName($object->ref);
@@ -65,7 +77,7 @@ $modulepart='contact';
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -74,8 +86,10 @@ include DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
 $form = new Form($db);
 
+$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->lastname) $title=$object->lastname;
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader("",$langs->trans("Contact"), $helpurl);
+llxHeader('', $title, $helpurl);
 
 if ($object->id)
 {
@@ -93,16 +107,51 @@ if ($object->id)
         $totalsize+=$file['size'];
     }
 
-    print '<table class="border" width="100%">';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+    
+    $morehtmlref='<div class="refidno">';
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+    {
+        $objsoc=new Societe($db);
+        $objsoc->fetch($object->socid);
+        // Thirdparty
+        $morehtmlref.=$langs->trans('ThirdParty') . ' : ';
+        if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1);
+        else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
+    }
+    $morehtmlref.='</div>';
+    
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+        
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border centpercent">';
 
-    // Ref
-    print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
-    print $form->showrefnav($object, 'id', $linkback);
+    // Company
+    /*
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+    {
+    	if ($object->socid > 0)
+    	{
+    		$objsoc = new Societe($db);
+    		$objsoc->fetch($object->socid);
+
+    		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+    	}
+
+    	else
+    	{
+    		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
+    		print $langs->trans("ContactNotLinkedToCompany");
+    		print '</td></tr>';
+    	}
+    }*/
+    
+    // Civility
+    print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
+    print $object->getCivilityLabel();
     print '</td></tr>';
-
-    // Name
-    print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->lastname.'</td>';
-    print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td></tr>';
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
@@ -110,8 +159,11 @@ if ($object->id)
 
     print '</div>';
 
+    dol_fiche_end();
+    
     $modulepart = 'contact';
     $permission = $user->rights->societe->contact->creer;
+    $permtoedit = $user->rights->societe->contact->creer;
     $param = '&id=' . $object->id;
     include DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 } else {

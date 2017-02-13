@@ -77,11 +77,11 @@ if ($action == 'updateoptions')
 		if (! $res > 0) $error++;
 		if (! $error)
 	    {
-		    setEventMessage($langs->trans("SetupSaved"));
+		    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	    }
 	    else
 	    {
-		    setEventMessage($langs->trans("Error"), 'errors');
+		    setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 	}
 
@@ -92,11 +92,11 @@ if ($action == 'updateoptions')
 		if (! $res > 0) $error++;
 		if (! $error)
 		{
-			setEventMessage($langs->trans("SetupSaved"));
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("Error"), 'errors');
+			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 	}
 }
@@ -121,12 +121,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
     {
         $db->commit();
-	    setEventMessage($langs->trans("SetupSaved"));
+	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
         $db->rollback();
-	    setEventMessage($langs->trans("Error"), 'errors');
+	    setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -217,14 +217,28 @@ if ($action=="setaddrefinlist") {
 	if (! $res > 0) $error++;
 	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"), 'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
+//Activate Ask For Preferred Shipping Method
+if ($action=="setaskforshippingmet") {
+	$setaskforshippingmet = GETPOST('value','int');
+	$res = dolibarr_set_const($db, "SOCIETE_ASK_FOR_SHIPPING_METHOD", $setaskforshippingmet,'yesno',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	if (! $error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
 
 //Activate ProfId mandatory
 if ($action == 'setprofidmandatory')
@@ -288,7 +302,7 @@ $help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers|ES:Conf
 llxHeader('',$langs->trans("CompanySetup"),$help_url);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("CompanySetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("CompanySetup"),$linkback,'title_setup');
 
 
 $head = societe_admin_prepare_head();
@@ -299,7 +313,7 @@ $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['so
 
 // Module to manage customer/supplier code
 
-print_titre($langs->trans("CompanyCodeChecker"));
+print load_fiche_titre($langs->trans("CompanyCodeChecker"),'','');
 
 print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">'."\n";
@@ -381,7 +395,7 @@ print "<br>";
 
 // Select accountancy code numbering module
 
-print_titre($langs->trans("AccountCodeManager"));
+print load_fiche_titre($langs->trans("AccountCodeManager"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -452,7 +466,7 @@ print "</table>\n";
  *  Document templates generators
  */
 print '<br>';
-print_titre($langs->trans("ModelModules"));
+print load_fiche_titre($langs->trans("ModelModules"),'','');
 
 // Load array def with activated templates
 $def = array();
@@ -598,7 +612,7 @@ print '</table>';
 print '<br>';
 
 //IDProf
-print_titre($langs->trans("CompanyIdProfChecker"));
+print load_fiche_titre($langs->trans("CompanyIdProfChecker"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -691,7 +705,7 @@ while ($i < $nbofloop)
 print "</table><br>\n";
 
 
-print_titre($langs->trans("Other"));
+print load_fiche_titre($langs->trans("Other"),'','');
 
 // Autres options
 $form=new Form($db);
@@ -777,6 +791,26 @@ print '</a></td>';
 print '</tr>';
 
 
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("AskForPreferredShippingMethod").'</td>';
+print '<td>&nbsp</td>';
+print '<td align="center">';
+if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD))
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=0">';
+	print img_picto($langs->trans("Activated"),'switch_on');
+
+}
+else
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=1">';
+	print img_picto($langs->trans("Disabled"),'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
+
 /*
 // COMPANY_USE_SEARCH_TO_SELECT
 $var=!$var;
@@ -804,6 +838,7 @@ print '</form>';
 
 dol_fiche_end();
 
-$db->close();
 
 llxFooter();
+
+$db->close();

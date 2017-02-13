@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Neuspešna prijava na FTP strežnik z 
 FTPFailedToRemoveFile=Neuspešna odstranitev datoteke <b>%s</b>.
 FTPFailedToRemoveDir=Neuspešna odstranitev mape <b>%s</b> (Preverite dovoljenja in če je ta mapa prazna).
 FTPPassiveMode=Pasivni način
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s

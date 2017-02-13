@@ -51,6 +51,8 @@ if ($action == 'setvalue' && $user->admin)
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_API_SIGNATURE",GETPOST('PAYPAL_API_SIGNATURE','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_SSLVERSION",GETPOST('PAYPAL_SSLVERSION','alpha'),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_CREDITOR",GETPOST('PAYPAL_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_API_INTEGRAL_OR_PAYPALONLY",GETPOST('PAYPAL_API_INTEGRAL_OR_PAYPALONLY','alpha'),'chaine',0,'',$conf->entity);
@@ -73,7 +75,7 @@ if ($action == 'setvalue' && $user->admin)
 	if (! $error)
   	{
   		$db->commit();
-  		setEventMessage($langs->trans("SetupSaved"));
+  		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
   	}
   	else
   	{
@@ -93,10 +95,15 @@ llxHeader('',$langs->trans("PaypalSetup"));
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("ModuleSetup").' PayPal',$linkback);
+print load_fiche_titre($langs->trans("ModuleSetup").' PayPal',$linkback);
 print '<br>';
 
 $head=paypaladmin_prepare_head();
+
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="setvalue">';
+
 
 dol_fiche_head($head, 'paypalaccount', '');
 
@@ -106,18 +113,15 @@ print $langs->trans("PaypalDesc")."<br>\n";
 if (! function_exists('curl_version'))
 {
 	$langs->load("errors");
-	setEventMessage($langs->trans("ErrorPhpCurlNotInstalled"), 'errors');
+	setEventMessages($langs->trans("ErrorPhpCurlNotInstalled"), null, 'errors');
 }
 
 
 print '<br>';
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="setvalue">';
-
 
 print '<table class="noborder" width="100%">';
 
+// Account Parameters
 $var=true;
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("AccountParameter").'</td>';
@@ -150,6 +154,13 @@ print '<input size="64" type="text" name="PAYPAL_API_SIGNATURE" value="'.$conf->
 print '<br>'.$langs->trans("Example").': ASsqXEmw4KzmX-CPChWSVDNCNfd.A3YNR7uz-VncXXAERFDFDFDF';
 print '</td></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'><td class="fieldrequired">';
+print $langs->trans("PAYPAL_SSLVERSION").'</td><td>';
+print $form->selectarray("PAYPAL_SSLVERSION",array('1'=> $langs->trans('TLSv1'),'6'=> $langs->trans('TLSv1.2')),$conf->global->PAYPAL_SSLVERSION);
+print '</td></tr>';
+
+// Usage Parameters
 $var=true;
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("UsageParameter").'</td>';
@@ -192,14 +203,14 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("MessageOK").'</td><td>';
-$doleditor=new DolEditor('PAYPAL_MESSAGE_OK',$conf->global->PAYPAL_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_4,60);
+$doleditor=new DolEditor('PAYPAL_MESSAGE_OK',$conf->global->PAYPAL_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_4,'90%');
 $doleditor->Create();
 print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("MessageKO").'</td><td>';
-$doleditor=new DolEditor('PAYPAL_MESSAGE_KO',$conf->global->PAYPAL_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_4,60);
+$doleditor=new DolEditor('PAYPAL_MESSAGE_KO',$conf->global->PAYPAL_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_4,'90%');
 $doleditor->Create();
 print '</td></tr>';
 
@@ -232,11 +243,11 @@ print '</td></tr>';
 
 print '</table>';
 
-print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+dol_fiche_end();
+
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
-
-dol_fiche_end();
 
 print '<br><br>';
 
@@ -365,10 +376,10 @@ if (! empty($conf->use_javascript_ajax))
 {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
-            $("#apidoc").hide();
+            $("#apidoca").hide();
             $("#apidoca").click(function() {
-                $("#apidoca").hide();
                 $("#apidoc").show();
+            	$("#apidoca").hide();
             });
 
             $("#generate_token").click(function() {
