@@ -130,8 +130,8 @@ else if ($action == 'specimen')
 {
     $modele=GETPOST('module','alpha');
 
-    $facture = new Facture($db);
-    $facture->initAsSpecimen();
+    $paiementFourn = new PaiementFourn($db);
+    $paiementFourn->initAsSpecimen();
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
@@ -153,7 +153,7 @@ else if ($action == 'specimen')
 
     	$module = new $classname($db);
 
-    	if ($module->write_file($facture,$langs) > 0)
+    	if ($module->write_file($paiementFourn,$langs) > 0)
     	{
     		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=supplier_payment&file=SPECIMEN.pdf");
     		return;

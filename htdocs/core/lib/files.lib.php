@@ -1874,6 +1874,16 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		$original_file=$conf->fournisseur->facture->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE facnumber='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
+	// Wrapping pour les rapport de paiements
+	else if ($modulepart == 'supplier_payment')
+	{
+		if ($fuser->rights->fournisseur->facture->lire || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->fournisseur->payment->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+	}
 
 	// Wrapping pour les rapport de paiements
 	else if ($modulepart == 'facture_paiement')

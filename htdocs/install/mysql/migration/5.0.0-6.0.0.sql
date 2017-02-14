@@ -98,3 +98,5 @@ CREATE TABLE llx_product_attribute_combination
   entity INT DEFAULT 1 NOT NULL
 );
 
+ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
+

@@ -24,7 +24,7 @@
  *	\brief      Class file to generate the supplier invoices with the canelle model
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefournisseur.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -157,13 +157,11 @@ class pdf_cow extends ModelePDFSuppliersPayments
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 
-		if ($conf->fournisseur->dir_output.'/facture')
+		if ($conf->fournisseur->payment->dir_output)
 		{
 			$object->fetch_thirdparty();
-
-			$deja_regle = $object->getSommePaiement();
-            //$amount_credit_notes_included = $object->getSumCreditNotesUsed();
-            //$amount_deposits_included = $object->getSumDepositsUsed();
+			
+			$total = $object->montant;
 
 			// Definition of $dir and $file
 			if ($object->specimen)
@@ -175,7 +173,7 @@ class pdf_cow extends ModelePDFSuppliersPayments
 			{
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = dol_sanitizeFileName($object->ref_supplier);
-                $dir = $conf->fournisseur->payment->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'supplier_payment').$objectref;
+                $dir = $conf->fournisseur->payment->dir_output.'/'.$objectref;
 				$file = $dir . "/" . $objectref . ".pdf";
 				if (! empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier?"_".$objectrefsupplier:"").".pdf";
 			}

@@ -345,6 +345,9 @@ class Conf
 			$this->fournisseur->facture=new stdClass();
 			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
 			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
+			$this->fournisseur->payment=new stdClass();
+			$this->fournisseur->payment->dir_output =$rootfordata."/fournisseur/payment";
+			$this->fournisseur->payment->dir_temp   =$rootfordata."/fournisseur/payment/temp";
 
 			// To prepare split of module fournisseur into fournisseur + supplier_order + supplier_invoice
 			if (! empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))  // By default, if module supplier is on, we set new properties

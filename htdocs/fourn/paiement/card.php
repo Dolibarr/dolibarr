@@ -43,6 +43,11 @@ $confirm	= GETPOST('confirm','alpha');
 
 $object = new PaiementFourn($db);
 
+// PDF
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+
 /*
  * Actions
  */
@@ -132,6 +137,32 @@ if ($action == 'setdatep' && ! empty($_POST['datepday']))
 	{
 		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
 	}
+}
+
+// Build document
+if ($action == 'builddoc')
+{
+	// Save modele used
+    $object->fetch($id);
+    $object->fetch_thirdparty();
+
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
+
+    $outputlangs = $langs;
+    $newlang=GETPOST('lang_id','alpha');
+    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
+    if (! empty($newlang))
+    {
+        $outputlangs = new Translate("",$conf);
+        $outputlangs->setDefaultLang($newlang);
+    }
+	$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    if ($result	< 0)
+    {
+		setEventMessages($object->error, $object->errors, 'errors');
+	    $action='';
+    }
 }
 
 
@@ -353,14 +384,13 @@ if ($result > 0)
      * Documents generes
      */
     $ref=dol_sanitizeFileName($object->ref);
-    $subdir = get_exdir($object->id,2,0,0,$object,'supplier_payment').$ref;
-    $filedir = $conf->fournisseur->paiement->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'supplier_payment').$ref;
+    $filedir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
     $urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
     $genallowed=$user->rights->fournisseur->facture->creer;
     $delallowed=$user->rights->fournisseur->facture->supprimer;
     $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF)?'':$conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
 
-    print $formfile->showdocuments('supplier_payment',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,40,0,'','','',$societe->default_lang);
+    print $formfile->showdocuments('supplier_payment',$ref,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,40,0,'','','',$societe->default_lang);
     $somethingshown=$formfile->numoffiles;
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
