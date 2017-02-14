@@ -235,7 +235,6 @@ class User extends CommonObject
 			$sql.= " AND u.rowid = ".$id;
 		}
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -618,7 +617,6 @@ class User extends CommonObject
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
-		dol_syslog(get_class($this).'::getrights', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -670,7 +668,6 @@ class User extends CommonObject
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
-		dol_syslog(get_class($this).'::getrights', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

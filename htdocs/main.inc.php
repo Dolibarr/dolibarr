@@ -1307,7 +1307,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             
             // Browser notifications
             $enablebrowsernotif=false;
-            if (! empty($conf->agenda->enabled) && ! empty($conf->global->AGENDA_NOTIFICATION) && ! empty($conf->global->AGENDA_NOTIFICATION_SOUND)) $enablebrowsernotif=true;
+            if (! empty($conf->agenda->enabled) && ! empty($conf->global->AGENDA_NOTIFICATION)) $enablebrowsernotif=true;
             if ($enablebrowsernotif)
             {
                 print '<!-- Includes JS of Dolibarr -->'."\n";
