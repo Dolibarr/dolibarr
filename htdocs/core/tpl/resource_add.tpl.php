@@ -16,7 +16,7 @@ $out .= '<input type="hidden" name="resource_type" value="'.$resource_obj.'">';
 // Resource
 $preselection = $resource_obj == $resource_type ? $selected : '';
 $out .= '<div class="tagtd">'.$langs->trans("SelectResource").'</div><div>';
-$out .= $formresources->select_resource_list($preselection, $resource_obj.'resource_id', '', 1, 0, array(), 2);
+$out .= $formresources->select_resource_list($preselection, $resource_obj.'resource_id', '', 1, 0, array(), 2, 0);
 
 // Parent
 $outputmode = !empty($preselection) && ($element_type == "product" || $element_type == 'service')?0:2;

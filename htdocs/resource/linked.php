@@ -434,7 +434,7 @@ else if ($element_id && $element_type) //Show linked resources to this element
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
-		$head=actions_prepare_head($act);
+		$head=actions_prepare_head($element);
 
 		dol_fiche_head($head, 'resources', $langs->trans("Action"),0,'action');
 
@@ -444,18 +444,18 @@ else if ($element_id && $element_type) //Show linked resources to this element
 		// Link to other agenda views
 		$out='';
 		$out.=img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"');
-		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewPerUser").'</a>';
+		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($element->datep,'%Y').'&month='.dol_print_date($element->datep,'%m').'&day='.dol_print_date($element->datep,'%d').'">'.$langs->trans("ViewPerUser").'</a>';
 		$out.='<br>';
 		$out.=img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone pictoactionview"');
-		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewCal").'</a>';
+		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($element->datep,'%Y').'&month='.dol_print_date($element->datep,'%m').'&day='.dol_print_date($element->datep,'%d').'">'.$langs->trans("ViewCal").'</a>';
 		$out.=img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"');
-		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewWeek").'</a>';
+		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($element->datep,'%Y').'&month='.dol_print_date($element->datep,'%m').'&day='.dol_print_date($element->datep,'%d').'">'.$langs->trans("ViewWeek").'</a>';
 		$out.=img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
-		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
+		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($element->datep,'%Y').'&month='.dol_print_date($element->datep,'%m').'&day='.dol_print_date($element->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
 
 		$linkback.=$out;
 
-		dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '', '&element_type='.$element_type, 0, '', '');
+		dol_banner_tab($element, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '', '&element_type='.$element_type, 0, '', '');
 
 		print '<div class="underbanner clearboth"></div>';
 
@@ -464,31 +464,31 @@ else if ($element_id && $element_type) //Show linked resources to this element
 		// Type
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
-				print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+				print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$element->type.'</td></tr>';
 		}
 
 		// Full day event
-		print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($act->fulldayevent, 3).'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($element->fulldayevent, 3).'</td></tr>';
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-		if (! $act->fulldayevent) print dol_print_date($act->datep,'dayhour');
-		else print dol_print_date($act->datep,'day');
-		if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
+		if (! $element->fulldayevent) print dol_print_date($element->datep,'dayhour');
+		else print dol_print_date($element->datep,'day');
+		if ($element->percentage == 0 && $element->datep && $element->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td>';
 		print '</tr>';
 
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-		if (! $act->fulldayevent) print dol_print_date($act->datef,'dayhour');
-		else print dol_print_date($act->datef,'day');
-		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
+		if (! $element->fulldayevent) print dol_print_date($element->datef,'dayhour');
+		else print dol_print_date($element->datef,'day');
+		if ($element->percentage > 0 && $element->percentage < 100 && $element->datef && $element->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
 		// Location
 		if (empty($conf->global->AGENDA_DISABLE_LOCATION))
 		{
-			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
+			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$element->location.'</td></tr>';
 		}
 
 		// Assigned to
@@ -496,14 +496,14 @@ else if ($element_id && $element_type) //Show linked resources to this element
 		$listofuserid=array();
 		if (empty($donotclearsession))
 		{
-			if ($act->userownerid > 0) $listofuserid[$act->userownerid]=array('id'=>$act->userownerid,'transparency'=>$act->transparency);	// Owner first
-			if (! empty($act->userassigned))	// Now concat assigned users
+			if ($element->userownerid > 0) $listofuserid[$element->userownerid]=array('id'=>$element->userownerid,'transparency'=>$element->transparency);	// Owner first
+			if (! empty($element->userassigned))	// Now concat assigned users
 			{
 				// Restore array with key with same value than param 'id'
-				$tmplist1=$act->userassigned; $tmplist2=array();
+				$tmplist1=$element->userassigned; $tmplist2=array();
 				foreach($tmplist1 as $key => $val)
 				{
-					if ($val['id'] && $val['id'] != $act->userownerid) $listofuserid[$val['id']]=$val;
+					if ($val['id'] && $val['id'] != $element->userownerid) $listofuserid[$val['id']]=$val;
 				}
 			}
 			$_SESSION['assignedtouser']=json_encode($listofuserid);
@@ -521,7 +521,7 @@ else if ($element_id && $element_type) //Show linked resources to this element
 		if (in_array($user->id,array_keys($listofuserid)))
 		{
 			print '<div class="myavailability">';
-			print $langs->trans("MyAvailability").': '.(($act->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
+			print $langs->trans("MyAvailability").': '.(($element->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
 			print '</div>';
 		}
 		print '	</td></tr>';
@@ -587,9 +587,9 @@ else if ($element_id && $element_type) //Show linked resources to this element
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 
-       	$fichinter->fetch_thirdparty();
+       	$element->fetch_thirdparty();
 
-		$head=fichinter_prepare_head($fichinter);
+		$head=fichinter_prepare_head($element);
 		dol_fiche_head($head, 'resource', $langs->trans("InterventionCard"),0,'intervention');
 
 		// Intervention card
@@ -601,7 +601,7 @@ else if ($element_id && $element_type) //Show linked resources to this element
 		//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 		//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 		// Thirdparty
-		$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $fichinter->thirdparty->getNomUrl(1);
+		$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $element->thirdparty->getNomUrl(1);
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
@@ -610,24 +610,24 @@ else if ($element_id && $element_type) //Show linked resources to this element
 			if ($user->rights->commande->creer)
 			{
 				if ($action != 'classify')
-					//$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $fichinter->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					//$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $element->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 					$morehtmlref.=' : ';
 				if ($action == 'classify') {
-					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $fichinter->id, $fichinter->socid, $fichinter->fk_project, 'projectid', 0, 0, 1, 1);
-					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$fichinter->id.'">';
+					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $element->id, $element->socid, $element->fk_project, 'projectid', 0, 0, 1, 1);
+					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$element->id.'">';
 					$morehtmlref.='<input type="hidden" name="action" value="classin">';
 					$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-					$morehtmlref.=$formproject->select_projects($fichinter->socid, $fichinter->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref.=$formproject->select_projects($element->socid, $element->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref.='</form>';
 				} else {
-					$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $fichinter->id, $fichinter->socid, $fichinter->fk_project, 'none', 0, 0, 0, 1);
+					$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $element->id, $element->socid, $element->fk_project, 'none', 0, 0, 0, 1);
 				}
 			} else {
-				if (! empty($fichinter->fk_project)) {
+				if (! empty($element->fk_project)) {
 					$proj = new Project($db);
-					$proj->fetch($fichinter->fk_project);
-					$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $fichinter->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+					$proj->fetch($element->fk_project);
+					$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $element->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
 					$morehtmlref.=$proj->ref;
 					$morehtmlref.='</a>';
 				} else {
@@ -637,7 +637,7 @@ else if ($element_id && $element_type) //Show linked resources to this element
 		}
 		$morehtmlref.='</div>';
 		
-		dol_banner_tab($fichinter, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '&element='.$element, 0, '', '', 1);
+		dol_banner_tab($element, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '&element='.$element, 0, '', '', 1);
 		
 		dol_fiche_end();
 	}
