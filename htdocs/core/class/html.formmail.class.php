@@ -533,7 +533,7 @@ class FormMail extends Form
         					$liste[$key]=$value;
         				}
         				if ($this->withtofree) $out.= " ".$langs->trans("or")." ";
-        				$out.= $form->multiselectarray("receiver", $liste, GETPOST("receiver"));
+        				$out.= $form->multiselectarray("receiver", $liste, GETPOST("receiver"), null, null, null,null, "90%");
         			}
         		}
         		$out.= "</td></tr>\n";
