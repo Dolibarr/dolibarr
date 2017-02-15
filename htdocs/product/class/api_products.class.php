@@ -266,6 +266,128 @@ class Products extends DolibarrApi
         $categories = new Categories();
         return $categories->getListForItem('product', $sortfield, $sortorder, $limit, $page, $id);
     }
+    
+    /**
+     * Get sell price for a product
+     *
+     * @param int		$id			ID of product
+     * @param int		$date_start	Date start
+     * @param int		$date_end	Date end
+     *
+     * @return array
+     * @throws RestException
+     *
+     * @url GET {id}/price
+     */
+    function getPrice($id, $date_start = null, $date_end = null) {
+        global $conf, $db;
+        
+        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+            throw new RestException(401);
+        }
+        
+        $result = $this->product->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Product not found');
+        }
+        
+        if( ! DolibarrApi::_checkAccessToResource('product',$this->product->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        
+        $is_dynamic = 0;
+        $price = price2num($this->product->price);
+        $price_ttc = price2num($this->product->price_ttc);
+        if (!empty($conf->dynamicprices->enabled) && !empty($this->product->fk_price_expression))
+        {
+            require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+            $priceparser = new PriceParser($db);
+            $extra_values = array('date_start' => $date_start, 'date_end' => $date_end);
+            $price_result = $priceparser->parseProduct($this->product, $extra_values);
+            if ($price_result >= 0)
+            {
+                $is_dynamic = 1;
+                $price = price2num($price_result);
+                //Calculate the VAT
+                $price_ttc = price2num($price * (1 + ($this->product->tva_tx / 100)));
+            }
+            else
+            {
+                throw new RestException(503, 'Price parser error: '.$priceparser->translatedError());
+            }
+        }
+
+        return array(
+            'is_dynamic'=>$is_dynamic,
+            'price'=>$price,
+            'price_ttc'=>$price_ttc,
+        );
+    }
+    
+    /**
+     * Get prices of price schedule for a product. Sell price might be different
+     *
+     * @param int		$id			ID of product
+     * @param int		$date_start	Date start
+     * @param int		$date_end	Date end
+     * @param bool		$price_only	Returns price only in array
+     *
+     * @return array
+     * @throws RestException
+     *
+     * @url GET {id}/priceschedule
+     */
+    function getPriceSchedule($id, $date_start, $date_end, $price_only) {
+        global $db;
+        
+        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+            throw new RestException(401);
+        }
+        
+        $result = $this->product->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Product not found');
+        }
+        
+        if( ! DolibarrApi::_checkAccessToResource('product',$this->product->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        
+        $data = array();
+        $start = dol_print_date($date_start, '%Y');
+        $end = dol_print_date($date_end, '%Y');
+        //Iterate each year between dates, only store if is valid
+        require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_schedule.class.php';
+        for ($year = $start; $year <= $end; $year++)
+        {
+            $schedule = new PriceSchedule($db);
+            $result = $schedule->fetch(0, $id, PriceSchedule::TYPE_SERVICE, 0, $year);
+            if ($result > 0)
+            {
+                $result = $schedule->fetchSections($date_start, $date_end);
+            }
+            if ($result > 0)
+            {
+                foreach ($schedule->sections as $section)
+                {
+                    if ($price_only)
+                    {
+                        $data[] = $section->price;
+                    }
+                    else
+                    {
+                        $data[] = array(
+                            'date_start' => $section->date_start,
+                            'date_end' => $section->date_end,
+                            'price' => $section->price,
+                        );
+                    }
+                }
+            }
+        }
+        
+        return $data;
+    }
 
     /**
      * Clean sensible object datas
