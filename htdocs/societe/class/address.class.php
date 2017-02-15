@@ -31,21 +31,21 @@
  */
 class Address
 {
-	var $db;
+	protected $db;
 
-	var $id;
-	var $type;
-	var $label;
-	var $socid;
-	var $name;
-	var $address;
-	var $zip;
-	var $town;
-	var $country_id;
-	var $country_code;
-	var $phone;
-	var $fax;
-	var $note;
+	public $id;
+	public $type;
+	public $label;
+	public $socid;
+	public $name;
+	public $address;
+	public $zip;
+	public $town;
+	public $country_id;
+	public $country_code;
+	public $phone;
+	public $fax;
+	public $note;
 
 	/**
 	 * Adresses liees a la societe
@@ -495,21 +495,21 @@ class Address
  */
 class AddressLine
 {
-
-	var $id;
-	var $date_creation;
-	var $date_modification;
-	var $label;
-	var $name;
-	var $address;
-	var $zip;
-	var $town;
-	var $country_id;
-	var $country_code;
-	var $country;
-	var $phone;
-	var $fax;
-	var $note;
+	protected $db;
+	public $id;
+	public $date_creation;
+	public $date_modification;
+	public $label;
+	public $name;
+	public $address;
+	public $zip;
+	public $town;
+	public $country_id;
+	public $country_code;
+	public $country;
+	public $phone;
+	public $fax;
+	public $note;
 
 
 	/**

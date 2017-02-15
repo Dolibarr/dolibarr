@@ -380,7 +380,7 @@ $moreheadjs=empty($conf->use_javascript_ajax)?"":"
         ,   north__paneSelector:    \"#ecm-layout-north\"
         ,   west__paneSelector:     \"#ecm-layout-west\"
         ,   resizable: true
-        ,   north__size:        36
+        ,   north__size:        37     /* 2 are removed by js */
         ,   north__resizable:   false
         ,   north__closable:    false
         ,   west__size:         340
@@ -509,24 +509,17 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 
 	// Root of manual section
-	print '<tr><td>';
-	print '<table class="nobordernopadding"><tr class="nobordernopadding">';
-	print '<td align="left" width="24px">';
-	print img_picto_common('','treemenu/base.gif');
-	print '</td><td align="left">';
+	print '<tr class="ecmroot">';
+	print '<td class="ecmroot">';
+	print img_picto_common('','treemenu/base.gif','class="inline-block valignmiddle"');
 	$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsManual").')';
 	print $form->textwithpicto($txt, $htmltooltip, 1, 'info');
 	print '</td>';
-	print '</tr></table></td>';
-	print '<td align="right">';
-	print '</td>';
-	print '<td align="right">&nbsp;</td>';
-	//print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.img_edit_add().'</a></td>';
-	print '<td align="right">&nbsp;</td>';
-	print '<td align="right">&nbsp;</td>';
-	print '<td align="center">';
-	//print $form->textwithpicto('',$htmltooltip,1,"info");
-	print '</td>';
+	print '<td class="ecmroot"></td>';
+	print '<td class="ecmroot">&nbsp;</td>';
+	print '<td class="ecmroot">&nbsp;</td>';
+	print '<td class="ecmroot">&nbsp;</td>';
+	print '<td class="ecmroot"></td>';
 	print '</tr>';
 
     if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))

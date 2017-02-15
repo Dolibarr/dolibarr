@@ -472,7 +472,7 @@ print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
 print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnInvoices").' ('.$langs->trans("AddCRIfTooLong").')<br>';
+print $langs->trans("FreeLegalTextOnInvoices").' '.img_info($langs->trans("AddCRIfTooLong")).'</br>';
 $variablename='SUPPLIER_INVOICE_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {

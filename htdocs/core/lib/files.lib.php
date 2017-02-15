@@ -44,8 +44,8 @@ function dol_basename($pathfile)
  *  @param	string		$path        	Starting path from which to search. This is a full path.
  *  @param	string		$types        	Can be "directories", "files", or "all"
  *  @param	int			$recursive		Determines whether subdirectories are searched
- *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.'))
+ *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function. Filter is checked into basename only.
+ *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.')). Exclude is checked into fullpath.
  *  @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
@@ -104,7 +104,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 			$filesize='';
 			$file_list = array();
 
-			while (false !== ($file = readdir($dir)))
+			while (false !== ($file = readdir($dir)))        // $file is always a basename (into directory $newpath)
 			{
 				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in utf8 in memory
 
@@ -137,7 +137,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 							if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
 							if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
 
-							if (! $filter || preg_match('/'.$filter.'/i',$file))	// We do not search key $filter into $path, only into $file
+							if (! $filter || preg_match('/'.$filter.'/i',$file))	// We do not search key $filter into all $path, only into $file part
 							{
 								preg_match('/([^\/]+)\/[^\/]+$/',$path.'/'.$file,$reg);
 								$level1name=(isset($reg[1])?$reg[1]:'');
@@ -515,13 +515,23 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
 
 	$result=0;
 
-	dol_syslog("files.lib.php::dolCopyr srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
+	dol_syslog("files.lib.php::dolCopyDir srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
 
 	if (empty($srcfile) || empty($destfile)) return -1;
 
 	$destexists=dol_is_dir($destfile);
 	if (! $overwriteifexists && $destexists) return 0;
-
+    
+    if (! $destexists)
+    {
+        // We must set mask just before creating dir, becaause it can be set differently by dol_copy
+        umask(0);
+        $dirmaskdec=octdec($newmask);
+        if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);
+        $dirmaskdec |= octdec('0200');  // Set w bit required to be able to create content for recursive subdirs files
+        dol_mkdir($destfile."/".$file, '', decoct($dirmaskdec));
+    }
+    
 	$srcfile=dol_osencode($srcfile);
 	$destfile=dol_osencode($destfile);
 
@@ -538,6 +548,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
                 {
                     if (!is_dir($destfile."/".$file))
                     {
+                        // We must set mask just before creating dir, becaause it can be set differently by dol_copy
                     	umask(0);
 						$dirmaskdec=octdec($newmask);
 						if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);

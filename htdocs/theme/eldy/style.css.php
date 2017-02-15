@@ -1772,6 +1772,10 @@ td.photo {
 /* Toolbar for ECM or Filemanager                                                 */
 /* ============================================================================== */
 
+td.ecmroot {
+    padding-bottom: 0 !important;
+}
+
 .largebutton {
     background-image: -o-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
     background-image: -moz-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
@@ -4543,27 +4547,6 @@ border-top-right-radius: 6px;
 }
 
 
-/* ============================================================================== */
-/*  Demo                                                                          */
-/* ============================================================================== */
-
-
-/* For demo pages */
-img.demothumb {
-    box-shadow: 2px 2px 8px #BBB;
-    margin-right: 20px;
-    margin-left: 10px;
-}
-
-.demobackground {
-    /*
-    background-image: url(/dolibarr_5.0/htdocs/theme/image-demo.jpg);
-    background-size: cover;
-    object-fit: contain;
-    */
-}
-
-
 
 /* ============================================================================== */
 /*  Public                                                                        */
@@ -4600,13 +4583,6 @@ img.demothumb {
 		position: absolute;
 		width: <?php print dol_size(350,'width'); ?>px;
 	}
-
-    img.demothumb {
-        box-shadow: 1px 1px 4px #BBB;
-        margin-right: 6px;
-        margin-left: 4px;
-        width: 80px;
-    }
 
     div.tabBar {
         padding-left: 0px;

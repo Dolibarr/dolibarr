@@ -3699,6 +3699,12 @@ abstract class CommonObject
                 $discount->fetch($line->fk_remise_except);
                 $this->tpl['description'] = $langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
             }
+            elseif ($line->desc == '(EXCESS RECEIVED)')
+            {
+                $discount=new DiscountAbsolute($this->db);
+                $discount->fetch($line->fk_remise_except);
+                $this->tpl['description'] = $langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
+            }
             else
             {
                 $this->tpl['description'] = dol_trunc($line->desc,60);
@@ -4550,7 +4556,7 @@ abstract class CommonObject
 								var parent = $(this).find("option[parent]:first").attr("parent");
 								var infos = parent.split(":");
 								var parent_list = infos[0];
-								$("select[name=\"options_"+parent_list+"\"]").change(function() {
+								$("select[name=\""+parent_list+"\"]").change(function() {
 									showOptions(child_list, parent_list);
 								});
 					    	});

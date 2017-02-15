@@ -77,8 +77,6 @@ if ($id > 0 || $ref)
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 
-$reputations=array('-1'=>'', 'FAVORITE'=>$langs->trans('Favorite'),'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
-
 if (! $sortfield) $sortfield="s.nom";
 if (! $sortorder) $sortorder="ASC";
 
@@ -527,7 +525,7 @@ if ($id > 0 || $ref)
 
 				// Reputation
 				print '<tr><td>'.$langs->trans("SupplierReputation").'</td><td>';
-				echo $form->selectarray('supplier_reputation', $reputations, $supplier_reputation?$supplier_reputation:$object->supplier_reputation);
+				echo $form->selectarray('supplier_reputation', $object->reputations, $supplier_reputation?$supplier_reputation:$object->supplier_reputation);
 				print '</td></tr>';
 
 				// Option to define a transport cost on supplier price
@@ -673,8 +671,8 @@ if ($id > 0 || $ref)
 
 						// Reputation
 						print '<td align="center">';
-						if (!empty($productfourn->supplier_reputation) && !empty($reputations[$productfourn->supplier_reputation])) {
-							print $reputations[$productfourn->supplier_reputation];	
+						if (!empty($productfourn->supplier_reputation) && !empty($object->reputations[$productfourn->supplier_reputation])) {
+							print $object->reputations[$productfourn->supplier_reputation];	
 						}  
 						print'</td>';
 
