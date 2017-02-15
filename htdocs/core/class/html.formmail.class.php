@@ -521,7 +521,7 @@ class FormMail extends Form
         			if (! empty($this->withto) && is_array($this->withto))
         			{
         				if (! empty($this->withtofree)) $out.= " ".$langs->trans("or")." ";
-        				$out.= $form->selectarray("receiver", $this->withto, GETPOST("receiver"), 1, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
+        				$out.= $form->multiselectarray("receiver", $this->withto, GETPOST("receiver"), null, null, null,null, "90%");
         			}
         			if (isset($this->withtosocid) && $this->withtosocid > 0) // deprecated. TODO Remove this. Instead, fill withto with array before calling method.
         			{
@@ -533,7 +533,7 @@ class FormMail extends Form
         					$liste[$key]=$value;
         				}
         				if ($this->withtofree) $out.= " ".$langs->trans("or")." ";
-        				$out.= $form->selectarray("receiver", $liste, GETPOST("receiver"), 1, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
+        				$out.= $form->multiselectarray("receiver", $liste, GETPOST("receiver"));
         			}
         		}
         		$out.= "</td></tr>\n";
