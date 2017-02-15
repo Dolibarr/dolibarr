@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2016	 Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2016-2017	Alexandre Spangaro	 <aspangaro@zendsi.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,6 +22,6 @@ create table llx_accounting_journal
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   code       		varchar(32) NOT NULL,
   label             varchar(128) NOT NULL,
-  nature			smallint DEFAULT 0 NOT NULL,			-- type of journals (Sale / purchase / bank / various operations)
+  nature			smallint DEFAULT 0 NOT NULL,			-- type of journals (1:Sale / 2:purchase / 3:bank / 4:various operations / 9: has-new)
   active            smallint DEFAULT 0
 )ENGINE=innodb;
