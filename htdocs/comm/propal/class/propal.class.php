@@ -1136,6 +1136,7 @@ class Propal extends CommonObject
         }
 
         $clonedObj->id=0;
+        $clonedObj->ref='';
         $clonedObj->statut=self::STATUS_DRAFT;
 
         // Clear fields
