@@ -34,11 +34,11 @@
  */
 class FormFile
 {
-    var $db;
-    var $error;
-
-    var $numoffiles;
-	var $infofiles;			// Used to return informations by function getDocumentsLink
+    private $db;
+    
+    public $error;
+    public $numoffiles;
+    public $infofiles;			// Used to return informations by function getDocumentsLink
 
 
     /**
@@ -548,7 +548,7 @@ class FormFile
             if (empty($buttonlabel)) $buttonlabel=$langs->trans('Generate');
 
             if ($conf->browser->layout == 'phone') $urlsource.='#'.$forname.'_form';   // So we switch to form after a generation
-            if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
+            if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" id="'.$forname.'_form" method="post">';
             $out.= '<input type="hidden" name="action" value="builddoc">';
             $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             

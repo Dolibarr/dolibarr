@@ -1408,6 +1408,11 @@ class CommandeFournisseur extends CommonOrder
                         {
                             $pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
                             $ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
+			    // is remise percent not keyed but present for the product we add it
+                            if ($remise_percent == 0 && $prod->remise_percent !=0)
+                            	$remise_percent =$prod->remise_percent;
+
+				
                         }
                         if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
                         {
@@ -2341,8 +2346,11 @@ class CommandeFournisseur extends CommonOrder
 
             $subprice = price2num($pu_ht,'MU');
 
+            //Fetch current line from the database and then clone the object and set it in $oldline property
             $this->line=new CommandeFournisseurLigne($this->db);
             $this->line->fetch($rowid);
+            $oldline = clone $this->line;
+            $this->line->oldline = $oldline;
 
             $this->line->context = $this->context;
 

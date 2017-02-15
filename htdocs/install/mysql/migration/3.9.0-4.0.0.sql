@@ -65,7 +65,7 @@ ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot(fk_product, batch);
 ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
 UPDATE llx_product_lot SET entity = 1 WHERE entity IS NULL;
 
-DROP TABLE llx_stock_serial; 
+DROP TABLE llx_stock_serial;
 
 ALTER TABLE llx_product ADD COLUMN note_public text;
 ALTER TABLE llx_user ADD COLUMN note_public text;

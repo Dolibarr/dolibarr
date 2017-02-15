@@ -2764,6 +2764,8 @@ class Propal extends CommonObject
      */
     function availability($availability_id, $notrigger=0)
     {
+        global $user;
+        
         if ($this->statut >= self::STATUS_DRAFT)
         {
         	$error=0;
@@ -3035,6 +3037,7 @@ class Propal extends CommonObject
 	        $response->warning_delay = $delay_warning/60/60/24;
 	        $response->label = $label;
 	        $response->url = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals';
+	        $response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
 	        $response->img = img_object($langs->trans("Propals"),"propal");
 
             // This assignment in condition is not a bug. It allows walking the results.

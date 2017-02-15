@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
- * Copyright (C) 2016 		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
  */
 
 /**
- * \file htdocs/accountancy/class/accountancycategory.class.php
+ * \file	htdocs/accountancy/class/accountancycategory.class.php
  * \ingroup Advanced accountancy
- * \brief File of class to manage categories of an accounting category_type
+ * \brief	File of class to manage categories of an accounting category_type
  */
 
 // Class
@@ -72,7 +72,6 @@ class AccountancyCategory
 					$this->lines_display[] = $obj;
 				}
 			}
-
 			return $num;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
@@ -84,7 +83,7 @@ class AccountancyCategory
 	}
 
 	/**
-	 * Function to select accountiing category of an accounting account present in chart of accounts
+	 * Function to select accounting category of an accounting account present in chart of accounts
 	 *
 	 * @param int $id Id category
 	 *

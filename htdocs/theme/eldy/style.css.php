@@ -1425,7 +1425,7 @@ form#login {
 }
 .login_table_title {
 	max-width: 530px;
-	color: #888888;
+	color: #888888 !important;
 	text-shadow: 1px 1px 1px #FFF;
 }
 .login_table label {
@@ -1771,6 +1771,10 @@ td.photo {
 /* ============================================================================== */
 /* Toolbar for ECM or Filemanager                                                 */
 /* ============================================================================== */
+
+td.ecmroot {
+    padding-bottom: 0 !important;
+}
 
 .largebutton {
     background-image: -o-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
@@ -2779,6 +2783,9 @@ table.dataTable td {
 tr.even td, tr.pair td, tr.odd td, tr.impair td, form.odd div.tagtd, form.impair div.tagtd, form.pair div.tagtd, div.impair div.tagtd, div.pair div.tagtd, div.liste_titre div.tagtd {
     padding: 5px 2px 5px 3px;
     border-bottom: 1px solid #ddd;
+}
+form.pair, form.impair {
+	font-weight: normal;
 }
 form.tagtr:last-of-type div.tagtd, tr.even:last-of-type td, tr.pair:last-of-type td, tr.odd:last-of-type td, tr.impair:last-of-type td {
     border-bottom: 0px !important;
@@ -4540,19 +4547,6 @@ border-top-right-radius: 6px;
 }
 
 
-/* ============================================================================== */
-/*  Demo                                                                          */
-/* ============================================================================== */
-
-
-/* For demo pages */
-img.demothumb {
-    box-shadow: 2px 2px 8px #BBB;
-    margin-right: 20px;
-    margin-left: 10px;
-}
-
-
 
 /* ============================================================================== */
 /*  Public                                                                        */
@@ -4589,13 +4583,6 @@ img.demothumb {
 		position: absolute;
 		width: <?php print dol_size(350,'width'); ?>px;
 	}
-
-    img.demothumb {
-        box-shadow: 1px 1px 4px #BBB;
-        margin-right: 6px;
-        margin-left: 4px;
-        width: 80px;
-    }
 
     div.tabBar {
         padding-left: 0px;

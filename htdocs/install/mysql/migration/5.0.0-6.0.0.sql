@@ -49,3 +49,52 @@ ALTER TABLE llx_loan ADD COLUMN fk_projet integer DEFAULT NULL;
 
 ALTER TABLE llx_holiday ADD COLUMN fk_user_modif integer;
 
+ALTER TABLE llx_projet_task_time ADD COLUMN datec date;
+ALTER TABLE llx_projet_task_time ADD COLUMN tms timestamp;
+
+ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_creat integer;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_product_price_by_qty DROP COLUMN date_price;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN tms timestamp;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN import_key integer;
+
+
+
+CREATE TABLE llx_product_attribute
+(
+  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  ref VARCHAR(255) NOT NULL,
+  label VARCHAR(255) NOT NULL,
+  rang INT DEFAULT 0 NOT NULL,
+  entity INT DEFAULT 1 NOT NULL
+);
+ALTER TABLE llx_product_attribute ADD CONSTRAINT unique_ref UNIQUE (ref);
+
+CREATE TABLE llx_product_attribute_value
+(
+  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  fk_product_attribute INT NOT NULL,
+  ref VARCHAR(255) DEFAULT NULL,
+  value VARCHAR(255) DEFAULT NULL,
+  entity INT DEFAULT 1 NOT NULL
+);
+ALTER TABLE llx_product_attribute_value ADD CONSTRAINT unique_ref UNIQUE (fk_product_attribute,ref);
+
+CREATE TABLE llx_product_attribute_combination2val
+(
+  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  fk_prod_combination INT NOT NULL,
+  fk_prod_attr INT NOT NULL,
+  fk_prod_attr_val INT NOT NULL
+);
+CREATE TABLE llx_product_attribute_combination
+(
+  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  fk_product_parent INT NOT NULL,
+  fk_product_child INT NOT NULL,
+  variation_price FLOAT NOT NULL,
+  variation_price_percentage INT NULL,
+  variation_weight FLOAT NOT NULL,
+  entity INT DEFAULT 1 NOT NULL
+);
+

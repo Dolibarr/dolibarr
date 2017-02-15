@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Api Explorer</title>
-  <!-- <link href='https://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'/>
+  <!-- DOL_LDR_CHANGE <link href='https://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'/>
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">-->
   <link href='css/reset.css' media='screen' rel='stylesheet' type='text/css'/>
   <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
@@ -53,12 +53,15 @@
 
     $('#input_apiKey').change(function() {
       var key = $('#input_apiKey')[0].value;
-      log("key: " + key);
+
       if(key && key.trim() != "") {
+        /* DOL_LDR_CHANGE */
         log("added key " + key);
-        
+
+        /* Disabled for security reason. We keep only param in header
         window.authorizations.add("key", new ApiKeyAuthorization("DOLAPIKEY", key, "query"));
         console.log("param api_key added with value "+key);
+        */
         
         window.authorizations.add("key2", new ApiKeyAuthorization("DOLAPIKEY", key, "header"));
         console.log("header DOLAPIKEY added with value "+key);

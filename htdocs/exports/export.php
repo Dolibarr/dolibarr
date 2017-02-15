@@ -61,6 +61,8 @@ $entitytoicon = array(
     'other'        => 'generic',
 	'account'      => 'account',
 	'product'      => 'product',
+    'virtualproduct'=>'product',
+	'subproduct'   => 'product',
     'warehouse'    => 'stock',
     'batch'        => 'stock',
 	'category'     => 'category',
@@ -93,6 +95,8 @@ $entitytolang = array(
 	'account'      => 'BankTransactions',
 	'payment'      => 'Payment',
 	'product'      => 'Product',
+	'virtualproduct'  => 'AssociatedProducts',
+	'subproduct'      => 'SubProduct',
     'service'      => 'Service',
     'stock'        => 'Stock',
     'batch'        => 'Batch',
@@ -591,7 +595,7 @@ if ($step == 2 && $datatoexport)
         {
             // Selected fields
             print '<td>&nbsp;</td>';
-            print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left('default', 0, 'style="max-width: 20px"').'</a></td>';
+            print '<td align="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left('default', 0, 'style="max-width: 20px"').'</a></td>';
             print '<td>';
             //print $text.'-'.$htmltext."<br>";
             print $form->textwithpicto($text,$htmltext);
@@ -606,7 +610,7 @@ if ($step == 2 && $datatoexport)
 			print $form->textwithpicto($text,$htmltext);
 			//print ' ('.$code.')';
             print '</td>';
-            print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right('default', 0, 'style="max-width: 20px"').'</a></td>';
+            print '<td align="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right('default', 0, 'style="max-width: 20px"').'</a></td>';
             print '<td>&nbsp;</td>';
         }
 

@@ -24,31 +24,57 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 global $user, $db, $langs, $conf;
 
-$time = GETPOST('time');
+$time = (int) GETPOST('time');    // Use the time parameter that is always increased by time_update, even if call is late
 //$time=dol_now();
 
-session_start();
 
-$time_update = (empty($conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY)?'3':(int) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY);
+$eventfound = array();
+//Uncomment this to force a test
+//$eventfound[]=array('type'=>'agenda', 'id'=>1, 'tipo'=>'eee', 'location'=>'aaa');
 
-$eventos = array();
-//$eventos[]=array('type'=>'agenda', 'id'=>1, 'tipo'=>'eee', 'location'=>'aaa');
+//dol_syslog('time='.$time.' $_SESSION[auto_ck_events_not_before]='.$_SESSION['auto_check_events_not_before']);
 
-// TODO Remove test on session. Timer should be managed by a javascript timer
-if ($_SESSION['auto_check_events'] <= (int) $time) 
+// TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when several tabs are opened.
+if ($time >= $_SESSION['auto_check_events_not_before']) 
 {
-    $_SESSION['auto_check_events'] = $time + $time_update;
-
+    $time_update = (int) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY;   // Always defined
+    if (! empty($_SESSION['auto_check_events_not_before'])) 
+    {
+        // We start scan from the not before so if two tabs were opend at differents seconds and we close one (so the js timer),
+        // then we are not losing periods 
+        $starttime = $_SESSION['auto_check_events_not_before'];
+        // Protection to avoid too long sessions
+        if ($starttime < ($time - (int) $conf->global->MAIN_SESSION_TIMEOUT)) 
+        {
+            dol_syslog("We ask to check browser notification on a too large period. We fix this with current date.");
+            $starttime = $time;
+        }
+    }
+    else 
+    {
+        $starttime = $time;
+    }
+    
+    $_SESSION['auto_check_events_not_before'] = $time + $time_update;
+    
+    // Force save of session change we did. 
+    // WARNING: Any change in sessions after that will not be saved !
+    session_write_close();
+    
+    require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+	
+    
+    dol_syslog('NEW $_SESSION[auto_check_events_not_before]='.$_SESSION['auto_check_events_not_before']);
+    
     $sql = 'SELECT id';
     $sql .= ' FROM ' . MAIN_DB_PREFIX . 'actioncomm a, ' . MAIN_DB_PREFIX . 'actioncomm_resources ar';
     $sql .= ' WHERE a.id = ar.fk_actioncomm';
-    // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when.
-    // This need to extend period to be sure to not miss and save what we notified to avoid duplicate (save is not done yet).
-    $sql .= " AND datep BETWEEN '" . $db->idate($time + 1) . "' AND '" . $db->idate($time + $time_update) . "'";
+    // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when several tabs are opened.
+    // This need to extend period to be sure to not miss and save in session what we notified to avoid duplicate (save is not done yet).
+    $sql .= " AND datep BETWEEN '" . $db->idate($starttime) . "' AND '" . $db->idate($time + $time_update - 1) . "'";
     $sql .= ' AND a.code <> "AC_OTH_AUTO"';
     $sql .= ' AND ar.element_type = "user"';
     $sql .= ' AND ar.fk_element = ' . $user->id;
@@ -59,8 +85,10 @@ if ($_SESSION['auto_check_events'] <= (int) $time)
 
         $actionmod = new ActionComm($db);
 
-        while ($obj = $db->fetch_object($resql)) {
-
+        while ($obj = $db->fetch_object($resql)) 
+        {
+            $langs->load("agenda");
+            
             $actionmod->fetch($obj->id);
 
             $event = array();
@@ -68,13 +96,13 @@ if ($_SESSION['auto_check_events'] <= (int) $time)
             $event['id'] = $actionmod->id;
             $event['tipo'] = $langs->transnoentities('Action' . $actionmod->code);
             $event['titulo'] = $actionmod->label;
-            $event['location'] = $actionmod->location;
+            $event['location'] = $langs->transnoentities('Location').': '.$actionmod->location;
             
-            $eventos[] = $event;
+            $eventfound[] = $event;
         }
     }
 
 }
 
-print json_encode($eventos);
+print json_encode($eventfound);
 

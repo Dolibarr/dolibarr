@@ -35,20 +35,23 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HT
     // Define javascript type
     header('Content-type: text/javascript; charset=UTF-8');
 
+    $nowtime = time();
+    //$nowtimeprevious = floor($nowtime / 60) * 60;   // auto_check_events_not_before is rounded to previous minute
+
     // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when.
     session_cache_limiter(FALSE);
     header('Cache-Control: no-cache');
     session_start();
-    if (!isset($_SESSION['auto_check_events'])) {
-        // Round to eliminate the second part
-        $_SESSION['auto_check_events'] = floor(time() / 60) * 60;
-        print 'var time_session = ' . $_SESSION['auto_check_events'] . ';'."\n";
-        print 'var now = ' . $_SESSION['auto_check_events'] . ';' . "\n";
-    } else {
-        print 'var time_session = ' . $_SESSION['auto_check_events'] . ';' . "\n";
-        print 'var now = ' . time() . ';' . "\n";
+    if (! isset($_SESSION['auto_check_events_not_before'])) 
+    {
+        print 'console.log("_SESSION[auto_check_events_not_before] is not set");'."\n";
+        // Round to eliminate the seconds
+        $_SESSION['auto_check_events_not_before'] = $nowtime;   // auto_check_events_not_before is rounded to previous minute
     }
-    print 'var time_auto_update = '.(empty($conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY)?'3':(int) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY).';' . "\n";
+    print 'var nowtime = ' . $nowtime . ';' . "\n";
+    print 'var auto_check_events_not_before = '.$_SESSION['auto_check_events_not_before']. ';'."\n";
+    print 'var time_js_next_test = Math.max(nowtime, auto_check_events_not_before);'."\n";
+    print 'var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY;   // Always defined
     ?>
 	
 	/* Check if permission ok */
@@ -56,31 +59,27 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HT
         Notification.requestPermission()
     }
 
-    if (now > (time_session + time_auto_update) || now == time_session) {
-
-        first_execution(); //firts run auto check
-    } else {
-
-        var time_first_execution = (time_auto_update - (now - time_session)) * 1000;	//need milliseconds
-
-        setTimeout(first_execution, time_first_execution); //first run auto check
-    }
+	/* Launch timer */
+   	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
+    var time_first_execution = (time_auto_update - (nowtime - time_js_next_test)) * 1000;	//need milliseconds
+    console.log("Launch browser notif check: setTimeout to wait time_first_execution="+time_first_execution+" before first check - nowtime = "+nowtime+" auto_check_events_not_before = "+auto_check_events_not_before+" time_js_next_test = "+time_js_next_test+" time_auto_update="+time_auto_update);
+    setTimeout(first_execution, time_first_execution); //first run auto check
 
 
     function first_execution() {
-    	console.log("Call first_execution");
-        check_events();
-        setInterval(check_events, time_auto_update * 1000); //program time for run check events
+    	console.log("Call first_execution time_auto_update (MAIN_BROWSER_NOTIFICATION_FREQUENCY) = "+time_auto_update);
+        check_events();	//one check before launching timer to launch other checks
+        setInterval(check_events, time_auto_update * 1000); //program time to run next check events
     }
 
     function check_events() {
     	if (Notification.permission === "granted")
     	{
-    		console.log("Call check_events");
+    		console.log("Call check_events time_js_next_test="+time_js_next_test);
             $.ajax("<?php print dol_buildpath('/core/ajax/check_notifications.php', 1); ?>", {
                 type: "post",   // Usually post o get
                 async: true,
-                data: {time: time_session},
+                data: {time: time_js_next_test},
                 success: function (result) {
                     var arr = JSON.parse(result);
                     if (arr.length > 0) {
@@ -95,7 +94,7 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HT
                             var title="Not defined";
                             var body = value['tipo'] + ': ' + value['titulo'];
                             if (value['type'] == 'agenda' && value['location'] != null && value['location'] != '') {
-                                body += '\n <?php print $langs->transnoentities('Location')?>: ' + value['location'];
+                                body += '\n' + value['location'];
                             }
     
                             if (value['type'] == 'agenda')
@@ -132,7 +131,7 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HT
         	console.log("Cancel check_events. Useless because Notification.permission is "+Notification.permission);
         }
 
-        time_session += time_auto_update;
+        time_js_next_test += time_auto_update;
     }
 <?php 
 }

@@ -993,9 +993,10 @@ function top_httphead()
  * @param 	array  	$arrayofjs		Array of complementary js files
  * @param 	array  	$arrayofcss		Array of complementary css files
  * @param 	int    	$disablejmobile	Disable jmobile
+ * @param   int     $disablenofollow Disable no follow tag
  * @return	void
  */
-function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $disablejmobile=0)
+function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $disablejmobile=0, $disablenofollow=0)
 {
     global $user, $conf, $langs, $db;
 
@@ -1017,13 +1018,13 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         print "<head>\n";
 		if (GETPOST('dol_basehref')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref')).'">'."\n";
         // Displays meta
-        print '<meta name="robots" content="noindex,nofollow">'."\n";      				// Do not index
+        print '<meta name="robots" content="noindex'.($disablenofollow?'':',nofollow').'">'."\n";      				// Do not index
         print '<meta name="viewport" content="width=device-width, initial-scale=1.0">';	// Scale for mobile device
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
 		$favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
         if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
         print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";
-        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser')) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
+        //if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser')) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
         if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser')) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
         if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser')) print '<link rel="author" title="Dolibarr Development Team" href="https://www.dolibarr.org">'."\n";
 
@@ -1306,7 +1307,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             
             // Browser notifications
             $enablebrowsernotif=false;
-            if (! empty($conf->agenda->enabled) && ! empty($conf->global->AGENDA_NOTIFICATION) && ! empty($conf->global->AGENDA_NOTIFICATION_SOUND)) $enablebrowsernotif=true;
+            if (! empty($conf->agenda->enabled) && ! empty($conf->global->AGENDA_NOTIFICATION)) $enablebrowsernotif=true;
             if ($enablebrowsernotif)
             {
                 print '<!-- Includes JS of Dolibarr -->'."\n";
@@ -1401,15 +1402,15 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     /*
      * Top menu
      */
-    print "\n".'<!-- Start top horizontal -->'."\n";
-
-    if (empty($conf->dol_hide_topmenu))
+    if (empty($conf->dol_hide_topmenu) && (! defined('NOREQUIREMENU') || ! constant('NOREQUIREMENU')))
     {
-    	print '<div class="side-nav-vert"><div id="id-top">';
+        print "\n".'<!-- Start top horizontal -->'."\n";
+        
+        print '<div class="side-nav-vert"><div id="id-top">';
 
 	    // Show menu entries
     	print '<div id="tmenu_tooltip'.(empty($conf->global->MAIN_MENU_INVERT)?'':'invert').'" class="tmenu">'."\n";
-	    $menumanager->atarget=$target;
+    	$menumanager->atarget=$target;
 	    $menumanager->showmenu('top', array('searchform'=>$searchform, 'bookmarks'=>$bookmarks));      // This contains a \n
 	    print "</div>\n";
 
@@ -1538,12 +1539,12 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		print '</div></div>';
 
 	    //unset($form);
+	
+		print '<div style="clear: both;"></div>';
+        print "<!-- End top horizontal menu -->\n\n";
     }
 
-	print '<div style="clear: both;"></div>';
-    print "<!-- End top horizontal menu -->\n\n";
-
-    if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '<div id="id-container">';
+    if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '<div id="id-container" class="id-container'.($morecss?' '.$morecss:'').'">';
 }
 
 
@@ -1571,7 +1572,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 
     if (! empty($menu_array_before)) dol_syslog("Deprecated parameter menu_array_before was used when calling main::left_menu function. Menu entries of module should now be defined into module descriptor and not provided when calling left_menu.", LOG_WARNING);
 
-    if (empty($conf->dol_hide_leftmenu))
+    if (empty($conf->dol_hide_leftmenu) && (! defined('NOREQUIREMENU') || ! constant('NOREQUIREMENU')))
     {
 	    // Instantiate hooks of thirdparty module
 	    $hookmanager->initHooks(array('searchform','leftblock'));
