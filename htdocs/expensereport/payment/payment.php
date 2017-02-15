@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("bills");
+$langs->load("banks");
 
 $chid=GETPOST("id");
 $action=GETPOST('action');
@@ -62,22 +63,22 @@ if ($action == 'add_payment')
 
 	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
-	if (! $_POST["fk_typepayment"] > 0)
+	if (! ($_POST["fk_typepayment"] > 0))
 	{
-		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
+		setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode")), null, 'errors');
 		$error++;
 	}
 	if ($datepaid == '')
 	{
-		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Date"));
+		setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
-    if (! empty($conf->banque->enabled) && ! $accountid > 0)
+    if (! empty($conf->banque->enabled) && ! ($accountid > 0))
     {
-        $mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToCredit"));
+        setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToDebit")), null, 'errors');
         $error++;
     }
-
+    
 	if (! $error)
 	{
 		$paymentid = 0;
@@ -163,18 +164,12 @@ $form=new Form($db);
 // Form to create expense report payment
 if (GETPOST("action") == 'create')
 {
-
 	$expensereport = new ExpenseReport($db);
 	$expensereport->fetch($chid);
 
 	$total = $expensereport->total_ttc;
 
 	print load_fiche_titre($langs->trans("DoPayment"));
-
-	if ($mesg)
-	{
-		print "<div class=\"error\">$mesg</div>";
-	}
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -222,12 +217,15 @@ if (GETPOST("action") == 'create')
 	print "</td>\n";
 	print '</tr>';
 
-	print '<tr>';
-	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
-	print '<td colspan="2">';
-	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$expensereport->accountid, "accountid", 0, '',1);  // Show open bank account list
-	print '</td></tr>';
-
+	if (! empty($conf->banque->enabled))
+	{
+    	print '<tr>';
+    	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
+    	print '<td colspan="2">';
+    	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$expensereport->accountid, "accountid", 0, '',1);  // Show open bank account list
+    	print '</td></tr>';
+	}
+	
 	// Number
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
@@ -243,9 +241,7 @@ if (GETPOST("action") == 'create')
 
     dol_fiche_end();
 
-	/*
- 	 * Autres charges impayees
-	 */
+	// List of expenses ereport not already paid completely
 	$num = 1;
 	$i = 0;
 

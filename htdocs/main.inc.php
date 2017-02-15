@@ -1700,8 +1700,10 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 	    else $appli.=" ".DOL_VERSION;
 	    print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
 	    if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
+	    else print '<span class="help">';
 	    print $appli;
 	    if ($doliurl) print '</a>';
+	    else print '</span>';
 	    print '</div>'."\n";
 
 		// Link to bugtrack
