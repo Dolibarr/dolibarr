@@ -2488,7 +2488,7 @@ class Facture extends CommonInvoice
 				{
 					$product_type = $product->type;
 
-					if (!empty($conf->dynamicprices->enabled))
+					if (!empty($conf->dynamicprices->enabled) && empty($origin) && empty($origin_id))
 					{
 						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
