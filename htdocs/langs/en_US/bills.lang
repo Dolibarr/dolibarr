@@ -78,6 +78,7 @@ PaymentMode=Payment type
 PaymentTypeDC=Debit/Credit Card
 PaymentTypePP=PayPal
 IdPaymentMode=Payment type (id)
+CodePaymentMode=Payment type (code)
 LabelPaymentMode=Payment type (label)
 PaymentModeShort=Payment type
 PaymentTerm=Payment term
