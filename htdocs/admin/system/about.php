@@ -26,13 +26,34 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 $langs->load("admin");
 $langs->load("help");
 $langs->load("members");
+$langs->load("other");
 
 $youuselaststable = 0;
+
+$action=GETPOST('action','alpha');
+
+if (! $user->admin) accessforbidden();
+
+$sfurl = '';
+$version='0.0';
+
+
+/*
+ *	Actions
+ */
+
+if ($action == 'getlastversion')
+{
+    $result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
+    //var_dump($result['content']);
+    $sfurl = simplexml_load_string($result['content']);
+}
 
 
 /*
@@ -50,51 +71,49 @@ print '<div style="padding-left: 30px;">'.img_picto_common('', 'dolibarr_box.png
 
 print '<div class="fichecenter"><div class="fichehalfleft">';
 
-print $langs->trans("Version").' / '.$langs->trans("DolibarrLicense").':';
-print '<ul>';
-print '<li><strong>'.DOL_VERSION.'</strong>';
+print $langs->trans("CurrentVersion").' : <strong>'.DOL_VERSION.'</strong><br>';
 
-$result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
-//var_dump($result['content']);
-$sfurl = simplexml_load_string($result['content']);
-if ($sfurl)
+if (function_exists('curl_init'))
 {
-    $i=0;
-    $version='0.0';
-    while (! empty($sfurl->channel[0]->item[$i]->title) && $i < 10000)
+    $conf->global->MAIN_USE_RESPONSE_TIMEOUT = 10;
+    
+    if ($action == 'getlastversion')
     {
-        $title=$sfurl->channel[0]->item[$i]->title;
-        if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
+        if ($sfurl)
         {
-            $newversion=$reg[1];
-            $newversionarray=explode('.',$newversion);
-            $versionarray=explode('.',$version);
-            //var_dump($newversionarray);var_dump($versionarray);
-            if (versioncompare($newversionarray, $versionarray) > 0) $version=$newversion;
+                    while (! empty($sfurl->channel[0]->item[$i]->title) && $i < 10000)
+            {
+                $title=$sfurl->channel[0]->item[$i]->title;
+                if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
+                {
+                    $newversion=$reg[1];
+                    $newversionarray=explode('.',$newversion);
+                    $versionarray=explode('.',$version);
+                    //var_dump($newversionarray);var_dump($versionarray);
+                    if (versioncompare($newversionarray, $versionarray) > 0) $version=$newversion;
+                }
+                $i++;
+            }
+            
+            // Show version
+        	print $langs->trans("LastStableVersion").' : <b>'. (($version != '0.0')?$version:$langs->trans("Unknown")) .'</b><br>';
         }
-        $i++;
+        else
+        {
+            print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b><br>';
+        }
     }
-
-    // Show version
-    if ($version != '0.0') 
+    else
     {
-        print ' ('.$langs->trans("LastStableVersion").': <b>'.$version.'</b>';
-    	if (DOL_VERSION == $version)
-    	{
-    	    $youuselaststable=1;
-            print $langs->trans("YouUseLastStableVersion");  
-    	}
-    	print ')';
+        print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="button">' .$langs->trans("Check").'</a><br>';
     }
 }
-else
-{
-    print ' ('.$langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b>)<br>';
-}
-print ' / <a href="http://www.gnu.org/copyleft/gpl.html">GNU-GPL v3+</a></li>';
+print '<br>';
 
-
-print '</ul>';
+print $langs->trans("DolibarrLicense").' : ';
+print '<ul><li>';
+print '<a href="http://www.gnu.org/copyleft/gpl.html">GNU-GPL v3+</a></li>';
+print '</li></ul>';
 
 //print "<br>\n";
 
