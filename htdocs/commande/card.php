@@ -49,6 +49,7 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
+    
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 
 if (!empty($conf->variants->enabled)) {
@@ -65,6 +66,7 @@ $langs->load('sendings');
 $langs->load('products');
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled)) $langs->load('margins');
+if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('orderid', 'int'));
 $ref = GETPOST('ref', 'alpha');
