@@ -432,7 +432,7 @@ class ProductFournisseur extends Product
                 if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression))
                 {
                     $priceparser = new PriceParser($this->db);
-                    $price_result = $priceparser->parseProductSupplier($this->fk_product, $this->fk_supplier_price_expression, $this->fourn_qty, $this->fourn_tva_tx);
+                    $price_result = $priceparser->parseProductSupplier($this);
                     if ($price_result >= 0) {
                     	$this->fourn_price = $price_result;
                     	//recalculation of unitprice, as probably the price changed...
