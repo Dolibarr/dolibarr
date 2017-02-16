@@ -546,6 +546,12 @@ div.myavailability {
 .selectlimit, .marginrightonly {
 	margin-right: 10px !important;
 }
+.selectlimit, .selectlimit:focus {
+    border-left: none !important;
+    border-top: none !important;
+    border-right: none !important;
+    outline: none;
+}
 .strikefordisabled {
 	text-decoration: line-through;
 }
@@ -2751,7 +2757,7 @@ tr.liste_titre_topborder td {
 .liste_titre td a.notasortlink:hover {
 	background: transparent;
 }
-tr.liste_titre td.liste_titre {		/* For last line of table headers only */
+tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel {		/* For last line of table headers only */
     border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
