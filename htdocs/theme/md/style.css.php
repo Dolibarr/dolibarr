@@ -1475,7 +1475,7 @@ form#login {
 }
 .login_main_message {
 	text-align: center;
-	max-width: 560px;
+	max-width: 570px;
 	margin-bottom: 10px;
 }
 .login_main_message .error {
