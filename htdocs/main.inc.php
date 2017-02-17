@@ -1926,7 +1926,16 @@ if (! function_exists("llxFooter"))
     		print '<script type="text/javascript">
             	jQuery(document).ready(function () {
             		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(($conf->browser->layout == 'phone' ? 400 : 700),'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
-            	});
+            		jQuery(".classfortooltiponclicktext").dialog({ width: 500, autoOpen: false });
+            		jQuery(".classfortooltiponclick").click(function () {
+            		    console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
+            		    if ($(this).attr(\'dolid\'))
+            		    {
+                            obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));
+            		        obj.dialog("open");
+            		    }
+            		});
+                });
             </script>' . "\n";
         }
         
