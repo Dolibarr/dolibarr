@@ -329,7 +329,7 @@ class FormMail extends Form
         	    $out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
 	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	        	$out.= ' &nbsp; ';
-	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" id="modelselected">';
+	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Select').'" name="modelselected" id="modelselected">';
 	        	$out.= ' &nbsp; ';
 	        	$out.= '</div>';
         	}
@@ -343,7 +343,7 @@ class FormMail extends Form
         	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put disabled on option, it is already on select and it makes chrome crazy.
         	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         	    $out.= ' &nbsp; ';
-        	    $out.= '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" disabled="disabled" id="modelselected">';
+        	    $out.= '<input class="button" type="submit" value="'.$langs->trans('Select').'" name="modelselected" disabled="disabled" id="modelselected">';
         	    $out.= ' &nbsp; ';
         	    $out.= '</div>';
         	}
