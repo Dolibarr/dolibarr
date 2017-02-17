@@ -51,7 +51,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->db = $db;
 		$this->name = "blochet";
 
-		$this->tab_top = 78;
+		$this->tab_top = 93;
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -70,8 +70,8 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
         // Defini position des colonnes
         $this->line_height = 5;
-		$this->line_per_page = 40;
-		$this->tab_height = 200;	//$this->line_height * $this->line_per_page;
+		$this->line_per_page = 35;
+		$this->tab_height = 175;	//$this->line_height * $this->line_per_page;
 	}
 
 	/**
@@ -244,27 +244,40 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->SetFont('','', $default_font_size);
         $pdf->SetXY(10,32);
         $pdf->MultiCell(19,2,$outputlangs->transnoentities("Account"),0,'L');
-		$pdf->SetFont('','', $default_font_size);
-        $pdf->SetXY(10,50);
-        $pdf->MultiCell(19,2,$outputlangs->transnoentities("Adresse pour courrier"),0,'L');
         pdf_bank($pdf,$outputlangs,32,32,$this->account,1);
 
+
 		$pdf->SetFont('','', $default_font_size);
-        $pdf->SetXY(114,15);
+        $pdf->SetXY(102,15);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("Signature"), 0, 'L');
 
-        $pdf->Rect(9, 14, 192, 53);
-        $pdf->line(9, 19, 112, 19);
-        $pdf->line(9, 25, 112, 25);
-        //$pdf->line(9, 31, 201, 31);
-        $pdf->line(9, 31, 112, 31);
-        $pdf->line(9, 49, 112, 49);
+		$pdf->SetFont('','', $default_font_size);
+        $pdf->SetXY(102,44);
+        $pdf->MultiCell(96,2,$outputlangs->transnoentities("Address"),0,'L');
 
-        $pdf->line(30, 14, 30, 67);
-        $pdf->line(112, 14, 112, 67);
+		$pdf->SetFont('','B',$default_font_size + 1);
+		$pdf->SetXY(102, 52);
+		$pdf->MultiCell(100, 6, $this->account->bank, 0, 'L', 0);
+
+		$pdf->SetFont('','',$default_font_size + 1);
+		$pdf->SetXY(102, 59);
+		$pdf->MultiCell(100, 6, $this->account->domiciliation, 0, 'L', 0);
+        
+
+        $pdf->Rect(9, 14, 192, 68);
+        $pdf->line(9, 19, 100, 19);
+        $pdf->line(9, 25, 100, 25);
+        //$pdf->line(9, 31, 201, 31);
+        $pdf->line(9, 31, 100, 31);
+
+        
+        $pdf->line(100, 42, 201, 42);
+
+        $pdf->line(30, 14, 30, 82);
+        $pdf->line(100, 14, 100, 82);
 
 		// Number of cheques
-		$posy=69;
+		$posy=84;
 		$pdf->Rect(9, $posy, 192, 6);
 		$pdf->line(55, $posy, 55, $posy+6);
 		$pdf->line(140, $posy, 140, $posy+6);
