@@ -1136,13 +1136,8 @@ class Propal extends CommonObject
         }
 
         $clonedObj->id=0;
+        $clonedObj->ref='';
         $clonedObj->statut=self::STATUS_DRAFT;
-
-        if (empty($conf->global->PROPALE_ADDON) || ! is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
-        {
-            $this->error='ErrorSetupNotComplete';
-            return -1;
-        }
 
         // Clear fields
         $clonedObj->user_author	= $user->id;
@@ -1151,12 +1146,6 @@ class Propal extends CommonObject
         $clonedObj->datep		= $now;    // deprecated
         $clonedObj->fin_validite	= $clonedObj->date + ($clonedObj->duree_validite * 24 * 3600);
         if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $clonedObj->ref_client	= '';
-
-        // Set ref
-        require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.'.php';
-        $obj = $conf->global->PROPALE_ADDON;
-        $modPropale = new $obj;
-        $clonedObj->ref = $modPropale->getNextValue($objsoc,$clonedObj);
 
         // Create clone
         
