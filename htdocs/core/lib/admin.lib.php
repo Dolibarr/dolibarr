@@ -763,6 +763,11 @@ function activateModule($value,$withdeps=1)
 		return $ret;
 	}
 
+	$const_name = $objMod->const_name;
+	if(!empty($conf->global->$const_name)){
+        return $ret;
+    }
+
     $result=$objMod->init();
     if ($result <= 0) 
     {
@@ -784,7 +789,13 @@ function activateModule($value,$withdeps=1)
                 		if (file_exists($dir.$objMod->depends[$i].".class.php"))
                 		{
                 			$resarray = activateModule($objMod->depends[$i]);
-    						if (empty($resarray['errors'])) $activate = true;
+    						if (empty($resarray['errors'])){
+    						    $activate = true;
+                            }else{
+    						    foreach ($resarray['errors'] as $errorMessage){
+                                    dol_syslog($errorMessage, LOG_ERR);
+                                }
+                            }
     						break;
                 		}
                 	}
