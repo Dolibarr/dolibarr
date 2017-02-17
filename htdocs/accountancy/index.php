@@ -114,14 +114,14 @@ if (! empty($conf->expensereport->enabled))  // TODO Move this in the default ac
     print "<br>\n";
     print "<br>\n";
 }
-if (! empty($conf->loan->enabled))  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
+/*
+if (! empty($conf->loan->enabled))
 {
     $step++;
     print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescLoan", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuSpecialExpenses").'-'.$langs->transnoentitiesnoconv("Loans").'</strong> '.$langs->transnoentitiesnoconv("or").' <strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
     print "<br>\n";
     print "<br>\n";
 }
-/*
 if (! empty($conf->don->enabled))
 {
     $step++;

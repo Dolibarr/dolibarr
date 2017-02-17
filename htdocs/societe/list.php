@@ -904,8 +904,12 @@ while ($i < min($num, $limit))
 	$companystatic->fournisseur=$obj->fournisseur;
 	$companystatic->code_client=$obj->code_client;
 	$companystatic->code_fournisseur=$obj->code_fournisseur;
-    $companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
-    $companystatic->name_alias=$obj->name_alias;
+
+	$companystatic->code_compta_client=$obj->code_compta;
+	$companystatic->code_compta_fournisseur=$obj->code_compta_fournisseur;
+
+    	$companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
+    	$companystatic->name_alias=$obj->name_alias;
 
 	print "<tr ".$bc[$var].">";
 	if (! empty($arrayfields['s.nom']['checked']))

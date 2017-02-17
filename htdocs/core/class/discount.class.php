@@ -374,20 +374,21 @@ class DiscountAbsolute
 
 
     /**
-     *  Return amount (with tax) of all credit notes and deposits invoices used by invoice
+     *  Return amount (with tax) of all deposits invoices used by invoice as a payment.
+     *  Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
      *
      *	@param		Facture		$invoice		Object invoice
-	 *	@param		int			$multicurrency	Return multicurrency_amount instead of amount
+	 *  @param 		int 		$multicurrency 	Return multicurrency_amount instead of amount
      *	@return		int							<0 if KO, Sum of credit notes and deposits amount otherwise
      */
-    function getSumCreditNotesUsed($invoice, $multicurrency=0)
+    function getSumDepositsUsed($invoice, $multicurrency=0)
     {
         $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
         $sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
-        $sql.= ' AND f.type = 2';
+        $sql.= ' AND f.type = 3';
 
-        dol_syslog(get_class($this)."::getSumCreditNotesUsed", LOG_DEBUG);
+        dol_syslog(get_class($this)."::getSumDepositsUsed", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -402,20 +403,20 @@ class DiscountAbsolute
     }
 
     /**
-     *  Return amount (with tax) of all deposits invoices used by invoice
+     *  Return amount (with tax) of all credit notes and deposits invoices used by invoice as a payment
      *
      *	@param		Facture		$invoice		Object invoice
-	 *  @param 		int 		$multicurrency 	Return multicurrency_amount instead of amount
+	 *	@param		int			$multicurrency	Return multicurrency_amount instead of amount
      *	@return		int							<0 if KO, Sum of credit notes and deposits amount otherwise
      */
-    function getSumDepositsUsed($invoice, $multicurrency=0)
+    function getSumCreditNotesUsed($invoice, $multicurrency=0)
     {
         $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
         $sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
-        $sql.= ' AND f.type = 3';
+        $sql.= ' AND f.type = 2';
 
-        dol_syslog(get_class($this)."::getSumDepositsUsed", LOG_DEBUG);
+        dol_syslog(get_class($this)."::getSumCreditNotesUsed", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

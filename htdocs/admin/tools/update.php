@@ -69,7 +69,9 @@ llxHeader('',$langs->trans("Upgrade"),$wikihelp);
 
 print load_fiche_titre($langs->trans("Upgrade"),'','title_setup');
 
-print $langs->trans("CurrentVersion").' : <b>'.DOL_VERSION.'</b><br>';
+print '<br>';
+
+print $langs->trans("CurrentVersion").' : <strong>'.DOL_VERSION.'</strong><br>';
 
 if (function_exists('curl_init'))
 {
