@@ -803,7 +803,7 @@ class FormFile
     	{
     	    $out='<dl class="dropdown inline-block">
     			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight').'</a></dt>
-    			<dd><div class="multichoicedoc"><ul class="ulselectedfields" style="display: none;">';
+    			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields" style="display: none;">';
     	    $tmpout='';
 
     		// Loop on each file found
