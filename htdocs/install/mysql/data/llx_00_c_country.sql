@@ -254,7 +254,7 @@ INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (22
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (224,'TV','TUV','Tuvalu',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (225,'UG','UGA','Ouganda',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (226,'UA','UKR','Ukraine',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (227,'AE','ARE','Émirats arabes unis',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (227,'AE','ARE','United Arab Emirates',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (228,'UM','UMI','Iles mineures éloignées des États-Unis',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (229,'UY','URY','Uruguay',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (230,'UZ','UZB','Ouzbékistan',1,0);
