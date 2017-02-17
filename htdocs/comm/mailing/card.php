@@ -909,7 +909,6 @@ else
 
 			print '</table>';
 
-			print "</div>";
 
 
 			// Clone confirmation
@@ -924,6 +923,94 @@ else
 				// Paiement incomplet. On demande si motif = escompte ou autre
 				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneEMailing'),$langs->trans('ConfirmCloneEMailing',$object->ref),'confirm_clone',$formquestion,'yes',2,240);
 			}
+
+
+			// Affichage formulaire de TEST
+			if ($action == 'test')
+			{
+				print load_fiche_titre($langs->trans("TestMailing"));
+
+				// Create l'objet formulaire mail
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				$formmail = new FormMail($db);
+				$formmail->fromname = $object->email_from;
+				$formmail->frommail = $object->email_from;
+				$formmail->withsubstit=1;
+				$formmail->withfrom=0;
+				$formmail->withto=$user->email?$user->email:1;
+				$formmail->withtocc=0;
+				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+				$formmail->withtopic=0;
+				$formmail->withtopicreadonly=1;
+				$formmail->withfile=0;
+				$formmail->withbody=0;
+				$formmail->withbodyreadonly=1;
+				$formmail->withcancel=1;
+				$formmail->withdeliveryreceipt=0;
+				// Tableau des substitutions
+				$formmail->substit=$object->substitutionarrayfortest;
+				// Tableau des parametres complementaires du post
+				$formmail->param["action"]="send";
+				$formmail->param["models"]="body";
+				$formmail->param["mailid"]=$object->id;
+				$formmail->param["returnurl"]=$_SERVER['PHP_SELF']."?id=".$object->id;
+
+				print $formmail->get_form();
+
+				print '<br>';
+			}
+
+
+			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
+			foreach($object->substitutionarray as $key => $val)
+			{
+				$htmltext.=$key.' = '.$langs->trans($val).'<br>';
+			}
+			$htmltext.='</i>';
+			
+			print '<table class="border" width="100%">';
+
+			// Subject
+			print '<tr><td class="titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
+
+			// Joined files
+			print '<tr><td>'.$langs->trans("MailFile").'</td><td colspan="3">';
+			// List of files
+			$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
+			if (count($listofpaths))
+			{
+				foreach($listofpaths as $key => $val)
+				{
+					print img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
+					print '<br>';
+				}
+			}
+			else
+			{
+				print $langs->trans("NoAttachedFiles").'<br>';
+			}
+			print '</td></tr>';
+
+            // Background color
+            /*print '<tr><td width="15%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
+            print $htmlother->selectColor($object->bgcolor,'bgcolor','edit_mailing',0);
+            print '</td></tr>';*/
+			
+			print '</table>';
+			
+		    // Message
+			print '<div style="padding-top: 10px" bgcolor="'.($object->bgcolor?(preg_match('/^#/',$object->bgcolor)?'':'#').$object->bgcolor:'white').'">';
+			if (empty($object->bgcolor) || strtolower($object->bgcolor) == 'ffffff')
+			{
+				$readonly=1;
+				// Editeur wysiwyg
+				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+				$doleditor=new DolEditor('body',$object->body,'',600,'dolibarr_mailings','',false,true,empty($conf->global->FCKEDITOR_ENABLE_MAILING)?0:1,20,120,$readonly);
+				$doleditor->Create();
+			}
+			else print dol_htmlentitiesbr($object->body);
+			print $htmltext;
+			print '</div>';
 
 			/*
 			 * Boutons d'action
@@ -1014,98 +1101,8 @@ else
 				print '</div>';
 			}
 
-			// Affichage formulaire de TEST
-			if ($action == 'test')
-			{
-				print load_fiche_titre($langs->trans("TestMailing"));
-
-				// Create l'objet formulaire mail
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail = new FormMail($db);
-				$formmail->fromname = $object->email_from;
-				$formmail->frommail = $object->email_from;
-				$formmail->withsubstit=1;
-				$formmail->withfrom=0;
-				$formmail->withto=$user->email?$user->email:1;
-				$formmail->withtocc=0;
-				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-				$formmail->withtopic=0;
-				$formmail->withtopicreadonly=1;
-				$formmail->withfile=0;
-				$formmail->withbody=0;
-				$formmail->withbodyreadonly=1;
-				$formmail->withcancel=1;
-				$formmail->withdeliveryreceipt=0;
-				// Tableau des substitutions
-				$formmail->substit=$object->substitutionarrayfortest;
-				// Tableau des parametres complementaires du post
-				$formmail->param["action"]="send";
-				$formmail->param["models"]="body";
-				$formmail->param["mailid"]=$object->id;
-				$formmail->param["returnurl"]=$_SERVER['PHP_SELF']."?id=".$object->id;
-
-				print $formmail->get_form();
-
-				print '<br>';
-			}
-
-
-			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
-			foreach($object->substitutionarray as $key => $val)
-			{
-				$htmltext.=$key.' = '.$langs->trans($val).'<br>';
-			}
-			$htmltext.='</i>';
 			
-			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), "", 'title_generic');
 			
-			dol_fiche_head('');
-			
-			print '<table class="border" width="100%">';
-
-			// Subject
-			print '<tr><td class="titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
-
-			// Joined files
-			print '<tr><td>'.$langs->trans("MailFile").'</td><td colspan="3">';
-			// List of files
-			$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
-			if (count($listofpaths))
-			{
-				foreach($listofpaths as $key => $val)
-				{
-					print img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
-					print '<br>';
-				}
-			}
-			else
-			{
-				print $langs->trans("NoAttachedFiles").'<br>';
-			}
-			print '</td></tr>';
-
-            // Background color
-            /*print '<tr><td width="15%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
-            print $htmlother->selectColor($object->bgcolor,'bgcolor','edit_mailing',0);
-            print '</td></tr>';*/
-			
-			print '</table>';
-			
-		    // Message
-			print '<div style="padding-top: 10px" bgcolor="'.($object->bgcolor?(preg_match('/^#/',$object->bgcolor)?'':'#').$object->bgcolor:'white').'">';
-			if (empty($object->bgcolor) || strtolower($object->bgcolor) == 'ffffff')
-			{
-				$readonly=1;
-				// Editeur wysiwyg
-				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor=new DolEditor('body',$object->body,'',600,'dolibarr_mailings','',false,true,empty($conf->global->FCKEDITOR_ENABLE_MAILING)?0:1,20,120,$readonly);
-				$doleditor->Create();
-			}
-			else print dol_htmlentitiesbr($object->body);
-			print $htmltext;
-			print '</div>';
-
 			dol_fiche_end();
 			
 		}
