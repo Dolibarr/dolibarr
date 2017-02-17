@@ -659,6 +659,7 @@ while ($i < min($num,$limit))
 	$contactstatic->id=$obj->cidp;
 	$contactstatic->statut=$obj->statut;
 	$contactstatic->poste=$obj->poste;
+	$contactstatic->email=$obj->email;
 	$contactstatic->phone_pro=$obj->phone_pro;
 	$contactstatic->phone_perso=$obj->phone_perso;
 	$contactstatic->phone_mobile=$obj->phone_mobile;
