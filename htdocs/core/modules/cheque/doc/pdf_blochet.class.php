@@ -51,7 +51,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->db = $db;
 		$this->name = "blochet";
 
-		$this->tab_top = 60;
+		$this->tab_top = 78;
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -243,24 +243,28 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$pdf->SetFont('','', $default_font_size);
         $pdf->SetXY(10,32);
-        $pdf->MultiCell(0,2,$outputlangs->transnoentities("Account"),0,'L');
+        $pdf->MultiCell(19,2,$outputlangs->transnoentities("Account"),0,'L');
+		$pdf->SetFont('','', $default_font_size);
+        $pdf->SetXY(10,50);
+        $pdf->MultiCell(19,2,$outputlangs->transnoentities("Adresse pour courrier"),0,'L');
         pdf_bank($pdf,$outputlangs,32,32,$this->account,1);
 
 		$pdf->SetFont('','', $default_font_size);
         $pdf->SetXY(114,15);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("Signature"), 0, 'L');
 
-        $pdf->Rect(9, 14, 192, 35);
+        $pdf->Rect(9, 14, 192, 53);
         $pdf->line(9, 19, 112, 19);
         $pdf->line(9, 25, 112, 25);
         //$pdf->line(9, 31, 201, 31);
         $pdf->line(9, 31, 112, 31);
+        $pdf->line(9, 49, 112, 49);
 
-        $pdf->line(30, 14, 30, 49);
-        $pdf->line(112, 14, 112, 49);
+        $pdf->line(30, 14, 30, 67);
+        $pdf->line(112, 14, 112, 67);
 
 		// Number of cheques
-		$posy=51;
+		$posy=69;
 		$pdf->Rect(9, $posy, 192, 6);
 		$pdf->line(55, $posy, 55, $posy+6);
 		$pdf->line(140, $posy, 140, $posy+6);

@@ -793,6 +793,23 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$pdf->SetFont('','B',$default_font_size - 3);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
+		$cury+=5; // Hauteur de la cell + 2 de marges pour passer à la rubrique "Adresse pour courrier"
+	}
+
+	if (! empty($account->bank))
+	{
+		$pdf->SetFont('','B',$default_font_size - 3);
+		$pdf->SetXY($curx, $cury);
+		$pdf->MultiCell(100, 3, $account->bank, 0, 'L', 0);
+		$cury+=3;
+	}
+
+	if (! empty($account->domiciliation))
+	{
+		$pdf->SetFont('','',$default_font_size - 3);
+		$pdf->SetXY($curx, $cury);
+		$pdf->MultiCell(100, 3, $account->domiciliation, 0, 'L', 0);
+		$cury+=12;
 	}
 
 	return $pdf->getY();
