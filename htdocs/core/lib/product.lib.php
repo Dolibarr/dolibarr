@@ -102,10 +102,13 @@ function product_prepare_head($object)
 
 		$prodcomb = new ProductCombination($db);
 
-		if ($prodcomb->fetchByFkProductChild($object->id) == -1) {
+		if ($prodcomb->fetchByFkProductChild($object->id) == -1) 
+		{
 			$head[$h][0] = DOL_URL_ROOT."/variants/combinations.php?id=".$object->id;
 			$head[$h][1] = $langs->trans('ProductCombinations');
 			$head[$h][2] = 'combinations';
+			$nbVariant = $prodcomb->countNbOfCombinationForFkProductParent($object->id);
+            if ($nbVariant > 0) $head[$h][1].= ' <span class="badge">'.$nbVariant.'</span>';
 		}
 
 		$h++;

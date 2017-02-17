@@ -203,7 +203,7 @@ if ($action == 'valide')
 $linkback = '<a href="' . DOL_URL_ROOT . '/compta/paiement/list.php">' . $langs->trans("BackToList") . '</a>';
 
 
-print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+print '<table class="border centpercent">'."\n";
 
 // Ref
 print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td><td colspan="3">';

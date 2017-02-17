@@ -1,26 +1,26 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
-* Copyright (C) 2014 	   Florian Henry		<florian.henry@open-concept.pro>
-* Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
-* Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
-* Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
-* Copyright (C) 2016      Laurent Destailleur 	<eldy@users.sourceforge.net>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*
-*/
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2014 	   Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
+ * Copyright (C) 2016      Laurent Destailleur 	<eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 /**
  * \file		htdocs/accountancy/admin/journal.php
@@ -121,7 +121,7 @@ dol_fiche_head($head, 'journal', $langs->trans("Configuration"), 0, 'cron');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">' . $langs->trans('Journaux') . '</td>';
+print '<td colspan="2">' . $langs->trans('Journaux') . '</td>';
 print "</tr>\n";
 
 foreach ( $list as $key ) {
@@ -145,11 +145,11 @@ print '<br>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">' . $langs->trans('JournalFinancial') . ' ('.$langs->trans('Opened').')</td>';
+print '<td colspan="2">' . $langs->trans('JournalFinancial') . ' ('.$langs->trans('Opened').')</td>';
 print "</tr>\n";
 
 // Bank account
-$sql = "SELECT rowid, label, number, accountancy_journal";
+$sql = "SELECT rowid, ref, label, number, account_number, accountancy_journal";
 $sql .= " FROM " . MAIN_DB_PREFIX . "bank_account";
 $sql .= " WHERE entity = " . $conf->entity;
 $sql .= " AND clos = 0";
@@ -162,30 +162,33 @@ if ($resql) {
 
 	if ($numr > 0)
 
-		$bankaccountstatic=new Account($db);
+		$bankaccountstatic = new Account($db);
 
 	while ( $i < $numr ) {
 		$objp = $db->fetch_object($resql);
-			
+
 		$var = ! $var;
-			
+
+		$bankaccountstatic->rowid = $objp->rowid;
 		$bankaccountstatic->id = $objp->rowid;
+		$bankaccountstatic->ref = $objp->ref;
 		$bankaccountstatic->label = $objp->label;
 		$bankaccountstatic->number = $objp->number;
+		$bankaccountstatic->account_number = $objp->account_number;
 		$bankaccountstatic->accountancy_journal = $objp->accountancy_journal;
-			
+
 		print '<tr ' . $bc[$var] . ' class="value">';
-			
+
 		// Param
 		print '<td width="50%"><label for="' . $objp->rowid . '">' . $langs->trans("Journal");
 		print ' - '.$bankaccountstatic->getNomUrl(1);
 		print '</label></td>';
-			
+
 		// Value
 		print '<td>';
 		print '<input type="text" size="20" id="' . $objp->rowid . '" name="bank_account['.$objp->rowid.']" value="' . $objp->accountancy_journal . '">';
 		print '</td></tr>';
-			
+
 		$i ++;
 	}
 	$db->free($resql);

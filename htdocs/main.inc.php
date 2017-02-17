@@ -1307,7 +1307,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             
             // Browser notifications
             $enablebrowsernotif=false;
-            if (! empty($conf->agenda->enabled) && ! empty($conf->global->AGENDA_NOTIFICATION) && ! empty($conf->global->AGENDA_NOTIFICATION_SOUND)) $enablebrowsernotif=true;
+            if (! empty($conf->agenda->enabled) && ! empty($conf->global->AGENDA_NOTIFICATION)) $enablebrowsernotif=true;
             if ($enablebrowsernotif)
             {
                 print '<!-- Includes JS of Dolibarr -->'."\n";
@@ -1696,8 +1696,10 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 	    else $appli.=" ".DOL_VERSION;
 	    print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
 	    if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
+	    else print '<span class="help">';
 	    print $appli;
 	    if ($doliurl) print '</a>';
+	    else print '</span>';
 	    print '</div>'."\n";
 
 		// Link to bugtrack

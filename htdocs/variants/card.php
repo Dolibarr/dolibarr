@@ -36,6 +36,7 @@ if ($prodattr->fetch($id) < 1) {
 	exit();
 }
 
+
 /*
  * Actions
  */
@@ -109,6 +110,11 @@ if ($confirm == 'yes') {
 		}
 	}
 }
+
+
+/*
+ * View
+ */
 
 $langs->load('products');
 

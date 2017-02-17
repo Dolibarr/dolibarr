@@ -131,7 +131,7 @@ elseif ($action == 'synchronize')
 	}
 	else
 	{
-		setEventMessages($langs->trans('multicurrency_syncronize_error', $reponse->error->info), null, 'errors');
+		setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
 	}
 }
 

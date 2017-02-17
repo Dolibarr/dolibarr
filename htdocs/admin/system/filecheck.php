@@ -73,11 +73,15 @@ print '<br>';
 // Modified or missing files
 $file_list = array('missing' => array(), 'updated' => array());
 
-// File to analyze
-//$xmlfile = DOL_DOCUMENT_ROOT.'/install/filelist-'.DOL_VERSION.'.xml';
+// Local file to compare to
 $xmlshortfile = GETPOST('xmlshortfile')?GETPOST('xmlshortfile'):'/install/filelist-'.DOL_VERSION.'.xml';
 $xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
-$xmlremote = GETPOST('xmlremote')?GETPOST('xmlremote'):'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
+// Remote file to compare to
+$xmlremote = GETPOST('xmlremote');
+if (empty($xmlremote) && ! empty($conf->global->MAIN_FILECHECK_URL)) $xmlremote = $conf->global->MAIN_FILECHECK_URL;
+$param='MAIN_FILECHECK_URL_'.DOL_VERSION;
+if (empty($xmlremote) && ! empty($conf->global->$param)) $xmlremote = $conf->global->$param;
+if (empty($xmlremote)) $xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
 
 
 // Test if remote test is ok
@@ -156,6 +160,52 @@ if ($xml)
     $file_list = array();
     $out = '';
     
+    // Forced constants
+    if (is_object($xml->dolibarr_constants[0]))
+    {
+        $out.=load_fiche_titre($langs->trans("ForcedConstants"));
+        
+        $out.='<table class="noborder">';
+        $out.='<tr class="liste_titre">';
+        $out.='<td>#</td>';
+        $out.='<td>' . $langs->trans("Constant") . '</td>';
+        $out.='<td align="center">' . $langs->trans("ExpectedValue") . '</td>';
+        $out.='<td align="center">' . $langs->trans("Value") . '</td>';
+        $out.='</tr>'."\n";
+        $var = true;
+
+        $i = 0;
+        foreach ($xml->dolibarr_constants[0]->constant as $constant)    // $constant is a simpleXMLElement
+        {
+            $constname=$constant['name'];
+            $constvalue=(string) $constant;
+            $constvalue = (empty($constvalue)?'0':$constvalue);
+            // Value found                
+            $value='';
+            if ($constname && $conf->global->$constname != '') $value=$conf->global->$constname;
+            $valueforchecksum=(empty($value)?'0':$value);
+            
+            $checksumconcat[]=$valueforchecksum;
+            
+            $i++;
+            $var = !$var;
+            $out.='<tr ' . $bc[$var] . '>';
+            $out.='<td>'.$i.'</td>' . "\n";
+            $out.='<td>'.$constname.'</td>' . "\n";
+            $out.='<td align="center">'.$constvalue.'</td>' . "\n";
+            $out.='<td align="center">'.$valueforchecksum.'</td>' . "\n";
+            $out.="</tr>\n";
+        }
+
+        if ($i==0)
+        {
+            $out.='<tr ' . $bc[false] . '><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        }
+        $out.='</table>';
+        
+        $out.='<br>';
+    }
+    
     // Scan htdocs
     if (is_object($xml->dolibarr_htdocs_dir[0]))
     {
@@ -180,6 +230,7 @@ if ($xml)
             }
         }
         
+        // Files missings
         $out.=load_fiche_titre($langs->trans("FilesMissing"));
         
         $out.='<table class="noborder">';
@@ -212,8 +263,10 @@ if ($xml)
 
         $out.='<br>';
 
+        // Files modified
         $out.=load_fiche_titre($langs->trans("FilesModified"));
         
+        $totalsize=0;
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
@@ -237,10 +290,20 @@ if ($xml)
 	            $out.='<td>'.$file['filename'].'</td>' . "\n";
 	            $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
 	            $out.='<td align="center">'.$file['md5'].'</td>' . "\n";
-	            $out.='<td align="right">'.dol_print_size(dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename'])).'</td>' . "\n";
+	            $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
+	            $totalsize += $size;
+	            $out.='<td align="right">'.dol_print_size($size).'</td>' . "\n";
 	            $out.='<td align="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']),'dayhour').'</td>' . "\n";
 	            $out.="</tr>\n";
 	        }
+            $out.='<tr class="liste_total">';
+            $out.='<td></td>' . "\n";
+            $out.='<td>'.$langs->trans("Total").'</td>' . "\n";
+            $out.='<td align="center"></td>' . "\n";
+            $out.='<td align="center"></td>' . "\n";
+            $out.='<td align="right">'.dol_print_size($totalsize).'</td>' . "\n";
+            $out.='<td align="right"></td>' . "\n";
+            $out.="</tr>\n";
         }
         else 
         {
@@ -250,8 +313,10 @@ if ($xml)
         
         $out.='<br>';
         
+        // Files added
         $out.=load_fiche_titre($langs->trans("FilesAdded"));
         
+        $totalsize = 0;
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
@@ -275,10 +340,20 @@ if ($xml)
                 $out.='<td>'.$file['filename'].'</td>' . "\n";
                 $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
                 $out.='<td align="center">'.$file['md5'].'</td>' . "\n";
-                $out.='<td align="right">'.dol_print_size(dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename'])).'</td>' . "\n";
+                $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
+                $totalsize += $size;
+                $out.='<td align="right">'.dol_print_size($size).'</td>' . "\n";
                 $out.='<td align="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']),'dayhour').'</td>' . "\n";
                 $out.="</tr>\n";
             }
+            $out.='<tr class="liste_total">';
+            $out.='<td></td>' . "\n";
+            $out.='<td>'.$langs->trans("Total").'</td>' . "\n";
+            $out.='<td align="center"></td>' . "\n";
+            $out.='<td align="center"></td>' . "\n";
+            $out.='<td align="right">'.dol_print_size($totalsize).'</td>' . "\n";
+            $out.='<td align="right"></td>' . "\n";
+            $out.="</tr>\n";
         }
         else
         {

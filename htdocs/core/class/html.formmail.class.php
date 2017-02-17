@@ -329,7 +329,7 @@ class FormMail extends Form
         	    $out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
 	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	        	$out.= ' &nbsp; ';
-	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" id="modelselected">';
+	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 	        	$out.= ' &nbsp; ';
 	        	$out.= '</div>';
         	}
@@ -343,7 +343,7 @@ class FormMail extends Form
         	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put disabled on option, it is already on select and it makes chrome crazy.
         	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         	    $out.= ' &nbsp; ';
-        	    $out.= '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" disabled="disabled" id="modelselected">';
+        	    $out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
         	    $out.= ' &nbsp; ';
         	    $out.= '</div>';
         	}
@@ -984,7 +984,7 @@ class FormMail extends Form
 	 */
 	function setSubstitFromObject($object, $outputlangs=null)
 	{
-		global $user;
+		global $conf, $user;
 		$this->substit['__REF__'] = $object->ref;
 		$this->substit['__REFCLIENT__'] = isset($object->ref_client) ? $object->ref_client : '';
 		$this->substit['__REFSUPPLIER__'] = isset($object->ref_supplier) ? $object->ref_supplier : '';
@@ -993,6 +993,7 @@ class FormMail extends Form
 		$this->substit['__DATE_DUE_YMD__'] = isset($object->date_lim_reglement)? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : '';
 		$this->substit['__AMOUNT__'] = price($object->total_ttc);
 		$this->substit['__AMOUNT_WO_TAX__'] = price($object->total_ht);
+		$this->substit['__AMOUNT_VAT__'] = price($object->total_tva);
 		
 		$this->substit['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
 		$this->substit['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
@@ -1005,6 +1006,7 @@ class FormMail extends Form
 		$this->substit['__PERSONALIZED__'] = '';
 		$this->substit['__CONTACTCIVNAME__'] = '';	// Will be replace just before sending
         
+		
         //Fill substit_lines with each object lines content
         if (is_array($object->lines))
         {
@@ -1022,10 +1024,10 @@ class FormMail extends Form
                     '__SUBPRICE__' => price($line->subprice),
                     '__AMOUNT__' => price($line->total_ttc),
                     '__AMOUNT_WO_TAX__' => price($line->total_ht),
-                    //'__PRODUCT_EXTRAFIELD_FIELD__' Done dinamically
+                    //'__PRODUCT_EXTRAFIELD_FIELD__' Done dinamically just after
                 );
 
-                // Create dinamic tags for __PRODUCT_EXTRAFIELD_FIELD__
+                // Create dynamic tags for __PRODUCT_EXTRAFIELD_FIELD__
                 if (!empty($line->fk_product))
                 {
                     $extrafields = new ExtraFields($this->db);
@@ -1045,7 +1047,7 @@ class FormMail extends Form
 	/**
 	 * Set substit array from object
 	 * 
-	 * @param	string	$mode		'form' or 'emailing'
+	 * @param	string	$mode		'form', 'formwithlines', 'formforlines' or 'emailing'
 	 * @return	void
 	 */
 	function getAvailableSubstitKey($mode='form')
@@ -1054,18 +1056,32 @@ class FormMail extends Form
 		
 		$vars=array();
 		
-		if ($mode == 'form')
+		if ($mode == 'form' || $mode == 'formwithlines' || $mode == 'formforlines')
 		{
 			$vars=array(
 				'__REF__', 
 				'__REFCLIENT__', 
-				'__THIRDPARTY_NAME__', 
-				'__PROJECT_REF__', 
-				'__PROJECT_NAME__',
+				'__REFSUPPLIER__', 
+			    '__THIRDPARTY_ID__', 
+			    '__THIRDPARTY_NAME__', 
+			    '__PROJECT_ID__', 
+			    '__PROJECT_REF__', 
+			    '__PROJECT_NAME__',
 				'__CONTACTCIVNAME__',
-				'__PERSONALIZED__',			// Paypal link will be added here in form mode
+				'__AMOUNT__', 
+				'__AMOUNT_WO_TAX__', 
+				'__AMOUNT_VAT__', 
+			    '__PERSONALIZED__',			// Paypal link will be added here in form mode
 				'__SIGNATURE__', 
 			);
+			if ($mode == 'formwithlines')
+			{
+			    $vars[] = '__LINES__';      // Will be set by the get_form function
+			}
+			if ($mode == 'formforlines')
+			{
+			    $vars[] = '__QUANTITY__';   // Will be set by the get_form function
+			}
 		}
 		if ($mode == 'emailing')
 		{

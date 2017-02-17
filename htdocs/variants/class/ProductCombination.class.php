@@ -86,9 +86,7 @@ class ProductCombination
 	 */
 	public function fetch($rowid)
 	{
-		require_once __DIR__.'/../lib/product_variants.lib.php';
-
-		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE rowid = ".(int) $rowid." AND entity IN (".getProductEntities($this->db).")";
+		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE rowid = ".(int) $rowid." AND entity IN (".getEntity('product', 1).")";
 
 		$query = $this->db->query($sql);
 
@@ -120,9 +118,7 @@ class ProductCombination
 	 */
 	public function fetchByFkProductChild($fk_child)
 	{
-		require_once __DIR__.'/../lib/product_variants.lib.php';
-
-		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_child = ".(int) $fk_child." AND entity IN (".getProductEntities($this->db).")";
+		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_child = ".(int) $fk_child." AND entity IN (".getEntity('product', 1).")";
 
 		$query = $this->db->query($sql);
 
@@ -154,9 +150,7 @@ class ProductCombination
 	 */
 	public function fetchAllByFkProductParent($fk_product_parent)
 	{
-		require_once __DIR__.'/../lib/product_variants.lib.php';
-
-		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".(int) $fk_product_parent." AND entity IN (".getProductEntities($this->db).")";
+		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".(int) $fk_product_parent." AND entity IN (".getEntity('product', 1).")";
 
 		$query = $this->db->query($sql);
 
@@ -182,6 +176,26 @@ class ProductCombination
 		return $return;
 	}
 
+	/**
+	 * Retrieves all product combinations by the product parent row id
+	 *
+	 * @param  int     $fk_product_parent  Id of parent product
+	 * @return int                         Nb of record
+	 */
+	public function countNbOfCombinationForFkProductParent($fk_product_parent)
+	{
+	    $nb = 0;
+	    $sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".(int) $fk_product_parent." AND entity IN (".getEntity('product', 1).")";
+	
+	    $resql = $this->db->query($sql);
+	    if ($resql) {
+	        $obj = $this->db->fetch_object($resql);
+	        if ($obj) $nb = $obj->nb;
+	    }
+
+	    return $nb;
+	}
+	
 	/**
 	 * Creates a product attribute combination
 	 *

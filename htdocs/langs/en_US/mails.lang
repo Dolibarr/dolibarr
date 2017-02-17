@@ -150,3 +150,6 @@ AdvTgtCreateFilter=Create filter
 AdvTgtOrCreateNewFilter=Name of new filter
 NoContactWithCategoryFound=No contact/address with a category found
 NoContactLinkedToThirdpartieWithCategoryFound=No contact/address with a category found
+OutGoingEmailSetup=Outgoing email setup
+InGoingEmailSetup=Incoming email setup
+

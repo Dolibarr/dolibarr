@@ -29,12 +29,15 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("errors");
 $langs->load("admin");
 
-$mode=GETPOST('mode', 'alpha')?GETPOST('mode', 'alpha'):0;
+$mode=GETPOST('mode', 'alpha');
+if (empty($mode)) $mode='common';
 $action=GETPOST('action','alpha');
 $value=GETPOST('value', 'alpha');
 $page_y=GETPOST('page_y','int');
@@ -69,12 +72,13 @@ if ($search_status)  $param.='&search_status='.urlencode($search_status);
 if ($search_nature)  $param.='&search_nature='.urlencode($search_nature);
 if ($search_version) $param.='&search_version='.urlencode($search_version);
 
+$dirins=DOL_DOCUMENT_ROOT.'/custom';
+$urldolibarrmodules='https://www.dolistore.com/';
 
 
 /*
  * Actions
  */
-
 
 if (GETPOST('buttonreset'))
 {
@@ -82,6 +86,109 @@ if (GETPOST('buttonreset'))
     $search_status='';
     $search_nature='';
     $search_version='';
+}
+
+if ($action=='install')
+{
+    $error=0;
+
+    // $original_file should match format module_modulename-x.y[.z].zip
+    $original_file=basename($_FILES["fileinstall"]["name"]);
+    $newfile=$conf->admin->dir_temp.'/'.$original_file.'/'.$original_file;
+
+    if (! $original_file)
+    {
+        $langs->load("Error");
+        setEventMessages($langs->trans("ErrorModuleFileRequired"), null, 'warnings');
+        $error++;
+    }
+    else
+    {
+        if (! preg_match('/\.zip$/i',$original_file))
+        {
+            $langs->load("errors");
+            setEventMessages($langs->trans("ErrorFileMustBeADolibarrPackage",$original_file), null, 'errors');
+            $error++;
+        }
+    	if (! preg_match('/module_.*\-[\d]+\.[\d]+.*$/i',$original_file))
+		{
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules",$original_file, 'module_*-x.y*.zip'), null, 'errors');
+			$error++;
+		}
+    }
+
+    if (! $error)
+    {
+        if ($original_file)
+        {
+            @dol_delete_dir_recursive($conf->admin->dir_temp.'/'.$original_file);
+            dol_mkdir($conf->admin->dir_temp.'/'.$original_file);
+        }
+
+        $tmpdir=preg_replace('/\.zip$/','',$original_file).'.dir';
+        if ($tmpdir)
+        {
+            @dol_delete_dir_recursive($conf->admin->dir_temp.'/'.$tmpdir);
+            dol_mkdir($conf->admin->dir_temp.'/'.$tmpdir);
+        }
+
+        $result=dol_move_uploaded_file($_FILES['fileinstall']['tmp_name'],$newfile,1,0,$_FILES['fileinstall']['error']);
+        if ($result > 0)
+        {
+            $result=dol_uncompress($newfile,$conf->admin->dir_temp.'/'.$tmpdir);
+
+            if (! empty($result['error']))
+            {
+                $langs->load("errors");
+                setEventMessages($langs->trans($result['error'],$original_file), null, 'errors');
+                $error++;
+            }
+            else
+            {
+                // Now we move the dir of the module
+                $modulename=preg_replace('/module_/', '', $original_file);
+                $modulename=preg_replace('/\-[\d]+\.[\d]+.*$/', '', $modulename);
+                // Search dir $modulename
+                $modulenamedir=$conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulename;
+                //var_dump($modulenamedir);
+                if (! dol_is_dir($modulenamedir))
+                {
+                    $modulenamedir=$conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename;
+                    //var_dump($modulenamedir);
+                    if (! dol_is_dir($modulenamedir))
+                    {
+						setEventMessages($langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat").'<br>Dir not found: '.$conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulename.'<br>'.$conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename, null, 'errors');
+                        $error++;
+                    }
+                }
+
+                if (! $error)
+                {
+                    //var_dump($dirins);
+                    @dol_delete_dir_recursive($dirins.'/'.$modulename);
+                    dol_syslog("Uncompress of module file is a success. We copy it from ".$modulenamedir." into target dir ".$dirins.'/'.$modulename);
+                    $result=dolCopyDir($modulenamedir, $dirins.'/'.$modulename, '0444', 1);
+                    if ($result <= 0)
+                    {
+                        dol_syslog('Failed to call dolCopyDir result='.$result." with param ".$modulenamedir." and ".$dirins.'/'.$modulename, LOG_WARNING);
+                        $langs->load("errors");
+                        setEventMessages($langs->trans("ErrorFailToCopyDir", $modulenamedir, $dirins.'/'.$modulename), null, 'errors');
+                        $error++;
+                    }
+                }
+            }
+        }
+        else
+        {
+            $error++;
+        }
+    }
+
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupIsReadyForUse", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules")), null, 'warnings');
+    }
 }
 
 if ($action == 'set' && $user->admin)
@@ -114,6 +221,13 @@ if ($action == 'reset' && $user->admin)
 /*
  * View
  */
+
+// Set dir where external modules are installed
+if (! dol_is_dir($dirins))
+{
+    dol_mkdir($dirins);
+}
+$dirins_ok=(dol_is_dir($dirins));
 
 $form = new Form($db);
 
@@ -277,24 +391,26 @@ if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouM
 print load_fiche_titre($langs->trans("ModulesSetup"),$moreinfo,'title_setup');
 
 // Start to show page
-if (empty($mode)) $mode='common';
-if ($mode==='common')      print $langs->trans("ModulesDesc")."<br>\n";
-if ($mode==='marketplace') print $langs->trans("ModulesMarketPlaceDesc")."<br>\n";
-if ($mode==='expdev')      print $langs->trans("ModuleFamilyExperimental")."<br>\n";
+if ($mode=='common')      print $langs->trans("ModulesDesc")."<br>\n";
+if ($mode=='marketplace') print $langs->trans("ModulesMarketPlaceDesc")."<br>\n";
+if ($mode=='deploy')      print $langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."<br>\n";
 
 
 $h = 0;
 
-$categidx='common';    // Main
-$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
+$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=common";
 $head[$h][1] = $langs->trans("AvailableModules");
 $head[$h][2] = 'common';
 $h++;
 
-$categidx='marketplace';
-$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
+$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=marketplace";
 $head[$h][1] = $langs->trans("ModulesMarketPlaces");
 $head[$h][2] = 'marketplace';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=deploy";
+$head[$h][1] = $langs->trans("AddExtensionThemeModuleOrOther");
+$head[$h][2] = 'deploy';
 $h++;
 
 
@@ -303,7 +419,7 @@ print "<br>\n";
 
 $var=true;
 
-if ($mode != 'marketplace')
+if ($mode == 'common')
 {
     
     print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -351,7 +467,6 @@ if ($mode != 'marketplace')
         //print '</div>';
     }
     
-    //dol_fiche_end();
     
     print '<div class="clearboth"></div><br>';
 
@@ -477,163 +592,6 @@ if ($mode != 'marketplace')
             $imginfo="info_black";
         }
         
-        // Define text of description of module
-        /*
-        $text='';
-        
-        if ($objMod->getDescLong()) $text.='<div class="titre">'.$objMod->getDesc().'</div><br>'.$objMod->getDescLong().'<br>';
-        else $text.='<div class="titre">'.$objMod->getDesc().'</div><br>';
-        
-        $text.='<br><strong>'.$langs->trans("Version").':</strong> '.$version;
-        
-        $textexternal='';
-        if ($objMod->isCoreOrExternalModule() == 'external')
-        {
-            $textexternal.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule",$dirofmodule);
-            if ($objMod->editor_name != 'dolibarr') $textexternal.='<br><strong>'.$langs->trans("Publisher").':</strong> '.(empty($objMod->editor_name)?$langs->trans("Unknown"):$objMod->editor_name);
-            if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i',$objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> '.$objMod->editor_url;
-            $text.=$textexternal;
-            $text.='<br>';
-        }
-        else
-        {
-            $text.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("Core").'<br>';
-        }
-        $text.='<br><strong>'.$langs->trans("LastActivationDate").':</strong> ';
-        if (! empty($conf->global->$const_name)) $text.=dol_print_date($objMod->getLastActivationDate(), 'dayhour');
-        else $text.=$langs->trans("Disabled");
-        $text.='<br>';
-        
-        $text.='<br><strong>'.$langs->trans("AddRemoveTabs").':</strong> ';
-        if (isset($objMod->tabs) && is_array($objMod->tabs) && count($objMod->tabs))
-        {
-            $i=0;
-            foreach($objMod->tabs as $val)
-            {
-                $tmp=explode(':',$val,3);
-                $text.=($i?', ':'').$tmp[0].':'.$tmp[1];
-                $i++;
-            }
-        }
-        else $text.=$langs->trans("No");
-        
-        $text.='<br><strong>'.$langs->trans("AddDictionaries").':</strong> ';
-        if (isset($objMod->dictionaries) && isset($objMod->dictionaries['tablib']) && is_array($objMod->dictionaries['tablib']) && count($objMod->dictionaries['tablib']))
-        {
-            $i=0;
-            foreach($objMod->dictionaries['tablib'] as $val)
-            {
-                $text.=($i?', ':'').$val;
-                $i++;
-            }
-        }
-        else $text.=$langs->trans("No");
-        
-        $text.='<br><strong>'.$langs->trans("AddBoxes").':</strong> ';
-        if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes))
-        {
-            $i=0;
-            foreach($objMod->boxes as $val)
-            {
-                $text.=($i?', ':'').($val['file']?$val['file']:$val[0]);
-                $i++;
-            }
-        }
-        else $text.=$langs->trans("No");
-        
-        $text.='<br><strong>'.$langs->trans("AddModels").':</strong> ';
-        if (isset($objMod->module_parts) && isset($objMod->module_parts['models']) && $objMod->module_parts['models'])
-        {
-            $text.=$langs->trans("Yes");
-        }
-        else $text.=$langs->trans("No");
-        
-        $text.='<br><strong>'.$langs->trans("AddSubstitutions").':</strong> ';
-        if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions'])
-        {
-            $text.=$langs->trans("Yes");
-        }
-        else $text.=$langs->trans("No");
-        
-        $text.='<br><strong>'.$langs->trans("AddSheduledJobs").':</strong> ';
-        if (isset($objMod->cronjobs) && is_array($objMod->cronjobs) && count($objMod->cronjobs))
-        {
-            $i=0;
-            foreach($objMod->cronjobs as $val)
-            {
-                $text.=($i?', ':'').($val['label']);
-                $i++;
-            }
-        }
-        else $text.=$langs->trans("No");
-        
-        $text.='<br><strong>'.$langs->trans("AddTriggers").':</strong> ';
-        if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers'])
-        {
-            $text.=$langs->trans("Yes");
-        }
-        else $text.=$langs->trans("No");
-        
-        $text.='<br><strong>'.$langs->trans("AddHooks").':</strong> ';
-        if (isset($objMod->module_parts) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks']))
-        {
-            $i=0;
-            foreach($objMod->module_parts['hooks'] as $val)
-            {
-                $text.=($i?', ':'').($val);
-                $i++;
-            }
-        }
-        else $text.=$langs->trans("No");
-        
-        $text.='<br><strong>'.$langs->trans("AddPermissions").':</strong> ';
-        if (isset($objMod->rights) && is_array($objMod->rights) && count($objMod->rights))
-        {
-            $i=0;
-            foreach($objMod->rights as $val)
-            {
-                $text.=($i?', ':'').($val[1]);
-                $i++;
-            }
-        }
-        else $text.=$langs->trans("No");
-        
-        $text.='<br><strong>'.$langs->trans("AddMenus").':</strong> ';
-        if (isset($objMod->menu) && ! empty($objMod->menu)) // objMod can be an array or just an int 1
-        {
-            $text.=$langs->trans("Yes");
-        }
-        else $text.=$langs->trans("No");
-        
-        $text.='<br><strong>'.$langs->trans("AddExportProfiles").':</strong> ';
-        if (isset($objMod->export_label) && is_array($objMod->export_label) && count($objMod->export_label))
-        {
-            $i=0;
-            foreach($objMod->export_label as $val)
-            {
-                $text.=($i?', ':'').($val);
-                $i++;
-            }
-        }
-        else $text.=$langs->trans("No");
-        
-        $text.='<br><strong>'.$langs->trans("AddImportProfiles").':</strong> ';
-        if (isset($objMod->import_label) && is_array($objMod->import_label) && count($objMod->import_label))
-        {
-            $i=0;
-            foreach($objMod->import_label as $val)
-            {
-                $text.=($i?', ':'').($val);
-                $i++;
-            }
-        }
-        else $text.=$langs->trans("No");
-        
-        $text.='<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
-        $text.=$langs->trans("DetectionNotPossible");
-        */
-        
-        //print "\n<!-- Module ".$objMod->numero." ".$objMod->getName()." found into ".$dirmod[$key]." -->\n";
         print '<tr '.$bc[$var].">\n";
 
         // Picto
@@ -768,8 +726,11 @@ if ($mode != 'marketplace')
     }
     print "</table>\n";
     print '</div>';
+    
+    dol_fiche_end();
 }
-else
+
+if ($mode == 'marketplace')
 {
     dol_fiche_head($head, $mode, '');
     
@@ -799,13 +760,115 @@ else
 
     print "</table>\n";
 
-    //dol_fiche_end();
+    dol_fiche_end();
 }
 
-dol_fiche_end();
+
+// Install external module
+   
+if ($mode == 'deploy')
+{
+    dol_fiche_head($head, $mode, '');
+
+    
+    $allowonlineinstall=true;
+    $allowfromweb=1;
+    if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) $allowonlineinstall=false;
+    
+    $fullurl='<a href="'.$urldolibarrmodules.'" target="_blank">'.$urldolibarrmodules.'</a>';
+    $message='';
+    if (! empty($allowonlineinstall))
+    {
+        if (! in_array('/custom',explode(',',$dolibarr_main_url_root_alt)))
+        {
+            $message=info_admin($langs->trans("ConfFileMuseContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
+            $allowfromweb=-1;
+        }
+        else
+        {
+            if ($dirins_ok)
+            {
+                if (! is_writable(dol_osencode($dirins)))
+                {
+                    $langs->load("errors");
+                    $message=info_admin($langs->trans("ErrorFailedToWriteInDir",$dirins));
+                    $allowfromweb=0;
+                }
+            }
+            else
+            {
+    
+                $message=info_admin($langs->trans("NotExistsDirect",$dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
+                $allowfromweb=0;
+            }
+        }
+    }
+    else
+    {
+        $message=info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile",$dolibarrdataroot.'/installmodules.lock'));
+        $allowfromweb=0;
+    }
+    
+    if ($allowfromweb < 1)
+    {
+    	print $langs->trans("SomethingMakeInstallFromWebNotPossible");
+    	print $message;
+    	//print $langs->trans("SomethingMakeInstallFromWebNotPossible2");
+    	print '<br>';
+    }
+    
+    
+    if ($allowfromweb >= 0)
+    {
+    	if ($allowfromweb == 1) 
+    	{
+    	    //print $langs->trans("ThisIsProcessToFollow").'<br>';
+    	}
+    	else 
+    	{
+    	    print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
+        	print '<b>'.$langs->trans("StepNb",1).'</b>: ';
+        	print $langs->trans("FindPackageFromWebSite",$fullurl).'<br>';
+        	print '<b>'.$langs->trans("StepNb",2).'</b>: ';
+        	print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
+        	print '<b>'.$langs->trans("StepNb",3).'</b>: ';
+    	}
+    
+    	if ($allowfromweb == 1)
+    	{
+    		print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
+    		print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
+    		print '<input type="hidden" name="action" value="install">';
+    		print '<input type="hidden" name="mode" value="deploy">';
+    		print $langs->trans("YouCanSubmitFile").' <input type="file" name="fileinstall"> ';
+    		print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
+    		print '</form>';
+    	}
+    	else
+    	{
+    		print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
+    		print '<b>'.$langs->trans("StepNb",4).'</b>: ';
+    		print $langs->trans("SetupIsReadyForUse").'<br>';
+    	}
+    }
+    
+    
+    if (! empty($result['return']))
+    {
+    	print '<br>';
+    
+    	foreach($result['return'] as $value)
+    	{
+    		echo $value.'<br>';
+    	}
+    }
+
+    dol_fiche_end();
+}
+
 
 // Show warning about external users
-if ($mode != 'marketplace') print info_admin(showModulesExludedForExternal($modules))."\n";
+if ($mode == 'common') print info_admin(showModulesExludedForExternal($modules))."\n";
 
 
 llxFooter();
