@@ -147,7 +147,7 @@ $usefilters=1;
  * Actions
  */
 
-if ($action=='selectfield')
+if ($action=='selectfield')     // Selection of field at step 2
 {
 	$fieldsarray=$objexport->array_export_fields[0];
 	$fieldsentitiesarray=$objexport->array_export_entities[0];
@@ -168,12 +168,28 @@ if ($action=='selectfield')
         $warnings=array();
 
         $array_selected[$field]=count($array_selected)+1;    // We tag the key $field as "selected"
-        // We check if there is a dependency
+        // We check if there is a dependency to activate 
+        /*var_dump($field);
+        var_dump($fieldsentitiesarray[$field]);
+        var_dump($fieldsdependenciesarray);*/
+        $listofdependencies=array();
         if (! empty($fieldsentitiesarray[$field]) && ! empty($fieldsdependenciesarray[$fieldsentitiesarray[$field]]))
         {
+            // We found a dependency on the type of field
             $tmp=$fieldsdependenciesarray[$fieldsentitiesarray[$field]]; // $fieldsdependenciesarray=array('element'=>'fd.rowid') or array('element'=>array('fd.rowid','ab.rowid'))
             if (is_array($tmp)) $listofdependencies=$tmp;
             else $listofdependencies=array($tmp);
+        }
+        else if (! empty($field) && ! empty($fieldsdependenciesarray[$field]))
+        {
+            // We found a dependency on a dedicated field
+            $tmp=$fieldsdependenciesarray[$field]; // $fieldsdependenciesarray=array('fd.fieldx'=>'fd.rowid') or array('fd.fieldx'=>array('fd.rowid','ab.rowid'))
+            if (is_array($tmp)) $listofdependencies=$tmp;
+            else $listofdependencies=array($tmp);
+        }
+        
+        if (count($listofdependencies))
+        {
             foreach($listofdependencies as $fieldid)
             {
                 if (empty($array_selected[$fieldid]))
