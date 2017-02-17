@@ -699,7 +699,7 @@ if ($action == 'create')
 	$htmltext.='</i>';
 			
 	// Print mail form
-	print load_fiche_titre($langs->trans("NewMailing"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext), 'title_generic');
+	print load_fiche_titre($langs->trans("NewMailing"), '', 'title_generic');
 
 	dol_fiche_head();
 
@@ -732,6 +732,7 @@ if ($action == 'create')
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor=new DolEditor('body',$_POST['body'],'',600,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,'90%');
 	$doleditor->Create();
+	print $htmltext;
 	print '</div>';
 	
 	dol_fiche_end();
@@ -1057,7 +1058,7 @@ else
 			$htmltext.='</i>';
 			
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext), 'title_generic');
+			print load_fiche_titre($langs->trans("EMail"), "", 'title_generic');
 			
 			dol_fiche_head('');
 			
@@ -1102,6 +1103,7 @@ else
 				$doleditor->Create();
 			}
 			else print dol_htmlentitiesbr($object->body);
+			print $htmltext;
 			print '</div>';
 
 			dol_fiche_end();
