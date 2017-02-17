@@ -507,7 +507,11 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Thirdparty
     if ($conf->societe->enabled)
     {
-        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td class="maxwidthonsmartphone">';
+        print '<tr><td>';
+        print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED)?'':'<span class="fieldrequired">');
+        print $langs->trans("ThirdParty");
+        print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED)?'':'</span>');
+        print '</td><td class="maxwidthonsmartphone">';
         $filteronlist='';
         if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
        	$text=$form->select_thirdparty_list(GETPOST('socid','int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), '', 0, 0, 'minwidth300');
@@ -719,7 +723,11 @@ elseif ($object->id > 0)
         // Thirdparty
         if ($conf->societe->enabled)
         {
-            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+            print '<tr><td>';
+            print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED)?'':'<span class="fieldrequired">');
+            print $langs->trans("ThirdParty");
+            print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED)?'':'</span>');
+            print '</td><td>';
     	    $filteronlist='';
     	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
             $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 'None', 1, 0, array(), '', 0, 0, 'minwidth300');

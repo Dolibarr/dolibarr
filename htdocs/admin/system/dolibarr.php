@@ -265,6 +265,7 @@ $configfileparameters=array(
 		'?dolibarr_main_db_prefix' => $langs->trans("Prefix"),
 		'separator2' => '',
 		'dolibarr_main_authentication' => $langs->trans("AuthenticationMode"),
+        '?multicompany_transverse_mode'=>  $langs->trans("MultiCompanyMode"),
 		'separator'=> '',
 		'?dolibarr_main_auth_ldap_login_attribute' => 'dolibarr_main_auth_ldap_login_attribute',
 		'?dolibarr_main_auth_ldap_host' => 'dolibarr_main_auth_ldap_host',
@@ -318,7 +319,11 @@ foreach($configfileparameters as $key => $value)
 	{
 		$newkey = preg_replace('/^\?/','',$key);
 
-		if (preg_match('/^\?/',$key) && empty(${$newkey})) continue;    // We discard parametes starting with ?
+		if (preg_match('/^\?/',$key) && empty(${$newkey})) 
+		{
+		    if ($newkey != 'multicompany_transverse_mode' || empty($conf->multicompany->enabled))
+                continue;    // We discard parameters starting with ?
+		}
 		if (strpos($newkey, 'separator') !== false && $lastkeyshown == 'separator') continue;
 
 		$var=!$var;
