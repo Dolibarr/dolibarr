@@ -2926,7 +2926,7 @@ tr.box_pair td, tr.box_impair td {
 	padding: 4px;
 }
 tr.box_pair:not(:last-child) td, tr.box_impair:not(:last-child) td {
-    border-bottom: 1px solid #f4f4f4;
+    border-bottom: 1px solid #eee;
 }
 .noborderbottom {
 	border-bottom: none !important;

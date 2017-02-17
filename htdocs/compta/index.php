@@ -509,10 +509,11 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastModifiedDonations",$max).'</td>';
-        print '<td class="liste_titre" align="right">'.$langs->trans("AmountTTC").'</td>';
-		print '<td class="liste_titre" align="right">'.$langs->trans("DateModificationShort").'</td>';
-        print '<td class="liste_titre" width="16">&nbsp;</td>';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("BoxTitleLastModifiedDonations",$max).'</td>';
+        print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
+		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+        print '<td width="16">&nbsp;</td>';
 		print '</tr>';
 		if ($num)
 		{
