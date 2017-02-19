@@ -366,6 +366,8 @@ function switchAllResources($object, $status, $booker_id, $booker_type, $new_boo
                     'status'=>$status,
                     'booker_id'=>$booker_id,
                     'booker_type'=>$booker_type,
+                    'new_booker_id'=>$new_booker_id,
+                    'new_booker_type'=>$new_booker_type,
                 );
                 $action='';
                 $reshook=$hookmanager->executeHooks('switchLineResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
