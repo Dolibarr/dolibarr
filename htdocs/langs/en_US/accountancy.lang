@@ -239,4 +239,4 @@ BookeppingLineAlreayExists=Lines already existing into bookeeping
 Binded=Lines bound
 ToBind=Lines to bind
 
-WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced by a correct report in a next version. 
+WarningReportNotReliable=Warning, this report is not based on the General Ledger, so does not contains transaction modified manualy in the General ledger. It will be replaced by a more complete report in a next version. 
