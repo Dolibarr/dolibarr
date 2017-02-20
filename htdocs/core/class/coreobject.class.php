@@ -33,8 +33,6 @@ class CoreObject extends CommonObject {
 	
 	public $no_update_tms = false;
 	
-	public $date_0 = '1001-01-01 00:00:00'; //TODO there is a solution for this ?
-	
 	public $error = '';
 	/*
 	 *  @var Array $_fields Fields to synchronize with Database
@@ -53,8 +51,8 @@ class CoreObject extends CommonObject {
 	protected function init() {
 		
 		$this->id = 0;
-		$this->datec = time();
-		$this->tms = time();
+		$this->datec = 0;
+		$this->tms = 0;
 		
 		if(!empty($this->__fields)) {
 			foreach ($this->__fields as $field=>$info) {
@@ -156,7 +154,7 @@ class CoreObject extends CommonObject {
 	
 			if($this->is_date($info)){
 				if(empty($this->{$field})){
-					$query[$field] = $this->date_0;
+					$query[$field] = NULL;
 				}
 				else{
 					$query[$field] = $this->db->idate($this->{$field});
@@ -197,7 +195,7 @@ class CoreObject extends CommonObject {
 
 		foreach ($this->__fields as $field=>$info) {
 			if($this->is_date($info)){
-				if($obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00')$this->{$field} = 0;
+				if(empty($obj->{$field}) || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00')$this->{$field} = 0;
 				else $this->{$field} = strtotime($obj->{$field});
 			}
 			elseif($this->is_array($info)){
@@ -346,7 +344,6 @@ class CoreObject extends CommonObject {
 			
 			$query = $this->set_save_query();
 			$query['rowid']=$this->id;
-			if(empty($this->no_update_tms))$query['tms'] = date('Y-m-d H:i:s');
 				
 			$res = $this->db->update($this->table_element,$query,array('rowid'));
 			
@@ -375,7 +372,6 @@ class CoreObject extends CommonObject {
 		$query = array();
 		$query = $this->set_save_query();
 		$query['datec'] = date("Y-m-d H:i:s",$this->datec);
-		if(empty($this->no_update_tms))$query['tms'] = date('Y-m-d H:i:s');
 		
 		$res = $this->db->insert($this->table_element,$query);
 	
@@ -426,7 +422,6 @@ class CoreObject extends CommonObject {
 	}
 	public function get_date($field,$format='') {
 		if(empty($this->{$field})) return '';
-		elseif($this->{$field}<=strtotime('1000-01-01 00:00:00')) return '';
 		else {
 			
 			return dol_print_date($this->{$field}, $format);
