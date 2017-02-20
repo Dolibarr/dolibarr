@@ -494,7 +494,7 @@ class pdf_cow extends ModelePDFSuppliersPayments
 		
 		// translate amount
 		$currency = $conf->currency;
-		$translateinletter = strtoupper(dol_convertToWord($object->montant, $outputlangs ,$currency));
+		$translateinletter = strtoupper(dol_convertToWord($object->montant,$outputlangs,$currency));
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
 		$pdf->MultiCell(90, 8, $translateinletter, 0, 'L', 1);
 		$posy += 8;

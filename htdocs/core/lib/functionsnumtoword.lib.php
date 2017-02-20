@@ -29,14 +29,15 @@
  * @deprecated
  * @param	float 	$numero			Number to convert
  * @param	Lang	$langs			Language
- * @param	string	$numorcurrency	'number' or 'amount'
- * @return 	string  				Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
+ * @param	boolean	$currency		0=number to translate | 1=currency to translate
+ * @param	boolean	$centimes		0=no centimes | 1=centimes to translate
+ * @return 	string  				Text of the number
  */
-function dol_convertToWord($num = false, $langs, $currency=false, $centimes=false)
+function dol_convertToWord($num=0, $langs, $currency=false, $centimes=false)
 {
 	global $conf;
 	
-    $num = str_replace(array(',', ' '), '' , trim($num));
+    $num = str_replace(array(',', ' '), '', trim($num));
     if(! $num) {
         return false;
     }
@@ -89,6 +90,7 @@ function dol_convertToWord($num = false, $langs, $currency=false, $centimes=fals
     	$langs->transnoentitiesnoconv('trillion'), 
     	$langs->transnoentitiesnoconv('quadrillion')
     );
+	
     $num_length = strlen($num);
     $levels = (int) (($num_length + 2) / 3);
     $max_length = $levels * 3;
@@ -103,7 +105,7 @@ function dol_convertToWord($num = false, $langs, $currency=false, $centimes=fals
         if ( $tens < 20 ) {
             $tens = ($tens ? ' ' . $list1[$tens] . ' ' : '' );
         } else {
-            $tens = (int)($tens / 10);
+            $tens = (int) ($tens / 10);
             $tens = ' ' . $list2[$tens] . ' ';
             $singles = (int) ($num_levels[$i] % 10);
             $singles = ' ' . $list1[$singles] . ' ';
