@@ -20,9 +20,8 @@
  * \ingroup Advanced accountancy
  * \brief Page to assign mass categories to accounts
  */
-require '../../main.inc.php';
 
-// Class
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancycategory.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
@@ -104,7 +103,7 @@ print '<table class="border" width="100%">';
 print '<tr><td>' . $langs->trans("AccountingCategory") . '</td>';
 print '<td>';
 $formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 1);
-print '<input class="button" type="submit" value="' . $langs->trans("Display") . '">';
+print '<input class="button" type="submit" value="' . $langs->trans("Select") . '">';
 print '</td></tr>';
 
 if (! empty($cat_id)) {
@@ -115,11 +114,11 @@ if (! empty($cat_id)) {
 	print '<tr><td>' . $langs->trans("AddCompteFromBK") . '</td>';
 	print '<td>';
 	if (is_array($AccCat->lines_cptbk) && count($AccCat->lines_cptbk) > 0) {
-		print '<select size="' . count($obj) . '" name="cpt_bk[]" multiple>';
+		print '<select class="flat minwidth200" size="' . count($obj) . '" name="cpt_bk[]" multiple>';
 		foreach ( $AccCat->lines_cptbk as $cpt ) {
 			print '<option value="' . length_accountg($cpt->numero_compte) . '">' . length_accountg($cpt->numero_compte) . ' (' . $cpt->label_compte . ' ' . $cpt->doc_ref . ')</option>';
 		}
-		print '</select><br><input class="button" type="submit" id="" class="action-delete" value="' . $langs->trans("add") . '"> ';
+		print '</select><br><input class="button" type="submit" id="" class="action-delete" value="' . $langs->trans("Add") . '"> ';
 	}
 	print '</td></tr>';
 }

@@ -90,7 +90,7 @@ class FormAccounting
             $num = $db->num_rows($resql);
             if ($num)
             {
-                print '<select class="flat maxwidth200" name="'.$htmlname.'">';
+                print '<select class="flat minwidth200" name="'.$htmlname.'">';
                 $i = 0;
 
                 if ($useempty) print '<option value="0">&nbsp;</option>';
