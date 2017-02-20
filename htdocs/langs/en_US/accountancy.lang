@@ -132,7 +132,7 @@ Sens=Sens
 Codejournal=Journal
 NumPiece=Piece number
 TransactionNumShort=Num. transaction
-AccountingCategory=Accounting category
+AccountingCategory=Accounting account groups
 GroupByAccountAccounting=Group by accounting account
 NotMatch=Not Set
 DeleteMvt=Delete general ledger lines
@@ -156,7 +156,7 @@ NewAccountingMvt=New transaction
 NumMvts=Numero of transaction
 ListeMvts=List of movements
 ErrorDebitCredit=Debit and Credit cannot have a value at the same time
-
+AddCompteFromBK=Add accounting accounts to the group 
 ReportThirdParty=List third party account
 DescThirdPartyReport=Consult here the list of the third party customers and suppliers and their accounting accounts
 ListAccounts=List of the accounting accounts
@@ -232,7 +232,7 @@ Calculated=Calculated
 Formula=Formula
 
 ## Error
-ErrorNoAccountingCategoryForThisCountry=No accounting category available for country %s (See Home - Setup - Dictionaries)
+ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
 ExportNotSupported=The export format setuped is not supported into this page
 BookeppingLineAlreayExists=Lines already existing into bookeeping
 

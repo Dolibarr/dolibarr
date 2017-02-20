@@ -48,8 +48,10 @@ $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel');
 
 // Security check
-if (! $user->admin)
+if (! empty($user->rights->accountancy->chartofaccount))
+{
 	accessforbidden();
+}
 
 $AccCat = new AccountancyCategory($db);
 
@@ -89,7 +91,7 @@ llxheader('', $langs->trans('AccountAccounting'));
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
-print load_fiche_titre($langs->trans('Categories'));
+print load_fiche_titre($langs->trans('AccountingCategory'));
 
 print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
@@ -101,7 +103,7 @@ print '<table class="border" width="100%">';
 // Category
 print '<tr><td>' . $langs->trans("AccountingCategory") . '</td>';
 print '<td>';
-$formaccounting->select_accounting_category($cat_id, 'account_category', 1);
+$formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 1);
 print '<input class="button" type="submit" value="' . $langs->trans("Display") . '">';
 print '</td></tr>';
 
@@ -117,7 +119,7 @@ if (! empty($cat_id)) {
 		foreach ( $AccCat->lines_cptbk as $cpt ) {
 			print '<option value="' . length_accountg($cpt->numero_compte) . '">' . length_accountg($cpt->numero_compte) . ' (' . $cpt->label_compte . ' ' . $cpt->doc_ref . ')</option>';
 		}
-		print '</select> - <input class="button" type="submit" id="" class="action-delete" value="' . $langs->trans("add") . '"> ';
+		print '</select><br><input class="button" type="submit" id="" class="action-delete" value="' . $langs->trans("add") . '"> ';
 	}
 	print '</td></tr>';
 }
@@ -133,7 +135,7 @@ if ($action == 'display' || $action == 'delete') {
 
 	print '<table class="noborder" width="100%">';
 
-	print '<tr class="liste_titre"><th class="liste_titre">' . $langs->trans("Numerocompte") . '</th><th class="liste_titre">' . $langs->trans("Description") . '</th><th class="liste_titre" width="60" align="center">Action</th></tr>';
+	print '<tr class="liste_titre"><th class="liste_titre">' . $langs->trans("AccountAccounting") . '</th><th class="liste_titre">' . $langs->trans("Description") . '</th><th class="liste_titre" width="60" align="center">Action</th></tr>';
 
 	if (! empty($cat_id)) {
 		$return = $AccCat->display($cat_id);
