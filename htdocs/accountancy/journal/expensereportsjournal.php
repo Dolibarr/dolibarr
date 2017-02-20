@@ -43,6 +43,7 @@ $langs->load("bills");
 $langs->load("other");
 $langs->load("main");
 $langs->load("accountancy");
+$langs->load("trips");
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
