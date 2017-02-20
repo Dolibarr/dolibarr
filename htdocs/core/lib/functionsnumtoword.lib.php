@@ -26,14 +26,14 @@
 /**
  * Function to return number in text.
  * 
- * @deprecated
- * @param	float 	$numero			Number to convert
+ * 
+ * @param	float 	$num			Number to convert
  * @param	Lang	$langs			Language
  * @param	boolean	$currency		0=number to translate | 1=currency to translate
  * @param	boolean	$centimes		0=no centimes | 1=centimes to translate
  * @return 	string  				Text of the number
  */
-function dol_convertToWord($num=0, $langs, $currency=false, $centimes=false)
+function dol_convertToWord($num, $langs, $currency=false, $centimes=false)
 {
 	global $conf;
 	
