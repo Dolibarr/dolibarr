@@ -31,8 +31,6 @@ class CoreObject extends CommonObject {
 	
 	public $withChild = true;
 	
-	public $no_update_tms = false;
-	
 	public $error = '';
 	/*
 	 *  @var Array $_fields Fields to synchronize with Database
