@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Read Scheduled job
-Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
+Permission23101 = Läs Planerad jobb
+Permission23102 = Skapa / uppdatera Schemalagt jobb
+Permission23103 = Radera schemalagt jobb
+Permission23104 = Utför schemalagt jobb
 # Admin
 CronSetup= Planerad jobbhantering installation
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs
@@ -17,14 +17,14 @@ CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronLastOutput=Sista loppet utgång
-CronLastResult=Senaste resultat code
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Kommando
-CronList=Scheduled jobs
+CronList=Schemalagda jobb
 CronDelete=Delete scheduled jobs
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allow to execute job that have been planned
 CronTask=Jobb
 CronNone=Ingen
@@ -33,13 +33,13 @@ CronDtEnd=Not after
 CronDtNextLaunch=Nästa exekvering
 CronDtLastLaunch=Start date of latest execution
 CronDtLastResult=End date of latest execution
-CronFrequency=Frequency
+CronFrequency=Frekvens
 CronClass=Class
 CronMethod=Metod
 CronModule=Modul
 CronNoJobs=Inga jobb registrerade
 CronPriority=Prioritet
-CronLabel=Label
+CronLabel=Etikett
 CronNbRun=Nb. lanseringen
 CronMaxRun=Max nb. launch
 CronEach=Varje
@@ -65,7 +65,7 @@ CronMethodHelp=Objektet metod för att starta. <BR> För exemple att hämta meto
 CronArgsHelp=Metoden argument. <BR> Till exemple att hämta förfarande för Dolibarr Produkt objekt /htdocs/product/class/product.class.php kan värdet av paramters vara <i>0, ProductRef</i>
 CronCommandHelp=Systemet kommandoraden som ska köras.
 CronCreateJob=Create new Scheduled Job
-CronFrom=From
+CronFrom=Från
 # Info
 # Common
 CronType=Job type

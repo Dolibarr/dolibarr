@@ -74,14 +74,18 @@ ResultOfMailSending=Result of mass EMail sending
 NbSelected=Nb selected
 NbIgnored=Nb ignored
 NbSent=Nb sent
-ContactsWithThirdpartyFilter=Contact with customer filters
+ConfirmUnvalidateEmailing=Are you sure you want to change email <b>%s</b> to draft status?
+MailingModuleDescContactsWithThirdpartyFilter=Contact with customer filters
+MailingModuleDescContactsByCompanyCategory=Contacts by third party category
+MailingModuleDescContactsByCategory=Contacts by categories
+MailingModuleDescContactsByFunction=Contacts by position
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Rivi %s tiedosto
 RecipientSelectionModules=Määritelty pyynnöt vastaanottajien valinta
 MailSelectedRecipients=Valitut vastaanottajat
 MailingArea=EMailings alueella
-LastMailings=Viimeisin %s emailings
+LastMailings=Latest %s emailings
 TargetsStatistics=Tavoitteet tilastot
 NbOfCompaniesContacts=Ainutlaatuinen yhteyksiä yritysten
 MailNoChangePossible=Vastaanottajat validoitava sähköpostia ei voi muuttaa
@@ -146,3 +150,6 @@ AdvTgtCreateFilter=Create filter
 AdvTgtOrCreateNewFilter=Name of new filter
 NoContactWithCategoryFound=No contact/address with a category found
 NoContactLinkedToThirdpartieWithCategoryFound=No contact/address with a category found
+OutGoingEmailSetup=Outgoing email setup
+InGoingEmailSetup=Incoming email setup
+

@@ -149,23 +149,27 @@ class AccountancyCategory
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " AND aa.active = 1";
 
+		$this->db->begin();
+		
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			$error ++;
 			$this->errors[] = "Error " . $this->db->lasterror();
+			$this->db->rollback();
 			return -1;
 		}
 
-		$this->db->begin();
-		while ( $obj = $this->db->fetch_object($resql)) {
-			if (array_key_exists(length_accountg($obj->account_number), $cpts)) {
+		while ( $obj = $this->db->fetch_object($resql)) 
+		{
+			if (array_key_exists(length_accountg($obj->account_number), $cpts)) 
+			{
 				$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account";
 				$sql .= " SET fk_accounting_category=" . $id_cat;
 				$sql .= " WHERE rowid=".$obj->rowid;
 				dol_syslog(__METHOD__, LOG_DEBUG);
-				$resql = $this->db->query($sql);
-				if (! $resql) {
+				$resqlupdate = $this->db->query($sql);
+				if (! $resqlupdate) {
 					$error ++;
 					$this->errors[] = "Error " . $this->db->lasterror();
 				}

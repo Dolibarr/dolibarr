@@ -1,2 +1,5 @@
 # Dolibarr language file - Source file is en_US - orders
+StatusOrderBilledShort=Pagado
 StatusOrderDraft=Borrador (debe ser validado)
+StatusOrderBilled=Pagado
+TypeContact_commande_external_BILLING=Contacto cliente de facturación cotización

@@ -9,14 +9,20 @@ VersionDevelopment=Dezvoltare
 VersionUnknown=Necunoscut
 VersionRecommanded=Recomandat
 FileCheck=Files integrity checker
-FileCheckDesc=This tool allows you to check the integrity of files of your application, comparing each files with the official ones. You can use this tool to detect if some files were modified by a hacker for example.
+FileCheckDesc=This tool allows you to check the integrity of files and setup of your application, comparing each files with the official ones. Value of some setup constants may also be checked. You can use this tool to detect if some files were modified by a hacker for example.
+FileIntegrityIsStrictlyConformedWithReference=Files integrity is strictly conformed with the reference.
+FileIntegrityIsOkButFilesWereAdded=Files integrity check has passed, however some new files were added.
+FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified, removed or added.
+GlobalChecksum=Global checksum
 MakeIntegrityAnalysisFrom=Make integrity analysis of application files from
 LocalSignature=Embedded local signature (less reliable)
 RemoteSignature=Remote distant signature (more reliable)
 FilesMissing= Fișiere Lipsa
 FilesUpdated= Fișiere Actualizate
+FilesModified=Modified Files
+FilesAdded=Added Files
 FileCheckDolibarr=Check integrity of application files
-AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from a certified package
+AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from an official package
 XmlNotFound=Xml Integrity File of application not found
 SessionId=ID Sesiune
 SessionSaveHandler=Handler pentru a salva sesiunile
@@ -185,7 +191,9 @@ BoxesDesc=Widgets are components showing some information that you can add to pe
 OnlyActiveElementsAreShown=Numai elementele din <a href="%s"> module activate </a> sunt afişate.
 ModulesDesc=Modulele Dolibarr definesc care funcționalitatea este activată în software. Unele module necesită permisiuni pe care trebuie să le acordați utilizatorilor, după activarea modulului. Faceți clic pe butonul de pornire/oprire pentru a activa un modul/caracteristică.
 ModulesMarketPlaceDesc=Puteți descărca mai multe module de pe site-uri externe de pe Internet ...
-ModulesMarketPlaces=Module mai multe ...
+ModulesDeployDesc=If permissions on your file system allows it, you can use this tool to deploy an external module. The module wil then be visible on the tab <strong>%s</strong>.
+ModulesMarketPlaces=Find external modules...
+GoModuleSetupArea=To deploy/install a new module, go onto the Module setup area at <a href="%s">%s</a>.
 DoliStoreDesc=DoliStore, market place oficial  pentru  module externe Dolibarr ERP / CRM
 DoliPartnersDesc=List of companies providing custom developed modules or features (Note: anyone experienced in PHP programming can provide custom development for an open source project)
 WebSiteDesc=Site-uri web de referință pentru a găsi mai multe module ...
@@ -276,21 +284,22 @@ ModuleFamilyInterface=Interfaces with external systems
 MenuHandlers=Manager Meniu
 MenuAdmin=Editor Meniu
 DoNotUseInProduction=Nu utilizaţi în producţie
-ThisIsProcessToFollow=Acesta este procesul de configurare pentru a:
-ThisIsAlternativeProcessToFollow=This is an alternative setup to process:
+ThisIsProcessToFollow=This is steps to process:
+ThisIsAlternativeProcessToFollow=This is an alternative setup to process manually:
 StepNb=Pasul %s
 FindPackageFromWebSite=Găsiţi un pachet care ofera facilitate dorit (de exemplu, pe site-ul web %s).
 DownloadPackageFromWebSite=Download package (for example from official web site %s).
-UnpackPackageInDolibarrRoot=Unpack package file into Dolibarr server directory dedicated to external modules: <b>%s</b>
-SetupIsReadyForUse=Instalarea este terminat şi Dolibarr este gata pentru a fi utilizate cu această nouă componentă.
-NotExistsDirect=Nu este  definit directorroot  alternativ.<br>
-InfDirAlt=Începând cu versiunea 3, este posibil să se definească un director radacina alternativ.Director rădăcină vă permite să stocați, în același loc, plug-in-uri și template-uri personalizate. <br> Doar creaţi un director de la rădăcină Dolibarr (de exemplu: custom). <br>
-InfDirExample=<br> Apoi, declaraţi l  fișierul în conf.php <br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br * Aceste linii sunt comentate cu "#", pentru a decomenta doar elimina caracterul.
+UnpackPackageInDolibarrRoot=Unpack the packaged files into server directory dedicated to Dolibarr: <b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, unpack the packaged files into the server directory dedicated to modules: <b>%s</b>
+SetupIsReadyForUse=Module deployment is finished. You must however enable and setup the module in your application by going on the page to setup modules: <a href="%s">%s</a>.
+NotExistsDirect=The alternative root directory is not defined to an existing directory.<br>
+InfDirAlt=Since version 3, it is possible to define an alternative root directory. This allows you to store, into a dedicated directory, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=La acest pas, puteți trimite pachetul utilizand acest instrument: Selectați modulul fișier 
 CurrentVersion=Dolibarr versiunea curentă
 CallUpdatePage=Go to the page that updates the database structure and data: %s.
 LastStableVersion=Ultima versiune stabilă
-LastActivationDate=Last activation date
+LastActivationDate=Latest activation date
 UpdateServerOffline=Update server offline
 GenericMaskCodes=Puteți introduce orice mască de numerotare. În această mască, ar putea fi folosit următoarele etichete: <br> <b>{000000}</b> corespunde unui număr care va fi incrementat pe fiecare% s. Introduceți cât mai multe zerouri ca lungimea dorită a contra. Contorul va fi completat cu zerouri la stânga, în scopul de a avea cât mai multe zerouri ca masca. <br> <b>{000000} +000</b> fel ca și anterior, dar o compensare corespunzător cu numărul din dreapta semnului + se aplică începând cu prima% s. <br> <b>{000000 @ x}</b> fel ca și anterior, dar contorul este resetat la zero atunci când se ajunge la o lună x (x între 1 și 12, sau 0 pentru a folosi primele luni ale anului fiscal definite în configurația dvs., sau 99 pentru a reseta la zero în fiecare lună ). Dacă această opțiune este folosită și x este 2 sau mai mare, atunci secvența {aa} {mm} sau {AAAA} {mm} este de asemenea necesară. <br> <b>{Dd}</b> zi (01 la 31). <br> <b>{Mm}</b> luni (01 la 12). <br> <b>{AA}, {AAAA}</b> sau <b>{y}</b> an peste 2, 4 sau 1 numere. <br>
 GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of third party type on n characters (see dictionary-thirdparty types).<br>
@@ -373,11 +382,11 @@ ExtrafieldCheckBox=Checkbox
 ExtrafieldRadio=Radio buton
 ExtrafieldCheckBoxFromList= Checkbox din tabel
 ExtrafieldLink=Link către un obiect
-ExtrafieldParamHelpselect=Lista de parametri trebuie să fie ca cheie, valoare <br><br> pentru exemplul: <br> 1, valoare1 <br> 2, valoare2 <br> 3, value3 <br> ... <br><br> Pentru a avea listă în funcție de o alta:<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
+ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list :<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list :<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=Lista de parametri trebuie să fie de tip cheie, valoare <br><br> pentru exemplul: <br> 1, valoare1 <br> 2, valoare2 <br> 3, value3 <br> ...
 ExtrafieldParamHelpradio=Lista de parametri trebuie să fie de tip  cheie, valoare <br><br> pentru exemplul: <br> 1, valoare1 <br> 2, valoare2 <br> 3, value3 <br> ...
-ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list :<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Parameters must be ObjectName:Classpath<br>Syntax : ObjectName:Classpath<br>Example : Societe:societe/class/societe.class.php
 LibraryToBuildPDF=Library used for PDF generation
 WarningUsingFPDF=Atenție: <b>conf.php</b> contine Directiva <b>dolibarr_pdf_force_fpdf = 1.</b> Acest lucru înseamnă că utilizați biblioteca FPDF pentru a genera fișiere PDF. Această bibliotecă este vechi și nu suportă o mulțime de caracteristici (Unicode, transparența imagine, cu litere chirilice, limbi arabe și asiatice, ...), astfel încât este posibil să apară erori în timpul generație PDF. <br> Pentru a rezolva acest lucru și au un suport complet de generare PDF, vă rugăm să descărcați <a href="http://www.tcpdf.org/" target="_blank">biblioteca TCPDF</a> , atunci comentariu sau elimina linia <b>$ dolibarr_pdf_force_fpdf = 1,</b> și se adaugă în schimb <b>$ dolibarr_lib_TCPDF_PATH = &#39;path_to_TCPDF_dir&#39;</b>
@@ -411,10 +420,11 @@ ModuleCompanyCodePanicum=Întoarceţi-vă un gol de contabilitate cod.
 ModuleCompanyCodeDigitaria=Contabilitate cod depinde de o terţă parte de cod. Acest cod este format din caractere "C" în prima poziţie, urmat de primele 5 caractere de-a treia parte de cod.
 Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=Use a 3 steps approval when amount (without tax) is higher than...
-
+WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to send an email from another server than the Yahoo server if the email address used as a sender is your Yahoo email (like myemail@yahoo.com, myemail@yahoo.fr, ...). Your current setup use the server of the application to send email, so some recipients (the one compatible with the restrictive DMARC protocol), will ask Yahoo if they can accept your email and Yahoo will respond "no" because the server is not a server owned by Yahoo, so few of your sent Emails may not be accepted.<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account).
+ClickToShowDescription=Click to show description
 # Modules
 Module0Name=Utilizatori & grupuri
-Module0Desc=Utilizatori şi grupuri de management
+Module0Desc=Users / Employees and Groups management
 Module1Name=Terţi
 Module1Desc=Managementul terţilor (societăţi, particulari) şi contactelor
 Module2Name=Comercial
@@ -515,8 +525,8 @@ Module2200Name=Preţuri dinamice
 Module2200Desc=Activați utilizarea expresii matematice pentru prețuri
 Module2300Name=Cron
 Module2300Desc=Scheduled job management
-Module2400Name=Agenda/Evenimente
-Module2400Desc=Follow events or rendez-vous. Record manual events into Agendas or let application logs automatic events for tracking purposes.
+Module2400Name=Events/Agenda
+Module2400Desc=Follow done and upcoming events. Let application logs automatic events for tracking purposes or record manual events or rendez-vous.
 Module2500Name=Electronic Content Management
 Module2500Desc=Salvaţi şi partaja documente
 Module2600Name=API/Web services (SOAP server)
@@ -582,7 +592,7 @@ Permission34=Ştergere produse / servicii
 Permission36=Exportul de produse / servicii
 Permission38=Exportul de produse
 Permission41=Citește proiecte și sarcini (proiecte comune și proiecte la care sunt persoana de contact). Se poate introduce, de asemenea, timpul consumat cu privire la sarcinile atribuite (pontajul)
-Permission42=Creare / Modificare de proiecte, pentru a edita sarcinile mele de proiecte
+Permission42=Create/modify projects (shared project and projects i'm contact for). Can also create tasks and assign users to project and tasks
 Permission44=Ştergere proiecte
 Permission45=Export proiecte
 Permission61=Citeşte intervenţii
@@ -685,7 +695,7 @@ PermissionAdvanced253=Crearea / modificarea utilizatorii interni / externi şi p
 Permission254=Ştergere sau dezactiva alţi utilizatori
 Permission255=Creaţi / modifica propriile informaţii de utilizator
 Permission256=Modificare propria parolă
-Permission262=Extinderea accesului la toate terţe părţi (nu numai cele legate de utilizator). Nu este eficient pentru utilizatorii externi (întotdeauna limitat la propriu).
+Permission262=Extend access to all third parties (not only third parties that user is a sale representative).<br>Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc).<br>Not effective for projects (only rules on project permissions, visibility and assignement matters).
 Permission271=Citeşte CA
 Permission272=Citeşte facturi
 Permission273=Problema facturilor
@@ -887,7 +897,7 @@ Offset=Decalaj
 AlwaysActive=Întotdeauna activ
 Upgrade=Upgrade
 MenuUpgrade=Upgrade / Extinde
-AddExtensionThemeModuleOrOther=Adăugare extensie (tema, module, ...)
+AddExtensionThemeModuleOrOther=Deploy/install external module
 WebServer=Server Web
 DocumentRootServer=Server Web este directorul rădăcină
 DataRootServer=Directorul de fişiere de date
@@ -994,7 +1004,7 @@ TriggerAlwaysActive=Declanşările în acest dosar sunt întotdeauna activ, ce s
 TriggerActiveAsModuleActive=Declanşările în acest dosar sunt active ca <b>modul %s</b> este activată.
 GeneratedPasswordDesc=Definiţi aici regulă care doriţi să-l utilizaţi pentru a genera o parolă nouă, dacă vă întrebaţi de a avea auto generate parola
 DictionaryDesc=Insert all reference data. You can add your values to the default.
-ConstDesc=Această pagină vă permite să editați toți ceilalți parametri care nu sunt disponibili în paginile anterioare. Aceștia sunt în principal parametrii rezervați pentru dezvoltatori sau pentru depanare avansată.
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
 MiscellaneousDesc=Toți ceilalți parametri legați de securitate sunt definiți aici.
 LimitsSetup=Limitele / Precizie
 LimitsDesc=Puteţi defini limitele, preciziile şi optimizarile utilizate de către Dolibarr aici
@@ -1161,10 +1171,6 @@ FreeLegalTextOnOrders=Free text de pe ordinele de
 WatermarkOnDraftOrders=Filigranul pe comenzile schiţă (niciunul daca e gol)
 ShippableOrderIconInList=Adaugă un icon în lista Comenzilor care indica daca comanda este expediabilă
 BANK_ASK_PAYMENT_BANK_DURING_ORDER=Cere contul bancar destinație al comenzii
-##### Clicktodial #####
-ClickToDialSetup=Click pentru a Dial modul setup
-ClickToDialUrlDesc=Url called when a click on phone picto is done.  Dans l'url, vous pouvez utiliser les balises<br><b>__PHONETO__</b> qui sera remplac� par le t�l�phone de l'appel�<br><b>__PHONEFROM__</b> qui sera remplac� par le t�l�phone de l'appelant (le votre)<br><b>__LOGIN__</b> qui sera remplac� par votre login clicktodial (d�fini sur votre fiche utilisateur)<br><b>__PASS__</b> qui sera remplac� par votre mot de passe clicktodial (d�fini sur votre fiche utilisateur).
-##### Bookmark4u #####
 ##### Interventions #####
 InterventionsSetup=Intervenţii de modul de configurare
 FreeLegalTextOnInterventions=Textul gratuit pe documente de intervenţie
@@ -1391,7 +1397,7 @@ SendingsSetup=Trimiterea de modul de configurare
 SendingsReceiptModel=Trimiterea primirea model
 SendingsNumberingModules=Trimiteri de numerotare module
 SendingsAbility=Foi de transport suport pentru livrările către clienți.
-NoNeedForDeliveryReceipts=În cele mai multe cazuri, sendings încasări sunt utilizate atât ca foi de client pentru livrări (lista de produse pentru a trimite) şi foi de faptul că este recevied şi semnat de către client. Deci, livrările de produse încasări este un duplicat caracteristică şi este rareori activat.
+NoNeedForDeliveryReceipts=In most cases, shipping sheets are used both as sheets for customer deliveries (list of products to send) and sheets that is received and signed by customer. So product deliveries receipts is a duplicated feature and is rarely activated.
 FreeLegalTextOnShippings=Text liber pe livrari
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Produse livrările primirea modul de numerotare
@@ -1471,7 +1477,11 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Set automatically this default value for type of e
 AGENDA_DEFAULT_FILTER_TYPE=Setați automat acest tip de eveniment în filtrul de căutare al vederii agenda
 AGENDA_DEFAULT_FILTER_STATUS=Setați automat acest statut în filtrul de căutare al vederii agenda
 AGENDA_DEFAULT_VIEW=Care tab doriţi să deschideţi când selectaţi meniul Agenda
-##### ClickToDial #####
+AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
+AGENDA_NOTIFICATION_SOUND=Enable sound notification
+##### Clicktodial #####
+ClickToDialSetup=Click pentru a Dial modul setup
+ClickToDialUrlDesc=Url called when a click on phone picto is done.  Dans l'url, vous pouvez utiliser les balises<br><b>__PHONETO__</b> qui sera remplac� par le t�l�phone de l'appel�<br><b>__PHONEFROM__</b> qui sera remplac� par le t�l�phone de l'appelant (le votre)<br><b>__LOGIN__</b> qui sera remplac� par votre login clicktodial (d�fini sur votre fiche utilisateur)<br><b>__PASS__</b> qui sera remplac� par votre mot de passe clicktodial (d�fini sur votre fiche utilisateur).
 ClickToDialDesc=This module allows to make phone numbers clickable. A click on this icon will call make your phone to call the phone number. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
 ClickToDialUseTelLink=Use just a link "tel:" on phone numbers
 ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface installed on same computer than the browser, and called when you click on a link in your browser that start with "tel:". If you need a full server solution (no need of local software installation), you must set this to "No" and fill next field.
@@ -1499,10 +1509,11 @@ EndPointIs=Clienții SOAP trebuie să își trimită cererile la punctul final D
 ##### API ####
 ApiSetup=Configurare Modul API
 ApiDesc=By enabling this module, Dolibarr become a REST server to provide miscellaneous web services.
-ApiProductionMode=Enable production mode (this will activate use of a caches for services management)
+ApiProductionMode=Enable production mode (this will activate use of a cache for services management)
 ApiExporerIs=You can explore the APIs at url
 OnlyActiveElementsAreExposed=Only elements from enabled modules are exposed
 ApiKey=Cheie pentru API
+WarningAPIExplorerDisabled=The API explorer has been disabled. API explorer is not required to provide API services. It is a tool for developer to find/test REST APIs. If you need this tool, go into setup of module API REST to activate it.
 ##### Bank #####
 BankSetupModule=Banca modul de configurare
 FreeLegalTextOnChequeReceipts=Free text pe cec încasări
@@ -1571,7 +1582,7 @@ BackupDumpWizard=Wizard to build database backup dump file
 SomethingMakeInstallFromWebNotPossible=Installation of external module is not possible from the web interface for the following reason:
 SomethingMakeInstallFromWebNotPossible2=For this reason, process to upgrade described here is only manual steps a privileged user can do.
 InstallModuleFromWebHasBeenDisabledByFile=Install of external module from application has been disabled by your administrator. You must ask him to remove the file <strong>%s</strong> to allow this feature.
-ConfFileMuseContainCustom=Installing an external module from application save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
+ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Highlight color of the line when the mouse passes over (keep empty for no highlight)
 TextTitleColor=Culoare titlu pagina
@@ -1601,6 +1612,7 @@ FixTZ=Fixează TimeZone
 FillFixTZOnlyIfRequired=Example: +2 (fill only if problem experienced)
 ExpectedChecksum=Checksum așteptat
 CurrentChecksum=Checksum curent
+ForcedConstants=Required constant values
 MailToSendProposal=To send customer proposal
 MailToSendOrder=To send customer order
 MailToSendInvoice=To send customer invoice
@@ -1609,13 +1621,14 @@ MailToSendIntervention=To send intervention
 MailToSendSupplierRequestForQuotation=To send quotation request to supplier
 MailToSendSupplierOrder=To send supplier order
 MailToSendSupplierInvoice=To send supplier invoice
+MailToSendContract=To send a contract
 MailToThirdparty=To send email from third party page
 ByDefaultInList=Show by default on list view
-YouUseLastStableVersion=Folositi ultima versiune stabilă
+YouUseLastStableVersion=You use the latest stable version
 TitleExampleForMajorRelease=Example of message you can use to announce this major release (feel free to use it on your web sites)
 TitleExampleForMaintenanceRelease=Example of message you can use to announce this maintenance release (feel free to use it on your web sites)
-ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
-ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 MultiPriceRuleDesc=When option "Several level of prices per product/service" is on, you can define different prices (one per price level) for each product. To save you time, you can enter here rule to have price for each level autocalculated according to price of first level, so you will have to enter only price for first level on each product. This page is here to save you time and can be usefull only if your prices for each leve are relative to first level. You can ignore this page in most cases.
 ModelModulesProduct=Templates for product documents
 ToGenerateCodeDefineAutomaticRuleFirst=To be able to generate automatically codes, you must first define a manager to auto define barcode number.

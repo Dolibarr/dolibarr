@@ -184,7 +184,7 @@ else {
     print '<table class="liste ' . ($moreforfilter ? "listwithfilterbefore" : "") . '">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("AccountAccounting"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
-    print_liste_field_titre($langs->trans("Labelcompte"), $_SERVER['PHP_SELF'], "t.label_compte", "", $options, "", $sortfield, $sortorder);
+    print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_compte", "", $options, "", $sortfield, $sortorder);
     print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
     print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
     print_liste_field_titre($langs->trans("Solde"), $_SERVER["PHP_SELF"], "", $options, "", 'align="right"', $sortfield, $sortorder);
@@ -192,7 +192,7 @@ else {
     print "</tr>\n";
     
     print '<tr class="liste_titre">';
-    print '<td class="liste_titre center" colspan="2">';
+    print '<td class="liste_titre" colspan="2">';
     print $langs->trans('From');
     print $formventilation->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, '');
     print '<br>';
@@ -229,7 +229,7 @@ else {
         if (empty($description)) {
             $link = '<a href="../admin/card.php?action=create&compte=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
         }
-        print '<tr' . $bc[$var] . '>';
+        print '<tr ' . $bc[$var] . '>';
         
         // Permet d'afficher le compte comptable
         if ($root_account_description != $displayed_account) {

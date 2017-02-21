@@ -17,8 +17,8 @@ CronMethodDoesNotExists=Klasse %s inneholder ingen metode %s
 # Menu
 EnabledAndDisabled=Aktivert og deaktivert
 # Page list
-CronLastOutput=Resultat av forrige kjøring
-CronLastResult=Siste kjøring - kode
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Kommando
 CronList=Planlagte jobber
 CronDelete=Slett planlagte jobber

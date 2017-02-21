@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - bills
-BillsCustomers=Klantenfacturen
+BillsCustomers=Klant facturen
+BillsSuppliers=Leverancier facturen
 DisabledBecauseNotErasable=Niet mogelijk omdat het niet kan worden gewist
 IdPaymentMode=Betalingsmanier (id)
 LabelPaymentMode=Betalingsmanier (label)
@@ -8,7 +9,6 @@ CreateCreditNote=Aanmaak krediet nota
 StatusOfGeneratedInvoices=Lijst van genereerde facturen
 BillStatusDraft=Conceptfactuur (moet worden gevalideerd)
 BillShortStatusClosedUnpaid=Afgesloten
-CustomersDraftInvoices=Klantenconceptfacturen
 ShowInvoiceSituation=Toon situatie factuur
 RemainderToBill=Nog te factureren
 DateMaxPayment=Te betalen vóór

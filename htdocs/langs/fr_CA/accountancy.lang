@@ -5,21 +5,18 @@ ACCOUNTING_EXPORT_PIECE=Exporter le nombre de pièces
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exporter avec compte global
 Selectformat=Sélectionner le format de date pour le fichier
 ACCOUNTING_EXPORT_PREFIX_SPEC=Spécifiez le préfixe du nom de fichier
-AccountAccountingSuggest=Compte comptable suggéré
-ProductsBinding=Products bindings
 AccountBalance=Solde du compte
 CAHTF=Total achats fournisseur avant taxes
-ACCOUNTING_LENGTH_DESCRIPTION=Longueur pour l'affichage des produits et services description dans les listes (valeur conseillée = 50 )
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longueur pour l'affichage des produits et services compte formulaire de description dans les listes (valeur conseillée = 50 )
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Note de frais
+AccountingCategory=Accounting category
 FinanceJournal=Journal des finances
 DescFinanceJournal=Journal de banque comprenant tous les types de règlements autres que espèce\t
 TotalVente=Chiffre d'affaires total avant taxes
+DescVentilDoneSupplier=Consultez ici la liste des lignes de factures fournisseur et leur compte comptable
 MvtNotCorrectlyBalanced=Le mouvement n'est pas correctement équilibré. Crédit = %s. Débit = %s
-GeneralLedgerIsWritten=Les opérations sont écrites dans le grand livre général
 InitAccountancy=Compabilité initiale
 OptionModeProductSell=Mode de ventes
 OptionModeProductBuy=Mode d'achats
-OptionModeProductSellDesc=Voir tous les produits sans compte comptable défini pour les ventes.
-OptionModeProductBuyDesc=Voir tous les produits sans compte comptable défini pour les achats.
 Range=Gamme de compte comptable
+ErrorNoAccountingCategoryForThisCountry=No accounting category available for country %s (See Home - Setup - Dictionaries)
+WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced by a correct report in a next version.

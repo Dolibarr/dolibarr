@@ -36,3 +36,5 @@ FindBug=Señalar un bug
 Currency=Moneda
 SelectElementAndClickRefresh=Seleccione un elemento y haga clic en Actualizar
 PrintFile=Imprimir archivo %s
+Select2MoreCharacter=or more characters<br /><br /><strong>Search syntax:</strong><br /><kbd><strong> |</strong></kbd><kbd> OR</kbd> (a|b)<br /><kbd><strong>*</strong></kbd><kbd> Any character</kbd> (a*b)<br /><kbd><strong>^</strong></kbd><kbd> Start with</kbd> (^ab)<br /><kbd><strong>$</strong></kbd><kbd> End with</kbd> (ab$)<br />
+Select2MoreCharacters=or more characters<br /><br /><strong>Search syntax:</strong><br /><kbd><strong> |</strong></kbd><kbd> OR</kbd> (a|b)<br /><kbd><strong>*</strong></kbd><kbd> Any character</kbd> (a*b)<br /><kbd><strong>^</strong></kbd><kbd> Start with</kbd> (^ab)<br /><kbd><strong>$</strong></kbd><kbd> End with</kbd> (ab$)<br />

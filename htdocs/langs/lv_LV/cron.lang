@@ -17,8 +17,8 @@ CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronLastOutput=Pēdējo reizi palaist izejas
-CronLastResult=Pēdējais rezultātu kods
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Komanda
 CronList=Scheduled jobs
 CronDelete=Delete scheduled jobs

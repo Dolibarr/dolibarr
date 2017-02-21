@@ -74,14 +74,18 @@ ResultOfMailSending=Резултат от масово изпращане на �
 NbSelected=Nb selected
 NbIgnored=Nb ignored
 NbSent=Nb sent
-ContactsWithThirdpartyFilter=Contact with customer filters
+ConfirmUnvalidateEmailing=Are you sure you want to change email <b>%s</b> to draft status?
+MailingModuleDescContactsWithThirdpartyFilter=Contact with customer filters
+MailingModuleDescContactsByCompanyCategory=Contacts by third party category
+MailingModuleDescContactsByCategory=Contacts by categories
+MailingModuleDescContactsByFunction=Contacts by position
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Line %s във файла
 RecipientSelectionModules=Определени искания за подбор на получателя
 MailSelectedRecipients=Избрани получателите
 MailingArea=Имейли
-LastMailings=Последните %s имейла
+LastMailings=Latest %s emailings
 TargetsStatistics=Насочена е към статистиката
 NbOfCompaniesContacts=Уникални контакти на фирми
 MailNoChangePossible=Получатели на за валидирани електронната поща не може да бъде променена
@@ -146,3 +150,6 @@ AdvTgtCreateFilter=Create filter
 AdvTgtOrCreateNewFilter=Name of new filter
 NoContactWithCategoryFound=No contact/address with a category found
 NoContactLinkedToThirdpartieWithCategoryFound=No contact/address with a category found
+OutGoingEmailSetup=Outgoing email setup
+InGoingEmailSetup=Incoming email setup
+

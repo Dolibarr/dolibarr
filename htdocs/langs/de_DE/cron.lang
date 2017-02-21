@@ -7,7 +7,7 @@ Permission23103 = Lösche geplanten Job
 Permission23104 = Führe geplanten Job aus
 # Admin
 CronSetup= Jobverwaltungs-Konfiguration
-URLToLaunchCronJobs=URL to check and launch qualified cron jobs
+URLToLaunchCronJobs=URL zum Prüfen und Starten von speziellen Jobs
 OrToLaunchASpecificJob=Oder zum Prüfen und Starten von speziellen Jobs
 KeyForCronAccess=Sicherheitsschlüssel für URL zum Starten von Cronjobs
 FileToLaunchCronJobs=Kommandozeile zum Starten von Cronjobs
@@ -17,14 +17,14 @@ CronMethodDoesNotExists=Klasse %s enthält keine Methode %s
 # Menu
 EnabledAndDisabled=Aktiviert und Deaktiviert
 # Page list
-CronLastOutput=Ausgabe der letzten Ausführung
-CronLastResult=Letzter Resultatcode
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Befehl
 CronList=Geplante Aufträge
 CronDelete=cronjobs löschen
-CronConfirmDelete=Sind Sie sicher, dass Sie diese geplanten Aufträge löschen wollen?
+CronConfirmDelete=Sind Sie sicher, dass Sie diese geplante Aufträge  jetzt löschen möchten?
 CronExecute=Geplanter Auftrag jetzt ausführen 
-CronConfirmExecute=Sind Sie sicher, dass Sie diese geplante Aufträge  jetzt ausführen möchten?
+CronConfirmExecute=Sind Sie sicher, dass Sie diese geplante Aufträge jetzt ausführen möchten?
 CronInfo=Das Modul "Zeitgesteuerte Cron-Jobs" erlaubt die geplanten Cron-Jobs die programmiert wurden durchzuführen.
 CronTask=Job
 CronNone=Keine

@@ -194,6 +194,8 @@ ChangeBinding=Change the binding
 
 ## Admin
 ApplyMassCategories=Použiť hromadne kategóriu
+AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
+CategoryDeleted=Category for the accounting account has been removed
 
 ## Export
 Exports=Exports
@@ -209,6 +211,7 @@ Modelcsv_ciel=Exportovať pre Sage Ciel Compta alebo Compta Evolution
 Modelcsv_quadratus=Exportovať pre Quadratus QuadraCompta
 Modelcsv_ebp=Exportovať pre EBP
 Modelcsv_cogilog=Exportovať pre Cogilog
+ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Načítať účtovníctvo

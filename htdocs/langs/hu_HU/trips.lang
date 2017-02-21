@@ -38,25 +38,25 @@ TripSociete=Information company
 TripNDF=Informations expense report
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Expense report line
-TF_OTHER=Other
+TF_OTHER=Egyéb
 TF_TRIP=Transportation
-TF_LUNCH=Lunch
-TF_METRO=Metro
-TF_TRAIN=Train
-TF_BUS=Bus
-TF_CAR=Car
-TF_PEAGE=Toll
-TF_ESSENCE=Fuel
-TF_HOTEL=Hotel
+TF_LUNCH=Ebéd
+TF_METRO=Metró
+TF_TRAIN=Vonat
+TF_BUS=Busz
+TF_CAR=Autó
+TF_PEAGE=Autópályadíj
+TF_ESSENCE=Üzemanyag
+TF_HOTEL=Szálloda
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
 AucuneLigne=There is no expense report declared yet
 
-ModePaiement=Payment mode
+ModePaiement=Fizetés módja
 
 VALIDATOR=User responsible for approval
-VALIDOR=Approved by
+VALIDOR=Jóváhagyva
 AUTHOR=Recorded by
 AUTHORPAIEMENT=Paid by
 REFUSEUR=Denied by
