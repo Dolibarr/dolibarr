@@ -113,6 +113,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 /*
  * Informations area
  */
+/* Was moved into a widget
 $boxinfo='';
 $boxinfo.= '<div class="box">';
 $boxinfo.= '<table summary="'.dol_escape_htmltag($langs->trans("LoginInformation")).'" class="noborder boxtable" width="100%">';
@@ -127,8 +128,7 @@ $boxinfo.= '</td>';
 $boxinfo.= "</tr>\n";
 $boxinfo.= "</table>\n";
 $boxinfo.= '</div>';
-//print $boxinfo;
-
+*/
 
 /*
  * Dashboard Dolibarr states (statistics)
@@ -593,7 +593,7 @@ $boxlist.='<tr><td class="notopnoleftnoright">'."\n";
 
 $boxlist.='<div class="fichehalfleft">';
 
-$boxlist.=$boxinfo;
+//$boxlist.=$boxinfo;
 $boxlist.=$boxstat;
 $boxlist.=$resultboxes['boxlista'];
 
