@@ -2011,8 +2011,8 @@ class User extends CommonObject
 	            $label.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
 	            if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $label.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$this->entity.')';
 	            $label.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
-	            $label.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($this->datelastlogin,"dayhour");
-	            $label.= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($this->datepreviouslogin,"dayhour");
+	            $label.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($this->datelastlogin,"dayhour",'tzuser');
+	            $label.= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($this->datepreviouslogin,"dayhour",'tzuser');
 	            $label.= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
 	            $label.= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
 	            $s=picto_from_langcode($langs->getDefaultLang());
