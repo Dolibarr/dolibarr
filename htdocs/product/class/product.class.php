@@ -1571,7 +1571,7 @@ class Product extends CommonObject
 		                    $prod_supplier->fourn_tva_tx = $obj->tva_tx;
 		                    $prod_supplier->fk_supplier_price_expression = $obj->fk_supplier_price_expression;
 		                    $priceparser = new PriceParser($this->db);
-		                    $price_result = $priceparser->parseProductSupplier($prod_supplier);
+		                    $price_result = $priceparser->parseProductSupplier($prod_supplier, $extra_values);
 		                    if ($result >= 0) {
 		                    	$obj->price = $price_result;
 		                    }

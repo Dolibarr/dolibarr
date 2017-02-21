@@ -202,6 +202,7 @@ class PriceParser
 		//Remove internal variables
 		unset($values["supplier_id"]);
 		unset($values["date_start"]);
+		unset($values["date_end"]);
 
 		//Prepare the lib, parameters and values
 		$em = new EvalMath();
