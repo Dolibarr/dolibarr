@@ -187,7 +187,21 @@ if (empty($reshook))
 	        if ($result < 0)
 	        {
 	            setEventMessages($object->error,$object->errors,'errors');
-	        }
+	        }else{
+                $outputlangs = $langs;
+                $newlang = '';
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+                if (! empty($newlang)) {
+                    $outputlangs = new Translate("", $conf);
+                    $outputlangs->setDefaultLang($newlang);
+                }
+                $model=$object->modelpdf;
+                $ret = $object->fetch($id); // Reload to get new records
+
+                $result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+                if ($result < 0) dol_print_error($db,$result);
+            }
 	    }
 	}
 
