@@ -1924,8 +1924,8 @@ class Facture extends CommonInvoice
 			dol_print_error($this->db);
 		}
 
-        // Check resources
-        if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+        // Check resources if coming from abandoned invoice
+        if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION) && $this->statut == self::STATUS_ABANDONED)
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
             require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
