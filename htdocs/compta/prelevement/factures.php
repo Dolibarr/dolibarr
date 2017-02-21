@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
@@ -43,9 +43,25 @@ if ($user->societe_id > 0) accessforbidden();
 // Get supervariables
 $prev_id = GETPOST('id','int');
 $socid = GETPOST('socid','int');
-$page = GETPOST('page','int');
-$sortorder = ((GETPOST('sortorder','alpha')=="")) ? "DESC" : GETPOST('sortorder','alpha');
-$sortfield = ((GETPOST('sortfield','alpha')=="")) ? "p.ref" : GETPOST('sortfield','alpha');
+
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield='p.ref';
+if (! $sortorder) $sortorder='DESC';
+
+
+/*
+ * View
+ */
+
+$invoicetmp = new Facture($db);
+$thirdpartytmp = new Societe($db);
 
 llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
@@ -60,30 +76,27 @@ if ($prev_id)
 
       	print '<table class="border" width="100%">';
 
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
-		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'day').'</td></tr>';
-		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
-
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'day').'</td></tr>';
+		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
 		// Status
-		print '<tr><td width="20%">'.$langs->trans('Status').'</td>';
-		print '<td>'.$bon->getLibStatut(1).'</td>';
-		print '</tr>';
+		print '<tr><td>'.$langs->trans('Status').'</td><td>'.$bon->getLibStatut(1).'</td></tr>';
 
 		if($bon->date_trans <> 0)
 		{
 			$muser = new User($db);
 			$muser->fetch($bon->user_trans);
 
-			print '<tr><td width="20%">'.$langs->trans("TransData").'</td><td>';
+			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($bon->date_trans,'day');
 			print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
-			print '<tr><td width="20%">'.$langs->trans("TransMetod").'</td><td>';
+			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $bon->methodes_trans[$bon->method_trans];
 			print '</td></tr>';
 		}
 		if($bon->date_credit <> 0)
 		{
-			print '<tr><td width="20%">'.$langs->trans('CreditDate').'</td><td>';
+			print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
 			print dol_print_date($bon->date_credit,'day');
 			print '</td></tr>';
 		}
@@ -92,7 +105,7 @@ if ($prev_id)
 
 		print '<br>';
 
-		print '<table class="border" width="100%"><tr><td width="20%">';
+		print '<table class="border" width="100%"><tr><td class="titlefield">';
 		print $langs->trans("WithdrawalFile").'</td><td>';
 		$relativepath = 'receipts/'.$bon->ref.'.xml';
 		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
@@ -107,11 +120,8 @@ if ($prev_id)
     }
 }
 
-$offset = $conf->liste_limit * $page ;
 
-/*
- * Liste des factures
- */
+// List of invoices
 $sql = "SELECT pf.rowid";
 $sql.= ",f.rowid as facid, f.facnumber as ref, f.total_ttc";
 $sql.= ", s.rowid as socid, s.nom as name, pl.statut";
@@ -127,27 +137,49 @@ $sql.= " AND pf.fk_facture = f.rowid";
 $sql.= " AND f.entity = ".$conf->entity;
 if ($prev_id) $sql.= " AND p.rowid=".$prev_id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
-$sql.= " ORDER BY $sortfield $sortorder ";
-$sql.= $db->plimit($conf->liste_limit+1, $offset);
+
+$sql.= $db->order($sortfield,$sortorder);
+
+// Count total nb of records
+$nbtotalofrecords = '';
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
+
+$sql.= $db->plimit($limit + 1,$offset);
 
 $result = $db->query($sql);
-
 if ($result)
 {
   	$num = $db->num_rows($result);
   	$i = 0;
 
-  	$urladd = "&amp;id=".$prev_id;
+  	$param = "&amp;id=".$prev_id;
 
-  	print_barre_liste("", $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num);
+	// Lines of title fields
+	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
+	$massactionbutton='';
+	
+	print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
+  	
   	print"\n<!-- debut table -->\n";
   	print '<table class="liste" width="100%">';
   	print '<tr class="liste_titre">';
-  	print_liste_field_titre($langs->trans("Bill"),$_SERVER["PHP_SELF"],"p.ref",'',$urladd,'class="liste_titre"',$sortfield,$sortorder);
-  	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$urladd,'class="liste_titre"',$sortfield,$sortorder);
-  	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"f.total_ttc","",$urladd,'class="liste_titre" align="center"',$sortfield,$sortorder);
-  	print_liste_field_titre('');
+  	print_liste_field_titre($langs->trans("Bill"),$_SERVER["PHP_SELF"],"p.ref",'',$param,'',$sortfield,$sortorder);
+  	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$param,'',$sortfield,$sortorder);
+  	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
+  	print_liste_field_titre($langs->trans("StatusDebitCredit"),$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -155,24 +187,31 @@ if ($result)
 
   	$total = 0;
 
-  	while ($i < min($num,$conf->liste_limit))
+  	while ($i < min($num, $limit))
     {
      	$obj = $db->fetch_object($result);
 
-      	print "<tr ".$bc[$var]."><td>";
-
-      	print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
-      	print img_object($langs->trans("ShowBill"),"bill");
-      	print '</a>&nbsp;';
-
-      	print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
-
-      	print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
-      	print img_object($langs->trans("ShowCompany"),"company"). ' '.$obj->name."</a></td>\n";
-
-      	print '<td align="center">'.price($obj->total_ttc)."</td>\n";
+     	$invoicetmp->id = $obj->facid;
+     	$invoicetmp->ref = $obj->ref;
+     	
+     	$thirdpartytmp->id = $obj->socid;
+     	$thirdpartytmp->name = $obj->name;
+     	
+      	print "<tr ".$bc[$var].">";
+      	
+      	print "<td>";
+      	print $invoicetmp->getNomUrl(1);
+        print "</td>\n";
 
       	print '<td>';
+      	print $thirdpartytmp->getNomUrl(1);
+      	print "</td>\n";
+
+      	// Amount
+      	print '<td align="right">'.price($obj->total_ttc)."</td>\n";
+
+      	// Status of requests
+      	print '<td align="center">';
 
       	if ($obj->statut == 0)
 		{
@@ -187,23 +226,25 @@ if ($result)
 	  		print '<b>'.$langs->trans("StatusRefused").'</b>';
 		}
 
-      	print "</td></tr>\n";
+      	print "</td>";
+      	
+      	print "<td></td>";
+      	
+      	print "</tr>\n";
 
       	$total += $obj->total_ttc;
       	$var=!$var;
       	$i++;
     }
 
-  	if($socid)
+  	if ($num > 0)
     {
-      	print "<tr ".$bc[$var]."><td>";
-
+      	print '<tr class="liste_total">';
      	print '<td>'.$langs->trans("Total").'</td>';
-
-      	print '<td align="center">'.price($total)."</td>\n";
-
       	print '<td>&nbsp;</td>';
-
+      	print '<td align="right">'.price($total)."</td>\n";
+      	print '<td>&nbsp;</td>';
+      	print '<td>&nbsp;</td>';
       	print "</tr>\n";
     }
 

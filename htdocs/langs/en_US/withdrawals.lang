@@ -40,6 +40,7 @@ RefusedReason=Reason for rejection
 RefusedInvoicing=Billing the rejection
 NoInvoiceRefused=Do not charge the rejection
 InvoiceRefused=Invoice refused (Charge the rejection to customer)
+StatusDebitCredit=Status debit/credit
 StatusWaiting=Waiting
 StatusTrans=Sent
 StatusCredited=Credited
