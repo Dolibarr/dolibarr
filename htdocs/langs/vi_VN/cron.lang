@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Read Scheduled job
-Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
+Permission23101 = Xem công việc theo lịch trình
+Permission23102 = Tạo/cập nhật công việc theo lịch trình
+Permission23103 = Xóa công việc theo lịch trình
+Permission23104 = Thực thi công việc theo lịch trình
 # Admin
 CronSetup= Theo lịch trình thiết lập quản lý công việc
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs
@@ -17,14 +17,14 @@ CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronLastOutput=Bài đầu ra chạy
-CronLastResult=Cuối mã kết quả
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Lệnh
-CronList=Scheduled jobs
+CronList=Việc theo lịch trình
 CronDelete=Delete scheduled jobs
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allow to execute job that have been planned
 CronTask=Công việc
 CronNone=Không
@@ -33,13 +33,13 @@ CronDtEnd=Not after
 CronDtNextLaunch=Thực hiện tiếp theo
 CronDtLastLaunch=Start date of latest execution
 CronDtLastResult=End date of latest execution
-CronFrequency=Frequency
+CronFrequency=Tần số
 CronClass=Class
 CronMethod=Phương pháp
 CronModule=Mô-đun
 CronNoJobs=Không có công ăn việc làm đăng ký
 CronPriority=Ưu tiên
-CronLabel=Label
+CronLabel=Nhãn
 CronNbRun=Nb. ra mắt
 CronMaxRun=Max nb. launch
 CronEach=Mỗi
@@ -65,7 +65,7 @@ CronMethodHelp=Phương pháp đối tượng để khởi động. <BR> Đối 
 CronArgsHelp=Các đối số phương pháp. <BR> Đối với exemple phương pháp của Dolibarr đối tượng sản phẩm /htdocs/product/class/product.class.php lấy, giá trị của paramters có thể là <i>0, ProductRef</i>
 CronCommandHelp=Các dòng lệnh hệ thống để thực thi.
 CronCreateJob=Create new Scheduled Job
-CronFrom=From
+CronFrom=Từ
 # Info
 # Common
 CronType=Job type

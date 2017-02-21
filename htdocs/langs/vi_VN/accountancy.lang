@@ -3,7 +3,7 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Dấu ngăn cách cột trong file xuất ra
 ACCOUNTING_EXPORT_DATE=Định dạng ngày trong file xuất ra
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export label
+ACCOUNTING_EXPORT_LABEL=Xuất nhãn
 ACCOUNTING_EXPORT_AMOUNT=Export amount
 ACCOUNTING_EXPORT_DEVISE=Export currency
 Selectformat=Select the format for the file
@@ -194,6 +194,8 @@ ChangeBinding=Change the binding
 
 ## Admin
 ApplyMassCategories=Apply mass categories
+AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
+CategoryDeleted=Category for the accounting account has been removed
 
 ## Export
 Exports=Xuất khẩu
@@ -209,6 +211,7 @@ Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
 Modelcsv_quadratus=Export towards Quadratus QuadraCompta
 Modelcsv_ebp=Export towards EBP
 Modelcsv_cogilog=Export towards Cogilog
+ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy

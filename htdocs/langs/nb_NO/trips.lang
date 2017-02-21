@@ -21,7 +21,17 @@ ListToApprove=Venter på godkjenning
 ExpensesArea=Område for reiseregninger
 ClassifyRefunded=Klassifisert 'refundert'
 ExpenseReportWaitingForApproval=En ny reiseregning er sendt inn for godkjenning
-ExpenseReportWaitingForApprovalMessage=En ny reiseregning er sendt inn og venter på godkjenning.\n- Bruker: %s\n- Periode: %s\nKlikk her for å godkjenne: %s
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
+ExpenseReportWaitingForReApproval=An expense report has been submitted for re-approval
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.\nThe %s, you refused to approve the expense report for this reason: %s.\nA new version has been proposed and waiting for your approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
+ExpenseReportApproved=En utgiftsrapport ble godkjent
+ExpenseReportApprovedMessage=Utgiftrapport %s ble godkjent.\n- Bruker: %s\n- Godkjent av: %s\nKlikk her for å vise utgiftsrapporten: %s
+ExpenseReportRefused=En utgiftsrapport ble avvist
+ExpenseReportRefusedMessage=Utgiftrapport %s ble avvist.\n- Bruker: %s\n- Avvist av: %s\n- Årsak for avvisning:%s\nKlikk her for å vise utgiftsrapporten: %s
+ExpenseReportCanceled=En utgiftsrapport ble kansellert
+ExpenseReportCanceledMessage=Utgiftrapport %s ble kansellert.\n- Bruker: %s\n- Kansellert av: %s\n- Årsak til kansellering: %s\nKlikk her for å vise utgiftsrapporten: %s
+ExpenseReportPaid=En utgiftsrapport ble betalt
+ExpenseReportPaidMessage=Utgiftrapport %s ble betalt.\n- Bruker: %s\n- Betalt av: %s\nKlikk her for å vise utgiftsrapporten: %s
 TripId=Reiseregnings - ID
 AnyOtherInThisListCanValidate=Person som skal informeres for godkjenning
 TripSociete=Firmainformasjon
@@ -59,31 +69,23 @@ DATE_REFUS=Avvist dato
 DATE_SAVE=Godkjennelsesdato
 DATE_CANCEL=Kansellert dato
 DATE_PAIEMENT=Betalt dato
-
 BROUILLONNER=Gjenåpne
 ValidateAndSubmit=Valider og send til godkjenning
 ValidatedWaitingApproval=Validert (venter på godkjenning)
-
 NOT_AUTHOR=Reiseregningener ikke opprettet av deg. Operasjonen avbrutt.
-
 ConfirmRefuseTrip=Er du sikker på at du vil avvise denne utgiftsrapporten?
-
 ValideTrip=Godkjenn reiseregning
 ConfirmValideTrip=Er du sikker på at du vil godkjenne denne utgiftsrapporten?
-
 PaidTrip=Betal en reiseregning
 ConfirmPaidTrip=Er du sikker på at du vil endre status på denne utgiftsrapporten til "betalt"?
-
 ConfirmCancelTrip=Er du sikker på at du vil kansellere denne utgiftsrapporten?
-
 BrouillonnerTrip=Endre reiseregning til "kladd"
 ConfirmBrouillonnerTrip=Er du sikker på at du vil endre status på denne utgiftsrapporten til "utkast"?
-
 SaveTrip=Godkjenn reiseregning
 ConfirmSaveTrip=Er du sikker på at du vil validere denne utgiftsrapporten?
-
 NoTripsToExportCSV=Ingen reiseregning å eksportere for denne perioden
 ExpenseReportPayment=Betaling av utgiftsrapport
-
 ExpenseReportsToApprove=Utgiftsrapporter for godkjenning
 ExpenseReportsToPay=Utgiftsrapport å betale
+CloneExpenseReport=Klon utgiftsrapport
+ConfirmCloneExpenseReport=Er du sikker på at du vil klone denne utgiftsrapporten?

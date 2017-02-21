@@ -81,6 +81,7 @@ PaymentBankAccount=Payment bank account
 OverAllProposals=Total proposals
 OverAllOrders=Total orders
 OverAllInvoices=Total invoices
+OverAllSupplierProposals=Total price requests
 ##### Local Taxes #####
 LocalTax1IsUsed=Použití druhé daně
 LocalTax1IsUsedES= RE se používá
@@ -404,7 +405,7 @@ MergeThirdparties=Merge third parties
 ConfirmMergeThirdparties=Are you sure you want to merge this third party into the current one? All linked objects (invoices, orders, ...) will be moved to current third party so you will be able to delete the duplicate one.
 ThirdpartiesMergeSuccess=Třetí strany  byly sloučeny
 SaleRepresentativeLogin=Login of sales representative
-SaleRepresentativeFirstname=Firstname of sales representative
-SaleRepresentativeLastname=Lastname of sales representative
+SaleRepresentativeFirstname=First name of sales representative
+SaleRepresentativeLastname=Last name of sales representative
 ErrorThirdpartiesMerge=Došlo k chybě při mazání třetích stran. Zkontrolujte log soubor. Změny byly vráceny.
 NewCustomerSupplierCodeProposed=New customer or supplier code suggested on duplicate code

@@ -27,7 +27,7 @@ OverviewOfAmountOfLinesNotBound=Übersicht über die Anzahl der nicht an ein Buc
 OverviewOfAmountOfLinesBound=Übersicht über die Anzahl der bereits an ein Buchhaltungskonto zugeordneten Zeilen
 OtherInfo=Zusatzinformationen
 
-AccountancyArea=Rechnungswesen
+AccountancyArea=Buchhaltung
 AccountancyAreaDescIntro=Die Verwendung des Buchhaltungsmoduls erfolgt in mehreren Schritten:
 AccountancyAreaDescActionOnce=The following actions are usually executed one time only, or once per year...
 AccountancyAreaDescActionOnceBis=Die nächsten Schritte sollten getan werden, um Ihnen in Zukunft  Zeit zu sparen, indem Sie Ihnen das korrekte Standardbuchhaltungskonto vorschlagen, wenn Sie die Journalisierung (Schreiben des Buchungsjournal und des Hauptbuchs) machen.
@@ -140,7 +140,7 @@ DelYear=Jahr zu entfernen
 DelJournal=Journal zu entfernen
 ConfirmDeleteMvt=This will delete all lines of the general ledger for year and/or from a specific journal. At least one criteria is required.
 ConfirmDeleteMvtPartial=Dadurch wird die ausgewählte(n) Zeile(n) aus dem Hauptbuch gelöscht
-DelBookKeeping=Delete record of the general ledger
+DelBookKeeping=Löschen Sie den Eintrag im Hauptbuch
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Expense reports journal
 DescFinanceJournal=Finanzjournal inklusive aller Arten von Zahlungen mit Bankkonto
@@ -194,6 +194,8 @@ ChangeBinding=Ändern der Zuordnung
 
 ## Admin
 ApplyMassCategories=Massenaktualisierung der Kategorien
+AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
+CategoryDeleted=Category for the accounting account has been removed
 
 ## Export
 Exports=Exporte
@@ -209,6 +211,7 @@ Modelcsv_ciel=Export zu Sage Ciel Compta oder Compta Evolution
 Modelcsv_quadratus=Export zu Quadratus QuadraCompta
 Modelcsv_ebp=Export zu EBP
 Modelcsv_cogilog=Export zu Cogilog
+ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Rechnungswesen initialisieren

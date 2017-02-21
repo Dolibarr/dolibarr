@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - bills
-BillsCustomersUnpaidForCompany=Offene Rechnungen vom Kunden %s
 BillsSuppliersUnpaid=Offene Lieferantenrechnungen
-BillsSuppliersUnpaidForCompany=Offene Rechnungen für den Lieferanten %s
 BillsStatistics=Zahlungsstatistik - Kundenrechnungen
 BillsStatisticsSuppliers=Zahlungsstatistik - Lieferantenrechnungen
 DisabledBecauseNotErasable=Deaktiviert da nicht gelöscht werden kann
@@ -25,6 +23,7 @@ CustomerInvoicePaymentBack=Gutschrift
 paymentInInvoiceCurrency=In Rechnungswährung
 PaidBack=Zurückbezahlt
 DeletePayment=Zahlung löschen
+ConfirmDeletePayment=Nur zur Sicherheit: Willst du diese Zahlung wirklich löschen?
 ReceivedPayments=Zahlungseingang
 ReceivedCustomersPayments=Erhaltene Kundenzahlungen
 PaymentsReportsForYear=Zahlungsbericht laufendes Jahr für %s

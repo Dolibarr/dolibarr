@@ -74,14 +74,18 @@ ResultOfMailSending=Sende-Ergebnis der E-Mail-Kampagne
 NbSelected=Anz. gewählte
 NbIgnored=Anz. ignoriert
 NbSent=Anz. gesendet
-ContactsWithThirdpartyFilter=Contact with customer filters
+ConfirmUnvalidateEmailing=Are you sure you want to change email <b>%s</b> to draft status?
+MailingModuleDescContactsWithThirdpartyFilter=Contact with customer filters
+MailingModuleDescContactsByCompanyCategory=Contacts by third party category
+MailingModuleDescContactsByCategory=Contacts by categories
+MailingModuleDescContactsByFunction=Contacts by position
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Zeile %s in der Datei
 RecipientSelectionModules=Definiert Auswahl von Empfängern
 MailSelectedRecipients=Ausgewählte Empfänger
 MailingArea=E-Mail Kampagnenübersicht
-LastMailings=%s neueste E-Mail Kampagnen
+LastMailings=Latest %s emailings
 TargetsStatistics=Zielstatistiken
 NbOfCompaniesContacts=Einzigartige Partnerkontakte
 MailNoChangePossible=Die Empfängerliste einer freigegebenen E-Mail Kampagne kann nicht mehr geändert werden
@@ -146,3 +150,6 @@ AdvTgtCreateFilter=Filter erstellen
 AdvTgtOrCreateNewFilter=Name des neuen Filters
 NoContactWithCategoryFound=Kein Kontakt/Adresse mit einer Kategorie gefunden
 NoContactLinkedToThirdpartieWithCategoryFound=Kein Kontakt/Adresse mit einer Kategorie gefunden
+OutGoingEmailSetup=Outgoing email setup
+InGoingEmailSetup=Incoming email setup
+
