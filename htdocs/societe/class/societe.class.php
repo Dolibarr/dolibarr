@@ -2026,7 +2026,7 @@ class Societe extends CommonObject
         if ($this->email && $addthirdparty)
         {
             if (empty($this->name)) $this->name=$this->nom;
-            $contact_emails['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
+            $contact_emails['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." (".$this->email.")";
         }
         return $contact_emails;
     }

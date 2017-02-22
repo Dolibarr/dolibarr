@@ -160,24 +160,33 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 	if ($result > 0)
 	{
+		$receiver=$_POST['receiver'];
+		$sendto_array=array();
+		
 		if (trim($_POST['sendto']))
 		{
 			// Recipient is provided into free text
 			$sendto = trim($_POST['sendto']);
-			$sendtoid = 0;
+			$sendtoid = array();
 		}
-		elseif ($_POST['receiver'] != '-1')
+		elseif (count($receiver)>0)
 		{
-			// Recipient was provided from combo list
-			if ($_POST['receiver'] == 'thirdparty') // Id of third party
-			{
-				$sendto = $thirdparty->name.' <'.$thirdparty->email.'>';
-				$sendtoid = 0;
+			foreach($receiver as $key=>$val) {
+				// Recipient was provided from combo list
+				if ($val == 'thirdparty') // Id of third party
+				{
+					$sendto_array[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+					$sendtoid = array();
+				}
+				else	// Id du contact
+				{
+					$sendto_array[] = $thirdparty->contact_get_property((int) $val,'email');
+					$sendtoid[] = $val;
+				}
 			}
-			else	// Id du contact
-			{
-				$sendto = $thirdparty->contact_get_property((int) $_POST['receiver'],'email');
-				$sendtoid = $_POST['receiver'];
+			
+			if (count($sendto_array)>0) {
+				$sendto=implode(',',$sendto_array);
 			}
 		}
 		if (trim($_POST['sendtocc']))
@@ -339,22 +348,45 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					// Initialisation of datas
 					if (is_object($object))
 					{
-    					$object->socid			= $sendtosocid;	// To link to a company
-    					$object->sendtoid		= $sendtoid;	// To link to a contact/address
-    					$object->actiontypecode	= $actiontypecode;
-    					$object->actionmsg		= $actionmsg;  // Long text
-    					$object->actionmsg2		= $actionmsg2; // Short text
-    					$object->trackid        = $trackid;
-    					$object->fk_element		= $object->id;
-    					$object->elementtype	= $object->element;
-    
-    					// Call of triggers
-    					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-    					$interface=new Interfaces($db);
-    					$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
-    					if ($result < 0) {
-    						$error++; $errors=$interface->errors;
-    					}
+						//multiple contact sends
+						if (count($sendtoid) >0) {
+							foreach($sendtoid as $val_id) {
+		    					$object->socid			= $sendtosocid;	// To link to a company
+		    					$object->sendtoid		= $val_id;	// To link to a contact/address
+		    					$object->actiontypecode	= $actiontypecode;
+		    					$object->actionmsg		= $actionmsg;  // Long text
+		    					$object->actionmsg2		= $actionmsg2; // Short text
+		    					$object->trackid        = $trackid;
+		    					$object->fk_element		= $object->id;
+		    					$object->elementtype	= $object->element;
+		    
+		    					// Call of triggers
+		    					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+		    					$interface=new Interfaces($db);
+		    					$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
+		    					if ($result < 0) {
+		    						$error++; $errors=$interface->errors;
+		    					}
+							}
+						} else {
+							//Thirdparty send
+							$object->socid			= $sendtosocid;	// To link to a company
+							$object->sendtoid		= 0;	// To link to a contact/address
+							$object->actiontypecode	= $actiontypecode;
+							$object->actionmsg		= $actionmsg;  // Long text
+							$object->actionmsg2		= $actionmsg2; // Short text
+							$object->trackid        = $trackid;
+							$object->fk_element		= $object->id;
+							$object->elementtype	= $object->element;
+							
+							// Call of triggers
+							include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+							$interface=new Interfaces($db);
+							$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
+							if ($result < 0) {
+								$error++; $errors=$interface->errors;
+							}
+						}
     					// End call of triggers
 					}
 					
