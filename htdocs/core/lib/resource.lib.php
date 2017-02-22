@@ -160,135 +160,160 @@ function occupyAllResources($object, $target, $status, $booker_id=null, $booker_
     $error = 0;
     $return = null;
     $db->begin();
-    $link = new ResourceLink($db);
 
-    if ($object->element == 'propal' || $object->element == 'facture') //Proposal/Bill
+    //Call hook
+    $parameters=array(
+        'target'=>$target,
+        'status'=>$status,
+        'booker_id'=>$booker_id,
+        'booker_type'=>$booker_type,
+    );
+    $action='';
+    $reshook=$hookmanager->executeHooks('occupyAllResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+    if ($reshook < 0)
     {
-        foreach ($object->lines as $line)
+        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+        $error++;
+    }
+    elseif ($reshook == 0 && !empty($hookmanager->resArray))
+    {
+        $result = $hookmanager->resArray;
+        if (isset($result['error'])) $error = $result['error'];
+        if (isset($result['return'])) $return = $result['return'];
+    }
+
+    if (!$error && !isset($return))
+    {
+        if ($object->element == 'propal' || $object->element == 'facture') //Proposal/Bill
         {
-            $result = occupyAllResources($line, $target, $status, $booker_id, $booker_type);
-            if ($result < 0)
+            foreach ($object->lines as $line)
             {
-                $error++;
-                break;
+                $result = occupyAllResources($line, $target, $status, $booker_id, $booker_type);
+                if ($result < 0)
+                {
+                    $error++;
+                    break;
+                }
             }
         }
-    }
-    else if ($object->element == 'propaldet' || $object->element == 'facturedet') //Proposal/Bill line
-    {
-        if ($object->fk_product && $object->product_type == Product::TYPE_SERVICE && $object->date_start && $object->date_end)
+        else if ($object->element == 'propaldet' || $object->element == 'facturedet') //Proposal/Bill line
         {
-            $qty = !empty($conf->global->RESOURCE_OCCUPATION_BY_QTY) ? intval($object->qty) : 1;
-            $element = 'service';
-            $tree = $link->getFullTree($object->fk_product, $element, true, $object->date_start, $object->date_end, $booker_id, $booker_type);
-            if (is_numeric($tree))
+            if ($object->fk_product && $object->product_type == Product::TYPE_SERVICE && $object->date_start && $object->date_end)
             {
-                setEventMessages($link->error, $link->errors, 'errors');
-                $error++;
-            }
-            else
-            {
-                $roots = null;
-
-                //Call hook
-                $parameters=array(
-                    'qty'=>$qty,
-                    'tree'=>$tree,
-                    'status'=>$status,
-                    'booker_id'=>$booker_id,
-                    'booker_type'=>$booker_type,
-                );
-                $action='';
-                $reshook=$hookmanager->executeHooks('occupyLineResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-                if ($reshook < 0)
+                $qty = !empty($conf->global->RESOURCE_OCCUPATION_BY_QTY) ? intval($object->qty) : 1;
+                $element = 'service';
+                $link = new ResourceLink($db);
+                $tree = $link->getFullTree($object->fk_product, $element, true, $object->date_start, $object->date_end, $booker_id, $booker_type);
+                if (is_numeric($tree))
                 {
-                    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+                    setEventMessages($link->error, $link->errors, 'errors');
                     $error++;
                 }
-                elseif ($reshook == 0 && !empty($hookmanager->resArray))
+                else
                 {
-                    $result = $hookmanager->resArray;
-                    if (isset($result['qty'])) $qty = $result['qty'];
-                    if (isset($result['tree'])) $tree = $result['tree'];
-                    if (isset($result['roots'])) $roots = $result['roots'];
-                    if (isset($result['error'])) $error = $result['error'];
-                    if (isset($result['return'])) $return = $result['return'];
-                }
-
-                if (!$error && !isset($return))
-                {
-                    //If hook didn't provide the roots calculate from tree
-                    if ($roots === null)
+                    $roots = null;
+    
+                    //Call hook
+                    $parameters=array(
+                        'qty'=>$qty,
+                        'tree'=>$tree,
+                        'target'=>$target,
+                        'status'=>$status,
+                        'booker_id'=>$booker_id,
+                        'booker_type'=>$booker_type,
+                    );
+                    $action='';
+                    $reshook=$hookmanager->executeHooks('occupyLineResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+                    if ($reshook < 0)
                     {
-                        $roots = $link->getAvailableRoots($tree, $qty);
+                        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+                        $error++;
                     }
-
-                    //There are root resources? Also check if we need to return hook value
-                    $available = $roots['available'];
-                    $notavailable = $roots['notavailable'];
-                    $total = count($available) + count($notavailable);
-                    if ($total > 0)
+                    elseif ($reshook == 0 && !empty($hookmanager->resArray))
                     {
-                        $need = $roots['need'];
-                        $resource_error = '';
-
-                        //Check if qty was not satisfied
-                        if ($need > 0)
+                        $result = $hookmanager->resArray;
+                        if (isset($result['qty'])) $qty = $result['qty'];
+                        if (isset($result['tree'])) $tree = $result['tree'];
+                        if (isset($result['roots'])) $roots = $result['roots'];
+                        if (isset($result['error'])) $error = $result['error'];
+                        if (isset($result['return'])) $return = $result['return'];
+                    }
+    
+                    if (!$error && !isset($return))
+                    {
+                        //If hook didn't provide the roots calculate from tree
+                        if ($roots === null)
                         {
-                            if (!empty($notavailable) && $need <= $total)
-                            {
-                                $trans = ResourceStatus::translated();
-                                foreach ($notavailable as $id => $data)
-                                {
-                                    $status_priority = $data['status_priority'];
-                                    $resource_error = $langs->transnoentities('ResourceStatus', $data['path'], $trans[$status_priority]);
-                                    break;
-                                }
-                            }
-                            else
-                            {
-                                $resource_error = $langs->transnoentities('ErrorResourceNotEnoughAvailable', $need);
-                            }
+                            $roots = $link->getAvailableRoots($tree, $qty);
                         }
-
-                        if (!empty($resource_error))
+    
+                        //There are root resources? Also check if we need to return hook value
+                        $available = $roots['available'];
+                        $notavailable = $roots['notavailable'];
+                        $total = count($available) + count($notavailable);
+                        if ($total > 0)
                         {
-                            setEventMessages($langs->transnoentities('ErrorServiceResource', $object->product_label, $resource_error), null, 'errors');
-                            $error++;
-                        }
-                        else
-                        {
-                            //Free any resources that we have taken before occupying
-                            foreach ($tree as $data)
+                            $need = $roots['need'];
+                            $resource_error = '';
+    
+                            //Check if qty was not satisfied
+                            if ($need > 0)
                             {
-                                if ($data['status'] == ResourceStatus::TAKEN)
+                                if (!empty($notavailable) && $need <= $total)
                                 {
-                                    /** @var Dolresource $resource */
-                                    $resource = $data['resource'];
-                                    $result = $resource->freeResource($user, $object->date_start, $object->date_end, null, $status, $booker_id, $booker_type);
-                                    if ($result < 0)
+                                    $trans = ResourceStatus::translated();
+                                    foreach ($notavailable as $id => $data)
                                     {
-                                        setEventMessages($resource->ref." ".$resource->error, $resource->errors, 'errors');
-                                        $error++;
+                                        $status_priority = $data['status_priority'];
+                                        $resource_error = $langs->transnoentities('ResourceStatus', $data['path'], $trans[$status_priority]);
                                         break;
                                     }
                                 }
-                            }
-
-                            //Iterate each available roots and occupy their dependant resources
-                            require_once DOL_DOCUMENT_ROOT.'/resource/class/resourcelog.class.php';
-                            foreach ($available as $root)
-                            {
-                                foreach ($root['dependency'] as $id => $resource)
+                                else
                                 {
-                                    /** @var Dolresource $resource */
-                                    $result = $resource->setStatus($user, $object->date_start, $object->date_end, $target, $status, $booker_id, $booker_type, false, ResourceLog::RESOURCE_OCCUPY);
-                                    if ($result < 0)
+                                    $resource_error = $langs->transnoentities('ErrorResourceNotEnoughAvailable', $need);
+                                }
+                            }
+    
+                            if (!empty($resource_error))
+                            {
+                                setEventMessages($langs->transnoentities('ErrorServiceResource', $object->product_label, $resource_error), null, 'errors');
+                                $error++;
+                            }
+                            else
+                            {
+                                //Free any resources that we have taken before occupying
+                                foreach ($tree as $data)
+                                {
+                                    if ($data['status'] == ResourceStatus::TAKEN)
                                     {
-                                        setEventMessages($resource->ref, null, 'errors');
-                                        setEventMessages($resource->error, $resource->errors, 'errors');
-                                        $error++;
-                                        break 2;
+                                        /** @var Dolresource $resource */
+                                        $resource = $data['resource'];
+                                        $result = $resource->freeResource($user, $object->date_start, $object->date_end, null, $status, $booker_id, $booker_type);
+                                        if ($result < 0)
+                                        {
+                                            setEventMessages($resource->ref." ".$resource->error, $resource->errors, 'errors');
+                                            $error++;
+                                            break;
+                                        }
+                                    }
+                                }
+    
+                                //Iterate each available roots and occupy their dependant resources
+                                require_once DOL_DOCUMENT_ROOT.'/resource/class/resourcelog.class.php';
+                                foreach ($available as $root)
+                                {
+                                    foreach ($root['dependency'] as $id => $resource)
+                                    {
+                                        /** @var Dolresource $resource */
+                                        $result = $resource->setStatus($user, $object->date_start, $object->date_end, $target, $status, $booker_id, $booker_type, false, ResourceLog::RESOURCE_OCCUPY);
+                                        if ($result < 0)
+                                        {
+                                            setEventMessages($resource->ref, null, 'errors');
+                                            setEventMessages($resource->error, $resource->errors, 'errors');
+                                            $error++;
+                                            break 2;
+                                        }
                                     }
                                 }
                             }
@@ -333,89 +358,114 @@ function switchAllResources($object, $status, $booker_id, $booker_type, $new_boo
     $error = 0;
     $return = null;
     $db->begin();
-    $link = new ResourceLink($db);
-
-    if ($object->element == 'propal' || $object->element == 'facture') //Proposal/Bill
+    
+    //Call hook
+    $parameters=array(
+        'status'=>$status,
+        'booker_id'=>$booker_id,
+        'booker_type'=>$booker_type,
+        'new_booker_id'=>$new_booker_id,
+        'new_booker_type'=>$new_booker_type,
+    );
+    $action='';
+    $reshook=$hookmanager->executeHooks('switchAllResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+    if ($reshook < 0)
     {
-        foreach ($object->lines as $line)
+        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+        $error++;
+    }
+    elseif ($reshook == 0 && !empty($hookmanager->resArray))
+    {
+        $result = $hookmanager->resArray;
+        if (isset($result['error'])) $error = $result['error'];
+        if (isset($result['return'])) $return = $result['return'];
+    }
+
+    if (!$error && !isset($return))
+    {
+        if ($object->element == 'propal' || $object->element == 'facture') //Proposal/Bill
         {
-            $result = switchAllResources($line, $status, $booker_id, $booker_type, $new_booker_id, $new_booker_type);
-            if ($result < 0)
+            foreach ($object->lines as $line)
             {
-                $error++;
-                break;
+                $result = switchAllResources($line, $status, $booker_id, $booker_type, $new_booker_id, $new_booker_type);
+                if ($result < 0)
+                {
+                    $error++;
+                    break;
+                }
             }
         }
-    }
-    else if ($object->element == 'propaldet' || $object->element == 'facturedet') //Proposal/Bill line
-    {
-        if ($object->fk_product && $object->product_type == Product::TYPE_SERVICE && $object->date_start && $object->date_end)
+        else if ($object->element == 'propaldet' || $object->element == 'facturedet') //Proposal/Bill line
         {
-            //Get all linked resources
-            $resources = $link->getResourcesLinked($object->fk_product, 'service');
-            if (is_int($resources) && $resources < 0)
+            if ($object->fk_product && $object->product_type == Product::TYPE_SERVICE && $object->date_start && $object->date_end)
             {
-                setEventMessages($link->error, $link->errors, 'errors');
-                $error++;
-            }
-            else
-            {
-                //Call hook
-                $parameters=array(
-                    'resources'=>$resources,
-                    'status'=>$status,
-                    'booker_id'=>$booker_id,
-                    'booker_type'=>$booker_type,
-                    'new_booker_id'=>$new_booker_id,
-                    'new_booker_type'=>$new_booker_type,
-                );
-                $action='';
-                $reshook=$hookmanager->executeHooks('switchLineResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-                if ($reshook < 0)
+                //Get all linked resources
+                $link = new ResourceLink($db);
+                $resources = $link->getResourcesLinked($object->fk_product, 'service');
+                if (is_int($resources) && $resources < 0)
                 {
-                    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+                    setEventMessages($link->error, $link->errors, 'errors');
                     $error++;
                 }
-                elseif ($reshook == 0 && !empty($hookmanager->resArray))
+                else
                 {
-                    $result = $hookmanager->resArray;
-                    if (isset($result['resources'])) $resources = $result['resources'];
-                    if (isset($result['error'])) $error = $result['error'];
-                    if (isset($result['return'])) $return = $result['return'];
-                }
-
-                // Switch taken resources
-                if (!$error && !isset($return))
-                {
-                    foreach ($resources as $resource_id => $resource_type)
+                    //Call hook
+                    $parameters=array(
+                        'resources'=>$resources,
+                        'status'=>$status,
+                        'booker_id'=>$booker_id,
+                        'booker_type'=>$booker_type,
+                        'new_booker_id'=>$new_booker_id,
+                        'new_booker_type'=>$new_booker_type,
+                    );
+                    $action='';
+                    $reshook=$hookmanager->executeHooks('switchLineResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+                    if ($reshook < 0)
                     {
-                        //Fetch resource
-                        $resource = fetchObjectByElement($resource_id, $resource_type);
-                        if (!is_object($resource) || $resource->id != $resource_id)
+                        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+                        $error++;
+                    }
+                    elseif ($reshook == 0 && !empty($hookmanager->resArray))
+                    {
+                        $result = $hookmanager->resArray;
+                        if (isset($result['resources'])) $resources = $result['resources'];
+                        if (isset($result['error'])) $error = $result['error'];
+                        if (isset($result['return'])) $return = $result['return'];
+                    }
+    
+                    // Switch taken resources
+                    if (!$error && !isset($return))
+                    {
+                        foreach ($resources as $resource_id => $resource_type)
                         {
-                            setEventMessages($langs->trans('ErrorResourceUnknown', $resource_id, $resource_type), null, 'errors');
-                            $error++;
-                            break;
-                        }
-                        
-                        //Get resource status
-                        $res_status = $resource->getStatus($object->date_start, $object->date_end, $booker_id, $booker_type);
-                        if ($res_status < 0)
-                        {
-                            setEventMessages($resource->error, $resource->errors, 'errors');
-                            $error++;
-                            break;
-                        }
-                        
-                        //Switch the resource if taken by the current booker
-                        if ($res_status == ResourceStatus::TAKEN)
-                        {
-                            $result = $resource->switchResource($user, $object->date_start, $object->date_end, $status, $booker_id, $booker_type, $new_booker_id, $new_booker_type);
-                            if ($result < 0)
+                            //Fetch resource
+                            $resource = fetchObjectByElement($resource_id, $resource_type);
+                            if (!is_object($resource) || $resource->id != $resource_id)
+                            {
+                                setEventMessages($langs->trans('ErrorResourceUnknown', $resource_id, $resource_type), null, 'errors');
+                                $error++;
+                                break;
+                            }
+                            
+                            //Get resource status
+                            $res_status = $resource->getStatus($object->date_start, $object->date_end, $booker_id, $booker_type);
+                            if ($res_status < 0)
                             {
                                 setEventMessages($resource->error, $resource->errors, 'errors');
                                 $error++;
                                 break;
+                            }
+                            
+                            //Switch the resource if taken by the current booker
+                            if ($res_status == ResourceStatus::TAKEN)
+                            {
+                                $result = $resource->switchResource($user, $object->date_start, $object->date_end, $status, $booker_id, $booker_type, $new_booker_id, $new_booker_type);
+                                if ($result < 0)
+                                {
+                                    setEventMessages($resource->error, $resource->errors, 'errors');
+                                    $error++;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -458,110 +508,135 @@ function freeAllResources($object, $status, $booker_id=null, $booker_type=null)
     $error = 0;
     $return = null;
     $db->begin();
-    $link = new ResourceLink($db);
 
-    if ($object->element == 'propal' || $object->element == 'facture') //Proposal/Bill
+    //Call hook
+    $parameters=array(
+        'status'=>$status,
+        'booker_id'=>$booker_id,
+        'booker_type'=>$booker_type,
+    );
+    $action='';
+    $reshook=$hookmanager->executeHooks('freeAllResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+    if ($reshook < 0)
     {
-        foreach ($object->lines as $line)
+        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+        $error++;
+    }
+    elseif ($reshook == 0 && !empty($hookmanager->resArray))
+    {
+        $result = $hookmanager->resArray;
+        if (isset($result['error'])) $error = $result['error'];
+        if (isset($result['return'])) $return = $result['return'];
+    }
+
+    // Free each resource
+    if (!$error && !isset($return))
+    {
+        if ($object->element == 'propal' || $object->element == 'facture') //Proposal/Bill
         {
-            $result = freeAllResources($line, $status, $booker_id, $booker_type);
-            if ($result < 0)
+            foreach ($object->lines as $line)
             {
-                $error++;
-                break;
+                $result = freeAllResources($line, $status, $booker_id, $booker_type);
+                if ($result < 0)
+                {
+                    $error++;
+                    break;
+                }
             }
         }
-    }
-    else if ($object->element == 'propaldet' || $object->element == 'facturedet') //Proposal/Bill line
-    {
-        if ($object->fk_product && $object->product_type == Product::TYPE_SERVICE && $object->date_start && $object->date_end)
+        else if ($object->element == 'propaldet' || $object->element == 'facturedet') //Proposal/Bill line
         {
-            //Get all linked resources
-            $resources = $link->getResourcesLinked($object->fk_product, 'service');
-            if (is_int($resources) && $resources < 0)
+            if ($object->fk_product && $object->product_type == Product::TYPE_SERVICE && $object->date_start && $object->date_end)
             {
-                setEventMessages($link->error, $link->errors, 'errors');
-                $error++;
-            }
-            else
-            {
-                //Call hook
-                $parameters=array(
-                    'resources'=>$resources,
-                    'status'=>$status,
-                    'booker_id'=>$booker_id,
-                    'booker_type'=>$booker_type,
-                );
-                $action='';
-                $reshook=$hookmanager->executeHooks('freeLineResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-                if ($reshook < 0)
+                //Get all linked resources
+                $link = new ResourceLink($db);
+                $resources = $link->getResourcesLinked($object->fk_product, 'service');
+                if (is_int($resources) && $resources < 0)
                 {
-                    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+                    setEventMessages($link->error, $link->errors, 'errors');
                     $error++;
                 }
-                elseif ($reshook == 0 && !empty($hookmanager->resArray))
+                else
                 {
-                    $result = $hookmanager->resArray;
-                    if (isset($result['resources'])) $resources = $result['resources'];
-                    if (isset($result['error'])) $error = $result['error'];
-                    if (isset($result['return'])) $return = $result['return'];
-                }
-
-                // Free each resource
-                if (!$error && !isset($return))
-                {
-                    foreach ($resources as $resource_id => $resource_type)
+                    //Call hook
+                    $parameters=array(
+                        'resources'=>$resources,
+                        'status'=>$status,
+                        'booker_id'=>$booker_id,
+                        'booker_type'=>$booker_type,
+                    );
+                    $action='';
+                    $reshook=$hookmanager->executeHooks('freeLineResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+                    if ($reshook < 0)
                     {
-                        $resource = fetchObjectByElement($resource_id, $resource_type);
-                        if (!is_object($resource) || $resource->id != $resource_id)
+                        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+                        $error++;
+                    }
+                    elseif ($reshook == 0 && !empty($hookmanager->resArray))
+                    {
+                        $result = $hookmanager->resArray;
+                        if (isset($result['resources'])) $resources = $result['resources'];
+                        if (isset($result['error'])) $error = $result['error'];
+                        if (isset($result['return'])) $return = $result['return'];
+                    }
+    
+                    // Free each resource
+                    if (!$error && !isset($return))
+                    {
+                        foreach ($resources as $resource_id => $resource_type)
                         {
-                            setEventMessages($langs->trans('ErrorResourceUnknown', $resource_id, $resource_type), null, 'errors');
-                            $error++;
-                            break;
-                        }
-                        $result = $resource->freeResource($user, $object->date_start, $object->date_end, null, $status, $booker_id, $booker_type);
-                        if ($result < 0)
-                        {
-                            setEventMessages($resource->error, $resource->errors, 'errors');
-                            $error++;
-                            break;
+                            $resource = fetchObjectByElement($resource_id, $resource_type);
+                            if (!is_object($resource) || $resource->id != $resource_id)
+                            {
+                                setEventMessages($langs->trans('ErrorResourceUnknown', $resource_id, $resource_type), null, 'errors');
+                                $error++;
+                                break;
+                            }
+                            $result = $resource->freeResource($user, $object->date_start, $object->date_end, null, $status, $booker_id, $booker_type);
+                            if ($result < 0)
+                            {
+                                setEventMessages($resource->error, $resource->errors, 'errors');
+                                $error++;
+                                break;
+                            }
                         }
                     }
                 }
             }
         }
-    }
-    else if ($object->element == 'action') //Event
-    {
-        if ($object->datep && $object->datef)
+        else if ($object->element == 'action') //Event
         {
-            //Get all linked resources
-            $resources = $link->getResourcesLinked($object->id, $object->element);
-            if (is_int($resources) && $resources < 0)
+            if ($object->datep && $object->datef)
             {
-                setEventMessages($link->error, $link->errors, 'errors');
-                $error++;
-            }
-            else
-            {
-                // Free each resource
-                if (!$error && !isset($return))
+                //Get all linked resources
+                $link = new ResourceLink($db);
+                $resources = $link->getResourcesLinked($object->id, $object->element);
+                if (is_int($resources) && $resources < 0)
                 {
-                    foreach ($resources as $resource_id => $resource_type)
+                    setEventMessages($link->error, $link->errors, 'errors');
+                    $error++;
+                }
+                else
+                {
+                    // Free each resource
+                    if (!$error && !isset($return))
                     {
-                        $resource = fetchObjectByElement($resource_id, $resource_type);
-                        if (!is_object($resource) || $resource->id != $resource_id)
+                        foreach ($resources as $resource_id => $resource_type)
                         {
-                            setEventMessages($langs->trans('ErrorResourceUnknown', $resource_id, $resource_type), null, 'errors');
-                            $error++;
-                            break;
-                        }
-                        $result = $resource->freeResource($user, $object->datep, $object->datef, null, $status, $booker_id, $booker_type);
-                        if ($result < 0)
-                        {
-                            setEventMessages($resource->error, $resource->errors, 'errors');
-                            $error++;
-                            break;
+                            $resource = fetchObjectByElement($resource_id, $resource_type);
+                            if (!is_object($resource) || $resource->id != $resource_id)
+                            {
+                                setEventMessages($langs->trans('ErrorResourceUnknown', $resource_id, $resource_type), null, 'errors');
+                                $error++;
+                                break;
+                            }
+                            $result = $resource->freeResource($user, $object->datep, $object->datef, null, $status, $booker_id, $booker_type);
+                            if ($result < 0)
+                            {
+                                setEventMessages($resource->error, $resource->errors, 'errors');
+                                $error++;
+                                break;
+                            }
                         }
                     }
                 }
