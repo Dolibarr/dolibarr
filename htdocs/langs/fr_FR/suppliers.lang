@@ -41,4 +41,5 @@ DoNotOrderThisProductToThisSupplier=Ne pas commander
 NotTheGoodQualitySupplier=Mauvaise qualité
 ReputationForThisProduct=Réputation
 BuyerName=Nom de l'acheteur
+SuppliersPaymentModel=Model liste des factures réglées par ce paiement
 AllProductServicePrices=All product / service prices
