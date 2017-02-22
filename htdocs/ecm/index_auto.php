@@ -350,46 +350,7 @@ $maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheig
 
 $morejs=array();
 if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs=array("/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js");
-$moreheadcss="
-<!-- dol_screenheight=".$_SESSION["dol_screenheight"]." -->
-<style type=\"text/css\">
-    #containerlayout {
-        height:     ".$maxheightwin."px;
-        margin:     0 auto;
-        width:      100%;
-        min-width:  700px;
-        _width:     700px; /* min-width for IE6 */
-    }
-</style>";
-$moreheadjs=empty($conf->use_javascript_ajax)?"":"
-<script type=\"text/javascript\">
-    jQuery(document).ready(function () {
-        jQuery('#containerlayout').layout({
-        	name: \"ecmlayout\"
-        ,   paneClass:    \"ecm-layout-pane\"
-        ,   resizerClass: \"ecm-layout-resizer\"
-        ,   togglerClass: \"ecm-layout-toggler\"
-        ,   center__paneSelector:   \"#ecm-layout-center\"
-        ,   north__paneSelector:    \"#ecm-layout-north\"
-        ,   west__paneSelector:     \"#ecm-layout-west\"
-        ,   resizable: true
-        ,   north__size:        37      /* 2 are removed by js */
-        ,   north__resizable:   false
-        ,   north__closable:    false
-        ,   west__size:         340
-        ,   west__minSize:      280
-        ,   west__slidable:     true
-        ,   west__resizable:    true
-        ,   west__togglerLength_closed: '100%'
-        ,   useStateCookie:     true
-            });
 
-        jQuery('#ecm-layout-center').layout({
-            center__paneSelector:   \".ecm-in-layout-center\"
-        ,   resizable: false
-            });
-    });
-</script>";
 
 llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,'',0,0);
 
@@ -422,14 +383,6 @@ $helptext1.=$langs->trans("ECMAreaDesc2");
 $helptext2.=$langs->trans("ECMAreaDesc");
 $helptext2.=$langs->trans("ECMAreaDesc2");
 
-/*
-print '<div class="hideonsmartphone">';
-print $langs->trans("ECMAreaDesc")."<br>";
-print $langs->trans("ECMAreaDesc2")."<br>";
-print "<br>\n";
-print '</div>';
-*/
-
 // Confirm remove file (for non javascript users)
 if ($action == 'delete' && empty($conf->use_javascript_ajax))
 {
@@ -437,8 +390,9 @@ if ($action == 'delete' && empty($conf->use_javascript_ajax))
 
 }
 
-if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
-else $classviewhide='visible';
+//if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
+//else $classviewhide='visible';
+$classviewhide='inline-block';
 
 
 $head = ecm_prepare_dasboard_head('');
