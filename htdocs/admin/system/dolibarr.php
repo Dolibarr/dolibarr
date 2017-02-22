@@ -25,15 +25,36 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");
 $langs->load("install");
 $langs->load("other");
 
+$action=GETPOST('action','alpha');
+
 if (! $user->admin)
 	accessforbidden();
 
+$sfurl = '';
+$version='0.0';
 
+
+
+/*
+ *	Actions
+ */
+
+if ($action == 'getlastversion')
+{
+    $result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
+    //var_dump($result['content']);
+    $sfurl = simplexml_load_string($result['content']);
+}
+
+	
 /*
  * View
  */

@@ -26,15 +26,12 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");
 $langs->load("help");
 $langs->load("members");
 $langs->load("other");
-
-$youuselaststable = 0;
 
 $action=GETPOST('action','alpha');
 
@@ -48,12 +45,7 @@ $version='0.0';
  *	Actions
  */
 
-if ($action == 'getlastversion')
-{
-    $result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
-    //var_dump($result['content']);
-    $sfurl = simplexml_load_string($result['content']);
-}
+// None
 
 
 /*
@@ -196,25 +188,29 @@ print '</div>';
 print '<div class="clearboth"></div>';
 
 
-if ($youuselaststable)
+$showpromotemessage=1;
+if ($showpromotemessage)
 {
-    print '<br>';
-    print '<br>';
-    
     $tmp=versiondolibarrarray();
-    if ((empty($tmp[2]) && (strpos($tmp[1], '0') === 0)) || (strpos($tmp[2], '0') === 0))
+    if (is_numeric($tmp[2]))    // Not alpha, beta or rc
     {
-        print $langs->trans("TitleExampleForMajorRelease").':<br>';
-        print '<textarea style="width:80%; min-height: 60px">';
-        print $langs->trans("ExampleOfNewsMessageForMajorRelease", DOL_VERSION, DOL_VERSION);
-        print '</textarea>';
-    }
-    else
-    {
-        print $langs->trans("TitleExampleForMaintenanceRelease").':<br>';
-        print '<textarea style="width:80%; min-height: 60px">';
-        print $langs->trans("ExampleOfNewsMessageForMaintenanceRelease", DOL_VERSION, DOL_VERSION);
-        print '</textarea>';
+        print '<br>';
+        print '<br>';
+        
+        if ((empty($tmp[2]) && (strpos($tmp[1], '0') === 0)) || (strpos($tmp[2], '0') === 0))
+        {
+            print $langs->trans("TitleExampleForMajorRelease").':<br>';
+            print '<textarea style="width:80%; min-height: 60px">';
+            print $langs->trans("ExampleOfNewsMessageForMajorRelease", DOL_VERSION, DOL_VERSION);
+            print '</textarea>';
+        }
+        else
+        {
+            print $langs->trans("TitleExampleForMaintenanceRelease").':<br>';
+            print '<textarea style="width:80%; min-height: 60px">';
+            print $langs->trans("ExampleOfNewsMessageForMaintenanceRelease", DOL_VERSION, DOL_VERSION);
+            print '</textarea>';
+        }
     }
 }
 
