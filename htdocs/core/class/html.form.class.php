@@ -3266,11 +3266,11 @@ class Form
             {
                 if ($selected == $res->rowid)
                 {
-                    $return.='<option value="'.$res->rowid.'" selected>'.$langs->trans($res->label).'</option>';
+                    $return.='<option value="'.$res->rowid.'" selected>'.($langs->trans('unit'.$res->code)!=$res->label?$langs->trans('unit'.$res->code):$res->label).'</option>';
                 }
                 else
                 {
-                    $return.='<option value="'.$res->rowid.'">'.$langs->trans($res->label).'</option>';
+                    $return.='<option value="'.$res->rowid.'">'.($langs->trans('unit'.$res->code)!=$res->label?$langs->trans('unit'.$res->code):$res->label).'</option>';
                 }
             }
             $return.='</select>';
