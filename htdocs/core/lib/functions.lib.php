@@ -271,8 +271,13 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	        }	         
 	        elseif ($reg[1] == 'YEAR')
 	        {
-	           $tmp=dol_getdate(dol_now(), true);
-	           $out = $tmp['year'];
+	            $tmp=dol_getdate(dol_now(), true);
+	            $out = $tmp['year'];
+	        }
+	        elseif ($reg[1] == 'MYCOUNTRYID')
+	        {
+	            global $mysoc;
+	            $out = $mysoc->country_id;
 	        }
 	    }
 	     
