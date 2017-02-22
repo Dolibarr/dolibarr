@@ -112,7 +112,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 	{
     	$result=$object->fetch($id);
     
-    	$sendtosocid=0;
+    	$sendtosocid=0;    // Thirdparty on object
     	if (method_exists($object,"fetch_thirdparty") && $object->element != 'societe')
     	{
     		$result=$object->fetch_thirdparty();
@@ -123,7 +123,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
     	{
     		$thirdparty=$object;
     		if ($thirdparty->id > 0) $sendtosocid=$thirdparty->id;
-    		elseif($conf->dolimail->enabled)
+    		elseif (! empty($conf->dolimail->enabled))
     		{
     			$dolimail = new Dolimail($db);
     			$possibleaccounts=$dolimail->get_societe_by_email($_POST['sendto'],"1");
@@ -160,52 +160,72 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 	if ($result > 0)
 	{
+		$sendto='';
+		$sendtocc='';
+		$sendtobcc='';
+		$sendtoid = array();
+
+		// Define $sendto
 		$receiver=$_POST['receiver'];
-		$sendto_array=array();
-		
+		if (! is_array($receiver))
+		{
+		    if ($receiver == '-1') $receiver=array();
+		    else $receiver=array($receiver);
+		}
+		$tmparray=array();
 		if (trim($_POST['sendto']))
 		{
-			// Recipient is provided into free text
-			$sendto = trim($_POST['sendto']);
-			$sendtoid = array();
+			// Recipients are provided into free text
+			$tmparray[] = trim($_POST['sendto']);
 		}
-		elseif (count($receiver)>0)
+		if (count($receiver)>0)
 		{
-			foreach($receiver as $key=>$val) {
+			foreach($receiver as $key=>$val) 
+			{
 				// Recipient was provided from combo list
 				if ($val == 'thirdparty') // Id of third party
 				{
-					$sendto_array[] = $thirdparty->name.' <'.$thirdparty->email.'>';
-					$sendtoid = array();
+					$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
 				}
 				else	// Id du contact
 				{
-					$sendto_array[] = $thirdparty->contact_get_property((int) $val,'email');
+					$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
 					$sendtoid[] = $val;
 				}
 			}
-			
-			if (count($sendto_array)>0) {
-				$sendto=implode(',',$sendto_array);
-			}
 		}
+		$sendto=implode(',',$tmparray);
+		
+		// Define $sendtocc
+		$receivercc=$_POST['receivercc'];
+		if (! is_array($receivercc))
+		{
+		    if ($receivercc == '-1') $receivercc=array();
+		    else $receivercc=array($receivercc);
+		}
+		$tmparray=array();
 		if (trim($_POST['sendtocc']))
 		{
-			$sendtocc = trim($_POST['sendtocc']);
+			$tmparray[] = trim($_POST['sendtocc']);
 		}
-		elseif ($_POST['receivercc'] != '-1')
+		if (count($receivercc) > 0)
 		{
-			// Recipient was provided from combo list
-			if ($_POST['receivercc'] == 'thirdparty')	// Id of third party
+			foreach($receivercc as $key=>$val) 
 			{
-				$sendtocc = $thirdparty->name.' <'.$thirdparty->email.'>';
-			}
-			else	// Id du contact
-			{
-				$sendtocc = $thirdparty->contact_get_property((int) $_POST['receivercc'],'email');
+				// Recipient was provided from combo list
+				if ($val == 'thirdparty') // Id of third party
+				{
+					$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+				}
+				else	// Id du contact
+				{
+					$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
+					//$sendtoid[] = $val;  TODO Add also id of contact in CC ?
+				}
 			}
 		}
-
+		$sendtocc=implode(',',$tmparray);
+		
 		if (dol_strlen($sendto))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -233,6 +253,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
             $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
 			$message = $_POST['message'];
+			
 			$sendtobcc= GETPOST('sendtoccc');
 			if ($mode == 'emailfromproposal') $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO));
 			if ($mode == 'emailfromorder')    $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO));
@@ -348,46 +369,22 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					// Initialisation of datas
 					if (is_object($object))
 					{
-						//multiple contact sends
-						if (count($sendtoid) >0) {
-							foreach($sendtoid as $val_id) {
-		    					$object->socid			= $sendtosocid;	// To link to a company
-		    					$object->sendtoid		= $val_id;	// To link to a contact/address
-		    					$object->actiontypecode	= $actiontypecode;
-		    					$object->actionmsg		= $actionmsg;  // Long text
-		    					$object->actionmsg2		= $actionmsg2; // Short text
-		    					$object->trackid        = $trackid;
-		    					$object->fk_element		= $object->id;
-		    					$object->elementtype	= $object->element;
+					    $object->socid			= $sendtosocid;	// To link to a company
+					    $object->sendtoid		= $sendtoid;	// To link to contacts/addresses. This is an array.
+					    $object->actiontypecode	= $actiontypecode;
+					    $object->actionmsg		= $actionmsg;  // Long text
+					    $object->actionmsg2		= $actionmsg2; // Short text
+					    $object->trackid        = $trackid;
+					    $object->fk_element		= $object->id;
+					    $object->elementtype	= $object->element;
 		    
-		    					// Call of triggers
-		    					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		    					$interface=new Interfaces($db);
-		    					$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
-		    					if ($result < 0) {
-		    						$error++; $errors=$interface->errors;
-		    					}
-							}
-						} else {
-							//Thirdparty send
-							$object->socid			= $sendtosocid;	// To link to a company
-							$object->sendtoid		= 0;	// To link to a contact/address
-							$object->actiontypecode	= $actiontypecode;
-							$object->actionmsg		= $actionmsg;  // Long text
-							$object->actionmsg2		= $actionmsg2; // Short text
-							$object->trackid        = $trackid;
-							$object->fk_element		= $object->id;
-							$object->elementtype	= $object->element;
-							
-							// Call of triggers
-							include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-							$interface=new Interfaces($db);
-							$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
-							if ($result < 0) {
-								$error++; $errors=$interface->errors;
-							}
-						}
-    					// End call of triggers
+					    // Call of triggers
+					    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+					    $interface=new Interfaces($db);
+					    $result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
+					    if ($result < 0) {
+					    	$error++; $errors=$interface->errors;
+					    }					    
 					}
 					
 					if ($error)

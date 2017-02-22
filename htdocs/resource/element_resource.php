@@ -31,6 +31,10 @@ if (! $res) die("Include of main fails");
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+if (! empty($conf->projet->enabled)) {
+    require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+}
 
 // Load traductions files requiredby by page
 $langs->load("resource");
@@ -212,7 +216,29 @@ else
 
 			$linkback.=$out;
 
-			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '', '&element='.$element, 0, '', '');
+			$morehtmlref='<div class="refidno">';
+			// Thirdparty
+			//$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+			// Project
+			if (! empty($conf->projet->enabled))
+			{
+			    $langs->load("projects");
+			    //$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+			    $morehtmlref.=$langs->trans('Project') . ': ';
+		        if (! empty($act->fk_project)) {
+		            $proj = new Project($db);
+		            $proj->fetch($act->fk_project);
+		            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $act->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+		            $morehtmlref.=$proj->ref;
+		            $morehtmlref.='</a>';
+		            if ($proj->title) $morehtmlref.=' - '.$proj->title;
+		        } else {
+		            $morehtmlref.='';
+		        }
+			}
+			$morehtmlref.='</div>';
+			
+			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref, '&element='.$element, 0, '', '');
 
 			print '<div class="underbanner clearboth"></div>';
 
