@@ -194,6 +194,8 @@ ChangeBinding=Endre bindingen
 
 ## Admin
 ApplyMassCategories=Masseinnlegging av kategorier
+AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
+CategoryDeleted=Category for the accounting account has been removed
 
 ## Export
 Exports=Eksporter
@@ -209,6 +211,7 @@ Modelcsv_ciel=Eksport til Sage Ciel Compta eller Compta Evolution
 Modelcsv_quadratus=Eksport til Quadratus QuadraCompta
 Modelcsv_ebp=Eksporter mot EBP
 Modelcsv_cogilog=Eksport mot Cogilog
+ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Initier regnskap

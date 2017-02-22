@@ -6,7 +6,6 @@ VATSummary=Balance de IGV
 VATPaid=IGV Pagado
 VATCollected=IGV recuperado
 PaymentVat=Pago IGV
-VATRefund=Sales tax refund Refund
 ShowVatPayment=Ver pagos IGV
 VATReportByCustomersInInputOutputMode=Informe por cliente del IGV repercutido y pagado (IGV pagado)
 VATReportByCustomersInDueDebtMode=Informe por cliente del IGV repercutido y pagado (IGV debido)

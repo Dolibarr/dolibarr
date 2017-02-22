@@ -57,7 +57,7 @@ ChangeAndLoad=Change and load
 Addanaccount=Muhasebe hesabı ekle
 AccountAccounting=Muhasebe hesabı
 AccountAccountingShort=Hesap
-AccountAccountingSuggest=Accounting account suggested
+AccountAccountingSuggest=Önerilen muhasebe hesabı
 MenuDefaultAccounts=Default accounts
 MenuVatAccounts=Vat accounts
 MenuTaxAccounts=Tax accounts
@@ -67,32 +67,32 @@ MenuProductsAccounts=Product accounts
 ProductsBinding=Products accounts
 Ventilation=Hesaba bağlama
 CustomersVentilation=Müşteri faturası bağlama
-SuppliersVentilation=Supplier invoice binding
+SuppliersVentilation=Tedarikçi faturası bağlama
 ExpenseReportsVentilation=Expense report binding
-CreateMvts=Create new transaction
-UpdateMvts=Modification of a transaction
-WriteBookKeeping=Journalize transactions in General Ledger
+CreateMvts=Yeni işlem oluştur
+UpdateMvts=İşlemi değiştir
+WriteBookKeeping=İşlemleri Büyük Deftere kaydet
 Bookkeeping=Büyük Defter
 AccountBalance=Hesap bakiyesi
 
 CAHTF=Total purchase supplier before tax
 TotalExpenseReport=Total expense report
-InvoiceLines=Lines of invoices to bind
-InvoiceLinesDone=Bound lines of invoices
+InvoiceLines=Bağlanacak fatura satırları
+InvoiceLinesDone=Bağlı fatura satırları
 ExpenseReportLines=Lines of expense reports to bind
 ExpenseReportLinesDone=Bound lines of expense reports
-IntoAccount=Bind line with the accounting account
+IntoAccount=Satırı muhasebe hesabına bağla
 
 
-Ventilate=Bind
+Ventilate=Bağla
 LineId=Id line
 Processing=İşleme
-EndProcessing=Process terminated.
+EndProcessing=İşlem sonlandırıldı.
 SelectedLines=Seçilen satırlar
 Lineofinvoice=Fatura satırı
 LineOfExpenseReport=Line of expense report
 NoAccountSelected=No accounting account selected
-VentilatedinAccount=Binded successfully to the accounting account
+VentilatedinAccount=Muhasebe hesabına başarıyla bağlandı
 NotVentilatedinAccount=Not bound to the accounting account
 XLineSuccessfullyBinded=%s products/services successfuly bound to an accounting account
 XLineFailedToBeBinded=%s products/services were not bound to any accounting account
@@ -194,6 +194,8 @@ ChangeBinding=Change the binding
 
 ## Admin
 ApplyMassCategories=Toplu kategori uygula
+AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
+CategoryDeleted=Category for the accounting account has been removed
 
 ## Export
 Exports=Dışaaktarımlar
@@ -209,6 +211,7 @@ Modelcsv_ciel=Sage Ciel Compta ya da Compta Evolution'a doğru dışaaktar
 Modelcsv_quadratus=Quadratus QuadraCompta'ya doğru dışaaktar
 Modelcsv_ebp=EBP'ye yönelik dışaaktarım
 Modelcsv_cogilog=Cogilog'a dışaaktar
+ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Muhasebe başlangıcı

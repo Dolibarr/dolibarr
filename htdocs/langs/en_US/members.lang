@@ -150,6 +150,7 @@ MembersByTownDesc=This screen show you statistics on members by town.
 MembersStatisticsDesc=Choose statistics you want to read...
 MenuMembersStats=Statistics
 LastMemberDate=Latest member date
+LatestSubscriptionDate=Latest subscription date
 Nature=Nature
 Public=Information are public
 NewMemberbyWeb=New member added. Awaiting approval

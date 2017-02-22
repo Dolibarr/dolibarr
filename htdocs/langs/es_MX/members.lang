@@ -1,3 +1,4 @@
 # Dolibarr language file - Source file is en_US - members
 MemberStatusDraftShort=Borrador
 SubscriptionLate=Tarde
+SubscriptionPayment=Pago de suscripción

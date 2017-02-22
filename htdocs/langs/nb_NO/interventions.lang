@@ -26,7 +26,7 @@ DocumentModelStandard=Standard dokumentet modell for intervensjoner
 InterventionCardsAndInterventionLines=Intervensjoner og intervensjonslinjer
 InterventionClassifyBilled=Merk "Fakturert"
 InterventionClassifyUnBilled=Merk "Ikke fakturert"
-InterventionClassifyDone=Classify "Done"
+InterventionClassifyDone=Klassifiser som "utført"
 StatusInterInvoiced=Fakturert
 ShowIntervention=Vis intervensjon
 SendInterventionRef=Send intervensjon %s
@@ -41,6 +41,7 @@ InterventionDeletedInDolibarr=Intervensjon %s ble slettet
 InterventionsArea=Område for intervensjoner
 DraftFichinter=Intervensjonskladder
 LastModifiedInterventions=Siste %s endrede intervensjoner
+FichinterToProcess=Interventions to process
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Ansvarlig for kundeoppfølging
 # Modele numérotation

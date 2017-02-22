@@ -74,14 +74,18 @@ ResultOfMailSending=نتيجة لإرسال البريد الإلكتروني ا
 NbSelected=ملحوظة مختارة
 NbIgnored=ملحوظة تجاهلها
 NbSent=أرسلت ملحوظة
-ContactsWithThirdpartyFilter=Contact with customer filters
+ConfirmUnvalidateEmailing=Are you sure you want to change email <b>%s</b> to draft status?
+MailingModuleDescContactsWithThirdpartyFilter=Contact with customer filters
+MailingModuleDescContactsByCompanyCategory=Contacts by third party category
+MailingModuleDescContactsByCategory=Contacts by categories
+MailingModuleDescContactsByFunction=Contacts by position
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=خط المستندات في ملف ٪
 RecipientSelectionModules=حددت لطلبات المستفيدين الاختيار
 MailSelectedRecipients=اختيار المستفيدين
 MailingArea=EMailings المنطقة
-LastMailings=ق emailings الماضي ٪
+LastMailings=Latest %s emailings
 TargetsStatistics=أهداف الإحصاءات
 NbOfCompaniesContacts=فريدة من شركات الاتصالات
 MailNoChangePossible=صادق المتلقين للمراسلة لا يمكن تغيير
@@ -146,3 +150,6 @@ AdvTgtCreateFilter=Create filter
 AdvTgtOrCreateNewFilter=Name of new filter
 NoContactWithCategoryFound=No contact/address with a category found
 NoContactLinkedToThirdpartieWithCategoryFound=No contact/address with a category found
+OutGoingEmailSetup=Outgoing email setup
+InGoingEmailSetup=Incoming email setup
+

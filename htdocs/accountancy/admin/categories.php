@@ -21,6 +21,7 @@
  * \ingroup Advanced accountancy
  * \brief	Page to assign mass categories to accounts
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancycategory.class.php';
@@ -45,7 +46,10 @@ if ($cat_id == 0) {
 }
 
 // Security check
-if (! $user->admin) accessforbidden();
+if (! empty($user->rights->accountancy->chartofaccount))
+{
+	accessforbidden();
+}
 
 $accountingcategory = new AccountancyCategory($db);
 
@@ -84,7 +88,7 @@ $formaccounting = new FormAccounting($db);
 
 llxheader('', $langs->trans('AccountAccounting'));
 
-print load_fiche_titre($langs->trans('Categories'));
+print load_fiche_titre($langs->trans('AccountingCategory'));
 
 print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
@@ -96,8 +100,8 @@ print '<table class="border" width="100%">';
 // Category
 print '<tr><td>' . $langs->trans("AccountingCategory") . '</td>';
 print '<td>';
-$formaccounting->select_accounting_category($cat_id, 'account_category', 1);
-print '<input class="button" type="submit" value="' . $langs->trans("Show") . '">';
+$formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 1);
+print '<input class="button" type="submit" value="' . $langs->trans("Select") . '">';
 print '</td></tr>';
 
 if (! empty($cat_id)) {
@@ -108,11 +112,11 @@ if (! empty($cat_id)) {
 	print '<tr><td>' . $langs->trans("AddAccountFromBookKeepingWithNoCategories") . '</td>';
 	print '<td>';
 	if (is_array($accountingcategory->lines_cptbk) && count($accountingcategory->lines_cptbk) > 0) {
-		print '<select size="' . count($obj) . '" name="cpt_bk[]" multiple>';
+		print '<select class="flat minwidth200" size="' . count($obj) . '" name="cpt_bk[]" multiple>';
 		foreach ( $accountingcategory->lines_cptbk as $cpt ) {
 			print '<option value="' . length_accountg($cpt->numero_compte) . '">' . length_accountg($cpt->numero_compte) . ' (' . $cpt->label_compte . ' ' . $cpt->doc_ref . ')</option>';
 		}
-		print '</select>';
+		print '</select><br>';
 		print '<input class="button" type="submit" id="" class="action-delete" value="' . $langs->trans("Add") . '"> ';
 	}
 	print '</td></tr>';
@@ -129,8 +133,8 @@ if ($action == 'display' || $action == 'delete') {
 
     print "<table class='noborder' width='100%'>\n";
     print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("AccountAccounting")."</td>";
-	print '<td colspan="2">'.$langs->trans("Label")."</td>";
+	print '<td class="liste_titre">'.$langs->trans("AccountAccounting")."</td>";
+	print '<td class="liste_titre" colspan="2">'.$langs->trans("Label")."</td>";
 	print "</tr>\n";
 
 	if (! empty($cat_id)) {
@@ -142,7 +146,7 @@ if ($action == 'display' || $action == 'delete') {
 		if (is_array($accountingcategory->lines_display) && count($accountingcategory->lines_display) > 0) {
 			foreach ( $accountingcategory->lines_display as $cpt ) {
 				$var = ! $var;
-				print '<tr' . $bc[$var] . '>';
+				print '<tr ' . $bc[$var] . '>';
 				print '<td>' . length_accountg($cpt->account_number) . '</td>';
 				print '<td>' . $cpt->label . '</td>';
 				print '<td align="right">';
