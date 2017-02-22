@@ -910,7 +910,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
         				    include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
         				    $ecmfile=new EcmFiles($db);
         				    $result = $ecmfile->fetch(0, '', $rel_filetodelete);
-        				    if ($result >= 0)
+        				    if ($result >= 0 && $ecmfile->id > 0)
         				    {
         				        $result = $ecmfile->delete($user);
         				    }
