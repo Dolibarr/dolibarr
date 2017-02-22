@@ -699,8 +699,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $num = $db->num_rows($result);
 
 	$var=true;
-	if ($num || (GETPOST('button_search') || GETPOST('button_search.x') || GETPOST('button_search_x')))
-    {
+
         print '<tr class="liste_titre">';
         
         // Photo
@@ -818,12 +817,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $i++;
         }
     }
-    else
-	{
-        print "<tr ".$bc[! $var].">";
-        print '<td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td>';
-        print "</tr>\n";
-    }
+
     print "\n</table>\n";
 
     print '</form>'."\n";
