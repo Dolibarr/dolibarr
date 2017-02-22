@@ -106,11 +106,16 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 		}
-
 	}
 
 	if (! $error)
 	{
+	    $res = dol_add_file_process($upload_dir, 0, 1, 'userfile', '', '', '');
+	    if ($res > 0)
+	    {
+	       $result=$ecmdir->changeNbOfFiles('+');
+	    }
+	    /*
 		if (dol_mkdir($upload_dir) >= 0)
 		{
 			$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0, 0, $_FILES['userfile']['error']);
@@ -139,7 +144,7 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFailToCreateDir",$upload_dir), null, 'errors');
-		}
+		}*/
 	}
 }
 

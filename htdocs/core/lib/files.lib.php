@@ -1178,12 +1178,14 @@ function dol_init_file_process($pathtoscan='', $trackid='')
  * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
  * @param	string	$link					Link to add (to add a link instead of a file)
  * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
- * @return	void
+ * @return	int                             <=0 if KO, >0 if OK
  */
 function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null, $trackid='')
 {
 	global $db,$user,$conf,$langs;
 
+	$res = 0;
+	
 	if (! empty($_FILES[$varfiles])) // For view $_FILES[$varfiles]['error']
 	{
 		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
@@ -1278,6 +1280,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					    }
 					}
 
+					$res = 1;
 					setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
 				}
 				else
@@ -1320,6 +1323,8 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("File")), null, 'errors');
 	}
+	
+	return $res;
 }
 
 
