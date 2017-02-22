@@ -28,7 +28,8 @@ if (!defined('NOREQUIREHTML')) define('NOREQUIREHTML', 1);
 
 require_once '../../main.inc.php';
 
-if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/index.php'))
+if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/index.php'
+    || preg_match('/getmenu_div\.php/', $_SERVER['HTTP_REFERER'])))
 {
     global $langs, $conf;
 

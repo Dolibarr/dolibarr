@@ -4152,7 +4152,7 @@ ul.ulmenu {
 }
 .ulmenu {
 	box-shadow: none !important;
-	border-bottom: 1px solid #444;
+	border-bottom: 1px solid #ccc;
 }
 .ui-btn-icon-right {
 	border-right: 1px solid #ccc !important;
