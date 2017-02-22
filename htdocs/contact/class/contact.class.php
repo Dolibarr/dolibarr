@@ -124,8 +124,8 @@ class Contact extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
-		    $sql.= " OUTER JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
-		    $sql.= " OUTER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+		    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
+		    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
