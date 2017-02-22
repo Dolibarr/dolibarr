@@ -46,7 +46,6 @@ $langs->load("bills");
 $langs->load("companies");
 $langs->load("paybox");
 $langs->load("paypal");
-$langs->load("stripe");
 
 
 

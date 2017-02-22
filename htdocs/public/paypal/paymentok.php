@@ -50,6 +50,7 @@ $langs->load("bills");
 $langs->load("companies");
 $langs->load("paybox");
 $langs->load("paypal");
+$langs->load("stripe");
 
 // Clean parameters
 $PAYPAL_API_USER="";

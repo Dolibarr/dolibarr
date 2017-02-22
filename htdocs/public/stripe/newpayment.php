@@ -16,14 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * For test: https://developer.paypal.com/
+ * For test: https://stripe.com/docs
  */
 
 /**
- *     	\file       htdocs/public/paypal/newpayment.php
- *		\ingroup    paypal
+ *     	\file       htdocs/public/stripe/newpayment.php
+ *		\ingroup    stripe
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
- *		\author	    Laurent Destailleur
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -36,14 +35,14 @@ $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['ent
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
+// require_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripefunctions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Security check
-if (empty($conf->paypal->enabled)) accessforbidden('',0,0,1);
+if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
 
 $langs->load("main");
 $langs->load("other");
@@ -91,8 +90,8 @@ if (! GETPOST("action"))
 //$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 $urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
 
-$urlok=$urlwithroot.'/public/paypal/paymentok.php?';
-$urlko=$urlwithroot.'/public/paypal/paymentko.php?';
+$urlok=$urlwithroot.'/public/stripe/paymentok.php?';
+$urlko=$urlwithroot.'/public/stripe/paymentko.php?';
 
 // Complete urls for post treatment
 $SOURCE=GETPOST("source",'alpha');
@@ -139,6 +138,7 @@ $PAYPAL_API_OK="";
 if ($urlok) $PAYPAL_API_OK=$urlok;
 $PAYPAL_API_KO="";
 if ($urlko) $PAYPAL_API_KO=$urlko;
+/*
 if (empty($PAYPAL_API_USER))
 {
     dol_print_error('',"Paypal setup param PAYPAL_API_USER not defined");
@@ -154,6 +154,7 @@ if (empty($PAYPAL_API_SIGNATURE))
     dol_print_error('',"Paypal setup param PAYPAL_API_SIGNATURE not defined");
     return -1;
 }
+*/
 
 // Check security token
 $valid=true;
@@ -255,7 +256,7 @@ if (GETPOST("action") == 'dopayment')
  * View
  */
 
-llxHeaderPaypal($langs->trans("PaymentForm"));
+llxHeaderStripe($langs->trans("PaymentForm"));
 
 if (! empty($PAYPAL_API_SANDBOX))
 {
@@ -949,11 +950,11 @@ if ($found && ! $error)	// We are in a management option and no error
 
 	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
 	{
-		print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
+		print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("StripeOrCBDoPayment").'">';
 	}
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
+	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'stripeonly')
 	{
-		print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PaypalDoPayment").'">';
+		print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("StripeDoPayment").'">';
 	}
 }
 else
@@ -969,8 +970,8 @@ print '</div>'."\n";
 print '<br>';
 
 
-html_print_paypal_footer($mysoc,$langs);
+html_print_stripe_footer($mysoc,$langs);
 
-llxFooterPaypal();
+llxFooterStripe();
 
 $db->close();
