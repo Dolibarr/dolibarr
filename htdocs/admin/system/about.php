@@ -63,52 +63,13 @@ if ($action == 'getlastversion')
 llxHeader();
 
 
-print load_fiche_titre("Dolibarr",'','title_setup');
+print load_fiche_titre($langs->trans("ExternalResources"),'','title_setup');
 
 print '<div style="padding-left: 30px;">'.img_picto_common('', 'dolibarr_box.png','height="120"').'</div>';
 
 
 
 print '<div class="fichecenter"><div class="fichehalfleft">';
-
-print $langs->trans("CurrentVersion").' : <strong>'.DOL_VERSION.'</strong><br>';
-
-if (function_exists('curl_init'))
-{
-    $conf->global->MAIN_USE_RESPONSE_TIMEOUT = 10;
-    
-    if ($action == 'getlastversion')
-    {
-        if ($sfurl)
-        {
-                    while (! empty($sfurl->channel[0]->item[$i]->title) && $i < 10000)
-            {
-                $title=$sfurl->channel[0]->item[$i]->title;
-                if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
-                {
-                    $newversion=$reg[1];
-                    $newversionarray=explode('.',$newversion);
-                    $versionarray=explode('.',$version);
-                    //var_dump($newversionarray);var_dump($versionarray);
-                    if (versioncompare($newversionarray, $versionarray) > 0) $version=$newversion;
-                }
-                $i++;
-            }
-            
-            // Show version
-        	print $langs->trans("LastStableVersion").' : <b>'. (($version != '0.0')?$version:$langs->trans("Unknown")) .'</b><br>';
-        }
-        else
-        {
-            print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b><br>';
-        }
-    }
-    else
-    {
-        print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="button">' .$langs->trans("Check").'</a><br>';
-    }
-}
-print '<br>';
 
 print $langs->trans("DolibarrLicense").' : ';
 print '<ul><li>';
@@ -201,6 +162,11 @@ $url='https://wiki.dolibarr.org/index.php/Subscribe';
 if (preg_match('/^fr_/i',$langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Adh%C3%A9rer';
 if (preg_match('/^es_/i',$langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Subscribirse';
 print '<li><a href="'.$url.'" target="_blank" rel="external">'.$langs->trans("SubscribeToFoundation").'</a></li>';
+print '</ul>';
+
+print $langs->trans("SocialNetworks").':';
+
+print '<ul>';
 
 print '<li><a href="https://facebook.com/dolibarr" target="_blank" rel="external">FaceBook</a></li>';
 print '<li><a href="https://twitter.com/dolibarr" target="_blank" rel="external">Twitter</a></li>';

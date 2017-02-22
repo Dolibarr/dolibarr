@@ -52,23 +52,60 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
-$var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("VersionLastUpgrade").'</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
-$var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("CurrentVersion").' ('.$langs->trans("Programs").')</td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE))
 {
-	// Compare version with last install database version (upgrades never occured)
-	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_INSTALL));
+    // Compare version with last install database version (upgrades never occured)
+    if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_INSTALL));
 }
 else
 {
-	// Compare version with last upgrade database version
-	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE));
+    // Compare version with last upgrade database version
+    if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE));
 }
+
+if (function_exists('curl_init'))
+{
+    $conf->global->MAIN_USE_RESPONSE_TIMEOUT = 10;
+    print ' &nbsp; &nbsp; - &nbsp; &nbsp; ';
+    if ($action == 'getlastversion')
+    {
+        if ($sfurl)
+        {
+            while (! empty($sfurl->channel[0]->item[$i]->title) && $i < 10000)
+            {
+                $title=$sfurl->channel[0]->item[$i]->title;
+                if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
+                {
+                    $newversion=$reg[1];
+                    $newversionarray=explode('.',$newversion);
+                    $versionarray=explode('.',$version);
+                    //var_dump($newversionarray);var_dump($versionarray);
+                    if (versioncompare($newversionarray, $versionarray) > 0) $version=$newversion;
+                }
+                $i++;
+            }
+
+            // Show version
+            print $langs->trans("LastStableVersion").' : <b>'. (($version != '0.0')?$version:$langs->trans("Unknown")) .'</b><br>';
+        }
+        else
+        {
+            print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b><br>';
+        }
+    }
+    else
+    {
+        print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="button">' .$langs->trans("Check").'</a><br>';
+    }
+}
+
 print '</td></tr>'."\n";
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("VersionLastUpgrade").' ('.$langs->trans("Database").')</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
 print '</table>';
 print '</div>';
 print '<br>';
