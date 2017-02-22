@@ -85,6 +85,7 @@ class PriceParser
 
 		-2 Args
 		 6, wrong number of arguments (%s given, %s expected)
+		23, unknown or non set variable '%s' after %s
 
 		-internal errors
 		 7, internal error
@@ -178,19 +179,56 @@ class PriceParser
 			$values["global_".$entry->code] = $entry->value;
 		}
 
+		//Check date start/end for price schedule
+		$date_start = $values["date_start"];
+		$date_end = $values["date_end"];
+		if ($product->isService() && $product->duration_unit && $product->duration_value)
+		{
+			if (empty($date_start) || !is_numeric($date_start)) $date_start = dol_now();
+			if (empty($date_end)   || !is_numeric($date_end)) $date_end = $date_start;
+
+			require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_schedule.class.php';
+			$price = PriceSchedule::getPrice($product->id, PriceSchedule::TYPE_SERVICE, 0, $date_start, $date_end);
+			if ($price !== null) $values["price_schedule"] = $price;
+
+			//Check if we have supplier price schedule too
+			if ($product instanceof ProductFournisseur)
+			{
+				$price = PriceSchedule::getPrice($product->id, PriceSchedule::TYPE_SUPPLIER_SERVICE, $product->product_fourn_price_id, $date_start, $date_end);
+				if ($price !== null) $values["supplier_price_schedule"] = $price;
+			}
+		}
+
+		//Remove internal variables
+		unset($values["supplier_id"]);
+		unset($values["date_start"]);
+		unset($values["date_end"]);
+
 		//Prepare the lib, parameters and values
 		$em = new EvalMath();
 		$em->suppress_errors = true; //Don't print errors on page
 		$this->error_expr = null;
 		$last_result = null;
 
-		//Iterate over each expression splitted by $separator_chr
+		//Fill each variable in expression from values
 		$expression = str_replace("\n", $this->separator_chr, $expression);
 		foreach ($values as $key => $value)
 		{
 			if ($value === null) $value = "NULL";
 			$expression = str_replace($this->special_chr.$key.$this->special_chr, strval($value), $expression);
 		}
+
+		//Check if there is unfilled variable
+		if (strpos($expression, $this->special_chr) !== false)
+		{
+			$data = explode($this->special_chr, $expression);
+			$variable = $this->special_chr.$data[1];
+			if (isset($data[2])) $variable.= $this->special_chr;
+			$this->error_parser = array(23, array($variable, $expression));
+			return -6;
+		}
+
+		//Iterate over each expression splitted by $separator_chr
 		$expressions = explode($this->separator_chr, $expression);
 		$expressions = array_slice($expressions, 0, $this->limit);
 		foreach ($expressions as $expr) {
@@ -241,7 +279,7 @@ class PriceParser
 
 		//Get the supplier min
 		$productFournisseur = new ProductFournisseur($this->db);
-		$supplier_min_price = $productFournisseur->find_min_price_product_fournisseur($product->id);
+		$supplier_min_price = $productFournisseur->find_min_price_product_fournisseur($product->id, 0, 0, $extra_values);
 
 		//Accessible values by expressions
 		$extra_values = array_merge($extra_values, array(
@@ -305,11 +343,13 @@ class PriceParser
 
 		//Values for product expressions
 		$extra_values = array_merge($extra_values, array(
-			"supplier_min_price" => 1,
+			"price_schedule" => 1,
+			"supplier_min_price" => 2,
 		));
 
 		//Values for supplier product expressions
 		$extra_values = array_merge($extra_values, array(
+			"supplier_price_schedule" => 1,
 			"supplier_quantity" => 2,
 			"supplier_tva_tx" => 3,
 		));

@@ -417,14 +417,6 @@ class Propal extends CommonObject
         $txlocaltax1=price2num($txlocaltax1);
         $txlocaltax2=price2num($txlocaltax2);
     	$pa_ht=price2num($pa_ht);
-        if ($price_base_type=='HT')
-        {
-            $pu=$pu_ht;
-        }
-        else
-        {
-            $pu=$pu_ttc;
-        }
 
         // Check parameters
         if ($type < 0) return -1;
@@ -433,19 +425,45 @@ class Propal extends CommonObject
         {
             $this->db->begin();
 
-        	$product_type=$type;
+			$product_type=$type;
 			if (!empty($fk_product))
 			{
 				$product=new Product($this->db);
 				$result=$product->fetch($fk_product);
-				$product_type=$product->type;
+				if ($result > 0)
+				{
+					$product_type = $product->type;
 
-				if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_PROPOSAL) && $product_type == 0 && $product->stock_reel < $qty) {
-                    $langs->load("errors");
-				    $this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnProposal', $product->ref);
-					$this->db->rollback();
-					return -3;
+					if (!empty($conf->dynamicprices->enabled))
+					{
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+						$priceparser = new PriceParser($this->db);
+						$extra_values = array('date_start' => $date_start, 'date_end' => $date_end);
+						$price_result = $priceparser->parseProduct($product, $extra_values);
+						if ($price_result >= 0)
+						{
+							$pu_ht = price2num($price_result);
+							//Calculate the VAT
+							$pu_ttc = price2num($pu_ht * (1 + ($txtva / 100)));
+						}
+					}
+
+					if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_PROPOSAL) && $product_type == 0 && $product->stock_reel < $qty) {
+	                    $langs->load("errors");
+					    $this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnProposal', $product->ref);
+						$this->db->rollback();
+						return -3;
+					}
 				}
+			}
+			
+			if ($price_base_type=='HT')
+			{
+				$pu=$pu_ht;
+			}
+			else
+			{
+				$pu=$pu_ttc;
 			}
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
@@ -637,6 +655,27 @@ class Propal extends CommonObject
         {
             $this->db->begin();
 
+            //Fetch current line from the database and then clone the object and set it in $oldline property
+            $line = new PropaleLigne($this->db);
+            $line->fetch($rowid);
+			$line->fetch_optionals(); // Fetch extrafields for oldcopy
+
+			$staticline = clone $line;
+
+            $line->oldline = $staticline;
+            $this->line = $line;
+            $this->line->context = $this->context;
+
+			//Fetch product
+			if (!empty($this->line->fk_product))
+			{
+				$product=new Product($this->db);
+				$result=$product->fetch($this->line->fk_product);
+				if ($result > 0)
+				{
+				}
+			}
+
             // Calcul du total TTC et de la TVA pour la ligne a partir de
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
@@ -675,17 +714,6 @@ class Propal extends CommonObject
                 $remise = round(($pu * $remise_percent / 100), 2);
                 $price = $pu - $remise;
             }
-
-            //Fetch current line from the database and then clone the object and set it in $oldline property
-            $line = new PropaleLigne($this->db);
-            $line->fetch($rowid);
-			$line->fetch_optionals(); // Fetch extrafields for oldcopy
-
-			$staticline = clone $line;
-
-            $line->oldline = $staticline;
-            $this->line = $line;
-            $this->line->context = $this->context;
 
             // Reorder if fk_parent_line change
             if (! empty($fk_parent_line) && ! empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line)

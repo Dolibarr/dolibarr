@@ -22,10 +22,12 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable_updater.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_schedule.class.php';
 
 $langs->load("products");
 
@@ -34,6 +36,7 @@ $action = GETPOST('action', 'alpha');
 $save = GETPOST('save', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $selection = GETPOST('selection', 'int');
+$mode = GETPOST('mode', 'int');
 
 // Security check
 if (!$user->admin) accessforbidden();
@@ -54,10 +57,23 @@ if ($action == 'edit_updater') {
     }
 }
 
+if (empty($mode)) $mode = $conf->global->PRICE_SCHEDULE_CALCULATION_MODE;
+if (empty($mode)) $mode = PriceSchedule::DEFAULT_MODE;
+
 /*
  * Actions
  */
 if (!empty($action) && empty($cancel)) {
+    //Price schedule
+    if ($action == 'price_schedule')
+    {
+        $action = '';
+        $ret = dolibarr_set_const($db, "PRICE_SCHEDULE_CALCULATION_MODE", $mode, 'chaine', 0, '', $conf->entity);
+        if ($ret < 0) {
+            dol_print_error($db);
+        }
+    }
+
     //Global variable actions
     if ($action == 'create_variable' || $action == 'edit_variable') {
         $price_globals->code = isset($_POST['code'])?GETPOST('code', 'alpha'):$price_globals->code;
@@ -149,6 +165,20 @@ $form = new Form($db);
 
 print $langs->trans("DynamicPriceDesc").'<br>';
 print '<br>';
+
+//Price schedule mode
+if (empty($action))
+{
+    print $form->textwithpicto($langs->trans("PriceScheduleMode"),$langs->trans("PriceScheduleModeHelp"),1);
+    print '<form id="price_schedule" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="price_schedule">';
+    print $form->selectarray('mode', PriceSchedule::calculation_modes_trans(), $mode);
+    print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
+    print '</form>';
+    print '<br><br>';
+}
+
 
 //Global variables table
 if ($action != 'create_updater' && $action != 'edit_updater') {

@@ -964,7 +964,8 @@ if (empty($reshook))
 
 	    	if (GETPOST('idprodfournprice') > 0)
 	    	{
-	    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty);    // Just to see if a price exists for the quantity. Not used to found vat.
+	    		$extra_values = array('date_start' => $date_start, 'date_end' => $date_end);
+	    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty, 0, 0, $extra_values);    // Just to see if a price exists for the quantity. Not used to found vat.
 	    	}
 
 		    //Replaces $fk_unit with the product's

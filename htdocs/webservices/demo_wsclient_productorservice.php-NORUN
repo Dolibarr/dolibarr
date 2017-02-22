@@ -31,6 +31,7 @@ $WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_productorservice.php';
 $WS_METHOD1 = 'createProductOrService';
 $WS_METHOD2 = 'getProductOrService';
 $WS_METHOD3 = 'getListOfProductsOrServices';
+$WS_METHOD4 = 'getProductOrServicePrice';
 $ns='http://www.dolibarr.org/ns/';
 
 
@@ -53,6 +54,12 @@ if ($soapclient3)
 {
     $soapclient3->soap_defencoding='UTF-8';
 	$soapclient3->decodeUTF8(false);
+}
+$soapclient4 = new nusoap_client($WS_DOL_URL);
+if ($soapclient4)
+{
+    $soapclient4->soap_defencoding='UTF-8';
+	$soapclient4->decodeUTF8(false);
 }
 
 
@@ -112,6 +119,29 @@ if ($WS_METHOD3)
     	print $soapclient3->request;
     	print "<br>\n\n";
     	print $soapclient3->response;
+    	exit;
+    }
+}
+
+// Test url 4
+if ($WS_METHOD4)
+{
+    $parameters = array(
+        'authentication'=>$authentication,
+        'id'=>'1',
+        'date_start'=>'2016-01-01T01:34:19Z',
+        'date_end'=>'2016-01-01T23:58:02Z',
+        'lang'=>'EN',
+    );
+    dol_syslog("Call method ".$WS_METHOD4);
+    $result4 = $soapclient4->call($WS_METHOD4,$parameters,$ns,'');
+    if (! $result4)
+    {
+    	print $soapclient4->error_str;
+    	print "<br>\n\n";
+    	print $soapclient4->request;
+    	print "<br>\n\n";
+    	print $soapclient4->response;
     	exit;
     }
 }
@@ -176,6 +206,22 @@ print_r($result3);
 echo '</pre>';
 echo '<h4>SOAP Message</h4>';
 echo '<pre>' . htmlspecialchars($soapclient3->response, ENT_QUOTES) . '</pre>';
+
+print '<hr>';
+
+echo "<h2>Request:</h2>";
+echo '<h4>Function</h4>';
+echo $WS_METHOD4;
+echo '<h4>SOAP Message</h4>';
+echo '<pre>' . htmlspecialchars($soapclient4->request, ENT_QUOTES) . '</pre>';
+//echo '<hr>';
+echo "<h2>Response:</h2>";
+echo '<h4>Result</h4>';
+echo '<pre>';
+print_r($result4);
+echo '</pre>';
+echo '<h4>SOAP Message</h4>';
+echo '<pre>' . htmlspecialchars($soapclient4->response, ENT_QUOTES) . '</pre>';
 
 echo '</body>'."\n";
 echo '</html>'."\n";

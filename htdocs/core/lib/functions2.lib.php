@@ -2112,3 +2112,435 @@ function cartesianArray(array $input) {
 
     return $result;
 }
+
+/**
+ *  Generate html for section viewer
+ *
+ *  @param   object $object         Object containing sections
+ *  @param   int    $html_id        ID of html
+ *  @param   int    $month          Month to show
+ *  @param   int    $day            Day to show
+ *  @param   string $duration_unit  Duration unit
+ *  @param   int    $duration_value Duration value
+ *  @param   bool   $interactive    Makes sections interactive
+ *  @param   bool   $selectable     Makes sections selectable
+ *  @param   bool   $navigator      Shows week/month navigator
+ *  @param   string $params         Extra URL parameters
+ *  @return  string                 HTML code
+ */
+function showSectionViewer($object, $html_id, $month, $day, $duration_unit, $duration_value, $interactive, $selectable, $navigator, $params)
+{
+    global $db, $langs, $conf, $hookmanager;
+
+    //The JS magic for interactivity and click/selection handling
+    $interactive_js = "";
+    $selectable_js = "";
+    if ($interactive || $selectable)
+    {
+        $interactive_js.= '<script type="text/javascript">
+            function unselect_all()
+            {
+                jQuery("#'.$html_id.',.ui-selected").each(function()
+                {
+                    var section = jQuery("#"+this.id);
+                    section.removeClass("ui-selected");
+                    this.style.background = "#" + section.data("color");
+                });
+                jQuery("#'.$html_id.'_selection").val("");
+                jQuery(".range_date").show();
+                jQuery("#selection_mode").hide();
+            }
+
+            function is_selection(classes)
+            {
+                return classes.indexOf("ui-selecting") > -1 || classes.indexOf("ui-selected") > -1;
+            }
+
+            function section_click()
+            {
+                unselect_all();
+                var section = jQuery("#"+(this.id));
+                if (section.data("interactive") === 1)
+                {
+                    jQuery("#range_start_month").val(section.data("start_month"));
+                    jQuery("#range_start_day").val(section.data("start_day"));
+                    jQuery("#range_start_hour").val(section.data("start_hour"));
+                    jQuery("#range_end_month").val(section.data("end_month"));
+                    jQuery("#range_end_day").val(section.data("end_day"));
+                    jQuery("#range_end_hour").val(section.data("end_hour"));
+                    //Specific code
+                    jQuery("#section_status").val(section.data("status"));
+                    jQuery("#section_price").val(section.data("price"));
+                    console.log($("#section_price").val());
+                }
+            }
+
+            function section_enter()
+            {
+                var section = jQuery("#"+(this.id));
+                if (!is_selection(section.attr("class")))
+                {
+                    this.style.background = "#"+section.data("color_hover");
+                }
+            }
+
+            function section_leave()
+            {
+                var section = jQuery("#"+(this.id));
+                if (!is_selection(section.attr("class")))
+                {
+                    this.style.background = "#"+section.data("color");
+                }
+            }
+
+            jQuery(".'.$html_id.'_section").each(function()
+            {
+                var section = jQuery("#"+this.id);
+                section.click(section_click);
+                if (section.data("interactive") === 1)
+                {
+                    section.mouseenter(section_enter);
+                    section.mouseleave(section_leave);
+                }
+            });
+        </script>';
+        if ($selectable)
+        {
+            $selectable_js.= '<script type="text/javascript">
+                jQuery("#'.$html_id.'").selectable({
+                    filter: ".'.$html_id.'_section",
+                    distance: 4,
+                    start: function()
+                    {
+                        jQuery(".range_date").hide();
+                        jQuery("#selection_mode").show();
+                    },
+
+                    selecting: function(event, ui)
+                    {
+                        var section = jQuery("#"+(ui.selecting.id));
+                        ui.selecting.style.background = "#" + section.data("color_hover");
+                    },
+
+                    unselecting: function(event, ui)
+                    {
+                        var section = jQuery("#"+(ui.unselecting.id));
+                        ui.unselecting.style.background = "#" + section.data("color");
+                    },
+
+                    stop: function()
+                    {
+                        var result = jQuery("#'.$html_id.'_selection");
+                        result.val("");
+                        var count = 0;
+                        jQuery(".ui-selected", this).each(function()
+                        {
+                            var section = jQuery("#"+(this.id));
+                            this.style.background = "#" + section.data("color_selected");
+                            count++;
+                            var id = section.data("id");
+                            var text = result.val();
+                            if (text.indexOf(id) == -1)
+                            {
+                                if (text.length > 0)
+                                {
+                                    text = text + ",";
+                                }
+                                text = text + id;
+                            }
+                            result.val(text);
+                        });
+                        if (count == 0)
+                        {
+                            unselect_all();
+                        }
+                    }
+                });
+            </script>';
+        }
+    }
+
+    // Hook for external viewer
+    $parameters=array(
+        'html_id'=>$html_id,
+        'month'=>$month,
+        'day'=>$day,
+        'duration_unit'=>$duration_unit,
+        'duration_value'=>$duration_value,
+        'interactive'=>$interactive,
+        'interactive_js'=>$interactive_js,
+        'selectable'=>$selectable,
+        'selectable_js'=>$selectable_js,
+        'navigator'=>$navigator,
+        'params'=>$params,
+    );
+    $action='';
+    $reshook=$hookmanager->executeHooks('showSectionViewer', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+    if ($reshook < 0)
+    {
+        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    }
+    else if ($reshook == 0 && !empty($hookmanager->resPrint))
+    {
+        return $hookmanager->resPrint;
+    }
+
+    //Prepare
+    $gm = "server";
+    $tz_output = "tzserver";
+    $year = $object->schedule_year;
+    $date = dol_get_first_day_week($day, $month, $year, $gm);
+    $first_time = dol_mktime(0,0,0,$date['first_month'],$date['first_day'],$date['first_year'], $gm);
+    $less_than_day = dol_time_plus_duree(0, $duration_value, $duration_unit) < 3600 * 24;
+    $date_format = $less_than_day ? 'hour' : 'dayhourtext';
+
+    //Pass viewer mode to url params and form
+    $mode = GETPOST('viewer_mode', 'alpha');
+    if ($mode)
+    {
+        $params.= '&amp;viewer_mode='.$mode;
+        print '<input type="hidden" name="viewer_mode" value="'.$mode.'">';
+    }
+
+    //Month/Day selector
+    $formother = new FormOther($db);
+    $selector = $langs->trans('Date').'&nbsp;'.$formother->select_monthday($year, $month, $day, 'sel_');
+    $selector.= '&nbsp;<input type="submit" class="button" value="'.$langs->trans('Refresh').'" />';
+
+    //Navigator
+    $nav = '';
+    if ($navigator)
+    {
+        //Calculate prev/next week
+        $now = dol_getdate(dol_now(), true);
+        $first_date = dol_getdate(dol_get_first_day($year, $month, $gm), true);
+        $last_date = dol_getdate(dol_get_last_day($year, $month, $gm), true);
+        $sel_time = dol_mktime(0,0,0,$month,$day,$year, $gm);
+        $current_date = dol_getdate($sel_time);
+        $step_time = dol_time_plus_duree(0, '1', 'w');
+        $prev_date = dol_getdate($sel_time - $step_time, true);
+        $next_date = dol_getdate($sel_time + $step_time, true);
+        //Bound to this year only
+        if ($current_date['year'] > $prev_date['year']) $prev_date = $first_date;
+        if ($current_date['year'] < $next_date['year']) $next_date = $last_date;
+        //Buttons
+        $nav.='<a href="?id='.$object->id.$params.'&amp;sel_month='.$prev_date['mon'].'&amp;sel_day='.$prev_date['mday'].'">'.img_previous($langs->trans("Previous")).'</a>';
+        $nav.='&nbsp; <span class="inline-block" style="text-align: center; min-width: 100px">'.$year.', '.$langs->trans($current_date['month']).'</span>&nbsp; ';
+        $nav.='<a href="?id='.$object->id.$params.'&amp;sel_month='.$next_date['mon'].'&amp;sel_day='.$next_date['mday'].'">'.img_next($langs->trans("Next")).'</a>';
+        $nav.=' &nbsp; (<a href="?id='.$object->id.$params.'&amp;sel_month='.$now['mon'].'&amp;sel_day='.$now['mday'].'">'.$langs->trans("Today").'</a>)';
+    }
+
+    //Generate html calendar
+    print load_fiche_titre($selector, $nav, '');
+    $out = '<table id="'.$html_id.'" style="width: 100%;" class="noborder nocellnopadd cal_month">';
+    $out.= '<tr class="liste_titre">';
+    for ($iter_day = 0; $iter_day < 7; $iter_day++)
+    {
+        $curtime = dol_time_plus_duree($first_time, $iter_day, 'd');
+        $out.= '<td class="nowrap" align="center" style="font-weight: bold;">';
+        $out.= dol_print_date($curtime,'daytext', $tz_output).'<br>';
+        $out.= $langs->trans("Day".(($iter_day+(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1)) % 7));
+        $out.= '</td>';
+    }
+    $out.= '</tr>';
+    $out.= '<tr>';
+
+    //Iterate each day
+    for ($iter_day = 0; $iter_day < 7; $iter_day++)
+    {
+        //Get current day sections
+        $date_start = dol_time_plus_duree($first_time, $iter_day, 'd');
+        $date_end = dol_time_plus_duree($date_start, 1, 'd') - 1;
+        $sections = getScheduleSections($object, $date_start, $date_end, $date_format, $tz_output);
+
+        //Calendar styling
+        $style = 'cal_current_month';
+        if ($iter_day == 6) $style.=' cal_current_month_right';
+        $extra_content = array('<br><b>', '</b><br>');
+
+        //Show the day sections
+        $out.= '<td class="'.$style.'" valign="top">';
+        $out.= showScheduleSections($html_id, $sections, '', false, $extra_content);
+        $out.= '</td>';
+    }
+    $out.= '</tr>';
+    $out.= '</table>';
+
+    //Add JS if filled
+    if (!empty($interactive_js)) $out.= $interactive_js;
+    if (!empty($selectable_js)) $out.= $selectable_js;
+
+    return $out;
+}
+
+/**
+ *  Generate each day data for section viewer
+ *
+ *  @param   object $object         Object containing sections
+ *  @param   int    $date_start     Date start timestamp to show
+ *  @param   int    $date_end       Date end timestamp to show
+ *  @param   int    $date_format    Date printing format
+ *  @param   string $tz_output      TZ for print date
+ *  @return  string                 HTML code
+ */
+function getScheduleSections($object, $date_start, $date_end, $date_format, $tz_output)
+{
+    global $user;
+
+    if ($object->element == "resourceschedule") {
+        $status_text = ResourceStatus::translated();
+        $status_colors_normal = ResourceStatus::colors(array('CC', '66', '22'));
+        $status_colors_bright = ResourceStatus::colors(array('EE', '88', '44'));
+    }
+
+    $sections = array();
+    foreach ($object->sections as $i => $section) {
+        if ($section->date_start <= $date_end && $section->date_end >= $date_start) {
+
+            $section_data = array();
+            $section_data['data'] = array();
+            if ($object->element == "resourceschedule")
+            {
+                // Check if booker is valid
+                $booker = null;
+                if ($section->booker_id && $section->booker_type) {
+                    $booker = fetchObjectByElement($section->booker_id, $section->booker_type);
+                    if (!is_object($booker) || $booker->id != $section->booker_id) {
+                        $booker = null;
+                        //Something went wrong, so convert it to manual and reload info
+                        $section->restoreSections($user, true);
+                        $section->fetch($section->id);
+                    }
+                }
+
+                //Status and Booker
+                $content = $status_text[$section->status];
+                if (is_object($booker)) {
+                    $text = $content;
+                    $target = "##REPLACEME##";
+                    switch ($section->booker_type) {
+                        case 'resourceplacement': //Resource placement
+                            $original = $booker->name_client;
+                            $content = $booker->getNomUrl(0, $target);
+                            break;
+                        case 'propal': //Proposal
+                        case 'compta': //Bill
+                        case 'action': //Event
+                        default:
+                            $original = $object->ref;
+                            $booker->ref = $target;
+                            $content = $booker->getNomUrl();
+                            break;
+                    }
+                    //Restore the original text in first occurrence (where the tooltip text is)
+                    $content = implode($original, explode($target, $content, 2));
+                    //Put our text in place
+                    $content = str_replace($target, $text, $content);
+                }
+                $section_data['content'] = $content;
+                $section_data['data'] = array(
+                    'color' => $status_colors_normal[$section->status],
+                    'color_hover' => $status_colors_bright[$section->status],
+                    'color_selected' => $status_colors_bright[$section->status],
+                    'interactive' => in_array($section->status, ResourceStatus::$MANUAL) ? 1 : 0,
+                    'status' => $section->status,
+                );
+            }
+            else if ($object->element == "priceschedule")
+            {
+                $section_data['data'] = array(
+                    'color' => '8C8CDC',
+                    'color_selected' => 'ACACFC',
+                    'color_hover' => 'ACACFC',
+                    'interactive' => 1,
+                    'price' => price($section->price),
+                );
+
+                //Price
+                $content = price($section->price);
+                $section_data['content'] = $content;
+            }
+
+            //Unique ID
+            $section_data['uid'] = "_".dol_print_date($date_start, '%Y_%j', $tz_output);
+            $section_data['uid'].= "_".dol_print_date($date_end, '%Y_%j', $tz_output);
+            $section_data['uid'].= $section->id;
+
+            //Date start/end
+            $section_data['date_start'] = dol_print_date($section->date_start, $date_format, $tz_output);
+            $section_data['date_end'] = dol_print_date($section->date_end, $date_format, $tz_output);
+
+            //Common data
+            $section_data['data'] = array_merge($section_data['data'], array(
+                'id' => $section->id,
+                'start_month' => intval(dol_print_date($section->date_start, '%m', $tz_output)),
+                'start_day' => intval(dol_print_date($section->date_start, '%d', $tz_output)),
+                'start_hour' => dol_print_date($section->date_start, '%H', $tz_output),
+                'end_month' => intval(dol_print_date($section->date_end, '%m', $tz_output)),
+                'end_day' => intval(dol_print_date($section->date_end, '%d', $tz_output)),
+                'end_hour' => dol_print_date($section->date_end, '%H', $tz_output),
+            ));
+            $sections[] = $section_data;
+        }
+    }
+    return $sections;
+}
+
+/**
+ * Generate html for particular day sections
+ *
+ *  @param   int    $html_id        ID of html
+ *  @param   array  $sections       Sections to show
+ *  @param   string $section_style  Section html style
+ *  @param   bool   $hide_dates     Hide dates
+ *  @param   array  $extra_content  Print extra content at start and end, must be 2 strings array
+ *  @return  string HTML code
+ */
+function showScheduleSections($html_id, $sections, $section_style = '', $hide_dates = false, $extra_content = null)
+{
+    //Header
+    $out = '<div id="'.$html_id.'_day" class="dayevent">';
+    $out.= '<table class="nobordernopadding" width="100%">';
+    $out.= '<tr><td valign="top" colspan="2" style="padding-bottom: 2px;">';
+    $out.= '<div style="width: 100%; position: relative;">';
+
+    foreach ($sections as $i => $section)
+    {
+        // Show rect of section
+        $section_id = $html_id.'_'.$section['uid'];
+        $out.= '<div class="nowrap">';
+        $out.= '<ul class="cal_event" style="height: 100%">';	// always 1 li per ul, 1 ul per section
+        $out.= '<li class="cal_event" style="height: 100%">';
+        $out.= '<table id="'.$section_id.'" class="'.$html_id.'_section cal_event"';
+        $out.= ' style="height: 100%; width: 100%; -moz-border-radius:4px; background: #'.$section['data']['color'].';"';
+        if (!empty($section['data']))
+        {
+            foreach ($section['data'] as $key => $value)
+            {
+                $out.= ' data-'.$key.'="'.$value.'"';
+            }
+        }
+        $out.= '>';
+        $out.= '<tr><td class="cal_event" '.$section_style.'>';
+
+        // Show content
+        if (!$hide_dates) $out.= $section['date_start'];
+        if ($extra_content) $out.= $extra_content[0];
+        $out.= $section['content'];
+        if ($extra_content) $out.= $extra_content[1];
+        if (!$hide_dates) $out.= $section['date_end'];
+
+        // Close rect
+        $out.= '</td>';
+        $out.= '</tr></table>';
+        $out.= '</li>';
+        $out.= '</ul>';
+        $out.= '</div>';
+    }
+
+    $out.= '</div>';
+    $out.= '</td></tr>';
+    $out.= '</table></div>';
+
+    return $out;
+}

@@ -125,6 +125,23 @@ function product_prepare_head($object)
         }
     }
 
+	//Price schedule
+	if ($object->isService() && $object->duration_unit && $object->duration_value)
+	{
+        if (! empty($conf->dynamicprices->enabled) && $user->rights->dynamicprices->schedule_read)
+        {
+            require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_schedule.class.php';
+            $head[$h][0] = DOL_URL_ROOT.'/product/dynamic_price/list_schedule.php?id='.$object->id.'&type='.PriceSchedule::TYPE_SERVICE;
+            $head[$h][1] = $langs->trans("PriceSchedule");
+            $head[$h][2] = 'priceschedule';
+            $h++;
+            $head[$h][0] = DOL_URL_ROOT.'/product/dynamic_price/list_schedule.php?id='.$object->id.'&type='.PriceSchedule::TYPE_SUPPLIER_SERVICE;
+            $head[$h][1] = $langs->trans("SupplierPriceSchedule");
+            $head[$h][2] = 'supplierpriceschedule';
+            $h++;
+        }
+	}
+
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

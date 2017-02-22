@@ -374,8 +374,6 @@ if (empty($reshook))
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
                 */
-                $object->duration_value         = GETPOST('duration_value');
-                $object->duration_unit          = GETPOST('duration_unit');
 
                 $object->canvas                 = GETPOST('canvas');
                 $object->weight                 = GETPOST('weight');
@@ -421,6 +419,33 @@ if (empty($reshook))
 				
 				if ($accountancy_code_sell <= 0) { $object->accountancy_code_sell = ''; } else { $object->accountancy_code_sell = $accountancy_code_sell; }
 				if ($accountancy_code_buy <= 0) { $object->accountancy_code_buy = ''; } else { $object->accountancy_code_buy = $accountancy_code_buy; }
+
+                $duration_value                 = GETPOST('duration_value');
+                $duration_unit                  = GETPOST('duration_unit');
+
+                //Check if duration is changed with price schedules present
+                if (!empty($conf->dynamicprices->enabled) && $object->isService())
+                {
+                    require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_schedule.class.php';
+                    $schedule = new PriceSchedule($db);
+                    $result = $schedule->fetchAll($object->id);
+                    if (is_int($result) && $result < 0)
+                    {
+                        setEventMessages($schedule->error, $schedule->errors, 'errors');
+                        $error++;
+                    }
+                    else if (count($schedule->lines) > 0)
+                    {
+                        if ($object->duration_value != $duration_value || $object->duration_unit != $duration_unit)
+                        {
+                            $error++;
+                            setEventMessage('ErrorPriceSchedulePresent', 'errors');
+                        }
+                    }
+                }
+
+                $object->duration_value         = $duration_value;
+                $object->duration_unit          = $duration_unit;
 
                 // Fill array 'array_options' with data from add form
         		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);

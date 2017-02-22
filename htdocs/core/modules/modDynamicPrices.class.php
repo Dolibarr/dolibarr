@@ -83,6 +83,24 @@ class modDynamicPrices extends DolibarrModules
         $this->rights = array();
         $this->rights_class = 'dynamicprices';
         $r=0;
-        
+
+        $this->rights[$r][0] = 2201;
+        $this->rights[$r][1] = 'Read price schedules';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'schedule_read';
+        $r++;
+
+        $this->rights[$r][0] = 2202;
+        $this->rights[$r][1] = 'Create/Modify price schedules';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'schedule_write';
+        $r++;
+
+        $this->rights[$r][0] = 2203;
+        $this->rights[$r][1] = 'Delete price schedules';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'schedule_delete';
+        $r++;
+
     }
 }

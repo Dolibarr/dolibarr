@@ -195,6 +195,7 @@ $help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp5");
 foreach ($price_globals->listGlobalVariables() as $entry) {
     $help_text.= '<br><b>#globals_'.$entry->code.'#</b> '.$entry->description.' = '.$entry->value;
 }
+$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp6");
 
 //Price expression editor
 print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"),$help_text,1).'</td><td>';

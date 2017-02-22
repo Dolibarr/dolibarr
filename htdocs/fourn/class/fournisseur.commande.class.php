@@ -1389,6 +1389,7 @@ class CommandeFournisseur extends CommonOrder
         {
             $this->db->begin();
 
+            $product_type = $type;
             if ($fk_product > 0)
             {
                 if (empty($conf->global->SUPPLIERORDER_WITH_NOPRICEDEFINED))
@@ -1403,7 +1404,9 @@ class CommandeFournisseur extends CommonOrder
                         
                         // We use 'none' instead of $fourn_ref, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
                         // If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
-                        $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', $this->fk_soc);   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$fourn_ref/$this->fk_soc
+                        $extra_values = array('date_start' => $date_start, 'date_end' => $date_end);
+                        $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', $this->fk_soc, $extra_values);   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$fourn_ref/$this->fk_soc
+                
                         if ($result > 0)
                         {
                             $pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
@@ -1446,10 +1449,6 @@ class CommandeFournisseur extends CommonOrder
                         return -1;
                     }
                 }
-            }
-            else
-            {
-                $product_type = $type;
             }
 
             // Calcul du total TTC et de la TVA pour la ligne a partir de
@@ -2309,6 +2308,18 @@ class CommandeFournisseur extends CommonOrder
 
             // Check parameters
             if ($type < 0) return -1;
+
+			//Fetch product
+            $line = new CommandeFournisseurLigne($this->db);
+            $line->fetch($rowid);
+            if (!empty($line->fk_product))
+            {
+                $product=new Product($this->db);
+                $result=$product->fetch($line->fk_product);
+                if ($result > 0)
+                {
+                }
+            }
 
             // Calcul du total TTC et de la TVA pour la ligne a partir de
             // qty, pu, remise_percent et txtva
