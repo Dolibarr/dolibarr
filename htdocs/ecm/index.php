@@ -115,36 +115,6 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	    {
 	       $result=$ecmdir->changeNbOfFiles('+');
 	    }
-	    /*
-		if (dol_mkdir($upload_dir) >= 0)
-		{
-			$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0, 0, $_FILES['userfile']['error']);
-			if (is_numeric($resupload) && $resupload > 0)
-			{
-				$result=$ecmdir->changeNbOfFiles('+');
-			}
-			else
-			{
-				$langs->load("errors");
-				if ($resupload < 0)	// Unknown error
-				{
-					setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
-				}
-				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-				{
-					setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-				}
-				else	// Known error
-				{
-					setEventMessages($langs->trans($resupload), null, 'errors');
-				}
-			}
-		}
-		else
-		{
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFailToCreateDir",$upload_dir), null, 'errors');
-		}*/
 	}
 }
 
@@ -462,6 +432,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 
 	// Root of manual section
+	/*
 	print '<tr class="ecmroot">';
 	print '<td class="ecmroot">';
 	print img_picto_common('','treemenu/base.gif','class="inline-block valignmiddle"');
@@ -474,10 +445,11 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	print '<td class="ecmroot">&nbsp;</td>';
 	print '<td class="ecmroot"></td>';
 	print '</tr>';
-
+    */
+	
     if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
     {
-        print '<tr><td colspan="6" style="padding-left: 20px">';
+        print '<tr><td colspan="6">';
 
     	// Show filemanager tree
 	    print '<div id="filetree" class="ecmfiletree"></div>';

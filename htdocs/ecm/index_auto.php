@@ -449,7 +449,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 		$htmltooltip=$langs->trans("ECMAreaDesc2");
 
 		// Root title line (Automatic section)
-		print '<tr class="ecmroot">';
+		/*print '<tr class="ecmroot">';
 		print '<td class="ecmroot">';
 		print img_picto_common('','treemenu/base.gif','class="inline-block valignmiddle"');
 		$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsAuto").')';
@@ -461,11 +461,12 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 		print '<td class="ecmroot">&nbsp;</td>';
 		print '<td class="ecmroot"></td>';
 		print '</tr>';
-
+        */
+		
 		$sectionauto=dol_sort_array($sectionauto,'label','ASC',true,false);
 
 		print '<tr>';
-    	print '<td colspan="6" style="padding-left: 20px">';
+    	print '<td colspan="6">';
 	    print '<div id="filetreeauto" class="ecmfiletree"><ul class="ecmjqft">';
 
 		$nbofentries=0;
