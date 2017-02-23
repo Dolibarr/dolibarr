@@ -130,13 +130,12 @@ print '
 </style>
     
 <script type="text/javascript">
-/*jQuery time*/
 $(document).ready(function(){
     $("body ul").click(function(){
         console.log("We click on body ul");
 
         $(this).siblings().find("li ul").slideUp(0);
-        //slide up all the link lists
+
         $(this).find("li ul").slideToggle(200);
 
         target = $(this);
