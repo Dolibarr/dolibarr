@@ -1808,7 +1808,7 @@ else
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
 				$sql.= ' WHERE fde.fk_expensereport = '.$object->id;
 
-				print '<div style="clear: both;">';
+				print '<div style="clear: both;"></div>';
 
 				$actiontouse='updateligne';
 				if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline') $actiontouse='addline';
@@ -1818,7 +1818,10 @@ else
 				print '<input type="hidden" name="action" value="'.$actiontouse.'">';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<input type="hidden" name="fk_expensereport" value="'.$object->id.'" />';
-				print '<table class="noborder" width="100%">';
+				
+				
+				print '<div class="div-table-responsive">';
+				print '<table id="tablelines" class="noborder" width="100%">';
 				
 		        $resql = $db->query($sql);
 				if ($resql)
@@ -2047,11 +2050,9 @@ else
 					} // Fin si c'est payé/validé
 
 					print '</table>';
+					print '</div>';
 					
 					print '</form>';
-					
-					print '</div>';
-						
 				}
 				else
 				{

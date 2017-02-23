@@ -686,7 +686,9 @@ div.fiche>form>div.div-table-responsive {
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-
+	div.fiche {
+		    margin-top: <?php print ($dol_hide_topmenu?'12':'6'); ?>px !important;
+	}
 	div.titre {
 		line-height: 2em;
 	}
@@ -750,6 +752,10 @@ div.fiche>form>div.div-table-responsive {
     	width: 20px;
         object-fit: contain;
     }
+    
+	div.statusref {
+    	padding-right: 10px;
+   	}    
 }
 .linkobject { cursor: pointer; }
 <?php if (GETPOST("optioncss") == 'print') { ?>
