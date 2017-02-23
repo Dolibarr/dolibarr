@@ -862,8 +862,10 @@ if ($id > 0)
 	$result4=$object->fetch_userassigned();
 	$result5=$object->fetch_optionals($id,$extralabels);
 	
-	if ($listUserAssignedUpdated || $donotclearsession) {
-
+	if ($listUserAssignedUpdated || $donotclearsession) 
+	{
+        $percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):(in_array(GETPOST('complete'),array(-1,100))?GETPOST('complete'):GETPOST("percentage"));	// If status is -1 or 100, percentage is not defined and we must use status
+	
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
@@ -1038,7 +1040,7 @@ if ($id > 0)
 
 		// Status
 		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
-		$percent=GETPOST("percentage")?GETPOST("percentage"):$object->percentage;
+		$percent = GETPOST("percentage") ? GETPOST("percentage"): $object->percentage;
 		$formactions->form_select_status_action('formaction',$percent,1);
 		print '</td></tr>';
 

@@ -34,7 +34,8 @@ function propal_prepare_head($object)
 	global $db, $langs, $conf, $user;
 	$langs->load("propal");
 	$langs->load("compta");
-
+	$langs->load("companies");
+	
 	$h = 0;
 	$head = array();
 
