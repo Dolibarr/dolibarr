@@ -371,7 +371,8 @@ dol_fiche_head($head, 'index', $langs->trans("ECMArea").' - '.$langs->trans("ECM
 
 // Start container of all panels
 ?>
-<div id="containerlayout"> <!-- begin div id="containerlayout" -->
+<!-- Begin div id="containerlayout" -->
+<div id="containerlayout">
 <div id="ecm-layout-north" class="toolbar largebutton">
 <?php
 
@@ -429,23 +430,6 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 	// Manual section
 	$htmltooltip=$langs->trans("ECMAreaDesc2");
-
-
-	// Root of manual section
-	/*
-	print '<tr class="ecmroot">';
-	print '<td class="ecmroot">';
-	print img_picto_common('','treemenu/base.gif','class="inline-block valignmiddle"');
-	$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsManual").')';
-	print $form->textwithpicto($txt, $htmltooltip, 1, 'info');
-	print '</td>';
-	print '<td class="ecmroot"></td>';
-	print '<td class="ecmroot">&nbsp;</td>';
-	print '<td class="ecmroot">&nbsp;</td>';
-	print '<td class="ecmroot">&nbsp;</td>';
-	print '<td class="ecmroot"></td>';
-	print '</tr>';
-    */
 	
     if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
     {
@@ -677,12 +661,12 @@ else print '&nbsp;';
 ?>
 </div>
 </div>
-</div> <!-- end div id="containerlayout" -->
+</div> <!-- End div id="containerlayout" -->
 <?php
 // End of page
 
 
-dol_fiche_end();
+dol_fiche_end(1);
 
 
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {

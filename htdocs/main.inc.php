@@ -1500,7 +1500,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
         print "<!-- End top horizontal menu -->\n\n";
     }
 
-    if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '<div id="id-container" class="id-container'.($morecss?' '.$morecss:'').'">';
+    if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '<!-- Begin div id-container --><div id="id-container" class="id-container'.($morecss?' '.$morecss:'').'">';
 }
 
 
@@ -1533,7 +1533,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 	    // Instantiate hooks of thirdparty module
 	    $hookmanager->initHooks(array('searchform','leftblock'));
 
-		print "\n".'<!-- Begin id-left -->'."\n".'<div class="side-nav"><div id="id-left">'."\n";
+		print "\n".'<!-- Begin side-nav id-left -->'."\n".'<div class="side-nav"><div id="id-left">'."\n";
 
 	    print "\n";
 
@@ -1697,7 +1697,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 	    $reshook=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
 	    print $hookmanager->resPrint;
 
-	    print '</div></div> <!-- end id-left -->';	// End div id="id-left"
+	    print '</div></div> <!-- End side-nav id-left -->';	// End div id="side-nav" div id="id-left"
     }
 
     print "\n";
@@ -1721,8 +1721,7 @@ function main_area($title='')
 
     print "\n";
 
-    if (! empty($conf->dol_use_jmobile)) print '<div data-role="page">';
-    print '<div class="fiche"> <!-- begin div class="fiche" -->'."\n";
+    print '<!-- Begin div class="fiche" -->'."\n".'<div class="fiche">'."\n";
     if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode",$conf->global->MAIN_ONLY_LOGIN_ALLOWED));
 }
 
@@ -1861,7 +1860,6 @@ if (! function_exists("llxFooter"))
 
         print "\n\n";
         print '</div> <!-- End div class="fiche" -->'."\n";
-        if (! empty($conf->dol_use_jmobile)) print '</div>';	// end data-role="page"
 
 		if (empty($conf->dol_hide_leftmenu)) print '</div> <!-- End div id-right -->'; // End div id-right
 

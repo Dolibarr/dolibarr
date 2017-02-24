@@ -740,6 +740,7 @@ div.fiche>form>div.div-table-responsive {
      }
 
     .hideonsmartphone { display: none; }
+    .hideonsmartphoneimp { display: none !important; }
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
     .maxwidthonsmartphone, #search_newcompany.ui-autocomplete-input { max-width: 100px; }
     .maxwidth50onsmartphone { max-width: 40px; }
@@ -868,6 +869,8 @@ div.vmenu, td.vmenu {
 .side-nav {
 	border-bottom: 1px solid #BBB;
 	background: #FFF;
+	padding-left: 20px;
+	padding-right: 20px;
 }
 .side-nav {
 	position: absolute;
@@ -3250,6 +3253,7 @@ td.hidden {
 .websitebar {
 	border-bottom: 1px solid #888;
 	background: #eee;
+	display: inline-block;
 }
 .websitebar .button, .websitebar .buttonDelete
 {
@@ -3261,11 +3265,15 @@ td.hidden {
 	display: inline-block;
 	padding-left: 10px;
 	vertical-align: middle;
-	line-height: 29px;
+	/* line-height: 29px; */
 }
 .websitetools {
 	float: right;
-	height: 28px;
+	/* height: 28px; */
+}
+.websiteselection, .websitetools {
+	padding-top: 3px;
+	padding-bottom: 3px;
 }
 .websiteinputurl {
     display: inline-block;
@@ -3273,6 +3281,9 @@ td.hidden {
 }
 .websiteiframenoborder {
 	border: 0px;
+}
+a.websitebuttonsitepreview {
+	vertical-align: middle;
 }
 a.websitebuttonsitepreview img {
 	width: 26px;

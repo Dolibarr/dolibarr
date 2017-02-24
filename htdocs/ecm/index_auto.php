@@ -401,7 +401,8 @@ dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans
 
 // Start container of all panels
 ?>
-<div id="containerlayout"> <!-- begin div id="containerlayout" -->
+<!-- Begin div id="containerlayout" -->
+<div id="containerlayout">
 <div id="ecm-layout-north" class="toolbar largebutton">
 <?php
 
@@ -448,21 +449,6 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	{
 		$htmltooltip=$langs->trans("ECMAreaDesc2");
 
-		// Root title line (Automatic section)
-		/*print '<tr class="ecmroot">';
-		print '<td class="ecmroot">';
-		print img_picto_common('','treemenu/base.gif','class="inline-block valignmiddle"');
-		$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsAuto").')';
-		print $form->textwithpicto($txt, $htmltooltip, 1, 0);
-		print '</td>';
-		print '<td class="ecmroot">&nbsp;</td>';
-		print '<td class="ecmroot">&nbsp;</td>';
-		print '<td class="ecmroot">&nbsp;</td>';
-		print '<td class="ecmroot">&nbsp;</td>';
-		print '<td class="ecmroot"></td>';
-		print '</tr>';
-        */
-		
 		$sectionauto=dol_sort_array($sectionauto,'label','ASC',true,false);
 
 		print '<tr>';
@@ -532,12 +518,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 </div>
 
 </div>
-</div> <!-- end div id="containerlayout" -->
+</div> <!-- End div id="containerlayout" -->
 <?php
 // End of page
 
 
-dol_fiche_end();
+dol_fiche_end(1);
 
 
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
