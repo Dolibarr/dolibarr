@@ -950,7 +950,6 @@ if (empty($reshook))
     
     	// if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
     	if (empty($vatrate)) $vatrate = "0.000";
-    
     	$object_ligne->vatrate = price2num($vatrate);
     
     	$object_ligne->fk_projet = $fk_projet;
@@ -1079,6 +1078,10 @@ if (empty($reshook))
     	$qty = GETPOST('qty');
     	$value_unit = GETPOST('value_unit');
     	$vatrate = GETPOST('vatrate');
+
+        // if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
+        if (empty($vatrate)) $vatrate = "0.000";
+        $vatrate = price2num($vatrate);
     
     	if (! GETPOST('fk_c_type_fees') > 0)
     	{
@@ -1086,7 +1089,7 @@ if (empty($reshook))
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
     		$action='';
     	}
-    	if (GETPOST('vatrate') < 0 || GETPOST('vatrate') == '')
+    	if ((int) $vatrate < 0 || $vatrate == '')
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Vat")), null, 'errors');
