@@ -1052,61 +1052,100 @@ if (empty($reshook))
 							$typeamount = GETPOST('typedeposit', 'alpha');
 							$valuedeposit = GETPOST('valuedeposit', 'int');
 
-							if ($typeamount == 'amount')
+							$amountdeposit = array();
+							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA))
 							{
-								$amountdeposit = $valuedeposit;
+								if ($typeamount == 'amount') $amount = $valuedeposit;
+								else $amount = $srcobject->total_ttc * ($valuedeposit / 100);
+								
+								$TTotalByTva = array();
+								foreach ($srcobject->lines as &$line)
+								{
+									$TTotalByTva[$line->tva_tx] += $line->total_ttc ;
+								}
+								
+								$amount_to_diff = 0;
+								foreach ($TTotalByTva as $tva => &$total)
+								{
+									$coef = $total / $srcobject->total_ttc; // Calc coef
+									$am = $amount * $coef;
+									$amount_ttc_diff += $am;
+									$amountdeposit[$tva] += $am / (1 + $tva / 100); // Convert into HT for the addline
+								}
 							}
 							else
 							{
-								$amountdeposit = 0;
-
-								if ($result > 0)
+								if ($typeamount == 'amount')
 								{
-									$totalamount = 0;
-									$lines = $srcobject->lines;
-									$numlines=count($lines);
-									for ($i=0; $i<$numlines; $i++)
-									{
-										$qualified=1;
-										if (empty($lines[$i]->qty)) $qualified=0;	// We discard qty=0, it is an option
-										if (! empty($lines[$i]->special_code)) $qualified=0;	// We discard special_code (frais port, ecotaxe, option, ...)
-										if ($qualified) $totalamount += $lines[$i]->total_ht;
-									}
-
-									if ($totalamount != 0) {
-										$amountdeposit = ($totalamount * $valuedeposit) / 100;
-									}
-								} else {
-									setEventMessages($srcobject->error, $srcobject->errors, 'errors');
-									$error ++;
+									$amountdeposit[] = $valuedeposit;
 								}
-							}
+								else
+								{
+									if ($result > 0)
+									{
+										$totalamount = 0;
+										$lines = $srcobject->lines;
+										$numlines=count($lines);
+										for ($i=0; $i<$numlines; $i++)
+										{
+											$qualified=1;
+											if (empty($lines[$i]->qty)) $qualified=0;	// We discard qty=0, it is an option
+											if (! empty($lines[$i]->special_code)) $qualified=0;	// We discard special_code (frais port, ecotaxe, option, ...)
+											if ($qualified) $totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
+										}
 
-							$result = $object->addline(
-									$langs->trans('Deposit'),
-									$amountdeposit,		 	// subprice
-									1, 						// quantity
-									$lines[$i]->tva_tx,     // vat rate
-							        0,                      // localtax1_tx
-									0, 						// localtax2_tx
-									(empty($conf->global->INVOICE_PRODUCTID_DEPOSIT)?0:$conf->global->INVOICE_PRODUCTID_DEPOSIT), 	// fk_product
-									0, 						// remise_percent
-									0, 						// date_start
-									0, 						// date_end
-									0, $lines[$i]->info_bits, // info_bits
-									0, 						// info_bits
-									'HT',
-									0,
-									0, 						// product_type
-									1,
-									$lines[$i]->special_code,
-									$object->origin,
-									0,
-									0,
-									0,
-									0,
-									$langs->trans('Deposit')
-								);
+										if ($totalamount != 0) {
+											$amountdeposit[$lines[$i]->tva] = ($totalamount * $valuedeposit) / 100;
+										} else {
+											$amountdeposit[] = 0;
+										}
+									} else {
+										setEventMessages($srcobject->error, $srcobject->errors, 'errors');
+										$error ++;
+									}
+								}
+								
+								$amount_ttc_diff = $amountdeposit[0];
+							}
+							
+							foreach ($amountdeposit as $tva => $amount)
+							{
+								$result = $object->addline(
+										$langs->trans('Deposit'),
+										$amount,		 	// subprice
+										1, 						// quantity
+										$tva,     // vat rate
+										0,                      // localtax1_tx
+										0, 						// localtax2_tx
+										(empty($conf->global->INVOICE_PRODUCTID_DEPOSIT)?0:$conf->global->INVOICE_PRODUCTID_DEPOSIT), 	// fk_product
+										0, 						// remise_percent
+										0, 						// date_start
+										0, 						// date_end
+										0, $lines[$i]->info_bits, // info_bits
+										0, 						// info_bits
+										'HT',
+										0,
+										0, 						// product_type
+										1,
+										$lines[$i]->special_code,
+										$object->origin,
+										0,
+										0,
+										0,
+										0,
+										$langs->trans('Deposit')
+									);
+							}
+							
+							$diff = $object->total_ttc - $amount_ttc_diff;
+							
+							if ($diff != 0)
+							{
+								$object->fetch_lines();
+								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx);
+								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
+							}
+							
 						}
 						else
 						{
