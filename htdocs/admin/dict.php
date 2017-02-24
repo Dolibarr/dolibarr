@@ -1343,6 +1343,10 @@ if ($id)
                             else if ($fieldlist[$field]=='price' || preg_match('/^amount/i',$fieldlist[$field])) {
                                 $valuetoshow=price($valuetoshow);
                             }
+                            if ($value == 'private')
+                            {
+                                $valuetoshow = yn($elementList[$valuetoshow]);
+                            }				
                             else if ($fieldlist[$field]=='libelle_facture') {
                                 $langs->load("bills");
                                 $key=$langs->trans("PaymentCondition".strtoupper($obj->code));
@@ -1689,6 +1693,12 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 		{
 			print '<td>';
 			print $form->selectarray('source', $sourceList,(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
+			print '</td>';
+		}
+		elseif ($fieldlist[$field] == 'private')
+		{
+			print '<td>';
+			print $form->selectyesno("private",(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'type' && $tabname == MAIN_DB_PREFIX."c_actioncomm")
