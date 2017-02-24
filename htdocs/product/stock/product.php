@@ -544,6 +544,7 @@ if ($id > 0 || $ref)
         if (! empty($conf->fournisseur->enabled))
         {
             if ($found) print '<br>'; else $found=1;
+			$result=$object->load_stats_reception(0,'3,4');
             print $langs->trans("ProductQtyInSuppliersShipmentAlreadyRecevied").': '.$object->stats_reception['qty'];
         }
 
