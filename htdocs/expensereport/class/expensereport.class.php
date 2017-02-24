@@ -958,7 +958,7 @@ class ExpenseReport extends CommonObject
             {
                 $prefix="ER";
                 if (! empty($conf->global->EXPENSE_REPORT_PREFIX)) $prefix=$conf->global->EXPENSE_REPORT_PREFIX;
-                $this->ref = strtoupper($fuser->login).$expld_car.$prefix.$this->ref.$expld_car.dol_print_date($this->date_debut,'%y%m%d');
+                $this->ref = str_replace(' ','_', $this->user_author_infos).$expld_car.$prefix.$this->ref.$expld_car.dol_print_date($this->date_debut,'%y%m%d');
             }
             require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
             // We rename directory in order to avoid losing the attachments
