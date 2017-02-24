@@ -1139,7 +1139,7 @@ if (empty($reshook))
 							
 							$diff = $object->total_ttc - $amount_ttc_diff;
 							
-							if ($diff != 0)
+							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA) && $diff != 0)
 							{
 								$object->fetch_lines();
 								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx);
