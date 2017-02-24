@@ -120,4 +120,6 @@ CREATE TABLE llx_product_price_schedule_section
   price           double(24,8) NOT NULL
 )ENGINE=innodb;
 
+ALTER TABLE llx_product_price_schedule ADD CONSTRAINT fk_product_price_schedule_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid) ON DELETE CASCADE;
 ALTER TABLE llx_product_price_schedule_section ADD UNIQUE INDEX uk_llx_product_price_schedule_section (fk_schedule, date_start, date_end);
+ALTER TABLE llx_product_price_schedule_section ADD CONSTRAINT fk_product_price_schedule_section_fk_schedule FOREIGN KEY (fk_schedule) REFERENCES llx_product_price_schedule (rowid) ON DELETE CASCADE;

@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_product_price_schedule ADD UNIQUE INDEX uk_llx_product_price_schedule (fk_product, schedule_type, schedule_year);
+ALTER TABLE llx_product_price_schedule ADD CONSTRAINT fk_product_price_schedule_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid) ON DELETE CASCADE;
