@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Api Explorer</title>
-  <!-- DOL_LDR_CHANGE <link href='https://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'/>
+  <!-- DOL_CHANGE LDR Remove external links <link href='https://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'/>
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">-->
   <link href='css/reset.css' media='screen' rel='stylesheet' type='text/css'/>
   <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
@@ -55,7 +55,7 @@
       var key = $('#input_apiKey')[0].value;
 
       if(key && key.trim() != "") {
-        /* DOL_LDR_CHANGE */
+        /* DOL_CHANGE LDR We set DOLAPIKEY into header */
         log("added key " + key);
 
         /* Disabled for security reason. We keep only param in header
