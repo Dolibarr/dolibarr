@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_resource_log ADD INDEX idx_llx_resource_schedule (fk_resource);
+ALTER TABLE llx_resource_log ADD CONSTRAINT fk_resource_log_fk_resource FOREIGN KEY (fk_resource) REFERENCES llx_resource (rowid) ON DELETE CASCADE;

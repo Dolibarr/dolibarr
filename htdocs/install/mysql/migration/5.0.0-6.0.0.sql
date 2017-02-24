@@ -116,3 +116,7 @@ CREATE TABLE llx_resource_log
 )ENGINE=innodb;
 
 ALTER TABLE llx_resource_log ADD INDEX idx_llx_resource_schedule (fk_resource);
+ALTER TABLE llx_resource_placement ADD CONSTRAINT fk_resource_placement_fk_resource FOREIGN KEY (fk_resource) REFERENCES llx_resource (rowid) ON DELETE CASCADE;
+ALTER TABLE llx_resource_log ADD CONSTRAINT fk_resource_log_fk_resource FOREIGN KEY (fk_resource) REFERENCES llx_resource (rowid) ON DELETE CASCADE;
+ALTER TABLE llx_resource_schedule ADD CONSTRAINT fk_resource_schedule_fk_resource FOREIGN KEY (fk_resource) REFERENCES llx_resource (rowid) ON DELETE CASCADE;
+ALTER TABLE llx_resource_schedule_section ADD CONSTRAINT fk_resource_schedule_section_fk_schedule FOREIGN KEY (fk_schedule) REFERENCES llx_resource_schedule (rowid) ON DELETE CASCADE;

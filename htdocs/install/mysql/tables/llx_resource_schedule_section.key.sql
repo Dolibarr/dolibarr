@@ -19,3 +19,4 @@
 
 ALTER TABLE llx_resource_schedule_section ADD UNIQUE INDEX uk_llx_resource_schedule_section (fk_schedule, date_start, date_end);
 ALTER TABLE llx_resource_schedule_section ADD INDEX idx_llx_resource_schedule_section_status (status);
+ALTER TABLE llx_resource_schedule_section ADD CONSTRAINT fk_resource_schedule_section_fk_schedule FOREIGN KEY (fk_schedule) REFERENCES llx_resource_schedule (rowid) ON DELETE CASCADE;

@@ -17,5 +17,4 @@
 -- ========================================================================
 
 
-ALTER TABLE llx_resource_schedule ADD UNIQUE INDEX uk_llx_resource_schedule (fk_resource, schedule_year);
-ALTER TABLE llx_resource_schedule ADD CONSTRAINT fk_resource_schedule_fk_resource FOREIGN KEY (fk_resource) REFERENCES llx_resource (rowid) ON DELETE CASCADE;
+ALTER TABLE llx_resource_placement ADD CONSTRAINT fk_resource_placement_fk_resource FOREIGN KEY (fk_resource) REFERENCES llx_resource (rowid) ON DELETE CASCADE;
