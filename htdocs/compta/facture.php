@@ -1121,8 +1121,9 @@ if (empty($reshook))
 										0, 						// remise_percent
 										0, 						// date_start
 										0, 						// date_end
-										0, $lines[$i]->info_bits, // info_bits
-										0, 						// info_bits
+										0, 
+								        $lines[$i]->info_bits,  // info_bits
+										0,
 										'HT',
 										0,
 										0, 						// product_type

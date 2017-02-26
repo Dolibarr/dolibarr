@@ -632,6 +632,8 @@ div.myavailability {
 .div-table-responsive, .div-table-responsive-no-min {
     overflow-x: auto;
     min-height: 0.01%;
+}
+.div-table-responsive {
     line-height: 100%;
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
