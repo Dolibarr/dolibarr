@@ -1032,7 +1032,14 @@ class FormMail extends Form
 		$this->substit['__SIGNATURE__'] = $user->signature;
 		$this->substit['__PERSONALIZED__'] = '';
 		$this->substit['__CONTACTCIVNAME__'] = '';	// Will be replace just before sending
-        
+
+        // Create dinamic tags for __EXTRAFIELD_FIELD__
+        $extrafields = new ExtraFields($this->db);
+        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element, true);
+        $object->fetch_optionals($object->id, $extralabels);
+        foreach ($extrafields->attribute_label as $key => $label) {
+            $this->substit['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
+        }
 		
         //Fill substit_lines with each object lines content
         if (is_array($object->lines))
