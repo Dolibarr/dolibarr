@@ -990,7 +990,6 @@ class Account extends CommonObject
         // Delete link between tag and bank account
         if (! $error)
         {
-            //$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";          // No more used
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
             $sql.= " WHERE fk_account = ".$this->id;
         
