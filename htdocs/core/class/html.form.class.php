@@ -1443,7 +1443,13 @@ class Form
         if ($includeUsers) $sql.= " AND u.rowid IN (".$includeUsers.")";
         if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) $sql.= " AND u.statut <> 0";
         if (! empty($morefilter)) $sql.=" ".$morefilter;
-        $sql.= " ORDER BY u.lastname ASC";
+
+        if(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)){
+            $sql.= " ORDER BY u.firstname ASC";
+        }else{
+            $sql.= " ORDER BY u.lastname ASC";
+        }
+
 
         dol_syslog(get_class($this)."::select_dolusers", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -1494,7 +1500,12 @@ class Form
                         $out.= '>';
                     }
 
-                    $out.= $userstatic->getFullName($langs, 0, -1, $maxlength);
+                    $fullNameMode = 0; //Lastname + firstname
+                    if(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)){
+                        $fullNameMode = 1; //firstname + lastname
+                    }
+                    $out.= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
+
                     // Complete name with more info
                     $moreinfo=0;
                     if (! empty($conf->global->MAIN_SHOW_LOGIN))
@@ -5311,7 +5322,7 @@ class Form
         {
         	$nbofdifferenttypes = count($object->linkedObjects);
 
-        	print '<br>';
+        	print '<br><!-- showLinkedObjectBlock -->';
             print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '');
 
             print '<table class="noborder allwidth">';
@@ -5403,7 +5414,7 @@ class Form
 
         	if (! $nboftypesoutput)
         	{
-        	    print '<tr><td class="opacitymedium" colspan="7">'.$langs->trans("None").'</td></tr>';
+        	    print '<tr><td class="impair opacitymedium" colspan="7">'.$langs->trans("None").'</td></tr>';
         	}
 
         	print '</table>';

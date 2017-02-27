@@ -72,6 +72,7 @@ if ($categid) {
 	}
 }
 
+
 /*
  * View
  */

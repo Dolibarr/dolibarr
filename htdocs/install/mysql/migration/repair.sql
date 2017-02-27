@@ -305,7 +305,6 @@ DELETE FROM llx_c_shipment_mode where code IN (select code from tmp_c_shipment_m
 drop table tmp_c_shipment_mode;
 
 
-
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_expensereport set date_debut = date_create where DATE(STR_TO_DATE(date_debut, '%Y-%m-%d')) IS NULL;
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
@@ -321,3 +320,6 @@ drop table tmp_c_shipment_mode;
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
 -- VMYSQL4.1 update llx_expensereport set date_valid = date_fin where DATE(STR_TO_DATE(date_valid, '%Y-%m-%d')) IS NULL;
 
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_expensereport_det as ed set date = (select date_debut from llx_expensereport as e where ed.fk_expensereport = e.rowid) where DATE(STR_TO_DATE(date, '%Y-%m-%d')) < '1000-00-00';
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';

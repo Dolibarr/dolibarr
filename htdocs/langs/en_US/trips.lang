@@ -60,6 +60,7 @@ DATE_SAVE=Validation date
 DATE_CANCEL=Cancelation date
 DATE_PAIEMENT=Payment date
 BROUILLONNER=Reopen
+ExpenseReportRef=Ref. expense report
 ValidateAndSubmit=Validate and submit for approval
 ValidatedWaitingApproval=Validated (waiting for approval)
 NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.

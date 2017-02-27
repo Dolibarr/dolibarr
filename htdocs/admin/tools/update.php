@@ -69,10 +69,16 @@ if ($action=='install')
 	}
 	else
 	{
-		if (! preg_match('/\.zip/i',$original_file))
+		if (! preg_match('/\.zip$/i',$original_file))
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFileMustBeADolibarrPackage",$original_file), null, 'errors');
+			$error++;
+		}
+		if (! preg_match('/module_.*\-[\d]+\.[\d]+.*$/i',$original_file))
+		{
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules",$original_file, 'module_*-x.y*.zip'), null, 'errors');
 			$error++;
 		}
 	}
@@ -117,7 +123,7 @@ if ($action=='install')
 					//var_dump($modulenamedir);
 					if (! dol_is_dir($modulenamedir))
 					{
-						setEventMessages($langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat"), null, 'errors');
+						setEventMessages($langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat").'<br>Dir not found: '.$conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulename.'<br>'.$conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename, null, 'errors');
 						$error++;
 					}
 				}
@@ -143,7 +149,7 @@ if ($action=='install')
 
 	if (! $error)
 	{
-		setEventMessages($langs->trans("SetupIsReadyForUse"), null, 'mesgs');
+		setEventMessages($langs->trans("SetupIsReadyForUse", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules")), null, 'warnings');
 	}
 }
 
@@ -170,6 +176,8 @@ print $langs->trans("CurrentVersion").' : <b>'.DOL_VERSION.'</b><br>';
 
 if (function_exists('curl_init'))
 {
+    $conf->global->MAIN_USE_RESPONSE_TIMEOUT = 10;
+    
     $result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
     //var_dump($result['content']);
     $sfurl = simplexml_load_string($result['content']);
@@ -281,26 +289,32 @@ if ($allowfromweb < 1)
 
 if ($allowfromweb >= 0)
 {
-	if ($allowfromweb == 1) print $langs->trans("ThisIsProcessToFollow").'<br>';
-	else print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
-	print '<b>'.$langs->trans("StepNb",1).'</b>: ';
-	print $langs->trans("FindPackageFromWebSite",$fullurl).'<br>';
-	print '<b>'.$langs->trans("StepNb",2).'</b>: ';
-	print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
-	print '<b>'.$langs->trans("StepNb",3).'</b>: ';
+	if ($allowfromweb == 1) 
+	{
+	    //print $langs->trans("ThisIsProcessToFollow").'<br>';
+	}
+	else 
+	{
+	    print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
+    	print '<b>'.$langs->trans("StepNb",1).'</b>: ';
+    	print $langs->trans("FindPackageFromWebSite",$fullurl).'<br>';
+    	print '<b>'.$langs->trans("StepNb",2).'</b>: ';
+    	print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
+    	print '<b>'.$langs->trans("StepNb",3).'</b>: ';
+	}
 
 	if ($allowfromweb == 1)
 	{
-		print $langs->trans("UnpackPackageInDolibarrRoot",$dirins).'<br>';
+		print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
 		print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
 		print '<input type="hidden" name="action" value="install">';
 		print $langs->trans("YouCanSubmitFile").' <input type="file" name="fileinstall"> ';
-		print '<input type="submit" name="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
+		print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
 		print '</form>';
 	}
 	else
 	{
-		print $langs->trans("UnpackPackageInDolibarrRoot",$dirins).'<br>';
+		print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
 		print '<b>'.$langs->trans("StepNb",4).'</b>: ';
 		print $langs->trans("SetupIsReadyForUse").'<br>';
 	}

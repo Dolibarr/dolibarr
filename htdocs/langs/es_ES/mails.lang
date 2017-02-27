@@ -74,14 +74,18 @@ ResultOfMailSending=Resultado del envío masivo de e-mails
 NbSelected=Nº seleccionados
 NbIgnored=Nº ignorados
 NbSent=Nº enviados
-ContactsWithThirdpartyFilter=Filtro de contactos con tercero
+ConfirmUnvalidateEmailing=Are you sure you want to change email <b>%s</b> to draft status?
+MailingModuleDescContactsWithThirdpartyFilter=Filtro de contactos con tercero
+MailingModuleDescContactsByCompanyCategory=Contacts by third party category
+MailingModuleDescContactsByCategory=Contacts by categories
+MailingModuleDescContactsByFunction=Contacts by position
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Línea %s en archivo
 RecipientSelectionModules=Módulos de selección de los destinatarios
 MailSelectedRecipients=Destinatarios seleccionados
 MailingArea=Área E-Mailings
-LastMailings=Los %s últimos E-Mailings
+LastMailings=Latest %s emailings
 TargetsStatistics=Estadísticas destinatarios
 NbOfCompaniesContacts=Contactos/direcciones únicos
 MailNoChangePossible=Destinatarios de un E-Mailing validado no modificables
@@ -146,3 +150,6 @@ AdvTgtCreateFilter=Crear filtro
 AdvTgtOrCreateNewFilter=Nombre del nuevo filtro
 NoContactWithCategoryFound=No se han encontrado contactos/direcciones con alguna categoría
 NoContactLinkedToThirdpartieWithCategoryFound=No se han encontrado contactos/direcciones con alguna categoría
+OutGoingEmailSetup=Outgoing email setup
+InGoingEmailSetup=Incoming email setup
+

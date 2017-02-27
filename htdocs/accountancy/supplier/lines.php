@@ -157,25 +157,25 @@ $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product"
 $sql.= " WHERE f.rowid = l.fk_facture_fourn and f.fk_statut >= 1 AND l.fk_code_ventilation <> 0 ";
 $sql.= " AND aa.rowid = l.fk_code_ventilation";
 if (strlen(trim($search_invoice))) {
-	$sql .= " AND f.ref like '%" . $search_invoice . "%'";
+	$sql .= natural_search("f.ref", $search_invoice);
 }
 if (strlen(trim($search_ref))) {
-	$sql .= " AND p.ref like '%" . $search_ref . "%'";
+	$sql .= natural_search("p.ref", $search_ref);
 }
 if (strlen(trim($search_label))) {
-	$sql .= " AND p.label like '%" . $search_label . "%'";
+	$sql .= natural_search("p.label", $search_label);
 }
 if (strlen(trim($search_desc))) {
-	$sql .= " AND l.description like '%" . $search_desc . "%'";
+	$sql .= natural_search("l.description", $search_desc);
 }
 if (strlen(trim($search_amount))) {
-	$sql .= " AND l.total_ht like '%" . $search_amount . "%'";
+	$sql .= natural_search("l.total_ht", $search_amount, 1);
 }
 if (strlen(trim($search_account))) {
-	$sql .= " AND aa.account_number like '%" . $search_account . "%'";
+	$sql .= natural_search("aa.account_number", $search_account, 1);
 }
 if (strlen(trim($search_vat))) {
-	$sql .= " AND (l.tva_tx like '" . $search_vat . "%')";
+	$sql .= natural_search("l.tva_tx", $search_vat, 1);
 }
 $sql .= " AND f.entity IN (" . getEntity("facture_fourn", 0) . ")";  // We don't share object for accountancy
 
@@ -255,7 +255,7 @@ if ($result) {
 	
 	print '<tr class="liste_titre">';
     print '<td class="liste_titre"></td>';
-	print '<td><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
@@ -264,7 +264,7 @@ if ($result) {
 	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre" align="center">';
     $searchpitco=$form->showFilterAndCheckAddButtons(1);
     print $searchpitco;
     print '</td>';

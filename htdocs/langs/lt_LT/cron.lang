@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Read Scheduled job
-Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
+Permission23101 = Skaityti planinį darbą
+Permission23102 = sukurti / atnaujinti planinį darbą
+Permission23103 = Panaikinti planinį darbą
+Permission23104 = Vykdyti planinį darbą
 # Admin
 CronSetup= Numatytos užduoties valdymo nustatymas
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs
@@ -17,14 +17,14 @@ CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronLastOutput=Paskutinė paleista išvestis
-CronLastResult=Paskutinio rezultato kodas
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Komanda
-CronList=Scheduled jobs
+CronList=Suplanuoti darbai
 CronDelete=Delete scheduled jobs
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allow to execute job that have been planned
 CronTask=Darbas
 CronNone=Nė vienas
@@ -33,13 +33,13 @@ CronDtEnd=Not after
 CronDtNextLaunch=Kitas vykdymas
 CronDtLastLaunch=Start date of latest execution
 CronDtLastResult=End date of latest execution
-CronFrequency=Frequency
+CronFrequency=Dažnis
 CronClass=Class
 CronMethod=Metodas
 CronModule=Modulis
 CronNoJobs=Nėra registruotų darbų
 CronPriority=Prioritetas
-CronLabel=Label
+CronLabel=Etiketė
 CronNbRun=Pradėti skaičių
 CronMaxRun=Max nb. launch
 CronEach=Kiekvienas
@@ -65,7 +65,7 @@ CronMethodHelp=Objekto metodas įkėlimui. <BR> Pvz.: Dolibarr Produkto objekto 
 CronArgsHelp=Metodo argumentai. <BR> Pvz.: Dolibarr Produkto objekto patraukimo metodas /htdocs/product/class/product.class.php, parametrų reikšmė gali būti <i>0, ProductRef</i>
 CronCommandHelp=Sistemos komandinė eilutė vykdymui
 CronCreateJob=Create new Scheduled Job
-CronFrom=From
+CronFrom=Nuo
 # Info
 # Common
 CronType=Job type

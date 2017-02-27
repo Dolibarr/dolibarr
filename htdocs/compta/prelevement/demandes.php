@@ -110,10 +110,10 @@ if ($resql)
 	print '<table class="liste" width="100%">';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Bill"));
-	print_liste_field_titre($langs->trans("Company"));
-    print_liste_field_titre($langs->trans("Amount"));
-	print_liste_field_titre($langs->trans("DateRequest"));
+	print_liste_field_titre($langs->trans("Bill"), $_SERVER["PHP_SELF"]);
+	print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"]);
+    print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "", "", $param, 'align="right"');
+	print_liste_field_titre($langs->trans("DateRequest"), $_SERVER["PHP_SELF"], "", "", $param, 'align="center"');
 	print_liste_field_titre('');
 	print '</tr>';
 
@@ -154,7 +154,7 @@ if ($resql)
 
         print '<td align="right">'.price($obj->total_ttc).'</td>';
 
-        print '<td align="right">'.dol_print_date($db->jdate($obj->date_demande),'day').'</td>';
+        print '<td align="center">'.dol_print_date($db->jdate($obj->date_demande),'day').'</td>';
 
         print '<td align="right"></td>';
         

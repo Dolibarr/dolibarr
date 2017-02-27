@@ -78,7 +78,7 @@ ManualUpdate=Actualització manual
 HolidaysCancelation=Anulació de dies lliures
 EmployeeLastname=Cognoms de l'empleat
 EmployeeFirstname=Nom de l'empleat
-TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
+TypeWasDisabledOrRemoved=El tipus de dia lliure (id %s) ha sigut desactivat o eliminat
 
 ## Configuration du Module ##
 LastUpdateCP=Última actualització automàtica de reserva de dies lliures

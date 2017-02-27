@@ -44,11 +44,12 @@ $search_email		= GETPOST('search_email','alpha');
 $type				= GETPOST('type','alpha');
 $status				= GETPOST('status','alpha');
 
-$sortfield	= GETPOST('sortfield','alpha');
-$sortorder	= GETPOST('sortorder','alpha');
-$page		= GETPOST('page','int');
-if ($page == -1) { $page = 0 ; }
-$offset = $conf->liste_limit * $page ;
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) {  $sortorder="DESC"; }
@@ -166,9 +167,6 @@ $form=new Form($db);
 // List of members type
 if (! $rowid && $action != 'create' && $action != 'edit')
 {
-
-	print load_fiche_titre($langs->trans("MembersTypes"));
-
 	//dol_fiche_head('');
 
 	$sql = "SELECT d.rowid, d.libelle, d.subscription, d.vote";
@@ -179,8 +177,22 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 	if ($result)
 	{
 		$num = $db->num_rows($result);
+		$nbtotalofrecords = $num;
+		
 		$i = 0;
 
+		$param = '';
+		
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+		print '<input type="hidden" name="action" value="list">';
+		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+		
+	    print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+	   
 		$moreforfilter = '';
 		
 		print '<div class="div-table-responsive">';
@@ -213,6 +225,8 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		}
 		print "</table>";
 		print '</div>';
+		
+		print '</form>';
 	}
 	else
 	{

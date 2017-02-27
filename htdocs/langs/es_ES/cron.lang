@@ -17,8 +17,8 @@ CronMethodDoesNotExists=La clase %s no contiene ningún método %s
 # Menu
 EnabledAndDisabled=Habilitado y deshabilitado
 # Page list
-CronLastOutput=Res. ult. ejec.
-CronLastResult=Últ. cód. res.
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Comando
 CronList=Tareas programadas
 CronDelete=Borrar tareas programadas

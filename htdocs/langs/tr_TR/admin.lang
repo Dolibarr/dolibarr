@@ -9,14 +9,20 @@ VersionDevelopment=Geliştirme
 VersionUnknown=Bilinmeyen
 VersionRecommanded=Önerilen
 FileCheck=Dosya bütünlüğü denetleyicisi
-FileCheckDesc=This tool allows you to check the integrity of files of your application, comparing each files with the official ones. You can use this tool to detect if some files were modified by a hacker for example.
+FileCheckDesc=This tool allows you to check the integrity of files and setup of your application, comparing each files with the official ones. Value of some setup constants may also be checked. You can use this tool to detect if some files were modified by a hacker for example.
+FileIntegrityIsStrictlyConformedWithReference=Files integrity is strictly conformed with the reference.
+FileIntegrityIsOkButFilesWereAdded=Files integrity check has passed, however some new files were added.
+FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified, removed or added.
+GlobalChecksum=Global checksum
 MakeIntegrityAnalysisFrom=Make integrity analysis of application files from
 LocalSignature=Embedded local signature (less reliable)
 RemoteSignature=Remote distant signature (more reliable)
 FilesMissing=Eksik dosyalar
 FilesUpdated=Güncellenmiş Dosyalar
+FilesModified=Modified Files
+FilesAdded=Added Files
 FileCheckDolibarr=Uygulama dosyaları bütünlüğünü denetle
-AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from a certified package
+AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from an official package
 XmlNotFound=Uygulamanın Xml Bütünlük Dosyası Bulunamadı
 SessionId=Oturum Kimliği
 SessionSaveHandler=Oturum kayıt yürütücüsü
@@ -185,7 +191,9 @@ BoxesDesc=Ekran etiketleri, sayfaları kişiselleştirmek için ekleyeceğiniz b
 OnlyActiveElementsAreShown=Yalnızca <ahref="modules.php">etkinleştirilmiş modüllerin</a> öğeleri gösterilmiştir.
 ModulesDesc=Dolibarr modülleri, yazılımda hangi özelliğin devreye alınacağını tanımlar. Modül devreye alındıktan sonra kullanıcıya bazı izinler vermeniz gerekir. Bir modülü/özelliği etkinleştirmek için aç/kapa düğmesini tıklayın.
 ModulesMarketPlaceDesc=Internette dış web sitelerinde indirmek için daha çok modül bulabilirsiniz...
-ModulesMarketPlaces=Daha çok modül...
+ModulesDeployDesc=If permissions on your file system allows it, you can use this tool to deploy an external module. The module wil then be visible on the tab <strong>%s</strong>.
+ModulesMarketPlaces=Find external modules...
+GoModuleSetupArea=To deploy/install a new module, go onto the Module setup area at <a href="%s">%s</a>.
 DoliStoreDesc=DoliStore, Dolibarr ERP/CRM dış modülleri için resmi pazar yeri
 DoliPartnersDesc=İstek üzerine modül ve özellik geliştiren firmaların listesi. (Not: Açık kaynak kullanan PHP bilen herhangi bir firma size özel geliştirme hizmetleri sağlayabilir)
 WebSiteDesc=Daha çok modül bulabileceğiniz referans web siteleri...
@@ -276,21 +284,22 @@ ModuleFamilyInterface=Dış sistemli arayüzler
 MenuHandlers=Menü işlemcileri
 MenuAdmin=Menü düzenleyici
 DoNotUseInProduction=Üretimde kullanmayın
-ThisIsProcessToFollow=Bu ayarlama işlemidir:
-ThisIsAlternativeProcessToFollow=Bu bir alternatif işlem ayarıdır:
+ThisIsProcessToFollow=This is steps to process:
+ThisIsAlternativeProcessToFollow=This is an alternative setup to process manually:
 StepNb=Adım %s
 FindPackageFromWebSite=İstediğiniz özelliği sağlayan bir paket bulun (örneğin; resmi web sitesinden %s).
 DownloadPackageFromWebSite=Paketi indir (örneğin resmi web sitesinden %s).
-UnpackPackageInDolibarrRoot=Dosya paketini dış modüllere adanmış Dolibarr sunucusu dizinin içine ayıklayın: <b>%s</b>
-SetupIsReadyForUse=Kurma işlemi bitmiştir ve Dolibarr bu yeni bileşeni ile kullanıma hazırdır.
-NotExistsDirect=Alternatif kök dizin tanımlanmamış.<br>
-InfDirAlt=Sürüm 3 ten beri bir alternatif kök dizin tanımlanabiliyor. Bu sizin bir miktar boşluk, eklentiler ve özel şablonlar depolamanızı sağlar.<br>Yalnızca Dolibarr kökünde bir dizin oluşturun (örn. özel).<br>
-InfDirExample=<br>Sonra bunu conf.php dosyasında belirtin<br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>*Bu satırlar "#" karakteri ile yorumlanır, yorumu kaldırmak için sadece bu karakteri kaldırın.
+UnpackPackageInDolibarrRoot=Unpack the packaged files into server directory dedicated to Dolibarr: <b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, unpack the packaged files into the server directory dedicated to modules: <b>%s</b>
+SetupIsReadyForUse=Module deployment is finished. You must however enable and setup the module in your application by going on the page to setup modules: <a href="%s">%s</a>.
+NotExistsDirect=The alternative root directory is not defined to an existing directory.<br>
+InfDirAlt=Since version 3, it is possible to define an alternative root directory. This allows you to store, into a dedicated directory, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=Bu adımda paketi göndermek için kullanacağınız araç: Modül dosyasını seç
 CurrentVersion=Dolibarr geçerli sürümü
 CallUpdatePage=Veritabanı yapısını ve verileri güncelleyen sayfaya git: %s.
 LastStableVersion=Son kararlı sürüm
-LastActivationDate=Son etkinleştirme tarihi
+LastActivationDate=Latest activation date
 UpdateServerOffline=Güncelleme sunucusu çevrimdışı
 GenericMaskCodes=Herhangi bir numaralandırma maskesi girebilirsiniz. Bu maskede alttaki etiketler kullanılabilir: <br><b>{000000}</ b> her %s te artırılacak bir numaraya karşılık gelir. Sayacın istenilen uzunluğu kadar çok sıfır girin. Sayaç, maskedeki kadar çok sayıda sıfır olacak şekilde soldan sıfırlarla tamamlanacaktır.<br><b>{000000+000}</b> önceki ile aynıdır fakat + işaretinin sağındaki sayıya denk gelen bir sapma ilk %s ten itibaren uygulanır.<br><b>{000000@x}</b> önceki ile aynıdır fakat sayaç x aya ulaşıldığında sıfırlanır (x= 1 ve 12 arasındadır veya yapılandırmada tanımlanan mali yılın ilk aylarını kullanmak için 0 dır). Bu seçenek kullanılırsa ve x= 2 veya daha yüksekse, {yyyy}{mm} veya {yyyy}{mm} dizisi de gereklidir.<br><b>{dd}</b> gün (01 ila 31).<br><b> {mm}</b> ay (01 ila 12).<br><b>{yy}</b>, <b>{yyyy}</b> veya <b>{y}</b> yıl 2, 4 veya 1 sayıları üzerindedir.<br>
 GenericMaskCodes2=<b>{cccc}</b> n Karakterdeki istemci kodu <br><b>{cccc000}</b> n Karakterdeki istemci kodu müşteri için özel bir sayaç tarafından takip edilmektedir. Müşteriye ayrılan bu sayaç, genel sayaçla aynı anda sıfırlanır.<br><b>{tttt}</b> n Karakterdeki üçüncü taraf türü kodu (bakınız sözlük-şirket türleri).<br>
@@ -373,11 +382,11 @@ ExtrafieldCheckBox=Onay kutusu
 ExtrafieldRadio=Onay düğmesi
 ExtrafieldCheckBoxFromList= Tablodan açılır kutu
 ExtrafieldLink=Bir nesneye bağlantı
-ExtrafieldParamHelpselect=Parametre listesi anahtar.değer gibi olmalı, örneğin <br><br> : <br>1,değer1<br>2,değer2<br>3,değer3<br>...<br><br>Başka bir listeye bağlı bir liste elde etmek için :<br>1,değer1|parent_list_code:parent_key<br>2,değer2|parent_list_code:parent_key
+ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list :<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list :<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=Parametre listesi anahtar.değer gibi olmalı, örneğin <br><br> : <br>1,değer1<br>2,değer2<br>3,değer3<br>...
 ExtrafieldParamHelpradio=Parametre listesi anahtar.değer gibi olmalı, örneğin <br><br> : <br>1,değer1<br>2,değer2<br>3,değer3<br>...
-ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list :<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Ölçütler ObjectName:Classpath<br>Syntax şeklinde olmalı :\nObjectName:Classpath<br>Örnek : Societe:societe/class/societe.class.php
 LibraryToBuildPDF=PDF oluşturmada kullanılan kütüphane
 WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
@@ -411,10 +420,11 @@ ModuleCompanyCodePanicum=Boş bir muhasebe kodu girin.
 ModuleCompanyCodeDigitaria=Muhasebe kodu üçüncü parti koduna bağlıdır. Kod üçüncü parti kodunun ilk 5 karakterini izleyen birinci konumda "C" karakterinden oluşmaktadır.
 Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=Tutar (vergi öncesi) bu tutardan yüksekse 3 aşamalı bir onaylama kullanın...
-
+WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to send an email from another server than the Yahoo server if the email address used as a sender is your Yahoo email (like myemail@yahoo.com, myemail@yahoo.fr, ...). Your current setup use the server of the application to send email, so some recipients (the one compatible with the restrictive DMARC protocol), will ask Yahoo if they can accept your email and Yahoo will respond "no" because the server is not a server owned by Yahoo, so few of your sent Emails may not be accepted.<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account).
+ClickToShowDescription=Click to show description
 # Modules
 Module0Name=Kullanıcılar & gruplar
-Module0Desc=Kullanıcı ve grup yönetimi
+Module0Desc=Users / Employees and Groups management
 Module1Name=Üçüncü partiler
 Module1Desc=Firma ve kişi yönetimi (müşteriler, adaylar…)
 Module2Name=Ticaret
@@ -515,8 +525,8 @@ Module2200Name=Dinamik Fiyatlar
 Module2200Desc=Fiyatlar için matematik ifadelerin kullanımını etkinleştir
 Module2300Name=Kron
 Module2300Desc=Planlı iş yönetimi
-Module2400Name=Gündem/Etkinlikler
-Module2400Desc=Etkinlik ya da randevu izle. Etkinlikleri gündeme el ile kaydet ya da uygulama izleme amacı ile etkinlikleri otomatik kaydetsin.
+Module2400Name=Events/Agenda
+Module2400Desc=Follow done and upcoming events. Let application logs automatic events for tracking purposes or record manual events or rendez-vous.
 Module2500Name=Elektronik İçerik Yönetimi
 Module2500Desc=Belgeleri saklayın ve yönetin
 Module2600Name=API/Web hizmetleri (SOAP sunucusu)
@@ -582,7 +592,7 @@ Permission34=Ürün sil
 Permission36=Gizli ürünleri gör/yönet
 Permission38=Ürün dışaaktar
 Permission41=Proje ve görevleri oku (paylaşılan projeleri ve benim ilgilisi olduğum projeleri). Aynı zamanda verilen görevlerde harcanan süreleri de ekleyebilir (zaman çizelgeleri).
-Permission42=Proje oluştur/düzenle (paylaşılan projeler ve ilgilisi olduğum projeler)
+Permission42=Create/modify projects (shared project and projects i'm contact for). Can also create tasks and assign users to project and tasks
 Permission44=Proje sil (paylaşılan projeler ve ilgilisi olduğum projeler)
 Permission45=Projeleri dışaaktar
 Permission61=Müdahale oku
@@ -685,7 +695,7 @@ PermissionAdvanced253=İç/dış kullanıcı ve izinlerini oluştur/değiştir
 Permission254=Yalnızca dış kullanıcıları oluştur/değiştir
 Permission255=Diğer kullanıcıların şifrelerini değiştir
 Permission256=Diğer kullanıcıları sil ya da engelle
-Permission262=Erişimi bütün üçüncü partlere genişlet (yalnızca kullanıcıya bağlı olanları değil). Dış kullanıcılar için etkili değildir (her zaman kendileri ile sınırlıdır).
+Permission262=Extend access to all third parties (not only third parties that user is a sale representative).<br>Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc).<br>Not effective for projects (only rules on project permissions, visibility and assignement matters).
 Permission271=CA oku
 Permission272=Fatura oku
 Permission273=Fatura dağıt
@@ -887,7 +897,7 @@ Offset=Sapma
 AlwaysActive=Her zaman etkin
 Upgrade=Yükselt
 MenuUpgrade=Yükseltme / Genişletme
-AddExtensionThemeModuleOrOther=Uzantı ekle (Tema, modül, ...)
+AddExtensionThemeModuleOrOther=Deploy/install external module
 WebServer=Web sunucusu
 DocumentRootServer=Web sunucusu kök dizini
 DataRootServer=Veri dizini dosyaları
@@ -994,7 +1004,7 @@ TriggerAlwaysActive=Bu dosyadaki tetikleyiciler, etkin Dolibarr modülleri ne ol
 TriggerActiveAsModuleActive=Bu dosyadaki tetikleyiciler <b>%s</b> modülü etkinleştirildiğinde etkin olur.
 GeneratedPasswordDesc=Eğer otomatik olarak yeni bir parola oluşturmak isterseniz burada kullanmak istediğiniz kuralı tanımlayabilirsiniz.
 DictionaryDesc=Bütün referans verisini ekleyin. Değerlerinizi varsayılana ekleyebilirsiniz.
-ConstDesc=Bu sayfa, önceki sayfalarda mevcut olmayan diğer tüm parametreleri düzenleme olanağı sağlar. Geliştiriciler veya gelişmiş sorunbulma için ayrılmış parametrelerdir.
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
 MiscellaneousDesc=Burada güvenlik ile ilgili diğer tüm parametreler tanımlanır.
 LimitsSetup=Sınırlar/Doğruluk kurulumu
 LimitsDesc=Burada Dolibarr’ın kullanımı için sınırlar, hassasiyet ve optimizasyon tanımlayabilirsiniz
@@ -1161,10 +1171,6 @@ FreeLegalTextOnOrders=Siparişte serbest metin
 WatermarkOnDraftOrders=Taslak siparişlerde filigran (boşsa yoktur)
 ShippableOrderIconInList=Sipariş listesine sevk edilebilir olup olmadığını belirten bir simge koyun
 BANK_ASK_PAYMENT_BANK_DURING_ORDER=Siparişe ait banka hesabını iste
-##### Clicktodial #####
-ClickToDialSetup=TıklaAra modülü kurulumu
-ClickToDialUrlDesc=Telefon resmi üzerine tıklandığında Url aranır. URL’de aranan kişinin telefon numarası ile değişecek <br><b>__PHONETO__</b> etiketini kullanabilirsiniz
-##### Bookmark4u #####
 ##### Interventions #####
 InterventionsSetup=Müdahaleler modülü kurulumu
 FreeLegalTextOnInterventions=Müdahale belgelerinde serbest metin
@@ -1391,7 +1397,7 @@ SendingsSetup=Gönderme modülü kurulumu
 SendingsReceiptModel=Makbuz gönderme modeli
 SendingsNumberingModules=Gönderi numaralandırma modülü
 SendingsAbility=Müşteri teslimatlarında sevkiyat tablolarını destekler
-NoNeedForDeliveryReceipts=Çoğu durumda, gönderilen fişler hem müşteri teslimatları (gönderilecek ürün listesi) hem de müşteri tarafından alınan ve imzalanan belgeler olarak kullanılır. Yani, ürün teslimat makbuzları çift kopya özelliğindedir ve nadiren etkinleştirilir.
+NoNeedForDeliveryReceipts=In most cases, shipping sheets are used both as sheets for customer deliveries (list of products to send) and sheets that is received and signed by customer. So product deliveries receipts is a duplicated feature and is rarely activated.
 FreeLegalTextOnShippings=Sevkiyatlarda serbest metin
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Ürün teslimat fişlerinde numaralandırma modülü
@@ -1471,7 +1477,11 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Etkinlik oluşturma formundaki etkinlik türü iç
 AGENDA_DEFAULT_FILTER_TYPE=Gündem görünümü arama süzgeçinde, etkinlikler için otomatik olarak bu etkinlik türünü ayarlar
 AGENDA_DEFAULT_FILTER_STATUS=Gündem görünümü arama süzgeçinde, etkinlikler için otomatik olarak bu durum türünü ayarlar
 AGENDA_DEFAULT_VIEW=Gündem menüsünü seçtiğinizde varsayılan olarak hangi sekmenin açılmasını istiyorsunuz
-##### ClickToDial #####
+AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
+AGENDA_NOTIFICATION_SOUND=Enable sound notification
+##### Clicktodial #####
+ClickToDialSetup=TıklaAra modülü kurulumu
+ClickToDialUrlDesc=Telefon resmi üzerine tıklandığında Url aranır. URL’de aranan kişinin telefon numarası ile değişecek <br><b>__PHONETO__</b> etiketini kullanabilirsiniz
 ClickToDialDesc=Bu modül telefon numaralarının tıklanabilmesini sağlar. Bu simgeye tıklanma telefonunuz ile bu telefonun aranmasını sağlar. Bu işlem Dolibarr'dan bir çağrı merkezini aramak için kullanılır, örneğin SIP sisteminde bir telefon numarasının aranması.
 ClickToDialUseTelLink=Telefon numaraları üzerinde yalnızca bir "tel:" linki kullan
 ClickToDialUseTelLinkDesc=Eğer kullanıcılarınız bir softphone ya da web tarayıcıdan farklı olarak aynı bilgisayarda kurulu bir arayüz kullanıyorsa ve web tarayıcınızda "tel:" ile başlayan bir köprü tıklandığında aranıyorsa bu yöntemi kullanın. Tam bir sunucu çözümüne gereksiniminiz varsa (yerel yazılım kurulumu gereksinimi olmadan) bunu "HAYIR" olarak ayarlayın ve sonraki alanı doldurun.
@@ -1499,10 +1509,11 @@ EndPointIs=SOAP istemcileri isteklerini URL de varolan Dolibarr uç noktasına g
 ##### API ####
 ApiSetup=API modül ayarları
 ApiDesc=Bu modül etkinleştirilerek Dolibarr çeşitli web hizmetlerini sağlayan bir REST sunucusu haline getirilir.
-ApiProductionMode=Üretim modunu etkinleştir (Bu hizmetlerin yönetimi için önbellek kullanımını etkinleştirir)
+ApiProductionMode=Enable production mode (this will activate use of a cache for services management)
 ApiExporerIs=API leri url de keşfedebilirsiniz
 OnlyActiveElementsAreExposed=Yalnızca etkin modüllerdeki öğeler gösterilir
 ApiKey=API için anahtar
+WarningAPIExplorerDisabled=The API explorer has been disabled. API explorer is not required to provide API services. It is a tool for developer to find/test REST APIs. If you need this tool, go into setup of module API REST to activate it.
 ##### Bank #####
 BankSetupModule=Banka modülü kurulumu
 FreeLegalTextOnChequeReceipts=Çek makbuzlarının üzerinde serbest metin
@@ -1571,7 +1582,7 @@ BackupDumpWizard=Veritabanı yedekleme döküm dosyası oluşturma sihirbazı
 SomethingMakeInstallFromWebNotPossible=Web arayüzünden dış modül kurulumu aşağıdaki nedenden ötürü olanaksızdır:
 SomethingMakeInstallFromWebNotPossible2=Bu nedenle, burada anlatılan yükseltme işlemi yalnızca ayrıcalıklı bir kullanıcın elle atacağı adımlardır.
 InstallModuleFromWebHasBeenDisabledByFile=Dış modülün uygulama içerisinden kurulumu yöneticiniz tarafından engellenmiştir. Bu özelliğe izin verilmesi için ondan <strong>%s</strong> dosyasını kaldırmasını istemelisiniz.
-ConfFileMuseContainCustom=Uygulama içinden dış modül kurarken modül dosyalarını bu dizine kaydedin: <strong>%s</strong>. Bu dizinin Dolibar tarafından işlenebilmesi için önce <strong>conf/conf.php</strong> dosyanızı ayarlamalısınız ki böylece<br> <strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong> seçeneklerini elde edin
+ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Tablo satırlarını fare üzerine geldiğinde vurgula
 HighlightLinesColor=Fare üzerinden geçerken satır rengini vurgula (vurgulanmaması için boş bırakın)
 TextTitleColor=Sayfa başlık rengi
@@ -1601,6 +1612,7 @@ FixTZ=Saat Dilimi Farkı
 FillFixTZOnlyIfRequired=Örnek: +2 (yalnızca sorun yaşanmışsa doldurun)
 ExpectedChecksum=Beklenen Sağlama
 CurrentChecksum=Geçerli Sağlama
+ForcedConstants=Required constant values
 MailToSendProposal=Müşteri teklifi göndermek için
 MailToSendOrder=Müşteri siparişi göndermek için
 MailToSendInvoice=Müşteri faturası göndermek için
@@ -1609,13 +1621,14 @@ MailToSendIntervention=Müdahale göndermek için
 MailToSendSupplierRequestForQuotation=Tedarikçiye teklif isteği göndermek için
 MailToSendSupplierOrder=Tedarikçi siparişi göndermek için
 MailToSendSupplierInvoice=Tedarikçi faturası göndermek için
+MailToSendContract=To send a contract
 MailToThirdparty=Üçüncü taraf sayfasından eposta göndermek için
 ByDefaultInList=Liste görünümünde varsayılana göre göster
-YouUseLastStableVersion=Son kararlı sürümü kullanın
+YouUseLastStableVersion=You use the latest stable version
 TitleExampleForMajorRelease=Bu ana sürümü duyurmak için kullanabileceğiniz mesaj örneği (web sitenizde rahatça kullanabilirsiniz)
 TitleExampleForMaintenanceRelease=Bu bakım sürümü duyurmak için kullanabileceğiniz mesaj örneği (web sitenizde rahatça kullanabilirsiniz)
-ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s hazırdır. Sürüm %s hem kullanıcılar, hem de geliştiriciler için bir çok yeni özellik içeren bir ana sürümdür. Bu sürümü http://www.dolibarr.org (Kararlı sürümler alt dizininden) portalının indirme alanından yükleyebilirsiniz. Değişiklerin tam listesini incelemek için <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> adresine bakabilirsiniz.
-ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s hazırdır. Sürüm %s bir bakım sürümü olup yalnızca hataların onarımını içerir. Daha eski bir sürüm kullanan herkesin bu sürüme yükselmesini öneririz. Her bakım sürümünde olduğu gibi, bu sürümde de ne yeni özellik ne de veri yapısı değişikliği vardır. Bu sürümü http://www.dolibarr.org (Kararlı sürümler alt dizininden) portalının indirmeler alanından yükleyebilirsiniz. Tam değişiklik listesini incelemek için <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> adresine bakabilirsiniz.
+ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 MultiPriceRuleDesc="Her ürün/hizmet için çok seviyeli fiyat" açık ise her ürün için farklı fiyatlar (her fiyat seviyesi için bir) tanımlayabilirsiniz. Zaman kazanmak için, burada, temel fiyata göre her seviye için kendiliğinden hesaplama yapılması için kural girebilirisiniz. Bu sayfa zaman kazanmanız için vardır ve yalnzca diğer fiyat seviyeleri temel fiyata bağlı ise kullanışlıdır. Çoğu durumda bu sayfayı gözardı edebilirsiniz.
 ModelModulesProduct=Ürün belgeleri için şablonlar
 ToGenerateCodeDefineAutomaticRuleFirst=Otomatik kodlar oluşturabilmek için önce otomatik olarak barkod numarası tanımlayacak bir yönetici tanımlamalısınız.

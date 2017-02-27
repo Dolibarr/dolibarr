@@ -9,17 +9,20 @@ VersionDevelopment=Arendusversioon
 VersionUnknown=Teadmata
 VersionRecommanded=Soovitatav
 FileCheck=Files integrity checker
-FileCheckDesc=This tool allows you to check the integrity of files of your application, comparing each files with the official ones. You can use this tool to detect if some files were modified by a hacker for example.
+FileCheckDesc=This tool allows you to check the integrity of files and setup of your application, comparing each files with the official ones. Value of some setup constants may also be checked. You can use this tool to detect if some files were modified by a hacker for example.
 FileIntegrityIsStrictlyConformedWithReference=Files integrity is strictly conformed with the reference.
-FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified of removed.
+FileIntegrityIsOkButFilesWereAdded=Files integrity check has passed, however some new files were added.
+FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified, removed or added.
 GlobalChecksum=Global checksum
 MakeIntegrityAnalysisFrom=Make integrity analysis of application files from
 LocalSignature=Embedded local signature (less reliable)
 RemoteSignature=Remote distant signature (more reliable)
 FilesMissing=Missing Files
 FilesUpdated=Updated Files
+FilesModified=Modified Files
+FilesAdded=Added Files
 FileCheckDolibarr=Check integrity of application files
-AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from a certified package
+AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from an official package
 XmlNotFound=Xml Integrity File of application not found
 SessionId=Sessiooni ID
 SessionSaveHandler=Sessioonide töötleja
@@ -188,7 +191,9 @@ BoxesDesc=Widgets are components showing some information that you can add to pe
 OnlyActiveElementsAreShown=Näidatakse ainult elemente <a href="%s">sisse lülitatud moodulitest</a>.
 ModulesDesc=Dolibarr modules define which functionality is enabled in software. Some modules require permissions you must grant to users, after enabling module. Click on button on/off to enable a module/feature.
 ModulesMarketPlaceDesc=You can find more modules to download on external websites on the Internet...
-ModulesMarketPlaces=Rohkem mooduleid...
+ModulesDeployDesc=If permissions on your file system allows it, you can use this tool to deploy an external module. The module wil then be visible on the tab <strong>%s</strong>.
+ModulesMarketPlaces=Find external modules...
+GoModuleSetupArea=To deploy/install a new module, go onto the Module setup area at <a href="%s">%s</a>.
 DoliStoreDesc=DoliStore on ametlik Dolibarr ERP/CRM moodulite müümiseks kasutatav koht
 DoliPartnersDesc=List of companies providing custom developed modules or features (Note: anyone experienced in PHP programming can provide custom development for an open source project)
 WebSiteDesc=Reference websites to find more modules...
@@ -280,20 +285,21 @@ MenuHandlers=Menüüde töötlejad
 MenuAdmin=Menüü toimeti
 DoNotUseInProduction=Ära kasuta tootmispaigaldustes
 ThisIsProcessToFollow=This is steps to process:
-ThisIsAlternativeProcessToFollow=This is an alternative setup to process:
+ThisIsAlternativeProcessToFollow=This is an alternative setup to process manually:
 StepNb=Samm %s
 FindPackageFromWebSite=Leia pakett, mis võimaldab soovitud funktsionaalsuse (näiteks ametlikul veebilehel %s).
 DownloadPackageFromWebSite=Download package (for example from official web site %s).
-UnpackPackageInDolibarrRoot=Unpack package file into Dolibarr server directory dedicated to external modules: <b>%s</b>
-SetupIsReadyForUse=Paigaldamine on lõpetatud ja Dolibarr on valmis kasutama uut komponenti.
-NotExistsDirect=Alternatiivset juurkausta pole määratletud.<br>
-InfDirAlt=Alates versioonist 3 on võimalik määratleda alternatiivne juurkaust. See võimaldab samas kohas säilitada liidesed ja enda loodud mallid.<br>Lihtsalt loo Dolibarri juurkausta lisakataloog (näiteks: custom).<br>
-InfDirExample=<br>Seejärel määratle seadistusfails conf.php parameetrid<br>$dolibarr_main_url_root_alt='http://minuserver/custom'<br>$dolibarr_main_document_root_alt='/rada//dolibarr/htdocs/custom'<br>*Need read on välja kommenteeritud sümboliga "#", kasutamiseks eemalda trellid.
+UnpackPackageInDolibarrRoot=Unpack the packaged files into server directory dedicated to Dolibarr: <b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, unpack the packaged files into the server directory dedicated to modules: <b>%s</b>
+SetupIsReadyForUse=Module deployment is finished. You must however enable and setup the module in your application by going on the page to setup modules: <a href="%s">%s</a>.
+NotExistsDirect=The alternative root directory is not defined to an existing directory.<br>
+InfDirAlt=Since version 3, it is possible to define an alternative root directory. This allows you to store, into a dedicated directory, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=For this step, you can send package using this tool: Select module file
 CurrentVersion=Dolibarri praegune versioo
 CallUpdatePage=Go to the page that updates the database structure and data: %s.
 LastStableVersion=Viimane stabiilne versioon
-LastActivationDate=Last activation date
+LastActivationDate=Latest activation date
 UpdateServerOffline=Update server offline
 GenericMaskCodes=Sa võid sisestada suvalise numeratsiooni maski. Järgnevas maskis saab kasutada järgmisi silte:<br><b>{000000}</b> vastab arvule, mida suurendatakse iga sündmuse %s korral. Sisesta niipalju nulle, kui soovid loenduri pikkuseks. Loendurile lisatakse vasakult alates niipalju nulle, et ta oleks maskiga sama pikk.<br><b>{000000+000}</b> on eelmisega sama, kuid esimesele %s lisatakse nihe, mis vastab + märgist paremal asuvale arvule.<br><b>{000000@x}</b> on eelmisega sama, ent kuuni x jõudmisel nullitakse loendur (x on 1 ja 12 vahel, või 0 seadistuses määratletud majandusaasta alguse kasutamiseks, või 99 loenduri nullimiseks iga kuu alguses). Kui kasutad seda funktsiooni ja x on 2 või kõrgem, siis on jada {yy}{mm} or {yyyy}{mm} nõutud.<br><b>{dd}</b> päev (01 kuni 31).<br><b>{mm}</b> kuu (01 kuni 12).<br><b>{yy}</b>, <b>{yyyy}</b> või <b>{y}</b> aasta 2, 4 või 1 numbri kasutamisks.<br>
 GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of third party type on n characters (see dictionary-thirdparty types).<br>
@@ -376,11 +382,11 @@ ExtrafieldCheckBox=Märkeruut
 ExtrafieldRadio=Raadionupp
 ExtrafieldCheckBoxFromList= Checkbox from table
 ExtrafieldLink=Link to an object
-ExtrafieldParamHelpselect=Parameetrite nimekiri peab olema kujul võti,väärtus<br><br>Näiteks:<br>1,väärtus1<br>2,väärtus2<br>3,väärtus3<br>jne<br><br>Nimekirja teisest nimekirjast sõltuvaks muutmiseks:<br>1,väärtus1|ema_nimekirja_kood:ema_võti<br>2,väärtus2|ema_nimekirja_kood:ema_võti
+ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list :<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list :<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=Parameetrite nimekiri peab olema kujul võti,väärtus<br><br>Näiteks:<br>1,väärtus1<br>2,väärtus2<br>3,väärtus3<br>...
 ExtrafieldParamHelpradio=Parameetrite nimekiri peab olema kujul võti,väärtus<br><br>Näiteks:<br>1,väärtus1<br>2,väärtus2<br>3,väärtus3<br>...
-ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list :<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Parameters must be ObjectName:Classpath<br>Syntax : ObjectName:Classpath<br>Example : Societe:societe/class/societe.class.php
 LibraryToBuildPDF=Library used for PDF generation
 WarningUsingFPDF=Hoiatus: <b>conf.php</b> sisaldab direktiivi <b>dolibarr_pdf_force_fpdf=1</b>. See tähendab, et PDF failide loomiseks kasutatakse FPDF teeki. FPDF teek on vananenud ja ei toeta paljusid võimalusi (Unicode, läbipaistvad pildid, kirillitsa, araabia ja aasia märgistikke jne), seega võib PDFi loomise ajal tekkida vigu.<br>Probleemide vältimiseks ja täieliku PDFi loomise toe jaoks palun lae alla <a href="http://www.tcpdf.org/" target="_blank">TCPDF teek</a> ning seejärel kommenteeri välja või kustuta rida <b>$dolibarr_pdf_force_fpdf=1</b> ja lisa rida <b>$dolibarr_lib_TCPDF_PATH='TCPDF_kausta_rada'</b>
@@ -415,10 +421,10 @@ ModuleCompanyCodeDigitaria=Raamatupidamine kood sõltub kolmanda isiku koodist. 
 Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=Use a 3 steps approval when amount (without tax) is higher than...
 WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to send an email from another server than the Yahoo server if the email address used as a sender is your Yahoo email (like myemail@yahoo.com, myemail@yahoo.fr, ...). Your current setup use the server of the application to send email, so some recipients (the one compatible with the restrictive DMARC protocol), will ask Yahoo if they can accept your email and Yahoo will respond "no" because the server is not a server owned by Yahoo, so few of your sent Emails may not be accepted.<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account).
-
+ClickToShowDescription=Click to show description
 # Modules
 Module0Name=Kasutajad ja grupid
-Module0Desc=Kasutajate ja gruppide haldamine
+Module0Desc=Users / Employees and Groups management
 Module1Name=Kolmandad isikud
 Module1Desc=Ettevõtete ja kontaktide haldamine (kliendid, huvilised)
 Module2Name=Äritegevus
@@ -689,7 +695,7 @@ PermissionAdvanced253=Väliste ja sisemiste kasutajate ja õiguste loomine/muutm
 Permission254=Ainult väliste kasutajate loomine/muutmine
 Permission255=Teiste kasutajate paroolide muutmine
 Permission256=Teiste kasutajate kustutamine või keelamine
-Permission262=Extend access to all third parties (not only third parties that user is a sale representative). Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc). Not effective for projects (only rules on project permissions, visibility and assignement matters).
+Permission262=Extend access to all third parties (not only third parties that user is a sale representative).<br>Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc).<br>Not effective for projects (only rules on project permissions, visibility and assignement matters).
 Permission271=CA vaatamine
 Permission272=Arvete vaatamine
 Permission273=Arvete väljastamine
@@ -891,7 +897,7 @@ Offset=Nihe
 AlwaysActive=Alati aktiivne
 Upgrade=Uuenda
 MenuUpgrade=Uuendada/laienda
-AddExtensionThemeModuleOrOther=Lisa laiendus (teema, moodul jne)
+AddExtensionThemeModuleOrOther=Deploy/install external module
 WebServer=Veebiserver
 DocumentRootServer=Veebiserveri juurkaust
 DataRootServer=Andmefailide kataloog
@@ -1165,10 +1171,6 @@ FreeLegalTextOnOrders=Vaba tekst tellimustel
 WatermarkOnDraftOrders=Vesimärk tellimuste mustanditel (puudub, kui tühi)
 ShippableOrderIconInList=Add an icon in Orders list which indicate if order is shippable
 BANK_ASK_PAYMENT_BANK_DURING_ORDER=Ask for bank account destination of order
-##### Clicktodial #####
-ClickToDialSetup=Click To Dial mooduli seadistamine
-ClickToDialUrlDesc=Url, mida kasutatakse telefoni pildi klõpsamisel. URLi sees saab kasutada järgmisi silte:<br><b>__PHONETO__</b> asendatakse helistatava inimese telefoninumbriga<br><b>__PHONEFROM__</b> asendatakse helistaja (Sinu) telefoninumbriga<br><b>__LOGIN__</b> asendatakse clicktodial kasutajanimega (määratletud Sinu kasutajakaardil)<br><b>__PASS__</b> asendatakse clicktodial parooliga (määratletud Sinu kasutajakaardil).
-##### Bookmark4u #####
 ##### Interventions #####
 InterventionsSetup=Sekkumiste mooduli seadistamine
 FreeLegalTextOnInterventions=Vaba tekst sekkumiste dokumentidel
@@ -1395,7 +1397,7 @@ SendingsSetup=Saatmiste mooduli seadistamine
 SendingsReceiptModel=Saatekviitungi mudel
 SendingsNumberingModules=Saatmiste numeratsiooni moodulid
 SendingsAbility=Support shipping sheets for customer deliveries
-NoNeedForDeliveryReceipts=Enamikul juhtudel on saatedokumendid kasutatud nii kontrollehtedena (nimekiri toodetest, mida saata) kui lehtedena, mille saab klient endale ja allkirjastab. Seega on saatedokumentide väljastamine dubleeritud võimalus ja aktiveeritakse harva.
+NoNeedForDeliveryReceipts=In most cases, shipping sheets are used both as sheets for customer deliveries (list of products to send) and sheets that is received and signed by customer. So product deliveries receipts is a duplicated feature and is rarely activated.
 FreeLegalTextOnShippings=Free text on shipments
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Saatedokumentide numeratsiooni moodul
@@ -1477,7 +1479,9 @@ AGENDA_DEFAULT_FILTER_STATUS=Seda liiki tegevuse staatus lisatakse automaatselt 
 AGENDA_DEFAULT_VIEW=Vaikimisi avatav sakk päevakava avamisel
 AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
 AGENDA_NOTIFICATION_SOUND=Enable sound notification
-##### ClickToDial #####
+##### Clicktodial #####
+ClickToDialSetup=Click To Dial mooduli seadistamine
+ClickToDialUrlDesc=Url, mida kasutatakse telefoni pildi klõpsamisel. URLi sees saab kasutada järgmisi silte:<br><b>__PHONETO__</b> asendatakse helistatava inimese telefoninumbriga<br><b>__PHONEFROM__</b> asendatakse helistaja (Sinu) telefoninumbriga<br><b>__LOGIN__</b> asendatakse clicktodial kasutajanimega (määratletud Sinu kasutajakaardil)<br><b>__PASS__</b> asendatakse clicktodial parooliga (määratletud Sinu kasutajakaardil).
 ClickToDialDesc=This module allows to make phone numbers clickable. A click on this icon will call make your phone to call the phone number. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
 ClickToDialUseTelLink=Use just a link "tel:" on phone numbers
 ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface installed on same computer than the browser, and called when you click on a link in your browser that start with "tel:". If you need a full server solution (no need of local software installation), you must set this to "No" and fill next field.
@@ -1505,10 +1509,11 @@ EndPointIs=SOAP clients must send their requests to the Dolibarr endpoint availa
 ##### API ####
 ApiSetup=API module setup
 ApiDesc=By enabling this module, Dolibarr become a REST server to provide miscellaneous web services.
-ApiProductionMode=Enable production mode (this will activate use of a caches for services management)
+ApiProductionMode=Enable production mode (this will activate use of a cache for services management)
 ApiExporerIs=You can explore the APIs at url
 OnlyActiveElementsAreExposed=Only elements from enabled modules are exposed
 ApiKey=Key for API
+WarningAPIExplorerDisabled=The API explorer has been disabled. API explorer is not required to provide API services. It is a tool for developer to find/test REST APIs. If you need this tool, go into setup of module API REST to activate it.
 ##### Bank #####
 BankSetupModule=Pangamooduli seadistamine
 FreeLegalTextOnChequeReceipts=Vaba tekst tšekikviitungitel
@@ -1577,7 +1582,7 @@ BackupDumpWizard=Wizard to build database backup dump file
 SomethingMakeInstallFromWebNotPossible=Installation of external module is not possible from the web interface for the following reason:
 SomethingMakeInstallFromWebNotPossible2=For this reason, process to upgrade described here is only manual steps a privileged user can do.
 InstallModuleFromWebHasBeenDisabledByFile=Install of external module from application has been disabled by your administrator. You must ask him to remove the file <strong>%s</strong> to allow this feature.
-ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
+ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Highlight color of the line when the mouse passes over (keep empty for no highlight)
 TextTitleColor=Color of page title
@@ -1607,6 +1612,7 @@ FixTZ=Ajavööndi parandus
 FillFixTZOnlyIfRequired=Example: +2 (fill only if problem experienced)
 ExpectedChecksum=Expected Checksum
 CurrentChecksum=Current Checksum
+ForcedConstants=Required constant values
 MailToSendProposal=To send customer proposal
 MailToSendOrder=To send customer order
 MailToSendInvoice=To send customer invoice
@@ -1615,9 +1621,10 @@ MailToSendIntervention=To send intervention
 MailToSendSupplierRequestForQuotation=To send quotation request to supplier
 MailToSendSupplierOrder=To send supplier order
 MailToSendSupplierInvoice=To send supplier invoice
+MailToSendContract=To send a contract
 MailToThirdparty=To send email from third party page
 ByDefaultInList=Show by default on list view
-YouUseLastStableVersion=You use the last stable version
+YouUseLastStableVersion=You use the latest stable version
 TitleExampleForMajorRelease=Example of message you can use to announce this major release (feel free to use it on your web sites)
 TitleExampleForMaintenanceRelease=Example of message you can use to announce this maintenance release (feel free to use it on your web sites)
 ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.

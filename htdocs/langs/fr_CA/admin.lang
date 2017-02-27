@@ -1,6 +1,9 @@
 # Dolibarr language file - Source file is en_US - admin
+FileCheckDesc=This tool allows you to check the integrity of files and setup of your application, comparing each files with the official ones. Value of some setup constants may also be checked. You can use this tool to detect if some files were modified by a hacker for example.
+FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified, removed or added.
 FilesUpdated=Mettre à jour les fichiers
 PurgeDeleteTemporaryFilesShort=Supprimer les fichiers temporaires
+ModulesMarketPlaces=Find external modules...
 InstrucToEncodePass=Pour chiffrer le mot de passe de la base dans le fichier de configuration <b>conf.php</b>, remplacer la ligne<br><b>$dolibarr_main_db_pass="...";</b><br>par<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
 InstrucToClearPass=Pour avoir le mot de passe de la base décodé (en clair) dans le fichier de configuration <b>conf.php</b>, remplacer dans ce fichier la ligne<br><b>$dolibarr_main_db_pass="crypted:..."</b><br>par<br><b>$dolibarr_main_db_pass="%s"</b>
 MAIN_MAIL_EMAIL_STARTTLS=Utilisation du chiffrement TLS (SSL)
@@ -11,8 +14,13 @@ ModuleFamilyProducts=Gestion des produits
 ModuleFamilyHr=Gestion des ressources humaines (GRH)
 ModuleFamilyPortal=Site internet et autres applications frontales
 ModuleFamilyInterface=Interfaces avec les systèmes externes
+ThisIsAlternativeProcessToFollow=This is an alternative setup to process manually:
 DownloadPackageFromWebSite=Télécharger le package %s.
-UnpackPackageInDolibarrRoot=Décompresser le paquet dans le répertoire dédié aux modules externes : <b>%s</b>
+UnpackPackageInDolibarrRoot=Unpack the packaged files into server directory dedicated to Dolibarr: <b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, unpack the packaged files into the server directory dedicated to modules: <b>%s</b>
+NotExistsDirect=The alternative root directory is not defined to an existing directory.<br>
+InfDirAlt=Since version 3, it is possible to define an alternative root directory. This allows you to store, into a dedicated directory, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=Sélectionner le module :
 DisableLinkToHelp=Masquer lien vers l'aide en ligne "<b>%s</b>"
 ListOfDirectoriesForModelGenODT=Liste des répertoires contenant des fichiers de modèles avec le format OpenDocument . <br><br> Mettez ici le chemin complet des répertoires .<br>Ajouter un retour chariot entre répertoire eah.<br> Pour ajouter un répertoire du module de GED , ajouter ici<b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br> Fichiers dans ces répertoires doit se terminer par <b>.odt</b> or <b>.ods</b>.
@@ -20,9 +28,11 @@ HideAnyVATInformationOnPDF=Cacher toutes les informations en rapport avec la TPS
 PlaceCustomerAddressToIsoLocation=Utilisez french standard position (La Poste) pour le client position d'adresse
 OldVATRates=Ancien taux de TPS/TVH
 NewVATRates=Nouveau taux de TPS/TVH
+ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list :<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list :<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelplink=Les paramètres doivent être ObjectName:Classpath<br>Syntax : ObjectName:Classpath<br>Exemple : Societe:societe/class/societe.class.php
 LocalTaxDesc=Certains pays appliquent 2 voire 3 taux sur chaque ligne de facture. Si c'est le cas, choisissez le type du deuxième et troisième taux et sa valeur. Les types possibles sont:<br>1 : taxe locale sur les produits et services hors TPS/TVH (la taxe locale est calculée sur le montant hors taxe)<br>2 : taxe locale sur les produits et services avant TPS/TVH (la taxe locale est appliquée sur le montant + TPS/TVH)<br>3 : taxe locale uniquement sur les produits hors TPS/TVH (la taxe locale est calculée sur le montant hors taxe)<br>4 : taxe locale uniquement sur les produits avant TPS/TVH (la taxe locale est calculée sur le montant + TPS/TVH)<br>5 : taxe locale uniquement sur les services hors TPS/TVH (la taxe locale est calculée sur le montant hors taxe)<br>6 : taxe locale uniquement sur les service avant TPS/TVH (la taxe locale est calculée sur le montant + TPS/TVH)
 EnableFileCache=Activer le cache de fichiers
+Module0Desc=Users / Employees and Groups management
 Module75Name=Notes de frais et déplacements
 Module500Name=Dépenses spéciales (taxes, charges, dividendes)
 Module500Desc=Gestion des dépenses spéciales comme les taxes, charges sociales et dividendes
@@ -70,6 +80,7 @@ LocalTax1IsUsedDesc=Utilisation d'un 2ème type taxe (autre que TPS/TVH)
 LocalTax1IsNotUsedDesc=Pas d'utilisation de 2ème type taxe (autre que TPS/TVH)
 LocalTax2IsUsedDesc=Utilisation d'un 3ème type taxe  (autre que TPS/TVH)
 LocalTax2IsNotUsedDesc=Pas d'utilisation de 3ème type taxe  (autre que TPS/TVH)
+AddExtensionThemeModuleOrOther=Deploy/install external module
 DefaultMaxSizeList=Longueur maximale des listes
 DefaultMaxSizeShortList=Longueur maximale par défaut des listes
 CompanyObject=Objet de la compagnie
@@ -114,10 +125,10 @@ ClickToDialUseTelLink=Utilisez juste un lien "tel: " sur les numéros de télép
 ClickToDialUseTelLinkDesc=Utilisez cette méthode si vos utilisateurs ont un softphone ou une interface de logiciel installé sur un même ordinateur que le navigateur , et a appelé lorsque vous cliquez sur un lien dans votre navigateur qui commencent par "tel: " . Si vous avez besoin d'une solution de serveur complet (pas besoin d'installation locale du logiciel ) , vous devez définir ce "Non" et remplir champ suivant.
 ApiSetup=Configuration du module API
 ApiDesc=En activant ce module , Dolibarr devenir un serveur REST pour fournir des services Web divers .
-ApiProductionMode=Activer le mode de production (active l'utilisation d'un cache pour la gestion des services )
 OnlyActiveElementsAreExposed=Seuls les éléments de modules activés sont exposés
 ApiKey=Clé API
 SalariesSetup=Configuration du module salariés
+ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Mettez en surbrillance les lignes de table lorsque déplacement de la souris passe au-dessus
 HighlightLinesColor=Mettez en surbrillance la couleur de la ligne lorsque la souris passe au-dessus (gardez vide pour ne pas mettre en évidence)
 TextTitleColor=Couleur de la page titre

@@ -708,7 +708,9 @@ div.fiche>form>div.div-table-responsive {
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-
+	div.fiche {
+		    margin-top: <?php print ($dol_hide_topmenu?'12':'6'); ?>px !important;
+	}
 	div.titre {
 		line-height: 2em;
 	}
@@ -773,6 +775,9 @@ div.fiche>form>div.div-table-responsive {
         object-fit: contain;
     }
 
+	div.statusref {
+    	padding-right: 10px;
+   	}
 }
 .linkobject { cursor: pointer; }
 <?php if (GETPOST("optioncss") == 'print') { ?>
@@ -1468,7 +1473,7 @@ form#login {
 }
 .login_main_message {
 	text-align: center;
-	max-width: 560px;
+	max-width: 570px;
 	margin-bottom: 10px;
 }
 .login_main_message .error {
@@ -1483,6 +1488,9 @@ div#login_left, div#login_right {
 	padding-right: 16px;
 	text-align: center;
 	vertical-align: middle;
+}
+div#login_right select#entity {
+    margin-top: 10px;
 }
 table.login_table tr td table.none tr td {
 	padding: 2px;
@@ -1633,7 +1641,7 @@ font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php p
 a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; white-space: nowrap; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
-a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; text-decoration: none; }
+a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; text-decoration: none; }
 
 .vmenu div.blockvmenufirst, .vmenu div.blockvmenulogo, .vmenu div.blockvmenusearchphone, .vmenu div.blockvmenubookmarks
 {
@@ -2502,10 +2510,10 @@ table.liste tr, table.noborder tr, div.noborder form {
 	min-height: 20px;
 }
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
-	padding: 8px 2px 8px 3px;			/* t r b l */
+	padding: 7px 2px 7px 3px;			/* t r b l */
 }
 table.liste td, table.noborder td, div.noborder form div {
-	padding: 8px 2px 8px 3px;			/* t r b l */
+	padding: 7px 2px 7px 3px;			/* t r b l */
 }
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 0px;			/* t r b l */
@@ -2775,7 +2783,7 @@ table.dataTable td {
     padding: 5px 2px 5px 3px !important;
 }
 tr.even td, tr.pair td, tr.odd td, tr.impair td, form.odd div.tagtd, form.impair div.tagtd, form.pair div.tagtd, div.impair div.tagtd, div.pair div.tagtd, div.liste_titre div.tagtd {
-    padding: 5px 2px 5px 3px;
+    padding: 7px 2px 7px 3px;
     border-bottom: 1px solid #ddd;
 }
 form.pair, form.impair {
@@ -3039,7 +3047,7 @@ tr.box_pair {
 }
 
 tr.box_pair td, tr.box_impair td {
-	padding: 4px;
+	/* padding: 4px; */
 }
 tr.box_pair:not(:last-child) td, tr.box_impair:not(:last-child) td {
     border-bottom: 1px solid #ddd;

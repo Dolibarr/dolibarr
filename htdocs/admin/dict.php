@@ -86,7 +86,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,33,34,0,6,0,29,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,25,0,26,0,32,0);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,33,34,0,6,0,29,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,25,0,26,0);
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -121,7 +121,7 @@ $tabname[28]= MAIN_DB_PREFIX."c_holiday_types";
 $tabname[29]= MAIN_DB_PREFIX."c_lead_status";
 $tabname[30]= MAIN_DB_PREFIX."c_format_cards";
 //$tabname[31]= MAIN_DB_PREFIX."accounting_system";
-$tabname[32]= MAIN_DB_PREFIX."c_accounting_category";
+//$tabname[32]= MAIN_DB_PREFIX."c_accounting_category";
 $tabname[33]= MAIN_DB_PREFIX."c_hrm_department";
 $tabname[34]= MAIN_DB_PREFIX."c_hrm_function";
 
@@ -158,7 +158,7 @@ $tablib[28]= "DictionaryHolidayTypes";
 $tablib[29]= "DictionaryOpportunityStatus";
 $tablib[30]= "DictionaryFormatCards";
 //$tablib[31]= "DictionaryAccountancysystem";
-$tablib[32]= "DictionaryAccountancyCategory";
+//$tablib[32]= "DictionaryAccountancyCategory";
 $tablib[33]= "DictionaryDepartment";
 $tablib[34]= "DictionaryFunction";
 
@@ -195,7 +195,7 @@ $tabsql[28]= "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.new
 $tabsql[29]= "SELECT rowid   as rowid, code, label, percent, position, active FROM ".MAIN_DB_PREFIX."c_lead_status";
 $tabsql[30]= "SELECT rowid, code, name, paper_size, orientation, metric, leftmargin, topmargin, nx, ny, spacex, spacey, width, height, font_size, custom_x, custom_y, active FROM ".MAIN_DB_PREFIX."c_format_cards";
 //$tabsql[31]= "SELECT s.rowid as rowid, pcg_version, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s";
-$tabsql[32]= "SELECT a.rowid as rowid, a.code as code, a.label, a.range_account, a.sens, a.category_type, a.formula, a.position as position, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accounting_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid and c.active=1";
+//$tabsql[32]= "SELECT a.rowid as rowid, a.code as code, a.label, a.range_account, a.sens, a.category_type, a.formula, a.position as position, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accounting_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid and c.active=1";
 $tabsql[33]= "SELECT rowid, pos, code, label, active FROM ".MAIN_DB_PREFIX."c_hrm_department";
 $tabsql[34]= "SELECT rowid, pos, code, label, c_level, active FROM ".MAIN_DB_PREFIX."c_hrm_function";
 
@@ -232,7 +232,7 @@ $tabsqlsort[28]="country ASC, code ASC";
 $tabsqlsort[29]="position ASC";
 $tabsqlsort[30]="code ASC";
 //$tabsqlsort[31]="pcg_version ASC";
-$tabsqlsort[32]="position ASC";
+//$tabsqlsort[32]="position ASC";
 $tabsqlsort[33]="code ASC";
 $tabsqlsort[34]="code ASC";
 
@@ -269,7 +269,7 @@ $tabfield[28]= "code,label,affect,delay,newbymonth,country_id,country";
 $tabfield[29]= "code,label,percent,position";
 $tabfield[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfield[31]= "pcg_version,label";
-$tabfield[32]= "code,label,range_account,sens,category_type,formula,position,country_id,country";
+//$tabfield[32]= "code,label,range_account,sens,category_type,formula,position,country_id,country";
 $tabfield[33]= "code,label";
 $tabfield[34]= "code,label";
 
@@ -306,7 +306,7 @@ $tabfieldvalue[28]= "code,label,affect,delay,newbymonth,country";
 $tabfieldvalue[29]= "code,label,percent,position";
 $tabfieldvalue[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfieldvalue[31]= "pcg_version,label";
-$tabfieldvalue[32]= "code,label,range_account,sens,category_type,formula,position,country";
+//$tabfieldvalue[32]= "code,label,range_account,sens,category_type,formula,position,country";
 $tabfieldvalue[33]= "code,label";
 $tabfieldvalue[34]= "code,label";
 
@@ -343,7 +343,7 @@ $tabfieldinsert[28]= "code,label,affect,delay,newbymonth,fk_country";
 $tabfieldinsert[29]= "code,label,percent,position";
 $tabfieldinsert[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfieldinsert[31]= "pcg_version,label";
-$tabfieldinsert[32]= "code,label,range_account,sens,category_type,formula,position,fk_country";
+//$tabfieldinsert[32]= "code,label,range_account,sens,category_type,formula,position,fk_country";
 $tabfieldinsert[33]= "code,label";
 $tabfieldinsert[34]= "code,label";
 
@@ -382,7 +382,7 @@ $tabrowid[28]= "";
 $tabrowid[29]= "";
 $tabrowid[30]= "";
 //$tabrowid[31]= "";
-$tabrowid[32]= "";
+//$tabrowid[32]= "";
 $tabrowid[33]= "rowid";
 $tabrowid[34]= "rowid";
 
@@ -419,7 +419,7 @@ $tabcond[28]= ! empty($conf->holiday->enabled);
 $tabcond[29]= ! empty($conf->projet->enabled);
 $tabcond[30]= ! empty($conf->label->enabled);
 //$tabcond[31]= ! empty($conf->accounting->enabled);
-$tabcond[32]= ! empty($conf->accounting->enabled);
+//$tabcond[32]= ! empty($conf->accounting->enabled);
 $tabcond[33]= ! empty($conf->hrm->enabled);
 $tabcond[34]= ! empty($conf->hrm->enabled);
 
@@ -456,7 +456,7 @@ $tabhelp[28] = array('affect'=>$langs->trans("FollowedByACounter"),'delay'=>$lan
 $tabhelp[29] = array('code'=>$langs->trans("EnterAnyCode"), 'percent'=>$langs->trans("OpportunityPercent"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[30] = array('code'=>$langs->trans("EnterAnyCode"), 'name'=>$langs->trans("LabelName"), 'paper_size'=>$langs->trans("LabelPaperSize"));
 //$tabhelp[31] = array('pcg_version'=>$langs->trans("EnterAnyCode"));
-$tabhelp[32] = array('code'=>$langs->trans("EnterAnyCode"));
+//$tabhelp[32] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[33] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[34] = array('code'=>$langs->trans("EnterAnyCode"));
 
@@ -493,7 +493,7 @@ $tabfieldcheck[28] = array();
 $tabfieldcheck[29] = array();
 $tabfieldcheck[30] = array();
 //$tabfieldcheck[31] = array();
-$tabfieldcheck[32] = array();
+//$tabfieldcheck[32] = array();
 $tabfieldcheck[33] = array();
 $tabfieldcheck[34] = array();
 
