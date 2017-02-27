@@ -380,7 +380,7 @@ class Account extends CommonObject
     /**
      *  Add an entry into table ".MAIN_DB_PREFIX."bank
      *
-     *  @param	int	$date			Date operation
+     *  @param	int	        $date			Date operation
      *  @param	string		$oper			1,2,3,4... (deprecated) or TYP,VIR,PRE,LIQ,VAD,CB,CHQ...
      *  @param	string		$label			Descripton
      *  @param	float		$amount			Amount
@@ -596,12 +596,15 @@ class Account extends CommonObject
 				$accline->datec = $this->db->idate($now);
 				$accline->label = '('.$langs->trans("InitialBankBalance").')';
 				$accline->amount = price2num($this->solde);
+				$accline->fk_user_author = $user->id;
 				$accline->fk_account = $this->id;
 				$accline->datev = $this->db->idate($this->date_solde);
 				$accline->dateo = $this->db->idate($this->date_solde);
 				$accline->fk_type = 'SOLD';
 
 				if ($accline->insert() < 0) {
+				    $this->error = $accline->error;
+				    $this->errors = $accline->errors;
 					return -3;
 				}
 
