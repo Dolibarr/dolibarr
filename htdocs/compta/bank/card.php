@@ -62,6 +62,7 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 
+
 /*
  * Actions
  */
@@ -152,6 +153,7 @@ if ($action == 'add')
         else {
             $error++;
             setEventMessages($object->error, $object->errors, 'errors');
+
             $action='create';   // Force chargement page en mode creation
         }
     }
@@ -247,15 +249,24 @@ if ($action == 'update')
     }
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->banque->configurer)
+if ($action == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->banque->configurer)
 {
     // Delete
     $object = new Account($db);
     $object->fetch(GETPOST("id","int"));
-    $object->delete();
+    $result = $object->delete($user);
 
-    header("Location: ".DOL_URL_ROOT."/compta/bank/index.php");
-    exit;
+    if ($result > 0)
+    {
+        setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+        header("Location: ".DOL_URL_ROOT."/compta/bank/index.php");
+        exit;
+    }
+    else
+    {
+        setEventMessages($account->error, $account->errors, 'errors');
+        $action='';
+    }
 }
 
 
