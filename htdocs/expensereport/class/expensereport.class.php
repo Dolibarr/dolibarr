@@ -60,7 +60,7 @@ class ExpenseReport extends CommonObject
 
     // Create
     var $date_create;
-    var $fk_user_author;    // the user the expense report is for (not really the author)
+    var $fk_user_author;    // Note fk_user_author is not the 'author' but the guy the expense report is for.
 
     // Update
 	var $date_modif;
@@ -126,9 +126,10 @@ class ExpenseReport extends CommonObject
         global $conf;
 
         $now = dol_now();
-		$error = 0;
+
+        $error = 0;
 		
-        $fuserid = $this->fk_user_author;
+        $fuserid = $this->fk_user_author;       // Note fk_user_author is not the 'author' but the guy the expense report is for.
         if (empty($fuserid)) $fuserid = $user->id;
         
         $this->db->begin();
@@ -276,7 +277,7 @@ class ExpenseReport extends CommonObject
             $this->statut=0;
     
             // Clear fields
-            $this->fk_user_author     = $user->id;
+            $this->fk_user_author     = $user->id;     // Note fk_user_author is not the 'author' but the guy the expense report is for.
             $this->fk_user_valid      = '';
             $this->date_create  	  = '';
             $this->date_creation      = '';
@@ -323,10 +324,18 @@ class ExpenseReport extends CommonObject
      * update
      *
      * @param   User    $user       User making change
+<<<<<<< HEAD
 	 * @param   int     $notrigger  Disable triggers
+=======
+     * @param   User    $newuser    New user we want to have the expense report on.
+>>>>>>> branch '5.0' of git@github.com:Dolibarr/dolibarr.git
      * @return  int                 <0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function update($user, $notrigger = 0)
+=======
+    function update($user, $userofexpensereport=null)
+>>>>>>> branch '5.0' of git@github.com:Dolibarr/dolibarr.git
     {
         global $langs;
 
@@ -339,10 +348,13 @@ class ExpenseReport extends CommonObject
         $sql.= " , total_tva = ".$this->total_tva;
         $sql.= " , date_debut = '".$this->db->idate($this->date_debut)."'";
         $sql.= " , date_fin = '".$this->db->idate($this->date_fin)."'";
-        $sql.= " , fk_user_author = ".($user->id > 0 ? "'".$user->id."'":"null");
+        if ($userofexpensereport && is_object($userofexpensereport))
+        {
+            $sql.= " , fk_user_author = ".($userofexpensereport->id > 0 ? "'".$userofexpensereport->id."'":"null");     // Note fk_user_author is not the 'author' but the guy the expense report is for.
+        }
         $sql.= " , fk_user_validator = ".($this->fk_user_validator > 0 ? $this->fk_user_validator:"null");
         $sql.= " , fk_user_valid = ".($this->fk_user_valid > 0 ? $this->fk_user_valid:"null");
-        $sql.= " , fk_user_modif = ".($this->fk_user_modif > 0 ? $this->fk_user_modif:"null");
+        $sql.= " , fk_user_modif = ".$user->id;
         $sql.= " , fk_statut = ".($this->fk_statut >= 0 ? $this->fk_statut:'0');
         $sql.= " , fk_c_paiement = ".($this->fk_c_paiement > 0 ? $this->fk_c_paiement:"null");
         $sql.= " , note_public = ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"''");
@@ -436,7 +448,7 @@ class ExpenseReport extends CommonObject
                 $this->date_refuse      = $this->db->jdate($obj->date_refuse);
                 $this->date_cancel      = $this->db->jdate($obj->date_cancel);
 
-                $this->fk_user_author           = $obj->fk_user_author;
+                $this->fk_user_author           = $obj->fk_user_author;    // Note fk_user_author is not the 'author' but the guy the expense report is for.
                 $this->fk_user_modif            = $obj->fk_user_modif;
                 $this->fk_user_validator        = $obj->fk_user_validator;
                 $this->fk_user_valid            = $obj->fk_user_valid;
@@ -1036,7 +1048,7 @@ class ExpenseReport extends CommonObject
             {
                 $prefix="ER";
                 if (! empty($conf->global->EXPENSE_REPORT_PREFIX)) $prefix=$conf->global->EXPENSE_REPORT_PREFIX;
-                $this->ref = strtoupper($fuser->login).$expld_car.$prefix.$this->ref.$expld_car.dol_print_date($this->date_debut,'%y%m%d');
+                $this->ref = str_replace(' ','_', $this->user_author_infos).$expld_car.$prefix.$this->ref.$expld_car.dol_print_date($this->date_debut,'%y%m%d');
             }
             require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
             // We rename directory in order to avoid losing the attachments
