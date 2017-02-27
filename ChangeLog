@@ -2,7 +2,14 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 5.0.0 compared to 4.0.* *****
 
+WARNING: 
+
+Following changes may create regression for some external modules, but were necessary to make Dolibarr better:
+* The hook getNodeList has been replaced by a normalized 'addreplace' hook getDirList.
+
+ 
 
 ***** ChangeLog for 5.0.0 compared to 4.0.* *****
 For users:

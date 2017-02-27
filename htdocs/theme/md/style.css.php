@@ -355,6 +355,7 @@ input:-webkit-autofill {
 input:-moz-placeholder { color:#ccc; }
 
 fieldset { border: 1px solid #AAAAAA !important; }
+.legendforfieldsetstep { padding-bottom: 10px; }
 
 
 .button, sbmtConnexion {
