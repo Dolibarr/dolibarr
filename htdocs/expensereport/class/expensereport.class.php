@@ -324,18 +324,11 @@ class ExpenseReport extends CommonObject
      * update
      *
      * @param   User    $user       User making change
-<<<<<<< HEAD
 	 * @param   int     $notrigger  Disable triggers
-=======
      * @param   User    $newuser    New user we want to have the expense report on.
->>>>>>> branch '5.0' of git@github.com:Dolibarr/dolibarr.git
      * @return  int                 <0 if KO, >0 if OK
      */
-<<<<<<< HEAD
-    function update($user, $notrigger = 0)
-=======
-    function update($user, $userofexpensereport=null)
->>>>>>> branch '5.0' of git@github.com:Dolibarr/dolibarr.git
+    function update($user, $notrigger = 0, $userofexpensereport=null)
     {
         global $langs;
 
