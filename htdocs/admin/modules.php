@@ -497,9 +497,10 @@ if ($mode != 'marketplace')
         print '<td align="center" valign="top" class="nowrap" style="width: 82px;">';
         $text='';
 
-        if ($objMod->getDescLong()) $text.='<div class="titre">'.$objMod->getDesc().'</div><br>'.$objMod->getDescLong().'<br>';
-        else $text.='<div class="titre">'.$objMod->getDesc().'</div><br>';
-
+        //if ($objMod->getDescLong()) $text.='<div class="titre">'.$objMod->getDesc().'</div><br>'.$objMod->getDescLong().'<br>';
+        //else $text.='<div class="titre">'.$objMod->getDesc().'</div><br>';
+        $text.='<div class="titre">'.$objMod->getDesc().'</div><br>';
+            
         $textexternal='';
         $imginfo="info";
         if ($objMod->isCoreOrExternalModule() == 'external')
