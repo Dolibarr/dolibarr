@@ -323,10 +323,10 @@ class ExpenseReport extends CommonObject
     /**
      * update
      *
-     * @param   User    $user       User making change
-	 * @param   int     $notrigger  Disable triggers
-     * @param   User    $newuser    New user we want to have the expense report on.
-     * @return  int                 <0 if KO, >0 if OK
+     * @param   User    $user                   User making change
+	 * @param   int     $notrigger              Disable triggers
+     * @param   User    $userofexpensereport    New user we want to have the expense report on.
+     * @return  int                             <0 if KO, >0 if OK
      */
     function update($user, $notrigger = 0, $userofexpensereport=null)
     {
