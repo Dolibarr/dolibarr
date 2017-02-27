@@ -1489,6 +1489,9 @@ div#login_left, div#login_right {
 	text-align: center;
 	vertical-align: middle;
 }
+div#login_right select#entity {
+    margin-top: 10px;
+}
 table.login_table tr td table.none tr td {
 	padding: 2px;
 }
