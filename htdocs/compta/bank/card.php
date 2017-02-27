@@ -65,7 +65,7 @@ $extralabels=$extrafields->fetch_name_optionals_label($account->table_element);
  * Actions
  */
 
-if ($_POST["action"] == 'add')
+if ($action == 'add')
 {
     $error=0;
 
@@ -154,7 +154,7 @@ if ($_POST["action"] == 'add')
     }
 }
 
-if ($_POST["action"] == 'update' && ! $_POST["cancel"])
+if ($action == 'update' && ! $_POST["cancel"])
 {
     $error=0;
 
@@ -235,15 +235,24 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     }
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->banque->configurer)
+if ($action == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->banque->configurer)
 {
     // Delete
     $account = new Account($db);
     $account->fetch($_GET["id"]);
-    $account->delete();
+    $result = $account->delete($user);
 
-    header("Location: ".DOL_URL_ROOT."/compta/bank/index.php");
-    exit;
+    if ($result > 0)
+    {
+        setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+        header("Location: ".DOL_URL_ROOT."/compta/bank/index.php");
+        exit;
+    }
+    else
+    {
+        setEventMessages($account->error, $account->errors, 'errors');
+        $action='';
+    }
 }
 
 

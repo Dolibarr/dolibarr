@@ -950,29 +950,60 @@ class Account extends CommonObject
     {
         global $conf;
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_account";
-        $sql.= " WHERE rowid  = ".$this->rowid;
-        $sql.= " AND entity = ".$conf->entity;
-
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-        $result = $this->db->query($sql);
-        if ($result) {
-
-        	// Remove extrafields
-        	if ((empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
-        	{
-        		$result=$this->deleteExtraFields();
-        		if ($result < 0)
-        		{
-        			dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
-        			return -1;
-        		}
-        	}
-
+        $error=0;
+        
+        $this->db->begin();
+        
+        // Delete link between tag and bank account
+        if (! $error)
+        {
+            //$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";          // No more used
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
+            $sql.= " WHERE fk_account = ".$this->id;
+        
+            $resql = $this->db->query($sql);
+            if (!$resql)
+            {
+                $error++;
+                $this->error = "Error ".$this->db->lasterror();
+            }
+        }
+        
+        if (! $error)
+        {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_account";
+            $sql.= " WHERE rowid = ".$this->rowid;
+    
+            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+            $result = $this->db->query($sql);
+            if ($result) 
+            {
+            	// Remove extrafields
+            	if ((empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+            	{
+            		$result=$this->deleteExtraFields();
+            		if ($result < 0)
+            		{
+            		    $error++;
+            			dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+            		}
+            	}
+            }
+            else 
+            {
+                $error++;
+                $this->error = "Error ".$this->db->lasterror();
+            }            
+        }
+        
+        if (! $error)
+        {
+            $this->db->commit();
             return 1;
         }
-        else {
-            dol_print_error($this->db);
+        else
+        {
+            $this->db->rollback();
             return -1;
         }
     }
