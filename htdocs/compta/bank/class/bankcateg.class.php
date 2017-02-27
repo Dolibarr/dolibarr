@@ -202,7 +202,6 @@ class BankCateg // extends CommonObject
 		// Delete link between tag and bank account
 		if (! $error)
 		{
-    		//$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";          // No more used
 		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
     		$sql.= " WHERE fk_categorie = ".$this->id;
     		
@@ -212,6 +211,20 @@ class BankCateg // extends CommonObject
     		    $error++;
     		    $this->errors[] = "Error ".$this->db->lasterror();
     		}
+		}
+		
+		// Delete link between tag and bank lines
+		if (! $error)
+		{
+		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
+		    $sql.= " WHERE fk_categ = ".$this->id;
+		
+		    $resql = $this->db->query($sql);
+		    if (!$resql)
+		    {
+		        $error++;
+		        $this->errors[] = "Error ".$this->db->lasterror();
+		    }
 		}
 		
 		// Delete bank categ
