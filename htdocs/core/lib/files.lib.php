@@ -68,6 +68,11 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	$path=preg_replace('/([\\/]+)$/i','',$path);
 	$newpath=dol_osencode($path);
 
+	$reshook = 0;
+	$file_list = array();
+	
+	$hookmanager->resArray=array();
+	
 	if (! $nohook)
 	{
 		$hookmanager->initHooks(array('fileslib'));
@@ -84,17 +89,11 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 				'loadsize' => $loadsize,
 				'mode' => $mode
 		);
-		$reshook=$hookmanager->executeHooks('getNodesList', $parameters, $object);
+		$reshook=$hookmanager->executeHooks('getDirList', $parameters, $object);
 	}
 
-	// $reshook may contain returns stacked by other modules
-	// $reshook is always empty with an array to not lose returns stacked with other modules
 	// $hookmanager->resArray may contain array stacked by other modules
-	if (! $nohook && ! empty($hookmanager->resArray)) // forced to use $hookmanager->resArray even if $hookmanager->resArray['nodes'] is empty
-	{
-		return $hookmanager->resArray['nodes'];
-	}
-	else
+	if (empty($reshook))
 	{
 		if (! is_dir($newpath)) return array();
 
@@ -102,7 +101,6 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 		{
 			$filedate='';
 			$filesize='';
-			$file_list = array();
 
 			while (false !== ($file = readdir($dir)))        // $file is always a basename (into directory $newpath)
 			{
@@ -195,14 +193,12 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 				// Sort the data
 				if ($sortorder) array_multisort($myarray, $sortorder, $file_list);
 			}
-
-			return $file_list;
-		}
-		else
-		{
-			return array();
 		}
 	}
+	
+	$file_list = array_merge($file_list, $hookmanager->resArray);
+	
+	return $file_list;
 }
 
 
