@@ -375,9 +375,10 @@ class User extends CommonObject
 	 *  @param  string	$allmodule		Ajouter tous les droits du module allmodule
 	 *  @param  string	$allperms		Ajouter tous les droits du module allmodule, perms allperms
 	 *  @param	int		$entity			Entity to use
+     *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @return int						> 0 if OK, < 0 if KO
 	 */
-	function addrights($rid, $allmodule='', $allperms='', $entity='')
+	function addrights($rid, $allmodule='', $allperms='', $entity=0, $notrigger=0)
 	{
 		global $conf, $user, $langs;
 
@@ -458,7 +459,7 @@ class User extends CommonObject
 			}
 		}
 
-		if (! $error)
+		if (! $error && ! $notrigger)
 		{
 		    $this->context = array('audit'=>$langs->trans("PermissionsAdd"));
 		    
@@ -486,10 +487,11 @@ class User extends CommonObject
 	 *  @param	int		$rid        Id du droit a retirer
 	 *  @param  string	$allmodule  Retirer tous les droits du module allmodule
 	 *  @param  string	$allperms   Retirer tous les droits du module allmodule, perms allperms
-	 *  @param	int		$entity			Entity to use
+	 *  @param	int		$entity		Entity to use
+     *  @param  int	    $notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *  @return int         		> 0 if OK, < 0 if OK
 	 */
-	function delrights($rid, $allmodule='', $allperms='', $entity='')
+	function delrights($rid, $allmodule='', $allperms='', $entity=0, $notrigger=0)
 	{
 		global $conf, $user, $langs;
 
@@ -566,7 +568,7 @@ class User extends CommonObject
 			}
 		}
 
-		if (! $error)
+		if (! $error && ! $notrigger)
 		{
 		    $this->context = array('audit'=>$langs->trans("PermissionsDelete"));
 		    
