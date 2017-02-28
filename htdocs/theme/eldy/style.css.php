@@ -2787,7 +2787,7 @@ div.tabBar .noborder {
     border: none;
 }
 .boxstats {
-    <?php print "float: ".$left.";\n"; ?>
+    display: inline-block;
     margin: 3px;
     padding: 3px;
 	/*-moz-box-shadow: 3px 3px 4px #DDD;
@@ -2797,6 +2797,11 @@ div.tabBar .noborder {
     border: 1px solid #CCC;
     text-align: center;
     border-radius: 2px;
+    
+	white-space: nowrap;
+	overflow: hidden;
+    text-overflow: ellipsis;
+    width: 110px;    
 }
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
@@ -2821,12 +2826,11 @@ span.dashboardlineko {
 	font-weight: bold;
 }
 .boxtable {
-/*    -moz-box-shadow: 3px 3px 4px #DDD;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD; */
     margin-bottom: 8px !important;
 }
-
+.tdboxstats {
+	text-align: center;
+}
 
 .box {
     padding-right: 0px;
