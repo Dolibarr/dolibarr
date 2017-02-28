@@ -33,16 +33,16 @@ CKEDITOR.editorConfig = function( config )
 	    ['Source','Maximize','Preview'],
 	    ['Cut','Copy','Paste','PasteText','PasteFromWord','-','Print', 'SpellChecker', 'Scayt'],
 	    ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+	 	['CreateDiv','ShowBlocks'],
 	    ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'],
 	    ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
-	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote','CreateDiv'],
+	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
 	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['BidiLtr', 'BidiRtl'],
 	    ['Link','Unlink','Anchor'],
 	    ['Image','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe'],
 	    ['Styles','Format','Font','FontSize'],
 	    ['TextColor','BGColor'],
-	    ['Maximize', 'ShowBlocks']
 	];
 
 	// Used for mailing fields
@@ -51,9 +51,10 @@ CKEDITOR.editorConfig = function( config )
 	 	['Source','Maximize','Preview'],
 	 	['Cut','Copy','Paste','-','SpellChecker', 'Scayt'],
 	 	['Undo','Redo','-','Find','Replace'],
+	 	['CreateDiv','ShowBlocks'],
 	    ['Format','Font','FontSize'],
 	 	['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
-	 	['NumberedList','BulletedList','Outdent','Indent','CreateDiv'],
+	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	 	['Link','Unlink','Anchor','Image','Table','HorizontalRule','SpecialChar']
 	 ];

@@ -3468,15 +3468,18 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 /*  CKEditor                                                                      */
 /* ============================================================================== */
 
+.cke_dialog {
+    border: 1px #bbb solid ! important;
+}
 .cke_editable
 {
 	margin: 5px !important;
 }
-.cke_editor table, .cke_editor tr, .cke_editor td
+/*.cke_editor table, .cke_editor tr, .cke_editor td
 {
     border: 0px solid #FF0000 !important;
 }
-span.cke_skin_kama { padding: 0 !important; }
+span.cke_skin_kama { padding: 0 !important; }*/
 .cke_wrapper { padding: 4px !important; }
 a.cke_dialog_ui_button
 {
