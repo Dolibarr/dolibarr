@@ -2837,7 +2837,7 @@ div .tdtop {
  */
 
 .boxstats {
-    <?php print "float: ".$left.";\n"; ?>
+    display: inline-block;
     margin: 3px;
     padding: 3px;
 	/*-moz-box-shadow: 3px 3px 4px #f4f4f4;
@@ -2848,6 +2848,11 @@ div .tdtop {
     text-align: center;
     border-radius: 2px;
     min-height: 38px;
+    
+	white-space: nowrap;
+	overflow: hidden;
+    text-overflow: ellipsis;
+    width: 110px;    
 }
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
@@ -2871,14 +2876,12 @@ span.dashboardlineko {
 	color: #880000;
 	font-weight: bold;
 }
-
 .boxtable {
-    -moz-box-shadow: 3px 3px 4px #f4f4f4;
-    -webkit-box-shadow: 3px 3px 4px #f4f4f4;
-    box-shadow: 3px 3px 4px #f4f4f4;
     margin-bottom: 8px !important;
 }
-
+.tdboxstats {
+	text-align: center;
+}
 
 .box {
     padding-right: 0px;
