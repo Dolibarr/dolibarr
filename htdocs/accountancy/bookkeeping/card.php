@@ -202,9 +202,11 @@ else if ($action == "confirm_create") {
 	}
 }
 
+
 /*
  * View
  */
+
 llxHeader();
 
 $html = new Form($db);
@@ -274,12 +276,12 @@ if ($action == 'create') {
 
 	print '<tr>';
 	print '<td>' . $langs->trans("Docref") . '</td>';
-	print '<td><input type="text" size="20" name="doc_ref" value=""/></td>';
+	print '<td><input type="text" class="minwidth200" name="doc_ref" value=""/></td>';
 	print '</tr>';
 
 	print '<tr>';
 	print '<td>' . $langs->trans("Doctype") . '</td>';
-	print '<td><input type="text" size="20" name="doc_type" value=""/></td>';
+	print '<td><input type="text" class="minwidth200" name="doc_type" value=""/></td>';
 	print '</tr>';
 
 	print '</table>';
@@ -345,6 +347,8 @@ if ($action == 'create') {
 			print '<input type="hidden" name="fk_doc" value="' . $book->fk_doc . '">' . "\n";
 			print '<input type="hidden" name="fk_docdet" value="' . $book->fk_docdet . '">' . "\n";
 
+			$var=False;
+			
 			print "<table class=\"noborder\" width=\"100%\">";
 			if (count($book->linesmvt) > 0) {
 
@@ -356,17 +360,17 @@ if ($action == 'create') {
 				print_liste_field_titre($langs->trans("AccountAccountingShort"));
 				print_liste_field_titre($langs->trans("Code_tiers"));
 				print_liste_field_titre($langs->trans("Labelcompte"));
-				print_liste_field_titre($langs->trans("Debit"), "", "", "", "", 'align="center"');
-				print_liste_field_titre($langs->trans("Credit"), "", "", "", "", 'align="center"');
-				print_liste_field_titre($langs->trans("Amount"), "", "", "", "", 'align="center"');
+				print_liste_field_titre($langs->trans("Debit"), "", "", "", "", 'align="right"');
+				print_liste_field_titre($langs->trans("Credit"), "", "", "", "", 'align="right"');
+				print_liste_field_titre($langs->trans("Amount"), "", "", "", "", 'align="right"');
 				print_liste_field_titre($langs->trans("Sens"), "", "", "", "", 'align="center"');
 				print_liste_field_titre($langs->trans("Action"), "", "", "", "", 'width="60" align="center"');
 
 				print "</tr>\n";
 
-				foreach ( $book->linesmvt as $line ) {
+				foreach ($book->linesmvt as $line) {
 					$var = ! $var;
-					print '<tr' . $bc[$var] . '>';
+					print '<tr ' . $bc[$var] . '>';
 
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
@@ -417,7 +421,7 @@ if ($action == 'create') {
 
 				if ($action == "" || $action == 'add') {
 					$var = ! $var;
-					print '<tr' . $bc[$var] . '>';
+					print '<tr ' . $bc[$var] . '>';
 					print '<td>';
 					print $formventilation->select_account($account_number, 'account_number', 0, array (), 1, 1, '');
 					print '</td>';

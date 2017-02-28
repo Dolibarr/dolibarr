@@ -194,6 +194,8 @@ ChangeBinding=Canvia la comptabilització
 
 ## Admin
 ApplyMassCategories=Aplica categories massives
+AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
+CategoryDeleted=Category for the accounting account has been removed
 
 ## Export
 Exports=Exportacions
@@ -209,6 +211,7 @@ Modelcsv_ciel=Exporta cap a Sage Ciel Compta o Compta Evolution
 Modelcsv_quadratus=Exporta cap a Quadratus QuadraCompta
 Modelcsv_ebp=Exporta cap a EBP
 Modelcsv_cogilog=Exporta cap a Cogilog
+ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Inicialitza la comptabilitat

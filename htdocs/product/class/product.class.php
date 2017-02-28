@@ -132,7 +132,7 @@ class Product extends CommonObject
 	public $tva_tx;
 	
 	//! French VAT NPR (0 or 1)
-    	public $tva_npr=0;
+    public $tva_npr=0;
 	
 	//! Other local taxes
 	public $localtax1_tx;
@@ -248,7 +248,7 @@ class Product extends CommonObject
 	public $stats_commande=array();
 	public $stats_contrat=array();
 	public $stats_facture=array();
-    	public $stats_commande_fournisseur=array();
+    public $stats_commande_fournisseur=array();
 
 	public $multilangs=array();
 
@@ -272,7 +272,7 @@ class Product extends CommonObject
 
 	public $oldcopy;
 
-    	public $fk_price_expression;
+    public $fk_price_expression;
 
 	/**
 	 * @deprecated
@@ -302,6 +302,7 @@ class Product extends CommonObject
 	 */
 	public $price_autogen = 0;
 
+	
 	/**
 	 * Regular product
 	 */
@@ -319,6 +320,7 @@ class Product extends CommonObject
 	 */
 	const TYPE_STOCKKIT = 3;
 
+	
 	/**
 	 *  Constructor
 	 *
@@ -3635,17 +3637,17 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    Load information about stock of a product into stock_reel, stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
-	 *    This function need a lot of load. If you use it on list, use a cache to execute it one for each product id. 
+	 *    Load information about stock of a product into ->stock_reel, ->stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
+	 *    This function need a lot of load. If you use it on list, use a cache to execute it once for each product id. 
 	 *    If ENTREPOT_EXTRA_STATUS set, filtering on warehouse status possible.
 	 *
 	 *    @param      string   $option 		'' = Load all stock info, also from closed and internal warehouses, 
 	 *										'nobatch' = Do not load batch information, 
 	 *										'novirtual' = Do not load virtual stock,
-	 *										'warehouseopen' = Load stock from open warehouses,
-	 *										'warehouseclosed' = Load stock from closed warehouses, 
-	 *										'warehouseinternal' = Load stock from warehouses for internal correct/transfer only
-	 *    @return     int                  < 0 if KO, > 0 if OK
+	 *										'warehouseopen' = Load stock from open warehouses only,
+	 *										'warehouseclosed' = Load stock from closed warehouses only, 
+	 *										'warehouseinternal' = Load stock from warehouses for internal correction/transfer only
+	 *    @return     int                   < 0 if KO, > 0 if OK
 	 *    @see		  load_virtual_stock, getBatchInfo
 	 */
 	function load_stock($option='')
@@ -4223,9 +4225,10 @@ class Product extends CommonObject
 	/**
 	 *  Charge indicateurs this->nb de tableau de bord
 	 *
-	 *  @return     int         <0 si ko, >0 si ok
+	 *  @param     int     $type       0=Product, 1=Service
+	 *  @return    int                 <0 if KO, >0 if OK
 	 */
-	function load_state_board()
+	function load_state_board($type=0)
 	{
 		global $conf, $user;
 
@@ -4234,14 +4237,16 @@ class Product extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= ' WHERE p.entity IN ('.getEntity($this->element, 1).')';
-		$sql.= " AND p.fk_product_type <> 1";
+		if ($type == 1) $sql.= " AND p.fk_product_type = 1";
+		else $sql.= " AND p.fk_product_type <> 1";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			while ($obj=$this->db->fetch_object($resql))
 			{
-				$this->nb["products"]=$obj->nb;
+				if ($type == 1) $this->nb["services"]=$obj->nb;
+				else $this->nb["products"]=$obj->nb;
 			}
             $this->db->free($resql);
 			return 1;
@@ -4608,4 +4613,5 @@ class Product extends CommonObject
             dol_print_error($this->db);
         }
     }
+    
 }

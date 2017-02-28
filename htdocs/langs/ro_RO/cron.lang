@@ -17,14 +17,14 @@ CronMethodDoesNotExists= Clasa %s nu conține metoda %s
 # Menu
 EnabledAndDisabled=Activat și dezactivat
 # Page list
-CronLastOutput=Ieşirea ultimei rulări
-CronLastResult=Codul ultimului rezultat
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Comandă
 CronList=Joburi programate
 CronDelete=Şterge Joburi programate
-CronConfirmDelete=Sunteţi sigur că doriţi să ştergeţi aceaste job-uri ?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Sunteţi sigur că doriţi să executati  aceaste job-uri programate  acum ?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Modul de joburi programate permite să  se execute  job-uri  care au fost planificate
 CronTask=Job
 CronNone=Niciunul
@@ -39,7 +39,7 @@ CronMethod=Metoda
 CronModule=Modulul
 CronNoJobs=Niciun job înregistrat
 CronPriority=Prioritate
-CronLabel=Label
+CronLabel=Etichetă
 CronNbRun=Nr. lansări
 CronMaxRun=Nr. max. lansări
 CronEach=Fiecare

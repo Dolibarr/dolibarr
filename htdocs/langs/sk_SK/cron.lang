@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Read Scheduled job
-Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
+Permission23101 = Ukázať naplánovanú úlohu
+Permission23102 = Vytvoriť / upraviť naplánovanú úlohu
+Permission23103 = Odstrániť naplánovanú úlohu
+Permission23104 = Spustiť naplánovanú úlohu
 # Admin
 CronSetup= Naplánované úlohy správy Nastavenie
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs
@@ -17,14 +17,14 @@ CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronLastOutput=Posledný beh výstup
-CronLastResult=Posledný kód výsledku
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Príkaz
-CronList=Scheduled jobs
+CronList=Naplánované úlohy
 CronDelete=Delete scheduled jobs
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allow to execute job that have been planned
 CronTask=Práca
 CronNone=Nikto
@@ -33,13 +33,13 @@ CronDtEnd=Not after
 CronDtNextLaunch=Ďalšie prevedenie
 CronDtLastLaunch=Start date of latest execution
 CronDtLastResult=End date of latest execution
-CronFrequency=Frequency
+CronFrequency=Frekvencia
 CronClass=Class
 CronMethod=Metóda
 CronModule=Modul
 CronNoJobs=Žiadny registrovaný práce
 CronPriority=Priorita
-CronLabel=Label
+CronLabel=Štítok
 CronNbRun=Nb. začať
 CronMaxRun=Max nb. launch
 CronEach=Každý
@@ -65,7 +65,7 @@ CronMethodHelp=Objekt spôsob štartu. <BR> Napr načítať metódy objektu výr
 CronArgsHelp=Metóda argumenty. <BR> Napr načítať metódy objektu výrobku Dolibarr / htdocs / produktu / trieda / product.class.php, môže byť hodnota paramters byť <i>0, ProductRef</i>
 CronCommandHelp=Systém príkazového riadka spustiť.
 CronCreateJob=Create new Scheduled Job
-CronFrom=From
+CronFrom=Z
 # Info
 # Common
 CronType=Job type

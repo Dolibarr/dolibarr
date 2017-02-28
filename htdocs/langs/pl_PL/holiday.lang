@@ -76,8 +76,9 @@ BoxTitleLastLeaveRequests=Ostatnie %s modyfikowanych wniosków urlopowych
 HolidaysMonthlyUpdate=Miesięczna aktualizacja
 ManualUpdate=Ręczna aktualizacja
 HolidaysCancelation=Anulowanie wniosku urlopowego
-EmployeeLastname=Nazwisko pracownika
-EmployeeFirstname=Imię pracownika
+EmployeeLastname=Employee last name
+EmployeeFirstname=Employee first name
+TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

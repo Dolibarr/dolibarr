@@ -3,11 +3,9 @@ This file describe changes made on external library after beeing included
 in Dolibarr root.
 
 
-
 ALL:
 ----
-Replace "& new" by "new"
-
+Check "DOL_CHANGE"
 
 
 CKEDITOR:
@@ -31,21 +29,6 @@ By
 * In file nusoap.php, to avoid a warning,
 Replace call to serialize_val with no bugged value
 
-
-
-FPDI:
------
-Replace:
-	$this->_readXref($this->_xref, $this->_findXref());
-with:
-    try {
-	        $this->_readXref($this->_xref, $this->_findXref());
-    }
-    catch(Exception $e)
-    {
-        	print $e->getMessage();
-        	exit;
-    }
 
 
 

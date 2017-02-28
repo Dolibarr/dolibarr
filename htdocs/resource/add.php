@@ -151,7 +151,7 @@ if (! $action)
         print $langs->trans('ResourceFormLabel_'.$field);
         print '</td>';
         print '<td>';
-        print '<input type="text" name="'.$field.'" value="'.$$field.'" />';
+        print '<input class="flat maxwidthonsmartphone" type="text" name="'.$field.'" value="'.$$field.'" />';
         print '</td>';
         print '</tr>';
 

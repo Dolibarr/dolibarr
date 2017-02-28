@@ -26,6 +26,8 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 /**
  *	Class to manage predefined services
+ *
+ *  @deprecated     Use class Product compatible for both product and services
  */
 class Service extends CommonObject
 {

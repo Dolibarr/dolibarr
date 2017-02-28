@@ -239,6 +239,7 @@ else
 /*
  * List of latest withdraws
  */
+/*
 $limit=5;
 
 print load_fiche_titre($langs->trans("LastWithdrawalReceipts",$limit),'','');
@@ -291,6 +292,7 @@ else
 {
     dol_print_error($db);
 }
+*/
 
 llxFooter();
 $db->close();

@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Read Scheduled job
-Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
+Permission23101 = Lees geplande taak
+Permission23102 = Maak/wijzig geplande taak
+Permission23103 = Verwijder geplande taak
+Permission23104 = Voer geplande taak uit
 # Admin
 CronSetup= Beheer taakplanning
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs
@@ -17,14 +17,14 @@ CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronLastOutput=Last run output
-CronLastResult=Last result code
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Commando
-CronList=Scheduled jobs
+CronList=Geplande taken
 CronDelete=Delete scheduled jobs
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allow to execute job that have been planned
 CronTask=Taak
 CronNone=Geen
@@ -33,13 +33,13 @@ CronDtEnd=Not after
 CronDtNextLaunch=Volgende uitvoering
 CronDtLastLaunch=Start date of latest execution
 CronDtLastResult=End date of latest execution
-CronFrequency=Frequency
+CronFrequency=Frequentie
 CronClass=Class
 CronMethod=Methode
 CronModule=Module
 CronNoJobs=Geen taken opgenomen
 CronPriority=Prioriteit
-CronLabel=Label
+CronLabel=Naam
 CronNbRun=Nb. launch
 CronMaxRun=Max nb. launch
 CronEach=Elke
@@ -65,7 +65,7 @@ CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of 
 CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
 CronCommandHelp=The system command line to execute.
 CronCreateJob=Create new Scheduled Job
-CronFrom=From
+CronFrom=Van
 # Info
 # Common
 CronType=Job type

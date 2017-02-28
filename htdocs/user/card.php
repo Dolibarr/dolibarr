@@ -1827,14 +1827,6 @@ else
             }
             print '</td></tr>';
 
-            // Photo
-            print '<tr>';
-            print '<td>'.$langs->trans("Photo").'</td>';
-            print '<td>';
-            print $form->showphoto('userphoto',$object,60,0,$caneditfield,'photowithmargin','small');
-            print '</td>';
-            print '</tr>';
-
             // Employee
             print '<tr>';
             print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
@@ -2237,6 +2229,14 @@ else
 			print '</td></tr>';
 		}
 
+		// Photo
+		print '<tr>';
+		print '<td>'.$langs->trans("Photo").'</td>';
+		print '<td>';
+		print $form->showphoto('userphoto',$object,60,0,$caneditfield,'photowithmargin','small');
+		print '</td>';
+		print '</tr>';
+		
 		// Categories
 		if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) 
 		{

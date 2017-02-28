@@ -145,6 +145,7 @@ class HookManager
 			    'formatNotificationMessage',
 			    'getFormMail',
 			    'getIdProfUrl',
+			    'getDirList',
 				'moveUploadedFile',
 			    'pdf_build_address',
 				'pdf_writelinedesc',

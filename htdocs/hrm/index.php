@@ -77,40 +77,42 @@ print load_fiche_titre($langs->trans("HRMArea"),'', 'title_hrm.png');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
-if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-	$langs->load("holiday");
-    $listofsearchfields['search_holiday']=array('text'=>'TitreRequestCP');
-}
-if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
-{
-	$langs->load("trips");
-    $listofsearchfields['search_deplacement']=array('text'=>'ExpenseReport');
-}
-if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
-{
-	$langs->load("trips");
-    $listofsearchfields['search_expensereport']=array('text'=>'ExpenseReport');
-}
-if (count($listofsearchfields))
-{
-	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover centpercent">';
-	$i=0;
-	foreach($listofsearchfields as $key => $value)
-	{
-		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-		print '</tr>';
-		$i++;
-	}
-	print '</table>';	
-	print '</form>';
-	print '<br>';
+    if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
+    {
+    	$langs->load("holiday");
+        $listofsearchfields['search_holiday']=array('text'=>'TitreRequestCP');
+    }
+    if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
+    {
+    	$langs->load("trips");
+        $listofsearchfields['search_deplacement']=array('text'=>'ExpenseReport');
+    }
+    if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
+    {
+    	$langs->load("trips");
+        $listofsearchfields['search_expensereport']=array('text'=>'ExpenseReport');
+    }
+    if (count($listofsearchfields))
+    {
+    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<table class="noborder nohover centpercent">';
+    	$i=0;
+    	foreach($listofsearchfields as $key => $value)
+    	{
+    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    		print '<tr '.$bc[false].'>';
+    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    		print '</tr>';
+    		$i++;
+    	}
+    	print '</table>';	
+    	print '</form>';
+    	print '<br>';
+    }
 }
 
 

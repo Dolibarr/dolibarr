@@ -769,13 +769,14 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
     	// RUM
     	print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
-	    print '<td colspan="4"><input size="30" type="text" name="rum" value="'.dol_escape_htmltag($account->rum).'"></td></tr>';
+	print '<td colspan="4"><input size="30" type="text" name="rum" value="'.dol_escape_htmltag($account->rum).'"></td></tr>';
 
-	    // FRSTRECUR
-	    print '<tr><td>'.$langs->trans("WithdrawMode").'</td>';
-	    print '<td colspan="4"><input size="30" type="text" name="frstrecur" value="'.dol_escape_htmltag(GETPOST('frstrecur')?GETPOST('frstrecur'):$account->frstrecur).'"></td></tr>';
+	print '<td colspan="4">';
+	$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
+	print $form->selectarray("frstrecur", $tblArraychoice, dol_escape_htmltag(GETPOST('frstrecur')?GETPOST('frstrecur'):$account->frstrecur), 0);
+	print '</td></tr>';
 
-	    print '</table>';
+	print '</table>';
     }
 
     print '</div>';
@@ -859,19 +860,21 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
     if ($conf->prelevement->enabled)
     {
-		print '<br>';
+	print '<br>';
 
     	print '<table class="border" width="100%">';
 
     	// RUM
     	print '<tr><td class="titlefieldcreate">'.$langs->trans("RUM").'</td>';
-	    print '<td>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
+	print '<td>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
 
-	    // FRSTRECUR
-	    print '<tr><td>'.$langs->trans("WithdrawMode").'</td>';
-	    print '<td><input size="30" type="text" name="frstrecur" value="'.(isset($_POST['frstrecur'])?GETPOST('frstrecur'):'FRST').'"></td></tr>';
+	print '<td>';
+	$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
+	print $form->selectarray("frstrecur", $tblArraychoice, (isset($_POST['frstrecur'])?GETPOST('frstrecur'):'FRST'), 0);
+	print '</td></tr>';
 
-	    print '</table>';
+
+	print '</table>';
     }
 
     print '</div>';

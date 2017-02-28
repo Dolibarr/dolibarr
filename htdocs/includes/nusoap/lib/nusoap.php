@@ -573,7 +573,7 @@ class nusoap_base {
 	                        }
 							$array_types[$tt] = 1;
 							// TODO: for literal, the name should be $name
-							//DOL_CHANGE This is to have tag name with name reported by wsdl and not "item"
+							// DOL_CHANGE This is to have tag name with name reported by wsdl and not "item"
                             //$xml .= $this->serialize_val($v,'item',false,false,false,false,$use);
 							$tmp=preg_replace('/s$/i','',$name);
                             $xml .= $this->serialize_val($v,$tmp?$tmp:'item',false,false,false,false,$use);

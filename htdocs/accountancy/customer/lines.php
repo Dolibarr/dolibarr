@@ -170,31 +170,31 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_STANDARD . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_DEPOSIT . "," . Facture::TYPE_SITUATION . ")";
 }
 if (strlen(trim($search_invoice))) {
-	$sql .= " AND f.facnumber like '%" . $search_invoice . "%'";
+	$sql .= natural_search("f.facnumber", $search_invoice);
 }
 if (strlen(trim($search_ref))) {
-	$sql .= " AND p.ref like '%" . $search_ref . "%'";
+	$sql .= natural_search("p.ref", $search_ref);
 }
 if (strlen(trim($search_label))) {
-	$sql .= " AND p.label like '%" . $search_label . "%'";
+	$sql .= natural_search("p.label", $search_label);
 }
 if (strlen(trim($search_desc))) {
-	$sql .= " AND fd.description like '%" . $search_desc . "%'";
+	$sql .= natural_search("fd.description", $search_desc);
 }
 if (strlen(trim($search_amount))) {
-	$sql .= " AND fd.total_ht like '%" . $search_amount . "%'";
+	$sql .= natural_search("fd.total_ht", $search_amount, 1);
 }
 if (strlen(trim($search_account))) {
-	$sql .= " AND aa.account_number like '%" . $search_account . "%'";
+	$sql .= natural_search("aa.account_number", $search_account);
 }
 if (strlen(trim($search_vat))) {
-	$sql .= " AND (fd.tva_tx like '" . $search_vat . "%')";
+	$sql .= natural_search("fd.tva_tx", $search_vat);
 }
 if (strlen(trim($search_country))) {
-	$sql .= " AND (co.label like'" . $search_country . "%')";
+	$sql .= natural_search("co.label", $search_country);
 }
 if (strlen(trim($search_tvaintra))) {
-	$sql .= " AND (s.tva_intra like'" . $search_tvaintra . "%')";
+	$sql .= natural_search("s.tva_intra", $search_tva_intra);
 }
 $sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")";    // We don't share object for accountancy
 $sql .= $db->order($sortfield, $sortorder);
@@ -283,7 +283,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tavintra" value="' . dol_escape_htmltag($search_tavintra) . '"></td>';
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre" align="center">';
 	$searchpitco=$form->showFilterAndCheckAddButtons(1);
 	print $searchpitco;
 	print "</td></tr>\n";

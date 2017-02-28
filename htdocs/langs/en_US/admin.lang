@@ -224,7 +224,9 @@ OfficialDemo=Dolibarr online demo
 OfficialMarketPlace=Official market place for external modules/addons
 OfficialWebHostingService=Referenced web hosting services (Cloud hosting)
 ReferencedPreferredPartners=Preferred Partners
-OtherResources=Autres ressources
+OtherResources=Other resources
+ExternalResources=External resources
+SocialNetworks=Social Networks
 ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=This area can help you to get a Help support service on Dolibarr.
@@ -842,7 +844,7 @@ DictionaryStaff=Staff
 DictionaryAvailability=Delivery delay
 DictionaryOrderMethods=Ordering methods
 DictionarySource=Origin of proposals/orders
-DictionaryAccountancyCategory=Accounting categories
+DictionaryAccountancyCategory=Accounting account groups
 DictionaryAccountancysystem=Models for chart of accounts
 DictionaryEMailTemplates=Emails templates
 DictionaryUnits=Units

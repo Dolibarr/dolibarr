@@ -2447,7 +2447,7 @@ else
 			$liste=array();
 			foreach ($object->thirdparty_and_contact_email_array(1) as $key=>$value) $liste[$key]=$value;
 			$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
-			$formmail->withtofree=0;
+			$formmail->withtofree=1;
 			$formmail->withtocc=$liste;
 			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
 			$formmail->withfile=2;

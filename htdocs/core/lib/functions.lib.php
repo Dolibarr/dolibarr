@@ -271,8 +271,13 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	        }
 	        elseif ($reg[1] == 'YEAR')
 	        {
-	           $tmp=dol_getdate(dol_now(), true);
-	           $out = $tmp['year'];
+	            $tmp=dol_getdate(dol_now(), true);
+	            $out = $tmp['year'];
+	        }
+	        elseif ($reg[1] == 'MYCOUNTRYID')
+	        {
+	            global $mysoc;
+	            $out = $mysoc->country_id;
 	        }
 	    }
 
@@ -4322,7 +4327,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 
 	$path = '';
 
-	$arrayforoldpath=array('cheque','user','category','holiday','shipment','supplier_invoice','invoice_supplier','mailing');
+	$arrayforoldpath=array('cheque','user','category','holiday','shipment','supplier_invoice','invoice_supplier','mailing','supplier_payment');
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';
 	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
 	{
@@ -5533,6 +5538,7 @@ function printCommonFooter($zone='private')
     	{
         	print '<!-- Set handler to switch left menu page -->'."\n";
         	print 'jQuery(".menuhider").click(function() {';
+        	print '  console.log("We click on .menuhider");'."\n";
         	print "  $('.side-nav').toggle();";
         	if ($conf->theme == 'md') print "  $('.login_block').toggle();";
         	print '});'."\n";
