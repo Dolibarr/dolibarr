@@ -140,7 +140,7 @@ if ($action == 'adduser' || $action =='removeuser')
 {
     if ($caneditperms)
     {
-        if ($userid)
+        if ($userid > 0)
         {
             $object->fetch($id);
 			$object->oldcopy = clone $object;

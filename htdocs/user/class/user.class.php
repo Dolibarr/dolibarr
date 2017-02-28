@@ -1855,8 +1855,9 @@ class User extends CommonObject
 		{
 			if (! $error && ! $notrigger)
 			{
-			    $this->newgroupid=$group;
-
+			    $this->newgroupid=$group;    // deprecated. Remove this.
+			    $this->context = array('audit'=>$langs->trans("UserSetInGroup"), 'newgroupid'=>$group);
+			     
 			    // Call trigger
                 $result=$this->call_trigger('USER_SETINGROUP',$user);
 	            if ($result < 0) { $error++; }
@@ -1909,8 +1910,9 @@ class User extends CommonObject
 		{
 			if (! $error && ! $notrigger)
 			{
-			    $this->oldgroupid=$group;
-
+			    $this->oldgroupid=$group;    // deprecated. Remove this.
+			    $this->context = array('audit'=>$langs->trans("UserRemovedFromGroup"), 'oldgroupid'=>$group);
+			    
 			    // Call trigger
                 $result=$this->call_trigger('USER_REMOVEFROMGROUP',$user);
                 if ($result < 0) { $error++; }
