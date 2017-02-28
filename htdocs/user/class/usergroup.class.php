@@ -249,7 +249,7 @@ class UserGroup extends CommonObject
 	}
 
 	/**
-	 *    Ajoute un droit a l'utilisateur
+	 *    Add a permission to a group
 	 *
 	 *    @param      int		$rid         id du droit a ajouter
 	 *    @param      string	$allmodule   Ajouter tous les droits du module allmodule
@@ -258,10 +258,10 @@ class UserGroup extends CommonObject
 	 */
 	function addrights($rid,$allmodule='',$allperms='')
 	{
-		global $conf;
+		global $conf, $user, $langs;
 
 		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms");
-		$err=0;
+		$error=0;
 		$whereforadd='';
 
 		$this->db->begin();
@@ -283,7 +283,7 @@ class UserGroup extends CommonObject
 				$subperms=$obj->subperms;
 			}
 			else {
-				$err++;
+				$error++;
 				dol_print_error($this->db);
 			}
 
@@ -323,23 +323,33 @@ class UserGroup extends CommonObject
 					$nid = $obj->id;
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights WHERE fk_usergroup = $this->id AND fk_id=".$nid;
-					if (! $this->db->query($sql)) $err++;
+					if (! $this->db->query($sql)) $error++;
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_rights (fk_usergroup, fk_id) VALUES ($this->id, $nid)";
-					if (! $this->db->query($sql)) $err++;
+					if (! $this->db->query($sql)) $error++;
 
 					$i++;
 				}
 			}
 			else
 			{
-				$err++;
+				$error++;
 				dol_print_error($this->db);
 			}
+			
+			if (! $error)
+			{
+			    $this->context = array('audit'=>$langs->trans("PermissionsAdd"));
+			
+			    // Call trigger
+			    $result=$this->call_trigger('GROUP_MODIFY',$user);
+			    if ($result < 0) { $error++; }
+			    // End call triggers
+			}			
 		}
 
-		if ($err) {
+		if ($error) {
 			$this->db->rollback();
-			return -$err;
+			return -$error;
 		}
 		else {
 			$this->db->commit();
@@ -350,7 +360,7 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *    Retire un droit a l'utilisateur
+	 *    Remove a permission from group
 	 *
 	 *    @param      int		$rid         id du droit a retirer
 	 *    @param      string	$allmodule   Retirer tous les droits du module allmodule
@@ -359,9 +369,9 @@ class UserGroup extends CommonObject
 	 */
 	function delrights($rid,$allmodule='',$allperms='')
 	{
-		global $conf;
+		global $conf, $user, $langs;
 
-		$err=0;
+		$error=0;
 		$wherefordel='';
 
 		$this->db->begin();
@@ -383,7 +393,7 @@ class UserGroup extends CommonObject
 				$subperms=$obj->subperms;
 			}
 			else {
-				$err++;
+				$error++;
 				dol_print_error($this->db);
 			}
 
@@ -424,21 +434,31 @@ class UserGroup extends CommonObject
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
 					$sql.= " WHERE fk_usergroup = $this->id AND fk_id=".$nid;
-					if (! $this->db->query($sql)) $err++;
+					if (! $this->db->query($sql)) $error++;
 
 					$i++;
 				}
 			}
 			else
 			{
-				$err++;
+				$error++;
 				dol_print_error($this->db);
+			}
+			
+			if (! $error)
+			{
+		        $this->context = array('audit'=>$langs->trans("PermissionsDelete"));
+		        
+			    // Call trigger
+			    $result=$this->call_trigger('GROUP_MODIFY',$user);
+			    if ($result < 0) { $error++; }
+			    // End call triggers
 			}
 		}
 
-		if ($err) {
+		if ($error) {
 			$this->db->rollback();
-			return -$err;
+			return -$error;
 		}
 		else {
 			$this->db->commit();
