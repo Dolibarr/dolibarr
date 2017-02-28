@@ -2177,7 +2177,9 @@ td.border, div.tagtable div div.border {
 
 
 /* Main boxes */
-
+.ficheaddleft table.noborder {
+	margin: 0px 0px 0px 0px;
+}
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 
@@ -2659,7 +2661,10 @@ div .tdtop {
 /*
  *  Boxes
  */
-
+ 
+.ficheaddleft div.boxstats {
+    border: none;
+}
 .boxstats {
     <?php print "float: ".$left.";\n"; ?>
     margin: 3px;
