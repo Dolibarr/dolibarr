@@ -210,7 +210,7 @@ if (empty($user->societe_id))
 	                   'Contact',
 	                   'Adherent',
 	                   'Product',
-	                   'Service',
+	                   'Product',
 	                   'Propal',
 	                   'Commande',
 	                   'Facture',
@@ -338,7 +338,10 @@ if (empty($user->societe_id))
 	                $board->load_state_board($user);
 	                $boardloaded[$classe]=$board;
 	            }
-	            else $board=$boardloaded[$classe];
+	            else 
+	            {
+	                $board=$boardloaded[$classe];
+	            }
 
 	            $var=!$var;
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);

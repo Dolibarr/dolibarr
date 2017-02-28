@@ -4223,29 +4223,27 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  Charge indicateurs this->nb de tableau de bord
+	 *  Load indicators this->nb for the dashboard
 	 *
-	 *  @param     int     $type       0=Product, 1=Service
 	 *  @return    int                 <0 if KO, >0 if OK
 	 */
-	function load_state_board($type=0)
+	function load_state_board()
 	{
 		global $conf, $user;
 
 		$this->nb=array();
 
-		$sql = "SELECT count(p.rowid) as nb";
+		$sql = "SELECT count(p.rowid) as nb, fk_product_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= ' WHERE p.entity IN ('.getEntity($this->element, 1).')';
-		if ($type == 1) $sql.= " AND p.fk_product_type = 1";
-		else $sql.= " AND p.fk_product_type <> 1";
+		$sql.= ' GROUP BY fk_product_type';
 
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			while ($obj=$this->db->fetch_object($resql))
 			{
-				if ($type == 1) $this->nb["services"]=$obj->nb;
+				if ($obj->fk_product_type == 1) $this->nb["services"]=$obj->nb;
 				else $this->nb["products"]=$obj->nb;
 			}
             $this->db->free($resql);
