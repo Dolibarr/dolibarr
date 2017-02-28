@@ -1245,6 +1245,7 @@ div.menu_titre {
 	padding-bottom: 4px;
 	overflow: hidden;
     text-overflow: ellipsis;
+    width: 188px;				/* required to have overflow working. must be same than menu_contenu */
 }
 .mainmenuaspan
 {
@@ -1627,6 +1628,7 @@ div.vmenu, td.vmenu {
 	padding-bottom: 3px;
 	overflow: hidden;
     text-overflow: ellipsis;
+    width: 188px;				/* required to have overflow working. must be same than .menu_titre */
 }
 #menu_contenu_logo { padding-top: 0; }
 .companylogo { }
