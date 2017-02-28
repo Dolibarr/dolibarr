@@ -924,8 +924,8 @@ print "</tr>";
 print "</table>";
 print '</div>';
 
-if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
-	
+if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
+{
 	print '<br><br>';
 	print_titre($langs->trans('AddNewProductStockWarehouse'));
 	//print '<br />';
@@ -944,11 +944,11 @@ if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 	$pse = new ProductStockEntrepot($db);
 	$lines = $pse->fetchAll(GETPOST('id'));
 	
-	if(!empty($lines)) {
-		
+	if (!empty($lines)) 
+	{
 		$var=false;
-		foreach($lines as $line) {
-			
+		foreach($lines as $line) 
+		{
 			$ent = new Entrepot($db);
 			$ent->fetch($line['fk_entrepot']);
 			print '<tr '.$bc[$var].'><td width="40%" colspan="4">'.$ent->getNomUrl(3).'</td>';
@@ -957,15 +957,12 @@ if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 			print '<td align="right"><a href="?id='.GETPOST('id').'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse">'.img_delete().'</a></td>';
 			print '</tr>';
 			$var=!$var;
-			
 		}
-
 	}
 	
 	print "</table>";
 	
 	print '</form>';
-	
 }
 
 llxFooter();
