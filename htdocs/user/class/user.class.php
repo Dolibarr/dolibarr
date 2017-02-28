@@ -1859,7 +1859,7 @@ class User extends CommonObject
 			    $this->context = array('audit'=>$langs->trans("UserSetInGroup"), 'newgroupid'=>$group);
 			     
 			    // Call trigger
-                $result=$this->call_trigger('USER_SETINGROUP',$user);
+                $result=$this->call_trigger('USER_MODIFY',$user);
 	            if ($result < 0) { $error++; }
                 // End call triggers
 			}
@@ -1914,7 +1914,7 @@ class User extends CommonObject
 			    $this->context = array('audit'=>$langs->trans("UserRemovedFromGroup"), 'oldgroupid'=>$group);
 			    
 			    // Call trigger
-                $result=$this->call_trigger('USER_REMOVEFROMGROUP',$user);
+                $result=$this->call_trigger('USER_MODIFY',$user);
                 if ($result < 0) { $error++; }
                 // End call triggers
 			}
