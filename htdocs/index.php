@@ -311,7 +311,7 @@ if (empty($user->societe_id))
 	                    "companies",
 	                    "members",
 	                    "products",
-	                    "produts",
+	                    "products",
 	                    "propal",
 	                    "orders",
             	        "bills",
