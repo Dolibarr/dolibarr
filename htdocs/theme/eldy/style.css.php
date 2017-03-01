@@ -286,19 +286,21 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
 
-    border: 1px solid #C0C0C0;
-    /* v6 border: none;
+    /* border: 1px solid #C0C0C0; */
+    border: none;
     border-bottom: 1px solid #C0C0C0;
-    outline: none !important;*/
+    outline: none;
     margin: 0px 0px 0px 0px;
 }
-
+input {
+    line-height: 17px;
+}
 input, select {
-	/* v6 border-bottom: solid 1px rgba(0,0,0,.2);*/
-	border-radius: 2px;
+	border-bottom: solid 1px rgba(0,0,0,.2);
+	/*border-radius: 2px;
 	border: solid 1px rgba(0,0,0,.3);
 	border-top:solid 1px rgba(0,0,0,.3);
-	border-bottom:solid 1px rgba(0,0,0,.2);
+	border-bottom:solid 1px rgba(0,0,0,.2);*/
 
 	padding:4px;
 	margin-left:0px;
