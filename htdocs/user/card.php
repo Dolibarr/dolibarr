@@ -580,6 +580,11 @@ if (empty($reshook)) {
             setEventMessages($ldap->error, $ldap->errors, 'errors');
         }
     }
+		
+    // Actions to build doc
+    $upload_dir = $conf->user->dir_output;
+    $permissioncreate=$user->rights->user->user->creer;
+    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
@@ -2284,8 +2289,8 @@ else
         $filename = dol_sanitizeFileName($object->ref);
         $filedir = $conf->user->dir_output . "/" . dol_sanitizeFileName($object->ref);
         $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-        $genallowed = $user->rights->user->creer;
-        $delallowed = $user->rights->user->supprimer;
+        $genallowed = $user->rights->user->user->creer;
+        $delallowed = $user->rights->user->user->supprimer;
 
         $var = true;
 

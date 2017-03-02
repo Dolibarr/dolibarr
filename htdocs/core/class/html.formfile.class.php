@@ -416,8 +416,8 @@ class FormFile
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once DOL_DOCUMENT_ROOT.'/core/modules/user/modules_user.php';
-                    $modellist=ModelePDFProduct::liste_modeles($this->db);
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/user/modules_user.class.php';
+                    $modellist=ModelePDFUser::liste_modeles($this->db);
                 }
             }
             elseif ($modulepart == 'group')
