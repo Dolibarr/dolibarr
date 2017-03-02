@@ -109,7 +109,7 @@ function marges_prepare_head()
  * @param 	float	$localtax2_tx		Vat rate special 2 (not used)
  * @param 	int		$fk_pa				Id of buying price (prefer set this to 0 and provide $paht instead. With id, buying price may have change)
  * @param 	float	$paht				Buying price without tax
- * @return	array						Array of margin info
+ * @return	array						Array of margin info (buying price, marge rate, marque rate)
  */
 function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, $fk_pa, $paht)
 {
@@ -134,7 +134,7 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 	}
 	else
 	{
-		$paht_ret	= $paht;
+		$paht_ret = $paht;
 	}
 
 	// Calculate selling unit price including line discount

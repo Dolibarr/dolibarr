@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - propal
 ProposalCard=Angebotskarte
-LastModifiedProposals=Die letzen %s bearbeiteten Angebote
 PropalsToClose=Zu schliessende Angebote
 DefaultProposalDurationValidity=Standardmässige Gültigkeitsdatuer (Tage)
 UseCustomerContactAsPropalRecipientIfExist=Falls vorhanden die Adresse des Kundenkontakts statt des Geschäftspartners verwenden

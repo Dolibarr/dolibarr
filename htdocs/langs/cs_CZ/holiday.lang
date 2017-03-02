@@ -76,8 +76,9 @@ BoxTitleLastLeaveRequests=Latest %s modified leave requests
 HolidaysMonthlyUpdate=Měsíční aktualizace
 ManualUpdate=Ruční aktualizace
 HolidaysCancelation=Stornovat dovolenou
-EmployeeLastname=Employee lastname
-EmployeeFirstname=Employee firstname
+EmployeeLastname=Employee last name
+EmployeeFirstname=Employee first name
+TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

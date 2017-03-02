@@ -1328,7 +1328,16 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             $cssclass.= " unmovable";
                         }
                     }
-                    else $cssclass.= " movable";
+                    else{
+                        if ($user->rights->agenda->allactions->create ||
+                            (($event->authorid == $user->id || $event->userownerid == $user->id) && $user->rights->agenda->myactions->create))
+                        {
+                            $cssclass.= " movable";
+                        }else{
+                            $cssclass.= " unmovable";
+                        }
+
+                    }
 
                     $h=''; $nowrapontd=1;
                     if ($action == 'show_day')  { $h='height: 100%; '; $nowrapontd=0; }

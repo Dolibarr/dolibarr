@@ -323,7 +323,7 @@ class BonPrelevement extends CommonObject
     /**
      * Set credite and set status of linked invoices
      *
-     * @return		int		<0 if KO, >0 if OK
+     * @return		int		<0 if KO, >=0 if OK
      */
     function set_credite()
     {

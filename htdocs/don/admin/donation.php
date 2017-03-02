@@ -209,15 +209,149 @@ $head = donation_admin_prepare_head();
 
 dol_fiche_head($head, 'general', $langs->trans("Donations"), 0, 'payment');
 
-/*
- *  Params
- */
-print load_fiche_titre($langs->trans("Options"));
+
+// Document templates
+print load_fiche_titre($langs->trans("DonationsModels"), '', '');
+
+// Defined the template definition table
+$type='donation';
+$def = array();
+$sql = "SELECT nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql.= " WHERE type = '".$type."'";
+$resql=$db->query($sql);
+if ($resql)
+{
+	$i = 0;
+	$num_rows=$db->num_rows($resql);
+	while ($i < $num_rows)
+	{
+		$array = $db->fetch_array($resql);
+		array_push($def, $array[0]);
+		$i++;
+	}
+}
+else
+{
+	dol_print_error($db);
+}
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
-//print '<td width="80">&nbsp;</td>';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
+print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
+print "</tr>\n";
+
+clearstatcache();
+
+$handle=opendir($dir);
+
+$var=True;
+if (is_resource($handle))
+{
+	while (($file = readdir($handle))!==false)
+	{
+		if (preg_match('/\.modules\.php$/i',$file))
+		{
+			$var = !$var;
+			$name = substr($file, 0, dol_strlen($file) -12);
+			$classname = substr($file, 0, dol_strlen($file) -12);
+
+			require_once $dir.'/'.$file;
+			$module=new $classname($db);
+
+			// Show modules according to features level
+			if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+			if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
+			if ($module->isEnabled())
+			{
+				print '<tr '.$bc[$var].'><td width=\"100\">';
+				echo $module->name;
+				print '</td>';
+				print '<td>';
+				print $module->description;
+				print '</td>';
+
+				// Active
+				if (in_array($name, $def))
+				{
+					if ($conf->global->DON_ADDON_MODEL == $name)
+					{
+						print "<td align=\"center\">\n";
+						print img_picto($langs->trans("Enabled"),'switch_on');
+						print '</td>';
+					}
+					else
+					{
+						print "<td align=\"center\">\n";
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+						print '</td>';
+					}
+				}
+				else
+				{
+					print "<td align=\"center\">\n";
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+					print "</td>";
+				}
+
+				// Default
+				if ($conf->global->DON_ADDON_MODEL == "$name")
+				{
+					print "<td align=\"center\">";
+					print img_picto($langs->trans("Default"),'on');
+					print '</td>';
+				}
+				else
+				{
+					print "<td align=\"center\">";
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+					print '</td>';
+				}
+
+				// Info
+				$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+				$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+				if ($module->type == 'pdf')
+				{
+					$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+				}
+				$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+				$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+				$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+				print '<td align="center">';
+				print $form->textwithpicto('',$htmltooltip,-1,0);
+				print '</td>';
+
+				// Preview
+				print '<td align="center">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"),'generic').'</a>';
+				print '</td>';
+
+				print "</tr>\n";
+			}
+		}
+	}
+	closedir($handle);
+}
+
+print '</table><br>';
+
+/*
+ *  Params
+ */
+print load_fiche_titre($langs->trans("Options"), '', '');
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameters").'</td>';
+print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
+print '<td></td>';
 print "</tr>\n";
 $var=true;
 
@@ -228,7 +362,7 @@ print '<input type="hidden" name="action" value="set_DONATION_ACCOUNTINGACCOUNT"
 $var=! $var;
 print '<tr '.$bc[$var].'>';
 
-print '<td width="50%">';
+print '<td>';
 $label = $langs->trans("AccountAccounting");
 print '<label for="DONATION_ACCOUNTINGACCOUNT">' . $label . '</label></td>';
 print '<td>';
@@ -251,8 +385,8 @@ print '<input type="hidden" name="action" value="set_DONATION_MESSAGE" />';
 
 $var=! $var;
 print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeTextOnDonations").'<br>';
-print '<textarea name="DONATION_MESSAGE" class="flat" cols="120">'.$conf->global->DONATION_MESSAGE.'</textarea>';
+print $langs->trans("FreeTextOnDonations").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
+print '<textarea name="DONATION_MESSAGE" class="flat" cols="80">'.$conf->global->DONATION_MESSAGE.'</textarea>';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
@@ -266,7 +400,7 @@ print '</form>';
 if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 {
 	print '<br>';
-	print load_fiche_titre($langs->trans("FrenchOptions"));
+	print load_fiche_titre($langs->trans("FrenchOptions"), '', '');
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -316,139 +450,6 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 	print '</tr>';
 	print "</table>\n";
 }
-
-// Document templates
-print '<br>';
-print load_fiche_titre($langs->trans("DonationsModels"));
-
-// Defined the template definition table
-$type='donation';
-$def = array();
-$sql = "SELECT nom";
-$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql.= " WHERE type = '".$type."'";
-$resql=$db->query($sql);
-if ($resql)
-{
-    $i = 0;
-    $num_rows=$db->num_rows($resql);
-    while ($i < $num_rows)
-    {
-        $array = $db->fetch_array($resql);
-        array_push($def, $array[0]);
-        $i++;
-    }
-}
-else
-{
-    dol_print_error($db);
-}
-
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
-print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
-print "</tr>\n";
-
-clearstatcache();
-
-$handle=opendir($dir);
-
-$var=True;
-if (is_resource($handle))
-{
-    while (($file = readdir($handle))!==false)
-    {
-        if (preg_match('/\.modules\.php$/i',$file))
-        {
-            $var = !$var;
-            $name = substr($file, 0, dol_strlen($file) -12);
-            $classname = substr($file, 0, dol_strlen($file) -12);
-
-            require_once $dir.'/'.$file;
-            $module=new $classname($db);
-
-            // Show modules according to features level
-            if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-            if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
-            if ($module->isEnabled())
-            {
-                print '<tr '.$bc[$var].'><td width=\"100\">';
-                echo $module->name;
-                print '</td>';
-                print '<td>';
-                print $module->description;
-                print '</td>';
-
-                // Active
-                if (in_array($name, $def))
-                {
-                    if ($conf->global->DON_ADDON_MODEL == $name)
-                    {
-						print "<td align=\"center\">\n";
-                    	print img_picto($langs->trans("Enabled"),'switch_on');
-						print '</td>';
-					}
-                    else
-                    {
-                        print "<td align=\"center\">\n";
-                        print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-						print '</td>';
-					}
-                }
-                else
-                {
-                    print "<td align=\"center\">\n";
-                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-                    print "</td>";
-                }
-
-                // Default
-                if ($conf->global->DON_ADDON_MODEL == "$name")
-                {
-					print "<td align=\"center\">";
-					print img_picto($langs->trans("Default"),'on');
-					print '</td>';
-                }
-                else
-                {
-                    print "<td align=\"center\">";
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-					print '</td>';
-				}                
-
-                // Info
-                $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-                $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-                if ($module->type == 'pdf')
-                {
-                    $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-                }
-                $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-                $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-                $htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
-                print '<td align="center">';
-                print $form->textwithpicto('',$htmltooltip,-1,0);
-                print '</td>';
-
-				// Preview
-				print '<td align="center">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"),'generic').'</a>';
-				print '</td>';
-
-                print "</tr>\n";
-            }
-        }
-    }
-    closedir($handle);
-}
-
-print '</table>';
 
 llxFooter();
 

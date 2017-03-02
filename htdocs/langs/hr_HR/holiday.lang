@@ -76,8 +76,9 @@ BoxTitleLastLeaveRequests=Zadnjih %s izmjenjenih zahtjeva za odlaskom
 HolidaysMonthlyUpdate=Mjesečna promjena
 ManualUpdate=Ručna promjena
 HolidaysCancelation=Odbijanje zahtjeva
-EmployeeLastname=Prezime zaposlenika
-EmployeeFirstname=Ime zaposlenika
+EmployeeLastname=Employee last name
+EmployeeFirstname=Employee first name
+TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
 
 ## Configuration du Module ##
 LastUpdateCP=Zadnje automatsko ažuriranje raspodjele odlazaka

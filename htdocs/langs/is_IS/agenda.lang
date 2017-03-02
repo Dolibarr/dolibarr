@@ -2,6 +2,7 @@
 IdAgenda=ID event
 Actions=Actions
 Agenda=Dagskrá
+TMenuAgenda=Dagskrá
 Agendas=Dagskrá
 LocalAgenda=Internal calendar
 ActionsOwnedBy=Event owned by

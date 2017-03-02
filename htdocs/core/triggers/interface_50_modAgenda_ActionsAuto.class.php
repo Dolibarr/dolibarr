@@ -47,7 +47,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 *      $object->actiontypecode (translation action code: AC_OTH, ...)
 	 *      $object->actionmsg (note, long text)
 	 *      $object->actionmsg2 (label, short text)
-	 *      $object->sendtoid (id of contact)
+	 *      $object->sendtoid (id of contact or array of ids)
 	 *      $object->socid
 	 *      $object->fk_project
 	 *      $object->fk_element
@@ -819,7 +819,16 @@ class InterfaceActionsAuto extends DolibarrTriggers
         require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$contactforaction=new Contact($this->db);
         $societeforaction=new Societe($this->db);
-        if ($object->sendtoid > 0) $contactforaction->fetch($object->sendtoid);
+        // Set contactforaction if there is only 1 contact.
+        if (is_array($object->sendtoid))
+        {
+            if (count($object->sendtoid) == 1) $contactforaction->fetch(reset($object->sendtoid));
+        }
+        else
+        {
+            if ($object->sendtoid > 0) $contactforaction->fetch($object->sendtoid);
+        }
+        // Set societeforaction.
         if ($object->socid > 0)    $societeforaction->fetch($object->socid);
 
 		// Insertion action

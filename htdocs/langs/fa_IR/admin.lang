@@ -9,14 +9,20 @@ VersionDevelopment=توسعه
 VersionUnknown=ناشناخته
 VersionRecommanded=توصیه شده
 FileCheck=Files integrity checker
-FileCheckDesc=This tool allows you to check the integrity of files of your application, comparing each files with the official ones. You can use this tool to detect if some files were modified by a hacker for example.
+FileCheckDesc=This tool allows you to check the integrity of files and setup of your application, comparing each files with the official ones. Value of some setup constants may also be checked. You can use this tool to detect if some files were modified by a hacker for example.
+FileIntegrityIsStrictlyConformedWithReference=Files integrity is strictly conformed with the reference.
+FileIntegrityIsOkButFilesWereAdded=Files integrity check has passed, however some new files were added.
+FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified, removed or added.
+GlobalChecksum=Global checksum
 MakeIntegrityAnalysisFrom=Make integrity analysis of application files from
 LocalSignature=Embedded local signature (less reliable)
 RemoteSignature=Remote distant signature (more reliable)
 FilesMissing=Missing Files
 FilesUpdated=بروزرسانی فایلها
+FilesModified=Modified Files
+FilesAdded=Added Files
 FileCheckDolibarr=Check integrity of application files
-AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from a certified package
+AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from an official package
 XmlNotFound=Xml Integrity File of application not found
 SessionId=شناسه جلسه
 SessionSaveHandler=هندلر برای صرفه جویی در جلسات
@@ -185,7 +191,9 @@ BoxesDesc=Widgets are components showing some information that you can add to pe
 OnlyActiveElementsAreShown=تنها عناصر از <a href="%s">ماژول های فعال</a> نمایش داده می شود.
 ModulesDesc=Dolibarr modules define which functionality is enabled in software. Some modules require permissions you must grant to users, after enabling module. Click on button on/off to enable a module/feature.
 ModulesMarketPlaceDesc=You can find more modules to download on external websites on the Internet...
-ModulesMarketPlaces=ماژول های بیشتر ...
+ModulesDeployDesc=If permissions on your file system allows it, you can use this tool to deploy an external module. The module wil then be visible on the tab <strong>%s</strong>.
+ModulesMarketPlaces=Find external modules...
+GoModuleSetupArea=To deploy/install a new module, go onto the Module setup area at <a href="%s">%s</a>.
 DoliStoreDesc=DoliStore، محل رسمی بازار برای ماژول های خارجی Dolibarr ERP / CRM
 DoliPartnersDesc=List of companies providing custom developed modules or features (Note: anyone experienced in PHP programming can provide custom development for an open source project)
 WebSiteDesc=Reference websites to find more modules...
@@ -276,21 +284,22 @@ ModuleFamilyInterface=Interfaces with external systems
 MenuHandlers=گرداننده منو
 MenuAdmin=ویرایشگر منو
 DoNotUseInProduction=آیا در استفاده از تولید نیست
-ThisIsProcessToFollow=این راه اندازی به فرآیند است:
-ThisIsAlternativeProcessToFollow=This is an alternative setup to process:
+ThisIsProcessToFollow=This is steps to process:
+ThisIsAlternativeProcessToFollow=This is an alternative setup to process manually:
 StepNb=مرحله٪ s را
 FindPackageFromWebSite=پیدا کردن یک بسته است که ویژگی فراهم می کند شما می خواهید (به عنوان مثال در وب سایت رسمی٪ بازدید کنندگان).
 DownloadPackageFromWebSite=Download package (for example from official web site %s).
-UnpackPackageInDolibarrRoot=Unpack package file into Dolibarr server directory dedicated to external modules: <b>%s</b>
-SetupIsReadyForUse=نصب به پایان رسید و Dolibarr آماده استفاده است با این بخش جدید است.
-NotExistsDirect=ریشه جایگزین تعریف نشده است. <br>
-InfDirAlt=از آنجا که نسخه 3 این امکان وجود دارد که تعریف کند directory.This ریشه جایگزین شما اجازه می دهد برای ذخیره، همان محل، پلاگین ها و قالب های سفارشی. <br> (: سفارشی به عنوان مثال) فقط یک پوشه در ریشه Dolibarr ایجاد کنید. <br>
-InfDirExample=<br> سپس آن را در conf.php فایل اعلام <br> $ dolibarr_main_url_root_alt = 'http://myserver/custom' <br> $ dolibarr_main_document_root_alt = '/ راه / از / dolibarr / htdocs / سفارشی' <br> * این خطوط با "#" نظر، به کامنت فقط حذف شخصیت.
+UnpackPackageInDolibarrRoot=Unpack the packaged files into server directory dedicated to Dolibarr: <b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, unpack the packaged files into the server directory dedicated to modules: <b>%s</b>
+SetupIsReadyForUse=Module deployment is finished. You must however enable and setup the module in your application by going on the page to setup modules: <a href="%s">%s</a>.
+NotExistsDirect=The alternative root directory is not defined to an existing directory.<br>
+InfDirAlt=Since version 3, it is possible to define an alternative root directory. This allows you to store, into a dedicated directory, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=For this step, you can send package using this tool: Select module file
 CurrentVersion=نسخه فعلی Dolibarr
 CallUpdatePage=Go to the page that updates the database structure and data: %s.
 LastStableVersion=Latest stable version
-LastActivationDate=Last activation date
+LastActivationDate=Latest activation date
 UpdateServerOffline=بروزرسانی آفلاین سرور
 GenericMaskCodes=شما می توانید ماسک شماره را وارد کنید. در این ماسک، تگ های زیر می تواند مورد استفاده قرار گیرد: <br> <b>{000000}</b> مربوط به تعداد خواهد شد که در هر یک از٪ s را افزایش مییابد. به عنوان بسیاری از صفر را وارد کنید به عنوان طول مورد نظر از ضد. شمارنده خواهد شد صفر از سمت چپ به منظور به صفر کرده اند و بسیاری از ماسک به پایان رسید. <br> <b>{000.000 +000}</b> همان قبلی است اما جبران مربوطه را به شماره در سمت راست علامت + شروع به کار رفته در اولین٪ است. <br> <b>{000000 @ X}</b> همان قبلی است اما شمارنده به صفر زمانی که ماه X برسد (x بین 1 و 12، و یا 0 به استفاده از ماه های اولیه سال مالی تعیین شده در تنظیمات خود را، و یا 99 به صفر هر ماه ). اگر این گزینه استفاده می شود و x است 2 یا بالاتر، و سپس دنباله {YY} {میلی متر} یا {تاریخ برای ورود yyyy} {میلی متر} نیز مورد نیاز است. <br> <b>{تولد}</b> روز (01 تا 31). <br> <b>{میلی متر}</b> ماه (01 تا 12). <br> <b>{YY}، {تاریخ برای ورود yyyy}</b> یا <b>{Y}</b> سال بیش از 2، 4 و یا 1 عدد. <br>
 GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of third party type on n characters (see dictionary-thirdparty types).<br>
@@ -373,11 +382,11 @@ ExtrafieldCheckBox=جعبه
 ExtrafieldRadio=دکمه های رادیویی
 ExtrafieldCheckBoxFromList= Checkbox from table
 ExtrafieldLink=Link to an object
-ExtrafieldParamHelpselect=فهرست پارامترها را به مانند کلید، ارزش است <br><br> به عنوان مثال: <br> 1، VALUE1 <br> 2، VALUE2 <br> 3، value3 <br> ... <br><br> به منظور داشتن لیست بسته به نوع دیگر: <br> 1، VALUE1 | parent_list_code: parent_key <br> 2، VALUE2 | parent_list_code: parent_key
+ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list :<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list :<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=فهرست پارامترها را به مانند کلید، ارزش است <br><br> به عنوان مثال: <br> 1، VALUE1 <br> 2، VALUE2 <br> 3، value3 <br> ...
 ExtrafieldParamHelpradio=فهرست پارامترها را به مانند کلید، ارزش است <br><br> به عنوان مثال: <br> 1، VALUE1 <br> 2، VALUE2 <br> 3، value3 <br> ...
-ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list :<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Parameters must be ObjectName:Classpath<br>Syntax : ObjectName:Classpath<br>Example : Societe:societe/class/societe.class.php
 LibraryToBuildPDF=Library used for PDF generation
 WarningUsingFPDF=اخطار: <b>conf.php</b> شما شامل <b>dolibarr_pdf_force_fpdf</b> بخشنامه <b>= 1.</b> این به این معنی شما استفاده از کتابخانه FPDF برای تولید فایل های PDF. این کتابخانه قدیمی است و بسیاری از ویژگی های (یونیکد، شفافیت تصویر، زبان سیریلیک، عربی و آسیایی، ...) را پشتیبانی نمی کند، بنابراین شما ممکن است خطا در PDF نسل را تجربه کنند. <br> برای حل این و دارای پشتیبانی کامل از PDF نسل، لطفا دانلود کنید <a href="http://www.tcpdf.org/" target="_blank">کتابخانه TCPDF</a> ، پس از آن اظهار نظر و یا حذف خط <b>$ dolibarr_pdf_force_fpdf = 1،</b> و اضافه کردن به جای <b>$ dolibarr_lib_TCPDF_PATH = 'path_to_TCPDF_dir'</b>
@@ -411,10 +420,11 @@ ModuleCompanyCodePanicum=بازگشت یک کد حسابداری خالی است
 ModuleCompanyCodeDigitaria=کد حسابداری بستگی به کد های شخص ثالث. کد از شخصیت "C" در مقام اول و پس از آن 5 حرف اول کد های شخص ثالث تشکیل شده است.
 Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=Use a 3 steps approval when amount (without tax) is higher than...
-
+WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to send an email from another server than the Yahoo server if the email address used as a sender is your Yahoo email (like myemail@yahoo.com, myemail@yahoo.fr, ...). Your current setup use the server of the application to send email, so some recipients (the one compatible with the restrictive DMARC protocol), will ask Yahoo if they can accept your email and Yahoo will respond "no" because the server is not a server owned by Yahoo, so few of your sent Emails may not be accepted.<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account).
+ClickToShowDescription=Click to show description
 # Modules
 Module0Name=کاربران و گروه های
-Module0Desc=کاربران و گروه های مدیریت
+Module0Desc=Users / Employees and Groups management
 Module1Name=احزاب سوم
 Module1Desc=شرکت ها و مدیریت تماس (مشتریان، چشم انداز ...)
 Module2Name=تجاری
@@ -515,8 +525,8 @@ Module2200Name=قیمت های پویا.
 Module2200Desc=Enable the usage of math expressions for prices
 Module2300Name=cron را
 Module2300Desc=Scheduled job management
-Module2400Name=Agenda/Events
-Module2400Desc=Follow events or rendez-vous. Record manual events into Agendas or let application logs automatic events for tracking purposes.
+Module2400Name=Events/Agenda
+Module2400Desc=Follow done and upcoming events. Let application logs automatic events for tracking purposes or record manual events or rendez-vous.
 Module2500Name=الکترونیکی مدیریت محتوا
 Module2500Desc=ذخیره و به اشتراک اسناد
 Module2600Name=API/Web services (SOAP server)
@@ -582,7 +592,7 @@ Permission34=حذف محصول
 Permission36=مشاهده / مدیریت محصولات مخفی
 Permission38=محصولات صادراتی
 Permission41=Read projects and tasks (shared project and projects i'm contact for). Can also enter time consumed on assigned tasks (timesheet)
-Permission42=ایجاد / تغییر پروژه (پروژه مشترک و پروژه های I تماس با هستم)
+Permission42=Create/modify projects (shared project and projects i'm contact for). Can also create tasks and assign users to project and tasks
 Permission44=حذف پروژه (پروژه مشترک و پروژه های I تماس با هستم)
 Permission45=Export projects
 Permission61=خوانده شده مداخله
@@ -685,7 +695,7 @@ PermissionAdvanced253=ایجاد / تغییر کاربران خارجی / داخ
 Permission254=ایجاد / تغییر کاربران خارجی فقط
 Permission255=تغییر دیگر کاربران رمز عبور
 Permission256=حذف و یا کاربران دیگر را غیر فعال کنید
-Permission262=گسترش دسترسی به تمام اشخاص ثالث (نه فقط کسانی که در ارتباط با کاربر). برای کاربران خارجی (همیشه به خود محدود) موثر است.
+Permission262=Extend access to all third parties (not only third parties that user is a sale representative).<br>Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc).<br>Not effective for projects (only rules on project permissions, visibility and assignement matters).
 Permission271=خوانده شده CA
 Permission272=خوانده شده فاکتورها
 Permission273=صورت حساب شماره
@@ -887,7 +897,7 @@ Offset=افست
 AlwaysActive=همیشه فعال
 Upgrade=به روز رسانی
 MenuUpgrade=ارتقا / تمدید
-AddExtensionThemeModuleOrOther=اضافه کردن پسوند (تم، ماژول، ...)
+AddExtensionThemeModuleOrOther=Deploy/install external module
 WebServer=وب سرور
 DocumentRootServer=دایرکتوری ریشه وب سرور
 DataRootServer=دایرکتوری فایل داده ها
@@ -994,7 +1004,7 @@ TriggerAlwaysActive=راه اندازی در این فایل همیشه فعال
 TriggerActiveAsModuleActive=محرک در این فایل فعال هستند به عنوان <b>بخش٪ s</b> را فعال کنید.
 GeneratedPasswordDesc=تعریف اینجا که رد می خواهید استفاده کنید برای ایجاد رمز عبور جدید اگر شما بخواهید به تولید خودکار رمز عبور
 DictionaryDesc=Insert all reference data. You can add your values to the default.
-ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting.
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
 MiscellaneousDesc=All other security related parameters are defined here.
 LimitsSetup=محدوده / راه اندازی دقیق
 LimitsDesc=شما می توانید محدودیت، دقت و بهینه سازی استفاده شده توسط Dolibarr در اینجا تعریف
@@ -1161,10 +1171,6 @@ FreeLegalTextOnOrders=متن رایگان در سفارشات
 WatermarkOnDraftOrders=تعیین میزان مد آب به دستور پیش نویس (هیچ اگر خالی)
 ShippableOrderIconInList=Add an icon in Orders list which indicate if order is shippable
 BANK_ASK_PAYMENT_BANK_DURING_ORDER=Ask for bank account destination of order
-##### Clicktodial #####
-ClickToDialSetup=کلیک کنید تا شماره گیری راه اندازی ماژول
-ClickToDialUrlDesc=آدرس نامیده می شود که با کلیک بر روی picto تلفن انجام می شود. در URL، شما می توانید برچسب ها <br> <b>__PHONETO__</b> خواهد شد که با شماره تلفن از فرد جایگزین را به تماس <br> <b>__PHONEFROM__</b> خواهد شد که با شماره تلفن تماس شخص (شما) به جای <br> <b>__LOGIN__</b> خواهد شد که با ورود clicktodial خود را جایگزین (تعریف شده در کارت کاربر شما) <br> <b>__PASS__</b> خواهد شد که با رمز عبور clicktodial شما (تعریف شده در کارت کاربر خود را) جایگزین شده است.
-##### Bookmark4u #####
 ##### Interventions #####
 InterventionsSetup=راه اندازی ماژول مداخلات
 FreeLegalTextOnInterventions=متن رایگان در اسناد مداخله
@@ -1391,7 +1397,7 @@ SendingsSetup=در حال ارسال راه اندازی ماژول
 SendingsReceiptModel=ارسال مدل رسید
 SendingsNumberingModules=Sendings تعداد ماژول ها
 SendingsAbility=Support shipping sheets for customer deliveries
-NoNeedForDeliveryReceipts=در اغلب موارد، sendings رسید هر دو به عنوان ورق برای تحویل به مشتری (لیستی از محصولات برای ارسال) و ورق است که recevied و امضا شده توسط مشتری استفاده می شود. بنابراین تحویل محصول رسید یکی از ویژگی های تکرار است و به ندرت فعال می شود.
+NoNeedForDeliveryReceipts=In most cases, shipping sheets are used both as sheets for customer deliveries (list of products to send) and sheets that is received and signed by customer. So product deliveries receipts is a duplicated feature and is rarely activated.
 FreeLegalTextOnShippings=Free text on shipments
 ##### Deliveries #####
 DeliveryOrderNumberingModules=محصولات تحویل رسید ماژول شماره
@@ -1471,7 +1477,11 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Set automatically this default value for type of e
 AGENDA_DEFAULT_FILTER_TYPE=تنظیم به صورت خودکار این نوع از رویداد را به فیلتر جستجو از نظر دستور کار
 AGENDA_DEFAULT_FILTER_STATUS=تنظیم به صورت خودکار این وضعیت رویدادی به فیلتر جستجو از نظر دستور کار
 AGENDA_DEFAULT_VIEW=کدام زبانه می خواهید برای باز کردن به طور پیش فرض هنگام انتخاب دستور کار منو
-##### ClickToDial #####
+AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
+AGENDA_NOTIFICATION_SOUND=Enable sound notification
+##### Clicktodial #####
+ClickToDialSetup=کلیک کنید تا شماره گیری راه اندازی ماژول
+ClickToDialUrlDesc=آدرس نامیده می شود که با کلیک بر روی picto تلفن انجام می شود. در URL، شما می توانید برچسب ها <br> <b>__PHONETO__</b> خواهد شد که با شماره تلفن از فرد جایگزین را به تماس <br> <b>__PHONEFROM__</b> خواهد شد که با شماره تلفن تماس شخص (شما) به جای <br> <b>__LOGIN__</b> خواهد شد که با ورود clicktodial خود را جایگزین (تعریف شده در کارت کاربر شما) <br> <b>__PASS__</b> خواهد شد که با رمز عبور clicktodial شما (تعریف شده در کارت کاربر خود را) جایگزین شده است.
 ClickToDialDesc=This module allows to make phone numbers clickable. A click on this icon will call make your phone to call the phone number. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
 ClickToDialUseTelLink=Use just a link "tel:" on phone numbers
 ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface installed on same computer than the browser, and called when you click on a link in your browser that start with "tel:". If you need a full server solution (no need of local software installation), you must set this to "No" and fill next field.
@@ -1499,10 +1509,11 @@ EndPointIs=SOAP clients must send their requests to the Dolibarr endpoint availa
 ##### API ####
 ApiSetup=API module setup
 ApiDesc=By enabling this module, Dolibarr become a REST server to provide miscellaneous web services.
-ApiProductionMode=Enable production mode (this will activate use of a caches for services management)
+ApiProductionMode=Enable production mode (this will activate use of a cache for services management)
 ApiExporerIs=You can explore the APIs at url
 OnlyActiveElementsAreExposed=Only elements from enabled modules are exposed
 ApiKey=Key for API
+WarningAPIExplorerDisabled=The API explorer has been disabled. API explorer is not required to provide API services. It is a tool for developer to find/test REST APIs. If you need this tool, go into setup of module API REST to activate it.
 ##### Bank #####
 BankSetupModule=راه اندازی ماژول بانک
 FreeLegalTextOnChequeReceipts=متن رایگان در چک رسید
@@ -1571,7 +1582,7 @@ BackupDumpWizard=Wizard to build database backup dump file
 SomethingMakeInstallFromWebNotPossible=Installation of external module is not possible from the web interface for the following reason:
 SomethingMakeInstallFromWebNotPossible2=For this reason, process to upgrade described here is only manual steps a privileged user can do.
 InstallModuleFromWebHasBeenDisabledByFile=Install of external module from application has been disabled by your administrator. You must ask him to remove the file <strong>%s</strong> to allow this feature.
-ConfFileMuseContainCustom=Installing an external module from application save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
+ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Highlight color of the line when the mouse passes over (keep empty for no highlight)
 TextTitleColor=Color of page title
@@ -1601,6 +1612,7 @@ FixTZ=ثابت منطقه زمانی
 FillFixTZOnlyIfRequired=Example: +2 (fill only if problem experienced)
 ExpectedChecksum=Expected Checksum
 CurrentChecksum=Current Checksum
+ForcedConstants=Required constant values
 MailToSendProposal=To send customer proposal
 MailToSendOrder=To send customer order
 MailToSendInvoice=To send customer invoice
@@ -1609,13 +1621,14 @@ MailToSendIntervention=To send intervention
 MailToSendSupplierRequestForQuotation=To send quotation request to supplier
 MailToSendSupplierOrder=To send supplier order
 MailToSendSupplierInvoice=To send supplier invoice
+MailToSendContract=To send a contract
 MailToThirdparty=To send email from third party page
 ByDefaultInList=Show by default on list view
-YouUseLastStableVersion=You use the last stable version
+YouUseLastStableVersion=You use the latest stable version
 TitleExampleForMajorRelease=Example of message you can use to announce this major release (feel free to use it on your web sites)
 TitleExampleForMaintenanceRelease=Example of message you can use to announce this maintenance release (feel free to use it on your web sites)
-ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
-ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 MultiPriceRuleDesc=When option "Several level of prices per product/service" is on, you can define different prices (one per price level) for each product. To save you time, you can enter here rule to have price for each level autocalculated according to price of first level, so you will have to enter only price for first level on each product. This page is here to save you time and can be usefull only if your prices for each leve are relative to first level. You can ignore this page in most cases.
 ModelModulesProduct=Templates for product documents
 ToGenerateCodeDefineAutomaticRuleFirst=To be able to generate automatically codes, you must first define a manager to auto define barcode number.

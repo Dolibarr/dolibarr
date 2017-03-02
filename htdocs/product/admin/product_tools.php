@@ -242,7 +242,7 @@ if ($action == 'convert')
 
 $form=new Form($db);
 
-$title = $langs->trans('ModulesSystemTools');
+$title = $langs->trans('ProductVatMassChange');
 
 llxHeader('',$title);
 

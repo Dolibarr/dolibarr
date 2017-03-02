@@ -189,7 +189,7 @@ else
     show_skin(null,1);
     print '<br>'."\n";
     
-    $listofmodes=array('dolibarr_mailings','dolibarr_notes','dolibarr_details','Full');
+    $listofmodes=array('dolibarr_mailings','dolibarr_notes','dolibarr_details','dolibarr_readonly','Full');
     $linkstomode='';
     foreach($listofmodes as $newmode)
     {

@@ -21,7 +21,17 @@ ListToApprove=Очаква одобрение
 ExpensesArea=Зона Доклади за разходи
 ClassifyRefunded=Класифициране като 'Рефинансиран'
 ExpenseReportWaitingForApproval=Нов доклад за разходи е бил изпратен за одобрение
-ExpenseReportWaitingForApprovalMessage=Нов доклад за разходи е бил изпратен и очаква одобрение.\n- Потребител: %s\n- Период: %s\nКликнете тук за валидиране: %s
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
+ExpenseReportWaitingForReApproval=An expense report has been submitted for re-approval
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.\nThe %s, you refused to approve the expense report for this reason: %s.\nA new version has been proposed and waiting for your approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
+ExpenseReportApproved=An expense report was approved
+ExpenseReportApprovedMessage=The expense report %s was approved.\n - User: %s\n - Approved by: %s\nClick here to show the expense report: %s
+ExpenseReportRefused=An expense report was refused
+ExpenseReportRefusedMessage=The expense report %s was refused.\n - User: %s\n - Refused by: %s\n - Motive for refusal: %s\nClick here to show the expense report: %s
+ExpenseReportCanceled=An expense report was canceled
+ExpenseReportCanceledMessage=The expense report %s was canceled.\n - User: %s\n - Canceled by: %s\n - Motive for cancellation: %s\nClick here to show the expense report: %s
+ExpenseReportPaid=An expense report was paid
+ExpenseReportPaidMessage=The expense report %s was paid.\n - User: %s\n - Paid by: %s\nClick here to show the expense report: %s
 TripId=Id на доклад за разходи
 AnyOtherInThisListCanValidate=Лице за информиране при валидация.
 TripSociete=Информация компания
@@ -59,31 +69,23 @@ DATE_REFUS=Дата на отхвърляне
 DATE_SAVE=Дата на валидиране
 DATE_CANCEL=Дата на отказване
 DATE_PAIEMENT=Дата на плащане
-
 BROUILLONNER=Отваряне отново
 ValidateAndSubmit=Валидиране и изпращане за одобрение
 ValidatedWaitingApproval=Валидиран (очаква одобрение)
-
 NOT_AUTHOR=Не сте автор на този доклад за разходи. Операцията е отказана.
-
 ConfirmRefuseTrip=Are you sure you want to deny this expense report?
-
 ValideTrip=Одобрение на доклад за разходи
 ConfirmValideTrip=Are you sure you want to approve this expense report?
-
 PaidTrip=Плащане на доклад за разходи
 ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
-
 ConfirmCancelTrip=Are you sure you want to cancel this expense report?
-
 BrouillonnerTrip=Преместване обратно на доклад за разходи със статус "Чернова"
 ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
-
 SaveTrip=Валидиране на доклад за разходи
 ConfirmSaveTrip=Are you sure you want to validate this expense report?
-
 NoTripsToExportCSV=Няма доклад за разходи за експортиране за този период.
 ExpenseReportPayment=Плащане на доклад за разходи
-
 ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Доклади за разходи за плащане
+CloneExpenseReport=Clone expese report
+ConfirmCloneExpenseReport=Are you sure you want to clone this expense report ?

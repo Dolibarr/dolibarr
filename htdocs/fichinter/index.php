@@ -59,16 +59,18 @@ print load_fiche_titre($langs->trans("InterventionsArea"));
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
-// Search ficheinter
-$var=false;
-print '<table class="noborder nohover" width="100%">';
-print '<form method="post" action="'.DOL_URL_ROOT.'/fichinter/list.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("Intervention").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "</form></table><br>\n";
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+{
+    // Search ficheinter
+    $var=false;
+    print '<table class="noborder nohover" width="100%">';
+    print '<form method="post" action="'.DOL_URL_ROOT.'/fichinter/list.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    print '<tr '.$bc[$var].'><td>';
+    print $langs->trans("Intervention").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print "</form></table><br>\n";
+}
 
 
 /*

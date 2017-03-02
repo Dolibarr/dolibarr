@@ -13,7 +13,7 @@
  * Copyright (C) 2013-2014 Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014	   Ferran Marcet	 	 <fmarcet@2byte.es>
- * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2015-2016 Marcos García         <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,10 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+
+if (!empty($conf->variants->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+}
 
 $langs->load('bills');
 $langs->load('companies');
@@ -602,7 +606,7 @@ if (empty($reshook))
 
 		$canconvert=0;
 		if ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 1 && empty($discountcheck->id)) $canconvert=1;	// we can convert deposit into discount if deposit is payed completely and not already converted (see real condition into condition used to show button converttoreduc)
-		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->paye == 0 && empty($discountcheck->id)) $canconvert=1;	// we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+		if (($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_STANDARD) && $object->paye == 0 && empty($discountcheck->id)) $canconvert=1;	// we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
 		if ($canconvert)
 		{
 			$db->begin();
@@ -626,6 +630,8 @@ if (empty($reshook))
 				$discount->description = '(CREDIT_NOTE)';
 			elseif ($object->type == Facture::TYPE_DEPOSIT)
 				$discount->description = '(DEPOSIT)';
+			elseif ($object->type == Facture::TYPE_STANDARD)
+				$discount->description = '(EXCESS RECEIVED)';
 			else {
 				setEventMessages($langs->trans('CantConvertToReducAnInvoiceOfThisType'), null, 'errors');
 			}
@@ -634,20 +640,46 @@ if (empty($reshook))
 			$discount->fk_facture_source = $object->id;
 
 			$error = 0;
-
-			foreach ($amount_ht as $tva_tx => $xxx)
-			{
-				$discount->amount_ht = abs($amount_ht[$tva_tx]);
-				$discount->amount_tva = abs($amount_tva[$tva_tx]);
-				$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
-				$discount->tva_tx = abs($tva_tx);
+			
+			if ($object->type == Facture::TYPE_STANDARD) {
+				
+				// If we're on a standard invoice, we have to get excess received to create it in TTC wuthout VAT
+				
+				$sql = 'SELECT SUM(pf.amount) as total_paiements
+						FROM llx_c_paiement as c, llx_paiement_facture as pf, llx_paiement as p
+						WHERE pf.fk_facture = '.$object->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid ORDER BY p.datep, p.tms';
+				
+				$resql = $db->query($sql);
+				$res = $db->fetch_object($resql);
+				$total_paiements = $res->total_paiements;
+				
+				$discount->amount_ht = $discount->amount_ttc = $total_paiements - $object->total_ttc;
+				$discount->amount_tva = 0;
+				$discount->tva_tx = 0;
 
 				$result = $discount->create($user);
 				if ($result < 0)
 				{
 					$error++;
-					break;
 				}
+				
+			} else {
+			
+				foreach ($amount_ht as $tva_tx => $xxx)
+				{
+					$discount->amount_ht = abs($amount_ht[$tva_tx]);
+					$discount->amount_tva = abs($amount_tva[$tva_tx]);
+					$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+					$discount->tva_tx = abs($tva_tx);
+	
+					$result = $discount->create($user);
+					if ($result < 0)
+					{
+						$error++;
+						break;
+					}
+				}
+			
 			}
 
 			if (empty($error))
@@ -804,14 +836,14 @@ if (empty($reshook))
 	                        $line->fk_parent_line = $fk_parent_line;
 
 	                        $line->subprice =-$line->subprice; // invert price for object
-	                        $line->pa_ht = -$line->pa_ht;
+	                        $line->pa_ht = $line->pa_ht;       // we choosed to have buy/cost price always positive, so no revert of sign here
 	                        $line->total_ht=-$line->total_ht;
 	                        $line->total_tva=-$line->total_tva;
 	                        $line->total_ttc=-$line->total_ttc;
 	                        $line->total_localtax1=-$line->total_localtax1;
 	                        $line->total_localtax2=-$line->total_localtax2;
 
-	                        $result = $line->insert();
+	                        $result = $line->insert(0, 1);     // When creating credit note with same lines than source, we must ignore error if discount alreayd linked
 
 	                        $object->lines[] = $line; // insert new line in current object
 
@@ -1020,61 +1052,101 @@ if (empty($reshook))
 							$typeamount = GETPOST('typedeposit', 'alpha');
 							$valuedeposit = GETPOST('valuedeposit', 'int');
 
-							if ($typeamount == 'amount')
+							$amountdeposit = array();
+							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA))
 							{
-								$amountdeposit = $valuedeposit;
+								if ($typeamount == 'amount') $amount = $valuedeposit;
+								else $amount = $srcobject->total_ttc * ($valuedeposit / 100);
+								
+								$TTotalByTva = array();
+								foreach ($srcobject->lines as &$line)
+								{
+									$TTotalByTva[$line->tva_tx] += $line->total_ttc ;
+								}
+								
+								$amount_to_diff = 0;
+								foreach ($TTotalByTva as $tva => &$total)
+								{
+									$coef = $total / $srcobject->total_ttc; // Calc coef
+									$am = $amount * $coef;
+									$amount_ttc_diff += $am;
+									$amountdeposit[$tva] += $am / (1 + $tva / 100); // Convert into HT for the addline
+								}
 							}
 							else
 							{
-								$amountdeposit = 0;
-
-								if ($result > 0)
+								if ($typeamount == 'amount')
 								{
-									$totalamount = 0;
-									$lines = $srcobject->lines;
-									$numlines=count($lines);
-									for ($i=0; $i<$numlines; $i++)
-									{
-										$qualified=1;
-										if (empty($lines[$i]->qty)) $qualified=0;	// We discard qty=0, it is an option
-										if (! empty($lines[$i]->special_code)) $qualified=0;	// We discard special_code (frais port, ecotaxe, option, ...)
-										if ($qualified) $totalamount += $lines[$i]->total_ht;
-									}
-
-									if ($totalamount != 0) {
-										$amountdeposit = ($totalamount * $valuedeposit) / 100;
-									}
-								} else {
-									setEventMessages($srcobject->error, $srcobject->errors, 'errors');
-									$error ++;
+									$amountdeposit[] = $valuedeposit;
 								}
-							}
+								else
+								{
+									if ($result > 0)
+									{
+										$totalamount = 0;
+										$lines = $srcobject->lines;
+										$numlines=count($lines);
+										for ($i=0; $i<$numlines; $i++)
+										{
+											$qualified=1;
+											if (empty($lines[$i]->qty)) $qualified=0;	// We discard qty=0, it is an option
+											if (! empty($lines[$i]->special_code)) $qualified=0;	// We discard special_code (frais port, ecotaxe, option, ...)
+											if ($qualified) $totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
+										}
 
-							$result = $object->addline(
-									$langs->trans('Deposit'),
-									$amountdeposit,		 	// subprice
-									1, 						// quantity
-									$lines[$i]->tva_tx,     // vat rate
-							        0,                      // localtax1_tx
-									0, 						// localtax2_tx
-									(empty($conf->global->INVOICE_PRODUCTID_DEPOSIT)?0:$conf->global->INVOICE_PRODUCTID_DEPOSIT), 	// fk_product
-									0, 						// remise_percent
-									0, 						// date_start
-									0, 						// date_end
-									0, $lines[$i]->info_bits, // info_bits
-									0, 						// info_bits
-									'HT',
-									0,
-									0, 						// product_type
-									1,
-									$lines[$i]->special_code,
-									$object->origin,
-									0,
-									0,
-									0,
-									0,
-									$langs->trans('Deposit')
-								);
+										if ($totalamount != 0) {
+											$amountdeposit[$lines[$i]->tva] = ($totalamount * $valuedeposit) / 100;
+										} else {
+											$amountdeposit[] = 0;
+										}
+									} else {
+										setEventMessages($srcobject->error, $srcobject->errors, 'errors');
+										$error ++;
+									}
+								}
+								
+								$amount_ttc_diff = $amountdeposit[0];
+							}
+							
+							foreach ($amountdeposit as $tva => $amount)
+							{
+								$result = $object->addline(
+										$langs->trans('Deposit'),
+										$amount,		 	// subprice
+										1, 						// quantity
+										$tva,     // vat rate
+										0,                      // localtax1_tx
+										0, 						// localtax2_tx
+										(empty($conf->global->INVOICE_PRODUCTID_DEPOSIT)?0:$conf->global->INVOICE_PRODUCTID_DEPOSIT), 	// fk_product
+										0, 						// remise_percent
+										0, 						// date_start
+										0, 						// date_end
+										0, 
+								        $lines[$i]->info_bits,  // info_bits
+										0,
+										'HT',
+										0,
+										0, 						// product_type
+										1,
+										$lines[$i]->special_code,
+										$object->origin,
+										0,
+										0,
+										0,
+										0,
+										$langs->trans('Deposit')
+									);
+							}
+							
+							$diff = $object->total_ttc - $amount_ttc_diff;
+							
+							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA) && $diff != 0)
+							{
+								$object->fetch_lines();
+								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx);
+								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
+							}
+							
 						}
 						else
 						{
@@ -1334,7 +1406,8 @@ if (empty($reshook))
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$price_ht = GETPOST('price_ht');
 		$price_ht_devise = GETPOST('multicurrency_price_ht');
-		if (GETPOST('prod_entry_mode') == 'free')
+		$prod_entry_mode = GETPOST('prod_entry_mode');
+		if ($prod_entry_mode == 'free')
 		{
 			$idprod=0;
 			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
@@ -1364,7 +1437,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error ++;
 		}
-        if (! GETPOST('prod_entry_mode'))
+        if (!$prod_entry_mode)
         {
             if (GETPOST('type') < 0 && ! GETPOST('search_idprod'))
             {
@@ -1372,11 +1445,11 @@ if (empty($reshook))
                 $error ++;
             }
         }
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && GETPOST('type') < 0) {
+		if ($prod_entry_mode == 'free' && empty($idprod) && GETPOST('type') < 0) {
             setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error ++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '') && $price_ht_devise == '') 	// Unit price can be 0 but not ''
+		if ($prod_entry_mode == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '') && $price_ht_devise == '') 	// Unit price can be 0 but not ''
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error ++;
@@ -1385,7 +1458,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error ++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && empty($product_desc)) {
+		if ($prod_entry_mode == 'free' && empty($idprod) && empty($product_desc)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 			$error ++;
 		}
@@ -1394,7 +1467,23 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), null, 'errors');
 			$error ++;
 		}
+
+		if (!$error && !empty($conf->variants->enabled) && $prod_entry_mode != 'free') {
+			if ($combinations = GETPOST('combinations', 'array')) {
+				//Check if there is a product with the given combination
+				$prodcomb = new ProductCombination($db);
+
+				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
+					$idprod = $res->fk_product_child;
+				} else {
+					setEventMessage($langs->trans('ErrorProductCombinationNotFound'), 'errors');
+					$error ++;
+				}
+			}
+		}
+
 		if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod))) {
+
 			$ret = $object->fetch($id);
 			if ($ret < 0) {
 				dol_print_error($db, $object->error);
@@ -1727,7 +1816,7 @@ if (empty($reshook))
 					}
 				}
 			}
-			
+
 			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'),
 				$date_start, $date_end, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $type,
 				GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('progress'),
@@ -2119,7 +2208,7 @@ if ($action == 'create')
 	print '</tr>' . "\n";
 
 	$exampletemplateinvoice=new FactureRec($db);
-	
+
 	// Overwrite value if creation of invoice is from a predefined invoice
 	if (empty($origin) && empty($originid) && GETPOST('fac_rec','int') > 0)
 	{
@@ -2436,7 +2525,7 @@ if ($action == 'create')
 	}
 
 	$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-	
+
 	// Date invoice
 	print '<tr><td class="fieldrequired">' . $langs->trans('DateInvoice') . '</td><td colspan="2">';
 	print $form->select_date($datefacture?$datefacture:$dateinvoice, '', '', '', '', "add", 1, 1, 1);
@@ -2542,15 +2631,15 @@ if ($action == 'create')
     	    '__INVOICE_YEAR__' =>  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%Y').')',
     	    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'),'%Y').')'
     	);
-    	
+
     	$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
     	foreach($substitutionarray as $key => $val)
     	{
     	    $htmltext.=$key.' = '.$langs->trans($val).'<br>';
     	}
-    	$htmltext.='</i>';	
+    	$htmltext.='</i>';
 	}
-	
+
 	// Public note
 	print '<tr>';
 	print '<td class="border tdtop">';
@@ -2718,8 +2807,8 @@ else if ($id > 0 || ! empty($ref))
 		$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 	} else {
-		$filterabsolutediscount = "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description LIKE '(DEPOSIT)%')";
-		$filtercreditnote = "fk_facture_source IS NOT NULL AND description NOT LIKE '(DEPOSIT)%'";
+		$filterabsolutediscount = "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND (description LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%'))";
+		$filtercreditnote = "fk_facture_source IS NOT NULL AND description NOT LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%'";
 	}
 
 	$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount);
@@ -2742,7 +2831,10 @@ else if ($id > 0 || ! empty($ref))
 
 	// Confirmation de la conversion de l'avoir en reduc
 	if ($action == 'converttoreduc') {
-		$text = $langs->trans('ConfirmConvertToReduc');
+		if($object->type == 0) $type_fac = 'ExcessReceived';
+		elseif($object->type == 2) $type_fac = 'CreditNote';
+		elseif($object->type == 3) $type_fac = 'Deposit';
+		$text = $langs->trans('ConfirmConvertToReduc', strtolower($langs->transnoentities($type_fac)));
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('ConvertToReduc'), $text, 'confirm_converttoreduc', '', "yes", 2);
 	}
 
@@ -3470,7 +3562,7 @@ else if ($id > 0 || ! empty($ref))
 
 	print '</table>';
 
-	
+
 	// List of previous situation invoices
 
 	$sign = 1;
@@ -3582,9 +3674,9 @@ else if ($id > 0 || ! empty($ref))
             print '</table>';
     }
 
-    
+
     // List of payments already done
-    
+
     print '<table class="noborder paymenttable" width="100%">';
 
     print '<tr class="liste_titre">';
@@ -3893,7 +3985,7 @@ else if ($id > 0 || ! empty($ref))
 
 	print "</table>\n";
     print "</div>";
-    
+
 	print "</form>\n";
 
 	dol_fiche_end();
@@ -3932,7 +4024,10 @@ else if ($id > 0 || ! empty($ref))
 					}
 				}
 			}
-
+			
+			$discount = new DiscountAbsolute($db);
+			$result = $discount->fetch(0, $object->id);
+			
 			// Reopen a standard paid invoice
 			if ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)
 				|| ($object->type == Facture::TYPE_CREDIT_NOTE && empty($discount->id))
@@ -3958,7 +4053,7 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// Send by mail
-			if (($object->statut == 1 || $object->statut == 2) || ! empty($conf->global->FACTURE_SENDBYEMAIL_FOR_ALL_STATUS)) {
+			if (($object->statut == Facture::STATUS_VALIDATED || $object->statut == Facture::STATUS_CLOSED) || ! empty($conf->global->FACTURE_SENDBYEMAIL_FOR_ALL_STATUS)) {
 				if ($objectidnext) {
 					print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('SendByMail') . '</span></div>';
 				} else {
@@ -3969,21 +4064,27 @@ else if ($id > 0 || ! empty($ref))
 				}
 			}
 
-			// deprecated. Useless because now we can use templates
-			if (! empty($conf->global->FACTURE_SHOW_SEND_REMINDER)) 			// For backward compatibility
+			// Request a direct debit order
+			if ($object->statut > Facture::STATUS_DRAFT && $object->paye == 0 && $num == 0)
 			{
-				if (($object->statut == 1 || $object->statut == 2) && $resteapayer > 0) {
-					if ($objectidnext) {
-						print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('SendRemindByMail') . '</span></div>';
-					} else {
-						if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->send) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=prerelance&amp;mode=init">' . $langs->trans('SendRemindByMail') . '</a></div>';
-						} else
-							print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendRemindByMail') . '</a></div>';
-					}
-				}
+			    if ($resteapayer > 0)
+			    {
+			        if ($user->rights->prelevement->bons->creer)
+			        {
+			            $langs->load("withdrawals");
+			            print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MakeWithdrawRequest")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			        }
+			        else
+			        {
+			            //print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			        }
+			    }
+			    else
+			    {
+			        //print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			    }
 			}
-
+			
 			// Create payment
 			if ($object->type != Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement) {
 				if ($objectidnext) {
@@ -3998,7 +4099,7 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// Reverse back money or convert to reduction
-			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
+			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_STANDARD) {
 				// For credit note only
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement)
 				{
@@ -4012,6 +4113,11 @@ else if ($id > 0 || ! empty($ref))
 					}
 				}
 
+				// For standard invoice with excess received
+				if ($object->type == Facture::TYPE_STANDARD && empty($object->paye) && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) < 0 && $user->rights->facture->creer && empty($discount->id))
+				{
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessReceivedToReduc').'</a></div>';
+				}
 				// For credit note
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->creer && $object->getSommePaiement() == 0) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';

@@ -6,8 +6,10 @@ Permission91=Consultar impuestos e IGV
 Permission92=Crear/modificar impuestos e IGV
 Permission93=Eliminar impuestos e IGV
 DictionaryVAT=Tasa de IGV (Impuesto sobre ventas en EEUU)
+DictionaryAccountancyCategory=Accounting categories
 VATManagement=Gestión IGV
 VATIsNotUsedDesc=El tipo de IGV propuesto por defecto es 0. Este es el caso de asociaciones, particulares o algunas pequeñas sociedades.
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
 UnitPriceOfProduct=Precio unitario sin IGV de un producto
 OptionVatMode=Opción de carga de IGV
 OptionVatDefaultDesc=La carga del IGV es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre el pago por los servicios

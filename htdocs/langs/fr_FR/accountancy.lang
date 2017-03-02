@@ -4,7 +4,7 @@ ACCOUNTING_EXPORT_DATE=Format de date pour le fichier d'exportation
 ACCOUNTING_EXPORT_PIECE=Exporter la référence de la pièce ?
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exporter avec les lignes regroupées ?
 ACCOUNTING_EXPORT_LABEL=Exporter le libellé
-ACCOUNTING_EXP ORT_AMOUNT=Exporter le montant
+ACCOUNTING_EXPORT_AMOUNT=Exporter le montant
 ACCOUNTING_EXPORT_DEVISE=Exporter la devise
 Selectformat=Sélectionnez le format du fichier
 ACCOUNTING_EXPORT_PREFIX_SPEC=Spécifiez le préfixe pour le nom du fichier
@@ -13,7 +13,7 @@ ThisProduct=Ce produit
 DefaultForService=Défaut pour les services
 DefaultForProduct=Défaut pour les produits
 CantSuggest=Suggestion no possible
-AccountancySetupDoneFromAccountancyMenu=La plupart configuration de la comptabilité se fait depuis le menu %s
+AccountancySetupDoneFromAccountancyMenu=La partie principale de la configuration de la comptabilité se fait depuis le menu %s
 ConfigAccountingExpert=Configuration du module comptabilité expert
 Journalization=Ventilation
 Journaux=Journaux
@@ -24,32 +24,32 @@ CurrentDedicatedAccountingAccount=Compte dédié courant
 AssignDedicatedAccountingAccount=Nouveau compte à assigner
 InvoiceLabel=Description de la facture
 OverviewOfAmountOfLinesNotBound=Vue d'ensemble du nombre de lignes non reliées à un compte comptable
-OverviewOfAmountOfLinesBound=Vue d'ensemble du nombre de ligne liées à un compte comptable
+OverviewOfAmountOfLinesBound=Vue d'ensemble du nombre de lignes liées à un compte comptable
 OtherInfo=Autre information
 
 AccountancyArea=Espace comptabilité
 AccountancyAreaDescIntro=L'utilisation du module de comptabilité se fait en plusieurs étapes:
 AccountancyAreaDescActionOnce=Les actions suivantes sont habituellement exécutées une seule fois, ou une fois par an ...
-AccountancyAreaDescActionOnceBis=Les prochaines étapes doivent être faite pour vous faire pour gagner du temps à l'avenir en vous proposant le bon compte comptable par défaut lors de la journalisation (écrire des enregistrements dans les journaux et Grand Livre)
+AccountancyAreaDescActionOnceBis=Les prochaines étapes doivent être faites pour vous faire gagner du temps à l'avenir en vous proposant le bon compte comptable par défaut lors de la journalisation (écrire des enregistrements dans les journaux et Grand Livre)
 AccountancyAreaDescActionFreq=Les actions suivantes sont habituellement exécutées chaque mois, semaine, ou jour pour les très grandes entreprises ...
-AccountancyAreaDescChartModel=STEP %s: Créer un modèle de plan de compte depuis le menu %s
-AccountancyAreaDescChart=STEP %s: Créer ou vérifier le contenu de votre plan de compte depuis le menu %s
-AccountancyAreaDescBank=STEP %s: Vérifier que la liaison entre les comptes bancaires et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, rendez-vous sur la fiche de chaque compte financier. Vous pouvez commencer à partir de la page %s.
-AccountancyAreaDescVat=STEP %s: Vérifiez que la liaison entre le paiement de la TVA et le compte comptable est faite. Compléter les liaisons manquantes. Vous pouvez définir les comptes comptables à utiliser pour chaque taux de TVA sur la page %s.
-AccountancyAreaDescExpenseReport=STEP %s: Vérifiez que la liaison entre le type de notes de frais et le compte comptable est faite. Compléter les liaisons manquantes. Vous pouvez définir les comptes comptables à utiliser pour chaque type de ligne de note de frais sur la page %s.
-AccountancyAreaDescSal=STEP %s: Vérifier que la liaison entre les paiements de salaires et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
-AccountancyAreaDescContrib=STEP %s: Vérifier que la liaison entre les dépenses spéciales (cotisations sociales ou fiscales) et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
-AccountancyAreaDescDonation=STEP %s: Vérifier que la liaison entre les paiements de dons et le compte comptable est faite. Compléter les liaisons manquantes. Vous pouvez définir le compte dédié pour cela à partir de l'entrée de menu %s.
-AccountancyAreaDescMisc=STEP %s: Vérifier que la liaison entre les de transactions divers et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
-AccountancyAreaDescProd=STEP %s: Vérifier que la liaison entre les produits/services et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
-AccountancyAreaDescLoan=STEP %s: Vérifier que la liaison entre les paiement de prêts et les comptes comptables est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
+AccountancyAreaDescChartModel=Etape %s: Créer un modèle de plan de compte depuis le menu %s
+AccountancyAreaDescChart=Etape %s: Créer ou vérifier le contenu de votre plan de compte depuis le menu %s
+AccountancyAreaDescBank=Etape %s: Vérifier que la liaison entre les comptes bancaires et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, rendez-vous sur la fiche de chaque compte financier. Vous pouvez commencer à partir de la page %s.
+AccountancyAreaDescVat=Etape %s: Vérifiez que la liaison entre le paiement de la TVA et le compte comptable est faite. Compléter les liaisons manquantes. Vous pouvez définir les comptes comptables à utiliser pour chaque taux de TVA sur la page %s.
+AccountancyAreaDescExpenseReport=Etape %s: Vérifiez que la liaison entre le type de notes de frais et le compte comptable est faite. Compléter les liaisons manquantes. Vous pouvez définir les comptes comptables à utiliser pour chaque type de ligne de note de frais sur la page %s.
+AccountancyAreaDescSal=Etape %s: Vérifier que la liaison entre les paiements de salaires et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
+AccountancyAreaDescContrib=Etape %s: Vérifier que la liaison entre les dépenses spéciales (cotisations sociales ou fiscales) et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
+AccountancyAreaDescDonation=Etape %s: Vérifier que la liaison entre les paiements de dons et le compte comptable est faite. Compléter les liaisons manquantes. Vous pouvez définir le compte dédié pour cela à partir de l'entrée de menu %s.
+AccountancyAreaDescMisc=Etape %s: Vérifier que la liaison par défaut entre les lignes de transactions diverses et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
+AccountancyAreaDescProd=Etape %s: Vérifier que la liaison entre les produits/services et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
+AccountancyAreaDescLoan=Etape %s: Vérifier que la liaison entre les paiements de prêts et les comptes comptables est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
 
-AccountancyAreaDescCustomer=STEP %s: Vérifier que la liaison entre les lignes de factures client existantes et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
-AccountancyAreaDescSupplier=STEP %s: Vérifier que la liaison entre les lignes de factures fournisseurs existantes et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
-AccountancyAreaDescWriteRecords=STEP %s: Ecrire les transactions dans le Grand Livre. Pour cela, aller sur chaque Journal, et cliquer sur le bouton "Enregistrer les opérations dans le Grand Livre".
-AccountancyAreaDescAnalyze=STEP %s: Ajouter ou modifier les opérations existantes et générer des rapports et des exportations.
+AccountancyAreaDescCustomer=Etape %s: Vérifier que la liaison entre les lignes de factures client existantes et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
+AccountancyAreaDescSupplier=Etape %s: Vérifier que la liaison entre les lignes de factures fournisseurs existantes et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
+AccountancyAreaDescWriteRecords=Etape %s: Ecrire les transactions dans le Grand Livre. Pour cela, aller sur chaque Journal, et cliquer sur le bouton "Enregistrer les opérations dans le Grand Livre".
+AccountancyAreaDescAnalyze=Etape %s: Ajouter ou modifier les opérations existantes et générer des rapports et des exportations.
 
-AccountancyAreaDescClosePeriod=STEP %s: Fermer la période pour ne plus pouvoir faire de modification à l'avenir.
+AccountancyAreaDescClosePeriod=Etape %s: Fermer la période pour ne plus pouvoir faire de modification à l'avenir.
 
 MenuAccountancy=Comptabilité
 Selectchartofaccounts=Sélectionnez le plan de compte actif
@@ -57,7 +57,7 @@ ChangeAndLoad=Changer et charger
 Addanaccount=Ajouter un compte comptable
 AccountAccounting=Compte comptable
 AccountAccountingShort=Compte
-AccountAccountingSuggest=Code comptabele suggéré
+AccountAccountingSuggest=Code comptable suggéré
 MenuDefaultAccounts=Comptes par défaut
 MenuVatAccounts=Compte TVA
 MenuTaxAccounts=Comptes charges
@@ -98,8 +98,8 @@ XLineSuccessfullyBinded=%s produits/services liés avec succès à un compte com
 XLineFailedToBeBinded=%s produits/services n'ont pu être liés à un compte comptable
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Nombre d'éléments à lier représentés par page (maximum recommandé: 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Trier de la page "Lien à réaliser" par les éléments les plus récents
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Trier la page "Liens réalisés" par les éléments les plus récents
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Commencez le tri de la page "Lien à réaliser" par les éléments les plus récents
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Commencez le tri de la page "Liens réalisés" par les éléments les plus récents
 
 ACCOUNTING_LENGTH_DESCRIPTION=Tronquer la description des produits & services dans les listes à n caractères (Idéalement = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Tronquer la description du compte des produits & services dans les listes à n caractères (Idéalement = 50)
@@ -144,7 +144,7 @@ DelBookKeeping=Supprimer l'enregistrement du grand livre
 FinanceJournal=Journal de trésorerie
 ExpenseReportsJournal=Journal des notes de frais
 DescFinanceJournal=Journal de trésorerie comprenant tous les types de paiements par compte bancaire / caisse
-DescJournalOnlyBindedVisible=Ceci est une vue de enregistrements qui sont liés à un compte comptable produits et qui peuvent être enregistrées dans le Grand Livre.
+DescJournalOnlyBindedVisible=Ceci est une vue des enregistrements qui sont liés à un compte comptable produits et qui peuvent être enregistrés dans le Grand Livre.
 VATAccountNotDefined=Compte de la TVA non défini
 ThirdpartyAccountNotDefined=Compte pour le tiers non défini
 ProductAccountNotDefined=Compte pour le produit non défini
@@ -167,17 +167,17 @@ Pcgsubtype=Sous classe de compte
 TotalVente=Total chiffre affaires hors taxe
 TotalMarge=Total marge
 
-DescVentilCustomer=Consultez ici la liste des lignes de facture client lié (ou non) à un compte comptable produit
+DescVentilCustomer=Consultez ici la liste des lignes de factures clients liées (ou non) à un compte comptable produit
 DescVentilMore=Dans la plupart des cas, si vous utilisez des produits ou des services prédéfinis et vous définissez le numéro de compte comptable sur la fiche produit/service, l'application sera en mesure de faire toute les liaisons entre vos lignes de facture et le compte comptable de votre plan comptable, juste en un clic avec le bouton <strong>"%s"</strong>. Si le compte n'a pas été mis sur les fiches produits/services ou si vous avez encore quelques lignes non liées à un compte, vous devrez faire une liaison manuelle à partir du menu <strong>"%s"</strong>.
 DescVentilDoneCustomer=Consultez ici la liste des lignes de factures clients et leur compte comptable produits
-DescVentilTodoCustomer=Lier les lignes de facture non déjà liée à un compte comptable produit
+DescVentilTodoCustomer=Lier les lignes de factures non déjà liées à un compte comptable produits
 ChangeAccount=Modifier le compte comptable produit/service pour les lignes sélectionnées avec le compte comptable suivant:
 Vide=-
-DescVentilSupplier=Consultez ici la liste des lignes de facture fournisseur liées ou pas encore liées à un compte comptable produit
-DescVentilDoneSupplier=Consultez ici la liste des lignes de factures fournisseur et leur compte comptable
+DescVentilSupplier=Consultez ici la liste des lignes de factures fournisseurs liées ou pas encore liées à un compte comptable produit
+DescVentilDoneSupplier=Consultez ici la liste des lignes de factures fournisseurs et leur compte comptable
 DescVentilTodoExpenseReport=Lier les lignes de note de frais par encore liées à un compte comptable
 DescVentilExpenseReport=Consultez ici la liste des lignes de notes de frais liées (ou non) à un compte comptable
-DescVentilExpenseReportMore=Si vous avez défini des comptes comptables au niveau des types de lignes notes de frais, l'application sera capable de faire l'association automatiquement entre les lignes de notes de frais et le compte comptable de votre plan comptable, en un simple clic sur le bouton <strong>"%s"</strong>. Si aucun compte n'a été défini au niveau du dictionnaires de types de lignes de notes de frais ou si vous avez toujours des lignes des notes de frais non liables automatiquement à un compte comptable, vous devez faire l'association manuellement depuis le menu "<strong>%s</strong>".
+DescVentilExpenseReportMore=Si vous avez défini des comptes comptables au niveau des types de lignes notes de frais, l'application sera capable de faire l'association automatiquement entre les lignes de notes de frais et le compte comptable de votre plan comptable, en un simple clic sur le bouton <strong>"%s"</strong>. Si aucun compte n'a été défini au niveau du dictionnaire de types de lignes de notes de frais ou si vous avez toujours des lignes de notes de frais non liables automatiquement à un compte comptable, vous devez faire l'association manuellement depuis le menu "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Consultez ici la liste des lignes des notes de frais et leur compte comptable
 
 ValidateHistory=Lier automatiquement
@@ -194,6 +194,8 @@ ChangeBinding=Changer les liens
 
 ## Admin
 ApplyMassCategories=Application en masse des catégories
+AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
+CategoryDeleted=Category for the accounting account has been removed
 
 ## Export
 Exports=Exports
@@ -209,18 +211,19 @@ Modelcsv_ciel=Export vers Sage Ciel Compta ou Compta Evolution
 Modelcsv_quadratus=Export vers Quadratus QuadraCompta
 Modelcsv_ebp=Export vers EBP
 Modelcsv_cogilog=Export vers Cogilog
+ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Initialisation comptabilité
 InitAccountancyDesc=Cette page peut être utilisée pour initialiser un compte comptable sur les produits et services qui ne disposent pas de compte comptable défini pour les ventes et les achats.
-DefaultBindingDesc=Cette page peut être utilisée pour définir un compte par défaut à utiliser pour la ventilation des transactions sur les salaires de paiement, les dons, les charges sociales et fiscales et la TVA lorsqu'aucun compte spécifique n'a été défini.
+DefaultBindingDesc=Cette page peut être utilisée pour définir un compte par défaut à utiliser pour la ventilation des transactions sur le paiement des salaires, les dons, les charges sociales et fiscales et la TVA lorsqu'aucun compte spécifique n'a été défini.
 Options=Options
 OptionModeProductSell=Mode ventes
 OptionModeProductBuy=Mode achats
 OptionModeProductSellDesc=Afficher tous les produits/services avec le compte comptable pour les ventes.
 OptionModeProductBuyDesc=Afficher tous les produits/services avec le compte comptable pour les achats.
 CleanFixHistory=Effacer les données comptables des lignes qui n'existent pas dans le plan comptable
-CleanHistory=Réinitialiser tous lesliens pour l'année sélectionnée
+CleanHistory=Réinitialiser tous les liens pour l'année sélectionnée
 
 WithoutValidAccount=Sans compte dédié valide
 WithValidAccount=Avec un compte dédié valide

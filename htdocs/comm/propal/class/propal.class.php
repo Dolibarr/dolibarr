@@ -824,7 +824,7 @@ class Propal extends CommonObject
         if (empty($this->demand_reason_id)) $this->demand_reason_id=0;
 
 		// Multicurrency
-		if (!empty($this->multicurrency_code)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+		if (!empty($this->multicurrency_code)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date);
 		if (empty($this->fk_multicurrency))
 		{
 			$this->multicurrency_code = $conf->currency;
@@ -1166,13 +1166,8 @@ class Propal extends CommonObject
         }
 
         $clonedObj->id=0;
+        $clonedObj->ref='';
         $clonedObj->statut=self::STATUS_DRAFT;
-
-        if (empty($conf->global->PROPALE_ADDON) || ! is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
-        {
-            $this->error='ErrorSetupNotComplete';
-            return -1;
-        }
 
         // Clear fields
         $clonedObj->user_author	= $user->id;
@@ -1181,12 +1176,6 @@ class Propal extends CommonObject
         $clonedObj->datep		= $now;    // deprecated
         $clonedObj->fin_validite	= $clonedObj->date + ($clonedObj->duree_validite * 24 * 3600);
         if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $clonedObj->ref_client	= '';
-
-        // Set ref
-        require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.'.php';
-        $obj = $conf->global->PROPALE_ADDON;
-        $modPropale = new $obj;
-        $clonedObj->ref = $modPropale->getNextValue($objsoc,$clonedObj);
 
         // Create clone
 
@@ -2764,6 +2753,8 @@ class Propal extends CommonObject
      */
     function availability($availability_id, $notrigger=0)
     {
+        global $user;
+        
         if ($this->statut >= self::STATUS_DRAFT)
         {
         	$error=0;
@@ -3035,6 +3026,7 @@ class Propal extends CommonObject
 	        $response->warning_delay = $delay_warning/60/60/24;
 	        $response->label = $label;
 	        $response->url = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals';
+	        $response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
 	        $response->img = img_object($langs->trans("Propals"),"propal");
 
             // This assignment in condition is not a bug. It allows walking the results.

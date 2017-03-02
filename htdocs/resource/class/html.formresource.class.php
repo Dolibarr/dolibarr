@@ -172,7 +172,7 @@ class FormResource
     	if ($filtertype != '' && $filtertype != '-1') $filterarray=explode(',',$filtertype);
 
     	$resourcestat->load_cache_code_type_resource();
-    	print '<select id="select'.$htmlname.'" class="flat select_'.$htmlname.'" name="'.$htmlname.'">';
+    	print '<select id="select'.$htmlname.'" class="flat maxwidthonsmartphone select_'.$htmlname.'" name="'.$htmlname.'">';
     	if ($empty) print '<option value="">&nbsp;</option>';
     	if (is_array($resourcestat->cache_code_type_resource) && count($resourcestat->cache_code_type_resource))
     	{

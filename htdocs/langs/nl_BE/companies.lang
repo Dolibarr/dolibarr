@@ -31,5 +31,5 @@ ImportDataset_company_4=Derde partij/Verkoopsverantwoordelijke (Affecteert verko
 ProductsIntoElements=Lijst van producten/diensten in %s
 MergeOriginThirdparty=Kopieer derde partij (derde partij die je wil verwijderen)
 MergeThirdparties=Voeg derde partijen samen
-ConfirmMergeThirdparties=Bent u zeker dat u deze derde partij wil samenvoegen met de huidige ? Alle gekoppelde objecten (facturen, orders, ...) worden verplaatst naar de huidige derde partij zodat u de gedupliceerde kan verwijderen.
 ThirdpartiesMergeSuccess=Derde partijen werden samen gevoegd.
+ErrorThirdpartiesMerge=Er was een fout tijdens het verwijderen van derde partijen. controleer het logboek. Aanpassingen werden teruggezet.

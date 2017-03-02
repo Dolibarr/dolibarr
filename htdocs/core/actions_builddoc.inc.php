@@ -91,6 +91,9 @@ if ($action == 'builddoc' && $permissioncreate)
         else
         {
             setEventMessages($langs->trans("FileGenerated"), null);
+
+            header('Location: '.$_SERVER['REQUEST_URI'].'#builddoc');
+            exit;
         }
     }
 }

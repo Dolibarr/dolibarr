@@ -178,7 +178,7 @@ class DolEditor
             	if (! empty($conf->global->FCKEDITOR_SKIN)) {
 					$skin = $conf->global->FCKEDITOR_SKIN;
 				} else {
-					$skin = 'moono'; // default with ckeditor 4 : moono
+					$skin = 'moono-lisa'; // default with ckeditor 4.6 : moono-lisa
 				}
 
             	$htmlencode_force=preg_match('/_encoded$/',$this->toolbarname)?'true':'false';

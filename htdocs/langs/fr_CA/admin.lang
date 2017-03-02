@@ -1,17 +1,26 @@
 # Dolibarr language file - Source file is en_US - admin
+FileCheckDesc=This tool allows you to check the integrity of files and setup of your application, comparing each files with the official ones. Value of some setup constants may also be checked. You can use this tool to detect if some files were modified by a hacker for example.
+FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified, removed or added.
 FilesUpdated=Mettre à jour les fichiers
 PurgeDeleteTemporaryFilesShort=Supprimer les fichiers temporaires
+ModulesMarketPlaces=Find external modules...
 InstrucToEncodePass=Pour chiffrer le mot de passe de la base dans le fichier de configuration <b>conf.php</b>, remplacer la ligne<br><b>$dolibarr_main_db_pass="...";</b><br>par<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
 InstrucToClearPass=Pour avoir le mot de passe de la base décodé (en clair) dans le fichier de configuration <b>conf.php</b>, remplacer dans ce fichier la ligne<br><b>$dolibarr_main_db_pass="crypted:..."</b><br>par<br><b>$dolibarr_main_db_pass="%s"</b>
 MAIN_MAIL_EMAIL_STARTTLS=Utilisation du chiffrement TLS (SSL)
 SubmitTranslation=Si la traduction de cette langue est incomplète ou vous trouvez des erreur , vous pouvez corriger cela en modifiant les fichiers dans le répertoire <b>langs/%s</b> et soumettre votre changement à www.transifex.com/dolibarr-association/dolibarr/
+SubmitTranslationENUS=Si la traduction de cette langue est incomplète ou vous trouvez des erreurs , vous pouvez corriger cela en modifiant les fichiers dans le répertoire <b> langs/%s </b> et soumettre les fichiers modifiés sur dolibarr.org/forum ou pour les développeurs sur github.com/Dolibarr/dolibarr.
 ModuleFamilySrm=Gestion des relations fournisseurs (GRF)
 ModuleFamilyProducts=Gestion des produits
 ModuleFamilyHr=Gestion des ressources humaines (GRH)
 ModuleFamilyPortal=Site internet et autres applications frontales
 ModuleFamilyInterface=Interfaces avec les systèmes externes
+ThisIsAlternativeProcessToFollow=This is an alternative setup to process manually:
 DownloadPackageFromWebSite=Télécharger le package %s.
-UnpackPackageInDolibarrRoot=Décompresser le paquet dans le répertoire dédié aux modules externes : <b>%s</b>
+UnpackPackageInDolibarrRoot=Unpack the packaged files into server directory dedicated to Dolibarr: <b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, unpack the packaged files into the server directory dedicated to modules: <b>%s</b>
+NotExistsDirect=The alternative root directory is not defined to an existing directory.<br>
+InfDirAlt=Since version 3, it is possible to define an alternative root directory. This allows you to store, into a dedicated directory, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=Sélectionner le module :
 DisableLinkToHelp=Masquer lien vers l'aide en ligne "<b>%s</b>"
 ListOfDirectoriesForModelGenODT=Liste des répertoires contenant des fichiers de modèles avec le format OpenDocument . <br><br> Mettez ici le chemin complet des répertoires .<br>Ajouter un retour chariot entre répertoire eah.<br> Pour ajouter un répertoire du module de GED , ajouter ici<b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br> Fichiers dans ces répertoires doit se terminer par <b>.odt</b> or <b>.ods</b>.
@@ -19,11 +28,11 @@ HideAnyVATInformationOnPDF=Cacher toutes les informations en rapport avec la TPS
 PlaceCustomerAddressToIsoLocation=Utilisez french standard position (La Poste) pour le client position d'adresse
 OldVATRates=Ancien taux de TPS/TVH
 NewVATRates=Nouveau taux de TPS/TVH
-ExtrafieldParamHelpsellist=La liste vient d'une table<br>Syntaxe: nom_de_table:nom_de_champ:id_champ::filtre<br>Exemple : c_typent:libelle:id::filter<br><br>filter peux être un test simple (exemple active=1 pour ne proposer que les valeur active)<br>si vous voulez faire un filtre sur des attributs supplémentaires, utilisez la syntax extra.champ=... (où champ est la code de l'attribut supplémentaire)<br><br>Pour que la liste soit dépendante d'une autre :<br>c_typent:libelle:id:code_liste_parent|colonne_parent:filter
-ExtrafieldParamHelpchkbxlst=La liste vient d'une table<br>Syntaxe: nom_de_table:nom_de_champ:id_champ::filtre<br>Exemple : c_typent:libelle:id::filter<br><br>filter peux être un test simple (exemple active=1 pour ne proposer que les valeur active)<br>si vous voulez faire un filtre sur des attributs supplémentaires, utilisez la syntax extra.champ=... (où champ est la code de l'attribut supplémentaire)<br><br>Pour que la liste soit dépendante d'une autre :<br>c_typent:libelle:id:code_liste_parent|colonne_parent:filter
+ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list :<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list :<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelplink=Les paramètres doivent être ObjectName:Classpath<br>Syntax : ObjectName:Classpath<br>Exemple : Societe:societe/class/societe.class.php
 LocalTaxDesc=Certains pays appliquent 2 voire 3 taux sur chaque ligne de facture. Si c'est le cas, choisissez le type du deuxième et troisième taux et sa valeur. Les types possibles sont:<br>1 : taxe locale sur les produits et services hors TPS/TVH (la taxe locale est calculée sur le montant hors taxe)<br>2 : taxe locale sur les produits et services avant TPS/TVH (la taxe locale est appliquée sur le montant + TPS/TVH)<br>3 : taxe locale uniquement sur les produits hors TPS/TVH (la taxe locale est calculée sur le montant hors taxe)<br>4 : taxe locale uniquement sur les produits avant TPS/TVH (la taxe locale est calculée sur le montant + TPS/TVH)<br>5 : taxe locale uniquement sur les services hors TPS/TVH (la taxe locale est calculée sur le montant hors taxe)<br>6 : taxe locale uniquement sur les service avant TPS/TVH (la taxe locale est calculée sur le montant + TPS/TVH)
 EnableFileCache=Activer le cache de fichiers
+Module0Desc=Users / Employees and Groups management
 Module75Name=Notes de frais et déplacements
 Module500Name=Dépenses spéciales (taxes, charges, dividendes)
 Module500Desc=Gestion des dépenses spéciales comme les taxes, charges sociales et dividendes
@@ -57,7 +66,9 @@ Permission20002=Créer / modifier les demandes de congé
 Permission20004=Lire toutes les demandes de congé (même utilisateur non subordonnés)
 Permission20005=Créer / modifier les demandes de congé pour tout le monde
 Permission20006=Administration des demandes de congé (balance de configuration et de mise à jour )
+Permission23004=Exécuté Travail planifié
 Permission2414=Exportation d'actions/tâches des autres
+Permission59001=Consulter les propositions commerciales
 DictionaryCanton=État / Province
 DictionarySocialContributions=Types de charges sociales
 DictionaryVAT=Taux de TPS/TVH ou de Taxes de Ventes
@@ -69,17 +80,18 @@ LocalTax1IsUsedDesc=Utilisation d'un 2ème type taxe (autre que TPS/TVH)
 LocalTax1IsNotUsedDesc=Pas d'utilisation de 2ème type taxe (autre que TPS/TVH)
 LocalTax2IsUsedDesc=Utilisation d'un 3ème type taxe  (autre que TPS/TVH)
 LocalTax2IsNotUsedDesc=Pas d'utilisation de 3ème type taxe  (autre que TPS/TVH)
+AddExtensionThemeModuleOrOther=Deploy/install external module
 DefaultMaxSizeList=Longueur maximale des listes
 DefaultMaxSizeShortList=Longueur maximale par défaut des listes
 CompanyObject=Objet de la compagnie
 ShowBugTrackLink=Afficher le lien "Signaler un défaut"
 Delays_MAIN_DELAY_EXPENSEREPORTS=Tolérance de retard (en jours) avant alerte pour les rapports de dépenses à approuver
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
 MAIN_ROUNDING_RULE_TOT=Taille du pas des arrondis (pour les très rares pays qui arrondissent sur une autre base que la base 10)
 UnitPriceOfProduct=Prix unitaire (no tax) d'un produit
 TotalPriceAfterRounding=Prix total (no tax/TPS/TVH/tx incl.) après arrondis
 BackupDesc2=Enregistrer le contenu du répertoire de documents (<b>%s</b>) qui contient tous les fichiers téléchargés et générés ( Donc, il inclut tous les fichiers de sauvegarde générés à l'étape 1).
 TotalNumberOfActivatedModules=Nombre total de modules de fonction activés : <b>%s</b> / <b>%s</b>
-OnlyFollowingModulesAreOpenedToExternalUsers=Remarque, seuls les modules suivants sont ouverts aux utilisateurs externes (quelles que soient les permissions de ces utilisateurs) :
 PasswordGenerationNone=Aucune suggestion de mot de passe généré . Le mot de passe doit être saisi manuellement.
 PasswordGenerationPerso=Retour un mot de passe en fonction de votre configuration personnellement défini.
 PasswordPatternDesc=Description du modèle de mot de passe
@@ -113,20 +125,13 @@ ClickToDialUseTelLink=Utilisez juste un lien "tel: " sur les numéros de télép
 ClickToDialUseTelLinkDesc=Utilisez cette méthode si vos utilisateurs ont un softphone ou une interface de logiciel installé sur un même ordinateur que le navigateur , et a appelé lorsque vous cliquez sur un lien dans votre navigateur qui commencent par "tel: " . Si vous avez besoin d'une solution de serveur complet (pas besoin d'installation locale du logiciel ) , vous devez définir ce "Non" et remplir champ suivant.
 ApiSetup=Configuration du module API
 ApiDesc=En activant ce module , Dolibarr devenir un serveur REST pour fournir des services Web divers .
-ApiProductionMode=Activer le mode de production (active l'utilisation d'un cache pour la gestion des services )
 OnlyActiveElementsAreExposed=Seuls les éléments de modules activés sont exposés
 ApiKey=Clé API
-NewFiscalYear=Nouvelle année fiscale
-OpenFiscalYear=Ouvrir année fiscale
-CloseFiscalYear=Fermer année fiscale
-DeleteFiscalYear=Effacer année fiscale
-ConfirmDeleteFiscalYear=Êtes-vous sûr de vouloir supprimer cette année fiscale ?
 SalariesSetup=Configuration du module salariés
-ConfFileMuseContainCustom=Installation d'un module externe de l'application enregistrer les fichiers de module dans le répertoire <strong>%s</strong> . Pour avoir ce répertoire traité par Dolibarr , vous devez configurer votre <strong>conf/conf.php</strong> pour avoir option<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
+ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Mettez en surbrillance les lignes de table lorsque déplacement de la souris passe au-dessus
 HighlightLinesColor=Mettez en surbrillance la couleur de la ligne lorsque la souris passe au-dessus (gardez vide pour ne pas mettre en évidence)
 TextTitleColor=Couleur de la page titre
-PressF5AfterChangingThis=Appuyez sur F5 pour rafraichir la valeur modifiée
 TopMenuBackgroundColor=Couleur de fond du menu haut
 LeftMenuBackgroundColor=Couleur de fond gauche
 BackgroundTableTitleColor=Couleur de fond pour le tableau ligne de titre
@@ -155,10 +160,9 @@ MailToSendIntervention=Envoyer l'intervention
 MailToSendSupplierRequestForQuotation=Pour envoyer demande de devis au fournisseur
 MailToSendSupplierOrder=Envoyer la commande fournisseur
 MailToSendSupplierInvoice=Envoyer la facture fournisseur
+ByDefaultInList=Afficher par défaut sur la liste vue
 TitleExampleForMajorRelease=Exemple de message que vous pouvez utiliser pour annoncer cette version majeure ( se sentir libre de l'utiliser sur vos sites web )
 TitleExampleForMaintenanceRelease=Exemple de message que vous pouvez utiliser pour annoncer cette version de maintenance ( se sentir libre de l'utiliser sur vos sites web )
-ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s est disponible . Version %s est une version majeure avec beaucoup de nouvelles fonctionnalités pour les utilisateurs et les développeurs. Vous pouvez le télécharger à partir de la zone de téléchargement de http://www.dolibarr.org portail (versions sous-répertoire Stable ) . Vous pouvez lire <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a>pour la liste complète des changements .
-ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s est disponible. Version %s est une version de maintenance , de sorte qu'il ne contient que des corrections de bugs. Nous vous recommandons tout le monde en utilisant une version plus ancienne mise à niveau vers celui-ci. Comme toute version de maintenance , pas de nouvelles fonctionnalités , ni le changement de structure de données est présent dans cette version . Vous pouvez le télécharger à partir de la zone de téléchargement de http://www.dolibarr.org portail (versions sous-répertoire Stable ) . Vous pouvez lire <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> pour la liste complète des changements .
 MultiPriceRuleDesc=Lorsque l'option " Plusieurs niveaux de prix par produit / service " est activée, vous pouvez définir des prix différents (un par niveau de prix ) pour chaque produit . Pour gagner du temps , vous pouvez entrer ici la règle pour avoir le prix pour chaque niveau autocalculated en fonction du prix du premier niveau , de sorte que vous devrez entrer seulement le prix pour le premier niveau sur chaque produit . Cette page est ici pour gagner du temps et peut être utile que si vos prix pour chaque leve sont liés à premier niveau . Vous pouvez ignorer cette page dans la plupart des cas .
 ModelModulesProduct=Modèles de documents produits
 ToGenerateCodeDefineAutomaticRuleFirst=Pour être en mesure de générer automatiquement des codes , vous devez d'abord définir un gestionnaire à l'auto de définir le numéro de code à barres .

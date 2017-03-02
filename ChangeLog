@@ -2,7 +2,14 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 6.0.0 compared to 5.0.* *****
 
+WARNING: 
+
+Following changes may create regression for some external modules, but were necessary to make Dolibarr better:
+* The hook getNodeList has been replaced by a normalized 'addreplace' hook getDirList.
+* The trigger USER_SETINGROUP and USER_REMOVEFROMGROUP has been replaced with trigger USER_MODIFY.
+ 
 
 ***** ChangeLog for 5.0.0 compared to 4.0.* *****
 For users:
@@ -150,11 +157,31 @@ Dolibarr better:
 - A new paramater sqlfilters was introduced to allow filter on any fields int the REST API. Few old parameters,
   no more required, were also removed. Use this new one if you were using one of them.
 - The trigger that activate or close a contract line is run on a contract line, not on contract.
+- Method commande->set_availability(user, availability_id) removed from commande class, use method commande->availability(availability_id, notrigger).
 
 Dolibarr 5.0 was frozen before PHP 7.1 was released. Unit tests are successful on PHP 7.1 but we don't have enough
 feedback to confirm all application is compatible. Current officiel supported PHP versions are PHP 5.3 to 7.0.
 
 
+***** ChangeLog for 4.0.4 to 4.0.3 *****
+FIX: #6227 Document models table header "Unit" is shown in 2 lines in Spanish
+FIX: #6230
+FIX: #6237
+FIX: #6245 Thirdparty link in supplier invoices list, links to "comm/card" instead of "fourn/card" page
+FIX: #6253 Supplier invoice list filter does not respect "thirdparty" filter
+FIX: #6277
+FIX: project list and ajax completion return wrong list.
+FIX: bug margin calculation by user with multicompany
+FIX: Can make a stock transfert on product not on sale/purchase.
+FIX: extrafield input for varchar was not working with special char within (ie double quotes)
+FIX: javascript error
+FIX: link for not found photo when using gravatar. Must use external url.
+FIX: Protection so even if link is output for external user, links is disabled.
+FIX: repair tool was ko to restore extrafields with type select.
+FIX: Security access problem with external users on projects/tasks
+FIX: We must not drop extrafield column if there is still record on other entities.
+FIX: regression with sedning email when introducing security options to restrict nb of email sending.
+t 
 ***** ChangeLog for 4.0.3 to 4.0.2 *****
 FIX: #5853 $conf->global->$calc==0 || $conf->global->$calc==1
 FIX: #5958 no discount on supplier command made by replenishment
