@@ -563,9 +563,7 @@ else
 	$paymentstatic=new Paiement($db);
 	$accountlinestatic=new AccountLine($db);
 	$accountstatic=new Account($db);
-
-	$accountstatic->id=$object->account_id;
-	$accountstatic->label=$object->account_label;
+	$accountstatic->fetch($object->account_id);
 
 	$linkback='<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/list.php">'.$langs->trans("BackToList").'</a>';
 	
