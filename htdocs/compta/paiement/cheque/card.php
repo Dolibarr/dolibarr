@@ -684,6 +684,7 @@ else
 	{
 		$num = $db->num_rows($resql);
 
+	    print '<div class="div-table-responsive">';
 		print '<table class="noborder" width="100%">';
 
 		$param="&amp;id=".$object->id;
@@ -760,6 +761,7 @@ else
 			$i++;
 		}
 		print "</table>";
+		print "</div>";
 	}
 	else
 	{
