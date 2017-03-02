@@ -113,6 +113,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 /*
  * Informations area
  */
+/* Was moved into a widget
 $boxinfo='';
 $boxinfo.= '<div class="box">';
 $boxinfo.= '<table summary="'.dol_escape_htmltag($langs->trans("LoginInformation")).'" class="noborder boxtable" width="100%">';
@@ -127,8 +128,7 @@ $boxinfo.= '</td>';
 $boxinfo.= "</tr>\n";
 $boxinfo.= "</table>\n";
 $boxinfo.= '</div>';
-//print $boxinfo;
-
+*/
 
 /*
  * Dashboard Dolibarr states (statistics)
@@ -210,7 +210,7 @@ if (empty($user->societe_id))
 	                   'Contact',
 	                   'Adherent',
 	                   'Product',
-	                   'Service',
+	                   'Product',
 	                   'Propal',
 	                   'Commande',
 	                   'Facture',
@@ -311,7 +311,7 @@ if (empty($user->societe_id))
 	                    "companies",
 	                    "members",
 	                    "products",
-	                    "produts",
+	                    "products",
 	                    "propal",
 	                    "orders",
             	        "bills",
@@ -338,7 +338,10 @@ if (empty($user->societe_id))
 	                $board->load_state_board($user);
 	                $boardloaded[$classe]=$board;
 	            }
-	            else $board=$boardloaded[$classe];
+	            else 
+	            {
+	                $board=$boardloaded[$classe];
+	            }
 
 	            $var=!$var;
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
@@ -593,7 +596,7 @@ $boxlist.='<tr><td class="notopnoleftnoright">'."\n";
 
 $boxlist.='<div class="fichehalfleft">';
 
-$boxlist.=$boxinfo;
+//$boxlist.=$boxinfo;
 $boxlist.=$boxstat;
 $boxlist.=$resultboxes['boxlista'];
 

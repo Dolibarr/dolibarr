@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Read Scheduled job
-Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
+Permission23101 = Просмотр Запланированных задач
+Permission23102 = Создать/обновить Запланированную задачу
+Permission23103 = Удалить Запланированную задачу
+Permission23104 = Выполнить запланированную задачу
 # Admin
 CronSetup= Настройки запланированных заданий
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs
@@ -17,14 +17,14 @@ CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronLastOutput=Последний вывод команды
-CronLastResult=Последний код возврата команды
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Команда
-CronList=Scheduled jobs
+CronList=Запланированные задания
 CronDelete=Удалить запланированные задания
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Модуль запланированных задач позволяет выполнять запланированные задачи
 CronTask=Задание
 CronNone=Никакой
@@ -33,13 +33,13 @@ CronDtEnd=Not after
 CronDtNextLaunch=Следующий запуск
 CronDtLastLaunch=Start date of latest execution
 CronDtLastResult=End date of latest execution
-CronFrequency=Frequency
+CronFrequency=Частота
 CronClass=Class
 CronMethod=Метод
 CronModule=Модуль
 CronNoJobs=Нет зарегистрированных заданий
 CronPriority=Приоритет
-CronLabel=Label
+CronLabel=Наименование
 CronNbRun=Кол-во запусков
 CronMaxRun=Max nb. launch
 CronEach=Каждый
@@ -65,7 +65,7 @@ CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of 
 CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
 CronCommandHelp=Команда для выполнения
 CronCreateJob=Создать новое запланированное задание
-CronFrom=From
+CronFrom=От
 # Info
 # Common
 CronType=Job type

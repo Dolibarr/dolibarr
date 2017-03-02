@@ -12,12 +12,13 @@ Permission25=Enviar las cotizaciones
 Permission26=Cerrar cotizaciones
 Permission27=Eliminar cotizaciones
 Permission28=Exportar las cotizaciones
+DictionaryAccountancyCategory=Accounting categories
 Delays_MAIN_DELAY_PROPALS_TO_CLOSE=Tolerancia de retraso antes de la alerta (en días) sobre cotizaciones a cerrar
 Delays_MAIN_DELAY_PROPALS_TO_BILL=Tolerancia de retraso antes de la alerta (en días) sobre cotizaciones no facturadas
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
 PropalSetup=Configuración del módulo Cotizaciones
 ProposalsNumberingModules=Módulos de numeración de cotizaciones
 ProposalsPDFModules=Modelos de documentos de cotizaciones
 FreeLegalTextOnProposal=Texto libre en cotizaciones
 WatermarkOnDraftProposal=Marca de agua en cotizaciones borrador (en caso de estar vacío)
 FCKeditorForProductDetails=Creación/edición WYSIWIG de las líneas de detalle de los productos (en pedidos, cotizaciones, facturas, etc.)
-ApiProductionMode=Enable production mode (this will activate use of a caches for services management)

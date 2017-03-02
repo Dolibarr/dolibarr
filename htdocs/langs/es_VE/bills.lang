@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - bills
-BillsCustomer=Facturas a clientes
+BillsCustomersUnpaid=Facturas a clientes pendientes de cobro
+BillsSuppliersUnpaid=Facturas de proveedores pendientes de pago
 CreateCreditNote=Crear factura de abono
 ErrorVATIntraNotConfigured=IVA aún no configurado
 SupplierBillsToPay=Facturas de proveedores pendientes de pago

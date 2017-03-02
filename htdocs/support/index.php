@@ -44,7 +44,7 @@ $langs->load("help");
 
 pHeader($langs->trans("DolibarrHelpCenter"), $_SERVER["PHP_SELF"]);
 
-print $langs->trans("HelpCenterDesc1")."<br>\n";
+print '<br>'.$langs->trans("HelpCenterDesc1")."<br>\n";
 print $langs->trans("HelpCenterDesc2")."<br>\n";
 
 print '<br>';
@@ -62,13 +62,13 @@ $style1='color: #333344; font-size: 16px; font-weight: bold';
 $style2='color: #5D4455; font-weight: bold;';
 
 print "\n";
-print '<div style="width: 100%"><div class="inline-block">';
+print '<div style="width: 100%; text-align: center"><div class="inline-block">';
 print "\n";
 
 // Forum/wiki support
 print '<table class="login tablesupport" width="100%">';
 print '<tr class="title" valign="top">';
-print '<td width="100%" align="left" valign="top">';
+print '<td width="100%" align="left" valign="middle">';
 
 print '<table summary="who"><tr><td>'.img_picto('','who.png','',1).'</td><td>';
 
@@ -82,7 +82,7 @@ print '</td>';
 print '</tr>';
 
 print '<tr>';
-print '<td align="center" valign="top">';
+print '<td align="center" valign="middle">';
 
 print '<table class="nocellnopadd">';
 print '<tr><td align="center">';
@@ -112,7 +112,7 @@ print '</div><div class="inline-block">';
 // Official support
 print '<table class="login" width="100%">';
 print '<tr class="title">';
-print '<td width="100%" align="left" valign="top">';
+print '<td width="100%" align="left" valign="middle">';
 
 print '<table summary="community"><tr><td>'.img_picto('','internet.png','',1).'</td><td>';
 print '<font style="'.$style1.'">'.$langs->trans("OfficialSupport").'</font>';
@@ -124,7 +124,7 @@ print '</td></tr></table>';
 
 print '</td>';
 print '</tr><tr>';
-print '<td align="center" valign="top">';
+print '<td align="center" valign="middle">';
 print '<table class="nocellnopadd">';
 print '<tr><td align="center">';
 
@@ -148,7 +148,7 @@ print '</div><div class="inline-block">';
 // Online support
 print '<table class="login" width="100%">';
 print '<tr class="title">';
-print '<td width="100%" align="left" valign="top">';
+print '<td width="100%" align="left" valign="middle">';
 
 print '<table summary="community"><tr><td>'.img_picto('','internet.png','',1).'</td><td>';
 
@@ -161,7 +161,7 @@ print '</td></tr></table>';
 
 print '</td>';
 print '</tr><tr>';
-print '<td align="center" valign="top">';
+print '<td align="center" valign="middle">';
 print '<table class="nocellnopadd">';
 print '<tr><td align="center">';
 print '<br>'.$langs->trans("ToSeeListOfAvailableRessources").'<br>';
@@ -181,7 +181,7 @@ print '</div><div class="inline-block">';
 // EMail support
 print '<table class="login tablesupport" width="100%">';
 print '<tr class="title" valign="top">';
-print '<td width="100%" align="left" valign="top">';
+print '<td width="100%" align="left" valign="middle">';
 
 print '<table summary="mail"><tr><td>'.img_picto('','mail.png','',1).'</td><td>';
 
@@ -214,7 +214,7 @@ print '</div><div class="inline-block">';
 // Other support
 print '<table class="login tablesupport" width="100%">';
 print '<tr class="title">';
-print '<td width="100%" align="left" valign="top">';
+print '<td width="100%" align="left" valign="middle">';
 
 print '<table summary="special"><tr><td>'.img_picto('','pagemaster.png','',1).'</td><td>';
 

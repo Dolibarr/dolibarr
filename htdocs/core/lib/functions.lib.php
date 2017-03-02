@@ -271,8 +271,13 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	        }
 	        elseif ($reg[1] == 'YEAR')
 	        {
-	           $tmp=dol_getdate(dol_now(), true);
-	           $out = $tmp['year'];
+	            $tmp=dol_getdate(dol_now(), true);
+	            $out = $tmp['year'];
+	        }
+	        elseif ($reg[1] == 'MYCOUNTRYID')
+	        {
+	            global $mysoc;
+	            $out = $mysoc->country_id;
 	        }
 	    }
 
@@ -2566,7 +2571,7 @@ function img_printer($titlealt = "default", $other='')
 /**
  *	Show help logo with cursor "?"
  *
- * 	@param	int              	$usehelpcursor		Use help cursor
+ * 	@param	int              	$usehelpcursor		1=Use help cursor, 2=Use click pointer cursor, 0=No specific cursor
  * 	@param	int|string	        $usealttitle		Text to use as alt title
  * 	@return string            	           			Return tag img
  */
@@ -2580,7 +2585,7 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
 		else $usealttitle = $langs->trans('Info');
 	}
 
-	return img_picto($usealttitle, 'info.png', ($usehelpcursor ? 'style="vertical-align: middle; cursor: help"' : 'style="vertical-align: middle;"'));
+	return img_picto($usealttitle, 'info.png', 'style="vertical-align: middle;'.($usehelpcursor == 1 ? ' cursor: help': ($usehelpcursor == 2 ? ' cursor: pointer':'')).'"');
 }
 
 /**
@@ -4322,7 +4327,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 
 	$path = '';
 
-	$arrayforoldpath=array('cheque','user','category','holiday','shipment','supplier_invoice','invoice_supplier','mailing');
+	$arrayforoldpath=array('cheque','user','category','holiday','shipment','supplier_invoice','invoice_supplier','mailing','supplier_payment');
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';
 	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
 	{
@@ -5533,6 +5538,7 @@ function printCommonFooter($zone='private')
     	{
         	print '<!-- Set handler to switch left menu page -->'."\n";
         	print 'jQuery(".menuhider").click(function() {';
+        	print '  console.log("We click on .menuhider");'."\n";
         	print "  $('.side-nav').toggle();";
         	if ($conf->theme == 'md') print "  $('.login_block').toggle();";
         	print '});'."\n";
@@ -5828,7 +5834,7 @@ function getImageFileNameForSize($file, $extName, $extImgTarget='')
  */
 function getAdvancedPreviewUrl($modulepart, $relativepath)
 {
-    global $conf;
+    global $conf, $langs;
 
     if (empty($conf->use_javascript_ajax)) return '';
 
@@ -5837,7 +5843,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath)
     //$mime_preview[]='archive';
     $num_mime = array_search(dol_mimetype($relativepath, '', 1), $mime_preview);
 
-    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;attachment=0&amp;file='.$relativepath).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js('Preview').'\')';
+    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;attachment=0&amp;file='.$relativepath).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js($langs->trans('Preview')).'\')';
     else return '';
 }
 

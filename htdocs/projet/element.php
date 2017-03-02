@@ -823,7 +823,7 @@ foreach ($listofreferent as $key => $value)
 				print "</td>\n";
 				
 				// Ref
-				print '<td align="left">';
+				print '<td align="left" class="nowrap">';
 				if ($tablename == 'expensereport_det')
 				{
 					print $expensereport->getNomUrl(1);

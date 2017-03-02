@@ -1395,9 +1395,18 @@ abstract class CommonObject
         }
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        if ($projectid) $sql.= ' SET fk_projet = '.$projectid;
-        else $sql.= ' SET fk_projet = NULL';
-        $sql.= ' WHERE rowid = '.$this->id;
+        if ($this->table_element == 'actioncomm') 
+        {
+            if ($projectid) $sql.= ' SET fk_project = '.$projectid;
+            else $sql.= ' SET fk_project = NULL';
+            $sql.= ' WHERE id = '.$this->id; 
+        }
+        else 
+        {
+            if ($projectid) $sql.= ' SET fk_projet = '.$projectid;
+            else $sql.= ' SET fk_projet = NULL';
+            $sql.= ' WHERE rowid = '.$this->id;
+        }
 
         dol_syslog(get_class($this)."::setProject", LOG_DEBUG);
         if ($this->db->query($sql))

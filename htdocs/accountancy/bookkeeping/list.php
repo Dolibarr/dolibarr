@@ -105,7 +105,6 @@ if ($action != 'export_csv' && ! isset($_POST['begin']) && ! isset($_GET['begin'
 
 
 
-
 /*
  * Action
  */
@@ -132,74 +131,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_date_end = '';
 }
 
-if ($action == 'delbookkeeping') {
-
-	$import_key = GETPOST('importkey', 'alpha');
-
-	if (! empty($import_key)) {
-		$result = $object->deleteByImportkey($import_key);
-		if ($result < 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		Header("Location: list.php");
-		exit();
-	}
-}
-if ($action == 'delbookkeepingyearconfirm') {
-
-	$delyear = GETPOST('delyear', 'int');
-	if ($delyear==-1) {
-		$delyear=0;
-	}
-	$deljournal = GETPOST('deljournal','alpha');
-	if ($deljournal==-1) {
-		$deljournal=0;
-	}
-
-	if (! empty($delyear) || ! empty($deljournal)) 
-	{
-		$result = $object->deleteByYearAndJournal($delyear,$deljournal);
-		if ($result < 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		else
-		{
-		    setEventMessages("RecordDeleted", null, 'mesgs');
-		}
-		Header("Location: list.php");
-		exit;
-	}
-	else
-	{
-	    setEventMessages("NoRecordDeleted", null, 'warnings');
-	    Header("Location: list.php");
-	    exit;
-	}
-}
-if ($action == 'delmouvconfirm') {
-
-	$mvt_num = GETPOST('mvt_num', 'int');
-
-	if (! empty($mvt_num)) {
-		$result = $object->deleteMvtNum($mvt_num);
-		if ($result < 0) {
-		    setEventMessages($object->error, $object->errors, 'errors');
-		}
-		else
-		{
-		    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		}
-		Header("Location: list.php");
-		exit;
-	}
-}
-
-
-
-/*
- * View
- */
-
+// Must be after the remove filter action, before the export.
 $param = '';
 $filter = array ();
 if (! empty($search_date_start)) {
@@ -266,6 +198,68 @@ if (! empty($search_mvt_num)) {
     $param .= '&search_mvt_num=' . $search_mvt_num;
 }
 
+if ($action == 'delbookkeeping') {
+
+	$import_key = GETPOST('importkey', 'alpha');
+
+	if (! empty($import_key)) {
+		$result = $object->deleteByImportkey($import_key);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		Header("Location: list.php");
+		exit();
+	}
+}
+if ($action == 'delbookkeepingyearconfirm') {
+
+	$delyear = GETPOST('delyear', 'int');
+	if ($delyear==-1) {
+		$delyear=0;
+	}
+	$deljournal = GETPOST('deljournal','alpha');
+	if ($deljournal==-1) {
+		$deljournal=0;
+	}
+
+	if (! empty($delyear) || ! empty($deljournal)) 
+	{
+		$result = $object->deleteByYearAndJournal($delyear,$deljournal);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		else
+		{
+		    setEventMessages("RecordDeleted", null, 'mesgs');
+		}
+		Header("Location: list.php");
+		exit;
+	}
+	else
+	{
+	    setEventMessages("NoRecordDeleted", null, 'warnings');
+	    Header("Location: list.php");
+	    exit;
+	}
+}
+if ($action == 'delmouvconfirm') {
+
+	$mvt_num = GETPOST('mvt_num', 'int');
+
+	if (! empty($mvt_num)) {
+		$result = $object->deleteMvtNum($mvt_num);
+		if ($result < 0) {
+		    setEventMessages($object->error, $object->errors, 'errors');
+		}
+		else
+		{
+		    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+		}
+		Header("Location: list.php");
+		exit;
+	}
+}
+
 if ($action == 'export_csv') {
 
     include DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php';
@@ -286,6 +280,11 @@ if ($action == 'export_csv') {
         exit;
     }
 }
+
+
+/*
+ * View
+ */
 
 $title_page = $langs->trans("Bookkeeping");
 
@@ -378,15 +377,15 @@ print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_d
 print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("AccountAccountingShort"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Code_tiers"), $_SERVER['PHP_SELF'], "t.code_tiers", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Labelcompte"), $_SERVER['PHP_SELF'], "t.label_compte", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_compte", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $param, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $param, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print '<td class="liste_titre center"><input type="text" name="search_mvt_num" size="6" value="' . $search_mvt_num . '"></td>';
+print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="' . dol_escape_htmltag($search_mvt_num) . '"></td>';
 print '<td class="liste_titre center">';
 print $langs->trans('From') . ': ';
 print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
@@ -394,15 +393,15 @@ print '<br>';
 print $langs->trans('to') . ': ';
 print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
 print '</td>';
-print '<td class="liste_titre center"><input type="text" name="search_doc_ref" size="8" value="' . $search_doc_ref . '"></td>';
-print '<td class="liste_titre center">';
+print '<td class="liste_titre"><input type="text" name="search_doc_ref" size="8" value="' . dol_escape_htmltag($search_doc_ref) . '"></td>';
+print '<td class="liste_titre">';
 print $langs->trans('From');
 print $formventilation->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, '');
 print '<br>';
 print $langs->trans('to');
 print $formventilation->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, '');
 print '</td>';
-print '<td class="liste_titre center">';
+print '<td class="liste_titre">';
 print $langs->trans('From');
 print $formventilation->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
 print '<br>';
@@ -414,8 +413,8 @@ print '<input type="text" size="7" class="flat" name="search_mvt_label" value="'
 print '</td>';
 print '<td class="liste_titre center">&nbsp;</td>';
 print '<td class="liste_titre center">&nbsp;</td>';
-print '<td class="liste_titre center" align="right"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
-print '<td class="liste_titre center" align="right">';
+print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
+print '<td class="liste_titre center">';
 $searchpitco=$form->showFilterAndCheckAddButtons(0);
 print $searchpitco;
 print '</td>';

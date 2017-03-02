@@ -17,14 +17,14 @@ CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronLastOutput=Izvještaj o zadnjem pokretanju
-CronLastResult=Šifra rezultat zadnjeg pokretanja
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Komanda
 CronList=Scheduled jobs
 CronDelete=Delete scheduled jobs
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allow to execute job that have been planned
 CronTask=Job
 CronNone=Ništa
@@ -54,7 +54,7 @@ CronNote=Komentar
 CronFieldMandatory=Polja %s su obavezna
 CronErrEndDateStartDt=Datum završetka ne može biti prije datuma početka
 CronStatusActiveBtn=Enable
-CronStatusInactiveBtn=Disable
+CronStatusInactiveBtn=Iskljući
 CronTaskInactive=This job is disabled
 CronId=ID
 CronClassFile=Classes (filename.class.php)
@@ -65,7 +65,7 @@ CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of 
 CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
 CronCommandHelp=Sistemska komanda za izvršenje
 CronCreateJob=Create new Scheduled Job
-CronFrom=From
+CronFrom=Od
 # Info
 # Common
 CronType=Job type

@@ -1072,7 +1072,7 @@ class SMTPs
 					{
 						foreach ( $this->_msgRecipients[$_host][$_which] as $_addr => $_realName )
 						{
-							if ( $_realName )	// DOL_CHANGE FIX
+							if ( $_realName )	// DOL_CHANGE LDR
 							{
 								$_realName = '"' . $_realName . '"';
 								$_RCPT_list[] = $_realName . ' <' . $_addr . '@' . $_host . '>';

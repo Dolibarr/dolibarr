@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Read Scheduled job
+Permission23101 = Λεπτομέρειες προγραμματισμένης εργασίας
 Permission23102 = Δημιουργία/ενημέρωση προγραμματισμένης εργασίας
 Permission23103 = Διαγραφή προγραμματισμένης εργασίας
 Permission23104 = Εκτέλεση προγραμματισμένης εργασίας
@@ -15,16 +15,16 @@ CronExplainHowToRunUnix=Στο Unix περιβάλλον θα πρέπει να 
 CronExplainHowToRunWin=Σε Microsoft (tm) Windows περιβάλλον μπορείτε να χρησιμοποιήσετε τα εργαλεία Προγραμματισμένη εργασία ώστε να εκτελείτε η γραμμή εντολών καθένα 5 λεπτά
 CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
-EnabledAndDisabled=Enabled and disabled
+EnabledAndDisabled=Ενεργοποίηση και απενεργοποίηση
 # Page list
-CronLastOutput=Τελευταία εκτέλεση εξόδου
-CronLastResult=Τελευταίος κωδικός αποτελέσματος
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Εντολή
 CronList=Προγραμματισμένες εργασίες
 CronDelete=Διαγραφή προγραμματισμένων εργασιών
-CronConfirmDelete=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτές τις προγραμματισμένες εργασίες;
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allow to execute job that have been planned
 CronTask=Εργασία
 CronNone=Καμία
@@ -39,7 +39,7 @@ CronMethod=Μέθοδος
 CronModule=Module
 CronNoJobs=Δεν έχουν καταχωρηθεί εργασίες
 CronPriority=Προτεραιότητα
-CronLabel=Label
+CronLabel=Ετικέτα
 CronNbRun=Nb. έναρξης
 CronMaxRun=Max nb. launch
 CronEach=Κάθε

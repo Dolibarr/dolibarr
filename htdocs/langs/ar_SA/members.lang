@@ -136,8 +136,8 @@ DocForAllMembersCards=إنشاء بطاقات العمل لجميع أعضاء (
 DocForOneMemberCards=إنشاء بطاقات العمل لعضو معين (تنسيق الإعداد للإخراج في الواقع : <b>%s)</b>
 DocForLabels=أوراق عنوان انتج (تنسيق الإعداد للإخراج فعلا : <b>%s)</b>
 SubscriptionPayment=دفع الاشتراك
-LastSubscriptionDate=آخر موعد الاكتتاب
-LastSubscriptionAmount=آخر مبلغ الاشتراك
+LastSubscriptionDate=Latest subscription date
+LastSubscriptionAmount=Latest subscription amount
 MembersStatisticsByCountries=أعضاء إحصاءات حسب البلد
 MembersStatisticsByState=أعضاء إحصاءات الولاية / المقاطعة
 MembersStatisticsByTown=أعضاء إحصاءات بلدة
@@ -149,7 +149,7 @@ MembersByStateDesc=هذه الشاشة تظهر لك إحصاءات عن أفر�
 MembersByTownDesc=هذه الشاشة تظهر لك إحصاءات عن أفراد من البلدة.
 MembersStatisticsDesc=اختيار الإحصاءات التي ترغب في قراءتها ...
 MenuMembersStats=إحصائيات
-LastMemberDate=آخر عضو تاريخ
+LastMemberDate=Latest member date
 Nature=طبيعة
 Public=معلومات علنية
 NewMemberbyWeb=وأضاف عضو جديد. تنتظر الموافقة

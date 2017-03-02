@@ -378,12 +378,12 @@ class User extends CommonObject
 	 */
 	function addrights($rid, $allmodule='', $allperms='', $entity='')
 	{
-		global $conf;
+		global $conf, $user, $langs;
 
 		$entity = (! empty($entity)?$entity:$conf->entity);
 
 		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity");
-		$err=0;
+		$error=0;
 		$whereforadd='';
 
 		$this->db->begin();
@@ -405,7 +405,7 @@ class User extends CommonObject
 				$subperms=$obj->subperms;
 			}
 			else {
-				$err++;
+				$error++;
 				dol_print_error($this->db);
 			}
 
@@ -443,23 +443,33 @@ class User extends CommonObject
 					$nid = $obj->id;
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id." AND fk_id=".$nid;
-					if (! $this->db->query($sql)) $err++;
+					if (! $this->db->query($sql)) $error++;
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES (".$this->id.", ".$nid.")";
-					if (! $this->db->query($sql)) $err++;
+					if (! $this->db->query($sql)) $error++;
 
 					$i++;
 				}
 			}
 			else
 			{
-				$err++;
+				$error++;
 				dol_print_error($this->db);
 			}
 		}
 
-		if ($err) {
+		if (! $error)
+		{
+		    $this->context = array('audit'=>$langs->trans("PermissionsAdd"));
+		    
+		    // Call trigger
+		    $result=$this->call_trigger('USER_MODIFY',$user);
+		    if ($result < 0) { $error++; }
+		    // End call triggers
+		}
+		
+		if ($error) {
 			$this->db->rollback();
-			return -$err;
+			return -$error;
 		}
 		else {
 			$this->db->commit();
@@ -480,9 +490,9 @@ class User extends CommonObject
 	 */
 	function delrights($rid, $allmodule='', $allperms='', $entity='')
 	{
-		global $conf;
+		global $conf, $user, $langs;
 
-		$err=0;
+		$error=0;
 		$wherefordel='';
 		$entity = (! empty($entity)?$entity:$conf->entity);
 
@@ -505,7 +515,7 @@ class User extends CommonObject
 				$subperms=$obj->subperms;
 			}
 			else {
-				$err++;
+				$error++;
 				dol_print_error($this->db);
 			}
 
@@ -543,21 +553,31 @@ class User extends CommonObject
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights";
 					$sql.= " WHERE fk_user = ".$this->id." AND fk_id=".$nid;
-					if (! $this->db->query($sql)) $err++;
+					if (! $this->db->query($sql)) $error++;
 
 					$i++;
 				}
 			}
 			else
 			{
-				$err++;
+				$error++;
 				dol_print_error($this->db);
 			}
 		}
 
-		if ($err) {
+		if (! $error)
+		{
+		    $this->context = array('audit'=>$langs->trans("PermissionsDelete"));
+		    
+		    // Call trigger
+		    $result=$this->call_trigger('USER_MODIFY',$user);
+		    if ($result < 0) { $error++; }
+		    // End call triggers
+		}
+		
+		if ($error) {
 			$this->db->rollback();
-			return -$err;
+			return -$error;
 		}
 		else {
 			$this->db->commit();
@@ -1237,7 +1257,7 @@ class User extends CommonObject
 	 */
 	function update($user,$notrigger=0,$nosyncmember=0,$nosyncmemberpass=0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs;
 
 		$nbrowsaffected=0;
 		$error=0;
@@ -1412,22 +1432,14 @@ class User extends CommonObject
 			$action='update';
 
 			// Actions on extra fields (by external module or standard code)
-			// FIXME le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('userdao'));
-			$parameters=array('socid'=>$this->id);
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
 			if (! $error && ! $notrigger)
 			{
@@ -1667,7 +1679,6 @@ class User extends CommonObject
 		// Define $urlwithroot
 		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-		//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
 
 		if (! $changelater)
 		{
@@ -1844,10 +1855,11 @@ class User extends CommonObject
 		{
 			if (! $error && ! $notrigger)
 			{
-			    $this->newgroupid=$group;
-
+			    $this->newgroupid=$group;    // deprecated. Remove this.
+			    $this->context = array('audit'=>$langs->trans("UserSetInGroup"), 'newgroupid'=>$group);
+			     
 			    // Call trigger
-                $result=$this->call_trigger('USER_SETINGROUP',$user);
+                $result=$this->call_trigger('USER_MODIFY',$user);
 	            if ($result < 0) { $error++; }
                 // End call triggers
 			}
@@ -1898,10 +1910,11 @@ class User extends CommonObject
 		{
 			if (! $error && ! $notrigger)
 			{
-			    $this->oldgroupid=$group;
-
+			    $this->oldgroupid=$group;    // deprecated. Remove this.
+			    $this->context = array('audit'=>$langs->trans("UserRemovedFromGroup"), 'oldgroupid'=>$group);
+			    
 			    // Call trigger
-                $result=$this->call_trigger('USER_REMOVEFROMGROUP',$user);
+                $result=$this->call_trigger('USER_MODIFY',$user);
                 if ($result < 0) { $error++; }
                 // End call triggers
 			}
@@ -2008,8 +2021,8 @@ class User extends CommonObject
 	            $label.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
 	            if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $label.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$this->entity.')';
 	            $label.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
-	            $label.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($this->datelastlogin,"dayhour");
-	            $label.= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($this->datepreviouslogin,"dayhour");
+	            $label.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($this->datelastlogin,"dayhour",'tzuser');
+	            $label.= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($this->datepreviouslogin,"dayhour",'tzuser');
 	            $label.= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
 	            $label.= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
 	            $s=picto_from_langcode($langs->getDefaultLang());
@@ -2570,7 +2583,12 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::get_full_tree call to build_path_from_id_user", LOG_DEBUG);
 		foreach($this->users as $key => $val)
 		{
-			$this->build_path_from_id_user($key,0);	// Process a branch from the root user key (this user has no parent)
+			$result = $this->build_path_from_id_user($key,0);	// Process a branch from the root user key (this user has no parent)
+			if ($result < 0) 
+			{
+			    $this->error='ErrorLoopInHierarchy';
+			    return -1;
+			}
 		}
 
 		// Exclude leaf including $deleteafterid from tree
@@ -2641,10 +2659,10 @@ class User extends CommonObject
 	 *  Function called by get_full_tree().
 	 *
 	 * 	@param		int		$id_user		id_user entry to update
-	 * 	@param		int		$protection		Deep counter to avoid infinite loop
-	 *	@return		void
+	 * 	@param		int		$protection		Deep counter to avoid infinite loop (no more required, a protection is added with array useridfound)
+	 *	@return		int                     < 0 if KO (infinit loop), >= 0 if OK
 	 */
-	function build_path_from_id_user($id_user,$protection=1000)
+	function build_path_from_id_user($id_user,$protection=0)
 	{
 		dol_syslog(get_class($this)."::build_path_from_id_user id_user=".$id_user." protection=".$protection, LOG_DEBUG);
 
@@ -2652,7 +2670,7 @@ class User extends CommonObject
 		{
 			// Already defined
 			dol_syslog(get_class($this)."::build_path_from_id_user fullpath and fullname already defined", LOG_WARNING);
-			return;
+			return 0;
 		}
 
 		// Define fullpath and fullname
@@ -2660,9 +2678,16 @@ class User extends CommonObject
 		$this->users[$id_user]['fullname'] = $this->users[$id_user]['lastname'];
 		$i=0; $cursor_user=$id_user;
 
-		while ((empty($protection) || $i < $protection) && ! empty($this->parentof[$cursor_user]))
+		$useridfound=array($id_user);
+		while (! empty($this->parentof[$cursor_user]))
 		{
-			$this->users[$id_user]['fullpath'] = '_'.$this->parentof[$cursor_user].$this->users[$id_user]['fullpath'];
+			if (in_array($this->parentof[$cursor_user], $useridfound)) 
+			{
+				dol_syslog("The hierarchy of user has a recursive loop", LOG_WARNING);
+				return -1;     // Should not happen. Protection against looping hierarchy
+			}
+			$useridfound[]=$this->parentof[$cursor_user];
+		    $this->users[$id_user]['fullpath'] = '_'.$this->parentof[$cursor_user].$this->users[$id_user]['fullpath'];
 			$this->users[$id_user]['fullname'] = $this->users[$this->parentof[$cursor_user]]['lastname'].' >> '.$this->users[$id_user]['fullname'];
 			$i++; $cursor_user=$this->parentof[$cursor_user];
 		}
@@ -2670,7 +2695,7 @@ class User extends CommonObject
 		// We count number of _ to have level
 		$this->users[$id_user]['level']=dol_strlen(preg_replace('/[^_]/i','',$this->users[$id_user]['fullpath']));
 
-		return;
+		return 1;
 	}
 
 	/**

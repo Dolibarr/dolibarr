@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - compta
 Param=Configuración
 PaymentSocialContribution=Pago de impuesto social/fiscal
-VATRefund=Sales tax refund Refund
 ByThirdParties=Por terceros
