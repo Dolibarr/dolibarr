@@ -270,8 +270,9 @@ if (empty($reshook))
 	    	$result=$object->update($user);
 	    	if ($result < 0)
 	    	{
-	    		$error++;
-		        setEventMessages($object->error, $object->errors,'errors');
+	    	    $error++;
+	    	    if ($result == -4) setEventMessages($langs->trans("ErrorRefAlreadyExists"), null, 'errors');
+		        else setEventMessages($object->error, $object->errors, 'errors');
 	    	}else {
 	    		// Category association
 	    		$categories = GETPOST('categories');
