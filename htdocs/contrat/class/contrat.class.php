@@ -1823,24 +1823,54 @@ class Contrat extends CommonObject
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	int		$maxlength		Max length of ref
+     *  @param	int     $notooltip		1=Disable tooltip
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$maxlength=0)
+	function getNomUrl($withpicto=0,$maxlength=0,$notooltip=0)
 	{
-		global $langs;
+		global $conf, $langs, $user;
 
 		$result='';
-        $label=$langs->trans("ShowContract").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$url = DOL_URL_ROOT.'/contrat/card.php?id='.$this->id;
+        $picto = 'contract';
+        $label = '';
+        
+        if ($user->rights->contrat->lire) {
+            $label = '<u>'.$langs->trans("ShowContract").'</u>';
+            $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+            $label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+            $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
+            if (!empty($this->total_ht)) {
+                $label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+            }
+            if (!empty($this->total_tva)) {
+                $label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1,	$conf->currency);
+            }
+            if (!empty($this->total_ttc)) {
+                $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+            }
+        }
+        
+        $linkclose='';
+        if (empty($notooltip) && $user->rights->contrat->lire)
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowOrder");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
+        }
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
-
-		$picto='contract';
-
-
-		if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		
+		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.($maxlength?dol_trunc($this->ref,$maxlength):$this->ref).$linkend;
+		$result.=$linkstart.$this->ref.$linkend;
 		return $result;
 	}
 
