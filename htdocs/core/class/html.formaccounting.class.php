@@ -104,7 +104,7 @@ class FormAccounting
                     $i++;
                 }
                 $out .=  '</select>';
-                if ($user->admin && $help) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+                //if ($user->admin && $help) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             }
             else
             {
