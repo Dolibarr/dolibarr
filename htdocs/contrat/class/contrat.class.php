@@ -608,7 +608,8 @@ class Contrat extends CommonObject
 		$extralabelsline=$extrafieldsline->fetch_name_optionals_label($line->table_element,true);
 
 		$this->lines=array();
-
+        $pos = 0;
+		
 		// Selectionne les lignes contrats liees a un produit
 		$sql = "SELECT p.label as product_label, p.description as product_desc, p.ref as product_ref,";
 		$sql.= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
@@ -693,8 +694,8 @@ class Contrat extends CommonObject
 				// fetch optionals attributes and labels
 				$line->fetch_optionals($line->id,$extralabelsline);
 
-				$this->lines[$i]			= $line;
-				$this->lines_id_index_mapper[$line->id] = $i;
+				$this->lines[$pos]			= $line;
+				$this->lines_id_index_mapper[$line->id] = $pos;
 
 				//dol_syslog("1 ".$line->desc);
 				//dol_syslog("2 ".$line->product_desc);
@@ -709,6 +710,7 @@ class Contrat extends CommonObject
                 $total_ht+=$objp->total_ht;
 
 				$i++;
+				$pos++;
 			}
 			$this->db->free($result);
 		}
@@ -798,14 +800,15 @@ class Contrat extends CommonObject
 				$line->fetch_optionals($line->id,$extralabelsline);
 
 
-				$this->lines[]        = $line;
-				$this->lines_id_index_mapper[$line->id] = key($this->lines);
+				$this->lines[$pos]			= $line;
+				$this->lines_id_index_mapper[$line->id] = $pos;
 
 				$total_ttc+=$objp->total_ttc;
                 $total_vat+=$objp->total_tva;
                 $total_ht+=$objp->total_ht;
 
                 $i++;
+                $pos++;
 			}
 
 			$this->db->free($result);

@@ -1047,7 +1047,6 @@ div.photoref {
 	vertical-align:middle;
 	text-align:center;
 }
-
 img.photorefnoborder {
     padding: 2px;
 	height: 48px;
@@ -1060,7 +1059,10 @@ img.photorefnoborder {
 .underbanner {
 	border-bottom: <?php echo $borderwith ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
-
+.tdhrthin {
+	margin: 0;
+	padding-bottom: 0 !important;
+}
 
 /* ============================================================================== */
 /* Menu top et 1ere ligne tableau                                                 */

@@ -62,12 +62,11 @@ $origin=GETPOST('origin','alpha');
 $originid=GETPOST('originid','int');
 
 $datecontrat='';
+$usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:0);
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'contrat',$id);
-
-$usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:0);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('contractcard','globalcard'));
@@ -1700,7 +1699,7 @@ else
             if ($object->statut > 0)
             {
                 print '<tr '.$bcnd[$var].'>';
-                print '<td colspan="'.($conf->margin->enabled?7:6).'"><hr class="opacitymedium"></td>';
+                print '<td class="tdhrthin" colspan="'.($conf->margin->enabled?7:6).'"><hr class="opacitymedium tdhrthin"></td>';
                 print "</tr>\n";
             }
 
@@ -1862,7 +1861,7 @@ else
                 print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
-                print '<td align="center nohover" rowspan="2" valign="middle" class="nohover">';
+                print '<td class="center nohover" rowspan="2" valign="middle" class="nohover">';
                 print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"><br>';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td>';
@@ -1917,7 +1916,7 @@ else
                 }
                 print '</td>';
 
-                print '<td align="right" rowspan="2" class="nohover">';
+                print '<td rowspan="2" class="center nohover">';
                 print '<input type="submit" class="button" name="close" value="'.$langs->trans("Unactivate").'"><br>';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td></tr>';
