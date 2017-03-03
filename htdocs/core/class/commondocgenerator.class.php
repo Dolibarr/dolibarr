@@ -320,16 +320,29 @@ abstract class CommonDocGenerator
 	
 	
 
+    /**
+     * Define array with couple subtitution key => subtitution value
+     *
+     * @param   Object		$object    		Dolibarr Object
+     * @param   Translate	$outputlangs    Language object for output
+     * @param   boolean		$recursive    	Want to fetch child array or child object
+     * @return	array						Array of substitution key->code
+     */
 	function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true) {
-		foreach($object as $key => $value) {
-			if(!is_array($value) && !is_object($value)) {
-	    	$array_other['object_'.$key] = $value;
-			}
-			if(is_array($value) && $recursive){
-				foreach($value as $key2 => $val) {
-					$array_other[$key][$key2] = $this->get_substitutionarray_each_var_object($val,$outputlangs,false);
+		$array_other = array();
+		if(!empty($object)) {
+			foreach($object as $key => $value) {
+				if(!is_array($value) && !is_object($value)) {
+		    		$array_other['object_'.$key] = $value;
 				}
-			}
+				if(is_array($value) && $recursive){
+					if(!empty($value)) {
+						foreach($value as $key2 => $val) {
+							$array_other[$key][$key2] = $this->get_substitutionarray_each_var_object($val,$outputlangs,false);
+						}
+					}
+				}
+		    }
 	    }
 		return $array_other;
 	}
