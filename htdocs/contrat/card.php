@@ -62,12 +62,11 @@ $origin=GETPOST('origin','alpha');
 $originid=GETPOST('originid','int');
 
 $datecontrat='';
+$usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:0);
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'contrat',$id);
-
-$usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:0);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('contractcard','globalcard'));
@@ -1454,7 +1453,7 @@ else
             print '<table class="notopnoleftnoright allwidth tableforservicepart1" width="100%">';
 
             $sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.description, cd.price_ht, cd.qty,";
-            $sql.= " cd.tva_tx, cd.remise_percent, cd.info_bits, cd.subprice,";
+            $sql.= " cd.tva_tx, cd.remise_percent, cd.info_bits, cd.subprice, cd.multicurrency_subprice,";
             $sql.= " cd.date_ouverture_prevue as date_debut, cd.date_ouverture as date_debut_reelle,";
             $sql.= " cd.date_fin_validite as date_fin, cd.date_cloture as date_fin_reelle,";
             $sql.= " cd.commentaire as comment, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht,";
@@ -1473,6 +1472,9 @@ else
                 print '<td>'.$langs->trans("ServiceNb",$cursorline).'</td>';
                 print '<td width="80" align="center">'.$langs->trans("VAT").'</td>';
                 print '<td width="80" align="right">'.$langs->trans("PriceUHT").'</td>';
+                if (!empty($conf->multicurrency->enabled)) {
+                    print '<td width="80" align="right">'.$langs->trans("PriceUHTCurrency").'</td>';
+                }
                 print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
 	            if ($conf->global->PRODUCT_USE_UNITS) print '<td width="30" align="left">'.$langs->trans("Unit").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("ReductionShort").'</td>';
@@ -1521,8 +1523,12 @@ else
                     }
                     // TVA
                     print '<td align="center">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
-                    // Prix
+                    // Price
                     print '<td align="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
+                    // Price multicurrency
+                    if (!empty($conf->multicurrency->enabled)) {
+                    	print '<td align="right" class="linecoluht_currency nowrap">'.price($objp->multicurrency_subprice).'</td>';
+                    }
                     // Quantite
                     print '<td align="center">'.$objp->qty.'</td>';
 	                // Unit
@@ -1705,7 +1711,7 @@ else
             if ($object->statut > 0)
             {
                 print '<tr '.$bcnd[$var].'>';
-                print '<td colspan="'.($conf->margin->enabled?7:6).'"><hr class="opacitymedium"></td>';
+                print '<td class="tdhrthin" colspan="'.($conf->margin->enabled?7:6).'"><hr class="opacitymedium tdhrthin"></td>';
                 print "</tr>\n";
             }
 
@@ -1867,7 +1873,7 @@ else
                 print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
-                print '<td align="center nohover" rowspan="2" valign="middle" class="nohover">';
+                print '<td class="center nohover" rowspan="2" valign="middle" class="nohover">';
                 print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"><br>';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td>';
@@ -1922,7 +1928,7 @@ else
                 }
                 print '</td>';
 
-                print '<td align="right" rowspan="2" class="nohover">';
+                print '<td rowspan="2" class="center nohover">';
                 print '<input type="submit" class="button" name="close" value="'.$langs->trans("Unactivate").'"><br>';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td></tr>';
@@ -1961,6 +1967,8 @@ else
 			{
 				$var = true;
 
+				$forcetoshowtitlelines=1;
+				
 				// Add free products/services
 				$object->formAddObjectLine(1, $mysoc, $soc);
 
@@ -2214,7 +2222,7 @@ $db->close();
 ?>
 
 <?php
-if ($conf->margin->enabled && $action == 'editline')
+if (! empty($conf->margin->enabled) && $action == 'editline')
 {
 ?>
 

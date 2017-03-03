@@ -295,9 +295,11 @@ if (empty($user->societe_id))
 	                    "propal",
 	                    "orders",
             	        "bills",
-            	        "supplier_proposal",
 						"contracts",
 						"interventions",
+	                    "bills",
+	                    "bills",
+	                    "supplier_proposal",
 	                    "projects",
 						"trips"
 	    );

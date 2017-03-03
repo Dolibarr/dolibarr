@@ -285,16 +285,16 @@ MenuHandlers=Gestors de menú
 MenuAdmin=Editor de menú
 DoNotUseInProduction=No utilitzar en producció
 ThisIsProcessToFollow=Aquests són els passos per al procés:
-ThisIsAlternativeProcessToFollow=This is an alternative setup to process manually:
+ThisIsAlternativeProcessToFollow=Aquesta és una configuració alternativa per processar manualment:
 StepNb=Pas %s
 FindPackageFromWebSite=Cercar el paquet que respon a la seva necessitat (per exemple en el lloc web %s)
 DownloadPackageFromWebSite=Descarrega el paquet (per exemple del lloc web oficial %s).
 UnpackPackageInDolibarrRoot=Descomprimeix els fitxers empaquetats en en el directori del servidor dedicat a Dolibarr: <b>%s</b>
 UnpackPackageInModulesRoot=To deploy/install an external module, unpack the packaged files into the server directory dedicated to modules: <b>%s</b>
-SetupIsReadyForUse=Module deployment is finished. You must however enable and setup the module in your application by going on the page to setup modules: <a href="%s">%s</a>.
-NotExistsDirect=The alternative root directory is not defined to an existing directory.<br>
-InfDirAlt=Since version 3, it is possible to define an alternative root directory. This allows you to store, into a dedicated directory, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
-InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
+SetupIsReadyForUse=La instal·lació del mòdul ha finalitzat. No obstant, ha d'habilitar i configurar el mòdul en la seva aplicació, aneu a la pàgina per configurar els mòduls: <a href="%s">%s</a>.
+NotExistsDirect=No s'ha definit el directori arrel alternatiu a un directori existent.<br>
+InfDirAlt=Des de la versió 3, és possible definir un directori arrel alternatiu. Això li permet emmagatzemar, en un directori dedicat, plug-ins i plantilles personalitzades.<br>Només ha de crear un directori a l'arrel de Dolibarr (per exemple: custom).<br>
+InfDirExample=<br>Després indiqui-ho al fitxer <strong>conf.php</strong> <br>$dolibarr_main_url_root_alt='http://miservidor/custom'<br>$dolibarr_main_document_root_alt='/ruta/de/Dolibarr/htdocs/custom'<br>Si aquestes línies es troben comentades amb "#", per habilitar-les, només cal descomentar eliminant el caràcter "#".
 YouCanSubmitFile=Per aquest pas, pots enviar el paquet utilitzant aquesta utilitat: Selecciona el fitxer del mòdul
 CurrentVersion=Versió actual de Dolibarr
 CallUpdatePage=Ves a la pàgina que actualitza l'estructura de base de dades i les dades: %s
@@ -421,7 +421,7 @@ ModuleCompanyCodeDigitaria=El codi comptable depèn del codi del tercer. El codi
 Use3StepsApproval=Per defecte, les comandes de compra necessiten ser creades i aprovades per 2 usuaris diferents (el primer pas/usuari és per a crear i un altre pas/usuari per aprovar. Noteu que si un usuari te permisos tant per crear com per aprovar, un sol pas/usuari serà suficient). Amb aquesta opció, tens la possibilitat d'introduir un tercer pas/usuari per a l'aprovació, si l'import es superior a un determinat valor (d'aquesta manera són necessaris 3 passos: 1=validació, 2=primera aprovació i 3=segona aprovació si l'import és suficient).<br>Deixa-ho en blanc si només vols un nivell d'aprovació (2 passos); posa un valor encara que sigui molt baix (0,1) si vols una segona aprovació (3 passos).
 UseDoubleApproval=Utilitza una aprovació en 3 passos quan l'import (sense impostos) sigui més gran que...
 WarningPHPMail=ADVERTÈNCIA: Alguns proveïdors de correu electrònic (com Yahoo) no li permeten enviar un correu electrònic des d'un altre servidor que no sigui el servidor de Yahoo si l'adreça de correu electrònic utilitzada com a remitent és el seu correu correu electrònic de Yahoo (com myemail@yahoo.com, myemail@yahoo.fr, ...). La seva configuració actual utilitza el servidor de l'aplicació per enviar correu electrònic, de manera que alguns destinataris (compatibles amb el protocol restrictiu DMARC) li preguntaran a Yahoo si poden acceptar el seu e-mail i Yahoo respondrà "no" perquè el servidor no és un servidor Propietat de Yahoo, pel que alguns dels seus e-mails enviats poden no ser acceptats.<br>Si el proveïdor de correu electrònic (com Yahoo) té aquesta restricció, ha de canviar la configuració de correu electrònic per a triar el mètode "servidor SMTP" i introdudir el servidor SMTP i credencials proporcionades pel seu proveïdor de correu electrònic (pregunti al seu proveïdor de correu electrònic les credencials SMTP per al seu compte).
-ClickToShowDescription=Click to show description
+ClickToShowDescription=Clica per mostrar la descripció
 # Modules
 Module0Name=Usuaris i grups
 Module0Desc=Gestió d'usuaris / empleats i grups
@@ -842,7 +842,7 @@ DictionaryStaff=Empleats
 DictionaryAvailability=Temps de lliurament
 DictionaryOrderMethods=Mètodes de comanda
 DictionarySource=Orígens de pressupostos/comandes
-DictionaryAccountancyCategory=Categories de comptabilitat
+DictionaryAccountancyCategory=Accounting account groups
 DictionaryAccountancysystem=Models de plans comptables
 DictionaryEMailTemplates=Models d'emails
 DictionaryUnits=Unitats

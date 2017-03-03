@@ -1076,7 +1076,6 @@ div.photoref {
 	vertical-align:middle;
 	text-align:center;
 }
-
 img.photorefnoborder {
     padding: 2px;
 	height: 48px;
@@ -1089,7 +1088,10 @@ img.photorefnoborder {
 .underbanner {
 	border-bottom: <?php echo $borderwith ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
-
+.tdhrthin {
+	margin: 0;
+	padding-bottom: 0 !important;
+}
 
 /* ============================================================================== */
 /* Menu top et 1ere ligne tableau                                                 */
@@ -1274,6 +1276,7 @@ div.menu_titre {
 	padding-bottom: 4px;
 	overflow: hidden;
     text-overflow: ellipsis;
+    width: 188px;				/* required to have overflow working. must be same than menu_contenu */
 }
 .mainmenuaspan
 {
@@ -1656,6 +1659,7 @@ div.vmenu, td.vmenu {
 	padding-bottom: 3px;
 	overflow: hidden;
     text-overflow: ellipsis;
+    width: 188px;				/* required to have overflow working. must be same than .menu_titre */
 }
 #menu_contenu_logo { padding-top: 0; }
 .companylogo { }

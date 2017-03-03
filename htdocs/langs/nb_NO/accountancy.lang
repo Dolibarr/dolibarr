@@ -25,7 +25,7 @@ AssignDedicatedAccountingAccount=New account to assign
 InvoiceLabel=Fakturaetikett
 OverviewOfAmountOfLinesNotBound=Overview of amount of lines not bound to accounting account
 OverviewOfAmountOfLinesBound=Overview of amount of lines already bound to accounting account
-OtherInfo=Other information
+OtherInfo=Annen informasjon
 
 AccountancyArea=Område for regnskap
 AccountancyAreaDescIntro=Bruk av regnskapsmodulen er gjort i flere skritt:

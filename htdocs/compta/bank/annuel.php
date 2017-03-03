@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $langs->load("banks");
 $langs->load("categories");
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width',768);
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',200);
+$WIDTH=DolGraph::getDefaultGraphSizeForStats('width',380);      // Large for one graph in a smarpthone.
+$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',160);
 
 $id=GETPOST('account')?GETPOST('account','alpha'):GETPOST('id');
 $ref=GETPOST('ref');
@@ -493,7 +493,7 @@ else
 }
 
 
-print "\n</div>\n";
+print "\n</div><br>\n";
 
 llxFooter();
 $db->close();

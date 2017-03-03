@@ -194,8 +194,8 @@ ChangeBinding=Changer les liens
 
 ## Admin
 ApplyMassCategories=Application en masse des catégories
-AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
-CategoryDeleted=Category for the accounting account has been removed
+AddAccountFromBookKeepingWithNoCategories=Ajouter les comptes sans groupes
+CategoryDeleted=Le groupe de comptes comptables a été supprimé
 
 ## Export
 Exports=Exports
@@ -211,7 +211,7 @@ Modelcsv_ciel=Export vers Sage Ciel Compta ou Compta Evolution
 Modelcsv_quadratus=Export vers Quadratus QuadraCompta
 Modelcsv_ebp=Export vers EBP
 Modelcsv_cogilog=Export vers Cogilog
-ChartofaccountsId=Chart of accounts Id
+ChartofaccountsId=Id plan comptable
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Initialisation comptabilité

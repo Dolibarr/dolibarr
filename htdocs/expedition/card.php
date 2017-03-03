@@ -1441,7 +1441,7 @@ else if ($id || $ref)
     	print '<div class="fichehalfleft">';
     	print '<div class="underbanner clearboth"></div>';
     	
-		print '<table class="border" width="100%">';
+        print '<table class="border" width="100%">';
 
 		// Linked documents
 		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
@@ -1681,7 +1681,10 @@ else if ($id || $ref)
 		/*
 		 * Lines of products
 		 */
-		print '<br><table class="noborder" width="100%">';
+		print '<br>';
+		
+        print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 		{
@@ -1955,10 +1958,9 @@ else if ($id || $ref)
 		}
 		
 		// TODO Show also lines ordered but not delivered
-
-		
 		
 		print "</table>\n";
+		print '</div>';
 	}
 
 
