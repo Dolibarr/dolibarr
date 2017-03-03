@@ -646,6 +646,20 @@ div.fiche>form>div.div-table-responsive {
     min-height: 350px;
 }
 
+.flexcontainer {
+    display: inline-flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+}
+.thumbstat {
+	flex: 1 1 120px;
+    /* flex-grow: 1; */
+    /* flex-shrink: 1; */
+    /* flex-basis: 140px; */
+    width: 100%;
+    justify-content: flex-start;
+    align-self: flex-start;
+}
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -2803,7 +2817,7 @@ div.tabBar .noborder {
 	white-space: nowrap;
 	overflow: hidden;
     text-overflow: ellipsis;
-    width: 110px;    
+    width: 105px;    
 }
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
@@ -3925,13 +3939,19 @@ div.dataTables_length select {
 	background: #FFFFFF !important;
 }
 
+.select2-arrow {
+	border: none;
+	border-left: none !important;
+	background: none !important;
+}
+
 .select2-choice
 {
-	border: 1px solid #aaa;
-	/* v6 border-top: none !important;
+	/* border: 1px solid #aaa; */
+	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
-	border-bottom: 1px solid #aaa;*/
+	border-bottom: 1px solid #aaa;
 }
 .select2-drop.select2-drop-above.select2-drop-active,
 .select2-container-active .select2-choice,
@@ -3941,7 +3961,6 @@ div.dataTables_length select {
 .select2-container-multi.select2-container-active .select2-choices
 {
 	border: 1px solid #aaa;
-	/* v6 */
 }
 .select2-disabled
 {
@@ -3949,7 +3968,7 @@ div.dataTables_length select {
 }
 .select2-drop-active
 {
-	border: 1px solid #aaa;
+	border: none;
 	border-top: none;
 }
 a span.select2-chosen
@@ -3958,7 +3977,7 @@ a span.select2-chosen
 }
 .select2-container .select2-choice {
 	background-image: none;
-	height: 24px;
+	/* height: 24px; */
 	line-height: 24px;
 }
 .select2-choices .select2-search-choice {
@@ -4062,6 +4081,8 @@ ul.ulselectedfields {
 dl.dropdown {
     margin:0px;
     padding:0px;
+    vertical-align: middle;
+    display: inline-block;
 }
 .dropdown dd, .dropdown dt {
     margin:0px;
@@ -4163,7 +4184,6 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 }
 select {
     /* display: inline-block; */	/* We can't set this. This disable ability to make */
-    /* TODO modified by jmobile, replace jmobile with pure css*/
     overflow:hidden;
     white-space: nowrap;			/* Enabling this make behaviour strange when selecting the empty value if this empty value is '' instead of '&nbsp;' */
     text-overflow: ellipsis;
