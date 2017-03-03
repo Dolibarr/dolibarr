@@ -76,9 +76,9 @@ NbIgnored=Nº ignorats
 NbSent=Nº enviats
 ConfirmUnvalidateEmailing=Are you sure you want to change email <b>%s</b> to draft status?
 MailingModuleDescContactsWithThirdpartyFilter=Contacte amb filtres de client
-MailingModuleDescContactsByCompanyCategory=Contacts by third party category
-MailingModuleDescContactsByCategory=Contacts by categories
-MailingModuleDescContactsByFunction=Contacts by position
+MailingModuleDescContactsByCompanyCategory=Contactes per categoria de tercer
+MailingModuleDescContactsByCategory=Contactes per categories
+MailingModuleDescContactsByFunction=Contactes per càrrec
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Línea %s en archiu
@@ -150,6 +150,6 @@ AdvTgtCreateFilter=Crea filtre
 AdvTgtOrCreateNewFilter=Nom de nou filtre
 NoContactWithCategoryFound=No s'han trobat contactes/adreces amb categoria
 NoContactLinkedToThirdpartieWithCategoryFound=No s'han trobat contactes/adreces amb categoria
-OutGoingEmailSetup=Outgoing email setup
-InGoingEmailSetup=Incoming email setup
+OutGoingEmailSetup=Configuració de correus electrònics sortints
+InGoingEmailSetup=Configuració de correus electrònics entrants
 
