@@ -222,6 +222,7 @@ NoLogoutProcessWithAuthMode=No applicative disconnect feature with authenticatio
 Connection=Connection
 Setup=Setup
 Alert=Alert
+MenuWarnings=Alerts
 Previous=Previous
 Next=Next
 Cards=Cards
