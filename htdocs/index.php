@@ -4,7 +4,8 @@
  * Copyright (C) 2005-2015 Regis Houssin	<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- *
+ * Copyright (C) 2016      Charlie Benke        <charlie@patas-monkey.com>
+*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -370,6 +371,7 @@ $boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'
 $boxwork.='<tr class="liste_titre">';
 $boxwork.='<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
 $boxwork.='<th class="liste_titre" align="right">'.$langs->trans("Number").'</th>';
+$boxwork.='<th class="liste_titre" align="right">'.$langs->trans("Amount").'</th>';
 $boxwork.='<th class="liste_titre" align="right">'.$form->textwithpicto($langs->trans("Late"),$langs->trans("LateDesc")).'</th>';
 $boxwork.='<th class="liste_titre">&nbsp;</th>';
 //print '<th class="liste_titre" width="20">&nbsp;</th>';
@@ -537,6 +539,14 @@ foreach($valid_dashboardlines as $board)
     $var=!$var;
     $boxwork.= '<tr '.$bc[$var].'><td width="16">'.$board->img.'</td><td>'.$board->label.'</td>';
     $boxwork.= '<td align="right"><a class="dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator">'.$board->nbtodo.'</span></a></td>';
+    
+    $boxwork.='<td align="right">';
+    if ($board->amount > 0) 
+    	$boxwork.= price($board->amount);
+    else 
+    	$boxwork.='&nbsp;';
+    $boxwork.='</td>';
+	
     $boxwork.= '<td align="right">';
     $textlate = $langs->trans("NActionsLate",$board->nbtodolate);
     $textlate .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
