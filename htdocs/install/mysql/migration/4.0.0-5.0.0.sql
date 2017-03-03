@@ -250,3 +250,6 @@ ALTER TABLE llx_projet_task ADD UNIQUE INDEX uk_projet_task_ref (ref, entity);
 
 ALTER TABLE llx_contrat ADD COLUMN fk_user_modif integer;
 
+
+update llx_accounting_account set account_parent = 0 where account_parent = '';
+
