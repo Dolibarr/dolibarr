@@ -180,11 +180,15 @@ class FormVentilation extends Form
 		$options = array();
 		$out = ajax_combobox($htmlname, $event);
 
-		while ($obj = $this->db->fetch_object($resql)) {
-			$options[$obj->pcg_type] = $obj->pcg_type;
+		while ($obj = $this->db->fetch_object($resql)) 
+		{
+		    if ($obj->pcg_type != '-1')
+		    {
+                $options[$obj->pcg_type] = $obj->pcg_type;
+		    }
 		}
 
-		$out .= Form::selectarray($htmlname, $options, $selectid, $showempty);
+		$out .= Form::selectarray($htmlname, $options, $selectid, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth200');
 
 		$this->db->free($resql);
 		return $out;
@@ -200,7 +204,8 @@ class FormVentilation extends Form
 	 *
 	 * @return string String with HTML select
 	 */
-	function select_pcgsubtype($selectid, $htmlname = 'pcg_subtype', $showempty = 0, $event = array()) {
+	function select_pcgsubtype($selectid, $htmlname = 'pcg_subtype', $showempty = 0, $event = array()) 
+	{
 		global $conf;
 
 		$sql = "SELECT DISTINCT pcg_subtype ";
@@ -221,11 +226,15 @@ class FormVentilation extends Form
 		$options = array();
 		$out = ajax_combobox($htmlname, $event);
 
-		while ($obj = $this->db->fetch_object($resql)) {
-			$options[$obj->pcg_subtype] = $obj->pcg_subtype;
+		while ($obj = $this->db->fetch_object($resql)) 
+		{
+		    if ($obj->pcg_type != '-1')
+		    {
+                $options[$obj->pcg_subtype] = $obj->pcg_subtype;
+		    }
 		}
 
-		$out .= Form::selectarray($htmlname, $options, $selectid, $showempty);
+		$out .= Form::selectarray($htmlname, $options, $selectid, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth200');
 
 		$this->db->free($resql);
 		return $out;

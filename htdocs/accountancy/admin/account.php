@@ -145,8 +145,6 @@ if ($action == 'delete') {
 
 $pcgver = $conf->global->CHARTOFACCOUNTS;
 
-
-
 $sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.pcg_subtype, aa.account_number, aa.account_parent , aa.label, aa.active, ";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
@@ -198,9 +196,11 @@ if ($resql) {
 	if ($search_pcgsubtype != "") $params.= '&amp;search_pcgsubtype='.urlencode($search_pcgsubtype);
     if ($optioncss != '') $param.='&optioncss='.$optioncss;
 	
-	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy');
-	
 	print '<form method="GET" action="' . $_SERVER["PHP_SELF"] . '">';
+	
+	$htmlbuttonadd = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
+	
+    print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $htmlbuttonadd);
 	
 	// Box to select active chart of account
     $var = ! $var;
@@ -229,13 +229,7 @@ if ($resql) {
     print "</select>";
     print '<input type="submit" class="button" name="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
     print '<br>';    
-    print "<br>\n";
-	
-	print '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
-	print '<a class="butAction" href="./categories.php">' . $langs->trans("ApplyMassCategories") . '</a>';
-	// print '<a class="butAction" href="./importaccounts.php">' . $langs->trans("ImportAccount") . '</a>';
-	// print '<a class="butAction" href="./productaccount.php">' . $langs->trans("CheckProductAccountancyCode") . '</a>';
-	print '<br><br>';
+	print '<br>';
 	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -307,12 +301,12 @@ if ($resql) {
 		
 		// Action
 		print '<td align="center">';
-		if ($user->admin) {
-			print '<a href="./card.php?action=update&id=' . $obj->rowid . '">';
+		if ($user->rights->accounting->chartofaccount) {
+			print '<a href="./card.php?action=update&id=' . $obj->rowid . '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?chartofaccounts='.$object->id).'">';
 			print img_edit();
 			print '</a>';
 			print '&nbsp;';
-			print '<a href="./card.php?action=delete&id=' . $obj->rowid . '">';
+			print '<a href="./card.php?action=delete&id=' . $obj->rowid . '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?chartofaccounts='.$object->id). '">';
 			print img_delete();
 			print '</a>';
 		}
