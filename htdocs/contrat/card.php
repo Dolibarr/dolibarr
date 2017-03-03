@@ -1442,7 +1442,7 @@ else
             print '<table class="notopnoleftnoright allwidth tableforservicepart1" width="100%">';
 
             $sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.description, cd.price_ht, cd.qty,";
-            $sql.= " cd.tva_tx, cd.remise_percent, cd.info_bits, cd.subprice,";
+            $sql.= " cd.tva_tx, cd.remise_percent, cd.info_bits, cd.subprice, cd.multicurrency_subprice,";
             $sql.= " cd.date_ouverture_prevue as date_debut, cd.date_ouverture as date_debut_reelle,";
             $sql.= " cd.date_fin_validite as date_fin, cd.date_cloture as date_fin_reelle,";
             $sql.= " cd.commentaire as comment, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht,";
@@ -1461,6 +1461,9 @@ else
                 print '<td>'.$langs->trans("ServiceNb",$cursorline).'</td>';
                 print '<td width="80" align="center">'.$langs->trans("VAT").'</td>';
                 print '<td width="80" align="right">'.$langs->trans("PriceUHT").'</td>';
+                if (!empty($conf->multicurrency->enabled)) {
+                    print '<td width="80" align="right">'.$langs->trans("PriceUHTCurrency").'</td>';
+                }
                 print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
 	            if ($conf->global->PRODUCT_USE_UNITS) print '<td width="30" align="left">'.$langs->trans("Unit").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("ReductionShort").'</td>';
@@ -1509,8 +1512,12 @@ else
                     }
                     // TVA
                     print '<td align="center">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
-                    // Prix
+                    // Price
                     print '<td align="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
+                    // Price multicurrency
+                    if (!empty($conf->multicurrency->enabled)) {
+                    	print '<td align="right" class="linecoluht_currency nowrap">'.price($objp->multicurrency_subprice).'</td>';
+                    }
                     // Quantite
                     print '<td align="center">'.$objp->qty.'</td>';
 	                // Unit
@@ -1949,6 +1956,8 @@ else
 			{
 				$var = true;
 
+				$forcetoshowtitlelines=1;
+				
 				// Add free products/services
 				$object->formAddObjectLine(1, $mysoc, $soc);
 
@@ -2075,7 +2084,7 @@ $db->close();
 ?>
 
 <?php
-if ($conf->margin->enabled && $action == 'editline')
+if (! empty($conf->margin->enabled) && $action == 'editline')
 {
 ?>
 

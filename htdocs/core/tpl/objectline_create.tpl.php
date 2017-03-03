@@ -37,7 +37,7 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
     $usemargins=1;
 }
 
-global $dateSelector, $forceall, $senderissupplier, $inputalsopricewithtax;
+global $dateSelector, $forceall, $forcetoshowtitlelines, $senderissupplier, $inputalsopricewithtax;
 if (! isset($dateSelector)) $dateSelector=1;    // For backward compatibility
 elseif (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
@@ -53,7 +53,7 @@ if (in_array($object->element,array('propal', 'supplier_proposal','facture','fac
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
 <?php 
-$nolinesbefore=(count($this->lines) == 0);
+$nolinesbefore=(count($this->lines) == 0 || $forcetoshowtitlelines);
 if ($nolinesbefore) {
 ?>
 <tr class="liste_titre<?php echo (($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add') ?> nodrag nodrop">
