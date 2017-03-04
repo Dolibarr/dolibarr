@@ -490,6 +490,7 @@ if ($action == 'export_csv') {
 			// Bank
 			foreach ( $tabbq[$key] as $k => $mt ) {
 				print '"' . $date . '"' . $sep;
+				print '"' . $journal . '"' . $sep;
 				print '"' . $val["type_payment"] . '"' . $sep;
 				print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
 				print '"' . $langs->trans("Bank") . '"' . $sep;
@@ -505,6 +506,7 @@ if ($action == 'export_csv') {
 				{
 					if ($mt) {
 						print '"' . $date . '"' . $sep;
+						print '"' . $journal . '"' . $sep;
 						print '"' . $val["type_payment"] . '"' . $sep;
 						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
 						print '"' . $companystatic->name . '"' . $sep;
@@ -521,6 +523,7 @@ if ($action == 'export_csv') {
 					if (1)
 					{
 						print '"' . $date . '"' . $sep;
+						print '"' . $journal . '"' . $sep;
 						print '"' . $val["ref"] . '"' . $sep;
 						print '"' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . '"' . $sep;
 						print '"' . $langs->trans("Bank") . '"' . $sep;

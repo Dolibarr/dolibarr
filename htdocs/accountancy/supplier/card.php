@@ -40,6 +40,7 @@ $langs->load("main");
 $langs->load("accountancy");
 
 $action = GETPOST('action');
+$cancel = GETPOST('cancel', 'alpha');
 $id = GETPOST('id', 'int');
 $codeventil = GETPOST('codeventil');
 
@@ -47,28 +48,38 @@ $codeventil = GETPOST('codeventil');
 if ($user->societe_id > 0)
 	accessforbidden();
 
-if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch)
+/*
+ * Actions
+ */
+if (! empty($cancel))
 {
-	$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
-	$sql .= " SET fk_code_ventilation = " . $codeventil;
-	$sql .= " WHERE rowid = " . $id;
-	
-	dol_syslog('accountancy/journal/sellsjournal.php:: $sql=' . $sql);
-	
-	$resql = $db->query($sql);
-	if (! $resql) {
-		setEventMessage($db->lasterror(), 'errors');
-	}
+	header("Location: ./lines.php");
+	exit();
+}
+elseif ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch)
+{
+	if (! $cancel)
+	{
+		$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
+		$sql .= " SET fk_code_ventilation = " . $codeventil;
+		$sql .= " WHERE rowid = " . $id;
+		
+		dol_syslog('accountancy/journal/sellsjournal.php:: $sql=' . $sql);
+		
+		$resql = $db->query($sql);
+		if (! $resql) {
+			setEventMessage($db->lasterror(), 'errors');
+		}
+	} else {
+		header("Location: ./lines.php");
+		exit();
+	}	
 }
 
 /*
  * View
  */
 llxHeader("", "", "FicheVentilation");
-
-if ($cancel == $langs->trans("Cancel")) {
-	$action = '';
-}
 
 /*
  * Create
@@ -123,15 +134,18 @@ if ($_GET["id"]) {
 			print '<tr><td width="20%">' . $langs->trans("NewAccount") . '</td><td>';
 			print $formventilation->select_account($objp->fk_code_ventilation, 'codeventil', 1);
 			print '</td></tr>';
-			print '<tr><td>&nbsp;</td><td><input type="submit" class="button" value="' . $langs->trans("Update") . '"></td></tr>';
 			
 			print '</table>';
+			
+			print '<br><div align="center"><input class="button" type="submit" value="' . $langs->trans("Save") . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<input class="button" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
+			
 			print '</form>';
 		} else {
-			print "Error 1";
+			print "Error with the result of sql request";
 		}
 	} else {
-		print "Error 2";
+		print "Error incorrect sql request";
 	}
 } else {
 	print "Error ID incorrect";

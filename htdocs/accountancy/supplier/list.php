@@ -31,6 +31,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -44,9 +45,7 @@ $codeventil = GETPOST('codeventil', 'array');
 $mesCasesCochees = GETPOST('mesCasesCochees', 'array');
 
 // Security check
-if ($user->societe_id > 0)
-	accessforbidden();
-if (! $user->rights->accounting->ventilation->dispatch)
+if ($user->societe_id > 0 || ! $user->rights->accounting->ventilation->dispatch)
 	accessforbidden();
 
 $formventilation = new FormVentilation($db);
@@ -90,6 +89,10 @@ if ($action == 'ventil') {
 			$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
 			$sql .= " SET fk_code_ventilation = " . $monCompte;
 			$sql .= " WHERE rowid = " . $monId;
+
+			$accountingaccount_static = new AccountingAccount($db);
+			$accountingaccount_static->fetch($monCompte);
+			$monCompte=length_accountg(html_entity_decode($accountingaccount_static->account_number)).' - '.$accountingaccount_static->label;
 
 			dol_syslog('accountancy/supplier/list.php:: sql=' . $sql);
 			if ($db->query($sql)) {

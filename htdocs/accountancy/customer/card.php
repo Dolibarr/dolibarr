@@ -34,6 +34,7 @@ $langs->load("bills");
 $langs->load("accountancy");
 
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 $codeventil = GETPOST('codeventil');
 $id = GETPOST('id');
 
@@ -44,9 +45,13 @@ if ($user->societe_id > 0)
 /*
  * Actions
  */
-
-if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) {
-	if (! GETPOST('cancel', 'alpha'))
+if (! empty($cancel))
+{
+	header("Location: ./lines.php");
+	exit();
+}
+elseif ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) {
+	if (! $cancel)
 	{
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
 		$sql .= " SET fk_code_ventilation = " . $codeventil;
@@ -63,18 +68,14 @@ if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) {
 	}		
 }
 
-llxHeader("", "", "FicheVentilation");
-
-if ($cancel == $langs->trans("Cancel")) {
-	$action = '';
-}
-
 /*
- * Create
+ * View
  */
 $form = new Form($db);
 $facture_static = new Facture($db);
 $formventilation = new FormVentilation($db);
+
+llxHeader("", "", "FicheVentilation");
 
 if (! empty($id)) {
 	$sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price,";
@@ -115,30 +116,33 @@ if (! empty($id)) {
 			print '<table class="border" width="100%">';
 			
 			// Ref facture
-			print '<tr><td>' . $langs->trans("Invoice") . '</td>';
+			print '<tr><td width="20%">' . $langs->trans("Invoice") . '</td>';
 			$facture_static->ref = $objp->facnumber;
 			$facture_static->id = $objp->facid;
 			print '<td>' . $facture_static->getNomUrl(1) . '</td>';
 			print '</tr>';
 			
-			print '<tr><td width="20%">' . $langs->trans("Line") . '</td>';
+			print '<tr><td>' . $langs->trans("Line") . '</td>';
 			print '<td>' . nl2br($objp->description) . '</td></tr>';
-			print '<tr><td width="20%">' . $langs->trans("Account") . '</td><td>';
+
+			print '<tr><td>' . $langs->trans("Account") . '</td><td>';
 			print $objp->account_number . '-' . $objp->label;
-			print '<tr><td width="20%">' . $langs->trans("NewAccount") . '</td><td>';
+
+			print '<tr><td>' . $langs->trans("NewAccount") . '</td><td>';
 			print $formventilation->select_account($objp->fk_code_ventilation, 'codeventil', 1);
 			print '</td></tr>';
+
 			print '</table>';
 			
-			print '<br><div align="center"><input class="button" type="submit" value="' . $langs->trans("Save") . '">&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<br><div align="center"><input class="button" type="submit" value="' . $langs->trans("Save") . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 			print '<input class="button" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
 	
 			print '</form>';
 		} else {
-			print "Error";
+			print "Error with the result of sql request";
 		}
 	} else {
-		print "Error";
+		print "Error incorrect sql request";
 	}
 } else {
 	print "Error ID incorrect";

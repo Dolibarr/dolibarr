@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,7 +76,20 @@ $y = $year_current;
 $var = true;
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width=150>' . $langs->trans("Label") . '</td><td align="center">' . $langs->trans("JanuaryMin") . '</td><td align="center">' . $langs->trans("FebruaryMin") . '</td><td align="center">' . $langs->trans("MarchMin") . '</td><td align="center">' . $langs->trans("AprilMin") . '</td><td align="center">' . $langs->trans("MayMin") . '</td><td align="center">' . $langs->trans("JuneMin") . '</td><td align="center">' . $langs->trans("JulyMin") . '</td><td align="center">' . $langs->trans("AugustMin") . '</td><td align="center">' . $langs->trans("SeptemberMin") . '</td><td align="center">' . $langs->trans("OctoberMin") . '</td><td align="center">' . $langs->trans("NovemberMin") . '</td><td align="center">' . $langs->trans("DecemberMin") . '</td><td align="center"><b>Total</b></td></tr>';
+print '<tr class="liste_titre"><td width=150>' . $langs->trans("Label") . '</td>';
+print '<td align="center">' . $langs->trans("JanuaryMin") . '</td>';
+print '<td align="center">' . $langs->trans("FebruaryMin") . '</td>';
+print '<td align="center">' . $langs->trans("MarchMin") . '</td>';
+print '<td align="center">' . $langs->trans("AprilMin") . '</td>';
+print '<td align="center">' . $langs->trans("MayMin") . '</td>';
+print '<td align="center">' . $langs->trans("JuneMin") . '</td>';
+print '<td align="center">' . $langs->trans("JulyMin") . '</td>';
+print '<td align="center">' . $langs->trans("AugustMin") . '</td>';
+print '<td align="center">' . $langs->trans("SeptemberMin") . '</td>';
+print '<td align="center">' . $langs->trans("OctoberMin") . '</td>';
+print '<td align="center">' . $langs->trans("NovemberMin") . '</td>';
+print '<td align="center">' . $langs->trans("DecemberMin") . '</td>';
+print '<td align="center"><b>Total</b></td></tr>';
 
 $sql = "SELECT bk.numero_compte AS 'compte',";
 $sql .= "  ROUND(SUM(IF(MONTH(bk.doc_date)=1,bk.montant,0)),2) AS 'Janvier',";

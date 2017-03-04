@@ -31,6 +31,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -88,6 +89,10 @@ if ($action == 'ventil') {
 			$sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
 			$sql .= " SET fk_code_ventilation = " . $monCompte;
 			$sql .= " WHERE rowid = " . $monId;
+
+			$accountingaccount_static = new AccountingAccount($db);
+			$accountingaccount_static->fetch($monCompte);
+			$monCompte=length_accountg(html_entity_decode($accountingaccount_static->account_number)).' - '.$accountingaccount_static->label;
 
 			dol_syslog("/accountancy/customer/list.php sql=" . $sql, LOG_DEBUG);
 			if ($db->query($sql)) {
