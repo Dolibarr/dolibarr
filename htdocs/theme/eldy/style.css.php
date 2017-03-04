@@ -266,7 +266,6 @@ textarea:focus, button:focus {
 	border: 1px solid #aaa !important;
 }
 input:focus, select:focus {
-    /* box-shadow: 0 0 4px #8091BF; */
 	border-bottom: 1px solid #666;
 }
 input.select2-input {
@@ -289,7 +288,6 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
 
-    /* border: 1px solid #C0C0C0; */
     border: none;
     border-bottom: 1px solid #C0C0C0;
     outline: none;
@@ -300,10 +298,6 @@ input {
 }
 input, select {
 	border-bottom: solid 1px rgba(0,0,0,.2);
-	/*border-radius: 2px;
-	border: solid 1px rgba(0,0,0,.3);
-	border-top:solid 1px rgba(0,0,0,.3);
-	border-bottom:solid 1px rgba(0,0,0,.2);*/
 
 	padding:4px;
 	margin-left:0px;
@@ -311,7 +305,7 @@ input, select {
 	margin-top:1px;
 	}
 textarea {
-	border-radius: 2px;
+	border-radius: 0;
 	border: solid 1px rgba(0,0,0,.3);
 	border-top:solid 1px rgba(0,0,0,.3);
 	border-bottom:solid 1px rgba(0,0,0,.2);
@@ -582,7 +576,7 @@ div.myavailability {
 .strikefordisabled {
 	text-decoration: line-through;
 }
-/* using a tdoverflowxxx make the min-with not working */
+/* using a tdoverflowxxx make the min-width not working */
 .tdoverflow {
     max-width: 0;
     overflow: hidden;
@@ -1701,7 +1695,7 @@ div.blockvmenusearchphone
 .vmenu div.blockvmenusearch
 {
 	padding-bottom: 14px;
-	border-bottom: 1px solid #e0e0e0;
+/*	border-bottom: 1px solid #e0e0e0;  */
 }
 .vmenu div.blockvmenuend
 {
@@ -3945,38 +3939,75 @@ div.dataTables_length select {
 .selectoptiondisabledwhite {
 	background: #FFFFFF !important;
 }
-
 .select2-arrow {
 	border: none;
 	border-left: none !important;
 	background: none !important;
 }
-
 .select2-choice
 {
-	/* border: 1px solid #aaa; */
 	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
 	border-bottom: 1px solid #aaa;
 }
-.select2-drop.select2-drop-above.select2-drop-active,
-.select2-container-active .select2-choice,
-.select2-container-active .select2-choices,
-.select2-dropdown-open.select2-drop-above .select2-choice,
-.select2-dropdown-open.select2-drop-above .select2-choices,
-.select2-container-multi.select2-container-active .select2-choices
+.select2-drop.select2-drop-above {
+	box-shadow: none !important;
+}
+.select2-drop.select2-drop-above.select2-drop-active {
+	border-top: 1px solid #ccc;
+}
+.select2-container-active .select2-choice, .select2-container-active .select2-choices 
 {
-	border: 1px solid #aaa;
+	outline: none;
+	border-top: none;
+	border-left: none;
+	border-bottom: none;
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+}
+.select2-dropdown-open {
+	background-color: #fff;
+}
+.select2-dropdown-open .select2-choice, .select2-dropdown-open .select2-choices
+{
+	outline: none;
+	border-top: none;
+	border-left: none;
+	border-bottom: none;
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+	background-color: #fff;
 }
 .select2-disabled
 {
 	color: #888;
 }
+.select2-drop.select2-drop-above.select2-drop-active, .select2-drop {
+	border-radius: 0;
+}
+.select2-drop.select2-drop-above {
+	border-radius:  0;
+}
+.select2-dropdown-open.select2-drop-above .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choices {
+	background-image: none;
+	border-left: 1px solid #ccc !important;
+	border-right: 1px solid #ccc !important;
+	border-radius: 0 !important;
+}
+div.select2-drop-above
+{
+	background: #fff;
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+}
 .select2-drop-active
 {
+	border: 1px solid #ccc;
+	padding-top: 4px;
+}
+.select2-search input {
 	border: none;
-	border-top: none;
 }
 a span.select2-chosen
 {
@@ -3984,11 +4015,7 @@ a span.select2-chosen
 }
 .select2-container .select2-choice {
 	background-image: none;
-	/* height: 24px; */
 	line-height: 24px;
-}
-.select2-choices .select2-search-choice {
-    /* border: 1px solid #aaa !important; */
 }
 .select2-results .select2-no-results, .select2-results .select2-searching, .select2-results .select2-ajax-error, .select2-results .select2-selection-limit
 {
