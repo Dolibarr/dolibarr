@@ -40,7 +40,6 @@ $mode=GETPOST('mode', 'alpha');
 if (empty($mode)) $mode='common';
 $action=GETPOST('action','alpha');
 $value=GETPOST('value', 'alpha');
-$page_y=GETPOST('page_y','int');
 $search_keyword=GETPOST('search_keyword','alpha');
 $search_status=GETPOST('search_status','alpha');
 $search_nature=GETPOST('search_nature','alpha');
@@ -204,7 +203,7 @@ if ($action == 'set' && $user->admin)
     		setEventMessages($msg, null, 'warnings');
 	    }
 	}
-    header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
+    header("Location: modules.php?mode=".$mode.$param.'#'.$value);
 	exit;
 }
 
@@ -212,7 +211,7 @@ if ($action == 'reset' && $user->admin)
 {
     $result=unActivateModule($value);
     if ($result) setEventMessages($result, null, 'errors');
-    header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
+    header("Location: modules.php?mode=".$mode.$param.'#'.$value);
 	exit;
 }
 
@@ -649,7 +648,7 @@ if ($mode == 'common')
         	}
         	else
         	{
-        		print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
+        		print '<a name="'.$modName.'" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
         		print img_picto($langs->trans("Activated"),'switch_on');
         		print '</a>';
         	}
@@ -713,7 +712,7 @@ if ($mode == 'common')
         	else
         	{
 	        	// Module non actif
-	        	print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
+	        	print '<a name="'.$modName.'" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
 	        	print img_picto($langs->trans("Disabled"),'switch_off');
 	        	print "</a>\n";
         	}
