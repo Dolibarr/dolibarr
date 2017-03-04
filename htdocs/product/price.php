@@ -1089,15 +1089,15 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print '<table class="border" width="100%">';
 
 		// VAT
-		print '<tr><td>' . $langs->trans("VATRate") . '</td><td colspan="2">';
+		print '<tr><td class="titlefield">' . $langs->trans("VATRate") . '</td><td>';
 		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
 		print '</td></tr>';
 
 		// Price base
-		print '<tr><td width="20%">';
+		print '<tr><td>';
 		print $langs->trans('PriceBase');
 		print '</td>';
-		print '<td colspan="2">';
+		print '<td>';
 		print $form->selectPriceBaseType($object->price_base_type, "price_base_type");
 		print '</td>';
 		print '</tr>';
@@ -1105,7 +1105,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
  		// Only show price mode and expression selector if module is enabled
 		if (! empty($conf->dynamicprices->enabled)) {
 			// Price mode selector
-			print '<tr><td>'.$langs->trans("PriceMode").'</td><td colspan="2">';
+			print '<tr><td>'.$langs->trans("PriceMode").'</td><td>';
 			$price_expression = new PriceExpression($db);
 			$price_expression_list = array(0 => $langs->trans("PriceNumeric")); //Put the numeric mode as first option
 			foreach ($price_expression->list_price_expression() as $entry) {
@@ -1141,10 +1141,10 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		// Price
 		$product = new Product($db);
 		$product->fetch($id, $ref, '', 1); //Ignore the math expression when getting the price
-		print '<tr id="price_numeric"><td width="20%">';
+		print '<tr id="price_numeric"><td>';
 		$text = $langs->trans('SellingPrice');
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
-		print '</td><td colspan="2">';
+		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
 			print '<input name="price" size="10" value="' . price($product->price_ttc) . '">';
 		} else {
@@ -1156,23 +1156,19 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
-		print '</td><td';
-		if (empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE)) {
-			print ' colspan="2"';
-		}
-		print '>';
+		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
 			print '<input name="price_min" size="10" value="' . price($object->price_min_ttc) . '">';
 		} else {
 			print '<input name="price_min" size="10" value="' . price($object->price_min) . '">';
 		}
-		print '</td>';
-		if ( !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
+		if (! empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
 		{
-			print '<td align="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
+		    print ' &nbsp; '.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
 		}
+		print '</td>';
 		print '</tr>';
-
+		
 		print '</table>';
 
 		dol_fiche_end();
