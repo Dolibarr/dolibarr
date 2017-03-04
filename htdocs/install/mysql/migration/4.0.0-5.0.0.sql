@@ -253,3 +253,6 @@ ALTER TABLE llx_contrat ADD COLUMN fk_user_modif integer;
 
 update llx_accounting_account set account_parent = 0 where account_parent = '';
 
+ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+

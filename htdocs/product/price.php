@@ -88,7 +88,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
     {
         $search_soc = '';        
     }
@@ -1306,11 +1306,11 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 }
 
 
-// List of price changes -log historic (ordered by descending date)
+// List of price changes - log historic (ordered by descending date)
 
 if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_price') && ! in_array($action, array('edit_price','edit_vat')))
 {
-    $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.recuperableonly,";
+    $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.default_vat_code, p.recuperableonly,";
     $sql .= " p.price_level, p.price_min, p.price_min_ttc,p.price_by_qty,";
     $sql .= " p.date_price as dp, p.fk_price_expression, u.rowid as user_id, u.login";
     $sql .= " FROM " . MAIN_DB_PREFIX . "product_price as p,";
@@ -1402,7 +1402,16 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     			}
     
     			print '<td align="center">' . $langs->trans($objp->price_base_type) . "</td>";
-    			if (empty($conf->global->PRODUIT_MULTIPRICES)) print '<td align="right">' . vatrate($objp->tva_tx, true, $objp->recuperableonly) . "</td>";
+    			if (empty($conf->global->PRODUIT_MULTIPRICES)) 
+    			{
+    			    print '<td align="right">';
+    			    if ($objp->default_vat_code)
+    			    {
+    			        print vatrate($objp->tva_tx, true) . ' ('.$objp->default_vat_code.')';
+    			    }
+    			    else print vatrate($objp->tva_tx, true, $objp->recuperableonly);
+    			    print "</td>";
+    			}
     
     			// Price
     			if (! empty($objp->fk_price_expression) && ! empty($conf->dynamicprices->enabled))

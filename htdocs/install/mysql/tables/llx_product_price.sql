@@ -31,6 +31,7 @@ create table llx_product_price
   price_min			double(24,8) default NULL,
   price_min_ttc		double(24,8) default NULL,
   price_base_type	varchar(3) DEFAULT 'HT',
+  default_vat_code	varchar(10),	         		-- Same code than into table llx_c_tva (but no constraints). Should be used in priority to find default vat, npr, localtaxes for product.
   tva_tx			double(6,3) NOT NULL,
   recuperableonly	integer NOT NULL DEFAULT '0',  
   localtax1_tx		double(6,3) DEFAULT 0,

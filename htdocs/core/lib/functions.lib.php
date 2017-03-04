@@ -3991,14 +3991,14 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			else
 			{
 				$ret=$product->tva_tx;    // Default vat of product we defined
+				// TODO Add ' ('.$product->default_vat_code.')';
 			}
 			$found=1;
 		}
 		else
 		{
-			// TODO Read default product vat according to countrycode and product
-
-
+			// TODO Read default product vat according to countrycode and product. Vat for couple countrycode/product is a feature not implemeted yet. 
+			// Such feature is useless for 99.999% of users, probably 100%
 		}
 	}
 
@@ -4006,11 +4006,11 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 	{
 		if (empty($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS))
 		{
-			// If vat of product for the country not found or not defined, we return higher vat of country.
+			// If vat of product for the country not found or not defined, we return the first higher vat of country.
 			$sql = "SELECT taux as vat_rate";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 			$sql.= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
-			$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
+			$sql.= " ORDER BY t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql.= $db->plimit(1);
 
 			$resql=$db->query($sql);
