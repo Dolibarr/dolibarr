@@ -1357,7 +1357,14 @@ class Contrat extends CommonObject
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
-			$txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+
+		    // Clean vat code
+    		$vat_src_code='';
+    		if (preg_match('/\((.*)\)/', $txtva, $reg))
+    		{
+    		    $vat_src_code = $reg[1];
+    		    $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+    		}
 
 			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1,$mysoc, $localtaxes_type);
 			$total_ht  = $tabprice[0];
@@ -1397,7 +1404,7 @@ class Contrat extends CommonObject
 
 			// Insertion dans la base
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
-			$sql.= " (fk_contrat, label, description, fk_product, qty, tva_tx,";
+			$sql.= " (fk_contrat, label, description, fk_product, qty, tva_tx, vat_src_code,";
 			$sql.= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice,";
 			$sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc,";
 			$sql.= " info_bits,";
@@ -1410,6 +1417,7 @@ class Contrat extends CommonObject
 			$sql.= ($fk_product>0 ? $fk_product : "null").",";
 			$sql.= " ".$qty.",";
 			$sql.= " ".$txtva.",";
+			$sql.= " ".($vat_src_code?"'".$vat_src_code."'":"null").",";
 			$sql.= " ".$txlocaltax1.",";
 			$sql.= " ".$txlocaltax2.",";
 			$sql.= " '".$localtax1_type."',";
@@ -2598,6 +2606,7 @@ class ContratLigne extends CommonObjectLine
 		$sql.= " t.date_fin_validite as date_fin_validite,";
 		$sql.= " t.date_cloture as date_cloture,";
 		$sql.= " t.tva_tx,";
+		$sql.= " t.vat_src_code,";
 		$sql.= " t.localtax1_tx,";
 		$sql.= " t.localtax2_tx,";
 		$sql.= " t.qty,";
@@ -2650,6 +2659,7 @@ class ContratLigne extends CommonObjectLine
 				$this->date_fin_validite = $this->db->jdate($obj->date_fin_validite);
 				$this->date_cloture = $this->db->jdate($obj->date_cloture);
 				$this->tva_tx = $obj->tva_tx;
+				$this->vat_src_code = $obj->vat_src_code;
 				$this->localtax1_tx = $obj->localtax1_tx;
 				$this->localtax2_tx = $obj->localtax2_tx;
 				$this->qty = $obj->qty;
