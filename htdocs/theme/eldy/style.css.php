@@ -282,6 +282,9 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
+.liste_titre input[name=month], .liste_titre input[name=month_lim] {
+	margin-right: 4px;
+}
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
