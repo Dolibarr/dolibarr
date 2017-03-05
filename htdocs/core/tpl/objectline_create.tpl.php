@@ -719,7 +719,9 @@ function setforfree() {
 	jQuery("#fournprice_predef").hide();
 	jQuery("#title_vat").show();
 	jQuery("#title_up_ht").show();
+	jQuery("#title_up_ht_currency").show();
 	jQuery("#title_up_ttc").show();
+	jQuery("#title_up_ttc_currency").show();
 	jQuery("#np_marginRate").show();	// May no exists
 	jQuery("#np_markRate").show();	// May no exists
 	jQuery(".np_marginRate").show();	// May no exists
@@ -739,7 +741,9 @@ function setforpredef() {
 	//jQuery("#fournprice_predef").show(); // management somewhere else
 	jQuery("#title_vat").hide();
 	jQuery("#title_up_ht").hide();
+	jQuery("#title_up_ht_currency").hide();
 	jQuery("#title_up_ttc").hide();
+	jQuery("#title_up_ttc_currency").hide();
 	jQuery("#np_marginRate").hide();	// May no exists
 	jQuery("#np_markRate").hide();	// May no exists
 	jQuery(".np_marginRate").hide();	// May no exists

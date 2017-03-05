@@ -568,6 +568,10 @@ class Conf
 		    $this->expensereport->payment->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY)?$this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY:0)*24*60*60;
 		}
 		
+		if (! empty($this->global->PRODUIT_MULTIPRICES) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT))
+		{
+		    $this->global->PRODUIT_MULTIPRICES_LIMIT = 5;
+		}
 		
 		// For modules that want to disable top or left menu
 		if (! empty($this->global->MAIN_HIDE_TOP_MENU)) $this->dol_hide_topmenu=$this->global->MAIN_HIDE_TOP_MENU;
@@ -596,7 +600,7 @@ class Conf
 		}
 		foreach ($handlers as $handler) {
 			$handler_files = array();
-			$dirsyslogs = array_merge(array('/core/modules/syslog/'), $conf->modules_parts['syslog']);
+			$dirsyslogs = array_merge(array('/core/modules/syslog/'), $this->modules_parts['syslog']);
 			foreach ($dirsyslogs as $reldir) {
 				$dir = dol_buildpath($reldir, 0);
 				$newdir = dol_osencode($dir);
