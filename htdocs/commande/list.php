@@ -275,6 +275,7 @@ if ($resql)
 	if ($search_sale > 0) 		$param.='&search_sale='.$search_sale;
 	if ($search_total_ht != '') $param.='&search_total_ht='.$search_total_ht;
 	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
+	if ($billed != '')       $param.='&billed='.$billed;
 
 	$num = $db->num_rows($resql);
 	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_commercial.png');
