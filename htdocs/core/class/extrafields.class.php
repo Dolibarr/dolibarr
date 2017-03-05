@@ -1018,8 +1018,9 @@ class ExtraFields
 			{
 				$out.='<input class="flat '.$showsize.'" type="radio" name="'.$keysuffix.'options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'');
 				$out.=' value="'.$keyopt.'"';
+				$out.=' id="'.$keysuffix.'options_'.$key.$keyprefix.'_'.$keyopt.'"';
 				$out.= ($value==$keyopt?'checked':'');
-				$out.='/>'.$val.'<br>';
+				$out.='/><label for="'.$keysuffix.'options_'.$key.$keyprefix.'_'.$keyopt.'">'.$val.'</label><br>';
 			}
 		}
 		elseif ($type == 'chkbxlst')

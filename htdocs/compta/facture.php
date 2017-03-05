@@ -3667,6 +3667,9 @@ else if ($id > 0 || ! empty($ref))
             
             print '<tr ' . $bc[$var] . '>';
             print '<td colspan="2" align="right"></td>';
+	    if (! empty($conf->banque->enabled))
+		print '<td align="right"></td>';
+
             print '<td align="right"><b>' . price($total_next_ht) . '</b></td>';
             print '<td align="right"><b>' . price($total_next_ttc) . '</b></td>';
             print '<td width="18">&nbsp;</td>';
