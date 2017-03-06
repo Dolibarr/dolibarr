@@ -292,6 +292,7 @@ class MouvementStock extends CommonObject
     		    }
     		    if (! $foundforbatch || $qtyisnotenough)
     		    {
+    		        $langs->load("stocks");
         		    $this->error = $langs->trans('qtyToTranferLotIsNotEnough');
         		    $this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough');
         		    $this->db->rollback();
@@ -302,6 +303,7 @@ class MouvementStock extends CommonObject
     		{
     		    if (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty))
     		    {
+    		        $langs->load("stocks");
     		        $this->error = $langs->trans('qtyToTranferIsNotEnough');
     		        $this->errors[] = $langs->trans('qtyToTranferIsNotEnough');
     		        $this->db->rollback();
