@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $langs->load("banks");
 $langs->load("categories");
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width',768);
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',200);
+$WIDTH=DolGraph::getDefaultGraphSizeForStats('width',380);      // Large for one graph in a smarpthone.
+$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',160);
 
 $id=GETPOST('account')?GETPOST('account','alpha'):GETPOST('id');
 $ref=GETPOST('ref');
@@ -147,7 +147,7 @@ $head=bank_prepare_head($object);
 dol_fiche_head($head,'annual',$langs->trans("FinancialAccount"),0,'account');
 
 $title=$langs->trans("FinancialAccount")." : ".$object->label;
-$link=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start-1)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
+$link=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start-1)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start+1)."'>".img_next('', 'class="valignbottom"')."</a>":"");
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
@@ -493,7 +493,7 @@ else
 }
 
 
-print "\n</div>\n";
+print "\n</div><br>\n";
 
 llxFooter();
 $db->close();

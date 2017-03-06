@@ -37,7 +37,7 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
     $usemargins=1;
 }
 
-global $dateSelector, $forceall, $senderissupplier, $inputalsopricewithtax;
+global $dateSelector, $forceall, $forcetoshowtitlelines, $senderissupplier, $inputalsopricewithtax;
 if (! isset($dateSelector)) $dateSelector=1;    // For backward compatibility
 elseif (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
@@ -52,8 +52,8 @@ if (in_array($object->element,array('propal', 'supplier_proposal','facture','fac
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
-<?php
-$nolinesbefore=(count($this->lines) == 0);
+<?php 
+$nolinesbefore=(count($this->lines) == 0 || $forcetoshowtitlelines);
 if ($nolinesbefore) {
 ?>
 <tr class="liste_titre<?php echo (($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add') ?> nodrag nodrop">
@@ -719,7 +719,9 @@ function setforfree() {
 	jQuery("#fournprice_predef").hide();
 	jQuery("#title_vat").show();
 	jQuery("#title_up_ht").show();
+	jQuery("#title_up_ht_currency").show();
 	jQuery("#title_up_ttc").show();
+	jQuery("#title_up_ttc_currency").show();
 	jQuery("#np_marginRate").show();	// May no exists
 	jQuery("#np_markRate").show();	// May no exists
 	jQuery(".np_marginRate").show();	// May no exists
@@ -739,7 +741,9 @@ function setforpredef() {
 	//jQuery("#fournprice_predef").show(); // management somewhere else
 	jQuery("#title_vat").hide();
 	jQuery("#title_up_ht").hide();
+	jQuery("#title_up_ht_currency").hide();
 	jQuery("#title_up_ttc").hide();
+	jQuery("#title_up_ttc_currency").hide();
 	jQuery("#np_marginRate").hide();	// May no exists
 	jQuery("#np_markRate").hide();	// May no exists
 	jQuery(".np_marginRate").hide();	// May no exists

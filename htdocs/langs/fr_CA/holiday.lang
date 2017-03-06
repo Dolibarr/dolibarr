@@ -1,2 +1,11 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=Gestion des ressources humaines
+DateDebCP=Date de début
+DateFinCP=Date de fin
+DateCreateCP=Date création
+ApprovedCP=Approuver
+CancelCP=Annulé
+RefuseCP=Refusé
+EditCP=Éditer
+StatutCP=État
+MotifCP=Raison

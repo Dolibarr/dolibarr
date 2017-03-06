@@ -1052,61 +1052,101 @@ if (empty($reshook))
 							$typeamount = GETPOST('typedeposit', 'alpha');
 							$valuedeposit = GETPOST('valuedeposit', 'int');
 
-							if ($typeamount == 'amount')
+							$amountdeposit = array();
+							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA))
 							{
-								$amountdeposit = $valuedeposit;
+								if ($typeamount == 'amount') $amount = $valuedeposit;
+								else $amount = $srcobject->total_ttc * ($valuedeposit / 100);
+								
+								$TTotalByTva = array();
+								foreach ($srcobject->lines as &$line)
+								{
+									$TTotalByTva[$line->tva_tx] += $line->total_ttc ;
+								}
+								
+								$amount_to_diff = 0;
+								foreach ($TTotalByTva as $tva => &$total)
+								{
+									$coef = $total / $srcobject->total_ttc; // Calc coef
+									$am = $amount * $coef;
+									$amount_ttc_diff += $am;
+									$amountdeposit[$tva] += $am / (1 + $tva / 100); // Convert into HT for the addline
+								}
 							}
 							else
 							{
-								$amountdeposit = 0;
-
-								if ($result > 0)
+								if ($typeamount == 'amount')
 								{
-									$totalamount = 0;
-									$lines = $srcobject->lines;
-									$numlines=count($lines);
-									for ($i=0; $i<$numlines; $i++)
-									{
-										$qualified=1;
-										if (empty($lines[$i]->qty)) $qualified=0;	// We discard qty=0, it is an option
-										if (! empty($lines[$i]->special_code)) $qualified=0;	// We discard special_code (frais port, ecotaxe, option, ...)
-										if ($qualified) $totalamount += $lines[$i]->total_ht;
-									}
-
-									if ($totalamount != 0) {
-										$amountdeposit = ($totalamount * $valuedeposit) / 100;
-									}
-								} else {
-									setEventMessages($srcobject->error, $srcobject->errors, 'errors');
-									$error ++;
+									$amountdeposit[] = $valuedeposit;
 								}
-							}
+								else
+								{
+									if ($result > 0)
+									{
+										$totalamount = 0;
+										$lines = $srcobject->lines;
+										$numlines=count($lines);
+										for ($i=0; $i<$numlines; $i++)
+										{
+											$qualified=1;
+											if (empty($lines[$i]->qty)) $qualified=0;	// We discard qty=0, it is an option
+											if (! empty($lines[$i]->special_code)) $qualified=0;	// We discard special_code (frais port, ecotaxe, option, ...)
+											if ($qualified) $totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
+										}
 
-							$result = $object->addline(
-									$langs->trans('Deposit'),
-									$amountdeposit,		 	// subprice
-									1, 						// quantity
-									$lines[$i]->tva_tx,     // vat rate
-							        0,                      // localtax1_tx
-									0, 						// localtax2_tx
-									(empty($conf->global->INVOICE_PRODUCTID_DEPOSIT)?0:$conf->global->INVOICE_PRODUCTID_DEPOSIT), 	// fk_product
-									0, 						// remise_percent
-									0, 						// date_start
-									0, 						// date_end
-									0, $lines[$i]->info_bits, // info_bits
-									0, 						// info_bits
-									'HT',
-									0,
-									0, 						// product_type
-									1,
-									$lines[$i]->special_code,
-									$object->origin,
-									0,
-									0,
-									0,
-									0,
-									$langs->trans('Deposit')
-								);
+										if ($totalamount != 0) {
+											$amountdeposit[$lines[$i]->tva] = ($totalamount * $valuedeposit) / 100;
+										} else {
+											$amountdeposit[] = 0;
+										}
+									} else {
+										setEventMessages($srcobject->error, $srcobject->errors, 'errors');
+										$error ++;
+									}
+								}
+								
+								$amount_ttc_diff = $amountdeposit[0];
+							}
+							
+							foreach ($amountdeposit as $tva => $amount)
+							{
+								$result = $object->addline(
+										$langs->trans('Deposit'),
+										$amount,		 	// subprice
+										1, 						// quantity
+										$tva,     // vat rate
+										0,                      // localtax1_tx
+										0, 						// localtax2_tx
+										(empty($conf->global->INVOICE_PRODUCTID_DEPOSIT)?0:$conf->global->INVOICE_PRODUCTID_DEPOSIT), 	// fk_product
+										0, 						// remise_percent
+										0, 						// date_start
+										0, 						// date_end
+										0, 
+								        $lines[$i]->info_bits,  // info_bits
+										0,
+										'HT',
+										0,
+										0, 						// product_type
+										1,
+										$lines[$i]->special_code,
+										$object->origin,
+										0,
+										0,
+										0,
+										0,
+										$langs->trans('Deposit')
+									);
+							}
+							
+							$diff = $object->total_ttc - $amount_ttc_diff;
+							
+							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA) && $diff != 0)
+							{
+								$object->fetch_lines();
+								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx);
+								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
+							}
+							
 						}
 						else
 						{
@@ -1462,7 +1502,7 @@ if (empty($reshook))
 
 			// Ecrase $pu par celui du produit
 			// Ecrase $desc par celui du produit
-			// Ecrase $txtva par celui du produit
+			// Ecrase $tva_tx par celui du produit
 			// Ecrase $base_price_type par celui du produit
 			// Replaces $fk_unit with the product's
 			if (! empty($idprod))
@@ -1473,102 +1513,105 @@ if (empty($reshook))
 				$label = ((GETPOST('product_label') && GETPOST('product_label') != $prod->label) ? GETPOST('product_label') : '');
 
 				// Update if prices fields are defined
-					$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
-					$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
-					if (empty($tva_tx)) $tva_npr=0;
+				$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
+				$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
+				if (empty($tva_tx)) $tva_npr=0;
 
-					$pu_ht = $prod->price;
-					$pu_ttc = $prod->price_ttc;
-					$price_min = $prod->price_min;
-					$price_base_type = $prod->price_base_type;
+				$pu_ht = $prod->price;
+				$pu_ttc = $prod->price_ttc;
+				$price_min = $prod->price_min;
+				$price_base_type = $prod->price_base_type;
 
-					// We define price for product
-					if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
+				// We define price for product
+				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
+				{
+					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
+					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
+					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
+					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
+					if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 					{
-						$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
-						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
-						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
-						$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
-						if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
-						{
-                            if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
-                            if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
-							if (empty($tva_tx)) $tva_npr=0;
+                        if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
+                        if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+						if (empty($tva_tx)) $tva_npr=0;
+					}
+				}
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+				{
+					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+
+					$prodcustprice = new Productcustomerprice($db);
+
+					$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->thirdparty->id);
+
+					$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+					if ($result) {
+						if (count($prodcustprice->lines) > 0) {
+							$pu_ht = price($prodcustprice->lines[0]->price);
+							$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
+							$price_base_type = $prodcustprice->lines[0]->price_base_type;
+							$tva_tx = $prodcustprice->lines[0]->tva_tx;
 						}
 					}
-					elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+				}
+
+				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
+				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+			    
+				// if price ht was forced (ie: from gui when calculated by margin rate and cost price). TODO Why this ?
+				if (! empty($price_ht))
+				{
+					$pu_ht = price2num($price_ht, 'MU');
+					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+				}
+				// On reevalue prix selon taux tva car taux tva transaction peut etre different
+				// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+				elseif ($tmpvat != $tmpprodvat)
+				{
+					if ($price_base_type != 'HT')
 					{
-						require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
-
-						$prodcustprice = new Productcustomerprice($db);
-
-						$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->thirdparty->id);
-
-						$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-						if ($result) {
-							if (count($prodcustprice->lines) > 0) {
-								$pu_ht = price($prodcustprice->lines[0]->price);
-								$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
-								$price_base_type = $prodcustprice->lines[0]->price_base_type;
-								$tva_tx = $prodcustprice->lines[0]->tva_tx;
-							}
-						}
+						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 					}
-
-					// if price ht was forced (ie: from gui when calculated by margin rate and cost price)
-					if (! empty($price_ht))
+					else
 					{
-						$pu_ht = price2num($price_ht, 'MU');
-						$pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
+						$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
 					}
-					// On reevalue prix selon taux tva car taux tva transaction peut etre different
-					// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-					elseif ($tva_tx != $prod->tva_tx)
-					{
-						if ($price_base_type != 'HT')
-						{
-							$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU');
-						}
-						else
-						{
-							$pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
-						}
-					}
+				}
 
-					$desc = '';
+				$desc = '';
 
-					// Define output language
-					if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
-						$outputlangs = $langs;
-						$newlang = '';
-						if (empty($newlang) && GETPOST('lang_id'))
-							$newlang = GETPOST('lang_id');
-						if (empty($newlang))
-							$newlang = $object->thirdparty->default_lang;
-						if (! empty($newlang)) {
-							$outputlangs = new Translate("", $conf);
-							$outputlangs->setDefaultLang($newlang);
-						}
-
-						$desc = (! empty($prod->multilangs [$outputlangs->defaultlang] ["description"])) ? $prod->multilangs [$outputlangs->defaultlang] ["description"] : $prod->description;
-					} else {
-						$desc = $prod->description;
+				// Define output language
+				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+					$outputlangs = $langs;
+					$newlang = '';
+					if (empty($newlang) && GETPOST('lang_id'))
+						$newlang = GETPOST('lang_id');
+					if (empty($newlang))
+						$newlang = $object->thirdparty->default_lang;
+					if (! empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
 					}
 
-					$desc = dol_concatdesc($desc, $product_desc);
+					$desc = (! empty($prod->multilangs [$outputlangs->defaultlang] ["description"])) ? $prod->multilangs [$outputlangs->defaultlang] ["description"] : $prod->description;
+				} else {
+					$desc = $prod->description;
+				}
 
-					// Add custom code and origin country into description
-					if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code))) {
-						$tmptxt = '(';
-						if (! empty($prod->customcode))
-							$tmptxt .= $langs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
-						if (! empty($prod->customcode) && ! empty($prod->country_code))
-							$tmptxt .= ' - ';
-						if (! empty($prod->country_code))
-							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $langs, 0);
-						$tmptxt .= ')';
-						$desc = dol_concatdesc($desc, $tmptxt);
-					}
+				$desc = dol_concatdesc($desc, $product_desc);
+
+				// Add custom code and origin country into description
+				if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code))) {
+					$tmptxt = '(';
+					if (! empty($prod->customcode))
+						$tmptxt .= $langs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
+					if (! empty($prod->customcode) && ! empty($prod->country_code))
+						$tmptxt .= ' - ';
+					if (! empty($prod->country_code))
+						$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $langs, 0);
+					$tmptxt .= ')';
+					$desc = dol_concatdesc($desc, $tmptxt);
+				}
 
 				$type = $prod->type;
 				$fk_unit = $prod->fk_unit;
@@ -3624,6 +3667,9 @@ else if ($id > 0 || ! empty($ref))
             
             print '<tr ' . $bc[$var] . '>';
             print '<td colspan="2" align="right"></td>';
+	    if (! empty($conf->banque->enabled))
+		print '<td align="right"></td>';
+
             print '<td align="right"><b>' . price($total_next_ht) . '</b></td>';
             print '<td align="right"><b>' . price($total_next_ttc) . '</b></td>';
             print '<td width="18">&nbsp;</td>';

@@ -48,7 +48,6 @@ if (empty($usedolheader))
 
 	<body style="padding: 10px;">
 
-	<div data-role="page">
 
 	<?php
 }
@@ -350,7 +349,7 @@ if (! empty($usedolheader))
 {
 	llxFooter();
 } else { ?>
-</div>
+
 </body>
 <?php } ?>
 

@@ -17,14 +17,14 @@ CronMethodDoesNotExists=Class类 %s 没有包含任何方法 %s
 # Menu
 EnabledAndDisabled=启用和禁用
 # Page list
-CronLastOutput=最后运行结果
-CronLastResult=最后结果代码
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=命令
 CronList=计划任务
 CronDelete=删除计划任务
-CronConfirmDelete=您确定想要删除计划任务吗？
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=安排计划工作
-CronConfirmExecute=你确定想要现在执行这些计划工作吗？
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=计划工作模式允许执行计划好了的工作
 CronTask=工作
 CronNone=无

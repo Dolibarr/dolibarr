@@ -959,7 +959,7 @@ class Cronjob extends CommonObject
 				// Create Object for the call module
 				$object = new $this->objectname($this->db);
 	
-				$params_arr = explode(", ",$this->params);
+				$params_arr = array_map('trim', explode(",",$this->params));
 				if (!is_array($params_arr))
 				{
 					$result = call_user_func(array($object, $this->methodename), $this->params);

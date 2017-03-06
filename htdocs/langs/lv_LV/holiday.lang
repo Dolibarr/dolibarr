@@ -76,8 +76,9 @@ BoxTitleLastLeaveRequests=Latest %s modified leave requests
 HolidaysMonthlyUpdate=Ikmēneša atjauninājums
 ManualUpdate=Manuāla aktualizēšana
 HolidaysCancelation=Leave request cancelation
-EmployeeLastname=Darbinieka uzvārds
-EmployeeFirstname=Darbinieka vārds
+EmployeeLastname=Employee last name
+EmployeeFirstname=Employee first name
+TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

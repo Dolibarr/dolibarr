@@ -72,20 +72,24 @@ print load_fiche_titre($langs->trans("ContractsArea"),'','title_commercial.png')
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-// Search contract
-if (! empty($conf->contrat->enabled))
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-	print '<tr '.$bc[$var].'>';
-	print '<td class="nowrap">'.$langs->trans("Contract").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
-	print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "</table></form>\n";
-	print "<br>";
+    // Search contract
+    if (! empty($conf->contrat->enabled))
+    {
+    	$var=false;
+    	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
+    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<table class="noborder nohover" width="100%">';
+    	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    	print '<tr '.$bc[$var].'>';
+    	print '<td class="nowrap">'.$langs->trans("Contract").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+    	print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    	print "</table></form>\n";
+    	print "<br>";
+    }
 }
+
 
 /*
  * Statistics
@@ -251,7 +255,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 
 			$i = 0;
 			//$tot_ttc = 0;
-			while ($i < $num && $i < 20)
+			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
 				print '<tr '.$bc[$var].'><td class="nowrap">';

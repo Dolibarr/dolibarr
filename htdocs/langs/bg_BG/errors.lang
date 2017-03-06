@@ -11,6 +11,7 @@ ErrorLoginAlreadyExists=Вход %s вече съществува.
 ErrorGroupAlreadyExists=Група %s вече съществува.
 ErrorRecordNotFound=Запишете не е намерен.
 ErrorFailToCopyFile=Не успя да копира файла <b>&quot;%s&quot;</b> в <b>&quot;%s&quot;.</b>
+ErrorFailToCopyDir=Failed to copy directory '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToRenameFile=Неуспешно преименуване на файлове <b>&quot;%s&quot;</b> в <b>&quot;%s&quot;.</b>
 ErrorFailToDeleteFile=Неуспех при премахването на файл <b>&quot;%s&quot;.</b>
 ErrorFailToCreateFile=Грешка при създаване на файл <b>&quot;%s&quot;.</b>
@@ -115,7 +116,7 @@ ErrorNoActivatedBarcode=Не е тип баркод активира
 ErrUnzipFails=Неуспех да разархивирате %s с ZipArchive
 ErrNoZipEngine=No engine to unzip %s file in this PHP
 ErrorFileMustBeADolibarrPackage=Файла %s трябва да бъде Dolibarr zip архив
-ErrorFileRequired=Отнема файла пакет Dolibarr
+ErrorModuleFileRequired=You must select a Dolibarr module package file
 ErrorPhpCurlNotInstalled=PHP навийте не е инсталиран, това е от съществено значение, за да разговаря с Paypal
 ErrorFailedToAddToMailmanList=Неуспешно добавяне на запис на пощальона списък или база СПИП
 ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
@@ -181,6 +182,8 @@ ErrorBankStatementNameMustFollowRegex=Error, bank statement name must follow the
 ErrorPhpMailDelivery=Check that you don't use a too high number of recipients and that your email content is not similar to a Spam. Ask also your administrator to check firewall and server logs files for a more complete information.
 ErrorUserNotAssignedToTask=User must be assigned to task to be able to enter time consumed.
 ErrorTaskAlreadyAssigned=Task already assigned to user
+ErrorModuleFileSeemsToHaveAWrongFormat=The module package seems to have a wrong format.
+ErrorFilenameDosNotMatchDolibarrPackageRules=The name of the module package (<strong>%s</strong>) does not match expected name syntax: <strong>%s</strong>
 
 # Warnings
 WarningPasswordSetWithNoAccount=Парола е зададено за този член. Обаче, няма създаден потребителски акаунт. Следователно тази парола е записана, но не може да бъде използвана за влизане в Dolibarr. Може да бъде използвана от външен модул/интерфейс, но ако нямате нужда да определите нито потребителско име нито парола за член, можете да деактивирате тази опция. Ако имате нужда да управлявате потребителско име, но нямата нужда от парола, можете да оставите това поле празно, за да избегнете това предупреждение. Забележка: Имейл също може да бъде използван като потребителско име ако члена с свързан към потребител.

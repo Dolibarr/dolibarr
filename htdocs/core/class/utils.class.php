@@ -146,12 +146,14 @@ class Utils
 	 *  @param  string      $type              'mysql', 'postgresql', ...
 	 *  @param  int         $usedefault        1=Use default backup profile (Set this to 1 when used as cron)
 	 *  @param  string      $file              'auto' or filename to build
+	 *  @param  int         $keeplastnfiles    Keep only last n files (not used yet)
 	 *  @return	int						       0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK) 
 	 */
-	function dumpDatabase($compression='none', $type='auto', $usedefault=1, $file='auto')
+	function dumpDatabase($compression='none', $type='auto', $usedefault=1, $file='auto', $keeplastnfiles=0)
 	{
 		global $db, $conf, $langs, $dolibarr_main_data_root;
 		global $dolibarr_main_db_name, $dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_port, $dolibarr_main_db_pass;
+
 		
 		$langs->load("admin");
 		
@@ -403,6 +405,19 @@ class Utils
 
 		    $this->output = "";
 		    $this->result = array("commandbackuplastdone" => "", "commandbackuptorun" => $command." ".$paramcrypted);
+		}
+
+		// Clean old files
+		if ($keeplastnfiles > 0)
+		{
+		    $tmpfiles = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '(\.err|\.old|\.sav)$', 'date', SORT_DESC);
+		    $i=0;
+		    foreach($tmpfiles as $key => $val)
+		    {
+		        $i++;
+		        if ($i <= $keeplastnfiles) continue;
+		        dol_delete_file($val['fullname']);
+		    }
 		}
 		
 		

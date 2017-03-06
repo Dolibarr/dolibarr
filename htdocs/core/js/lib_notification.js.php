@@ -28,7 +28,8 @@ if (!defined('NOREQUIREHTML')) define('NOREQUIREHTML', 1);
 
 require_once '../../main.inc.php';
 
-if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/index.php'))
+if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/index.php'
+    || preg_match('/getmenu_div\.php/', $_SERVER['HTTP_REFERER'])))
 {
     global $langs, $conf;
 
@@ -49,11 +50,12 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HT
         $_SESSION['auto_check_events_not_before'] = $nowtime;   // auto_check_events_not_before is rounded to previous minute
     }
     print 'var nowtime = ' . $nowtime . ';' . "\n";
+    print 'var login = \'' . $_SESSION['dol_login'] . '\';' . "\n";
     print 'var auto_check_events_not_before = '.$_SESSION['auto_check_events_not_before']. ';'."\n";
     print 'var time_js_next_test = Math.max(nowtime, auto_check_events_not_before);'."\n";
-    print 'var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY;   // Always defined
+    print 'var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY.';'."\n";   // Always defined
     ?>
-	
+
 	/* Check if permission ok */
 	if (Notification.permission !== "granted") {
         Notification.requestPermission()
@@ -62,8 +64,10 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HT
 	/* Launch timer */
    	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
     var time_first_execution = (time_auto_update - (nowtime - time_js_next_test)) * 1000;	//need milliseconds
-    console.log("Launch browser notif check: setTimeout to wait time_first_execution="+time_first_execution+" before first check - nowtime = "+nowtime+" auto_check_events_not_before = "+auto_check_events_not_before+" time_js_next_test = "+time_js_next_test+" time_auto_update="+time_auto_update);
-    setTimeout(first_execution, time_first_execution); //first run auto check
+    if (login != '') { 
+    	console.log("Launch browser notif check: setTimeout to wait time_first_execution="+time_first_execution+" before first check - nowtime = "+nowtime+" auto_check_events_not_before = "+auto_check_events_not_before+" time_js_next_test = "+time_js_next_test+" time_auto_update="+time_auto_update);
+    	setTimeout(first_execution, time_first_execution); 
+    } //first run auto check
 
 
     function first_execution() {

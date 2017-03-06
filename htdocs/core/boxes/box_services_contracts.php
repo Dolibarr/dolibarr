@@ -70,15 +70,12 @@ class box_services_contracts extends ModeleBoxes
 			$sql.= " cd.rowid as cdid, cd.tms as datem, cd.statut, cd.label, cd.description, cd.product_type as type,";
 			$sql.= " p.rowid as product_id, p.ref as product_ref";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s";
-			$sql.= ", ".MAIN_DB_PREFIX."contrat as c";
-			$sql.= ", ".MAIN_DB_PREFIX."contratdet as cd";
+			$sql.= " INNER JOIN ".MAIN_DB_PREFIX."contrat as c ON s.rowid = c.fk_soc";
+			$sql.= " INNER JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= "INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			$sql.= ")";
 			$sql.= " WHERE c.entity = ".$conf->entity;
-			$sql.= " AND s.rowid = c.fk_soc";
-			$sql.= " AND c.rowid = cd.fk_contrat";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
 			$sql.= $db->order("c.tms","DESC");
 			$sql.= $db->plimit($max, 0);

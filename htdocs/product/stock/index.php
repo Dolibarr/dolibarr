@@ -48,17 +48,18 @@ print load_fiche_titre($langs->trans("StocksArea"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-/*
- * Zone recherche entrepot
- */
-print '<form method="post" action="'.DOL_URL_ROOT.'/product/stock/list.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder nohover" width="100%">';
-print "<tr class=\"liste_titre\">";
-print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print "<tr ".$bc[false]."><td>";
-print $langs->trans("Warehouse").':</td><td><input class="flat" type="text" size="18" name="sall"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "</table></form><br>";
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+{
+    print '<form method="post" action="'.DOL_URL_ROOT.'/product/stock/list.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<table class="noborder nohover" width="100%">';
+    print "<tr class=\"liste_titre\">";
+    print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    print "<tr ".$bc[false]."><td>";
+    print $langs->trans("Warehouse").':</td><td><input class="flat" type="text" size="18" name="sall"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print "</table></form><br>";
+}
+
 
 $sql = "SELECT e.label, e.rowid, e.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";

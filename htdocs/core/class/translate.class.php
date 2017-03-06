@@ -139,6 +139,20 @@ class Translate
 
 
 	/**
+	 *  Load translation files.
+     *
+	 *  @param	array	$domains      		Array of lang files to load
+	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
+	 */
+	function loadLangs($domains)
+	{
+	    foreach($domains as $domain)
+	    {
+	        $this->load($domain);
+	    }
+	}
+	
+	/**
 	 *  Load translation key-value for a particular file, into a memory array.
 	 *  If data for file already loaded, do nothing.
 	 * 	All data in translation array are stored in UTF-8 format.

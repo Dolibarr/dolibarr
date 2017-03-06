@@ -224,7 +224,9 @@ OfficialDemo=Dolibarr online demo
 OfficialMarketPlace=Official market place for external modules/addons
 OfficialWebHostingService=Referenced web hosting services (Cloud hosting)
 ReferencedPreferredPartners=Preferred Partners
-OtherResources=Autres ressources
+OtherResources=Other resources
+ExternalResources=External resources
+SocialNetworks=Social Networks
 ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=This area can help you to get a Help support service on Dolibarr.
@@ -421,7 +423,7 @@ ModuleCompanyCodeDigitaria=Accountancy code depends on third party code. The cod
 Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.  
 UseDoubleApproval=Use a 3 steps approval when amount (without tax) is higher than...
 WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to send an email from another server than the Yahoo server if the email address used as a sender is your Yahoo email (like myemail@yahoo.com, myemail@yahoo.fr, ...). Your current setup use the server of the application to send email, so some recipients (the one compatible with the restrictive DMARC protocol), will ask Yahoo if they can accept your email and Yahoo will respond "no" because the server is not a server owned by Yahoo, so few of your sent Emails may not be accepted.<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account). 
-
+ClickToShowDescription=Click to show description
 # Modules
 Module0Name=Users & groups
 Module0Desc=Users / Employees and Groups management
@@ -842,7 +844,7 @@ DictionaryStaff=Staff
 DictionaryAvailability=Delivery delay
 DictionaryOrderMethods=Ordering methods
 DictionarySource=Origin of proposals/orders
-DictionaryAccountancyCategory=Accounting categories
+DictionaryAccountancyCategory=Accounting account groups
 DictionaryAccountancysystem=Models for chart of accounts
 DictionaryEMailTemplates=Emails templates
 DictionaryUnits=Units
@@ -921,7 +923,7 @@ Host=Server
 DriverType=Driver type
 SummarySystem=System information summary
 SummaryConst=List of all Dolibarr setup parameters
-MenuCompanySetup=Company/Foundation
+MenuCompanySetup=Company/Organisation
 DefaultMenuManager= Standard menu manager
 DefaultMenuSmartphoneManager=Smartphone menu manager
 Skin=Skin theme
@@ -935,8 +937,8 @@ PermanentLeftSearchForm=Permanent search form on left menu
 DefaultLanguage=Default language to use (language code)
 EnableMultilangInterface=Enable multilingual interface
 EnableShowLogo=Show logo on left menu
-CompanyInfo=Company/foundation information
-CompanyIds=Company/foundation identities
+CompanyInfo=Company/organisation information
+CompanyIds=Company/organisation identities
 CompanyName=Name
 CompanyAddress=Address
 CompanyZip=Zip
@@ -969,8 +971,8 @@ Delays_MAIN_DELAY_MEMBERS=Tolerance delay (in days) before alert on delayed memb
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Tolerance delay (in days) before alert for cheques deposit to do
 Delays_MAIN_DELAY_EXPENSEREPORTS=Tolerance delay (in days) before alert for expense reports to approve
 SetupDescription1=The setup area is for initial setup parameters before starting to use Dolibarr.
-SetupDescription2=The two most important setup steps are the first two in the setup menu on the left: Company/foundation setup page and Modules setup page:
-SetupDescription3=Parameters in menu <a href="%s">Setup -> Company/foundation</a> are required because submitted data are used on Dolibarr displays and to customize the default behaviour of the software (for country-related features for example).
+SetupDescription2=The two most important setup steps are the first two in the setup menu on the left: Company/Organisation setup page and Modules setup page:
+SetupDescription3=Parameters in menu <a href="%s">Setup -> Company/Organisation</a> are required because submitted data are used on Dolibarr displays and to customize the default behaviour of the software (for country-related features for example).
 SetupDescription4=Parameters in menu <a href="%s">Setup -> Modules</a> are required because Dolibarr is not a monolithic ERP/CRM but a collection of several modules, all more or less independent. New features will be added to menus for every module you'll enable.
 SetupDescription5=Other menu entries manage optional parameters.
 LogEvents=Security audit events
@@ -1171,10 +1173,6 @@ FreeLegalTextOnOrders=Free text on orders
 WatermarkOnDraftOrders=Watermark on draft orders (none if empty)
 ShippableOrderIconInList=Add an icon in Orders list which indicate if order is shippable
 BANK_ASK_PAYMENT_BANK_DURING_ORDER=Ask for bank account destination of order
-##### Clicktodial #####
-ClickToDialSetup=Click To Dial module setup
-ClickToDialUrlDesc=Url called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with your clicktodial login (defined on your user card)<br><b>__PASS__</b> that will be replaced with your clicktodial password (defined on your user card).
-##### Bookmark4u #####
 ##### Interventions #####
 InterventionsSetup=Interventions module setup
 FreeLegalTextOnInterventions=Free text on intervention documents
@@ -1468,7 +1466,7 @@ SupposedToBeInvoiceDate=Invoice date used
 Buy=Buy
 Sell=Sell
 InvoiceDateUsed=Invoice date used
-YourCompanyDoesNotUseVAT=Your company has been defined to not use VAT (Home - Setup - Company/Foundation), so there is no VAT options to setup.
+YourCompanyDoesNotUseVAT=Your company has been defined to not use VAT (Home - Setup - Company/Organisation), so there is no VAT options to setup.
 AccountancyCode=Accountancy Code
 AccountancyCodeSell=Sale account. code
 AccountancyCodeBuy=Purchase account. code 
@@ -1483,7 +1481,9 @@ AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into searc
 AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
 AGENDA_NOTIFICATION_SOUND=Enable sound notification
-##### ClickToDial #####
+##### Clicktodial #####
+ClickToDialSetup=Click To Dial module setup
+ClickToDialUrlDesc=Url called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with your clicktodial login (defined on your user card)<br><b>__PASS__</b> that will be replaced with your clicktodial password (defined on your user card).
 ClickToDialDesc=This module allows to make phone numbers clickable. A click on this icon will call make your phone to call the phone number. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
 ClickToDialUseTelLink=Use just a link "tel:" on phone numbers
 ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface installed on same computer than the browser, and called when you click on a link in your browser that start with "tel:". If you need a full server solution (no need of local software installation), you must set this to "No" and fill next field.
@@ -1660,6 +1660,7 @@ SamePriceAlsoForSharedCompanies=If you use a multicompany module, with the choic
 ModuleEnabledAdminMustCheckRights=Module has been activated. Permissions for activated module(s) were given to admin users only. You may need to grant permissions to other users or groups manually if necessary.
 UserHasNoPermissions=This user has no permission defined
 TypeCdr=Use "None" if the date of payment term is date of invoice plus a delta in days (delta is field "Nb of days")<br>Use "At end of month", if, after delta, the date must be increased to reach the end of month (+ an optional "Offset" in days)<br>Use "Current/Next" to have payment term date being the first Nth of the month (N is stored into field "Nb of days")
+BaseCurrency=Reference currency of the company (go into setup of company to change this)
 ##### Resource ####
 ResourceSetup=Configuration du module Resource 
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).

@@ -105,6 +105,4 @@ MergeOriginThirdparty=Geschäftspartner duplizieren (Geschäftspartner, den Sie 
 MergeThirdparties=Zusammenführen von Geschäftspartnern
 ThirdpartiesMergeSuccess=Geschäftspartner wurden zusammengelegt
 SaleRepresentativeLogin=Login des Verkaufsmitarbeiters
-SaleRepresentativeFirstname=Vorname des Verkaufsmitarbeiters
-SaleRepresentativeLastname=Nachname des Verkaufsmitarbeiters
 ErrorThirdpartiesMerge=Es gab einen Fehler beim Löschen des Geschäftspartners. Bitte überprüfen Sie das Protokoll. Änderungen wurden rückgängig gemacht.

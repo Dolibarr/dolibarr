@@ -466,6 +466,15 @@ class FormFile
                     $modellist=ModelePDFSuppliersInvoices::liste_modeles($this->db);
                 }
             }
+			else if ($modulepart == 'supplier_payment')
+			{
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
+                    $modellist=ModelePDFSuppliersPayments::liste_modeles($this->db);
+                }
+			}
             else if ($modulepart == 'remisecheque')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
@@ -803,7 +812,7 @@ class FormFile
     	{
     	    $out='<dl class="dropdown inline-block">
     			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight').'</a></dt>
-    			<dd><div class="multichoicedoc"><ul class="ulselectedfields" style="display: none;">';
+    			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields" style="display: none;">';
     	    $tmpout='';
 
     		// Loop on each file found

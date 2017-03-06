@@ -47,6 +47,55 @@ class AccountancySystem
 		$this->db = $db;
 	}
 	
+	
+	/**
+	 * Load record in memory
+	 *
+	 * @param 	int 	$rowid 				   Id
+	 * @param 	string 	$ref             	   ref
+	 * @return 	int                            <0 if KO, Id of record if OK and found
+	 */
+	function fetch($rowid = 0, $ref = '') 
+	{
+	    global $conf;
+	
+	    if ($rowid > 0 || $ref) 
+	    {
+	        $sql  = "SELECT a.pcg_version, a.label, a.active";
+	        $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system as a";
+	        $sql .= " WHERE";
+	        if ($rowid) {
+	            $sql .= " a.rowid = '" . $rowid . "'";
+	        } elseif ($ref) {
+	            $sql .= " a.pcg_version = '" . $ref . "'";
+	        }
+	
+	        dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
+	        $result = $this->db->query($sql);
+	        if ($result) {
+	            $obj = $this->db->fetch_object($result);
+	
+	            if ($obj) {
+	                $this->id = $obj->rowid;
+	                $this->rowid = $obj->rowid;
+	                $this->pcg_version = $obj->pcg_version;
+	                $this->ref = $obj->pcg_version;
+	                $this->label = $obj->label;
+	                $this->active = $obj->active;
+	                	
+	                return $this->id;
+	            } else {
+	                return 0;
+	            }
+	        } else {
+	            $this->error = "Error " . $this->db->lasterror();
+	            $this->errors[] = "Error " . $this->db->lasterror();
+	        }
+	    }
+	    return - 1;
+	}
+	
+	
 	/**
 	 * Insert accountancy system name into database
 	 *
