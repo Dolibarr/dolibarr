@@ -17,14 +17,14 @@ CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronLastOutput=Ostatnie wyjście prowadzony
-CronLastResult=Ostatni kod wynikowy
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Komenda
 CronList=Zaplanowane zadania
 CronDelete=Usuwanie zaplanowanych zadań
-CronConfirmDelete=Czy jesteś pewny, że chcesz usunąć te zaplanowane zadania?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Jesteś pewny, że chcesz teraz wykonać te zaplanowane zadania?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Moduł zaplanowanych zadań pozwala na uruchamianie zadań, ktore były zaplanowane
 CronTask=Zadanie
 CronNone=Żaden

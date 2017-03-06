@@ -34,6 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+if (! empty($conf->projet->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 $langs->load("products");
 $langs->load("stocks");
@@ -43,6 +48,7 @@ if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 $result=restrictedArea($user,'stock');
 
 $id=GETPOST('id','int');
+$msid=GETPOST('msid','int');
 $product_id=GETPOST("product_id");
 $action=GETPOST('action');
 $cancel=GETPOST('cancel');
@@ -156,6 +162,15 @@ if ($action == "correct_stock")
 
 	if (! $error)
     {
+		$origin_element = '';
+		$origin_id = null;
+		
+		if (GETPOST('projectid', 'int'))
+		{
+			$origin_element = 'project';
+			$origin_id = GETPOST('projectid', 'int');
+		}
+		
         if ($product->hasbatch())
         {
         	$batch=GETPOST('batch_number');
@@ -173,7 +188,9 @@ if ($action == "correct_stock")
 	            GETPOST("label",'san_alpha'),
 	            GETPOST('unitprice'),
 	        	$eatby,$sellby,$batch,
-	        	GETPOST('inventorycode')
+	        	GETPOST('inventorycode'),
+	        	$origin_element,
+	        	$origin_id
 	        );		// We do not change value of stock for a correction
         }
         else
@@ -185,7 +202,9 @@ if ($action == "correct_stock")
 	            GETPOST("mouvement"),
 	            GETPOST("label",'san_alpha'),
 	            GETPOST('unitprice'),
-	        	GETPOST('inventorycode')
+	        	GETPOST('inventorycode'),
+	        	$origin_element,
+	        	$origin_id
 	        );		// We do not change value of stock for a correction
         }
 
@@ -392,6 +411,7 @@ $userstatic=new User($db);
 $form=new Form($db);
 $formother=new FormOther($db);
 $formproduct=new FormProduct($db);
+if (!empty($conf->projet->enabled)) $formproject=new FormProjets($db);
 
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.fk_product_type as type, p.entity,";
 $sql.= " e.label as stock, e.rowid as entrepot_id, e.lieu,";
@@ -412,6 +432,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
 $sql.= " WHERE m.fk_product = p.rowid";
+if ($msid > 0) $sql .= " AND m.rowid = ".$msid;
 $sql.= " AND m.fk_entrepot = e.rowid";
 $sql.= " AND e.entity IN (".getEntity('stock', 1).")";
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
@@ -492,8 +513,12 @@ if ($resql)
 	
     $i = 0;
     $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-    $texte = $langs->trans("ListOfStockMovements");
-    if ($id) $texte.=' ('.$langs->trans("ForThisWarehouse").')';
+    if ($msid) $texte = $langs->trans('StockMovementForId', $msid);
+	else
+	{
+		$texte = $langs->trans("ListOfStockMovements");
+		if ($id) $texte.=' ('.$langs->trans("ForThisWarehouse").')';
+	}
     llxHeader("",$texte,$help_url);
 
     /*
@@ -549,7 +574,7 @@ if ($resql)
         
         // Value
         print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
-        print price((empty($calcproducts['qty'])?'0':price2num($calcproducts['qty'],'MT')), 0, $langs, 0, -1, -1, $conf->currency);
+        print price((empty($calcproducts['value'])?'0':price2num($calcproducts['value'],'MT')), 0, $langs, 0, -1, -1, $conf->currency);
         print "</td></tr>";
 
         // Last movement

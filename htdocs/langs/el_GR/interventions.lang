@@ -41,6 +41,7 @@ InterventionDeletedInDolibarr=Παρέμβαση %s διαγράφετε
 InterventionsArea=Περιοχή παρεμβάσεων
 DraftFichinter=Πρόχειρες παρεμβάσεις
 LastModifiedInterventions=Latest %s modified interventions
+FichinterToProcess=Interventions to process
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Σε συνέχεια επαφή με τον πελάτη
 # Modele numérotation

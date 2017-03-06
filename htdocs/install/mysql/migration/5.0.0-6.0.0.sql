@@ -43,6 +43,74 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_MODIFY','Product or service modified','Executed when a product or sevice is modified','product',30);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_DELETE','Product or service deleted','Executed when a product or sevice is deleted','product',30);
 
+ALTER TABLE llx_c_email_templates ADD COLUMN content_lines text;
 
 ALTER TABLE llx_loan ADD COLUMN fk_projet integer DEFAULT NULL;
+
+ALTER TABLE llx_holiday ADD COLUMN fk_user_modif integer;
+
+ALTER TABLE llx_projet_task_time ADD COLUMN datec date;
+ALTER TABLE llx_projet_task_time ADD COLUMN tms timestamp;
+
+ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_creat integer;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_product_price_by_qty DROP COLUMN date_price;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN tms timestamp;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN import_key integer;
+
+
+
+CREATE TABLE llx_product_attribute
+(
+  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  ref VARCHAR(255) NOT NULL,
+  label VARCHAR(255) NOT NULL,
+  rang INT DEFAULT 0 NOT NULL,
+  entity INT DEFAULT 1 NOT NULL
+);
+ALTER TABLE llx_product_attribute ADD CONSTRAINT unique_ref UNIQUE (ref);
+
+CREATE TABLE llx_product_attribute_value
+(
+  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  fk_product_attribute INT NOT NULL,
+  ref VARCHAR(255) DEFAULT NULL,
+  value VARCHAR(255) DEFAULT NULL,
+  entity INT DEFAULT 1 NOT NULL
+);
+ALTER TABLE llx_product_attribute_value ADD CONSTRAINT unique_ref UNIQUE (fk_product_attribute,ref);
+
+CREATE TABLE llx_product_attribute_combination2val
+(
+  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  fk_prod_combination INT NOT NULL,
+  fk_prod_attr INT NOT NULL,
+  fk_prod_attr_val INT NOT NULL
+);
+CREATE TABLE llx_product_attribute_combination
+(
+  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  fk_product_parent INT NOT NULL,
+  fk_product_child INT NOT NULL,
+  variation_price FLOAT NOT NULL,
+  variation_price_percentage INT NULL,
+  variation_weight FLOAT NOT NULL,
+  entity INT DEFAULT 1 NOT NULL
+);
+
+ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
+
+
+ALTER TABLE llx_societe_remise_except ADD COLUMN fk_invoice_supplier_line	integer;
+ALTER TABLE llx_societe_remise_except ADD COLUMN fk_invoice_supplier		integer;
+ALTER TABLE llx_societe_remise_except ADD COLUMN fk_invoice_supplier_source	integer;
+
+ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_soc_remise_fk_invoice_supplier_line       FOREIGN KEY (fk_invoice_supplier_line) REFERENCES llx_facture_fourn_det (rowid);
+ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_invoice_supplier        FOREIGN KEY (fk_invoice_supplier)      REFERENCES llx_facture_fourn (rowid);
+ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_invoice_supplier_source FOREIGN KEY (fk_invoice_supplier)      REFERENCES llx_facture_fourn (rowid);
+
+UPDATE llx_const set value='moono-lisa' where value = 'moono' AND name = 'FCKEDITOR_SKIN';
+
+ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
 

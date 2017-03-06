@@ -33,7 +33,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 class mailing_contacts2 extends MailingTargets
 {
     var $name='ContactsByFunction';
-    // This label is used if no translation is found for key MailingModuleDescXXX where XXX=name is found
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
     var $desc='Add contacts by function';
     var $require_admin=0;
 

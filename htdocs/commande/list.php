@@ -43,12 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load('orders');
-$langs->load('sendings');
-$langs->load('deliveries');
-$langs->load('companies');
-$langs->load('compta');
-$langs->load('bills');
+$langs->loadLangs(array("orders",'sendings','deliveries','companies','compta','bills'));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
@@ -627,6 +622,7 @@ if ($resql)
     if ($show_files)            $param.='&show_files=' .$show_files;
     if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 	if ($billed != '')			$param.='&billed='.$billed;
+
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
 	{

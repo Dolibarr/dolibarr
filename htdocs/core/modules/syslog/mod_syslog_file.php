@@ -8,6 +8,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
 class mod_syslog_file extends LogHandler implements LogHandlerInterface
 {
 	var $code = 'file';
+	var $lastTime = 0;
 
 	/**
 	 * 	Return name of logger
@@ -145,9 +146,16 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				LOG_INFO => 'INFO',
 				LOG_DEBUG => 'DEBUG'
 			);
-
-			$message = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident>0?str_pad('',$this->ident,' '):'').$content['message'];
-
+			
+			$delay = "";
+			if (!empty($conf->global->MAIN_SYSLOG_SHOW_DELAY))
+			{
+				$now = microtime(true);
+				$delay = " ".sprintf("%05.3f", $this->lastTime != 0 ? $now - $this->lastTime : 0);
+				$this->lastTime = $now;
+			}
+			
+			$message = dol_print_date(time(),"%Y-%m-%d %H:%M:%S").$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident>0?str_pad('',$this->ident,' '):'').$content['message'];
 			fwrite($filefd, $message."\n");
 			fclose($filefd);
 			@chmod($logfile, octdec(empty($conf->global->MAIN_UMASK)?'0664':$conf->global->MAIN_UMASK));

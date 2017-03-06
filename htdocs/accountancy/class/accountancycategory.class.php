@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
- * Copyright (C) 2016 		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
  */
 
 /**
- * \file htdocs/accountancy/class/accountancycategory.class.php
+ * \file	htdocs/accountancy/class/accountancycategory.class.php
  * \ingroup Advanced accountancy
- * \brief File of class to manage categories of an accounting category_type
+ * \brief	File of class to manage categories of an accounting category_type
  */
 
 // Class
@@ -72,7 +72,6 @@ class AccountancyCategory
 					$this->lines_display[] = $obj;
 				}
 			}
-
 			return $num;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
@@ -84,7 +83,7 @@ class AccountancyCategory
 	}
 
 	/**
-	 * Function to select accountiing category of an accounting account present in chart of accounts
+	 * Function to select accounting category of an accounting account present in chart of accounts
 	 *
 	 * @param int $id Id category
 	 *
@@ -131,6 +130,47 @@ class AccountancyCategory
 	}
 
 	/**
+	 * Function to select accounting category of an accounting account present in chart of accounts
+	 *
+	 * @param int $id Id category
+	 *
+	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function getAccountsWithNoCategory($id) {
+	    global $conf;
+	
+	    $sql = "SELECT aa.account_number as numero_compte, aa.label as label_compte";
+	    $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
+	    $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+	    $sql .= " WHERE (aa.fk_accounting_category != ".$id." OR aa.fk_accounting_category IS NULL)";
+	    $sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
+	    $sql .= " AND aa.active = 1";
+	    $sql .= " GROUP BY aa.account_number, aa.label";
+	    $sql .= " ORDER BY aa.account_number, aa.label";
+	
+	    $this->lines_CptBk = array ();
+	
+	    dol_syslog(__METHOD__, LOG_DEBUG);
+	    $resql = $this->db->query($sql);
+	    if ($resql) {
+	        $num = $this->db->num_rows($resql);
+	        if ($num) {
+	            while ( $obj = $this->db->fetch_object($resql) ) {
+	                $this->lines_cptbk[] = $obj;
+	            }
+	        }
+	
+	        return $num;
+	    } else {
+	        $this->error = "Error " . $this->db->lasterror();
+	        $this->errors[] = $this->error;
+	        dol_syslog(__METHOD__ . " " . implode(',' . $this->errors), LOG_ERR);
+	
+	        return - 1;
+	    }
+	}
+	
+	/**
 	 * Function to add an accounting account in an accounting category
 	 *
 	 * @param int $id_cat Id category
@@ -150,23 +190,27 @@ class AccountancyCategory
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " AND aa.active = 1";
 
+		$this->db->begin();
+		
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			$error ++;
 			$this->errors[] = "Error " . $this->db->lasterror();
+			$this->db->rollback();
 			return -1;
 		}
 
-		$this->db->begin();
-		while ( $obj = $this->db->fetch_object($resql)) {
-			if (array_key_exists(length_accountg($obj->account_number), $cpts)) {
+		while ( $obj = $this->db->fetch_object($resql)) 
+		{
+			if (array_key_exists(length_accountg($obj->account_number), $cpts)) 
+			{
 				$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account";
 				$sql .= " SET fk_accounting_category=" . $id_cat;
 				$sql .= " WHERE rowid=".$obj->rowid;
 				dol_syslog(__METHOD__, LOG_DEBUG);
-				$resql = $this->db->query($sql);
-				if (! $resql) {
+				$resqlupdate = $this->db->query($sql);
+				if (! $resqlupdate) {
 					$error ++;
 					$this->errors[] = "Error " . $this->db->lasterror();
 				}

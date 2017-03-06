@@ -24,6 +24,7 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
 -- after changing const name, please insure that old constant was rename
 UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHERE name = __ENCRYPT('MAIN_THIRPARTY_CREATION_INDIVIDUAL')__;  -- under 3.9.0
 UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHERE name = __ENCRYPT('MAIN_THIRDPARTY_CREATION_INDIVIDUAL')__; -- under 4.0.1
@@ -166,6 +167,7 @@ ALTER TABLE llx_commandedet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_propaldet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
+ALTER TABLE llx_contratdet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 
 ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
 
@@ -182,8 +184,9 @@ create table llx_resource_extrafields
 
 ALTER TABLE llx_resource_extrafields ADD INDEX idx_resource_extrafields (fk_object);
 
-INSERT INTO llx_const (name, value, type, note, visible) values (__ENCRYPT('MAIN_SIZE_SHORTLIST_LIMIT')__,__ENCRYPT('3')__,'chaine','Max length for small lists (tabs)',0);
+INSERT INTO llx_const (name, value, type, note, visible, entity) values (__ENCRYPT('MAIN_SIZE_SHORTLIST_LIMIT')__, __ENCRYPT('3')__, 'chaine', 'Max length for small lists (tabs)', 0, 0);
 
+INSERT INTO llx_const (name, value, type, note, visible, entity) values (__ENCRYPT('EXPEDITION_ADDON_NUMBER')__, __ENCRYPT('mod_expedition_safor')__, 'chaine','Name for numbering manager for shipments',0,1);
 
 ALTER TABLE llx_bank_account ADD COLUMN note_public     		text;
 ALTER TABLE llx_bank_account ADD COLUMN model_pdf       		varchar(255);
@@ -248,4 +251,10 @@ UPDATE llx_projet_task SET ref = NULL WHERE ref = '';
 ALTER TABLE llx_projet_task ADD UNIQUE INDEX uk_projet_task_ref (ref, entity);
 
 ALTER TABLE llx_contrat ADD COLUMN fk_user_modif integer;
+
+
+UPDATE llx_accounting_account set account_parent = 0 where account_parent = '';
+
+ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
 

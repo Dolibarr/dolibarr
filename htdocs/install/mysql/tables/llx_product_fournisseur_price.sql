@@ -36,6 +36,7 @@ create table llx_product_fournisseur_price
   unitprice				double(24,8) DEFAULT 0,
   charges				double(24,8) DEFAULT 0,		-- to store transport cost. Constant PRODUCT_CHARGES must be set to see it.
   unitcharges			double(24,8) DEFAULT 0,		-- deprecated
+  default_vat_code	    varchar(10),
   tva_tx				double(6,3) NOT NULL,
   info_bits				integer NOT NULL DEFAULT 0,
   fk_user				integer,

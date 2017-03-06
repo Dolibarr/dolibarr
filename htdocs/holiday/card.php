@@ -46,6 +46,8 @@ if ($user->societe_id > 0) accessforbidden();
 
 $now=dol_now();
 
+$langs->load("holiday");
+
 
 /*
  * Actions

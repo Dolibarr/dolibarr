@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2015-2016 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1032,7 +1033,6 @@ if (empty($reshook))
     
     	// if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
     	if (empty($vatrate)) $vatrate = "0.000";
-    
     	$object_ligne->vatrate = price2num($vatrate);
     
     	$object_ligne->fk_projet = $fk_projet;
@@ -1161,6 +1161,10 @@ if (empty($reshook))
     	$qty = GETPOST('qty');
     	$value_unit = GETPOST('value_unit');
     	$vatrate = GETPOST('vatrate');
+
+        // if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
+        if (empty($vatrate)) $vatrate = "0.000";
+        $vatrate = price2num($vatrate);
     
     	if (! GETPOST('fk_c_type_fees') > 0)
     	{
@@ -1168,7 +1172,7 @@ if (empty($reshook))
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
     		$action='';
     	}
-    	if (GETPOST('vatrate') < 0 || GETPOST('vatrate') == '')
+    	if ((int) $vatrate < 0 || $vatrate == '')
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Vat")), null, 'errors');
@@ -1311,8 +1315,8 @@ if ($action == 'create')
 	print '<td>';
 	$defaultselectuser=$user->id;
 	if (GETPOST('fk_user_author') > 0) $defaultselectuser=GETPOST('fk_user_author');
-    $include_users = array($user->id);
-    if (! empty($user->rights->expensereport->writeall)) $include_users=array();
+  $include_users = 'hierarchyme';
+  if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expensereport->writeall_advance)) $include_users=array();
 	$s=$form->select_dolusers($defaultselectuser, "fk_user_author", 0, "", 0, $include_users);
 	print $s;
 	print '</td>';
@@ -1396,10 +1400,10 @@ else
 		
 		if ($result > 0)
 		{
-			if ($object->fk_user_author != $user->id)
+			if (! in_array($object->fk_user_author, $user->getAllChildIds(1)))
 			{
 				if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-				    && empty($user->rights->expensereport->writeall_advance))
+				    && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
 				{
 					print load_fiche_titre($langs->trans('TripCard'));
 
@@ -1891,7 +1895,7 @@ else
 				$sql.= ' WHERE fde.fk_expensereport = '.$object->id;
 				$sql.= ' ORDER BY fde.date ASC';
 
-				print '<div style="clear: both;">';
+				print '<div style="clear: both;"></div>';
 
 				$actiontouse='updateligne';
 				if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline') $actiontouse='addline';
@@ -1901,7 +1905,10 @@ else
 				print '<input type="hidden" name="action" value="'.$actiontouse.'">';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<input type="hidden" name="fk_expensereport" value="'.$object->id.'" />';
-				print '<table class="noborder" width="100%">';
+				
+				
+				print '<div class="div-table-responsive">';
+				print '<table id="tablelines" class="noborder" width="100%">';
 				
 		        $resql = $db->query($sql);
 				if ($resql)
@@ -2130,11 +2137,9 @@ else
 					} // Fin si c'est payé/validé
 
 					print '</table>';
+					print '</div>';
 					
 					print '</form>';
-					
-					print '</div>';
-						
 				}
 				else
 				{
@@ -2174,7 +2179,7 @@ if ($action != 'create' && $action != 'edit')
 	*/
 	if ($user->rights->expensereport->creer && $object->fk_statut==0)
 	{
-		if ($object->fk_user_author == $user->id)
+		if (in_array($object->fk_user_author, $user->getAllChildIds(1)) || !empty($user->rights->expensereport->writeall_advance))
 		{
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
@@ -2222,7 +2227,7 @@ if ($action != 'create' && $action != 'edit')
 	 */
 	if ($object->fk_statut == 2)
 	{
-		if ($object->fk_user_author == $user->id)
+		if (in_array($object->fk_user_author, $user->getAllChildIds(1)))
 		{
 			// Brouillonner
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';

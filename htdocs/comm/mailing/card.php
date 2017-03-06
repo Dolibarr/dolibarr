@@ -602,6 +602,29 @@ if (empty($reshook))
 		}
 	}
 
+	// Action confirmation validation
+	if ($action == 'confirm_settodraft' && $confirm == 'yes')
+	{
+		if ($object->id > 0)
+		{
+			$result = $object->setStatut(0);
+            if ($result > 0)
+            {
+    			//setEventMessages($langs->trans("MailingSuccessfullyValidated"), null, 'mesgs');
+    			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+    			exit;
+            }
+            else
+            {
+                setEventMessages($object->error, $object->errors, 'errors');
+            }
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+
 	// Resend
 	if ($action == 'confirm_reset' && $confirm == 'yes')
 	{
@@ -674,14 +697,19 @@ if ($action == 'create')
 		$htmltext.=$key.' = '.$langs->trans($val).'<br>';
 	}
 	$htmltext.='</i>';
-			
+
+	
+	$availablelink=$form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'help', '', 0, 2, 'availvar');
+	//print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$objMod->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto($langs->trans("ClickToShowDescription"), $imginfo).'</a>';
+	
+	
 	// Print mail form
-	print load_fiche_titre($langs->trans("NewMailing"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext), 'title_generic');
+	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'title_generic');
 
 	dol_fiche_head();
 
 	print '<table class="border" width="100%">';
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth200" name="titre" value="'.dol_escape_htmltag(GETPOST('titre')).'"></td></tr>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST('titre')).'"></td></tr>';
 	print '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat minwidth200" name="from" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
 	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat minwidth200" name="errorsto" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO)?$conf->global->MAILING_EMAIL_ERRORSTO:$conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
 
@@ -697,7 +725,7 @@ if ($action == 'create')
 	print '</br><br>';
 
 	print '<table class="border" width="100%">';
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet')).'"></td></tr>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet')).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 	print $htmlother->selectColor($_POST['bgcolor'],'bgcolor','new_mailing',0);
 	print '</td></tr>';
@@ -707,7 +735,7 @@ if ($action == 'create')
 	print '<div style="padding-top: 10px">';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('body',$_POST['body'],'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,'90%');
+	$doleditor=new DolEditor('body',$_POST['body'],'',600,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,'90%');
 	$doleditor->Create();
 	print '</div>';
 	
@@ -727,7 +755,12 @@ else
 
 		dol_fiche_head($head, 'card', $langs->trans("Mailing"), 0, 'email');
 
-		// Confirmation de la validation du mailing
+		// Confirmation back to draft
+		if ($action == 'settodraft')
+		{
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("SetToDraft"),$langs->trans("ConfirmUnvalidateEmailing"),"confirm_settodraft",'','',1);
+		}
+		// Confirmation validation of mailing
 		if ($action == 'valid')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valid",'','',1);
@@ -900,9 +933,14 @@ else
 			 * Boutons d'action
 			 */
 
-			if (GETPOST("cancel") || $confirm=='no' || $action == '' || in_array($action,array('valid','delete','sendall','clone')))
+			if (GETPOST("cancel") || $confirm=='no' || $action == '' || in_array($action,array('settodraft', 'valid','delete','sendall','clone')))
 			{
 				print "\n\n<div class=\"tabsAction\">\n";
+
+				if (($object->statut == 1) && ($user->rights->mailing->valider || $object->fk_user_valid == $user->id))
+				{
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=settodraft&amp;id='.$object->id.'">'.$langs->trans("SetToDraft").'</a>';
+				}
 
 				if (($object->statut == 0 || $object->statut == 1) && $user->rights->mailing->creer)
 				{
@@ -1065,7 +1103,7 @@ else
 				$readonly=1;
 				// Editeur wysiwyg
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_mailings','',false,true,empty($conf->global->FCKEDITOR_ENABLE_MAILING)?0:1,20,120,$readonly);
+				$doleditor=new DolEditor('body',$object->body,'',600,'dolibarr_mailings','',false,true,empty($conf->global->FCKEDITOR_ENABLE_MAILING)?0:1,20,120,$readonly);
 				$doleditor->Create();
 			}
 			else print dol_htmlentitiesbr($object->body);
@@ -1212,7 +1250,7 @@ else
 			print '<div style="padding-top: 10px">';
 			// Editeur wysiwyg
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,'90%');
+			$doleditor=new DolEditor('body',$object->body,'',600,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,'90%');
 			$doleditor->Create();
 			print '</div>';
 

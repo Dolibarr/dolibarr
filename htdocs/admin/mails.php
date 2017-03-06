@@ -114,17 +114,24 @@ $server=! empty($conf->global->MAIN_MAIL_SMTP_SERVER)?$conf->global->MAIN_MAIL_S
 if (! $server) $server='127.0.0.1';
 
 
-/*
- * View
- */
-
 $wikihelp='EN:Setup EMails|FR:Paramétrage EMails|ES:Configuración EMails';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 print load_fiche_titre($langs->trans("EMailsSetup"),'','title_setup');
 
-print $langs->trans("EMailsDesc")."<br>\n";
-print "<br>\n";
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/mails.php";
+$head[$h][1] = $langs->trans("OutGoingEmailSetup");
+$head[$h][2] = 'common';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
+$head[$h][1] = $langs->trans("DictionaryEMailTemplates");
+$head[$h][2] = 'templates';
+$h++;
+
 
 // List of sending methods
 $listofmethods=array();
@@ -221,6 +228,12 @@ if ($action == 'edit')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
 
+	dol_fiche_head($head, 'common', '');
+	
+	print $langs->trans("EMailsDesc")."<br>\n";
+	print "<br>\n";
+	
+	
 	clearstatcache();
 	$var=true;
 
@@ -428,6 +441,8 @@ if ($action == 'edit')
 
     print '</table>';
 
+    dol_fiche_end();
+    
     print '<br><div class="center">';
     print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -438,6 +453,12 @@ if ($action == 'edit')
 }
 else
 {
+    dol_fiche_head($head, 'common', '');
+    
+    print $langs->trans("EMailsDesc")."<br>\n";
+    print "<br>\n";
+    
+    
 	$var=true;
 
 	print '<table class="noborder" width="100%">';
@@ -570,10 +591,12 @@ else
 		print '&nbsp;';
 	}
 	print '</td></tr>';
-
     
 	print '</table>';
 
+	dol_fiche_end();
+	
+	
     if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
     {
         print '<br>';
@@ -619,7 +642,7 @@ else
 	print '</div>';
 
 
-	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && ! in_array($action, array('testconnect', 'test', 'testhtml')))
 	{
         $text = $langs->trans("WarningPHPMail");
 	    print info_admin($text);

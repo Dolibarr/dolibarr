@@ -1,18 +1,18 @@
 <?php
-/* Copyright (C) 2000-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014      Cédric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+/* Copyright (C) 2000-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
+ * Copyright (C) 2004		Christophe Combelles		<ccomb@free.fr>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@capnetworks.com>
+ * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2016	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013-2017	Alexandre Spangaro			<aspangaro@zendsi.com>
+ * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -271,8 +271,13 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	        }
 	        elseif ($reg[1] == 'YEAR')
 	        {
-	           $tmp=dol_getdate(dol_now(), true);
-	           $out = $tmp['year'];
+	            $tmp=dol_getdate(dol_now(), true);
+	            $out = $tmp['year'];
+	        }
+	        elseif ($reg[1] == 'MYCOUNTRYID')
+	        {
+	            global $mysoc;
+	            $out = $mysoc->country_id;
 	        }
 	    }
 
@@ -374,7 +379,7 @@ function dol_include_once($relpath, $classname='')
 
 
 /**
- *	Return path of url or filesystem. Return alternate root if exists
+ *	Return path of url or filesystem. Return alternate root if exists.
  *
  * 	@param	string	$path		Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
  *  @param	int		$type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path using same host that current url), 3=Used for an URL path (output full path using host defined into $dolibarr_main_url_root of conf file)
@@ -983,6 +988,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	$showbarcode=empty($conf->barcode->enabled)?0:($object->barcode?1:0);
 	if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 	$modulepart='unknown';
+
 	if ($object->element == 'societe') $modulepart='societe';
 	if ($object->element == 'contact') $modulepart='contact';
 	if ($object->element == 'member')  $modulepart='memberphoto';
@@ -1006,7 +1012,6 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 				$nophoto='/public/theme/common/nophoto.png';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
 			}
-
         }
 	}
 	else
@@ -1091,7 +1096,11 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		$morehtmlstatus.=$tmptxt;
 	}
 	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
-	if ($object->element == 'product' && ! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
+	
+	if ($object->element == 'product' || $object->element == 'bank_account')
+	{
+		if(! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
+	}
 
 	if ($object->element != 'product' && $object->element != 'bookmark') 
 	{
@@ -2225,7 +2234,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
  *	@param	string	$trunc				Where to trunc: right, left, middle (size must be a 2 power), wrap
  * 	@param	string	$stringencoding		Tell what is source string encoding
  *  @param	int		$nodot				Truncation do not add ... after truncation. So it's an exact truncation.
- *  @param  int     $display            Trunc is use to display and can be changed for small screen
+ *  @param  int     $display            Trunc is use to display and can be changed for small screen. TODO Remove this param (must be dealt with CSS)
  *	@return string						Truncated string
  */
 function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodot=0, $display=0)
@@ -2562,7 +2571,7 @@ function img_printer($titlealt = "default", $other='')
 /**
  *	Show help logo with cursor "?"
  *
- * 	@param	int              	$usehelpcursor		Use help cursor
+ * 	@param	int              	$usehelpcursor		1=Use help cursor, 2=Use click pointer cursor, 0=No specific cursor
  * 	@param	int|string	        $usealttitle		Text to use as alt title
  * 	@return string            	           			Return tag img
  */
@@ -2576,7 +2585,7 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
 		else $usealttitle = $langs->trans('Info');
 	}
 
-	return img_picto($usealttitle, 'info.png', ($usehelpcursor ? 'style="vertical-align: middle; cursor: help"' : 'style="vertical-align: middle;"'));
+	return img_picto($usealttitle, 'info.png', 'style="vertical-align: middle;'.($usehelpcursor == 1 ? ' cursor: help': ($usehelpcursor == 2 ? ' cursor: pointer':'')).'"');
 }
 
 /**
@@ -3954,11 +3963,12 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 
 /**
  *	Return vat rate of a product in a particular selling country or default country vat if product is unknown
- *
+ *  Function called by get_default_tva
+ *  
  *  @param	int			$idprod          	Id of product or 0 if not a predefined product
  *  @param  Societe		$thirdparty_seller  Thirdparty with a ->country_code defined (FR, US, IT, ...)
  *	@param	int			$idprodfournprice	Id product_fournisseur_price (for "supplier" order/invoice)
- *  @return float					        Vat rate
+ *  @return float|string   				    Vat rate to use with format 5.0 or '5.0 (XXX)'
  *  @see get_product_localtax_for_country
  */
 function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice=0)
@@ -3986,14 +3996,14 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			else
 			{
 				$ret=$product->tva_tx;    // Default vat of product we defined
+				if ($product->default_vat_code) $ret.=' ('.$product->default_vat_code.')';
 			}
 			$found=1;
 		}
 		else
 		{
-			// TODO Read default product vat according to countrycode and product
-
-
+			// TODO Read default product vat according to countrycode and product. Vat for couple countrycode/product is a feature not implemeted yet. 
+			// May be usefull/required if hidden option SERVICE_ARE_ECOMMERCE_200238EC is on
 		}
 	}
 
@@ -4001,11 +4011,11 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 	{
 		if (empty($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS))
 		{
-			// If vat of product for the country not found or not defined, we return higher vat of country.
+			// If vat of product for the country not found or not defined, we return the first higher vat of country.
 			$sql = "SELECT taux as vat_rate";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 			$sql.= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
-			$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
+			$sql.= " ORDER BY t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql.= $db->plimit(1);
 
 			$resql=$db->query($sql);
@@ -4108,7 +4118,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
  *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
  *	@param  int			$idprod					Id product
  *	@param	int			$idprodfournprice		Id product_fournisseur_price (for supplier order/invoice)
- *	@return float         				      	Vat rate to use, -1 if we can't guess it
+ *	@return float|string   				      	Vat rate to use with format 5.0 or '5.0 (XXX)', -1 if we can't guess it
  *  @see get_default_npr, get_default_localtax
  */
 function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
@@ -4318,7 +4328,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 
 	$path = '';
 
-	$arrayforoldpath=array('cheque','user','category','holiday','shipment','supplier_invoice','invoice_supplier','mailing');
+	$arrayforoldpath=array('cheque','user','category','holiday','shipment','supplier_invoice','invoice_supplier','mailing','supplier_payment');
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';
 	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
 	{
@@ -5529,6 +5539,7 @@ function printCommonFooter($zone='private')
     	{
         	print '<!-- Set handler to switch left menu page -->'."\n";
         	print 'jQuery(".menuhider").click(function() {';
+        	print '  console.log("We click on .menuhider");'."\n";
         	print "  $('.side-nav').toggle();";
         	if ($conf->theme == 'md') print "  $('.login_block').toggle();";
         	print '});'."\n";
@@ -5824,7 +5835,7 @@ function getImageFileNameForSize($file, $extName, $extImgTarget='')
  */
 function getAdvancedPreviewUrl($modulepart, $relativepath)
 {
-    global $conf;
+    global $conf, $langs;
 
     if (empty($conf->use_javascript_ajax)) return '';
 
@@ -5833,7 +5844,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath)
     //$mime_preview[]='archive';
     $num_mime = array_search(dol_mimetype($relativepath, '', 1), $mime_preview);
 
-    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;attachment=0&amp;file='.$relativepath).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js('Preview').'\')';
+    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;attachment=0&amp;file='.$relativepath).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js($langs->trans('Preview')).'\')';
     else return '';
 }
 

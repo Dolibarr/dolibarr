@@ -44,8 +44,8 @@ function dol_basename($pathfile)
  *  @param	string		$path        	Starting path from which to search. This is a full path.
  *  @param	string		$types        	Can be "directories", "files", or "all"
  *  @param	int			$recursive		Determines whether subdirectories are searched
- *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.'))
+ *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function. Filter is checked into basename only.
+ *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.')). Exclude is checked into fullpath.
  *  @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
@@ -68,6 +68,11 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	$path=preg_replace('/([\\/]+)$/i','',$path);
 	$newpath=dol_osencode($path);
 
+	$reshook = 0;
+	$file_list = array();
+	
+	$hookmanager->resArray=array();
+	
 	if (! $nohook)
 	{
 		$hookmanager->initHooks(array('fileslib'));
@@ -84,17 +89,11 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 				'loadsize' => $loadsize,
 				'mode' => $mode
 		);
-		$reshook=$hookmanager->executeHooks('getNodesList', $parameters, $object);
+		$reshook=$hookmanager->executeHooks('getDirList', $parameters, $object);
 	}
 
-	// $reshook may contain returns stacked by other modules
-	// $reshook is always empty with an array to not lose returns stacked with other modules
 	// $hookmanager->resArray may contain array stacked by other modules
-	if (! $nohook && ! empty($hookmanager->resArray)) // forced to use $hookmanager->resArray even if $hookmanager->resArray['nodes'] is empty
-	{
-		return $hookmanager->resArray['nodes'];
-	}
-	else
+	if (empty($reshook))
 	{
 		if (! is_dir($newpath)) return array();
 
@@ -102,9 +101,8 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 		{
 			$filedate='';
 			$filesize='';
-			$file_list = array();
 
-			while (false !== ($file = readdir($dir)))
+			while (false !== ($file = readdir($dir)))        // $file is always a basename (into directory $newpath)
 			{
 				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in utf8 in memory
 
@@ -137,7 +135,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 							if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
 							if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
 
-							if (! $filter || preg_match('/'.$filter.'/i',$file))	// We do not search key $filter into $path, only into $file
+							if (! $filter || preg_match('/'.$filter.'/i',$file))	// We do not search key $filter into all $path, only into $file part
 							{
 								preg_match('/([^\/]+)\/[^\/]+$/',$path.'/'.$file,$reg);
 								$level1name=(isset($reg[1])?$reg[1]:'');
@@ -195,14 +193,12 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 				// Sort the data
 				if ($sortorder) array_multisort($myarray, $sortorder, $file_list);
 			}
-
-			return $file_list;
-		}
-		else
-		{
-			return array();
 		}
 	}
+	
+	$file_list = array_merge($file_list, $hookmanager->resArray);
+	
+	return $file_list;
 }
 
 
@@ -515,13 +511,23 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
 
 	$result=0;
 
-	dol_syslog("files.lib.php::dolCopyr srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
+	dol_syslog("files.lib.php::dolCopyDir srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
 
 	if (empty($srcfile) || empty($destfile)) return -1;
 
 	$destexists=dol_is_dir($destfile);
 	if (! $overwriteifexists && $destexists) return 0;
-
+    
+    if (! $destexists)
+    {
+        // We must set mask just before creating dir, becaause it can be set differently by dol_copy
+        umask(0);
+        $dirmaskdec=octdec($newmask);
+        if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);
+        $dirmaskdec |= octdec('0200');  // Set w bit required to be able to create content for recursive subdirs files
+        dol_mkdir($destfile."/".$file, '', decoct($dirmaskdec));
+    }
+    
 	$srcfile=dol_osencode($srcfile);
 	$destfile=dol_osencode($destfile);
 
@@ -538,6 +544,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
                 {
                     if (!is_dir($destfile."/".$file))
                     {
+                        // We must set mask just before creating dir, becaause it can be set differently by dol_copy
                     	umask(0);
 						$dirmaskdec=octdec($newmask);
 						if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);
@@ -899,7 +906,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
         				    include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
         				    $ecmfile=new EcmFiles($db);
         				    $result = $ecmfile->fetch(0, '', $rel_filetodelete);
-        				    if ($result >= 0)
+        				    if ($result >= 0 && $ecmfile->id > 0)
         				    {
         				        $result = $ecmfile->delete($user);
         				    }
@@ -1167,12 +1174,14 @@ function dol_init_file_process($pathtoscan='', $trackid='')
  * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
  * @param	string	$link					Link to add (to add a link instead of a file)
  * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
- * @return	void
+ * @return	int                             <=0 if KO, >0 if OK
  */
 function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null, $trackid='')
 {
 	global $db,$user,$conf,$langs;
 
+	$res = 0;
+	
 	if (! empty($_FILES[$varfiles])) // For view $_FILES[$varfiles]['error']
 	{
 		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
@@ -1267,6 +1276,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					    }
 					}
 
+					$res = 1;
 					setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
 				}
 				else
@@ -1309,6 +1319,8 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("File")), null, 'errors');
 	}
+	
+	return $res;
 }
 
 
@@ -1873,6 +1885,16 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		}
 		$original_file=$conf->fournisseur->facture->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE facnumber='".$db->escape($refname)."' AND entity=".$conf->entity;
+	}
+	// Wrapping pour les rapport de paiements
+	else if ($modulepart == 'supplier_payment')
+	{
+		if ($fuser->rights->fournisseur->facture->lire || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->fournisseur->payment->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les rapport de paiements

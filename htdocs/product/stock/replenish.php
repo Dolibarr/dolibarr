@@ -293,12 +293,7 @@ if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrep
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_warehouse_properties AS pse ON (p.rowid = pse.fk_product AND pse.fk_entrepot = '.$fk_entrepot.')';
 }
 $sql.= ' WHERE p.entity IN (' . getEntity("product", 1) . ')';
-if ($sall) {
-    $sql .= ' AND (p.ref LIKE "%'.$db->escape($sall).'%" ';
-    $sql .= 'OR p.label LIKE "%'.$db->escape($sall).'%" ';
-    $sql .= 'OR p.description LIKE "%'.$db->escape($sall).'%" ';
-    $sql .= 'OR p.note LIKE "%'.$db->escape($sall).'%")';
-}
+if ($sall) $sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type)) {
     if ($type == 1) {
@@ -307,20 +302,8 @@ if (dol_strlen($type)) {
         $sql .= ' AND p.fk_product_type <> 1';
     }
 }
-if ($sref) {
-    //natural search
-    $scrit = explode(' ', $sref);
-    foreach ($scrit as $crit) {
-        $sql .= ' AND p.ref LIKE "%' . $crit . '%"';
-    }
-}
-if ($snom) {
-    //natural search
-    $scrit = explode(' ', $snom);
-    foreach ($scrit as $crit) {
-        $sql .= ' AND p.label LIKE "%' . $db->escape($crit) . '%"';
-    }
-}
+if ($sref) $sql.=natural_search('p.ref', $sref);
+if ($snom) $sql.=natural_search('p.label', $snom);
 $sql.= ' AND p.tobuy = 1';
 if (!empty($canvas)) $sql .= ' AND p.canvas = "' . $db->escape($canvas) . '"';
 $sql.= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price';
@@ -529,7 +512,7 @@ print_liste_field_titre($langs->trans('StockLimitShort'), $_SERVER["PHP_SELF"], 
 print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], 'stock_physique', $param, '', 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans('Ordered'), $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans('StockToBuy'), $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('Supplier'), $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('SupplierRef'), $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
 print "</tr>\n";
 
 // Lignes des champs de filtre

@@ -1,2 +1,5 @@
 # Dolibarr language file - Source file is en_US - members
+Members=Membres
 MemberStatusActiveShort=Validée
+SubscriptionLate=Retard
+ImportDataset_member_1=Membres

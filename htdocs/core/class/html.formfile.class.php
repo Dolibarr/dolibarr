@@ -34,11 +34,11 @@
  */
 class FormFile
 {
-    var $db;
-    var $error;
-
-    var $numoffiles;
-	var $infofiles;			// Used to return informations by function getDocumentsLink
+    private $db;
+    
+    public $error;
+    public $numoffiles;
+    public $infofiles;			// Used to return informations by function getDocumentsLink
 
 
     /**
@@ -466,6 +466,15 @@ class FormFile
                     $modellist=ModelePDFSuppliersInvoices::liste_modeles($this->db);
                 }
             }
+			else if ($modulepart == 'supplier_payment')
+			{
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
+                    $modellist=ModelePDFSuppliersPayments::liste_modeles($this->db);
+                }
+			}
             else if ($modulepart == 'remisecheque')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
@@ -548,7 +557,7 @@ class FormFile
             if (empty($buttonlabel)) $buttonlabel=$langs->trans('Generate');
 
             if ($conf->browser->layout == 'phone') $urlsource.='#'.$forname.'_form';   // So we switch to form after a generation
-            if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
+            if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" id="'.$forname.'_form" method="post">';
             $out.= '<input type="hidden" name="action" value="builddoc">';
             $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             
@@ -669,7 +678,7 @@ class FormFile
 					
 					// Show file name with link to download
 					$out.= '<td class="nowrap">';
-					$out.= '<a data-ajax="false" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
+					$out.= '<a data-ajax="false" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
 					$mime=dol_mimetype($relativepath,'',0);
 					if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
 					$out.= ' target="_blank">';
@@ -803,7 +812,7 @@ class FormFile
     	{
     	    $out='<dl class="dropdown inline-block">
     			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight').'</a></dt>
-    			<dd><div class="multichoicedoc"><ul class="ulselectedfields" style="display: none;">';
+    			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields" style="display: none;">';
     	    $tmpout='';
 
     		// Loop on each file found

@@ -110,7 +110,7 @@ Enclosure=Encadrement des chaînes de textes
 SpecialCode=Code spécial
 ExportStringFilter=%% permet de remplacer 1 ou plusieurs caractères dans le texte
 ExportDateFilter=AAAA, AAAAMM, AAAAMMJJ: filtre pour une année/mois/jour<br>AAAA+AAAA, AAAAMM+AAAAMM, AAAAMMJJ+AAAAMMJJ: filtre pour une plage année/mois/jour<br> > AAAA, > AAAAMM, > AAAAMMJJ': filtre pour une date supérieure à une année/mois/jour donné<br> < AAAA, < AAAAMM, < AAAAMMJJ: filtre pour une date inférieure à une année/mois/jour donné
-ExportNumericFilter='NNNNN' filtres sur une valeur<br>'NNNNN+NNNNN' filtres sur une place de valeurs<br>'&gt;NNNNN' filtres sur les valeurs plus petites<br>'&gt;NNNNN' filtres sur les valeurs plus grandes
+ExportNumericFilter=NNNNN filtre une seule valeur<br>NNNNN+NNNNN filtre une plage de valeurs<br>< NNNNN filtre les valeurs inférieures<br>> NNNNN filtre les valeurs supérieures
 ImportFromLine=Début d'import à la ligne numéro
 EndAtLineNb=Fin à la ligne numéro
 SetThisValueTo2ToExcludeFirstLine=Par exemple, positionnez cette valeur à 3 pour exclure les 2 premières lignes
@@ -120,3 +120,8 @@ SelectFilterFields=Si vous voulez filtrer sur certaines valeurs, saisissez ces v
 FilteredFields=Champs filtrés
 FilteredFieldsValues=Valeurs de filtrage
 FormatControlRule=Règle de contrôle de format
+## imports updates
+KeysToUseForUpdates=Clé à utiliser pour mettre à jour les données
+NbInsert=Nombre de lignes insérées: %s
+NbUpdate=Nombre de lignes mises à jour: %s
+MultipleRecordFoundWithTheseFilters=Plusieurs enregistrements ont été trouvés avec ces filtres: %s

@@ -34,12 +34,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 class mailing_contacts1 extends MailingTargets
 {
 	var $name='ContactCompanies';                     // Identifiant du module mailing
-	// This label is used if no translation is found for key MailingModuleDescXXX where XXX=name is found
-	var $desc='Contacts des tiers (prospects, clients, fournisseurs...)';
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	var $desc='Contacts of thirdparties (prospects, customers, suppliers...)';
 	var $require_module=array("societe");               // Module mailing actif si modules require_module actifs
 	var $require_admin=0;                               // Module mailing actif pour user admin ou non
 	var $picto='contact';
-
+	
 	var $db;
 
 

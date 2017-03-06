@@ -533,7 +533,7 @@ if ($object->fetch($id) >= 0)
 				print '<td align="center">';
                 if (empty($obj->source_id) || empty($obj->source_type))
                 {
-                    print $obj->source_url; // For backward compatibility
+                    print empty($obj->source_url)?'':$obj->source_url; // For backward compatibility
                 }
                 else
                 {

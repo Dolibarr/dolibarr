@@ -396,7 +396,7 @@ class ExpenseReports extends DolibarrApi
             $this->expensereport->$field = $value;
         }
         
-        if($this->expensereport->update($id, DolibarrApiAccess::$user,1,'','','update'))
+        if($this->expensereport->update(DolibarrApiAccess::$user))
             return $this->get($id);
         
         return false;

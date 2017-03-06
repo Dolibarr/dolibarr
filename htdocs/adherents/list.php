@@ -375,7 +375,7 @@ if (! empty($moreforfilter))
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
-print '<div class="div-table-responsive-no-min">';
+print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 print '<tr class="liste_titre">';
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
@@ -749,7 +749,8 @@ while ($i < min($num, $limit))
 			print '<td align="center" class="nowrap">';
 			print dol_print_date($datefin,'day');
 			if ($memberstatic->hasDelay()) {
-				print " ".img_warning($langs->trans("SubscriptionLate"));
+			    $textlate .= ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->adherent->subscription->warning_delay/60/60/24) >= 0 ? '+' : '').ceil($conf->adherent->subscription->warning_delay/60/60/24).' '.$langs->trans("days").')';
+				print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
 			}
 			print '</td>';
 		}

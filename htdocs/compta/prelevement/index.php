@@ -59,9 +59,7 @@ llxHeader('',$langs->trans("CustomersStandingOrdersArea"));
 if (prelevement_check_config() < 0)
 {
 	$langs->load("errors");
-	print '<div class="error">';
-	print $langs->trans("ErrorModuleSetupNotComplete");
-	print '</div>';
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
 }
 
 print load_fiche_titre($langs->trans("CustomersStandingOrdersArea"));

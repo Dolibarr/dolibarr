@@ -24,6 +24,7 @@ WithdrawStatistics=Statistiques des prélèvements
 WithdrawRejectStatistics=Statistiques des rejets de prélèvements
 LastWithdrawalReceipt=Les %s derniers bons de prélèvements
 MakeWithdrawRequest=Faire une demande de prélèvement
+WithdrawRequestsDone=%s demandes de prélèvements enregistrées
 ThirdPartyBankCode=Code banque du tiers
 NoInvoiceCouldBeWithdrawed=Aucune facture percevable, prélevée avec succès. Vérifiez que les factures sont sur des sociétés  dont le compte bancaire par défaut est correctement renseigné.
 ClassCredited=Classer crédité

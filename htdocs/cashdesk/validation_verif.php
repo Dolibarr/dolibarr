@@ -47,15 +47,40 @@ switch ($action)
 
 
 	case 'valide_achat':
-
+        
+	    $thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
+	    
 		$company=new Societe($db);
-		$company->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
+		$company->fetch($thirdpartyid);
 
 		$invoice=new Facture($db);
 		$invoice->date=dol_now();
 		$invoice->type= Facture::TYPE_STANDARD;
+		
+		// To use a specific numbering module for POS, reset $conf->global->FACTURE_ADDON and other vars here
+		// and restore values just after
+		$sav_FACTURE_ADDON='';
+		if (! empty($conf->global->POS_ADDON))
+		{
+			$sav_FACTURE_ADDON = $conf->global->FACTURE_ADDON;
+			$conf->global->FACTURE_ADDON = $conf->global->POS_ADDON;
+
+			// To force prefix only for POS with terre module
+			if (! empty($conf->global->POS_NUMBERING_TERRE_FORCE_PREFIX)) $conf->global->INVOICE_NUMBERING_TERRE_FORCE_PREFIX = $conf->global->POS_NUMBERING_TERRE_FORCE_PREFIX;
+			// To force prefix only for POS with mars module
+			if (! empty($conf->global->POS_NUMBERING_MARS_FORCE_PREFIX)) $conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX = $conf->global->POS_NUMBERING_MARS_FORCE_PREFIX;
+			// To force rule only for POS with mercure
+			//...
+		}
+		
 		$num=$invoice->getNextNumRef($company);
 
+		// Restore save values
+		if (! empty($sav_FACTURE_ADDON))
+		{
+			$conf->global->FACTURE_ADDON = $sav_FACTURE_ADDON;
+		}
+		
 		$obj_facturation->numInvoice($num);
 
 		$obj_facturation->getSetPaymentMode($_POST['hdnChoix']);

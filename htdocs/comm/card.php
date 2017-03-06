@@ -1039,6 +1039,11 @@ if ($id > 0)
 
     if (empty($reshook))
     {
+        if ($object->status != 1)
+        {
+            print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("ThirdPartyIsClosed").'</a></div>';
+        }
+        
     	if (! empty($conf->propal->enabled) && $user->rights->propal->creer && $object->status==1)
     	{
     		$langs->load("propal");
@@ -1072,15 +1077,11 @@ if ($id > 0)
     			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a></div>';
     		}
     
-    		if (! empty($conf->facture->enabled))
+    		if (! empty($conf->facture->enabled) && $object->status==1)
     		{
     			if (empty($user->rights->facture->creer))
     			{
     			    print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
-    			}
-    			else if ($object->status != 1)
-    			{
-    			    print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
     			}
     			else
     			{
@@ -1101,7 +1102,7 @@ if ($id > 0)
     	}
     
     	// Add action
-    	if (! empty($conf->agenda->enabled) && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+    	if (! empty($conf->agenda->enabled) && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB) && $object->status==1)
     	{
     		if ($user->rights->agenda->myactions->create)
     		{

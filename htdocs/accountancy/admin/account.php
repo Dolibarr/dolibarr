@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2016      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,6 +41,7 @@ $action = GETPOST('action');
 $cancel = GETPOST('cancel');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
+
 $search_account = GETPOST("search_account");
 $search_label = GETPOST("search_label");
 $search_accountparent = GETPOST("search_accountparent");
@@ -67,6 +68,15 @@ if (! $sortfield)
 	$sortfield = "aa.account_number";
 if (! $sortorder)
 	$sortorder = "ASC";
+
+$arrayfields=array(
+    'aa.account_number'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
+    'aa.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
+	'aa.account_parent'=>array('label'=>$langs->trans("Accountparent"), 'checked'=>0),
+    'aa.pcg_type'=>array('label'=>$langs->trans("Pcgtype"), 'checked'=>0),
+    'aa.pcg_subtype'=>array('label'=>$langs->trans("Pcgsubtype"), 'checked'=>0),
+	'aa.active'=>array('label'=>$langs->trans("Activated"), 'checked'=>1)
+);
 
 $accounting = new AccountingAccount($db);
 
@@ -95,6 +105,7 @@ if (empty($reshook))
     	$search_accountparent = "";
     	$search_pcgtype = "";
     	$search_pcgsubtype = "";
+		$search_array_options=array();
     }
     
     if (GETPOST('change_chart'))
@@ -135,6 +146,7 @@ if (empty($reshook))
 /*
  * View
  */
+$form=new Form($db);
 
 llxHeader('', $langs->trans("ListAccounts"));
 
@@ -145,30 +157,21 @@ if ($action == 'delete') {
 
 $pcgver = $conf->global->CHARTOFACCOUNTS;
 
-
-
 $sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.pcg_subtype, aa.account_number, aa.account_parent , aa.label, aa.active, ";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON aa.account_parent = a2.rowid";
+// Dirty hack wainting that foreign key account_parent is an integer to be compared correctly with rowid
+if ($db->type == 'pgsql') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = CAST(aa.account_parent AS INTEGER)";
+else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = CAST(aa.account_parent AS UNSIGNED)";
 $sql .= " WHERE asy.rowid = " . $pcgver;
 
-if (strlen(trim($search_account))) {
-	$sql .= natural_search("aa.account_number", $search_account);
-}
-if (strlen(trim($search_label))) {
-	$sql .= natural_search("aa.label", $search_label);
-}
-if (strlen(trim($search_accountparent))) {
-	$sql .= natural_search("aa.account_parent", $search_accountparent);
-}
-if (strlen(trim($search_pcgtype))) {
-	$sql .= natural_search("aa.pcg_type", $search_pcgtype);
-}
-if (strlen(trim($search_pcgsubtype))) {
-	$sql .= natural_search("aa.pcg_subtype", $search_pcgsubtype);
-}
+if (strlen(trim($search_account)))			$sql .= natural_search("aa.account_number", $search_account);
+if (strlen(trim($search_label)))			$sql .= natural_search("aa.label", $search_label);
+if (strlen(trim($search_accountparent)))	$sql .= natural_search("aa.account_parent", $search_accountparent);
+if (strlen(trim($search_pcgtype)))			$sql .= natural_search("aa.pcg_type", $search_pcgtype);
+if (strlen(trim($search_pcgsubtype)))		$sql .= natural_search("aa.pcg_subtype", $search_pcgsubtype);
+
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -184,21 +187,25 @@ $sql .= $db->plimit($limit + 1, $offset);
 dol_syslog('accountancy/admin/account.php:: $sql=' . $sql);
 $resql = $db->query($sql);
 
-if ($resql) {
-    
+if ($resql)
+{
 	$num = $db->num_rows($resql);
-	
+
     $params='';
-	if ($search_account != "") $params.= '&amp;search_account='.urlencode($search_account);
-	if ($search_label != "") $params.= '&amp;search_label='.urlencode($search_label);
-	if ($search_accountparent != "") $params.= '&amp;search_accountparent='.urlencode($search_accountparent);
-	if ($search_pcgtype != "") $params.= '&amp;search_pcgtype='.urlencode($search_pcgtype);
-	if ($search_pcgsubtype != "") $params.= '&amp;search_pcgsubtype='.urlencode($search_pcgsubtype);
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($search_account) $params.= '&amp;search_account='.urlencode($search_account);
+	if ($search_label) $params.= '&amp;search_label='.urlencode($search_label);
+	if ($search_accountparent) $params.= '&amp;search_accountparent='.urlencode($search_accountparent);
+	if ($search_pcgtype) $params.= '&amp;search_pcgtype='.urlencode($search_pcgtype);
+	if ($search_pcgsubtype) $params.= '&amp;search_pcgsubtype='.urlencode($search_pcgsubtype);
     if ($optioncss != '') $param.='&optioncss='.$optioncss;
-	
-	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy');
-	
+
+
 	print '<form method="GET" action="' . $_SERVER["PHP_SELF"] . '">';
+	
+	$htmlbuttonadd = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
+	
+    print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $htmlbuttonadd);
 	
 	// Box to select active chart of account
     $var = ! $var;
@@ -207,7 +214,7 @@ if ($resql) {
     $sql = "SELECT rowid, pcg_version, label, active";
     $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system";
     $sql .= " WHERE active = 1";
-    dol_syslog('accountancy/admin/index.php:: $sql=' . $sql);
+    dol_syslog('accountancy/admin/account.php:: $sql=' . $sql);
     $resqlchart = $db->query($sql);
     $var = true;
     if ($resqlchart) {
@@ -227,35 +234,37 @@ if ($resql) {
     print "</select>";
     print '<input type="submit" class="button" name="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
     print '<br>';    
-    print "<br>\n";
+	print '<br>';
 	
-	print '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
-	print '<a class="butAction" href="./categories.php">' . $langs->trans("ApplyMassCategories") . '</a>';
-	// print '<a class="butAction" href="./importaccounts.php">' . $langs->trans("ImportAccount") . '</a>';
-	// print '<a class="butAction" href="./productaccount.php">' . $langs->trans("CheckProductAccountancyCode") . '</a>';
-	print '<br><br>';
+	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	
-	print '<table class="noborder" width="100%">';
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("AccountNumber"), $_SERVER["PHP_SELF"], "aa.account_number", "", $params, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "aa.label", "", $params, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Accountparent"), $_SERVER["PHP_SELF"], "aa.account_parent", "", $params, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Pcgtype"), $_SERVER["PHP_SELF"], "aa.pcg_type", "", $params, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Pcgsubtype"), $_SERVER["PHP_SELF"], "aa.pcg_subtype", "", $params, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Activated"), $_SERVER["PHP_SELF"], "aa.active", "", $params, "", $sortfield, $sortorder);
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $params, "", 'width="60" align="center"', $sortfield, $sortorder);
-	print '</tr>';
-	
+
+	if (! empty($arrayfields['aa.account_number']['checked']))	print_liste_field_titre($arrayfields['aa.account_number']['label'], $_SERVER["PHP_SELF"],"aa.account_number","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['aa.label']['checked']))			print_liste_field_titre($arrayfields['aa.label']['label'], $_SERVER["PHP_SELF"],"aa.label","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['aa.account_parent']['checked']))	print_liste_field_titre($arrayfields['aa.account_parent']['label'], $_SERVER["PHP_SELF"],"aa.account_parent", "", $param,'align="left"',$sortfield,$sortorder);
+	if (! empty($arrayfields['aa.pcg_type']['checked']))		print_liste_field_titre($arrayfields['aa.pcg_type']['label'],$_SERVER["PHP_SELF"],'aa.pcg_type','',$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['aa.pcg_subtype']['checked']))		print_liste_field_titre($arrayfields['aa.pcg_subtype']['label'],$_SERVER["PHP_SELF"],'aa.pcg_subtype','',$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['aa.active']['checked']))			print_liste_field_titre($arrayfields['aa.active']['label'],$_SERVER["PHP_SELF"],'aa.active','',$param,'',$sortfield,$sortorder);
+
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
+	print "</tr>\n";
+
+	// Line for search fields
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_account" value="' . $search_account . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_accountparent" value="' . $search_accountparent . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgtype" value="' . $search_pcgtype . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgsubtype" value="' . $search_pcgsubtype . '"></td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+	if (! empty($arrayfields['aa.account_number']['checked']))	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_account" value="' . $search_account . '"></td>';
+	if (! empty($arrayfields['aa.label']['checked']))			print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
+	if (! empty($arrayfields['aa.account_parent']['checked']))	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_accountparent" value="' . $search_accountparent . '"></td>';
+	if (! empty($arrayfields['aa.pcg_type']['checked']))		print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgtype" value="' . $search_pcgtype . '"></td>';
+	if (! empty($arrayfields['aa.pcg_subtype']['checked']))		print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgsubtype" value="' . $search_pcgsubtype . '"></td>';
+	if (! empty($arrayfields['aa.active']['checked']))			print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="right" colspan="2" class="liste_titre">';
-	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-	print $searchpitco;
+	$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+	print $searchpicto;
 	print '</td>';
 	print '</tr>';
 	
@@ -263,8 +272,7 @@ if ($resql) {
 	
 	$accountstatic = new AccountingAccount($db);
 	$accountparent = new AccountingAccount($db);
-	
-	$i = 0;
+
 	while ( $i < min($num, $limit) ) 
 	{
 		$obj = $db->fetch_object($resql);
@@ -274,47 +282,94 @@ if ($resql) {
 		$accountstatic->account_number = $obj->account_number;
 		
 		print '<tr ' . $bc[$var] . '>';
-		print '<td>' . $accountstatic->getNomUrl(1) . '</td>';
-		print '<td>' . $obj->label . '</td>';
 
-		if (! empty($obj->account_parent))
-        {
-			$accountparent->id = $obj->rowid2;
-			$accountparent->label = $obj->label2;
-			$accountparent->account_number = $obj->account_number2;
-		
-			print '<td>' . $accountparent->getNomUrl(1) . '</td>';
-		}
-		else
+		// Account number
+		if (! empty($arrayfields['aa.account_number']['checked']))
 		{
-			print '<td>&nbsp;</td>';
+			print "<td>";
+			print $accountstatic->getNomUrl(1);
+			print "</td>\n";
+			if (! $i) $totalarray['nbfield']++;
 		}
-		print '<td>' . $obj->pcg_type . '</td>';
-		print '<td>' . $obj->pcg_subtype . '</td>';
-		print '<td>';
-		if (empty($obj->active)) {
-			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $obj->rowid . '&action=enable">';
-			print img_picto($langs->trans("Disabled"), 'switch_off');
-			print '</a>';
-		} else {
-			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $obj->rowid . '&action=disable">';
-			print img_picto($langs->trans("Activated"), 'switch_on');
-			print '</a>';
+
+		// Account label
+		if (! empty($arrayfields['aa.label']['checked']))
+		{
+			print "<td>";
+			print $obj->label;
+			print "</td>\n";
+			if (! $i) $totalarray['nbfield']++;
 		}
-		print '</td>';
-		
+
+		// Account parent
+		if (! empty($arrayfields['aa.account_parent']['checked']))
+		{
+			if (! empty($obj->account_parent))
+			{
+				$accountparent->id = $obj->rowid2;
+				$accountparent->label = $obj->label2;
+				$accountparent->account_number = $obj->account_number2;
+			
+				print "<td>";
+				print $accountparent->getNomUrl(1);
+				print "</td>\n";
+				if (! $i) $totalarray['nbfield']++;
+			}
+			else
+			{
+				print '<td>&nbsp;</td>';
+				if (! $i) $totalarray['nbfield']++;
+			}
+		}
+
+		// Chart of accounts type
+		if (! empty($arrayfields['aa.pcg_type']['checked']))
+		{
+			print "<td>";
+			print $obj->pcg_type;
+			print "</td>\n";
+			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// Chart of accounts subtype
+		if (! empty($arrayfields['aa.pcg_subtype']['checked']))
+		{
+			print "<td>";
+			print $obj->pcg_subtype;
+			print "</td>\n";
+			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// Activated or not
+		if (! empty($arrayfields['aa.active']['checked']))
+		{
+			print '<td>';
+			if (empty($obj->active)) {
+				print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $obj->rowid . '&action=enable">';
+				print img_picto($langs->trans("Disabled"), 'switch_off');
+				print '</a>';
+			} else {
+				print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $obj->rowid . '&action=disable">';
+				print img_picto($langs->trans("Activated"), 'switch_on');
+				print '</a>';
+			}
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+
 		// Action
 		print '<td align="center">';
-		if ($user->admin) {
-			print '<a href="./card.php?action=update&id=' . $obj->rowid . '">';
+		if ($user->rights->accounting->chartofaccount) {
+			print '<a href="./card.php?action=update&id=' . $obj->rowid . '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?chartofaccounts='.$object->id).'">';
 			print img_edit();
 			print '</a>';
 			print '&nbsp;';
-			print '<a href="./card.php?action=delete&id=' . $obj->rowid . '">';
+			print '<a href="./card.php?action=delete&id=' . $obj->rowid . '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?chartofaccounts='.$object->id). '">';
 			print img_delete();
 			print '</a>';
 		}
 		print '</td>' . "\n";
+		if (! $i) $totalarray['nbfield']++;
 		
 		print "</tr>\n";
 		$var = ! $var;
@@ -322,6 +377,7 @@ if ($resql) {
 	}
 	
 	print "</table>";
+	print "</div>";
 	print '</form>';
 } else {
 	dol_print_error($db);

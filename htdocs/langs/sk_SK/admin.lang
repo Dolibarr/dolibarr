@@ -9,14 +9,20 @@ VersionDevelopment=Vývojárska
 VersionUnknown=Neznáma
 VersionRecommanded=Odporúčaná
 FileCheck=Kontrola integrity súborov
-FileCheckDesc=This tool allows you to check the integrity of files of your application, comparing each files with the official ones. You can use this tool to detect if some files were modified by a hacker for example.
+FileCheckDesc=This tool allows you to check the integrity of files and setup of your application, comparing each files with the official ones. Value of some setup constants may also be checked. You can use this tool to detect if some files were modified by a hacker for example.
+FileIntegrityIsStrictlyConformedWithReference=Files integrity is strictly conformed with the reference.
+FileIntegrityIsOkButFilesWereAdded=Files integrity check has passed, however some new files were added.
+FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified, removed or added.
+GlobalChecksum=Global checksum
 MakeIntegrityAnalysisFrom=Make integrity analysis of application files from
 LocalSignature=Embedded local signature (less reliable)
 RemoteSignature=Remote distant signature (more reliable)
 FilesMissing=Chýbajúce súbory
 FilesUpdated=Aktualizované súbory
+FilesModified=Modified Files
+FilesAdded=Added Files
 FileCheckDolibarr=Skontrolovať integritu aplikačných súborov
-AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from a certified package
+AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from an official package
 XmlNotFound=Integrita XML súboru aplikácie nenájdená
 SessionId=ID relácie
 SessionSaveHandler=Handler pre uloženie sedenia
@@ -185,7 +191,9 @@ BoxesDesc=Widgets are components showing some information that you can add to pe
 OnlyActiveElementsAreShown=Iba prvky z <a href="%s">povolených modulov</a> sú uvedené.
 ModulesDesc=Dolibarr modules define which functionality is enabled in software. Some modules require permissions you must grant to users, after enabling module. Click on button on/off to enable a module/feature.
 ModulesMarketPlaceDesc=Viac modulov na stiahnutie môžete nájst na internete
-ModulesMarketPlaces=Viac moduly ...
+ModulesDeployDesc=If permissions on your file system allows it, you can use this tool to deploy an external module. The module wil then be visible on the tab <strong>%s</strong>.
+ModulesMarketPlaces=Find external modules...
+GoModuleSetupArea=To deploy/install a new module, go onto the Module setup area at <a href="%s">%s</a>.
 DoliStoreDesc=DoliStore, oficiálny trh pre Dolibarr ERP / CRM externých modulov
 DoliPartnersDesc=List of companies providing custom developed modules or features (Note: anyone experienced in PHP programming can provide custom development for an open source project)
 WebSiteDesc=Referenčná stránka pre nájdenie viacero modulov
@@ -276,21 +284,22 @@ ModuleFamilyInterface=Interfaces with external systems
 MenuHandlers=Menu manipulátory
 MenuAdmin=Menu Editor
 DoNotUseInProduction=Nepoužívajte vo výrobe
-ThisIsProcessToFollow=To je nastavený tak, aby proces:
-ThisIsAlternativeProcessToFollow=Toto je alternatívne nastavenie pre postup:
+ThisIsProcessToFollow=This is steps to process:
+ThisIsAlternativeProcessToFollow=This is an alternative setup to process manually:
 StepNb=Krok %s
 FindPackageFromWebSite=Nájsť balíčka, ktorý obsahuje funkciu, ktorú chcete (napr. na oficiálnych webových stránkach %s).
 DownloadPackageFromWebSite=Stiahnúť  balíček ( napr. z oficiálnej stránky %s ).
-UnpackPackageInDolibarrRoot=Rozbaľte balíček na server do priečinka určeného na externé moduly:  <b>%s</b>
-SetupIsReadyForUse=Inštalácia je dokončená a Dolibarr je pripravený na použitie s touto nový komponent.
-NotExistsDirect=Alternatívne koreňový adresár nie je definovaná. <br>
-InfDirAlt=Od verzie 3 je možné definovať alternatívny koreň directory.This umožňuje ukladať, rovnaké miesto, plug-iny a vlastné šablóny. <br> Stačí vytvoriť adresár v koreňovom adresári Dolibarr (napr.: vlastné). <br>
-InfDirExample=<br> Potom vyhlásiť ju v súbore conf.php <br> $ Dolibarr_main_url_root_alt = 'http://myserver/custom &quot; <br> $ Dolibarr_main_document_root_alt = '/ cesta / of / Dolibarr / htdocs / vlastný &quot; <br> * Tieto riadky sú okomentované znakom &quot;#&quot;, odkomentovať odobrať iba charakter.
+UnpackPackageInDolibarrRoot=Unpack the packaged files into server directory dedicated to Dolibarr: <b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, unpack the packaged files into the server directory dedicated to modules: <b>%s</b>
+SetupIsReadyForUse=Module deployment is finished. You must however enable and setup the module in your application by going on the page to setup modules: <a href="%s">%s</a>.
+NotExistsDirect=The alternative root directory is not defined to an existing directory.<br>
+InfDirAlt=Since version 3, it is possible to define an alternative root directory. This allows you to store, into a dedicated directory, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=V tomto kroku, môžete poslať balíček použitím tohto nástroja: Vybrať modul
 CurrentVersion=Dolibarr aktuálna verzia
 CallUpdatePage=Choďte na stránku úpravý databázobej štruktúry a dát. %s
 LastStableVersion= Najnovšia stabilná verzia
-LastActivationDate=Posledný baktívny dátum
+LastActivationDate=Latest activation date
 UpdateServerOffline=Aktualizovať server offline
 GenericMaskCodes=Môžete zadať akékoľvek masku číslovanie. V tejto maske, by mohli byť použité nasledovné značky: <br> <b>{000000}</b> zodpovedá množstvu, ktoré sa zvýšia na každej %s. Vložiť počet núl na požadovanú dĺžku pultu. Počítadlo sa vyplní nulami zľava, aby sa čo najviac nuly ako maska. <br> <b>{000000} 000</b> rovnako ako predchádzajúce, ale posun zodpovedá číslu na pravej strane znamienko + je aplikovaný začína na prvej %s. <br> <b>{000000 @ x}</b> rovnaká ako predchádzajúca, ale počítadlo sa resetuje na nulu, keď je mesiac x hodnoty (x medzi 1 a 12 alebo 0, používať prvých mesiacoch fiškálneho roka definované v konfigurácii, alebo 99 pre resetovanie na nulu každý mesiac ). Ak je táto voľba sa používa, a x je 2 alebo vyššia, potom postupnosť {yy} {mm} alebo {yyyy} {} mm je tiež potrebné. <br> <b>{Dd}</b> deň (01 až 31). <br> <b>{Mm}</b> mesiac (01 až 12). <br> <b>{Yy}, {RRRR}</b> alebo <b>{y}</b> ročne po dobu 2, 4 alebo 1 číslice. <br>
 GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of third party type on n characters (see dictionary-thirdparty types).<br>
@@ -373,11 +382,11 @@ ExtrafieldCheckBox=Zaškrtávacie políčko
 ExtrafieldRadio=Prepínač
 ExtrafieldCheckBoxFromList= Checkbox from table
 ExtrafieldLink=Odkaz na objekt
-ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another :<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
+ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list :<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list :<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=Zoznam kľúčových hodnôt <br><br> napríklad : <br>1,hodnota1<br>2,hodnota2<br>3,hodnota3<br>...
 ExtrafieldParamHelpradio=Zoznam kľúčových hodnôt <br><br> napríklad : <br>1,hodnota1<br>2,hodnota2<br>3,hodnota3<br>...
-ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list :<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Parameters must be ObjectName:Classpath<br>Syntax : ObjectName:Classpath<br>Example : Societe:societe/class/societe.class.php
 LibraryToBuildPDF=Knižnica používaná pre generovanie PDF
 WarningUsingFPDF=Upozornenie: Váš <b>conf.php</b> obsahuje direktívu <b>dolibarr_pdf_force_fpdf = 1.</b> To znamená, že môžete používať knižnicu FPDF pre generovanie PDF súborov. Táto knižnica je stará a nepodporuje mnoho funkcií (Unicode, obraz transparentnosť, azbuka, arabské a ázijské jazyky, ...), takže môže dôjsť k chybám pri generovaní PDF. <br> Ak chcete vyriešiť tento a majú plnú podporu generovanie PDF, stiahnite si <a href="http://www.tcpdf.org/" target="_blank">TCPDF knižnice</a> , potom komentár alebo odstrániť riadok <b>$ dolibarr_pdf_force_fpdf = 1,</b> a namiesto neho doplniť <b>$ dolibarr_lib_TCPDF_PATH = 'path_to_TCPDF_dir &quot;</b>
@@ -411,10 +420,11 @@ ModuleCompanyCodePanicum=Späť prázdny evidencia kód.
 ModuleCompanyCodeDigitaria=Účtovníctvo kód závisí na kóde tretích strán. Kód sa skladá zo znaku &quot;C&quot; na prvom mieste nasleduje prvých 5 znakov kódu tretích strán.
 Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=Použiť 3 krokové povolenie ked cena ( bez DPH ) je väčšia ako...
-
+WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to send an email from another server than the Yahoo server if the email address used as a sender is your Yahoo email (like myemail@yahoo.com, myemail@yahoo.fr, ...). Your current setup use the server of the application to send email, so some recipients (the one compatible with the restrictive DMARC protocol), will ask Yahoo if they can accept your email and Yahoo will respond "no" because the server is not a server owned by Yahoo, so few of your sent Emails may not be accepted.<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account).
+ClickToShowDescription=Click to show description
 # Modules
 Module0Name=Používatelia a skupiny
-Module0Desc=Používatelia a skupiny riadenia
+Module0Desc=Users / Employees and Groups management
 Module1Name=Tretie strany
 Module1Desc=Firmy a správu kontaktov (zákazníci, vyhliadky ...)
 Module2Name=Obchodné
@@ -515,8 +525,8 @@ Module2200Name=Dynamická cena
 Module2200Desc=Zapnúť používanie matematických výrazov pre ceny
 Module2300Name=Cron
 Module2300Desc=Správa plánovaných úloh
-Module2400Name=Agenda/Udalosti
-Module2400Desc=Follow events or rendez-vous. Record manual events into Agendas or let application logs automatic events for tracking purposes.
+Module2400Name=Events/Agenda
+Module2400Desc=Follow done and upcoming events. Let application logs automatic events for tracking purposes or record manual events or rendez-vous.
 Module2500Name=Elektronický Redakčný
 Module2500Desc=Uložiť a zdieľať dokumenty
 Module2600Name=API/Webové služby ( SOAP server )
@@ -582,7 +592,7 @@ Permission34=Odstrániť produkty
 Permission36=Pozri / správa skryté produkty
 Permission38=Export produktov
 Permission41=Read projects and tasks (shared project and projects i'm contact for). Can also enter time consumed on assigned tasks (timesheet)
-Permission42=Vytvoriť / upraviť projektov (spoločné projekty, projekt a ja som kontakt pre)
+Permission42=Create/modify projects (shared project and projects i'm contact for). Can also create tasks and assign users to project and tasks
 Permission44=Odstrániť projektov (spoločné projekty, projekt a ja som kontakt pre)
 Permission45=Export projects
 Permission61=Prečítajte intervencie
@@ -685,7 +695,7 @@ PermissionAdvanced253=Vytvoriť / upraviť interné / externé užívateľa a op
 Permission254=Vytvoriť / upraviť externí používatelia iba
 Permission255=Upraviť ostatným používateľom heslo
 Permission256=Odstrániť alebo zakázať ostatným užívateľom
-Permission262=Rozšíriť prístup ku všetkým tretím stranám (nielen tých, ktoré súvisia s užívateľom). Neplatí pre externých používateľov (vždy iba na seba).
+Permission262=Extend access to all third parties (not only third parties that user is a sale representative).<br>Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc).<br>Not effective for projects (only rules on project permissions, visibility and assignement matters).
 Permission271=Prečítajte CA
 Permission272=Prečítajte si faktúry
 Permission273=Vydanie faktúry
@@ -832,7 +842,7 @@ DictionaryStaff=Zamestnanec
 DictionaryAvailability=Oneskorenie doručenia
 DictionaryOrderMethods=Možnosti objednávky
 DictionarySource=Pôvod ponuky / objednávky
-DictionaryAccountancyCategory=Accounting categories
+DictionaryAccountancyCategory=Accounting account groups
 DictionaryAccountancysystem=Modely účtovných osnov
 DictionaryEMailTemplates=Šablóny emailov
 DictionaryUnits=Jednotky
@@ -887,7 +897,7 @@ Offset=Ofset
 AlwaysActive=Vždy aktívny
 Upgrade=Vylepšiť
 MenuUpgrade=Aktualizujte / predĺžiť
-AddExtensionThemeModuleOrOther=Pridať príponu (tému, modul, ...)
+AddExtensionThemeModuleOrOther=Deploy/install external module
 WebServer=Webový server
 DocumentRootServer=Webového servera koreňový adresár
 DataRootServer=Dat adresára súborov
@@ -994,7 +1004,7 @@ TriggerAlwaysActive=Trigger v tomto súbore sú vždy aktívne, či už sú akti
 TriggerActiveAsModuleActive=Trigger v tomto súbore sú aktívne ako modul <b>%s</b> je povolené.
 GeneratedPasswordDesc=Definujte tu pravidlo, ktoré chcete použiť na vytvorenie nového hesla, ak sa spýtate mať automaticky generované heslo
 DictionaryDesc=Vložte referenčné data. Môžete pridať vaše hodnoty ako základ
-ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting.
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
 MiscellaneousDesc=Ostatné bezpečnostné parametre sú definované tu.
 LimitsSetup=Limity / Presné nastavenie
 LimitsDesc=Môžete definovať limity, upresnenie a optimalizácia používané Dolibarr tu
@@ -1161,10 +1171,6 @@ FreeLegalTextOnOrders=Voľný text o objednávkach
 WatermarkOnDraftOrders=Vodoznak na konceptoch objednávok (ak žiadny prázdny)
 ShippableOrderIconInList=Add an icon in Orders list which indicate if order is shippable
 BANK_ASK_PAYMENT_BANK_DURING_ORDER=Ask for bank account destination of order
-##### Clicktodial #####
-ClickToDialSetup=Kliknite pre Dial Nastavenie modulu
-ClickToDialUrlDesc=Url volaná, keď sa vykonáva kliknutím na tel Piktogram. Do poľa URL môžete použiť značky <br> <b>__PHONETO__</b> Ktorý bude nahradený s telefónnym číslom osoby volať <br> <b>__PHONEFROM__</b> Ktorý bude nahradený telefónne číslo volajúceho (vaše) <br> <b>__LOGIN__</b> Ktorý bude nahradený s clicktodial prihlásenie (definované na karte užívateľa) <br> <b>__PASS__</b> Ktorý bude nahradený s clicktodial heslo (definované na karte užívateľa).
-##### Bookmark4u #####
 ##### Interventions #####
 InterventionsSetup=Intervencie modul nastavenia
 FreeLegalTextOnInterventions=Voľný text na intervenčnú dokumentov
@@ -1391,7 +1397,7 @@ SendingsSetup=Odoslanie Nastavenie modulu
 SendingsReceiptModel=Odoslanie potvrdenky modelu
 SendingsNumberingModules=Sendings číslovanie moduly
 SendingsAbility=Support shipping sheets for customer deliveries
-NoNeedForDeliveryReceipts=Vo väčšine prípadov sú sendings príjmy použité ako listov pre dodávky zákazníkom (zoznam výrobkov na odoslanie) a na hárkoch, ktoré je recevied a podpísaný zákazníkom. Takže dodávok výrobkov príjmy je duplicitné funkcie a je zriedka aktivovaný.
+NoNeedForDeliveryReceipts=In most cases, shipping sheets are used both as sheets for customer deliveries (list of products to send) and sheets that is received and signed by customer. So product deliveries receipts is a duplicated feature and is rarely activated.
 FreeLegalTextOnShippings=Pozámka pre doručovateľa
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Produkty dodávky príjem číslovanie modul
@@ -1471,7 +1477,11 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Set automatically this default value for type of e
 AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
 AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
 AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
-##### ClickToDial #####
+AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
+AGENDA_NOTIFICATION_SOUND=Enable sound notification
+##### Clicktodial #####
+ClickToDialSetup=Kliknite pre Dial Nastavenie modulu
+ClickToDialUrlDesc=Url volaná, keď sa vykonáva kliknutím na tel Piktogram. Do poľa URL môžete použiť značky <br> <b>__PHONETO__</b> Ktorý bude nahradený s telefónnym číslom osoby volať <br> <b>__PHONEFROM__</b> Ktorý bude nahradený telefónne číslo volajúceho (vaše) <br> <b>__LOGIN__</b> Ktorý bude nahradený s clicktodial prihlásenie (definované na karte užívateľa) <br> <b>__PASS__</b> Ktorý bude nahradený s clicktodial heslo (definované na karte užívateľa).
 ClickToDialDesc=This module allows to make phone numbers clickable. A click on this icon will call make your phone to call the phone number. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
 ClickToDialUseTelLink=Use just a link "tel:" on phone numbers
 ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface installed on same computer than the browser, and called when you click on a link in your browser that start with "tel:". If you need a full server solution (no need of local software installation), you must set this to "No" and fill next field.
@@ -1499,10 +1509,11 @@ EndPointIs=SOAP clients must send their requests to the Dolibarr endpoint availa
 ##### API ####
 ApiSetup=Nastavenie API modulu
 ApiDesc=Zapnutím tohto modulu získate rôzne služby REST servra
-ApiProductionMode=Enable production mode (this will activate use of a caches for services management)
+ApiProductionMode=Enable production mode (this will activate use of a cache for services management)
 ApiExporerIs=API možete preskúmať na adrese
 OnlyActiveElementsAreExposed=Iba prvky zapnutého modulu sú odhalené
 ApiKey=Kľúč pre API
+WarningAPIExplorerDisabled=The API explorer has been disabled. API explorer is not required to provide API services. It is a tool for developer to find/test REST APIs. If you need this tool, go into setup of module API REST to activate it.
 ##### Bank #####
 BankSetupModule=Bankové modul nastavenia
 FreeLegalTextOnChequeReceipts=Voľný text na kontroly príjmov
@@ -1571,7 +1582,7 @@ BackupDumpWizard=Pomocník pre databázovú zálohu
 SomethingMakeInstallFromWebNotPossible=Inštalácia externého modulu z webu nie je možná kôli : 
 SomethingMakeInstallFromWebNotPossible2=For this reason, process to upgrade described here is only manual steps a privileged user can do.
 InstallModuleFromWebHasBeenDisabledByFile=Install of external module from application has been disabled by your administrator. You must ask him to remove the file <strong>%s</strong> to allow this feature.
-ConfFileMuseContainCustom=Installing an external module from application save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
+ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Zvýrazniť riadok pre prechode kurzora
 HighlightLinesColor=Highlight color of the line when the mouse passes over (keep empty for no highlight)
 TextTitleColor=Color of page title
@@ -1601,6 +1612,7 @@ FixTZ=Oprava časovej zóny
 FillFixTZOnlyIfRequired=Príklad: +2 ( vyplňte iba ak máte problém )
 ExpectedChecksum=Expected Checksum
 CurrentChecksum=Current Checksum
+ForcedConstants=Required constant values
 MailToSendProposal=Zákaznícka ponuka na poslanie
 MailToSendOrder=Zákaznícka objednávka na poslanie
 MailToSendInvoice=Zákaznícka faktúra na poslanie
@@ -1609,13 +1621,14 @@ MailToSendIntervention=To send intervention
 MailToSendSupplierRequestForQuotation=Citácia pre dodávateľa na poslanie
 MailToSendSupplierOrder=Dodávateľska objednávka na poslanie
 MailToSendSupplierInvoice=Dodávateľská faktúra na poslanie
+MailToSendContract=To send a contract
 MailToThirdparty=To send email from third party page
 ByDefaultInList=Show by default on list view
-YouUseLastStableVersion=You use the last stable version
+YouUseLastStableVersion=You use the latest stable version
 TitleExampleForMajorRelease=Example of message you can use to announce this major release (feel free to use it on your web sites)
 TitleExampleForMaintenanceRelease=Example of message you can use to announce this maintenance release (feel free to use it on your web sites)
-ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
-ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 MultiPriceRuleDesc=When option "Several level of prices per product/service" is on, you can define different prices (one per price level) for each product. To save you time, you can enter here rule to have price for each level autocalculated according to price of first level, so you will have to enter only price for first level on each product. This page is here to save you time and can be usefull only if your prices for each leve are relative to first level. You can ignore this page in most cases.
 ModelModulesProduct=Templates for product documents
 ToGenerateCodeDefineAutomaticRuleFirst=To be able to generate automatically codes, you must first define a manager to auto define barcode number.

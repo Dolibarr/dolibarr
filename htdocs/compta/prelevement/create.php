@@ -124,23 +124,15 @@ if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
 print '<table class="border" width="100%">';
 
 print '<tr><td class="titlefield">'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
-print '<td align="right">';
+print '<td>';
 print $nb;
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("AmountToWithdraw").'</td>';
-print '<td align="right">';
+print '<td>';
 print price($pricetowithdraw);
 print '</td>';
 print '</tr>';
-
-//print '<tr><td>'.$langs->trans("NbOfInvoiceToWithdraw").' + '.$langs->trans("ThirdPartyBankCode").'='.$conf->global->PRELEVEMENT_CODE_BANQUE.'</td><td align="right">';
-//print $nb1;
-//print '</td></tr>';
-
-//print '<tr><td>'.$langs->trans("NbOfInvoiceToWithdrawWithInfo").'</td><td align="right">';
-//print $nb11;
-//print '</td></tr>';
 
 print '</table>';
 print '</div>';
@@ -158,8 +150,6 @@ else
 {
     print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw")).'">'.$langs->trans("CreateAll")."</a>\n";
 }
-    //if ($nb11) print '<a class="butAction" href="create.php?action=create&amp;banque=1">'.$langs->trans("CreateBanque")."</a>\n";
-    //if ($nb1)  print '<a class="butAction" href="create.php?action=create&amp;banque=1&amp;guichet=1">'.$langs->trans("CreateGuichet")."</a>\n";
 
 print "</div>\n";
 print '<br>';
@@ -247,8 +237,9 @@ else
 
 
 /*
- * List of last withdraws
+ * List of latest withdraws
  */
+/*
 $limit=5;
 
 print load_fiche_titre($langs->trans("LastWithdrawalReceipts",$limit),'','');
@@ -301,6 +292,7 @@ else
 {
     dol_print_error($db);
 }
+*/
 
 llxFooter();
 $db->close();

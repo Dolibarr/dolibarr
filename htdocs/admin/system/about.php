@@ -26,13 +26,26 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");
 $langs->load("help");
 $langs->load("members");
+$langs->load("other");
 
-$youuselaststable = 0;
+$action=GETPOST('action','alpha');
+
+if (! $user->admin) accessforbidden();
+
+$sfurl = '';
+$version='0.0';
+
+
+/*
+ *	Actions
+ */
+
+// None
 
 
 /*
@@ -42,7 +55,7 @@ $youuselaststable = 0;
 llxHeader();
 
 
-print load_fiche_titre("Dolibarr",'','title_setup');
+print load_fiche_titre($langs->trans("ExternalResources"),'','title_setup');
 
 print '<div style="padding-left: 30px;">'.img_picto_common('', 'dolibarr_box.png','height="120"').'</div>';
 
@@ -50,51 +63,10 @@ print '<div style="padding-left: 30px;">'.img_picto_common('', 'dolibarr_box.png
 
 print '<div class="fichecenter"><div class="fichehalfleft">';
 
-print $langs->trans("Version").' / '.$langs->trans("DolibarrLicense").':';
-print '<ul>';
-print '<li><strong>'.DOL_VERSION.'</strong>';
-
-$result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
-//var_dump($result['content']);
-$sfurl = simplexml_load_string($result['content']);
-if ($sfurl)
-{
-    $i=0;
-    $version='0.0';
-    while (! empty($sfurl->channel[0]->item[$i]->title) && $i < 10000)
-    {
-        $title=$sfurl->channel[0]->item[$i]->title;
-        if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
-        {
-            $newversion=$reg[1];
-            $newversionarray=explode('.',$newversion);
-            $versionarray=explode('.',$version);
-            //var_dump($newversionarray);var_dump($versionarray);
-            if (versioncompare($newversionarray, $versionarray) > 0) $version=$newversion;
-        }
-        $i++;
-    }
-
-    // Show version
-    if ($version != '0.0') 
-    {
-        print ' ('.$langs->trans("LastStableVersion").': <b>'.$version.'</b>';
-    	if (DOL_VERSION == $version)
-    	{
-    	    $youuselaststable=1;
-            print $langs->trans("YouUseLastStableVersion");  
-    	}
-    	print ')';
-    }
-}
-else
-{
-    print ' ('.$langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b>)<br>';
-}
-print ' / <a href="http://www.gnu.org/copyleft/gpl.html">GNU-GPL v3+</a></li>';
-
-
-print '</ul>';
+print $langs->trans("DolibarrLicense").' : ';
+print '<ul><li>';
+print '<a href="http://www.gnu.org/copyleft/gpl.html">GNU-GPL v3+</a></li>';
+print '</li></ul>';
 
 //print "<br>\n";
 
@@ -182,6 +154,11 @@ $url='https://wiki.dolibarr.org/index.php/Subscribe';
 if (preg_match('/^fr_/i',$langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Adh%C3%A9rer';
 if (preg_match('/^es_/i',$langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Subscribirse';
 print '<li><a href="'.$url.'" target="_blank" rel="external">'.$langs->trans("SubscribeToFoundation").'</a></li>';
+print '</ul>';
+
+print $langs->trans("SocialNetworks").':';
+
+print '<ul>';
 
 print '<li><a href="https://facebook.com/dolibarr" target="_blank" rel="external">FaceBook</a></li>';
 print '<li><a href="https://twitter.com/dolibarr" target="_blank" rel="external">Twitter</a></li>';
@@ -211,25 +188,29 @@ print '</div>';
 print '<div class="clearboth"></div>';
 
 
-if ($youuselaststable)
+$showpromotemessage=1;
+if ($showpromotemessage)
 {
-    print '<br>';
-    print '<br>';
-    
     $tmp=versiondolibarrarray();
-    if ((empty($tmp[2]) && (strpos($tmp[1], '0') === 0)) || (strpos($tmp[2], '0') === 0))
+    if (is_numeric($tmp[2]))    // Not alpha, beta or rc
     {
-        print $langs->trans("TitleExampleForMajorRelease").':<br>';
-        print '<textarea style="width:80%; min-height: 60px">';
-        print $langs->trans("ExampleOfNewsMessageForMajorRelease", DOL_VERSION, DOL_VERSION);
-        print '</textarea>';
-    }
-    else
-    {
-        print $langs->trans("TitleExampleForMaintenanceRelease").':<br>';
-        print '<textarea style="width:80%; min-height: 60px">';
-        print $langs->trans("ExampleOfNewsMessageForMaintenanceRelease", DOL_VERSION, DOL_VERSION);
-        print '</textarea>';
+        print '<br>';
+        print '<br>';
+        
+        if ((empty($tmp[2]) && (strpos($tmp[1], '0') === 0)) || (strpos($tmp[2], '0') === 0))
+        {
+            print $langs->trans("TitleExampleForMajorRelease").':<br>';
+            print '<textarea style="width:80%; min-height: 60px">';
+            print $langs->trans("ExampleOfNewsMessageForMajorRelease", DOL_VERSION, DOL_VERSION);
+            print '</textarea>';
+        }
+        else
+        {
+            print $langs->trans("TitleExampleForMaintenanceRelease").':<br>';
+            print '<textarea style="width:80%; min-height: 60px">';
+            print $langs->trans("ExampleOfNewsMessageForMaintenanceRelease", DOL_VERSION, DOL_VERSION);
+            print '</textarea>';
+        }
     }
 }
 

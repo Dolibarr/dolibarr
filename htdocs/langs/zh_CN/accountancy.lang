@@ -194,6 +194,8 @@ ChangeBinding=Change the binding
 
 ## Admin
 ApplyMassCategories=应用批量类别
+AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
+CategoryDeleted=Category for the accounting account has been removed
 
 ## Export
 Exports=导出
@@ -209,6 +211,7 @@ Modelcsv_ciel=向 Sage Ciel Compta 或 Compta Evolution导出
 Modelcsv_quadratus=向 Quadratus QuadraCompta导出
 Modelcsv_ebp=向 EBP导出
 Modelcsv_cogilog=导出到 Cogilog
+ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=初始化会计
