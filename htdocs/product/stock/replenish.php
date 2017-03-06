@@ -53,6 +53,8 @@ $type = GETPOST('type','int');
 $tobuy = GETPOST('tobuy', 'int');
 $salert = GETPOST('salert', 'alpha');
 $mode = GETPOST('mode','alpha');
+$draftorder = GETPOST('draftorder','alpha');
+
 
 $fourn_id = GETPOST('fourn_id','int');
 $fk_supplier = GETPOST('fk_supplier','int');
@@ -96,7 +98,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $snom = '';
     $sal = '';
     $salert = '';
+	$draftorder='';
 }
+if($draftorder == 'on') $draftchecked = "checked";
 
 // Create orders
 if ($action == 'order' && isset($_POST['valid']))
@@ -438,6 +442,7 @@ print '<input type="hidden" name="action" value="filter">';
 print '<input type="hidden" name="sref" value="'.$sref.'">';
 print '<input type="hidden" name="snom" value="'.$snom.'">';
 print '<input type="hidden" name="salert" value="'.$salert.'">';
+print '<input type="hidden" name="draftorder" value="'.$draftorder.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
 print $langs->trans('Warehouse').' '.$formproduct->selectWarehouses($fk_entrepot, 'fk_entrepot', '', 1);
@@ -450,10 +455,11 @@ print '<input class="button" type="submit" name="valid" value="'.$langs->trans('
 print '</div>';
 print '</form>';
 
-if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
+if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alpha')) {
 	$filters = '&sref=' . $sref . '&snom=' . $snom;
 	$filters .= '&sall=' . $sall;
 	$filters .= '&salert=' . $salert;
+	$filters .= '&draftorder=' . $draftorder;
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
@@ -472,6 +478,7 @@ if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
 	$filters .= '&fourn_id=' . $fourn_id;
 	$filters .= (isset($type)?'&type=' . $type:'');
 	$filters .=  '&=' . $salert;
+	$filters .= '&draftorder=' . $draftorder;
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
@@ -490,7 +497,7 @@ if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
 print '<table class="liste" width="100%">';
 
 $param = (isset($type)? '&type=' . $type : '');
-$param .= '&fourn_id=' . $fourn_id . '&snom='. $snom . '&salert=' . $salert;
+$param .= '&fourn_id=' . $fourn_id . '&snom='. $snom . '&salert=' . $salert . '&draftorder='.$draftorder;
 $param .= '&sref=' . $sref;
 $param .= '&mode=' . $mode;
 $param .= '&fk_supplier=' . $fk_supplier;
@@ -534,7 +541,7 @@ if (!empty($conf->service->enabled) && $type == 1) print '<td class="liste_titre
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="right">&nbsp;</td>';
 print '<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" id="salert" name="salert" ' . (!empty($alertchecked)?$alertchecked:'') . '></td>';
-print '<td class="liste_titre" align="right">&nbsp;</td>';
+print '<td class="liste_titre" align="right">' . $langs->trans('Draft') . '&nbsp;<input type="checkbox" id="draftorder" name="draftorder" ' . (!empty($draftchecked)?$draftchecked:'') . '></td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="right">';
 $searchpitco=$form->showFilterAndCheckAddButtons(0);
@@ -584,7 +591,12 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		}
 
 		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
-		$result=$prod->load_stats_commande_fournisseur(0,'1,2,3,4');
+		if(isset($draftchecked)){
+			$result=$prod->load_stats_commande_fournisseur(0,'0,1,2,3,4');
+		}else {
+			$result=$prod->load_stats_commande_fournisseur(0,'1,2,3,4');
+		}
+		
 		$result=$prod->load_stats_reception(0,'4');
 
 		//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
@@ -671,11 +683,12 @@ print '</table>';
 
 if ($num > $conf->liste_limit)
 {
-	if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha'))
+	if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alpha'))
 	{
 		$filters = '&sref=' . $sref . '&snom=' . $snom;
 		$filters .= '&sall=' . $sall;
 		$filters .= '&salert=' . $salert;
+		$filters .= '&draftorder=' . $draftorder;
 		$filters .= '&mode=' . $mode;
 		$filters .= '&fk_supplier=' . $fk_supplier;
 		$filters .= '&fk_entrepot=' . $fk_entrepot;
@@ -687,6 +700,7 @@ if ($num > $conf->liste_limit)
 		$filters .= '&fourn_id=' . $fourn_id;
 		$filters .= (isset($type)? '&type=' . $type : '');
 		$filters .= '&salert=' . $salert;
+		$filters .= '&draftorder=' . $draftorder;
 		$filters .= '&mode=' . $mode;
 		$filters .= '&fk_supplier=' . $fk_supplier;
 		$filters .= '&fk_entrepot=' . $fk_entrepot;
