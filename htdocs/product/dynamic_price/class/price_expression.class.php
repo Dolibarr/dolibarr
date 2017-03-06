@@ -121,6 +121,13 @@ class PriceExpression
      */
     function fetch($id)
     {
+        // Check parameters
+        if (empty($id))
+        {
+            $this->error='ErrorWrongParameters';
+            return -1;
+        }
+        
         $sql = "SELECT title, expression";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE rowid = ".$id;
