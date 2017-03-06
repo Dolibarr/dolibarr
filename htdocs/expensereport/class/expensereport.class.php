@@ -1892,7 +1892,8 @@ class ExpenseReport extends CommonObject
         if ($option == 'toapprove') $sql.= " WHERE ex.fk_statut = 2";
         else $sql.= " WHERE ex.fk_statut = 5";
         $sql.= " AND ex.entity IN (".getEntity('expensereport', 1).")";
-        $sql.= " AND ex.fk_user_author IN (".join(',',$userchildids).")";
+        $sql.= " AND (ex.fk_user_author IN (".join(',',$userchildids).")";
+        $sql.= " OR ex.fk_user_validator IN (".join(',',$userchildids)."))";
 
         $resql=$this->db->query($sql);
         if ($resql)

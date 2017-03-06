@@ -42,7 +42,7 @@ $action=GETPOST('action','alpha');
 // Security check
 $socid=0;
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'expensereport',$id,'');
+$result=restrictedArea($user,'expensereport',$id,'expensereport');
 
 
 $object = new ExpenseReport($db);

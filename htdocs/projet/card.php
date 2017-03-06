@@ -129,6 +129,12 @@ if (empty($reshook))
 	        $error++;
 	    }
 
+	    if (GETPOST('opp_amount') != '' && ! (GETPOST('opp_status') > 0))
+	    {
+	        $error++;
+	        setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+	    }
+	    
 	    if (! $error)
 	    {
 	        $error=0;
@@ -264,8 +270,9 @@ if (empty($reshook))
 	    	$result=$object->update($user);
 	    	if ($result < 0)
 	    	{
-	    		$error++;
-		        setEventMessages($object->error, $object->errors,'errors');
+	    	    $error++;
+	    	    if ($result == -4) setEventMessages($langs->trans("ErrorRefAlreadyExists"), null, 'errors');
+		        else setEventMessages($object->error, $object->errors, 'errors');
 	    	}else {
 	    		// Category association
 	    		$categories = GETPOST('categories');
@@ -562,26 +569,26 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	    // Opportunity probability
 	    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-	    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOST('opp_percent')!=''?price(GETPOST('opp_percent')):'').'"><span class="hideonsmartphone"> %</span>';
+	    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOST('opp_percent')!=''?GETPOST('opp_percent'):'').'"><span class="hideonsmartphone"> %</span>';
 	    print '<input type="hidden" name="opp_percent_not_set" id="opp_percent_not_set" value="'.(GETPOST('opp_percent')!=''?'0':'1').'">';
 	    print '</td>';
 	    print '</tr>';
 
 	    // Opportunity amount
 	    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-	    print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOST('opp_amount')!=''?price(GETPOST('opp_amount')):'').'"></td>';
+	    print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOST('opp_amount')!=''?GETPOST('opp_amount'):'').'"></td>';
 	    print '</tr>';
     }
 
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td>';
-	print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?price(GETPOST('budget_amount')):'').'"></td>';
+	print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?GETPOST('budget_amount'):'').'"></td>';
 	print '</tr>';
 
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
     print '<td>';
-    print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.$_POST["description"].'</textarea>';
+    print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.GETPOST("description").'</textarea>';
     print '</td></tr>';
 
     if ($conf->categorie->enabled) {

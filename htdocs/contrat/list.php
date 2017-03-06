@@ -187,11 +187,12 @@ $now=dol_now();
 $form=new Form($db);
 $formother = new FormOther($db);
 $socstatic = new Societe($db);
+$contracttmp = new Contrat($db);
 
-llxHeader();
+llxHeader('', $langs->trans("Contracts"));
 
 $sql = 'SELECT';
-$sql.= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier,";
+$sql.= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
 $sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
@@ -265,7 +266,7 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
-$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier,";
+$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
 $sql.= ' s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql.= " typent.code,";
 $sql.= " state.code_departement, state.nom";
@@ -556,13 +557,25 @@ if ($resql)
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($resql);
+        
+        $contracttmp->ref=$obj->ref;
+        $contracttmp->id=$obj->rowid;
+        $contracttmp->ref_customer=$obj->ref_customer;
+        $contracttmp->ref_supplier=$obj->ref_supplier;
+        
         $var=!$var;
         print '<tr '.$bc[$var].'>';
         if (! empty($arrayfields['c.ref']['checked']))
         {
-            print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">';
-            print img_object($langs->trans("ShowContract"),"contract").' '.(isset($obj->ref) ? $obj->ref : $obj->rowid) .'</a>';
+            print '<td class="nowrap">';
+            print $contracttmp->getNomUrl(1);
             if ($obj->nb_late) print img_warning($langs->trans("Late"));
+            if (!empty($obj->note_private) || !empty($obj->note_public))
+            {
+                print ' <span class="note">';
+                print '<a href="'.DOL_URL_ROOT.'/contrat/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+                print '</span>';
+            }
             print '</td>';
         }
         if (! empty($arrayfields['c.ref_customer']['checked'])) 
