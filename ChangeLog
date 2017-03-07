@@ -2,13 +2,13 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-***** ChangeLog for 5.0.0 compared to 4.0.* *****
+***** ChangeLog for 6.0.0 compared to 5.0.* *****
 
 WARNING: 
 
 Following changes may create regression for some external modules, but were necessary to make Dolibarr better:
 * The hook getNodeList has been replaced by a normalized 'addreplace' hook getDirList.
-
+* The trigger USER_SETINGROUP and USER_REMOVEFROMGROUP has been replaced with trigger USER_MODIFY.
  
 
 ***** ChangeLog for 5.0.0 compared to 4.0.* *****

@@ -266,7 +266,6 @@ textarea:focus, button:focus {
 	border: 1px solid #aaa !important;
 }
 input:focus, select:focus {
-    /* box-shadow: 0 0 4px #8091BF; */
 	border-bottom: 1px solid #666;
 }
 input.select2-input {
@@ -282,23 +281,23 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
+.liste_titre input[name=month], .liste_titre input[name=month_lim] {
+	margin-right: 4px;
+}
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
 
-    border: 1px solid #C0C0C0;
-    /* v6 border: none;
+    border: none;
     border-bottom: 1px solid #C0C0C0;
-    outline: none !important;*/
+    outline: none;
     margin: 0px 0px 0px 0px;
 }
-
+input {
+    line-height: 17px;
+}
 input, select {
-	/* v6 border-bottom: solid 1px rgba(0,0,0,.2);*/
-	border-radius: 2px;
-	border: solid 1px rgba(0,0,0,.3);
-	border-top:solid 1px rgba(0,0,0,.3);
-	border-bottom:solid 1px rgba(0,0,0,.2);
+	border-bottom: solid 1px rgba(0,0,0,.2);
 
 	padding:4px;
 	margin-left:0px;
@@ -306,7 +305,7 @@ input, select {
 	margin-top:1px;
 	}
 textarea {
-	border-radius: 2px;
+	border-radius: 0;
 	border: solid 1px rgba(0,0,0,.3);
 	border-top:solid 1px rgba(0,0,0,.3);
 	border-bottom:solid 1px rgba(0,0,0,.2);
@@ -577,7 +576,7 @@ div.myavailability {
 .strikefordisabled {
 	text-decoration: line-through;
 }
-/* using a tdoverflowxxx make the min-with not working */
+/* using a tdoverflowxxx make the min-width not working */
 .tdoverflow {
     max-width: 0;
     overflow: hidden;
@@ -644,6 +643,20 @@ div.fiche>form>div.div-table-responsive {
     min-height: 350px;
 }
 
+.flexcontainer {
+    display: inline-flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+}
+.thumbstat {
+	flex: 1 1 120px;
+    /* flex-grow: 1; */
+    /* flex-shrink: 1; */
+    /* flex-basis: 140px; */
+    width: 100%;
+    justify-content: flex-start;
+    align-self: flex-start;
+}
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -1060,7 +1073,6 @@ div.photoref {
 	vertical-align:middle;
 	text-align:center;
 }
-
 img.photorefnoborder {
     padding: 2px;
 	height: 48px;
@@ -1073,7 +1085,10 @@ img.photorefnoborder {
 .underbanner {
 	border-bottom: <?php echo $borderwith ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
-
+.tdhrthin {
+	margin: 0;
+	padding-bottom: 0 !important;
+}
 
 /* ============================================================================== */
 /* Menu top et 1ere ligne tableau                                                 */
@@ -1258,6 +1273,7 @@ div.menu_titre {
 	padding-bottom: 4px;
 	overflow: hidden;
     text-overflow: ellipsis;
+    width: 188px;				/* required to have overflow working. must be same than menu_contenu */
 }
 .mainmenuaspan
 {
@@ -1640,6 +1656,7 @@ div.vmenu, td.vmenu {
 	padding-bottom: 3px;
 	overflow: hidden;
     text-overflow: ellipsis;
+    width: 188px;				/* required to have overflow working. must be same than .menu_titre */
 }
 #menu_contenu_logo { padding-top: 0; }
 .companylogo { }
@@ -1678,7 +1695,7 @@ div.blockvmenusearchphone
 .vmenu div.blockvmenusearch
 {
 	padding-bottom: 14px;
-	border-bottom: 1px solid #e0e0e0;
+/*	border-bottom: 1px solid #e0e0e0;  */
 }
 .vmenu div.blockvmenuend
 {
@@ -2307,7 +2324,9 @@ td.border, div.tagtable div div.border {
 
 
 /* Main boxes */
-
+.ficheaddleft table.noborder {
+	margin: 0px 0px 0px 0px;
+}
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 
@@ -2780,9 +2799,12 @@ div.tabBar .noborder {
 /*
  *  Boxes
  */
-
+ 
+.ficheaddleft div.boxstats {
+    border: none;
+}
 .boxstats {
-    <?php print "float: ".$left.";\n"; ?>
+    display: inline-block;
     margin: 3px;
     padding: 3px;
 	/*-moz-box-shadow: 3px 3px 4px #DDD;
@@ -2792,6 +2814,11 @@ div.tabBar .noborder {
     border: 1px solid #CCC;
     text-align: center;
     border-radius: 2px;
+    
+	white-space: nowrap;
+	overflow: hidden;
+    text-overflow: ellipsis;
+    width: 105px;    
 }
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
@@ -2816,12 +2843,11 @@ span.dashboardlineko {
 	font-weight: bold;
 }
 .boxtable {
-/*    -moz-box-shadow: 3px 3px 4px #DDD;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD; */
     margin-bottom: 8px !important;
 }
-
+.tdboxstats {
+	text-align: center;
+}
 
 .box {
     padding-right: 0px;
@@ -3570,15 +3596,18 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 /*  CKEditor                                                                      */
 /* ============================================================================== */
 
+.cke_dialog {
+    border: 1px #bbb solid ! important;
+}
 .cke_editable
 {
 	margin: 5px !important;
 }
-.cke_editor table, .cke_editor tr, .cke_editor td
+/*.cke_editor table, .cke_editor tr, .cke_editor td
 {
     border: 0px solid #FF0000 !important;
 }
-span.cke_skin_kama { padding: 0 !important; }
+span.cke_skin_kama { padding: 0 !important; }*/
 .cke_wrapper { padding: 4px !important; }
 a.cke_dialog_ui_button
 {
@@ -3910,33 +3939,75 @@ div.dataTables_length select {
 .selectoptiondisabledwhite {
 	background: #FFFFFF !important;
 }
-
+.select2-arrow {
+	border: none;
+	border-left: none !important;
+	background: none !important;
+}
 .select2-choice
 {
-	border: 1px solid #aaa;
-	/* v6 border-top: none !important;
+	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
-	border-bottom: 1px solid #aaa;*/
+	border-bottom: 1px solid #aaa;
 }
-.select2-drop.select2-drop-above.select2-drop-active,
-.select2-container-active .select2-choice,
-.select2-container-active .select2-choices,
-.select2-dropdown-open.select2-drop-above .select2-choice,
-.select2-dropdown-open.select2-drop-above .select2-choices,
-.select2-container-multi.select2-container-active .select2-choices
+.select2-drop.select2-drop-above {
+	box-shadow: none !important;
+}
+.select2-drop.select2-drop-above.select2-drop-active {
+	border-top: 1px solid #ccc;
+}
+.select2-container-active .select2-choice, .select2-container-active .select2-choices 
 {
-	border: 1px solid #aaa;
-	/* v6 */
+	outline: none;
+	border-top: none;
+	border-left: none;
+	border-bottom: none;
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+}
+.select2-dropdown-open {
+	background-color: #fff;
+}
+.select2-dropdown-open .select2-choice, .select2-dropdown-open .select2-choices
+{
+	outline: none;
+	border-top: none;
+	border-left: none;
+	border-bottom: none;
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+	background-color: #fff;
 }
 .select2-disabled
 {
 	color: #888;
 }
+.select2-drop.select2-drop-above.select2-drop-active, .select2-drop {
+	border-radius: 0;
+}
+.select2-drop.select2-drop-above {
+	border-radius:  0;
+}
+.select2-dropdown-open.select2-drop-above .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choices {
+	background-image: none;
+	border-left: 1px solid #ccc !important;
+	border-right: 1px solid #ccc !important;
+	border-radius: 0 !important;
+}
+div.select2-drop-above
+{
+	background: #fff;
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+}
 .select2-drop-active
 {
-	border: 1px solid #aaa;
-	border-top: none;
+	border: 1px solid #ccc;
+	padding-top: 4px;
+}
+.select2-search input {
+	border: none;
 }
 a span.select2-chosen
 {
@@ -3944,11 +4015,7 @@ a span.select2-chosen
 }
 .select2-container .select2-choice {
 	background-image: none;
-	height: 24px;
 	line-height: 24px;
-}
-.select2-choices .select2-search-choice {
-    /* border: 1px solid #aaa !important; */
 }
 .select2-results .select2-no-results, .select2-results .select2-searching, .select2-results .select2-ajax-error, .select2-results .select2-selection-limit
 {
@@ -4048,6 +4115,8 @@ ul.ulselectedfields {
 dl.dropdown {
     margin:0px;
     padding:0px;
+    vertical-align: middle;
+    display: inline-block;
 }
 .dropdown dd, .dropdown dt {
     margin:0px;
@@ -4149,7 +4218,6 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 }
 select {
     /* display: inline-block; */	/* We can't set this. This disable ability to make */
-    /* TODO modified by jmobile, replace jmobile with pure css*/
     overflow:hidden;
     white-space: nowrap;			/* Enabling this make behaviour strange when selecting the empty value if this empty value is '' instead of '&nbsp;' */
     text-overflow: ellipsis;

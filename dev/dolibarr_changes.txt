@@ -8,13 +8,13 @@ ALL:
 Check "DOL_CHANGE"
 
 
-CKEDITOR:
----------
+CKEDITOR (4.6.2):
+-----------------
 * In ckeditor/ckeditor/contents.css
 Replace:
-	margin: 20px;
+	body { ... margin: 20px;
 With
-	margin: 5px;
+	body { ... margin: 5px;
 
 
 
@@ -39,7 +39,7 @@ define('QR_FIND_FROM_RANDOM', 2);
 with
 define('QR_FIND_FROM_RANDOM', false);
 
-* Removed useless directories (examples, tools)
+* Removed useless directories ("examples", "tools")
 
 * Fix
  	// initialize subsetchars

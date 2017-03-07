@@ -58,6 +58,8 @@ class Events // extends CommonObject
 		array('id'=>'USER_NEW_PASSWORD',      'test'=>1),
 		array('id'=>'USER_ENABLEDISABLE',     'test'=>1),
 		array('id'=>'USER_DELETE',            'test'=>1),
+	/*    array('id'=>'USER_SETINGROUP',        'test'=>1), deprecated. Replace with USER_MODIFY
+	    array('id'=>'USER_REMOVEFROMGROUP',   'test'=>1), deprecated. Replace with USER_MODIFY */
 		array('id'=>'GROUP_CREATE',           'test'=>1),
 		array('id'=>'GROUP_MODIFY',           'test'=>1),
 		array('id'=>'GROUP_DELETE',           'test'=>1),
