@@ -158,7 +158,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	    
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("ProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("ProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
 		if ($num > 0)
 		{
@@ -239,7 +239,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
          
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print '<td colspan="3">'.$langs->trans("SupplierProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
+        print '<th colspan="3">'.$langs->trans("SupplierProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
         if ($num > 0)
         {
@@ -318,7 +318,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	    
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("DraftOrders").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("DraftOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
 		if ($num)
 		{
@@ -399,7 +399,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
 
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print '<td colspan="3">'.$langs->trans("DraftSuppliersOrders").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
+        print '<th colspan="3">'.$langs->trans("DraftSuppliersOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
         if ($num)
         {
@@ -485,12 +485,12 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">';
+		print '<th colspan="2">';
 		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastCustomersOrProspects",$max);
         else if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects",$max);
 		else print $langs->trans("BoxTitleLastModifiedCustomers",$max);
-		print '</td>';
-		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+		print '</th>';
+		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -549,8 +549,8 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastModifiedSuppliers",min($max,$num)).'</td>';
-		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+		print '<tr class="liste_titre"><th>'.$langs->trans("BoxTitleLastModifiedSuppliers",min($max,$num)).'</th>';
+		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -628,7 +628,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
 		if ($num > 0)
 		{
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastContracts",5).'</td></tr>';
+			print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("LastContracts",5).'</th></tr>';
 			$i = 0;
 
 			$staticcontrat=new Contrat($db);
@@ -689,7 +689,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			$var=true;
 
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></td></tr>';
+			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></th></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
@@ -788,7 +788,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 			$var=true;
 
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("OrdersOpened").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></td></tr>';
+			print '<tr class="liste_titre"><th class="liste_titre" colspan="5">'.$langs->trans("OrdersOpened").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></th></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)

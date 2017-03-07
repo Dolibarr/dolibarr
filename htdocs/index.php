@@ -535,7 +535,7 @@ $boxwork.='</tr>'."\n";
 if ($showweather)
 {
     $var=!$var;
-    $boxwork.='<tr '.$bc[$var].'>';
+    $boxwork.='<tr class="nohover">';
     $boxwork.='<td colspan="4" class="nohover hideonsmartphone center valignmiddle">';
     //$boxwork.=$langs->trans("Meteo");
     //$boxwork.='</td><td colspan="2" class="nohover center">';
@@ -556,23 +556,26 @@ if ($showweather)
 
 
 // Show dashboard
+$nbworkboardempty=0;
 foreach($valid_dashboardlines as $board)
 {
+    if (empty($boad->nbtodo)) $nbworkboardempty++;
+    
     $var=!$var;
-    $boxwork.= '<tr '.$bc[$var].'><td class="nowrap">'.$board->img.' &nbsp; '.$board->label.'</td>';
-    $boxwork.= '<td align="right"><a class="dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator">'.$board->nbtodo.'</span></a></td>';
-    $boxwork.= '<td align="right">';
+    $boxwork .= '<tr class="oddeven'.($board->nbtodo?'':' workboardempty').'"><td class="nowrap">'.$board->img.' &nbsp; '.$board->label.'</td>';
+    $boxwork .= '<td align="right"><a class="dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator">'.$board->nbtodo.'</span></a></td>';
+    $boxwork .= '<td align="right">';
     $textlate = $langs->trans("NActionsLate",$board->nbtodolate);
     $textlate.= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
-    $boxwork.= '<a title="'.dol_escape_htmltag($textlate).'" class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'" href="'.((!$board->url_late) ? $board->url : $board->url_late ).'">';
-    $boxwork.= '<span class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'">';
-    $boxwork.= $board->nbtodolate;
-    $boxwork.= '</span>';
-    $boxwork.= '</a>';
-    $boxwork.='</td>';
-    $boxwork.='<td>';
-    if ($board->nbtodolate > 0) $boxwork.=img_picto($textlate, "warning", 'class="valignmiddle"').' ';
-    $boxwork.='</td>';
+    $boxwork .= '<a title="'.dol_escape_htmltag($textlate).'" class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'" href="'.((!$board->url_late) ? $board->url : $board->url_late ).'">';
+    $boxwork .= '<span class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'">';
+    $boxwork .= $board->nbtodolate;
+    $boxwork .= '</span>';
+    $boxwork .= '</a>';
+    $boxwork .='</td>';
+    $boxwork .='<td>';
+    if ($board->nbtodolate > 0) $boxwork .=img_picto($textlate, "warning", 'class="valignmiddle"').' ';
+    $boxwork .='</td>';
     /*print '<td class="nowrap" align="right">';
     print ' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')';
     print '</td>';*/
@@ -589,8 +592,8 @@ foreach($valid_dashboardlines as $board)
         $boxwork.='</td>';
         $showweather=0;
     }*/
-    $boxwork.='</tr>';
-    $boxwork.="\n";
+    $boxwork .='</tr>';
+    $boxwork .="\n";
 }
 
 $boxwork.='</table>';   // End table array of working board

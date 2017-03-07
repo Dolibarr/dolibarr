@@ -180,7 +180,7 @@ else
 
 
 print '<table class="noborder nohover" width="100%">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</td></tr>'."\n";
+print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</th></tr>'."\n";
 $var=true;
 $listofstatus=array(0,4,4,5); $bool=false;
 foreach($listofstatus as $status)
@@ -248,7 +248,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("DraftContracts").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("DraftContracts").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 		if ($num)
 		{
 			$companystatic=new Societe($db);
@@ -324,10 +324,10 @@ if ($result)
 
 	print '<table class="noborder" width="100%">';
 
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastContracts",5).'</td>';
-	print '<td align="center">'.$langs->trans("DateModification").'</td>';
-	//print '<td align="left">'.$langs->trans("Status").'</td>';
-	print '<td align="center" width="80" colspan="4">'.$langs->trans("Services").'</td>';
+	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastContracts",5).'</th>';
+	print '<th align="center">'.$langs->trans("DateModification").'</th>';
+	//print '<th align="left">'.$langs->trans("Status").'</th>';
+	print '<th align="center" width="80" colspan="4">'.$langs->trans("Services").'</th>';
 	print "</tr>\n";
 
 	$var=True;
@@ -394,7 +394,7 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 
-	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastModifiedServices",$max).'</td>';
+	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("LastModifiedServices",$max).'</th>';
 	print "</tr>\n";
 
 	$var=True;
@@ -475,7 +475,7 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 
-	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("NotActivatedServices").' <a href="'.DOL_URL_ROOT.'/contrat/services.php?mode=0"><span class="badge">'.$num.'</span></a></td>';
+	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("NotActivatedServices").' <a href="'.DOL_URL_ROOT.'/contrat/services.php?mode=0"><span class="badge">'.$num.'</span></a></th>';
 	print "</tr>\n";
 
 	$var=True;
@@ -556,7 +556,7 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 
-	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ListOfExpiredServices").' <a href="'.DOL_URL_ROOT.'/contrat/services.php?mode=4&amp;filter=expired"><span class="badge">'.$num.'</span></a></td>';
+	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("ListOfExpiredServices").' <a href="'.DOL_URL_ROOT.'/contrat/services.php?mode=4&amp;filter=expired"><span class="badge">'.$num.'</span></a></th>';
 	print "</tr>\n";
 
 	$var=True;

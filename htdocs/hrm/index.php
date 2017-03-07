@@ -121,7 +121,7 @@ if (! empty($conf->holiday->enabled))
 	$user_id = $user->id;
 
     print '<table class="noborder nohover" width="100%">';
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Holidays").'</td></tr>';
+    print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
     print "<tr ".$bc[0].">";
     print '<td colspan="3">';
 
@@ -179,11 +179,11 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print '<td colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests",min($max,$num)).'</td>';
-        print '<td>'.$langs->trans("from").'</td>';
-        print '<td>'.$langs->trans("to").'</td>';
-        print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
-        print '<td width="16">&nbsp;</td>';
+        print '<th colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests",min($max,$num)).'</th>';
+        print '<th>'.$langs->trans("from").'</th>';
+        print '<th>'.$langs->trans("to").'</th>';
+        print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+        print '<th width="16">&nbsp;</th>';
         print '</tr>';
         if ($num)
         {
@@ -250,10 +250,10 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</td>';
-		print '<td align="right">'.$langs->trans("FeesKilometersOrAmout").'</td>';
-		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
-		print '<td width="16">&nbsp;</td>';
+		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</th>';
+		print '<th align="right">'.$langs->trans("FeesKilometersOrAmout").'</th>';
+		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -317,10 +317,10 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</td>';
-		print '<td align="right">'.$langs->trans("TotalTTC").'</td>';
-		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
-		print '<td width="16">&nbsp;</td>';
+		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</th>';
+		print '<th align="right">'.$langs->trans("TotalTTC").'</th>';
+		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
 		{

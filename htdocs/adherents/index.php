@@ -163,7 +163,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 if ($conf->use_javascript_ajax)
 {
     print '<table class="noborder nohover" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
+    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
     print '<tr '.$bc[0].'><td align="center" colspan="2">';
 
     $SommeA=0;
@@ -201,8 +201,70 @@ if ($conf->use_javascript_ajax)
     print '</table>';
 }
 
+print '<br>';
 
-//print '</td><td class="notopnoleftnoright" valign="top">';
+// List of subscription by year
+$Total=array();
+$Number=array();
+$tot=0;
+$numb=0;
+
+$sql = "SELECT c.subscription, c.dateadh as dateh";
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
+$sql.= " WHERE d.entity IN (".getEntity().")";
+$sql.= " AND d.rowid = c.fk_adherent";
+if(isset($date_select) && $date_select != '')
+{
+    $sql .= " AND c.dateadh LIKE '".$date_select."%'";
+}
+$result = $db->query($sql);
+if ($result)
+{
+    $num = $db->num_rows($result);
+    $i = 0;
+    while ($i < $num)
+    {
+        $objp = $db->fetch_object($result);
+        $year=dol_print_date($db->jdate($objp->dateh),"%Y");
+        $Total[$year]=(isset($Total[$year])?$Total[$year]:0)+$objp->subscription;
+        $Number[$year]=(isset($Number[$year])?$Number[$year]:0)+1;
+        $tot+=$objp->subscription;
+        $numb+=1;
+        $i++;
+    }
+}
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<th>'.$langs->trans("Subscriptions").'</th>';
+print '<th align="right">'.$langs->trans("Number").'</th>';
+print '<th align="right">'.$langs->trans("AmountTotal").'</th>';
+print '<th align="right">'.$langs->trans("AmountAverage").'</th>';
+print "</tr>\n";
+
+$var=true;
+krsort($Total);
+foreach ($Total as $key=>$value)
+{
+    $var=!$var;
+    print "<tr ".$bc[$var].">";
+    print "<td><a href=\"./subscription/list.php?date_select=$key\">$key</a></td>";
+    print "<td align=\"right\">".$Number[$key]."</td>";
+    print "<td align=\"right\">".price($value)."</td>";
+    print "<td align=\"right\">".price(price2num($value/$Number[$key],'MT'))."</td>";
+    print "</tr>\n";
+}
+
+// Total
+print '<tr class="liste_total">';
+print '<td>'.$langs->trans("Total").'</td>';
+print "<td align=\"right\">".$numb."</td>";
+print '<td align="right">'.price($tot)."</td>";
+print "<td align=\"right\">".price(price2num($numb>0?($tot/$numb):0,'MT'))."</td>";
+print "</tr>\n";
+print "</table><br>\n";
+
+
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
@@ -227,7 +289,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="4">'.$langs->trans("LastMembersModified",$max).'</td></tr>';
+	print '<th colspan="4">'.$langs->trans("LastMembersModified",$max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -290,7 +352,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="5">'.$langs->trans("LastSubscriptionsModified",$max).'</td></tr>';
+	print '<th colspan="5">'.$langs->trans("LastSubscriptionsModified",$max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -336,11 +398,11 @@ else
 // Summary of members by type
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("MembersTypes").'</td>';
-print '<td align=right>'.$langs->trans("MembersStatusToValid").'</td>';
-print '<td align=right>'.$langs->trans("MenuMembersNotUpToDate").'</td>';
-print '<td align=right>'.$langs->trans("MenuMembersUpToDate").'</td>';
-print '<td align=right>'.$langs->trans("MembersStatusResiliated").'</td>';
+print '<th>'.$langs->trans("MembersTypes").'</th>';
+print '<th align=right>'.$langs->trans("MembersStatusToValid").'</th>';
+print '<th align=right>'.$langs->trans("MenuMembersNotUpToDate").'</th>';
+print '<th align=right>'.$langs->trans("MenuMembersUpToDate").'</th>';
+print '<th align=right>'.$langs->trans("MembersStatusResiliated").'</th>';
 print "</tr>\n";
 
 foreach ($AdherentType as $key => $adhtype)
@@ -363,71 +425,8 @@ print '<td class="liste_total" align="right">'.$SommeD.' '.$staticmember->LibSta
 print '</tr>';
 
 print "</table>\n";
-print "<br>\n";
 
 
-// List of subscription by year
-$Total=array();
-$Number=array();
-$tot=0;
-$numb=0;
-
-$sql = "SELECT c.subscription, c.dateadh as dateh";
-$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
-$sql.= " WHERE d.entity IN (".getEntity().")";
-$sql.= " AND d.rowid = c.fk_adherent";
-if(isset($date_select) && $date_select != '')
-{
-	$sql .= " AND c.dateadh LIKE '".$date_select."%'";
-}
-$result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
-	$i = 0;
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($result);
-		$year=dol_print_date($db->jdate($objp->dateh),"%Y");
-		$Total[$year]=(isset($Total[$year])?$Total[$year]:0)+$objp->subscription;
-		$Number[$year]=(isset($Number[$year])?$Number[$year]:0)+1;
-		$tot+=$objp->subscription;
-		$numb+=1;
-		$i++;
-	}
-}
-
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Subscriptions").'</td>';
-print '<td align="right">'.$langs->trans("Number").'</td>';
-print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
-print "</tr>\n";
-
-$var=true;
-krsort($Total);
-foreach ($Total as $key=>$value)
-{
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
-	print "<td><a href=\"./subscription/list.php?date_select=$key\">$key</a></td>";
-	print "<td align=\"right\">".$Number[$key]."</td>";
-	print "<td align=\"right\">".price($value)."</td>";
-	print "<td align=\"right\">".price(price2num($value/$Number[$key],'MT'))."</td>";
-	print "</tr>\n";
-}
-
-// Total
-print '<tr class="liste_total">';
-print '<td>'.$langs->trans("Total").'</td>';
-print "<td align=\"right\">".$numb."</td>";
-print '<td align="right">'.price($tot)."</td>";
-print "<td align=\"right\">".price(price2num($numb>0?($tot/$numb):0,'MT'))."</td>";
-print "</tr>\n";
-print "</table><br>\n";
-
-//print '</td></tr></table>';
 print '</div></div></div>';
 
 

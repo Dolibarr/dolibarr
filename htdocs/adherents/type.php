@@ -199,11 +199,11 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 		
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Ref").'</td>';
-		print '<td>'.$langs->trans("Label").'</td>';
-		print '<td align="center">'.$langs->trans("SubscriptionRequired").'</td>';
-		print '<td align="center">'.$langs->trans("VoteAllowed").'</td>';
-		print '<td>&nbsp;</td>';
+		print '<th>'.$langs->trans("Ref").'</th>';
+		print '<th>'.$langs->trans("Label").'</th>';
+		print '<th align="center">'.$langs->trans("SubscriptionRequired").'</th>';
+		print '<th align="center">'.$langs->trans("VoteAllowed").'</th>';
+		print '<th>&nbsp;</th>';
 		print "</tr>\n";
 
 		$var=True;

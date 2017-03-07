@@ -88,7 +88,7 @@ if ($resql)
 	{
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("SendingsToValidate").'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("SendingsToValidate").'</th></tr>';
 		$i = 0;
 		$var = True;
 		while ($i < $num)
@@ -141,7 +141,7 @@ if ($resql)
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OrdersToProcess").'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("OrdersToProcess").'</th></tr>';
 		$var = True;
 		while ($i < $num)
 		{
@@ -203,7 +203,7 @@ if ( $resql )
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OrdersInProcess").'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("OrdersInProcess").'</th></tr>';
 		$var = True;
 		while ($i < $num)
 		{
@@ -264,7 +264,7 @@ if ($resql)
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("LastSendings",$num).'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("LastSendings",$num).'</th></tr>';
 		$var = True;
 		while ($i < $num)
 		{

@@ -117,7 +117,7 @@ if ($resql)
     $db->free($resql);
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</td></tr>'."\n";
+    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</th></tr>'."\n";
     $var=true;
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
@@ -169,7 +169,7 @@ if (! empty($conf->supplier_proposal->enabled))
 	{
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("DraftRequests").'</td></tr>';
+		print '<th colspan="2">'.$langs->trans("DraftRequests").'</th></tr>';
 		$langs->load("supplier_proposal");
 		$num = $db->num_rows($resql);
 		if ($num)
@@ -227,7 +227,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="4">'.$langs->trans("LastModifiedRequests",$max).'</td></tr>';
+	print '<th colspan="4">'.$langs->trans("LastModifiedRequests",$max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -311,7 +311,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 			$var=true;
 
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
+			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)

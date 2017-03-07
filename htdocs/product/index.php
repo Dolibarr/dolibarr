@@ -127,7 +127,7 @@ while ($objp = $db->fetch_object($result))
 }
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
+print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 if (! empty($conf->product->enabled))
 {
 	$statProducts = "<tr ".$bc[0].">";
@@ -268,7 +268,7 @@ if ($result)
 		$colnb=5;
 		if (empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;
 
-		print '<tr class="liste_titre"><td colspan="'.$colnb.'">'.$transRecordedType.'</td></tr>';
+		print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th></tr>';
 
 		$var=True;
 
