@@ -1115,6 +1115,7 @@ class FormFile
 					print "</td>\n";
 					print '<td align="right" width="80px">'.dol_print_size($file['size'],1,1).'</td>';
 					print '<td align="center" width="130px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
+				
 					// Preview
 					if (empty($useinecm))
 					{
@@ -1420,6 +1421,13 @@ class FormFile
                 print '<td>';
                 if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) print $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]->getNomUrl(1,'document');
                 else print $langs->trans("ObjectDeleted",($id?$id:$ref));
+                
+                $filename=dol_sanitizeFileName($ref);
+                //$filedir=$conf->$modulepart->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+                $filedir=$file['path'];
+                //$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+                //print $formfile->getDocumentsLink($modulepart, $filename, $filedir);
+                
                 print '</td>';
                 print '<td>';
                 //print "XX".$file['name']; //$file['name'] must be utf8
@@ -1429,14 +1437,17 @@ class FormFile
                 print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
                 print dol_trunc($file['name'],$maxlength,'middle');
                 print '</a>';
+                
+                print $this->getDocumentsLink($modulepart, $filename, $filedir);
+                
                 print "</td>\n";
                 print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
                 print '<td align="center">'.dol_print_date($file['date'],"dayhour").'</td>';
                 print '<td align="right">';
-                if (! empty($useinecm))  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
-                if ($forcedownload) print '&attachment=1';
-                print '&file='.urlencode($relativefile).'">';
-                print img_view().'</a> &nbsp; ';
+                //if (! empty($useinecm))  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+                //if ($forcedownload) print '&attachment=1';
+                //print '&file='.urlencode($relativefile).'">';
+                //print img_view().'</a> &nbsp; ';
                 //if ($permtodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
                 //else print '&nbsp;';
                 print "</td></tr>\n";
