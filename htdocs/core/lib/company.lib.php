@@ -214,7 +214,7 @@ function societe_prepare_head(Societe $object)
         // Attached files
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-        $upload_dir = $conf->societe->dir_output . "/" . $object->id;
+        $upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id ;
         $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
         $nbLinks=Link::count($db, $object->element, $object->id);
         
@@ -1171,6 +1171,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         if (get_class($filterobj) == 'Societe') $out.='<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
         
         $out.="\n";
+        
+        $out.='<div class="div-table-responsive-no-min">';
         $out.='<table class="noborder" width="100%">';
         $out.='<tr class="liste_titre">';
 		if ($donetodo)
@@ -1201,7 +1203,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             $out.='<td class="liste_titre"></td>';
 		}
 		$out.='<td class="liste_titre"></td>';
-		$out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
+		$out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
 		$out.='<td class="liste_titre"></td>';
 		$out.='<td class="liste_titre">';
 	    $out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
@@ -1373,7 +1375,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             $i++;
         }
         $out.="</table>\n";
-        //$out.="<br>\n";
+        $out.="</div>\n";
     }
 
     $out.='</form>';

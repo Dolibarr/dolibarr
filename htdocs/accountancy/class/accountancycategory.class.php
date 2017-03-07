@@ -84,7 +84,7 @@ class AccountancyCategory
 	}
 
 	/**
-	 * Function to select accountiing category of an accounting account present in chart of accounts
+	 * Function to select accounting category of an accounting account present in chart of accounts
 	 *
 	 * @param int $id Id category
 	 *
@@ -130,6 +130,47 @@ class AccountancyCategory
 		}
 	}
 
+	/**
+	 * Function to select accounting category of an accounting account present in chart of accounts
+	 *
+	 * @param int $id Id category
+	 *
+	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function getAccountsWithNoCategory($id) {
+	    global $conf;
+	
+	    $sql = "SELECT aa.account_number as numero_compte, aa.label as label_compte";
+	    $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
+	    $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+	    $sql .= " WHERE (aa.fk_accounting_category != ".$id." OR aa.fk_accounting_category IS NULL)";
+	    $sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
+	    $sql .= " AND aa.active = 1";
+	    $sql .= " GROUP BY aa.account_number, aa.label";
+	    $sql .= " ORDER BY aa.account_number, aa.label";
+	
+	    $this->lines_CptBk = array ();
+	
+	    dol_syslog(__METHOD__, LOG_DEBUG);
+	    $resql = $this->db->query($sql);
+	    if ($resql) {
+	        $num = $this->db->num_rows($resql);
+	        if ($num) {
+	            while ( $obj = $this->db->fetch_object($resql) ) {
+	                $this->lines_cptbk[] = $obj;
+	            }
+	        }
+	
+	        return $num;
+	    } else {
+	        $this->error = "Error " . $this->db->lasterror();
+	        $this->errors[] = $this->error;
+	        dol_syslog(__METHOD__ . " " . implode(',' . $this->errors), LOG_ERR);
+	
+	        return - 1;
+	    }
+	}
+	
 	/**
 	 * Function to add an accounting account in an accounting category
 	 *

@@ -377,7 +377,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         if (! $err) $err+=$this->insert_cronjobs();
 
         // Insert permission definitions of module into llx_rights_def. If user is admin, grant this permission to user.
-        if (! $err) $err+=$this->insert_permissions(1);
+        if (! $err) $err+=$this->insert_permissions(1, null, 1);
 
         // Insert specific menus entries into database
         if (! $err) $err+=$this->insert_menus();
@@ -1414,10 +1414,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      *
      * @param   int $reinitadminperms   If 1, we also grant them to all admin users
      * @param   int $force_entity       Force current entity
-     *
+     * @param   int	$notrigger			1=Does not execute triggers, 0= execute triggers
      * @return  int                     Error count (0 if OK)
      */
-    function insert_permissions($reinitadminperms=0, $force_entity=null)
+    function insert_permissions($reinitadminperms=0, $force_entity=null, $notrigger=0)
     {
         global $conf,$user;
 
@@ -1523,7 +1523,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                                 $tmpuser=new User($this->db);
                                 $tmpuser->fetch($obj2->rowid);
                                 if (!empty($tmpuser->id)) {
-                                    $tmpuser->addrights($r_id);
+                                    $tmpuser->addrights($r_id, '', '', 0, 1);
                                 }
                                 $i++;
                             }
@@ -1552,8 +1552,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
     /**
      * Removes access rights
-     *
-     * @return  int Error count (0 if OK)
+     * 
+     * @return  int                     Error count (0 if OK)
      */
     function delete_permissions()
     {

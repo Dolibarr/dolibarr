@@ -46,7 +46,7 @@ $confirm = GETPOST('confirm','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'expensereport', $id, '');
+$result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
 // Get parameters
