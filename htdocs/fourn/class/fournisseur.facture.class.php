@@ -2078,6 +2078,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql.= ', f.localtax1_type, f.localtax2_type, f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
 		$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
 		$sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
+		$sql.= ', f.multicurrency_total_ht, f.multicurrency_total_tva, multicurrency_total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
 		$sql.= ' WHERE f.rowid = '.$rowid;
@@ -2129,6 +2130,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->special_code		= $obj->special_code;
 		$this->rang       		= $obj->rang;
 		$this->fk_unit           = $obj->fk_unit;
+
+		$this->multicurrency_total_ht	= $obj->multicurrency_total_ht;
+		$this->multicurrency_total_tva	= $obj->multicurrency_total_tva;
+		$this->multicurrency_total_ttc	= $obj->multicurrency_total_ttc;
 
 		return 1;
 	}
