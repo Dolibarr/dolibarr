@@ -1539,10 +1539,11 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
                 {
                     $tmpdir=trim($tmpdir);
                     $tmpdir=preg_replace('/DOL_DATA_ROOT/',DOL_DATA_ROOT,$tmpdir);
+		    $tmpdir=preg_replace('/DOL_DOCUMENT_ROOT/',DOL_DOCUMENT_ROOT,$tmpdir);
                     if (! $tmpdir) { unset($listofdir[$key]); continue; }
                     if (is_dir($tmpdir))
                     {
-                        $tmpfiles=dol_dir_list($tmpdir,'files',0,'\.od(s|t)$','','name',SORT_ASC,0);
+                        $tmpfiles=dol_dir_list($tmpdir,'files',0,'','','name',SORT_ASC,0);
                         if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
                     }
                 }
