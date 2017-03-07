@@ -334,12 +334,19 @@ class Project extends CommonObject
             }
             else
 			{
-                $this->error = $this->db->lasterror();
-                $this->errors[] = $this->error;
-                $this->db->rollback();
-                dol_syslog(get_class($this)."::update error -2 " . $this->error, LOG_ERR);
-                $result = -2;
-            }
+		        $this->error = $this->db->lasterror();
+		        $this->errors[] = $this->error;
+		        $this->db->rollback();
+			    if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			    {
+			        $result = -4;
+			    }
+			    else
+			    {
+			        $result = -2;
+			    }
+		        dol_syslog(get_class($this)."::update error " . $result . " " . $this->error, LOG_ERR);
+			}
         }
         else
         {

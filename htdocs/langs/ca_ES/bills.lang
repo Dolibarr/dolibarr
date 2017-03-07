@@ -336,8 +336,8 @@ InvoiceAutoValidate=Valida les factures automàticament
 GeneratedFromRecurringInvoice=Generat des de la plantilla de factura recurrent %s
 DateIsNotEnough=Encara no s'ha arribat a la data
 InvoiceGeneratedFromTemplate=La factura %s s'ha generat des de la plantilla de factura recurrent %s
-WarningInvoiceDateInFuture=Warning, the invoice date is higher than current date
-WarningInvoiceDateTooFarInFuture=Warning, the invoice date is too far from current date
+WarningInvoiceDateInFuture=Alerta, la data de factura és major que la data actual
+WarningInvoiceDateTooFarInFuture=Alerta, la data de factura és molt antiga respecte la data actual
 # PaymentConditions
 Statut=Estat
 PaymentConditionShortRECEP=A la recepció

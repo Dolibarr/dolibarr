@@ -311,13 +311,15 @@ if (empty($user->societe_id))
 	                    "companies",
 	                    "members",
 	                    "products",
-	                    "produts",
+	                    "products",
 	                    "propal",
 	                    "orders",
             	        "bills",
-            	        "supplier_proposal",
 						"contracts",
 						"interventions",
+	                    "bills",
+	                    "bills",
+	                    "supplier_proposal",
 	                    "projects",
 						"trips"
 	    );

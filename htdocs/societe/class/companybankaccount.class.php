@@ -106,7 +106,7 @@ class CompanyBankAccount extends Account
      *  @param  int     $notrigger   1=Disable triggers
      *	@return	int				     <=0 if KO, >0 if OK
      */
-    function update(User $user = null, $notrigger=0)
+    function update(User $user = null, $notrigger = 0)
     {
     	global $conf;
 

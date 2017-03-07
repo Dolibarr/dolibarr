@@ -33,7 +33,7 @@ $langs->load("trips");
 // Security check
 $id = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'expensereport', $id, '');
+$result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
 /*

@@ -413,7 +413,7 @@ class Propal extends CommonObject
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
         $pu_ttc=price2num($pu_ttc);
-        $txtva=price2num($txtva);
+        $txtva=price2num($txtva);               // $txtva can have format '5.0(XXX)' or '5'
         $txlocaltax1=price2num($txlocaltax1);
         $txlocaltax2=price2num($txlocaltax2);
     	$pa_ht=price2num($pa_ht);
@@ -428,7 +428,7 @@ class Propal extends CommonObject
 
         // Check parameters
         if ($type < 0) return -1;
-
+      
         if ($this->statut == self::STATUS_DRAFT)
         {
             $this->db->begin();
