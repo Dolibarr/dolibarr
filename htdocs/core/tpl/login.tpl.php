@@ -239,6 +239,18 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 	</div></div>
 <?php
 }
+if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
+	if (substr($langs->defaultlang,0,2)=='fr') {
+		$xml = simplexml_load_file("http://www.commitstrip.com/fr/feed/");
+	} else {
+		$xml = simplexml_load_file("http://www.commitstrip.com/en/feed/");
+	}
+
+    $little = $xml->channel->item[0]->children('content',true);
+
+    print $little->encoded;
+}
+
 ?>
 
 <?php if ($main_home)
