@@ -332,19 +332,17 @@ abstract class CommonDocGenerator
 		$array_other = array();
 		if(!empty($object)) {
 			foreach($object as $key => $value) {
-				if(!is_array($value) && !is_object($value)) {
-		    		$array_other['object_'.$key] = $value;
-				}
-				if(is_array($value) && $recursive){
-					if(!empty($value)) {
-						foreach($value as $key2 => $val) {
-							$array_other[$key][$key2] = $this->get_substitutionarray_each_var_object($val,$outputlangs,false);
-						}
+				if(!empty($value)) {
+					if(!is_array($value) && !is_object($value)) {
+			    		$array_other['object_'.$key] = $value;
+					}
+					if(is_array($value) && $recursive){
+						$array_other['object_'.$key] = $this->get_substitutionarray_each_var_object($value,$outputlangs,false);
 					}
 				}
 		    }
 	    }
-		return $array_other;
+	    return $array_other;
 	}
 
 

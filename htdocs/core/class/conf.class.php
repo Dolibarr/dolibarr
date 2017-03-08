@@ -106,6 +106,7 @@ class Conf
 		$this->propal			= new stdClass();
 		$this->facture			= new stdClass();
 		$this->contrat			= new stdClass();
+		$this->usergroup		= new stdClass();
 		$this->adherent			= new stdClass();
 		$this->bank				= new stdClass();
 		$this->notification		= new stdClass();
@@ -309,6 +310,10 @@ class Conf
 		// For backward compatibility
 		$this->user->dir_output=$rootforuser."/users";
 		$this->user->dir_temp=$rootforuser."/users/temp";
+		
+		// UserGroup
+		$this->usergroup->dir_output=$rootforuser."/usergroups";
+		$this->usergroup->dir_temp=$rootforuser."/usergroups/temp";
 
 		// For propal storage
 		$this->propal->dir_output=$rootfordata."/propale";

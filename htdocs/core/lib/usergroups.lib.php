@@ -207,6 +207,11 @@ function user_admin_prepare_head()
     $head[$h][2] = 'card';
     $h++;
 
+    $head[$h][0] = DOL_URL_ROOT.'/admin/usergroup.php';
+    $head[$h][1] = $langs->trans("Group");
+    $head[$h][2] = 'usergroupcard';
+    $h++;
+
     $head[$h][0] = DOL_URL_ROOT.'/user/admin/user_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';

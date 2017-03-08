@@ -420,13 +420,13 @@ class FormFile
                     $modellist=ModelePDFUser::liste_modeles($this->db);
                 }
             }
-            elseif ($modulepart == 'group')
+            elseif ($modulepart == 'usergroup')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_group.php';
-                    $modellist=ModelePDFProduct::liste_modeles($this->db);
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/usergroup/modules_usergroup.class.php';
+                    $modellist=ModelePDFUserGroup::liste_modeles($this->db);
                 }
             }
             elseif ($modulepart == 'project_task')

@@ -818,5 +818,39 @@ class UserGroup extends CommonObject
 		$this->datem=time();
 		$this->members=array($user->id);	// Members of this group is just me
 	}
+	
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 * 	@param	    string		$modele			Force model to use ('' to not force)
+	 * 	@param		Translate	$outputlangs	Object langs to use for output
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 * 	@return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$user,$langs;
+
+		$langs->load("user");
+
+		// Positionne le modele sur le nom du modele a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->USERGROUP_ADDON_PDF))
+			{
+				$modele = $conf->global->USERGROUP_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'grass';
+			}
+		}
+
+		$modelpath = "core/modules/usergroup/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
 }
 

@@ -36,7 +36,7 @@
 /**
  *	Parent class to manage intervention document templates
  */
-abstract class ModelePDFUser extends CommonDocGenerator
+abstract class ModelePDFUserGroup extends CommonDocGenerator
 {
 	var $error='';
 
@@ -52,7 +52,7 @@ abstract class ModelePDFUser extends CommonDocGenerator
 	{
 		global $conf;
 
-		$type='user';
+		$type='usergroup';
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
