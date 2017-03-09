@@ -779,16 +779,21 @@ function activateModule($value,$withdeps=1)
         {
             if (isset($objMod->depends) && is_array($objMod->depends) && ! empty($objMod->depends))
             {
-                // Activation des modules dont le module depend
-                $num = count($objMod->depends);
-                for ($i = 0; $i < $num; $i++)
+                // Activation of modules this module depends on
+                // this->depends may be array('modModule1', 'mmodModule2') or array('always'=>"modModule1", 'FR'=>'modModule2')
+                foreach ($objMod->depend as $key => $modulestring)
                 {
+                    if ((! is_numeric($key)) && $key != 'always' && $key != $mysoc->country_code)
+                    {
+                        dol_syslog("We are not concerned by dependency with key=".$key." because our country is ".$mysoc->country_code);
+                        continue;
+                    }
                 	$activate = false;
                 	foreach ($modulesdir as $dir)
                 	{
-                		if (file_exists($dir.$objMod->depends[$i].".class.php"))
+                		if (file_exists($dir.$modulestring.".class.php"))
                 		{
-                			$resarray = activateModule($objMod->depends[$i]);
+                			$resarray = activateModule($modulestring);
     						if (empty($resarray['errors'])){
     						    $activate = true;
                             }else{
@@ -807,7 +812,7 @@ function activateModule($value,$withdeps=1)
     				}
     				else 
     				{
-    				    $ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $objMod->depends[$i]);
+    				    $ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring);
     				}
                 }
             }
