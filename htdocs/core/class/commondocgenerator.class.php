@@ -444,9 +444,9 @@ abstract class CommonDocGenerator
 			'line_price_ht_locale'=>price($line->total_ht, 0, $outputlangs),
 			'line_price_ttc_locale'=>price($line->total_ttc, 0, $outputlangs),
 			'line_price_vat_locale'=>price($line->total_tva, 0, $outputlangs),
-			'line_date_start'=>$line->date_start,
+			'line_date_start'=>dol_print_date($line->date_start,'day','tzuser'),
 			'line_date_start_rfc'=>dol_print_date($line->date_start,'dayrfc'),
-			'line_date_end'=>$line->date_end,
+			'line_date_end'=>dol_print_date($line->date_end,'day','tzuser'),
 			'line_date_end_rfc'=>dol_print_date($line->date_end,'dayrfc')
 		);
 
