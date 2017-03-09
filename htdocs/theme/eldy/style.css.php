@@ -4023,6 +4023,23 @@ a span.select2-chosen
 .select2-container-multi .select2-choices .select2-search-choice {
   margin-bottom: 3px;
 }
+
+/* Special case for the select2 add widget */
+#addbox .select2-container .select2-choice > .select2-chosen {
+    text-align: left;
+    opacity: 0.2;
+}
+/* Style used before the select2 js is executed on boxcombo */
+#boxcombo.boxcombo {
+    text-align: left;
+    opacity: 0.2;
+    border-bottom: 1px solid #000;
+    height: 26px;
+    line-height: 24px;
+    padding: 0 0 5px 5px;
+    vertical-align: top;
+}
+
 /* To emulate select 2 style */
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
   padding: 2px 5px 1px 5px;

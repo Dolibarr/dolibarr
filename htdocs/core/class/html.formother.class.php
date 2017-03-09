@@ -978,7 +978,7 @@ class FormOther
      *
      * 	@param	   User         $user		 Object User
      * 	@param	   String       $areacode    Code of area for pages (0=value for Home page)
-     * 	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlist'=>)
+     * 	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
      */
     static function getBoxesArea($user,$areacode)
     {
@@ -1027,10 +1027,10 @@ class FormOther
 			$selectboxlist.='<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist.='<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist.='<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel, '', $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, ' disabled hidden selected');
+			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, 'hidden selected');
             if (empty($conf->use_javascript_ajax)) $selectboxlist.=' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
             $selectboxlist.='</form>';
-            //$selectboxlist.=ajax_combobox("boxcombo");
+            $selectboxlist.=ajax_combobox("boxcombo");
         }
 
         // Javascript code for dynamic actions
@@ -1114,11 +1114,6 @@ class FormOther
 
         	$emptybox=new ModeleBoxes($db);
 
-            //$boxlist.='<table width="100%" class="notopnoleftnoright">';
-            //$boxlist.='<tr><td class="notopnoleftnoright">'."\n";
-
-            //$boxlist.='<div class="fichehalfleft">';
-
             $boxlista.="\n<!-- Box left container -->\n";
             $boxlista.='<div id="left" class="connectedSortable">'."\n";
 
@@ -1152,8 +1147,6 @@ class FormOther
             $boxlista.= "</div>\n";
             $boxlista.= "<!-- End box left container -->\n";
 
-            //$boxlist.= '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
             $boxlistb.= "\n<!-- Box right container -->\n";
             $boxlistb.= '<div id="right" class="connectedSortable">'."\n";
 
@@ -1183,11 +1176,6 @@ class FormOther
             $boxlistb.= "</div>\n";
             $boxlistb.= "<!-- End box right container -->\n";
 
-            //$boxlist.= '</div></div>';
-            //$boxlist.= "\n";
-
-            //$boxlist.= "</td></tr>";
-            //$boxlist.= "</table>";
         }
 
         return array('selectboxlist'=>count($boxactivated)?$selectboxlist:'', 'boxactivated'=>$boxactivated, 'boxlista'=>$boxlista, 'boxlistb'=>$boxlistb);

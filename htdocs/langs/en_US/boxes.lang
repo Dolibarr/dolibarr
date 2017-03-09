@@ -83,3 +83,4 @@ ForCustomersOrders=Customers orders
 ForProposals=Proposals
 LastXMonthRolling=The latest %s month rolling
 ChooseBoxToAdd=Add widget to your dashboard
+BoxAdded=Widget was added in your dashboard

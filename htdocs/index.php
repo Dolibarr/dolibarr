@@ -61,9 +61,8 @@ if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax dis
 	$boxorder.=GETPOST('boxcombo');
 
 	$result=InfoBox::saveboxorder($db,$zone,$boxorder,$userid);
+	if ($result > 0) setEventMessages($langs->trans("BoxAdded"), null);
 }
-
-
 
 
 /*
@@ -79,7 +78,7 @@ if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$langs->trans("HomeAr
 llxHeader('',$title);
 
 
-$resultboxes=FormOther::getBoxesArea($user,"0");
+$resultboxes=FormOther::getBoxesArea($user,"0");    // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 
 print load_fiche_titre($langs->trans("HomeArea"),$resultboxes['selectboxlist'],'title_home');
