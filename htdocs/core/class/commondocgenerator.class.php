@@ -448,14 +448,13 @@ abstract class CommonDocGenerator
 			'line_price_ht_locale'=>price($line->total_ht, 0, $outputlangs),
 			'line_price_ttc_locale'=>price($line->total_ttc, 0, $outputlangs),
 			'line_price_vat_locale'=>price($line->total_tva, 0, $outputlangs),
+		    // Dates
 			'line_date_start'=>dol_print_date($line->date_start, 'day', 'tzuser'),
 			'line_date_start_locale'=>dol_print_date($line->date_start, 'day', 'tzuser', $outputlangs),
 		    'line_date_start_rfc'=>dol_print_date($line->date_start, 'dayrfc', 'tzuser'),
-		    'line_date_start_rfc_locale'=>dol_print_date($line->date_start, 'dayrfc', 'tzuser', $outputlangs),
 		    'line_date_end'=>dol_print_date($line->date_end, 'day', 'tzuser'),
 		    'line_date_end_locale'=>dol_print_date($line->date_end, 'day', 'tzuser', $outputlangs),
 		    'line_date_end_rfc'=>dol_print_date($line->date_end, 'dayrfc', 'tzuser'),
-		    'line_date_end_rfc_locale'=>dol_print_date($line->date_end, 'dayrfc', 'tzuser', $outputlangs)
 		);
 
 		// Retrieve extrafields
