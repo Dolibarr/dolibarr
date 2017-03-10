@@ -240,7 +240,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                 $out.= '>';
                 if ($conf->use_javascript_ajax)
                 {
-                    $out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflow maxwidth300onsmartphone">';
+                    $out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax100 maxwidth100onsmartphone">';
                 }
                 if (! empty($head['text']))
                 {
