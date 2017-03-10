@@ -87,7 +87,8 @@ if ($action == 'update') {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 
-    foreach ($list as $constname) {
+    foreach ($list as $constname) 
+    {
         $constvalue = GETPOST($constname, 'alpha');
 
         if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -278,13 +279,17 @@ foreach ($list as $key)
     $var = ! $var;
 
     print '<tr ' . $bc[$var] . ' class="value">';
+    
+    if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO) && ($key == 'ACCOUNTING_LENGTH_GACCOUNT' || $key == 'ACCOUNTING_LENGTH_AACCOUNT')) continue;
+
     // Param
     $label = $langs->trans($key);
     print '<td>'.$label.'</td>';
     // Value
     print '<td align="right">';
-    print '<input type="text" size="20" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
+    print '<input type="text" class="maxwidth100" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
     print '</td>';
+    
     print '</tr>';
 }
 
