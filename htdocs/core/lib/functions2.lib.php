@@ -1539,7 +1539,6 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
                 {
                     $tmpdir=trim($tmpdir);
                     $tmpdir=preg_replace('/DOL_DATA_ROOT/',DOL_DATA_ROOT,$tmpdir);
-		    $tmpdir=preg_replace('/DOL_DOCUMENT_ROOT/',DOL_DOCUMENT_ROOT,$tmpdir);
                     if (! $tmpdir) { unset($listofdir[$key]); continue; }
                     if (is_dir($tmpdir))
                     {
