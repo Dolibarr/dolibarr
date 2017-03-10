@@ -107,7 +107,7 @@ ACCOUNTING_LENGTH_DESCRIPTION=Truncate product & services description in listing
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncate product & services account description form in listings after x chars (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounting accounts
-ACCOUNTING_MANAGE_ZERO=Manage the zero at the end of an accounting account. Needed by some countries. Disabled by default. If set to on, you must also set the 2 following parameters (or it is ignored)
+ACCOUNTING_MANAGE_ZERO=Manage the zero at the end of an accounting account. Needed by some countries. Disabled by default. If set to on, you must not set the 2 following parameters. This function adds real zero while the 2 following functions add virtual zero.
 BANK_DISABLE_DIRECT_INPUT=Disable direct recording of transaction in bank account
 
 ACCOUNTING_SELL_JOURNAL=Sell journal
