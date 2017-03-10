@@ -595,6 +595,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     	// Categories
     	print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
     	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
+    	$arrayselected=GETPOST('categories', 'array');
     	print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
     	print "</td></tr>";
     }
