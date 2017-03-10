@@ -1935,7 +1935,8 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 				$original_file=$conf->$modulepart->dir_output.'/'.$original_file;
 			}
 		}
-		if (preg_match('/^specimen/i',$original_file))	$accessallowed=1;    // If link to a specimen
+		
+		//if (preg_match('/^specimen/i',$original_file))	$accessallowed=1;    // If link to a specimen
 		if ($fuser->admin) $accessallowed=1;    // If user is admin
 
 		// For modules who wants to manage different levels of permissions for documents
