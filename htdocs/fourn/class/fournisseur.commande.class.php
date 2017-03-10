@@ -1457,7 +1457,7 @@ class CommandeFournisseur extends CommonOrder
            	$sql.= ", '".$localtax1_type."',";
 			$sql.= " '".$localtax2_type."'";
 
-            $sql.= ", ".$remise_percent.",'".price2num($subprice,'MU')."','".$ref."',";
+            $sql.= ", ".$remise_percent.",'".price2num($subprice,'MU')."','".$this->db->escape($ref)."',";
             $sql.= "'".price2num($total_ht)."',";
             $sql.= "'".price2num($total_tva)."',";
             $sql.= "'".price2num($total_localtax1)."',";
