@@ -239,16 +239,21 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 	</div></div>
 <?php
 }
+
+// Add commit strip
 if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 	if (substr($langs->defaultlang,0,2)=='fr') {
-		$xml = simplexml_load_file("http://www.commitstrip.com/fr/feed/");
+		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/fr/feed/");
 	} else {
-		$xml = simplexml_load_file("http://www.commitstrip.com/en/feed/");
+		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/en/feed/");
 	}
-
-    $little = $xml->channel->item[0]->children('content',true);
-
-    print $little->encoded;
+    if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200') 
+    {
+        $xml = simplexml_load_string($resgetcommitstrip['content']);
+        $little = $xml->channel->item[0]->children('content',true);
+        print $little->encoded;
+    }
 }
 
 ?>
