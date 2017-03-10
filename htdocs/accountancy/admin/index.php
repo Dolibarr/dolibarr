@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
@@ -301,7 +301,7 @@ print '<div class="center"><input type="submit" class="button" value="' . $langs
 print '<br>';
 print '<br>';
 
-print $langs->trans("AccountancySetupDoneFromAccountancyMenu", $langs->transnoentitiesnoconv("Home").'-'.$langs->transnoentitiesnoconv("Financial").'-'.$langs->transnoentitiesnoconv("Accountancy"));
+print $langs->trans("AccountancySetupDoneFromAccountancyMenu", $langs->transnoentitiesnoconv("Home").'-'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy"));
 
 print '<br>';
 print '</form>';
