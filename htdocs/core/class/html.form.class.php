@@ -5745,7 +5745,13 @@ class Form
 		{
 		    $ret.=dol_htmlentities($object->getFullName($langs));
 		}
+		else if (in_array($object->element, array('action', 'agenda')))
+		{
+		    $ret.=$object->label;    
+		}
 		else if ($fieldref != 'none') $ret.=dol_htmlentities($object->$fieldref);
+		
+		
 		if ($morehtmlref)
 		{
 		    $ret.=' '.$morehtmlref;
