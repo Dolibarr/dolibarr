@@ -273,7 +273,7 @@ input.select2-input {
 }
 .select2-choice {
 	border: none;
-	border-bottom: 1px solid #aaa !important;
+	border-bottom: 1px solid #ccc !important;
 }
 
 textarea.cke_source:focus
@@ -296,16 +296,22 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 input, select {
 	border-bottom: solid 1px rgba(0,0,0,.2);
 
-	padding:4px;
 	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
-	}
+}
+input {
+	padding:4px;
+}
+select {
+	padding:1px;
+}
 
 textarea {
 	border-radius: 0;
-	border: solid 1px rgba(0,0,0,.3);
-	border-top:solid 1px rgba(0,0,0,.3);
+	border-top:solid 1px rgba(0,0,0,.1);
+	border-left:solid 1px rgba(0,0,0,.1);
+	border-right:solid 1px rgba(0,0,0,.1);
 	border-bottom:solid 1px rgba(0,0,0,.2);
 		
 	background-color: #FFF;
@@ -480,6 +486,9 @@ th .button {
 }
 .valignbottom {
 	vertical-align: bottom;
+}
+.valigntextbottom {
+	vertical-align: text-bottom;
 }
 .centpercent {
 	width: 100%;
@@ -1512,9 +1521,6 @@ form#login {
 	-moz-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 	-webkit-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 	box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
-	/*-moz-box-shadow: 3px 2px 20px #CCC;
-    -webkit-box-shadow: 3px 2px 20px #CCC;
-    box-shadow: 3px 2px 20px #CCC;*/
 
 	border-radius: 4px;
 	border:solid 1px rgba(80,80,80,.4);
@@ -2184,9 +2190,7 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 
 table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
-<?php if (empty($noborderline)) { ?>
 	border: 1px solid #f4f4f4;
-<?php } ?>
 	border-collapse: collapse !important;
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
@@ -2776,6 +2780,7 @@ span.dashboardlineko {
 }
 .boxtable {
     margin-bottom: 8px !important;
+    border-bottom-width: 0 !important;
 }
 .tdboxstats {
 	text-align: center;
@@ -3856,6 +3861,9 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.select2-container .select2-choice {
+	border-bottom: 1px solid #ccc;
+}
 .select2-container .select2-choice > .select2-chosen {
     margin-right: 23px;
 }
@@ -3883,7 +3891,7 @@ div.dataTables_length select {
 	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
-	border-bottom: 1px solid #aaa;
+	border-bottom: 1px solid #ccc;
 }
 .select2-drop.select2-drop-above {
 	box-shadow: none !important;
@@ -3970,6 +3978,16 @@ a span.select2-chosen
 .select2-container-multi .select2-choices .select2-search-choice {
   margin-bottom: 3px;
 }
+.select2-dropdown-open.select2-drop-above .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choices, .select2-container-multi .select2-choices,
+.select2-container-multi.select2-container-active .select2-choices
+{
+	border-bottom: 1px solid #ccc;
+	border-right: none;
+	border-top: none;
+	border-left: 1px solid #ddd;
+}
+
+
 
 /* Special case for the select2 add widget */
 #addbox .select2-container .select2-choice > .select2-chosen {

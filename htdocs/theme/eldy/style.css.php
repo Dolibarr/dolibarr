@@ -100,7 +100,6 @@ $usegradienttop=(isset($conf->global->THEME_ELDY_TOPMENU_BACK1)?0:1);
 $usegradienttitle=(isset($conf->global->THEME_ELDY_BACKTITLE1)?0:1);
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
 $borderwith=2;
-$noborderline=0;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
@@ -273,7 +272,7 @@ input.select2-input {
 }
 .select2-choice {
 	border: none;
-	border-bottom: 1px solid #aaa !important;
+	border-bottom: 1px solid #ccc !important;
 }
 
 textarea.cke_source:focus
@@ -299,15 +298,19 @@ input {
 input, select {
 	border-bottom: solid 1px rgba(0,0,0,.2);
 
-	padding:4px;
+	padding: 4px;
 	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
-	}
+}
+select {
+	padding: 4px 4px 4px 1px;
+}
 textarea {
 	border-radius: 0;
-	border: solid 1px rgba(0,0,0,.3);
-	border-top:solid 1px rgba(0,0,0,.3);
+	border-top:solid 1px rgba(0,0,0,.1);
+	border-left:solid 1px rgba(0,0,0,.1);
+	border-right:solid 1px rgba(0,0,0,.1);
 	border-bottom:solid 1px rgba(0,0,0,.2);
 
 	padding:4px;
@@ -475,6 +478,9 @@ th .button {
 }
 .valignbottom {
 	vertical-align: bottom;
+}
+.valigntextbottom {
+	vertical-align: text-bottom;
 }
 .centpercent {
 	width: 100%;
@@ -919,8 +925,8 @@ div.fiche {
 
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'6':'20')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'6')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'6':'26')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'16':'6')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
 	<?php if (! empty($conf->dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
 }
@@ -1476,10 +1482,6 @@ form#login {
 	-moz-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
 	-webkit-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
 	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
-
-	/*-moz-box-shadow: 3px 2px 20px #CCC;
-    -webkit-box-shadow: 3px 2px 20px #CCC;
-    box-shadow: 3px 2px 20px #CCC;*/
 
 	border-radius: 5px;
 	/*border-top:solid 1px rgba(180,180,180,.4);
@@ -2273,9 +2275,6 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 
 table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
-<?php if (empty($noborderline)) { ?>
-	border: 1px solid #E0E0E0;
-<?php } ?>
 	border-collapse: collapse !important;
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
@@ -2295,17 +2294,13 @@ div .tdtop {
 }
 
 table.border td, div.border div div.tagtd {
-<?php if (empty($noborderline)) { ?>
-	padding: 2px 2px 2px 2px;
-	border: 1px solid #E0E0E0;
-<?php } elseif ($noborderline == 1) { ?>
 	padding: 3px 2px 3px 2px;
-	border-bottom: 1px solid #E0E0E0;
-<?php } elseif ($noborderline == 2) { ?>
-	padding: 3px 2px 3px 2px;
-	/* border: 1px solid #E0E0E0; */
-<?php } ?>
 	border-collapse: collapse;
+}
+div.tabBar .fichecenter table.border>tbody>tr>td, div.tabBar .fichecenter div.border div div.tagtd
+{
+	padding-top: 4px;
+	border-bottom: 1px solid #E0E0E0;
 }
 
 td.border, div.tagtable div div.border {
@@ -2854,6 +2849,7 @@ span.dashboardlineko {
 }
 .boxtable {
     margin-bottom: 8px !important;
+    border-bottom-width: 0 !important;
 }
 .tdboxstats {
 	text-align: center;
@@ -3910,6 +3906,9 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.select2-container .select2-choice {
+	border-bottom: 1px solid #ccc;
+}
 .select2-container .select2-choice > .select2-chosen {
     margin-right: 23px;
 }
@@ -3936,7 +3935,7 @@ div.dataTables_length select {
 	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
-	border-bottom: 1px solid #aaa;
+	border-bottom: 1px solid #ccc;
 }
 .select2-drop.select2-drop-above {
 	box-shadow: none !important;
@@ -4023,6 +4022,15 @@ a span.select2-chosen
 .select2-container-multi .select2-choices .select2-search-choice {
   margin-bottom: 3px;
 }
+.select2-dropdown-open.select2-drop-above .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choices, .select2-container-multi .select2-choices,
+.select2-container-multi.select2-container-active .select2-choices
+{
+	border-bottom: 1px solid #ccc;
+	border-right: none;
+	border-top: none;
+	border-left: 1px solid #ddd;
+}
+
 
 /* Special case for the select2 add widget */
 #addbox .select2-container .select2-choice > .select2-chosen {
