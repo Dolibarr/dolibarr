@@ -406,7 +406,7 @@ $listofreferent=array(
 	'table'=>'stock_mouvement',
 	'datefieldname'=>'datem',
 	'disableamount'=>0,
-	'test'=>$conf->stock->enabled && $user->rights->stock->mouvement->lire),
+	'test'=>($conf->stock->enabled && $user->rights->stock->mouvement->lire && ! empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW)))
 /* No need for this, available on dedicated tab "Agenda/Events"
 'agenda'=>array(
 	'name'=>"Agenda",
