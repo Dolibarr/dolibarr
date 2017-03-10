@@ -1968,7 +1968,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 }
 
 /**
- * Store object in file
+ * Store object in file.
  *
  * @param string $directory Directory of cache
  * @param string $filename Name of filecache
@@ -1984,7 +1984,7 @@ function dol_filecache($directory, $filename, $object)
 }
 
 /**
- * Test if Refresh needed
+ * Test if Refresh needed.
  *
  * @param string $directory Directory of cache
  * @param string $filename Name of filecache
@@ -2000,7 +2000,7 @@ function dol_cache_refresh($directory, $filename, $cachetime)
 }
 
 /**
- * Read object from cachefile
+ * Read object from cachefile.
  *
  * @param string $directory Directory of cache
  * @param string $filename Name of filecache
