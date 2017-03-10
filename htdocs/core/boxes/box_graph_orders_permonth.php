@@ -253,7 +253,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 		}
 		else {
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
+			$this->info_box_contents[0][0] = array('td' => '',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
 		}
 	}
