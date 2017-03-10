@@ -1046,7 +1046,7 @@ class FormOther
 	        	if (boxorder==\'A:A-B:B\' && closing == 1)	// There is no more boxes on screen, and we are after a delete of a box so we must hide title
 	        	{
 	        		jQuery.ajax({
-	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=\'+closing+\'&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
 	        			async: false
 	        		});
 	        		// We force reload to be sure to get all boxes into list
@@ -1055,7 +1055,7 @@ class FormOther
 	        	else
 	        	{
 	        		jQuery.ajax({
-	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=\'+closing+\'&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
 	        			async: true
 	        		});
 	        	}
