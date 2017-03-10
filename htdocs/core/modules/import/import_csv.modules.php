@@ -588,9 +588,9 @@ class ImportCsv extends ModeleImports
 					{
 						$updatedone = false;
 						$insertdone = false;
-						if(!empty($updatekeys)) {
+						if (!empty($updatekeys)) {
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
-							if(empty($lastinsertid)) {
+							if (empty($lastinsertid)) {
 								$sqlSelect = 'SELECT rowid FROM '.$tablename;
 								
 								$data = array_combine($listfields, $listvalues);
@@ -627,7 +627,7 @@ class ImportCsv extends ModeleImports
 								}
 							}
 							
-							if(!empty($lastinsertid)) {
+							if (!empty($lastinsertid)) {
 								// Build SQL UPDATE request
 								$sqlstart = 'UPDATE '.$tablename;
 								
@@ -660,7 +660,7 @@ class ImportCsv extends ModeleImports
 						}
 
 						// Update not done, we do insert
-						if(!$error && !$updatedone) {
+						if (!$error && !$updatedone) {
 							// Build SQL INSERT request
 							$sqlstart = 'INSERT INTO '.$tablename.'('.implode(', ', $listfields).', import_key';
 							$sqlend = ') VALUES('.implode(', ', $listvalues).", '".$importid."'";
@@ -679,10 +679,10 @@ class ImportCsv extends ModeleImports
 							if ($sql)
 							{
 								$resql=$this->db->query($sql);
-								$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that dependent tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
 								if ($resql)
 								{
-									$insertdone = true;
+								    $last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
+								    $insertdone = true;
 								}
 								else
 								{
