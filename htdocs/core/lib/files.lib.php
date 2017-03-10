@@ -1066,7 +1066,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		}
 
 		// Security:
-		// On interdit fichiers caches, remontees de repertoire ainsi que les pipes dans les noms de fichiers.
+		// We refuse cache files/dirs, upload using .. and pipes into filenames.
 		if (preg_match('/^\./',$src_file) || preg_match('/\.\./',$src_file) || preg_match('/[<>|]/',$src_file))
 		{
 			dol_syslog("Refused to deliver file ".$src_file, LOG_WARNING);
@@ -1150,6 +1150,14 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 
 	dol_syslog("dol_delete_file file=".$file." disableglob=".$disableglob." nophperrors=".$nophperrors." nohook=".$nohook);
 
+	// Security:
+	// We refuse cache files/dirs, upload using .. and pipes into filenames.
+	if (preg_match('/^\./',$file) || preg_match('/\.\./',$file) || preg_match('/[<>|]/',$file))
+	{
+        dol_syslog("Refused to delete file ".$file, LOG_WARNING);
+	    return False;
+	}
+	
 	if (empty($nohook))
 	{
 		$hookmanager->initHooks(array('fileslib'));
