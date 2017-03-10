@@ -634,7 +634,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		}
 
 		// Security:
-		// On interdit fichiers caches, remontees de repertoire ainsi que les pipes dans les noms de fichiers.
+		// We refuse cache files/dirs, upload using .. and pipes into filenames.
 		if (preg_match('/^\./',$src_file) || preg_match('/\.\./',$src_file) || preg_match('/[<>|]/',$src_file))
 		{
 			dol_syslog("Refused to deliver file ".$src_file, LOG_WARNING);
@@ -707,6 +707,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param	int		$nohook			Disable all hooks
  *  @param	object	$object			Current object in use
  *  @return boolean         		True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
+ *  @see dol_delete_dir
  */
 function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=null)
 {
@@ -718,6 +719,14 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 
 	dol_syslog("dol_delete_file file=".$file." disableglob=".$disableglob." nophperrors=".$nophperrors." nohook=".$nohook);
 
+	// Security:
+	// We refuse transversal using .. and pipes into filenames.
+	if (preg_match('/\.\./',$file) || preg_match('/[<>|]/',$file))
+	{
+        dol_syslog("Refused to delete file ".$file, LOG_WARNING);
+	    return False;
+	}
+	
 	if (empty($nohook))
 	{
 		$hookmanager->initHooks(array('fileslib'));
@@ -782,9 +791,18 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
  *  @param	string	$dir            Directory to delete
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @return boolean         		True if success, false if error
+ *  @see dol_delete_file
  */
 function dol_delete_dir($dir,$nophperrors=0)
 {
+	// Security:
+	// We refuse transversal using .. and pipes into filenames.
+	if (preg_match('/\.\./',$dir) || preg_match('/[<>|]/',$dir))
+	{
+        dol_syslog("Refused to delete dir ".$dir, LOG_WARNING);
+	    return False;
+	}
+	
     $dir_osencoded=dol_osencode($dir);
     return ($nophperrors?@rmdir($dir_osencoded):rmdir($dir_osencoded));
 }
