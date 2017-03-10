@@ -1530,7 +1530,6 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 
                 $const=$obj->description;
                 $dirtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
-
                 $listoffiles=array();
 
                 // Now we add models found in directories scanned
