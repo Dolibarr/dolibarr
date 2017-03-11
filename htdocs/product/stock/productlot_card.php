@@ -322,7 +322,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'batch');
 	
-	print '<table class="border centpercent">'."\n";
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
+
+    print '<table class="border centpercent">'."\n";
 	
 	// Product
     print '<tr><td class="titlefield">'.$langs->trans("Product").'</td><td>';
@@ -352,6 +355,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
     
 	print '</table>';
+	
+	print '</div>';
 	
 	dol_fiche_end();
 
