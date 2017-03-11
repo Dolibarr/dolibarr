@@ -270,24 +270,6 @@ llxHeader('','ProductLot','');
 $form=new Form($db);
 
 
-// Put here content of your page
-
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
-
-
 // Part to create
 if ($action == 'create')
 {
@@ -335,19 +317,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print $formconfirm;
 	}
 	
-	print '<table class="border centpercent">'."\n";
 	
 	$linkback = '<a href="' . DOL_URL_ROOT . '/product/stock/productlot_list.php' . '">' . $langs->trans("BackToList") . '</a>';
 	
-	// Ref
-	print '<tr><td class="titlefield">' . $langs->trans('Batch') . '</td>';
-	print '<td colspan="3">';
-	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'batch');
-	print '</td>';
-	print '</tr>';
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'batch');
+	
+	print '<table class="border centpercent">'."\n";
 	
 	// Product
-    print '<tr><td>'.$langs->trans("Product").'</td><td>';
+    print '<tr><td class="titlefield">'.$langs->trans("Product").'</td><td>';
     $producttmp = new Product($db);
     $producttmp->fetch($object->fk_product);
     print $producttmp->getNomUrl(1, 'stock');
@@ -356,7 +334,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     // Eat by
     print '<tr><td>';
     print $form->editfieldkey($langs->trans('Eatby'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
-    print '</td><td colspan="5">';
+    print '</td><td>';
     print $form->editfieldval($langs->trans('Eatby'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
     print '</td>';
     print '</tr>';
@@ -364,7 +342,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     // Sell by
     print '<tr><td>';
     print $form->editfieldkey($langs->trans('Sellby'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
-    print '</td><td colspan="5">';
+    print '</td><td>';
     print $form->editfieldval($langs->trans('Sellby'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
     print '</td>';
     print '</tr>';
