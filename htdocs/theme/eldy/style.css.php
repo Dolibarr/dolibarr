@@ -260,24 +260,12 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     background-color: #FFF;
 }
 
-textarea:focus, button:focus {
-    /* v6 box-shadow: 0 0 4px #8091BF; */
-	border: 1px solid #aaa !important;
-}
-input:focus, select:focus {
-	border-bottom: 1px solid #666;
-}
 input.select2-input {
 	border-bottom: none ! important;
 }
 .select2-choice {
 	border: none;
-	border-bottom:  solid 1px rgba(0,0,0,.1) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
-}
-
-textarea.cke_source:focus
-{
-	box-shadow: none;
+	border-bottom:  solid 1px rgba(0,0,0,.2) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
 
 .liste_titre input[name=month], .liste_titre input[name=month_lim] {
@@ -288,7 +276,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-family: <?php print $fontlist ?>;
 
     border: none;
-    border-bottom: solid 1px rgba(0,0,0,.1);
+    border-bottom: solid 1px rgba(0,0,0,.2);
     outline: none;
     margin: 0px 0px 0px 0px;
 }
@@ -296,22 +284,34 @@ input {
     line-height: 17px;
 }
 input, select {
-	border-bottom: solid 1px rgba(0,0,0,.1);
-
 	padding: 4px;
 	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
 }
+
+/* Focus definitions must be after standard definition */
+textarea:focus, button:focus {
+    /* v6 box-shadow: 0 0 4px #8091BF; */
+	border: 1px solid #aaa !important;
+}
+input:focus, select:focus {
+	border-bottom: 1px solid #666;
+}
+textarea.cke_source:focus
+{
+	box-shadow: none;
+}
+
 select {
 	/* padding: 4px 4px 2px 1px; */
 }
 textarea {
 	border-radius: 0;
-	border-top:solid 1px rgba(0,0,0,.1);
-	border-left:solid 1px rgba(0,0,0,.1);
-	border-right:solid 1px rgba(0,0,0,.1);
-	border-bottom:solid 1px rgba(0,0,0,.1);
+	border-top:solid 1px rgba(0,0,0,.2);
+	border-left:solid 1px rgba(0,0,0,.2);
+	border-right:solid 1px rgba(0,0,0,.2);
+	border-bottom:solid 1px rgba(0,0,0,.2);
 
 	padding:4px;
 	margin-left:0px;
@@ -378,7 +378,8 @@ input:-webkit-autofill {
 ::-moz-placeholder { color:#bbb; } 			/* firefox 19+ */
 :-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
-
+input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight] { margin-right: 6px; }
+input[name=surface] { margin-right: 4px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
 
@@ -2297,7 +2298,7 @@ table.border td, div.border div div.tagtd {
 	padding: 3px 2px 3px 2px;
 	border-collapse: collapse;
 }
-div.tabBar .fichecenter table.border>tbody>tr>td, div.tabBar .fichecenter div.border div div.tagtd
+div.tabBar .fichecenter table.border>tbody>tr>td, div.tabBar .fichecenter div.border div div.tagtd, div.tabBar div.border div div.tagtd
 {
 	padding-top: 4px;
 	border-bottom: 1px solid #E0E0E0;
@@ -3908,8 +3909,8 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
-.select2-container .select2-choice {
-	border-bottom: solid 1px rgba(0,0,0,.1);
+.select2-choice, .select2-container .select2-choice {
+	border-bottom: solid 1px rgba(0,0,0,.2);
 }
 .select2-container .select2-choice > .select2-chosen {
     margin-right: 23px;
@@ -3937,14 +3938,13 @@ div.dataTables_length select {
 	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
-	border-bottom: solid 1px rgba(0,0,0,.1);
 }
 .select2-drop.select2-drop-above {
 	box-shadow: none !important;
 }
 .select2-drop.select2-drop-above.select2-drop-active {
 	border-top: 1px solid #ccc;
-	border-bottom: solid 1px rgba(0,0,0,.1);
+	border-bottom: solid 1px rgba(0,0,0,.2);
 }
 .select2-container-active .select2-choice, .select2-container-active .select2-choices 
 {

@@ -292,7 +292,6 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     outline: none;
     margin: 0px 0px 0px 0px;
 }
-
 input, select {
 	border-bottom: solid 1px rgba(0,0,0,.1);
 
