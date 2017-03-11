@@ -2556,11 +2556,12 @@ div.pagination li.paginationafterarrows {
 
 
 
+
 /* Set the color for hover lines */
 .oddeven:hover, .odd:hover, .impair:hover, .even:hover, .pair:hover, .even:hover, .pair:hover, table.dataTable tr.even:hover, table.dataTable tr.odd:hover
 {
 <?php if ($colorbacklinepairhover) { ?>
-	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
+	background-color: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
 <?php } ?>
 }
 
@@ -2575,7 +2576,7 @@ div.pagination li.paginationafterarrows {
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
 #GanttChartDIV {
-	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
+	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
 
 .oddeven, .even, .pair, .nohover .even:hover, .nohover .pair:hover, tr.even td.nohover, tr.pair td.nohover {
@@ -2592,7 +2593,7 @@ table.dataTable tr.odd, table.dataTable tr.oddeven {
 }
 
 /* For no hover style */
-td.oddeven, table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.impair td, table.nohover tr.pair td, tr.nohover td {
+td.oddeven, table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.impair td, table.nohover tr.pair td, tr.nohover td, form.nohover, form.nohover:hover {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
 }
@@ -2600,6 +2601,7 @@ tr.nohoverpair td {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 }
+
 
 table.dataTable td {
     padding: 5px 2px 5px 3px !important;

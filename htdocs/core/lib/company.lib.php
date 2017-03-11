@@ -531,6 +531,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
 
         print "\n";
         print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"),$buttoncreate,'');
+        print '<div class="div-table-responsive">';
         print "\n".'<table class="noborder" width=100%>';
 
         $sql  = "SELECT p.rowid as id, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
@@ -620,7 +621,8 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
             dol_print_error($db);
         }
         print "</table>";
-
+        print '</div>';
+        
         print "<br>\n";
     }
 
