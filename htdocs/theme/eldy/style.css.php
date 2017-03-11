@@ -304,7 +304,7 @@ input, select {
 	margin-top:1px;
 }
 select {
-	padding: 4px 4px 4px 1px;
+	/* padding: 4px 4px 2px 1px; */
 }
 textarea {
 	border-radius: 0;
@@ -387,7 +387,7 @@ fieldset { border: 1px solid #AAAAAA !important; }
 	border-color: #c5c5c5;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
-	padding: 4px 14px;
+	padding: 3px 14px;
 	margin-bottom: 0;
 	margin-top: 0;
 	text-align: center;
@@ -3942,6 +3942,7 @@ div.dataTables_length select {
 }
 .select2-drop.select2-drop-above.select2-drop-active {
 	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
 }
 .select2-container-active .select2-choice, .select2-container-active .select2-choices 
 {
@@ -3977,8 +3978,6 @@ div.dataTables_length select {
 }
 .select2-dropdown-open.select2-drop-above .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choices {
 	background-image: none;
-	border-left: 1px solid #ccc !important;
-	border-right: 1px solid #ccc !important;
 	border-radius: 0 !important;
 }
 div.select2-drop-above
@@ -4025,7 +4024,7 @@ a span.select2-chosen
 .select2-dropdown-open.select2-drop-above .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choices, .select2-container-multi .select2-choices,
 .select2-container-multi.select2-container-active .select2-choices
 {
-	border-bottom: 1px solid #ccc;
+	border-bottom: none;
 	border-right: none;
 	border-top: none;
 	border-left: 1px solid #ddd;

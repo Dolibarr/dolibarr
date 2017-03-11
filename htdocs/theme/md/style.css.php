@@ -3898,6 +3898,7 @@ div.dataTables_length select {
 }
 .select2-drop.select2-drop-above.select2-drop-active {
 	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
 }
 .select2-container-active .select2-choice, .select2-container-active .select2-choices 
 {
@@ -3933,8 +3934,6 @@ div.dataTables_length select {
 }
 .select2-dropdown-open.select2-drop-above .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choices {
 	background-image: none;
-	border-left: 1px solid #ccc !important;
-	border-right: 1px solid #ccc !important;
 	border-radius: 0 !important;
 }
 div.select2-drop-above
