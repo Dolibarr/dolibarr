@@ -272,7 +272,7 @@ input.select2-input {
 }
 .select2-choice {
 	border: none;
-	border-bottom: 1px solid #ccc !important;
+	border-bottom:  solid 1px rgba(0,0,0,.1) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
 
 textarea.cke_source:focus
@@ -288,7 +288,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-family: <?php print $fontlist ?>;
 
     border: none;
-    border-bottom: 1px solid #C0C0C0;
+    border-bottom: solid 1px rgba(0,0,0,.1);
     outline: none;
     margin: 0px 0px 0px 0px;
 }
@@ -296,7 +296,7 @@ input {
     line-height: 17px;
 }
 input, select {
-	border-bottom: solid 1px rgba(0,0,0,.2);
+	border-bottom: solid 1px rgba(0,0,0,.1);
 
 	padding: 4px;
 	margin-left:0px;
@@ -311,7 +311,7 @@ textarea {
 	border-top:solid 1px rgba(0,0,0,.1);
 	border-left:solid 1px rgba(0,0,0,.1);
 	border-right:solid 1px rgba(0,0,0,.1);
-	border-bottom:solid 1px rgba(0,0,0,.2);
+	border-bottom:solid 1px rgba(0,0,0,.1);
 
 	padding:4px;
 	margin-left:0px;
@@ -3909,7 +3909,7 @@ div.dataTables_length select {
 /* ============================================================================== */
 
 .select2-container .select2-choice {
-	border-bottom: 1px solid #ccc;
+	border-bottom: solid 1px rgba(0,0,0,.1);
 }
 .select2-container .select2-choice > .select2-chosen {
     margin-right: 23px;
@@ -3937,14 +3937,14 @@ div.dataTables_length select {
 	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
-	border-bottom: 1px solid #ccc;
+	border-bottom: solid 1px rgba(0,0,0,.1);
 }
 .select2-drop.select2-drop-above {
 	box-shadow: none !important;
 }
 .select2-drop.select2-drop-above.select2-drop-active {
 	border-top: 1px solid #ccc;
-	border-bottom: 1px solid #ccc;
+	border-bottom: solid 1px rgba(0,0,0,.1);
 }
 .select2-container-active .select2-choice, .select2-container-active .select2-choices 
 {

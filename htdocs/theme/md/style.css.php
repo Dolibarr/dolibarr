@@ -288,13 +288,13 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
     border: none;
-    border-bottom: 1px solid #C0C0C0;
+    border-bottom: solid 1px rgba(0,0,0,.1);
     outline: none;
     margin: 0px 0px 0px 0px;
 }
 
 input, select {
-	border-bottom: solid 1px rgba(0,0,0,.2);
+	border-bottom: solid 1px rgba(0,0,0,.1);
 
 	margin-left:0px;
 	margin-bottom:1px;
