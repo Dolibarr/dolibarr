@@ -2559,10 +2559,11 @@ div.pagination li.paginationafterarrows {
 
 
 /* Set the color for hover lines */
-.oddeven:hover, .odd:hover, .impair:hover, .even:hover, .pair:hover, .even:hover, .pair:hover, table.dataTable tr.even:hover, table.dataTable tr.odd:hover
+.oddeven:hover, .odd:hover, .impair:hover, .even:hover, .pair:hover, .even:hover, .pair:hover,
+table.dataTable tr.even:hover, table.dataTable tr.odd:hover
 {
 <?php if ($colorbacklinepairhover) { ?>
-	background-color: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
+	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;		/* Must be background to be stronger than background of odd or even */
 <?php } ?>
 }
 

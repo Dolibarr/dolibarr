@@ -244,8 +244,9 @@ if ($action == 'edit')
 		foreach ($object->multilangs as $key => $value)
 		{
 			$s=picto_from_langcode($key);
-			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', '')."</a><br>";
+			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
 		    
+			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border" width="100%">';
 			print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$object->multilangs[$key]["label"].'"></td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
@@ -263,6 +264,8 @@ if ($action == 'edit')
 		}
 	}
 
+	print '<br>';
+	
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -274,17 +277,20 @@ if ($action == 'edit')
 }
 else if ($action != 'add')
 {
-    if ($cnt_trans) print '<div class="underbanner clearboth"></div>';
+    //if ($cnt_trans) print '<div class="underbanner clearboth"></div>';
     
 	if (! empty($object->multilangs))
 	{
 		foreach ($object->multilangs as $key => $value)
 		{
 			$s=picto_from_langcode($key);
+			//print '<tr><td>';
+			print ($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
+			//print '</td><td></td></tr>';
+			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border" width="100%">';
-			print '<tr class="liste_titre"><td colspan="2">'.($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', '').'</a></td></tr>';
 			print '<tr><td class="titlefieldcreate">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
-			print '<tr><td>'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
+			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
 			if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION))
 			{
                 print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
@@ -312,6 +318,8 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<input type="hidden" name="action" value="vadd">';
 	print '<input type="hidden" name="id" value="'.GETPOST("id",'int').'">';
 
+	dol_fiche_head();
+	
 	print '<table class="border" width="100%">';
 	print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Language').'</td><td>';
     print $formadmin->select_language('','forcelangprod',0,$object->multilangs,1);
@@ -331,7 +339,9 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
     }
 	print '</table>';
 
-	print '<br><div class="center">';
+	dol_fiche_end();
+	
+	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
