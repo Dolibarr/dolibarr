@@ -640,6 +640,7 @@ if ($resql)
     if ($search_inventorycode)   $param.='&search_inventorycode='.urlencode($search_inventorycode);
     if ($search_product_ref)     $param.='&search_product_ref='.urlencode($search_product_ref);
     if ($search_product)         $param.='&search_product='.urlencode($search_product);
+    if ($search_batch)           $param.='&search_batch='.urlencode($search_batch);
     if ($search_warehouse > 0)   $param.='&search_warehouse='.urlencode($search_warehouse);
     if (!empty($sref))           $param.='&sref='.urlencode($sref); // FIXME $sref is not defined
     if (!empty($snom))           $param.='&snom='.urlencode($snom); // FIXME $snom is not defined
