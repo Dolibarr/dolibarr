@@ -89,7 +89,7 @@ $arrayfields=array(
     'm.batch'=>array('label'=>$langs->trans("BatchNumberShort"), 'checked'=>1, 'enabled'=>(! empty($conf->productbatch->enabled))),
     'pl.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>0, 'enabled'=>(! empty($conf->productbatch->enabled))),
     'pl.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(! empty($conf->productbatch->enabled))),
-    'm.warehouse'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(! $id > 0)),	// If we are on specific warehouse, we hide it
+    'e.label'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(! $id > 0)),	// If we are on specific warehouse, we hide it
     'm.fk_user_author'=>array('label'=>$langs->trans("Author"), 'checked'=>0),
     'm.inventorycode'=>array('label'=>$langs->trans("InventoryCodeShort"), 'checked'=>1),
     'm.label'=>array('label'=>$langs->trans("LabelMovement"), 'checked'=>1),
@@ -710,7 +710,7 @@ if ($resql)
     if (! empty($arrayfields['m.batch']['checked']))            print_liste_field_titre($arrayfields['m.batch']['label'],$_SERVER["PHP_SELF"],'m.batch','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['pl.eatby']['checked']))           print_liste_field_titre($arrayfields['pl.eatby']['label'],$_SERVER["PHP_SELF"],'pl.eatby','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['pl.sellby']['checked']))          print_liste_field_titre($arrayfields['pl.sellby']['label'],$_SERVER["PHP_SELF"],'pl.sellby','',$param,'align="center"',$sortfield,$sortorder);
-    if (! empty($arrayfields['m.warehouse']['checked']))        print_liste_field_titre($arrayfields['m.warehouse']['label'],$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
+    if (! empty($arrayfields['e.label']['checked']))        print_liste_field_titre($arrayfields['e.label']['label'],$_SERVER["PHP_SELF"], "e.label","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
     if (! empty($arrayfields['m.fk_user_author']['checked']))   print_liste_field_titre($arrayfields['m.fk_user_author']['label'],$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['m.inventorycode']['checked']))    print_liste_field_titre($arrayfields['m.inventorycode']['label'],$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['m.label']['checked']))            print_liste_field_titre($arrayfields['m.label']['label'],$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
@@ -774,7 +774,7 @@ if ($resql)
     // Batch
     if (! empty($arrayfields['m.batch']['checked'])) 
     {
-    	print '<td align="center"><input class="flat" type="text" size="5" name="search_batch" value="'.dol_escape_htmltag($search_batch).'"></td>';
+    	print '<td class="liste_titre" align="center"><input class="flat" type="text" size="5" name="search_batch" value="'.dol_escape_htmltag($search_batch).'"></td>';
 	}
     if (! empty($arrayfields['pl.eatby']['checked']))
     {
@@ -787,7 +787,7 @@ if ($resql)
 	    print '</td>';
     }
     // Warehouse
-    if (! empty($arrayfields['m.warehouse']['checked'])) 
+    if (! empty($arrayfields['e.label']['checked'])) 
     {
         print '<td class="liste_titre maxwidthonsmartphone" align="left">';
         //print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
@@ -949,7 +949,7 @@ if ($resql)
         	print '<td align="center">'. dol_print_date($objp->sellby,'day') .'</td>';
 		}
         // Warehouse
-        if (! empty($arrayfields['m.warehouse']['checked']))
+        if (! empty($arrayfields['e.label']['checked']))
 		{
             print '<td>';
             print $warehousestatic->getNomUrl(1);
