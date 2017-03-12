@@ -615,35 +615,48 @@ if (! empty($id) || ! empty($ref)) {
 				<th class="liste_titre" style="text-align: center;"><?php echo $langs->trans('OnBuy') ?></th>
 				<th class="liste_titre"></th>
 			</tr>
-			<?php foreach ($productCombinations as $currcomb):
-				$prodstatic->fetch($currcomb->fk_product_child); ?>
-			<tr <?php echo $bc[!$var] ?>>
-				<td><input type="checkbox" name="select[<?php echo $prodstatic->id ?>]"></td>
-				<td><?php echo $prodstatic->getNomUrl(1) ?></td>
-				<td>
-					<?php
-
-					$productCombination2ValuePairs = $comb2val->fetchByFkCombination($currcomb->id);
-					$iMax = count($productCombination2ValuePairs);
-
-					for ($i = 0; $i < $iMax; $i++) {
-						echo dol_htmlentities($productCombination2ValuePairs[$i]);
-
-						if ($i !== ($iMax - 1)) {
-							echo ', ';
-						}
-					} ?>
-				</td>
-				<td style="text-align: right"><?php echo ($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '') ?></td>
-				<td style="text-align: right"><?php echo ($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuring_units_string($prodstatic->weight_units, 'weight') ?></td>
-				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 0) ?></td>
-				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
-				<td style="text-align: right">
-					<a href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=edit&valueid='.$currcomb->id, 2) ?>"><?php echo img_edit() ?></a>
-					<a href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=delete&valueid='.$currcomb->id, 2) ?>"><?php echo img_delete() ?></a>
-				</td>
-			</tr>
-			<?php $var = !$var; endforeach ?>
+			<?php
+			
+			if (count($productCombinations))
+			{
+    			foreach ($productCombinations as $currcomb) {
+    				$prodstatic->fetch($currcomb->fk_product_child); 
+    				?>
+    				<tr <?php echo $bc[!$var] ?>>
+    				<td><input type="checkbox" name="select[<?php echo $prodstatic->id ?>]"></td>
+    				<td><?php echo $prodstatic->getNomUrl(1) ?></td>
+    				<td>
+    					<?php
+    
+    					$productCombination2ValuePairs = $comb2val->fetchByFkCombination($currcomb->id);
+    					$iMax = count($productCombination2ValuePairs);
+    
+    					for ($i = 0; $i < $iMax; $i++) {
+    						echo dol_htmlentities($productCombination2ValuePairs[$i]);
+    
+    						if ($i !== ($iMax - 1)) {
+    							echo ', ';
+    						}
+    					} ?>
+    				</td>
+    				<td style="text-align: right"><?php echo ($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '') ?></td>
+    				<td style="text-align: right"><?php echo ($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuring_units_string($prodstatic->weight_units, 'weight') ?></td>
+    				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 0) ?></td>
+    				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
+    				<td style="text-align: right">
+    					<a href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=edit&valueid='.$currcomb->id, 2) ?>"><?php echo img_edit() ?></a>
+    					<a href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=delete&valueid='.$currcomb->id, 2) ?>"><?php echo img_delete() ?></a>
+    				</td>
+    			</tr>
+    			<?php
+    			$var = !$var; 
+			    }
+			}
+			else
+			{
+			     print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';   
+			}
+			?>
 		</table>
 
 		<?php if ($productCombinations): ?>
