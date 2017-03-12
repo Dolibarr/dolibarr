@@ -114,3 +114,5 @@ UPDATE llx_const set value='moono-lisa' where value = 'moono' AND name = 'FCKEDI
 ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
 
+ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;
+
