@@ -3,7 +3,7 @@
         print '<tr><td>';
         print '<table width="100%" class="nobordernopadding"><tr><td>';
         print $langs->trans('SalesRepresentatives');
-        print '<td><td align="right">';
+        print '</td><td align="right">';
         if ($user->rights->societe->creer && $user->rights->societe->client->voir)
         print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$object->id.'">'.img_edit('',1).'</a>';
         else
