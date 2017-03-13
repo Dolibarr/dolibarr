@@ -612,7 +612,9 @@ foreach ($listofreferent as $key => $value)
 		{
 			$addform.='<div class="inline-block valignmiddle">';
 			if ($testnew) $addform.='<a class="buttonxxx" href="'.$urlnew.'">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</a>';
-			else $addform.='<a class="buttonxxx buttonRefused" disabled="disabled" href="#">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</a>';
+			elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
+				$addform.='<a class="buttonxxx buttonRefused" disabled="disabled" href="#">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</a>';
+			}
             $addform.='<div>';
 		}
 
