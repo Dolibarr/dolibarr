@@ -1373,7 +1373,8 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta
 function dol_check_secure_access_document($modulepart,$original_file,$entity,$fuser='',$refname='')
 {
 	global $user, $conf, $db;
-
+	global $dolibarr_main_data_root;
+	
 	if (! is_object($fuser)) $fuser=$user;
 
 	if (empty($modulepart)) return 'ErrorBadParameter';
@@ -1834,7 +1835,6 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	elseif ($modulepart == 'medias' && !empty($dolibarr_main_data_root))
 	{
 	    $accessallowed=1;
-	    global $dolibarr_main_data_root;
 	    $original_file=$dolibarr_main_data_root.'/medias/'.$original_file;
 	}
 	
