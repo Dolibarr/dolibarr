@@ -562,7 +562,9 @@ function calendars_prepare_head($param)
 /**
 *    Return Array List with in agenda used thirdparties
 *
-*    @return     array      with in agenda used fk_soc numbers
+*		@param		int			$socid  	Id of thirdparty
+*		@param		string	$filter  	Filter String for Where Clause (Example: code = "AC_OTH_AUTO")
+*   @return   array      with in agenda used fk_soc numbers
 */
 function used_thirdparties_array($socid=0, $filter=false)
 {
@@ -577,7 +579,7 @@ function used_thirdparties_array($socid=0, $filter=false)
     $sql.= ' FROM '.MAIN_DB_PREFIX."actioncomm";
     $sql.= ' where fk_soc > 0';
     if ($socid > 0) $sql.= ' AND fk_soc = '.$socid;
-    if (isset($filter)) $sql.= " ".$filter;
+    if (isset($filter)) $sql.= ' AND '.$filter;
     $sql.= ' GROUP BY fk_soc;';
    	
     $resql=$db->query($sql);
