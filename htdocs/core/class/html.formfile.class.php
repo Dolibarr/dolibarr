@@ -333,7 +333,7 @@ class FormFile
         
         $titletoshow=$langs->trans("Documents");
         if (! empty($title)) $titletoshow=$title;
-
+        
         // Show table
         if ($genallowed)
         {
@@ -439,6 +439,15 @@ class FormFile
             		$modellist=ModelePDFTask::liste_modeles($this->db);
             	}
             }
+            elseif ($modulepart == 'product')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
+                    $modellist=ModelePDFProduct::liste_modeles($this->db);
+                }
+            }
             elseif ($modulepart == 'export')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
@@ -523,6 +532,24 @@ class FormFile
             else if ($modulepart == 'unpaid')
             {
                 $modellist='';
+            }
+            elseif ($modulepart == 'user')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/user/modules_user.class.php';
+                    $modellist=ModelePDFUser::liste_modeles($this->db);
+                }
+            }
+            elseif ($modulepart == 'usergroup')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/usergroup/modules_usergroup.class.php';
+                    $modellist=ModelePDFUserGroup::liste_modeles($this->db);
+                }
             }
             else //if ($modulepart != 'agenda')
             {

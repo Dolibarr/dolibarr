@@ -114,5 +114,12 @@ UPDATE llx_const set value='moono-lisa' where value = 'moono' AND name = 'FCKEDI
 ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
 
-ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;
+ALTER TABLE llx_user ADD COLUMN model_pdf varchar(255);
+ALTER TABLE llx_usergroup ADD COLUMN model_pdf varchar(255);
 
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('PRODUCT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/products', 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('CONTRACT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/contracts', 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USERGROUP_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/usergroups', 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USER_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/users', 'chaine', 0, '');
+
+ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;

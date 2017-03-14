@@ -33,13 +33,14 @@
 // Build doc
 if ($action == 'builddoc' && $permissioncreate)
 {
+	
     if (is_numeric(GETPOST('model')))
     {
         $error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
     }
     else
     {
-        // Reload to get all modified line records and be ready for hooks
+   		// Reload to get all modified line records and be ready for hooks
         $ret = $object->fetch($id);
         $ret = $object->fetch_thirdparty();
         /*if (empty($object->id) || ! $object->id > 0)

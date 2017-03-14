@@ -22,9 +22,9 @@
  */
 
 /**
- *   	\file       htdocs/admin/user.php
+ *   	\file       htdocs/admin/usergroup.php
  *		\ingroup    core
- *		\brief      Page to setup user module
+ *		\brief      Page to setup usergroup module
  */
 
 require '../main.inc.php';
@@ -41,7 +41,7 @@ $extrafields = new ExtraFields($db);
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
-$type='user';
+$type='group';
 
 /*
  * Action
@@ -88,7 +88,7 @@ elseif ($action == 'del_default')
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
-        if ($conf->global->USER_ADDON_PDF_ODT == "$value") dolibarr_del_const($db, 'USER_ADDON_PDF_ODT',$conf->entity);
+        if ($conf->global->USERGROUP_ADDON_PDF_ODT == "$value") dolibarr_del_const($db, 'USERGROUP_ADDON_PDF_ODT',$conf->entity);
 	}
 	$res = true;
 }
@@ -96,11 +96,11 @@ elseif ($action == 'del_default')
 // Set default model
 elseif ($action == 'setdoc')
 {
-	if (dolibarr_set_const($db, "USER_ADDON_PDF_ODT",$value,'chaine',0,'',$conf->entity))
+	if (dolibarr_set_const($db, "USERGROUP_ADDON_PDF_ODT",$value,'chaine',0,'',$conf->entity))
 	{
 		// La constante qui a ete lue en avant du nouveau set
 		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->USER_ADDON_PDF_ODT = $value;
+		$conf->global->USERGROUP_ADDON_PDF_ODT = $value;
 	}
 
 	// On active le modele
@@ -138,22 +138,6 @@ elseif (preg_match('/del_(.*)/',$action,$reg))
         dol_print_error($db);
     }
 }
-//Set hide closed customer into combox or select
-elseif ($action == 'sethideinactiveuser')
-{
-	$status = GETPOST('status','alpha');
-
-	if (dolibarr_set_const($db, "USER_HIDE_INACTIVE_IN_COMBOBOX",$status,'chaine',0,'',$conf->entity) > 0)
-	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
-
 /*
  * View
  */
@@ -167,44 +151,7 @@ print load_fiche_titre($langs->trans("UsersSetup"),$linkback,'title_setup');
 
 $head=user_admin_prepare_head();
 
-dol_fiche_head($head,'card', $langs->trans("MenuUsersAndGroups"), 0, 'user');
-
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
-print '</tr>';
-
-$var=true;
-$form = new Form($db);
-
-// Mail required for members
-$var=!$var;
-print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("UserMailRequired").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
-
-print '<td align="center" width="100">';
-if ($conf->use_javascript_ajax)
-{
-	print ajax_constantonoff('USER_MAIL_REQUIRED');
-}
-else
-{
-	if (empty($conf->global->USER_MAIL_REQUIRED))
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-	}
-	else
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Enabled"),'on').'</a>';
-	}
-}
-print '</td></tr>';
-
-print '</table>';
-
+dol_fiche_head($head,'usergroupcard', $langs->trans("MenuUsersAndGroups"), 0, 'user');
 
 
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
@@ -251,7 +198,7 @@ foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
     {
-    	$dir = dol_buildpath($reldir."core/modules/user".$valdir);
+    	$dir = dol_buildpath($reldir."core/modules/usergroup".$valdir);
         if (is_dir($dir))
         {
             $handle=opendir($dir);
@@ -309,7 +256,7 @@ foreach ($dirmodels as $reldir)
 
 	                            // Defaut
 	                            print '<td align="center">';
-	                            if ($conf->global->USER_ADDON_PDF == $name)
+	                            if ($conf->global->USERGROUP_ADDON_PDF == $name)
 	                            {
 	                                print img_picto($langs->trans("Default"),'on');
 	                            }
