@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2016 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
@@ -34,25 +34,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (! empty($conf->propal->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
-if (! empty($conf->commande->enabled))    require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (! empty($conf->propal->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (! empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+if (! empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
+if (! empty($conf->commande->enabled))		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (! empty($conf->supplier_proposal->enabled)) require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
-if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-if (! empty($conf->contrat->enabled))     require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-if (! empty($conf->ficheinter->enabled))  require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-if (! empty($conf->deplacement->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
-if (! empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-if (! empty($conf->agenda->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-if (! empty($conf->don->enabled))         require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-if (! empty($conf->loan->enabled))        require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-if (! empty($conf->stock->enabled))	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+if (! empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+if (! empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+if (! empty($conf->contrat->enabled))		require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+if (! empty($conf->ficheinter->enabled))	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+if (! empty($conf->deplacement->enabled))	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
+if (! empty($conf->expensereport->enabled))	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+if (! empty($conf->agenda->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+if (! empty($conf->don->enabled))			require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+if (! empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+if (! empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+if (! empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 
 $langs->load("projects");
 $langs->load("companies");
 $langs->load("suppliers");
+$langs->load("compta");
 if (! empty($conf->facture->enabled))  	    $langs->load("bills");
 if (! empty($conf->commande->enabled)) 	    $langs->load("orders");
 if (! empty($conf->propal->enabled))   	    $langs->load("propal");
@@ -406,7 +408,20 @@ $listofreferent=array(
 	'table'=>'stock_mouvement',
 	'datefieldname'=>'datem',
 	'disableamount'=>0,
-	'test'=>($conf->stock->enabled && $user->rights->stock->mouvement->lire && ! empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW)))
+	'test'=>($conf->stock->enabled && $user->rights->stock->mouvement->lire && ! empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))),
+'chargesociales'=>array(
+	'name'=>"SocialContribution",
+	'title'=>"ListSocialContributionAssociatedProject",
+	'class'=>'ChargeSociales',
+	'margin'=>'add',
+	'table'=>'chargesociales',
+	'datefieldname'=>'date_ech',
+	'disableamount'=>0,
+    'urlnew'=>DOL_URL_ROOT.'/compta/sociales/card.php?action=create&projectid='.$id,
+    'lang'=>'compta',
+    'buttonnew'=>'AddSocialContribution',
+    'testnew'=>$user->rights->tax->charges->lire,
+    'test'=>$conf->tax->enabled && $user->rights->tax->charges->lire)
 /* No need for this, available on dedicated tab "Agenda/Events"
 'agenda'=>array(
 	'name'=>"Agenda",
@@ -539,7 +554,7 @@ foreach ($listofreferent as $key => $value)
 
                 // Special cases
 				if ($tablename != 'expensereport_det' && method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
-				if ($tablename == 'don') $total_ht_by_line=$element->amount;
+				if ($tablename == 'don' || $tablename == 'chargesociales') $total_ht_by_line=$element->amount;
 				elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
 				elseif ($tablename == 'projet_task')
 				{
@@ -564,7 +579,7 @@ foreach ($listofreferent as $key => $value)
 
 				if ($qualifiedfortotal) $total_ht = $total_ht + $total_ht_by_line;
 
-				if ($tablename == 'don') $total_ttc_by_line=$element->amount;
+				if ($tablename == 'don' || $tablename == 'chargesociales') $total_ttc_by_line=$element->amount;
 				elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 				elseif ($tablename == 'projet_task')
 				{
@@ -865,9 +880,10 @@ foreach ($listofreferent as $key => $value)
 				$date=''; $total_time_by_line = null;
 				if ($tablename == 'expensereport_det') $date = $element->date;      // No draft status on lines
 				elseif ($tablename == 'stock_mouvement') $date = $element->datem;
+				if ($tablename == 'chargesociales') $date = $element->date_ech;
 				elseif (! empty($element->status) || ! empty($element->statut) || ! empty($element->fk_status))
 				{
-				    if ($tablename=='don') $date = $element->datedon;
+				    if ($tablename == 'don') $date = $element->datedon;
 				    if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order')
     				{
     				    $date=($element->date_commande?$element->date_commande:$element->date_valid);
@@ -927,7 +943,7 @@ foreach ($listofreferent as $key => $value)
 				{
 				    $total_ht_by_line=null;
 				    $othermessage='';
-					if ($tablename == 'don') $total_ht_by_line=$element->amount;
+					if ($tablename == 'don' || $tablename == 'chargesociales') $total_ht_by_line=$element->amount;
 					elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
 					elseif (in_array($tablename, array('projet_task')))
 					{
@@ -967,7 +983,7 @@ foreach ($listofreferent as $key => $value)
 				if (empty($value['disableamount']))
 				{
 				    $total_ttc_by_line=null;
-					if ($tablename == 'don') $total_ttc_by_line=$element->amount;
+					if ($tablename == 'don' || $tablename == 'chargesociales') $total_ttc_by_line=$element->amount;
 					elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 					elseif ($tablename == 'projet_task')
 					{
