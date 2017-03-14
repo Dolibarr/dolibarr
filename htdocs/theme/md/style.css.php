@@ -292,18 +292,24 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     outline: none;
     margin: 0px 0px 0px 0px;
 }
-input, select {
-	border-bottom: solid 1px rgba(0,0,0,.1);
 
+input {
+    line-height: 17px;
+	padding: 4px;
+	padding-left: 5px;
+}
+select {
+	padding: 4px;
+	padding-left: 2px;
+}
+input, select {
 	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
 }
-input {
-	padding:4px;
-}
-select {
-	padding:1px;
+
+input, select {
+	border-bottom: solid 1px rgba(0,0,0,.1);
 }
 
 textarea {

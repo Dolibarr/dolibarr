@@ -268,7 +268,7 @@ input.select2-input {
 	border-bottom:  solid 1px rgba(0,0,0,.2) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
 
-.liste_titre input[name=month], .liste_titre input[name=month_lim] {
+.liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre input[name=month_lim] {
 	margin-right: 4px;
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
@@ -282,9 +282,14 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 }
 input {
     line-height: 17px;
+	padding: 4px;
+	padding-left: 5px;
+}
+select {
+	padding: 4px;
+	padding-left: 2px;
 }
 input, select {
-	padding: 4px;
 	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
@@ -4003,7 +4008,7 @@ a span.select2-chosen
 }
 .select2-container .select2-choice {
 	background-image: none;
-	line-height: 24px;
+	/* line-height: 24px; */
 }
 .select2-results .select2-no-results, .select2-results .select2-searching, .select2-results .select2-ajax-error, .select2-results .select2-selection-limit
 {
