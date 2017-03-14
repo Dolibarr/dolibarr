@@ -18,15 +18,15 @@ then
 fi
 
 soffice="/usr/bin/soffice"
-
+home_java="/tmp"
 
 if [ -f "$1.odt" ]
  then
   nbprocess=$(pgrep -c soffice)
   if [ $nbprocess -ne 1 ]	# If there is some soffice process running
    then
-    cmd="$soffice --invisible --accept=socket,host=127.0.0.1,port=8100;urp; --nofirststartwizard --headless"
-    $cmd &
+    cmd="$soffice --invisible --accept=socket,host=127.0.0.1,port=8100;urp; --nofirststartwizard --headless -env:UserInstallation=file:///$home_java/"
+    export HOME=$home_java && cd $home_java && $cmd&
     retcode=$?
     if [ $retcode -ne 0 ]
      then
