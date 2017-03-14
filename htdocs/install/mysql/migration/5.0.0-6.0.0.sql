@@ -114,3 +114,11 @@ UPDATE llx_const set value='moono-lisa' where value = 'moono' AND name = 'FCKEDI
 ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
 
+ALTER TABLE llx_user ADD COLUMN model_pdf varchar(255);
+ALTER TABLE llx_usergroup ADD COLUMN model_pdf varchar(255);
+
+INSERT INTO `llx_const` (`name`, `entity`, `value`, `type`, `visible`, `note`, `tms`) VALUES
+('PRODUCT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/products', 'chaine', 0, '', '2017-03-13 16:54:30'),
+('CONTRACT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/contracts', 'chaine', 0, '', '2017-03-13 13:07:27'),
+('USERGROUP_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/usergroups', 'chaine', 0, '', '2017-03-10 15:25:06'),
+('USER_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/users', 'chaine', 0, '', '2017-03-10 15:14:14')

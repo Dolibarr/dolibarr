@@ -147,7 +147,6 @@ if (empty($reshook))
 	{
 		// Save last template used to generate document
 		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
 		// Define output language
 		$outputlangs = $langs;
 		$newlang='';
@@ -158,11 +157,12 @@ if (empty($reshook))
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		$result=product_create($db, $object, GETPOST('model','alpha'), $outputlangs);
+		$ret = $object->fetch($id); // Reload to get new records
+		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		if ($result <= 0)
 		{
-			dol_print_error($db,$result);
-			exit;
+			setEventMessages($object->error, $object->errors, 'errors');
+	        $action='';
 		}
 	}
 	
@@ -197,6 +197,20 @@ if (empty($reshook))
 			setEventMessages($errors, null, 'errors');
 		}
     }
+	
+	// Remove file in doc form
+	if ($action == 'remove_file' && $user->rights->produit->creer) {
+		if ($object->id > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	
+			$langs->load("other");
+			$upload_dir = $conf->product->dir_output;
+			$file = $upload_dir . '/' . GETPOST('file');
+			$ret = dol_delete_file($file, 0, 0, 0, $object);
+			if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
+		}
+	}
 
     // Add a product or service
     if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
@@ -2001,7 +2015,7 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
 /*
  * Documents generes
  */
-if ($action == '' || $action == 'view')
+if ($action != 'edit' && $action != 'delete')
 {
     print '<div class="fichecenter"><div class="fichehalfleft">';
     print '<a name="builddoc"></a>'; // ancre

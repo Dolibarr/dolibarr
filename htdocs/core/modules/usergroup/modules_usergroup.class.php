@@ -52,7 +52,7 @@ abstract class ModelePDFUserGroup extends CommonDocGenerator
 	{
 		global $conf;
 
-		$type='usergroup';
+		$type='group';
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

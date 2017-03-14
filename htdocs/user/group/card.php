@@ -210,6 +210,11 @@ if ($action == 'update')
         setEventMessages($langs->trans('ErrorForbidden'), null, 'mesgs');
     }
 }
+					
+// Actions to build doc
+$upload_dir = $conf->usergroup->dir_output;
+$permissioncreate=$user->rights->user->user->creer;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
 
@@ -498,11 +503,6 @@ else
             }
             print "</table>";
             print "<br>";
-					
-		    // Actions to build doc
-		    $upload_dir = $conf->usergroup->dir_output;
-		    $permissioncreate=$user->rights->user->user->creer;
-		    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 			
 			/*
 	         * Documents generes
