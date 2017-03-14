@@ -400,7 +400,7 @@ if ($id > 0 || ! empty($ref))
 			// Description
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 			print '<td>';
-			print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
+			print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$object->description.'</textarea>';
 			print '</td></tr>';
 
 			// Other options
