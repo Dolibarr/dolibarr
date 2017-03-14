@@ -464,7 +464,7 @@ class FormProjets
 		if ($table_element == 'projet_task') return '';		// Special cas of element we never link to a project (already always done)
 
 		$linkedtothirdparty=false;
-		if (! in_array($table_element, array('don','expensereport_det','expensereport','loan','stock_mouvement'))) $linkedtothirdparty=true;
+		if (! in_array($table_element, array('don','expensereport_det','expensereport','loan','stock_mouvement','chargesociales'))) $linkedtothirdparty=true;
 
 		$sqlfilter='';
 		$projectkey="fk_projet";
@@ -507,6 +507,7 @@ class FormProjets
 				$sql = 'SELECT t.rowid, t.label as ref';
 				$projectkey='fk_origin';
 				break;
+			case "chargesociales":
 			default:
 				$sql = "SELECT t.rowid, t.ref";
 				break;
@@ -597,7 +598,7 @@ class FormProjets
 			if ($num > 0)
 			{
 				$sellist = '<select class="flat oppstatus'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
-				if ($showempty) $sellist.= '<option value="-1"></option>';
+				if ($showempty) $sellist.= '<option value="-1">&nbsp;</option>';    // Without &nbsp, strange move of screen when switching value
 				if ($showallnone) $sellist.= '<option value="all"'.($preselected == 'all'?' selected="selected"':'').'>--'.$langs->trans("OnlyOpportunitiesShort").'--</option>';
 				if ($showallnone) $sellist.= '<option value="openedopp"'.($preselected == 'openedopp'?' selected="selected"':'').'>--'.$langs->trans("OpenedOpportunitiesShort").'--</option>';
 				if ($showallnone) $sellist.= '<option value="none"'.($preselected == 'none'?' selected="selected"':'').'>--'.$langs->trans("NotAnOpportunityShort").'--</option>';

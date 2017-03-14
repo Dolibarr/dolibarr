@@ -1514,13 +1514,13 @@ else
             // Ref/ID
 			if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
 			{
-		        print '<tr><td>'.$langs->trans("ID").'</td><td colspan="3">';
+		        print '<tr><td class="titlefieldcreate">'.$langs->trans("ID").'</td><td colspan="3">';
             	print $object->ref;
             	print '</td></tr>';
 			}
 
             // Name
-            print '<tr><td class="titlefield">'.fieldLabel('ThirdPartyName','name',1).'</td>';
+            print '<tr><td class="titlefieldcreate">'.fieldLabel('ThirdPartyName','name',1).'</td>';
 	        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
 
 	        // Alias names (commercial, trademark or alias names)

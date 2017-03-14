@@ -110,14 +110,14 @@ class box_actions extends ModeleBoxes
 					$label = empty($objp->label)?$objp->type_label:$objp->label;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $actionstatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => ($societestatic->id > 0 ? $societestatic->getNomUrl(1) : ''),
                         'asis' => 1,
                     );
@@ -128,7 +128,7 @@ class box_actions extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => ($objp->percentage>= 0?$objp->percentage.'%':''),
                     );
 
@@ -149,7 +149,7 @@ class box_actions extends ModeleBoxes
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );

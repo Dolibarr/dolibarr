@@ -1047,9 +1047,15 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
             }
         }
 	}
+	
 	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
-	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-		$morehtmlstatus.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
+	
+	if ($object->element == 'societe')
+	{
+	    if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) 
+    	{
+	       	$morehtmlstatus.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
+    	}
 	}
 	elseif ($object->element == 'product')
 	{
@@ -1099,9 +1105,9 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	
 	if ($object->element == 'product' || $object->element == 'bank_account')
 	{
-		if(! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
+		if (! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
 	}
-
+	
 	if ($object->element != 'product' && $object->element != 'bookmark') 
 	{
     	$morehtmlref.='<div class="refidno">';

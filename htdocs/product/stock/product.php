@@ -110,7 +110,7 @@ $parameters=array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if($action == 'addlimitstockwarehouse') {
+if ($action == 'addlimitstockwarehouse') {
 	
 	$seuil_stock_alerte = GETPOST('seuil_stock_alerte');
 	$desiredstock = GETPOST('desiredstock');
@@ -625,7 +625,8 @@ if ($id > 0 || $ref)
         print '</td></tr>';
 
         // Real stock
-        $text_stock_options = '';
+        $text_stock_options = $langs->trans("RealStockDesc").'<br>';
+        $text_stock_options.= $langs->trans("RealStockWillAutomaticallyWhen").'<br>';
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)?$langs->trans("DeStockOnShipment").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)?$langs->trans("DeStockOnValidateOrder").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_BILL)?$langs->trans("DeStockOnBill").'<br>':'');
@@ -642,56 +643,54 @@ if ($id > 0 || $ref)
 
 		$stocktheo = price2num($object->stock_theorique, 'MS');
 		
+		$found=0;
+		$helpondiff='<strong>'.$langs->trans("StockDiffPhysicTeoric").':</strong><br>';
+		// Number of customer orders running
+		if (! empty($conf->commande->enabled))
+		{
+		    if ($found) $helpondiff.='<br>'; else $found=1;
+		    $helpondiff.=$langs->trans("ProductQtyInCustomersOrdersRunning").': '.$object->stats_commande['qty'];
+		    $result=$object->load_stats_commande(0,'0');
+		    if ($result < 0) dol_print_error($db,$object->error);
+		    $helpondiff.=' ('.$langs->trans("ProductQtyInDraft").': '.$object->stats_commande['qty'].')';
+		}
+		
+		// Number of product from customer order already sent (partial shipping)
+		if (! empty($conf->expedition->enabled))
+		{
+		    if ($found) $helpondiff.='<br>'; else $found=1;
+		    $result=$object->load_stats_sending(0,'2');
+		    $helpondiff.=$langs->trans("ProductQtyInShipmentAlreadySent").': '.$object->stats_expedition['qty'];
+		}
+		
+		// Number of supplier order running
+		if (! empty($conf->fournisseur->enabled))
+		{
+		    if ($found) $helpondiff.='<br>'; else $found=1;
+		    $result=$object->load_stats_commande_fournisseur(0,'3,4');
+		    $helpondiff.=$langs->trans("ProductQtyInSuppliersOrdersRunning").': '.$object->stats_commande_fournisseur['qty'];
+		    $result=$object->load_stats_commande_fournisseur(0,'0,1,2');
+		    if ($result < 0) dol_print_error($db,$object->error);
+		    $helpondiff.=' ('.$langs->trans("ProductQtyInDraftOrWaitingApproved").': '.$object->stats_commande_fournisseur['qty'].')';
+		}
+		
+		// Number of product from supplier order already received (partial receipt)
+		if (! empty($conf->fournisseur->enabled))
+		{
+		    if ($found) $helpondiff.='<br>'; else $found=1;
+		    $helpondiff.=$langs->trans("ProductQtyInSuppliersShipmentAlreadyRecevied").': '.$object->stats_reception['qty'];
+		}
+		
         // Calculating a theorical value
-        print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
-        print "<td>".(empty($stocktheo)?0:$stocktheo);
+        print '<tr><td>';
+        print $form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc"));
+        print '</td>';
+        print "<td>";
+        //print (empty($stocktheo)?0:$stocktheo);
+        print $form->textwithpicto((empty($stocktheo)?0:$stocktheo), $helpondiff);
         if ($object->seuil_stock_alerte != '' && ($object->stock_theorique < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
         print '</td>';
         print '</tr>';
-
-        print '<tr><td>';
-        print $langs->trans("StockDiffPhysicTeoric");
-        print '</td>';
-        print '<td>';
-
-        $found=0;
-        // Number of customer orders running
-        if (! empty($conf->commande->enabled))
-        {
-            if ($found) print '<br>'; else $found=1;
-            print $langs->trans("ProductQtyInCustomersOrdersRunning").': '.$object->stats_commande['qty'];
-            $result=$object->load_stats_commande(0,'0');
-            if ($result < 0) dol_print_error($db,$object->error);
-            print ' ('.$langs->trans("ProductQtyInDraft").': '.$object->stats_commande['qty'].')';
-        }
-
-        // Number of product from customer order already sent (partial shipping)
-        if (! empty($conf->expedition->enabled))
-        {
-            if ($found) print '<br>'; else $found=1;
-            $result=$object->load_stats_sending(0,'2');
-            print $langs->trans("ProductQtyInShipmentAlreadySent").': '.$object->stats_expedition['qty'];
-        }
-
-        // Number of supplier order running
-        if (! empty($conf->fournisseur->enabled))
-        {
-            if ($found) print '<br>'; else $found=1;
-            $result=$object->load_stats_commande_fournisseur(0,'3,4');
-            print $langs->trans("ProductQtyInSuppliersOrdersRunning").': '.$object->stats_commande_fournisseur['qty'];
-            $result=$object->load_stats_commande_fournisseur(0,'0,1,2');
-            if ($result < 0) dol_print_error($db,$object->error);
-            print ' ('.$langs->trans("ProductQtyInDraftOrWaitingApproved").': '.$object->stats_commande_fournisseur['qty'].')';
-        }
-
-	    // Number of product from supplier order already received (partial receipt)
-        if (! empty($conf->fournisseur->enabled))
-        {
-            if ($found) print '<br>'; else $found=1;
-            print $langs->trans("ProductQtyInSuppliersShipmentAlreadyRecevied").': '.$object->stats_reception['qty'];
-        }
-
-        print '</td></tr>';
 
 		// Last movement
 		$sql = "SELECT max(m.datem) as datem";

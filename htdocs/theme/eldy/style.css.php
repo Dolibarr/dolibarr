@@ -100,7 +100,6 @@ $usegradienttop=(isset($conf->global->THEME_ELDY_TOPMENU_BACK1)?0:1);
 $usegradienttitle=(isset($conf->global->THEME_ELDY_BACKTITLE1)?0:1);
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
 $borderwith=2;
-$noborderline=0;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
@@ -261,24 +260,12 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     background-color: #FFF;
 }
 
-textarea:focus, button:focus {
-    /* v6 box-shadow: 0 0 4px #8091BF; */
-	border: 1px solid #aaa !important;
-}
-input:focus, select:focus {
-	border-bottom: 1px solid #666;
-}
 input.select2-input {
 	border-bottom: none ! important;
 }
 .select2-choice {
 	border: none;
-	border-bottom: 1px solid #aaa !important;
-}
-
-textarea.cke_source:focus
-{
-	box-shadow: none;
+	border-bottom:  solid 1px rgba(0,0,0,.2) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
 
 .liste_titre input[name=month], .liste_titre input[name=month_lim] {
@@ -289,7 +276,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-family: <?php print $fontlist ?>;
 
     border: none;
-    border-bottom: 1px solid #C0C0C0;
+    border-bottom: solid 1px rgba(0,0,0,.2);
     outline: none;
     margin: 0px 0px 0px 0px;
 }
@@ -297,17 +284,33 @@ input {
     line-height: 17px;
 }
 input, select {
-	border-bottom: solid 1px rgba(0,0,0,.2);
-
-	padding:4px;
+	padding: 4px;
 	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
-	}
+}
+
+/* Focus definitions must be after standard definition */
+textarea:focus, button:focus {
+    /* v6 box-shadow: 0 0 4px #8091BF; */
+	border: 1px solid #aaa !important;
+}
+input:focus, select:focus {
+	border-bottom: 1px solid #666;
+}
+textarea.cke_source:focus
+{
+	box-shadow: none;
+}
+
+select {
+	/* padding: 4px 4px 2px 1px; */
+}
 textarea {
 	border-radius: 0;
-	border: solid 1px rgba(0,0,0,.3);
-	border-top:solid 1px rgba(0,0,0,.3);
+	border-top:solid 1px rgba(0,0,0,.2);
+	border-left:solid 1px rgba(0,0,0,.2);
+	border-right:solid 1px rgba(0,0,0,.2);
 	border-bottom:solid 1px rgba(0,0,0,.2);
 
 	padding:4px;
@@ -375,7 +378,8 @@ input:-webkit-autofill {
 ::-moz-placeholder { color:#bbb; } 			/* firefox 19+ */
 :-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
-
+input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight] { margin-right: 6px; }
+input[name=surface] { margin-right: 4px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
 
@@ -384,7 +388,7 @@ fieldset { border: 1px solid #AAAAAA !important; }
 	border-color: #c5c5c5;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
-	padding: 4px 14px;
+	padding: 3px 14px;
 	margin-bottom: 0;
 	margin-top: 0;
 	text-align: center;
@@ -475,6 +479,9 @@ th .button {
 }
 .valignbottom {
 	vertical-align: bottom;
+}
+.valigntextbottom {
+	vertical-align: text-bottom;
 }
 .centpercent {
 	width: 100%;
@@ -919,8 +926,8 @@ div.fiche {
 
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'6':'20')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'6')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'6':'26')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'16':'6')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
 	<?php if (! empty($conf->dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
 }
@@ -1476,10 +1483,6 @@ form#login {
 	-moz-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
 	-webkit-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
 	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
-
-	/*-moz-box-shadow: 3px 2px 20px #CCC;
-    -webkit-box-shadow: 3px 2px 20px #CCC;
-    box-shadow: 3px 2px 20px #CCC;*/
 
 	border-radius: 5px;
 	/*border-top:solid 1px rgba(180,180,180,.4);
@@ -2273,9 +2276,6 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 
 table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
-<?php if (empty($noborderline)) { ?>
-	border: 1px solid #E0E0E0;
-<?php } ?>
 	border-collapse: collapse !important;
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
@@ -2295,17 +2295,13 @@ div .tdtop {
 }
 
 table.border td, div.border div div.tagtd {
-<?php if (empty($noborderline)) { ?>
-	padding: 2px 2px 2px 2px;
-	border: 1px solid #E0E0E0;
-<?php } elseif ($noborderline == 1) { ?>
 	padding: 3px 2px 3px 2px;
-	border-bottom: 1px solid #E0E0E0;
-<?php } elseif ($noborderline == 2) { ?>
-	padding: 3px 2px 3px 2px;
-	/* border: 1px solid #E0E0E0; */
-<?php } ?>
 	border-collapse: collapse;
+}
+div.tabBar .fichecenter table.border>tbody>tr>td, div.tabBar .fichecenter div.border div div.tagtd, div.tabBar div.border div div.tagtd
+{
+	padding-top: 4px;
+	border-bottom: 1px solid #E0E0E0;
 }
 
 td.border, div.tagtable div div.border {
@@ -2561,11 +2557,13 @@ div.pagination li.paginationafterarrows {
 
 
 
+
 /* Set the color for hover lines */
-.oddeven:hover, .odd:hover, .impair:hover, .even:hover, .pair:hover, .even:hover, .pair:hover, table.dataTable tr.even:hover, table.dataTable tr.odd:hover
+.oddeven:hover, .odd:hover, .impair:hover, .even:hover, .pair:hover, .even:hover, .pair:hover,
+table.dataTable tr.even:hover, table.dataTable tr.odd:hover
 {
 <?php if ($colorbacklinepairhover) { ?>
-	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
+	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;		/* Must be background to be stronger than background of odd or even */
 <?php } ?>
 }
 
@@ -2580,7 +2578,7 @@ div.pagination li.paginationafterarrows {
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
 #GanttChartDIV {
-	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
+	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
 
 .oddeven, .even, .pair, .nohover .even:hover, .nohover .pair:hover, tr.even td.nohover, tr.pair td.nohover {
@@ -2597,7 +2595,7 @@ table.dataTable tr.odd, table.dataTable tr.oddeven {
 }
 
 /* For no hover style */
-td.oddeven, table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.impair td, table.nohover tr.pair td, tr.nohover td {
+td.oddeven, table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.impair td, table.nohover tr.pair td, tr.nohover td, form.nohover, form.nohover:hover {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
 }
@@ -2605,6 +2603,7 @@ tr.nohoverpair td {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 }
+
 
 table.dataTable td {
     padding: 5px 2px 5px 3px !important;
@@ -2854,6 +2853,7 @@ span.dashboardlineko {
 }
 .boxtable {
     margin-bottom: 8px !important;
+    border-bottom-width: 0 !important;
 }
 .tdboxstats {
 	text-align: center;
@@ -3910,6 +3910,9 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.select2-choice, .select2-container .select2-choice {
+	border-bottom: solid 1px rgba(0,0,0,.2);
+}
 .select2-container .select2-choice > .select2-chosen {
     margin-right: 23px;
 }
@@ -3936,13 +3939,13 @@ div.dataTables_length select {
 	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
-	border-bottom: 1px solid #aaa;
 }
 .select2-drop.select2-drop-above {
 	box-shadow: none !important;
 }
 .select2-drop.select2-drop-above.select2-drop-active {
 	border-top: 1px solid #ccc;
+	border-bottom: solid 1px rgba(0,0,0,.2);
 }
 .select2-container-active .select2-choice, .select2-container-active .select2-choices 
 {
@@ -3978,8 +3981,6 @@ div.dataTables_length select {
 }
 .select2-dropdown-open.select2-drop-above .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choices {
 	background-image: none;
-	border-left: 1px solid #ccc !important;
-	border-right: 1px solid #ccc !important;
 	border-radius: 0 !important;
 }
 div.select2-drop-above
@@ -4023,6 +4024,15 @@ a span.select2-chosen
 .select2-container-multi .select2-choices .select2-search-choice {
   margin-bottom: 3px;
 }
+.select2-dropdown-open.select2-drop-above .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choices, .select2-container-multi .select2-choices,
+.select2-container-multi.select2-container-active .select2-choices
+{
+	border-bottom: none;
+	border-right: none;
+	border-top: none;
+	border-left: 1px solid #ddd;
+}
+
 
 /* Special case for the select2 add widget */
 #addbox .select2-container .select2-choice > .select2-chosen {

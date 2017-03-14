@@ -447,7 +447,7 @@ class Form
         else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':'').($extrastyle?' style="'.$extrastyle.'"':''); // Attribut to put on td text tag
         if ($tooltipon == 1 || $tooltipon == 3) 
         {
-            $paramfortooltiptd=' class="'.$classfortooltip.' inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'" ';
+            $paramfortooltiptd=' class="'.($tooltipon == 3 ? 'cursorpointer ' : '').$classfortooltip.' inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'" ';
             if ($tooltiptrigger == '') $paramfortooltiptd.=' title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
             else $paramfortooltiptd.=' dolid="'.$tooltiptrigger.'"';
         }
@@ -524,7 +524,7 @@ class Form
         elseif ($type == 'warning') $img = img_warning($alt);
 		else $img = img_picto($alt, $type);
 
-        return $this->textwithtooltip($text, $htmltext, 2, $direction, $img, $extracss, $notabs, '', $noencodehtmltext, $tooltiptrigger);
+        return $this->textwithtooltip($text, $htmltext, ($tooltiptrigger?3:2), $direction, $img, $extracss, $notabs, '', $noencodehtmltext, $tooltiptrigger);
     }
 
     /**
@@ -5851,7 +5851,13 @@ class Form
 		{
 		    $ret.=dol_htmlentities($object->getFullName($langs));
 		}
+		else if (in_array($object->element, array('action', 'agenda')))
+		{
+		    $ret.=$object->ref.'<br>'.$object->label;    
+		}
 		else if ($fieldref != 'none') $ret.=dol_htmlentities($object->$fieldref);
+		
+		
 		if ($morehtmlref)
 		{
 		    $ret.=' '.$morehtmlref;

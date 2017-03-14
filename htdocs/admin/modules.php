@@ -516,6 +516,7 @@ if ($mode == 'common')
 
         // Check filters
         $modulename=$objMod->getName();
+        $moduletechnicalname=$objMod->name;
         $moduledesc=$objMod->getDesc();
         $moduledesclong=$objMod->getDescLong();
         $moduleauthor=$objMod->getPublisher();
@@ -525,6 +526,7 @@ if ($mode == 'common')
         {
             $qualified=0;
             if (preg_match('/'.preg_quote($search_keyword).'/i', $modulename)
+                || preg_match('/'.preg_quote($search_keyword).'/i', $moduletechnicalname)
                 || preg_match('/'.preg_quote($search_keyword).'/i', $moduledesc)
                 || preg_match('/'.preg_quote($search_keyword).'/i', $moduledesclong)
                 || preg_match('/'.preg_quote($search_keyword).'/i', $moduleauthor)

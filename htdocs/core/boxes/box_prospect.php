@@ -117,13 +117,13 @@ class box_prospect extends ModeleBoxes
                     $thirdpartystatic->logo = $objp->logo;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $thirdpartystatic->getNomUrl(1),
                     	'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => dol_print_date($datem, "day"),
                     );
 
@@ -149,14 +149,14 @@ class box_prospect extends ModeleBoxes
                 $db->free($resql);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
+                'td' => '',
                 'text' => $langs->trans("ReadPermissionNotAllowed"),
             );
 		}

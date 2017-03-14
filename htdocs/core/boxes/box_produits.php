@@ -106,13 +106,13 @@ class box_produits extends ModeleBoxes
 					$productstatic->entity = $objp->entity;
 
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $productstatic->getNomUrl(1),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $objp->label,
                     );
 
@@ -139,7 +139,7 @@ class box_produits extends ModeleBoxes
 	                    }
 	               	}
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => $price,
                     );
 
@@ -149,7 +149,7 @@ class box_produits extends ModeleBoxes
                     );
 
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => dol_print_date($datem,'day'),
                     );
 
@@ -174,14 +174,14 @@ class box_produits extends ModeleBoxes
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
+                'td' => '',
                 'text' => $langs->trans("ReadPermissionNotAllowed"),
             );
         }

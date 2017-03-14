@@ -155,13 +155,13 @@ class box_services_contracts extends ModeleBoxes
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
+				$this->info_box_contents[0][0] = array(	'td' => '',
     	        										'maxlength'=>500,
 	            										'text' => ($db->error().' sql='.$sql));
 			}
 		}
 		else {
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
+			$this->info_box_contents[0][0] = array('td' => '',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
 		}
 

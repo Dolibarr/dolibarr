@@ -741,7 +741,7 @@ while ($i < min($num,$limit))
     		print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
     	}
-    	// Amount
+    	// Opp Amount
     	if (! empty($arrayfields['p.opp_amount']['checked']))
     	{
 			print '<td align="right">';
@@ -754,6 +754,7 @@ while ($i < min($num,$limit))
 			if (! $i) $totalarray['nbfield']++;
 			if (! $i) $totalarray['totaloppfield']=$totalarray['nbfield'];
     	}
+    	// Opp Status
     	if (! empty($arrayfields['p.fk_opp_status']['checked']))
     	{
             print '<td align="middle">';
@@ -761,6 +762,7 @@ while ($i < min($num,$limit))
 			print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
     	}
+    	// Opp percent
 	    if (! empty($arrayfields['p.opp_percent']['checked']))
     	{
 			print '<td align="right">';
@@ -768,6 +770,7 @@ while ($i < min($num,$limit))
 			print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
     	}
+    	// Budget
 	    if (! empty($arrayfields['p.budget_amount']['checked']))
     	{
 			print '<td align="right">';

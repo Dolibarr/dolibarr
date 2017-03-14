@@ -1231,11 +1231,11 @@ abstract class CommonObject
      *	@param	int			$id			To force other object id (should not be used)
      *	@param	string		$format		Data format ('text', 'date'). 'text' is used if not defined
      *	@param	string		$id_field	To force rowid field name. 'rowid' is used if not defined
-     *	@param	User|string	$user		Update last update fields also if user object provided
+     *	@param	User|string	$fuser		Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
      *  @param  string      $trigkey    Trigger key to run (in most cases something like 'XXX_MODIFY')
      *	@return	int						<0 if KO, >0 if OK
      */
-    function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $user='', $trigkey='')
+    function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $fuser=null, $trigkey='')
     {
         global $user,$langs,$conf;
         
@@ -1255,7 +1255,8 @@ abstract class CommonObject
         if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
         else if ($format == 'int') $sql.= $field." = ".$this->db->escape($value);
         else if ($format == 'date') $sql.= $field." = ".($value ? "'".$this->db->idate($value)."'" : "null");
-        if (is_object($user)) $sql.=", fk_user_modif = ".$user->id;
+        if (! empty($fuser) && is_object($fuser)) $sql.=", fk_user_modif = ".$fuser->id;
+        elseif (empty($fuser) || $fuser != 'none') $sql.=", fk_user_modif = ".$user->id;
         $sql.= " WHERE ".$id_field." = ".$id;
 
         dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
@@ -1264,7 +1265,7 @@ abstract class CommonObject
         {
             if ($trigkey)
             {
-                $result=$this->call_trigger($trigkey, $user);   // This may set this->errors
+                $result=$this->call_trigger($trigkey, (! empty($fuser) && is_object($fuser)) ? $fuser : $user);   // This may set this->errors
                 if ($result < 0) $error++;
             }
 
