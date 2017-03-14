@@ -516,7 +516,6 @@ foreach($dashboardlines as $tmp)
 {
 	if ($tmp instanceof WorkboardResponse) $valid_dashboardlines[] = $tmp;
 }
-$rowspan = count($valid_dashboardlines);
 
 // We calculate $totallate. Must be defined before start of next loop because it is show in first fetch on next loop
 foreach($valid_dashboardlines as $board)
@@ -549,8 +548,6 @@ if ($showweather)
     $text='';
     if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate).')';
     $options='height="64px"';
-    if ($rowspan <= 2) $options='height="24"';  // Weather logo is smaller if dashboard has few elements
-    else if ($rowspan <= 3) $options='height="48"';  // Weather logo is smaller if dashboard has few elements
     $boxwork.=showWeather($totallate,$text,$options);
     $boxwork.='</td>';
     /*$boxwork.='<td align="left" colspan="3" class="nohover">';
@@ -564,43 +561,54 @@ if ($showweather)
 
 // Show dashboard
 $nbworkboardempty=0;
-foreach($valid_dashboardlines as $board)
+if (! empty($valid_dashboardlines))
 {
-    if (empty($boad->nbtodo)) $nbworkboardempty++;
-    
-    $var=!$var;
-    $boxwork .= '<tr class="oddeven'.($board->nbtodo?'':' workboardempty').'"><td class="nowrap">'.$board->img.' &nbsp; '.$board->label.'</td>';
-    $boxwork .= '<td align="right"><a class="dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator">'.$board->nbtodo.'</span></a></td>';
-    $boxwork .= '<td align="right">';
-    $textlate = $langs->trans("NActionsLate",$board->nbtodolate);
-    $textlate.= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
-    $boxwork .= '<a title="'.dol_escape_htmltag($textlate).'" class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'" href="'.((!$board->url_late) ? $board->url : $board->url_late ).'">';
-    $boxwork .= '<span class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'">';
-    $boxwork .= $board->nbtodolate;
-    $boxwork .= '</span>';
-    $boxwork .= '</a>';
-    $boxwork .='</td>';
-    $boxwork .='<td>';
-    if ($board->nbtodolate > 0) $boxwork .=img_picto($textlate, "warning", 'class="valignmiddle"').' ';
-    $boxwork .='</td>';
-    /*print '<td class="nowrap" align="right">';
-    print ' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')';
-    print '</td>';*/
-    /*
-    if ($showweather)
+    foreach($valid_dashboardlines as $board)
     {
-        $boxwork.='<td class="nohover hideonsmartphone noborderbottom" rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';
-        $text='';
-        if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate).')';
-        $options='height="64px"';
-        if ($rowspan <= 2) $options='height="24"';  // Weather logo is smaller if dashboard has few elements
-        else if ($rowspan <= 3) $options='height="48"';  // Weather logo is smaller if dashboard has few elements
-        $boxwork.=showWeather($totallate,$text,$options);
-        $boxwork.='</td>';
-        $showweather=0;
-    }*/
-    $boxwork .='</tr>';
-    $boxwork .="\n";
+        if (empty($boad->nbtodo)) $nbworkboardempty++;
+        
+        $var=!$var;
+        $boxwork .= '<tr class="oddeven'.($board->nbtodo?'':' workboardempty').'"><td class="nowrap">'.$board->img.' &nbsp; '.$board->label.'</td>';
+        $boxwork .= '<td align="right"><a class="dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator">'.$board->nbtodo.'</span></a></td>';
+        $boxwork .= '<td align="right">';
+        $textlate = $langs->trans("NActionsLate",$board->nbtodolate);
+        $textlate.= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
+        $boxwork .= '<a title="'.dol_escape_htmltag($textlate).'" class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'" href="'.((!$board->url_late) ? $board->url : $board->url_late ).'">';
+        $boxwork .= '<span class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'">';
+        $boxwork .= $board->nbtodolate;
+        $boxwork .= '</span>';
+        $boxwork .= '</a>';
+        $boxwork .='</td>';
+        $boxwork .='<td>';
+        if ($board->nbtodolate > 0) $boxwork .=img_picto($textlate, "warning", 'class="valignmiddle"').' ';
+        $boxwork .='</td>';
+        /*print '<td class="nowrap" align="right">';
+        print ' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')';
+        print '</td>';*/
+        /*
+        if ($showweather)
+        {
+            $boxwork.='<td class="nohover hideonsmartphone noborderbottom" rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';
+            $text='';
+            if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate).')';
+            $options='height="64px"';
+            if ($rowspan <= 2) $options='height="24"';  // Weather logo is smaller if dashboard has few elements
+            else if ($rowspan <= 3) $options='height="48"';  // Weather logo is smaller if dashboard has few elements
+            $boxwork.=showWeather($totallate,$text,$options);
+            $boxwork.='</td>';
+            $showweather=0;
+        }*/
+        $boxwork .='</tr>';
+        $boxwork .="\n";
+    }
+}
+else
+{
+    $boxwork.='<tr class="nohover">';
+    $boxwork.='<td colspan="4" class="nohover valignmiddle opacitymedium">';
+    $boxwork.=$langs->trans("NoOpenedElementToProcess");
+    $boxwork.='</td>';
+    $boxwork.='</tr>';
 }
 
 $boxwork.='</table>';   // End table array of working board

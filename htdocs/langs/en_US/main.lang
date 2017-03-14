@@ -408,6 +408,7 @@ TotalDuration=Total duration
 Summary=Summary
 DolibarrStateBoard=Statistics
 DolibarrWorkBoard=Work tasks board
+NoOpenedElementToProcess=No opened element to process
 Available=Available
 NotYetAvailable=Not yet available
 NotAvailable=Not available

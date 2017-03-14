@@ -2858,6 +2858,9 @@ span.dashboardlineko {
 }
 .boxtable {
     margin-bottom: 8px !important;
+    border-bottom-width: 1px;
+}
+.boxtablenobottom {
     border-bottom-width: 0 !important;
 }
 .tdboxstats {
