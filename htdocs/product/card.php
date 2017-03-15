@@ -1211,14 +1211,14 @@ else
             print '<table class="border allwidth">';
 
             // Ref
-            print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
+            print '<tr><td class="titlefield fieldrequired"><label for="ref">'.$langs->trans("Ref").'</label></td><td colspan="3"><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
 
             // Label
-            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
+            print '<tr><td class="fieldrequired"><label for="label">'.$langs->trans("Label").'</td><td colspan="3"><input id="label" name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
             // Status To sell
-            print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
-            print '<select class="flat" name="statut">';
+            print '<tr><td class="fieldrequired"><label for="statut">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</label></td><td colspan="3">';
+            print '<select class="flat" id="statut" name="statut">';
             if ($object->status)
             {
                 print '<option value="1" selected>'.$langs->trans("OnSell").'</option>';
@@ -1233,8 +1233,8 @@ else
             print '</td></tr>';
 
             // Status To Buy
-            print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
-            print '<select class="flat" name="statut_buy">';
+            print '<tr><td class="fieldrequired"><label for="statut_buy">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</label></td><td colspan="3">';
+            print '<select class="flat" id="statut_buy" name="statut_buy">';
             if ($object->status_buy)
             {
                 print '<option value="1" selected>'.$langs->trans("ProductStatusOnBuy").'</option>';
@@ -1293,8 +1293,8 @@ else
             print "\n";
 
             // Public Url
-            print '<tr><td>'.$langs->trans("PublicUrl").'</td><td colspan="3">';
-			print '<input type="text" name="url" class="quatrevingtpercent" value="'.$object->url.'">';
+            print '<tr><td><label for="url">'.$langs->trans("PublicUrl").'</label></td><td colspan="3">';
+			print '<input type="text" id="url" name="url" class="quatrevingtpercent" value="'.$object->url.'">';
             print '</td></tr>';
 
             // Stock
@@ -1327,7 +1327,7 @@ else
             if ($object->isService())
             {
                 // Duration
-                print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3"><input name="duration_value" size="3" maxlength="5" value="'.$object->duration_value.'">';
+                print '<tr><td><label for="duration_value">'.$langs->trans("Duration").'</label></td><td colspan="3"><input id="duration_value" name="duration_value" size="3" maxlength="5" value="'.$object->duration_value.'">';
                 print '&nbsp; ';
                 print '<input name="duration_unit" type="radio" value="h"'.($object->duration_unit=='h'?' checked':'').'>'.$langs->trans("Hour");
                 print '&nbsp; ';
@@ -1344,8 +1344,8 @@ else
             else
 			{
                 // Weight
-                print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
-                print '<input name="weight" size="5" value="'.$object->weight.'"> ';
+                print '<tr><td><label id="weight">'.$langs->trans("Weight").'</label></td><td colspan="3">';
+                print '<input id="weight" name="weight" size="5" value="'.$object->weight.'"> ';
                 print $formproduct->select_measuring_units("weight_units", "weight", $object->weight_units);
                 print '</td></tr>';
                 if (empty($conf->global->PRODUCT_DISABLE_SIZE))
@@ -1361,16 +1361,16 @@ else
                 if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
                 {
                     // Surface
-                    print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
-                    print '<input name="surface" size="5" value="'.$object->surface.'"> ';
+                    print '<tr><td><label for="surface">'.$langs->trans("Surface").'</label></td><td colspan="3">';
+                    print '<input id="surface" name="surface" size="5" value="'.$object->surface.'"> ';
                     print $formproduct->select_measuring_units("surface_units", "surface", $object->surface_units);
                     print '</td></tr>';
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
                 {
                     // Volume
-                    print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
-                    print '<input name="volume" size="5" value="'.$object->volume.'"> ';
+                    print '<tr><td><label for="volume">'.$langs->trans("Volume").'</label></td><td colspan="3">';
+                    print '<input id="volume" name="volume" size="5" value="'.$object->volume.'"> ';
                     print $formproduct->select_measuring_units("volume_units", "volume", $object->volume_units);
                     print '</td></tr>';
                 }
@@ -1456,8 +1456,8 @@ else
                 print '</td></tr>';
 
                 // Accountancy_code_buy
-                print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-                print '<td><input name="accountancy_code_buy" class="maxwidth200" value="'.$object->accountancy_code_buy.'">';
+                print '<tr><td><label for="accountancy_code_buy">'.$langs->trans("ProductAccountancyBuyCode").'</label></td>';
+                print '<td><input id="accountancy_code_buy" name="accountancy_code_buy" class="maxwidth200" value="'.$object->accountancy_code_buy.'">';
                 print '</td></tr>';
             }
 			print '</table>';
