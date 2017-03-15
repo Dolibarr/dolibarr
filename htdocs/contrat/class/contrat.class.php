@@ -496,7 +496,7 @@ class Contrat extends CommonObject
 		$sql.= " ref_supplier, ref_customer,";
 		$sql.= " ref_ext,";
 		$sql.= " fk_user_mise_en_service, date_contrat as datecontrat,";
-		$sql.= " fk_user_author,";
+		$sql.= " fk_user_author, fin_validite, date_cloture,";
 		$sql.= " fk_projet,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi,";
 		$sql.= " note_private, note_public, model_pdf, extraparams";
@@ -527,6 +527,10 @@ class Contrat extends CommonObject
 				$this->date_contrat				= $this->db->jdate($result["datecontrat"]);
 				$this->date_creation				= $this->db->jdate($result["datecontrat"]);
 
+				$this->fin_validite				= $this->db->jdate($result["fin_validite"]);
+				$this->date_cloture				= $this->db->jdate($result["date_cloture"]);
+
+				
 				$this->user_author_id			= $result["fk_user_author"];
 
 				$this->commercial_signature_id	= $result["fk_commercial_signature"];
