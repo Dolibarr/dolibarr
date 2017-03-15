@@ -1878,20 +1878,21 @@ div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
     padding-top: 16px;
     padding-left: 0px; padding-right: 0px;
-    padding-bottom: 14px;
-    margin: 0px 0px 14px 0px;
+    padding-bottom: 2px;
+    margin: 0px 0px 16px 0px;
     border-top: 1px solid #BBB;
-    border-bottom: 1px solid #AAA;
+    /* border-bottom: 1px solid #AAA; */
 	width: auto;
-
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
-
-	/*<?php if (empty($dol_optimize_smallscreen)) { ?>
-    -moz-box-shadow: 3px 3px 4px #DDD;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
-	<?php } ?>*/
 }
+div.tabBarWithBottom {
+	padding-bottom: 18px;
+	border-bottom: 1px solid #aaa; 
+}
+div.tabBar table.tableforservicepart2:last-child {
+    border-bottom: 1px solid #aaa;
+}
+
 div.popuptabset {
 	padding: 6px;
 	background: #fff;
@@ -1904,7 +1905,7 @@ div.popuptab {
 	padding-right: 5px;
 }
 div.tabsAction {
-    margin: 20px 0em 10px 0em;
+    margin: 20px 0em 25px 0em;
     padding: 0em 0em;
     text-align: right;
 }

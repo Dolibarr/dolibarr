@@ -1883,30 +1883,28 @@ div.tabBar {
     padding-top: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
     padding-left: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
     padding-right: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
-    padding-bottom: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
-    margin: 0px 0px 14px 0px;
+    padding-bottom: <?php echo ($dol_optimize_smallscreen?'2':'2'); ?>px;
+    margin: 0px 0px 16px 0px;
     -moz-border-radius:3px;
     -webkit-border-radius: 3px;
 	border-radius: 3px;
     border-right: 1px solid #BBB;
-    border-bottom: 1px solid #BBB;
+    /* border-bottom: 1px solid #BBB; */
     border-left: 1px solid #BBB;
     border-top: 1px solid #CCC;
 	width: auto;
-
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
-
-	/*
-	<?php if (empty($dol_optimize_smallscreen)) { ?>
-    -moz-box-shadow: 3px 3px 4px #f4f4f4;
-    -webkit-box-shadow: 3px 3px 4px #f4f4f4;
-    box-shadow: 3px 3px 4px #f4f4f4;
-	<?php } ?>
-	*/
+}
+div.tabBarWithBottom {
+	padding-bottom: 18px;
+	border-bottom: 1px solid #aaa; 
+}
+div.tabBar table.tableforservicepart2:last-child {
+    border-bottom: 1px solid #aaa;
 }
 
 div.tabsAction {
-    margin: 20px 0em 10px 0em;
+    margin: 20px 0em 25px 0em;
     padding: 0em 0em;
     text-align: right;
 }

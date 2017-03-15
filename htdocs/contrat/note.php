@@ -164,7 +164,7 @@ if ($id > 0 || ! empty($ref))
 	
 	print '</div>';
 	
-	print '<br>';
+	//print '<br>';
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 

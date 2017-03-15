@@ -1506,7 +1506,7 @@ else
             if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
 
-            dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
+            dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
 
             print '<table class="border" width="100%">';
@@ -1921,7 +1921,7 @@ else
 
         $head = societe_prepare_head($object);
 
-        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
+        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
         // Confirm delete third party
         if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)))

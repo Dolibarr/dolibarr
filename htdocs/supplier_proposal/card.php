@@ -1773,7 +1773,6 @@ if ($action == 'create')
 
 		print '</div>';
 	}
-	print "<br>\n";
 
 	if ($action != 'presend')
 	{

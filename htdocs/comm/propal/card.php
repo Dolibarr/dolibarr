@@ -2414,7 +2414,6 @@ if ($action == 'create')
 
 		print '</div>';
 	}
-	print "<br>\n";
 
 	//Select mail models is same action as presend
 	if (GETPOST('modelselected')) $action = 'presend';
