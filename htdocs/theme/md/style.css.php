@@ -2228,6 +2228,9 @@ td.border, div.tagtable div div.border {
 
 
 /* Main boxes */
+.noborderbottom {
+    border-bottom: none !important;
+}
 .ficheaddleft table.noborder {
 	margin: 0px 0px 0px 0px;
 }

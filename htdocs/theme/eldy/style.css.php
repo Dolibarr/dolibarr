@@ -2326,6 +2326,9 @@ td.border, div.tagtable div div.border {
 
 
 /* Main boxes */
+.noborderbottom {
+    border-bottom: none !important;
+}
 .ficheaddleft table.noborder {
 	margin: 0px 0px 0px 0px;
 }
@@ -2345,6 +2348,13 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 
 	margin: 0px 0px 5px 0px;
 }
+div.ficheaddleft table.noborder:last-child {
+    border-bottom: 1px solid #aaa;
+}
+div.ficheaddleft table.noborder {
+    border-bottom: none;
+}
+
 table.paddingtopbottomonly tr td {
 	padding-top: 1px;
 	padding-bottom: 2px;
