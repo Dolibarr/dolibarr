@@ -2348,10 +2348,10 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 
 	margin: 0px 0px 5px 0px;
 }
-div.ficheaddleft table.noborder:last-child {
+div.tabBar div.ficheaddleft table.noborder:last-of-type {
     border-bottom: 1px solid #aaa;
 }
-div.ficheaddleft table.noborder {
+div.tabBar div.ficheaddleft table.noborder {
     border-bottom: none;
 }
 

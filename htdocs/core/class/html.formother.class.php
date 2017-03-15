@@ -1046,7 +1046,7 @@ class FormOther
 	        	if (boxorder==\'A:A-B:B\' && closing == 1)	// There is no more boxes on screen, and we are after a delete of a box so we must hide title
 	        	{
 	        		jQuery.ajax({
-	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=\'+closing+\'&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=0&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
 	        			async: false
 	        		});
 	        		// We force reload to be sure to get all boxes into list
@@ -1086,7 +1086,7 @@ class FormOther
 	        		containment: \'.fiche\',
 	        		connectWith: \'.connectedSortable\',
 	        		stop: function(event, ui) {
-	        			updateBoxOrder(0);
+	        			updateBoxOrder(1);  /* 1 to avoid message after a move */
 	        		}
 	    		});
 
@@ -1096,7 +1096,7 @@ class FormOther
 	        		var label=jQuery(\'#boxlabelentry\'+boxid).val();
 	        		jQuery(\'#boxto_\'+boxid).remove();
 	        		if (boxid > 0) jQuery(\'#boxcombo\').append(new Option(label, boxid));
-	        		updateBoxOrder(1);
+	        		updateBoxOrder(1);  /* 1 to avoid message after a remove */
 	        	});
 
         	});'."\n";

@@ -355,7 +355,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 		{
 			print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
-		print '</table><br>';
+		print '</table>';
 	}
 	else dol_print_error($db);
 }
