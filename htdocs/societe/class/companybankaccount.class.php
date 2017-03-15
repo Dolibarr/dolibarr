@@ -69,8 +69,8 @@ class CompanyBankAccount extends Account
      */
     function create(User $user = null, $notrigger=0)
     {
-        $now=dol_now();
-
+        $now	= dol_now();
+	$error	= 0;
         // Correct default_rib to be sure to have always one default
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib where fk_soc = ".$this->socid." AND default_rib = 1";
    		$result = $this->db->query($sql);
@@ -89,7 +89,21 @@ class CompanyBankAccount extends Account
             if ($this->db->affected_rows($resql))
             {
                 $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe_rib");
-                return 1;
+		    
+		// Call trigger
+		$result=$this->call_trigger('COMPANY_RIB_CREATE',$user);
+		if ($result < 0) $error++;
+		// End call triggers
+		    
+		if(! $error )
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+               
             }
         }
         else
