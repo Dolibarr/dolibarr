@@ -90,19 +90,27 @@ class CompanyBankAccount extends Account
             {
                 $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe_rib");
 		    
-		// Call trigger
-		$result=$this->call_trigger('COMPANY_RIB_CREATE',$user);
-		if ($result < 0) $error++;
-		// End call triggers
+		    if (! $notrigger)
+		    {
+		   	 // Call trigger
+			$result=$this->call_trigger('COMPANY_RIB_CREATE',$user);
+			if ($result < 0) $error++;
+			// End call triggers
+
+			if(! $error )
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
 		    
-		if(! $error )
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
+		    }
+		    else
+		    {
+		    	return 1;
+		    }
                
             }
         }
