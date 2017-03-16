@@ -262,7 +262,7 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 	    	setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
 	   	    // Redirect to avoid submit twice on back
-	       	header('Location: '.$_SERVER["PHP_SELF"].($projectid?'?id='.$projectid:'?').($mode?'&mode='.$mode:''));
+	       	header('Location: '.$_SERVER["PHP_SELF"].($projectid?'?id='.$projectid:'?').($mode?'&mode='.$mode:'').($day?'&day='.$day:'').($month?'&month='.$month:'').($year?'&year='.$year:''));
 	       	exit;
 	   	}
 	}
