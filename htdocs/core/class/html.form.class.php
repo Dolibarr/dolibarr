@@ -4740,7 +4740,7 @@ class Form
                 // Year
                 if ($emptydate || $set_time == -1)
                 {
-                    $retstring.='<input'.($disabled?' disabled':'').' placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" class="flat maxwidth50imp" type="text" maxlength="4" id="'.$prefix.'year" name="'.$prefix.'year" value="'.$syear.'">';
+                    $retstring.='<input'.($disabled?' disabled':'').' placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" class="flat maxwidth50imp valignmiddle" type="text" maxlength="4" id="'.$prefix.'year" name="'.$prefix.'year" value="'.$syear.'">';
                 }
                 else
                 {
@@ -4885,7 +4885,7 @@ class Form
      *	@param	string	$prefix   		Prefix for input fields
      *	@param  int		$iSecond  		Default preselected duration (number of seconds or '')
      * 	@param	int		$disabled		Disable the combo box
-     * 	@param	string	$typehour		If 'select' then input hour and input min is a combo, if 'text' input hour is in text and input min is a combo
+     * 	@param	string	$typehour		If 'select' then input hour and input min is a combo, if 'text' input hour is in text and input min is a text
      *  @param	integer	$minunderhours	If 1, show minutes selection under the hours
      * 	@param	int		$nooutput		Do not output html string but return it
      *  @return	string|null
@@ -4923,12 +4923,13 @@ class Form
         }
         elseif ($typehour=='text')
         {
-        	$retstring.='<input type="text" size="1" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat" value="'.($hourSelected?((int) $hourSelected):'').'">';
+        	$retstring.='<input placeholder="'.$langs->trans('HourShort').'" type="text" size="1" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat" value="'.($hourSelected?((int) $hourSelected):'').'">';
         }
         else return 'BadValueForParameterTypeHour';
 
-        $retstring.=' '.$langs->trans('HourShort');
-
+        if ($typehour!='text') $retstring.=' '.$langs->trans('HourShort');
+        else $retstring.=':';
+        
         // Minutes
         if ($minunderhours) $retstring.='<br>';
         else $retstring.="&nbsp;";
@@ -4946,10 +4947,12 @@ class Form
         }
         elseif ($typehour=='text')
         {
-        	$retstring.='<input type="text" size="1" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat" value="'.($minSelected?((int) $minSelected):'').'">';
+        	$retstring.='<input placeholder="'.$langs->trans('MinuteShort').'" type="text" size="1" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat" value="'.($minSelected?((int) $minSelected):'').'">';
         }
-        $retstring.=' '.$langs->trans('MinuteShort');
-        $retstring.="&nbsp;";
+        
+        if ($typehour!='text') $retstring.=' '.$langs->trans('MinuteShort');
+
+        //$retstring.="&nbsp;";
 
         if (! empty($nooutput)) return $retstring;
 

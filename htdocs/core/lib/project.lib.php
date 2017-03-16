@@ -919,7 +919,6 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
                     $tableCell.='</td>';
                     print $tableCell;
 		        }
-		        dol_syslog("yyy");
 		        
 				print '<td align="right">';
 				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("YouAreNotContactOfProject"));

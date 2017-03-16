@@ -334,9 +334,10 @@ print '<input type="hidden" name="month" value="'.$month.'">';
 print '<input type="hidden" name="year" value="'.$year.'">';
 
 $head=project_timesheet_prepare_head($mode);
-dol_fiche_head($head, 'inputperweek', '', 0, 'task');
+dol_fiche_head($head, 'inputperweek', '', -1, 'task');
 
 // Show description of content
+print '<div class="hideonsmartphone">';
 if ($mine) print $langs->trans("MyTasksDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
 else
 {
@@ -351,6 +352,7 @@ else
 {
 	print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
 }
+print '</div>';
 
 dol_fiche_end();
 
@@ -384,7 +386,7 @@ dol_fiche_end();
 //print '<input type="hidden" name="month" value="'.$month.'">';
 //print '<input type="hidden" name="day" value="'.$day.'">';
 
-print '<div class="floatright">'.$nav.'</div>';     // We move this before the assign to components so, the default submit button is not the assign to.
+print '<div class="floatright right">'.$nav.'</div>';     // We move this before the assign to components so, the default submit button is not the assign to.
 
 print '<div class="float valignmiddle">';
 print $langs->trans("AssignTaskToMe").'<br>';

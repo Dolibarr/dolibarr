@@ -352,7 +352,7 @@ class FormProjets
 			}
 
 			if (empty($option_only)) {
-				$out.= '<select class="flat'.($minmax?' '.$minmax:'').'"'.($disabled?' disabled="disabled"':'').' id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+				$out.= '<select class="valignmiddle flat'.($minmax?' '.$minmax:'').'"'.($disabled?' disabled="disabled"':'').' id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
 			}
 			if (!empty($show_empty)) {
 				$out.= '<option value="0">&nbsp;</option>';

@@ -761,8 +761,8 @@ div.fiche>form>div.div-table-responsive {
 		min-width: 20px;
     	min-height: 1.4em;
     	line-height: 1.4em;
-    	padding: .4em .1em;
-    	border: 1px solid #BBB;
+    	/* padding: .4em .1em; */
+    	/* border-bottom: 1px solid #BBB; */
     	/* max-width: inherit; why this ? */
      }
 
