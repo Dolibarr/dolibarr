@@ -413,11 +413,11 @@ if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY))
 {
     print '<td>'.$langs->trans("ThirdParty").'</td>';
 }
-print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
-print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
-print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-if ($usertoprocess->id == $user->id) print '<td align="right">'.$langs->trans("TimeSpentByYou").'</td>';
-else print '<td align="right">'.$langs->trans("TimeSpentByUser").'</td>';
+print '<td align="right" class="maxwidth100">'.$langs->trans("PlannedWorkload").'</td>';
+print '<td align="right" class="maxwidth100">'.$langs->trans("ProgressDeclared").'</td>';
+print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpent").'</td>';
+if ($usertoprocess->id == $user->id) print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpentByYou").'</td>';
+else print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpentByUser").'</td>';
 print '<td align="center">'.$langs->trans("HourStart").'</td>';
 print '<td align="center" colspan="2">'.$langs->trans("Duration").'</td>';
 print '<td align="right">'.$langs->trans("Note").'</td>';
