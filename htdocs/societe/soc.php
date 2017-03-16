@@ -123,15 +123,14 @@ if (empty($reshook))
 		$soc_origin_id = GETPOST('soc_origin', 'int');
 		$soc_origin = new Societe($db);
 
-		if ($soc_origin_id < 1)
+		if ($soc_origin_id <= 0)
 		{
 			$langs->load('errors');
 			$langs->load('companies');
-			setEventMessages($langs->trans('ErrorProdIdIsMandatory', $langs->trans('MergeOriginThirdparty')), null, 'errors');
+			setEventMessages($langs->trans('ErrorThirdPartyIdIsMandatory', $langs->trans('MergeOriginThirdparty')), null, 'errors');
 		}
 		else
 		{
-
 			if (!$errors && $soc_origin->fetch($soc_origin_id) < 1)
 			{
 				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
@@ -140,8 +139,44 @@ if (empty($reshook))
 
 			if (!$errors)
 			{
+			    // TODO Move the merge function into class of object.
+			    
 				$db->begin();
 
+				// Recopy some data
+				$object->client = $object->client | $soc_origin->client;
+				$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
+				$listofproperties=array(
+				    'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
+				    'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
+				    'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
+				    'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
+				    'model_pdf', 'fk_projet'
+				);
+				foreach ($listofproperties as $property)
+				{
+				    if (empty($object->$property)) $object->$property = $soc_origin->$property;
+				}
+				
+				// Concat some data
+				$listofproperties=array(
+				    'note_public', 'note_private' 
+				);
+				foreach ($listofproperties as $property)
+				{
+				    $object->$property = dol_concatdesc($object->$property, $soc_origin->$property);
+				}
+				
+				// Merge extrafields
+				foreach ($soc_origin->array_options as $key => $val)
+				{
+				    if (empty($object->array_options[$key])) $object->array_options[$key] = $val;
+				}
+
+				// TODO Merge categories
+				$object->update($object->id, $user);
+				
+				// Move links 
 				$objects = array(
 					'Adherent' => '/adherents/class/adherent.class.php',
 					'Societe' => '/societe/class/societe.class.php',
@@ -159,6 +194,7 @@ if (empty($reshook))
 					'Fichinter' => '/fichinter/class/fichinter.class.php',
 					'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
 					'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
+					'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 					'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
 					'Livraison' => '/livraison/class/livraison.class.php',
 					'Product' => '/product/class/product.class.php',
@@ -451,6 +487,7 @@ if (empty($reshook))
                 if (empty($object->fournisseur)) $object->code_fournisseur='';
 
                 $result = $object->create($user);
+                
 				if ($result >= 0)
                 {
                     if ($object->particulier)
