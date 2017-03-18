@@ -129,7 +129,7 @@ class Interfaces
                         if (in_array($modName,$modules))    // $modules = list of modName already loaded
                         {
                             $langs->load("errors");
-                            dol_syslog(get_class($this)."::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger", $newdir."/".$file, $fullpathfiles[$modName]), LOG_ERR);
+                            dol_syslog(get_class($this)."::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger", $newdir."/".$file, $fullpathfiles[$modName]), LOG_WARNING);
                             continue;
                         }
                         
@@ -140,7 +140,7 @@ class Interfaces
                         }
                         catch(Exception $e)
                         {
-                            dol_syslog('ko for '.$modName." ".$e->getMessage()."\n", LOG_ERROR);
+                            dol_syslog('ko for '.$modName." ".$e->getMessage()."\n", LOG_ERR);
                         }
                         
                         $modules[$i] = $modName;
