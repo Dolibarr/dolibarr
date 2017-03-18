@@ -427,6 +427,25 @@ class SMTPs
 		{
 			if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS))
 			{
+			    /*
+			    The following dialog illustrates how a client and server can start a TLS STARTTLS session
+			    S: <waits for connection on TCP port 25>
+			    C: <opens connection>
+			    S: 220 mail.imc.org SMTP service ready
+			    C: EHLO mail.ietf.org
+			    S: 250-mail.imc.org offers a warm hug of welcome
+			    S: 250 STARTTLS
+			    C: STARTTLS
+			    S: 220 Go ahead
+			    C: <starts TLS negotiation>
+			    C & S: <negotiate a TLS session>
+			    C & S: <check result of negotiation>
+                // Second pass EHLO
+                C: EHLO client-domain.com
+                S: 250-server-domain.com
+                S: 250 AUTH LOGIN			    
+			    C: <continues by sending an SMTP command
+			    */
 				if (!$_retVal = $this->socket_send_str('STARTTLS', 220))
 				{
 					$this->_setErr(131, 'STARTTLS connection is not supported.');
@@ -437,6 +456,8 @@ class SMTPs
 					$this->_setErr(132, 'STARTTLS connection failed.');
 					return $_retVal;
 				}
+				// Most server servers expect a 2nd pass of EHLO after TLS is established to get another time 
+				// the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
 				if (!$_retVal = $this->socket_send_str('EHLO '.$host, '250'))
 				{
 					$this->_setErr(126, '"' . $host . '" does not support authenticated connections.');
