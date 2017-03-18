@@ -4,8 +4,9 @@
  * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry    	 <florian.henry@open-cooncept.pro>
- * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015       Jean-François Ferry	 <jfefe@aternatik.fr>
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -405,28 +406,19 @@ if ($id > 0 || ! empty($ref))
     
     dol_fiche_end();
  
-
-
     /*
      * Buttons actions
      */
-    if ($action != 'addline' && $action != 'reconcile')
+    if ($action != 'reconcile')
     {
         print '<div class="tabsAction">';
-    
-        if ($action != 'addline')
-        {
-            if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
-            {
-                if ($user->rights->banque->modifier) {
-                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param.'">'.$langs->trans("AddBankRecord").'</a>';
-                } else {
-                    print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
-                }
-            } else {
-                print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
-            }
-        }
+
+		if ($user->rights->banque->modifier) {
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param.'">'.$langs->trans("AddBankRecord").'</a>';
+        } else {
+			print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+		}
+
         if ($object->canBeConciliated() > 0) {
             // If not cash account and can be reconciliate
             if ($user->rights->banque->consolidate) {
@@ -636,49 +628,6 @@ if ($resql)
 //	    print '</td></tr></table>';
 	}
 
-	// Form to add a transaction with no invoice
-	if ($user->rights->banque->modifier && $action == 'addline')
-	{
-	    print load_fiche_titre($langs->trans("AddBankRecordLong"),'','');
-	
-	    print '<table class="noborder" width="100%">';
-	    print '<tr class="liste_titre">';
-	    print '<td>'.$langs->trans("Date").'</td>';
-	    print '<td>&nbsp;</td>';
-	    print '<td>'.$langs->trans("Type").'</td>';
-	    print '<td>'.$langs->trans("Numero").'</td>';
-	    print '<td colspan="2">'.$langs->trans("Description").'</td>';
-	    print '<td align=right>'.$langs->trans("Debit").'</td>';
-	    print '<td align=right>'.$langs->trans("Credit").'</td>';
-	    print '<td colspan="2" align="center">&nbsp;</td>';
-	    print '</tr>';
-	
-	    print '<tr '.$bcnd[false].'>';
-	    print '<td class="nowrap" colspan="2">';
-	    $form->select_date(empty($dateop)?-1:$dateop,'op',0,0,0,'transaction');
-	    print '</td>';
-	    print '<td class="nowrap">';
-	    $form->select_types_paiements((GETPOST('operation')?GETPOST('operation'):($object->courant == Account::TYPE_CASH ? 'LIQ' : '')),'operation','1,2',2,1);
-	    print '</td><td>';
-	    print '<input name="num_chq" class="flat" type="text" size="4" value="'.GETPOST("num_chq").'"></td>';
-	    print '<td colspan="2">';
-	    print '<input name="label" class="flat" type="text" size="24"  value="'.GETPOST("label").'">';
-	    if ($options) {
-	        print '<br>'.$langs->trans("Rubrique").': ';
-	        print Form::selectarray('cat1', $options, GETPOST('cat1'), 1);
-	    }
-	    print '</td>';
-	    print '<td align="right"><input name="adddebit" class="flat" type="text" size="4" value="'.GETPOST("adddebit").'"></td>';
-	    print '<td align="right"><input name="addcredit" class="flat" type="text" size="4" value="'.GETPOST("addcredit").'"></td>';
-	    print '<td colspan="2" align="center">';
-	    print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
-	    print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-	    print '</td></tr>';
-	    print '</table>';
-	    print '<br>';
-	}	
-	
-	
 	/// ajax to adjust value date with plus and less picto
 	print '
     <script type="text/javascript">

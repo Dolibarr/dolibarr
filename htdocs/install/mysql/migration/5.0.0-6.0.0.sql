@@ -123,3 +123,5 @@ INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USERGR
 INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USER_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/users', 'chaine', 0, '');
 
 ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;
+
+DELETE FROM llx_const WHERE name = __ENCRYPT('BANK_DISABLE_DIRECT_INPUT')__;
