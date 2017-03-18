@@ -303,7 +303,7 @@ if ($resql)
 	// List of mass actions available
 	$arrayofmassactions =  array(
 	    //'presend'=>$langs->trans("SendByMail"),
-	    //'builddoc'=>$langs->trans("PDFMerge"),
+	    'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	if ($user->rights->expensereport->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
 	if ($massaction == 'presend') $arrayofmassactions=array();
@@ -716,7 +716,7 @@ if ($resql)
 
 	print '</form>'."\n";
 
-	/*
+
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
 	{
 	    // Show list of available documents
@@ -727,13 +727,12 @@ if ($resql)
 	    $genallowed=$user->rights->expensereport->lire;
 	    $delallowed=$user->rights->expensereport->lire;
 	
-	    print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
+	    print $formfile->showdocuments('massfilesarea_expensereport','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
 	}
 	else
 	{
 	    print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
 	}
-	*/
 }
 else
 {

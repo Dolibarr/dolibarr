@@ -1608,6 +1608,14 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	    }
 	    $original_file=$conf->facture->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
+	else if ($modulepart == 'massfilesarea_expensereport')
+	{
+	    if ($fuser->rights->facture->lire || preg_match('/^specimen/i',$original_file))
+	    {
+	        $accessallowed=1;
+	    }
+	    $original_file=$conf->expensereport->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+	}
 	
 	// Wrapping for interventions
 	else if (($modulepart == 'fichinter' || $modulepart == 'ficheinter') && !empty($conf->ficheinter->dir_output))
