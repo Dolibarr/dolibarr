@@ -130,18 +130,18 @@ create table llx_payment_various
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
   tms                   timestamp,
-  datec                 datetime,                   -- Create date
-  datep                 date,                       -- date de paiement
-  datev                 date,                       -- date de valeur (this field should not be here, only into bank tables)
+  datec                 datetime,
+  datep                 date,
+  datev                 date,
   sens                  smallint DEFAULT 0 NOT NULL,
   amount                double(24,8) DEFAULT 0 NOT NULL,
   fk_typepayment        integer NOT NULL,
-  num_payment           varchar(50),				-- ref
+  num_payment           varchar(50),
   label                 varchar(255),
-  entity                integer DEFAULT 1 NOT NULL,	-- multi company id
+  accountancy_code		varchar(32),
+  entity                integer DEFAULT 1 NOT NULL,
   note                  text,
   fk_bank               integer,
-  fk_code_ventilation	integer DEFAULT 0,
-  fk_user_author        integer,                    -- utilisateur qui a cree l'info
-  fk_user_modif         integer                     -- utilisateur qui a modifié l'info
+  fk_user_author        integer,
+  fk_user_modif         integer
 )ENGINE=innodb;
