@@ -1070,6 +1070,8 @@ class pdf_crabe extends ModelePDFFactures
 			}
 			else
 			{
+			    // FIXME amount of vat not supported with multicurrency
+			    			 
 				//Local tax 1 before VAT
 				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
