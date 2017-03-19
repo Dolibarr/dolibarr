@@ -91,6 +91,22 @@ if ($action == 'reset' && $user->admin)
 	exit;
 }
 
+if ($action == 'update' && $user->admin)
+{
+    $result=updateModule($value);
+    if ($result) setEventMessages($result, null, 'errors');
+    header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
+	exit;
+}
+
+if ($action == 'init' && $user->admin)
+{
+    $result=initModule($value);
+    if ($result) setEventMessages($result, null, 'errors');
+    header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
+	exit;
+}
+
 if (GETPOST('buttonreset'))
 {
     $search_keyword='';
@@ -443,11 +459,11 @@ if ($mode != 'marketplace')
         if ($familykey!=$oldfamily)
         {
             print '<tr class="liste_titre">'."\n";
-            print '<td colspan="5">';
+            print '<td colspan="6">';
             $familytext=empty($familyinfo[$familykey]['label'])?$familykey:$familyinfo[$familykey]['label'];
             print $familytext;
             print "</td>\n";
-    		print '<td colspan="2" align="right">'.$langs->trans("SetupShort").'</td>'."\n";
+    		print '<td colspan="3" align="right">'.$langs->trans("SetupShort").'</td>'."\n";
             print "</tr>\n";
             $atleastoneforfamily=0;
             //print "<tr><td>yy".$oldfamily."-".$familykey."-".$atleastoneforfamily."<br></td><tr>";
@@ -492,7 +508,18 @@ if ($mode != 'marketplace')
         print "</td>\n";
 
         // Help
-        print '<td align="center" valign="top" class="nowrap" style="width: 82px;">';
+        print '<td align="left" valign="top" class="nowrap" style="width: 82px;">';
+        
+        // Picto warning
+        $version=$objMod->getVersion(0);
+        $versiontrans=$objMod->getVersion(1);
+        if (preg_match('/development/i', $version))  print img_warning($langs->trans("Development"), 'style="float: right"');
+        if (preg_match('/experimental/i', $version)) print img_warning($langs->trans("Experimental"), 'style="float: right"');
+        if (preg_match('/deprecated/i', $version))   print img_warning($langs->trans("Deprecated"), 'style="float: right"');
+
+        // Picto external
+        if ($textexternal) print img_picto($langs->trans("ExternalModule",$dirofmodule), 'external', 'style="float: right"');
+
         $text='';
         if ($objMod->getDescLong()) $text.=$objMod->getDesc().'<br>'.$objMod->getDescLong().'<br>';
         else $text.=$objMod->getDesc().'<br>';
@@ -640,22 +667,23 @@ if ($mode != 'marketplace')
 
         print $form->textwithpicto('', $text, 1, 'help', 'minheight20');
 
-        // Picto warning
-        $version=$objMod->getVersion(0);
-        $versiontrans=$objMod->getVersion(1);
-        if (preg_match('/development/i', $version))  print img_warning($langs->trans("Development"), 'style="float: right"');
-        if (preg_match('/experimental/i', $version)) print img_warning($langs->trans("Experimental"), 'style="float: right"');
-        if (preg_match('/deprecated/i', $version))   print img_warning($langs->trans("Deprecated"), 'style="float: right"');
-
-        // Picto external
-        if ($textexternal) print img_picto($langs->trans("ExternalModule",$dirofmodule), 'external', 'style="float: right"');
-
-
         print '</td>';
 
         // Version
         print '<td align="center" valign="top" class="nowrap">';
         print $versiontrans;
+
+        // Version available
+        $distVersion = false;
+        if (empty($objMod->disabled) && method_exists($objMod, 'getUpdateVersion')&& method_exists($objMod, 'update')) {
+            $distVersion = $objMod->getUpdateVersion();
+            if ($distVersion !== false && $distVersion != $version) {
+                print '<br />';
+                print '<a class="button" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=update&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
+                print $langs->trans('UpdateTo', $distVersion);
+                print '</a>';
+            }
+        }
         print "</td>\n";
 
         // Activate/Disable and Setup (2 columns)
@@ -664,7 +692,7 @@ if ($mode != 'marketplace')
         	$disableSetup = 0;
 
         	print '<td align="center" valign="middle">';
-            if (! empty($objMod->disabled))
+                if (! empty($objMod->disabled))
         	{
         		print $langs->trans("Disabled");
         	}
@@ -681,12 +709,22 @@ if ($mode != 'marketplace')
         	}
         	print '</td>'."\n";
 
+                //init link
+        	print '<td align="center" valign="middle">';
+                if (empty($objMod->disabled) && method_exists($objMod, 'reset'))
+        	{
+        		print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=init&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
+        		print img_picto($langs->trans("ResetModule"),'reset');
+        		print '</a>';
+        	}
+        	print '</td>'."\n";
+                
         	// Config link
         	if (! empty($objMod->config_page_url) && !$disableSetup)
         	{
         		if (is_array($objMod->config_page_url))
         		{
-        			print '<td class="tdsetuppicto" align="right" valign="top">';
+        			print '<td class="tdsetuppicto" align="right">';
         			$i=0;
         			foreach ($objMod->config_page_url as $page)
         			{
@@ -744,6 +782,7 @@ if ($mode != 'marketplace')
 	        	print "</a>\n";
         	}
         	print "</td>\n";
+                print "<td></td>\n"; // new init button, empty here
         	print '<td class="tdsetuppicto" align="right" valign="middle">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
         }
 
