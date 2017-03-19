@@ -394,16 +394,15 @@ if ($id > 0 || ! empty($ref))
     foreach ($bankcateg->fetchAll() as $bankcategory) {
         $options[$bankcategory->id] = $bankcategory->label;
     }
-    
+
     // Bank card
-    
     $head=bank_prepare_head($object);
     dol_fiche_head($head,'journal',$langs->trans("FinancialAccount"),0,'account');
-    
+
     $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
-    
+
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
-    
+
     dol_fiche_end();
  
     /*
@@ -413,10 +412,17 @@ if ($id > 0 || ! empty($ref))
     {
         print '<div class="tabsAction">';
 
-		if ($user->rights->banque->modifier) {
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$account.'">'.$langs->trans("AddBankRecord").'</a>';
-        } else {
-			print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+		if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
+		{
+			if ($user->rights->banque->modifier) {
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$account.'">'.$langs->trans("AddBankRecord").'</a>';
+			} else {
+				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+			}
+		}
+		else
+		{
+			print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
 		}
 
         if ($object->canBeConciliated() > 0) {

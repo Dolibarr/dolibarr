@@ -124,8 +124,6 @@ INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USER_A
 
 ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;
 
-DELETE FROM llx_const WHERE name = __ENCRYPT('BANK_DISABLE_DIRECT_INPUT')__;
-
 create table llx_payment_various
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
