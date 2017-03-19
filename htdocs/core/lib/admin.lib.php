@@ -842,6 +842,124 @@ function unActivateModule($value, $requiredby=1)
     return $ret;
 }
 
+/**
+ *  reset a module
+ *
+ *  @param      string		$value               Nom du module a réinitialiser
+ *  @return     string     				         Error message or '';
+ */
+function initModule($value)
+{
+    global $db, $modules, $langs, $conf;
+
+     // Check parameters
+    if (empty($value)) return 'ErrorBadParameter';
+
+    $ret='';
+    $modName = $value;
+    $modFile = $modName . ".class.php";
+
+    // Loop on each directory to fill $modulesdir
+    $modulesdir = dolGetModulesDirs();
+
+    // Loop on each modulesdir directories
+    $found=false;
+    foreach ($modulesdir as $dir)
+    {
+        if (file_exists($dir.$modFile))
+        {
+            $found=@include_once $dir.$modFile;
+            if ($found) break;
+        }
+    }
+
+    if ($found)
+    {
+        $objMod = new $modName($db);
+        if (method_exists($objMod, 'reset')) {
+            $result = $objMod->reset();
+        } else { // this module does not have optional reset function
+            $result = -1;
+        }
+        if ($result <= 0) $ret=$objMod->error;
+    }
+    else
+    {
+        //print $dir.$modFile;
+    	// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
+        $genericMod = new DolibarrModules($db);
+        $genericMod->name=preg_replace('/^mod/i','',$modName);
+        $genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
+        $genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
+        dol_syslog("modules::resetModule Failed to find module file, we use generic function with name " . $modName);
+        $genericMod->_remove(array());
+    }
+
+    return $ret;
+}
+
+/**
+ *  update a module
+ *
+ *  @param      string		$value               Nom du module a mettre à jour
+ *  @return     string     				         Error message or '';
+ */
+function updateModule($value)
+{
+    global $db, $modules, $langs, $conf;
+
+     // Check parameters
+    if (empty($value)) return 'ErrorBadParameter';
+
+    $ret='';
+    $modName = $value;
+    $modFile = $modName . ".class.php";
+
+    // Loop on each directory to fill $modulesdir
+    $modulesdir = dolGetModulesDirs();
+
+    // Loop on each modulesdir directories
+    $found=false;
+    foreach ($modulesdir as $dir)
+    {
+        if (file_exists($dir.$modFile))
+        {
+            $found=@include_once $dir.$modFile;
+            if ($found) break;
+        }
+    }
+
+    if ($found)
+    {
+        $objMod = new $modName($db);
+        // check optionnal function
+        if (method_exists($objMod, 'update') && method_exists($objMod, 'getUpdateVersion') ) {
+            // compare version
+            if (version_compare($objMod->getUpdateVersion(),$objMod->getVersion(),'>')) {
+                $result = $objMod->update();
+            } else { //no update found
+                $result = -1;
+            }
+        } else { // this module does not have optional update & getUpdateVersion function
+            $result = -2;
+        }
+        if ($result <= 0) $ret=$objMod->error;
+    }
+    else
+    {
+        //print $dir.$modFile;
+    	// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
+        $genericMod = new DolibarrModules($db);
+        $genericMod->name=preg_replace('/^mod/i','',$modName);
+        $genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
+        $genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
+        dol_syslog("modules::updateModule Failed to find module file, we use generic function with name " . $modName);
+        $genericMod->_remove(array());
+    }
+
+    return $ret;
+}
+
 
 /**
  *  Add external modules to list of dictionaries
