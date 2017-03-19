@@ -414,7 +414,7 @@ if ($id > 0 || ! empty($ref))
         print '<div class="tabsAction">';
 
 		if ($user->rights->banque->modifier) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param.'">'.$langs->trans("AddBankRecord").'</a>';
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$account.'">'.$langs->trans("AddBankRecord").'</a>';
         } else {
 			print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
 		}
