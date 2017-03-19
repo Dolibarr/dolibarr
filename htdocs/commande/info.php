@@ -53,6 +53,8 @@ if (! $object->fetch($id, $ref) > 0)
  * View
  */
 
+$form = new Form($db);
+
 llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 $object->fetch_thirdparty();

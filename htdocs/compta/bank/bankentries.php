@@ -91,6 +91,7 @@ $search_dv_end = dol_mktime(0, 0, 0, GETPOST('search_end_dvmonth', 'int'), GETPO
 $search_thirdparty=GETPOST("thirdparty",'alpha');
 $search_req_nb=GETPOST("req_nb",'alpha');
 $search_num_releve=GETPOST("search_num_releve",'alpha');
+$search_conciliated=GETPOST("search_conciliated",'int');
 $num_releve=GETPOST("num_releve");
 $cat=GETPOST("cat");
 
@@ -150,6 +151,7 @@ $arrayfields=array(
     'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
     'balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1, 'position'=>1000),
     'b.num_releve'=>array('label'=>$langs->trans("AccountStatement"), 'checked'=>1, 'position'=>1010),
+    'b.conciliated'=>array('label'=>$langs->trans("Conciliated"), 'enabled'=> $object->rappro, 'checked'=>($action == 'reconcile'?1:0), 'position'=>1020),
 );
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -190,6 +192,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_req_nb='';
 	$search_thirdparty='';
 	$search_num_releve='';
+	$search_conciliated='';
 	$thirdparty='';
 	
 	$account="";
@@ -444,7 +447,7 @@ else
 	llxHeader('', $langs->trans("BankTransactions"), '', '', 0, 0, array(), array(), $param);
 }
 
-$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq,";
+$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql.= " b.fk_account, b.fk_type,";
 $sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.url_id,";
@@ -474,6 +477,7 @@ if (dol_strlen($search_dv_end)>0) $sql .= " AND b.datev <= '" . $db->idate($sear
 if ($search_ref) $sql.=natural_search("b.rowid", $search_ref);
 if ($search_req_nb) $sql.= natural_search("b.num_chq", $search_req_nb);
 if ($search_num_releve) $sql.= natural_search("b.num_releve", $search_num_releve);
+if ($search_conciliated != '' && $search_conciliated != '-1') $sql.= " AND b.rappro = ".$search_conciliated;
 if ($search_thirdparty) $sql.= natural_search("s.nom", $search_thirdparty);
 if ($description) $sql.= natural_search("b.label", $description);       // Warning some text are just translation keys, not translated strings
 if ($bid) $sql.= " AND b.rowid=l.lineid AND l.fk_categ=".$bid;
@@ -776,6 +780,7 @@ if ($resql)
 	if (! empty($arrayfields['b.credit']['checked']))           print_liste_field_titre($arrayfields['b.credit']['label'],$_SERVER['PHP_SELF'],'b.amount','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['balance']['checked']))            print_liste_field_titre($arrayfields['balance']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.num_releve']['checked']))       print_liste_field_titre($arrayfields['b.num_releve']['label'],$_SERVER['PHP_SELF'],'b.num_releve','',$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['b.conciliated']['checked']))      print_liste_field_titre($arrayfields['b.conciliated']['label'],$_SERVER['PHP_SELF'],'b.rappro','',$param,'align="center"',$sortfield,$sortorder);
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -857,10 +862,17 @@ if ($resql)
     	print $form->textwithpicto('', $htmltext, 1);
     	print '</td>';
 	}
+    // Numero statement
 	if (! empty($arrayfields['b.num_releve']['checked']))
 	{
-        // Numero statement
         print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_num_releve" value="'.dol_escape_htmltag($search_num_releve).'" size="3"></td>';
+	}
+	// Conciliated
+	if (! empty($arrayfields['b.conciliated']['checked']))
+	{
+        print '<td class="liste_titre" align="center">';
+        print $form->selectyesno('search_conciliated', $search_conciliated, 1, False, 1);
+        print '</td>';
 	}
 	print '<td class="liste_titre" align="middle">';
 	print '</td>';
@@ -1207,7 +1219,7 @@ if ($resql)
         	// Transaction reconciliated or edit link
         	if ($bankaccount->canBeConciliated() > 0)
         	{
-            	if ($objp->rappro)  // If line not conciliated and account can be conciliated
+            	if ($objp->conciliated)  // If line not conciliated and account can be conciliated
             	{
             	    print '<a href="releve.php?num='.$objp->num_releve.'&amp;account='.$objp->bankid.'">'.$objp->num_releve.'</a>';
             	}
@@ -1220,10 +1232,18 @@ if ($resql)
             if (! $i) $totalarray['nbfield']++;
     	}
 
+        if (! empty($arrayfields['b.conciliated']['checked']))
+    	{
+            print '<td class="nowrap" align="center">';
+            print $objp->conciliated?$langs->trans("Yes"):$langs->trans("No");
+        	print '</td>';
+            if (! $i) $totalarray['nbfield']++;
+    	}
+    	
     	// Action edit/delete
     	print '<td class="nowrap" align="center">';
     	// Transaction reconciliated or edit link
-    	if ($objp->rappro && $bankaccount->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
+    	if ($objp->conciliated && $bankaccount->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
     	{
     	    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	    print img_edit();
@@ -1243,7 +1263,7 @@ if ($resql)
     	        print img_view();
     	        print '</a>';
     	    }
-    	    if ($bankaccount->canBeConciliated() > 0 && empty($objp->rappro))
+    	    if ($bankaccount->canBeConciliated() > 0 && empty($objp->conciliated))
     	    {
     	        if ($db->jdate($objp->dv) < ($now - $conf->bank->rappro->warning_delay))
     	        {
