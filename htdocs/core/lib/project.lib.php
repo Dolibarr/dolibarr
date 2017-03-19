@@ -635,7 +635,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY))
 				{
 				    // Thirdparty
-				    print '<td class="nowrap">';
+				    print '<td class="tdoverflowmax100">';
 				    $thirdpartystatic->id=$lines[$i]->socid;
 				    $thirdpartystatic->name=$lines[$i]->thirdparty_name;
 				    print $thirdpartystatic->getNomUrl(1, 'project', 10);
@@ -839,10 +839,10 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY))
 				{
 				    // Thirdparty
-				    print '<td class="nowrap">';
+				    print '<td class="tdoverflowmax100">';
 				    $thirdpartystatic->id=$lines[$i]->thirdparty_id;
 				    $thirdpartystatic->name=$lines[$i]->thirdparty_name;
-				    print $thirdpartystatic->getNomUrl(1, 'project', 10);
+				    print $thirdpartystatic->getNomUrl(1, 'project');
 				    print '</td>';
 				}
 				

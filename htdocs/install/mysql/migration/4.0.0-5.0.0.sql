@@ -255,6 +255,10 @@ ALTER TABLE llx_contrat ADD COLUMN fk_user_modif integer;
 
 UPDATE llx_accounting_account set account_parent = 0 where account_parent = '';
 
+-- VMYSQL4.3 ALTER TABLE llx_product_price MODIFY COLUMN date_price DATETIME NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product_price ALTER COLUMN date_price DROP NOT NULL;
+ALTER TABLE llx_product_price ALTER COLUMN date_price SET DEFAULT NULL;
+ 
 ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
 
