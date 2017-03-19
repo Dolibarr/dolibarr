@@ -382,7 +382,7 @@ if ($result)
 				else if ($links[$key]['type']=='payment_various') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowVariousPayment'),'payment').' ';
-                    print $langs->trans("SalaryPayment");
+                    print $langs->trans("VariousPayment");
                     print '</a>';
                 }
                 else {

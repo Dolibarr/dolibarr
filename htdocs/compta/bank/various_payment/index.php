@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("compta");
-$langs->load("salaries");
+$langs->load("banks");
 $langs->load("bills");
 
 // Security check
@@ -142,7 +142,7 @@ if ($result)
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
+	print_barre_liste($langs->trans("VariousPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 	
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -153,7 +153,8 @@ if ($result)
 	print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"v.datep","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("PaymentMode"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
     if (! empty($conf->banque->enabled)) print_liste_field_titre($langs->trans("BankAccount"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"v.amount","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"v.amount","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Sens"),$_SERVER["PHP_SELF"],"v.sens","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
 
@@ -179,6 +180,8 @@ if ($result)
     }
 	// Amount
 	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
+	// Sens
+	print '<td class="liste_titre">&nbsp;</td>';
 
     print '<td class="liste_titre" align="right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
@@ -223,6 +226,9 @@ if ($result)
 	    }
         // Amount
         print "<td align=\"right\">".price($obj->amount)."</td>";
+        // Sens
+		if ($obj->sens == '1') $sens = $langs->trans("Credit"); else $sens = $langs->trans("Debit");
+        print "<td align=\"right\">".$sens."</td>";
         print "<td></td>";
         print "</tr>\n";
 
@@ -231,7 +237,7 @@ if ($result)
         $i++;
     }
 
-    $colspan=5;
+    $colspan=4;
     if (! empty($conf->banque->enabled)) $colspan++;
     print '<tr class="liste_total"><td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
     print '<td class="liste_total" align="right">'.price($total)."</td>";

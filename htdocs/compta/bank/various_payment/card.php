@@ -26,8 +26,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
 $langs->load("compta");
 $langs->load("banks");
@@ -317,7 +317,7 @@ if ($id)
     $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 	
     print "<tr>";
-	print '<td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
+	print '<td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 	print '</td></tr>';
 
@@ -325,15 +325,35 @@ if ($id)
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("DatePayment").'</td><td colspan="3">';
+	print '<td>'.$langs->trans("DatePayment").'</td><td>';
 	print dol_print_date($object->datep,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("DateValue").'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
 	print dol_print_date($object->datev,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	// Debit / Credit
+	if ($object->sens == '1') $sens = $langs->trans("Credit"); else $sens = $langs->trans("Debit");
+	print '<tr><td>'.$langs->trans("Sens").'</td><td>'.$sens.'</td></tr>';
+
+	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+
+	// Accountancy code
+	print '<tr><td class="nowrap">';
+	print $langs->trans("AccountAccounting");
+	print '</td><td>';
+	if (! empty($conf->accounting->enabled))
+	{
+		$accountancyaccount = new AccountingAccount($db);
+		$accountancyaccount->fetch('',$object->accountancy_code);
+
+		print $accountancyaccount->getNomUrl(1);
+		// print length_accountg($object->accountancy_code);
+	} else {
+		print $object->accountancy_code;
+	}
+	print '</td></tr>';
 
 	if (! empty($conf->banque->enabled))
 	{
@@ -352,7 +372,7 @@ if ($id)
 	}
 
 	// Other attributes
-	$parameters=array('colspan' => ' colspan="3"');
+	$parameters=array('colspan' => ' colspan="1"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
 	print '</table>';
@@ -366,7 +386,7 @@ if ($id)
 	print '<div class="tabsAction">'."\n";
 	if ($object->rappro == 0)
 	{
-		if (! empty($user->rights->salaries->delete))
+		if (! empty($user->rights->banque->delete))
 		{
 			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a>';
 		}

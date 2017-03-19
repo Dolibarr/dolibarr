@@ -97,6 +97,7 @@ class PaymentVarious extends CommonObject
 		$sql.= " num_payment='".$this->num_payment."',";
 		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " note='".$this->db->escape($this->note)."',";
+		$sql.= " accountancy_code='".$this->db->escape($this->accountancy_code)."',";
 		$sql.= " fk_bank=".($this->fk_bank > 0 ? "'".$this->fk_bank."'":"null").",";
 		$sql.= " fk_user_author='".$this->fk_user_author."',";
 		$sql.= " fk_user_modif='".$this->fk_user_modif."'";
@@ -154,6 +155,7 @@ class PaymentVarious extends CommonObject
 		$sql.= " v.num_payment,";
 		$sql.= " v.label,";
 		$sql.= " v.note,";
+		$sql.= " v.accountancy_code,";
 		$sql.= " v.fk_bank,";
 		$sql.= " v.fk_user_author,";
 		$sql.= " v.fk_user_modif,";
@@ -173,23 +175,25 @@ class PaymentVarious extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id    = $obj->rowid;
-				$this->ref   = $obj->rowid;
-				$this->tms   = $this->db->jdate($obj->tms);
-				$this->fk_user = $obj->fk_user;
-				$this->datep = $this->db->jdate($obj->datep);
-				$this->datev = $this->db->jdate($obj->datev);
-				$this->amount = $obj->amount;
-				$this->type_payement = $obj->fk_typepayment;
-				$this->num_payment = $obj->num_payment;
-				$this->label = $obj->label;
-				$this->note  = $obj->note;
-				$this->fk_bank = $obj->fk_bank;
-				$this->fk_user_author = $obj->fk_user_author;
-				$this->fk_user_modif = $obj->fk_user_modif;
-				$this->fk_account = $obj->fk_account;
-				$this->fk_type = $obj->fk_type;
-				$this->rappro  = $obj->rappro;
+				$this->id				= $obj->rowid;
+				$this->ref				= $obj->rowid;
+				$this->tms				= $this->db->jdate($obj->tms);
+				$this->fk_user			= $obj->fk_user;
+				$this->datep			= $this->db->jdate($obj->datep);
+				$this->datev			= $this->db->jdate($obj->datev);
+				$this->sens				= $obj->sens;
+				$this->amount			= $obj->amount;
+				$this->type_payement	= $obj->fk_typepayment;
+				$this->num_payment		= $obj->num_payment;
+				$this->label			= $obj->label;
+				$this->note				= $obj->note;
+				$this->accountancy_code	= $obj->accountancy_code;
+				$this->fk_bank			= $obj->fk_bank;
+				$this->fk_user_author	= $obj->fk_user_author;
+				$this->fk_user_modif	= $obj->fk_user_modif;
+				$this->fk_account		= $obj->fk_account;
+				$this->fk_type			= $obj->fk_type;
+				$this->rappro			= $obj->rappro;
 			}
 			$this->db->free($resql);
 
@@ -356,12 +360,14 @@ class PaymentVarious extends CommonObject
 					if ($result <= 0) dol_print_error($this->db);
 
 					// Insert payment into llx_bank
-					// Add link 'payment_salary' in bank_url between payment and bank transaction
+					// Add link 'payment_various' in bank_url between payment and bank transaction
+					if ($this->sens == '0') $sign='-';
+
 					$bank_line_id = $acc->addline(
 						$this->datep,
 						$this->type_payment,
 						$this->label,
-						-abs($this->amount),
+						$sign.abs($this->amount),
 						$this->num_payment,
 						'',
 						$user
