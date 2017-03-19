@@ -308,13 +308,13 @@ if ($action == 'create')
 if ($id)
 {
 
-	$head=various_payement_prepare_head($object);
+	$head=various_payment_prepare_head($object);
 
 	dol_fiche_head($head, 'card', $langs->trans("VariousPayment"), 0, 'payment');
 
 	print '<table class="border" width="100%">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 	
     print "<tr>";
 	print '<td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';

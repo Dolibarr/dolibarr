@@ -163,7 +163,7 @@ class PaymentVarious extends CommonObject
 
 		$sql.= " FROM ".MAIN_DB_PREFIX."payment_various as v";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON v.fk_bank = b.rowid";
-		$sql.= " WHERE s.rowid = ".$id;
+		$sql.= " WHERE v.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -309,11 +309,13 @@ class PaymentVarious extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_various (";
 		$sql.= " datep";
 		$sql.= ", datev";
+		$sql.= ", sens";
 		$sql.= ", amount";
 		$sql.= ", fk_typepayment";
 		$sql.= ", num_payment";
 		if ($this->note) $sql.= ", note";
 		$sql.= ", label";
+		$sql.= ", accountancy_code";
 		$sql.= ", fk_user_author";
 		$sql.= ", datec";
 		$sql.= ", fk_bank";
@@ -322,12 +324,13 @@ class PaymentVarious extends CommonObject
 		$sql.= " VALUES (";
 		$sql.= "'".$this->db->idate($this->datep)."'";
 		$sql.= ", '".$this->db->idate($this->datev)."'";
+		$sql.= ", '".$this->sens."'";
 		$sql.= ", ".$this->amount;
-		$sql.= ", ".($this->salary > 0 ? $this->salary : "null");
 		$sql.= ", '".$this->type_payment."'";
 		$sql.= ", '".$this->num_payment."'";
 		if ($this->note) $sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->label)."'";
+		$sql.= ", '".$this->accountancy_code."'";
 		$sql.= ", '".$user->id."'";
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", NULL";
