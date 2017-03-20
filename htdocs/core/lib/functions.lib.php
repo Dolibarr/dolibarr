@@ -248,7 +248,24 @@ function dol_shutdown()
  */
 function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 {
-	if (empty($method)) $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
+	if (empty($method))
+	{
+		$out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
+		
+		// Management of default values
+		if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+		{
+			$relativepathstring = preg_replace('/\.[a-z]+$/', '', $_SERVER["PHP_SELF"]);
+			if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+			$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+			$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+			$relativepathstring=dol_string_nospecial($relativepathstring, '-');
+			// $relativepathstring is now string that identify the page: '_societe_card', '_agenda_card', ...
+			$keyfordefaultvalue = 'MAIN_DEFAULT_FOR_'.$relativepathstring.'_'.$paramname;
+			global $conf;
+			if (isset($conf->global->$keyfordefaultvalue)) $out = $conf->global->$keyfordefaultvalue;
+		}
+	}
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
 	elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
