@@ -151,7 +151,7 @@ if ($id > 0 || ! empty($ref))
 
         // Relative and absolute discounts
         $addabsolutediscount=' <a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddGlobalDiscount").'</a>';
-        $addcreditnote=' <a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$soc->id.'&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddCreditNote").'</a>';
+        $addcreditnote=' <a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$soc->id.'&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddCreditNote").'</a>';
 
         print '<tr><td>'.$langs->trans('Discounts').'</td>';
         print '<td colspan="5">';

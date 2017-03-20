@@ -237,7 +237,7 @@ if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
 			$x_both[$my_coll_rate]['paye']['vat'] = 0;
 			$x_both[$my_coll_rate]['coll']['links'] = '';
 			foreach($x_coll[$my_coll_rate]['facid'] as $id=>$dummy){
-				$x_both[$my_coll_rate]['coll']['links'] .= '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$x_coll[$my_coll_rate]['facid'][$id].'" title="'.$x_coll[$my_coll_rate]['facnum'][$id].'">..'.substr($x_coll[$my_coll_rate]['facnum'][$id],-2).'</a> ';
+				$x_both[$my_coll_rate]['coll']['links'] .= '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$x_coll[$my_coll_rate]['facid'][$id].'" title="'.$x_coll[$my_coll_rate]['facnum'][$id].'">..'.substr($x_coll[$my_coll_rate]['facnum'][$id],-2).'</a> ';
 			}
 		}
 		foreach(array_keys($x_paye) as $my_paye_rate){

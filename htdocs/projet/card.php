@@ -528,7 +528,7 @@ if ($action == 'create' && $user->rights->projet->creer)
         	print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
         }
         else print $text;
-        print ' <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
         print '</td></tr>';
     }
 
@@ -1088,7 +1088,7 @@ elseif ($object->id > 0)
 	            if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
 	            {
 	                $langs->load("bills");
-	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
 	            }
 	            if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer)
 	            {

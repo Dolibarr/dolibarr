@@ -43,7 +43,7 @@ function societe_prepare_head(Societe $object)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/societe/card.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'card';
     $h++;
@@ -259,7 +259,7 @@ function societe_prepare_head2($object)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/societe/card.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'company';
     $h++;
@@ -1470,7 +1470,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 			print '<td>'.$obj->code_client.'</td>';
 
 			print '<td align="center">';
-			print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$obj->rowid.'&amp;action=edit">';
+			print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$obj->rowid.'&amp;action=edit">';
 			print img_edit();
 			print '</a></td>';
 

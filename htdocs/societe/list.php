@@ -461,7 +461,7 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 {
     $obj = $db->fetch_object($resql);
     $id = $obj->rowid;
-    header("Location: ".DOL_URL_ROOT.'/societe/soc.php?socid='.$id);
+    header("Location: ".DOL_URL_ROOT.'/societe/card.php?socid='.$id);
     exit;
 }
 

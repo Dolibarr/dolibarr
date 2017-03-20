@@ -30,12 +30,12 @@
  */
 
 /**
- * \file 	htdocs/compta/facture.php
+ * \file 	htdocs/compta/facture/card.php
  * \ingroup facture
  * \brief 	Page to create/see an invoice
  */
 
-require '../main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
@@ -2828,7 +2828,7 @@ else if ($id > 0 || ! empty($ref))
 
 	$head = facture_prepare_head($object);
 
-	dol_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), 0, 'bill');
+	dol_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), -1, 'bill');
 
 	$formconfirm = '';
 
@@ -3159,7 +3159,7 @@ else if ($id > 0 || ! empty($ref))
 	// Relative and absolute discounts
 	$addrelativediscount = '<a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditRelativeDiscounts") . '</a>';
 	$addabsolutediscount = '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditGlobalDiscounts") . '</a>';
-	$addcreditnote = '<a href="' . DOL_URL_ROOT . '/compta/facture.php?action=create&socid=' . $soc->id . '&type=2&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("AddCreditNote") . '</a>';
+	$addcreditnote = '<a href="' . DOL_URL_ROOT . '/compta/facture/card.php?action=create&socid=' . $soc->id . '&type=2&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("AddCreditNote") . '</a>';
 
 	print '<tr><td>' . $langs->trans('Discounts');
 	print '</td><td>';
@@ -3466,7 +3466,7 @@ else if ($id > 0 || ! empty($ref))
         print '<table width="100%" class="nobordernopadding"><tr><td>';
         print $langs->trans('IncotermLabel');
         print '<td><td align="right">';
-        if ($user->rights->facture->creer) print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+        if ($user->rights->facture->creer) print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
         else print '&nbsp;';
         print '</td></tr></table>';
         print '</td>';

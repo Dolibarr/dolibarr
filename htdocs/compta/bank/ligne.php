@@ -311,13 +311,9 @@ if ($result)
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='company') {
-                    print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$links[$key]['url_id'].'">';
-                    //print img_object($langs->trans('ShowCompany'),'company').' ';
                     $societe=new Societe($db);
                     $societe->fetch($links[$key]['url_id']);
-                    //print $links[$key]['label'];
                     print $societe->getNomUrl(1);
-                    print '</a>';
                 }
                 else if ($links[$key]['type']=='sc') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
