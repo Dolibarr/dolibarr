@@ -228,7 +228,7 @@ if ($action == 'edit')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	dol_fiche_head($head, 'common', '');
+	dol_fiche_head($head, 'common', '', -1);
 	
 	print $langs->trans("EMailsDesc")."<br>\n";
 	print "<br>\n";
@@ -453,7 +453,7 @@ if ($action == 'edit')
 }
 else
 {
-    dol_fiche_head($head, 'common', '');
+    dol_fiche_head($head, 'common', '', -1);
     
     print $langs->trans("EMailsDesc")."<br>\n";
     print "<br>\n";

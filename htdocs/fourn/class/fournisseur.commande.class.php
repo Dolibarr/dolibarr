@@ -2321,7 +2321,7 @@ class CommandeFournisseur extends CommonOrder
             if (preg_match('/\((.*)\)/', $txtva, $reg))
             {
                 $vat_src_code = $reg[1];
-                $vatrate = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+                $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
             }
             
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
