@@ -2360,13 +2360,9 @@ else
 
         $somethingshown = $formfile->show_documents('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
-		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
-
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object);
-		if ($linktoelem) print '<br>'.$linktoelem;
-
+		$linktoelem = $form->showLinkToObjectBlock($object, null, null);
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
