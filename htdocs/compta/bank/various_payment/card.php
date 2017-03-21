@@ -225,7 +225,7 @@ if ($action == 'create')
 	// Label
 	print '<tr><td>';
 	print fieldLabel('Label','label',1).'</td><td>';
-	print '<input name="label" id="label" class="minwidth300" value="'.(GETPOST("label")?GETPOST("label",'',2):$langs->trans("VariousPayment")).'">';
+	print '<input name="label" id="label" class="minwidth300" value="'.($label?$label:$langs->trans("VariousPayment")).'">';
 	print '</td></tr>';
 
 	// Sens
