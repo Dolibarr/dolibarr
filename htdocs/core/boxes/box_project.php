@@ -78,7 +78,7 @@ class box_project extends ModeleBoxes
 		// list the summary of the orders
 		if ($user->rights->projet->lire) {
 
-			$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut ";
+			$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.public";
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             if($user->socid) $sql.= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=p.fk_soc";
 			$sql.= " WHERE p.entity = ".$conf->entity;
@@ -98,7 +98,7 @@ class box_project extends ModeleBoxes
                     $tooltip = $langs->trans('Project') . ': ' . $objp->ref;
                     $this->info_box_contents[$i][0] = array(
                         'td' => 'align="left" width="16"',
-                        'logo' => 'object_project',
+                        'logo' => 'object_project'.($objp->public?'pub':''),
                         'tooltip' => $tooltip,
                         'url' => DOL_URL_ROOT."/projet/card.php?id=".$objp->rowid,
                     );
@@ -123,13 +123,13 @@ class box_project extends ModeleBoxes
 					if ($resultTask) {
 						$objTask = $db->fetch_object($resultTask);
                         $this->info_box_contents[$i][3] = array(
-                            'td' => 'align="right"',
-                            'text' => number_format($objTask->nb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"),
+                            'td' => 'class="right"',
+                            'text' => $objTask->nb."&nbsp;".$langs->trans("Tasks"),
                         );
-						if ($objTask->nb  > 0 )
+						if ($objTask->nb  > 0)
                             $this->info_box_contents[$i][4] = array(
-                                'td' => 'align="right"',
-                                'text' => number_format(($objTask->totprogress/$objTask->nb), 0, ',', ' ')."%",
+                                'td' => 'class="right"',
+                                'text' => round($objTask->totprogress/$objTask->nb, 0)."%",
                             );
 						else
 							$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => "N/A&nbsp;");
