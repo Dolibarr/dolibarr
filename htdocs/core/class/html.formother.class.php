@@ -1011,6 +1011,7 @@ class FormOther
         		if (! empty($boxidactivatedforuser[$box->id])) continue;	// Already visible for user
         		$label=$langs->transnoentitiesnoconv($box->boxlabel);
         		if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
+        		//$label = '<span class="fa fa-home fa-fw" aria-hidden="true"></span>'.$label;    KO with select2. No html rendering.
         		$arrayboxtoactivatelabel[$box->id]=$label;			// We keep only boxes not shown for user, to show into combo list
         	}
             foreach($boxidactivatedforuser as $boxid)
@@ -1027,7 +1028,7 @@ class FormOther
 			$selectboxlist.='<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist.='<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist.='<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, 'hidden selected');
+			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, 'hidden selected', 0, 1);
             if (empty($conf->use_javascript_ajax)) $selectboxlist.=' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
             $selectboxlist.='</form>';
             $selectboxlist.=ajax_combobox("boxcombo");

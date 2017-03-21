@@ -77,7 +77,7 @@ if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$langs->trans("HomeAr
 
 llxHeader('',$title);
 
-
+    
 $resultboxes=FormOther::getBoxesArea($user,"0");    // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 
@@ -242,7 +242,7 @@ if (empty($user->societe_id))
 	                 'order',
 	                 'bill',
 	                 'propal',
-	                 'project',
+	                 'projectpub',
 					 'trip',
 					 'generic'
 	    );
@@ -388,7 +388,6 @@ if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 {
     include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
     $board=new Project($db);
-
     $dashboardlines[] = $board->load_board($user);
 }
 

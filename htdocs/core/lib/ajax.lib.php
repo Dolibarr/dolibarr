@@ -377,7 +377,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
         		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
         		    dir: \'ltr\',
         			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
-					minimumInputLength: '.$minLengthToAutocomplete.'
+					minimumInputLength: '.$minLengthToAutocomplete.'				    
 				})';
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
 	$msg.= ';'."\n";

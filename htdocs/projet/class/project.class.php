@@ -1692,8 +1692,8 @@ class Project extends CommonObject
             $response->warning_delay = $conf->projet->warning_delay/60/60/24;
             $response->label = $langs->trans("OpenedProjects");
             if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/list.php?search_status=1&mainmenu=project';
-            else $response->url = DOL_URL_ROOT.'/projet/list.php?mode=mine&search_status=1&mainmenu=project';
-            $response->img = img_object($langs->trans("Projects"),"project");
+            else $response->url = DOL_URL_ROOT.'/projet/list.php?search_project_user=-1&search_status=1&mainmenu=project';
+            $response->img = img_object($langs->trans("Projects"),"projectpub");
 
             // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
