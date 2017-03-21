@@ -38,7 +38,7 @@ function facture_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/card.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Card');
 	$head[$h][2] = 'compta';
 	$h++;
