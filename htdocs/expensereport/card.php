@@ -1959,7 +1959,7 @@ else
 									print '<td></td>';
 
 									// Select date
-									print '<td style="text-align:center;">';
+									print '<td class="center">';
 									$form->select_date($objp->date,'date');
 									print '</td>';
 
@@ -1972,13 +1972,13 @@ else
 									}
 									
 									// Select type
-									print '<td style="text-align:center;">';
+									print '<td class="center">';
 									select_type_fees_id($objp->type_fees_code,'fk_c_type_fees');
 									print '</td>';
 
 									// Add comments
 									print '<td>';
-									print '<textarea class="flat_ndf" name="comments" class="centpercent">'.$objp->comments.'</textarea>';
+									print '<textarea name="comments" class="flat_ndf centpercent">'.$objp->comments.'</textarea>';
 									print '</td>';
 
 									// VAT
@@ -1988,12 +1988,12 @@ else
 
 									// Unit price
 									print '<td style="text-align:right;">';
-									print '<input type="text" size="6" name="value_unit" value="'.$objp->value_unit.'" />';
+									print '<input type="text" min="0" class="maxwidth100" name="value_unit" value="'.$objp->value_unit.'" />';
 									print '</td>';
 
 									// Quantity
 									print '<td style="text-align:right;">';
-									print '<input type="text" size="4" name="qty" value="'.$objp->qty.'" />';
+									print '<input type="number" min="0" class="maxwidth100" name="qty" value="'.$objp->qty.'" />';
 									print '</td>';
 
 									if ($action != 'editline')
@@ -2074,12 +2074,12 @@ else
 
 						// Unit price
 						print '<td align="right">';
-						print '<input type="text" size="5" name="value_unit" value="'.$value_unit.'">';
+						print '<input type="text" class="right maxwidth50" name="value_unit" value="'.$value_unit.'">';
 						print '</td>';
 
 						// Quantity
 						print '<td align="right">';
-						print '<input type="text" size="2" name="qty"  value="'.($qty?$qty:1).'">';
+						print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.($qty?$qty:1).'">';
 						print '</td>';
 
 						if ($action != 'editline')
