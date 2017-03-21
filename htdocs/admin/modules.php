@@ -440,7 +440,7 @@ if ($mode == 'common')
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-    dol_fiche_head($head, $mode, '');
+    dol_fiche_head($head, $mode, '', -1);
 
     $moreforfilter = '';
     $moreforfilter.='<div class="divsearchfield">';
@@ -773,7 +773,7 @@ if ($mode == 'common')
 
 if ($mode == 'marketplace')
 {
-    dol_fiche_head($head, $mode, '');
+    dol_fiche_head($head, $mode, '', -1);
     
     // Marketplace
     print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
@@ -809,7 +809,7 @@ if ($mode == 'marketplace')
    
 if ($mode == 'deploy')
 {
-    dol_fiche_head($head, $mode, '');
+    dol_fiche_head($head, $mode, '', -1);
 
     
     $allowonlineinstall=true;
