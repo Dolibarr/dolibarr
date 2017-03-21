@@ -582,26 +582,68 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     }
 
     /**
-     * Gives the translated module description if translation exists in admin.lang or the default module description
+     * Gives the long description of a module. First check README-la_LA.md then README.md
+     * If not markdown files found, it return translated value of the key ->descriptionlong.
      *
-     * @return  string  Translated module description
+     * @return  string  Long description of a module
      */
     function getDescLong()
     {
         global $langs;
         $langs->load("admin");
         
-        if (empty($this->descriptionlong)) return '';
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
+        $filefound= false;
         
-        // If module description translation does not exist using its unique id, we can use its name to find translation
-        if (is_array($this->langfiles))
+        // Define path to file README.md. 
+        // First check README-la_LA.md then README.md
+        $pathoffile = dol_buildpath(strtolower($this->name).'/README-'.$langs->defaultlang.'.md', 0);
+        if (dol_is_file($pathoffile))
         {
-            foreach($this->langfiles as $val)
+            $filefound = true;
+        }
+        if (! $filefound)
+        {
+            $pathoffile = dol_buildpath(strtolower($this->name).'/README.md', 0);
+            if (dol_is_file($pathoffile))
             {
-                if ($val) $langs->load($val);
+                $filefound = true;
             }
         }
-        return $langs->trans($this->descriptionlong);
+        
+        if ($filefound)     // Mostly for external modules
+        {
+            $content = file_get_contents($pathoffile);
+    
+            if ((float) DOL_VERSION >= 6.0)
+            {
+                @include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
+                $content = dolMd2Html($content, 'parsedown', array('doc/'=>dol_buildpath('cabinetmed/doc/', 1)));
+            }
+            else
+            {
+                $content = nl2br($content);
+            }
+        }
+        else                // Mostly for internal modules
+        {
+            if (! empty($this->descriptionlong))
+            {
+                if (is_array($this->langfiles))
+                {
+                    foreach($this->langfiles as $val)
+                    {
+                        if ($val) $langs->load($val);
+                    }
+                }
+            
+                $content = $langs->trans($this->descriptionlong);
+            }
+        }
+    
+        return $content;
     }
     
     /**

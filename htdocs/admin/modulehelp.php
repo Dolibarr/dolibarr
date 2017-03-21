@@ -338,7 +338,7 @@ if ($mode == 'desc')
     $text.='<br>';
 
     $moduledesclong=$objMod->getDescLong();
-    if ($moduledesclong) $text.='<br><hr><br>'.$moduledesclong.'<br>';
+    if ($moduledesclong) $text.='<br><hr><div class="moduledesclong">'.$moduledesclong.'<div>';
 }
 
 if ($mode == 'feature')

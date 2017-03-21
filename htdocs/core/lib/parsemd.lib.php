@@ -24,12 +24,22 @@
 /**
  * Function to parse MD content into HTML
  *
- * @param	string	  $content			MD content
- * @param   string    $parser           'parsedown' or 'nl2br'
- * @return	string                      Parsed content
+ * @param	string	  $content			    MD content
+ * @param   string    $parser               'parsedown' or 'nl2br'
+ * @param   string    $replaceimagepath     Replace path to image with another path. Exemple: ('doc/'=>'xxx/aaa/')
+ * @return	string                          Parsed content
  */
-function dolMd2Html($content, $parser='parsedown')
+function dolMd2Html($content, $parser='parsedown',$replaceimagepath=null)
 {
+    if (is_array($replaceimagepath))
+    {
+        foreach($replaceimagepath as $key => $val)
+        {
+            $keytoreplace = ']('.$key;
+            $valafter = ']('.$val;
+            $content = preg_replace('/'.preg_quote($keytoreplace,'/').'/m', $valafter, $content);
+        }
+    }
     if ($parser == 'parsedown')
     {
         include DOL_DOCUMENT_ROOT.'/includes/parsedown/Parsedown.php';

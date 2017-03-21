@@ -640,6 +640,13 @@ div.myavailability {
 	margin-bottom: 12px;
 }
 
+/* For the long description of module */
+.moduledesclong p img,.moduledesclong p a img {
+    max-width: 90% !important;
+    height: auto !important;
+}
+
+
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
 /*.table-responsive {
     width: calc(100% - 330px);
