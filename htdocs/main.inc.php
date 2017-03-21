@@ -1390,7 +1390,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    $logouttext='';
 	    if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	    {
-    	    $logouthtmltext=$appli.'<br>';
+    	    //$logouthtmltext=$appli.'<br>';
     	    if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http')
     	    {
     	    	$logouthtmltext.=$langs->trans("Logout").'<br>';
@@ -1467,8 +1467,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	        if ($helpbaseurl && $helppage)
 	        {
 	            $text='';
-	            $title='';
-	            //$text.='<div id="blockvmenuhelpwiki" class="blockvmenuhelp">';
+	            $title=$appli.'<br>';
 	            $title.=$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
 	            if ($mode == 'wiki') $title.=' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
 	            $text.='<a class="help" target="_blank" href="';
@@ -1631,32 +1630,35 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
         print '<div id="blockvmenuhelp" class="blockvmenuhelp">'."\n";
 
         // Version
-        $doliurl='http://www.dolibarr.org';
-		//local communities
-		if (preg_match('/fr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.fr';
-		if (preg_match('/es/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.es';
-		if (preg_match('/de/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.de';
-		if (preg_match('/it/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.it';
-		if (preg_match('/gr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.gr';
-
-        $appli=constant('DOL_APPLICATION_TITLE');
-	    if (! empty($conf->global->MAIN_APPLICATION_TITLE))
-	    {
-	    	$appli=$conf->global->MAIN_APPLICATION_TITLE; $doliurl='';
-	    	if (preg_match('/\d\.\d/', $appli))
-	    	{
-				if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
-	    	}
-	    	else $appli.=" ".DOL_VERSION;
-	    }
-	    else $appli.=" ".DOL_VERSION;
-	    print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
-	    if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
-	    else print '<span class="help">';
-	    print $appli;
-	    if ($doliurl) print '</a>';
-	    else print '</span>';
-	    print '</div>'."\n";
+        if (empty($conf->global->MAIN_HIDE_VERSION))    // Version is already on help picto and on login page.
+        {
+            $doliurl='https://www.dolibarr.org';
+    		//local communities
+    		if (preg_match('/fr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.fr';
+    		if (preg_match('/es/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.es';
+    		if (preg_match('/de/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.de';
+    		if (preg_match('/it/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.it';
+    		if (preg_match('/gr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.gr';
+    
+            $appli=constant('DOL_APPLICATION_TITLE');
+    	    if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+    	    {
+    	    	$appli=$conf->global->MAIN_APPLICATION_TITLE; $doliurl='';
+    	    	if (preg_match('/\d\.\d/', $appli))
+    	    	{
+    				if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
+    	    	}
+    	    	else $appli.=" ".DOL_VERSION;
+    	    }
+    	    else $appli.=" ".DOL_VERSION;
+    	    print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
+    	    if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
+    	    else print '<span class="help">';
+    	    print $appli;
+    	    if ($doliurl) print '</a>';
+    	    else print '</span>';
+    	    print '</div>'."\n";
+        }
 
 		// Link to bugtrack
 		if (! empty($conf->global->MAIN_BUGTRACK_ENABLELINK))
