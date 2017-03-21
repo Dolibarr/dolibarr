@@ -1272,8 +1272,8 @@ if ($action == 'create')
 	print '<td>';
 	$defaultselectuser=$user->id;
 	if (GETPOST('fk_user_author') > 0) $defaultselectuser=GETPOST('fk_user_author');
-  $include_users = 'hierarchyme';
-  if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expensereport->writeall_advance)) $include_users=array();
+    $include_users = 'hierarchyme';
+    if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expensereport->writeall_advance)) $include_users=array();
 	$s=$form->select_dolusers($defaultselectuser, "fk_user_author", 0, "", 0, $include_users);
 	print $s;
 	print '</td>';
@@ -1485,7 +1485,7 @@ else
 			}
 			else
 			{
-				dol_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
+				dol_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
 
 				// Clone confirmation
 				if ($action == 'clone') {
