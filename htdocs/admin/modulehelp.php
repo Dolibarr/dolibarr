@@ -239,7 +239,7 @@ $head[$h][2] = 'desc';
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=feature';
-$head[$h][1] = $langs->trans("Features");
+$head[$h][1] = $langs->trans("TechnicalServicesProvided");
 $head[$h][2] = 'feature';
 $h++;
 
@@ -251,44 +251,37 @@ foreach($orders as $tmpkey => $tmpvalue)
     if ($objMod->numero == $id)
     {
         $key = $i;
+        $modName = $filename[$tmpkey];
+        $dirofmodule = $dirmod[$tmpkey];
         break;
     }
     $i++;
 }
 $value = $orders[$key];
+$special = $objMod->special;
+$tab=explode('_',$value);
+$familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$tab[3];
+
+// Check filters
+$modulename=$objMod->getName();
+$moduledesc=$objMod->getDesc();
+$moduleauthor=$objMod->getPublisher();
+
 
 
 print '<div class="centpercent">';
 
-
-print load_fiche_titre($objMod->getDesc(),$moreinfo,'object_'.$objMod->picto);
+print load_fiche_titre(($modulename?$modulename:$moduledesc), $moreinfo, 'object_'.$objMod->picto);
 print '<br>';
 
-dol_fiche_head($head, $mode, $title);
+dol_fiche_head($head, $mode, $title, -1);
 
-
-
-$tab=explode('_',$value);
-$familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$tab[3];
-
-$modName = $filename[$key];
-$objMod  = $modules[$key];
-$dirofmodule = $dirmod[$key];
-
-$special = $objMod->special;
-
-if (! $objMod->getName())
+if (! $modulename)
 {
 	dol_syslog("Error for module ".$key." - Property name of module looks empty", LOG_WARNING);
 }
 
 $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
-
-// Check filters
-$modulename=$objMod->getName();
-$moduledesc=$objMod->getDesc();
-$moduledesclong=$objMod->getDescLong();
-$moduleauthor=$objMod->getPublisher();
 
 // Load all lang files of module
 if (isset($objMod->langfiles) && is_array($objMod->langfiles))
@@ -322,6 +315,8 @@ $text='';
    
 if ($mode == 'desc')
 {
+    if ($moduledesc) $text.=$moduledesc.'<br><br>';
+    
     $text.='<strong>'.$langs->trans("Version").':</strong> '.$version;
     
     $textexternal='';
@@ -329,7 +324,7 @@ if ($mode == 'desc')
     {
         $textexternal.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule",$dirofmodule);
         if ($objMod->editor_name != 'dolibarr') $textexternal.='<br><strong>'.$langs->trans("Publisher").':</strong> '.(empty($objMod->editor_name)?$langs->trans("Unknown"):$objMod->editor_name);
-        if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i',$objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> '.$objMod->editor_url;
+        if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i',$objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> <a href="'.$objMod->editor_url.'" target="_blank">'.$objMod->editor_url.'</a>';
         $text.=$textexternal;
         $text.='<br>';
     }
@@ -342,7 +337,8 @@ if ($mode == 'desc')
     else $text.=$langs->trans("Disabled");
     $text.='<br>';
 
-    if ($objMod->getDescLong()) $text.=$objMod->getDesc().'<br>';
+    $moduledesclong=$objMod->getDescLong();
+    if ($moduledesclong) $text.='<br><hr><br>'.$moduledesclong.'<br>';
 }
 
 if ($mode == 'feature')
@@ -360,6 +356,8 @@ if ($mode == 'feature')
     }
     else $text.=$langs->trans("No");
     
+    $text.='<br>';
+    
     $text.='<br><strong>'.$langs->trans("AddDictionaries").':</strong> ';
     if (isset($objMod->dictionaries) && isset($objMod->dictionaries['tablib']) && is_array($objMod->dictionaries['tablib']) && count($objMod->dictionaries['tablib']))
     {
@@ -371,6 +369,8 @@ if ($mode == 'feature')
         }
     }
     else $text.=$langs->trans("No");
+    
+    $text.='<br>';
     
     $text.='<br><strong>'.$langs->trans("AddBoxes").':</strong> ';
     if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes))
@@ -384,6 +384,8 @@ if ($mode == 'feature')
     }
     else $text.=$langs->trans("No");
     
+    $text.='<br>';
+    
     $text.='<br><strong>'.$langs->trans("AddModels").':</strong> ';
     if (isset($objMod->module_parts) && isset($objMod->module_parts['models']) && $objMod->module_parts['models'])
     {
@@ -391,12 +393,16 @@ if ($mode == 'feature')
     }
     else $text.=$langs->trans("No");
     
+    $text.='<br>';
+    
     $text.='<br><strong>'.$langs->trans("AddSubstitutions").':</strong> ';
     if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions'])
     {
         $text.=$langs->trans("Yes");
     }
     else $text.=$langs->trans("No");
+    
+    $text.='<br>';
     
     $text.='<br><strong>'.$langs->trans("AddSheduledJobs").':</strong> ';
     if (isset($objMod->cronjobs) && is_array($objMod->cronjobs) && count($objMod->cronjobs))
@@ -410,12 +416,16 @@ if ($mode == 'feature')
     }
     else $text.=$langs->trans("No");
     
+    $text.='<br>';
+    
     $text.='<br><strong>'.$langs->trans("AddTriggers").':</strong> ';
     if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers'])
     {
         $text.=$langs->trans("Yes");
     }
     else $text.=$langs->trans("No");
+    
+    $text.='<br>';
     
     $text.='<br><strong>'.$langs->trans("AddHooks").':</strong> ';
     if (isset($objMod->module_parts) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks']))
@@ -429,6 +439,8 @@ if ($mode == 'feature')
     }
     else $text.=$langs->trans("No");
     
+    $text.='<br>';
+    
     $text.='<br><strong>'.$langs->trans("AddPermissions").':</strong> ';
     if (isset($objMod->rights) && is_array($objMod->rights) && count($objMod->rights))
     {
@@ -441,12 +453,16 @@ if ($mode == 'feature')
     }
     else $text.=$langs->trans("No");
     
+    $text.='<br>';
+    
     $text.='<br><strong>'.$langs->trans("AddMenus").':</strong> ';
     if (isset($objMod->menu) && ! empty($objMod->menu)) // objMod can be an array or just an int 1
     {
         $text.=$langs->trans("Yes");
     }
     else $text.=$langs->trans("No");
+    
+    $text.='<br>';
     
     $text.='<br><strong>'.$langs->trans("AddExportProfiles").':</strong> ';
     if (isset($objMod->export_label) && is_array($objMod->export_label) && count($objMod->export_label))
@@ -460,6 +476,8 @@ if ($mode == 'feature')
     }
     else $text.=$langs->trans("No");
     
+    $text.='<br>';
+    
     $text.='<br><strong>'.$langs->trans("AddImportProfiles").':</strong> ';
     if (isset($objMod->import_label) && is_array($objMod->import_label) && count($objMod->import_label))
     {
@@ -471,6 +489,8 @@ if ($mode == 'feature')
         }
     }
     else $text.=$langs->trans("No");
+    
+    $text.='<br>';
     
     $text.='<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
     $text.=$langs->trans("DetectionNotPossible");
