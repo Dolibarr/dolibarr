@@ -1217,53 +1217,10 @@ if (empty($reshook))
     	}
     }
     
-    
-    /*
-     * Generate or regenerate the PDF document
-     */
-    if ($action == 'builddoc')	// GET or POST
-    {
-    	$depl = new ExpenseReport($db, 0, $_GET['id']);
-    	$depl->fetch($id);
-    
-    	if ($_REQUEST['model'])
-    	{
-    		$depl->setDocModel($user, $_REQUEST['model']);
-    	}
-    
-    	$outputlangs = $langs;
-    	if (! empty($_REQUEST['lang_id']))
-    	{
-    		$outputlangs = new Translate("",$conf);
-    		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-    	}
-    	$result=expensereport_pdf_create($db, $depl, '', $depl->modelpdf, $outputlangs);
-    	if ($result <= 0)
-    	{
-    		setEventMessages($object->error, $object->errors, 'errors');
-            $action='';
-    	}
-    }
-    
-    // Remove file in doc form
-    else if ($action == 'remove_file')
-    {
-    	$object = new ExpenseReport($db, 0, $_GET['id']);
-    	if ($object->fetch($id))
-    	{
-    		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    
-    		$object->fetch_thirdparty();
-    
-    		$langs->load("other");
-    		$upload_dir = $conf->expensereport->dir_output;
-    		$file = $upload_dir . '/' . GETPOST('file');
-    		$ret=dol_delete_file($file,0,0,0,$object);
-    		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-    		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-    		$action='';
-    	}
-    }
+    // Actions to build doc
+    $upload_dir = $conf->expensereport->dir_output;
+    $permissioncreate = $user->rights->expensereport->creer;
+    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
@@ -1352,8 +1309,8 @@ if ($action == 'create')
 
 	// Public note
 	print '<tr>';
-	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
-	print '<td class="tdtop">';
+	print '<td class="tdtop">' . $langs->trans('NotePublic') . '</td>';
+	print '<td>';
 
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
@@ -1362,8 +1319,8 @@ if ($action == 'create')
 	// Private note
 	if (empty($user->societe_id)) {
 		print '<tr>';
-		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
-		print '<td class="tdtop">';
+		print '<td class="tdtop">' . $langs->trans('NotePrivate') . '</td>';
+		print '<td>';
 
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
