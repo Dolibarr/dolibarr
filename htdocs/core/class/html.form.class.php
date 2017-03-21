@@ -4878,11 +4878,13 @@ class Form
      *	Function to show a form to select a duration on a page
      *
      *	@param	string	$prefix   		Prefix for input fields
-     *	@param  int		$iSecond  		Default preselected duration (number of seconds or '')
-     * 	@param	int		$disabled		Disable the combo box
-     * 	@param	string	$typehour		If 'select' then input hour and input min is a combo, if 'text' input hour is in text and input min is a text
-     *  @param	integer	$minunderhours	If 1, show minutes selection under the hours
-     * 	@param	int		$nooutput		Do not output html string but return it
+     *	@param  int	$iSecond  		Default preselected duration (number of seconds or '')
+     * 	@param	int	$disabled		Disable the combo box
+     * 	@param	string	$typehour		If 'select' then input hour and input min is a combo,
+     *						if 'text' input hour is in text and input min is a text, 
+     *						if 'mixte' input hour is in text and input min is a combo
+     *  @param	integer	$minunderhours		If 1, show minutes selection under the hours
+     * 	@param	int	$nooutput		Do not output html string but return it
      *  @return	string|null
      */
     function select_duration($prefix, $iSecond='', $disabled=0, $typehour='select', $minunderhours=0, $nooutput=0)
@@ -4902,7 +4904,7 @@ class Form
             $minSelected = convertSecondToTime($iSecond,'min');
         }
 
-        if ($typehour=='select')
+        if ($typehour=='select' )
         {
 	        $retstring.='<select class="flat" name="'.$prefix.'hour"'.($disabled?' disabled':'').'>';
 	        for ($hour = 0; $hour < 25; $hour++)	// For a duration, we allow 24 hours
@@ -4916,7 +4918,7 @@ class Form
 	        }
 	        $retstring.="</select>";
         }
-        elseif ($typehour=='text')
+        elseif ($typehour=='text' || $typehour=='mixte')
         {
         	$retstring.='<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" size="1" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat" value="'.($hourSelected?((int) $hourSelected):'').'">';
         }
@@ -4929,7 +4931,7 @@ class Form
         if ($minunderhours) $retstring.='<br>';
         else $retstring.="&nbsp;";
 
-        if ($typehour=='select')
+        if ($typehour=='select' || $typehour=='mixte')
         {
 	        $retstring.='<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled':'').'>';
 	        for ($min = 0; $min <= 55; $min=$min+5)
@@ -4940,7 +4942,7 @@ class Form
 	        }
 	        $retstring.="</select>";
         }
-        elseif ($typehour=='text')
+        elseif ($typehour=='text' )
         {
         	$retstring.='<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" size="1" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat" value="'.($minSelected?((int) $minSelected):'').'">';
         }
