@@ -2411,6 +2411,7 @@ else
 				print $langs->trans('AlreadyPaid');
 			print ' :</td><td align="right"'.(($totalpaye > 0)?' class="amountalreadypaid"':'').'>' . price($totalpaye) . '</td><td>&nbsp;</td></tr>';
 
+            $resteapayer = $object->total_ttc - $totalpaye;
 			$resteapayeraffiche = $resteapayer;
 			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 

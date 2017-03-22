@@ -209,7 +209,26 @@ if (! $error && $massaction == 'confirm_presend')
             if (count($listofqualifiedinvoice) > 0)
             {
                 $langs->load("commercial");
-                $from = $user->getFullName($langs) . ' <' . $user->email .'>';
+
+                $fromtype = GETPOST('fromtype');
+                if ($fromtype === 'user') {
+                    $from = $user->getFullName($langs) .' <'.$user->email.'>';
+                }
+                elseif ($fromtype === 'company') {
+                    $from = $conf->global->MAIN_INFO_SOCIETE_NOM .' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+                }
+                elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
+                    $tmp=explode(',', $user->email_aliases);
+                    $from = trim($tmp[($reg[1] - 1)]);
+                }
+                elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
+                    $tmp=explode(',', $conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+                    $from = trim($tmp[($reg[1] - 1)]);
+                }
+                else {
+                    $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+                }
+
                 $replyto = $from;
                 $subject = GETPOST('subject');
                 $message = GETPOST('message');

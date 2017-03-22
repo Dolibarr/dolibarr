@@ -60,6 +60,7 @@ $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('sendings');
 $langs->load('products');
+$langs->load('other');
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled)) $langs->load('margins');
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
@@ -2079,7 +2080,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {
-			print $object->date ? dol_print_date($object->date, 'daytext') : '&nbsp;';
+			print $object->date ? dol_print_date($object->date, 'day') : '&nbsp;';
 			if ($object->hasDelay() && empty($object->date_livraison)) {
 			    print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 			}
