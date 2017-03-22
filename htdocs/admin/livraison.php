@@ -214,12 +214,10 @@ print load_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
 print '<br>';
 $head = expedition_admin_prepare_head();
 
-dol_fiche_head($head, 'receivings', $langs->trans("Receivings"), 0, 'sending');
+dol_fiche_head($head, 'receivings', $langs->trans("Receivings"), -1, 'sending');
 
 
-/*
- * Livraison numbering model
- */
+// Delivery numbering model
 
 print load_fiche_titre($langs->trans("DeliveryOrderNumberingModules"),'','');
 
