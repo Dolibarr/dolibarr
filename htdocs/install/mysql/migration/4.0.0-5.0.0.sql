@@ -166,6 +166,7 @@ ALTER TABLE llx_commandedet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_propaldet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_contratdet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 
 ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
