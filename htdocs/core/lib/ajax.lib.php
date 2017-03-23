@@ -347,6 +347,25 @@ function ajax_dialog($title,$message,$w=350,$h=150)
     return $msg;
 }
 
+
+/**
+ * Make a input box content all selected
+ * 
+ * @param string	$htmlname	Id of html object 
+ * @param int		$addlink	Add a link to after
+ */
+function ajax_autoselect($htmlname, $addlink=0)
+{
+	global $langs;
+	$out = '<script type="text/javascript">
+               jQuery(document).ready(function () {
+				    jQuery("#'.$htmlname.'").click(function() { jQuery(this).select(); } );
+				});
+		    </script>';
+	if ($addlink) $out.=' <a href="'.$url.'" target="_blank">'.$langs->trans("Link").'</a>';
+	return $out;
+}
+
 /**
  * Convert a html select field into an ajax combobox.
  * Use ajax_combobox() only for small combo list! If not, use instead ajax_autocompleter().
