@@ -122,4 +122,5 @@ INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('CONTRA
 INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USERGROUP_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/usergroups', 'chaine', 0, '');
 INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USER_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/users', 'chaine', 0, '');
 
+ALTER TABLE llx_chargesociales ADD COLUMN ref varchar(16);
 ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;

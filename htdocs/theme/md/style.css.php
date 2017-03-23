@@ -1112,7 +1112,7 @@ table.noborder tr.liste_titre td {
 	width: 44px;
 }
 div.attacharea {
-	padding-top: 10px;
+	padding-top: 18px;
 	padding-bottom: 10px;
 }
 div.arearef {

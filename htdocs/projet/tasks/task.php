@@ -430,13 +430,14 @@ if ($id > 0 || ! empty($ref))
 			$param=($withproject?'&withproject=1':'');
 			$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
-			dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
+			dol_fiche_head($head, 'task_task', $langs->trans("Task"), -1, 'projecttask');
 
 			if ($action == 'delete')
 			{
 				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
 			}
 
+			print '<div class="fichecenter">';
 			print '<table class="border" width="100%">';
 
 			// Ref
@@ -522,7 +523,8 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			print '</table>';
-
+            print '</div>';
+            
 			dol_fiche_end();
 		}
 
