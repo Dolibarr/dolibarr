@@ -98,7 +98,7 @@ if ($object->id)
 
 	$form=new Form($db);
 
-	dol_fiche_head($head, 'document', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
 
 
 	// Construit liste des fichiers

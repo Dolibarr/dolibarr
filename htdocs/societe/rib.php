@@ -344,7 +344,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 // View
 if ($socid && $action != 'edit' && $action != "create")
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
 	// Confirm delete third party
     if ($action == 'delete')

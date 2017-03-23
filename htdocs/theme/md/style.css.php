@@ -1906,17 +1906,18 @@ div.tabBar {
     padding-top: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
     padding-left: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
     padding-right: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
-    padding-bottom: <?php echo ($dol_optimize_smallscreen?'2':'2'); ?>px;
     margin: 0px 0px 16px 0px;
     -moz-border-radius:3px;
     -webkit-border-radius: 3px;
 	border-radius: 3px;
     border-right: 1px solid #BBB;
-    /* border-bottom: 1px solid #BBB; */
     border-left: 1px solid #BBB;
     border-top: 1px solid #CCC;
 	width: auto;
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
+
+	padding-bottom: 12px;
+	border-bottom: 1px solid #aaa; 
 }
 div.tabBarWithBottom {
 	padding-bottom: 18px;
@@ -2363,7 +2364,7 @@ div.refid  {
   	font-size: 160%;
 }
 div.refidno  {
-	padding-top: 2px;
+	padding-top: 8px;
 	font-weight: normal;
   	color: #444;
   	font-size: <?php print $fontsize ?>px;

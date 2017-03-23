@@ -2451,7 +2451,7 @@ div.refid  {
   	font-size: 160%;
 }
 div.refidno  {
-	padding-top: 2px;
+	padding-top: 8px;
 	font-weight: normal;
   	color: #444;
   	font-size: <?php print $fontsize ?>px;
