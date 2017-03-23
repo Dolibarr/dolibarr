@@ -519,6 +519,12 @@ textarea.centpercent {
 .nounderline {
     text-decoration: none;
 }
+.paddingleft {
+	padding-<?php print $left; ?>: 4px;
+}
+.paddingright {
+	padding-<?php print $right; ?>: 4px;
+}
 .cursorpointer {
 	cursor: pointer;
 }
@@ -1090,7 +1096,8 @@ img.photorefnoborder {
 	height: 48px;
 	width: 48px;
     object-fit: contain;
-    border: 1px solid #CCC;
+    border: 1px solid #AAA;
+    border-radius: 100px;
 }
 .underrefbanner {
 }
@@ -1615,10 +1622,15 @@ img.login, img.printer, img.entity {
 	color: white;
 	font-weight: bold;
 }
-img.loginphoto {
-	border-radius: 2px;
+.userimgatoplogin img.userphoto {		/* size for user photo in login bar */
 	width: 16px;
     height: 16px;
+}
+img.userphoto {			/* size for user photo in lists */
+	border-radius: 2px;
+	width: 18px;
+    height: 18px;
+    vertical-align: middle;
 }
 .span-icon-user {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>);
