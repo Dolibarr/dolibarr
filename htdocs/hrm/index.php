@@ -148,7 +148,7 @@ $langs->load("boxes");
 
 
 
-// Last leave requests
+// Latest leave requests
 if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 {
     $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.photo, u.statut, x.rowid, x.rowid as ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
@@ -204,7 +204,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
                 $starthalfday=($obj->halfday == -1 || $obj->halfday == 2)?'afternoon':'morning';
                 $endhalfday=($obj->halfday == 1 || $obj->halfday == 2)?'morning':'afternoon';
                 
-                print '<td>'.dol_print_date($obj->date_start,'day').' '.$langs->trans($listhalfday[$endhalfday]);
+                print '<td>'.dol_print_date($obj->date_start,'day').' '.$langs->trans($listhalfday[$starthalfday]);
                 print '<td>'.dol_print_date($obj->date_end,'day').' '.$langs->trans($listhalfday[$endhalfday]);
                 print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
                 print '<td>'.$holidaystatic->LibStatut($obj->status,3).'</td>';
