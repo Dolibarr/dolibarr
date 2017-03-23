@@ -4878,13 +4878,13 @@ class Form
      *	Function to show a form to select a duration on a page
      *
      *	@param	string	$prefix   		Prefix for input fields
-     *	@param  int	$iSecond  		Default preselected duration (number of seconds or '')
-     * 	@param	int	$disabled		Disable the combo box
+     *	@param  int	$iSecond  		    Default preselected duration (number of seconds or '')
+     * 	@param	int	$disabled           Disable the combo box
      * 	@param	string	$typehour		If 'select' then input hour and input min is a combo,
-     *						if 'text' input hour is in text and input min is a text, 
-     *						if 'mixte' input hour is in text and input min is a combo
-     *  @param	integer	$minunderhours		If 1, show minutes selection under the hours
-     * 	@param	int	$nooutput		Do not output html string but return it
+     *						            if 'text' input hour is in text and input min is a text, 
+     *						            if 'textselect' input hour is in text and input min is a combo
+     *  @param	integer	$minunderhours	If 1, show minutes selection under the hours
+     * 	@param	int	$nooutput		    Do not output html string but return it
      *  @return	string|null
      */
     function select_duration($prefix, $iSecond='', $disabled=0, $typehour='select', $minunderhours=0, $nooutput=0)
@@ -4918,7 +4918,7 @@ class Form
 	        }
 	        $retstring.="</select>";
         }
-        elseif ($typehour=='text' || $typehour=='mixte')
+        elseif ($typehour=='text' || $typehour=='textselect')
         {
         	$retstring.='<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" size="1" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat" value="'.($hourSelected?((int) $hourSelected):'').'">';
         }
@@ -4931,7 +4931,7 @@ class Form
         if ($minunderhours) $retstring.='<br>';
         else $retstring.="&nbsp;";
 
-        if ($typehour=='select' || $typehour=='mixte')
+        if ($typehour=='select' || $typehour=='textselect')
         {
 	        $retstring.='<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled':'').'>';
 	        for ($min = 0; $min <= 55; $min=$min+5)
