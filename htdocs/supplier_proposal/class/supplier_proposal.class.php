@@ -355,6 +355,7 @@ class SupplierProposal extends CommonObject
      *      @param		string		$label				???
      *      @param		array		$array_option		extrafields array
 	 * 		@param		string		$ref_fourn			Supplier price reference
+	 * 		@param		int			$fk_unit			Id of the unit to use.
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
      *    	@see       	add_product
@@ -547,6 +548,7 @@ class SupplierProposal extends CommonObject
      *  @param		int			$type				0/1=Product/service
 	 *  @param		array		$array_option		extrafields array
 	 * 	@param		string		$ref_fourn			Supplier price reference
+	 *	@param		int			$fk_unit			Id of the unit to use.
      *  @return     int     		        		0 if OK, <0 if KO
      */
 	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $array_option=0, $ref_fourn='', $fk_unit='')
