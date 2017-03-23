@@ -577,9 +577,10 @@ if (! defined('NOLOGIN'))
     {
         // We are already into an authenticated session
         $login=$_SESSION["dol_login"];
-        dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login, LOG_DEBUG);
+        $entity=$_SESSION["dol_entity"];
+        dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login." _SESSION['dol_entity']=".$entity, LOG_DEBUG);
 
-        $resultFetchUser=$user->fetch('',$login);
+        $resultFetchUser=$user->fetch('',$login,'',1,($entity > 0 ? $entity : -1));
         if ($resultFetchUser <= 0)
         {
             // Account has been removed after login

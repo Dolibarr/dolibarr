@@ -176,7 +176,7 @@ class CommandeFournisseur extends CommonOrder
         // Check parameters
         if (empty($id) && empty($ref)) return -1;
 
-        $sql = "SELECT c.rowid, c.ref, ref_supplier, c.fk_soc, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
+        $sql = "SELECT c.rowid, c.ref, ref_supplier, c.fk_soc, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_vat,";
         $sql.= " c.localtax1, c.localtax2, ";
         $sql.= " c.date_creation, c.date_valid, c.date_approve, c.date_approve2,";
         $sql.= " c.fk_user_author, c.fk_user_valid, c.fk_user_approve, c.fk_user_approve2,";
@@ -222,7 +222,7 @@ class CommandeFournisseur extends CommonOrder
             $this->user_approve_id		= $obj->fk_user_approve;
             $this->user_approve_id2		= $obj->fk_user_approve2;
             $this->total_ht				= $obj->total_ht;
-            $this->total_tva			= $obj->tva;
+            $this->total_tva			= $obj->total_vat;
             $this->total_localtax1		= $obj->localtax1;
             $this->total_localtax2		= $obj->localtax2;
             $this->total_ttc			= $obj->total_ttc;
@@ -1340,9 +1340,11 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param		array	$array_options			extrafields array
      *  @param 		string	$fk_unit 				Code of the unit to use. Null to use the default one
 	 *  @param 		string	$pu_ht_devise			Amount in currency
+	 *  @param		string	$origin					'order', ...
+	 *  @param		int		$origin_id				Id of origin object
      *	@return     int             				<=0 if KO, >0 if OK
      */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $type=0, $info_bits=0, $notrigger=false, $date_start=null, $date_end=null, $array_options=0, $fk_unit=null, $pu_ht_devise=0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $type=0, $info_bits=0, $notrigger=false, $date_start=null, $date_end=null, $array_options=0, $fk_unit=null, $pu_ht_devise=0, $origin='', $origin_id=0)
     {
         global $langs,$mysoc,$conf;
 
@@ -1511,7 +1513,8 @@ class CommandeFournisseur extends CommonOrder
             $this->line->total_ttc=$total_ttc;
             $this->line->product_type=$type;
             $this->line->special_code=$this->special_code;
-            $this->line->origin=$this->origin;
+            $this->line->origin=$origin;
+            $this->line->origin_id=$origin_id;
             $this->line->fk_unit=$fk_unit;
 
             $this->line->date_start=$date_start;
