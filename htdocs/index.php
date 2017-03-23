@@ -530,26 +530,23 @@ $boxwork.='<div class="box">';
 $boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable" width="100%">'."\n";
 $boxwork.='<tr class="liste_titre">';
 $boxwork.='<th class="liste_titre">'.$langs->trans("DolibarrWorkBoard").'</th>';
-//$boxwork.='<th class="liste_titre" align="right">'.$langs->trans("Number").'</th>';
-//$boxwork.='<th class="liste_titre" align="right">'.$form->textwithpicto($langs->trans("Late"),$langs->trans("LateDesc")).'</th>';
-//$boxwork.='<th class="liste_titre" style="width: 22px">&nbsp;</th>';
-//print '<th class="liste_titre" width="20">&nbsp;</th>';
-//if ($showweather) $boxwork.='<th class="liste_titre hideonsmartphone" width="80">&nbsp;</th>';
 $boxwork.='</tr>'."\n";
 
 if ($showweather)
-{/*
+{
     $boxwork.='<tr class="nohover">';
     $boxwork.='<td class="nohover hideonsmartphone center valignmiddle">';
     $text='';
     if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate).')';
+    $text.='. '.$langs->trans("LateDesc");
+    //$text.=$form->textwithpicto('',$langs->trans("LateDesc"));
     $options='height="64px"';
     $boxwork.=showWeather($totallate,$text,$options);
     $boxwork.='</td>';
-    $boxwork.='</tr>';*/
+    $boxwork.='</tr>';
 }
 
-$boxwork.='<td class="tdboxstats nohover flexcontainer">';
+$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer">';
 
 // Show dashboard
 $nbworkboardempty=0;

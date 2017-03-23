@@ -2889,6 +2889,9 @@ tr.box_titre {
 tr.box_titre td.boxclose {
 	width: 30px;
 }
+img.boxhandle, img.boxclose {
+	padding-left: 5px;
+}
 
 .noborderbottom {
 	border-bottom: none !important;
