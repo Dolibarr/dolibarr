@@ -677,6 +677,11 @@ div.fiche>form>div.div-table-responsive {
 }
 .thumbstat {
 	flex: 1 1 120px;
+}
+.thumbstat150 {
+	flex: 1 1 150px;
+}
+.thumbstat, thumbstat150 {
     /* flex-grow: 1; */
     /* flex-shrink: 1; */
     /* flex-basis: 140px; */
@@ -2854,26 +2859,37 @@ div.tabBar .noborder {
 .ficheaddleft div.boxstats {
     border: none;
 }
-.boxstats {
+.boxstatsborder {
+    border: 1px solid #CCC !important;
+}
+.boxstats, .boxstats130 {
     display: inline-block;
     margin: 3px;
-    padding: 3px;
-	/*-moz-box-shadow: 3px 3px 4px #DDD;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
-    margin-bottom: 8px !important;*/
     border: 1px solid #CCC;
     text-align: center;
     border-radius: 2px;
-    
+}
+.boxstats, .boxstats130, .boxstatscontent {    
 	white-space: nowrap;
 	overflow: hidden;
     text-overflow: ellipsis;
-    width: 115px;    
 }
+.boxstats {
+    padding: 3px;
+    width: 105px;    
+}
+.boxstats130 {
+    width: 135px; 
+    height: 48px;
+    padding: 3px  
+}
+.boxstatscontent {
+	padding: 3px;
+}
+
 @media only screen and (max-width: 767px)
 {
-    .boxstats {
+    .boxstats, .boxstats130 {
         width: 100px;    
     }
 }
@@ -2890,15 +2906,25 @@ span.boxstatsindicator {
 	font-weight: normal;
 }
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
-	font-size: 120%;
+	font-size: 130%;
 	font-weight: normal;
+}
+.dashboardlineindicatorlate img {
+	width: 16px;
 }
 span.dashboardlineok {
 	color: #008800;
 }
 span.dashboardlineko {
 	color: #880000;
-	font-weight: bold;
+	/* font-weight: bold; */
+	font-size: 100%;	
+}
+.dashboardlinelatecoin {
+	float: right;
+	position: relative;
+    text-align: right;
+    top: -22px
 }
 .boxtable {
     margin-bottom: 8px !important;
@@ -2909,6 +2935,9 @@ span.dashboardlineko {
 }
 .tdboxstats {
 	text-align: center;
+}
+a.valignmiddle.dashboardlineindicator {
+    line-height: 30px;
 }
 
 .box {

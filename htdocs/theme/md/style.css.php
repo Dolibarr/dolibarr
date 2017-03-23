@@ -684,6 +684,11 @@ div.fiche>form>div.div-table-responsive {
 }
 .thumbstat {
 	flex: 1 1 120px;
+}
+.thumbstat150 {
+	flex: 1 1 150px;
+}
+.thumbstat, thumbstat150 {
     /* flex-grow: 1; */
     /* flex-shrink: 1; */
     /* flex-basis: 140px; */
@@ -2769,27 +2774,33 @@ div .tdtop {
 .ficheaddleft div.boxstats {
     border: none;
 }
-.boxstats {
+.boxstatsborder {
+    border: 1px solid #CCC !important;
+}
+.boxstats, .boxstats130 {
     display: inline-block;
     margin: 3px;
-    padding: 3px;
-	/*-moz-box-shadow: 3px 3px 4px #f4f4f4;
-    -webkit-box-shadow: 3px 3px 4px #f4f4f4;
-    box-shadow: 3px 3px 4px #f4f4f4;
-    margin-bottom: 8px !important;*/
     border: 1px solid #CCC;
     text-align: center;
     border-radius: 2px;
-    min-height: 38px;
-    
+}
+.boxstats, .boxstats130, .boxstatscontent {    
 	white-space: nowrap;
 	overflow: hidden;
     text-overflow: ellipsis;
-    width: 115px;    
+}
+.boxstats {
+    padding: 3px;
+    width: 105px;    
+}
+.boxstats130 {
+    width: 135px; 
+    height: 48px;
+    padding: 3px  
 }
 @media only screen and (max-width: 767px)
 {
-    .boxstats {
+    .boxstats, .boxstats130 {
         width: 100px;    
     }
 }
@@ -2806,7 +2817,10 @@ span.boxstatsindicator {
 }
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 120%;
-	font-weight: bold;
+	font-weight: normal;
+}
+.dashboardlineindicatorlate img {
+	width: 16px;
 }
 span.dashboardlineok {
 	color: #008800;
@@ -2814,6 +2828,16 @@ span.dashboardlineok {
 span.dashboardlineko {
 	color: #880000;
 	font-weight: bold;
+}
+.dashboardlinelatecoin {
+	float: right;
+	position: relative;
+    text-align: right;
+    top: -22px
+}
+.boxtable {
+    margin-bottom: 8px !important;
+    border-bottom-width: 1px;
 }
 .boxtable {
     margin-bottom: 8px !important;
@@ -2825,6 +2849,10 @@ span.dashboardlineko {
 .tdboxstats {
 	text-align: center;
 }
+a.valignmiddle.dashboardlineindicator {
+    line-height: 30px;
+}
+
 
 .box {
     padding-right: 0px;
