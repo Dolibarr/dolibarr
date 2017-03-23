@@ -53,14 +53,6 @@ function facture_prepare_head($object)
 		$h++;
 	}
 
-	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$object->id;
-		$head[$h][1] = $langs->trans('Preview');
-		$head[$h][2] = 'preview';
-		$h++;
-	}
-
 	//if ($fac->mode_reglement_code == 'PRE')
 	if (! empty($conf->prelevement->enabled))
 	{
