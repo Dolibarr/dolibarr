@@ -1068,7 +1068,10 @@ if (empty($reshook))
 										null,
 										null,
 										array(),
-										$lines[$i]->fk_unit
+										$lines[$i]->fk_unit,
+										0,
+										$element,
+										!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid
 									);
 								}
 
