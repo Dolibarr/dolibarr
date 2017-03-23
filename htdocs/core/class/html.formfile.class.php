@@ -992,7 +992,7 @@ class FormFile
 			    print '<input type="hidden" name="id" value="'.$object->id.'">';
 			    print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
-			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborderbottom':'liste').'">'."\n";
+			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborder':'liste').'">'."\n";
 			
 			print '<tr class="liste_titre nodrag nodrop">';
 			print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
