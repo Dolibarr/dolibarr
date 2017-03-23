@@ -139,7 +139,7 @@ class box_project extends ModeleBoxes
                             'td' => 'class="right"',
                             'text' => $objTask->nb."&nbsp;".$langs->trans("Tasks"),
                         );
-						if ($objTask->nb  > 0 )
+						if ($objTask->nb  > 0)
                             $this->info_box_contents[$i][4] = array(
                                 'td' => 'class="right"',
                                 'text' => round($objTask->totprogress/$objTask->nb, 0)."%",

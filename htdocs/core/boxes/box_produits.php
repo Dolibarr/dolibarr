@@ -112,7 +112,7 @@ class box_produits extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                         'text' => $objp->label,
                     );
 
@@ -144,7 +144,7 @@ class box_produits extends ModeleBoxes
                     );
 
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'align="left" class="nowrap"',
+                        'td' => 'class="nowrap"',
                         'text' => $price_base_type,
                     );
 
