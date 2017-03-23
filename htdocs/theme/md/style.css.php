@@ -646,6 +646,13 @@ div.myavailability {
 	margin-bottom: 12px;
 }
 
+/* For the long description of module */
+.moduledesclong p img,.moduledesclong p a img {
+    max-width: 90% !important;
+    height: auto !important;
+}
+
+
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
 /*.table-responsive {
     width: calc(100% - 330px);
@@ -701,6 +708,7 @@ div.fiche>form>div.div-table-responsive {
 	.minwidth400 { min-width: 400px; }
 	.minwidth500 { min-width: 500px; }
 	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
 	.minwidth200imp { min-width: 200px !important; }
 	.minwidth300imp { min-width: 300px !important; }
@@ -717,6 +725,7 @@ div.fiche>form>div.div-table-responsive {
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
 .maxwidth50imp  { max-width: 50px !important; }
+.maxwidth75imp  { max-width: 75px !important; }
 .minheight20 { min-height: 20px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
@@ -731,6 +740,7 @@ div.fiche>form>div.div-table-responsive {
 	.titlefield { width: 30% !important; }
 	.titlefieldcreate { width: 30% !important; }
 	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth75imp  { min-width: 75px !important; }
     .minwidth100imp { min-width: 100px !important; }
     .minwidth200imp { min-width: 200px !important; }
     .minwidth300imp { min-width: 300px !important; }
@@ -743,7 +753,8 @@ div.fiche>form>div.div-table-responsive {
 {
     .maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
-    .minwidth100imp { min-width: 50px !important; }
+    .minwidth75imp  { min-width: 70px !important; }
+    .minwidth100imp { min-width: 80px !important; }
     .minwidth200imp { min-width: 100px !important; }
     .minwidth300imp { min-width: 100px !important; }
     .minwidth400imp { min-width: 100px !important; }
@@ -793,11 +804,12 @@ div.fiche>form>div.div-table-responsive {
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
 	.minwidth50imp  { min-width: 50px !important; }
-    .minwidth100imp { min-width: 50px !important; }
-    .minwidth200imp { min-width: 50px !important; }
-    .minwidth300imp { min-width: 50px !important; }
-    .minwidth400imp { min-width: 50px !important; }
-    .minwidth500imp { min-width: 50px !important; }
+	.minwidth75imp  { min-width: 60px !important; }
+    .minwidth100imp { min-width: 60px !important; }
+    .minwidth200imp { min-width: 60px !important; }
+    .minwidth300imp { min-width: 60px !important; }
+    .minwidth400imp { min-width: 60px !important; }
+    .minwidth500imp { min-width: 60px !important; }
     .titlefield { width: auto; }
     .titlefieldcreate { width: auto; }
 

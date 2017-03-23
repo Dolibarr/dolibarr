@@ -1217,53 +1217,10 @@ if (empty($reshook))
     	}
     }
     
-    
-    /*
-     * Generate or regenerate the PDF document
-     */
-    if ($action == 'builddoc')	// GET or POST
-    {
-    	$depl = new ExpenseReport($db, 0, $_GET['id']);
-    	$depl->fetch($id);
-    
-    	if ($_REQUEST['model'])
-    	{
-    		$depl->setDocModel($user, $_REQUEST['model']);
-    	}
-    
-    	$outputlangs = $langs;
-    	if (! empty($_REQUEST['lang_id']))
-    	{
-    		$outputlangs = new Translate("",$conf);
-    		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-    	}
-    	$result=expensereport_pdf_create($db, $depl, '', $depl->modelpdf, $outputlangs);
-    	if ($result <= 0)
-    	{
-    		setEventMessages($object->error, $object->errors, 'errors');
-            $action='';
-    	}
-    }
-    
-    // Remove file in doc form
-    else if ($action == 'remove_file')
-    {
-    	$object = new ExpenseReport($db, 0, $_GET['id']);
-    	if ($object->fetch($id))
-    	{
-    		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    
-    		$object->fetch_thirdparty();
-    
-    		$langs->load("other");
-    		$upload_dir = $conf->expensereport->dir_output;
-    		$file = $upload_dir . '/' . GETPOST('file');
-    		$ret=dol_delete_file($file,0,0,0,$object);
-    		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-    		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-    		$action='';
-    	}
-    }
+    // Actions to build doc
+    $upload_dir = $conf->expensereport->dir_output;
+    $permissioncreate = $user->rights->expensereport->creer;
+    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
@@ -1315,8 +1272,8 @@ if ($action == 'create')
 	print '<td>';
 	$defaultselectuser=$user->id;
 	if (GETPOST('fk_user_author') > 0) $defaultselectuser=GETPOST('fk_user_author');
-  $include_users = 'hierarchyme';
-  if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expensereport->writeall_advance)) $include_users=array();
+    $include_users = 'hierarchyme';
+    if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expensereport->writeall_advance)) $include_users=array();
 	$s=$form->select_dolusers($defaultselectuser, "fk_user_author", 0, "", 0, $include_users);
 	print $s;
 	print '</td>';
@@ -1352,8 +1309,8 @@ if ($action == 'create')
 
 	// Public note
 	print '<tr>';
-	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
-	print '<td class="tdtop">';
+	print '<td class="tdtop">' . $langs->trans('NotePublic') . '</td>';
+	print '<td>';
 
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
@@ -1362,8 +1319,8 @@ if ($action == 'create')
 	// Private note
 	if (empty($user->societe_id)) {
 		print '<tr>';
-		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
-		print '<td class="tdtop">';
+		print '<td class="tdtop">' . $langs->trans('NotePrivate') . '</td>';
+		print '<td>';
 
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
@@ -1528,7 +1485,7 @@ else
 			}
 			else
 			{
-				dol_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
+				dol_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
 
 				// Clone confirmation
 				if ($action == 'clone') {
@@ -2002,7 +1959,7 @@ else
 									print '<td></td>';
 
 									// Select date
-									print '<td style="text-align:center;">';
+									print '<td class="center">';
 									$form->select_date($objp->date,'date');
 									print '</td>';
 
@@ -2015,13 +1972,13 @@ else
 									}
 									
 									// Select type
-									print '<td style="text-align:center;">';
+									print '<td class="center">';
 									select_type_fees_id($objp->type_fees_code,'fk_c_type_fees');
 									print '</td>';
 
 									// Add comments
 									print '<td>';
-									print '<textarea class="flat_ndf" name="comments" class="centpercent">'.$objp->comments.'</textarea>';
+									print '<textarea name="comments" class="flat_ndf centpercent">'.$objp->comments.'</textarea>';
 									print '</td>';
 
 									// VAT
@@ -2031,12 +1988,12 @@ else
 
 									// Unit price
 									print '<td style="text-align:right;">';
-									print '<input type="text" size="6" name="value_unit" value="'.$objp->value_unit.'" />';
+									print '<input type="text" min="0" class="maxwidth100" name="value_unit" value="'.$objp->value_unit.'" />';
 									print '</td>';
 
 									// Quantity
 									print '<td style="text-align:right;">';
-									print '<input type="text" size="4" name="qty" value="'.$objp->qty.'" />';
+									print '<input type="number" min="0" class="maxwidth100" name="qty" value="'.$objp->qty.'" />';
 									print '</td>';
 
 									if ($action != 'editline')
@@ -2117,12 +2074,12 @@ else
 
 						// Unit price
 						print '<td align="right">';
-						print '<input type="text" size="5" name="value_unit" value="'.$value_unit.'">';
+						print '<input type="text" class="right maxwidth50" name="value_unit" value="'.$value_unit.'">';
 						print '</td>';
 
 						// Quantity
 						print '<td align="right">';
-						print '<input type="text" size="2" name="qty"  value="'.($qty?$qty:1).'">';
+						print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.($qty?$qty:1).'">';
 						print '</td>';
 
 						if ($action != 'editline')

@@ -1070,11 +1070,10 @@ class Form
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
             	$comboenhancement =ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
             	$out.= $comboenhancement;
-            	$nodatarole=($comboenhancement?' data-role="none"':'');
             }
 
             // Construct $out and $outarray
-            $out.= '<select id="'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'"'.($moreparam?' '.$moreparam:'').' name="'.$htmlname.'"'.$nodatarole.'>'."\n";
+            $out.= '<select id="'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'"'.($moreparam?' '.$moreparam:'').' name="'.$htmlname.'">'."\n";
 
             $textifempty='';
             // Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
@@ -1286,10 +1285,9 @@ class Form
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
             	$comboenhancement = ajax_combobox($htmlname, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
             	$out.= $comboenhancement;
-            	$nodatarole=($comboenhancement?' data-role="none"':'');
             }
 
-            if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+            if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
             if ($showempty == 1) $out.= '<option value="0"'.($selected=='0'?' selected':'').'></option>';
             if ($showempty == 2) $out.= '<option value="0"'.($selected=='0'?' selected':'').'>'.$langs->trans("Internal").'</option>';
             $num = $this->db->num_rows($resql);
@@ -1481,17 +1479,15 @@ class Form
             if ($num)
             {
            		// Enhance with select2
-           		$nodatarole='';
 		        if ($conf->use_javascript_ajax)
 		        {
 		            include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 		            $comboenhancement = ajax_combobox($htmlname);
 		            $out.=$comboenhancement;
-		            $nodatarole=($comboenhancement?' data-role="none"':'');
 		        }
 
 		        // do not use maxwidthonsmartphone by default. Set it by caller so auto size to 100% will work when not defined
-                $out.= '<select class="flat'.($morecss?' minwidth100 '.$morecss:' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$nodatarole.'>';
+                $out.= '<select class="flat'.($morecss?' minwidth100 '.$morecss:' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').'>';
                 if ($show_empty) $out.= '<option value="-1"'.((empty($selected) || $selected==-1)?' selected':'').'>&nbsp;</option>'."\n";
 				if ($show_every) $out.= '<option value="-2"'.(($selected==-2)?' selected':'').'>-- '.$langs->trans("Everybody").' --</option>'."\n";
 
@@ -1964,10 +1960,9 @@ class Form
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
             	$comboenhancement =ajax_combobox($htmlname, $events, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
             	$out.= $comboenhancement;
-            	$nodatarole=($comboenhancement?' data-role="none"':'');
             }
 
-            $out.='<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'"'.$nodatarole.'>';
+            $out.='<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 
             $textifempty='';
             // Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
@@ -4533,7 +4528,7 @@ class Form
         		$disabled=true;
         	}
 
-        	if (! $options_only) $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$title.'>';
+        	if (! $options_only) $return.= '<select class="flat minwidth75imp" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$title.'>';
 
         	$selectedfound=false;
         	foreach ($this->cache_vatrates as $rate)
@@ -4722,7 +4717,7 @@ class Form
 
                 $retstring.="</select>";
 
-                $retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth50onsmartphone" id="'.$prefix.'month" name="'.$prefix.'month">';
+                $retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth75imp" id="'.$prefix.'month" name="'.$prefix.'month">';
                 if ($emptydate || $set_time == -1)
                 {
                     $retstring.='<option value="0" selected>&nbsp;</option>';
@@ -4740,11 +4735,11 @@ class Form
                 // Year
                 if ($emptydate || $set_time == -1)
                 {
-                    $retstring.='<input'.($disabled?' disabled':'').' placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" class="flat maxwidth50imp valignmiddle" type="text" maxlength="4" id="'.$prefix.'year" name="'.$prefix.'year" value="'.$syear.'">';
+                    $retstring.='<input'.($disabled?' disabled':'').' placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" class="flat maxwidth50imp valignmiddle" type="number" min="0" max="3000" maxlength="4" id="'.$prefix.'year" name="'.$prefix.'year" value="'.$syear.'">';
                 }
                 else
                 {
-                    $retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth75" id="'.$prefix.'year" name="'.$prefix.'year">';
+                    $retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth75imp" id="'.$prefix.'year" name="'.$prefix.'year">';
 
                     for ($year = $syear - 5; $year < $syear + 10 ; $year++)
                     {
@@ -4923,7 +4918,7 @@ class Form
         }
         elseif ($typehour=='text')
         {
-        	$retstring.='<input placeholder="'.$langs->trans('HourShort').'" type="text" size="1" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat" value="'.($hourSelected?((int) $hourSelected):'').'">';
+        	$retstring.='<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" size="1" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat" value="'.($hourSelected?((int) $hourSelected):'').'">';
         }
         else return 'BadValueForParameterTypeHour';
 
@@ -4947,7 +4942,7 @@ class Form
         }
         elseif ($typehour=='text')
         {
-        	$retstring.='<input placeholder="'.$langs->trans('MinuteShort').'" type="text" size="1" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat" value="'.($minSelected?((int) $minSelected):'').'">';
+        	$retstring.='<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" size="1" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat" value="'.($minSelected?((int) $minSelected):'').'">';
         }
         
         if ($typehour!='text') $retstring.=' '.$langs->trans('MinuteShort');
@@ -4966,24 +4961,25 @@ class Form
      *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
      *
      *	@param	string			$htmlname       Name of html select area. Must start with "multi" if this is a multiselect
-     *	@param	array			$array          Array with key+value
+     *	@param	array			$array          Array (key => value)
      *	@param	string|string[]	$id             Preselected key or preselected keys for multiselect
      *	@param	int				$show_empty     0 no empty value allowed, 1 or string to add an empty value into list (value is '' or '&nbsp;' if 1), <0 to add an empty value with key that is this value.
-     *	@param	int				$key_in_label   1 pour afficher la key dans la valeur "[key] value"
+     *	@param	int				$key_in_label   1 to show key into label with format "[key] value"
      *	@param	int				$value_as_key   1 to use value as key
      *	@param  string			$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
-     *	@param  int				$translate		Translate and encode value
+     *	@param  int				$translate		1=Translate and encode value
      * 	@param	int				$maxlen			Length maximum for labels
      * 	@param	int				$disabled		Html select box is disabled
      *  @param	string			$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' or 'POS' = Do not sort, we keep original order
      *  @param	string			$morecss		Add more class to css styles
      *  @param	int				$addjscombo		    Add js combo
-     *  @param  string          $moreparamonempty   Add more param on the empty option line. Not used if show_empty not set.
-     *  @param  int             $disablebademail    Check if an email is found into value and if not disable and colorize entry.
-     * 	@return	string							    HTML select string.
+     *  @param  string          $moreparamonempty   Add more param on the empty option line. Not used if show_empty not set
+     *  @param  int             $disablebademail    Check if an email is found into value and if not disable and colorize entry
+     *  @param  int             $nohtmlescape       No html escaping.
+     * 	@return	string							    HTML select string
      *  @see multiselectarray
      */
-    static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0, $moreparamonempty='',$disablebademail=0)
+    static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0, $moreparamonempty='',$disablebademail=0, $nohtmlescape=0)
     {
         global $conf, $langs;
 
@@ -5003,13 +4999,11 @@ class Form
         	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?(constant('REQUIRE_JQUERY_MULTISELECT')?constant('REQUIRE_JQUERY_MULTISELECT'):'select2'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
 
         	// Enhance with select2
-        	$nodatarole='';
         	if ($conf->use_javascript_ajax)
         	{
         	    include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
         	    $comboenhancement = ajax_combobox($htmlname);
         	    $out.=$comboenhancement;
-        	    $nodatarole=($comboenhancement?' data-role="none"':'');
         	}
         }
 
@@ -5057,11 +5051,13 @@ class Form
 
                 if ($key_in_label)
                 {
-                    $selectOptionValue = dol_escape_htmltag($key.' - '.($maxlen?dol_trunc($value,$maxlen):$value));
+                    if (empty($nohtmlescape)) $selectOptionValue = dol_escape_htmltag($key.' - '.($maxlen?dol_trunc($value,$maxlen):$value));
+                    else $selectOptionValue = $key.' - '.($maxlen?dol_trunc($value,$maxlen):$value);
                 }
                 else
                 {
-                    $selectOptionValue = dol_escape_htmltag($maxlen?dol_trunc($value,$maxlen):$value);
+                    if (empty($nohtmlescape)) $selectOptionValue = dol_escape_htmltag($maxlen?dol_trunc($value,$maxlen):$value);
+                    else $selectOptionValue = $maxlen?dol_trunc($value,$maxlen):$value;
                     if ($value == '' || $value == '-') $selectOptionValue='&nbsp;';
                 }
                 //var_dump($selectOptionValue);
@@ -5976,6 +5972,7 @@ class Form
         }
         else
         {
+            // Generic case to show photos
         	$dir=$conf->$modulepart->dir_output;
         	if (! empty($object->photo))
         	{
@@ -6045,7 +6042,6 @@ class Form
                 if ($object->photo) $ret.="<br>\n";
                 $ret.='<table class="nobordernopadding centpercent">';
                 if ($object->photo) $ret.='<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
-                //$ret.='<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
                 $ret.='<tr><td class="tdoverflow"><input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput"></td></tr>';
                 $ret.='</table>';
             }
@@ -6112,10 +6108,9 @@ class Form
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 	           	$comboenhancement = ajax_combobox($htmlname);
                 $out.= $comboenhancement;
-                $nodatarole=($comboenhancement?' data-role="none"':'');
             }
 
-            $out.= '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$nodatarole.'>';
+            $out.= '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').'>';
 
         	$num = $this->db->num_rows($resql);
             $i = 0;
