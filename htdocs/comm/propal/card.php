@@ -1804,42 +1804,7 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 
-    // Ref
-    /*
-	print '<tr><td>' . $langs->trans('Ref') . '</td><td colspan="5">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
-	print '</td></tr>';
-	*/
-
-	// Ref customer
-	/*
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-	print $langs->trans('RefCustomer') . '</td>';
-	if ($action != 'refclient' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=refclient&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
-	print '</td></tr></table>';
-	print '</td><td colspan="5">';
-	if ($user->rights->propal->creer && $action == 'refclient') {
-		print '<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
-		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-		print '<input type="hidden" name="action" value="set_ref_client">';
-		print '<input type="text" class="flat" size="20" name="ref_client" value="' . $object->ref_client . '">';
-		print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-		print '</form>';
-	} else {
-		print $object->ref_client;
-	}
-	print '</td>';
-	print '</tr>';
-    */
-
-	// Company
-	/*
-	print '<tr><td>' . $langs->trans('Company') . '</td><td colspan="5">' . $soc->getNomUrl(1) . '</td>';
-	print '</tr>';*/
-
-	// Lin for thirdparty discounts
+	// Link for thirdparty discounts
 	print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
 	if ($soc->remise_percent)
 		print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);

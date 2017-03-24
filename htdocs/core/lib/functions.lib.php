@@ -1006,12 +1006,15 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 	$modulepart='unknown';
 
-	if ($object->element == 'societe') $modulepart='societe';
-	if ($object->element == 'contact') $modulepart='contact';
-	if ($object->element == 'member')  $modulepart='memberphoto';
-	if ($object->element == 'user')    $modulepart='userphoto';
-	if ($object->element == 'product') $modulepart='product';
-
+	if ($object->element == 'societe')   $modulepart='societe';
+	if ($object->element == 'contact')   $modulepart='contact';
+	if ($object->element == 'member')    $modulepart='memberphoto';
+	if ($object->element == 'user')      $modulepart='userphoto';
+	if ($object->element == 'product')   $modulepart='product';
+	if ($object->element == 'propal')    $modulepart='propal';
+	if ($object->element == 'commande')  $modulepart='commande';
+	if ($object->element == 'facture')   $modulepart='facture';
+	
 	if ($object->element == 'product')
 	{
 	    $width=80; $cssclass='photoref';
@@ -1037,7 +1040,56 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
         {
             if ($modulepart != 'unknown')
             {
-                $phototoshow = $form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos);
+                // Check if a preview file is available
+                if (in_array($modulepart, array('propal', 'commande', 'facture')) && class_exists("Imagick"))
+                {
+                    $objectref = dol_sanitizeFileName($object->ref);
+                    $dir_output = $conf->$modulepart->dir_output . "/";
+                    $filepath = $dir_output . $objectref . "/";
+                    $file = $filepath . $objectref . ".pdf";
+                    $relativepath = $objectref.'/'.$objectref.'.pdf';
+                    
+                    // Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
+                    $fileimage = $file.'_preview.png';              // If PDF has 1 page
+                    $fileimagebis = $file.'_preview-0.pdf.png';     // If PDF has more than one page
+                    $relativepathimage = $relativepath.'_preview.png';
+                    
+                    // Si fichier PDF existe
+                    if (file_exists($file))
+                    {
+                        $encfile = urlencode($file);
+                        // Conversion du PDF en image png si fichier png non existant
+                        if ((! file_exists($fileimage) && ! file_exists($fileimagebis)) || (filemtime($fileimage) < filemtime($file)))
+                        {
+                            $ret = dol_convert_file($file,'png',$fileimage);
+                            if ($ret < 0) $error++;
+                        }
+    
+                        // Si fichier png PDF d'1 page trouve
+                        if (file_exists($fileimage))
+                        {
+                            $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
+                            $phototoshow.= '<img height="70" class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+                            $phototoshow.= '</div></div>';
+                        }
+                        // Si fichier png PDF de plus d'1 page trouve
+                        elseif (file_exists($fileimagebis))
+                        {
+                            $preview = preg_replace('/\.png/','',$relativepath) . "-0.png";
+                            if (file_exists($dir_output.$preview))
+                            {
+                                $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
+                                $phototoshow.= '<img height="70" class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
+                                $phototoshow.= '</div></div>';
+                            }
+                        }
+                    }
+                }
+                else if (! $phototoshow)
+                {
+                    $phototoshow = $form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos);
+                }
+
                 if ($phototoshow)
                 {
                     $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
@@ -1045,7 +1097,8 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     $morehtmlleft.='</div>';
                 }
             }
-            elseif ($conf->browser->layout != 'phone')      // Show No photo link (picto of pbject)
+            
+            if (! $phototoshow && $conf->browser->layout != 'phone')      // Show No photo link (picto of pbject)
             {
                 $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
                 if ($object->element == 'action')

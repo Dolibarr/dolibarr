@@ -55,13 +55,6 @@ function propal_prepare_head($object)
 		$head[$h][2] = 'shipping';
 		$h++;
 	}
-	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Preview");
-		$head[$h][2] = 'preview';
-		$h++;
-	}
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{

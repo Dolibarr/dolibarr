@@ -26,7 +26,7 @@ create table llx_usergroup
   datec         datetime,
   tms           timestamp,
   note          text,
-  model_pdf     varchar(255) DEFAULT NULL,
+  model_pdf     varchar(255) DEFAULT NULL
 )ENGINE=innodb;
 
 -- 

@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015-2016 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
@@ -373,6 +373,12 @@ if ($result)
                     print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowUser'),'user').' ';
                     print $langs->trans("User");
+                    print '</a>';
+                }
+				else if ($links[$key]['type']=='payment_various') {
+                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowVariousPayment'),'payment').' ';
+                    print $langs->trans("VariousPayment");
                     print '</a>';
                 }
                 else {
