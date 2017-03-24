@@ -113,13 +113,13 @@ class box_produits_alerte_stock extends ModeleBoxes
 					$productstatic->entity = $objp->entity;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $productstatic->getNomUrl(1),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                         'text' => $objp->label,
                     );
 
@@ -153,7 +153,7 @@ class box_produits_alerte_stock extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left" class="nowrap"',
+                        'td' => 'class="nowrap"',
                         'text' => $price_base_type,
                     );
 
@@ -180,7 +180,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 			else
 			{
 				$this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
@@ -188,7 +188,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 		}
 		else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
+                'td' => '',
                 'text' => $langs->trans("ReadPermissionNotAllowed"),
             );
 		}

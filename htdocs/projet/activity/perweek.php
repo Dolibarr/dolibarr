@@ -262,7 +262,7 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 	    	setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
 	   	    // Redirect to avoid submit twice on back
-	       	header('Location: '.$_SERVER["PHP_SELF"].($projectid?'?id='.$projectid:'?').($mode?'&mode='.$mode:''));
+	       	header('Location: '.$_SERVER["PHP_SELF"].($projectid?'?id='.$projectid:'?').($mode?'&mode='.$mode:'').($day?'&day='.$day:'').($month?'&month='.$month:'').($year?'&year='.$year:''));
 	       	exit;
 	   	}
 	}
@@ -408,17 +408,17 @@ if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY))
 {
     print '<td>'.$langs->trans("ThirdParty").'</td>';
 }
-print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
-print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
-print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-if ($usertoprocess->id == $user->id) print '<td align="right">'.$langs->trans("TimeSpentByYou").'</td>';
-else print '<td align="right">'.$langs->trans("TimeSpentByUser").'</td>';
+print '<td align="right" class="maxwidth75">'.$langs->trans("PlannedWorkload").'</td>';
+print '<td align="right" class="maxwidth75">'.$langs->trans("ProgressDeclared").'</td>';
+print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'</td>';
+if ($usertoprocess->id == $user->id) print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByYou").'</td>';
+else print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByUser").'</td>';
 
 $startday=dol_mktime(12, 0, 0, $startdayarray['first_month'], $startdayarray['first_day'], $startdayarray['first_year']);
 
 for($i=0;$i<7;$i++)
 {
-    print '<td width="7%" align="center" class="hide'.$i.'">'.dol_print_date($startday + ($i * 3600 * 24), '%a').'<br>'.dol_print_date($startday + ($i * 3600 * 24), 'dayreduceformat').'</td>';
+    print '<td width="6%" align="center" class="hide'.$i.'">'.dol_print_date($startday + ($i * 3600 * 24), '%a').'<br>'.dol_print_date($startday + ($i * 3600 * 24), 'dayreduceformat').'</td>';
 }
 print '<td></td>';
 print "</tr>\n";
@@ -460,13 +460,13 @@ if (count($tasksarray) > 0)
 	
 	print '<tr class="liste_total">
                 <td class="liste_total" colspan="'.$colspan.'" align="right">'.$langs->trans("Total").'</td>
-                <td class="liste_total hide0" width="7%" align="center"><div id="totalDay[0]">&nbsp;</div></td>
-                <td class="liste_total hide1" width="7%" align="center"><div id="totalDay[1]">&nbsp;</div></td>
-                <td class="liste_total hide2" width="7%" align="center"><div id="totalDay[2]">&nbsp;</div></td>
-                <td class="liste_total hide3" width="7%" align="center"><div id="totalDay[3]">&nbsp;</div></td>
-                <td class="liste_total hide4" width="7%" align="center"><div id="totalDay[4]">&nbsp;</div></td>
-                <td class="liste_total hide5" width="7%" align="center"><div id="totalDay[5]">&nbsp;</div></td>
-                <td class="liste_total hide6" width="7%" align="center"><div id="totalDay[6]">&nbsp;</div></td>
+                <td class="liste_total hide0" align="center"><div id="totalDay[0]">&nbsp;</div></td>
+                <td class="liste_total hide1" align="center"><div id="totalDay[1]">&nbsp;</div></td>
+                <td class="liste_total hide2" align="center"><div id="totalDay[2]">&nbsp;</div></td>
+                <td class="liste_total hide3" align="center"><div id="totalDay[3]">&nbsp;</div></td>
+                <td class="liste_total hide4" align="center"><div id="totalDay[4]">&nbsp;</div></td>
+                <td class="liste_total hide5" align="center"><div id="totalDay[5]">&nbsp;</div></td>
+                <td class="liste_total hide6" align="center"><div id="totalDay[6]">&nbsp;</div></td>
                 <td class="liste_total"></td>
     </tr>';
 }

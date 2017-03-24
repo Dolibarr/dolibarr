@@ -291,7 +291,7 @@ class CategoryApi extends DolibarrApi
      * @url GET /customer/{cusid}/categories
      */
     function getListCustomerCategories($cusid, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
-        return $this->getListForItem('customer', $sortfield, $sortorder, $limit, $page, $cusid);  
+        return $this->getListForItem($sortfield, $sortorder, $limit, $page, 'customer', $cusid);  
     }
 
     /**

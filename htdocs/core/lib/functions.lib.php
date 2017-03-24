@@ -1024,7 +1024,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     $morehtmlleft.='</div>';
                 }
             }
-            elseif ($conf->browser->layout != 'phone')      // Show no photo link
+            elseif ($conf->browser->layout != 'phone')      // Show No photo link (picto of pbject)
             {
                 $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
                 if ($object->element == 'action') 
@@ -1036,7 +1036,9 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                 else
                 {
                     $width=14; $cssclass='photorefcenter';
-    				$nophoto=img_picto('', 'object_'.$object->picto, '', false, 1);
+                    $picto = $object->picto;
+                    if ($object->element == 'project' && ! $object->public) $picto = 'project'; // instead of projectpub
+    				$nophoto=img_picto('', 'object_'.$picto, '', false, 1);
     				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.$nophoto.'"></div></div>';
                 }
                 $morehtmlleft.='</div>';

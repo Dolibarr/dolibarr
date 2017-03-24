@@ -60,6 +60,7 @@ $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('sendings');
 $langs->load('products');
+$langs->load('other');
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled)) $langs->load('margins');
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
@@ -2079,7 +2080,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {
-			print $object->date ? dol_print_date($object->date, 'daytext') : '&nbsp;';
+			print $object->date ? dol_print_date($object->date, 'day') : '&nbsp;';
 			if ($object->hasDelay() && empty($object->date_livraison)) {
 			    print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 			}
@@ -2212,7 +2213,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print fieldLabel('CurrencyRate','multicurrency_tx');
 			print '</td>';
-			if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
+			if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
 				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 			print '</tr></table>';
 			print '</td><td>';
@@ -2223,7 +2224,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 			} else {
 				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
-				if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code != $conf->currency) {
+				if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 					print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
 					print '</div>';
