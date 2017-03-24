@@ -4241,7 +4241,6 @@ dl.dropdown {
     background-color: #FFF;
     border: 1px solid #888;
     display:none;
-    right:0px;						/* pop is align on right */
     padding: 2px 15px 2px 5px;
     position:absolute;
     top:2px;
