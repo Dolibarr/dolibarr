@@ -5855,10 +5855,11 @@ function getImageFileNameForSize($file, $extName, $extImgTarget='')
  * Return URL we can use for advanced preview links
  *
  * @param   string    $modulepart     propal, facture, facture_fourn, ...
- * @param   string    $relativepath   Relative path of docs
- * @return  string                    Output string with HTML
+ * @param   string    $relativepath   Relative path of docs.
+ * @param	int		  $alldata		  Return array with all components (1 is recommended)  
+ * @return  string|array              Output string with href link or array with all components of link
  */
-function getAdvancedPreviewUrl($modulepart, $relativepath)
+function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0)
 {
     global $conf, $langs;
 
@@ -5868,8 +5869,15 @@ function getAdvancedPreviewUrl($modulepart, $relativepath)
     //$mime_preview[]='vnd.oasis.opendocument.presentation';
     //$mime_preview[]='archive';
     $num_mime = array_search(dol_mimetype($relativepath, '', 1), $mime_preview);
+ 
+    if ($alldata == 1) 
+    {
+    	if ($num_mime !== false) return array('target'=>'_blank', 'css'=>'documentpreview', 'url'=>DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath), 'mime'=>dol_mimetype($relativepath), );
+    	else return array();
+    }
 
-    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;attachment=0&amp;file='.$relativepath).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js($langs->trans('Preview')).'\')';
+    // old behavior
+    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath)).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js($langs->trans('Preview')).'\')';
     else return '';
 }
 
