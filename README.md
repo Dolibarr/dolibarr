@@ -91,14 +91,15 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Standing orders management (European SEPA)
 - Bank accounts management
 - Shared calendar/agenda (with ical and vcal export for third party tools integration)
-- Opportunities and/or project management (following project benefit including invoices, expense reports, time spent, ...)
+- Opportunities and/or project management
 - Projects management
 - Contracts management
 - Stock management
 - Shipping management
 - Interventions management
 - Employee's leave requests management
-- Expense report management
+- Expense reports
+- Timesheets
 - Electronic Document Management (EDM)
 - Foundations members management
 - Mass emailing

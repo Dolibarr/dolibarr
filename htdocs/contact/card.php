@@ -714,6 +714,11 @@ else
                 print ' &nbsp; &nbsp; ';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
             }
+            else
+            {
+                print ' &nbsp; &nbsp; ';
+                print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+            }
             print '</div>';
 
             print "</form>";
@@ -997,7 +1002,7 @@ else
 
             print '<div class="center">';
             print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+            print ' &nbsp; &nbsp; ';
             print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
             print '</div>';
 
@@ -1229,33 +1234,7 @@ else
         }
 
         print "</div>";
-        //print "<br>";
 
-        /*
-		if (! empty($conf->agenda->enabled))
-		{
-			$objthirdparty=$objsoc;
-			$objcon=$object;
-
-		    $out='';
-		    $permok=$user->rights->agenda->myactions->create;
-		    if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
-		    {
-		        $out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-		        if (get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
-		        $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1">';
-		    	$out.=$langs->trans("AddAnAction").' ';
-		    	$out.=img_picto($langs->trans("AddAnAction"),'filenew');
-		    	$out.="</a>";
-			}
-
-        	print load_fiche_titre($langs->trans("TasksHistoryForThisContact"),$out,'');
-
-        	//print show_actions_todo($conf,$langs,$db,$objsoc,$object);
-
-        	print show_actions_done($conf,$langs,$db,$objsoc,$object,0,'','');
-		}
-		*/
     }
 }
 

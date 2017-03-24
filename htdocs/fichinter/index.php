@@ -59,16 +59,18 @@ print load_fiche_titre($langs->trans("InterventionsArea"));
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
-// Search ficheinter
-$var=false;
-print '<table class="noborder nohover" width="100%">';
-print '<form method="post" action="'.DOL_URL_ROOT.'/fichinter/list.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("Intervention").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "</form></table><br>\n";
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+{
+    // Search ficheinter
+    $var=false;
+    print '<table class="noborder nohover" width="100%">';
+    print '<form method="post" action="'.DOL_URL_ROOT.'/fichinter/list.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    print '<tr '.$bc[$var].'><td>';
+    print $langs->trans("Intervention").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print "</form></table><br>\n";
+}
 
 
 /*
@@ -114,7 +116,7 @@ if ($resql)
     }
     $db->free($resql);
     print '<table class="noborder nohover" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</td></tr>'."\n";
+    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</th></tr>'."\n";
     $listofstatus=array(0,1,2);
     $bool=false;
     foreach ($listofstatus as $status)
@@ -179,7 +181,7 @@ if (! empty($conf->ficheinter->enabled))
 	{
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("DraftFichinter").'</td></tr>';
+		print '<th colspan="2">'.$langs->trans("DraftFichinter").'</th></tr>';
 		$langs->load("fichinter");
 		$num = $db->num_rows($resql);
 		if ($num)
@@ -229,7 +231,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="4">'.$langs->trans("LastModifiedInterventions",$max).'</td></tr>';
+	print '<th colspan="4">'.$langs->trans("LastModifiedInterventions",$max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -301,7 +303,7 @@ if (! empty($conf->ficheinter->enabled))
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("FichinterToProcess").' <a href="'.DOL_URL_ROOT.'/fichinter/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
+		print '<th colspan="3">'.$langs->trans("FichinterToProcess").' <a href="'.DOL_URL_ROOT.'/fichinter/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
 
 		if ($num)
 		{

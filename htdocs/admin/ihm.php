@@ -157,8 +157,7 @@ if ($action == 'edit')	// Edit
     print '<input type="hidden" name="action" value="update">';
 
     clearstatcache();
-    $var=true;
-
+    
     print '<br>';
     print '<table summary="edit" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
@@ -166,16 +165,14 @@ if ($action == 'edit')	// Edit
 	print '</tr>';
 
     // Default language
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
+    print '<tr><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
     print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'main_lang_default', 1, 0, 0, 0, 0, 'minwidth300');
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Multilingual GUI
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>';
+    print '<tr><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>';
     print $form->selectyesno('main_multilangs',$conf->global->MAIN_MULTILANGS,1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
@@ -192,11 +189,9 @@ if ($action == 'edit')	// Edit
     {
         print '<table summary="search" class="noborder" width="100%">';
         print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td colspan="2">'.$langs->trans("Activated").'</td></tr>';
-        $var=True;
         foreach ($searchform as $key => $value)
         {
-            $var=!$var;
-            print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td colspan="2">';
+            print '<tr><td width="35%">'.$searchformtitle[$key].'</td><td colspan="2">';
             print $form->selectyesno($searchform[$key],$searchformconst[$key],1);
             print '</td></tr>';
         }
@@ -210,29 +205,18 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-	// Show logo
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableShowLogo").'</td><td>';
-    print $form->selectyesno('MAIN_SHOW_LOGO',$conf->global->MAIN_SHOW_LOGO,1);
-    print '</td>';
-	print '<td width="20">&nbsp;</td>';
-	print '</tr>';
-
 	// Max size of lists
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
+    print '<tr><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Max size of short lists on customer card
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '"></td>';
+    print '<tr><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '"></td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 	
     // Disable javascript and ajax
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
+    print '<tr><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
     print $form->selectyesno('main_disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0,1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
@@ -241,8 +225,7 @@ if ($action == 'edit')	// Edit
     // Activate preview tab on element card
     if (class_exists("Imagick"))
 	{
-	    $var=!$var;
-	    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
+	    print '<tr><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
 	    print $form->selectyesno('MAIN_USE_PREVIEW_TABS',isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:0,1);
 	    print '</td>';
 		print '<td width="20">&nbsp;</td>';
@@ -250,32 +233,28 @@ if ($action == 'edit')	// Edit
 	}
 
     // First day for weeks
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
+    print '<tr><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
     print $formother->select_dayofweek((isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'),'MAIN_START_WEEK',0);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
     // DefaultWorkingDays
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultWorkingDays").'</td><td>';
+    print '<tr><td width="35%">'.$langs->trans("DefaultWorkingDays").'</td><td>';
     print '<input type="text" name="MAIN_DEFAULT_WORKING_DAYS" size="5" value="'.(isset($conf->global->MAIN_DEFAULT_WORKING_DAYS)?$conf->global->MAIN_DEFAULT_WORKING_DAYS:'1-5').'">';
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
     // DefaultWorkingHours
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultWorkingHours").'</td><td>';
+    print '<tr><td width="35%">'.$langs->trans("DefaultWorkingHours").'</td><td>';
     print '<input type="text" name="MAIN_DEFAULT_WORKING_HOURS" size="5" value="'.(isset($conf->global->MAIN_DEFAULT_WORKING_HOURS)?$conf->global->MAIN_DEFAULT_WORKING_HOURS:'9-18').'">';
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Firstname/Name
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("FirstnameNamePosition").'</td><td>';
+    print '<tr><td width="35%">'.$langs->trans("FirstnameNamePosition").'</td><td>';
 	$array=array(0=>$langs->trans("Firstname").' '.$langs->trans("Lastname"),1=>$langs->trans("Lastname").' '.$langs->trans("Firstname"));
     print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION',$array,(isset($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?$conf->global->MAIN_FIRSTNAME_NAME_POSITION:0));
     print '</td>';
@@ -283,40 +262,52 @@ if ($action == 'edit')	// Edit
 	print '</tr>';
 
 	// Hide unauthorized button
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ButtonHideUnauthorized").'</td><td>';
+	print '<tr><td width="35%">'.$langs->trans("ButtonHideUnauthorized").'</td><td>';
 	print $form->selectyesno('MAIN_BUTTON_HIDE_UNAUTHORIZED',isset($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)?$conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED:0,1);
 	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    // Hide helpcenter link on login page
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
-    print $form->selectyesno('MAIN_HELPCENTER_DISABLELINK',isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0,1);
-    print '</td>';
+	// Show logo
+	print '<tr><td width="35%">'.$langs->trans("EnableShowLogo").'</td><td>';
+	print $form->selectyesno('MAIN_SHOW_LOGO',$conf->global->MAIN_SHOW_LOGO,1);
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
-
-	// Hide wiki link on login page
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/helpdoc.png','',1)).'</td><td>';
-    print $form->selectyesno('MAIN_HELP_DISABLELINK', isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0,1);
-    print '</td>';
+	
+	// Hide version link
+	/*
+	
+	print '<tr><td width="35%">'.$langs->trans("HideVersionLink").'</td><td>';
+	print $form->selectyesno('MAIN_HIDE_VERSION',$conf->global->MAIN_HIDE_VERSION,1);
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
-
+    */
+	
 	// Show bugtrack link
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
+	print '<tr><td width="35%">'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
 	print $form->selectyesno('MAIN_BUGTRACK_ENABLELINK',$conf->global->MAIN_BUGTRACK_ENABLELINK,1);
 	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    // Message on login page
-	$var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
+	// Hide wiki link on login page
+    print '<tr><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/helpdoc.png','',1)).'</td><td>';
+    print $form->selectyesno('MAIN_HELP_DISABLELINK', isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0,1);
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+
+	// Hide helpcenter link on login page
+	print '<tr><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
+	print $form->selectyesno('MAIN_HELPCENTER_DISABLELINK',isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0,1);
+	print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+	
+	// Message on login page
+    print '<tr><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
 
     $doleditor = new DolEditor('main_home', (isset($conf->global->MAIN_HOME)?$conf->global->MAIN_HOME:''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
 	$doleditor->Create();
@@ -324,8 +315,7 @@ if ($action == 'edit')	// Edit
 	print '</td></tr>'."\n";
 
 	// Message of the day on home page
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
+    print '<tr><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
 
     $doleditor = new DolEditor('main_motd', (isset($conf->global->MAIN_MOTD)?$conf->global->MAIN_MOTD:''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
 	$doleditor->Create();
@@ -345,14 +335,11 @@ if ($action == 'edit')	// Edit
 }
 else	// Show
 {
-    $var=true;
-
     // Language
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td><td>&nbsp;</td></tr>';
 
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
+    print '<tr><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
     $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
     print ($s?$s.' ':'');
     print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
@@ -361,9 +348,8 @@ else	// Show
     if ($user->admin && $conf->global->MAIN_LANG_DEFAULT!='auto') print info_admin($langs->trans("SubmitTranslation".($conf->global->MAIN_LANG_DEFAULT=='en_US'?'ENUS':''),$conf->global->MAIN_LANG_DEFAULT),1);
 	print '</td>';
 	print "</tr>";
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>' . yn($conf->global->MAIN_MULTILANGS) . '</td>';
+    
+    print '<tr><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>' . yn($conf->global->MAIN_MULTILANGS) . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
@@ -380,11 +366,10 @@ else	// Show
     {
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td><td>&nbsp;</td></tr>';
-        $var=true;
         foreach ($searchform as $key => $value)
         {
-            $var=!$var;
-            print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td>'.yn($searchformconst[$key]).'</td>';
+            
+            print '<tr><td width="35%">'.$searchformtitle[$key].'</td><td>'.yn($searchformconst[$key]).'</td>';
     		print '<td align="left">';
     		if (! empty($searchformmodule[$key])) print $langs->trans("IfModuleEnabled",$langs->transnoentitiesnoconv($searchformmodule[$key]));
             print '</td></tr>';
@@ -394,28 +379,20 @@ else	// Show
     }
 
     // Other
-    $var=true;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameters").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
 
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
-	print '<td width="20">&nbsp;</td>';
-	print "</tr>";
-
-	$var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '</td>';
+    print '<tr><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 	
-	$var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td>' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '</td>';
+    print '<tr><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td>' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
     // Disable javascript/ajax
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
+    
+    print '<tr><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
     print yn($conf->global->MAIN_DISABLE_JAVASCRIPT)."</td>";
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
@@ -423,40 +400,36 @@ else	// Show
     // Activate preview tab on element card
     if (class_exists("Imagick"))
 	{
-		$var=!$var;
-	    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
+		
+	    print '<tr><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
 	    print yn(isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:0)."</td>";
 		print '<td width="20">&nbsp;</td>';
 		print "</tr>";
 	}
 
 	// First day for weeks
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
+    print '<tr><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
     print $langs->trans("Day".(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'));
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
     // DefaultWorkingDays
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultWorkingDays").'</td><td>';
+    print '<tr><td width="35%">'.$langs->trans("DefaultWorkingDays").'</td><td>';
     print isset($conf->global->MAIN_DEFAULT_WORKING_DAYS)?$conf->global->MAIN_DEFAULT_WORKING_DAYS:'1-5';
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
     // DefaultWorkingHours
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultWorkingHours").'</td><td>';
+    print '<tr><td width="35%">'.$langs->trans("DefaultWorkingHours").'</td><td>';
     print isset($conf->global->MAIN_DEFAULT_WORKING_HOURS)?$conf->global->MAIN_DEFAULT_WORKING_HOURS:'9-18';
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Firstname / Name position
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("FirstnameNamePosition").'</td><td>';
+    print '<tr><td width="35%">'.$langs->trans("FirstnameNamePosition").'</td><td>';
     if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) { print $langs->trans("Firstname").' '.$langs->trans("Lastname"); }
     else { print $langs->trans("Lastname").' '.$langs->trans("Firstname"); }
     print '</td>';
@@ -464,40 +437,48 @@ else	// Show
 	print '</tr>';
 
 	// Hide unauthorized button
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ButtonHideUnauthorized").'</td><td colspan="2">';
+	print '<tr><td width="35%">'.$langs->trans("ButtonHideUnauthorized").'</td><td colspan="2">';
 	print yn((isset($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)?$conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED:0),1);
 	print '</td></tr>';
 
-    // Link to help center
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td colspan="2">';
-    print yn((isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0),1);
-    print '</td></tr>';
+    // Show logo
+    print '<tr><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print "</tr>";
 
-    // Link to wiki help
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/helpdoc.png','',1)).'</td><td colspan="2">';
-    print yn((isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0),1);
-    print '</td></tr>';
-
-	// Show bugtrack link
-	$var=!$var;
-	print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
+	// Hide version link
+	/*
+	 print '<tr><td width="35%">'.$langs->trans("HideVersionLink").'</td><td>';
+	 print yn($conf->global->MAIN_HIDE_VERSION);
+	 print '</td>';
+	 print '<td width="20">&nbsp;</td>';
+	 print '</tr>';
+	 */
+	
+    // Show bugtrack link
+	print '<tr"><td width="35%">'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
 	print yn($conf->global->MAIN_BUGTRACK_ENABLELINK)."</td>";
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
-    // Message login
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
+    // Link to wiki help
+    print '<tr><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/helpdoc.png','',1)).'</td><td colspan="2">';
+    print yn((isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0),1);
+    print '</td></tr>';
+
+	// Link to help center
+    print '<tr><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td colspan="2">';
+    print yn((isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0),1);
+    print '</td></tr>';
+
+	// Message login
+    print '<tr><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
     if (isset($conf->global->MAIN_HOME)) print dol_htmlcleanlastbr($conf->global->MAIN_HOME);
     else print '&nbsp;';
     print '</td></tr>'."\n";
 
     // Message of the day
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
+    print '<tr><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
     if (isset($conf->global->MAIN_MOTD)) print dol_htmlcleanlastbr($conf->global->MAIN_MOTD);
     else print '&nbsp;';
     print '</td></tr>'."\n";

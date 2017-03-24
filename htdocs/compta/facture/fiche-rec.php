@@ -456,7 +456,7 @@ if (empty($reshook))
 
     	// Ecrase $pu par celui du produit
     	// Ecrase $desc par celui du produit
-    	// Ecrase $txtva par celui du produit
+    	// Ecrase $tva_tx par celui du produit
     	// Ecrase $base_price_type par celui du produit
     	// Replaces $fk_unit with the product's
     	if (! empty($idprod))
@@ -511,23 +511,26 @@ if (empty($reshook))
     			}
     		}
 
-    		// if price ht was forced (ie: from gui when calculated by margin rate and cost price)
+			$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
+			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+			
+    		// if price ht was forced (ie: from gui when calculated by margin rate and cost price). TODO Why this ?
     		if (! empty($price_ht))
     		{
     			$pu_ht = price2num($price_ht, 'MU');
-    			$pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
+    			$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
     		}
     		// On reevalue prix selon taux tva car taux tva transaction peut etre different
     		// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-    		elseif ($tva_tx != $prod->tva_tx)
+    		elseif ($tmpvat != $tmpprodvat)
     		{
     			if ($price_base_type != 'HT')
     			{
-    			    $pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU');
+    			    $pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
     			}
     			else
     			{
-    			    $pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
+    			    $pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
     			}
     		}
 
@@ -983,7 +986,7 @@ if ($action == 'create')
 			$projectid = GETPOST('projectid')?GETPOST('projectid'):$object->fk_project;
 			$langs->load('projects');
 			print '<tr><td>' . $langs->trans('Project') . '</td><td>';
-			$numprojet = $formproject->select_projects($socid, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, $forceaddid=0, $morecss='');
+			$numprojet = $formproject->select_projects($object->thirdparty->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, '');
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $object->thirdparty->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$object->thirdparty->id.(!empty($id)?'&id='.$id:'')).'">' . $langs->trans("AddProject") . '</a>';
 			print '</td></tr>';
 		}
@@ -1492,7 +1495,7 @@ else
 				{
 					if (empty($object->frequency) || $object->date_when <= $today)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$object->thirdparty->id.'&amp;fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$object->thirdparty->id.'&amp;fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
 					}
 					else
 					{
@@ -1783,7 +1786,7 @@ else
 					{
 				        if (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today)
 				        {
-                            print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
+                            print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
                             print $langs->trans("CreateBill").'</a>';
 				        }
 				        else

@@ -17,14 +17,14 @@ CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronLastOutput=Viimase käivituse väljund
-CronLastResult=Viimane vastuse kood
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Käsk
-CronList=Scheduled jobs
+CronList=Plaanitud käivitused
 CronDelete=Delete scheduled jobs
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allow to execute job that have been planned
 CronTask=Tegevus
 CronNone=Mitte ükski
@@ -33,13 +33,13 @@ CronDtEnd=Not after
 CronDtNextLaunch=Järgmine käivitus
 CronDtLastLaunch=Start date of latest execution
 CronDtLastResult=End date of latest execution
-CronFrequency=Frequency
+CronFrequency=Sagedus
 CronClass=Class
 CronMethod=Meetod
 CronModule=Moodul
 CronNoJobs=Pole ühtki registreeritud programm
 CronPriority=Prioriteet
-CronLabel=Label
+CronLabel=Nimi
 CronNbRun=Käivituste arv
 CronMaxRun=Max nb. launch
 CronEach=Iga
@@ -65,7 +65,7 @@ CronMethodHelp=Kasutatava objekti korral käivitatav meetod. <BR> Näiteks Dolib
 CronArgsHelp=Meetodile antavad argumendid. <BR> Näiteks Dolibarri Product objekti /htdocs/product/class/product.class.php meetodi fetch kasutamisel võivad parameetrite väärtusteks olla <i>0, ProductRef</i>.
 CronCommandHelp=Käivitatav süsteemi käsk.
 CronCreateJob=Create new Scheduled Job
-CronFrom=From
+CronFrom=Kellelt
 # Info
 # Common
 CronType=Job type

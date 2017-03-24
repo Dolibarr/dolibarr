@@ -71,9 +71,15 @@ print load_fiche_titre($langs->trans("ListOfUsers"). ' ('.$langs->trans("Hierarc
 // Load hierarchy of users
 $user_arbo = $userstatic->get_full_tree(0, ($search_statut != '' && $search_statut >= 0) ? "statut = ".$search_statut : '');
 
+if (! is_array($user_arbo) && $user_arbo < 0)
+{
+    setEventMessages($userstatic->error, $userstatic->errors, 'warnings');    
+}
+else
+{
 // Define fulltree array
 $fulltree=$user_arbo;
-
+//var_dump($fulltree);
 // Define data (format for treeview)
 $data=array();
 $data[] = array('rowid'=>0,'fk_menu'=>-1,'title'=>"racine",'mainmenu'=>'','leftmenu'=>'','fk_mainmenu'=>'','fk_leftmenu'=>'');
@@ -131,6 +137,7 @@ foreach($fulltree as $key => $val)
 	);
 }
 
+//var_dump($data);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
@@ -139,8 +146,7 @@ $param="search_statut=".$search_statut;
 print '<table class="liste nohover" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("HierarchicView"));
-print '<td align="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a>';
-print ' | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div></td>';
+print_liste_field_titre('<div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>',$_SERVER['PHP_SELF'],"",'',"",'align="center"');
 print_liste_field_titre($langs->trans("Status"),$_SERVER['PHP_SELF'],"",'',"",'align="right"');
 print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','','','','maxwidthsearch ');
 print '</tr>';
@@ -185,6 +191,7 @@ else
 
 print "</table>";
 print "</form>\n";
+}
 
 //
 /*print '<script type="text/javascript" language="javascript">

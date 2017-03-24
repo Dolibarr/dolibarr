@@ -192,6 +192,7 @@ if ($type == 'directory')
     // Auto area for expense report
     else if ($module == 'expensereport') $upload_dir = $conf->expensereport->dir_output;
 
+    // Automatic list
     if (in_array($module, $automodules))
     {
         $param.='&module='.$module;
@@ -200,7 +201,7 @@ if ($type == 'directory')
         $filearray=dol_dir_list($upload_dir,"files",1,'', $excludefiles, $sortfield, $sorting,1);
         $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname,$url);
     }
-    //Manual area
+    // Manual list
     else
     {
         $relativepath=$ecmdir->getRelativePath();

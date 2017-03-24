@@ -636,7 +636,8 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     {
     	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
     	{
-    	    $varprop.="print '<tr><td class=\"fieldrequired\">'.\$langs->trans(\"Field".$prop['field']."\").'</td><td><input class=\"flat\" type=\"text\" name=\"".$prop['field']."\" value=\"'.\$object->".$prop['field'].".'\"></td></tr>';\n";
+            $baseString = 'print "<tr><td class=\"fieldrequired\">".\$langs->trans("Field%s")."</td><td><input class=\"flat\" type=\"text\" name=\"%s\" value=\"".$object->%s."\"></td></tr>";';
+            $varprop.= sprintf("\t ".$baseString." \n", $prop['field'], $prop['field'], $prop['field']);
     	}
     }
     $targetcontent=preg_replace('/LIST_OF_TD_LABEL_FIELDS_EDIT/', $varprop, $targetcontent);
@@ -648,7 +649,7 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     {
     	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
     	{
-    	    $varprop.="print '<tr><td class=\"fieldrequired\">'.\$langs->trans(\"Field".$prop['field']."\").'</td><td>\$object->".$prop['field']."</td></tr>';\n";
+    	    $varprop.=sprintf("\t print '<tr><td class=\"fieldrequired\">'.\$langs->trans(\"Field%s\").'</td><td>'.\$object->%s.'</td></tr>';\n",$prop['field'],$prop['field']);
     	}
     }
     $targetcontent=preg_replace('/LIST_OF_TD_LABEL_FIELDS_VIEW/', $varprop, $targetcontent);

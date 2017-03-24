@@ -1328,7 +1328,16 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             $cssclass.= " unmovable";
                         }
                     }
-                    else $cssclass.= " movable";
+                    else{
+                        if ($user->rights->agenda->allactions->create ||
+                            (($event->authorid == $user->id || $event->userownerid == $user->id) && $user->rights->agenda->myactions->create))
+                        {
+                            $cssclass.= " movable";
+                        }else{
+                            $cssclass.= " unmovable";
+                        }
+
+                    }
 
                     $h=''; $nowrapontd=1;
                     if ($action == 'show_day')  { $h='height: 100%; '; $nowrapontd=0; }
@@ -1344,7 +1353,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     print '<ul class="cal_event" style="'.$h.'">';	// always 1 li per ul, 1 ul per event
                     print '<li class="cal_event" style="'.$h.'">';
                     print '<table class="cal_event'.(empty($event->transparency)?'':' cal_event_busy').'" style="'.$h;
-                    print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
+                    print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, -3).'), to(#'.dol_color_minus($color, -3).'));';
                     //if (! empty($event->transparency)) print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
                     //else print 'background-color: transparent !important; background: none; border: 1px solid #bbb;';
                     print ' -moz-border-radius:4px;" width="100%"><tr>';
@@ -1404,7 +1413,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             {
                                 $savlabel=$event->libelle;
                                 $event->libelle=$daterange;
+                                //print '<strong>';
                                 print $event->getNomUrl(0);
+                                //print '</strong>';
                                 $event->libelle=$savlabel;
                             }
                             else
@@ -1412,7 +1423,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                                 print $daterange;
                             }
                             //print '</strong> ';
-                            print "<br>\n";
+                            print " ";
                         }
                         else
 						{
@@ -1526,14 +1537,22 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
  * Change color with a delta
  *
  * @param	string	$color		Color
- * @param 	int		$minus		Delta
+ * @param 	int		$minus		Delta (1 = 16 unit)
+ * @param   int     $minusunit  Minus unit
  * @return	string				New color
  */
-function dol_color_minus($color, $minus)
+function dol_color_minus($color, $minus, $minusunit = 16)
 {
 	$newcolor=$color;
-	$newcolor[0]=((hexdec($newcolor[0])-$minus)<0)?0:dechex((hexdec($newcolor[0])-$minus));
-	$newcolor[2]=((hexdec($newcolor[2])-$minus)<0)?0:dechex((hexdec($newcolor[2])-$minus));
-	$newcolor[4]=((hexdec($newcolor[4])-$minus)<0)?0:dechex((hexdec($newcolor[4])-$minus));
+	if ($minusunit == 16)
+	{
+    	$newcolor[0]=dechex(max(min(hexdec($newcolor[0])-$minus, 15), 0));
+    	$newcolor[2]=dechex(max(min(hexdec($newcolor[2])-$minus, 15), 0));
+    	$newcolor[4]=dechex(max(min(hexdec($newcolor[4])-$minus, 15), 0));
+	}
+	else
+	{
+	    // Not yet implemented
+	}
 	return $newcolor;
 }

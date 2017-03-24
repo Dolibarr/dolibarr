@@ -46,7 +46,7 @@ $confirm = GETPOST('confirm','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'expensereport', $id, '');
+$result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
 // Get parameters
@@ -91,7 +91,7 @@ if ($object->id)
 
 	$head=expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("ExpenseReport"), 0, 'trip');
+	dol_fiche_head($head, 'documents',  $langs->trans("ExpenseReport"), -1, 'trip');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 	

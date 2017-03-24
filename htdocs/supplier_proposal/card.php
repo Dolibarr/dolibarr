@@ -354,7 +354,7 @@ if (empty($reshook))
 										$array_options = $lines[$i]->array_options;
 									}
 
-									$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options);
+									$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->ref_fourn, $lines[$i]->fk_unit);
 
 									if ($result > 0) {
 										$lineid = $result;
@@ -633,7 +633,8 @@ if (empty($reshook))
 			            $buyingprice,
 			            $label,
 			            $array_options,
-			            $ref_fourn
+			            $ref_fourn,
+			            $fk_unit
 			            );
 			        //var_dump($tva_tx);var_dump($productsupplier->fourn_pu);var_dump($price_base_type);exit;
 			    }
@@ -683,7 +684,7 @@ if (empty($reshook))
 			        $price_base_type = 'HT';
 			    }
 			
-				$result = $object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $ttc, $info_bits, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $ref_fourn);
+				$result = $object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $ttc, $info_bits, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $ref_fourn, $fk_unit);
 			    //$result = $object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end, $array_options, $fk_unit);
 			}
 
@@ -826,7 +827,8 @@ if (empty($reshook))
 		if (! $error) {
 			$db->begin();
 			$ref_fourn = GETPOST('fourn_ref');
-			$result = $object->updateline(GETPOST('lineid'), $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $array_options, $ref_fourn);
+			$fk_unit = GETPOST('units');
+			$result = $object->updateline(GETPOST('lineid'), $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $array_options, $ref_fourn, $fk_unit);
 
 			if ($result >= 0) {
 				$db->commit();
@@ -1040,6 +1042,15 @@ if ($action == 'create')
 		$objectsrc->fetch_optionals($originid);
 		$object->array_options = $objectsrc->array_options;
 
+		if (!empty($conf->multicurrency->enabled))
+		{
+		    if (!empty($objectsrc->multicurrency_code)) $currency_code = $objectsrc->multicurrency_code;
+		    if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx;
+		}
+	}
+	else
+	{
+	    if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
 	}
 
 	$object = new SupplierProposal($db);
@@ -1149,7 +1160,6 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
-		$currency_code = (!empty($soc->multicurrency_code) ? $soc->multicurrency_code : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency));
 	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
 		print '</td></tr>';
 	}
@@ -1196,6 +1206,13 @@ if ($action == 'create')
 			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax2) . "</td></tr>";
 		}
 		print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td colspan="2">' . price($objectsrc->total_ttc) . "</td></tr>";
+
+		if (!empty($conf->multicurrency->enabled))
+		{
+			print '<tr><td>' . $langs->trans('MulticurrencyTotalHT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
+			print '<tr><td>' . $langs->trans('MulticurrencyTotalVAT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
+			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
+		}
 	}
 
 	print "</table>\n";
@@ -1283,7 +1300,7 @@ if ($action == 'create')
 	$soc->fetch($object->socid);
 
 	$head = supplier_proposal_prepare_head($object);
-	dol_fiche_head($head, 'comm', $langs->trans('CommRequest'), 0, 'supplier_proposal');
+	dol_fiche_head($head, 'comm', $langs->trans('CommRequest'), -1, 'supplier_proposal');
 
 	$formconfirm = '';
 
@@ -1491,14 +1508,22 @@ if ($action == 'create')
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print fieldLabel('CurrencyRate','multicurrency_tx');
 		print '</td>';
-		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
+		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
-		if ($action == 'editmulticurrencyrate') {
-			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
+		if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
+		    if($action == 'actualizemulticurrencyrate') {
+   				list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
+		    }
+		    $form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 		} else {
-			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
+		    $form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
+		    if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+		        print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
+		        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
+		        print '</div>';
+		    }
 		}
 		print '</td></tr>';
 	}
@@ -1773,7 +1798,6 @@ if ($action == 'create')
 
 		print '</div>';
 	}
-	print "<br>\n";
 
 	if ($action != 'presend')
 	{

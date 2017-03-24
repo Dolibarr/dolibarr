@@ -47,7 +47,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 *      $object->actiontypecode (translation action code: AC_OTH, ...)
 	 *      $object->actionmsg (note, long text)
 	 *      $object->actionmsg2 (label, short text)
-	 *      $object->sendtoid (id of contact)
+	 *      $object->sendtoid (id of contact or array of ids)
 	 *      $object->socid
 	 *      $object->fk_project
 	 *      $object->fk_element
@@ -819,7 +819,16 @@ class InterfaceActionsAuto extends DolibarrTriggers
         require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$contactforaction=new Contact($this->db);
         $societeforaction=new Societe($this->db);
-        if ($object->sendtoid > 0) $contactforaction->fetch($object->sendtoid);
+        // Set contactforaction if there is only 1 contact.
+        if (is_array($object->sendtoid))
+        {
+            if (count($object->sendtoid) == 1) $contactforaction->fetch(reset($object->sendtoid));
+        }
+        else
+        {
+            if ($object->sendtoid > 0) $contactforaction->fetch($object->sendtoid);
+        }
+        // Set societeforaction.
         if ($object->socid > 0)    $societeforaction->fetch($object->socid);
 
 		// Insertion action
@@ -855,6 +864,21 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->elementtype = $object->element;
 
 		$ret=$actioncomm->create($user);       // User creating action
+		
+		if ($ret > 0 && $conf->global->MAIN_COPY_FILE_IN_EVENT_AUTO)
+		{
+			if (is_array($object->attachedfiles) && array_key_exists('paths',$object->attachedfiles) && count($object->attachedfiles['paths'])>0) {
+				foreach($object->attachedfiles['paths'] as $key=>$filespath) {
+					$srcfile = $filespath;
+					$destdir = $conf->agenda->dir_output . '/' . $ret;
+					$destfile = $destdir . '/' . $object->attachedfiles['names'][$key];
+					if (dol_mkdir($destdir) >= 0) {
+						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+						dol_copy($srcfile, $destfile);
+					}
+				}
+			}
+		}
 		
 		unset($object->actionmsg); unset($object->actionmsg2); unset($object->actiontypecode);	// When several action are called on same object, we must be sure to not reuse value of first action.
 		

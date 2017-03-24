@@ -106,25 +106,25 @@ class box_contracts extends ModeleBoxes
     				// if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $contractstatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis'=>1
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                         'text' => $thirdpartytmp->getNomUrl(1),
                         'asis'=>1
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => dol_print_date($datec,'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" class="nowrap"',
+                        'td' => 'class="nowrap right"',
                         'text' => $contractstatic->getLibStatut(6),
                         'asis'=>1,
                     );
@@ -141,14 +141,14 @@ class box_contracts extends ModeleBoxes
                 $db->free($resql);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
+                'td' => '',
                 'text' => $langs->trans("ReadPermissionNotAllowed"),
             );
         }

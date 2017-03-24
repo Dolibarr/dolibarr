@@ -54,7 +54,7 @@ if (GETPOST('actioncode','array'))
 }
 else
 {
-    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
@@ -107,7 +107,7 @@ llxHeader("",$title,$help_url);
 
 $head = project_prepare_head($object);
 
-dol_fiche_head($head, 'agenda', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
+dol_fiche_head($head, 'agenda', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
 
 // Project card

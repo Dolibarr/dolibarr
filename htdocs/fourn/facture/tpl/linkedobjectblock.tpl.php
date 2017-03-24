@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@capnetworks.com>
  * Copyright (C) 2014      Marcos García <marcosgdf@gmail.com>
  * Copyright (C) 2015      Charlie Benke <charlie@patas-monkey.com>
+ * Copyright (C) 2016      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 ?>
 
@@ -48,7 +48,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     	<td align="right"><?php
     		if ($user->rights->fournisseur->facture->lire) {
     		    $sign = 1;
-    			if ($object->type == Facture::TYPE_CREDIT_NOTE) $sign = -1;
+    			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) $sign = -1;
     			if ($objectlink->statut != 3)		// If not abandonned
     			{
     				$total = $total + $sign * $objectlink->total_ht;

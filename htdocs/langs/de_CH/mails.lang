@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - mails
-ConfirmResetMailing=Achtung, wenn Sie diese E-Mail Kampangne (<b>%s</b>), können Sie diese Aktion nochmals versenden. Sind Sie sicher, das ist tun möchten?
 DateLastSend=Datum des letzten Versand
 ActivateCheckReadKey=Schlüssel um die URL für "Lesebestätigung" und "Abmelden/Unsubscribe" zu verschlüsseln
 AllRecipientSelected=Alle Partner mit E-Mail ausgewählt

@@ -46,14 +46,17 @@ $action=GETPOST('action');
  */
 
 // positionne la variable pour le nombre de rss externes
-$sql ="SELECT MAX(".$db->decrypt('name').") as name FROM ".MAIN_DB_PREFIX."const";
+$sql ="SELECT ".$db->decrypt('name')." as name FROM ".MAIN_DB_PREFIX."const";
 $sql.=" WHERE ".$db->decrypt('name')." LIKE 'EXTERNAL_RSS_URLRSS_%'";
-$result=$db->query($sql);
+//print $sql;
+$result=$db->query($sql);	// We can't use SELECT MAX() because EXTERNAL_RSS_URLRSS_10 is lower than EXTERNAL_RSS_URLRSS_9
 if ($result)
 {
-    $obj = $db->fetch_object($result);
-    preg_match('/([0-9]+)$/i',$obj->name,$reg);
-	if ($reg[1]) $lastexternalrss = $reg[1];
+    while ($obj = $db->fetch_object($result))
+    {
+        preg_match('/([0-9]+)$/i',$obj->name,$reg);
+        if ($reg[1] && $reg[1] > $lastexternalrss) $lastexternalrss = $reg[1];
+    }
 }
 else
 {

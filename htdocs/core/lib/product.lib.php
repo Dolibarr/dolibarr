@@ -3,7 +3,7 @@
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2009-2010  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,6 +93,26 @@ function product_prepare_head($object)
 	$head[$h][1] = $langs->trans('Referers');
 	$head[$h][2] = 'referers';
 	$h++;
+
+	if (!empty($conf->variants->enabled) && $object->isProduct()) {
+
+		global $db;
+
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+
+		$prodcomb = new ProductCombination($db);
+
+		if ($prodcomb->fetchByFkProductChild($object->id) == -1) 
+		{
+			$head[$h][0] = DOL_URL_ROOT."/variants/combinations.php?id=".$object->id;
+			$head[$h][1] = $langs->trans('ProductCombinations');
+			$head[$h][2] = 'combinations';
+			$nbVariant = $prodcomb->countNbOfCombinationForFkProductParent($object->id);
+            if ($nbVariant > 0) $head[$h][1].= ' <span class="badge">'.$nbVariant.'</span>';
+		}
+
+		$h++;
+	}
 
     if ($object->isProduct() || ($object->isService() && ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))    // If physical product we can stock (or service with option)
     {

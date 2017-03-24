@@ -9,14 +9,20 @@ VersionDevelopment=Udvikling
 VersionUnknown=Ukendt
 VersionRecommanded=Anbefalet
 FileCheck=Files integrity checker
-FileCheckDesc=This tool allows you to check the integrity of files of your application, comparing each files with the official ones. You can use this tool to detect if some files were modified by a hacker for example.
+FileCheckDesc=This tool allows you to check the integrity of files and setup of your application, comparing each files with the official ones. Value of some setup constants may also be checked. You can use this tool to detect if some files were modified by a hacker for example.
+FileIntegrityIsStrictlyConformedWithReference=Files integrity is strictly conformed with the reference.
+FileIntegrityIsOkButFilesWereAdded=Files integrity check has passed, however some new files were added.
+FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified, removed or added.
+GlobalChecksum=Global checksum
 MakeIntegrityAnalysisFrom=Make integrity analysis of application files from
 LocalSignature=Embedded local signature (less reliable)
 RemoteSignature=Remote distant signature (more reliable)
 FilesMissing=Missing Files
 FilesUpdated=Updated Files
+FilesModified=Modified Files
+FilesAdded=Added Files
 FileCheckDolibarr=Check integrity of application files
-AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from a certified package
+AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from an official package
 XmlNotFound=Xml Integrity File of application not found
 SessionId=Session ID
 SessionSaveHandler=Handler for at gemme sessioner
@@ -185,7 +191,9 @@ BoxesDesc=Widgets are components showing some information that you can add to pe
 OnlyActiveElementsAreShown=Only elements from <a href="%s">enabled modules</a> are shown.
 ModulesDesc=Dolibarr modules define which functionality is enabled in software. Some modules require permissions you must grant to users, after enabling module. Click on button on/off to enable a module/feature.
 ModulesMarketPlaceDesc=You can find more modules to download on external websites on the Internet...
-ModulesMarketPlaces=Flere moduler ...
+ModulesDeployDesc=If permissions on your file system allows it, you can use this tool to deploy an external module. The module wil then be visible on the tab <strong>%s</strong>.
+ModulesMarketPlaces=Find external modules...
+GoModuleSetupArea=To deploy/install a new module, go onto the Module setup area at <a href="%s">%s</a>.
 DoliStoreDesc=DoliStore den officielle markedsplads for Dolibarr ERP / CRM eksterne moduler
 DoliPartnersDesc=List of companies providing custom developed modules or features (Note: anyone experienced in PHP programming can provide custom development for an open source project)
 WebSiteDesc=Reference websites to find more modules...
@@ -276,21 +284,22 @@ ModuleFamilyInterface=Interfaces with external systems
 MenuHandlers=Menu håndterer
 MenuAdmin=Menu editor
 DoNotUseInProduction=Do not use in production
-ThisIsProcessToFollow=Det er opsætningen til processen:
-ThisIsAlternativeProcessToFollow=This is an alternative setup to process:
+ThisIsProcessToFollow=This is steps to process:
+ThisIsAlternativeProcessToFollow=This is an alternative setup to process manually:
 StepNb=Trin %s
 FindPackageFromWebSite=Find en pakke, der giver funktion, du ønsker (for eksempel på web site %s).
 DownloadPackageFromWebSite=Download package (for example from official web site %s).
-UnpackPackageInDolibarrRoot=Unpack package file into Dolibarr server directory dedicated to external modules: <b>%s</b>
-SetupIsReadyForUse=Installer er færdig og Dolibarr er klar til brug med denne nye komponent.
-NotExistsDirect=The alternative root directory is not defined.<br>
-InfDirAlt=Since version 3 it is possible to define an alternative root directory.This allows you to store, same place, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
-InfDirExample=<br>Then declare it in the file conf.php<br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>*These lines are commented with "#", to uncomment only remove the character.
+UnpackPackageInDolibarrRoot=Unpack the packaged files into server directory dedicated to Dolibarr: <b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, unpack the packaged files into the server directory dedicated to modules: <b>%s</b>
+SetupIsReadyForUse=Module deployment is finished. You must however enable and setup the module in your application by going on the page to setup modules: <a href="%s">%s</a>.
+NotExistsDirect=The alternative root directory is not defined to an existing directory.<br>
+InfDirAlt=Since version 3, it is possible to define an alternative root directory. This allows you to store, into a dedicated directory, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=For this step, you can send package using this tool: Select module file
 CurrentVersion=Dolibarr aktuelle version
 CallUpdatePage=Go to the page that updates the database structure and data: %s.
 LastStableVersion=Latest stable version
-LastActivationDate=Last activation date
+LastActivationDate=Latest activation date
 UpdateServerOffline=Update server offline
 GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags could be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as previous but an offset corresponding to the number to the right of the + sign is applied starting on first %s. <br><b>{000000@x}</b> same as previous but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
 GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of third party type on n characters (see dictionary-thirdparty types).<br>
@@ -373,11 +382,11 @@ ExtrafieldCheckBox=Checkbox
 ExtrafieldRadio=Radio button
 ExtrafieldCheckBoxFromList= Checkbox from table
 ExtrafieldLink=Link to an object
-ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another :<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
+ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list :<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list :<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...
 ExtrafieldParamHelpradio=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...
-ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list :<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Parameters must be ObjectName:Classpath<br>Syntax : ObjectName:Classpath<br>Example : Societe:societe/class/societe.class.php
 LibraryToBuildPDF=Library used for PDF generation
 WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
@@ -411,10 +420,11 @@ ModuleCompanyCodePanicum=Retur tom regnskabspool kode.
 ModuleCompanyCodeDigitaria=Regnskabsmæssig kode afhænger tredjepart kode. Koden er sammensat af tegnet "C" i første position efterfulgt af de første 5 bogstaver af tredjepart kode.
 Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=Use a 3 steps approval when amount (without tax) is higher than...
-
+WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to send an email from another server than the Yahoo server if the email address used as a sender is your Yahoo email (like myemail@yahoo.com, myemail@yahoo.fr, ...). Your current setup use the server of the application to send email, so some recipients (the one compatible with the restrictive DMARC protocol), will ask Yahoo if they can accept your email and Yahoo will respond "no" because the server is not a server owned by Yahoo, so few of your sent Emails may not be accepted.<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account).
+ClickToShowDescription=Click to show description
 # Modules
 Module0Name=Brugere og grupper
-Module0Desc=Brugere og grupper forvaltning
+Module0Desc=Users / Employees and Groups management
 Module1Name=Tredjemand
 Module1Desc=Virksomheder og kontakter "forvaltning
 Module2Name=Kommerciel
@@ -515,8 +525,8 @@ Module2200Name=Dynamic Prices
 Module2200Desc=Enable the usage of math expressions for prices
 Module2300Name=Cron
 Module2300Desc=Scheduled job management
-Module2400Name=Agenda/Events
-Module2400Desc=Follow events or rendez-vous. Record manual events into Agendas or let application logs automatic events for tracking purposes.
+Module2400Name=Events/Agenda
+Module2400Desc=Follow done and upcoming events. Let application logs automatic events for tracking purposes or record manual events or rendez-vous.
 Module2500Name=Elektronisk Content Management
 Module2500Desc=Gemme og dele dokumenter
 Module2600Name=API/Web services (SOAP server)
@@ -582,7 +592,7 @@ Permission34=Slet produkter / ydelser
 Permission36=Eksportere produkter / ydelser
 Permission38=Eksportere produkter
 Permission41=Read projects and tasks (shared project and projects i'm contact for). Can also enter time consumed on assigned tasks (timesheet)
-Permission42=Opret / ændre projekter, redigere opgaver for mine projekter
+Permission42=Create/modify projects (shared project and projects i'm contact for). Can also create tasks and assign users to project and tasks
 Permission44=Slet projekter
 Permission45=Export projects
 Permission61=Læs interventioner
@@ -685,7 +695,7 @@ PermissionAdvanced253=Opret / ændre interne / eksterne brugere og tilladelser
 Permission254=Slette eller deaktivere andre brugere
 Permission255=Opret / ændre sin egen brugeroplysninger
 Permission256=Ændre sin egen adgangskode
-Permission262=Udvide adgangen til alle tredjeparter (ikke kun dem, der er knyttet til brugeren). Ikke effektivt for eksterne brugere (altid begrænset til sig selv).
+Permission262=Extend access to all third parties (not only third parties that user is a sale representative).<br>Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc).<br>Not effective for projects (only rules on project permissions, visibility and assignement matters).
 Permission271=Læs CA
 Permission272=Læs fakturaer
 Permission273=Udsteder fakturaer
@@ -832,7 +842,7 @@ DictionaryStaff=Personale
 DictionaryAvailability=Levering forsinkelse
 DictionaryOrderMethods=Bestilling af metoder
 DictionarySource=Oprindelse af forslag / ordrer
-DictionaryAccountancyCategory=Accounting categories
+DictionaryAccountancyCategory=Accounting account groups
 DictionaryAccountancysystem=Models for chart of accounts
 DictionaryEMailTemplates=E-mail skabeloner
 DictionaryUnits=Enheder
@@ -887,7 +897,7 @@ Offset=Offset
 AlwaysActive=Altid aktiv
 Upgrade=Upgrade
 MenuUpgrade=Upgrade / Forlæng
-AddExtensionThemeModuleOrOther=Tilføj udvidelse (tema, modul, ...)
+AddExtensionThemeModuleOrOther=Deploy/install external module
 WebServer=Web server
 DocumentRootServer=Webserverens rodmappe
 DataRootServer=Datafiler bibliotek
@@ -994,7 +1004,7 @@ TriggerAlwaysActive=Udløser i denne fil er altid aktive, uanset hvad er det akt
 TriggerActiveAsModuleActive=Udløser i denne fil er aktive som <b>modul %s</b> er aktiveret.
 GeneratedPasswordDesc=Definer her som regel, du vil bruge til at generere nye adgangskode, hvis du beder om at få automatisk genereret adgangskode
 DictionaryDesc=Insert all reference data. You can add your values to the default.
-ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting.
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
 MiscellaneousDesc=All other security related parameters are defined here.
 LimitsSetup=Grænseværdier / Precision setup
 LimitsDesc=Du kan definere grænser, præciseringer og optimeringer bruges af Dolibarr her
@@ -1161,10 +1171,6 @@ FreeLegalTextOnOrders=Fri tekst om ordrer
 WatermarkOnDraftOrders=Watermark on draft orders (none if empty)
 ShippableOrderIconInList=Add an icon in Orders list which indicate if order is shippable
 BANK_ASK_PAYMENT_BANK_DURING_ORDER=Ask for bank account destination of order
-##### Clicktodial #####
-ClickToDialSetup=Klik for at ringe modul opsætning
-ClickToDialUrlDesc=Url called when a click on phone picto is done. Dans l'url, vous pouvez utiliser les balises<br><b>__PHONETO__</b> qui sera remplacé par le téléphone de l'appelé<br><b>__PHONEFROM__</b> qui sera remplacé par le téléphone de l'appelant (le votre)<br><b>__LOGIN__</b> qui sera remplacé par votre login clicktodial (défini sur votre fiche utilisateur)<br><b>__PASS__</b> qui sera remplacé par votre mot de passe clicktodial (défini sur votre fiche utilisateur).
-##### Bookmark4u #####
 ##### Interventions #####
 InterventionsSetup=Interventioner modul opsætning
 FreeLegalTextOnInterventions=Fri tekst om intervention dokumenter
@@ -1391,7 +1397,7 @@ SendingsSetup=Sender modul opsætning
 SendingsReceiptModel=Afsendelse modtagelsen model
 SendingsNumberingModules=Sendings nummerering moduler
 SendingsAbility=Support shipping sheets for customer deliveries
-NoNeedForDeliveryReceipts=I de fleste tilfælde sendings indtægter anvendes både som plader til kunden leverancer (listen over produkter til at sende) og plader, der er recevied og underskrevet af kunden. Så produkt leverancer kvitteringer er en overlappes træk og er sjældent aktiveret.
+NoNeedForDeliveryReceipts=In most cases, shipping sheets are used both as sheets for customer deliveries (list of products to send) and sheets that is received and signed by customer. So product deliveries receipts is a duplicated feature and is rarely activated.
 FreeLegalTextOnShippings=Free text on shipments
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Produkter leverancer modtagelsen nummerressourcer modul
@@ -1471,7 +1477,11 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Set automatically this default value for type of e
 AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
 AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
 AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
-##### ClickToDial #####
+AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
+AGENDA_NOTIFICATION_SOUND=Enable sound notification
+##### Clicktodial #####
+ClickToDialSetup=Klik for at ringe modul opsætning
+ClickToDialUrlDesc=Url called when a click on phone picto is done. Dans l'url, vous pouvez utiliser les balises<br><b>__PHONETO__</b> qui sera remplacé par le téléphone de l'appelé<br><b>__PHONEFROM__</b> qui sera remplacé par le téléphone de l'appelant (le votre)<br><b>__LOGIN__</b> qui sera remplacé par votre login clicktodial (défini sur votre fiche utilisateur)<br><b>__PASS__</b> qui sera remplacé par votre mot de passe clicktodial (défini sur votre fiche utilisateur).
 ClickToDialDesc=This module allows to make phone numbers clickable. A click on this icon will call make your phone to call the phone number. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
 ClickToDialUseTelLink=Use just a link "tel:" on phone numbers
 ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface installed on same computer than the browser, and called when you click on a link in your browser that start with "tel:". If you need a full server solution (no need of local software installation), you must set this to "No" and fill next field.
@@ -1499,10 +1509,11 @@ EndPointIs=SOAP clients must send their requests to the Dolibarr endpoint availa
 ##### API ####
 ApiSetup=API module setup
 ApiDesc=By enabling this module, Dolibarr become a REST server to provide miscellaneous web services.
-ApiProductionMode=Enable production mode (this will activate use of a caches for services management)
+ApiProductionMode=Enable production mode (this will activate use of a cache for services management)
 ApiExporerIs=You can explore the APIs at url
 OnlyActiveElementsAreExposed=Only elements from enabled modules are exposed
 ApiKey=Key for API
+WarningAPIExplorerDisabled=The API explorer has been disabled. API explorer is not required to provide API services. It is a tool for developer to find/test REST APIs. If you need this tool, go into setup of module API REST to activate it.
 ##### Bank #####
 BankSetupModule=Bank modul opsætning
 FreeLegalTextOnChequeReceipts=Fri tekst på check kvitteringer
@@ -1571,7 +1582,7 @@ BackupDumpWizard=Wizard to build database backup dump file
 SomethingMakeInstallFromWebNotPossible=Installation of external module is not possible from the web interface for the following reason:
 SomethingMakeInstallFromWebNotPossible2=For this reason, process to upgrade described here is only manual steps a privileged user can do.
 InstallModuleFromWebHasBeenDisabledByFile=Install of external module from application has been disabled by your administrator. You must ask him to remove the file <strong>%s</strong> to allow this feature.
-ConfFileMuseContainCustom=Installing an external module from application save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
+ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Highlight color of the line when the mouse passes over (keep empty for no highlight)
 TextTitleColor=Color of page title
@@ -1601,6 +1612,7 @@ FixTZ=TimeZone fix
 FillFixTZOnlyIfRequired=Example: +2 (fill only if problem experienced)
 ExpectedChecksum=Expected Checksum
 CurrentChecksum=Current Checksum
+ForcedConstants=Required constant values
 MailToSendProposal=To send customer proposal
 MailToSendOrder=To send customer order
 MailToSendInvoice=To send customer invoice
@@ -1609,13 +1621,14 @@ MailToSendIntervention=To send intervention
 MailToSendSupplierRequestForQuotation=To send quotation request to supplier
 MailToSendSupplierOrder=To send supplier order
 MailToSendSupplierInvoice=To send supplier invoice
+MailToSendContract=To send a contract
 MailToThirdparty=To send email from third party page
 ByDefaultInList=Show by default on list view
-YouUseLastStableVersion=You use the last stable version
+YouUseLastStableVersion=You use the latest stable version
 TitleExampleForMajorRelease=Example of message you can use to announce this major release (feel free to use it on your web sites)
 TitleExampleForMaintenanceRelease=Example of message you can use to announce this maintenance release (feel free to use it on your web sites)
-ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
-ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 MultiPriceRuleDesc=When option "Several level of prices per product/service" is on, you can define different prices (one per price level) for each product. To save you time, you can enter here rule to have price for each level autocalculated according to price of first level, so you will have to enter only price for first level on each product. This page is here to save you time and can be usefull only if your prices for each leve are relative to first level. You can ignore this page in most cases.
 ModelModulesProduct=Templates for product documents
 ToGenerateCodeDefineAutomaticRuleFirst=To be able to generate automatically codes, you must first define a manager to auto define barcode number.

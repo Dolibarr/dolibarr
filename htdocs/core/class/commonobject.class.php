@@ -1231,11 +1231,11 @@ abstract class CommonObject
      *	@param	int			$id			To force other object id (should not be used)
      *	@param	string		$format		Data format ('text', 'date'). 'text' is used if not defined
      *	@param	string		$id_field	To force rowid field name. 'rowid' is used if not defined
-     *	@param	User|string	$user		Update last update fields also if user object provided
+     *	@param	User|string	$fuser		Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
      *  @param  string      $trigkey    Trigger key to run (in most cases something like 'XXX_MODIFY')
      *	@return	int						<0 if KO, >0 if OK
      */
-    function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $user='', $trigkey='')
+    function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $fuser=null, $trigkey='')
     {
         global $user,$langs,$conf;
         
@@ -1255,7 +1255,8 @@ abstract class CommonObject
         if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
         else if ($format == 'int') $sql.= $field." = ".$this->db->escape($value);
         else if ($format == 'date') $sql.= $field." = ".($value ? "'".$this->db->idate($value)."'" : "null");
-        if (is_object($user)) $sql.=", fk_user_modif = ".$user->id;
+        if (! empty($fuser) && is_object($fuser)) $sql.=", fk_user_modif = ".$fuser->id;
+        elseif (empty($fuser) || $fuser != 'none') $sql.=", fk_user_modif = ".$user->id;
         $sql.= " WHERE ".$id_field." = ".$id;
 
         dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
@@ -1264,7 +1265,7 @@ abstract class CommonObject
         {
             if ($trigkey)
             {
-                $result=$this->call_trigger($trigkey, $user);   // This may set this->errors
+                $result=$this->call_trigger($trigkey, (! empty($fuser) && is_object($fuser)) ? $fuser : $user);   // This may set this->errors
                 if ($result < 0) $error++;
             }
 
@@ -1395,9 +1396,18 @@ abstract class CommonObject
         }
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        if ($projectid) $sql.= ' SET fk_projet = '.$projectid;
-        else $sql.= ' SET fk_projet = NULL';
-        $sql.= ' WHERE rowid = '.$this->id;
+        if ($this->table_element == 'actioncomm') 
+        {
+            if ($projectid) $sql.= ' SET fk_project = '.$projectid;
+            else $sql.= ' SET fk_project = NULL';
+            $sql.= ' WHERE id = '.$this->id; 
+        }
+        else 
+        {
+            if ($projectid) $sql.= ' SET fk_projet = '.$projectid;
+            else $sql.= ' SET fk_projet = NULL';
+            $sql.= ' WHERE rowid = '.$this->id;
+        }
 
         dol_syslog(get_class($this)."::setProject", LOG_DEBUG);
         if ($this->db->query($sql))
@@ -2151,6 +2161,8 @@ abstract class CommonObject
      */
     function update_note($note,$suffix='')
     {
+        global $user;
+        
     	if (! $this->table_element)
     	{
     		dol_syslog(get_class($this)."::update_note was called on objet with property table_element not defined", LOG_ERR);
@@ -2167,6 +2179,7 @@ abstract class CommonObject
             
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     	$sql.= " SET note".$suffix." = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
+    	$sql.= " ,".(in_array($this->table_element, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))?"fk_user_mod":"fk_user_modif")." = ".$user->id;
     	$sql.= " WHERE rowid =". $this->id;
 
     	dol_syslog(get_class($this)."::update_note", LOG_DEBUG);
@@ -2782,6 +2795,7 @@ abstract class CommonObject
         $this->db->begin();
 
         $fieldstatus="fk_statut";
+        if ($elementTable == 'mailing') $fieldstatus="statut";
         if ($elementTable == 'user') $fieldstatus="statut";
         if ($elementTable == 'expensereport') $fieldstatus="fk_statut";
 		if ($elementTable == 'commande_fournisseur_dispatch') $fieldstatus="status";
@@ -3695,6 +3709,12 @@ abstract class CommonObject
                 $discount->fetch($line->fk_remise_except);
                 $this->tpl['description'] = $langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
             }
+            elseif ($line->desc == '(EXCESS RECEIVED)')
+            {
+                $discount=new DiscountAbsolute($this->db);
+                $discount->fetch($line->fk_remise_except);
+                $this->tpl['description'] = $langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
+            }
             else
             {
                 $this->tpl['description'] = dol_trunc($line->desc,60);
@@ -3875,6 +3895,7 @@ abstract class CommonObject
 			$modele=$tmp[0];
 			$srctemplatepath=$tmp[1];
 		}
+		
 
 		// Search template files
 		$file=''; $classname=''; $filefound=0;
@@ -4546,7 +4567,7 @@ abstract class CommonObject
 								var parent = $(this).find("option[parent]:first").attr("parent");
 								var infos = parent.split(":");
 								var parent_list = infos[0];
-								$("select[name=\"options_"+parent_list+"\"]").change(function() {
+								$("select[name=\""+parent_list+"\"]").change(function() {
 									showOptions(child_list, parent_list);
 								});
 					    	});

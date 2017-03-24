@@ -309,11 +309,11 @@ if ($id)
 
 			print "<tr ".$bc[$var]."><td>";
 
-			print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">';
 			print img_object($langs->trans("ShowBill"),"bill");
 			print '</a>&nbsp;';
 
-			print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+			print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
 			print img_object($langs->trans("ShowCompany"),"company"). ' '.$obj->name."</a></td>\n";

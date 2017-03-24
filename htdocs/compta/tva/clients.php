@@ -82,10 +82,8 @@ if (empty($date_start) || empty($date_end)) {// We define date_start and date_en
 	}
 }
 
-$min = GETPOST("min");
-if (empty($min)) {
-	$min = 0;
-}
+$min = price2num(GETPOST("min"));
+if (empty($min)) $min = 0;
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit

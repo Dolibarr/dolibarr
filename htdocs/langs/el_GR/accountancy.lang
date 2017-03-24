@@ -132,7 +132,7 @@ Sens=Σημασία
 Codejournal=Ημερολόγιο
 NumPiece=Piece number
 TransactionNumShort=Num. transaction
-AccountingCategory=Accounting category
+AccountingCategory=Λογιστική κατηγορία
 GroupByAccountAccounting=Group by accounting account
 NotMatch=Not Set
 DeleteMvt=Delete general ledger lines
@@ -152,8 +152,8 @@ FeeAccountNotDefined=Account for fee not defined
 BankAccountNotDefined=Account for bank not defined
 CustomerInvoicePayment=Πληρωμή τιμολογίου προμηθευτή
 ThirdPartyAccount=Λογαριασμός Πελ./Προμ.
-NewAccountingMvt=New transaction
-NumMvts=Numero of transaction
+NewAccountingMvt=Νέα συναλλαγή
+NumMvts=Αριθμός συναλλαγής
 ListeMvts=List of movements
 ErrorDebitCredit=Χρεωστικές και Πιστωτικές δεν μπορούν να χουν την ίδια αξία ταυτόχρονα
 
@@ -194,6 +194,8 @@ ChangeBinding=Change the binding
 
 ## Admin
 ApplyMassCategories=Apply mass categories
+AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
+CategoryDeleted=Category for the accounting account has been removed
 
 ## Export
 Exports=Εξαγωγές
@@ -209,6 +211,7 @@ Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
 Modelcsv_quadratus=Export towards Quadratus QuadraCompta
 Modelcsv_ebp=Export towards EBP
 Modelcsv_cogilog=Export towards Cogilog
+ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy

@@ -83,6 +83,8 @@ class box_services_expired extends ModeleBoxes
 
     			$i = 0;
 
+    			$thirdpartytmp = new Societe($this->db);
+    			
     			while ($i < $num)
     			{
     			    $late='';
@@ -96,23 +98,23 @@ class box_services_expired extends ModeleBoxes
     				'logo' => $this->boximg,
     				'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
 
-    				$this->info_box_contents[$i][1] = array('td' => 'align="left"',
+    				$this->info_box_contents[$i][1] = array('td' => '',
     				'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some contracts have no ref
     				'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
 
-    				$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-    				'logo' => 'company',
-    				'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+    				$thirdpartytmp->id = $objp->socid;
+    				$thirdpartytmp->name = $objp->name;
 
-    				$this->info_box_contents[$i][3] = array('td' => 'class="tdoverflow maxwidth100onsmartphone" align="left"',
-    				'text' => $objp->name,
-    				'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+    				$this->info_box_contents[$i][2] = array('td' => 'class="tdoverflowmax100 maxwidth100onsmartphone" align="left"',
+    				'text' => $thirdpartytmp->getNomUrl(1, 'customer'),
+    				'asis' => 1
+    				);
 
     				$this->info_box_contents[$i][4] = array('td' => 'align="center"',
     				'text' => dol_print_date($dateline,'day'),
     				'text2'=> $late);
 
-    				$this->info_box_contents[$i][5] = array('td' => 'align="right"',
+    				$this->info_box_contents[$i][5] = array('td' => 'class="right"',
     				'text' => $objp->nb_services);
 
 
@@ -129,7 +131,7 @@ class box_services_expired extends ModeleBoxes
     		}
     		else
     		{
-    			$this->info_box_contents[0][0] = array(  'td' => 'align="left"',
+    			$this->info_box_contents[0][0] = array(  'td' => '',
                                                         'maxlength'=>500,
                                                         'text' => ($db->error().' sql='.$sql));
     		}
@@ -138,7 +140,7 @@ class box_services_expired extends ModeleBoxes
     	}
     	else
     	{
-    		$this->info_box_contents[0][0] = array('td' => 'align="left"',
+    		$this->info_box_contents[0][0] = array('td' => '',
     		'text' => $langs->trans("ReadPermissionNotAllowed"));
     	}
     }

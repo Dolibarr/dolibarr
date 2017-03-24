@@ -61,6 +61,8 @@ if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 }
 
+$max=3;
+
 
 /*
  * Actions
@@ -88,44 +90,45 @@ print load_fiche_titre($langs->trans("AccountancyTreasuryArea"),'','title_accoun
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-$max=3;
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+{
+    // Search customer invoices
+    if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
+    {
+    	$listofsearchfields['search_invoice']=array('text'=>'CustomerInvoice');
+    }
+    // Search supplier invoices
+    if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+    {
+    	$listofsearchfields['search_supplier_invoice']=array('text'=>'SupplierInvoice');
+    }
+    if (! empty($conf->don->enabled) && $user->rights->don->lire)
+    {
+    	$langs->load("donations");
+    	$listofsearchfields['search_donation']=array('text'=>'Donation');
+    }
+    
+    if (count($listofsearchfields))
+    {
+    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<table class="noborder nohover centpercent">';
+    	$i=0;
+    	foreach($listofsearchfields as $key => $value)
+    	{
+    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    		print '<tr '.$bc[false].'>';
+    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'"></td>';
+    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    		print '</tr>';
+    		$i++;
+    	}
+    	print '</table>';	
+    	print '</form>';
+    	print '<br>';
+    }
+}
 
-
-// Search customer invoices
-if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
-{
-	$listofsearchfields['search_invoice']=array('text'=>'CustomerInvoice');
-}
-// Search supplier invoices
-if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
-{
-	$listofsearchfields['search_supplier_invoice']=array('text'=>'SupplierInvoice');
-}
-if (! empty($conf->don->enabled) && $user->rights->don->lire)
-{
-	$langs->load("donations");
-	$listofsearchfields['search_donation']=array('text'=>'Donation');
-}
-
-if (count($listofsearchfields))
-{
-	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover centpercent">';
-	$i=0;
-	foreach($listofsearchfields as $key => $value)
-	{
-		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'"></td>';
-		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-		print '</tr>';
-		$i++;
-	}
-	print '</table>';	
-	print '</form>';
-	print '<br>';
-}
 
 /**
  * Draft customers invoices
@@ -159,7 +162,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("CustomersDraftInvoices").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("CustomersDraftInvoices").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 		if ($num)
 		{
 			$companystatic=new Societe($db);
@@ -235,7 +238,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("SuppliersDraftInvoices").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("SuppliersDraftInvoices").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 		if ($num)
 		{
 			$companystatic=new Societe($db);
@@ -321,11 +324,11 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BoxTitleLastCustomerBills",$max).'</td>';
-		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
-		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
-		print '<td width="16">&nbsp;</td>';
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastCustomerBills",$max).'</th>';
+		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th align="right">'.$langs->trans("AmountHT").'</th>';
+		print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
+		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -429,11 +432,11 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BoxTitleLastSupplierBills",$max).'</td>';
-		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
-		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
-		print '<td width="16">&nbsp;</td>';
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastSupplierBills",$max).'</th>';
+		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th align="right">'.$langs->trans("AmountHT").'</th>';
+		print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
+		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<th width="16">&nbsp;</th>';
 		print "</tr>\n";
 		if ($num)
 		{
@@ -509,10 +512,11 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastModifiedDonations",$max).'</td>';
-        print '<td class="liste_titre" align="right">'.$langs->trans("AmountTTC").'</td>';
-		print '<td class="liste_titre" align="right">'.$langs->trans("DateModificationShort").'</td>';
-        print '<td class="liste_titre" width="16">&nbsp;</td>';
+		print '<tr class="liste_titre">';
+		print '<th>'.$langs->trans("BoxTitleLastModifiedDonations",$max).'</th>';
+        print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
+		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+        print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -577,11 +581,11 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("ContributionsToPay").($num?' <a href="'.DOL_URL_ROOT.'/compta/sociales/index.php?status=0"><span class="badge">'.$num.'</span></a>':'').'</td>';
-			print '<td align="center">'.$langs->trans("DateDue").'</td>';
-			print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-			print '<td align="right">'.$langs->trans("Paid").'</td>';
-			print '<td align="center" width="16">&nbsp;</td>';
+			print '<th>'.$langs->trans("ContributionsToPay").($num?' <a href="'.DOL_URL_ROOT.'/compta/sociales/index.php?status=0"><span class="badge">'.$num.'</span></a>':'').'</th>';
+			print '<th align="center">'.$langs->trans("DateDue").'</th>';
+			print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
+			print '<th align="right">'.$langs->trans("Paid").'</th>';
+			print '<th align="center" width="16">&nbsp;</th>';
 			print '</tr>';
 			if ($num)
 			{
@@ -663,11 +667,11 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 			$i = 0;
 			print '<table class="noborder" width="100%">';
 			print "<tr class=\"liste_titre\">";
-			print '<td colspan="2">'.$langs->trans("OrdersDeliveredToBill").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=3&amp;billed=0"><span class="badge">'.$num.'</span></a></td>';
-			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
-			print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-			print '<td align="right">'.$langs->trans("ToBill").'</td>';
-			print '<td align="center" width="16">&nbsp;</td>';
+			print '<th colspan="2">'.$langs->trans("OrdersDeliveredToBill").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=3&amp;billed=0"><span class="badge">'.$num.'</span></a></th>';
+			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th align="right">'.$langs->trans("AmountHT").'</th>';
+			print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
+			print '<th align="right">'.$langs->trans("ToBill").'</th>';
+			print '<th align="center" width="16">&nbsp;</th>';
 			print '</tr>';
 			$tot_ht=$tot_ttc=$tot_tobill=0;
 			$societestatic = new Societe($db);
@@ -765,12 +769,12 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsCustomersUnpaid",$num).' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status=1"><span class="badge">'.$num.'</span></a></td>';
-		print '<td align="right">'.$langs->trans("DateDue").'</td>';
-		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
-		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-		print '<td align="right">'.$langs->trans("Received").'</td>';
-		print '<td width="16">&nbsp;</td>';
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BillsCustomersUnpaid",$num).' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status=1"><span class="badge">'.$num.'</span></a></th>';
+		print '<th align="right">'.$langs->trans("DateDue").'</th>';
+		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th align="right">'.$langs->trans("AmountHT").'</th>';
+		print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
+		print '<th align="right">'.$langs->trans("Received").'</th>';
+		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -887,12 +891,12 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsSuppliersUnpaid",$num).' <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php"><span class="badge">'.$num.'</span></a></td>';
-		print '<td align="right">'.$langs->trans("DateDue").'</td>';
-		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
-		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-		print '<td align="right">'.$langs->trans("Paid").'</td>';
-		print '<td width="16">&nbsp;</td>';
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BillsSuppliersUnpaid",$num).' <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php"><span class="badge">'.$num.'</span></a></th>';
+		print '<th align="right">'.$langs->trans("DateDue").'</th>';
+		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th align="right">'.$langs->trans("AmountHT").'</th>';
+		print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
+		print '<th align="right">'.$langs->trans("Paid").'</th>';
+		print '<th width="16">&nbsp;</th>';
 		print "</tr>\n";
 		$societestatic = new Societe($db);
 		if ($num)
@@ -959,7 +963,7 @@ $resql = 0;
 if ($resql)
 {
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("TasksToDo").'</td>';
+	print '<tr class="liste_titre"><thcolspan="2">'.$langs->trans("TasksToDo").'</th>';
 	print "</tr>\n";
 	$var = true;
 	$i = 0;

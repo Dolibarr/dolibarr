@@ -41,6 +41,7 @@ InterventionDeletedInDolibarr=Intervence %s odstraněna
 InterventionsArea=Interventions area
 DraftFichinter=Draft interventions
 LastModifiedInterventions=Latest %s modified interventions
+FichinterToProcess=Interventions to process
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=V návaznosti kontakt se zákazníkem
 # Modele numérotation

@@ -97,7 +97,7 @@ if ($id > 0 || ! empty($ref))
 		$upload_dir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 		$head = facture_prepare_head($object);
-		dol_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), 0, 'bill');
+		dol_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, 'bill');
 
     	$totalpaye = $object->getSommePaiement();
 		

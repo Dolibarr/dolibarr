@@ -756,7 +756,7 @@ if (empty($action))
 
             // Thirdparty
             print '<td>';
-            if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->name,32).'</a>';
+            if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->name,32).'</a>';
             else print '&nbsp;';
             print '</td>';
 

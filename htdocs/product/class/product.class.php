@@ -12,7 +12,7 @@
  * Copyright (C) 2014		Henry Florian			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
- * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016-2017	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Gustavo Novaro			
  *
  * This program is free software; you can redistribute it and/or modify
@@ -132,7 +132,7 @@ class Product extends CommonObject
 	public $tva_tx;
 	
 	//! French VAT NPR (0 or 1)
-    	public $tva_npr=0;
+    public $tva_npr=0;
 	
 	//! Other local taxes
 	public $localtax1_tx;
@@ -248,7 +248,7 @@ class Product extends CommonObject
 	public $stats_commande=array();
 	public $stats_contrat=array();
 	public $stats_facture=array();
-    	public $stats_commande_fournisseur=array();
+    public $stats_commande_fournisseur=array();
 
 	public $multilangs=array();
 
@@ -272,7 +272,7 @@ class Product extends CommonObject
 
 	public $oldcopy;
 
-    	public $fk_price_expression;
+    public $fk_price_expression;
 
 	/**
 	 * @deprecated
@@ -302,6 +302,7 @@ class Product extends CommonObject
 	 */
 	public $price_autogen = 0;
 
+	
 	/**
 	 * Regular product
 	 */
@@ -319,6 +320,7 @@ class Product extends CommonObject
 	 */
 	const TYPE_STOCKKIT = 3;
 
+	
 	/**
 	 *  Constructor
 	 *
@@ -935,7 +937,7 @@ class Product extends CommonObject
                     // End call triggers
 				}
 
-				if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref != $this->ref))
+				if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref))
 				{
 					// We remove directory
 					if ($conf->product->dir_output)
@@ -960,6 +962,17 @@ class Product extends CommonObject
 
 				if (! $error)
 				{
+					if ($conf->variants->enabled) {
+
+						require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+
+						$comb = new ProductCombination($this->db);
+
+						foreach ($comb->fetchAllByFkProductParent($this->id) as $currcomb) {
+							$currcomb->updateProperties($this);
+						}
+					}
+
 					$this->db->commit();
 					return 1;
 				}
@@ -1079,6 +1092,26 @@ class Product extends CommonObject
     					}
     				}
     			}
+			}
+
+			if (!$error) {
+
+				require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
+
+				//If it is a parent product, then we remove the association with child products
+				$prodcomb = new ProductCombination($this->db);
+
+				if ($prodcomb->deleteByFkProductParent($id) < 0) {
+					$error++;
+					$this->errors[] = 'Error deleting combinations';
+				}
+
+				//We also check if it is a child product
+				if (!$error && ($prodcomb->fetchByFkProductChild($id) > 0) && ($prodcomb->delete() < 0)) {
+					$error++;
+					$this->errors[] = 'Error deleting child combination';
+				}
 			}
 
 			// Delete product
@@ -1404,9 +1437,9 @@ class Product extends CommonObject
 		if (empty($this->price_by_qty)) $this->price_by_qty=0;
 
 		// Add new price
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,tosell, tva_tx, recuperableonly,";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,tosell, tva_tx, default_vat_code, recuperableonly,";
 		$sql.= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression) ";
-		$sql.= " VALUES(".($level?$level:1).", '".$this->db->idate($now)."',".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx.",".$this->tva_npr.",";
+		$sql.= " VALUES(".($level?$level:1).", '".$this->db->idate($now)."',".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx.", ".($this->default_vat_code?("'".$this->default_vat_code."'"):"null").",".$this->tva_npr.",";
 		$sql.= " ".$this->localtax1_tx.", ".$this->localtax2_tx.", '".$this->localtax1_type."', '".$this->localtax2_type."', ".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty.",".$conf->entity.",".($this->fk_price_expression > 0?$this->fk_price_expression:'null');
 		$sql.= ")";
 
@@ -1470,7 +1503,7 @@ class Product extends CommonObject
 		$result = 0;
 
 		// We do a first seach with a select by searching with couple prodfournprice and qty only (later we will search on triplet qty/product_id/fourn_ref)
-		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity,";
+		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent,";
 		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql.= " WHERE pfp.rowid = ".$prodfournprice;
@@ -1504,6 +1537,7 @@ class Product extends CommonObject
 				$this->fourn_price_base_type = 'HT';                // Price base type
 				$this->ref_fourn = $obj->ref_fourn;                 // deprecated
 				$this->ref_supplier = $obj->ref_fourn;              // Ref supplier
+				$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
 				$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 				$result=$obj->fk_product;
 				return $result;
@@ -1549,6 +1583,7 @@ class Product extends CommonObject
 						$this->fourn_price_base_type = 'HT';                // Price base type for a virtual supplier
 						$this->ref_fourn = $obj->ref_supplier;              // deprecated
 						$this->ref_supplier = $obj->ref_supplier;           // Ref supplier
+						$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
 						$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 						$result=$obj->fk_product;
 						return $result;
@@ -1898,14 +1933,14 @@ class Product extends CommonObject
 
 				// multilangs
 				if (! empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
-
+				
 				// Load multiprices array
 				if (! empty($conf->global->PRODUIT_MULTIPRICES))
 				{
 					for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 					{
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
-						$sql.= " price_base_type, tva_tx, tosell, price_by_qty, rowid, recuperableonly";
+						$sql.= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid, recuperableonly";
 						$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
 						$sql.= " WHERE entity IN (".getEntity('productprice', 1).")";
 						$sql.= " AND price_level=".$i;
@@ -1922,7 +1957,8 @@ class Product extends CommonObject
 							$this->multiprices_min[$i]=$result["price_min"];
 							$this->multiprices_min_ttc[$i]=$result["price_min_ttc"];
 							$this->multiprices_base_type[$i]=$result["price_base_type"];
-							$this->multiprices_tva_tx[$i]=$result["tva_tx"];
+							// Next two fields are used only if PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL is on
+							$this->multiprices_tva_tx[$i]=$result["tva_tx"];     // TODO Add ' ('.$result['default_vat_code'].')'
 							$this->multiprices_recuperableonly[$i]=$result["recuperableonly"];
 
 							// Price by quantity
@@ -1931,7 +1967,7 @@ class Product extends CommonObject
 							// Récuperation de la liste des prix selon qty si flag positionné
 							if ($this->prices_by_qty[$i] == 1)
 							{
-								$sql = "SELECT rowid,price, unitprice, quantity, remise_percent, remise";
+								$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise";
 								$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 								$sql.= " WHERE fk_product_price = '".$this->prices_by_qty_id[$i]."'";
 								$sql.= " ORDER BY quantity ASC";
@@ -1968,7 +2004,7 @@ class Product extends CommonObject
 				} else if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 				{
 					$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
-					$sql.= " price_base_type, tva_tx, tosell, price_by_qty, rowid";
+					$sql.= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
 					$sql.= " WHERE fk_product = '".$this->id."'";
 					$sql.= " ORDER BY date_price DESC, rowid DESC";
@@ -2027,7 +2063,7 @@ class Product extends CommonObject
                     if ($price_result >= 0)
                     {
                         $this->price = $price_result;
-                        //Calculate the VAT
+                        // Calculate the VAT
 						$this->price_ttc = price2num($this->price) * (1 + ($this->tva_tx / 100));
 						$this->price_ttc = price2num($this->price_ttc,'MU');
                     }
@@ -3393,6 +3429,41 @@ class Product extends CommonObject
 		return $result;
 	}
 
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 * 	@param	    string		$modele			Force model to use ('' to not force)
+	 * 	@param		Translate	$outputlangs	Object langs to use for output
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 * 	@return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$user,$langs;
+
+		$langs->load("products");
+
+		// Positionne le modele sur le nom du modele a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->PRODUCT_ADDON_PDF))
+			{
+				$modele = $conf->global->PRODUCT_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'strato';
+			}
+		}
+
+		$modelpath = "core/modules/product/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
+
 	/**
 	 *	Return label of status of object
 	 *
@@ -3518,20 +3589,23 @@ class Product extends CommonObject
 	 * 	@param		string	$label			Label of stock movement
 	 * 	@param		double	$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
 	 *  @param		string	$inventorycode	Inventory code
+	 *  @param  	string	$origin_element Origin element type
+	 *  @param  	int		$origin_id      Origin id of element
 	 * 	@return     int     				<0 if KO, >0 if OK
 	 */
-	function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $inventorycode='')
+	function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $inventorycode='', $origin_element='', $origin_id=null)
 	{
 		if ($id_entrepot)
 		{
 			$this->db->begin();
 
 			require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
-
+			
 			$op[0] = "+".trim($nbpiece);
 			$op[1] = "-".trim($nbpiece);
 
 			$movementstock=new MouvementStock($this->db);
+			$movementstock->setOrigin($origin_element, $origin_id);
 			$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],$movement,$price,$label,$inventorycode);
 
 			if ($result >= 0)
@@ -3563,9 +3637,11 @@ class Product extends CommonObject
 	 * 	@param		date	$dluo			sell-by date
 	 * 	@param		string	$lot			Lot number
 	 *  @param		string	$inventorycode	Inventory code
+	 *  @param  	string	$origin_element Origin element type
+	 *  @param  	int		$origin_id      Origin id of element
 	 * 	@return     int     				<0 if KO, >0 if OK
 	 */
-	function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $dlc='', $dluo='',$lot='', $inventorycode='')
+	function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $dlc='', $dluo='',$lot='', $inventorycode='', $origin_element='', $origin_id=null)
 	{
 		if ($id_entrepot)
 		{
@@ -3577,6 +3653,7 @@ class Product extends CommonObject
 			$op[1] = "-".trim($nbpiece);
 
 			$movementstock=new MouvementStock($this->db);
+			$movementstock->setOrigin($origin_element, $origin_id);
 			$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],$movement,$price,$label,$inventorycode,'',$dlc,$dluo,$lot);
 
 			if ($result >= 0)
@@ -3596,17 +3673,17 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    Load information about stock of a product into stock_reel, stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
-	 *    This function need a lot of load. If you use it on list, use a cache to execute it one for each product id. 
+	 *    Load information about stock of a product into ->stock_reel, ->stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
+	 *    This function need a lot of load. If you use it on list, use a cache to execute it once for each product id. 
 	 *    If ENTREPOT_EXTRA_STATUS set, filtering on warehouse status possible.
 	 *
 	 *    @param      string   $option 		'' = Load all stock info, also from closed and internal warehouses, 
 	 *										'nobatch' = Do not load batch information, 
 	 *										'novirtual' = Do not load virtual stock,
-	 *										'warehouseopen' = Load stock from open warehouses,
-	 *										'warehouseclosed' = Load stock from closed warehouses, 
-	 *										'warehouseinternal' = Load stock from warehouses for internal correct/transfer only
-	 *    @return     int                  < 0 if KO, > 0 if OK
+	 *										'warehouseopen' = Load stock from open warehouses only,
+	 *										'warehouseclosed' = Load stock from closed warehouses only, 
+	 *										'warehouseinternal' = Load stock from warehouses for internal correction/transfer only
+	 *    @return     int                   < 0 if KO, > 0 if OK
 	 *    @see		  load_virtual_stock, getBatchInfo
 	 */
 	function load_stock($option='')
@@ -4182,9 +4259,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  Charge indicateurs this->nb de tableau de bord
+	 *  Load indicators this->nb for the dashboard
 	 *
-	 *  @return     int         <0 si ko, >0 si ok
+	 *  @return    int                 <0 if KO, >0 if OK
 	 */
 	function load_state_board()
 	{
@@ -4192,17 +4269,18 @@ class Product extends CommonObject
 
 		$this->nb=array();
 
-		$sql = "SELECT count(p.rowid) as nb";
+		$sql = "SELECT count(p.rowid) as nb, fk_product_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= ' WHERE p.entity IN ('.getEntity($this->element, 1).')';
-		$sql.= " AND p.fk_product_type <> 1";
+		$sql.= ' GROUP BY fk_product_type';
 
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			while ($obj=$this->db->fetch_object($resql))
 			{
-				$this->nb["products"]=$obj->nb;
+				if ($obj->fk_product_type == 1) $this->nb["services"]=$obj->nb;
+				else $this->nb["products"]=$obj->nb;
 			}
             $this->db->free($resql);
 			return 1;
@@ -4569,4 +4647,5 @@ class Product extends CommonObject
             dol_print_error($this->db);
         }
     }
+    
 }

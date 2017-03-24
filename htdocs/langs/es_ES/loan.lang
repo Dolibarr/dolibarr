@@ -43,6 +43,7 @@ LoanCalcDesc=Esta <b> calculadora de hipotecas </b> puede utilizarse para calcul
 GoToInterest=%s se destinará al INTERÉS
 GoToPrincipal=%s se destinará al PRINCIPAL
 YouWillSpend=Pagará %s en el año %s
+ListLoanAssociatedProject=Listado de préstamos asociados al proyecto
 # Admin
 ConfigLoan=Configuración del módulo préstamos
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cuenta contable por defecto para el capital

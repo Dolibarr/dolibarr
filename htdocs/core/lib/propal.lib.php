@@ -34,7 +34,8 @@ function propal_prepare_head($object)
 	global $db, $langs, $conf, $user;
 	$langs->load("propal");
 	$langs->load("compta");
-
+	$langs->load("companies");
+	
 	$h = 0;
 	$head = array();
 
@@ -52,13 +53,6 @@ function propal_prepare_head($object)
 		if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
 		$head[$h][1] = $text;
 		$head[$h][2] = 'shipping';
-		$h++;
-	}
-	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Preview");
-		$head[$h][2] = 'preview';
 		$h++;
 	}
 

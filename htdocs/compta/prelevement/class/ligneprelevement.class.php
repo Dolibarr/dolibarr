@@ -136,24 +136,22 @@ class LignePrelevement
 		{
 			return $langs->trans($this->statuts[$statut]);
 		}
-
 		if ($mode == 1)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut8').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);   // Waiting
+			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);   // Credited
+			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut8').' '.$langs->trans($this->statuts[$statut]);   // Refused
 		}
 		if ($mode == 2)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
-			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
+			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
 			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut8');
 		}
-
 		if ($mode == 3)
 		{
 			if ($statut==0) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut1');
-			if ($statut==2) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
+			if ($statut==2) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
 			if ($statut==3) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut8');
 		}
 	}

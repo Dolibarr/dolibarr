@@ -6,7 +6,7 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2006		Auguria SARL			<info@auguria.org>
  * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013-2014	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2013-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012-2013	Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2011-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
@@ -147,7 +147,6 @@ if (empty($reshook))
 	{
 		// Save last template used to generate document
 		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
 		// Define output language
 		$outputlangs = $langs;
 		$newlang='';
@@ -158,11 +157,12 @@ if (empty($reshook))
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		$result=product_create($db, $object, GETPOST('model','alpha'), $outputlangs);
+		$ret = $object->fetch($id); // Reload to get new records
+		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		if ($result <= 0)
 		{
-			dol_print_error($db,$result);
-			exit;
+			setEventMessages($object->error, $object->errors, 'errors');
+	        $action='';
 		}
 	}
 	
@@ -197,6 +197,20 @@ if (empty($reshook))
 			setEventMessages($errors, null, 'errors');
 		}
     }
+	
+	// Remove file in doc form
+	if ($action == 'remove_file' && $user->rights->produit->creer) {
+		if ($object->id > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	
+			$langs->load("other");
+			$upload_dir = $conf->product->dir_output;
+			$file = $upload_dir . '/' . GETPOST('file');
+			$ret = dol_delete_file($file, 0, 0, 0, $object);
+			if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
+		}
+	}
 
     // Add a product or service
     if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
@@ -646,13 +660,16 @@ if (empty($reshook))
                 }
             }
 
+			$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
+			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+            
             // On reevalue prix selon taux tva car taux tva transaction peut etre different
             // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-            if ($tva_tx != $object->tva_tx) {
+            if ($tmpvat != $tmpprodvat) {
                 if ($price_base_type != 'HT') {
-                    $pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU');
+                    $pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
                 } else {
-                    $pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
+                    $pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
                 }
             }
             
@@ -787,7 +804,7 @@ if (empty($reshook))
                 );
 
                 if ($result > 0) {
-                    header("Location: " . DOL_URL_ROOT . "/compta/facture.php?facid=" . $facture->id);
+                    header("Location: " . DOL_URL_ROOT . "/compta/facture/card.php?facid=" . $facture->id);
                     exit;
                 }
             }
@@ -1156,7 +1173,7 @@ else
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="' . $langs->trans("Create") . '">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+        print ' &nbsp; &nbsp; ';
 		print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
@@ -1603,6 +1620,22 @@ else
 			print dol_print_url($object->url);
             print '</td></tr>';
 
+            //Parent product.
+            if (!empty($conf->variants->enabled) && $object->isProduct()) {
+
+                $combination = new ProductCombination($db);
+
+                if ($combination->fetchByFkProductChild($object->id) > 0) {
+                    $prodstatic = new Product($db);
+                    $prodstatic->fetch($combination->fk_product_parent);
+
+                    // Parent product
+                    print '<tr><td>'.$langs->trans("ParentProduct").'</td><td colspan="2">';
+                    print $prodstatic->getNomUrl(1);
+                    print '</td></tr>';
+                }
+            }
+
             print '</table>';
             print '</div>';
             print '<div class="fichehalfright"><div class="ficheaddleft">';
@@ -1982,7 +2015,7 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
 /*
  * Documents generes
  */
-if ($action == '' || $action == 'view')
+if ($action != 'edit' && $action != 'delete')
 {
     print '<div class="fichecenter"><div class="fichehalfleft">';
     print '<a name="builddoc"></a>'; // ancre

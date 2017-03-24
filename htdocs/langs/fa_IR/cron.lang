@@ -17,14 +17,14 @@ CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronLastOutput=تاریخ و زمان آخرین خروجی اجرا
-CronLastResult=آخرین نتیجه
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=فرمان
-CronList=Scheduled jobs
+CronList=شغل برنامه ریزی
 CronDelete=Delete scheduled jobs
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allow to execute job that have been planned
 CronTask=کار
 CronNone=هیچ یک
@@ -33,13 +33,13 @@ CronDtEnd=Not after
 CronDtNextLaunch=اعدام بعدی
 CronDtLastLaunch=Start date of latest execution
 CronDtLastResult=End date of latest execution
-CronFrequency=Frequency
+CronFrequency=فرکانس
 CronClass=Class
 CronMethod=روش
 CronModule=واحد
 CronNoJobs=بدون شغل ثبت نام
 CronPriority=اولویت
-CronLabel=Label
+CronLabel=برچسب
 CronNbRun=نیوبیوم. راه اندازی
 CronMaxRun=Max nb. launch
 CronEach=هر
@@ -65,7 +65,7 @@ CronMethodHelp=روش شی برای راه اندازی. <BR> برای exemple �
 CronArgsHelp=استدلال از روش. <BR> برای exemple به بهانه روش Dolibarr محصولات شی / htdocs / محصول / کلاس / product.class.php، مقدار پارامترهای می تواند <i>0، ProductRef</i>
 CronCommandHelp=خط فرمان سیستم را اجرا کند.
 CronCreateJob=Create new Scheduled Job
-CronFrom=From
+CronFrom=از
 # Info
 # Common
 CronType=Job type

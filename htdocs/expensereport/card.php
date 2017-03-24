@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2015-2016 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1032,7 +1033,6 @@ if (empty($reshook))
     
     	// if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
     	if (empty($vatrate)) $vatrate = "0.000";
-    
     	$object_ligne->vatrate = price2num($vatrate);
     
     	$object_ligne->fk_projet = $fk_projet;
@@ -1161,6 +1161,10 @@ if (empty($reshook))
     	$qty = GETPOST('qty');
     	$value_unit = GETPOST('value_unit');
     	$vatrate = GETPOST('vatrate');
+
+        // if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
+        if (empty($vatrate)) $vatrate = "0.000";
+        $vatrate = price2num($vatrate);
     
     	if (! GETPOST('fk_c_type_fees') > 0)
     	{
@@ -1168,7 +1172,7 @@ if (empty($reshook))
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
     		$action='';
     	}
-    	if (GETPOST('vatrate') < 0 || GETPOST('vatrate') == '')
+    	if ((int) $vatrate < 0 || $vatrate == '')
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Vat")), null, 'errors');
@@ -1213,53 +1217,10 @@ if (empty($reshook))
     	}
     }
     
-    
-    /*
-     * Generate or regenerate the PDF document
-     */
-    if ($action == 'builddoc')	// GET or POST
-    {
-    	$depl = new ExpenseReport($db, 0, $_GET['id']);
-    	$depl->fetch($id);
-    
-    	if ($_REQUEST['model'])
-    	{
-    		$depl->setDocModel($user, $_REQUEST['model']);
-    	}
-    
-    	$outputlangs = $langs;
-    	if (! empty($_REQUEST['lang_id']))
-    	{
-    		$outputlangs = new Translate("",$conf);
-    		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-    	}
-    	$result=expensereport_pdf_create($db, $depl, '', $depl->modelpdf, $outputlangs);
-    	if ($result <= 0)
-    	{
-    		setEventMessages($object->error, $object->errors, 'errors');
-            $action='';
-    	}
-    }
-    
-    // Remove file in doc form
-    else if ($action == 'remove_file')
-    {
-    	$object = new ExpenseReport($db, 0, $_GET['id']);
-    	if ($object->fetch($id))
-    	{
-    		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    
-    		$object->fetch_thirdparty();
-    
-    		$langs->load("other");
-    		$upload_dir = $conf->expensereport->dir_output;
-    		$file = $upload_dir . '/' . GETPOST('file');
-    		$ret=dol_delete_file($file,0,0,0,$object);
-    		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-    		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-    		$action='';
-    	}
-    }
+    // Actions to build doc
+    $upload_dir = $conf->expensereport->dir_output;
+    $permissioncreate = $user->rights->expensereport->creer;
+    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
@@ -1311,8 +1272,8 @@ if ($action == 'create')
 	print '<td>';
 	$defaultselectuser=$user->id;
 	if (GETPOST('fk_user_author') > 0) $defaultselectuser=GETPOST('fk_user_author');
-    $include_users = array($user->id);
-    if (! empty($user->rights->expensereport->writeall)) $include_users=array();
+    $include_users = 'hierarchyme';
+    if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expensereport->writeall_advance)) $include_users=array();
 	$s=$form->select_dolusers($defaultselectuser, "fk_user_author", 0, "", 0, $include_users);
 	print $s;
 	print '</td>';
@@ -1348,8 +1309,8 @@ if ($action == 'create')
 
 	// Public note
 	print '<tr>';
-	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
-	print '<td class="tdtop">';
+	print '<td class="tdtop">' . $langs->trans('NotePublic') . '</td>';
+	print '<td>';
 
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
@@ -1358,8 +1319,8 @@ if ($action == 'create')
 	// Private note
 	if (empty($user->societe_id)) {
 		print '<tr>';
-		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
-		print '<td class="tdtop">';
+		print '<td class="tdtop">' . $langs->trans('NotePrivate') . '</td>';
+		print '<td>';
 
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
@@ -1396,10 +1357,10 @@ else
 		
 		if ($result > 0)
 		{
-			if ($object->fk_user_author != $user->id)
+			if (! in_array($object->fk_user_author, $user->getAllChildIds(1)))
 			{
 				if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-				    && empty($user->rights->expensereport->writeall_advance))
+				    && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
 				{
 					print load_fiche_titre($langs->trans('TripCard'));
 
@@ -1524,7 +1485,7 @@ else
 			}
 			else
 			{
-				dol_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
+				dol_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
 
 				// Clone confirmation
 				if ($action == 'clone') {
@@ -1891,7 +1852,7 @@ else
 				$sql.= ' WHERE fde.fk_expensereport = '.$object->id;
 				$sql.= ' ORDER BY fde.date ASC';
 
-				print '<div style="clear: both;">';
+				print '<div style="clear: both;"></div>';
 
 				$actiontouse='updateligne';
 				if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline') $actiontouse='addline';
@@ -1901,7 +1862,10 @@ else
 				print '<input type="hidden" name="action" value="'.$actiontouse.'">';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<input type="hidden" name="fk_expensereport" value="'.$object->id.'" />';
-				print '<table class="noborder" width="100%">';
+				
+				
+				print '<div class="div-table-responsive">';
+				print '<table id="tablelines" class="noborder" width="100%">';
 				
 		        $resql = $db->query($sql);
 				if ($resql)
@@ -1995,7 +1959,7 @@ else
 									print '<td></td>';
 
 									// Select date
-									print '<td style="text-align:center;">';
+									print '<td class="center">';
 									$form->select_date($objp->date,'date');
 									print '</td>';
 
@@ -2008,13 +1972,13 @@ else
 									}
 									
 									// Select type
-									print '<td style="text-align:center;">';
+									print '<td class="center">';
 									select_type_fees_id($objp->type_fees_code,'fk_c_type_fees');
 									print '</td>';
 
 									// Add comments
 									print '<td>';
-									print '<textarea class="flat_ndf" name="comments" class="centpercent">'.$objp->comments.'</textarea>';
+									print '<textarea name="comments" class="flat_ndf centpercent">'.$objp->comments.'</textarea>';
 									print '</td>';
 
 									// VAT
@@ -2024,12 +1988,12 @@ else
 
 									// Unit price
 									print '<td style="text-align:right;">';
-									print '<input type="text" size="6" name="value_unit" value="'.$objp->value_unit.'" />';
+									print '<input type="text" min="0" class="maxwidth100" name="value_unit" value="'.$objp->value_unit.'" />';
 									print '</td>';
 
 									// Quantity
 									print '<td style="text-align:right;">';
-									print '<input type="text" size="4" name="qty" value="'.$objp->qty.'" />';
+									print '<input type="number" min="0" class="maxwidth100" name="qty" value="'.$objp->qty.'" />';
 									print '</td>';
 
 									if ($action != 'editline')
@@ -2110,12 +2074,12 @@ else
 
 						// Unit price
 						print '<td align="right">';
-						print '<input type="text" size="5" name="value_unit" value="'.$value_unit.'">';
+						print '<input type="text" class="right maxwidth50" name="value_unit" value="'.$value_unit.'">';
 						print '</td>';
 
 						// Quantity
 						print '<td align="right">';
-						print '<input type="text" size="2" name="qty"  value="'.($qty?$qty:1).'">';
+						print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.($qty?$qty:1).'">';
 						print '</td>';
 
 						if ($action != 'editline')
@@ -2130,11 +2094,9 @@ else
 					} // Fin si c'est payé/validé
 
 					print '</table>';
+					print '</div>';
 					
 					print '</form>';
-					
-					print '</div>';
-						
 				}
 				else
 				{
@@ -2174,7 +2136,7 @@ if ($action != 'create' && $action != 'edit')
 	*/
 	if ($user->rights->expensereport->creer && $object->fk_statut==0)
 	{
-		if ($object->fk_user_author == $user->id)
+		if (in_array($object->fk_user_author, $user->getAllChildIds(1)) || !empty($user->rights->expensereport->writeall_advance))
 		{
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
@@ -2222,7 +2184,7 @@ if ($action != 'create' && $action != 'edit')
 	 */
 	if ($object->fk_statut == 2)
 	{
-		if ($object->fk_user_author == $user->id)
+		if (in_array($object->fk_user_author, $user->getAllChildIds(1)))
 		{
 			// Brouillonner
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';

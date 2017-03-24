@@ -173,6 +173,7 @@ $sql = "SELECT";
 $sql.= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
 if ($client) $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
 $sql.= " sum(d.total_ht) as selling_price,";
+// Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
 $sql.= " sum(".$db->ifsql('d.total_ht < 0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
 $sql.= " sum(".$db->ifsql('d.total_ht < 0','-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))','d.total_ht - (d.buy_price_ht * d.qty)').") as marge";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -207,6 +208,11 @@ if ($result)
   	print '<br>';
 	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num,$num,'');
 
+	if ($conf->global->MARGIN_TYPE == "1")
+	    $labelcostprice=$langs->trans('BuyingPrice');
+	else   // value is 'costprice' or 'pmp'
+	    $labelcostprice=$langs->trans('CostPrice');
+	
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";
 
@@ -218,7 +224,7 @@ if ($result)
 	else
   		print_liste_field_titre($langs->trans("Customer"),$_SERVER["PHP_SELF"],"s.nom","","&amp;socid=".$socid,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buying_price","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($labelcostprice,$_SERVER["PHP_SELF"],"buying_price","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 		print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);

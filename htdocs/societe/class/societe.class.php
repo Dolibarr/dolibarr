@@ -503,10 +503,9 @@ class Societe extends CommonObject
             }
             else
             {
-                if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+                if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                 {
-
-                    $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->name);
+                    $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->name);    // duplicate on a field (code or profid or ...)
                     $result=-1;
                 }
                 else
@@ -1892,7 +1891,7 @@ class Societe extends CommonObject
         if (empty($linkstart))
         {
             $label.= '<u>' . $langs->trans("ShowCompany") . '</u>';
-            $linkstart = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
+            $linkstart = '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$this->id;
         }
 
         if (! empty($this->name))
@@ -2029,6 +2028,7 @@ class Societe extends CommonObject
             if (empty($this->name)) $this->name=$this->nom;
             $contact_emails['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
         }
+        //var_dump($contact_emails)
         return $contact_emails;
     }
 
@@ -3610,7 +3610,9 @@ class Societe extends CommonObject
 	 */
 	public function setCategories($categories, $type)
 	{
-		// Decode type
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+	    
+	    // Decode type
 		if ($type == 'customer') {
 			$type_id = Categorie::TYPE_CUSTOMER;
 			$type_text = 'customer';
@@ -3628,7 +3630,6 @@ class Societe extends CommonObject
 		}
 
 		// Get current categories
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$c = new Categorie($this->db);
 		$existing = $c->containing($this->id, $type_id, 'id');
 

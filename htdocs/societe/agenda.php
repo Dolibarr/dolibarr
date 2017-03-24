@@ -41,7 +41,7 @@ if (GETPOST('actioncode','array'))
 }
 else
 {
-    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
@@ -118,7 +118,7 @@ if ($socid > 0)
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"), -1, 'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 	

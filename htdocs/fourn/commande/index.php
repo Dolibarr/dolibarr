@@ -53,17 +53,17 @@ print load_fiche_titre($langs->trans("SuppliersOrdersArea"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-/*
- * Search form
- */
-$var=false;
-print '<form method="post" action="list.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder nohover" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("SupplierOrder").':</td><td><input type="text" class="flat" name="search_all" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "</table></form><br>\n";
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+{
+    $var=false;
+    print '<form method="post" action="list.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<table class="noborder nohover" width="100%">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    print '<tr '.$bc[$var].'><td>';
+    print $langs->trans("SupplierOrder").':</td><td><input type="text" class="flat" name="search_all" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print "</table></form><br>\n";
+}
 
 
 /*
@@ -112,7 +112,7 @@ if ($resql)
 	$db->free($resql);
 
 	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</td></tr>';
+	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';
 	print "</tr>\n";
 	foreach (array(0,1,2,3,4,5,6) as $statut)
 	{
@@ -169,8 +169,8 @@ if ($resql)
 
 	print '<table class="liste" width="100%">';
 
-	print '<tr class="liste_titre"><td>'.$langs->trans("Status").'</td>';
-	print '<td align="right">'.$langs->trans("Nb").'</td>';
+	print '<tr class="liste_titre"><th>'.$langs->trans("Status").'</th>';
+	print '<th align="right">'.$langs->trans("Nb").'</th>';
 	print "</tr>\n";
 	$var=True;
 
@@ -216,7 +216,7 @@ if (! empty($conf->fournisseur->enabled))
 	{
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("DraftOrders").'</td></tr>';
+		print '<th colspan="2">'.$langs->trans("DraftOrders").'</th></tr>';
 		$langs->load("orders");
 		$num = $db->num_rows($resql);
 		if ($num)
@@ -261,7 +261,7 @@ if ($resql)
 	$i = 0;
 
 	print '<table class="liste" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("UserWithApproveOrderGrant").'</td>';
+	print '<tr class="liste_titre"><th>'.$langs->trans("UserWithApproveOrderGrant").'</th>';
 	print "</tr>\n";
 	$var=True;
 
@@ -315,7 +315,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="4">'.$langs->trans("LastModifiedOrders",$max).'</td></tr>';
+	print '<th colspan="4">'.$langs->trans("LastModifiedOrders",$max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -385,7 +385,7 @@ $num = $db->num_rows($resql);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1">('.$num.')</a></td></tr>';
+print '<th colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1">('.$num.')</a></th></tr>';
 
 if ($num)
 {
