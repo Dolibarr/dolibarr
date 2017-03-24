@@ -86,7 +86,7 @@ print $langs->trans("RestoreDesc3",$dolibarr_main_db_name).'<br><br>';
 
 <?php print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b>'; ?><br><br>
 
-<table><tr><td valign="top">
+<table><tr><td class="tdtop">
 
 <?php if ($conf->use_javascript_ajax) { ?>
 <div id="div_container_exportoptions">
@@ -120,7 +120,7 @@ print $langs->trans("RestoreDesc3",$dolibarr_main_db_name).'<br><br>';
 </div>
 <?php } ?>
 
-</td><td valign="top">
+</td><td class="tdtop">
 
 
 <div id="div_container_sub_exportoptions">

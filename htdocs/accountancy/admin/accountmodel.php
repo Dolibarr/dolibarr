@@ -736,11 +736,11 @@ if ($id)
         {
         	if ($tabname[$id] == MAIN_DB_PREFIX.'c_email_templates' && $action == 'edit')
         	{
-				fieldList($fieldlist,$obj,$tabname[$id],'hide');
+				fieldListAccountModel($fieldlist,$obj,$tabname[$id],'hide');
         	}
         	else
         	{
-        		fieldList($fieldlist,$obj,$tabname[$id],'add');
+        		fieldListAccountModel($fieldlist,$obj,$tabname[$id],'add');
         	}
         }
 
@@ -928,7 +928,7 @@ if ($id)
                     $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
-                    if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
+                    if (empty($reshook)) fieldListAccountModel($fieldlist,$obj,$tabname[$id],'edit');
 
                     print '<td colspan="3" align="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
                     print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
@@ -1252,7 +1252,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldList($fieldlist, $obj='', $tabname='', $context='')
+function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 {
 	global $conf,$langs,$db;
 	global $form;

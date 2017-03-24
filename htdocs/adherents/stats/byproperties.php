@@ -120,7 +120,7 @@ print '<table class="liste" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Nature").'</td>';
 print '<td align="right">'.$langs->trans("NbOfMembers").'</td>';
-print '<td align="center">'.$langs->trans("LastMemberDate").'</td>';
+print '<td align="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
 print '</tr>';
 
 if (! $foundphy) $data[]=array('label'=>'phy','nb'=>'0','lastdate'=>'');

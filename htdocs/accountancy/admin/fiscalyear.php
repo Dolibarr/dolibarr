@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ $sql .= " WHERE f.entity = " . $conf->entity;
 $sql.=$db->order($sortfield,$sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);

@@ -88,7 +88,7 @@ $sortorder=GETPOST("sortorder",'alpha');
 $page=GETPOST("page",'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
-if ($page == -1) { $page = 0 ; }
+if (empty($page) || $page == -1) { $page = 0 ; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -226,7 +226,7 @@ if (empty($reshook))
     	$search_idprof6='';
     	$search_type='';
     	$search_type_thirdparty='';
-    	$search_status='';
+    	$search_status=-1;
     	$search_stcomm='';
      	$search_level_from='';
      	$search_level_to='';
@@ -240,7 +240,7 @@ if (empty($reshook))
         $object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
         $result=$object->update($object->id, $user);
         if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
-    
+
         $action='';
     }
 }
@@ -413,7 +413,7 @@ if ($search_idprof6)  $sql.= natural_search("s.idprof6",$search_idprof6);
 if ($search_type > 0 && in_array($search_type,array('1,3','2,3'))) $sql .= " AND s.client IN (".$db->escape($search_type).")";
 if ($search_type > 0 && in_array($search_type,array('4')))         $sql .= " AND s.fournisseur = 1";
 if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
-if ($search_status!='') $sql .= " AND s.status = ".$db->escape($search_status);
+if ($search_status!='' && $search_status >= 0) $sql .= " AND s.status = ".$db->escape($search_status);
 if (!empty($conf->barcode->enabled) && $search_barcode) $sql.= " AND s.barcode LIKE '%".$db->escape($search_barcode)."%'";
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_levels)  $sql .= " AND s.fk_prospectlevel IN (".$search_levels.')';
@@ -439,7 +439,7 @@ $sql.=$hookmanager->resPrint;
 $sql.= $db->order($sortfield,$sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
@@ -461,7 +461,7 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 {
     $obj = $db->fetch_object($resql);
     $id = $obj->rowid;
-    header("Location: ".DOL_URL_ROOT.'/societe/soc.php?socid='.$id);
+    header("Location: ".DOL_URL_ROOT.'/societe/card.php?socid='.$id);
     exit;
 }
 
@@ -505,7 +505,7 @@ foreach ($search_array_options as $key => $val)
     $crit=$val;
     $tmpkey=preg_replace('/search_options_/','',$key);
     if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-} 	
+}
 
 // Show delete result message
 if (GETPOST('delsoc'))
@@ -619,9 +619,9 @@ if (! empty($arrayfields['s.fk_stcomm']['checked']))               print_liste_f
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
+   foreach($extrafields->attribute_label as $key => $val)
    {
-       if (! empty($arrayfields["ef.".$key]['checked'])) 
+       if (! empty($arrayfields["ef.".$key]['checked']))
        {
 			$align=$extrafields->getAlignFlag($key);
 			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
@@ -838,9 +838,9 @@ if (! empty($arrayfields['s.fk_stcomm']['checked']))
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
+   foreach($extrafields->attribute_label as $key => $val)
    {
-		if (! empty($arrayfields["ef.".$key]['checked'])) 
+		if (! empty($arrayfields["ef.".$key]['checked']))
 		{
             $align=$extrafields->getAlignFlag($key);
             $typeofextrafield=$extrafields->attribute_type[$key];
@@ -878,7 +878,7 @@ if (! empty($arrayfields['s.tms']['checked']))
 if (! empty($arrayfields['s.status']['checked']))
 {
     print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-    print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
+    print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')), $search_status, 1);
     print '</td>';
 }
 // Action column
@@ -895,7 +895,7 @@ while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
 	$var=!$var;
-	
+
 	$companystatic->id=$obj->rowid;
 	$companystatic->name=$obj->name;
 	$companystatic->canvas=$obj->canvas;
@@ -904,9 +904,13 @@ while ($i < min($num, $limit))
 	$companystatic->fournisseur=$obj->fournisseur;
 	$companystatic->code_client=$obj->code_client;
 	$companystatic->code_fournisseur=$obj->code_fournisseur;
-    $companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
-    $companystatic->name_alias=$obj->name_alias;
-	
+
+	$companystatic->code_compta_client=$obj->code_compta;
+	$companystatic->code_compta_fournisseur=$obj->code_compta_fournisseur;
+
+    	$companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
+    	$companystatic->name_alias=$obj->name_alias;
+
 	print "<tr ".$bc[$var].">";
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
@@ -948,12 +952,12 @@ while ($i < min($num, $limit))
     if (! empty($arrayfields['s.zip']['checked']))
     {
         print "<td>".$obj->zip."</td>\n";
-    }        
+    }
     // State
     if (! empty($arrayfields['state.nom']['checked']))
     {
         print "<td>".$obj->state_name."</td>\n";
-    }        
+    }
     // Country
     if (! empty($arrayfields['country.code_iso']['checked']))
     {

@@ -267,7 +267,7 @@ class Thirdparties extends DolibarrApi
      */
     function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         $categories = new Categories();
-        return $categories->getListForItem('customer', $sortfield, $sortorder, $limit, $page, $id);
+        return $categories->getListForItem($sortfield, $sortorder, $limit, $page, 'customer', $id);
     }
 
     /**

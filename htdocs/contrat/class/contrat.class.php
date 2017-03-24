@@ -8,7 +8,7 @@
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2016	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2015-2017	Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -496,7 +496,7 @@ class Contrat extends CommonObject
 		$sql.= " ref_supplier, ref_customer,";
 		$sql.= " ref_ext,";
 		$sql.= " fk_user_mise_en_service, date_contrat as datecontrat,";
-		$sql.= " fk_user_author,";
+		$sql.= " fk_user_author, fin_validite, date_cloture,";
 		$sql.= " fk_projet,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi,";
 		$sql.= " note_private, note_public, model_pdf, extraparams";
@@ -527,6 +527,10 @@ class Contrat extends CommonObject
 				$this->date_contrat				= $this->db->jdate($result["datecontrat"]);
 				$this->date_creation				= $this->db->jdate($result["datecontrat"]);
 
+				$this->fin_validite				= $this->db->jdate($result["fin_validite"]);
+				$this->date_cloture				= $this->db->jdate($result["date_cloture"]);
+
+				
 				$this->user_author_id			= $result["fk_user_author"];
 
 				$this->commercial_signature_id	= $result["fk_commercial_signature"];
@@ -608,7 +612,8 @@ class Contrat extends CommonObject
 		$extralabelsline=$extrafieldsline->fetch_name_optionals_label($line->table_element,true);
 
 		$this->lines=array();
-
+        $pos = 0;
+		
 		// Selectionne les lignes contrats liees a un produit
 		$sql = "SELECT p.label as product_label, p.description as product_desc, p.ref as product_ref,";
 		$sql.= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
@@ -693,8 +698,8 @@ class Contrat extends CommonObject
 				// fetch optionals attributes and labels
 				$line->fetch_optionals($line->id,$extralabelsline);
 
-				$this->lines[]			= $line;
-				$this->lines_id_index_mapper[$line->id] = key($this->lines);
+				$this->lines[$pos]			= $line;
+				$this->lines_id_index_mapper[$line->id] = $pos;
 
 				//dol_syslog("1 ".$line->desc);
 				//dol_syslog("2 ".$line->product_desc);
@@ -709,6 +714,7 @@ class Contrat extends CommonObject
                 $total_ht+=$objp->total_ht;
 
 				$i++;
+				$pos++;
 			}
 			$this->db->free($result);
 		}
@@ -798,14 +804,15 @@ class Contrat extends CommonObject
 				$line->fetch_optionals($line->id,$extralabelsline);
 
 
-				$this->lines[]        = $line;
-				$this->lines_id_index_mapper[$line->id] = key($this->lines);
+				$this->lines[$pos]			= $line;
+				$this->lines_id_index_mapper[$line->id] = $pos;
 
 				$total_ttc+=$objp->total_ttc;
                 $total_vat+=$objp->total_tva;
                 $total_ht+=$objp->total_ht;
 
                 $i++;
+                $pos++;
 			}
 
 			$this->db->free($result);
@@ -1354,7 +1361,14 @@ class Contrat extends CommonObject
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
-			$txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+
+		    // Clean vat code
+    		$vat_src_code='';
+    		if (preg_match('/\((.*)\)/', $txtva, $reg))
+    		{
+    		    $vat_src_code = $reg[1];
+    		    $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+    		}
 
 			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1,$mysoc, $localtaxes_type);
 			$total_ht  = $tabprice[0];
@@ -1394,7 +1408,7 @@ class Contrat extends CommonObject
 
 			// Insertion dans la base
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
-			$sql.= " (fk_contrat, label, description, fk_product, qty, tva_tx,";
+			$sql.= " (fk_contrat, label, description, fk_product, qty, tva_tx, vat_src_code,";
 			$sql.= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice,";
 			$sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc,";
 			$sql.= " info_bits,";
@@ -1407,6 +1421,7 @@ class Contrat extends CommonObject
 			$sql.= ($fk_product>0 ? $fk_product : "null").",";
 			$sql.= " ".$qty.",";
 			$sql.= " ".$txtva.",";
+			$sql.= " ".($vat_src_code?"'".$vat_src_code."'":"null").",";
 			$sql.= " ".$txlocaltax1.",";
 			$sql.= " ".$txlocaltax2.",";
 			$sql.= " '".$localtax1_type."',";
@@ -1823,24 +1838,54 @@ class Contrat extends CommonObject
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	int		$maxlength		Max length of ref
+     *  @param	int     $notooltip		1=Disable tooltip
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$maxlength=0)
+	function getNomUrl($withpicto=0,$maxlength=0,$notooltip=0)
 	{
-		global $langs;
+		global $conf, $langs, $user;
 
 		$result='';
-        $label=$langs->trans("ShowContract").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$url = DOL_URL_ROOT.'/contrat/card.php?id='.$this->id;
+        $picto = 'contract';
+        $label = '';
+        
+        if ($user->rights->contrat->lire) {
+            $label = '<u>'.$langs->trans("ShowContract").'</u>';
+            $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+            $label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+            $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
+            if (!empty($this->total_ht)) {
+                $label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+            }
+            if (!empty($this->total_tva)) {
+                $label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1,	$conf->currency);
+            }
+            if (!empty($this->total_ttc)) {
+                $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+            }
+        }
+        
+        $linkclose='';
+        if (empty($notooltip) && $user->rights->contrat->lire)
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label=$langs->trans("ShowOrder");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
+        }
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
-
-		$picto='contract';
-
-
-		if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		
+		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.($maxlength?dol_trunc($this->ref,$maxlength):$this->ref).$linkend;
+		$result.=$linkstart.$this->ref.$linkend;
 		return $result;
 	}
 
@@ -2061,7 +2106,7 @@ class Contrat extends CommonObject
 		$sql = "SELECT count(c.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		if (!$user->rights->contrat->lire && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
@@ -2199,20 +2244,18 @@ class Contrat extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $conf,$user,$langs;
+		global $conf,$langs;
 
 		$langs->load("contracts");
 
-		// Positionne le modele sur le nom du modele a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->CONTRACT_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'strato';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->CONTRACT_ADDON_PDF)) {
 				$modele = $conf->global->CONTRACT_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'strato';
 			}
 		}
 
@@ -2253,11 +2296,11 @@ class Contrat extends CommonObject
 		$this->context['createfromclone'] = 'createfromclone';
 
 		$error = 0;
-		$now = dol_now();
 
 		$this->fetch($this->id);
 		// Load dest object
 		$clonedObj = clone $this;
+        $clonedObj->socid = $socid;
 
 		$this->db->begin();
 
@@ -2292,16 +2335,13 @@ class Contrat extends CommonObject
 			$this->error = $clonedObj->error;
 			$this->errors[] = $clonedObj->error;
 		} else {
-			// copy internal contacts
-			if ($clonedObj->copy_linked_contact($this, 'internal') < 0)
-				$error ++;
-
-				// copy external contacts if same company
-			elseif ($this->socid == $clonedObj->socid) {
-				if ($clonedObj->copy_linked_contact($this, 'external') < 0)
-					$error ++;
-			}
-		}
+            // copy external contacts if same company
+            if ($this->socid == $clonedObj->socid) {
+                if ($clonedObj->copy_linked_contact($this, 'external') < 0) {
+                    $error++;
+                }
+            }
+        }
 
 		if (! $error) {
 			foreach ( $this->lines as $line ) {
@@ -2568,6 +2608,7 @@ class ContratLigne extends CommonObjectLine
 		$sql.= " t.date_fin_validite as date_fin_validite,";
 		$sql.= " t.date_cloture as date_cloture,";
 		$sql.= " t.tva_tx,";
+		$sql.= " t.vat_src_code,";
 		$sql.= " t.localtax1_tx,";
 		$sql.= " t.localtax2_tx,";
 		$sql.= " t.qty,";
@@ -2620,6 +2661,7 @@ class ContratLigne extends CommonObjectLine
 				$this->date_fin_validite = $this->db->jdate($obj->date_fin_validite);
 				$this->date_cloture = $this->db->jdate($obj->date_cloture);
 				$this->tva_tx = $obj->tva_tx;
+				$this->vat_src_code = $obj->vat_src_code;
 				$this->localtax1_tx = $obj->localtax1_tx;
 				$this->localtax2_tx = $obj->localtax2_tx;
 				$this->qty = $obj->qty;

@@ -32,12 +32,10 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  */
 class mailing_fraise extends MailingTargets
 {
-    // CHANGE THIS: Put here a name not already used
     var $name='FundationMembers';                    // Identifiant du module mailing
-    // CHANGE THIS: Put here a description of your selector module.
-    // This label is used if no translation found for key MailingModuleDescXXX where XXX=name is found
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
     var $desc='Foundation members with emails (by status)';
-    // CHANGE THIS: Set to 1 if selector is available for admin users only
+    // Set to 1 if selector is available for admin users only
     var $require_admin=0;
 
     var $require_module=array('adherent');

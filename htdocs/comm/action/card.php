@@ -146,6 +146,14 @@ if (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser'))
 	$listUserAssignedUpdated = true;
 }
 
+// Link to a project
+if ($action == 'classin' && ($user->rights->agenda->allactions->create ||
+    (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)))
+{
+    $object->fetch($id);
+    $object->setProject(GETPOST('projectid'));
+}
+
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
 {
@@ -577,6 +585,8 @@ if ($action == 'mupdate')
  * View
  */
 
+$formproject=new FormProjets($db);
+
 $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('',$langs->trans("Agenda"),$help_url);
 
@@ -744,7 +754,7 @@ if ($action == 'create')
 	print '<br><br>';
 	print '<table class="border" width="100%">';
 
-	// Societe, contact
+	// Related company
 	print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
 	if (GETPOST('socid','int') > 0)
 	{
@@ -755,7 +765,6 @@ if ($action == 'create')
 	}
 	else
 	{
-
 		$events=array();
 		$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 		//For external user force the company to user company
@@ -768,6 +777,7 @@ if ($action == 'create')
 	}
 	print '</td></tr>';
 
+	// Related contact
 	print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
 	$form->select_contacts(GETPOST('socid','int'), GETPOST('contactid'), 'contactid', 1, '', '', 0, 'minwidth200');
 	print '</td></tr>';
@@ -852,8 +862,10 @@ if ($id > 0)
 	$result4=$object->fetch_userassigned();
 	$result5=$object->fetch_optionals($id,$extralabels);
 	
-	if ($listUserAssignedUpdated || $donotclearsession) {
-
+	if ($listUserAssignedUpdated || $donotclearsession) 
+	{
+        $percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):(in_array(GETPOST('complete'),array(-1,100))?GETPOST('complete'):GETPOST("percentage"));	// If status is -1 or 100, percentage is not defined and we must use status
+	
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
@@ -1028,7 +1040,7 @@ if ($id > 0)
 
 		// Status
 		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
-		$percent=GETPOST("percentage")?GETPOST("percentage"):$object->percentage;
+		$percent = GETPOST("percentage") ? GETPOST("percentage"): $object->percentage;
 		$formactions->form_select_status_action('formaction',$percent,1);
 		print '</td></tr>';
 
@@ -1090,10 +1102,10 @@ if ($id > 0)
 		
 		print '<table class="border" width="100%">';
 
-		// Thirdparty - Contact
 		if ($conf->societe->enabled)
 		{
-			print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
+		    // Related company
+		    print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
 			print '<div class="maxwidth200onsmartphone">';
 			$events=array();     // 'method'=parameter action of url, 'url'=url to call that return new list of contacts
@@ -1104,8 +1116,8 @@ if ($id > 0)
 			print '</div>';
 			print '</td></tr>';
 
-			// Contact
-			print '<tr><td>'.$langs->trans("Contact").'</td><td>';
+			// related contact
+			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
 			print '<div class="maxwidth200onsmartphone">';
 			$form->select_contacts($object->socid, $object->contactid, 'contactid', 1, '', '', 0, 'minwidth200');
 			print '</div>';
@@ -1199,26 +1211,60 @@ if ($id > 0)
 		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
 		$linkback.=$out;
 		
-		dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
+		
+		$morehtmlref='<div class="refidno">';
+		// Thirdparty
+		//$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+		// Project
+		if (! empty($conf->projet->enabled))
+		{
+		    $langs->load("projects");
+		    //$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+		    $morehtmlref.=$langs->trans('Project') . ' ';
+    		if ($user->rights->agenda->allactions->create ||
+	       	    (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create))
+		    {
+		        if ($action != 'classify')
+		            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+		            if ($action == 'classify') {
+		                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+		                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+		                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+		                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+		                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		                $morehtmlref.='</form>';
+		            } else {
+		                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+		            }
+		    } else {
+		        if (! empty($object->fk_project)) {
+		            $proj = new Project($db);
+		            $proj->fetch($object->fk_project);
+		            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+		            $morehtmlref.=$proj->ref;
+		            $morehtmlref.='</a>';
+		            if ($proj->title) $morehtmlref.=' - '.$proj->title;
+		        } else {
+		            $morehtmlref.='';
+		        }
+		    }
+		}
+		$morehtmlref.='</div>';
+		
+		
+		dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref);
 		
 		print '<div class="underbanner clearboth"></div>';
 		
 		// Affichage fiche action en mode visu
 		print '<table class="border" width="100%">';
 
-		// Ref
-		/*print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
-		print '</td></tr>';*/
-
 		// Type
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$object->type.'</td></tr>';
 		}
-
-		// Title
-		//print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.dol_htmlentities($object->label).'</td></tr>';
 
         // Full day event
         print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent, 3).'</td></tr>';
@@ -1240,11 +1286,6 @@ if ($id > 0)
 		else print dol_print_date($object->datef,'day');
 		if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
-
-		// Status
-		/*print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
-		print $object->getLibStatut(4);
-		print '</td></tr>';*/
 
         // Location
 	    if (empty($conf->global->AGENDA_DISABLE_LOCATION))
@@ -1302,14 +1343,14 @@ if ($id > 0)
 
 		print '</table>';
 
-		print '<br><br>';
+		print '<br>';
 
 		print '<table class="border" width="100%">';
 
-		// Third party - Contact
 		if ($conf->societe->enabled)
 		{
-			print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id?$object->thirdparty->getNomUrl(1):$langs->trans("None"));
+		    // Related company
+		    print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td colspan="3">'.($object->thirdparty->id?$object->thirdparty->getNomUrl(1):('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
 			if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL')
 			{
 				if ($object->thirdparty->fetch($object->thirdparty->id))
@@ -1317,9 +1358,11 @@ if ($id > 0)
 					print "<br>".dol_print_phone($object->thirdparty->phone);
 				}
 			}
-			print '</td>';
-			print '<td>'.$langs->trans("Contact").'</td>';
-			print '<td>';
+			print '</td></tr>';
+			
+			// Related contact
+			print '<tr><td>'.$langs->trans("ActionOnContact").'</td>';
+			print '<td colspan="3">';
 			if ($object->contactid > 0)
 			{
 				print $object->contact->getNomUrl(1);
@@ -1333,12 +1376,13 @@ if ($id > 0)
 			}
 			else
 			{
-				print $langs->trans("None");
+				print '<span class="opacitymedium">'.$langs->trans("NoneOrSeveral").'</span>';
 			}
 			print '</td></tr>';
 		}
 
 		// Project
+		/*
 		if (! empty($conf->projet->enabled))
 		{
 			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
@@ -1350,7 +1394,8 @@ if ($id > 0)
 			}
 			print '</td></tr>';
 		}
-
+        */
+		
 		// Priority
 		print '<tr><td class="nowrap" class="titlefield">'.$langs->trans("Priority").'</td><td colspan="3">';
 		print ($object->priority?$object->priority:'');

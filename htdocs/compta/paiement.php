@@ -292,7 +292,7 @@ if (empty($reshook))
 	                else $invoiceid=$facid;
 	            }
 	        }
-	        if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/compta/facture.php?facid='.$invoiceid;
+	        if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/compta/facture/card.php?facid='.$invoiceid;
 	        else $loc = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$paiement_id;
 	        header('Location: '.$loc);
 	        exit;
@@ -369,7 +369,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			                    }
             					if ($(\'#fieldchqemetteur\').val() == \'\')
             					{
-            						var emetteur = ('.$facture->type.' == 2) ? \''.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM).'\' : jQuery(\'#thirdpartylabel\').val();
+            						var emetteur = ('.$facture->type.' == 2) ? \''.dol_escape_js(dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM)).'\' : jQuery(\'#thirdpartylabel\').val();
             						$(\'#fieldchqemetteur\').val(emetteur);
             					}
             				}
@@ -396,7 +396,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							var form = $("#payment_form");
 
 							json["invoice_type"] = $("#invoice_type").val();
-							json["amountPayment"] = $("#amountpayment").attr("value");
+            				json["amountPayment"] = $("#amountpayment").attr("value");
 							json["amounts"] = _elemToJson(form.find("input.amount"));
 							json["remains"] = _elemToJson(form.find("input.remain"));
 
@@ -512,7 +512,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		// Comments
 		print '<tr><td>'.$langs->trans('Comments').'</td>';
-		print '<td valign="top">';
+		print '<td class="tdtop">';
 		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment').'</textarea></td></tr>';
         
         print '</table>';
@@ -861,7 +861,7 @@ if (! GETPOST('action'))
             $objp = $db->fetch_object($resql);
             $var=!$var;
             print '<tr '.$bc[$var].'>';
-            print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber."</a></td>\n";
+            print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$objp->facid.'">'.$objp->facnumber."</a></td>\n";
             print '<td>'.dol_print_date($db->jdate($objp->dp))."</td>\n";
             print '<td>'.$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
             print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';

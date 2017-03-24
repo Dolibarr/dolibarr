@@ -110,7 +110,7 @@ if ($search_account > 0) $sql.= " AND b.fk_account = ".$search_account;
 if ($search_amount) $sql.= natural_search('c.subscription', $search_amount, 1);
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);

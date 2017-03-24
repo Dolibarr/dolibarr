@@ -29,17 +29,16 @@
  */
 class Translate
 {
-	var $dir;                          // Directories that contains /langs subdirectory
+	public $dir;                          // Directories that contains /langs subdirectory
 
-	var $defaultlang;                  // Current language for current user
-	var $direction = 'ltr';            // Left to right or Right to left
-	var $charset_output='UTF-8';       // Codage used by "trans" method outputs
+	public $defaultlang;                  // Current language for current user
+	public $charset_output='UTF-8';       // Codage used by "trans" method outputs
 
-	var $tab_translate=array();        // Array of all translations key=>value
-	private $_tab_loaded=array();      // Array to store result after loading each language file
+	public $tab_translate=array();        // Array of all translations key=>value
+	private $_tab_loaded=array();         // Array to store result after loading each language file
 
-	var $cache_labels=array();         // Cache for labels return by getLabelFromKey method
-	var $cache_currencies=array();     // Cache to store currency symbols
+	public $cache_labels=array();         // Cache for labels return by getLabelFromKey method
+	public $cache_currencies=array();     // Cache to store currency symbols
 
 
 
@@ -140,6 +139,20 @@ class Translate
 
 
 	/**
+	 *  Load translation files.
+     *
+	 *  @param	array	$domains      		Array of lang files to load
+	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
+	 */
+	function loadLangs($domains)
+	{
+	    foreach($domains as $domain)
+	    {
+	        $this->load($domain);
+	    }
+	}
+	
+	/**
 	 *  Load translation key-value for a particular file, into a memory array.
 	 *  If data for file already loaded, do nothing.
 	 * 	All data in translation array are stored in UTF-8 format.
@@ -197,7 +210,7 @@ class Translate
 
 		// Redefine alt
 		$langarray=explode('_',$langofdir);
-		if ($alt < 1 && isset($langarray[1]) && strtolower($langarray[0]) == strtolower($langarray[1])) $alt=1;
+		if ($alt < 1 && isset($langarray[1]) && (strtolower($langarray[0]) == strtolower($langarray[1]) || in_array(strtolower($langofdir), array('el_gr')))) $alt=1;
 		if ($alt < 2 && strtolower($langofdir) == 'en_us') $alt=2;
 
 		if (empty($langofdir))	// This may occurs when load is called without setting the language and without providing a value for forcelangdir
@@ -257,32 +270,33 @@ class Translate
 					{
 						if ($usecachekey) $tabtranslatedomain=array();	// To save lang content in cache
 
-						while ($line = fgets($fp,4096))	// Ex: Need 225ms for all fgets on all lang file for Third party page. Same speed than file_get_contents
-						{
-							if ($line[0] != "\n" && $line[0] != " " && $line[0] != "#")
-							{
-								$tab=explode('=',$line,2);
-								$key=trim($tab[0]);
+						/**
+						 * Read each lines until a '=' (with any combination of spaces around it)
+						 * and split the rest until a line feed.
+						 * This is more efficient than fgets + explode + trim by a factor of ~2.
+						 */
+						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n]")) {
+							if (isset($line[1])) {
+								list($key, $value) = $line;
 								//if ($domain == 'orders') print "Domain=$domain, found a string for $tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
 								//if ($key == 'Order') print "Domain=$domain, found a string for key=$key=$tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
-								if (empty($this->tab_translate[$key]) && isset($tab[1]))    // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
-								{
-									$value=trim(preg_replace('/\\n/',"\n",$tab[1]));
-
-									if ($key == 'DIRECTION')	// This is to declare direction of language
-									{
-										if ($alt < 2 || empty($this->tab_translate[$key]))	// We load direction only for primary files or if not yet loaded
-										{
-                                            $this->tab_translate[$key]=$value;
-											if ($stopafterdirection) break;	// We do not save tab if we stop after DIRECTION
-											else if ($usecachekey) $tabtranslatedomain[$key]=$value;
+								if (empty($this->tab_translate[$key])) { // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
+									$value = preg_replace('/\\n/', "\n", $value); // Parse and render carriage returns
+									if ($key == 'DIRECTION') { // This is to declare direction of language
+										if ($alt < 2 || empty($this->tab_translate[$key])) { // We load direction only for primary files or if not yet loaded
+											$this->tab_translate[$key] = $value;
+											if ($stopafterdirection) {
+												break; // We do not save tab if we stop after DIRECTION
+											} elseif ($usecachekey) {
+												$tabtranslatedomain[$key] = $value;
+											}
 										}
-									}
-									else
-									{
-										$this->tab_translate[$key]=$value;
+									} else {
+										$this->tab_translate[$key] = $value;
 										//if ($domain == 'orders') print "$tab[0] value $value<br>";
-										if ($usecachekey) $tabtranslatedomain[$key]=$value;	// To save lang content in cache
+										if ($usecachekey) {
+											$tabtranslatedomain[$key] = $value;
+										} // To save lang content in cache
 									}
 								}
 							}
@@ -308,31 +322,31 @@ class Translate
 			}
 		}
 
-		// Now we complete with next file
+		// Now we complete with next file (fr_CA->fr_FR, es_MX->ex_ES, ...)
 		if ($alt == 0)
 		{
 			// This function MUST NOT contains call to syslog
 			//dol_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$newdomain.".lang file)", LOG_DEBUG);
 			$langofdir=strtolower($langarray[0]).'_'.strtoupper($langarray[0]);
+			if ($langofdir == 'el_EL') $langofdir = 'el_GR';                     // main parent for el_CY is not el_EL but el_GR
 			$this->load($domain,$alt+1,$stopafterdirection,$langofdir);
 		}
 
-		// Now we complete with reference en_US/fr_FR/es_ES file
+		// Now we complete with reference file (en_US)
 		if ($alt == 1)
 		{
 			// This function MUST NOT contains call to syslog
 			//dol_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$newdomain.".lang file)", LOG_DEBUG);
 			$langofdir='en_US';
-			//if (preg_match('/^fr/i',$langarray[0])) $langofdir='fr_FR';
-			//if (preg_match('/^es/i',$langarray[0])) $langofdir='es_ES';
 			$this->load($domain,$alt+1,$stopafterdirection,$langofdir);
 		}
 
+		// We already are the reference file. No more files to scan to complete.
 		if ($alt == 2)
 		{
 			if ($fileread) $this->_tab_loaded[$newdomain]=1;	// Set domain file as loaded
 
-			if (empty($this->_tab_loaded[$newdomain])) $this->_tab_loaded[$newdomain]=2;           // Marque ce fichier comme non trouve
+			if (empty($this->_tab_loaded[$newdomain])) $this->_tab_loaded[$newdomain]=2;           // Set this file as found
 		}
 
 		// This part is deprecated and replaced with table llx_overwrite_trans

@@ -182,6 +182,7 @@ if ($id > 0 || ! empty($ref))
 else
 {
 	header('Location: index.php');
+	exit;
 }
 
 

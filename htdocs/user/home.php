@@ -62,22 +62,21 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Search User
-$var=false;
 print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("User").':</td><td><input class="flat inputsearch" type="text" name="search_user" size="18"></td><td'.($canreadperms?' rowspan="2"':'').'><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Search").'</td></tr>';
+print '<tr><td>';
+print $langs->trans("User").':</td><td><input class="flat inputsearch" type="text" name="search_user" size="18"></td></tr>';
 
 // Search Group
 if ($canreadperms)
 {
-	$var=false;
-	print '<tr '.$bc[$var].'><td>';
+	print '<tr><td>';
 	print $langs->trans("Group").':</td><td><input class="flat inputsearch" type="text" name="search_group" size="18"></td></tr>';
 }
 
+print '<tr><td class="center" colspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</table><br>\n";
 print '</form>';
 

@@ -86,7 +86,7 @@ print '<input type="hidden" name="action" value="save">';
 
 $head=security_prepare_head();
 
-dol_fiche_head($head, 'audit', $langs->trans("Security"));
+dol_fiche_head($head, 'audit', $langs->trans("Security"), -1);
 
 
 $var=true;

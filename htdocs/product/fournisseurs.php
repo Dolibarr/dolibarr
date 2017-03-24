@@ -77,8 +77,6 @@ if ($id > 0 || $ref)
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 
-$reputations=array('-1'=>'', 'FAVORITE'=>$langs->trans('Favorite'),'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
-
 if (! $sortfield) $sortfield="s.nom";
 if (! $sortorder) $sortorder="ASC";
 
@@ -396,7 +394,7 @@ if ($id > 0 || $ref)
 					{
 						if (empty($form->result))
 						{
-							print ' - <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$action).'">'.$langs->trans("CreateDolibarrThirdPartySupplier").'</a>';
+							print ' - <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$action).'">'.$langs->trans("CreateDolibarrThirdPartySupplier").'</a>';
 						}
 					}
 				}
@@ -527,7 +525,7 @@ if ($id > 0 || $ref)
 
 				// Reputation
 				print '<tr><td>'.$langs->trans("SupplierReputation").'</td><td>';
-				echo $form->selectarray('supplier_reputation', $reputations, $supplier_reputation?$supplier_reputation:$object->supplier_reputation);
+				echo $form->selectarray('supplier_reputation', $object->reputations, $supplier_reputation?$supplier_reputation:$object->supplier_reputation);
 				print '</td></tr>';
 
 				// Option to define a transport cost on supplier price
@@ -673,8 +671,8 @@ if ($id > 0 || $ref)
 
 						// Reputation
 						print '<td align="center">';
-						if (!empty($productfourn->supplier_reputation) && !empty($reputations[$productfourn->supplier_reputation])) {
-							print $reputations[$productfourn->supplier_reputation];	
+						if (!empty($productfourn->supplier_reputation) && !empty($object->reputations[$productfourn->supplier_reputation])) {
+							print $object->reputations[$productfourn->supplier_reputation];	
 						}  
 						print'</td>';
 
@@ -700,6 +698,7 @@ if ($id > 0 || $ref)
 						if ($user->rights->produit->creer || $user->rights->service->creer)
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
+							print ' &nbsp; ';
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=ask_remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"),'disable.png').'</a>';
 						}
 

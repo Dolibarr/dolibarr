@@ -14,7 +14,7 @@ DefaultForService=Default for service
 DefaultForProduct=Default for product
 CantSuggest=Can't suggest
 AccountancySetupDoneFromAccountancyMenu=Most setup of the accountancy is done from the menu %s
-ConfigAccountingExpert=Configuration of the module accounting expert
+ConfigAccountingExpert=モジュール会計専門家の構成
 Journalization=Journalization
 Journaux=Journals
 JournalFinancial=Financial journals
@@ -194,6 +194,8 @@ ChangeBinding=Change the binding
 
 ## Admin
 ApplyMassCategories=Apply mass categories
+AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
+CategoryDeleted=Category for the accounting account has been removed
 
 ## Export
 Exports=Exports
@@ -209,6 +211,7 @@ Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
 Modelcsv_quadratus=Export towards Quadratus QuadraCompta
 Modelcsv_ebp=Export towards EBP
 Modelcsv_cogilog=Export towards Cogilog
+ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy

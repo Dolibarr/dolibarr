@@ -311,13 +311,9 @@ if ($result)
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='company') {
-                    print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$links[$key]['url_id'].'">';
-                    //print img_object($langs->trans('ShowCompany'),'company').' ';
                     $societe=new Societe($db);
                     $societe->fetch($links[$key]['url_id']);
-                    //print $links[$key]['label'];
                     print $societe->getNomUrl(1);
-                    print '</a>';
                 }
                 else if ($links[$key]['type']=='sc') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
@@ -543,7 +539,8 @@ if ($result)
         // Releve rappro
         if ($acct->canBeConciliated() > 0)  // Si compte rapprochable
         {
-            print '<br>'."\n";
+            print '<br><hr>'."\n";
+            
             print load_fiche_titre($langs->trans("Reconciliation"), '', 'title_bank.png');
             print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$objp->rowid.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

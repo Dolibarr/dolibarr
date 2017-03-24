@@ -59,9 +59,9 @@ class ExpenseReportStats extends Stats
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as e";
 		$this->field='total_ht';
 
-		$this->where = " e.fk_statut > 0";
+		//$this->where = " e.fk_statut > 0";
 		//$this->where.= " AND e.date_valid > '2000-01-01'";    // To filter only correct "valid date". If date is invalid, the group by on it will fails. Launch a repair.php if you have. 
-		$this->where.= ' AND e.entity IN ('.getEntity('expensereport', 1).')';
+		$this->where.= ' e.entity IN ('.getEntity('expensereport', 1).')';
 		
 		//$this->where.= " AND entity = ".$conf->entity;
 		if ($this->socid)
@@ -88,7 +88,7 @@ class ExpenseReportStats extends Stats
 	 */
 	function getNbByYear()
 	{
-		$sql = "SELECT YEAR(date_valid) as dm, count(*)";
+		$sql = "SELECT YEAR(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').") as dm, count(*)";
 		$sql.= " FROM ".$this->from;
 		$sql.= " GROUP BY dm DESC";
 		$sql.= " WHERE ".$this->where;
@@ -105,7 +105,7 @@ class ExpenseReportStats extends Stats
 	 */
 	function getNbByMonth($year)
 	{
-		$sql = "SELECT MONTH(e.date_valid) as dm, count(*)";
+		$sql = "SELECT MONTH(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').") as dm, count(*)";
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE YEAR(e.date_valid) = ".$year;
 		$sql.= " AND ".$this->where;
@@ -126,9 +126,9 @@ class ExpenseReportStats extends Stats
 	 */
 	function getAmountByMonth($year)
 	{
-		$sql = "SELECT date_format(e.date_valid,'%m') as dm, sum(".$this->field.")";
+		$sql = "SELECT date_format(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').",'%m') as dm, sum(".$this->field.")";
 		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE date_format(e.date_valid,'%Y') = '".$year."'";
+		$sql.= " WHERE date_format(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').",'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
 		$sql.= $this->db->order('dm','DESC');
@@ -146,9 +146,9 @@ class ExpenseReportStats extends Stats
 	 */
 	function getAverageByMonth($year)
 	{
-		$sql = "SELECT date_format(e.date_valid,'%m') as dm, avg(".$this->field.")";
+		$sql = "SELECT date_format(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').",'%m') as dm, avg(".$this->field.")";
 		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE date_format(e.date_valid,'%Y') = '".$year."'";
+		$sql.= " WHERE date_format(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').",'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -163,7 +163,7 @@ class ExpenseReportStats extends Stats
 	 */
 	function getAllByYear()
 	{
-		$sql = "SELECT date_format(e.date_valid,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
+		$sql = "SELECT date_format(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').",'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";

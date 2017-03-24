@@ -70,7 +70,8 @@ class ProductFournisseur extends Product
     var $fourn_unitcharges;       // old version used a buggy system to calculate margin of a charge field on supplier price. Now margin is on pmp, best supplier price or cost price.
 
     var $fk_supplier_price_expression;
-
+    var $supplier_reputation;     // reputation of supplier
+    var $reputations=array();     // list of available supplier reputations 
 
     /**
 	 *	Constructor
@@ -79,7 +80,11 @@ class ProductFournisseur extends Product
      */
     function __construct($db)
     {
+        global $langs;
+        
         $this->db = $db;
+        $langs->load("suppliers");
+        $this->reputations= array('-1'=>'', 'FAVORITE'=>$langs->trans('Favorite'),'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
     }
 
 

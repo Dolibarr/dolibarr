@@ -34,6 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+if (! empty($conf->projet->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 $langs->load("products");
 $langs->load("stocks");
@@ -43,6 +48,7 @@ if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 $result=restrictedArea($user,'stock');
 
 $id=GETPOST('id','int');
+$msid=GETPOST('msid','int');
 $product_id=GETPOST("product_id");
 $action=GETPOST('action');
 $cancel=GETPOST('cancel');
@@ -89,7 +95,7 @@ $arrayfields=array(
     'm.batch'=>array('label'=>$langs->trans("BatchNumberShort"), 'checked'=>1, 'enabled'=>(! empty($conf->productbatch->enabled))),
     'pl.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>0, 'enabled'=>(! empty($conf->productbatch->enabled))),
     'pl.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(! empty($conf->productbatch->enabled))),
-    'm.warehouse'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(! $id > 0)),	// If we are on specific warehouse, we hide it
+    'e.label'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(! $id > 0)),	// If we are on specific warehouse, we hide it
     'm.fk_user_author'=>array('label'=>$langs->trans("Author"), 'checked'=>0),
     'm.inventorycode'=>array('label'=>$langs->trans("InventoryCodeShort"), 'checked'=>1),
     'm.label'=>array('label'=>$langs->trans("LabelMovement"), 'checked'=>1),
@@ -156,6 +162,15 @@ if ($action == "correct_stock")
 
 	if (! $error)
     {
+		$origin_element = '';
+		$origin_id = null;
+		
+		if (GETPOST('projectid', 'int'))
+		{
+			$origin_element = 'project';
+			$origin_id = GETPOST('projectid', 'int');
+		}
+		
         if ($product->hasbatch())
         {
         	$batch=GETPOST('batch_number');
@@ -173,7 +188,9 @@ if ($action == "correct_stock")
 	            GETPOST("label",'san_alpha'),
 	            GETPOST('unitprice'),
 	        	$eatby,$sellby,$batch,
-	        	GETPOST('inventorycode')
+	        	GETPOST('inventorycode'),
+	        	$origin_element,
+	        	$origin_id
 	        );		// We do not change value of stock for a correction
         }
         else
@@ -185,7 +202,9 @@ if ($action == "correct_stock")
 	            GETPOST("mouvement"),
 	            GETPOST("label",'san_alpha'),
 	            GETPOST('unitprice'),
-	        	GETPOST('inventorycode')
+	        	GETPOST('inventorycode'),
+	        	$origin_element,
+	        	$origin_id
 	        );		// We do not change value of stock for a correction
         }
 
@@ -392,6 +411,7 @@ $userstatic=new User($db);
 $form=new Form($db);
 $formother=new FormOther($db);
 $formproduct=new FormProduct($db);
+if (!empty($conf->projet->enabled)) $formproject=new FormProjets($db);
 
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.fk_product_type as type, p.entity,";
 $sql.= " e.label as stock, e.rowid as entrepot_id, e.lieu,";
@@ -412,6 +432,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
 $sql.= " WHERE m.fk_product = p.rowid";
+if ($msid > 0) $sql .= " AND m.rowid = ".$msid;
 $sql.= " AND m.fk_entrepot = e.rowid";
 $sql.= " AND e.entity IN (".getEntity('stock', 1).")";
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
@@ -456,7 +477,7 @@ $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // No
 $sql.=$hookmanager->resPrint;
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -492,8 +513,12 @@ if ($resql)
 	
     $i = 0;
     $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-    $texte = $langs->trans("ListOfStockMovements");
-    if ($id) $texte.=' ('.$langs->trans("ForThisWarehouse").')';
+    if ($msid) $texte = $langs->trans('StockMovementForId', $msid);
+	else
+	{
+		$texte = $langs->trans("ListOfStockMovements");
+		if ($id) $texte.=' ('.$langs->trans("ForThisWarehouse").')';
+	}
     llxHeader("",$texte,$help_url);
 
     /*
@@ -549,7 +574,7 @@ if ($resql)
         
         // Value
         print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
-        print price((empty($calcproducts['qty'])?'0':price2num($calcproducts['qty'],'MT')), 0, $langs, 0, -1, -1, $conf->currency);
+        print price((empty($calcproducts['value'])?'0':price2num($calcproducts['value'],'MT')), 0, $langs, 0, -1, -1, $conf->currency);
         print "</td></tr>";
 
         // Last movement
@@ -640,6 +665,7 @@ if ($resql)
     if ($search_inventorycode)   $param.='&search_inventorycode='.urlencode($search_inventorycode);
     if ($search_product_ref)     $param.='&search_product_ref='.urlencode($search_product_ref);
     if ($search_product)         $param.='&search_product='.urlencode($search_product);
+    if ($search_batch)           $param.='&search_batch='.urlencode($search_batch);
     if ($search_warehouse > 0)   $param.='&search_warehouse='.urlencode($search_warehouse);
     if (!empty($sref))           $param.='&sref='.urlencode($sref); // FIXME $sref is not defined
     if (!empty($snom))           $param.='&snom='.urlencode($snom); // FIXME $snom is not defined
@@ -710,7 +736,7 @@ if ($resql)
     if (! empty($arrayfields['m.batch']['checked']))            print_liste_field_titre($arrayfields['m.batch']['label'],$_SERVER["PHP_SELF"],'m.batch','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['pl.eatby']['checked']))           print_liste_field_titre($arrayfields['pl.eatby']['label'],$_SERVER["PHP_SELF"],'pl.eatby','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['pl.sellby']['checked']))          print_liste_field_titre($arrayfields['pl.sellby']['label'],$_SERVER["PHP_SELF"],'pl.sellby','',$param,'align="center"',$sortfield,$sortorder);
-    if (! empty($arrayfields['m.warehouse']['checked']))        print_liste_field_titre($arrayfields['m.warehouse']['label'],$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
+    if (! empty($arrayfields['e.label']['checked']))        print_liste_field_titre($arrayfields['e.label']['label'],$_SERVER["PHP_SELF"], "e.label","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
     if (! empty($arrayfields['m.fk_user_author']['checked']))   print_liste_field_titre($arrayfields['m.fk_user_author']['label'],$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['m.inventorycode']['checked']))    print_liste_field_titre($arrayfields['m.inventorycode']['label'],$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['m.label']['checked']))            print_liste_field_titre($arrayfields['m.label']['label'],$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
@@ -774,7 +800,7 @@ if ($resql)
     // Batch
     if (! empty($arrayfields['m.batch']['checked'])) 
     {
-    	print '<td align="center"><input class="flat" type="text" size="5" name="search_batch" value="'.dol_escape_htmltag($search_batch).'"></td>';
+    	print '<td class="liste_titre" align="center"><input class="flat" type="text" size="5" name="search_batch" value="'.dol_escape_htmltag($search_batch).'"></td>';
 	}
     if (! empty($arrayfields['pl.eatby']['checked']))
     {
@@ -787,7 +813,7 @@ if ($resql)
 	    print '</td>';
     }
     // Warehouse
-    if (! empty($arrayfields['m.warehouse']['checked'])) 
+    if (! empty($arrayfields['e.label']['checked'])) 
     {
         print '<td class="liste_titre maxwidthonsmartphone" align="left">';
         //print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
@@ -949,7 +975,7 @@ if ($resql)
         	print '<td align="center">'. dol_print_date($objp->sellby,'day') .'</td>';
 		}
         // Warehouse
-        if (! empty($arrayfields['m.warehouse']['checked']))
+        if (! empty($arrayfields['e.label']['checked']))
 		{
             print '<td>';
             print $warehousestatic->getNomUrl(1);

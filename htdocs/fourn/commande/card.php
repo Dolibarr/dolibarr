@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  *
@@ -49,6 +49,10 @@ if (!empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 require_once NUSOAP_PATH.'/nusoap.php';     // Include SOAP
+
+if (!empty($conf->variants->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+}
 
 $langs->load('admin');
 $langs->load('orders');
@@ -284,7 +288,7 @@ if (empty($reshook))
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
-		if (GETPOST('prod_entry_mode') == 'free')
+		if ($prod_entry_mode == 'free')
 		{
 			$idprod=0;
 			$price_ht = GETPOST('price_ht');
@@ -313,22 +317,22 @@ if (empty($reshook))
 	    	}
 	    }
 
-	    if (GETPOST('prod_entry_mode')=='free' && GETPOST('price_ht') < 0 && $qty < 0)
+	    if ($prod_entry_mode =='free' && GETPOST('price_ht') < 0 && $qty < 0)
 	    {
 	        setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 	        $error++;
 	    }
-	    if (GETPOST('prod_entry_mode')=='free'  && ! GETPOST('idprodfournprice') && GETPOST('type') < 0)
+	    if ($prod_entry_mode =='free'  && ! GETPOST('idprodfournprice') && GETPOST('type') < 0)
 	    {
 	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 	        $error++;
 	    }
-	    if (GETPOST('prod_entry_mode')=='free' && GETPOST('price_ht')==='' && GETPOST('price_ttc')==='' && $price_ht_devise === '') // Unit price can be 0 but not ''
+	    if ($prod_entry_mode =='free' && GETPOST('price_ht')==='' && GETPOST('price_ttc')==='' && $price_ht_devise === '') // Unit price can be 0 but not ''
 	    {
 	        setEventMessages($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), null, 'errors');
 	        $error++;
 	    }
-	    if (GETPOST('prod_entry_mode')=='free' && ! GETPOST('dp_desc'))
+	    if ($prod_entry_mode =='free' && ! GETPOST('dp_desc'))
 	    {
 	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 	        $error++;
@@ -339,10 +343,24 @@ if (empty($reshook))
 	        $error++;
 	    }
 
-	    // Ecrase $pu par celui	du produit
+		if (!$error && !empty($conf->variants->enabled) && $prod_entry_mode != 'free') {
+			if ($combinations = GETPOST('combinations', 'array')) {
+				//Check if there is a product with the given combination
+				$prodcomb = new ProductCombination($db);
+
+				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
+					$idprod = $res->fk_product_child;
+				} else {
+					setEventMessage($langs->trans('ErrorProductCombinationNotFound'), 'errors');
+					$error ++;
+				}
+			}
+		}
+
+		// Ecrase $pu par celui	du produit
 	    // Ecrase $desc	par	celui du produit
 	    // Ecrase $txtva  par celui du produit
-	    if ((GETPOST('prod_entry_mode') != 'free') && empty($error))	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
+	    if (($prod_entry_mode != 'free') && empty($error))	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
 	    {
 	    	$productsupplier = new ProductFournisseur($db);
 
@@ -441,7 +459,7 @@ if (empty($reshook))
 	    		$ht = $ttc / (1 + ($tva_tx / 100));
 	    		$price_base_type = 'HT';
 	    	}
-			
+
 			$pu_ht_devise = price2num($price_ht_devise, 'MU');
 
 			$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
@@ -543,7 +561,7 @@ if (empty($reshook))
 
 	    $localtax1_tx=get_localtax($tva_tx,1,$mysoc,$object->thirdparty);
 	    $localtax2_tx=get_localtax($tva_tx,2,$mysoc,$object->thirdparty);
-		
+
 		$pu_ht_devise = GETPOST('multicurrency_subprice');
 
 		// Extrafields Lines
@@ -877,38 +895,10 @@ if (empty($reshook))
 	    }
 	}
 
-	if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	// En get ou en	post
-	{
-	    // Build document
-
-	    // Save last template used to generate document
-	    if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-	    $outputlangs = $langs;
-	    if (GETPOST('lang_id'))
-	    {
-	        $outputlangs = new Translate("",$conf);
-	        $outputlangs->setDefaultLang(GETPOST('lang_id'));
-	    }
-	    $result= $object->generateDocument($object->modelpdf,$outputlangs, $hidedetails, $hidedesc, $hideref);
-	    if ($result	<= 0)
-	    {
-	        setEventMessages($object->error, $object->errors, 'errors');
-	        $action='';
-	    }
-	}
-
-	// Delete file in doc form
-	if ($action == 'remove_file' && $object->id > 0 && $user->rights->fournisseur->commande->creer)
-	{
-	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	    $langs->load("other");
-	    $upload_dir =	$conf->fournisseur->commande->dir_output;
-	    $file =	$upload_dir	. '/' .	GETPOST('file');
-	    $ret=dol_delete_file($file,0,0,0,$object);
-	    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-	    else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-	}
+	// Actions to build doc
+	$upload_dir = $conf->commande->dir_output;
+	$permissioncreate = $user->rights->fournisseur->commande->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'update_extras')
 	{
@@ -1096,7 +1086,10 @@ if (empty($reshook))
 										null,
 										null,
 										array(),
-										$lines[$i]->fk_unit
+										$lines[$i]->fk_unit,
+										0,
+										$element,
+										!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid
 									);
 								}
 
@@ -1415,6 +1408,7 @@ if ($action=='create')
 
 	// If not defined, set default value from constant
 	if (empty($cond_reglement_id) && ! empty($conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_TERM_ID)) $cond_reglement_id=$conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_TERM_ID;
+	if (empty($mode_reglement_id) && ! empty($conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID)) $mode_reglement_id=$conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID;
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1444,6 +1438,19 @@ if ($action=='create')
 	else
 	{
 		print $form->select_company((empty($socid)?'':$socid), 'socid', 's.fournisseur = 1', 'SelectThirdParty');
+        // reload page to retrieve customer informations
+        if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE))
+        {
+            print '<script type="text/javascript">
+			$(document).ready(function() {
+				$("#socid").change(function() {
+					var socid = $(this).val();
+					// reload page
+					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid;
+				});
+			});
+			</script>';
+        }
 	}
 	print '</td>';
 
@@ -1601,7 +1608,7 @@ if ($action=='create')
 elseif (! empty($object->id))
 {
 	$result = $object->fetch($id, $ref);
-	
+
     $societe = new Fournisseur($db);
     $result=$societe->fetch($object->socid);
     if ($result < 0) dol_print_error($db);
@@ -1615,7 +1622,7 @@ elseif (! empty($object->id))
 	$head = ordersupplier_prepare_head($object);
 
 	$title=$langs->trans("SupplierOrder");
-	dol_fiche_head($head, 'card', $title, 0, 'order');
+	dol_fiche_head($head, 'card', $title, -1, 'order');
 
 
 	$formconfirm='';
@@ -1773,7 +1780,7 @@ elseif (! empty($object->id))
 	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
 	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+	                $morehtmlref.=$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:-1), $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 	                $morehtmlref.='</form>';
 	            } else {
@@ -1889,7 +1896,7 @@ elseif (! empty($object->id))
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print fieldLabel('CurrencyRate','multicurrency_tx');
 		print '</td>';
-		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
+		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
@@ -1900,7 +1907,7 @@ elseif (! empty($object->id))
 			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 		} else {
 			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
-			if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code != $conf->currency) {
+			if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 				print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
 				print '</div>';
@@ -2000,9 +2007,27 @@ elseif (! empty($object->id))
 	print '<div class="underbanner clearboth"></div>';
 	
 	print '<table class="border centpercent">';
+
+	if (!empty($conf->multicurrency->enabled))
+	{
+	    // Multicurrency Amount HT
+	    print '<tr><td class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+	    print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+	    print '</tr>';
+	
+	    // Multicurrency Amount VAT
+	    print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+	    print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+	    print '</tr>';
+	
+	    // Multicurrency Amount TTC
+	    print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+	    print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+	    print '</tr>';
+	}
 	
 	// Total
-	print '<tr><td class="titlefield">'.$langs->trans("AmountHT").'</td>';
+	print '<tr><td class="titlefieldmiddle">'.$langs->trans("AmountHT").'</td>';
 	print '<td>'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</td>';
 	print '</tr>';
 
@@ -2027,24 +2052,6 @@ elseif (! empty($object->id))
 	// Total TTC
 	print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->total_ttc,'',$langs,1,-1,-1,$conf->currency).'</td>';
 	print '</tr>';
-
-	if (!empty($conf->multicurrency->enabled))
-	{
-		// Multicurrency Amount HT
-		print '<tr><td>' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
-		print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-		print '</tr>';
-
-		// Multicurrency Amount VAT
-		print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
-		print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-		print '</tr>';
-
-		// Multicurrency Amount TTC
-		print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
-		print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-		print '</tr>';
-	}
 
 	print '</table>';
 	
@@ -2612,6 +2619,18 @@ elseif (! empty($object->id))
 					}
 				}
 
+				if ($object->statut == 2)
+				{
+				    if ($user->rights->fournisseur->commande->commander)
+				    {
+				        print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=makeorder#makeorder">'.$langs->trans("MakeOrder").'</a></div>';
+				    }
+				    else
+				    {
+				        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("MakeOrder").'</a></div>';
+				    }
+				}
+
 				// Create bill
 				if (! empty($conf->facture->enabled))
 				{
@@ -2663,55 +2682,58 @@ elseif (! empty($object->id))
 		}
 
 
-		print '<div class="fichecenter"><div class="fichehalfleft">';
-
-		/*
-		 * Documents generes
-		 */
-		$comfournref = dol_sanitizeFileName($object->ref);
-		$file =	$conf->fournisseur->dir_output . '/commande/' . $comfournref .	'/'	. $comfournref . '.pdf';
-		$relativepath =	$comfournref.'/'.$comfournref.'.pdf';
-		$filedir = $conf->fournisseur->dir_output	. '/commande/' .	$comfournref;
-		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed=$user->rights->fournisseur->commande->creer;
-		$delallowed=$user->rights->fournisseur->commande->supprimer;
-
-		print $formfile->showdocuments('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$object->thirdparty->default_lang);
-		$somethingshown=$formfile->numoffiles;
-
-		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('supplier_order','order_supplier'));
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
-
-		if ($user->rights->fournisseur->commande->commander && $object->statut == 2)
+		if ($user->rights->fournisseur->commande->commander && $object->statut == 2 && $action == 'makeorder')
 		{
-			// Set status to ordered (action=commande)
-			print '<!-- form to record supplier order -->'."\n";
-			print '<form name="commande" action="card.php?id='.$object->id.'&amp;action=commande" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden"	name="action" value="commande">';
-			print load_fiche_titre($langs->trans("ToOrder"),'','');
-			print '<table class="noborder" width="100%">';
-			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
-			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
-			$date_com = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-			print $form->select_date($date_com,'',1,1,'',"commande",1,0,1);
-			print '</td></tr>';
+		    // Set status to ordered (action=commande)
+		    print '<!-- form to record supplier order -->'."\n";
+		    print '<form name="commande" id="makeorder" action="card.php?id='.$object->id.'&amp;action=commande" method="post">';
+		    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		    print '<input type="hidden"	name="action" value="commande">';
+		    print load_fiche_titre($langs->trans("ToOrder"),'','');
+		    print '<table class="noborder" width="100%">';
+		    //print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
+		    print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
+		    $date_com = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+		    print $form->select_date($date_com,'',1,1,'',"commande",1,0,1);
+		    print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
-			$formorder->selectInputMethod(GETPOST('methodecommande'), "methodecommande", 1);
-			print '</td></tr>';
+		    print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
+		    $formorder->selectInputMethod(GETPOST('methodecommande'), "methodecommande", 1);
+		    print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment" value="'.GETPOST('comment').'"></td></tr>';
-			print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("ToOrder").'"></td></tr>';
-			print '</table>';
-			print '</form>';
-			print "<br>";
+		    print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment" value="'.GETPOST('comment').'"></td></tr>';
+		    print '<tr><td align="center" colspan="2">';
+		    print '<input type="submit" name="makeorder" class="button" value="'.$langs->trans("ToOrder").'">';
+		    print ' &nbsp; &nbsp; ';
+		    print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+		    print '</td></tr>';
+		    print '</table>';
+		    print '</form>';
+		    print "<br>";
 		}
+if ($action != 'makeorder')
+		{
+    		print '<div class="fichecenter"><div class="fichehalfleft">';
 
+    		/*
+    		 * Documents generes
+    		 */
+    		$comfournref = dol_sanitizeFileName($object->ref);
+    		$file =	$conf->fournisseur->dir_output . '/commande/' . $comfournref .	'/'	. $comfournref . '.pdf';
+    		$relativepath =	$comfournref.'/'.$comfournref.'.pdf';
+    		$filedir = $conf->fournisseur->dir_output	. '/commande/' .	$comfournref;
+    		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+    		$genallowed=$user->rights->fournisseur->commande->creer;
+    		$delallowed=$user->rights->fournisseur->commande->supprimer;
+
+    		print $formfile->showdocuments('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$object->thirdparty->default_lang);
+    		$somethingshown=$formfile->numoffiles;
+
+    		// Show links to link elements
+    		$linktoelem = $form->showLinkToObjectBlock($object, null, array('supplier_order','order_supplier'));
+    		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+
+    		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 		if ($user->rights->fournisseur->commande->receptionner	&& ($object->statut == 3 || $object->statut == 4))
 		{
 			// Set status to received (action=livraison)
@@ -2720,7 +2742,7 @@ elseif (! empty($object->id))
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="livraison">';
 			print load_fiche_titre($langs->trans("Receive"),'','');
-			
+
 			print '<table class="noborder" width="100%">';
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 			print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
@@ -2751,15 +2773,9 @@ elseif (! empty($object->id))
         $somethingshown=$formactions->showactions($object,'order_supplier',$socid,0,'listaction'.($genallowed?'largetitle':''));
 
 
-		// List of actions on element
-		/* Hidden because" available into "Log" tab
-		print '<br>';
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-		$formactions=new FormActions($db);
-		$somethingshown=$formactions->showactions($object,'order_supplier',$socid);
-		*/
 
-		print '</div></div></div>';
+
+		print '</div></div></div>';}
 	}
 
 	print '</td></tr></table>';

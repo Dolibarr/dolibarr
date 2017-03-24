@@ -110,7 +110,7 @@ Enclosure=Innbygging
 SpecialCode=Spesialkode
 ExportStringFilter=%% tillater at at en eller flere karakterer i teksten kan erstattes
 ExportDateFilter=ÅÅÅÅ, ÅÅÅÅMM, ÅÅÅÅMMDD : filtrert etter år/måned/dag<br>ÅÅÅÅ+ÅÅÅÅ, ÅÅÅÅMM+ÅÅÅÅMM, ÅÅÅÅMMDD+ÅÅÅÅMMDD: filtrerer en tidsperiode<br> > ÅÅÅÅ, > ÅÅÅÅMM, > ÅÅÅÅMMDD: filteret velger alle påfølgende år<br> < ÅÅÅÅ, < ÅÅÅÅMM, < ÅÅÅÅMMDD: filteret velger alle foregående år
-ExportNumericFilter='NNNNN' filtrer etter en verdi<br>'NNNNN+NNNNN' filtrerer etter verdirekke<br>'&gt;NNNNN' filtrerer etter synkende verdier<br>'&gt;NNNNN' filtrerer etter stigende verdier
+ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
 ImportFromLine=Import starter fra linjenummer
 EndAtLineNb=Slutter på linjenummer
 SetThisValueTo2ToExcludeFirstLine=For eksempel, sett denne verdien til 3 for å eksludere de 2 første linjene
@@ -120,3 +120,8 @@ SelectFilterFields=Hvis du vil filtrere etter noen verdier, kan du endre dem her
 FilteredFields=Filtrerte felt
 FilteredFieldsValues=Filterverdi
 FormatControlRule=Format kontrollregel
+## imports updates
+KeysToUseForUpdates=Nøkkel for bruk ved dataoppdatering
+NbInsert=Antall innsatte linjer: %s
+NbUpdate=Antall oppdaterte linjer: %s
+MultipleRecordFoundWithTheseFilters=Flere poster er blitt funnet med disse filtrene: %s

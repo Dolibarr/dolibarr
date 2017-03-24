@@ -217,7 +217,7 @@ $sql .= " AND f.entity IN (" . getEntity("facture_fourn", 0) . ")";  // We don't
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -292,11 +292,11 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
 	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidthonsmartphone" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_vat" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="right flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
-	print '<td align="right" class="liste_titre">';
+	print '<td align="center" class="liste_titre">';
 	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
 	print $searchpitco;
 	print '</td>';
@@ -406,7 +406,7 @@ if ($result) {
 		print '</td>';
 		
 		// Colonne choix ligne a ventiler
-		print '<td align="right">';
+		print '<td align="center">';
 		print '<input type="checkbox" class="flat checkforselect" name="toselect[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
 		print '</td>';
 

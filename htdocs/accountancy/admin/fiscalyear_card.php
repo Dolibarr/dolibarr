@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2016  Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -176,13 +176,15 @@ if ($action == 'create')
 	print $form->select_date(($date_end ? $date_end : - 1), 'fiscalyearend');
 	print '</td></tr>';
 
+	/*
 	// Statut
 	print '<tr>';
 	print '<td class="fieldrequired">' . $langs->trans("Status") . '</td>';
 	print '<td class="valeur">';
 	print $form->selectarray('statut', $statut2label, GETPOST('statut'));
 	print '</td></tr>';
-
+	*/
+	
 	print '</table>';
 
 	dol_fiche_end();
@@ -232,7 +234,8 @@ if ($action == 'create')
 
 			// Statut
 			print '<tr><td>' . $langs->trans("Statut") . '</td><td>';
-			print $form->selectarray('statut', $statut2label, $object->statut);
+			// print $form->selectarray('statut', $statut2label, $object->statut);
+			print $object->getLibStatut(4);
 			print '</td></tr>';
 
 			print '</table>';
@@ -268,7 +271,7 @@ if ($action == 'create')
 			print '</td></tr>';
 
 			// Label
-			print '<tr><td valign="top">';
+			print '<tr><td class="tdtop">';
 			print $form->editfieldkey("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
 			print '</td><td colspan="2">';
 			print $form->editfieldval("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
@@ -304,7 +307,7 @@ if ($action == 'create')
 
     			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=edit&id=' . $id . '">' . $langs->trans('Modify') . '</a>';
     
-    			print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
+    			// print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
 			
     			print '</div>';
 			}

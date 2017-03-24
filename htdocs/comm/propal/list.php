@@ -178,7 +178,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $search_categ='';
     $search_user='';
@@ -333,7 +333,7 @@ $sql.= $db->order($sortfield,$sortorder);
 $sql.=', p.ref DESC';
 
 // Count total nb of records
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -363,7 +363,7 @@ if ($resql)
 	
 	$arrayofselected=is_array($toselect)?$toselect:array();
 	
-	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
+	$param='&viewstatut='.$viewstatut;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($sall)				 $param.='&sall='.$sall;
@@ -377,6 +377,7 @@ if ($resql)
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	if ($search_login)  	 $param.='&search_login='.$search_login;
 	if ($search_town)		 $param.='&search_town='.$search_town;
+	if ($socid > 0)          $param.='&socid='.$socid;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
@@ -436,8 +437,8 @@ if ($resql)
 	
 	    dol_fiche_head(null, '', '');
 	
-	    $topicmail="SendProposalRef";
-	    $modelmail="propal_send";
+	    $topicmail="SendSupplierProposalRef";
+	    $modelmail="supplier_proposal_send";
 	
 	    // Cree l'objet formulaire mail
 	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';

@@ -16,6 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Need global variable $title to be defined by caller (like dol_loginfunction)
+
+
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
@@ -35,7 +38,10 @@ $arrayofjs=array(
 );
 $titleofloginpage=$langs->trans('Login').' @ '.$titletruedolibarrversion;	// $titletruedolibarrversion is defined by dol_loginfunction in security2.lib.php. We must keep the @, some tools use it to know it is login page and find true dolibarr version.
 
-print top_htmlhead('',$titleofloginpage,0,0,$arrayofjs);
+$disablenofollow=1;
+if (! preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) $disablenofollow=0;
+
+print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disablenofollow);
 ?>
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
 
@@ -71,7 +77,13 @@ $(document).ready(function () {
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
 <table class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
-<tr class="vmenu"><td class="center"><?php echo dol_escape_htmltag($title); ?></td></tr>
+<tr class="vmenu"><td class="center">
+<?php
+if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
+echo dol_escape_htmltag($title); 
+if ($disablenofollow) echo '</a>';
+?>
+</td></tr>
 </table>
 <br>
 
@@ -89,7 +101,7 @@ $(document).ready(function () {
 
 <div id="login_right">
 
-<table class="left centpercent" title="Login pass">
+<table class="left centpercent" title="<?php echo $langs->trans("EnterLoginDetail"); ?>">
 <!-- Login -->
 <tr>
 <td class="nowrap center valignmiddle">
@@ -227,6 +239,23 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 	</div></div>
 <?php
 }
+
+// Add commit strip
+if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+	if (substr($langs->defaultlang,0,2)=='fr') {
+		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/fr/feed/");
+	} else {
+		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/en/feed/");
+	}
+    if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200') 
+    {
+        $xml = simplexml_load_string($resgetcommitstrip['content']);
+        $little = $xml->channel->item[0]->children('content',true);
+        print $little->encoded;
+    }
+}
+
 ?>
 
 <?php if ($main_home)

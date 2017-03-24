@@ -88,6 +88,23 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	const STATUS_ABANDONED = 3;
 
+	
+	/**
+	 * 	Return remain amount to pay.
+	 *  Property ->id and ->total_ttc must be set.
+	 *
+	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
+	 *	@return		int						Remain of amount to pay
+	 */
+	function getRemainToPay($multicurrency=0)
+	{
+	    $alreadypaid=0;
+	    $alreadypaid+=$this->getSommePaiement($multicurrency);
+	    $alreadypaid+=$this->getSumDepositsUsed($multicurrency);
+	    $alreadypaid+=$this->getSumCreditNotesUsed($multicurrency);
+    	return $this->total_ttc - $alreadypaid;
+	}
+
 	/**
 	 * 	Return amount of payments already done
 	 *
@@ -123,7 +140,66 @@ abstract class CommonInvoice extends CommonObject
 			return -1;
 		}
 	}
+	
+	/**
+	 *    	Return amount (with tax) of all deposits invoices used by invoice.
+     *      Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
+	 *
+	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
+	 *		@return		int						<0 if KO, Sum of deposits amount otherwise
+	 */
+	function getSumDepositsUsed($multicurrency=0)
+	{
+		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
+	    {
+	        // TODO
+	       return 0;     
+	    }
+	    
+	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+	
+	    $discountstatic=new DiscountAbsolute($this->db);
+	    $result=$discountstatic->getSumDepositsUsed($this, $multicurrency);
+	    if ($result >= 0)
+	    {
+	        return $result;
+	    }
+	    else
+	    {
+	        $this->error=$discountstatic->error;
+	        return -1;
+	    }
+	}
 
+	/**
+	 *    	Return amount (with tax) of all credit notes and deposits invoices used by invoice
+	 *
+	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
+	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
+	 */
+	function getSumCreditNotesUsed($multicurrency=0)
+	{
+	    if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
+	    {
+	        // TODO
+	        return 0;
+	    }
+	     
+	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+	
+	    $discountstatic=new DiscountAbsolute($this->db);
+	    $result=$discountstatic->getSumCreditNotesUsed($this, $multicurrency);
+	    if ($result >= 0)
+	    {
+	        return $result;
+	    }
+	    else
+	    {
+	        $this->error=$discountstatic->error;
+	        return -1;
+	    }
+	}
+	
 	/**
 	 *	Renvoie tableau des ids de facture avoir issus de la facture
 	 *
@@ -233,7 +309,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param      int		$status        	Id status
 	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
 	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
-	 *	@param		int		$type			Type facture
+	 *	@param		int		$type			Type invoice
 	 *	@return     string        			Libelle du statut
 	 */
 	function LibStatut($paye,$status,$mode=0,$alreadypaid=-1,$type=0)
@@ -255,8 +331,8 @@ abstract class CommonInvoice extends CommonObject
 			}
 			else
 			{
-				if ($type == 2) return $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted');
-				elseif ($type == 3) return $langs->trans('Bill'.$prefix.'StatusConverted');
+				if ($type == self::TYPE_CREDIT_NOTE) return $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted');       // credit note
+				elseif ($type == self::TYPE_DEPOSIT) return $langs->trans('Bill'.$prefix.'StatusConverted');             // deposit invoice
 				else return $langs->trans('Bill'.$prefix.'StatusPaid');
 			}
 		}
@@ -273,8 +349,8 @@ abstract class CommonInvoice extends CommonObject
 			}
 			else
 			{
-				if ($type == 2) return $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted');
-				elseif ($type == 3) return $langs->trans('Bill'.$prefix.'StatusConverted');
+				if ($type == self::TYPE_CREDIT_NOTE) return $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted');
+				elseif ($type == self::TYPE_DEPOSIT) return $langs->trans('Bill'.$prefix.'StatusConverted');
 				else return $langs->trans('Bill'.$prefix.'StatusPaid');
 			}
 		}
@@ -291,8 +367,8 @@ abstract class CommonInvoice extends CommonObject
 			}
 			else
 			{
-				if ($type == 2) return img_picto($langs->trans('BillStatusPaidBackOrConverted'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted');
-				elseif ($type == 3) return img_picto($langs->trans('BillStatusConverted'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusConverted');
+				if ($type == self::TYPE_CREDIT_NOTE) return img_picto($langs->trans('BillStatusPaidBackOrConverted'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted');
+				elseif ($type == self::TYPE_DEPOSIT) return img_picto($langs->trans('BillStatusConverted'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusConverted');
 				else return img_picto($langs->trans('BillStatusPaid'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPaid');
 			}
 		}
@@ -309,8 +385,8 @@ abstract class CommonInvoice extends CommonObject
 			}
 			else
 			{
-				if ($type == 2) return img_picto($langs->trans('BillStatusPaidBackOrConverted'),'statut6');
-				elseif ($type == 3) return img_picto($langs->trans('BillStatusConverted'),'statut6');
+				if ($type == self::TYPE_CREDIT_NOTE) return img_picto($langs->trans('BillStatusPaidBackOrConverted'),'statut6');
+				elseif ($type == self::TYPE_DEPOSIT) return img_picto($langs->trans('BillStatusConverted'),'statut6');
 				else return img_picto($langs->trans('BillStatusPaid'),'statut6');
 			}
 		}
@@ -327,8 +403,8 @@ abstract class CommonInvoice extends CommonObject
 			}
 			else
 			{
-				if ($type == 2) return img_picto($langs->trans('BillStatusPaidBackOrConverted'),'statut6').' '.$langs->trans('BillStatusPaidBackOrConverted');
-				elseif ($type == 3) return img_picto($langs->trans('BillStatusConverted'),'statut6').' '.$langs->trans('BillStatusConverted');
+				if ($type == self::TYPE_CREDIT_NOTE) return img_picto($langs->trans('BillStatusPaidBackOrConverted'),'statut6').' '.$langs->trans('BillStatusPaidBackOrConverted');
+				elseif ($type == self::TYPE_DEPOSIT) return img_picto($langs->trans('BillStatusConverted'),'statut6').' '.$langs->trans('BillStatusConverted');
 				else return img_picto($langs->trans('BillStatusPaid'),'statut6').' '.$langs->trans('BillStatusPaid');
 			}
 		}
@@ -340,13 +416,17 @@ abstract class CommonInvoice extends CommonObject
 				if ($status == 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusDraft').' </span>'.img_picto($langs->trans('BillStatusDraft'),'statut0');
 				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusCanceled').' </span>'.img_picto($langs->trans('BillStatusCanceled'),'statut5');
 				if (($status == 3 || $status == 2) && $alreadypaid > 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially').' </span>'.img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7');
-				if ($alreadypaid <= 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusNotPaid').' </span>'.img_picto($langs->trans('BillStatusNotPaid'),'statut1');
+				if ($alreadypaid <= 0) 
+				{
+				    if ($type == self::TYPE_CREDIT_NOTE) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusNotRefunded').' </span>'.img_picto($langs->trans('StatusNotRefunded'),'statut1');
+				    return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusNotPaid').' </span>'.img_picto($langs->trans('BillStatusNotPaid'),'statut1');
+				}
 				return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusStarted').' </span>'.img_picto($langs->trans('BillStatusStarted'),'statut3');
 			}
 			else
 			{
-				if ($type == 2) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted').' </span>'.img_picto($langs->trans('BillStatusPaidBackOrConverted'),'statut6');
-				elseif ($type == 3) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusConverted').' </span>'.img_picto($langs->trans('BillStatusConverted'),'statut6');
+				if ($type == self::TYPE_CREDIT_NOTE) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted').' </span>'.img_picto($langs->trans('BillStatusPaidBackOrConverted'),'statut6');
+				elseif ($type == self::TYPE_DEPOSIT) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusConverted').' </span>'.img_picto($langs->trans('BillStatusConverted'),'statut6');
 				else return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusPaid').' </span>'.img_picto($langs->trans('BillStatusPaid'),'statut6');
 			}
 		}

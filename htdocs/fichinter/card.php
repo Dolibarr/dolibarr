@@ -438,49 +438,6 @@ if (empty($reshook))
 		}
 	}
 
-	/*
-	 * Build doc
-	 */
-	else if ($action == 'builddoc' && $user->rights->ficheinter->creer)	// En get ou en post
-	{
-		$object->fetch_lines();
-
-		// Save last template used to generate document
-		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang='';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-		if (! empty($newlang))
-		{
-			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		$result=fichinter_create($db, $object, GETPOST('model','alpha'), $outputlangs);
-		if ($result <= 0)
-		{
-			dol_print_error($db,$result);
-			exit;
-		}
-	}
-
-	// Remove file in doc form
-	else if ($action == 'remove_file')
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-		$object->fetch_thirdparty();
-
-		$langs->load("other");
-		$upload_dir = $conf->ficheinter->dir_output;
-		$file = $upload_dir . '/' . GETPOST('file');
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-	}
-
 	// Set into a project
 	else if ($action == 'classin' && $user->rights->ficheinter->creer)
 	{
@@ -595,7 +552,7 @@ if (empty($reshook))
 		}
 	}
 
-	// Classify Billed
+	// Classify unbilled
 	else if ($action == 'classifyunbilled' && $user->rights->ficheinter->creer)
 	{
 		$result=$object->setStatut(1);
@@ -610,19 +567,19 @@ if (empty($reshook))
 		}
 	}
 
-	// Classify Billed
+	// Classify Done
 	else if ($action == 'classifydone' && $user->rights->ficheinter->creer)
 	{
-		$result=$object->setStatut(3);
-		if ($result > 0)
-		{
-			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-			exit;
-		}
-		else
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
+	    $result=$object->setStatut(3);
+	    if ($result > 0)
+	    {
+	        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+	        exit;
+	    }
+	    else
+	    {
+	        setEventMessages($object->error, $object->errors, 'errors');
+	    }
 	}
 	
 	/*
@@ -797,6 +754,11 @@ if (empty($reshook))
 		if ($error) $action = 'edit_extras';
 	}
 
+	// Actions to build doc
+	$upload_dir = $conf->ficheinter->dir_output;
+	$permissioncreate = $user->rights->ficheinter->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->ficheinter->creer)
 	{
 		if ($action == 'addcontact')
@@ -967,7 +929,7 @@ if ($action == 'create')
 		// Description (must be a textarea and not html must be allowed (used in list view)
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		print '<textarea name="description" cols="80" rows="'.ROWS_3.'">'.GETPOST('description').'</textarea>';
+		print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('description').'</textarea>';
 		print '</td></tr>';
 
 		// Project
@@ -1673,7 +1635,7 @@ else if ($id > 0 || ! empty($ref))
 					$langs->load("bills");
 					if ($object->statut < 2)
 					{
-						if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a></div>';
+						if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a></div>';
 						else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddBill").'</a></div>';
 					}
 

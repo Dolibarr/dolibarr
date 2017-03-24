@@ -48,6 +48,7 @@ $confirm = GETPOST('confirm','alpha');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'holiday', $id, 'holiday');
 
+$langs->load("holiday");
 
 // Get parameters
 $sortfield = GETPOST('sortfield','alpha');

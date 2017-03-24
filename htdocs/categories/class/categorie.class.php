@@ -49,8 +49,10 @@ class Categorie extends CommonObject
 	const TYPE_MEMBER = 3;     // TODO Replace this value with 'member'
 	const TYPE_CONTACT = 4;    // TODO Replace this value with 'contact'
 	const TYPE_USER = 4;       // categorie contact and user are same !   TODO Replace this value with 'user'
-    	const TYPE_ACCOUNT = 5;    // for bank account TODO Replace this value with 'account'
-    	const TYPE_PROJECT = 6;
+    const TYPE_ACCOUNT = 5;    // for bank account TODO Replace this value with 'account'
+    const TYPE_PROJECT = 6;
+    public $picto = 'category';
+    
 
 	/**
 	 * @var array ID mapping from type string
@@ -205,6 +207,7 @@ class Categorie extends CommonObject
 				$res = $this->db->fetch_array($resql);
 
 				$this->id			= $res['rowid'];
+				//$this->ref			= $res['rowid'];
 				$this->fk_parent	= $res['fk_parent'];
 				$this->label		= $res['label'];
 				$this->description	= $res['description'];
@@ -523,7 +526,17 @@ class Categorie extends CommonObject
 		}
 		if (! $error)
 		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_project";
+			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact";
+			$sql .= " WHERE fk_categorie = ".$this->id;
+			if (!$this->db->query($sql))
+			{
+				$this->error=$this->db->lasterror();
+				$error++;
+			}
+		}
+		if (! $error)
+		{
+			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
 			$sql .= " WHERE fk_categorie = ".$this->id;
 			if (!$this->db->query($sql))
 			{
@@ -532,7 +545,18 @@ class Categorie extends CommonObject
 				$error++;
 			}
 		}
-
+		if (! $error)
+		{
+		    $sql  = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
+		    $sql .= " WHERE fk_categ = ".$this->id;
+		    if (!$this->db->query($sql))
+		    {
+		        $this->error=$this->db->lasterror();
+		        dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+		        $error++;
+		    }
+		}
+		
 		if (! $error)
 		{
 			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_lang";
@@ -1703,6 +1727,18 @@ class Categorie extends CommonObject
 	    }
 	}
 
+	/**
+	 *	Return label of contact status
+	 *
+	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * 	@return 	string					Label of contact status
+	 */
+	function getLibStatut($mode)
+	{
+	    return '';
+	}
+	
+	
     /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.

@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2011  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012  Regis Houssin               <regis.houssin@capnetworks.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2016  Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  *
@@ -1056,13 +1056,13 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 		{
 	        $numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date)+$yearoffset, $numFinal);
         	$numFinal = preg_replace('/\{yy\}/i',  date("y",$date)+$yearoffset, $numFinal);
-        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),2,1)+$yearoffset, $numFinal);
+        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),1,1)+$yearoffset, $numFinal);
 		}
 		else	// we want yyyy to be current year
 		{
         	$numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date), $numFinal);
         	$numFinal = preg_replace('/\{yy\}/i',  date("y",$date), $numFinal);
-        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),2,1), $numFinal);
+        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),1,1), $numFinal);
 		}
         $numFinal = preg_replace('/\{mm\}/i',  date("m",$date), $numFinal);
         $numFinal = preg_replace('/\{dd\}/i',  date("d",$date), $numFinal);
@@ -1509,7 +1509,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
     $sql.= " WHERE type = '".$type."'";
     $sql.= " AND entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
     $sql.= " ORDER BY description DESC";
-
+		
     dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql)
@@ -1530,7 +1530,6 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 
                 $const=$obj->description;
                 $dirtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
-
                 $listoffiles=array();
 
                 // Now we add models found in directories scanned
@@ -1923,10 +1922,6 @@ function getElementProperties($element_type)
         $subelement = $regs[2];
     }
 
-    $classfile = strtolower($subelement);
-    $classname = ucfirst($subelement);
-    $classpath = $module.'/class';
-
     // For compat
     if($element_type == "action") {
         $classpath = 'comm/action/class';
@@ -1991,8 +1986,22 @@ function getElementProperties($element_type)
         $module='propal';
         $subelement='propaleligne';
     }
-    $classfile = strtolower($subelement);
-    $classname = ucfirst($subelement);
+    if ($element_type == 'order_supplier')  {
+        $classpath = 'fourn/class';
+        $module='fournisseur';
+        $subelement='commandefournisseur';
+        $classfile='fournisseur.commande';
+    }
+    if ($element_type == 'invoice_supplier')  {
+        $classpath = 'fourn/class';
+        $module='fournisseur';
+        $subelement='facturefournisseur';
+        $classfile='fournisseur.facture';
+    }
+
+    if (!isset($classfile)) $classfile = strtolower($subelement);
+    if (!isset($classname)) $classname = ucfirst($subelement);
+    if (!isset($classpath)) $classpath = $module.'/class';
 
     $element_properties = array(
         'module' => $module,
@@ -2074,4 +2083,31 @@ function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
 	return array(hexdec($reg[1]),hexdec($reg[2]),hexdec($reg[3]));
 }
 
+/**
+ * Applies the Cartesian product algorithm to an array
+ * Source: http://stackoverflow.com/a/15973172
+ *
+ * @param array $input Array of products
+ * @return array Array of combinations
+ */
+function cartesianArray(array $input) {
+    // filter out empty values
+    $input = array_filter($input);
 
+    $result = array(array());
+
+    foreach ($input as $key => $values) {
+        $append = array();
+
+        foreach($result as $product) {
+            foreach($values as $item) {
+                $product[$key] = $item;
+                $append[] = $product;
+            }
+        }
+
+        $result = $append;
+    }
+
+    return $result;
+}

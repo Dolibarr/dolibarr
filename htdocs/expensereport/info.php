@@ -33,12 +33,15 @@ $langs->load("trips");
 // Security check
 $id = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'expensereport', $id, '');
+$result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
 /*
  * View
  */
+
+$form = new Form($db);
+
 $title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Info");
 $helpurl="EN:Module_Expense_Reports";
 llxHeader("",$title,$helpurl);
@@ -51,7 +54,7 @@ if ($id > 0 || ! empty($ref))
 
 	$head = expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("ExpenseReport"), 0, 'trip');
+	dol_fiche_head($head, 'info', $langs->trans("ExpenseReport"), -1, 'trip');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 	

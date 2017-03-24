@@ -771,7 +771,7 @@ class ExtraFields
 		}
 		elseif ($type == 'varchar')
 		{
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+            $out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif (in_array($type, array('mail', 'phone', 'url')))
 		{
@@ -1018,8 +1018,9 @@ class ExtraFields
 			{
 				$out.='<input class="flat '.$showsize.'" type="radio" name="'.$keysuffix.'options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'');
 				$out.=' value="'.$keyopt.'"';
+				$out.=' id="'.$keysuffix.'options_'.$key.$keyprefix.'_'.$keyopt.'"';
 				$out.= ($value==$keyopt?'checked':'');
-				$out.='/>'.$val.'<br>';
+				$out.='/><label for="'.$keysuffix.'options_'.$key.$keyprefix.'_'.$keyopt.'">'.$val.'</label><br>';
 			}
 		}
 		elseif ($type == 'chkbxlst')

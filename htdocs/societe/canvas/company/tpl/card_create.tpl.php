@@ -29,7 +29,7 @@
 <br>
 <?php echo $langs->trans("ThirdPartyType") ?>: &nbsp;
 <input type="radio" id="radiocompany" class="flat" name="private" value="0" checked>
-<?php echo $langs->trans("Company/Fundation"); ?> &nbsp; &nbsp;
+<?php echo $langs->trans("CompanyFoundation"); ?> &nbsp; &nbsp;
 <input type="radio" id="radioprivate" class="flat" name="private" value="1"> <?php echo $langs->trans("Individual"); ?> (<?php echo $langs->trans("ToCreateContactWithSameName") ?>)
 <br>
 <br>
@@ -104,7 +104,7 @@
 <?php } ?>
 
 <tr>
-	<td valign="top"><?php echo $langs->trans('Address'); ?></td>
+	<td class="tdtop"><?php echo $langs->trans('Address'); ?></td>
 	<td colspan="3"><textarea name="adress" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
 </tr>
 

@@ -139,7 +139,7 @@ class CommandeApi extends DolibarrApi
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
 
-        $nbtotalofrecords = -1;
+        $nbtotalofrecords = '';
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -194,7 +194,7 @@ class CommandeApi extends DolibarrApi
      * @return  array   Array of order objects
      */
     function getListForSoc($socid = 0) {
-      return getList(0,"s.rowid","ASC",0,0,$socid);
+      return $this->getList(0,"s.rowid","ASC",0,0,$socid);
     }
 
 

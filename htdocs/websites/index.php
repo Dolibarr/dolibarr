@@ -60,6 +60,7 @@ function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, 
 
     // main area
     //main_area($title);
+    print '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">'."\n";
 }
 
 
@@ -76,7 +77,10 @@ $langs->load("website");
 
 if (! $user->admin) accessforbidden();
 
-$conf->dol_hide_leftmenu = 1;
+if (! ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)))
+{
+    $conf->dol_hide_leftmenu = 1;   // Force hide of left menu.
+}
 
 $error=0;
 $website=GETPOST('website', 'alpha');
@@ -239,7 +243,8 @@ if ($action == 'updatecss')
        $db->rollback();
     }*/
     
-    $csscontent = '<!-- START DOLIBARR-WEBSITE-ADDED-HEADER -->'."\n";
+    $csscontent = '<!-- BEGIN DOLIBARR-WEBSITE-ADDED-HEADER -->'."\n";
+    $csscontent.= '<!-- File generated to wrap the css file - DO NOT MODIFY - It is just a copy of database css content -->'."\n";
     $csscontent.= '<?php '."\n";
     $csscontent.= "header('Content-type: text/css');\n";
     $csscontent.= "?>"."\n";
@@ -291,7 +296,7 @@ if ($action == 'setashome')
         dol_delete_file($fileindex);
 
         $indexcontent = '<?php'."\n";
-        $indexcontent.= '// File generated to wrap the home page'."\n";
+        $indexcontent.= '// File generated to wrap the home page - DO NOT MODIFY - It is just an include'."\n";
         $indexcontent.= "include_once './".basename($filetpl)."'\n";
         $indexcontent.= '?>'."\n";
         $result = file_put_contents($fileindex, $indexcontent);
@@ -350,7 +355,7 @@ if ($action == 'updatemeta')
             dol_delete_file($filemaster);
             
             $mastercontent = '<?php'."\n";
-            $mastercontent.= '// File generated to link to the master file'."\n";
+            $mastercontent.= '// File generated to link to the master file - DO NOT MODIFY - It is just an include'."\n";
             $mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
             $mastercontent.= '?>'."\n";
             $result = file_put_contents($filemaster, $mastercontent);
@@ -368,7 +373,7 @@ if ($action == 'updatemeta')
             }
             
             $aliascontent = '<?php'."\n";
-            $aliascontent.= '// File generated to wrap the alias page'."\n";
+            $aliascontent.= '// File generated to wrap the page - DO NOT MODIFY - It is just an include'."\n";
             $aliascontent.= "include_once './page".$objectpage->id.".tpl.php';\n";
             $aliascontent.= '?>'."\n";
             $result = file_put_contents($filealias, $aliascontent);
@@ -390,6 +395,7 @@ if ($action == 'updatemeta')
             $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
             $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
             $tplcontent.= '<meta name="viewport" content="width=device-width, initial-scale=0.8">'."\n";
+            $tplcontent.= '<link rel="canonical" href="'.$objectpage->pageurl.'">'."\n";
             $tplcontent.= '<meta name="keywords" content="'.join(', ', explode(',',$objectpage->keywords)).'" />'."\n";
             $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
             $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
@@ -485,7 +491,7 @@ if ($action == 'updatecontent')
             }
             
 		    $aliascontent = '<?php'."\n";
-		    $aliascontent.= '// File generated to wrap the alias page'."\n";
+		    $aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a copy of database page content\n";
 		    $aliascontent.= "include_once './page".$objectpage->id.".tpl.php';\n";
 		    $aliascontent.= '?>'."\n";
 		    $result = file_put_contents($filealias, $aliascontent);
@@ -495,12 +501,15 @@ if ($action == 'updatecontent')
             if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
 		
     		        
-    	    // Now create the .tpl file
-    	    // TODO Keep a one time generate file or include a dynamicaly generated content ? 
+    	    // Now create the .tpl file with code to be able to make dynamic changes
     	    dol_delete_file($filetpl);
 
             $tplcontent ='';
-            $tplcontent.= "<?php if (! defined('USEDOLIBARRSERVER')) require './master.inc.php'; ?>"."\n";
+            $tplcontent.= "<?php // BEGIN PHP\n";
+            $tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require './master.inc.php'; } // Not already loaded"."\n";
+            $tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+            $tplcontent.= "ob_start();\n";
+            $tplcontent.= "// END PHP ?>\n";
     	    $tplcontent.= '<html>'."\n";
     	    $tplcontent.= '<header>'."\n";
     	    $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
@@ -517,6 +526,11 @@ if ($action == 'updatecontent')
     	    $tplcontent.= '<body>'."\n";
     	    $tplcontent.= $objectpage->content."\n";
     	    $tplcontent.= '</body>'."\n";
+    	    
+    	    $tplcontent.= '<?php // BEGIN PHP'."\n";
+    	    $tplcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+    	    $tplcontent.= "// END PHP ?>"."\n";
+    	    
             //var_dump($filetpl);exit;	    
     	    $result = file_put_contents($filetpl, $tplcontent);
     	    if (! empty($conf->global->MAIN_UMASK))
@@ -596,14 +610,14 @@ if (count($object->records) > 0)
 {
     // ***** Part for web sites
     
-    print '<div class="websiteselection">';
+    print '<div class="websiteselection hideonsmartphoneimp">';
     print $langs->trans("Website").': ';
     print '</div>';
 
     // List of websites
     print '<div class="websiteselection">';
     $out='';
-    $out.='<select name="website">';
+    $out.='<select name="website" id="website">';
     if (empty($object->records)) $out.='<option value="-1">&nbsp;</option>';
     // Loop on each sites
     $i=0;
@@ -619,6 +633,7 @@ if (count($object->records) > 0)
         $i++;
     }
     $out.='</select>';
+    $out.=ajax_combobox('website');
     print $out;
     print '<input type="submit" class="button" name="refreshsite" value="'.$langs->trans("Load").'">';
 
@@ -688,7 +703,7 @@ if (count($object->records) > 0)
         $atleastonepage=(is_array($array) && count($array) > 0);
         
         print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
-        print '<div class="websiteselection">';
+        print '<div class="websiteselection hideonsmartphoneimp">';
         print $langs->trans("Page").': ';
         print '</div>';
         print '<div class="websiteselection">';
@@ -696,7 +711,7 @@ if (count($object->records) > 0)
         if ($action != 'add')
         {
             $out='';
-            $out.='<select name="pageid">';
+            $out.='<select name="pageid" id="pageid" class="minwidth200">';
             if ($atleastonepage)
             {
                 if (empty($pageid) && $action != 'create')      // Page id is not defined, we try to take one
@@ -722,6 +737,7 @@ if (count($object->records) > 0)
             }
             else $out.='<option value="-1">&nbsp;</option>';
             $out.='</select>';
+            $out.=ajax_combobox('pageid');
             print $out;
         }
         else
@@ -853,8 +869,8 @@ if ($action == 'editcss')
     print '<br>';
 
     $csscontent = @file_get_contents($filecss);
-    // Clean php css file to get only css part
-    $csscontent = preg_replace('/<!-- START DOLIBARR.*END -->/s', '', $csscontent); 
+    // Clean the php css file to remove php code and get only css part
+    $csscontent = preg_replace('/<!-- BEGIN DOLIBARR.*END -->/s', '', $csscontent); 
     
     dol_fiche_head();
 
@@ -867,7 +883,7 @@ if ($action == 'editcss')
     print $website;
     print '</td></tr>';
 
-    print '<tr><td valign="top">';
+    print '<tr><td class="tdtop">';
     print $langs->trans('WEBSITE_CSS_INLINE');
     print '</td><td>';
     print '<textarea class="flat centpercent" rows="32" name="WEBSITE_CSS_INLINE">';
@@ -992,14 +1008,11 @@ if ($action == 'preview')
     {
         $objectpage->fetch($pageid);
 
-        print "\n".'<!-- Page content '.$filetpl.' : Div with (CSS + Page content from database) -->'."\n";
-
-        
-        $csscontent = @file_get_contents($filecss);
-        
-        $out='';
+        $out = "\n".'<!-- Page content '.$filetpl.' : Div with (CSS + Page content from database) -->'."\n";
         
         $out.='<div id="websitecontent" class="websitecontent">'."\n";
+        
+        $csscontent = @file_get_contents($filecss);
         
         $out.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
         $out.=$csscontent;
@@ -1008,6 +1021,8 @@ if ($action == 'preview')
         $out.=$objectpage->content."\n";
         
         $out.='</div>';
+        
+        $out.= "\n".'<!-- End page content '.$filetpl.' -->'."\n\n";
         
         print $out;
         

@@ -50,13 +50,14 @@ class FormAccounting
      * 	@param	int		$useempty		Set to 1 if we want an empty value
      * 	@param	int		$maxlen			Max length of text in combo box
      * 	@param	int		$help			Add or not the admin help picto
+     *  @param  int     $allcountries   All countries
      * 	@return	void
      */
-    function select_accounting_category($selected='',$htmlname='account_category', $useempty=0, $maxlen=64, $help=1)
+    function select_accounting_category($selected='',$htmlname='account_category', $useempty=0, $maxlen=0, $help=1, $allcountries=0)
     {
         global $db,$langs,$user,$mysoc;
 
-        if (empty($mysoc->country_id) && empty($mysoc->country_code))
+        if (empty($mysoc->country_id) && empty($mysoc->country_code) && empty($allcountries))
         {
             dol_print_error('','Call to select_accounting_account with mysoc country not yet defined');
             exit;
@@ -68,7 +69,7 @@ class FormAccounting
             $sql.= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
             $sql.= " WHERE c.active = 1";
 			$sql.= " AND c.category_type = 0";
-            $sql.= " AND c.fk_country = ".$mysoc->country_id;
+            if (empty($allcountries)) $sql.= " AND c.fk_country = ".$mysoc->country_id;
             $sql.= " ORDER BY c.label ASC";
         }
         else
@@ -78,7 +79,7 @@ class FormAccounting
             $sql.= " WHERE c.active = 1";
 			$sql.= " AND c.category_type = 0";
 			$sql.= " AND c.fk_country = co.rowid";
-            $sql.= " AND co.code = '".$mysoc->country_code."'";
+            if (empty($allcountries)) $sql.= " AND co.code = '".$mysoc->country_code."'";
             $sql.= " ORDER BY c.label ASC";
         }
 
@@ -89,31 +90,35 @@ class FormAccounting
             $num = $db->num_rows($resql);
             if ($num)
             {
-                print '<select class="flat" name="'.$htmlname.'">';
+                $out = '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'">';
                 $i = 0;
 
-                if ($useempty) print '<option value="0">&nbsp;</option>';
+                if ($useempty) $out.= '<option value="0">&nbsp;</option>';
                 while ($i < $num)
                 {
                     $obj = $db->fetch_object($resql);
-                    print '<option value="'.$obj->rowid.'"';
-                    if ($obj->rowid == $selected) print ' selected';
-                    print '>'.dol_trunc($obj->type,$maxlen);
-					print ' ('.$obj->range_account.')';
+                    $out .= '<option value="'.$obj->rowid.'"';
+                    if ($obj->rowid == $selected) $out .= ' selected';
+                    $out .= '>'.($maxlen ? dol_trunc($obj->type,$maxlen) : $obj->type);
+					$out .= ' ('.$obj->range_account.')';
                     $i++;
                 }
-                print '</select>';
-                if ($user->admin && $help) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+                $out .=  '</select>';
+                //if ($user->admin && $help) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             }
             else
             {
-                print $langs->trans("ErrorNoAccountingCategoryForThisCountry",$mysoc->country_code);
+                $out .= $langs->trans("ErrorNoAccountingCategoryForThisCountry",$mysoc->country_code);
             }
         }
         else
         {
             dol_print_error($db,$db->lasterror());
         }
+        
+        $out .= ajax_combobox($htmlname, $event);
+        
+        print $out;
     }
 }
 

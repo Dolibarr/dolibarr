@@ -80,6 +80,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	$result=array();
 
 	// Clean parameters
+	if (empty($info_bits)) $info_bits=0;
 	if (empty($txtva)) $txtva=0;
 	if (empty($seller) || ! is_object($seller))
 	{

@@ -58,11 +58,27 @@ $taskstatic=new Task($db);
 $tasktmp=new Task($db);
 
 $title=$langs->trans("Activities");
-if ($mine) $title=$langs->trans("MyActivities");
+//if ($mine) $title=$langs->trans("MyActivities");
 
 llxHeader("",$title);
 
-print load_fiche_titre($title, '', 'title_project');
+
+// Title for combo list see all projects
+$titleall=$langs->trans("AllAllowedProjects");
+if (! empty($user->rights->projet->all->lire) && ! $socid) $titleall=$langs->trans("AllProjects");
+else $titleall=$langs->trans("AllAllowedProjects").'<br><br>';
+
+
+$morehtml='';
+$morehtml.='<form name="projectform">';
+$morehtml.='<SELECT name="mode">';
+$morehtml.='<option name="all" value="all"'.($mine?'':' selected').'>'.$titleall.'</option>';
+$morehtml.='<option name="mine" value="mine"'.($mine?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
+$morehtml.='</SELECT>';
+$morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'title_project.png', 0, $morehtml);
+//print load_fiche_titre($title, '', 'title_project');
 
 if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
 else
@@ -74,33 +90,36 @@ else
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-// Search project
-if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
+
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-	$listofsearchfields['search_task']=array('text'=>'Task');
+    // Search project
+    if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
+    {
+    	$listofsearchfields['search_task']=array('text'=>'Task');
+    }
+    
+    if (count($listofsearchfields))
+    {
+    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<table class="noborder nohover centpercent">';
+    	$i=0;
+    	foreach($listofsearchfields as $key => $value)
+    	{
+    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    		print '<tr '.$bc[false].'>';
+    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    		print '</tr>';
+    		$i++;
+    	}
+    	print '</table>';	
+    	print '</form>';
+    	print '<br>';
+    }
 }
 
-if (count($listofsearchfields))
-{
-	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover centpercent">';
-	$i=0;
-	foreach($listofsearchfields as $key => $value)
-	{
-		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-		print '</tr>';
-		$i++;
-	}
-	print '</table>';	
-	print '</form>';
-	print '<br>';
-}
-
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 /* Affichage de la liste des projets d'aujourd'hui */
 print '<table class="noborder" width="100%">';
@@ -156,8 +175,11 @@ print "</tr>\n";
 print "</table>";
 
 
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
+
 /* Affichage de la liste des projets d'hier */
-print '<br><table class="noborder" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans('ActivityOnProjectYesterday').'</td>';
 print '<td align="right">'.$langs->trans("Time").'</td>';

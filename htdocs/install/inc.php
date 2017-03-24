@@ -191,7 +191,7 @@ if (constant('DOL_DATA_ROOT') === null) {
 }
 if (@file_exists($lockfile))
 {
-    print 'Install pages have been disabled for security reason (by lock file install.lock into dolibarr root directory).<br>';
+    print 'Install pages have been disabled for security reason (by lock file install.lock into dolibarr documents directory).<br>';
     if (! empty($dolibarr_main_url_root))
     {
         print 'Click on following link. ';

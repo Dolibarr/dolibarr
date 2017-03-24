@@ -178,7 +178,7 @@ $sql .= " AND er.entity IN (" . getEntity("expensereport", 0) . ")";  // We don'
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -253,8 +253,8 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="right flat maxwidth50" name="search_vat" size="1" placeholder="%" value="' . dol_escape_htmltag($search_vat) . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="right flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
     print '<td class="liste_titre" align="right"></td>';
     print '<td class="liste_titre" align="right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(1);

@@ -128,7 +128,7 @@ if (is_dir($dir))
 asort($linkforyear);
 foreach($linkforyear as $cursoryear)
 {
-    print '<a href="rapport.php?year='.$cursoryear.'">'.$cursoryear.'</a> &nbsp;';
+    print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$cursoryear.'">'.$cursoryear.'</a> &nbsp;';
 }
 
 if ($year)

@@ -438,6 +438,35 @@ class Productlot extends CommonObject
 		}
 	}
 	
+	
+	/**
+	 *	Return label of status of object
+	 *
+	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return     string      		Label of status
+	 */
+	function getLibStatut($mode=0)
+	{
+	    return $this->LibStatut(0,$mode);
+	}
+	
+	/**
+	 *	Return label of a given status
+	 *
+	 *	@param	int		$statut     Status
+	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return string      		Label of status
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+	    global $langs;
+	
+	    //$langs->load('stocks');
+
+	    return '';
+	}
+	
+	
 	/**
 	 *  Return a link to the a lot card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname

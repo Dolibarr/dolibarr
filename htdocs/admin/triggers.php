@@ -52,6 +52,7 @@ $template_dir = DOL_DOCUMENT_ROOT.'/core/tpl/';
 $interfaces = new Interfaces($db);
 $triggers = $interfaces->getTriggersList();
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">
 <tr class="liste_titre">
 <td colspan="2">'.$langs->trans("File").'</td>
@@ -66,9 +67,9 @@ foreach ($triggers as $trigger)
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
 	print '<td valign="top" width="14" align="center">'.$trigger['picto'].'</td>';
-	print '<td valign="top">'.$trigger['file'].'</td>';
+	print '<td class="tdtop">'.$trigger['file'].'</td>';
 	print '<td valign="top" align="center">'.$trigger['status'].'</td>';
-	print '<td valign="top">';
+	print '<td class="tdtop">';
 	$text=$trigger['info'];
 	$text.="<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
 	//$text.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
@@ -78,6 +79,7 @@ foreach ($triggers as $trigger)
 }
 
 print '</table>';
+print '</div>';
 
 llxFooter();
 

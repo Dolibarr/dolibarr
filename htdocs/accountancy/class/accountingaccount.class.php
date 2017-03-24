@@ -150,12 +150,19 @@ class AccountingAccount extends CommonObject
 		if (isset($this->active))
 			$this->active = trim($this->active);
 			
-			// Check parameters
-			// Put here code to add control on parameters values
+		if (empty($this->pcg_type) || $this->pcg_type == '-1')
+		{
+		    $this->pcg_type = 'XXXXXX';
+		}
+		if (empty($this->pcg_subtype) || $this->pcg_subtype == '-1')
+		{
+		    $this->pcg_subtype = 'XXXXXX';
+		}
+		// Check parameters
+		// Put here code to add control on parameters values
 			
 		// Insert request
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_account(";
-		
 		$sql .= "datec";
 		$sql .= ", entity";
 		$sql .= ", fk_pcg_version";
@@ -167,9 +174,7 @@ class AccountingAccount extends CommonObject
 		$sql .= ", fk_accounting_category";
 		$sql .= ", fk_user_author";
 		$sql .= ", active";
-		
 		$sql .= ") VALUES (";
-		
 		$sql .= " '" . $this->db->idate($now) . "'";
 		$sql .= ", " . $conf->entity;
 		$sql .= ", " . (empty($this->fk_pcg_version) ? 'NULL' : "'" . $this->db->escape($this->fk_pcg_version) . "'");
@@ -225,11 +230,22 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Update record
 	 *
-	 * @param User $user Use making update
-	 * @return int <0 if KO, >0 if OK
+	 * @param  User $user      Use making update
+	 * @return int             <0 if KO, >0 if OK
 	 */
-	function update($user) {
-		$this->db->begin();
+	function update($user) 
+	{
+	    // Check parameters
+	    if (empty($this->pcg_type) || $this->pcg_type == '-1')
+	    {
+	        $this->pcg_type = 'XXXXXX';
+	    }
+	    if (empty($this->pcg_subtype) || $this->pcg_subtype == '-1')
+	    {
+	        $this->pcg_subtype = 'XXXXXX';
+	    }
+	     
+	    $this->db->begin();
 		
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
 		$sql .= " SET fk_pcg_version = " . ($this->fk_pcg_version ? "'" . $this->db->escape($this->fk_pcg_version) . "'" : "null");
@@ -241,7 +257,6 @@ class AccountingAccount extends CommonObject
 		$sql .= " , fk_accounting_category = '" . $this->account_category . "'";
 		$sql .= " , fk_user_modif = " . $user->id;
 		$sql .= " , active = '" . $this->active . "'";
-		
 		$sql .= " WHERE rowid = " . $this->id;
 		
 		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);

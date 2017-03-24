@@ -6,7 +6,7 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2006		Auguria SARL			<info@auguria.org>
  * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013-2014	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2013-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012-2013	Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2011-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
@@ -147,7 +147,6 @@ if (empty($reshook))
 	{
 		// Save last template used to generate document
 		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
 		// Define output language
 		$outputlangs = $langs;
 		$newlang='';
@@ -158,11 +157,12 @@ if (empty($reshook))
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		$result=product_create($db, $object, GETPOST('model','alpha'), $outputlangs);
+		$ret = $object->fetch($id); // Reload to get new records
+		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		if ($result <= 0)
 		{
-			dol_print_error($db,$result);
-			exit;
+			setEventMessages($object->error, $object->errors, 'errors');
+	        $action='';
 		}
 	}
 	
@@ -197,6 +197,20 @@ if (empty($reshook))
 			setEventMessages($errors, null, 'errors');
 		}
     }
+	
+	// Remove file in doc form
+	if ($action == 'remove_file' && $user->rights->produit->creer) {
+		if ($object->id > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	
+			$langs->load("other");
+			$upload_dir = $conf->product->dir_output;
+			$file = $upload_dir . '/' . GETPOST('file');
+			$ret = dol_delete_file($file, 0, 0, 0, $object);
+			if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
+		}
+	}
 
     // Add a product or service
     if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
@@ -283,7 +297,9 @@ if (empty($reshook))
             $object->weight_units       	 = GETPOST('weight_units');
             $object->length             	 = GETPOST('size');
             $object->length_units       	 = GETPOST('size_units');
-            $object->surface            	 = GETPOST('surface');
+            $object->width               	 = GETPOST('sizewidth');
+            $object->height             	 = GETPOST('sizeheight');
+	        $object->surface            	 = GETPOST('surface');
             $object->surface_units      	 = GETPOST('surface_units');
             $object->volume             	 = GETPOST('volume');
             $object->volume_units       	 = GETPOST('volume_units');
@@ -380,6 +396,9 @@ if (empty($reshook))
                 $object->weight_units           = GETPOST('weight_units');
                 $object->length                 = GETPOST('size');
                 $object->length_units           = GETPOST('size_units');
+                $object->width               	 = GETPOST('sizewidth');
+                $object->height             	 = GETPOST('sizeheight');
+
                 $object->surface                = GETPOST('surface');
                 $object->surface_units          = GETPOST('surface_units');
                 $object->volume                 = GETPOST('volume');
@@ -641,13 +660,16 @@ if (empty($reshook))
                 }
             }
 
+			$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
+			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+            
             // On reevalue prix selon taux tva car taux tva transaction peut etre different
             // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-            if ($tva_tx != $object->tva_tx) {
+            if ($tmpvat != $tmpprodvat) {
                 if ($price_base_type != 'HT') {
-                    $pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU');
+                    $pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
                 } else {
-                    $pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
+                    $pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
                 }
             }
             
@@ -782,7 +804,7 @@ if (empty($reshook))
                 );
 
                 if ($result > 0) {
-                    header("Location: " . DOL_URL_ROOT . "/compta/facture.php?facid=" . $facture->id);
+                    header("Location: " . DOL_URL_ROOT . "/compta/facture/card.php?facid=" . $facture->id);
                     exit;
                 }
             }
@@ -1010,10 +1032,12 @@ else
             print $formproduct->select_measuring_units("weight_units","weight");
             print '</td></tr>';
             // Length
-            if (empty($conf->global->PRODUCT_DISABLE_LENGTH))
+            if (empty($conf->global->PRODUCT_DISABLE_SIZE))
             {
-                print '<tr><td>'.$langs->trans("Length").'</td><td colspan="3">';
-                print '<input name="size" size="4" value="'.GETPOST('size').'">';
+                print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="3">';
+                print '<input name="size" size="4" value="'.GETPOST('size').'"> x ';
+                print '<input name="sizewidth" size="4" value="'.GETPOST('sizewidth').'"> x ';
+                print '<input name="sizeheight" size="4" value="'.GETPOST('sizeheight').'">';
                 print $formproduct->select_measuring_units("size_units","size");
                 print '</td></tr>';
             }
@@ -1149,7 +1173,7 @@ else
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="' . $langs->trans("Create") . '">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+        print ' &nbsp; &nbsp; ';
 		print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
@@ -1324,13 +1348,15 @@ else
                 print '<input name="weight" size="5" value="'.$object->weight.'"> ';
                 print $formproduct->select_measuring_units("weight_units", "weight", $object->weight_units);
                 print '</td></tr>';
-                if (empty($conf->global->PRODUCT_DISABLE_LENGTH))
+                if (empty($conf->global->PRODUCT_DISABLE_SIZE))
                 {
-                    // Length
-                    print '<tr><td>'.$langs->trans("Length").'</td><td colspan="3">';
-                    print '<input name="size" size="5" value="'.$object->length.'"> ';
-                    print $formproduct->select_measuring_units("size_units", "size", $object->length_units);
-                    print '</td></tr>';
+        			// Length
+        			print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="3">';
+        			print '<input name="size" size="5" value="'.$object->length.'">x';
+        			print '<input name="sizewidth" size="5" value="'.$object->width.'">x';
+        			print '<input name="sizeheight" size="5" value="'.$object->height.'"> ';
+        			print $formproduct->select_measuring_units("size_units", "size", $object->length_units);
+        			print '</td></tr>';
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
                 {
@@ -1340,11 +1366,14 @@ else
                     print $formproduct->select_measuring_units("surface_units", "surface", $object->surface_units);
                     print '</td></tr>';
                 }
-                // Volume
-                print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
-                print '<input name="volume" size="5" value="'.$object->volume.'"> ';
-                print $formproduct->select_measuring_units("volume_units", "volume", $object->volume_units);
-                print '</td></tr>';
+                if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
+                {
+                    // Volume
+                    print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
+                    print '<input name="volume" size="5" value="'.$object->volume.'"> ';
+                    print $formproduct->select_measuring_units("volume_units", "volume", $object->volume_units);
+                    print '</td></tr>';
+                }
             }
         	// Units
 	        if($conf->global->PRODUCT_USE_UNITS)
@@ -1591,6 +1620,22 @@ else
 			print dol_print_url($object->url);
             print '</td></tr>';
 
+            //Parent product.
+            if (!empty($conf->variants->enabled) && $object->isProduct()) {
+
+                $combination = new ProductCombination($db);
+
+                if ($combination->fetchByFkProductChild($object->id) > 0) {
+                    $prodstatic = new Product($db);
+                    $prodstatic->fetch($combination->fk_product_parent);
+
+                    // Parent product
+                    print '<tr><td>'.$langs->trans("ParentProduct").'</td><td colspan="2">';
+                    print $prodstatic->getNomUrl(1);
+                    print '</td></tr>';
+                }
+            }
+
             print '</table>';
             print '</div>';
             print '<div class="fichehalfright"><div class="ficheaddleft">';
@@ -1635,13 +1680,16 @@ else
                     print '&nbsp;';
                 }
                 print "</td></tr>\n";
-                if (empty($conf->global->PRODUCT_DISABLE_LENGTH))
+                if (empty($conf->global->PRODUCT_DISABLE_SIZE))
                 {
                     // Length
-                    print '<tr><td>'.$langs->trans("Length").'</td><td colspan="2">';
-                    if ($object->length != '')
+                    print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="2">';
+                    if ($object->length != '' || $object->width != '' || $object->height != '')
                     {
-                        print $object->length." ".measuring_units_string($object->length_units,"size");
+                        print $object->length;
+                        if ($object->width) print " x ".$object->width;
+                        if ($object->height) print " x ".$object->height;
+                        print ' '.measuring_units_string($object->length_units,"size");
                     }
                     else
                     {
@@ -1663,17 +1711,20 @@ else
                     }
                     print "</td></tr>\n";
                 }
-                // Volume
-                print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
-                if ($object->volume != '')
+                if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
                 {
-                    print $object->volume." ".measuring_units_string($object->volume_units,"volume");
+                    // Volume
+                    print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
+                    if ($object->volume != '')
+                    {
+                        print $object->volume." ".measuring_units_string($object->volume_units,"volume");
+                    }
+                    else
+                    {
+                        print '&nbsp;';
+                    }
+                    print "</td></tr>\n";
                 }
-                else
-                {
-                    print '&nbsp;';
-                }
-                print "</td></tr>\n";
             }
 
 			// Unit
@@ -1964,7 +2015,7 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
 /*
  * Documents generes
  */
-if ($action == '' || $action == 'view')
+if ($action != 'edit' && $action != 'delete')
 {
     print '<div class="fichecenter"><div class="fichehalfleft">';
     print '<a name="builddoc"></a>'; // ancre

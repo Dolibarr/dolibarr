@@ -238,8 +238,8 @@ function show_array_actions_to_do($max=5)
 	    $num = $db->num_rows($resql);
 
 	    print '<table class="noborder" width="100%">';
-	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastActionsToDo",$max).'</td>';
-		print '<td colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$langs->trans("FullList").'</a>';
+	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo",$max).'</th>';
+		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 
 		$var = true;
@@ -335,8 +335,8 @@ function show_array_last_actions_done($max=5)
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastDoneTasks",$max).'</td>';
-		print '<td colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=done">'.$langs->trans("FullList").'</a>';
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks",$max).'</th>';
+		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=done">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 		$var = true;
 		$i = 0;

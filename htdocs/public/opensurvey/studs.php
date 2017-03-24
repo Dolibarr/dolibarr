@@ -248,7 +248,7 @@ if (empty($object->ref))     // For survey, id is a hex string
     llxFooterSurvey();
 
     $db->close();
-    exit;
+    exit();
 }
 
 // Define format of choices
@@ -287,7 +287,7 @@ if (!$canbemodified) {
 	llxFooterSurvey();
 
 	$db->close();
-	die;
+	exit;
 }
 
 print '<form name="formulaire" action="studs.php?sondage='.$numsondage.'"'.'#bas" method="POST">'."\n";

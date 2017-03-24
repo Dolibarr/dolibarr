@@ -42,7 +42,7 @@ $mine 		= (GETPOST('mode','alpha') == 'mine' ? 1 : 0);
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid=$user->societe_id;
+//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result=restrictedArea($user,'projet',$id,'projet&project');
 
 $object = new Project($db);
@@ -96,7 +96,7 @@ if ($object->id > 0)
     //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 	$head = project_prepare_head($object);
-	dol_fiche_head($head, 'document', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
+	dol_fiche_head($head, 'document', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
 	// Files list constructor
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);

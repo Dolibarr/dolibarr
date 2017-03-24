@@ -17,14 +17,14 @@ CronMethodDoesNotExists=Sınıf %s hiçbir %s yöntemi içermiyor
 # Menu
 EnabledAndDisabled=Etkin ve engelli
 # Page list
-CronLastOutput=Son çalıştırma çıktısı
-CronLastResult=Son sonuç kodu
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Komut
 CronList=Planlı işler
 CronDelete=Planlı işleri sil
-CronConfirmDelete=Bu planlı işleri silmek istediğinizden emin misiniz?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Planlı işleri yükle
-CronConfirmExecute=Bu planlı işleri şimdi yürütmek istediğinizden emin misiniz?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Planlı iş modülü planlanmış işlerin yürütülmesini sağlar
 CronTask=İş
 CronNone=Hiçbiri

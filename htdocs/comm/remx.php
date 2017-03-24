@@ -114,7 +114,7 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 		$newdiscount2->amount_ttc=price2num($discount->amount_ttc-$newdiscount1->amount_ttc);
 		$newdiscount1->amount_ht=price2num($newdiscount1->amount_ttc/(1+$newdiscount1->tva_tx/100),'MT');
 		$newdiscount2->amount_ht=price2num($newdiscount2->amount_ttc/(1+$newdiscount2->tva_tx/100),'MT');
-		$newdiscount1->amount_tva=price2num($newdiscount1->amount_ttc-$newdiscount2->amount_ht);
+		$newdiscount1->amount_tva=price2num($newdiscount1->amount_ttc-$newdiscount1->amount_ht);
 		$newdiscount2->amount_tva=price2num($newdiscount2->amount_ttc-$newdiscount2->amount_ht);
 
 		$db->begin();
@@ -381,6 +381,15 @@ if ($socid > 0)
 				print preg_replace('/\(DEPOSIT\)/',$langs->trans("InvoiceDeposit"),$obj->description).' '.$facturestatic->getNomURl(1);
 				print '</td>';
 			}
+			elseif (preg_match('/\(EXCESS RECEIVED\)/',$obj->description))
+			{
+				print '<td class="nowrap">';
+				$facturestatic->id=$obj->fk_facture_source;
+				$facturestatic->ref=$obj->ref;
+				$facturestatic->type=$obj->type;
+				print preg_replace('/\(EXCESS RECEIVED\)/',$langs->trans("Invoice"),$obj->description).' '.$facturestatic->getNomURl(1);
+				print '</td>';
+			}
 			else
 			{
 				print '<td>';
@@ -540,13 +549,22 @@ if ($socid > 0)
 				print preg_replace('/\(DEPOSIT\)/',$langs->trans("InvoiceDeposit"),$obj->description).' '.$facturestatic->getNomURl(1);
 				print '</td>';
 			}
+			elseif (preg_match('/\(EXCESS RECEIVED\)/',$obj->description))
+			{
+				print '<td class="nowrap">';
+				$facturestatic->id=$obj->fk_facture_source;
+				$facturestatic->ref=$obj->ref;
+				$facturestatic->type=$obj->type;
+				print preg_replace('/\(EXCESS RECEIVED\)/',$langs->trans("Invoice"),$obj->description).' '.$facturestatic->getNomURl(1);
+				print '</td>';
+			}
 			else
 			{
 				print '<td>';
 				print $obj->description;
 				print '</td>';
 			}
-			print '<td align="left" class="nowrap"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>';
+			print '<td align="left" class="nowrap"><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>';
 			print '<td align="right">'.price($obj->amount_ht).'</td>';
 			print '<td align="right">'.price2num($obj->tva_tx,'MU').'%</td>';
 			print '<td align="right">'.price($obj->amount_ttc).'</td>';

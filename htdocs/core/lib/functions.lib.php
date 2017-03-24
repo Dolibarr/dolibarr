@@ -1,18 +1,18 @@
 <?php
-/* Copyright (C) 2000-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014      Cédric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+/* Copyright (C) 2000-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
+ * Copyright (C) 2004		Christophe Combelles		<ccomb@free.fr>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@capnetworks.com>
+ * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2016	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013-2017	Alexandre Spangaro			<aspangaro@zendsi.com>
+ * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -248,7 +248,24 @@ function dol_shutdown()
  */
 function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 {
-	if (empty($method)) $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
+	if (empty($method))
+	{
+		$out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
+		
+		// Management of default values
+		if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+		{
+			$relativepathstring = preg_replace('/\.[a-z]+$/', '', $_SERVER["PHP_SELF"]);
+			if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+			$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+			$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+			$relativepathstring=dol_string_nospecial($relativepathstring, '-');
+			// $relativepathstring is now string that identify the page: '_societe_card', '_agenda_card', ...
+			$keyfordefaultvalue = 'MAIN_DEFAULT_FOR_'.$relativepathstring.'_'.$paramname;
+			global $conf;
+			if (isset($conf->global->$keyfordefaultvalue)) $out = $conf->global->$keyfordefaultvalue;
+		}
+	}
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
 	elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
@@ -271,8 +288,13 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	        }
 	        elseif ($reg[1] == 'YEAR')
 	        {
-	           $tmp=dol_getdate(dol_now(), true);
-	           $out = $tmp['year'];
+	            $tmp=dol_getdate(dol_now(), true);
+	            $out = $tmp['year'];
+	        }
+	        elseif ($reg[1] == 'MYCOUNTRYID')
+	        {
+	            global $mysoc;
+	            $out = $mysoc->country_id;
 	        }
 	    }
 
@@ -374,7 +396,7 @@ function dol_include_once($relpath, $classname='')
 
 
 /**
- *	Return path of url or filesystem. Return alternate root if exists
+ *	Return path of url or filesystem. Return alternate root if exists.
  *
  * 	@param	string	$path		Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
  *  @param	int		$type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path using same host that current url), 3=Used for an URL path (output full path using host defined into $dolibarr_main_url_root of conf file)
@@ -740,7 +762,10 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
     		'ip' => false
     	);
 
-    	if (! empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
+    	// This is when server run behind a reverse proxy
+    	if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) $data['ip'] = $_SERVER['HTTP_X_FORWARDED_FOR'].(empty($_SERVER["REMOTE_ADDR"])?'':'->'.$_SERVER['REMOTE_ADDR']);
+    	// This is when server run normally on a server
+    	else if (! empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
     	// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
     	else if (! empty($_SERVER['SERVER_ADDR'])) $data['ip'] = $_SERVER['SERVER_ADDR'];
     	// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
@@ -772,7 +797,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
  *	@param	array	$links				Array of tabs. Currently initialized by calling a function xxx_admin_prepare_head
  *	@param	string	$active     		Active tab name (document', 'info', 'ldap', ....)
  *	@param  string	$title      		Title
- *	@param  int		$notab				0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
+ *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  * 	@return	void
@@ -788,7 +813,7 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  *	@param	array	$links				Array of tabs
  *	@param	string	$active     		Active tab name
  *	@param  string	$title      		Title
- *	@param  int		$notab				0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
+ *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  * 	@return	string
@@ -918,7 +943,7 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 
 	$out.="</div>\n";
 
-	if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
+	if (! $notab || $notab == -1) $out.="\n".'<div class="tabBar'.($notab == -1 ? '' : ' tabBarWithBottom').'">'."\n";
 
 	$parameters=array('tabname' => $active, 'out' => $out);
 	$reshook=$hookmanager->executeHooks('printTabsHead',$parameters);	// This hook usage is called just before output the head of tabs. Take also a look at "completeTabsHead"
@@ -933,7 +958,7 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 /**
  *  Show tab footer of a card
  *
- *  @param	int		$notab       0=Add tab footer, 1=no tab footer
+ *  @param	int		$notab       -1 or 0=Add tab footer, 1=no tab footer
  *  @return	void
  */
 function dol_fiche_end($notab=0)
@@ -944,12 +969,12 @@ function dol_fiche_end($notab=0)
 /**
  *	Return tab footer of a card
  *
- *	@param  int		$notab		0=Add tab footer, 1=no tab footer
+ *	@param  int		$notab		-1 or 0=Add tab footer, 1=no tab footer
  *  @return	string
  */
 function dol_get_fiche_end($notab=0)
 {
-	if (! $notab) return "\n</div>\n";
+	if (! $notab || $notab == -1) return "\n</div>\n";
 	else return '';
 }
 
@@ -967,7 +992,7 @@ function dol_get_fiche_end($notab=0)
  *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
  *	@param	string	$morehtmlleft	More html code to show before ref
  *	@param	string	$morehtmlstatus	More html code to show under navigation arrows
- *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner
+ *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner (add css 'arearefnobottom' on div)
  *	@param	string	$morehtmlright	More html code to show before navigation arrows
  *  @return	void
  */
@@ -980,12 +1005,16 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	$showbarcode=empty($conf->barcode->enabled)?0:($object->barcode?1:0);
 	if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 	$modulepart='unknown';
-	if ($object->element == 'societe') $modulepart='societe';
-	if ($object->element == 'contact') $modulepart='contact';
-	if ($object->element == 'member')  $modulepart='memberphoto';
-	if ($object->element == 'user')    $modulepart='userphoto';
-	if ($object->element == 'product') $modulepart='product';
 
+	if ($object->element == 'societe')   $modulepart='societe';
+	if ($object->element == 'contact')   $modulepart='contact';
+	if ($object->element == 'member')    $modulepart='memberphoto';
+	if ($object->element == 'user')      $modulepart='userphoto';
+	if ($object->element == 'product')   $modulepart='product';
+	if ($object->element == 'propal')    $modulepart='propal';
+	if ($object->element == 'commande')  $modulepart='commande';
+	if ($object->element == 'facture')   $modulepart='facture';
+	
 	if ($object->element == 'product')
 	{
 	    $width=80; $cssclass='photoref';
@@ -1003,7 +1032,6 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 				$nophoto='/public/theme/common/nophoto.png';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
 			}
-
         }
 	}
 	else
@@ -1012,7 +1040,56 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
         {
             if ($modulepart != 'unknown')
             {
-                $phototoshow = $form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos);
+                // Check if a preview file is available
+                if (in_array($modulepart, array('propal', 'commande', 'facture')) && class_exists("Imagick"))
+                {
+                    $objectref = dol_sanitizeFileName($object->ref);
+                    $dir_output = $conf->$modulepart->dir_output . "/";
+                    $filepath = $dir_output . $objectref . "/";
+                    $file = $filepath . $objectref . ".pdf";
+                    $relativepath = $objectref.'/'.$objectref.'.pdf';
+                    
+                    // Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
+                    $fileimage = $file.'_preview.png';              // If PDF has 1 page
+                    $fileimagebis = $file.'_preview-0.pdf.png';     // If PDF has more than one page
+                    $relativepathimage = $relativepath.'_preview.png';
+                    
+                    // Si fichier PDF existe
+                    if (file_exists($file))
+                    {
+                        $encfile = urlencode($file);
+                        // Conversion du PDF en image png si fichier png non existant
+                        if ((! file_exists($fileimage) && ! file_exists($fileimagebis)) || (filemtime($fileimage) < filemtime($file)))
+                        {
+                            $ret = dol_convert_file($file,'png',$fileimage);
+                            if ($ret < 0) $error++;
+                        }
+    
+                        // Si fichier png PDF d'1 page trouve
+                        if (file_exists($fileimage))
+                        {
+                            $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
+                            $phototoshow.= '<img height="70" class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+                            $phototoshow.= '</div></div>';
+                        }
+                        // Si fichier png PDF de plus d'1 page trouve
+                        elseif (file_exists($fileimagebis))
+                        {
+                            $preview = preg_replace('/\.png/','',$relativepath) . "-0.png";
+                            if (file_exists($dir_output.$preview))
+                            {
+                                $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
+                                $phototoshow.= '<img height="70" class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
+                                $phototoshow.= '</div></div>';
+                            }
+                        }
+                    }
+                }
+                else if (! $phototoshow)
+                {
+                    $phototoshow = $form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos);
+                }
+
                 if ($phototoshow)
                 {
                     $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
@@ -1020,7 +1097,8 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     $morehtmlleft.='</div>';
                 }
             }
-            elseif ($conf->browser->layout != 'phone')      // Show no photo link
+            
+            if (! $phototoshow && $conf->browser->layout != 'phone')      // Show No photo link (picto of pbject)
             {
                 $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
                 if ($object->element == 'action')
@@ -1032,16 +1110,24 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                 else
                 {
                     $width=14; $cssclass='photorefcenter';
-    				$nophoto=img_picto('', 'object_'.$object->picto, '', false, 1);
+                    $picto = $object->picto;
+                    if ($object->element == 'project' && ! $object->public) $picto = 'project'; // instead of projectpub
+    				$nophoto=img_picto('', 'object_'.$picto, '', false, 1);
     				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.$nophoto.'"></div></div>';
                 }
                 $morehtmlleft.='</div>';
             }
         }
 	}
+	
 	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
-	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-		$morehtmlstatus.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
+	
+	if ($object->element == 'societe')
+	{
+	    if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) 
+    	{
+	       	$morehtmlstatus.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
+    	}
 	}
 	elseif ($object->element == 'product')
 	{
@@ -1088,9 +1174,13 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		$morehtmlstatus.=$tmptxt;
 	}
 	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
-	if ($object->element == 'product' && ! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
-
-	if ($object->element != 'product') 
+	
+	if ($object->element == 'product' || $object->element == 'bank_account')
+	{
+		if (! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
+	}
+	
+	if ($object->element != 'product' && $object->element != 'bookmark') 
 	{
     	$morehtmlref.='<div class="refidno">';
     	$morehtmlref.=$object->getBannerAddress('refaddress',$object);
@@ -2222,7 +2312,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
  *	@param	string	$trunc				Where to trunc: right, left, middle (size must be a 2 power), wrap
  * 	@param	string	$stringencoding		Tell what is source string encoding
  *  @param	int		$nodot				Truncation do not add ... after truncation. So it's an exact truncation.
- *  @param  int     $display            Trunc is use to display and can be changed for small screen
+ *  @param  int     $display            Trunc is use to display and can be changed for small screen. TODO Remove this param (must be dealt with CSS)
  *	@return string						Truncated string
  */
 function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodot=0, $display=0)
@@ -2343,7 +2433,7 @@ function img_picto($titlealt, $picto, $morealt = '', $pictoisfullpath = false, $
 		if (preg_match('/:[^\s0-9]/',$titlealt)) $tmparray=explode(':',$titlealt);		// We explode if we have TextA:TextB. Not if we have TextA: TextB
 		$title=$tmparray[0];
 		$alt=empty($tmparray[1])?'':$tmparray[1];
-		return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($title).'"').($morealt?' '.$morealt:'').'>';	// Alt is used for accessibility, title for popup
+		return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($title).'"').($morealt?' '.$morealt:'').'>';	// Alt is used for accessibility, title for popup
 	}
 }
 
@@ -2504,7 +2594,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Modify');
 
-	return img_picto($titlealt, 'edit.png', ($float ? 'style="float: right"' : $other));
+	return img_picto($titlealt, 'edit.png', ($float ? 'style="float: '.($langs->tab_translate["DIRECTION"] == 'rtl'?'left':'right').'"' : $other));
 }
 
 /**
@@ -2559,7 +2649,7 @@ function img_printer($titlealt = "default", $other='')
 /**
  *	Show help logo with cursor "?"
  *
- * 	@param	int              	$usehelpcursor		Use help cursor
+ * 	@param	int              	$usehelpcursor		1=Use help cursor, 2=Use click pointer cursor, 0=No specific cursor
  * 	@param	int|string	        $usealttitle		Text to use as alt title
  * 	@return string            	           			Return tag img
  */
@@ -2573,7 +2663,7 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
 		else $usealttitle = $langs->trans('Info');
 	}
 
-	return img_picto($usealttitle, 'info.png', ($usehelpcursor ? 'style="vertical-align: middle; cursor: help"' : 'style="vertical-align: middle;"'));
+	return img_picto($usealttitle, 'info.png', 'style="vertical-align: middle;'.($usehelpcursor == 1 ? ' cursor: help': ($usehelpcursor == 2 ? ' cursor: pointer':'')).'"');
 }
 
 /**
@@ -3174,7 +3264,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 }
 
 /**
- *	return a title with navigation controls for pagination
+ *	Print a title with navigation controls for pagination
  *
  *	@param	string	    $titre				Title to show (required)
  *	@param	int   	    $page				Numero of page to show in navigation links (required)
@@ -3184,7 +3274,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
  *	@param	string	    $sortorder       	Order to sort ('' by default)
  *	@param	string	    $center          	String in the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction() 
  *	@param	int		    $num				Number of records found by select with limit+1
- *	@param	int		    $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value to not show number.
+ *	@param	int|string  $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value of number to not show number. Use '' if unknown.
  *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
  *  @param	string	    $morehtml			More html to show
@@ -3193,7 +3283,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
  *  @param  int         $hideselectlimit    Force to hide select limit
  *	@return	void
  */
-function load_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=-1, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines='', $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
 {
 	global $conf,$langs;
 
@@ -3213,26 +3303,27 @@ function load_barre_liste($titre, $page, $file, $options='', $sortfield='', $sor
 		$nextpage = 0;
 	}
 	//print 'totalnboflines='.$totalnboflines.'-savlimit='.$savlimit.'-limit='.$limit.'-num='.$num.'-nextpage='.$nextpage;
-	$out = "\n";
-	$out.= "<!-- Begin title '".$titre."' -->\n";
-	$out.='<table width="100%" border="0" class="notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px;"><tr>';
+
+	print "\n";
+	print "<!-- Begin title '".$titre."' -->\n";
+	print '<table width="100%" border="0" class="notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px;"><tr>';
 
 	// Left
-	//if ($picto && $titre) $out.='<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
-	$out.='<td class="nobordernopadding valignmiddle">';
-	if ($picto && $titre) $out.=img_picto('', $picto, 'class="hideonsmartphone valignmiddle" id="pictotitle"', $pictoisfullpath);
-	$out.='<div class="titre inline-block">'.$titre;
-	if (!empty($titre) && $savtotalnboflines >= 0) $out.=' ('.$totalnboflines.')';
-	$out.='</div></td>';
+	//if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
+	print '<td class="nobordernopadding valignmiddle">';
+	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle" id="pictotitle"', $pictoisfullpath);
+	print '<div class="titre inline-block">'.$titre;
+	if (!empty($titre) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') print ' ('.$totalnboflines.')';
+	print '</div></td>';
 
 	// Center
 	if ($center)
 	{
-		$out.='<td class="nobordernopadding center valignmiddle">'.$center.'</td>';
+		print '<td class="nobordernopadding center valignmiddle">'.$center.'</td>';
 	}
 
 	// Right
-	$out.='<td class="nobordernopadding valignmiddle" align="right">';
+	print '<td class="nobordernopadding valignmiddle" align="right">';
 	if ($sortfield) $options .= "&amp;sortfield=".$sortfield;
 	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
 	// Show navigation bar
@@ -3281,39 +3372,15 @@ function load_barre_liste($titre, $page, $file, $options='', $sortfield='', $sor
 			$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="active"':'data-role="button"').'>'.($page+1)."</li>";
 		}
 	}
-	$out.=load_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $savlimit, $totalnboflines, $hideselectlimit);		// output the div and ul for previous/last completed with page numbers into $pagelist
-	$out.='</td>';
+	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $savlimit, $totalnboflines, $hideselectlimit);		// output the div and ul for previous/last completed with page numbers into $pagelist
+	print '</td>';
 
-	$out.='</tr></table>'."\n";
-	$out.="<!-- End title -->\n\n";
-}
-/**
- *	Print a title with navigation controls for pagination
- *
- *	@param	string	    $titre				Title to show (required)
- *	@param	int   	    $page				Numero of page to show in navigation links (required)
- *	@param	string	    $file				Url of page (required)
- *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder)
- *	@param	string    	$sortfield       	Field to sort on ('' by default)
- *	@param	string	    $sortorder       	Order to sort ('' by default)
- *	@param	string	    $center          	String in the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction() 
- *	@param	int		    $num				Number of records found by select with limit+1
- *	@param	int		    $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value to not show number.
- *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
- *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
- *  @param	string	    $morehtml			More html to show
- *  @param  string      $morecss            More css to the table
- *  @param  int         $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit).
- *  @param  int         $hideselectlimit    Force to hide select limit
- *	@return	void
- */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=-1, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
-{
-	echo load_barre_liste($titre, $page, $file, $options, $sortfield, $sortorder, $center, $num, $totalnboflines, $picto, $pictoisfullpath, $morehtml, $morecss, $limit, $hideselectlimit);
+	print '</tr></table>'."\n";
+	print "<!-- End title -->\n\n";
 }
 
 /**
- *	Function to return navigation arrows into lists
+ *	Function to show navigation arrows into lists
  *
  *	@param	int				$page				Number of page
  *	@param	string			$file				Page URL (in most cases provided with $_SERVER["PHP_SELF"])
@@ -3326,20 +3393,20 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  *  @param  int             $hideselectlimit    Force to hide select limit
  *	@return	void
  */
-function load_fleche_navigation($page, $file, $options='', $nextpage=0, $betweenarrows='', $afterarrows='', $limit=-1, $totalnboflines=0, $hideselectlimit=0)
+function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betweenarrows='', $afterarrows='', $limit=-1, $totalnboflines=0, $hideselectlimit=0)
 {
 	global $conf, $langs;
 
-	$out='<div class="pagination"><ul>';
+	print '<div class="pagination"><ul>';
 	if ((int) $limit >= 0 && empty($hideselectlimit))
 	{
 	    $pagesizechoices='10:10,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000';
 	    //$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
 	    //$pagesizechoices.=',2:2';
 	    if (! empty($conf->global->MAIN_PAGESIZE_CHOICES)) $pagesizechoices=$conf->global->MAIN_PAGESIZE_CHOICES;
-	     
-        $out.='<li class="pagination">';
-        $out.='<select class="flat selectlimit" name="limit">';
+
+        print '<li class="pagination">';
+        print '<select class="flat selectlimit" name="limit" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'">';
         $tmpchoice=explode(',',$pagesizechoices);
         $tmpkey=$limit.':'.$limit;
         if (! in_array($tmpkey, $tmpchoice)) $tmpchoice[]=$tmpkey;
@@ -3360,13 +3427,13 @@ function load_fleche_navigation($page, $file, $options='', $nextpage=0, $between
                     $selected = ' selected="selected"';
                     $found = true;
                 }
-                $out.='<option name="'.$key.'"'.$selected.'>'.dol_escape_htmltag($val).'</option>'."\n";
+                print '<option name="'.$key.'"'.$selected.'>'.dol_escape_htmltag($val).'</option>'."\n";
             }
         }
-        $out.='</select>';
+        print '</select>';
         if ($conf->use_javascript_ajax)
         {
-            $out.='<!-- JS CODE TO ENABLE select limit to launch submit of page -->
+            print '<!-- JS CODE TO ENABLE select limit to launch submit of page -->
             		<script type="text/javascript">
                 	jQuery(document).ready(function () {
             	  		jQuery(".selectlimit").change(function() {
@@ -3377,48 +3444,31 @@ function load_fleche_navigation($page, $file, $options='', $nextpage=0, $between
             		</script>
                 ';
         }
-        $out.='</li>';	    
+        print '</li>';
 	}
 	if ($page > 0)
 	{
-		if (($conf->dol_use_jmobile != 4)) $out.='<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>';
-		else $out.='<li><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a></li>';
+		if (($conf->dol_use_jmobile != 4)) print '<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>';
+		else print '<li><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a></li>';
 	}
 	if ($betweenarrows)
 	{
-		$out.=$betweenarrows;
+		print $betweenarrows;
 	}
 	if ($nextpage > 0)
 	{
-		if (($conf->dol_use_jmobile != 4)) $out.='<li class="pagination"><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'">></a></li>';
-		else $out.='<li><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$file.'?page='.($page+1).$options.'">'.$langs->trans("Next").'</a></li>';
+		if (($conf->dol_use_jmobile != 4)) print '<li class="pagination"><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'">></a></li>';
+		else print '<li><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$file.'?page='.($page+1).$options.'">'.$langs->trans("Next").'</a></li>';
 	}
 	if ($afterarrows)
 	{
-		$out.='<li class="paginationafterarrows">';
-		$out.=$afterarrows;
-		$out.='</li>';
+		print '<li class="paginationafterarrows">';
+		print $afterarrows;
+		print '</li>';
 	}
-	$out.='</ul></div>'."\n";
+	print '</ul></div>'."\n";
 }
-/**
- *	Function to show navigation arrows into lists
- *
- *	@param	int				$page				Number of page
- *	@param	string			$file				Page URL (in most cases provided with $_SERVER["PHP_SELF"])
- *	@param	string			$options         	Other url paramaters to propagate ("" by default, may include sortfield and sortorder)
- *	@param	integer			$nextpage	    	Do we show a next page button
- *	@param	string			$betweenarrows		HTML content to show between arrows. MUST contains '<li> </li>' tags or '<li><span> </span></li>'.
- *  @param	string			$afterarrows		HTML content to show after arrows. Must NOT contains '<li> </li>' tags.
- *  @param  int             $limit              Max nb of record to show  (-1 = no combo with limit, 0 = no limit, > 0 = limit)
- *	@param	int		        $totalnboflines		Total number of records/lines for all pages (if known)
- *  @param  int             $hideselectlimit    Force to hide select limit
- *	@return	void
- */
-function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betweenarrows='', $afterarrows='', $limit=-1, $totalnboflines=0, $hideselectlimit=0)
-{
-	echo load_fleche_navigation($page, $file, $options, $nextpage, $betweenarrows, $afterarrows, $limit, $totalnboflines, $hideselectlimit);
-}
+
 
 /**
  *	Return a string with VAT rate label formated for view output
@@ -3991,11 +4041,12 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 
 /**
  *	Return vat rate of a product in a particular selling country or default country vat if product is unknown
- *
+ *  Function called by get_default_tva
+ *  
  *  @param	int			$idprod          	Id of product or 0 if not a predefined product
  *  @param  Societe		$thirdparty_seller  Thirdparty with a ->country_code defined (FR, US, IT, ...)
  *	@param	int			$idprodfournprice	Id product_fournisseur_price (for "supplier" order/invoice)
- *  @return float					        Vat rate
+ *  @return float|string   				    Vat rate to use with format 5.0 or '5.0 (XXX)'
  *  @see get_product_localtax_for_country
  */
 function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice=0)
@@ -4023,14 +4074,14 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			else
 			{
 				$ret=$product->tva_tx;    // Default vat of product we defined
+				if ($product->default_vat_code) $ret.=' ('.$product->default_vat_code.')';
 			}
 			$found=1;
 		}
 		else
 		{
-			// TODO Read default product vat according to countrycode and product
-
-
+			// TODO Read default product vat according to countrycode and product. Vat for couple countrycode/product is a feature not implemeted yet. 
+			// May be usefull/required if hidden option SERVICE_ARE_ECOMMERCE_200238EC is on
 		}
 	}
 
@@ -4038,11 +4089,11 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 	{
 		if (empty($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS))
 		{
-			// If vat of product for the country not found or not defined, we return higher vat of country.
+			// If vat of product for the country not found or not defined, we return the first higher vat of country.
 			$sql = "SELECT taux as vat_rate";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 			$sql.= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
-			$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
+			$sql.= " ORDER BY t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql.= $db->plimit(1);
 
 			$resql=$db->query($sql);
@@ -4145,7 +4196,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
  *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
  *	@param  int			$idprod					Id product
  *	@param	int			$idprodfournprice		Id product_fournisseur_price (for supplier order/invoice)
- *	@return float         				      	Vat rate to use, -1 if we can't guess it
+ *	@return float|string   				      	Vat rate to use with format 5.0 or '5.0 (XXX)', -1 if we can't guess it
  *  @see get_default_npr, get_default_localtax
  */
 function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
@@ -4355,7 +4406,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 
 	$path = '';
 
-	$arrayforoldpath=array('cheque','user','category','holiday','shipment','supplier_invoice','invoice_supplier','mailing');
+	$arrayforoldpath=array('cheque','user','category','holiday','shipment','supplier_invoice','invoice_supplier','mailing','supplier_payment');
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';
 	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
 	{
@@ -5566,6 +5617,7 @@ function printCommonFooter($zone='private')
     	{
         	print '<!-- Set handler to switch left menu page -->'."\n";
         	print 'jQuery(".menuhider").click(function() {';
+        	print '  console.log("We click on .menuhider");'."\n";
         	print "  $('.side-nav').toggle();";
         	if ($conf->theme == 'md') print "  $('.login_block').toggle();";
         	print '});'."\n";
@@ -5861,7 +5913,7 @@ function getImageFileNameForSize($file, $extName, $extImgTarget='')
  */
 function getAdvancedPreviewUrl($modulepart, $relativepath)
 {
-    global $conf;
+    global $conf, $langs;
 
     if (empty($conf->use_javascript_ajax)) return '';
 
@@ -5870,7 +5922,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath)
     //$mime_preview[]='archive';
     $num_mime = array_search(dol_mimetype($relativepath, '', 1), $mime_preview);
 
-    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;attachment=0&amp;file='.$relativepath).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js('Preview').'\')';
+    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;attachment=0&amp;file='.$relativepath).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js($langs->trans('Preview')).'\')';
     else return '';
 }
 

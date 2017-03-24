@@ -199,10 +199,11 @@ if ($action == 'valide')
 
 }
 
-print '<table class="border" width="100%">';
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/compta/paiement/list.php">' . $langs->trans("BackToList") . '</a>';
 
+
+print '<table class="border centpercent">'."\n";
 
 // Ref
 print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td><td colspan="3">';
@@ -280,6 +281,8 @@ if (! empty($conf->banque->enabled))
 
 print '</table>';
 
+dol_fiche_end();
+
 
 /*
  * List of invoices
@@ -298,7 +301,14 @@ if ($resql)
 
 	$i = 0;
 	$total = 0;
-	print '<br><table class="noborder" width="100%">';
+	
+	$moreforfilter='';
+	
+	print '<br>';
+	
+	print '<div class="div-table-responsive">';
+	print '<table class="noborder" width="100%">';
+	
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Bill').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
@@ -363,6 +373,8 @@ if ($resql)
 	$var=!$var;
 
 	print "</table>\n";
+	print '</div>';
+	
 	$db->free($resql);
 }
 else
@@ -370,7 +382,6 @@ else
 	dol_print_error($db);
 }
 
-print '</div>';
 
 
 /*

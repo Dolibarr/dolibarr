@@ -34,11 +34,11 @@
  */
 class FormFile
 {
-    var $db;
-    var $error;
-
-    var $numoffiles;
-	var $infofiles;			// Used to return informations by function getDocumentsLink
+    private $db;
+    
+    public $error;
+    public $numoffiles;
+    public $infofiles;			// Used to return informations by function getDocumentsLink
 
 
     /**
@@ -76,7 +76,7 @@ class FormFile
         global $conf,$langs, $hookmanager;
         $hookmanager->initHooks(array('formfile'));
 
-        
+
         if (! empty($conf->browser->layout) && $conf->browser->layout != 'classic') $useajax=0;
 
 		if ((! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) && $useajax) || ($useajax==2))
@@ -275,7 +275,7 @@ class FormFile
 		if (0 !== $iconPDF) {
 			dol_syslog(__METHOD__ . ": passing iconPDF parameter is deprecated", LOG_WARNING);
 		}
-		
+
         global $langs, $conf, $user, $hookmanager;
         global $form, $bc;
 
@@ -287,7 +287,7 @@ class FormFile
         if (! empty($iconPDF)) {
         	return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
         }
-        
+
         $printer=0;
         if (in_array($modulepart,array('facture','supplier_proposal','propal','proposal','order','commande','expedition', 'commande_fournisseur', 'expensereport')))	// The direct print feature is implemented only for such elements
         {
@@ -333,7 +333,7 @@ class FormFile
         
         $titletoshow=$langs->trans("Documents");
         if (! empty($title)) $titletoshow=$title;
-
+        
         // Show table
         if ($genallowed)
         {
@@ -439,6 +439,15 @@ class FormFile
             		$modellist=ModelePDFTask::liste_modeles($this->db);
             	}
             }
+            elseif ($modulepart == 'product')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
+                    $modellist=ModelePDFProduct::liste_modeles($this->db);
+                }
+            }
             elseif ($modulepart == 'export')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
@@ -466,6 +475,15 @@ class FormFile
                     $modellist=ModelePDFSuppliersInvoices::liste_modeles($this->db);
                 }
             }
+			else if ($modulepart == 'supplier_payment')
+			{
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
+                    $modellist=ModelePDFSuppliersPayments::liste_modeles($this->db);
+                }
+			}
             else if ($modulepart == 'remisecheque')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
@@ -515,6 +533,24 @@ class FormFile
             {
                 $modellist='';
             }
+            elseif ($modulepart == 'user')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/user/modules_user.class.php';
+                    $modellist=ModelePDFUser::liste_modeles($this->db);
+                }
+            }
+            elseif ($modulepart == 'usergroup')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/usergroup/modules_usergroup.class.php';
+                    $modellist=ModelePDFUserGroup::liste_modeles($this->db);
+                }
+            }
             else //if ($modulepart != 'agenda')
             {
             	// For normalized standard modules
@@ -548,7 +584,7 @@ class FormFile
             if (empty($buttonlabel)) $buttonlabel=$langs->trans('Generate');
 
             if ($conf->browser->layout == 'phone') $urlsource.='#'.$forname.'_form';   // So we switch to form after a generation
-            if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
+            if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" id="'.$forname.'_form" method="post">';
             $out.= '<input type="hidden" name="action" value="builddoc">';
             $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             
@@ -559,7 +595,7 @@ class FormFile
 
             $addcolumforpicto=($delallowed || $printer || $morepicto);
             $out.= '<th align="center" colspan="'.(3+($addcolumforpicto?'2':'1')).'" class="formdoc liste_titre maxwidthonsmartphone">';
-            
+
             // Model
             if (! empty($modellist))
             {
@@ -669,7 +705,7 @@ class FormFile
 					
 					// Show file name with link to download
 					$out.= '<td class="nowrap">';
-					$out.= '<a data-ajax="false" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
+					$out.= '<a data-ajax="false" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
 					$mime=dol_mimetype($relativepath,'',0);
 					if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
 					$out.= ' target="_blank">';
@@ -803,7 +839,7 @@ class FormFile
     	{
     	    $out='<dl class="dropdown inline-block">
     			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight').'</a></dt>
-    			<dd><div class="multichoicedoc"><ul class="ulselectedfields" style="display: none;">';
+    			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields" style="display: none;">';
     	    $tmpout='';
 
     		// Loop on each file found
@@ -956,7 +992,7 @@ class FormFile
 			    print '<input type="hidden" name="id" value="'.$object->id.'">';
 			    print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
-			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborderbottom':'liste').'">'."\n";
+			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborder':'liste').'">'."\n";
 			
 			print '<tr class="liste_titre nodrag nodrop">';
 			print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
@@ -1106,6 +1142,7 @@ class FormFile
 					print "</td>\n";
 					print '<td align="right" width="80px">'.dol_print_size($file['size'],1,1).'</td>';
 					print '<td align="center" width="130px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
+				
 					// Preview
 					if (empty($useinecm))
 					{
@@ -1116,10 +1153,11 @@ class FormFile
 						    $minifile=getImageFileNameForSize($file['name'], '_mini'); // For new thumbs using same ext (in lower case howerver) than original
 						    if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
 						    //print $file['path'].'/'.$minifile.'<br>';
+
 						    $urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
-						    if (empty($urlforhref)) $urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+						    if (empty($urlforhref)) $urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
 						    print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
-							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$minifile).'" title="">';
+							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
 							print '</a>';
 						}
 						else print '&nbsp;';
@@ -1410,6 +1448,13 @@ class FormFile
                 print '<td>';
                 if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) print $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]->getNomUrl(1,'document');
                 else print $langs->trans("ObjectDeleted",($id?$id:$ref));
+                
+                $filename=dol_sanitizeFileName($ref);
+                //$filedir=$conf->$modulepart->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+                $filedir=$file['path'];
+                //$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+                //print $formfile->getDocumentsLink($modulepart, $filename, $filedir);
+                
                 print '</td>';
                 print '<td>';
                 //print "XX".$file['name']; //$file['name'] must be utf8
@@ -1419,14 +1464,17 @@ class FormFile
                 print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
                 print dol_trunc($file['name'],$maxlength,'middle');
                 print '</a>';
+                
+                print $this->getDocumentsLink($modulepart, $filename, $filedir);
+                
                 print "</td>\n";
                 print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
                 print '<td align="center">'.dol_print_date($file['date'],"dayhour").'</td>';
                 print '<td align="right">';
-                if (! empty($useinecm))  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
-                if ($forcedownload) print '&attachment=1';
-                print '&file='.urlencode($relativefile).'">';
-                print img_view().'</a> &nbsp; ';
+                //if (! empty($useinecm))  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+                //if ($forcedownload) print '&attachment=1';
+                //print '&file='.urlencode($relativefile).'">';
+                //print img_view().'</a> &nbsp; ';
                 //if ($permtodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
                 //else print '&nbsp;';
                 print "</td></tr>\n";
