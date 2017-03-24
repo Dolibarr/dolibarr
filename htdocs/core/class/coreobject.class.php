@@ -25,10 +25,8 @@
  
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
-class CoreObject extends CommonObject {
-	
-	public $db;
-	
+class CoreObject extends CommonObject
+{
 	public $withChild = true;
 	
 	public $error = '';
@@ -41,217 +39,326 @@ class CoreObject extends CommonObject {
 	 *
 	 *  @param      DoliDB		$db      Database handler
 	 */
-	function __construct(DoliDB &$db) {
-		
-
+	function __construct(DoliDB &$db)
+    {
+        $this->db = $db;
 	}
-	
-	protected function init() {
-		
+
+    /**
+     * Function to init fields
+     *
+     * @return bool
+     */
+	protected function init()
+    {
 		$this->id = 0;
 		$this->datec = 0;
 		$this->tms = 0;
 		
-		if(!empty($this->__fields)) {
-			foreach ($this->__fields as $field=>$info) {
-		
-		        if($this->is_date($info)){
-					$this->{$field} = time();
-		        }
-		        elseif($this->is_array($info)){
-					$this->{$field} = array();
-		        }
-		        elseif($this->is_int($info)){
-					$this->{$field} = (int)0;
-		        }
-		        elseif($this->is_float($info)) {
-					$this->{$field} = (double)0;
-				}
-		        else{
-					$this->{$field} = '';
-		        }
+		if (!empty($this->__fields))
+		{
+			foreach ($this->__fields as $field=>$info)
+			{
+		        if ($this->is_date($info)) $this->{$field} = time();
+		        elseif ($this->is_array($info)) $this->{$field} = array();
+		        elseif ($this->is_int($info)) $this->{$field} = (int) 0;
+		        elseif ($this->is_float($info)) $this->{$field} = (double) 0;
+				else $this->{$field} = '';
 		    }
-			
-		    $this->to_delete=false;
+
+            $this->to_delete=false;
+            $this->is_clone=false;
 			
 			return true;
 		}
-		else{
+		else
+        {
 			return false;
 		}
 			
 	}
-	
-	private function checkFieldType($field, $type) {
-		
-		if( isset($this->__fields[$field]) && method_exists($this, 'is_'.$type)) {
+
+    /**
+     * Test type of field
+     *
+     * @param   string  $field  name of field
+     * @param   string  $type   type of field to test
+     * @return                  value of field or false
+     */
+    private function checkFieldType($field, $type)
+    {
+		if (isset($this->__fields[$field]) && method_exists($this, 'is_'.$type))
+		{
 			return $this->{'is_'.$type}($this->__fields[$field]);
 		}
-		else return false;
-		
+		else
+        {
+            return false;
+        }
 	}
-	
-	private function is_date(Array &$info){
-	
+
+    /**
+     * Function test if type is date
+     *
+     * @param   array   $info   content informations of field
+     * @return                  bool
+     */
+    private function is_date($info)
+    {
 		if(isset($info['type']) && $info['type']=='date') return true;
 		else return false;
-		
 	}
-	
-	private function is_array($info) {
-		
-	  	if(is_array($info)) {
+
+    /**
+     * Function test if type is array
+     *
+     * @param   array   $info   content informations of field
+     * @return                  bool
+     */
+	private function is_array($info)
+    {
+	  	if(is_array($info))
+	  	{
 			if(isset($info['type']) && $info['type']=='array') return true;
 			else return false;
 		}
 		else return false;
 	}
-	
-	
-	private function is_null($info){
-		if(is_array($info)) {
+
+    /**
+     * Function test if type is null
+     *
+     * @param   array   $info   content informations of field
+     * @return                  bool
+     */
+	private function is_null($info)
+    {
+		if(is_array($info))
+		{
 			if(isset($info['type']) && $info['type']=='null') return true;
 			else return false;
 		}
 		else return false;
 	}
-	
-	private function is_int($info){
-	
-		if(is_array($info)) {
+
+    /**
+     * Function test if type is integer
+     *
+     * @param   array   $info   content informations of field
+     * @return                  bool
+     */
+	private function is_int($info)
+    {
+		if(is_array($info))
+		{
 			if(isset($info['type']) && ($info['type']=='int' || $info['type']=='integer' )) return true;
 			else return false;
 		}
 		else return false;
 	}
-	private function is_float($info){
-		if(is_array($info)) {
+
+    /**
+     * Function test if type is float
+     *
+     * @param   array   $info   content informations of field
+     * @return                  bool
+     */
+	private function is_float($info)
+    {
+		if(is_array($info))
+		{
 			if(isset($info['type']) && $info['type']=='float') return true;
 			else return false;
-		} else return false;
+		}
+		else return false;
 	}
-	
-	private function is_text($info){
-	  	if(is_array($info)) {
+
+    /**
+     * Function test if type is text
+     *
+     * @param   array   $info   content informations of field
+     * @return                  bool
+     */
+	private function is_text($info)
+    {
+	  	if(is_array($info))
+	  	{
 			if(isset($info['type']) && $info['type']=='text') return true;
 			else return false;
-		} else return false;
+		}
+		else return false;
 	}
-	private function is_index($info){
-	  	if(is_array($info)) {
+
+    /**
+     * Function test if is indexed
+     *
+     * @param   array   $info   content informations of field
+     * @return                  bool
+     */
+	private function is_index($info)
+    {
+	  	if(is_array($info))
+	  	{
 			if(isset($info['index']) && $info['index']==true) return true;
 			else return false;
-		} else return false;
+		}
+		else return false;
 	}
-		
-	private function set_save_query(){
-		
+
+
+    /**
+     * Function to prepare the values to insert
+     *
+     * @return array
+     */
+    private function set_save_query()
+    {
 		$query=array();
-		
-		foreach ($this->__fields as $field=>$info) {
-	
-			if($this->is_date($info)){
-				if(empty($this->{$field})){
+		foreach ($this->__fields as $field=>$info)
+		{
+			if($this->is_date($info))
+			{
+				if(empty($this->{$field}))
+				{
 					$query[$field] = NULL;
 				}
-				else{
+				else
+                {
 					$query[$field] = $this->db->idate($this->{$field});
 				}
 		  	}
-		  	else if($this->is_array($info)){
-		  		    $query[$field] = serialize($this->{$field});
+		  	else if($this->is_array($info))
+		  	{
+                $query[$field] = serialize($this->{$field});
 		  	}
-		
-		  	else if($this->is_int($info)){
-		    	$query[$field] = (int)price2num($this->{$field});
+		  	else if($this->is_int($info))
+		  	{
+		    	$query[$field] = (int) price2num($this->{$field});
 		  	}
-		
-		  	else if($this->is_float($info)){
-		    	$query[$field] = (double)price2num($this->{$field});
+		  	else if($this->is_float($info))
+		  	{
+		    	$query[$field] = (double) price2num($this->{$field});
 		  	}
-		
-		  	elseif($this->is_null($info)) {
-		  		$query[$field] = (is_null($this->{$field}) || (empty($this->{$field}) && $this->{$field}!==0 && $this->{$field}!=='0')?null:$this->{$field});
+		  	elseif($this->is_null($info))
+            {
+		  		$query[$field] = (is_null($this->{$field}) || (empty($this->{$field}) && $this->{$field}!==0 && $this->{$field}!=='0') ? null : $this->{$field});
 		    }
-		    else{
+		    else
+            {
 		       $query[$field] = $this->{$field};
 		    }
-		
 	    }
 	
 		return $query;
 	}
-		
-	private function get_field_list(){
-			
+
+
+    /**
+     * Function to concat keys of fields
+     *
+     * @return string
+     */
+    private function get_field_list()
+    {
 		$keys = array_keys($this->__fields);
-		
 	    return implode(',', $keys);
 	}
-	
-	private function set_vars_by_db(&$obj){
 
-		foreach ($this->__fields as $field=>$info) {
-			if($this->is_date($info)){
-				if(empty($obj->{$field}) || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00')$this->{$field} = 0;
+
+    /**
+     * Function to load data into current object this
+     *
+     * @param   stdClass    $obj    Contain data of object from database
+     */
+    private function set_vars_by_db(&$obj)
+    {
+		foreach ($this->__fields as $field => $info)
+		{
+			if($this->is_date($info))
+			{
+				if(empty($obj->{$field}) || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') $this->{$field} = 0;
 				else $this->{$field} = strtotime($obj->{$field});
 			}
-			elseif($this->is_array($info)){
+			elseif($this->is_array($info))
+            {
 				$this->{$field} = @unserialize($obj->{$field});
-				//HACK POUR LES DONNES NON UTF8
-				if($this->{$field}===FALSE)@unserialize(utf8_decode($obj->{$field}));
+				// Hack for data not in UTF8
+				if($this->{$field } === FALSE) @unserialize(utf8_decode($obj->{$field}));
 			}
-			elseif($this->is_int($info)){
+			elseif($this->is_int($info))
+            {
 				$this->{$field} = (int)$obj->{$field};
 			}
-			elseif($this->is_float($info)){
+			elseif($this->is_float($info))
+            {
 				$this->{$field} = (double)$obj->{$field};
 			}
-			elseif($this->is_null($info)){
+			elseif($this->is_null($info))
+            {
 				$val = $obj->{$field};
 				// zero is not null 
-				$this->{$field} = (is_null($val) || (empty($val) && $val!==0 && $val!=='0')?null:$val);
+				$this->{$field} = (is_null($val) || (empty($val) && $val!==0 && $val!=='0') ? null : $val);
 			}
-			else{
+			else
+            {
 				$this->{$field} = $obj->{$field};
 			}
 
 		}
 	}
-	
-	public function fetch($id, $loadChild = true) {
+
+    /**
+     *	Get object and children from database
+     *
+     *	@param      int			$id       		Id of object to load
+     * 	@param		bool		$loadChild		used to load children from database
+     *	@return     int         				>0 if OK, <0 if KO, 0 if not found
+     */
+	public function fetch($id, $loadChild = true)
+    {
+		if (empty($id)) return false;
+
+		$sql = 'SELECT '.$this->get_field_list().', datec, tms';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
+        $sql.= ' WHERE rowid = '.$id;
 		
-		if(empty($id)) return false;
+		$res = $this->db->query($sql);
+		if($obj = $this->db->fetch_object($res))
+		{
+            $this->id = $id;
+            $this->set_vars_by_db($obj);
 
-		$sql = 'SELECT '.$this->get_field_list().',datec,tms
-						FROM '.MAIN_DB_PREFIX.$this->table_element.'
-						WHERE rowid='.$id;
-		
-		$res = $this->db->query( $sql );
-		if($obj = $this->db->fetch_object($res)) {
-				$this->id=$id;
-			
-				$this->set_vars_by_db($obj);
+            $this->datec = $this->db->idate($obj->datec);
+            $this->tms = $this->db->idate($obj->tms);
 
-				$this->datec=$this->db->idate($obj->datec);
-				$this->tms=$this->db->idate($obj->tms);
-				
-				if($loadChild) $this->fetchChild();
+            if ($loadChild) $this->fetchChild();
 
-				return $this->id;
+            return $this->id;
 		}
-		else {
-				$this->error = $this->db->lasterror();
-				
-				return false;
+		else
+        {
+            $this->error = $this->db->lasterror();
+            return false;
 		}
-		
 	}
-	public function addChild($tabName, $id='', $key='id', $try_to_load = false) {
-		if(!empty($id)) {
-			foreach($this->{$tabName} as $k=>&$object) {
+
+
+    /**
+     * Function to instantiate a new child
+     *
+     * @param   string  $tabName        Table name of child
+     * @param   int     $id             If id is given, we try to return his key if exist or load if we try_to_load
+     * @param   string  $key            Attribute name of the object id
+     * @param   bool    $try_to_load    Force the fetch if an id is given
+     * @return                          int
+     */
+    public function addChild($tabName, $id=0, $key='id', $try_to_load = false)
+    {
+		if(!empty($id))
+		{
+			foreach($this->{$tabName} as $k=>&$object)
+			{
 				if($object->{$key} === $id) return $k;
-	
 			}
 		}
 	
@@ -259,28 +366,39 @@ class CoreObject extends CommonObject {
 	
 		$className = ucfirst($tabName);
 		$this->{$tabName}[$k] = new $className($this->db);
-		if($id>0 && $key==='id' && $try_to_load) { 
+		if($id>0 && $key==='id' && $try_to_load)
+		{
 			$this->{$tabName}[$k]->fetch($id); 
 		}
-	
-	
+
 		return $k;
 	}
-	
-	public function removeChild($tabName, $id, $key='id') {
-		foreach($this->{$tabName} as &$object) {
-	
-			if($object->{$key} == $id) {
+
+
+    /**
+     * Function to set a child as to delete
+     *
+     * @param   string  $tabName        Table name of child
+     * @param   int     $id             Id of child to set as to delete
+     * @param   string  $key            Attribute name of the object id
+     * @return                          bool
+     */
+    public function removeChild($tabName, $id, $key='id')
+    {
+		foreach ($this->{$tabName} as &$object)
+		{
+			if ($object->{$key} == $id)
+			{
 				$object->to_delete = true;
 				return true;
 			}
-	
-	
 		}
 		return false;
 	}
-	
-	public function fetchChild() {
+
+
+	public function fetchChild()
+    {
 
 		if($this->withChild && !empty($this->childtables) && !empty($this->fk_element)) {
 			foreach($this->childtables as &$childTable) {
@@ -390,76 +508,108 @@ class CoreObject extends CommonObject {
 		}
 	
 	}
-	public function delete(User &$user){
-		if($this->id>0){
-			$this->call_trigger(strtoupper($this->element). '_DELETE', $user);
-			
-			$this->db->delete($this->table_element,array('rowid'=>$this->id),array('rowid'));
-			
-			if($this->withChild && !empty($this->childtables)) {
-				foreach($this->childtables as &$childTable) {
-						
-					$className = ucfirst($childTable);
-					if(!empty($this->{$className})) {
-						foreach($this->{$className} as &$object) {
-				
-							$object->delete($user);
-				
-						}
-					}
-			
-				}
-			}
-			
-		
-			
+	public function delete(User &$user)
+    {
+		if($this->id>0)
+		{
+            $error = 0;
+
+            $result = $this->call_trigger(strtoupper($this->element). '_DELETE', $user);
+            if ($result < 0) $error++;
+
+
+            if (!$error)
+            {
+                $this->db->delete($this->table_element, array('rowid'=>$this->id), array('rowid'));
+
+                if($this->withChild && !empty($this->childtables))
+                {
+                    foreach($this->childtables as &$childTable)
+                    {
+                        $className = ucfirst($childTable);
+                        if (!empty($this->{$className}))
+                        {
+                            foreach($this->{$className} as &$object)
+                            {
+                                $object->delete($user);
+                            }
+                        }
+                    }
+                }
+            }
+
 		}
-	
-		
-	
 	}
-	public function get_date($field,$format='') {
+
+
+    /**
+     * Function to get a formatted date
+     *
+     * @param   string  $field  Attribute to return
+     * @param   string  $format Output date format
+     * @return          string
+     */
+    public function get_date($field, $format='')
+    {
 		if(empty($this->{$field})) return '';
-		else {
+		else
+        {
 			
 			return dol_print_date($this->{$field}, $format);
 		}
-	
 	}
-	
-	public function set_date($field,$date){
 
-	  	if(empty($date)) {
+    /**
+     * Function to set date in field
+     *
+     * @param   string  $field  field to set
+     * @param   string  $date   formatted date to convert
+     * @return                  mixed
+     */
+    public function set_date($field, $date)
+    {
+	  	if (empty($date))
+	  	{
 	  		$this->{$field} = 0;
 	  	}
-		else {
+		else
+        {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$this->{$field} = dol_stringtotime($date);
 		}
 
 		return $this->{$field};
 	}
-	
-	public function set_values(&$Tab) {
-		
-		foreach ($Tab as $key=>$value) {
-	
-			if($this->checkFieldType($key,'date')) {
+
+
+    /**
+     * Function to update current object
+     *
+     * @param   array   $Tab    Array of values
+     */
+    public function set_values(&$Tab)
+    {
+		foreach ($Tab as $key => $value)
+		{
+			if($this->checkFieldType($key, 'date'))
+			{
 				$this->set_date($key, $value);
 			}
-			else if( $this->checkFieldType($key,'array')){
+			else if( $this->checkFieldType($key, 'array'))
+			{
 				$this->{$key} = $value;
 			}
-			else if( $this->checkFieldType($key,'float') ) {
-				$this->{$key} = (double)price2num($value);
+			else if( $this->checkFieldType($key, 'float') )
+			{
+				$this->{$key} = (double) price2num($value);
 			}
-			else if( $this->checkFieldType($key,'int') ) {
-				$this->{$key} = (int)price2num($value);
+			else if( $this->checkFieldType($key, 'int') ) {
+				$this->{$key} = (int) price2num($value);
 			}
-			else {
+			else
+            {
 				$this->{$key} = @stripslashes($value);
 			}
-			
 		}
 	}
 	
