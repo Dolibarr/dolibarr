@@ -214,63 +214,53 @@ class modinventory extends DolibarrModules
 		$this->menu = array();			// List of menus to add
 		$r=0;
 
-		// Add here entries to declare new menus
-		//
-		// Example to declare a new Top Menu entry and its Left menu entry:
-		// $this->menu[$r]=array(	'fk_menu'=>0,			                // Put 0 if this is a top menu
-		//							'type'=>'top',			                // This is a Top menu entry
-		//							'titre'=>'inventory top menu',
-		//							'mainmenu'=>'inventory',
-		//							'leftmenu'=>'inventory',
-		//							'url'=>'/inventory/pagetop.php',
-		//							'langs'=>'mylangfile@inventory',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		//							'position'=>100,
-		//							'enabled'=>'$conf->inventory->enabled',	// Define condition to show or hide menu entry. Use '$conf->inventory->enabled' if entry must be visible if module is enabled.
-		//							'perms'=>'1',			                // Use 'perms'=>'$user->rights->inventory->level1->level2' if you want your menu with a permission rules
-		//							'target'=>'',
-		//							'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-		// $r++;
-		//
-		// Example to declare a Left Menu entry into an existing Top menu entry:
-		// $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=xxx',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-		//							'type'=>'left',			                // This is a Left menu entry
-		//							'titre'=>'inventory left menu',
-		//							'mainmenu'=>'xxx',
-		//							'leftmenu'=>'inventory',
-		//							'url'=>'/inventory/pagelevel2.php',
-		//							'langs'=>'mylangfile@inventory',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		//							'position'=>100,
-		//							'enabled'=>'$conf->inventory->enabled',  // Define condition to show or hide menu entry. Use '$conf->inventory->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-		//							'perms'=>'1',			                // Use 'perms'=>'$user->rights->inventory->level1->level2' if you want your menu with a permission rules
-		//							'target'=>'',
-		//							'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-		// $r++;
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=products,fk_leftmenu=stock',			                // Put 0 if this is a top menu
-								'type'=>'left',			                // This is a Top menu entry
-								'titre'=>'ListInventory',
-								'mainmenu'=>'inventory',
-								'leftmenu'=>'inventory',
-								'url'=>'/inventory/list.php',
-								'langs'=>'inventory',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-								'position'=>100,
-								'enabled'=>'$conf->inventory->enabled',	// Define condition to show or hide menu entry. Use '$conf->inventory->enabled' if entry must be visible if module is enabled.
-								'perms'=>'$user->rights->inventory->read',			                // Use 'perms'=>'$user->rights->inventory->level1->level2' if you want your menu with a permission rules
-								'target'=>'',
-								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-		$r++;
+
+        $this->menu[$r]=array(
+            'fk_menu'=>'fk_mainmenu=products',			                // Put 0 if this is a top menu
+            'type'=>'left',			                // This is a Top menu entry
+            'titre'=>'Inventory',
+            'mainmenu'=>'products',
+            'leftmenu'=>'inventory_left',
+            'url'=>'/inventory/list.php',
+            'langs'=>'inventory',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'position'=>100+$r,
+            'enabled'=>'$conf->inventory->enabled',	// Define condition to show or hide menu entry. Use '$conf->inventory->enabled' if entry must be visible if module is enabled.
+            'perms'=>'$user->rights->inventory->read',			                // Use 'perms'=>'$user->rights->inventory->level1->level2' if you want your menu with a permission rules
+            'target'=>'',
+            'user'=>2
+        );				                // 0=Menu for internal users, 1=external users, 2=both
+        $r++;
 		
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=products,fk_leftmenu=stock',			                // Put 0 if this is a top menu
-								'type'=>'left',			                // This is a Top menu entry
-								'titre'=>'NewInventory',
-								'mainmenu'=>'inventory',
-								'leftmenu'=>'inventory',
-								'url'=>'/inventory/inventory.php?action=create',
-								'position'=>100,
-								'enabled'=>'$conf->inventory->enabled',	// Define condition to show or hide menu entry. Use '$conf->inventory->enabled' if entry must be visible if module is enabled.
-								'perms'=>'$user->rights->inventory->create',			                // Use 'perms'=>'$user->rights->inventory->level1->level2' if you want your menu with a permission rules
-								'target'=>'',
-								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
+		$this->menu[$r]=array(
+		    'fk_menu'=>'fk_mainmenu=products,fk_leftmenu=inventory_left',			                // Put 0 if this is a top menu
+            'type'=>'left',			                // This is a Top menu entry
+            'titre'=>'NewInventory',
+            'mainmenu'=>'products',
+            'leftmenu'=>'inventory_left_create',
+            'url'=>'/inventory/inventory.php?action=create',
+            'position'=>100+$r,
+            'enabled'=>'$conf->inventory->enabled',	// Define condition to show or hide menu entry. Use '$conf->inventory->enabled' if entry must be visible if module is enabled.
+            'perms'=>'$user->rights->inventory->create',			                // Use 'perms'=>'$user->rights->inventory->level1->level2' if you want your menu with a permission rules
+            'target'=>'',
+            'user'=>2
+        );				                // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
+
+        $this->menu[$r]=array(
+            'fk_menu'=>'fk_mainmenu=products,fk_leftmenu=inventory_left',			                // Put 0 if this is a top menu
+            'type'=>'left',			                // This is a Top menu entry
+            'titre'=>'ListInventory',
+            'mainmenu'=>'products',
+            'leftmenu'=>'inventory_left_list',
+            'url'=>'/inventory/list.php',
+            'langs'=>'inventory',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'position'=>100+$r,
+            'enabled'=>'$conf->inventory->enabled',	// Define condition to show or hide menu entry. Use '$conf->inventory->enabled' if entry must be visible if module is enabled.
+            'perms'=>'$user->rights->inventory->read',			                // Use 'perms'=>'$user->rights->inventory->level1->level2' if you want your menu with a permission rules
+            'target'=>'',
+            'user'=>2
+        );				                // 0=Menu for internal users, 1=external users, 2=both
+        $r++;
 
 		// Exports
 		$r=1;
