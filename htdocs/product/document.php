@@ -210,8 +210,8 @@ if ($object->id)
 
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-    
-	dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
+    $object->next_prev_filter=" fk_product_type = ".$object->type;
+    dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
     
     print '<div class="fichecenter">';
     
