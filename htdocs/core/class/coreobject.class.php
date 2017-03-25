@@ -28,13 +28,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class CoreObject extends CommonObject
 {
 	public $withChild = true;
-	
+
+    /**
+     * @var string 		Error string
+     */
 	public $error = '';
-	/*
+
+    /**
+     * @var string[]	Array of error strings
+     */
+    public $errors=array();
+
+	/**
 	 *  @var Array $_fields Fields to synchronize with Database
 	 */
 	protected $__fields=array();
-	 /**
+
+    /**
 	 *  Constructor
 	 *
 	 *  @param      DoliDB		$db      Database handler
@@ -338,6 +348,7 @@ class CoreObject extends CommonObject
 		else
         {
             $this->error = $this->db->lasterror();
+            $this->errors[] = $this->error;
             return false;
 		}
 	}
@@ -397,148 +408,202 @@ class CoreObject extends CommonObject
 	}
 
 
-	public function fetchChild()
+    /**
+     * Function to fetch children objects
+     */
+    public function fetchChild()
     {
+		if($this->withChild && !empty($this->childtables) && !empty($this->fk_element))
+		{
+			foreach($this->childtables as &$childTable)
+			{
+                $className = ucfirst($childTable);
 
-		if($this->withChild && !empty($this->childtables) && !empty($this->fk_element)) {
-			foreach($this->childtables as &$childTable) {
-					
-					$className = ucfirst($childTable);
-					
-					$this->{$className}=array();
-					
-					$sql = " SELECT rowid FROM ".MAIN_DB_PREFIX.$childTable." WHERE ".$this->fk_element."=".$this->id;
-					$res = $this->db->query($sql);
-					
-					if($res) {
-						$Tab=array();
-						while($obj = $this->db->fetch_object($res)) {
-							
-							$o=new $className($this->db);	
-							$o->fetch($obj->rowid);
-							
-							$this->{$className}[] = $o;
-							
-						}
-						
-					}
+                $this->{$className}=array();
 
+                $sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$childTable.' WHERE '.$this->fk_element.' = '.$this->id;
+                $res = $this->db->query($sql);
+
+                if($res)
+                {
+                    while($obj = $this->db->fetch_object($res))
+                    {
+                        $o=new $className($this->db);
+                        $o->fetch($obj->rowid);
+
+                        $this->{$className}[] = $o;
+                    }
+                }
+                else
+                {
+                    $this->errors[] = $this->db->lasterror();
+                }
 			}
-
 		}
-
 	}
-	
-	public function saveChild(User &$user) {
-	
-		if($this->withChild && !empty($this->childtables) && !empty($this->fk_element)) {
-			foreach($this->childtables as &$childTable) {
-	
+
+    /**
+     * Function to update children data
+     *
+     * @param   User    $user   user object
+     */
+	public function saveChild(User &$user)
+    {
+		if($this->withChild && !empty($this->childtables) && !empty($this->fk_element))
+		{
+			foreach($this->childtables as &$childTable)
+			{
 				$className = ucfirst($childTable);
-				if(!empty($this->{$className})) {
-					foreach($this->{$className} as $i => &$object) {
-		
+				if(!empty($this->{$className}))
+				{
+					foreach($this->{$className} as $i => &$object)
+					{
 						$object->{$this->fk_element} = $this->id;
 						
 						$object->update($user);
 						if($this->unsetChildDeleted && isset($object->to_delete) && $object->to_delete==true) unset($this->{$className}[$i]);
 					}
 				}
-	
 			}
 		}
 	}
-	public function update(User &$user) {
-		if(empty($this->id )) return $this->create($user); // To test, with that, no need to test on high level object, the core decide it, update just needed
-		
-		if(isset($this->to_delete) && $this->to_delete==true) {
-			$this->delete($user);
-		}
-		else {
-		
-			$query = array();
-			
-			$query = $this->set_save_query();
-			$query['rowid']=$this->id;
-				
-			$res = $this->db->update($this->table_element,$query,array('rowid'));
-			
-			if($res) {
-			
-				$result = $this->call_trigger(strtoupper($this->element). '_UPDATE', $user);
-				
-				$this->saveChild($user);
-			
-				return true;
-			}
-			else{
-				$this->error = $this->db->lasterror();
-				
-				return false;
-			}
-		
-		}
-		return $this->id;
-		
-		
+
+
+    /**
+     * Function to update object or create or delete if needed
+     *
+     * @param   User    $user   user object
+     * @return                  < 0 if ko, > 0 if ok
+     */
+    public function update(User &$user)
+    {
+		if (empty($this->id)) return $this->create($user); // To test, with that, no need to test on high level object, the core decide it, update just needed
+        elseif (isset($this->to_delete) && $this->to_delete==true) return $this->delete($user);
+
+        $error = 0;
+        $this->db->begin();
+
+        $query = $this->set_save_query();
+        $query['rowid'] = $this->id;
+
+        $res = $this->db->update($this->table_element, $query, array('rowid'));
+        if ($res)
+        {
+            $result = $this->call_trigger(strtoupper($this->element). '_UPDATE', $user);
+            if ($result < 0) $error++;
+            else $this->saveChild($user);
+        }
+        else
+        {
+            $error++;
+            $this->error = $this->db->lasterror();
+            $this->errors[] = $this->error;
+        }
+
+        if (empty($error))
+        {
+            $this->db->commit();
+            return $this->id;
+        }
+        else
+        {
+            $this->db->rollback();
+            return -1;
+        }
+
 	}
-	public function create(User &$user) {
-		if($this->id>0) return $this->update($user);
-		
-		$query = array();
+
+    /**
+     * Function to create object in database
+     *
+     * @param   User    $user   user object
+     * @return                  < 0 if ko, > 0 if ok
+     */
+    public function create(User &$user)
+    {
+		if($this->id > 0) return $this->update($user);
+
+        $error = 0;
+        $this->db->begin();
+
 		$query = $this->set_save_query();
-		$query['datec'] = date("Y-m-d H:i:s",$this->datec);
+		$query['datec'] = date("Y-m-d H:i:s", $this->datec);
 		
-		$res = $this->db->insert($this->table_element,$query);
-	
-		if($res) {
+		$res = $this->db->insert($this->table_element, $query);
+		if($res)
+		{
 			$this->id = $this->db->last_insert_id($this->table_element);
-			
+
 			$result = $this->call_trigger(strtoupper($this->element). '_CREATE', $user);
-			
-			$this->saveChild($user);
-			
-			return $this->id;
+            if ($result < 0) $error++;
+            else $this->saveChild($user);
 		}
-		else{
-			
-			$this->error = $this->db->lasterror();
-			
-			return false;
+		else
+        {
+            $error++;
+            $this->error = $this->db->lasterror();
+            $this->errors[] = $this->error;
 		}
-	
+
+        if (empty($error))
+        {
+            $this->db->commit();
+            return $this->id;
+        }
+        else
+        {
+            $this->db->rollback();
+            return -1;
+        }
 	}
+
+    /**
+     * Function to delete object in database
+     *
+     * @param   User    $user   user object
+     * @return                  < 0 if ko, > 0 if ok
+     */
 	public function delete(User &$user)
     {
-		if($this->id>0)
-		{
-            $error = 0;
+		if ($this->id <= 0) return 0;
 
-            $result = $this->call_trigger(strtoupper($this->element). '_DELETE', $user);
-            if ($result < 0) $error++;
+        $error = 0;
+        $this->db->begin();
 
+        $result = $this->call_trigger(strtoupper($this->element). '_DELETE', $user);
+        if ($result < 0) $error++;
 
-            if (!$error)
+        if (!$error)
+        {
+            $this->db->delete($this->table_element, array('rowid' => $this->id), array('rowid'));
+            if($this->withChild && !empty($this->childtables))
             {
-                $this->db->delete($this->table_element, array('rowid'=>$this->id), array('rowid'));
-
-                if($this->withChild && !empty($this->childtables))
+                foreach($this->childtables as &$childTable)
                 {
-                    foreach($this->childtables as &$childTable)
+                    $className = ucfirst($childTable);
+                    if (!empty($this->{$className}))
                     {
-                        $className = ucfirst($childTable);
-                        if (!empty($this->{$className}))
+                        foreach($this->{$className} as &$object)
                         {
-                            foreach($this->{$className} as &$object)
-                            {
-                                $object->delete($user);
-                            }
+                            $object->delete($user);
                         }
                     }
                 }
             }
+        }
 
-		}
+        if (empty($error))
+        {
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->error = $this->db->lasterror();
+            $this->errors[] = $this->error;
+            $this->db->rollback();
+            return -1;
+        }
 	}
 
 
@@ -554,7 +619,6 @@ class CoreObject extends CommonObject
 		if(empty($this->{$field})) return '';
 		else
         {
-			
 			return dol_print_date($this->{$field}, $format);
 		}
 	}
