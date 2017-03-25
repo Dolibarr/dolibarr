@@ -1882,7 +1882,9 @@ if (! function_exists("llxFooter"))
 
         if (! empty($delayedhtmlcontent)) print $delayedhtmlcontent;
 
-		// Wrapper to show tooltips
+        // TODO Move this in lib_head.js
+
+        // Wrapper to show tooltips (html or onclick popup)
         if (! empty($conf->use_javascript_ajax) && empty($conf->dol_no_mouse_hover))
         {
     		print "\n<!-- JS CODE TO ENABLE tipTip on all object with class classfortooltip -->\n";
@@ -1901,6 +1903,21 @@ if (! function_exists("llxFooter"))
                 });
             </script>' . "\n";
         }
+        
+        // Wrapper to manage document_preview
+        if (! empty($conf->use_javascript_ajax))
+        {
+            print "\n<!-- JS CODE TO ENABLE document_preview -->\n";
+            print '<script type="text/javascript">
+                jQuery(document).ready(function () {
+			        jQuery(".documentpreview").click(function () {
+            		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
+            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), \''.dol_escape_js($langs->transnoentities("Preview")).'\');
+                		return false;
+        			});
+        		});
+            </script>' . "\n";
+        }         
         
         // Wrapper to manage dropdown
         if ($conf->use_javascript_ajax)

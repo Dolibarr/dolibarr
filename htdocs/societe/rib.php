@@ -802,7 +802,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
     dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
-    print '<div class="fichecenter">';
+    print '<div class="nofichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
@@ -845,7 +845,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     }
 
     print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-    print '<textarea name="domiciliation" rows="'.ROWS_4.'" cols="40" maxlength="255">';
+    print '<textarea name="domiciliation" rows="'.ROWS_4.'" class="quatrevingtpercent" maxlength="255">';
     print GETPOST('domiciliation');
     print "</textarea></td></tr>";
 
@@ -854,7 +854,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     print "</td></tr>\n";
 
     print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
-    print '<textarea name="owner_address" rows="'.ROWS_4.'" cols="40" maxlength="255">';
+    print '<textarea name="owner_address" rows="'.ROWS_4.'" class="quatrevingtpercent" maxlength="255">';
     print GETPOST('owner_address');
     print "</textarea></td></tr>";
 
