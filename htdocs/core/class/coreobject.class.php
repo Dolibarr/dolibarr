@@ -29,16 +29,6 @@ class CoreObject extends CommonObject
 {
 	public $withChild = true;
 
-    /**
-     * @var string 		Error string
-     */
-	public $error = '';
-
-    /**
-     * @var string[]	Array of error strings
-     */
-    public $errors=array();
-
 	/**
 	 *  @var Array $_fields Fields to synchronize with Database
 	 */
@@ -349,7 +339,7 @@ class CoreObject extends CommonObject
         {
             $this->error = $this->db->lasterror();
             $this->errors[] = $this->error;
-            return false;
+            return -1;
 		}
 	}
 
@@ -650,6 +640,7 @@ class CoreObject extends CommonObject
      * Function to update current object
      *
      * @param   array   $Tab    Array of values
+     * @return                  int
      */
     public function set_values(&$Tab)
     {
@@ -675,6 +666,8 @@ class CoreObject extends CommonObject
 				$this->{$key} = @stripslashes($value);
 			}
 		}
+
+		return 1;
 	}
 	
 }

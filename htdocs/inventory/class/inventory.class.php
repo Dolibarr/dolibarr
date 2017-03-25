@@ -26,7 +26,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 class Inventory extends CoreObject
 {
-	
 	public $element='inventory';
 	public $table_element='inventory';
 	public $fk_element='fk_inventory';
@@ -60,7 +59,11 @@ class Inventory extends CoreObject
 	 * @var string
 	 */
 	public $title;
-	
+
+    /**
+     * Attribute object linked with database
+     * @var array
+     */
 	protected $__fields=array(
 		'fk_warehouse'=>array('type'=>'integer','index'=>true)
 		,'entity'=>array('type'=>'integer','index'=>true)
@@ -68,58 +71,70 @@ class Inventory extends CoreObject
 		,'date_inventory'=>array('type'=>'date')
 		,'title'=>array('type'=>'string')
 	);
-	
-	public $db;
-	
+
+    /**
+     *  Constructor
+     *
+     *  @param      DoliDB		$db      Database handler
+     */
 	public function __construct(DoliDB &$db) 
 	{
 		global $conf;
-		
-		$this->db = &$db;
-		
+
+        parent::__construct($db);
 		parent::init();
 		
        	$this->status = 0;
 		$this->entity = $conf->entity;
 		$this->errors = array();
 		$this->amount = 0;
-		
 	}
-	
+
+    /**
+     * Function to sort children object
+     */
 	public function sort_det() 
 	{
-
 		if(!empty($this->Inventorydet))	usort($this->Inventorydet, array('Inventory', 'customSort'));
 	}
-	
-	public function fetch($id,$annexe = true) 
+
+    /**
+     *	Get object and children from database
+     *
+     *	@param      int			$id       		Id of object to load
+     * 	@param		bool		$loadChild		used to load children from database
+     *	@return     int         				>0 if OK, <0 if KO, 0 if not found
+     */
+	public function fetch($id, $loadChild = true)
 	{
-	    
-        if(!$annexe) $this->withChild = false;
+        if(!$loadChild) $this->withChild = false;
         
-		$res = parent::fetch($id);
-		
-		if($res>0) {
+		$res = parent::fetch($id, $loadChild);
+		if($res > 0)
+		{
 			$this->sort_det();
-			
 			$this->amount = 0;
-			
-			if(!empty($this->Inventorydet ))  {
-				foreach($this->Inventorydet as &$det){
-					$this->amount+=$det->qty_view * $det->pmp;
+			if(!empty($this->Inventorydet ))
+			{
+				foreach($this->Inventorydet as &$det)
+				{
+					$this->amount += $det->qty_view * $det->pmp;
 				}
-				
 			}
 		}
 				
 		return $res;
 	}
-	
-	
+
+    /**
+     * Custom function call by usort
+     *
+     * @param   Inventorydet    $objA   first Inventorydet object
+     * @param   Inventorydet    $objB   second Inventorydet object
+     * @return                          int
+     */
 	private function customSort(&$objA, &$objB)
 	{
-		global $db;
-		
 		$r = strcmp(strtoupper(trim($objA->product->ref)), strtoupper(trim($objB->product->ref)));
 		
 		if ($r < 0) $r = -1;
@@ -128,42 +143,109 @@ class Inventory extends CoreObject
 		
 		return $r;
 	}
-	
-	public function changePMP(User &$user) {
-		if(!empty($this->Inventorydet)) {
+
+    /**
+     * @param   User    $user   user object
+     * @return                  int
+     */
+    public function changePMP(User &$user)
+    {
+        $error = 0;
+        $this->db->begin();
+
+		if(!empty($this->Inventorydet))
+		{
 			foreach ($this->Inventorydet as $k => &$Inventorydet)
 			{
-				
-				if($Inventorydet->new_pmp>0) {
+				if($Inventorydet->new_pmp>0)
+				{
 					$Inventorydet->pmp = $Inventorydet->new_pmp; 
 					$Inventorydet->new_pmp = 0;
 				
-					$this->db->query("UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".$Inventorydet->pmp."
-					WHERE rowid = ".$Inventorydet->fk_product );
-					
+					$res = $this->db->query('UPDATE '.MAIN_DB_PREFIX.'product as p SET pmp = '.$Inventorydet->pmp.' WHERE rowid = '.$Inventorydet->fk_product );
+					if (!$res)
+                    {
+                        $error++;
+                        $this->error = $this->db->lasterror();
+                        $this->errors[] = $this->db->lasterror();
+                    }
 				}
 			}
 		}
 		
-		return parent::update($user);
-		
+		$res = parent::update($user);
+        if (!$res)
+        {
+            $error++;
+            $this->error = $this->db->lasterror();
+            $this->errors[] = $this->db->lasterror();
+        }
+
+
+        if (!$error)
+        {
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->db->rollback();
+            return -1;
+        }
 	}
-	
+
+    /**
+     * Function to update object or create or delete if needed
+     *
+     * @param   User    $user   user object
+     * @return                  < 0 if ko, > 0 if ok
+     */
 	public function update(User &$user)
 	{
-		
-		//si on valide l'inventaire on sauvegarde le stock à cette instant
+		$error = 0;
+		$this->db->begin();
+
+        // if we valid the inventory we save the stock at the same time
 		if ($this->status)
 		{
-			 $this->regulate();
+		    $res = $this->regulate();
+            if ($res < 0)
+            {
+                $error++;
+                $this->error = $this->db->lasterror();
+                $this->errors[] = $this->db->lasterror();
+            }
 		}
-		
-		parent::update($user);
+
+        $res = parent::update($user);
+        if (!$res)
+        {
+            $error++;
+            $this->error = $this->db->lasterror();
+            $this->errors[] = $this->db->lasterror();
+        }
+
+		if (!$error)
+        {
+            $this->db->commit();
+            return $this->id;
+        }
+        else
+        {
+            $this->db->rollback();
+            return -1;
+        }
 	}
-	
+
+    /**
+     * Function to update current object
+     *
+     * @param   array   $Tab    Array of values
+     * @return                  int
+     */
 	public function set_values(&$Tab)
 	{
-		global $db,$langs;
+		global $langs;
 		
 		if (isset($Tab['qty_to_add']))
 		{
@@ -174,10 +256,10 @@ class Inventory extends CoreObject
 				if ($qty < 0) 
 				{
 					$this->errors[] = $langs->trans('inventoryErrorQtyAdd');
-					return 0;
+					return -1;
 				} 
 				
-				$product = new Product($db);
+				$product = new Product($this->db);
 				$product->fetch($this->Inventorydet[$k]->fk_product);
 				
 				$this->Inventorydet[$k]->pmp = $product->pmp;
@@ -185,47 +267,73 @@ class Inventory extends CoreObject
 			}	
 		}
 		
-		parent::set_values($Tab);
+		return parent::set_values($Tab);
 	}
-	
-    public function deleteAllLine(User &$user) {
-        
-        foreach($this->Inventorydet as &$det) {
+
+    /**
+     * Function to delete all Inventorydet
+     *
+     * @param   User    $user   user object
+     * @return                  < 0 if ko, > 0 if ok
+     */
+    public function deleteAllLine(User &$user)
+    {
+        foreach($this->Inventorydet as &$det)
+        {
             $det->to_delete = true;
         }
         
-        $this->update($user);
-      
-        $this->Inventorydet=array();
-        
+        $res = $this->update($user);
+
+        if ($res > 0) $this->Inventorydet = array();
+        else return -1;
     }
-    
-    public function add_product($fk_product, $fk_entrepot='') {
-        
+
+    /**
+     * Function to add Inventorydet
+     *
+     * @param   int     $fk_product     fk_product of Inventorydet
+     * @param   int     $fk_warehouse   fk_warehouse target
+     * @return                          bool
+     */
+    public function add_product($fk_product, $fk_warehouse=0)
+    {
         $k = $this->addChild('Inventorydet');
         $det =  &$this->Inventorydet[$k];
         
         $det->fk_inventory = $this->id;
         $det->fk_product = $fk_product;
-		$det->fk_warehouse = empty($fk_entrepot) ? $this->fk_warehouse : $fk_entrepot;
+		$det->fk_warehouse = empty($fk_warehouse) ? $this->fk_warehouse : $fk_warehouse;
         
         $det->load_product();
                 
         $date = $this->get_date('date_inventory', 'Y-m-d');
-        if(empty($date))$date = $this->get_date('datec', 'Y-m-d'); 
-        $det->setStockDate( $date , $fk_entrepot);
+        if(empty($date)) $date = $this->get_date('datec', 'Y-m-d');
+        $det->setStockDate( $date , $fk_warehouse);
         
         return true;
     }
-    
+
+    /**
+     *  Duplication method product to add datem
+     *  Adjust stock in a warehouse for product
+     *
+     *  @param  	int     $fk_product     id of product
+     *  @param  	int		$fk_warehouse   id of warehouse
+     *  @param  	double	$nbpiece        nb of units
+     *  @param  	int		$movement       0 = add, 1 = remove
+     * 	@param		string	$label			Label of stock movement
+     * 	@param		double	$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
+     *  @param		string	$inventorycode	Inventory code
+     * 	@return     int     				<0 if KO, >0 if OK
+     */
     public function correct_stock($fk_product, $fk_warehouse, $nbpiece, $movement, $label='', $price=0, $inventorycode='')
 	{
-		global $conf, $db, $langs, $user;
-		
-		/* duplication method product to add datem */
+		global $conf, $user;
+
 		if ($fk_warehouse)
 		{
-			$db->begin();
+			$this->db->begin();
 
 			require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
 
@@ -234,7 +342,7 @@ class Inventory extends CoreObject
 
 			$datem = empty($conf->global->INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT) ? dol_now() : $this->date_inventory;
 
-			$movementstock=new MouvementStock($db);
+			$movementstock=new MouvementStock($this->db);
 			$movementstock->origin = new stdClass();
 			$movementstock->origin->element = 'inventory';
 			$movementstock->origin->id = $this->id;
@@ -242,7 +350,7 @@ class Inventory extends CoreObject
 			
 			if ($result >= 0)
 			{
-				$db->commit();
+				$this->db->commit();
 				return 1;
 			}
 			else
@@ -250,19 +358,25 @@ class Inventory extends CoreObject
 			    $this->error=$movementstock->error;
 			    $this->errors=$movementstock->errors;
 
-				$db->rollback();
+				$this->db->rollback();
 				return -1;
 			}
 		}
 	}
-	
+
+    /**
+     * Function to regulate stock
+     *
+     * @return      int
+     */
 	public function regulate()
 	{
-		global $db,$user,$langs,$conf;
+		global $langs,$conf;
 		
-		if($conf->global->INVENTORY_DISABLE_VIRTUAL){
+		if($conf->global->INVENTORY_DISABLE_VIRTUAL)
+		{
 			$pdt_virtuel = false;
-			// Test si pdt virtuel est activé
+			// Test if virtual product is enabled
 			if($conf->global->PRODUIT_SOUSPRODUITS)
 			{
 				$pdt_virtuel = true;
@@ -272,106 +386,138 @@ class Inventory extends CoreObject
 		
 		foreach ($this->Inventorydet as $k => $Inventorydet)
 		{
-			$product = new Product($db);
+			$product = new Product($this->db);
 			$product->fetch($Inventorydet->fk_product);
-			
-			/*
-			 * Ancien code qui était pourri et qui modifié la valeur du stock théorique si le parent était déstocké le même jour que l'enfant
-			 * 
-			 * $product->load_stock();
-			$Inventorydet->qty_stock = $product->stock_warehouse[$this->fk_warehouse]->real;
-			
-			if(date('Y-m-d', $this->date_inventory) < date('Y-m-d')) {
-				$TRes = $Inventorydet->getPmpStockFromDate($PDOdb, date('Y-m-d', $this->date_inventory), $this->fk_warehouse);
-				$Inventorydet->qty_stock = $TRes[1];
-			}
-			*/
+
 			if ($Inventorydet->qty_view != $Inventorydet->qty_stock)
 			{
 				$Inventorydet->qty_regulated = $Inventorydet->qty_view - $Inventorydet->qty_stock;
 				$nbpiece = abs($Inventorydet->qty_regulated);
 				$movement = (int) ($Inventorydet->qty_view < $Inventorydet->qty_stock); // 0 = add ; 1 = remove
 						
-				$href = dol_buildpath('/inventory/inventory.php?id='.$this->id.'&action=view', 1);
+				//$href = dol_buildpath('/inventory/inventory.php?id='.$this->id.'&action=view', 1);
 				
-				$this->correct_stock($product->id, $Inventorydet->fk_warehouse, $nbpiece, $movement, $langs->trans('inventoryMvtStock'));
+				$res = $this->correct_stock($product->id, $Inventorydet->fk_warehouse, $nbpiece, $movement, $langs->trans('inventoryMvtStock'));
+				if ($res < 0) return -1;
 			}
 		}
 
-		if($conf->global->INVENTORY_DISABLE_VIRTUAL){
-			// Test si pdt virtuel était activé avant la régule
+		if($conf->global->INVENTORY_DISABLE_VIRTUAL)
+		{
+            // Test if virtual product was enabled before regulate
 			if($pdt_virtuel) $conf->global->PRODUIT_SOUSPRODUITS = 1;
 		}
 		
 		return 1;
 	}
-    
-	public function getTitle() {
+
+    /**
+     * Get the title
+     * @return  string
+     */
+	public function getTitle()
+    {
 		global $langs;
 		
 		return !empty($this->title) ? $this->title : $langs->trans('inventoryTitle').' '.$this->id;
 	}
-	
-	public function getNomUrl($picto = 1) {
-		
-        return '<a href="'.dol_buildpath('/inventory/inventory.php?id='.$this->id, 1).'">'.($picto ? img_picto('','object_list.png','',0).' ' : '').$this->getTitle().'</a>';
-        
-	} 
-	
-	public function add_products_for($fk_warehouse,$fk_category=0,$fk_supplier=0,$only_prods_in_stock=0) {
-		$e = new Entrepot($this->db);
-		$e->fetch($fk_warehouse);
+
+
+    /**
+     * Return clicable link of object (with eventually picto)
+     *
+     * @param   int     $withpicto  Add picto into link
+     * @return                      string
+     */
+	public function getNomUrl($withpicto = 1)
+    {
+        return '<a href="'.dol_buildpath('/inventory/inventory.php?id='.$this->id, 1).'">'.($withpicto ? img_picto('','object_list.png','',0).' ' : '').$this->getTitle().'</a>';
+	}
+
+    /**
+     * Function to add products by default from warehouse and children
+     *
+     * @param $fk_warehouse
+     * @param int $fk_category
+     * @param int $fk_supplier
+     * @param int $only_prods_in_stock
+     *
+     * @return int
+     */
+	public function add_products_for($fk_warehouse,$fk_category=0,$fk_supplier=0,$only_prods_in_stock=0)
+    {
+        $warehouse = new Entrepot($this->db);
+        $warehouse->fetch($fk_warehouse);
 		$TChildWarehouses = array($fk_warehouse);
-		$e->get_children_warehouses($fk_warehouse, $TChildWarehouses);
+        $warehouse->get_children_warehouses($fk_warehouse, $TChildWarehouses);
 			
-		$sql = 'SELECT ps.fk_product, ps.fk_entrepot
-			     FROM '.MAIN_DB_PREFIX.'product_stock ps
-			     INNER JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = ps.fk_product)
-                 LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product cp ON (cp.fk_product = p.rowid)
-				 LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price pfp ON (pfp.fk_product = p.rowid)
-			     WHERE ps.fk_entrepot IN ('.implode(', ', $TChildWarehouses).')';
+		$sql = 'SELECT ps.fk_product, ps.fk_entrepot';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_stock ps';
+        $sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = ps.fk_product)';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product cp ON (cp.fk_product = p.rowid)';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price pfp ON (pfp.fk_product = p.rowid)';
+        $sql.= ' WHERE ps.fk_entrepot IN ('.implode(', ', $TChildWarehouses).')';
 			
-		if($fk_category>0) $sql.= " AND cp.fk_categorie=".$fk_category;
-		if($fk_supplier>0) $sql.= " AND pfp.fk_soc=".$fk_supplier;
-		if(!empty($only_prods_in_stock)) $sql.= ' AND ps.reel > 0';
+		if ($fk_category>0) $sql.= ' AND cp.fk_categorie='.$fk_category;
+		if ($fk_supplier>0) $sql.= ' AND pfp.fk_soc = '.$fk_supplier;
+		if (!empty($only_prods_in_stock)) $sql.= ' AND ps.reel > 0';
 			
-		$sql.=' GROUP BY ps.fk_product, ps.fk_entrepot
-					ORDER BY p.ref ASC,p.label ASC';
+		$sql.=' GROUP BY ps.fk_product, ps.fk_entrepot ORDER BY p.ref ASC,p.label ASC';
 		 
 		$res = $this->db->query($sql);
-		if($res) {
-			while($obj = $this->db->fetch_object($res)){
+		if($res)
+		{
+			while($obj = $this->db->fetch_object($res))
+            {
 				$this->add_product($obj->fk_product, $obj->fk_entrepot);
 			}
+
+			return 1;
 		}
-			
-		
+		else
+        {
+            $this->error = $this->db->lasterror();
+            $this->errors[] = $this->db->lasterror();
+            return -1;
+        }
 	}
-	
-    static function getLink($id) {
+
+    /**
+     * Return clicable link of inventory object
+     *
+     * @param   int     $id         id of inventory
+     * @param   int     $withpicto  Add picto into link
+     * @return  string
+     */
+    static function getLink($id, $withpicto=1)
+    {
         global $langs,$db;
         
-        $i = new Inventory($db);
-        if($i->fetch($id, false)>0) return $i->getNomUrl();
+        $inventory = new Inventory($db);
+        if($inventory->fetch($id, false) > 0) return $inventory->getNomUrl($withpicto);
         else return $langs->trans('InventoryUnableToFetchObject');
-        
     }
-	
-	static function getSQL($type) {
+
+    /**
+     * Function to get the sql select of inventory
+     * @param   string  $type
+     * @return  string
+     */
+	static function getSQL($type)
+    {
 		global $conf;
-		
-		if($type=='All') {
-			
-			$sql="SELECT i.rowid,i.title, e.label, i.date_inventory, i.fk_warehouse, i.datec, i.tms, i.status
-				  FROM ".MAIN_DB_PREFIX."inventory i
-				  LEFT JOIN ".MAIN_DB_PREFIX."entrepot e ON (e.rowid = i.fk_warehouse)
-				  WHERE i.entity=".(int) $conf->entity;
-			
+
+        $sql = '';
+		if($type == 'All')
+		{
+			$sql = 'SELECT i.rowid,i.title, e.label, i.date_inventory, i.fk_warehouse, i.datec, i.tms, i.status';
+            $sql.= ' FROM '.MAIN_DB_PREFIX.'inventory i';
+            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot e ON (e.rowid = i.fk_warehouse)';
+            $sql.= ' WHERE i.entity = '.(int) $conf->entity;
 		}
 	
 		return $sql;	
 	}
-	
 }
 
 class Inventorydet extends CoreObject
@@ -404,138 +550,157 @@ class Inventorydet extends CoreObject
 		,'pa'=>array('type'=>'float')
 		,'new_pmp'=>array('type'=>'float')
 	);
-	
-	
-	function __construct(&$db)
+
+    /**
+     *  Constructor
+     *
+     *  @param      DoliDB		$db      Database handler
+     */
+	function __construct(DoliDB &$db)
 	{
 		global $conf;
-		
-		$this->db = &$db;
-		
+
+		parent::__construct($db);
 		parent::init();
 				
 		$this->entity = $conf->entity;
 		$this->errors = array();
 		
 		$this->product = null;
-		
 		$this->current_pa = 0;
-		
 	}
-	
+
+    /**
+     * Get object and children from database
+     *
+     * @param   int   $id   id of inventorydet object
+     * @return  int
+     */
 	function fetch($id) 
 	{
-		global $conf;
-		
 		$res = parent::fetch($id);
 		$this->load_product();
         $this->fetch_current_pa();
 			
 		return $res;
 	}
-	
-	function fetch_current_pa() {
+
+    /**
+     * Function to get the unit buy price
+     *
+     * @return bool
+     */
+    function fetch_current_pa()
+    {
 		global $db,$conf;
 		
 		if(empty($conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA)) return false;
 		
-		if($this->pa>0){ 
+		if($this->pa > 0)
+		{
 			$this->current_pa = $this->pa;
 		}
-		else {
-			
+		else
+        {
 			dol_include_once('/fourn/class/fournisseur.product.class.php');
 			$p= new ProductFournisseur($db);
 			$p->find_min_price_product_fournisseur($this->fk_product);
 			
 			if($p->fourn_qty>0)	$this->current_pa = $p->fourn_price / $p->fourn_qty;
 		}
+
 		return true;
 	}
-	
-    function setStockDate($date, $fk_warehouse) {
-        
-		list($pmp,$stock) = $this->getPmpStockFromDate($date, $fk_warehouse);
-		
+
+    /**
+     * Function to set pa attribute from date en fk_warehouse
+     *
+     * @param   date    $date           date value
+     * @param   int     $fk_warehouse   fk_warehouse target
+     */
+    function setStockDate($date, $fk_warehouse)
+    {
+		list($pmp, $stock) = $this->getPmpStockFromDate($date, $fk_warehouse);
+
         $this->qty_stock = $stock;
         $this->pmp = $pmp;
-        
+
         $last_pa = 0;
-        $sql = "SELECT price FROM ".MAIN_DB_PREFIX."stock_mouvement 
-                WHERE fk_entrepot=".$fk_warehouse." 
-                AND fk_product=".$this->fk_product." 
-                AND (origintype='order_supplier' || origintype='invoice_supplier')
-                AND price>0 
-                AND datem<='".$date." 23:59:59'
-                ORDER BY datem DESC LIMIT 1";
-               
+        $sql = 'SELECT price FROM '.MAIN_DB_PREFIX.'stock_mouvement';
+        $sql.= ' WHERE fk_entrepot = '.$fk_warehouse;
+        $sql.= ' AND fk_product = '.$this->fk_product;
+        $sql.= ' AND (origintype=\'order_supplier\' || origintype=\'invoice_supplier\')';
+        $sql.= ' AND price > 0';
+        $sql.= ' AND datem <= \''.$date.' 23:59:59\'';
+        $sql.= ' ORDER BY datem DESC LIMIT 1';
+
         $res = $this->db->query($sql);
-       
-        if($res && $obj = $this->db->fetch_object($res)) {
+        if($res && $obj = $this->db->fetch_object($res))
+        {
             $last_pa = $obj->price;
         }
-        
+
         $this->pa = $last_pa;
-      
     }
 
-	function getPmpStockFromDate( $date, $fk_warehouse){
-		
+
+    /**
+     * Get the last pmp and last stock from date and warehouse
+     *
+     * @param   date    $date           date to check
+     * @param   int     $fk_warehouse   id of warehouse
+     * @return array
+     */
+    function getPmpStockFromDate($date, $fk_warehouse)
+    {
 		$res = $this->product->load_stock();
 		
-		if($res>0) {
+		if($res>0)
+		{
 			$stock = isset($this->product->stock_warehouse[$fk_warehouse]->real) ? $this->product->stock_warehouse[$fk_warehouse]->real : 0;
-			
-			if((float)DOL_VERSION<4.0) {
-				$pmp = isset($this->product->stock_warehouse[$fk_warehouse]->pmp) ? $this->product->stock_warehouse[$fk_warehouse]->pmp : 0; 
-			}
-			else{
-				$pmp = $this->product->pmp;
-			}
-			
+            $pmp = $this->product->pmp;
 		}
 		
 		//All Stock mouvement between now and inventory date
-		$sql = "SELECT value, price
-				FROM ".MAIN_DB_PREFIX."stock_mouvement
-				WHERE fk_product = ".$this->product->id."
-					AND fk_entrepot = ".$fk_warehouse."
-					AND datem > '".date('Y-m-d 23:59:59',strtotime($date))."'
-				ORDER BY datem DESC";
+		$sql = 'SELECT value, price';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'stock_mouvement';
+        $sql.= ' WHERE fk_product = '.$this->product->id;
+        $sql.= ' AND fk_entrepot = '.$fk_warehouse;
+        $sql.= ' AND datem > \''.date('Y-m-d 23:59:59', strtotime($date)).'\'';
+        $sql.= ' ORDER BY datem DESC';
 
-		
 		$res = $this->db->query($sql);
 		
 		$laststock = $stock;
 		$lastpmp = $pmp;
 		
-		if($res) {
-			while($mouvement = $this->db->fetch_object($res)) {
-				$price = ($mouvement->price>0 && $mouvement->value>0) ? $mouvement->price : $lastpmp;
-				
+		if($res)
+		{
+			while($mouvement = $this->db->fetch_object($res))
+            {
+				$price = ($mouvement->price > 0 && $mouvement->value > 0) ? $mouvement->price : $lastpmp;
 				$stock_value = $laststock * $lastpmp;
-					
 				$laststock -= $mouvement->value;
-					
 				$last_stock_value = $stock_value - ($mouvement->value * $price);
-					
 				$lastpmp = ($laststock != 0) ? $last_stock_value / $laststock : $lastpmp;
 			}
-			
 		}
 		
-		return array($lastpmp,$laststock);
+		return array($lastpmp, $laststock);
 	}
-    
+
+    /**
+     * Fetch the product linked with the line
+     * @return  void
+     */
 	function load_product() 
 	{
 		global $db;
 		
-		if($this->fk_product>0) {
+		if($this->fk_product>0)
+		{
 			$this->product = new Product($db);
 			$this->product->fetch($this->fk_product);
 		}
-		
 	}
-	
 }
