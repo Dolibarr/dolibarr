@@ -20,7 +20,6 @@
  *	\file		lib/inventory.lib.php
  *	\ingroup	inventory
  *	\brief		This file is an example module library
- *				Put some comments here
  */
 
 function inventoryAdminPrepareHead()

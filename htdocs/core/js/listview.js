@@ -90,11 +90,6 @@ function Listview_submitSearch(obj) {
 	if($form.length>0){
 		$form.submit();
 	}
-	else{
-		//There is no form for search action
-		null;
-	}
-
 }
 function Listview_launch_downloadAs(mode,url,token,session_name) {
 	 $('#listviewdAS_export_form').remove();
@@ -145,7 +140,7 @@ $(document).ready(function() {
 	});
 	
 	if(typeof $_GET["get-all-for-export"] != "undefined") {
-		Listview_launch_downloadAs($_GET["mode"],$_GET["url"],$_GET["token"],$_GET["session_name"]);
+		Listview_launch_downloadAs($_GET['mode'],$_GET['url'],$_GET['token'],$_GET['session_name']);
 	}
 	
 });

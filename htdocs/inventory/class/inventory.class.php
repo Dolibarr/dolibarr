@@ -93,7 +93,7 @@ class Inventory extends CoreObject
     /**
      * Function to sort children object
      */
-	public function sort_det() 
+	public function sortDet()
 	{
 		if(!empty($this->Inventorydet))	usort($this->Inventorydet, array('Inventory', 'customSort'));
 	}
@@ -112,7 +112,7 @@ class Inventory extends CoreObject
 		$res = parent::fetch($id, $loadChild);
 		if($res > 0)
 		{
-			$this->sort_det();
+			$this->sortDet();
 			$this->amount = 0;
 			if(!empty($this->Inventorydet ))
 			{
@@ -243,7 +243,7 @@ class Inventory extends CoreObject
      * @param   array   $Tab    Array of values
      * @return                  int
      */
-	public function set_values(&$Tab)
+	public function setValues(&$Tab)
 	{
 		global $langs;
 		
@@ -267,7 +267,7 @@ class Inventory extends CoreObject
 			}	
 		}
 		
-		return parent::set_values($Tab);
+		return parent::setValues($Tab);
 	}
 
     /**
@@ -296,7 +296,7 @@ class Inventory extends CoreObject
      * @param   int     $fk_warehouse   fk_warehouse target
      * @return                          bool
      */
-    public function add_product($fk_product, $fk_warehouse=0)
+    public function addProduct($fk_product, $fk_warehouse=0)
     {
         $k = $this->addChild('Inventorydet');
         $det =  &$this->Inventorydet[$k];
@@ -309,7 +309,7 @@ class Inventory extends CoreObject
                 
         $date = $this->get_date('date_inventory', 'Y-m-d');
         if(empty($date)) $date = $this->get_date('datec', 'Y-m-d');
-        $det->setStockDate( $date , $fk_warehouse);
+        $det->setStockDate($date, $fk_warehouse);
         
         return true;
     }
@@ -327,7 +327,7 @@ class Inventory extends CoreObject
      *  @param		string	$inventorycode	Inventory code
      * 	@return     int     				<0 if KO, >0 if OK
      */
-    public function correct_stock($fk_product, $fk_warehouse, $nbpiece, $movement, $label='', $price=0, $inventorycode='')
+    public function correctStock($fk_product, $fk_warehouse, $nbpiece, $movement, $label='', $price=0, $inventorycode='')
 	{
 		global $conf, $user;
 
@@ -397,7 +397,7 @@ class Inventory extends CoreObject
 						
 				//$href = dol_buildpath('/inventory/inventory.php?id='.$this->id.'&action=view', 1);
 				
-				$res = $this->correct_stock($product->id, $Inventorydet->fk_warehouse, $nbpiece, $movement, $langs->trans('inventoryMvtStock'));
+				$res = $this->correctStock($product->id, $Inventorydet->fk_warehouse, $nbpiece, $movement, $langs->trans('inventoryMvtStock'));
 				if ($res < 0) return -1;
 			}
 		}
@@ -437,14 +437,14 @@ class Inventory extends CoreObject
     /**
      * Function to add products by default from warehouse and children
      *
-     * @param $fk_warehouse
-     * @param int $fk_category
-     * @param int $fk_supplier
-     * @param int $only_prods_in_stock
+     * @param int $fk_warehouse         id of warehouse
+     * @param int $fk_category          id of category
+     * @param int $fk_supplier          id of supplier
+     * @param int $only_prods_in_stock  only product with stock
      *
      * @return int
      */
-	public function add_products_for($fk_warehouse,$fk_category=0,$fk_supplier=0,$only_prods_in_stock=0)
+	public function addProductsFor($fk_warehouse,$fk_category=0,$fk_supplier=0,$only_prods_in_stock=0)
     {
         $warehouse = new Entrepot($this->db);
         $warehouse->fetch($fk_warehouse);
@@ -469,7 +469,7 @@ class Inventory extends CoreObject
 		{
 			while($obj = $this->db->fetch_object($res))
             {
-				$this->add_product($obj->fk_product, $obj->fk_entrepot);
+				$this->addProduct($obj->fk_product, $obj->fk_entrepot);
 			}
 
 			return 1;
@@ -500,7 +500,7 @@ class Inventory extends CoreObject
 
     /**
      * Function to get the sql select of inventory
-     * @param   string  $type
+     * @param   string  $type   'All' to get all data
      * @return  string
      */
 	static function getSQL($type)

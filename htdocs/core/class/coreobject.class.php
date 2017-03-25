@@ -642,7 +642,7 @@ class CoreObject extends CommonObject
      * @param   array   $Tab    Array of values
      * @return                  int
      */
-    public function set_values(&$Tab)
+    public function setValues(&$Tab)
     {
 		foreach ($Tab as $key => $value)
 		{
