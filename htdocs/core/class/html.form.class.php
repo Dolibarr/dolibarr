@@ -1843,7 +1843,7 @@ class Form
         $selectFields = " p.rowid, p.label, p.ref, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
         (count($warehouseStatusArray)) ? $selectFieldsGrouped = ", sum(ps.reel) as stock" : $selectFieldsGrouped = ", p.stock";
 
-        $sql = "SELECT ";
+        $sql = "SELECT DISTINCT";
         $sql.= $selectFields . $selectFieldsGrouped;
         //Price by customer
         if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
@@ -1872,6 +1872,7 @@ class Form
             $selectFields.= ", price_rowid, price_by_qty";
 		}
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
         if (count($warehouseStatusArray))
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_product = p.rowid";
@@ -1930,6 +1931,7 @@ class Form
             	if ($i > 0) $sql.=" AND ";
                 $sql.="(p.ref LIKE '".$db->escape($prefix.$crit)."%' OR p.label LIKE '".$db->escape($prefix.$crit)."%'";
                 if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '".$db->escape($prefix.$crit)."%'";
+		$sql.=" OR pfp.ref_fourn LIKE '".$db->escape($prefix.$crit)."%'";
                 $sql.=")";
                 $i++;
             }
