@@ -81,12 +81,12 @@ echo $list->render(Inventory::getSQL('All'), array(
 ));
 
 
-if (!empty($user->rights->inventory->create))
+/*if (!empty($user->rights->inventory->create))
 {
     print '<div class="tabsAction">';
     print '<a class="butAction" href="inventory.php?action=create">'.$langs->trans('inventoryCreate').'</a>';
     print '</div>';
-}
+}*/
 
 echo '</form>';
 
