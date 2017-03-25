@@ -98,7 +98,7 @@ $formadmin=new FormAdmin($db);
 $arraydetailsforpdffoot = array(
 	0 => $langs->trans('NoDetails'),
 	1 => $langs->trans('DisplayCompanyInfo'),
-	2 => $langs->trans('DisplayManagersInfo'),
+	2 => $langs->trans('DisplayCompanyManagers'),
 	3 => $langs->trans('DisplayCompanyInfoAndManagers')
 );
 
