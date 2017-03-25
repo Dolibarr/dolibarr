@@ -20,7 +20,7 @@
 CREATE TABLE llx_inventorydet 
 ( 
 rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
-datec DATETIME DEFAULT NULL, 
+datec datetime DEFAULT NULL,
 tms timestamp, 
 fk_inventory integer DEFAULT 0, 
 fk_warehouse integer DEFAULT 0,
@@ -31,6 +31,6 @@ qty_stock double DEFAULT 0,
 qty_regulated double DEFAULT 0, 
 pmp double DEFAULT 0, 
 pa double DEFAULT 0, 
-new_pmp double DEFAULT 0, 
+new_pmp double DEFAULT 0
 ) 
 ENGINE=InnoDB;

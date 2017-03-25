@@ -129,20 +129,20 @@ ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;
 CREATE TABLE llx_inventory 
 ( 
 rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
-datec DATETIME DEFAULT NULL, 
+datec datetime DEFAULT NULL,
 tms timestamp, 
 fk_warehouse integer DEFAULT 0, 
 entity integer DEFAULT 0, 
 status integer DEFAULT 0, 
 title varchar(255) NOT NULL, 
-date_inventory datetime DATETIME DEFAULT NULL
+date_inventory datetime DEFAULT NULL
 ) 
 ENGINE=InnoDB;
 
 CREATE TABLE llx_inventorydet 
 ( 
 rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
-datec DATETIME DEFAULT NULL, 
+datec datetime DEFAULT NULL,
 tms timestamp, 
 fk_inventory integer DEFAULT 0, 
 fk_warehouse integer DEFAULT 0,
@@ -153,12 +153,12 @@ qty_stock double DEFAULT 0,
 qty_regulated double DEFAULT 0, 
 pmp double DEFAULT 0, 
 pa double DEFAULT 0, 
-new_pmp double DEFAULT 0, 
+new_pmp double DEFAULT 0
 ) 
 ENGINE=InnoDB;
 
 ALTER TABLE llx_inventory ADD INDEX idx_inventory_tms (tms);
-ALTER TABLE llx_inventory ADD INDEX idx_inventory_datec (date_cre);
+ALTER TABLE llx_inventory ADD INDEX idx_inventory_datec (datec);
 ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_tms (tms);
-ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_datec (date_cre);
+ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_datec (datec);
 ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_fk_inventory (fk_inventory);

@@ -20,12 +20,12 @@
 CREATE TABLE llx_inventory 
 ( 
 rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
-datec DATETIME DEFAULT NULL, 
+datec datetime DEFAULT NULL,
 tms timestamp, 
 fk_warehouse integer DEFAULT 0, 
 entity integer DEFAULT 0, 
 status integer DEFAULT 0, 
 title varchar(255) NOT NULL, 
-date_inventory datetime DATETIME DEFAULT NULL
+date_inventory datetime DEFAULT NULL
 ) 
 ENGINE=InnoDB;
