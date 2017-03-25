@@ -1208,19 +1208,11 @@ if ($id > 0)
 		// Affichage fiche action en mode visu
 		print '<table class="border" width="100%">';
 
-		// Ref
-		/*print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
-		print '</td></tr>';*/
-
 		// Type
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$object->type.'</td></tr>';
 		}
-
-		// Title
-		//print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.dol_htmlentities($object->label).'</td></tr>';
 
         // Full day event
         print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent, 3).'</td></tr>';
@@ -1242,11 +1234,6 @@ if ($id > 0)
 		else print dol_print_date($object->datef,'day');
 		if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
-
-		// Status
-		/*print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
-		print $object->getLibStatut(4);
-		print '</td></tr>';*/
 
         // Location
 	    if (empty($conf->global->AGENDA_DISABLE_LOCATION))
@@ -1281,7 +1268,7 @@ if ($id > 0)
 		print '<div class="assignedtouser">';
 		print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		print '</div>';
-		if (in_array($user->id,array_keys($listofuserid))) 
+		if ($object->datep != $object->datef && in_array($user->id,array_keys($listofuserid))) 
 		{
 			print '<div class="myavailability">';
 			print $langs->trans("MyAvailability").': '.(($object->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
