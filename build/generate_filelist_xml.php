@@ -40,6 +40,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
  * Main
  */
 
+$includecustom=0;
 $includeconstants=array();
 
 if (empty($argv[1])) 
@@ -67,8 +68,6 @@ while ($i < $argc)
 
 if (empty($includecustom))
 {
-    $includecustom=0;
-
     if (DOL_VERSION != $release)
     {
         print 'Error: When parameter "includecustom" is not set, version declared into filefunc.in.php ('.DOL_VERSION.') must be exact same value than "release" parameter ('.$release.')'."\n";
@@ -80,7 +79,7 @@ else
 {
     if (! preg_match('/'.preg_quote(DOL_VERSION,'/').'-/',$release))
     {
-        print 'Error: When parameter "includecustom" is not set, version declared into ('.DOL_VERSION.') must be used with a suffix into "release" parmater (ex: '.DOL_VERSION.'-mydistrib).'."\n";
+        print 'Error: When parameter "includecustom" is set, version declared into filefunc.inc.php ('.DOL_VERSION.') must be used with a suffix into "release" parmater (ex: '.DOL_VERSION.'-mydistrib).'."\n";
         print "Usage: ".$script_file." release=x.y.z[-...] [includecustom=1]\n";
         exit -1;
     }
