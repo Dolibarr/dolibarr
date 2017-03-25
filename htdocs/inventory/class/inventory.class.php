@@ -573,10 +573,11 @@ class Inventorydet extends CoreObject
     /**
      * Get object and children from database
      *
-     * @param   int   $id   id of inventorydet object
+     * @param   int   $id           id of inventorydet object
+     * @param   bool  $loadChild    load children
      * @return  int
      */
-	function fetch($id) 
+	function fetch($id, $loadChild = true)
 	{
 		$res = parent::fetch($id);
 		$this->load_product();

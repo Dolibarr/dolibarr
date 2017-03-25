@@ -517,7 +517,7 @@ class CoreObject extends CommonObject
         $this->db->begin();
 
 		$query = $this->set_save_query();
-		$query['datec'] = date("Y-m-d H:i:s", $this->datec);
+		$query['datec'] = date("Y-m-d H:i:s", dol_now());
 		
 		$res = $this->db->insert($this->table_element, $query);
 		if($res)

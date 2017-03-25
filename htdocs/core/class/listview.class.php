@@ -19,21 +19,19 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Listview {
+class Listview
+{
 	
-	function __construct(&$db, $id ) {
-			
+	function __construct(&$db, $id)
+    {
 		$this->db = &$db;
-			
 		$this->id = $id;
-		
 		$this->TTotalTmp=array();
-		
 		$this->sql = '';
-
 	}
-	private function init(&$TParam) {
-		
+
+	private function init(&$TParam)
+    {
 		global $conf, $langs;
 		
 		if(!isset($TParam['hide']))$TParam['hide']=array();
@@ -574,7 +572,7 @@ class Listview {
 		
 		$this->init($TParam);
 		
-		$this->parse_array($THeader, $TField, $TParam,$TField);
+		$this->parse_array($THeader, $TField, $TParam);
 		list($TTotal, $TTotalGroup)=$this->get_total($TField, $TParam);
 		
 		$this->renderList($THeader, $TField,$TTotal,$TTotalGroup, $TParam);	
@@ -610,13 +608,14 @@ class Listview {
 		return $sql;
 	}
 	
-	private function parse_array(&$THeader, &$TField, &$TParam, $TField) {
-		$first=true;
-		
-		 $this->THideFlip = array_flip($TParam['hide']);
+	private function parse_array(&$THeader, &$TField, &$TParam)
+    {
+		$first = true;
+
+		$this->THideFlip = array_flip($TParam['hide']);
 		$this->TTotalTmp=array();
 		
-		if(empty($TField)) return false;
+		if (empty($TField)) return false;
 		
 		foreach($TField as $row) {
 			if($first) {
@@ -844,7 +843,7 @@ class Listview {
 		$this->TTotalTmp=array();
 		
 		$this->THideFlip = array_flip($TParam['hide']);
-var_dump($this->sql);
+
 		$res = $this->db->query($this->sql);
 		if($res!==false) {
 			

@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 $langs->load("stock");
 $langs->load("inventory");
 
-if(!$user->rights->inventory->read) accessforbidden();
+if(empty($user->rights->inventory->read)) accessforbidden();
 
 _action();
 
@@ -54,7 +54,7 @@ function _action()
 	
 	switch($action) {
 		case 'create':
-			if (!$user->rights->inventory->create) accessforbidden();
+			if (empty($user->rights->inventory->create)) accessforbidden();
 			
 			$inventory = new Inventory($db);
 			
@@ -63,7 +63,7 @@ function _action()
 			break;
 		
 		case 'confirmCreate':
-			if (!$user->rights->inventory->create) accessforbidden();
+			if (empty($user->rights->inventory->create)) accessforbidden();
 		
 			$inventory = new Inventory($db);
 			$inventory->set_values($_POST);

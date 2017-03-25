@@ -6,20 +6,23 @@
     $get = GETPOST('get');
     $put = GETPOST('put');
     
-    switch ($put) {
+    switch ($put)
+    {
         case 'qty':
-            if (!$user->rights->inventory->write) { echo -1; exit; }
+            if (empty($user->rights->inventory->write)) { echo -1; exit; }
             
             $fk_det_inventory = GETPOST('fk_det_inventory');
             
             $det = new Inventorydet($db);
-            if( $det->fetch( $fk_det_inventory)) {
+            if( $det->fetch( $fk_det_inventory))
+            {
                 $det->qty_view+=GETPOST('qty');
                 $det->update($user);
                 
                 echo $det->qty_view;
             }
-            else {
+            else
+            {
                 echo -2;
             }            
             
@@ -31,17 +34,18 @@
             $fk_det_inventory = GETPOST('fk_det_inventory');
             
             $det = new Inventorydet($db);
-            if( $det->fetch( $fk_det_inventory)) {
+            if( $det->fetch( $fk_det_inventory))
+            {
                 $det->new_pmp=price2num(GETPOST('pmp'));
                 $det->update($user);
                 
                 echo $det->new_pmp;
             }
-            else {
+            else
+            {
                 echo -2;
             }            
             
             break;
-        
     }
  
