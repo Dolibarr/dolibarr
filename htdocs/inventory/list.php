@@ -43,7 +43,7 @@ llxHeader('',$langs->trans('inventoryListTitle'),'','');
 echo '<form name="formListInvetory" action="'.$_SERVER['PHP_SELF'].'" method="post" >';
 
 $inventory = new Inventory($db);
-$list = new ListView($db,'listInventory');
+$list = new ListView($db, 'listInventory');
 
 $THide = array('label','title');
 

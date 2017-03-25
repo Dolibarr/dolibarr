@@ -21,7 +21,12 @@
 
 class Listview
 {
-	
+    /**
+     *  Constructor
+     *
+     *  @param      DoliDB		$db      Database handler
+     *  @param      string		$id      html id
+     */
 	function __construct(&$db, $id)
     {
 		$this->db = &$db;
@@ -30,6 +35,12 @@ class Listview
 		$this->sql = '';
 	}
 
+    /**
+     * Function to init fields
+     *
+     * @param   array   $TParam     array of configuration of list
+     * @return bool
+     */
 	private function init(&$TParam)
     {
 		global $conf, $langs;
@@ -51,87 +62,123 @@ class Listview
 			,'orderUp'=>''
 			,'id'=>$this->id
 			,'head_search'=>''
-			,'export'=>array() //TODO include native export
-			,'view_type'=>'' //TODO to include graph or kanban instead of list
+			,'export'=>array()
+			,'view_type'=>''
 		),$TParam['list']);
 		
 		$POSTList = GETPOST('Listview');
 		
-		if(empty($TParam['limit']))$TParam['limit']=array();
-		if(!empty($POSTList[$this->id]['page'])) $TParam['limit']['page'] = $POSTList[$this->id]['page'];
+		if (empty($TParam['limit']))$TParam['limit'] = array();
+		if (!empty($POSTList[$this->id]['page'])) $TParam['limit']['page'] = $POSTList[$this->id]['page'];
 		
-		$TParam['limit']=array_merge(array('page'=>1, 'nbLine'=>$conf->liste_limit, 'global'=>0), $TParam['limit']);
+		$TParam['limit'] = array_merge(array('page'=>1, 'nbLine'=>$conf->liste_limit, 'global'=>0), $TParam['limit']);
 		
-		if(!empty($POSTList[$this->id]['orderBy'])) {
+		if(!empty($POSTList[$this->id]['orderBy']))
+		{
 			$TParam['orderBy'] = $POSTList[$this->id]['orderBy']; 
 		}
-		
 	}
-	private function getSearchNull($key, &$TParam) {
+
+
+    /**
+     * Function to know if we can search on null value
+     * @param   string  $key    field name
+     * @param   array   $TParam array of configuration
+     * @return bool
+     */
+    private function getSearchNull($key, &$TParam)
+    {
 		return !empty($TParam['search'][$key]['allow_is_null']);
-	} 
-	private function getSearchKey($key, &$TParam) {
-		
-		$TPrefixe=array();
-		if(!empty($TParam['search'][$key]['table'])) {
+	}
+
+    /**
+     * @param $key
+     * @param $TParam
+     * @return array
+     */
+	private function getSearchKey($key, &$TParam)
+    {
+		$TPrefixe = array();
+		if(!empty($TParam['search'][$key]['table']))
+		{
 			if (!is_array($TParam['search'][$key]['table'])) $TParam['search'][$key]['table'] = array($TParam['search'][$key]['table']);
 			
-			foreach ($TParam['search'][$key]['table'] as $prefix_table) {
+			foreach ($TParam['search'][$key]['table'] as $prefix_table)
+			{
 				$TPrefixe[] = $prefix_table.'.'; 
 			}
 		}
 		
 		$TKey=array();
-		if(!empty($TParam['search'][$key]['field'])) {
+		if(!empty($TParam['search'][$key]['field']))
+		{
 			if (!is_array($TParam['search'][$key]['field'])) $TParam['search'][$key]['field'] = array($TParam['search'][$key]['field']);
 			
-			foreach ($TParam['search'][$key]['field'] as $i => $field) {
+			foreach ($TParam['search'][$key]['field'] as $i => $field)
+			{
 				$prefixe = !empty($TPrefixe[$i]) ? $TPrefixe[$i] : $TPrefixe[0];
 				$TKey[] = $prefixe. $field ;
 			}
-		} else {
-			$TKey[] =$TPrefixe[0].$key;
+		}
+		else
+		{
+			$TKey[] = $TPrefixe[0].$key;
 		}
 		
 		return $TKey;
-	} 
-	
-	private function dateToSQLDate($date) {
-		
+	}
+
+    /**
+     * @param $date
+     * @return int|string   Date TMS or ''
+     */
+    private function dateToSQLDate($date)
+    {
 		return $this->db->jdate($date);
 	}
-	
-	private function addSqlFromTypeDate(&$TSQLMore, &$value, $sKey)
+
+
+    /**
+     * @param $TSQLMore
+     * @param $value
+     * @param $sKey
+     */
+    private function addSqlFromTypeDate(&$TSQLMore, &$value, $sKey)
 	{
 		if(is_array($value))
 		{
-			
 			$TSQLDate=array();
 			if(!empty($value['start']))
 			{
 				$valueDeb = $this->dateToSQLDate($value['start']);
 				$TSQLDate[]=$sKey." >= '".$valueDeb." 00:00:00'" ;
-				
 			}
-			
+
 			if(!empty($value['end']))
 			{
 				$valueFin = $this->dateToSQLDate($value['end']);
-				$TSQLDate[]=$sKey." <= '".$valueFin." 23:59:59'" ;	
-				
+				$TSQLDate[]=$sKey." <= '".$valueFin." 23:59:59'" ;
 			}
-			
+
 			if(!empty($TSQLDate)) $TSQLMore[] = implode(' AND ', $TSQLDate);
 		}
 		else
 		{
 			$value = $this->dateToSQLDate($value);
 			$TSQLMore[]=$sKey." LIKE '".$value."%'" ;
-			
 		}
 	}
-	
-	private function addSqlFromOther(&$TSQLMore, &$value, &$TParam, $sKey, $key)
+
+
+    /**
+     * @param $TSQLMore
+     * @param $value
+     * @param $TParam
+     * @param $sKey
+     * @param $key
+     * @return bool
+     */
+    private function addSqlFromOther(&$TSQLMore, &$value, &$TParam, $sKey, $key)
 	{
 		if($value==-1) return false;
 			
@@ -363,7 +410,7 @@ class Listview
 					$TTotal[$field]=count($this->TTotalTmp[$targetField]);
 				}
 				else {
-					$TTotal[$field]=array_sum($this->TTotalTmp[$targetField]);	
+					$TTotal[$field]=array_sum($this->TTotalTmp[$targetField]);
 				}
 								
 			}
