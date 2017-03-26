@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
@@ -302,16 +302,16 @@ if ($result) {
 
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
-		
+
 		print '<tr '. $bc[$var].'>';
 
 		// Line id
 		print '<td>' . $objp->rowid . '</td>';
 
-		print '<td align="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
-		
 		// Ref Expense report
 		print '<td>' . $expensereport_static->getNomUrl(1) . '</td>';
+
+		print '<td align="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
 
 		// Fees label
 		print '<td>';
