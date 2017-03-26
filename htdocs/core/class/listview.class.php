@@ -589,14 +589,17 @@ class Listview
 		foreach($THeader as $field=>$head)
 		{
 			if(empty($head['width']))$head['width']='auto';
-			
+
+
 			$out.='<th style="width:'.$head['width'].';text-align:'.$head['text-align'].'" class="liste_titre">'.$head['libelle'];
-				
+			// TODO replace the actual html by this function call to print a standard output as Dolibarr then add extrafields
+//            $out .= getTitleFieldOfList($head, $_SERVER["PHP_SELF"],"p.ref");
+
 			if($head['order']) $out.='<span class="nowrap">
 					<a href="javascript:Listview_OrderDown(\''.$this->id.'\',\''.$field.'\')">'.img_down().'</a>
 					<a href="javascript:Listview_OrderUp(\''.$this->id.'\', \''.$field.'\')">'.img_up().'</a>
 			</span>';
-			
+
 			$out.=$head['more'];
 			$out.='</th>';
 		}
