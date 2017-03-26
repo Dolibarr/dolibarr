@@ -489,7 +489,7 @@ if ($id > 0)
 		print "</td></tr>";
 
 		// Nbterms
-		print '<tr><td">'.$langs->trans("Nbterms").'</td>';
+		print '<tr><td>'.$langs->trans("Nbterms").'</td>';
 		print '<td>';
 		if ($action == 'edit')
 		{
@@ -502,7 +502,7 @@ if ($id > 0)
 		print '</td></tr>';
 
 		// Rate
-		print '<tr><td">'.$langs->trans("Rate").'</td>';
+		print '<tr><td>'.$langs->trans("Rate").'</td>';
 		print '<td>';
 		if ($action == 'edit')
 		{
