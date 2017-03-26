@@ -38,7 +38,7 @@ function facture_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/card.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Card');
 	$head[$h][2] = 'compta';
 	$h++;
@@ -50,14 +50,6 @@ function facture_prepare_head($object)
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
 		$head[$h][2] = 'contact';
-		$h++;
-	}
-
-	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$object->id;
-		$head[$h][1] = $langs->trans('Preview');
-		$head[$h][2] = 'preview';
 		$h++;
 	}
 

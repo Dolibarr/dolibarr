@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015-2016 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
@@ -311,13 +311,9 @@ if ($result)
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='company') {
-                    print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$links[$key]['url_id'].'">';
-                    //print img_object($langs->trans('ShowCompany'),'company').' ';
                     $societe=new Societe($db);
                     $societe->fetch($links[$key]['url_id']);
-                    //print $links[$key]['label'];
                     print $societe->getNomUrl(1);
-                    print '</a>';
                 }
                 else if ($links[$key]['type']=='sc') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
@@ -377,6 +373,12 @@ if ($result)
                     print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowUser'),'user').' ';
                     print $langs->trans("User");
+                    print '</a>';
+                }
+				else if ($links[$key]['type']=='payment_various') {
+                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowVariousPayment'),'payment').' ';
+                    print $langs->trans("VariousPayment");
                     print '</a>';
                 }
                 else {
@@ -543,7 +545,8 @@ if ($result)
         // Releve rappro
         if ($acct->canBeConciliated() > 0)  // Si compte rapprochable
         {
-            print '<br>'."\n";
+            print '<br><hr>'."\n";
+            
             print load_fiche_titre($langs->trans("Reconciliation"), '', 'title_bank.png');
             print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$objp->rowid.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

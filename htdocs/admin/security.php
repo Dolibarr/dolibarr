@@ -198,7 +198,7 @@ print "<br>\n";
 
 $head=security_prepare_head();
 
-dol_fiche_head($head, 'passwords', $langs->trans("Security"));
+dol_fiche_head($head, 'passwords', $langs->trans("Security"), -1);
 
 
 $var=false;

@@ -292,18 +292,24 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     outline: none;
     margin: 0px 0px 0px 0px;
 }
-input, select {
-	border-bottom: solid 1px rgba(0,0,0,.1);
 
+input {
+    line-height: 17px;
+	padding: 4px;
+	padding-left: 5px;
+}
+select {
+	padding: 4px;
+	padding-left: 2px;
+}
+input, select {
 	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
 }
-input {
-	padding:4px;
-}
-select {
-	padding:1px;
+
+input, select {
+	border-bottom: solid 1px rgba(0,0,0,.1);
 }
 
 textarea {
@@ -387,6 +393,7 @@ input:-moz-placeholder { color:#ccc; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
 
+hr { border: 0; border-top: 1px solid #ccc; }
 
 .button, .buttonDelete, input[name="sbmtConnexion"] {
     font-family: <?php print $fontlist ?>;
@@ -520,6 +527,12 @@ textarea.centpercent {
 .nounderline {
     text-decoration: none;
 }
+.paddingleft {
+	padding-<?php print $left; ?>: 4px;
+}
+.paddingright {
+	padding-<?php print $right; ?>: 4px;
+}
 .cursorpointer {
 	cursor: pointer;
 }
@@ -634,6 +647,13 @@ div.myavailability {
 	margin-bottom: 12px;
 }
 
+/* For the long description of module */
+.moduledesclong p img,.moduledesclong p a img {
+    max-width: 90% !important;
+    height: auto !important;
+}
+
+
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
 /*.table-responsive {
     width: calc(100% - 330px);
@@ -664,6 +684,11 @@ div.fiche>form>div.div-table-responsive {
 }
 .thumbstat {
 	flex: 1 1 120px;
+}
+.thumbstat150 {
+	flex: 1 1 150px;
+}
+.thumbstat, thumbstat150 {
     /* flex-grow: 1; */
     /* flex-shrink: 1; */
     /* flex-basis: 140px; */
@@ -689,6 +714,7 @@ div.fiche>form>div.div-table-responsive {
 	.minwidth400 { min-width: 400px; }
 	.minwidth500 { min-width: 500px; }
 	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
 	.minwidth200imp { min-width: 200px !important; }
 	.minwidth300imp { min-width: 300px !important; }
@@ -705,6 +731,7 @@ div.fiche>form>div.div-table-responsive {
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
 .maxwidth50imp  { max-width: 50px !important; }
+.maxwidth75imp  { max-width: 75px !important; }
 .minheight20 { min-height: 20px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
@@ -719,6 +746,7 @@ div.fiche>form>div.div-table-responsive {
 	.titlefield { width: 30% !important; }
 	.titlefieldcreate { width: 30% !important; }
 	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth75imp  { min-width: 75px !important; }
     .minwidth100imp { min-width: 100px !important; }
     .minwidth200imp { min-width: 200px !important; }
     .minwidth300imp { min-width: 300px !important; }
@@ -731,7 +759,8 @@ div.fiche>form>div.div-table-responsive {
 {
     .maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
-    .minwidth100imp { min-width: 50px !important; }
+    .minwidth75imp  { min-width: 70px !important; }
+    .minwidth100imp { min-width: 80px !important; }
     .minwidth200imp { min-width: 100px !important; }
     .minwidth300imp { min-width: 100px !important; }
     .minwidth400imp { min-width: 100px !important; }
@@ -765,8 +794,8 @@ div.fiche>form>div.div-table-responsive {
 		min-width: 20px;
     	min-height: 1.4em;
     	line-height: 1.4em;
-    	padding: .4em .1em;
-    	border: 1px solid #BBB;
+    	/* padding: .4em .1em; */
+    	/* border-bottom: 1px solid #BBB; */
     	/* max-width: inherit; why this */
      }
 
@@ -781,11 +810,12 @@ div.fiche>form>div.div-table-responsive {
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
 	.minwidth50imp  { min-width: 50px !important; }
-    .minwidth100imp { min-width: 50px !important; }
-    .minwidth200imp { min-width: 50px !important; }
-    .minwidth300imp { min-width: 50px !important; }
-    .minwidth400imp { min-width: 50px !important; }
-    .minwidth500imp { min-width: 50px !important; }
+	.minwidth75imp  { min-width: 60px !important; }
+    .minwidth100imp { min-width: 60px !important; }
+    .minwidth200imp { min-width: 60px !important; }
+    .minwidth300imp { min-width: 60px !important; }
+    .minwidth400imp { min-width: 60px !important; }
+    .minwidth500imp { min-width: 60px !important; }
     .titlefield { width: auto; }
     .titlefieldcreate { width: auto; }
 
@@ -1087,7 +1117,7 @@ table.noborder tr.liste_titre td {
 	width: 44px;
 }
 div.attacharea {
-	padding-top: 10px;
+	padding-top: 18px;
 	padding-bottom: 10px;
 }
 div.arearef {
@@ -1135,7 +1165,8 @@ img.photorefnoborder {
 	height: 48px;
 	width: 48px;
     object-fit: contain;
-    border: 1px solid #CCC;
+    border: 1px solid #AAA;
+    border-radius: 100px;
 }
 .underrefbanner {
 }
@@ -1648,13 +1679,17 @@ img.login, img.printer, img.entity {
 	color: white;
 	font-weight: bold;
 }
-img.loginphoto {
+.userimgatoplogin img.userphoto {		/* size for user photo in login bar */
 	border-radius: 5px;
-	margin-top: -4px;
-	width: 20px;
-	height: 20px;
+	width: 16px;
+	height: 16px;
+	vertical-align: text-bottom;
 }
-
+img.userphoto {			/* size for user photo in lists */
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+}
 .span-icon-user {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>);
 	background-repeat: no-repeat;
@@ -1877,30 +1912,29 @@ div.tabBar {
     padding-top: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
     padding-left: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
     padding-right: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
-    padding-bottom: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
-    margin: 0px 0px 14px 0px;
+    margin: 0px 0px 16px 0px;
     -moz-border-radius:3px;
     -webkit-border-radius: 3px;
 	border-radius: 3px;
     border-right: 1px solid #BBB;
-    border-bottom: 1px solid #BBB;
     border-left: 1px solid #BBB;
     border-top: 1px solid #CCC;
 	width: auto;
-
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
 
-	/*
-	<?php if (empty($dol_optimize_smallscreen)) { ?>
-    -moz-box-shadow: 3px 3px 4px #f4f4f4;
-    -webkit-box-shadow: 3px 3px 4px #f4f4f4;
-    box-shadow: 3px 3px 4px #f4f4f4;
-	<?php } ?>
-	*/
+	padding-bottom: 12px;
+	border-bottom: 1px solid #aaa; 
+}
+div.tabBarWithBottom {
+	padding-bottom: 18px;
+	border-bottom: 1px solid #aaa; 
+}
+div.tabBar table.tableforservicepart2:last-child {
+    border-bottom: 1px solid #aaa;
 }
 
 div.tabsAction {
-    margin: 20px 0em 10px 0em;
+    margin: 20px 0em 25px 0em;
     padding: 0em 0em;
     text-align: right;
 }
@@ -2224,6 +2258,9 @@ td.border, div.tagtable div div.border {
 
 
 /* Main boxes */
+.noborderbottom {
+    border-bottom: none !important;
+}
 .ficheaddleft table.noborder {
 	margin: 0px 0px 0px 0px;
 }
@@ -2333,7 +2370,7 @@ div.refid  {
   	font-size: 160%;
 }
 div.refidno  {
-	padding-top: 2px;
+	padding-top: 8px;
 	font-weight: normal;
   	color: #444;
   	font-size: <?php print $fontsize ?>px;
@@ -2737,23 +2774,35 @@ div .tdtop {
 .ficheaddleft div.boxstats {
     border: none;
 }
-.boxstats {
+.boxstatsborder {
+    border: 1px solid #CCC !important;
+}
+.boxstats, .boxstats130 {
     display: inline-block;
     margin: 3px;
-    padding: 3px;
-	/*-moz-box-shadow: 3px 3px 4px #f4f4f4;
-    -webkit-box-shadow: 3px 3px 4px #f4f4f4;
-    box-shadow: 3px 3px 4px #f4f4f4;
-    margin-bottom: 8px !important;*/
     border: 1px solid #CCC;
     text-align: center;
     border-radius: 2px;
-    min-height: 38px;
-    
+}
+.boxstats, .boxstats130, .boxstatscontent {    
 	white-space: nowrap;
 	overflow: hidden;
     text-overflow: ellipsis;
+}
+.boxstats {
+    padding: 3px;
     width: 105px;    
+}
+.boxstats130 {
+    width: 135px; 
+    height: 48px;
+    padding: 3px  
+}
+@media only screen and (max-width: 767px)
+{
+    .boxstats, .boxstats130 {
+        width: 100px;    
+    }
 }
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
@@ -2768,7 +2817,10 @@ span.boxstatsindicator {
 }
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 120%;
-	font-weight: bold;
+	font-weight: normal;
+}
+.dashboardlineindicatorlate img {
+	width: 16px;
 }
 span.dashboardlineok {
 	color: #008800;
@@ -2777,13 +2829,30 @@ span.dashboardlineko {
 	color: #880000;
 	font-weight: bold;
 }
+.dashboardlinelatecoin {
+	float: right;
+	position: relative;
+    text-align: right;
+    top: -22px
+}
 .boxtable {
     margin-bottom: 8px !important;
+    border-bottom-width: 1px;
+}
+.boxtable {
+    margin-bottom: 8px !important;
+    border-bottom-width: 1px;
+}
+.boxtablenobottom {
     border-bottom-width: 0 !important;
 }
 .tdboxstats {
 	text-align: center;
 }
+a.valignmiddle.dashboardlineindicator {
+    line-height: 30px;
+}
+
 
 .box {
     padding-right: 0px;
@@ -2819,6 +2888,9 @@ tr.box_titre {
 
 tr.box_titre td.boxclose {
 	width: 30px;
+}
+img.boxhandle, img.boxclose {
+	padding-left: 5px;
 }
 
 .noborderbottom {

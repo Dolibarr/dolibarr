@@ -118,7 +118,7 @@ $db->commit();
 
 $head=security_prepare_head();
 
-dol_fiche_head($head, 'default', $langs->trans("Security"));
+dol_fiche_head($head, 'default', $langs->trans("Security"), -1);
 
 
 // Show warning about external users

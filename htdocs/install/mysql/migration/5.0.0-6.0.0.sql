@@ -122,4 +122,25 @@ INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('CONTRA
 INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USERGROUP_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/usergroups', 'chaine', 0, '');
 INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USER_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/users', 'chaine', 0, '');
 
+ALTER TABLE llx_chargesociales ADD COLUMN ref varchar(16);
 ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;
+
+create table llx_payment_various
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  tms                   timestamp,
+  datec                 datetime,
+  datep                 date,
+  datev                 date,
+  sens                  smallint DEFAULT 0 NOT NULL,
+  amount                double(24,8) DEFAULT 0 NOT NULL,
+  fk_typepayment        integer NOT NULL,
+  num_payment           varchar(50),
+  label                 varchar(255),
+  accountancy_code		varchar(32),
+  entity                integer DEFAULT 1 NOT NULL,
+  note                  text,
+  fk_bank               integer,
+  fk_user_author        integer,
+  fk_user_modif         integer
+)ENGINE=innodb;

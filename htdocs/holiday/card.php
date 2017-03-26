@@ -828,7 +828,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 
         // Date start
         print '<tr>';
-        print '<td class="fieldrequired">'.$langs->trans("DateDebCP").' ('.$langs->trans("FirstDayOfHoliday").')</td>';
+        print '<td class="fieldrequired">';
+        print $langs->trans("DateDebCP");
+        print ' ('.$langs->trans("FirstDayOfHoliday").')';
+        print '</td>';
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if (! GETPOST('date_debut_')) {
@@ -844,7 +847,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 
         // Date end
         print '<tr>';
-        print '<td class="fieldrequired">'.$langs->trans("DateFinCP").' ('.$langs->trans("LastDayOfHoliday").')</td>';
+        print '<td class="fieldrequired">';
+        print $langs->trans("DateFinCP");
+        print ' ('.$langs->trans("LastDayOfHoliday").')';
+        print '</td>';
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if (! GETPOST('date_fin_')) {

@@ -43,7 +43,7 @@ function societe_prepare_head(Societe $object)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/societe/card.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'card';
     $h++;
@@ -259,7 +259,7 @@ function societe_prepare_head2($object)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/societe/card.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'company';
     $h++;
@@ -693,7 +693,6 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     $colspan=9;
     print '<tr class="liste_titre">';
-    print_liste_field_titre('');
     print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"p.lastname","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Poste"),$_SERVER["PHP_SELF"],"p.poste","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
@@ -728,21 +727,16 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     {
         print '<tr class="liste_titre">';
         
-        // Photo
-        print '<td class="liste_titre">';
-        print '</td>';
-        
-        // Name - Position
+        // Photo - Name
         print '<td class="liste_titre">';
         print '<input type="text" class="flat" name="search_name" size="20" value="'.$search_name.'">';
         print '</td>';
     
-        // Address / Phone
+        // Position
         print '<td class="liste_titre">';
-        //print '<input type="text" class="flat" name="search_addressphone" size="20" value="'.$search_addressphone.'">';
         print '</td>';
     
-        // Email
+        // Address - Phone - Email
         print '<td class="liste_titre">&nbsp;</td>';
     
         // Status
@@ -797,14 +791,10 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             
             print "<tr ".$bc[$var].">";
 
-            // Photo
-            print '<td width="50px">';
-            print $form->showphoto('contact',$contactstatic,0,0,0,'photorefnoborder','small',1,0,1);
-			print '</td>';
-            
-			// Name
+			// Photo - Name
 			print '<td>';
-            print $contactstatic->getNomUrl(0,'',0,'&backtopage='.urlencode($backtopage));
+            print $form->showphoto('contact',$contactstatic,0,0,0,'photorefnoborder valignmiddle marginrightonly','small',1,0,1);
+			print $contactstatic->getNomUrl(0,'',0,'&backtopage='.urlencode($backtopage));
 			print '</td>';
 			
 			// Job position
@@ -812,7 +802,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             if ($obj->poste) print $obj->poste;
             print '</td>';
 
-            // Address and phone
+            // Address - Phone - Email
             print '<td>';
             print $contactstatic->getBannerAddress('contact', $object);
             print '</td>';
@@ -1470,7 +1460,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 			print '<td>'.$obj->code_client.'</td>';
 
 			print '<td align="center">';
-			print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$obj->rowid.'&amp;action=edit">';
+			print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$obj->rowid.'&amp;action=edit">';
 			print img_edit();
 			print '</a></td>';
 

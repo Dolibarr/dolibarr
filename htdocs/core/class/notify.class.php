@@ -368,13 +368,13 @@ class Notify
 	                	
 	                    switch ($notifcode) {
 							case 'BILL_VALIDATE':
-								$link='/compta/facture.php?facid='.$object->id;
+								$link='/compta/facture/card.php?facid='.$object->id;
 								$dir_output = $conf->facture->dir_output;
 								$object_type = 'facture';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$newref);
 								break;
 							case 'BILL_PAYED':
-								$link='/compta/facture.php?facid='.$object->id;
+								$link='/compta/facture/card.php?facid='.$object->id;
 								$dir_output = $conf->facture->dir_output;
 								$object_type = 'facture';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextInvoicePayed",$newref);
@@ -544,13 +544,13 @@ class Notify
 
 		        switch ($notifcode) {
 					case 'BILL_VALIDATE':
-						$link='/compta/facture.php?facid='.$object->id;
+						$link='/compta/facture/card.php?facid='.$object->id;
 						$dir_output = $conf->facture->dir_output;
 						$object_type = 'facture';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$newref);
 						break;
 					case 'BILL_PAYED':
-						$link='/compta/facture.php?facid='.$object->id;
+						$link='/compta/facture/card.php?facid='.$object->id;
 						$dir_output = $conf->facture->dir_output;
 						$object_type = 'facture';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInvoicePayed",$newref);

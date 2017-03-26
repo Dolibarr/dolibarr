@@ -263,7 +263,7 @@ $listofreferent=array(
 	'margin'=>'add',
 	'table'=>'facture',
 	'datefieldname'=>'datef',
-    'urlnew'=>DOL_URL_ROOT.'/compta/facture.php?action=create&projectid='.$id.'&socid='.$socid,
+    'urlnew'=>DOL_URL_ROOT.'/compta/facture/card.php?action=create&projectid='.$id.'&socid='.$socid,
     'lang'=>'bills',
     'buttonnew'=>'CreateBill',
     'testnew'=>$user->rights->facture->creer,
@@ -274,7 +274,7 @@ $listofreferent=array(
 	'class'=>'FactureRec',
 	'table'=>'facture_rec',
 	'datefieldname'=>'datec',
-    'urlnew'=>DOL_URL_ROOT.'/compta/facture.php?action=create&projectid='.$id.'&socid='.$socid,
+    'urlnew'=>DOL_URL_ROOT.'/compta/facture/card.php?action=create&projectid='.$id.'&socid='.$socid,
     'lang'=>'bills',
     'buttonnew'=>'CreateBill',
     'testnew'=>$user->rights->facture->creer,
@@ -388,6 +388,19 @@ $listofreferent=array(
     'buttonnew'=>'AddLoan',
     'testnew'=>$user->rights->loan->write,
     'test'=>$conf->loan->enabled && $user->rights->loan->read),
+'chargesociales'=>array(
+    'name'=>"SocialContribution",
+    'title'=>"ListSocialContributionAssociatedProject",
+    'class'=>'ChargeSociales',
+    'margin'=>'add',
+    'table'=>'chargesociales',
+    'datefieldname'=>'date_ech',
+    'disableamount'=>0,
+    'urlnew'=>DOL_URL_ROOT.'/compta/sociales/card.php?action=create&projectid='.$id,
+    'lang'=>'compta',
+    'buttonnew'=>'AddSocialContribution',
+    'testnew'=>$user->rights->tax->charges->lire,
+    'test'=>$conf->tax->enabled && $user->rights->tax->charges->lire),    
 'project_task'=>array(
 	'name'=>"TaskTimeValorised",
 	'title'=>"ListTaskTimeUserProject",
@@ -409,19 +422,6 @@ $listofreferent=array(
 	'datefieldname'=>'datem',
 	'disableamount'=>0,
 	'test'=>($conf->stock->enabled && $user->rights->stock->mouvement->lire && ! empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))),
-'chargesociales'=>array(
-	'name'=>"SocialContribution",
-	'title'=>"ListSocialContributionAssociatedProject",
-	'class'=>'ChargeSociales',
-	'margin'=>'add',
-	'table'=>'chargesociales',
-	'datefieldname'=>'date_ech',
-	'disableamount'=>0,
-    'urlnew'=>DOL_URL_ROOT.'/compta/sociales/card.php?action=create&projectid='.$id,
-    'lang'=>'compta',
-    'buttonnew'=>'AddSocialContribution',
-    'testnew'=>$user->rights->tax->charges->lire,
-    'test'=>$conf->tax->enabled && $user->rights->tax->charges->lire)
 /* No need for this, available on dedicated tab "Agenda/Events"
 'agenda'=>array(
 	'name'=>"Agenda",
@@ -726,7 +726,9 @@ foreach ($listofreferent as $key => $value)
 		{
 			$addform.='<div class="inline-block valignmiddle">';
 			if ($testnew) $addform.='<a class="buttonxxx" href="'.$urlnew.'">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</a>';
-			else $addform.='<a class="buttonxxx buttonRefused" disabled="disabled" href="#">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</a>';
+			elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
+				$addform.='<a class="buttonxxx buttonRefused" disabled="disabled" href="#">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</a>';
+			}
             $addform.='<div>';
 		}
 
@@ -1095,7 +1097,7 @@ foreach ($listofreferent as $key => $value)
 			print '<td align="right">';
 			if (empty($value['disableamount'])) 
 			{
-			    if (! empty($conf->salaries->enabled)) print ''.$langs->trans("TotalHT").' : '.price($total_ht);
+			    if ($tablename != 'projet_task' || ! empty($conf->salaries->enabled)) print ''.$langs->trans("TotalHT").' : '.price($total_ht);
 			}
 			print '</td>';
 			//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td align="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_ttc).'</td>';
@@ -1103,8 +1105,7 @@ foreach ($listofreferent as $key => $value)
 			print '<td align="right">';
 			if (empty($value['disableamount'])) 
 			{
-			    
-			    if (! empty($conf->salaries->enabled)) print $langs->trans("TotalTTC").' : '.price($total_ttc);
+			    if ($tablename != 'projet_task' || ! empty($conf->salaries->enabled)) print $langs->trans("TotalTTC").' : '.price($total_ttc);
 			}
 			print '</td>';
 			print '<td>&nbsp;</td>';

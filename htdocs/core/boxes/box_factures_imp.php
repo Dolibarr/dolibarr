@@ -78,8 +78,9 @@ class box_factures_imp extends ModeleBoxes
             $sql.= " f.total_ttc,";
 			$sql.= " f.paye, f.fk_statut, f.rowid as facid";
 			$sql.= ", sum(pf.amount) as am";
-			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= ", ".MAIN_DB_PREFIX."facture as f";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
 			$sql.= " WHERE f.fk_soc = s.rowid";
 			$sql.= " AND f.entity = ".$conf->entity;

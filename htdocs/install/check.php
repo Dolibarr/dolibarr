@@ -478,8 +478,17 @@ else
             $choice .= '<td class="listofchoices" align="center">';
 			if ($allowupgrade)
 			{
-				// If it's not last updagre script, action = upgrade_tmp, if last action = upgrade
-                $choice .= '<a class="button runupgrade" href="upgrade.php?action=upgrade'.($count<count($migrationscript)?'_'.$versionto:'').'&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
+				$disabled=false;
+				if ($foundrecommandedchoice == 2)
+				{
+					$disabled=true;
+				}
+				if ($foundrecommandedchoice == 1)
+				{
+					$foundrecommandedchoice = 2;
+				}
+				if ($disabled) $choice .= '<span class="buttonDisable runupgrade"'.($disabled?' disabled="disabled"':'').' href="#">'.$langs->trans("NotAvailable").'</span>';
+				else $choice .= '<a class="button runupgrade"'.($disabled?' disabled="disabled"':'').' href="upgrade.php?action=upgrade'.($count<count($migrationscript)?'_'.$versionto:'').'&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
 			}
 			else
 			{
