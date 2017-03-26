@@ -4,6 +4,7 @@
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
@@ -869,10 +871,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         // Description
         print '<tr>';
         print '<td>'.$langs->trans("DescCP").'</td>';
-        print '<td>';
-        print '<textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70">'.GETPOST('description').'</textarea>';
-        print '</td>';
-        print '</tr>';
+        print '<td class="tdtop">';
+        $doleditor = new DolEditor('description', GETPOST('description'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+        print $doleditor->Create(1);
+        print '</td></tr>';
 
         print '</tbody>';
         print '</table>';
@@ -1098,8 +1100,10 @@ else
                 {
                     print '<tr>';
                     print '<td>'.$langs->trans('DescCP').'</td>';
-                    print '<td><textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70">'.$object->description.'</textarea></td>';
-                    print '</tr>';
+                    print '<td class="tdtop">';
+                    $doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+                    print $doleditor->Create(1);
+                    print '</td></tr>';
                 }
 
                 print '</tbody>';
