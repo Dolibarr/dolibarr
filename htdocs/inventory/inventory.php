@@ -381,12 +381,12 @@ function card(&$inventory, $action='edit')
 	$lines = array();
 	card_line($inventory, $lines, $action);
 	
-	print '<b>'.$langs->trans('inventoryOnDate')." ".$inventory->get_date('date_inventory').'</b><br><br>';
+	print '<b>'.$langs->trans('inventoryOnDate')." ".$inventory->getDate('date_inventory').'</b><br><br>';
 	
 	$inventoryTPL = array(
 		'id'=> $inventory->id
-		,'date_cre' => $inventory->get_date('date_cre', 'd/m/Y')
-		,'date_maj' => $inventory->get_date('date_maj', 'd/m/Y H:i')
+		,'date_cre' => $inventory->getDate('date_cre', 'd/m/Y')
+		,'date_maj' => $inventory->getDate('date_maj', 'd/m/Y H:i')
 		,'fk_warehouse' => $inventory->fk_warehouse
 		,'status' => $inventory->status
 		,'entity' => $inventory->entity

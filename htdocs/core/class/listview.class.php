@@ -19,6 +19,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *	Class to manage the lists view
+ */
 class Listview
 {
     /**
@@ -92,8 +95,8 @@ class Listview
 	}
 
     /**
-     * @param $key
-     * @param $TParam
+     * @param string    $key    field name
+     * @param array     $TParam array of configuration
      * @return array
      */
 	private function getSearchKey($key, &$TParam)
@@ -129,7 +132,7 @@ class Listview
 	}
 
     /**
-     * @param $date
+     * @param string    $date   date to convert
      * @return int|string   Date TMS or ''
      */
     private function dateToSQLDate($date)
@@ -139,9 +142,9 @@ class Listview
 
 
     /**
-     * @param $TSQLMore
-     * @param $value
-     * @param $sKey
+     * @param array     $TSQLMore   contain some additional sql instructions
+     * @param string    $value      date with read format
+     * @param string    $sKey       field name
      */
     private function addSqlFromTypeDate(&$TSQLMore, &$value, $sKey)
 	{
@@ -171,11 +174,11 @@ class Listview
 
 
     /**
-     * @param $TSQLMore
-     * @param $value
-     * @param $TParam
-     * @param $sKey
-     * @param $key
+     * @param array     $TSQLMore   contain some additional sql instructions
+     * @param string    $value      value to filter
+     * @param array     $TParam     array of configuration
+     * @param string    $sKey       field name
+     * @param string    $key        reference of sKey to find value into TParam
      * @return bool
      */
     private function addSqlFromOther(&$TSQLMore, &$value, &$TParam, $sKey, $key)
@@ -209,8 +212,8 @@ class Listview
 
 
     /**
-     * @param $sql
-     * @param $TParam
+     * @param string    $sql    standard select sql
+     * @param array     $TParam array of configuration
      * @return string
      */
     private function search($sql, &$TParam)
@@ -270,8 +273,8 @@ class Listview
 	}
 
     /**
-     * @param $sql
-     * @param array $TParam
+     * @param string    $sql    standard select sql
+     * @param array     $TParam array of configuration
      * @return string
      */
     public function render($sql, $TParam=array())
@@ -292,8 +295,8 @@ class Listview
 	}
 
     /**
-     * @param $THeader
-     * @param $TParam
+     * @param array     $THeader    the configuration of header
+     * @param array     $TParam     array of configuration
      * @return array
      */
     private function setSearch(&$THeader, &$TParam)

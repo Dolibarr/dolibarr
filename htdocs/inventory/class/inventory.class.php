@@ -24,6 +24,9 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/coreobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+/**
+ *	Class to manage inventories
+ */
 class Inventory extends CoreObject
 {
 	public $element='inventory';
@@ -307,8 +310,8 @@ class Inventory extends CoreObject
         
         $det->load_product();
                 
-        $date = $this->get_date('date_inventory', 'Y-m-d');
-        if(empty($date)) $date = $this->get_date('datec', 'Y-m-d');
+        $date = $this->getDate('date_inventory', 'Y-m-d');
+        if(empty($date)) $date = $this->getDate('datec', 'Y-m-d');
         $det->setStockDate($date, $fk_warehouse);
         
         return true;

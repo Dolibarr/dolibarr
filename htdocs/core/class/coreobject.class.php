@@ -287,11 +287,11 @@ class CoreObject extends CommonObject
 			}
 			elseif($this->is_int($info))
             {
-				$this->{$field} = (int)$obj->{$field};
+				$this->{$field} = (int) $obj->{$field};
 			}
 			elseif($this->is_float($info))
             {
-				$this->{$field} = (double)$obj->{$field};
+				$this->{$field} = (double) $obj->{$field};
 			}
 			elseif($this->is_null($info))
             {
@@ -604,7 +604,7 @@ class CoreObject extends CommonObject
      * @param   string  $format Output date format
      * @return          string
      */
-    public function get_date($field, $format='')
+    public function getDate($field, $format='')
     {
 		if(empty($this->{$field})) return '';
 		else
@@ -620,7 +620,7 @@ class CoreObject extends CommonObject
      * @param   string  $date   formatted date to convert
      * @return                  mixed
      */
-    public function set_date($field, $date)
+    public function setDate($field, $date)
     {
 	  	if (empty($date))
 	  	{
@@ -648,7 +648,7 @@ class CoreObject extends CommonObject
 		{
 			if($this->checkFieldType($key, 'date'))
 			{
-				$this->set_date($key, $value);
+				$this->setDate($key, $value);
 			}
 			else if( $this->checkFieldType($key, 'array'))
 			{

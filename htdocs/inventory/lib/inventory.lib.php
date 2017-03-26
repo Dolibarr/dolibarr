@@ -22,6 +22,11 @@
  *	\brief		This file is an example module library
  */
 
+/**
+ *  Define head array for tabs of inventory tools setup pages
+ *
+ *  @return			Array of head
+ */
 function inventoryAdminPrepareHead()
 {
     global $langs, $conf;
