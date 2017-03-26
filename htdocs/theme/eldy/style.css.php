@@ -275,7 +275,10 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
 
-    border: none;
+<?php if(empty($conf->global->THEME_ELDY_SHOW_BORDER_INPUT)) 
+	print "border: none;" 
+?>
+    
     border-bottom: solid 1px rgba(0,0,0,.2);
     outline: none;
     margin: 0px 0px 0px 0px;

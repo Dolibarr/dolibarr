@@ -215,6 +215,12 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 	
+    // show input border
+    print '<tr><td width="35%">'.$langs->trans("showInputBorder").'</td><td>';
+    print $form->selectyesno('main_showInputBorder',isset($conf->global->THEME_ELDY_SHOW_BORDER_INPUT)?$conf->global->THEME_ELDY_SHOW_BORDER_INPUT:0,1);
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
     // Disable javascript and ajax
     print '<tr><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
     print $form->selectyesno('main_disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0,1);
@@ -390,12 +396,16 @@ else	// Show
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
+    print '<tr><td width="35%">'.$langs->trans("showInputBorder").'</td><td>';
+    print yn($conf->global->THEME_ELDY_SHOW_BORDER_INPUT)."</td>";
+    print '<td width="20">&nbsp;</td>';
+    print "</tr>";
+
     // Disable javascript/ajax
-    
     print '<tr><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
     print yn($conf->global->MAIN_DISABLE_JAVASCRIPT)."</td>";
-	print '<td width="20">&nbsp;</td>';
-	print "</tr>";
+    print '<td width="20">&nbsp;</td>';
+    print "</tr>";
 
     // Activate preview tab on element card
     if (class_exists("Imagick"))
