@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>  
  * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
@@ -148,7 +148,7 @@ print '<script type="text/javascript">
 $sql = "SELECT er.ref, er.rowid as erid,";
 $sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht, erd.fk_code_ventilation, erd.tva_tx, erd.date,";
 $sql .= " aa.label, aa.account_number,";
-$sql .= " f.id as fees_id, f.label as fees_label";
+$sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as er";
 $sql .= " , " . MAIN_DB_PREFIX . "accounting_account as aa";
 $sql .= " , " . MAIN_DB_PREFIX . "expensereport_det as erd";
@@ -282,7 +282,7 @@ if ($result) {
 
 		print '<td align="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
 		
-		print '<td class="tdoverflow">' . $objp->fees_label . '</td>';
+		print '<td class="tdoverflow">' . ($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code))) . '</td>';
 
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments));

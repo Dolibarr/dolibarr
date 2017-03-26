@@ -115,7 +115,11 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if ($cancel) { $action = ''; }
+    if ($cancel) 
+	{ 
+		$action = ''; 
+		$object->fetch($id); // show shipment also after canceling modification
+	}
     
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
@@ -175,7 +175,7 @@ llxHeader('', $langs->trans("ExpenseReportsVentilation"));
 // Expense report lines
 $sql = "SELECT er.ref, er.rowid as erid, er.date_debut,";
 $sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht as price, erd.fk_code_ventilation, erd.tva_tx as tva_tx_line, erd.date,";
-$sql .= " f.id as fees_id, f.label as fees_label, f.accountancy_code as code_buy,";
+$sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label, f.accountancy_code as code_buy,";
 $sql .= " aa.rowid as aarowid";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as er";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "expensereport_det as erd ON er.rowid = erd.fk_expensereport";
@@ -302,20 +302,20 @@ if ($result) {
 
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
-		
+
 		print '<tr '. $bc[$var].'>';
 
 		// Line id
 		print '<td>' . $objp->rowid . '</td>';
 
-		print '<td align="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
-		
 		// Ref Expense report
 		print '<td>' . $expensereport_static->getNomUrl(1) . '</td>';
 
+		print '<td align="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
+
 		// Fees label
 		print '<td>';
-		print $objp->fees_label;
+		print ($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code)));
 		print '</td>';
 
 		// Fees description -- Can be null
