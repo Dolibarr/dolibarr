@@ -674,7 +674,7 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
     overflow-x: auto;
 }
 div.fiche>form>div.div-table-responsive {
-    min-height: 350px;
+    min-height: 390px;
 }
 
 .flexcontainer {
@@ -2301,6 +2301,9 @@ table.paddingtopbottomonly tr td {
 	padding-bottom: 2px;
 }
 
+tr.liste_titre_filter td.liste_titre {
+    border-bottom: 1px solid #eee;
+}
 .liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
 {
     border-top-width: 2px;
@@ -2800,20 +2803,28 @@ div .tdtop {
 }
 @media only screen and (max-width: 767px)
 {
-    .boxstats, .boxstats130 {
-        width: 100px;    
+	.thumbstat150 {
+		flex: 1 1 110px;
+	}
+	.boxstats, .boxstats130 {
+        width: 90px;    
+    }
+    .dashboardlineindicator { 
+        float: left;
+    	padding-left: 5px;
     }
 }
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
 span.boxstatstext {
-	/* opacity: 0.9;  Disabled. This make text on top of left menu in smartphone size */
     line-height: 18px;
+    opacity: 0.7;
 }
 span.boxstatsindicator {
 	font-size: 110%;
 	font-weight: normal;
+	font-color: rgb(<?php print $colortextlink; ?>);
 }
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 120%;
@@ -2826,14 +2837,18 @@ span.dashboardlineok {
 	color: #008800;
 }
 span.dashboardlineko {
-	color: #880000;
-	font-weight: bold;
+	color: #FFF;
+	font-size: 80%;
 }
 .dashboardlinelatecoin {
 	float: right;
 	position: relative;
     text-align: right;
-    top: -22px
+    top: -24px;
+    padding: 1px 6px 1px 6px;
+    background-color: #8c4446;
+    color: #FFFFFF ! important;
+    border-radius: .25em;    
 }
 .boxtable {
     margin-bottom: 8px !important;

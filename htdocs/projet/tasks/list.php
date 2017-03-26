@@ -335,7 +335,6 @@ if (! $resql)
     exit;
 }
 
-$var=true;
 $num = $db->num_rows($resql);
 
 if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
@@ -597,7 +596,6 @@ if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$
  
 $now = dol_now();
 $i=0;
-$var=true;
 $totalarray=array();
 while ($i < min($num,$limit))
 {
@@ -621,8 +619,7 @@ while ($i < min($num,$limit))
 	$userAccess = $projectstatic->restrictedProjectArea($user);    // why this ?
 	if ($userAccess >= 0)
 	{
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr>";
 
     	// Ref
     	if (! empty($arrayfields['t.ref']['checked']))
@@ -741,7 +738,7 @@ while ($i < min($num,$limit))
         	if ($obj->planned_workload || $obj->duration_effective)
 			{
 				if ($obj->planned_workload) print round(100 * $obj->duration_effective / $obj->planned_workload,2).' %';
-				else print $langs->trans('WorkloadNotDefined');
+				else print $form->textwithpicto('',$langs->trans('WorkloadNotDefined'), 1, 'help');
 			}
     		print '</td>';
             if (! $i) $totalarray['nbfield']++;

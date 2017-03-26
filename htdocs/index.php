@@ -561,14 +561,14 @@ if (! empty($valid_dashboardlines))
         
         $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats130 boxstatsborder">';
         $boxwork .= '<div class="boxstatscontent">';
-        $boxwork .= $board->img.' '.$board->label.'<br>';
+        $boxwork .= '<span class="boxstatstext">'.$board->img.' '.$board->label.'</span><br>';
         $boxwork .= '<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.$board->nbtodo.'</span></a>';
         $boxwork .= '</div>';
         if ($board->nbtodolate > 0)
         {
             $boxwork .= '<div class="dashboardlinelatecoin nowrap">';
             $boxwork .= '<a title="'.dol_escape_htmltag($textlate).'" class="valignmiddle dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'" href="'.((!$board->url_late) ? $board->url : $board->url_late ).'">';
-            $boxwork .= img_picto($textlate, "warning", 'class="valigntextbottom"').'';
+            $boxwork .= img_picto($textlate, "warning_white", 'class="valigntextbottom"').'';
             $boxwork .= '<span class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'">';
             $boxwork .= $board->nbtodolate;
             $boxwork .= '</span>';

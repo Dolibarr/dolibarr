@@ -65,6 +65,7 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 
 // Define image path files and other constants
 $fontlist='roboto,arial,tahoma,verdana,helvetica';    //$fontlist='helvetica, verdana, arial, sans-serif';
+//$fontlist='"open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;';
 $img_head='';
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
@@ -95,7 +96,7 @@ $colortexttitle='0,0,0';
 $colortext='0,0,0';
 $colortextlink='0,0,120';
 $fontsize='13';
-$fontsizesmaller='11';
+$fontsizesmaller='12';
 $usegradienttop=(isset($conf->global->THEME_ELDY_TOPMENU_BACK1)?0:1);
 $usegradienttitle=(isset($conf->global->THEME_ELDY_BACKTITLE1)?0:1);
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
@@ -122,7 +123,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
     $conf->global->THEME_ELDY_TEXT='0,0,0';
     $conf->global->THEME_ELDY_FONT_SIZE1='13';
-    $conf->global->THEME_ELDY_FONT_SIZE2='11';
+    $conf->global->THEME_ELDY_FONT_SIZE2='12';
 }
 
 
@@ -240,7 +241,7 @@ body {
 <?php } ?>
 	color: rgb(<?php echo $colortext; ?>);
 	font-size: <?php print $fontsize ?>px;
-	line-height: 130%;
+	line-height: 1.4;
 	font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
@@ -670,7 +671,7 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
     overflow-x: auto;
 }
 div.fiche>form>div.div-table-responsive {
-    min-height: 350px;
+    min-height: 390px;
 }
 
 .flexcontainer {
@@ -682,7 +683,7 @@ div.fiche>form>div.div-table-responsive {
 	flex: 1 1 120px;
 }
 .thumbstat150 {
-	flex: 1 1 150px;
+	flex: 1 1 170px;
 }
 .thumbstat, thumbstat150 {
     /* flex-grow: 1; */
@@ -876,13 +877,14 @@ td.showDragHandle {
 #id-right, #id-left {
 	padding-top: 16px;
 	padding-bottom: 8px;
-
+	
 	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
 	float: none;
 	vertical-align: top;
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
 	width: 100%;
+	background: rgb(<?php print $colorbackbody; ?>);
 }
 #id-left {
 /*	background-color: #fff;
@@ -2393,6 +2395,9 @@ table.paddingtopbottomonly tr td {
 	padding-top: 1px;
 	padding-bottom: 2px;
 }
+tr.liste_titre_filter td.liste_titre {
+    border-bottom: 1px solid #eee;
+}
 .liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
 {
     border-top-width: 2px;
@@ -2707,29 +2712,26 @@ tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, tabl
 }
 div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
-	<?php if ($usegradienttitle) { ?>
-	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
-	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
-	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
-	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
-	<?php } else { ?>
-	background: rgb(<?php echo $colorbacktitle1; ?>);
-	<?php } ?>
+	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
-
+    border-bottom: 1px solid #ddd;
+	
     color: rgb(<?php echo $colortexttitle; ?>);
     font-family: <?php print $fontlist ?>;
-    border-bottom: 1px solid #FDFFFF;
     text-align: <?php echo $left; ?>;
 }
 tr.liste_titre th, tr.liste_titre td, th.liste_titre
 {
-	border-bottom: 1px solid #<?php echo ($colorbacktitle1 == '255,255,255'?'BBBBBB':'FDFFFF'); ?>;
+/*	border-bottom: 1px solid #<?php echo ($colorbacktitle1 == '255,255,255'?'BBBBBB':'ddd'); ?>; */
+	border-bottom: 1px solid #888;
 }
-/* TODO Once title line is moved under title search, make border bottom of all th black and force to whit when it's first tr */ 
-tr:first-child th.liste_titre {
-    border-bottom: 1px solid #FFF ! important;
+/* TODO Once title line is moved under title search, make border bottom of all th black and force to white when it's first tr */ 
+tr.liste_titre:first-child th, tr:first-child th.liste_titre {
+    border-bottom: 1px solid #ddd ! important;
 }
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div
 {
@@ -2882,7 +2884,7 @@ div.tabBar .noborder {
     width: 105px;    
 }
 .boxstats130 {
-    width: 135px; 
+    width: 160px; 
     height: 48px;
     padding: 3px  
 }
@@ -2892,8 +2894,15 @@ div.tabBar .noborder {
 
 @media only screen and (max-width: 767px)
 {
-    .boxstats, .boxstats130 {
-        width: 100px;    
+	.thumbstat150 {
+		flex: 1 1 110px;
+	}
+	.boxstats, .boxstats130 {
+        width: 90px;    
+    }
+    .dashboardlineindicator { 
+        float: left;
+    	padding-left: 5px;
     }
 }
 
@@ -2919,15 +2928,18 @@ span.dashboardlineok {
 	color: #008800;
 }
 span.dashboardlineko {
-	color: #880000;
-	/* font-weight: bold; */
-	font-size: 100%;	
+	color: #FFF;
+	font-size: 80%;	
 }
 .dashboardlinelatecoin {
 	float: right;
 	position: relative;
     text-align: right;
-    top: -22px
+    top: -28px;
+    padding: 1px 6px 1px 6px;
+    background-color: #8c4446;
+    color: #FFFFFF ! important;
+    border-radius: .25em;    
 }
 .boxtable {
     margin-bottom: 8px !important;
@@ -4114,10 +4126,11 @@ a span.select2-chosen
 .select2-dropdown-open.select2-drop-above .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choices, .select2-container-multi .select2-choices,
 .select2-container-multi.select2-container-active .select2-choices
 {
-	border-bottom: none;
+	border-bottom: 1px solid #ccc;
 	border-right: none;
 	border-top: none;
-	border-left: 1px solid #ddd;
+	border-left: none;
+	
 }
 
 
@@ -4623,7 +4636,7 @@ border-top-right-radius: 6px;
 @media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 6.9, 0) + 20; ?>px)
 {
 	div.tmenucenter {
-	    max-width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
+	    width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
     	white-space: nowrap;
   		overflow: hidden;
   		text-overflow: ellipsis;
