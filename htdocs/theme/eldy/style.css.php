@@ -272,18 +272,19 @@ input.select2-input {
 .liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre input[name=month_lim] {
 	margin-right: 4px;
 }
+input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
+	<?php if (empty($conf->global->THEME_ELDY_SHOW_BORDER_INPUT)) 
+		print "border: none;" 
+	?>
+}
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
-
-<?php if(empty($conf->global->THEME_ELDY_SHOW_BORDER_INPUT)) 
-	print "border: none;" 
-?>
-    
-    border-bottom: solid 1px rgba(0,0,0,.2);
     outline: none;
     margin: 0px 0px 0px 0px;
+    border-bottom: solid 1px rgba(0,0,0,.2);
 }
+
 input {
     line-height: 17px;
 	padding: 4px;

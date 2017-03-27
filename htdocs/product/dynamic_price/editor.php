@@ -16,9 +16,9 @@
  */
 
 /**
- *  \file	   htdocs/product/dynamic_price/editor.php
+ *  \file	    htdocs/product/dynamic_price/editor.php
  *  \ingroup	product
- *  \brief	  Page for editing expression
+ *  \brief	    Page for editing expression
  */
 
 require '../../main.inc.php';
@@ -59,6 +59,7 @@ else if ($action != 'delete')
 {
 	$price_expression->fetch($eid);
 }
+
 
 /*
  * Actions
@@ -157,23 +158,28 @@ if ($action == 'delete')
 	}
 }
 
+
 /*
  * View
  */
 
-//Header
-llxHeader("","",$langs->trans("CardProduct".$product->type));
-print load_fiche_titre($langs->trans("PriceExpressionEditor"));
 $form = new Form($db);
+
+llxHeader("","",$langs->trans("CardProduct".$product->type));
+
+print load_fiche_titre($langs->trans("PriceExpressionEditor"));
 
 //Form/Table
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;tab='.$tab.'&amp;eid='.$eid.'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value='.($eid == 0 ? 'add' : 'update').'>';
+
+dol_fiche_head();
+
 print '<table class="border" width="100%">';
 
 // Price expression selector
-print '<tr><td class="fieldrequired">'.$langs->trans("PriceExpressionSelected").'</td><td>';
+print '<tr><td class="titlefield fieldrequired">'.$langs->trans("PriceExpressionSelected").'</td><td>';
 $price_expression_list = array(0 => $langs->trans("New")); //Put the new as first option
 foreach ($price_expression->list_price_expression() as $entry) {
 	$price_expression_list[$entry->id] = $entry->title;
@@ -203,6 +209,8 @@ $doleditor=new DolEditor('expression',isset($price_expression->expression)?$pric
 $doleditor->Create();
 print '</td></tr>';
 print '</table>';
+
+dol_fiche_end();
 
 //Buttons
 print '<div class="center">';

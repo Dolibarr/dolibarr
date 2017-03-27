@@ -471,12 +471,10 @@ if ($mode == 'common')
 
     if (! empty($moreforfilter))
     {
-        //print '<div class="liste_titre liste_titre_bydiv centpercent">';
         print $moreforfilter;
         $parameters=array();
         $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-        //print '</div>';
     }
     
     
@@ -485,8 +483,6 @@ if ($mode == 'common')
     $moreforfilter='';
     
     // Show list of modules
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" summary="list_of_modules" id="list_of_modules" >'."\n";
 
     $oldfamily='';
 
@@ -570,14 +566,15 @@ if ($mode == 'common')
         // Print a separator if we change family
         if ($familykey!=$oldfamily)
         {
-            print '<tr class="liste_titre">'."\n";
-            print '<td colspan="5">';
+        	if ($oldfamily) print '</table></div><br>';
+        	
             $familytext=empty($familyinfo[$familykey]['label'])?$familykey:$familyinfo[$familykey]['label'];
-            print $familytext;
-            print "</td>\n";
-    		print '<td colspan="2" align="right">'.$langs->trans("SetupShort").'</td>'."\n";
-            print "</tr>\n";
-            $atleastoneforfamily=0;
+            print_fiche_titre($familytext, '', '');
+    		
+            print '<div class="div-table-responsive">';
+        	print '<table class="tagtable liste" summary="list_of_modules">'."\n";
+            
+        	$atleastoneforfamily=0;
         }
 
         $atleastoneforfamily++;
@@ -606,43 +603,38 @@ if ($mode == 'common')
             $imginfo="info_black";
         }
         
-        print '<tr '.$bc[$var].">\n";
+        print '<tr>'."\n";
 
-        // Picto
-        print '  <td valign="top" width="14" align="center">';
+        // Picto + Name of module
+        print '  <td width="200px">';
         $alttext='';
         //if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
         //if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
         if (! empty($objMod->picto))
         {
         	if (preg_match('/^\//i',$objMod->picto)) print img_picto($alttext,$objMod->picto,' width="14px"',1);
-        	else print img_object($alttext,$objMod->picto,' width="14px"');
+        	else print img_object($alttext, $objMod->picto, 'class="valignmiddle" width="14px"');
         }
         else
         {
-        	print img_object($alttext,'generic');
+        	print img_object($alttext, 'generic', 'class="valignmiddle"');
         }
-        print '</td>';
-
-        // Name
-        print '<td class="tdtop">'.$objMod->getName();
+        print ' <span class="valignmiddle">'.$objMod->getName().'</span>';
         print "</td>\n";
 
         // Desc
-        print '<td class="tdtop">';
+        print '<td class="valignmiddle tdoverflowmax300">';
         print nl2br($objMod->getDesc());
         print "</td>\n";
 
         // Help
-        print '<td align="center" valign="top" class="nowrap" style="width: 82px;">';
-        
+        print '<td class="center nowrap" style="width: 82px;">';
         //print $form->textwithpicto('', $text, 1, $imginfo, 'minheight20', 0, 2, 1);
         print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$objMod->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto($langs->trans("ClickToShowDescription"), $imginfo).'</a>';
-        
         print '</td>';
 
         // Version
-        print '<td align="center" valign="top" class="nowrap">';
+        print '<td class="center nowrap" width="120px">';
         print $versiontrans;
         print "</td>\n";
 
@@ -651,8 +643,12 @@ if ($mode == 'common')
         {
         	$disableSetup = 0;
 
-        	print '<td align="center" valign="middle">';
-            if (! empty($objMod->disabled))
+        	print '<td class="center valignmiddle" width="80px">';
+        	if (! empty($arrayofwarnings[$modName]))
+	        {
+                print '<!-- This module has a warning to show when we activate it (note: your country is '.$mysoc->country_code.') -->'."\n";
+	        }
+	        if (! empty($objMod->disabled))
         	{
         		print $langs->trans("Disabled");
         	}
@@ -674,7 +670,7 @@ if ($mode == 'common')
         	{
         		if (is_array($objMod->config_page_url))
         		{
-        			print '<td class="tdsetuppicto" align="right" valign="top">';
+        			print '<td class="tdsetuppicto right" width="40px"">';
         			$i=0;
         			foreach ($objMod->config_page_url as $page)
         			{
@@ -700,22 +696,22 @@ if ($mode == 'common')
         		}
         		else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
         		{
-        			print '<td class="tdsetuppicto" align="right" valign="middle"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
+        			print '<td class="tdsetuppicto right valignmiddle" width="80px"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
         		}
         		else
         		{
-        			print '<td class="tdsetuppicto" align="right" valign="middle"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
+        			print '<td class="tdsetuppicto right valignmiddle" width="80px"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
         		}
         	}
         	else
         	{
-        		print '<td class="tdsetuppicto" align="right" valign="middle">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
+        		print '<td class="tdsetuppicto right valignmiddle" width="80px">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
         	}
 
         }
         else	// Module not yet activated
 		{
-        	print '<td align="center" valign="middle">';
+        	print '<td class="center valignmiddle" width="80px">';
 		    if (! empty($objMod->always_enabled))
         	{
         		// Should never happened
@@ -754,17 +750,20 @@ if ($mode == 'common')
 	        	    }
 	        	}
         	    print '<!-- Message to show: '.$warningmessage.' -->'."\n";
-	        	print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
+	        	print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '"';
+	        	if ($warningmessage) print ' onclick="return confirm(\''.dol_escape_js($warningmessage).'\');"';
+	        	print '>';
 	        	print img_picto($langs->trans("Disabled"),'switch_off');
 	        	print "</a>\n";
         	}
         	print "</td>\n";
-        	print '<td class="tdsetuppicto" align="right" valign="middle">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
+        	print '<td class="tdsetuppicto right valignmiddle" width="80px">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
         }
 
         print "</tr>\n";
 
     }
+    
     print "</table>\n";
     print '</div>';
     
