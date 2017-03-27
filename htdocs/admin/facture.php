@@ -6,6 +6,7 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2012-2013  Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
+ * Copyright (C) 2016		Alexandre Spangaro			<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,6 +207,18 @@ if ($action == 'setribchq')
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
+}
+
+if ($action == 'setonlybiciban') {
+    $setonlybiciban = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN", $setonlybiciban, 'yesno', 0, '', $conf->entity);
+    if (! $res > 0)
+        $error ++;
+        if (! $error) {
+            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        } else {
+            setEventMessages($langs->trans("Error"), null, 'mesgs');
+        }
 }
 
 if ($action == 'set_FACTURE_DRAFT_WATERMARK')
@@ -671,6 +684,21 @@ else
     print $langs->trans("BankModuleNotActive");
 }
 print "</td></tr>";
+
+$var = ! $var;
+print "<tr " . $bc[$var] . ">";
+print '<td>' . $langs->trans("ShowOnlyBicIban") . '</td>';
+if (! empty($conf->global->PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN)) {
+	print '<td align="left"><a href="' . $_SERVER['PHP_SELF'] . '?action=setonlybiciban&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td align="left"><a href="' . $_SERVER['PHP_SELF'] . '?action=setonlybiciban&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
