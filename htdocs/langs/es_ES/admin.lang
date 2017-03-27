@@ -11,13 +11,16 @@ VersionRecommanded=Recomendada
 FileCheck=Comprobador de integridad de archivos
 FileCheckDesc=Esta herramienta le permite comprobar la integridad de los archivos de la aplicación, comparando cada archivo con los oficiales. Se puede utilizar esta herramienta para detectar si algunos archivos fueron modificados por un hacker por ejemplo.
 FileIntegrityIsStrictlyConformedWithReference=La integridad de los archivos se ajusta estrictamente a la referencia.
-FileIntegritySomeFilesWereRemovedOrModified=El chequeo de integridad de archivos ha fallado. Algunos archivos han sido removidos o modificados.
+FileIntegrityIsOkButFilesWereAdded=La comprobación de la integridad de los archivos ha resultado exitosa, sin embargo se han agregado algunos archivos nuevos.
+FileIntegritySomeFilesWereRemovedOrModified=La comprobación de integridad de archivos ha fallado. Algunos archivos fueron modificados, eliminados o agregados.
 GlobalChecksum=Suma de comprobación global
 MakeIntegrityAnalysisFrom=Realizar el análisis de la integridad de los archivos de la aplicación desde
 LocalSignature=Firma local incrustada (menos segura)
 RemoteSignature=Firma remota (más segura)
 FilesMissing=Archivos no encontrados
 FilesUpdated=Archivos actualizados
+FilesModified=Archivos modificados
+FilesAdded=Archivos añadidos
 FileCheckDolibarr=Comprobar la integradad de los archivos de la aplicación
 AvailableOnlyOnPackagedVersions=El archivo local para la comprobación de integridad sólo está disponible cuando la aplicación se instala desde un paquete certificado
 XmlNotFound=No se encuentra el archivo xml
@@ -188,7 +191,9 @@ BoxesDesc=Los paneles son componentes que muestran algunos datos que pueden aña
 OnlyActiveElementsAreShown=Sólo los elementos de <a href="%s">módulos activados</a> son mostrados.
 ModulesDesc=Los módulos de Dolibarr definen qué funcionalidad está habilitada en el software. Algunos módulos requieren permisos que se deben conceder a los usuarios después de activar el módulo. Haga clic en el botón de encendido/apagado para activar un módulo/función.
 ModulesMarketPlaceDesc=Puede encontrar más módulos para descargar en sitios web externos en Internet ...
-ModulesMarketPlaces=Más módulos...
+ModulesDeployDesc=Si los permisos en su sistema de archivos lo permiten, puede utilizar esta herramienta para instalar un módulo externo. El módulo estará entonces visible en la pestaña <strong>%s</strong>.
+ModulesMarketPlaces=Buscar módulos externos...
+GoModuleSetupArea=Para instalar un nuevo módulo, vaya al área de configuración de módulos en <a href="%s">%s</a>.
 DoliStoreDesc=DoliStore, el sitio oficial de módulos complementarios y para Dolibarr ERP/CRM
 DoliPartnersDesc=Lista de empresas que ofrecen módulos y desarrollos a medida (Nota: cualquier persona con experiencia en programación PHP puede ofrecer desarrollos a medida para un proyecto de código abierto)
 WebSiteDesc=Sitios web de referencia para encontrar más módulos ...
@@ -280,15 +285,16 @@ MenuHandlers=Gestores menú
 MenuAdmin=Editor menú
 DoNotUseInProduction=No usar en producción
 ThisIsProcessToFollow=Estos son los pasos para proceder:
-ThisIsAlternativeProcessToFollow=Este es una configuración alternativa para procesar:
+ThisIsAlternativeProcessToFollow=Este es una configuración alternativa para procesar manualmente:
 StepNb=Paso %s
 FindPackageFromWebSite=Buscar el paquete que responde a su necesidad (por ejemplo en el sitio web %s)
 DownloadPackageFromWebSite=Descargue el paquete (por ejemplo desde el sitio web oficial %s).
-UnpackPackageInDolibarrRoot=Descomprima el archivo del paquete en el directorio del servidor de Dolibarr dedicado a los módulos externos: <b>%s</b>
-SetupIsReadyForUse=La instalación ha finalizado y Dolibarr está disponible con el nuevo componente.
-NotExistsDirect=No existe el directorio alternativo.<br>
-InfDirAlt=Desde la versión 3 es posible definir un directorio root alternativo, esto le permite almacenar en el mismo lugar módulos y temas personalizados.<br>Basta con crear un directorio en el raíz de Dolibarr (por ejemplo: custom).<br>
-InfDirExample=<br>Seguidamente se declara en el archivo conf.php:<br> $dolibarr_main_url_root_alt='http://miservidor/custom'<br>$dolibarr_main_document_root_alt='/directorio/de/dolibarr/htdocs/custom'<br>*Estas lineas vienen comentadas con un "#", para descomentarlas solo hay que retirar el caracter.
+UnpackPackageInDolibarrRoot=Descomprimir los archivos comprimidos en el directorio del servidor dedicado a Dolibarr: <b>%s</b>
+UnpackPackageInModulesRoot=Para instalar un módulo externo, descomprima el archivo en el directorio del servidor dedicado a los módulos: <b>%s</b>
+SetupIsReadyForUse=La instalación del módulo ha concluido. Sin embargo, debe habilitar y configurar el módulo en su aplicación, vaya a la página para configurar los módulos: <a href="%s">%s</a>.
+NotExistsDirect=El directorio raíz alternativo no está configurado en un directorio existente.<br>
+InfDirAlt=Desde la versión 3, es posible definir un directorio raíz alternativo. Esto le permite almacenar, en un directorio dedicado, plug-ins y plantillas personalizadas.<br>Sólo cree un directorio en la raíz de Dolibarr (por ejemplo: custom).<br>
+InfDirExample=<br>Luego indíquelo en el archivo <strong>conf.php</strong><br> $ dolibarr_main_url_root_alt = 'http://miservidor /custom'<br>$ dolibarr_main_document_root_alt = '/ruta/de/dolibarr/htdocs/custom '<br>Si estas líneas se encuentran comentadas con "#", para habilitarlas, basta con descomentar eliminando el carácter "#".
 YouCanSubmitFile=Para este paso, puede enviar el paquete usando esta herramienta: Seleccionar el archivo del módulo
 CurrentVersion=Versión actual de Dolibarr
 CallUpdatePage=Ir a la página de actualización de la estructura de la base de datos y sus datos: %s.
@@ -376,11 +382,11 @@ ExtrafieldCheckBox=Casilla de verificación
 ExtrafieldRadio=Botón de selección excluyente
 ExtrafieldCheckBoxFromList= Casilla de selección de tabla
 ExtrafieldLink=Objeto adjuntado
-ExtrafieldParamHelpselect=El listado de parámetros tiene que ser key,valor<br><br> por ejemplo:\n<br>1,value1<br>2,value2<br>3,value3<br>...<br><br>Para tener la lista en función de otra:<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
+ExtrafieldParamHelpselect=El listado de parámetros tiene que ser key,valor<br><br> por ejemplo:\\n<br>1,value1<br>2,value2<br>3,value3<br>...<br><br>Para tener una lista en funcion de atributos complementarios de lista:<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>Para tener la lista en función de otra:<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=El listado de parámetros tiene que ser key,valor<br><br> por ejemplo:\n<br>1,value1<br>2,value2<br>3,value3<br>...
 ExtrafieldParamHelpradio=El listado de parámetros tiene que ser key,valor<br><br> por ejemplo:\n<br>1,value1<br>2,value2<br>3,value3<br>...
-ExtrafieldParamHelpsellist=Lista de parámetros viene de una tabla<br>Sintaxis: nombre_tabla: etiqueta_campo: identificador_campo :: filtro <br> Ejemplo: c_typent: libelle: id :: filtro <br><br> filtro puede ser una prueba simple (por ejemplo, activo = 1) para mostrar el valor sólo el valor activo<br>También puedes utilizar $ID$ en el filtro como el id actual del objeto actual<br>Para hacer un SELECT en el filtro usa $SEL$<br> si desea filtrar un campo extra utilizar la sintáxis extra.fieldcode = ... (donde el código de campo es el código del campo extra) <br><br> para tener la lista en función de otra: <br> c_typent: libelle: id: parent_list_code | parent_column: filtro
-ExtrafieldParamHelpchkbxlst=Lista de parámetros viene de una tabla<br>Sintaxis: nombre_tabla: etiqueta_campo: identificador_campo :: filtro <br> Ejemplo: c_typent: libelle: id :: filtro <br> filtro puede ser una prueba simple (por ejemplo, activo = 1) para mostrar el valor sólo se activa <br> si desea filtrar un campo extra utilizar la sintáxis extra.fieldcode = ... (donde el código de campo es el código del campo extra) <br> para tener la lista en función de otra: <br> c_typent: libelle: id: parent_list_code | parent_column: filtro
+ExtrafieldParamHelpsellist=Lista de parámetros proviene de una tabla <br> Sintaxis: nombre_tabla: etiqueta_field: id_field :: filtro <br> Ejemplo: c_typent: libelle: id :: filtro <br> <br> filtro puede ser una prueba simple (por ejemplo, activa = 1) Para mostrar sólo el valor activo <br> También puede utilizar $ ID $ en el filtro witch es el actual id del objeto actual <br> Para hacer un SELECT en el filtro de uso $ SEL $ <br> si desea filtrar en extrafields utilizar la sintaxis Extra.fieldcode = ... (donde código de campo es el código de extrafield) <br> <br> Para que la lista dependa de otra lista de atributos complementarios: <br> c_typent: libelle: id: options_ <i> parent_list_code </i> | parent_column: filter <br> <br> Para que la lista dependa de otra lista: <br> c_typent: libelle: id: <i> parent_list_code </i> | parent_column: filter
+ExtrafieldParamHelpchkbxlst=Lista de parámetros proviene de una tabla <br> Sintaxis: nombre_tabla: etiqueta_field: id_field :: filtro <br> Ejemplo: c_typent: libelle: id :: filtro <br> <br> filtro puede ser una prueba simple (por ejemplo, activa = 1) Para mostrar sólo el valor activo <br> También puede utilizar $ ID $ en el filtro witch es el id actual del objeto actual <br> Para hacer un SELECT en el filtro de uso $ SEL $ <br> si desea filtrar en extrafields utilizar la sintaxis Extra.fieldcode = ... (donde código de campo es el código de extrafield) <br> <br> Para que la lista dependa de otra lista de atributos complementarios: <br> c_typent: libelle: id: options_ <i> parent_list_code </i> | parent_column: filter <br> <br> Para que la lista dependa de otra lista: <br> c_typent: libelle: id: <i> parent_list_code </i> | parent_column: filter
 ExtrafieldParamHelplink=Los parámetros deben ser ObjectName: Classpath<br>Sintaxis: ObjectName:Classpath<br>Ejemplo: Societe:societe/class/societe.class.php
 LibraryToBuildPDF=Libreria usada en la generación de los PDF
 WarningUsingFPDF=Atención: Su archivo <b>conf.php</b> contiene la directiva <b>dolibarr_pdf_force_fpdf=1</b>. Esto hace que se use la librería FPDF para generar sus archivos PDF. Esta librería es antigua y no cubre algunas funcionalidades (Unicode, transparencia de imágenes, idiomas cirílicos, árabes o asiáticos, etc.), por lo que puede tener problemas en la generación de los PDF.<br>Para resolverlo, y disponer de un soporte completo de PDF, puede descargar la <a href="http://www.tcpdf.org/" target="_blank">librería TCPDF</a> , y a continuación comentar o eliminar la línea <b>$dolibarr_pdf_force_fpdf=1</b>, y añadir en su lugar <b>$dolibarr_lib_TCPDF_PATH='ruta_a_TCPDF'</b>
@@ -415,10 +421,10 @@ ModuleCompanyCodeDigitaria=Devuelve un código contable compuesto siguiendo el c
 Use3StepsApproval=De forma predeterminada, los pedidos a proveedor deben ser creados y aprobados por 2 usuarios diferentes (un paso/usuario para crear y un paso/usuario para aprobar. Tenga en cuenta que si el usuario tiene tanto el permiso para crear y aprobar, un paso usuario será suficiente) . Puede pedir con esta opción introducir una tercera etapa de aprobación/usuario, si la cantidad es superior a un valor específico (por lo que serán necesarios 3 pasos: 1 validación, 2=primera aprobación y 3=segunda aprobación si la cantidad es suficiente).<br>Deje vacío si una aprobación (2 pasos) es suficiente, si se establece en un valor muy bajo (0,1) se requiere siempre una segunda aprobación (3 pasos).
 UseDoubleApproval=Usar 3 pasos de aprobación si el importe (sin IVA) es mayor que...
 WarningPHPMail=ADVERTENCIA: Algunos proveedores de correo electrónico (como Yahoo) no le permiten enviar un e-mail desde otro servidor que no sea el servidor de Yahoo si la dirección de correo electrónico utilizada como remitente es su correo e-mail de Yahoo (como myemail@yahoo.com, myemail@yahoo.fr, ...). Su configuración actual utiliza el servidor de la aplicación para enviar e-mail, por lo que algunos destinatarios (compatibles con el protocolo restrictivo DMARC) le preguntarán a Yahoo si pueden aceptar su e-mail y Yahoo responderá "no" porque el servidor no es un servidor Propiedad de Yahoo, por lo que algunos de sus e-mails enviados pueden no ser aceptados. Si su proveedor de correo electrónico (como Yahoo) tiene esta restricción, debe cambiar la configuración de e-mail para elegir el método "servidor SMTP" y introdudir el servidor SMTP y credenciales proporcionadas por su proveedor de correo electrónico (pregunte a su proveedor de correo electrónico las credenciales SMTP para su cuenta).
-
+ClickToShowDescription=Clic para ver la descripción
 # Modules
 Module0Name=Usuarios y grupos
-Module0Desc=Gestión de usuarios y grupos
+Module0Desc=Gestión de Usuarios / Empleados y grupos
 Module1Name=Terceros
 Module1Desc=Gestión de terceros (empresas, particulares) y contactos
 Module2Name=Comercial
@@ -519,8 +525,8 @@ Module2200Name=Precios dinámicos
 Module2200Desc=Activar el uso de expresiones matemáticas para precios
 Module2300Name=Programador
 Module2300Desc=Gestión del Trabajo programado
-Module2400Name=Events/Agenda
-Module2400Desc=Follow done and upcoming events. Let application logs automatic events for tracking purposes or record manual events or rendez-vous.
+Module2400Name=Eventos/Agenda
+Module2400Desc=Siga los eventos o citas. Registre eventos manuales en las agendas o deje a la aplicación registrar eventos automáticos para fines de seguimiento.
 Module2500Name=Gestión Electrónica de Documentos
 Module2500Desc=Permite administrar una base de documentos
 Module2600Name=API/Servicios web (servidor SOAP)
@@ -586,7 +592,7 @@ Permission34=Eliminar productos
 Permission36=Ver/gestionar los productos ocultos
 Permission38=Exportar productos
 Permission41=Leer proyectos y tareas (proyectos compartidos y proyectos de los que soy contacto). También puede introducir tiempos consumidos en tareas asignadas.
-Permission42=Create/modify projects (shared project and projects i'm contact for). Can also create tasks and assign users to project and tasks
+Permission42=Crear/modificar proyectos (proyectos compartidos y proyectos de los que soy contacto). También puede crear tareas y asignar usuarios a proyectos y tareas
 Permission44=Eliminar proyectos y tareas (compartidos o soy contacto)
 Permission45=Exportar proyectos
 Permission61=Consultar intervenciones
@@ -689,7 +695,7 @@ PermissionAdvanced253=Crear/modificar usuarios internos/externos y sus permisos
 Permission254=Modificar la contraseña de otros usuarios
 Permission255=Eliminar o desactivar otros usuarios
 Permission256=Consultar sus permisos
-Permission262=Extend access to all third parties (not only third parties that user is a sale representative). Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc). Not effective for projects (only rules on project permissions, visibility and assignement matters).
+Permission262=Ampliar el acceso a todos los terceros (no sólo a los terceros que el usuario es comercial).<br>No efectivo para usuarios externos (Solamente usuarios internos. Los externos están limitados a ellos mismos para presupuestos, facturas, contratos, etc.).<br>No efectivo para proyectos (solamente permisos de visión y asignación de los proyectos).
 Permission271=Consultar el CA
 Permission272=Consultar las facturas
 Permission273=Emitir las facturas
@@ -836,7 +842,7 @@ DictionaryStaff=Empleados
 DictionaryAvailability=Tiempos de entrega
 DictionaryOrderMethods=Métodos de pedido
 DictionarySource=Orígenes de presupuestos/pedidos
-DictionaryAccountancyCategory=Categorías contables
+DictionaryAccountancyCategory=Grupos cuentas contables
 DictionaryAccountancysystem=Modelos de planes contables
 DictionaryEMailTemplates=Plantillas E-Mails
 DictionaryUnits=Unidades
@@ -891,7 +897,7 @@ Offset=Decálogo
 AlwaysActive=Siempre activo
 Upgrade=Actualización
 MenuUpgrade=Actualización / Extensión
-AddExtensionThemeModuleOrOther=Añadir extensión (tema, módulo, etc.)
+AddExtensionThemeModuleOrOther=Instalar módulo externo
 WebServer=Servidor web
 DocumentRootServer=Directorio raíz de las páginas web
 DataRootServer=Directorio raíz de los archivos de datos
@@ -998,7 +1004,7 @@ TriggerAlwaysActive=Triggers de este archivo siempre activos, ya que los módulo
 TriggerActiveAsModuleActive=Triggers de este archivo activos ya que el módulo <b>%s</b> está activado
 GeneratedPasswordDesc=Indique aquí que norma quiere utilizar para generar las contraseñas cuando quiera generar una nueva contraseña
 DictionaryDesc=Inserte aquí los datos de referencia. Puede añadir sus datos a los predefinidos.
-ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
+ConstDesc=Esta página le permite editar todos los demás parámetros que no se encuentran en las páginas anteriores. Estos son reservados en su mayoría a desarrolladores o soluciones avanzadas. Para obtener una lista de opcoines  <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">haga clic aquí</a>.
 MiscellaneousDesc=Todos los otros parámetros relacionados con la seguridad se definen aquí.
 LimitsSetup=Configuración de límites y precisiones
 LimitsDesc=Puede definir aquí los límites y precisiones utilizados por Dolibarr
@@ -1165,10 +1171,6 @@ FreeLegalTextOnOrders=Texto libre en pedidos
 WatermarkOnDraftOrders=Marca de agua en pedidos borrador (en caso de estar vacío)
 ShippableOrderIconInList=Añadir un icono en el listado de pedidos que indica si el pedido es enviable
 BANK_ASK_PAYMENT_BANK_DURING_ORDER=Preguntar por cuenta bancaria a usar en el pedido
-##### Clicktodial #####
-ClickToDialSetup=Configuración del módulo Click To Dial
-ClickToDialUrlDesc=URL de llamada haciendo click en el icono teléfono. <br>La URL completa de llamada será: URL?login=...&password=...&caller=...&called=telellamada
-##### Bookmark4u #####
 ##### Interventions #####
 InterventionsSetup=Configuración del módulo intervenciones
 FreeLegalTextOnInterventions=Texto adicional en las fichas de intervención
@@ -1475,9 +1477,11 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Establecer automáticamente este valor por defecto
 AGENDA_DEFAULT_FILTER_TYPE=Establecer por defecto este tipo de evento en el filtro de búsqueda en la vista de la agenda
 AGENDA_DEFAULT_FILTER_STATUS=Establecer por defecto este estado de eventos en el filtro de búsqueda en la vista de la agenda
 AGENDA_DEFAULT_VIEW=Establecer la pestaña por defecto al seleccionar el menú Agenda
-AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
-AGENDA_NOTIFICATION_SOUND=Enable sound notification
-##### ClickToDial #####
+AGENDA_NOTIFICATION=Activar notificación de eventos en el navegador cuando se alcanza la fecha del evento (el usuario puede rechazar las notificaciones en la pregunta de confirmación del explorador)
+AGENDA_NOTIFICATION_SOUND=Activar sonido de notificación
+##### Clicktodial #####
+ClickToDialSetup=Configuración del módulo Click To Dial
+ClickToDialUrlDesc=URL de llamada haciendo click en el icono teléfono. <br>La URL completa de llamada será: URL?login=...&password=...&caller=...&called=telellamada
 ClickToDialDesc=Este módulo permite hacer clicables los números de teléfono. Un clic en este icono hará que su teléfono llame al número de teléfono. Esto puede ser usado para llamar a un sistema de centralitas desde Dolibarr que puede llamar al número de teléfono en un sistema SIP, por ejemplo.
 ClickToDialUseTelLink=Utilice el enlace "tel:" que aparece en los números de teléfono
 ClickToDialUseTelLinkDesc=Utilice este método si los usuarios tienen un softphone o una interfaz de software instalado en mismo equipo que el navegador, y se llama al hacer clic en un enlace en el navegador que comienza con "tel:". Si necesita una solución de servidor completa (sin necesidad de instalación de software local), debe establecer este en "No" y rellenar siguiente campo.
@@ -1509,6 +1513,7 @@ ApiProductionMode=Activar el modo de producción (esto activará uso de cachés 
 ApiExporerIs=Puede explorar las API en la url
 OnlyActiveElementsAreExposed=Sólo son expuestos los elementos de los módulos activos
 ApiKey=Clave para API
+WarningAPIExplorerDisabled=Se ha deshabilitado el explorador de API. No es necesario API Explorer para proporcionar servicios API. Es una herramienta para que el desarrollador encuentre/pruebe API REST. Si necesita esta herramienta, vaya a la configuración del módulo API REST para activarla.
 ##### Bank #####
 BankSetupModule=Configuración del módulo Banco
 FreeLegalTextOnChequeReceipts=Mención complementaria en las remesas de cheques
@@ -1577,7 +1582,7 @@ BackupDumpWizard=Asistente para crear una copia de seguridad de la base de datos
 SomethingMakeInstallFromWebNotPossible=No es posible la instalación de módulos externos desde la interfaz web por la siguiente razón:
 SomethingMakeInstallFromWebNotPossible2=Por esta razón, explicaremos aquí los pasos del proceso de actualización manual que puede realizar un usuario con privilegios. 
 InstallModuleFromWebHasBeenDisabledByFile=La instalación de módulos externos desde la aplicación se encuentra desactivada por el administrador. Debe requerirle que elimine el archivo <strong>%s</strong> para habilitar esta funcionalidad.
-ConfFileMuseContainCustom=Instalar un módulo externo desde la aplicación necesita guardar los archivos del módulo en el directorio <strong>%s</strong>. Para que este directorio pueda ser procesado por Dolibarr, necesita configurar su <strong>conf/conf.php</strong> para disponer de la opción<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
+ConfFileMuseContainCustom=Instalar un módulo externo desde la aplicación guarda los archivos del módulo en el directorio <strong>%s</strong>. Para permitir a Dolibarr el procesamiento de dicho directorio, debe configurar su <strong>conf/conf.php</strong> añadiento 2 líneas de directivas:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Resaltar líneas de los listados cuando el ratón pasa por encima de ellas
 HighlightLinesColor=Resalta el color de la línea cuando el ratón pasa por encima (mantener vacío para no resaltar)
 TextTitleColor=Color para la página de título
@@ -1607,6 +1612,7 @@ FixTZ=Corrección de zona horaria
 FillFixTZOnlyIfRequired=Ejemplo: +2 (complete sólo si tiene problemas)
 ExpectedChecksum=Esperando la suma de comprobación
 CurrentChecksum=Suma de comprobación actual
+ForcedConstants=Valores requeridos de constantes
 MailToSendProposal=Para enviar presupuesto a cliente
 MailToSendOrder=Para enviar pedido de cliente
 MailToSendInvoice=Para enviar factura a cliente
@@ -1615,9 +1621,10 @@ MailToSendIntervention=Para enviar intervención
 MailToSendSupplierRequestForQuotation=Para enviar solicitud de presupuesto de proveedor
 MailToSendSupplierOrder=Para enviar pedido a proveedor
 MailToSendSupplierInvoice=Para enviar factura de proveedor
+MailToSendContract=Para enviar un contrato
 MailToThirdparty=Para enviar e-mail desde la página del tercero
 ByDefaultInList=Mostrar por defecto en modo lista
-YouUseLastStableVersion=Debe usar la última versión estable
+YouUseLastStableVersion=Usa la última versión estable
 TitleExampleForMajorRelease=Ejemplo de mensaje que puede usar para anunciar esta release mayor (no dude en usarlo en sus sitios web)
 TitleExampleForMaintenanceRelease=Ejemplo de mensaje que puede usar para anunciar esta versión de mantenimiento (no dude en usarlo en sus sitios web)
 ExampleOfNewsMessageForMajorRelease=Disponible ERP/CRM Dolibarr %s. La versión %s es una versión mayor con un montón de nuevas características, tanto para usuarios como para desarrolladores. Se puede descargar desde la sección de descargas del portal https://www.dolibarr.org (subdirectorio versiones estables). Puede leer <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> para ver la lista completa de los cambios.

@@ -9,14 +9,20 @@ VersionDevelopment=Utviklingsversjon
 VersionUnknown=Ukjent
 VersionRecommanded=Anbefalt
 FileCheck=Filintegritetssjekker
-FileCheckDesc=Dette verktøyet tillater deg å kontrollere integriteten til filer i applikasjonen, og sammenligner hver fil med de offisielle filene. Du kan kan bruke verktøyet til å kontrollere om filene ble endret av f.eks en hacker.
+FileCheckDesc=This tool allows you to check the integrity of files and setup of your application, comparing each files with the official ones. Value of some setup constants may also be checked. You can use this tool to detect if some files were modified by a hacker for example.
+FileIntegrityIsStrictlyConformedWithReference=Files integrity is strictly conformed with the reference.
+FileIntegrityIsOkButFilesWereAdded=Files integrity check has passed, however some new files were added.
+FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified, removed or added.
+GlobalChecksum=Global sjekksum
 MakeIntegrityAnalysisFrom=Opprett integritetsanalyse av applikasjonsfiler fra
 LocalSignature=Innebygget lokal signatur (mindre pålitelig)
 RemoteSignature=Fjernsignatur (mer pålitelig)
 FilesMissing=Manglende filer
 FilesUpdated=Oppdaterte filer
+FilesModified=Endrede filer
+FilesAdded=Filer lagt til
 FileCheckDolibarr=Integritetssjekk av applikasjonsfilene
-AvailableOnlyOnPackagedVersions=Den lokale filen for integritetssjekk er kun tilgjengelig hvis applikasjonen er installert fra en sertifisert pakke
+AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from an official package
 XmlNotFound=Xml Integritetsfilen til applikasjonen ble ikke funnet
 SessionId=Økt-ID
 SessionSaveHandler=Håndterer for å lagre sesjoner
@@ -185,7 +191,9 @@ BoxesDesc=Widgeter er komponenter som viser litt informasjon som du kan legge ti
 OnlyActiveElementsAreShown=Bare elementer fra <a href="%s">aktiverte moduler</a> vises.
 ModulesDesc=Dolibarr-moduler definerer hvilke funksjonaliteter som er aktivert i programmet. Noen moduler krever tillatelser du må gi for brukerne, etter å ha aktivert modulen. Klikk på knappen på/av for å aktivere en modul/funksjon.
 ModulesMarketPlaceDesc=Du kan finne flere moduler for nedlasting på eksterne nettsteder.
-ModulesMarketPlaces=Flere moduler ...
+ModulesDeployDesc=If permissions on your file system allows it, you can use this tool to deploy an external module. The module wil then be visible on the tab <strong>%s</strong>.
+ModulesMarketPlaces=Finn eksterne moduler.
+GoModuleSetupArea=To deploy/install a new module, go onto the Module setup area at <a href="%s">%s</a>.
 DoliStoreDesc=DoliStore, den offisielle markedsplassen for eksterne moduler til Dolibarr ERP/CRM 
 DoliPartnersDesc=Liste over selskaper som tilbyr spesialtilpassede moduler og funksjoner (Merk: Erfarne PHP-programmerere kan gi tilpasset utvikling for åpen kildekode)
 WebSiteDesc=Referansesider for å finne flere moduler.
@@ -223,14 +231,14 @@ HelpCenterDesc1=Dette området kan hjelpe deg å få support-tjeneste med Doliba
 HelpCenterDesc2=Enkelte deler av denne tjenesten er <b>kun</b> tilgjengelig på <b>engelsk.</b>
 CurrentMenuHandler=Gjeldende menyen behandler
 MeasuringUnit=Måleenhet
-LeftMargin=Left margin
-TopMargin=Top margin
-PaperSize=Paper type
-Orientation=Orientation
+LeftMargin=Venstremarg
+TopMargin=Toppmarg
+PaperSize=Papirtype
+Orientation=Orientering
 SpaceX=Space X
 SpaceY=Space Y
-FontSize=Font size
-Content=Content
+FontSize=Fontstørrelse
+Content=Innhold
 NoticePeriod=Oppsigelsestid
 NewByMonth=New by month
 Emails=E-poster
@@ -276,21 +284,22 @@ ModuleFamilyInterface=Grensesnitt mot eksterne systemer
 MenuHandlers=Menyhåndtering
 MenuAdmin=Menyredigering
 DoNotUseInProduction=Ikke bruk i produksjon
-ThisIsProcessToFollow=Dette er innstillinger for:
-ThisIsAlternativeProcessToFollow=Alternativt oppsett for å prosessere:
+ThisIsProcessToFollow=Disse skrittene må gjennomføres:
+ThisIsAlternativeProcessToFollow=This is an alternative setup to process manually:
 StepNb=Trinn %s
 FindPackageFromWebSite=Finn en pakke som inneholder funksjonen du vil bruke (for eksempel på nettsider %s).
 DownloadPackageFromWebSite=Last ned pakke (for eksempel fra den offisielle websiden %s).
-UnpackPackageInDolibarrRoot=Pakk ut filen i Dolibarrs servermappe for eksterne moduler:<b>%s</b>
-SetupIsReadyForUse=Installasjonen er ferdig og Dolibarr er klar til bruk med den nye modulen.
-NotExistsDirect=Alternativ rotkatalog er ikke definert. <br>
-InfDirAlt=Etter versjon 3 er det mulig å definere en alternativ rotkatalog. Dette lar deg lagre plug-ins og egendefinerte maler på samme sted.<br>Bare lag en katalog i roten av Dolibarr (f.eks: egendefinert).<br>
-InfDirExample=<br>Aktiver det i conf.php<br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>*disse linjene er deaktivert med "#", for å aktivere fjernes #
+UnpackPackageInDolibarrRoot=Unpack the packaged files into server directory dedicated to Dolibarr: <b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, unpack the packaged files into the server directory dedicated to modules: <b>%s</b>
+SetupIsReadyForUse=Module deployment is finished. You must however enable and setup the module in your application by going on the page to setup modules: <a href="%s">%s</a>.
+NotExistsDirect=The alternative root directory is not defined to an existing directory.<br>
+InfDirAlt=Fra versjon 3 er det mulig å definere en alternativ rotkatalog. Dette gjør det mulig å lagre plug-ins og egendefinerte maler.<br>Opprett en katalog i roten til Dolibarr (f.eks min katalog).<br>
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=I dette trinnet kan du sende pakken med dette verktøyet: Velg modulfil
 CurrentVersion=Gjeldende versjon av Dolibarr 
 CallUpdatePage=Gå til siden som oppdaterer data og databasestruktur: %s.
 LastStableVersion=Siste stabile versjon
-LastActivationDate=Siste aktiveringsdato
+LastActivationDate=Latest activation date
 UpdateServerOffline=Oppdater serveren offline
 GenericMaskCodes=Her kan du legge inn nummereringsmal. I malen kan du bruke følgende tagger:<br><b>{000000}</b> tilsvarer et tall som økes ved hver %s. Angi så mange nuller som du ønsker at lengden på telleren skal være. Telleren vil ha ledende nuller i henhold til malens lengde. <br><b>{000000+000}</b> samme som forrige, men med en forskyvning til høyre for + tegnet, starter fra første %s. <br><b>{000000@x}</b> samme som forrige, men telleren starter fra null når måned x nås (x mellom 1 og 12). Hvis dette valget brukes og x er 2 eller mer kreves også sekvensen {yy}{mm} eller {yyyy}{mm} kreves også. <br><b>{dd}</b> dag (01 til 31).<br><b>{mm}</b> måned (01 til 12).<br><b>{yy}</b>, <b>{yyyy}</b> eller <b>{y}</b> årstall over 2, 4 eller 1 siffer. <br> <b>{cccc000}</b> klientkoden på n tegn etterfulgt av en klientreferanse uten forskyvning og nullet med den globale telleren.<br><br>Alle andre tegn i malen vil forbli intakte.<br>Mellomrom er ikke tillatt.<br><br><u>Eksempel på den 99de %s av tredjeparten blir 31/01/2007:</u><br><b>ABC{yy}{mm}-{000000}</b> vil gi <b>ABC0701-000099</b><br><b>{0000+100}-ZZZ/{dd}/XXX</b> vil gi <b>0199-ZZZ/31/XXX</b><br>
 GenericMaskCodes2=<b>{cccc}</b> klientkoden på n tegn<br><b>{cccc000}</b> klientkoden på n tegn etterfølges av en teller dedikert til kunden. Denne telleren blir tilbakestilt til samtidig som den globale telleren.<br><b>{tttt}</b> Koden av tredjeparts type på n tegn (se ordbok-tredjepartstyper). <br>
@@ -373,11 +382,11 @@ ExtrafieldCheckBox=Avmerkingsboks
 ExtrafieldRadio=Radio-knapp
 ExtrafieldCheckBoxFromList= Avkrysningsboks fra tabell
 ExtrafieldLink=Lenke til et objekt
-ExtrafieldParamHelpselect=Parameterlisten må settes opp med nøkkel,verdi<br><br> for eksempel: <br>1,verdi1<br>2,verdi2<br>3,verdi3<br>...<br><br>For å gjøre listen avhengig av en annen liste:<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
+ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list :<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list :<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=Parameterlisten må settes opp med nøkkel,verdi<br><br> for eksempel: <br>1,verdi1<br>2,verdi2<br>3,verdi3<br>...
 ExtrafieldParamHelpradio=Parameterlisten må settes opp med nøkkel,verdi<br><br> for eksempel: <br>1,verdi1<br>2,verdi2<br>3,verdi3<br>...
-ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list :<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Parametre må være ObjectName:Classpath<br>Syntax : ObjectName:Classpath<br>Eksempel : Societe:societe/class/societe.class.php
 LibraryToBuildPDF=Bibliotek brukt for PDF-generering
 WarningUsingFPDF=Advarsel! <b>conf.php</b> inneholder direktivet <b>dolibarr_pdf_force_fpdf=1</b>. Dette betyr at du bruker FPDF biblioteket for å generere PDF-filer. Dette biblioteket er gammelt og støtter ikke en rekke funksjoner (Unicode, bilde-transparens, kyrillisk, arabiske og asiatiske språk, ...), så du kan oppleve feil under PDF generering. <br> For å løse dette, og ha full støtte ved PDF generering, kan du laste ned <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, deretter kommentere eller fjerne linjen <b>$dolibarr_pdf_force_fpdf=1</b>, og i stedet legge inn <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
@@ -411,10 +420,11 @@ ModuleCompanyCodePanicum=Velg en tom regnskapskode
 ModuleCompanyCodeDigitaria=Regnskapskode avhenger av tredjepartskode. Koden består av karakteren "C" i første posisjon, etterfulgt av de første 5 tegnene i tredjepartskoden.
 Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=Bruk 3-trinns godkjennelse når beløpet (eks. MVA) er høyere enn...
-
+WarningPHPMail=ADVARSEL: Noen e-postleverandører (som Yahoo) tillater deg ikke å sende en e-post fra en annen server enn Yahoo-serveren hvis e-postadressen benyttes som avsender er din Yahoo e-post (som myemail@yahoo.com, myemail@yahoo.fr, ...). Ditt nåværende oppsett bruker serveren til programmet til å sende e-post, så noen mottakere (det ene er kompatible med den restriktive DMARC protokollen), vil be Yahoo om de kan ta imot e-post og Yahoo vil svare "nei" fordi serveren er ikke en server eid av Yahoo, så flere av dine sendte e-poster kan ikke aksepteres. <br> Hvis e-postleverandøren (som Yahoo) har denne begrensningen, må du endre e-post-oppsett for å velge den andre metoden "SMTP server" og skriv inn SMTP-server og legitimasjon som tilbys av e-postleverandøren (be e-postleverandøren om å få SMTP-legitimasjon for kontoen din).
+ClickToShowDescription=Klikk for å vise beskrivelse
 # Modules
 Module0Name=Brukere & grupper
-Module0Desc=Behandling av brukere og grupper
+Module0Desc=Users / Employees and Groups management
 Module1Name=Tredjeparter
 Module1Desc=Behandling av bedrifter og kontaktpersoner
 Module2Name=Handel
@@ -515,8 +525,8 @@ Module2200Name=Dynamiske priser
 Module2200Desc=Aktiver mulighet for matematiske utrykk for å beregne priser
 Module2300Name=Cron
 Module2300Desc=Behandling av planlagte oppgaver
-Module2400Name=Agenda/Hendelser
-Module2400Desc=Følg hendelser eller møter. Registrer hendelser manuelt i agendaer eller la app-logger registrere hendelser automatisk for sporing.
+Module2400Name=Hendelser/Agenda
+Module2400Desc=Follow done and upcoming events. Let application logs automatic events for tracking purposes or record manual events or rendez-vous.
 Module2500Name=Elektronisk Innholdshåndtering-ECM
 Module2500Desc=Lagre og dele dokumenter
 Module2600Name=API/Web tjenseter(SOAP server)
@@ -582,7 +592,7 @@ Permission34=Slett varer
 Permission36=Se/administrer skjulte varer
 Permission38=Eksporter varer
 Permission41=Les prosjekter og oppgaver (delte prosjekter og de jeg er kontakt for). Her kan du også legge inn tidsbruk på tildelte oppgaver (timelister)
-Permission42=Opprett/endre prosjekter(delte og de jeg er kontakt for)
+Permission42=Create/modify projects (shared project and projects i'm contact for). Can also create tasks and assign users to project and tasks
 Permission44=Slett prosjekter (delte og mine egne)
 Permission45=Eksporter prosjekter
 Permission61=Vis intervensjoner
@@ -685,7 +695,7 @@ PermissionAdvanced253=Opprett/endre interne/eksterne brukere og tillatelser
 Permission254=Slette eller deaktivere andre brukere
 Permission255=Opprett/endre egen brukerinformasjon
 Permission256=Slett eller deaktiver andre brukere
-Permission262=Utvid tilgangen til alle tredjeparter (ikke bare de som er lenket til brukeren). Påvirker ikke eksterne brukere (som alltid er begrenset til seg selv).
+Permission262=Extend access to all third parties (not only third parties that user is a sale representative).<br>Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc).<br>Not effective for projects (only rules on project permissions, visibility and assignement matters).
 Permission271=Vis CA
 Permission272=Vis fakturaer
 Permission273=Opprett fakturaer
@@ -825,14 +835,14 @@ DictionaryPaymentModes=Betalingsmåter
 DictionaryTypeContact=Kontakt/adressetyper
 DictionaryEcotaxe=Miljøgebyr (WEEE)
 DictionaryPaperFormat=Papirformater
-DictionaryFormatCards=Cards formats
+DictionaryFormatCards=Kortformater
 DictionaryFees=Avgiftstyper
 DictionarySendingMethods=Leveringsmetoder
 DictionaryStaff=Stab
 DictionaryAvailability=Leveringsforsinkelse
 DictionaryOrderMethods=Ordremetoder
 DictionarySource=Tilbud/ordre-opprinnelse
-DictionaryAccountancyCategory=Regnskapskategorier
+DictionaryAccountancyCategory=Accounting account groups
 DictionaryAccountancysystem=Diagram-modeller for kontoer
 DictionaryEMailTemplates=E-postmaler
 DictionaryUnits=Enheter
@@ -887,7 +897,7 @@ Offset=Forskyvning
 AlwaysActive=Alltid aktiv
 Upgrade=Oppgrader
 MenuUpgrade=Oppgrader/Utvid
-AddExtensionThemeModuleOrOther=Legg til utvidelse (tema, modul ...)
+AddExtensionThemeModuleOrOther=Deploy/install external module
 WebServer=Webserver
 DocumentRootServer=Webserverens rotkatalog
 DataRootServer=Mappe for datafiler
@@ -994,7 +1004,7 @@ TriggerAlwaysActive=Utløserne i denne filen er alltid slått på, uansett hvilk
 TriggerActiveAsModuleActive=Utløserne i denne filen er slått på ettersom modulen <b>%s</b> er slått på.
 GeneratedPasswordDesc=Her angir du hvilken regel som skal generere nye passord dersom du ber om å ha automatisk opprettede passord
 DictionaryDesc=Sett alle referansedata. Du kan legge til dine verdier som standard.
-ConstDesc=Denne siden lar deg redigere alle andre parametre som ikke finnes på foregående sider. Disse er stort sett forbeholdt parametre for utviklere eller avansert feilsøking.
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
 MiscellaneousDesc=Alle andre sikkerhetsrelaterte parametre er definert her.
 LimitsSetup=Grenser/presisjon
 LimitsDesc=Her angir du grenser og presisjon som skal brukes i programmet
@@ -1161,10 +1171,6 @@ FreeLegalTextOnOrders=Fritekst på ordre
 WatermarkOnDraftOrders=Vannmerke på ordrekladder (ingen hvis tom)
 ShippableOrderIconInList=Legg til et ikon i ordrelisten for å vise om ordren kan sendes
 BANK_ASK_PAYMENT_BANK_DURING_ORDER=Be om bankkontor for ordre
-##### Clicktodial #####
-ClickToDialSetup='Click To Dial' modul
-ClickToDialUrlDesc=URL som kalles når man klikker på telefonikonet. I URL, kan du bruke koder <br> <b> __ PHONETO __ </b> som vil bli erstattet med telefonnummeret til personen du vil ringe <br> <b> __ PHONEFROM __ </b> som vil bli erstattet med telefonnummer for å ringe person (din) <br> <b> __ lOGG __ </b> som vil bli erstattet med clicktodial innlogging (definert på brukerkort ) <br> <b> __ PASS __ </b> som vil bli erstattet med clicktodial passord (defineres på brukerkort ).
-##### Bookmark4u #####
 ##### Interventions #####
 InterventionsSetup=Oppsett av intervensjoner-modulen
 FreeLegalTextOnInterventions=Fritekst i intervensjonsdokumenter
@@ -1391,7 +1397,7 @@ SendingsSetup=Oppsett av forsendelsesmodulen
 SendingsReceiptModel=Modell for forsendelseskvitteringer
 SendingsNumberingModules=Nummereringsmodell for for sendelser
 SendingsAbility=Støtt forsendelsesskjemaer for kundeleveranser
-NoNeedForDeliveryReceipts=I de fleste tilfeller er forsendelseskvitteringer brukt både som ark for kundeleveranser (liste over varer som skal sendes) og ark som er mottatt og signert av kunden. Så vareleveringskvitteringer er en dobbel funksjon og er sjelden aktivert.
+NoNeedForDeliveryReceipts=In most cases, shipping sheets are used both as sheets for customer deliveries (list of products to send) and sheets that is received and signed by customer. So product deliveries receipts is a duplicated feature and is rarely activated.
 FreeLegalTextOnShippings=Fritekst på leveringer
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Nummereringsmodul for vareleveringskvitteringer
@@ -1471,7 +1477,11 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Sett denne standardverdien automatisk for hendelse
 AGENDA_DEFAULT_FILTER_TYPE=Sett denne hendelsestypen automatisk i søkefilteret til Agenda-visning
 AGENDA_DEFAULT_FILTER_STATUS=Sett denne statustypen automatisk i søkefilteret til Agenda-visning
 AGENDA_DEFAULT_VIEW=Hvilken fane vil åpne som standard når du velger Agenda-menyen?
-##### ClickToDial #####
+AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
+AGENDA_NOTIFICATION_SOUND=Aktiver lydvarsler
+##### Clicktodial #####
+ClickToDialSetup='Click To Dial' modul
+ClickToDialUrlDesc=URL som kalles når man klikker på telefonikonet. I URL, kan du bruke koder <br> <b> __ PHONETO __ </b> som vil bli erstattet med telefonnummeret til personen du vil ringe <br> <b> __ PHONEFROM __ </b> som vil bli erstattet med telefonnummer for å ringe person (din) <br> <b> __ lOGG __ </b> som vil bli erstattet med clicktodial innlogging (definert på brukerkort ) <br> <b> __ PASS __ </b> som vil bli erstattet med clicktodial passord (defineres på brukerkort ).
 ClickToDialDesc=Denne modulen gjør telefonnumre klikkbare. Ved å klikke på dette ikonet vil telefonen din ringe opp nummeret.
 ClickToDialUseTelLink=Bruk kun en lenke "tlf:" for telefonnumre
 ClickToDialUseTelLinkDesc=Bruk denne metoden hvis brukerne har en softphone eller et programvaregrensesnitt installert på samme datamaskin som nettleseren, og kalles når du klikker på en link i nettleseren din som starter med "tel:". Hvis du trenger en full server-løsning (uten behov for lokal installasjon av programvare), må du sette denne på "Nei" og fylle neste felt.
@@ -1499,10 +1509,11 @@ EndPointIs=SOAP-klienter må sende sine forespørsler til Dolibarr endepunkt til
 ##### API ####
 ApiSetup=Oppsett av API-modul
 ApiDesc=Ved å  aktivere denne modulen, blir Dolibarr en REST-server for diverse web-tjenester
-ApiProductionMode=Aktiver produksjonsmodus (dette vil aktivere bruk av en kasse for tjenestehåndtering)
+ApiProductionMode=Enable production mode (this will activate use of a cache for services management)
 ApiExporerIs=Du kan utforske API'ene i URL
 OnlyActiveElementsAreExposed=Bare elementer fra aktiverte moduler er vist
 ApiKey=API-nøkkel
+WarningAPIExplorerDisabled=The API explorer has been disabled. API explorer is not required to provide API services. It is a tool for developer to find/test REST APIs. If you need this tool, go into setup of module API REST to activate it.
 ##### Bank #####
 BankSetupModule=Oppsett av Bankmodulen
 FreeLegalTextOnChequeReceipts=Fritekst på å sjekkvitteringer
@@ -1571,12 +1582,12 @@ BackupDumpWizard=Veiviser for å bygge database-backup dumpfil
 SomethingMakeInstallFromWebNotPossible=Installasjon av ekstern modul er ikke mulig fra webgrensesnittet på grunn av:
 SomethingMakeInstallFromWebNotPossible2=På grunn av dette, er prosessen for å oppgradere beskrevet her, bare manuelle trinn en privilegert bruker kan gjøre.
 InstallModuleFromWebHasBeenDisabledByFile=Administrator har deaktivert muligheten for å installere eksterne moduler. Administrator må fjerne filen <strong>%s</strong> for å tillate dette.
-ConfFileMuseContainCustom=For å installere en ekstern modul, må du lagre filene i mappen <strong>%s</strong>. For at Dolibarr skal kunne behandle denne katalogen, må du først endre <strong>conf/conf.php</strong> til <br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
+ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Fremhev tabellinjer når musen flyttes over
 HighlightLinesColor=Uthev fargen på linjen når musen føres over (holdes tom for ingen uthevning)
 TextTitleColor=Farge på sidetittel
 LinkColor=Farge på lenker
-PressF5AfterChangingThis=Press F5 on keyboard or clear your browser cache after changing this value to have it effective
+PressF5AfterChangingThis=Trykk F5 eller slett nettleserens cache for at endringene skal tre i kraft
 NotSupportedByAllThemes=Vil virke med kjernetemaer, vil kanskje ikke virke med eksterne temaer
 BackgroundColor=Bakgrunnsfarge
 TopMenuBackgroundColor=Bakgrunnsfarge for toppmeny
@@ -1601,6 +1612,7 @@ FixTZ=Tidssone offset
 FillFixTZOnlyIfRequired=Eksempel: +2 (fylles kun ut ved problemer)
 ExpectedChecksum=Forventet sjekksum
 CurrentChecksum=Gjeldende sjekksum
+ForcedConstants=Required constant values
 MailToSendProposal=For å sende tilbud
 MailToSendOrder=For å sende kundeordre
 MailToSendInvoice=For å sende kundefaktura
@@ -1609,13 +1621,14 @@ MailToSendIntervention=For å sende intervensjon
 MailToSendSupplierRequestForQuotation=For å sende forespørsel til leverandør
 MailToSendSupplierOrder=For å sende leverandørordre
 MailToSendSupplierInvoice=For å sende leverandørfaktura
+MailToSendContract=For å sende en kontrakt
 MailToThirdparty=For å sende epost fra tredjepart-side
 ByDefaultInList=Vis som standard for liste
-YouUseLastStableVersion=Du bruker siste stabile verjon
+YouUseLastStableVersion=You use the latest stable version
 TitleExampleForMajorRelease=Eksempel på melding du kan bruke for å annonsere større oppdateringer (du kan bruke denne på dine websider)
 TitleExampleForMaintenanceRelease=Eksempel på beskjed du kan bruke for å annonsere denne vedlikeholdsversjonen (du kan bruke den på dine websider)
-ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s er tilgjengelig. Versjon %s er en større utgivelse med mange nye funksjoner både for brukere og utviklere. Du kan hente den fra nedlastningsområdet http://www.dolibarr.org portal (undermappe: Stable versions). Du kan lese <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for en komplett liste over forandringer som er gjort.
-ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s er tilgjengelig. Versjon %s er en vedlikeholdsversjon, så den inneholder bare bugreparasjoner. Vi anbefaler alle som bruker en eldre versjon om å oppgradere til denne. Som i alle vedlikeholdsversjoner, er det ingen nye funksjoner eller strukturendringer i denne versjonen. Du hente den fra nedlastningsområdet http://www.dolibarr.org portal (underkatalog: Stable versions). Du kan lese <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for en komplett liste over endringer som er gjort.
+ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 MultiPriceRuleDesc=Når alternativet "Flere prisnivået per vare/tjeneste" er på, kan du definere forskjellige priser (ett pr prisnivå) for hvert produkt. For å spare tid, kan du lage en regel som gir pris for hvert nivå autokalkulert i forhold til prisen på første nivå, slik at du bar legger inn en pris for hvert produkt. Denne siden er laget for å spare tid og kan være nyttig hvis prisene for hvert nivå står i forhold til første nivå. Du kan ignorere denne siden i de fleste tilfeller.
 ModelModulesProduct=Maler for produkt-dokumenter
 ToGenerateCodeDefineAutomaticRuleFirst=For å være i stand til å generere automatiske koder, må du først definere program for å automatisk definere strekkodenummer.

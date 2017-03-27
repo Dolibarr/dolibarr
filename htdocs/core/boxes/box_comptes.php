@@ -111,18 +111,18 @@ class box_comptes extends ModeleBoxes
                     $solde_total[$objp->currency_code] += $solde;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $account_static->getNomUrl(1),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $objp->number,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => price($solde, 0, $langs, 0, -1, -1, $objp->currency_code)
                     );
 
@@ -151,14 +151,14 @@ class box_comptes extends ModeleBoxes
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
+                'td' => '',
                 'text' => $langs->trans("ReadPermissionNotAllowed"),
             );
         }

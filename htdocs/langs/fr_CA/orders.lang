@@ -1,3 +1,16 @@
 # Dolibarr language file - Source file is en_US - orders
+StatusOrderCanceledShort=Annulé
+StatusOrderProcessedShort=Traité
+StatusOrderApprovedShort=Approuver
+StatusOrderRefusedShort=Refusé
 StatusOrderBilledShort=Facturées
+StatusOrderCanceled=Annulé
+StatusOrderProcessed=Traité
+StatusOrderApproved=Approuver
+StatusOrderRefused=Refusé
 StatusOrderBilled=Facturées
+TypeContact_commande_external_BILLING=Contact client facturation
+TypeContact_commande_external_SHIPPING=Contact client livraison
+TypeContact_order_supplier_external_BILLING=Contact fournisseur facturation
+TypeContact_order_supplier_external_SHIPPING=Contact fournisseur livraison
+OrderByFax=Télécopie

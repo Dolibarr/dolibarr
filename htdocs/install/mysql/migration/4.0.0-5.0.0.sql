@@ -24,6 +24,7 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
 -- after changing const name, please insure that old constant was rename
 UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHERE name = __ENCRYPT('MAIN_THIRPARTY_CREATION_INDIVIDUAL')__;  -- under 3.9.0
 UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHERE name = __ENCRYPT('MAIN_THIRDPARTY_CREATION_INDIVIDUAL')__; -- under 4.0.1
@@ -166,6 +167,8 @@ ALTER TABLE llx_commandedet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_propaldet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN fk_unit integer DEFAULT NULL;
+ALTER TABLE llx_contratdet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 
 ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
 
@@ -182,7 +185,7 @@ create table llx_resource_extrafields
 
 ALTER TABLE llx_resource_extrafields ADD INDEX idx_resource_extrafields (fk_object);
 
-INSERT INTO llx_const (name, value, type, note, visible) values (__ENCRYPT('MAIN_SIZE_SHORTLIST_LIMIT')__,__ENCRYPT('3')__,'chaine','Max length for small lists (tabs)',0);
+INSERT INTO llx_const (name, value, type, note, visible, entity) values (__ENCRYPT('MAIN_SIZE_SHORTLIST_LIMIT')__, __ENCRYPT('3')__, 'chaine', 'Max length for small lists (tabs)', 0, 0);
 
 INSERT INTO llx_const (name, value, type, note, visible, entity) values (__ENCRYPT('EXPEDITION_ADDON_NUMBER')__, __ENCRYPT('mod_expedition_safor')__, 'chaine','Name for numbering manager for shipments',0,1);
 
@@ -251,39 +254,12 @@ ALTER TABLE llx_projet_task ADD UNIQUE INDEX uk_projet_task_ref (ref, entity);
 ALTER TABLE llx_contrat ADD COLUMN fk_user_modif integer;
 
 
--- Product attributes
-CREATE TABLE llx_product_attribute
-(
-  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  ref VARCHAR(255) NOT NULL,
-  label VARCHAR(255) NOT NULL,
-  rang INT DEFAULT 0 NOT NULL,
-  entity INT DEFAULT 1 NOT NULL
-);
-ALTER TABLE llx_product_attribute ADD CONSTRAINT unique_ref UNIQUE (ref);
-CREATE TABLE llx_product_attribute_combination
-(
-  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  fk_product_parent INT NOT NULL,
-  fk_product_child INT NOT NULL,
-  variation_price FLOAT NOT NULL,
-  variation_price_percentage INT NULL,
-  variation_weight FLOAT NOT NULL,
-  entity INT DEFAULT 1 NOT NULL
-);
-CREATE TABLE llx_product_attribute_combination2val
-(
-  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  fk_prod_combination INT NOT NULL,
-  fk_prod_attr INT NOT NULL,
-  fk_prod_attr_val INT NOT NULL
-);
-CREATE TABLE llx_product_attribute_value
-(
-  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  fk_product_attribute INT NOT NULL,
-  ref VARCHAR(255) DEFAULT NULL,
-  value VARCHAR(255) DEFAULT NULL,
-  entity INT DEFAULT 1 NOT NULL
-);
-ALTER TABLE llx_product_attribute_value ADD CONSTRAINT unique_ref UNIQUE (fk_product_attribute,ref);
+UPDATE llx_accounting_account set account_parent = 0 where account_parent = '';
+
+-- VMYSQL4.3 ALTER TABLE llx_product_price MODIFY COLUMN date_price DATETIME NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product_price ALTER COLUMN date_price DROP NOT NULL;
+ALTER TABLE llx_product_price ALTER COLUMN date_price SET DEFAULT NULL;
+ 
+ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+

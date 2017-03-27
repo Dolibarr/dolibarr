@@ -308,7 +308,7 @@ if ($id > 0 || $ref)
 			dol_fiche_head($head, 'suppliers', $titre, 0, $picto);
 			
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-				
+		$object->next_prev_filter=" fk_product_type = ".$object->type;		
             dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
             
             print '<div class="fichecenter">';
@@ -394,7 +394,7 @@ if ($id > 0 || $ref)
 					{
 						if (empty($form->result))
 						{
-							print ' - <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$action).'">'.$langs->trans("CreateDolibarrThirdPartySupplier").'</a>';
+							print ' - <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$action).'">'.$langs->trans("CreateDolibarrThirdPartySupplier").'</a>';
 						}
 					}
 				}

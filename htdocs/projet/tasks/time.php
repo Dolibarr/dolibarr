@@ -425,6 +425,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
 		}
 
+		print '<div class="fichecenter">';
 		print '<table class="border" width="100%">';
 
 		$param=($withproject?'&withproject=1':'');
@@ -492,7 +493,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		}
 
 		print '</table>';
-
+        print '</div>';
+        
 		dol_fiche_end();
 
 

@@ -8,7 +8,6 @@ VATSummary=GST balance
 VATPaid=GST paid
 VATCollected=GST to collect
 PaymentVat=GST payment
-VATRefund=Sales tax refund Refund
 ShowVatPayment=Show GST payment
 CheckReceipt=Cheque deposit
 CheckReceiptShort=Cheque deposit

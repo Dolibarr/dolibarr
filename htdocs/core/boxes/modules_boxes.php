@@ -206,9 +206,6 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
         require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
 		$MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
-		$bcx = array();
-		$bcx[0] = 'class="box_pair"';
-		$bcx[1] = 'class="box_impair"';
 		$var = false;
 
         $cachetime = 900;   // 900 : 15mn
@@ -243,7 +240,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                 $out.= '>';
                 if ($conf->use_javascript_ajax)
                 {
-                    $out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflow maxwidth300onsmartphone">';
+                    $out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax100 maxwidth100onsmartphone">';
                 }
                 if (! empty($head['text']))
                 {
@@ -284,7 +281,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 
                         // TR
                         if (isset($contents[$i][0]['tr'])) $out.= '<tr valign="top" '.$contents[$i][0]['tr'].'>';
-                        else $out.= '<tr valign="top" '.$bcx[$var].'>';
+                        else $out.= '<tr class="oddeven">';
 
                         // Loop on each TD
                         $nbcolthisline=count($contents[$i]);

@@ -151,7 +151,7 @@ $formother = new FormOther($db);
 if ($object->id > 0)
 {
     $head = propal_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Proposal"), 0, 'propal');
+	dol_fiche_head($head, 'contact', $langs->trans("Proposal"), -1, 'propal');
 
 
 	// Proposal card

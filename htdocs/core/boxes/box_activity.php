@@ -148,19 +148,19 @@ class box_activity extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][1] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $langs->trans("Bills")."&nbsp;".$facturestatic->LibStatut(1,$data[$j]->fk_statut,0)." ".$data[$j]->annee,
                     );
 
                     $this->info_box_contents[$line][2] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(1,$data[$j]->fk_statut,0),
                         'text' => $data[$j]->nb,
                         'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
                     );
 
                     $this->info_box_contents[$line][3] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency)
                     );
 
@@ -230,19 +230,19 @@ class box_activity extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][1] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $langs->trans("Bills")."&nbsp;".$facturestatic->LibStatut(0,$data[$j]->fk_statut,0),
                     );
 
                     $this->info_box_contents[$line][2] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => $data[$j]->nb,
                         'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(0,$data[$j]->fk_statut,0),
                         'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
                     );
                     $totalnb += $data[$j]->nb;
                     $this->info_box_contents[$line][3] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
                     );
                     $totalMnt += $objp->Mnttot;
@@ -260,7 +260,7 @@ class box_activity extends ModeleBoxes
                     );
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500, 'text' => ($db->error().' sql='.$sql),
                 );
             }
@@ -323,12 +323,12 @@ class box_activity extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][1] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' =>$langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut,0,0),
                     );
 
                     $this->info_box_contents[$line][2] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => $data[$j]->nb,
                         'tooltip' => $langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut,0,0),
                         'url' => DOL_URL_ROOT."/commande/list.php?mainmenu=commercial&amp;leftmenu=orders&amp;viewstatut=".$data[$j]->fk_statut,
@@ -336,7 +336,7 @@ class box_activity extends ModeleBoxes
                     $totalnb += $data[$j]->nb;
 
                     $this->info_box_contents[$line][3] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
                     );
                     $totalMnt += $data[$j]->Mnttot;
@@ -413,12 +413,12 @@ class box_activity extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][1] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut,0),
                     );
 
                     $this->info_box_contents[$line][2] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => $data[$j]->nb,
                         'tooltip' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut,0),
                         'url' => DOL_URL_ROOT."/comm/propal/list.php?mainmenu=commercial&amp;leftmenu=propals&amp;viewstatut=".$data[$j]->fk_statut,
@@ -426,7 +426,7 @@ class box_activity extends ModeleBoxes
                     $totalnb += $data[$j]->nb;
 
                     $this->info_box_contents[$line][3] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
                     );
                     $totalMnt += $data[$j]->Mnttot;

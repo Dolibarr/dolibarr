@@ -394,7 +394,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$description.'</textarea>';
+	print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$description.'</textarea>';
 	print '</td></tr>';
 
 	// Other options

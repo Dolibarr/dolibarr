@@ -72,7 +72,7 @@ class FormOther
         $result = $this->db->query($sql);
         if ($result)
         {
-            print '<select class="flat" name="'.$htmlname.'">';
+            print '<select class="flat minwidth200" name="'.$htmlname.'">';
             if ($useempty)
             {
                 print '<option value="-1">&nbsp;</option>';
@@ -978,7 +978,7 @@ class FormOther
      *
      * 	@param	   User         $user		 Object User
      * 	@param	   String       $areacode    Code of area for pages (0=value for Home page)
-     * 	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlist'=>)
+     * 	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
      */
     static function getBoxesArea($user,$areacode)
     {
@@ -1011,6 +1011,7 @@ class FormOther
         		if (! empty($boxidactivatedforuser[$box->id])) continue;	// Already visible for user
         		$label=$langs->transnoentitiesnoconv($box->boxlabel);
         		if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
+        		//$label = '<span class="fa fa-home fa-fw" aria-hidden="true"></span>'.$label;    KO with select2. No html rendering.
         		$arrayboxtoactivatelabel[$box->id]=$label;			// We keep only boxes not shown for user, to show into combo list
         	}
             foreach($boxidactivatedforuser as $boxid)
@@ -1027,10 +1028,10 @@ class FormOther
 			$selectboxlist.='<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist.='<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist.='<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel, '', $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, ' disabled hidden selected');
+			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, 'hidden selected', 0, 1);
             if (empty($conf->use_javascript_ajax)) $selectboxlist.=' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
             $selectboxlist.='</form>';
-            //$selectboxlist.=ajax_combobox("boxcombo");
+            $selectboxlist.=ajax_combobox("boxcombo");
         }
 
         // Javascript code for dynamic actions
@@ -1046,7 +1047,7 @@ class FormOther
 	        	if (boxorder==\'A:A-B:B\' && closing == 1)	// There is no more boxes on screen, and we are after a delete of a box so we must hide title
 	        	{
 	        		jQuery.ajax({
-	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=0&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
 	        			async: false
 	        		});
 	        		// We force reload to be sure to get all boxes into list
@@ -1055,7 +1056,7 @@ class FormOther
 	        	else
 	        	{
 	        		jQuery.ajax({
-	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=\'+closing+\'&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
 	        			async: true
 	        		});
 	        	}
@@ -1086,7 +1087,7 @@ class FormOther
 	        		containment: \'.fiche\',
 	        		connectWith: \'.connectedSortable\',
 	        		stop: function(event, ui) {
-	        			updateBoxOrder(0);
+	        			updateBoxOrder(1);  /* 1 to avoid message after a move */
 	        		}
 	    		});
 
@@ -1096,7 +1097,7 @@ class FormOther
 	        		var label=jQuery(\'#boxlabelentry\'+boxid).val();
 	        		jQuery(\'#boxto_\'+boxid).remove();
 	        		if (boxid > 0) jQuery(\'#boxcombo\').append(new Option(label, boxid));
-	        		updateBoxOrder(1);
+	        		updateBoxOrder(1);  /* 1 to avoid message after a remove */
 	        	});
 
         	});'."\n";
@@ -1113,11 +1114,6 @@ class FormOther
 			$langs->load("projects");
 
         	$emptybox=new ModeleBoxes($db);
-
-            //$boxlist.='<table width="100%" class="notopnoleftnoright">';
-            //$boxlist.='<tr><td class="notopnoleftnoright">'."\n";
-
-            //$boxlist.='<div class="fichehalfleft">';
 
             $boxlista.="\n<!-- Box left container -->\n";
             $boxlista.='<div id="left" class="connectedSortable">'."\n";
@@ -1152,8 +1148,6 @@ class FormOther
             $boxlista.= "</div>\n";
             $boxlista.= "<!-- End box left container -->\n";
 
-            //$boxlist.= '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
             $boxlistb.= "\n<!-- Box right container -->\n";
             $boxlistb.= '<div id="right" class="connectedSortable">'."\n";
 
@@ -1183,11 +1177,6 @@ class FormOther
             $boxlistb.= "</div>\n";
             $boxlistb.= "<!-- End box right container -->\n";
 
-            //$boxlist.= '</div></div>';
-            //$boxlist.= "\n";
-
-            //$boxlist.= "</td></tr>";
-            //$boxlist.= "</table>";
         }
 
         return array('selectboxlist'=>count($boxactivated)?$selectboxlist:'', 'boxactivated'=>$boxactivated, 'boxlista'=>$boxlista, 'boxlistb'=>$boxlistb);

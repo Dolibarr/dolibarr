@@ -661,6 +661,49 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
+	 *	Create a document onto disk according to template model.
+	 *
+	 *	@param	    string		$modele			Force template to use ('' to not force)
+	 *	@param		Translate	$outputlangs	Object lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @return     int         				<0 if KO, 0 if nothing done, >0 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf, $user, $langs;
+
+		$langs->load("suppliers");
+
+		// Set the model on the model name to use
+		if (empty($modele))
+		{
+			if (! empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF))
+			{
+				$modele = $conf->global->SUPPLIER_PAYMENT_ADDON_PDF;
+			}
+			else
+			{
+				$modele = '';       // No default value. For supplier invoice, we allow to disable all PDF generation
+			}
+		}
+
+		if (empty($modele))
+		{
+		    return 0;
+		}
+		else
+		{
+            $modelpath = "core/modules/supplier_payment/pdf/";
+
+            return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+
+
+
+	/**
 	 * 	get the right way of payment
 	 * 
 	 * 	@return 	string 	'dolibarr' if standard comportment or paid in dolibarr currency, 'customer' if payment received from multicurrency inputs

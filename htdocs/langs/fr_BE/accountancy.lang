@@ -1,10 +1,9 @@
 # Dolibarr language file - Source file is en_US - accountancy
 ConfigAccountingExpert=Configuration du module de compta expert
-ProductsBinding=Products bindings
 Processing=Exécution
-EndProcessing=Fin de l'exécution
 Lineofinvoice=Lignes de facture
 Doctype=Type de document
+AccountingCategory=Accounting category
 ThirdPartyAccount=Compte tiers
 ErrorDebitCredit=Débit et crédit ne peuvent pas être non-nuls en même temps
 Pcgtype=Classe du compte
@@ -12,3 +11,5 @@ Pcgsubtype=Sous-classe du compte
 TotalMarge=Marge de ventes totale
 Selectmodelcsv=Sélectionnez un modèle d'export
 Modelcsv_normal=Export classique
+ErrorNoAccountingCategoryForThisCountry=No accounting category available for country %s (See Home - Setup - Dictionaries)
+WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced by a correct report in a next version.

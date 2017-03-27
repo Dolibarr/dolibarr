@@ -67,7 +67,7 @@ $resql = $db->query($sql);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("BankChecks")."</td>\n";
+print '<th colspan="2">'.$langs->trans("BankChecks")."</th>\n";
 print "</tr>\n";
 
 if ($resql)
@@ -111,12 +111,12 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("LastCheckReceiptShort",$max).'</td>';
-	print '<td>'.$langs->trans("Date")."</td>";
-	print '<td>'.$langs->trans("Account").'</td>';
-	print '<td align="right">'.$langs->trans("NbOfCheques").'</td>';
-	print '<td align="right">'.$langs->trans("Amount").'</td>';
-	print '<td align="right">'.$langs->trans("Status").'</td>';
+	print '<th>'.$langs->trans("LastCheckReceiptShort",$max).'</th>';
+	print '<th>'.$langs->trans("Date")."</th>";
+	print '<th>'.$langs->trans("Account").'</th>';
+	print '<th align="right">'.$langs->trans("NbOfCheques").'</th>';
+	print '<th align="right">'.$langs->trans("Amount").'</th>';
+	print '<th align="right">'.$langs->trans("Status").'</th>';
 	print "</tr>\n";
 
 	$var=true;

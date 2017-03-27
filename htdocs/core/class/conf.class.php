@@ -106,6 +106,7 @@ class Conf
 		$this->propal			= new stdClass();
 		$this->facture			= new stdClass();
 		$this->contrat			= new stdClass();
+		$this->usergroup		= new stdClass();
 		$this->adherent			= new stdClass();
 		$this->bank				= new stdClass();
 		$this->notification		= new stdClass();
@@ -323,6 +324,10 @@ class Conf
 		// For backward compatibility
 		$this->user->dir_output=$rootforuser."/users";
 		$this->user->dir_temp=$rootforuser."/users/temp";
+		
+		// UserGroup
+		$this->usergroup->dir_output=$rootforuser."/usergroups";
+		$this->usergroup->dir_temp=$rootforuser."/usergroups/temp";
 
 		// For propal storage
 		$this->propal->dir_output=$rootfordata."/propale";
@@ -345,6 +350,9 @@ class Conf
 			$this->fournisseur->facture=new stdClass();
 			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
 			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
+			$this->fournisseur->payment=new stdClass();
+			$this->fournisseur->payment->dir_output =$rootfordata."/fournisseur/payment";
+			$this->fournisseur->payment->dir_temp   =$rootfordata."/fournisseur/payment/temp";
 
 			// To prepare split of module fournisseur into fournisseur + supplier_order + supplier_invoice
 			if (! empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))  // By default, if module supplier is on, we set new properties
@@ -565,10 +573,16 @@ class Conf
 		    $this->expensereport->payment->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY)?$this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY:0)*24*60*60;
 		}
 		
+		if (! empty($this->global->PRODUIT_MULTIPRICES) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT))
+		{
+		    $this->global->PRODUIT_MULTIPRICES_LIMIT = 5;
+		}
 		
 		// For modules that want to disable top or left menu
 		if (! empty($this->global->MAIN_HIDE_TOP_MENU)) $this->dol_hide_topmenu=$this->global->MAIN_HIDE_TOP_MENU;
 		if (! empty($this->global->MAIN_HIDE_LEFT_MENU)) $this->dol_hide_leftmenu=$this->global->MAIN_HIDE_LEFT_MENU;
+
+		if (empty($this->global->MAIN_SIZE_SHORTLIST_LIMIT)) $this->global->MAIN_SIZE_SHORTLIST_LIMIT=3;
 
 		// For backward compatibility
 		if (isset($this->product))   $this->produit=$this->product;
@@ -591,7 +605,7 @@ class Conf
 		}
 		foreach ($handlers as $handler) {
 			$handler_files = array();
-			$dirsyslogs = array_merge(array('/core/modules/syslog/'), $conf->modules_parts['syslog']);
+			$dirsyslogs = array_merge(array('/core/modules/syslog/'), $this->modules_parts['syslog']);
 			foreach ($dirsyslogs as $reldir) {
 				$dir = dol_buildpath($reldir, 0);
 				$newdir = dol_osencode($dir);

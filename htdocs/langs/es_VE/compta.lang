@@ -14,7 +14,6 @@ LT1PaymentES=-
 LT1PaymentsES=-
 LT2PaymentES=Pago ISLR
 LT2PaymentsES=Pagos ISLR
-VATRefund=Sales tax refund Refund
 CalcModeLT1=-
 CalcModeLT1Debt=-
 CalcModeLT1Rec=-

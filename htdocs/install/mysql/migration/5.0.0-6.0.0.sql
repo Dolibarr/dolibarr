@@ -104,3 +104,50 @@ INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (4,'OD', 'Journal des opérations diverses', 4, 1);
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (5,'AN', 'Journal des à-nouveaux', 9, 1);
 
+ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
+
+
+ALTER TABLE llx_societe_remise_except ADD COLUMN fk_invoice_supplier_line	integer;
+ALTER TABLE llx_societe_remise_except ADD COLUMN fk_invoice_supplier		integer;
+ALTER TABLE llx_societe_remise_except ADD COLUMN fk_invoice_supplier_source	integer;
+
+ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_soc_remise_fk_invoice_supplier_line       FOREIGN KEY (fk_invoice_supplier_line) REFERENCES llx_facture_fourn_det (rowid);
+ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_invoice_supplier        FOREIGN KEY (fk_invoice_supplier)      REFERENCES llx_facture_fourn (rowid);
+ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_invoice_supplier_source FOREIGN KEY (fk_invoice_supplier)      REFERENCES llx_facture_fourn (rowid);
+
+UPDATE llx_const set value='moono-lisa' where value = 'moono' AND name = 'FCKEDITOR_SKIN';
+
+ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+
+ALTER TABLE llx_user ADD COLUMN model_pdf varchar(255);
+ALTER TABLE llx_usergroup ADD COLUMN model_pdf varchar(255);
+
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('PRODUCT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/products', 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('CONTRACT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/contracts', 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USERGROUP_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/usergroups', 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USER_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/users', 'chaine', 0, '');
+
+ALTER TABLE llx_chargesociales ADD COLUMN ref varchar(16);
+ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;
+
+create table llx_payment_various
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  tms                   timestamp,
+  datec                 datetime,
+  datep                 date,
+  datev                 date,
+  sens                  smallint DEFAULT 0 NOT NULL,
+  amount                double(24,8) DEFAULT 0 NOT NULL,
+  fk_typepayment        integer NOT NULL,
+  num_payment           varchar(50),
+  label                 varchar(255),
+  accountancy_code		varchar(32),
+  entity                integer DEFAULT 1 NOT NULL,
+  note                  text,
+  fk_bank               integer,
+  fk_user_author        integer,
+  fk_user_modif         integer
+)ENGINE=innodb;
+>>>>>>> uptream/develop

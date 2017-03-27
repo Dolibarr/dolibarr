@@ -763,6 +763,11 @@ function activateModule($value,$withdeps=1)
 		return $ret;
 	}
 
+	$const_name = $objMod->const_name;
+	if(!empty($conf->global->$const_name)){
+        return $ret;
+    }
+
     $result=$objMod->init();
     if ($result <= 0) 
     {
@@ -774,17 +779,28 @@ function activateModule($value,$withdeps=1)
         {
             if (isset($objMod->depends) && is_array($objMod->depends) && ! empty($objMod->depends))
             {
-                // Activation des modules dont le module depend
-                $num = count($objMod->depends);
-                for ($i = 0; $i < $num; $i++)
+                // Activation of modules this module depends on
+                // this->depends may be array('modModule1', 'mmodModule2') or array('always'=>"modModule1", 'FR'=>'modModule2')
+                foreach ($objMod->depend as $key => $modulestring)
                 {
+                    if ((! is_numeric($key)) && $key != 'always' && $key != $mysoc->country_code)
+                    {
+                        dol_syslog("We are not concerned by dependency with key=".$key." because our country is ".$mysoc->country_code);
+                        continue;
+                    }
                 	$activate = false;
                 	foreach ($modulesdir as $dir)
                 	{
-                		if (file_exists($dir.$objMod->depends[$i].".class.php"))
+                		if (file_exists($dir.$modulestring.".class.php"))
                 		{
-                			$resarray = activateModule($objMod->depends[$i]);
-    						if (empty($resarray['errors'])) $activate = true;
+                			$resarray = activateModule($modulestring);
+    						if (empty($resarray['errors'])){
+    						    $activate = true;
+                            }else{
+    						    foreach ($resarray['errors'] as $errorMessage){
+                                    dol_syslog($errorMessage, LOG_ERR);
+                                }
+                            }
     						break;
                 		}
                 	}
@@ -796,7 +812,7 @@ function activateModule($value,$withdeps=1)
     				}
     				else 
     				{
-    				    $ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $objMod->depends[$i]);
+    				    $ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring);
     				}
                 }
             }
@@ -1327,7 +1343,7 @@ function addDocumentModel($name, $type, $label='', $description='')
     $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
     $sql.= (! empty($description)?"'".$db->escape($description)."'":"null");
     $sql.= ")";
-
+	
     dol_syslog("admin.lib::addDocumentModel", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)

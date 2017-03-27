@@ -181,7 +181,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 $head=translation_prepare_head();
 
-dol_fiche_head($head, $mode, '', 0, '');
+dol_fiche_head($head, $mode, '', -1, '');
 
 if ($mode == 'overwrite')
 {

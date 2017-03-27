@@ -42,7 +42,7 @@ $action=GETPOST('action','alpha');
 // Security check
 $socid=0;
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'expensereport',$id,'');
+$result=restrictedArea($user,'expensereport',$id,'expensereport');
 
 
 $object = new ExpenseReport($db);
@@ -78,7 +78,7 @@ if ($id > 0 || ! empty($ref))
 
 	$head = expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("ExpenseReport"), 0, 'trip');
+	dol_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 	
@@ -87,20 +87,6 @@ if ($id > 0 || ! empty($ref))
 
 	
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-	
-    /*	
-	print '<table class="border" width="100%">';
-
-	// Ref
-	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-	print "</td></tr>";
-
-	print "</table>";
-
-	print '<br>';
-    */
 	 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
@@ -111,7 +97,6 @@ if ($id > 0 || ! empty($ref))
 	print '</div>';
 	
 	dol_fiche_end();
-	
 }
 
 

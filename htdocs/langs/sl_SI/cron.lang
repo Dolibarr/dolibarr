@@ -17,8 +17,8 @@ CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronLastOutput=Last run output
-CronLastResult=Last result code
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Ukaz
 CronList=Scheduled jobs
 CronDelete=Delete scheduled jobs

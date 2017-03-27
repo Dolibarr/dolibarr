@@ -74,7 +74,9 @@ class modUser extends DolibarrModules
 		$this->const = array();
 
 		// Boxes
-		$this->boxes = array();
+		$this->boxes = array(
+		    0=>array('file'=>'box_lastlogin.php','enabledbydefaulton'=>'Home'),
+		);
 
 		// Permissions
 		$this->rights = array();

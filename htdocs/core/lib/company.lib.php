@@ -43,7 +43,7 @@ function societe_prepare_head(Societe $object)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/societe/card.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'card';
     $h++;
@@ -214,7 +214,7 @@ function societe_prepare_head(Societe $object)
         // Attached files
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-        $upload_dir = $conf->societe->dir_output . "/" . $object->id;
+        $upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id ;
         $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
         $nbLinks=Link::count($db, $object->element, $object->id);
         
@@ -259,7 +259,7 @@ function societe_prepare_head2($object)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/societe/card.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'company';
     $h++;
@@ -531,10 +531,13 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
 
         print "\n";
         print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"),$buttoncreate,'');
+        print '<div class="div-table-responsive">';
         print "\n".'<table class="noborder" width=100%>';
 
-        $sql  = "SELECT p.rowid as id, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status";
+        $sql  = "SELECT p.rowid as id, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
+        $sql .= ", cls.code as opp_status_code";
         $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
         $sql .= " WHERE p.fk_soc = ".$object->id;
         $sql .= " ORDER BY p.dateo DESC";
 
@@ -544,8 +547,14 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
             $num = $db->num_rows($result);
 
             print '<tr class="liste_titre">';
-            print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Name").'</td><td align="center">'.$langs->trans("DateStart").'</td><td align="center">'.$langs->trans("DateEnd").'</td>';
-            print '<td align="right">'.$langs->trans("Status").'</td>';
+            print '<td>'.$langs->trans("Ref").'</td>';
+            print '<td>'.$langs->trans("Name").'</td>';
+            print '<td class="center">'.$langs->trans("DateStart").'</td>';
+            print '<td class="center">'.$langs->trans("DateEnd").'</td>';
+            print '<td class="right">'.$langs->trans("OpportunityAmountShort").'</td>';
+            print '<td class="center">'.$langs->trans("OpportunityStatusShort").'</td>';
+            print '<td class="right">'.$langs->trans("OpportunityProbabilityShort").'</td>';
+            print '<td class="right">'.$langs->trans("Status").'</td>';
             print '</tr>';
 
             if ($num > 0)
@@ -574,9 +583,24 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
                         // Label
                         print '<td>'.$obj->title.'</td>';
                         // Date start
-                        print '<td align="center">'.dol_print_date($db->jdate($obj->do),"day").'</td>';
+                        print '<td class="center">'.dol_print_date($db->jdate($obj->do),"day").'</td>';
                         // Date end
-                        print '<td align="center">'.dol_print_date($db->jdate($obj->de),"day").'</td>';
+                        print '<td class="center">'.dol_print_date($db->jdate($obj->de),"day").'</td>';
+                        // Opp amount
+                        print '<td class="right">';
+                        if ($obj->opp_status_code)
+                        {
+                            print price($obj->opp_amount, 1, '', 1, -1, -1, '');
+                        }
+                        print '</td>';
+                        // Opp status
+                        print '<td align="center">';
+            			if ($obj->opp_status_code) print $langs->trans("OppStatusShort".$obj->opp_status_code);
+            			print '</td>';
+			            // Opp percent
+            			print '<td align="right">';
+            			if ($obj->opp_percent) print price($obj->opp_percent, 1, '', 1, 0).'%';
+            			print '</td>';			            
                         // Status
                         print '<td align="right">'.$projecttmp->getLibStatut(5).'</td>';
 
@@ -597,7 +621,8 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
             dol_print_error($db);
         }
         print "</table>";
-
+        print '</div>';
+        
         print "<br>\n";
     }
 
@@ -668,7 +693,6 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     $colspan=9;
     print '<tr class="liste_titre">';
-    print_liste_field_titre('');
     print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"p.lastname","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Poste"),$_SERVER["PHP_SELF"],"p.poste","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
@@ -703,21 +727,16 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     {
         print '<tr class="liste_titre">';
         
-        // Photo
-        print '<td class="liste_titre">';
-        print '</td>';
-        
-        // Name - Position
+        // Photo - Name
         print '<td class="liste_titre">';
         print '<input type="text" class="flat" name="search_name" size="20" value="'.$search_name.'">';
         print '</td>';
     
-        // Address / Phone
+        // Position
         print '<td class="liste_titre">';
-        //print '<input type="text" class="flat" name="search_addressphone" size="20" value="'.$search_addressphone.'">';
         print '</td>';
     
-        // Email
+        // Address - Phone - Email
         print '<td class="liste_titre">&nbsp;</td>';
     
         // Status
@@ -772,14 +791,10 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             
             print "<tr ".$bc[$var].">";
 
-            // Photo
-            print '<td width="50px">';
-            print $form->showphoto('contact',$contactstatic,0,0,0,'photorefnoborder','small',1,0,1);
-			print '</td>';
-            
-			// Name
+			// Photo - Name
 			print '<td>';
-            print $contactstatic->getNomUrl(0,'',0,'&backtopage='.urlencode($backtopage));
+            print $form->showphoto('contact',$contactstatic,0,0,0,'photorefnoborder valignmiddle marginrightonly','small',1,0,1);
+			print $contactstatic->getNomUrl(0,'',0,'&backtopage='.urlencode($backtopage));
 			print '</td>';
 			
 			// Job position
@@ -787,7 +802,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             if ($obj->poste) print $obj->poste;
             print '</td>';
 
-            // Address and phone
+            // Address - Phone - Email
             print '<td>';
             print $contactstatic->getBannerAddress('contact', $object);
             print '</td>';
@@ -1171,6 +1186,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         if (get_class($filterobj) == 'Societe') $out.='<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
         
         $out.="\n";
+        
+        $out.='<div class="div-table-responsive-no-min">';
         $out.='<table class="noborder" width="100%">';
         $out.='<tr class="liste_titre">';
 		if ($donetodo)
@@ -1201,7 +1218,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             $out.='<td class="liste_titre"></td>';
 		}
 		$out.='<td class="liste_titre"></td>';
-		$out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
+		$out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
 		$out.='<td class="liste_titre"></td>';
 		$out.='<td class="liste_titre">';
 	    $out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
@@ -1373,7 +1390,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             $i++;
         }
         $out.="</table>\n";
-        //$out.="<br>\n";
+        $out.="</div>\n";
     }
 
     $out.='</form>';
@@ -1443,7 +1460,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 			print '<td>'.$obj->code_client.'</td>';
 
 			print '<td align="center">';
-			print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$obj->rowid.'&amp;action=edit">';
+			print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$obj->rowid.'&amp;action=edit">';
 			print img_edit();
 			print '</a></td>';
 

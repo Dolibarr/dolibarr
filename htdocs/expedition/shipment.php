@@ -245,7 +245,7 @@ if ($id > 0 || ! empty($ref))
 		$res = $object->fetch_optionals($object->id, $extralabels);
 		
 		$head = commande_prepare_head($object);
-		dol_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"), 0, 'order');
+		dol_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"), -1, 'order');
 
 		
 		$formconfirm = '';

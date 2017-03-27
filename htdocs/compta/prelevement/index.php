@@ -74,7 +74,7 @@ $bprev = new BonPrelevement($db);
 $var=true;
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
+print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td align="right">';
@@ -114,7 +114,7 @@ if ($resql)
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="5">'.$langs->trans("InvoiceWaitingWithdraw").' ('.$num.')</td></tr>';
+    print '<th colspan="5">'.$langs->trans("InvoiceWaitingWithdraw").' ('.$num.')</th></tr>';
     if ($num)
     {
         $var = True;
@@ -188,10 +188,10 @@ if ($result)
 
     print"\n<!-- debut table -->\n";
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("LastWithdrawalReceipt",$limit).'</td>';
-    print '<td>'.$langs->trans("Date").'</td>';
-    print '<td align="right">'.$langs->trans("Amount").'</td>';
-    print '<td align="right">'.$langs->trans("Status").'</td>';
+    print '<tr class="liste_titre"><th>'.$langs->trans("LastWithdrawalReceipt",$limit).'</th>';
+    print '<th>'.$langs->trans("Date").'</th>';
+    print '<th align="right">'.$langs->trans("Amount").'</th>';
+    print '<th align="right">'.$langs->trans("Status").'</th>';
     print '</tr>';
 
     while ($i < min($num,$limit))

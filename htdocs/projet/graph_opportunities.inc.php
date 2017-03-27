@@ -50,7 +50,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    $ponderated_opp_amount = $ponderated_opp_amount / 100;
 	    
 	    print '<table class="noborder nohover" width="100%">';
-	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</td></tr>'."\n";
+	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</th></tr>'."\n";
 	    $var=true;
 	    $listofstatus=array_keys($listofoppstatus);
 	    foreach ($listofstatus as $status)
@@ -78,7 +78,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    {
 	        print '<tr class="impair"><td align="center" colspan="2">';
    	        $data=array('series'=>$dataseries);
-   	        dol_print_graph('stats',400,180,$data,1,'pie',0,'',0,$totaloppnb?0:1);
+   	        dol_print_graph('stats',360,180,$data,1,'pie',0,'',0,$totaloppnb?0:1);
 	        print '</td></tr>';
 	    }
 	    //if ($totalinprocess != $total)

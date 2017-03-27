@@ -77,57 +77,59 @@ print load_fiche_titre($langs->trans("CommercialArea"),'','title_commercial.png'
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-// Search proposal
-if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-	$listofsearchfields['search_proposal']=array('text'=>'Proposal');
+    // Search proposal
+    if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
+    {
+    	$listofsearchfields['search_proposal']=array('text'=>'Proposal');
+    }
+    // Search customer order
+    if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
+    {
+    	$listofsearchfields['search_customer_order']=array('text'=>'CustomerOrder');
+    }
+    // Search supplier proposal
+    if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
+    {
+        $listofsearchfields['search_supplier_proposal']=array('text'=>'SupplierProposalShort');
+    }
+    // Search supplier order
+    if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
+    {
+    	$listofsearchfields['search_supplier_order']=array('text'=>'SupplierOrder');
+    }
+    // Search intervention
+    if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
+    {
+    	$listofsearchfields['search_intervention']=array('text'=>'Intervention');
+    }
+    // Search contract
+    if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
+    {
+        $listofsearchfields['search_contract']=array('text'=>'Contract');
+    }
+    
+    if (count($listofsearchfields))
+    {
+    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<table class="noborder nohover centpercent">';
+    	$i=0;
+    	foreach($listofsearchfields as $key => $value)
+    	{
+    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    		print '<tr '.$bc[false].'>';
+    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+    		if ($i == 0) print '<td class="noborderbottom" rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button "></td>';
+    		print '</tr>';
+    		$i++;
+    	}
+    	print '</table>';	
+    	print '</form>';
+    	print '<br>';
+    }
 }
-// Search customer order
-if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
-{
-	$listofsearchfields['search_customer_order']=array('text'=>'CustomerOrder');
-}
-// Search supplier proposal
-if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
-{
-    $listofsearchfields['search_supplier_proposal']=array('text'=>'SupplierProposalShort');
-}
-// Search supplier order
-if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
-{
-	$listofsearchfields['search_supplier_order']=array('text'=>'SupplierOrder');
-}
-// Search intervention
-if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
-{
-	$listofsearchfields['search_intervention']=array('text'=>'Intervention');
-}
-// Search contract
-if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
-{
-    $listofsearchfields['search_contract']=array('text'=>'Contract');
-}
-
-if (count($listofsearchfields))
-{
-	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover centpercent">';
-	$i=0;
-	foreach($listofsearchfields as $key => $value)
-	{
-		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-		if ($i == 0) print '<td class="noborderbottom" rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button "></td>';
-		print '</tr>';
-		$i++;
-	}
-	print '</table>';	
-	print '</form>';
-	print '<br>';
-}
-
 
 
 /*
@@ -156,7 +158,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	    
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("ProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("ProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
 		if ($num > 0)
 		{
@@ -237,7 +239,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
          
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print '<td colspan="3">'.$langs->trans("SupplierProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
+        print '<th colspan="3">'.$langs->trans("SupplierProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
         if ($num > 0)
         {
@@ -316,7 +318,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	    
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("DraftOrders").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("DraftOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
 		if ($num)
 		{
@@ -397,7 +399,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
 
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print '<td colspan="3">'.$langs->trans("DraftSuppliersOrders").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
+        print '<th colspan="3">'.$langs->trans("DraftSuppliersOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
         if ($num)
         {
@@ -483,12 +485,12 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">';
+		print '<th colspan="2">';
 		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastCustomersOrProspects",$max);
         else if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects",$max);
 		else print $langs->trans("BoxTitleLastModifiedCustomers",$max);
-		print '</td>';
-		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+		print '</th>';
+		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -547,8 +549,8 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastModifiedSuppliers",min($max,$num)).'</td>';
-		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+		print '<tr class="liste_titre"><th>'.$langs->trans("BoxTitleLastModifiedSuppliers",min($max,$num)).'</th>';
+		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -626,7 +628,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
 		if ($num > 0)
 		{
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastContracts",5).'</td></tr>';
+			print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("LastContracts",5).'</th></tr>';
 			$i = 0;
 
 			$staticcontrat=new Contrat($db);
@@ -687,7 +689,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			$var=true;
 
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></td></tr>';
+			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></th></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
@@ -786,7 +788,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 			$var=true;
 
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("OrdersOpened").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></td></tr>';
+			print '<tr class="liste_titre"><th class="liste_titre" colspan="5">'.$langs->trans("OrdersOpened").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></th></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)

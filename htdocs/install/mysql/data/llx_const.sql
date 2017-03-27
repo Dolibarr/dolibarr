@@ -85,3 +85,12 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_EXP
 --
 insert into llx_const (name, value, type, note, visible) values ('MAIN_FIX_FOR_BUGGED_MTA','1','chaine','Set constant to fix email ending from PHP with some linux ike system',1);
 insert into llx_const (name, value, type, note, visible) values ('MAILING_EMAIL_FROM','dolibarr@domain.com','chaine','EMail emmetteur pour les envois d emailings',0);
+
+
+--
+-- ODT Path
+---
+insert into `llx_const` (`name`, `entity`, `value`, `type`, `visible`) VALUES ('PRODUCT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/products', 'chaine', 0);
+insert into `llx_const` (`name`, `entity`, `value`, `type`, `visible`) VALUES ('CONTRACT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/contracts', 'chaine', 0);
+insert into `llx_const` (`name`, `entity`, `value`, `type`, `visible`) VALUES ('USERGROUP_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/usergroups', 'chaine', 0);
+insert into `llx_const` (`name`, `entity`, `value`, `type`, `visible`) VALUES ('USER_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/users', 'chaine', 0);

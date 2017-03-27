@@ -97,7 +97,7 @@ function tree_showpad(&$fulltree,$key,$silent=0)
 // ------------------------------- Used by menu editor, category view, ... -----------------
 
 /**
- *  Recursive function to output menu tree. <ul id="iddivjstree"><li>...</li></ul>
+ *  Recursive function to output a tree. <ul id="iddivjstree"><li>...</li></ul>
  *  It is also used for the tree of categories.
  *  Note: To have this function working, check you have loaded the js and css for treeview.
  *  $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
@@ -106,7 +106,7 @@ function tree_showpad(&$fulltree,$key,$silent=0)
  *  TODO Replace with jstree plugin instead of treeview plugin.
  *
  *  @param	array	$tab    		Array of all elements
- *  @param  int	    $pere   		Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu=>,'fk_leftmenu=>)
+ *  @param  array   $pere   		Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu=>,'fk_leftmenu=>)
  *  @param  int	    $rang   		Level of element
  *  @param	string	$iddivjstree	Id to use for parent ul element
  *  @param  int     $donoresetalreadyloaded     Do not reset global array $donoresetalreadyloaded used to avoid to go down on an aleady processed record
@@ -139,7 +139,10 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetal
 		print '<ul id="'.$iddivjstree.'">';
 	}
 	
-	if ($rang > 50)	return;	// Protect against infinite loop. Max 50 depth
+	if ($rang > 50)	
+	{
+	    return;	// Protect against infinite loop. Max 50 depth
+	}
 
 	//ballayage du tableau
 	$sizeoftab=count($tab);

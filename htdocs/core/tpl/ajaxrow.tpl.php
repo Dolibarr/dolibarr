@@ -44,6 +44,7 @@ $(document).ready(function(){
     $("#<?php echo $tagidfortablednd; ?>").tableDnD({
 		onDrop: function(table, row) {
 			var reloadpage = "<?php echo $forcereloadpage; ?>";
+			console.log("tableDND onDrop");
 			console.log($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize());
 			var roworder = cleanSerialize($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize());
 			var table_element_line = "<?php echo $table_element_line; ?>";
@@ -59,14 +60,15 @@ $(document).ready(function(){
 						filepath: filepath
 					},
 					function() {
+						console.log("tableDND end of ajax call");
 						if (reloadpage == 1) {
 							location.href = '<?php echo $_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING']; ?>';
 						} else {
 							$("#<?php echo $tagidfortablednd; ?> .drag").each(
 									function( intIndex ) {
-										$(this).removeClass("pair impair");
-										if (intIndex % 2 == 0) $(this).addClass('impair');
-										if (intIndex % 2 == 1) $(this).addClass('pair');
+										// $(this).removeClass("pair impair");
+										//if (intIndex % 2 == 0) $(this).addClass('impair');
+										//if (intIndex % 2 == 1) $(this).addClass('pair');
 									});
 						}
 					});

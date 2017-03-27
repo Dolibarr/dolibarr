@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
@@ -87,7 +87,8 @@ if ($action == 'update') {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 
-    foreach ($list as $constname) {
+    foreach ($list as $constname) 
+    {
         $constvalue = GETPOST($constname, 'alpha');
 
         if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -141,17 +142,16 @@ if ($action == 'setmanagezero') {
 }
 
 if ($action == 'setdisabledirectinput') {
-    $setdisabledirectinput = GETPOST('value', 'int');
-    $res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
-    if (! $res > 0)
-        $error ++;
-        if (! $error) {
-            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        } else {
-            setEventMessages($langs->trans("Error"), null, 'mesgs');
-        }
+	$setdisabledirectinput = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
+	if (! $res > 0)
+		$error ++;
+		if (! $error) {
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'mesgs');
+		}
 }
-
 
 /*
  * View
@@ -242,20 +242,20 @@ if (! empty($user->admin))
     }
     print '</tr>';
 
-    $var = ! $var;
-    print "<tr " . $bc[$var] . ">";
-    print '<td>' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
-    if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
-        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
-        print img_picto($langs->trans("Activated"), 'switch_on');
-        print '</a></td>';
-    } else {
-        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
-        print img_picto($langs->trans("Disabled"), 'switch_off');
-        print '</a></td>';
-    }
-    print '</tr>';
-    
+	$var = ! $var;
+	print "<tr " . $bc[$var] . ">";
+	print '<td>' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
+	if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
+		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+	print '</tr>';
+
     $var = ! $var;
     print "<tr " . $bc[$var] . ">";
     print '<td>' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
@@ -278,13 +278,17 @@ foreach ($list as $key)
     $var = ! $var;
 
     print '<tr ' . $bc[$var] . ' class="value">';
+    
+    if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO) && ($key == 'ACCOUNTING_LENGTH_GACCOUNT' || $key == 'ACCOUNTING_LENGTH_AACCOUNT')) continue;
+
     // Param
     $label = $langs->trans($key);
     print '<td>'.$label.'</td>';
     // Value
     print '<td align="right">';
-    print '<input type="text" size="20" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
+    print '<input type="text" class="maxwidth100" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
     print '</td>';
+    
     print '</tr>';
 }
 
@@ -301,7 +305,7 @@ print '<div class="center"><input type="submit" class="button" value="' . $langs
 print '<br>';
 print '<br>';
 
-print $langs->trans("AccountancySetupDoneFromAccountancyMenu", $langs->transnoentitiesnoconv("Home").'-'.$langs->transnoentitiesnoconv("Financial").'-'.$langs->transnoentitiesnoconv("Accountancy"));
+print $langs->trans("AccountancySetupDoneFromAccountancyMenu", $langs->transnoentitiesnoconv("Home").'-'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy"));
 
 print '<br>';
 print '</form>';

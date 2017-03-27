@@ -76,8 +76,8 @@ BoxTitleLastLeaveRequests=%s zuletzt bearbeitete Urlaubsanträge
 HolidaysMonthlyUpdate=Monatliches Update
 ManualUpdate=Manuelles Update
 HolidaysCancelation=Urlaubsantrag stornieren
-EmployeeLastname=Mitarbeiter Nachname
-EmployeeFirstname=Mitarbeiter Vorname
+EmployeeLastname=Employee last name
+EmployeeFirstname=Employee first name
 TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
 
 ## Configuration du Module ##

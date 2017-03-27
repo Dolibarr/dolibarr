@@ -9,17 +9,20 @@ VersionDevelopment=تطويرية
 VersionUnknown=غير معروف
 VersionRecommanded=موصى بها
 FileCheck=Files integrity checker
-FileCheckDesc=This tool allows you to check the integrity of files of your application, comparing each files with the official ones. You can use this tool to detect if some files were modified by a hacker for example.
+FileCheckDesc=This tool allows you to check the integrity of files and setup of your application, comparing each files with the official ones. Value of some setup constants may also be checked. You can use this tool to detect if some files were modified by a hacker for example.
 FileIntegrityIsStrictlyConformedWithReference=Files integrity is strictly conformed with the reference.
-FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified of removed.
+FileIntegrityIsOkButFilesWereAdded=Files integrity check has passed, however some new files were added.
+FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified, removed or added.
 GlobalChecksum=Global checksum
 MakeIntegrityAnalysisFrom=Make integrity analysis of application files from
 LocalSignature=Embedded local signature (less reliable)
 RemoteSignature=Remote distant signature (more reliable)
 FilesMissing=الملفات المفقودة
 FilesUpdated=الملفات التي تم تحديثها
+FilesModified=Modified Files
+FilesAdded=Added Files
 FileCheckDolibarr=Check integrity of application files
-AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from a certified package
+AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from an official package
 XmlNotFound=Xml Integrity File of application not found
 SessionId=Session ID
 SessionSaveHandler=معالج لحفظ الجلسات
@@ -188,7 +191,9 @@ BoxesDesc=Widgets are components showing some information that you can add to pe
 OnlyActiveElementsAreShown=فقط العناصر من <a href="%s">النماذج المفعلة </a> سوف تظهر.
 ModulesDesc=Dolibarr modules define which functionality is enabled in software. Some modules require permissions you must grant to users, after enabling module. Click on button on/off to enable a module/feature.
 ModulesMarketPlaceDesc=You can find more modules to download on external websites on the Internet...
-ModulesMarketPlaces=مزيد من وحدات...
+ModulesDeployDesc=If permissions on your file system allows it, you can use this tool to deploy an external module. The module wil then be visible on the tab <strong>%s</strong>.
+ModulesMarketPlaces=Find external modules...
+GoModuleSetupArea=To deploy/install a new module, go onto the Module setup area at <a href="%s">%s</a>.
 DoliStoreDesc=DoliStore ، في السوق الرسمي لتخطيط موارد المؤسسات وحدات Dolibarr / خارجي إدارة علاقات العملاء
 DoliPartnersDesc=List of companies providing custom developed modules or features (Note: anyone experienced in PHP programming can provide custom development for an open source project)
 WebSiteDesc=Reference websites to find more modules...
@@ -280,20 +285,21 @@ MenuHandlers=قائمة مناولي
 MenuAdmin=قائمة تحرير
 DoNotUseInProduction=لا تستخدمها مع المنتج
 ThisIsProcessToFollow=This is steps to process:
-ThisIsAlternativeProcessToFollow=هذا هو الإعداد بديل للعملية:
+ThisIsAlternativeProcessToFollow=This is an alternative setup to process manually:
 StepNb=الخطوة %s
 FindPackageFromWebSite=العثور على الحزمة التي توفر ميزة تريد (على سبيل المثال على موقع الويب %s).
 DownloadPackageFromWebSite=تحميل الحزمة (على سبيل المثال من الموقع الرسمي على الإنترنت%s).
-UnpackPackageInDolibarrRoot=ملف حزمة فك إلى Dolibarr دليل خادم مخصص لوحدات <b>الخارجية:%s</b>
-SetupIsReadyForUse=الانتهاء من تركيب وDolibarr على استعداد لاستخدام هذا العنصر الجديد.
-NotExistsDirect=لم يتم تعريف الدليل الجذر بديل. <br>
-InfDirAlt=منذ الإصدار 3 من الممكن تعريف directory.This الجذر بديلة يسمح لك لتخزين ونفس المكان، والمكونات الإضافية والقوالب المخصصة. <br> مجرد إنشاء دليل على جذر Dolibarr (على سبيل المثال: مخصص). <br>
-InfDirExample=<br> ثم نعلن ذلك في conf.php ملف <br> $ dolibarr_main_url_root_alt = 'HTTP: // MYSERVER / مخصص " <br> $ dolibarr_main_document_root_alt = '/ مسار / لعام / dolibarr / htdocs / مخصص " <br> * وعلق هذه الخطوط مع "#"، إلى غير تعليق فقط إزالة الطابع.
+UnpackPackageInDolibarrRoot=Unpack the packaged files into server directory dedicated to Dolibarr: <b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, unpack the packaged files into the server directory dedicated to modules: <b>%s</b>
+SetupIsReadyForUse=Module deployment is finished. You must however enable and setup the module in your application by going on the page to setup modules: <a href="%s">%s</a>.
+NotExistsDirect=The alternative root directory is not defined to an existing directory.<br>
+InfDirAlt=Since version 3, it is possible to define an alternative root directory. This allows you to store, into a dedicated directory, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=لهذه الخطوة، يمكنك إرسال حزمة باستخدام هذه الأداة: اختر ملف الوحدة النمطية
 CurrentVersion=Dolibarr النسخة الحالية
 CallUpdatePage=Go to the page that updates the database structure and data: %s.
 LastStableVersion=Latest stable version
-LastActivationDate=Last activation date
+LastActivationDate=Latest activation date
 UpdateServerOffline=خادم التحديث متواجد حاليا
 GenericMaskCodes=يمكنك إدخال أي قناع الترقيم. في هذا القناع ، وبعد ويمكن استخدام العلامات : <br> <b>(000000)</b> يطابق عدد الذي سيكون على كل يزداد ٪ s. كما تدخل العديد من أصفار على النحو المنشود طول المضادة. المضاد وسيتم الانتهاء من اصفار من اليسار من أجل الحصول على أكبر عدد اصفار كما القناع. <br> <b>000000 +000) (نفس</b> السابقة ولكن يقابل المقابلة لعدد للحق من علامة + يطبق اعتبارا من أول ٪ s. <br> <b>000000 @ (س)</b> نفس السابقة ولكن المضاد هو إعادة الصفر عندما يتم التوصل إلى الشهر خ خ ما بين 1 و 12). إذا كان هذا الخيار هو المستخدمة وس 2 أو أعلى ، ثم تسلسل (ذ ذ م م)) ((سنة أو ملم)) (مطلوب أيضا. <br> <b>(ب)</b> اليوم (01 الى 31). <br> <b>() ملم</b> في الشهر (01 الى 12). <br> <b>(كذا)</b> ، <b>(سنة))</b> أو <b>(ذ</b> السنة أكثر من 2 أو 4 أو 1 الأرقام. <br>
 GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of third party type on n characters (see dictionary-thirdparty types).<br>
@@ -376,11 +382,11 @@ ExtrafieldCheckBox=Checkbox
 ExtrafieldRadio=Radio button
 ExtrafieldCheckBoxFromList= مربع من الجدول
 ExtrafieldLink=رابط إلى كائن
-ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another :<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
+ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list :<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list :<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...
 ExtrafieldParamHelpradio=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...
-ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list :<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=يجب أن يكون المعلمات ObjectName: CLASSPATH <br> بناء الجملة: ObjectName: CLASSPATH <br> مثال: سوسيتيه: سوسيتيه / فئة / societe.class.php
 LibraryToBuildPDF=Library used for PDF generation
 WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
@@ -415,10 +421,10 @@ ModuleCompanyCodeDigitaria=قانون المحاسبة طرف ثالث يعتم�
 Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=Use a 3 steps approval when amount (without tax) is higher than...
 WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to send an email from another server than the Yahoo server if the email address used as a sender is your Yahoo email (like myemail@yahoo.com, myemail@yahoo.fr, ...). Your current setup use the server of the application to send email, so some recipients (the one compatible with the restrictive DMARC protocol), will ask Yahoo if they can accept your email and Yahoo will respond "no" because the server is not a server owned by Yahoo, so few of your sent Emails may not be accepted.<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account).
-
+ClickToShowDescription=Click to show description
 # Modules
 Module0Name=& مجموعات المستخدمين
-Module0Desc=إدارة المستخدمين والمجموعات
+Module0Desc=Users / Employees and Groups management
 Module1Name=أطراف ثالثة
 Module1Desc=شركات الاتصالات وإدارة
 Module2Name=التجارية
@@ -689,7 +695,7 @@ PermissionAdvanced253=إنشاء / تعديل المستخدمين خارجي / 
 Permission254=حذف أو تعطيل المستخدمين الآخرين
 Permission255=إنشاء / تعديل بلده معلومات المستخدم
 Permission256=تعديل بنفسه كلمة المرور
-Permission262=Extend access to all third parties (not only third parties that user is a sale representative). Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc). Not effective for projects (only rules on project permissions, visibility and assignement matters).
+Permission262=Extend access to all third parties (not only third parties that user is a sale representative).<br>Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc).<br>Not effective for projects (only rules on project permissions, visibility and assignement matters).
 Permission271=قراءة في كاليفورنيا
 Permission272=قراءة الفواتير
 Permission273=قضية الفواتير
@@ -836,7 +842,7 @@ DictionaryStaff=العاملين
 DictionaryAvailability=تأخير تسليم
 DictionaryOrderMethods=طرق ترتيب
 DictionarySource=أصل مقترحات / أوامر
-DictionaryAccountancyCategory=Accounting categories
+DictionaryAccountancyCategory=Accounting account groups
 DictionaryAccountancysystem=نماذج للتخطيط للحسابات
 DictionaryEMailTemplates=رسائل البريد الإلكتروني قوالب
 DictionaryUnits=الوحدات
@@ -891,7 +897,7 @@ Offset=ويقابل
 AlwaysActive=حركة دائمة
 Upgrade=ترقية
 MenuUpgrade=ترقية / توسيع
-AddExtensionThemeModuleOrOther=إضافة التمديد) الموضوع ، وحدة ،...)
+AddExtensionThemeModuleOrOther=Deploy/install external module
 WebServer=خادم الويب
 DocumentRootServer=خادم الويب 'sالدليل الرئيسي
 DataRootServer=دليل ملفات البيانات
@@ -1165,10 +1171,6 @@ FreeLegalTextOnOrders=بناء على أوامر النص الحر
 WatermarkOnDraftOrders=العلامة المائية على مشاريع المراسيم (أي إذا فارغ)
 ShippableOrderIconInList=إضافة رمز في قائمة الطلبيات التي تشير إلى أمر غير قابل للشحن إذا
 BANK_ASK_PAYMENT_BANK_DURING_ORDER=اسأل عن وجهة حساب مصرفي من أجل
-##### Clicktodial #####
-ClickToDialSetup=انقر لإعداد وحدة الاتصال الهاتفي
-ClickToDialUrlDesc=ودعا الموقع عندما تنقر على الهاتف picto ذلك. Dans l' رابط ، vous pouvez utiliser ليه balises <br> <b>٪ ٪ 1 $ ق</b> qui الأمصال remplacé قدم المساواة جنيه téléphone دي l' appelé <br> <b>٪ ٪</b> 2 $ <b>ق</b> qui الأمصال remplacé لو قدم المساواة téléphone دي l' appelant جنيه مصري vôtre) <br> <b>٪ ٪ ل 3</b> دولار qui الأمصال remplacé vôtre ادخل clicktodial الفقرة (défini سور vôtre فيشه utilisateur) <br> <b>٪ ٪</b> 4 <b>$</b> ق qui الأمصال remplacé الفقرة vôtre يذكره دي clicktodial عتيق (défini سور vôtre فيشه utilisateur).
-##### Bookmark4u #####
 ##### Interventions #####
 InterventionsSetup=وحدة التدخل الإعداد
 FreeLegalTextOnInterventions=حرر النص على وثائق التدخل
@@ -1395,7 +1397,7 @@ SendingsSetup=ارسال وحدة الإعداد
 SendingsReceiptModel=ارسال استلام نموذج
 SendingsNumberingModules=Sendings ترقيم الوحدات
 SendingsAbility=أوراق دعم الشحن للشحنات العملاء
-NoNeedForDeliveryReceipts=في معظم الحالات ، تستخدم الإرسال إيصالات سواء صحائف لتسليم العميل (قائمة المنتجات ارسال) ، وصحائف التي وقعت عليها recevied الزبون. حتى المنتج تسليم الإيصالات هي سمة مزدوجة ونادرا ما تفعيلها.
+NoNeedForDeliveryReceipts=In most cases, shipping sheets are used both as sheets for customer deliveries (list of products to send) and sheets that is received and signed by customer. So product deliveries receipts is a duplicated feature and is rarely activated.
 FreeLegalTextOnShippings=النص الحر على الشحنات
 ##### Deliveries #####
 DeliveryOrderNumberingModules=تلقي شحنات المنتجات الترقيم وحدة
@@ -1477,7 +1479,9 @@ AGENDA_DEFAULT_FILTER_STATUS=تلقائيا تعيين هذه الحالة مع 
 AGENDA_DEFAULT_VIEW=علامة التبويب التي تريد فتح افتراضيا عند اختيار القائمة جدول الأعمال
 AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
 AGENDA_NOTIFICATION_SOUND=Enable sound notification
-##### ClickToDial #####
+##### Clicktodial #####
+ClickToDialSetup=انقر لإعداد وحدة الاتصال الهاتفي
+ClickToDialUrlDesc=ودعا الموقع عندما تنقر على الهاتف picto ذلك. Dans l' رابط ، vous pouvez utiliser ليه balises <br> <b>٪ ٪ 1 $ ق</b> qui الأمصال remplacé قدم المساواة جنيه téléphone دي l' appelé <br> <b>٪ ٪</b> 2 $ <b>ق</b> qui الأمصال remplacé لو قدم المساواة téléphone دي l' appelant جنيه مصري vôtre) <br> <b>٪ ٪ ل 3</b> دولار qui الأمصال remplacé vôtre ادخل clicktodial الفقرة (défini سور vôtre فيشه utilisateur) <br> <b>٪ ٪</b> 4 <b>$</b> ق qui الأمصال remplacé الفقرة vôtre يذكره دي clicktodial عتيق (défini سور vôtre فيشه utilisateur).
 ClickToDialDesc=هذه الوحدة تسمح لجعل أرقام هواتف يمكن النقر عليها. وهناك انقر على هذه الأيقونة دعوة تجعل هاتفك إلى الاتصال برقم الهاتف. وهذا يمكن أن تستخدم لاستدعاء نظام مركز الاتصال من Dolibarr يمكن أن نسميه ورقم الهاتف على نظام SIP على سبيل المثال.
 ClickToDialUseTelLink=مجرد استخدام الرابط "الهاتف:" على أرقام الهواتف
 ClickToDialUseTelLinkDesc=استخدام هذا الأسلوب إذا كان المستخدمون يكون الهاتف الرقمي أو واجهة البرامج المثبتة على الكمبيوتر نفسه من المتصفح، ويسمى عند النقر على رابط في المتصفح التي تبدأ ب "الهاتف". إذا كنت في حاجة الى حل خادم الكامل (لا حاجة لتثبيت البرامج المحلية)، يجب عليك تعيين هذا إلى "لا" وملء الحقل التالي.
@@ -1505,10 +1509,11 @@ EndPointIs=SOAP clients must send their requests to the Dolibarr endpoint availa
 ##### API ####
 ApiSetup=API وحدة الإعداد
 ApiDesc=من خلال تمكين هذه الوحدة، Dolibarr يصبح الخادم REST لتوفير خدمات الإنترنت المتنوعة.
-ApiProductionMode=تمكين وضع الإنتاج (وهذا سوف تفعيل استخدام مخابئ لإدارة الخدمات)
+ApiProductionMode=Enable production mode (this will activate use of a cache for services management)
 ApiExporerIs=You can explore the APIs at url
 OnlyActiveElementsAreExposed=ويتعرض عناصر فقط من وحدات تمكين
 ApiKey=مفتاح API
+WarningAPIExplorerDisabled=The API explorer has been disabled. API explorer is not required to provide API services. It is a tool for developer to find/test REST APIs. If you need this tool, go into setup of module API REST to activate it.
 ##### Bank #####
 BankSetupModule=إعداد وحدة مصرفية
 FreeLegalTextOnChequeReceipts=نص حر على الشيكات والإيصالات
@@ -1577,7 +1582,7 @@ BackupDumpWizard=المعالج لبناء قاعدة بيانات النسخ ا
 SomethingMakeInstallFromWebNotPossible=تركيب وحدة خارجية غير ممكن من واجهة ويب للسبب التالي:
 SomethingMakeInstallFromWebNotPossible2=لهذا السبب، عملية لترقية وصفت هنا هو دليل على بعد خطوات قليلة يمكن للمستخدم متميز القيام به.
 InstallModuleFromWebHasBeenDisabledByFile=تثبيت وحدة خارجية من التطبيق قد تم تعطيلها من قبل المسؤول. يجب أن يطلب منه إزالة <strong>الملف٪ s</strong> للسماح هذه الميزة.
-ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
+ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=تسليط الضوء على خطوط الجدول عندما يمر تحرك الماوس فوق
 HighlightLinesColor=تسليط الضوء على لون الخط عند تمرير الماوس فوق (الحفاظ فارغة دون تمييز)
 TextTitleColor=Color of page title
@@ -1607,6 +1612,7 @@ FixTZ=الإصلاح والوقت
 FillFixTZOnlyIfRequired=مثال: +2 (ملء فقط إذا كانت المشكلة من ذوي الخبرة)
 ExpectedChecksum=اختباري المتوقع
 CurrentChecksum=اختباري الحالي
+ForcedConstants=Required constant values
 MailToSendProposal=لإرسال اقتراح العملاء
 MailToSendOrder=لإرسال طلب العميل
 MailToSendInvoice=لإرسال فاتورة العملاء
@@ -1615,9 +1621,10 @@ MailToSendIntervention=لإرسال التدخل
 MailToSendSupplierRequestForQuotation=لإرسال طلب الاقتباس إلى المورد
 MailToSendSupplierOrder=لإرسال المورد أجل
 MailToSendSupplierInvoice=لإرسال فاتورة المورد
+MailToSendContract=To send a contract
 MailToThirdparty=To send email from third party page
 ByDefaultInList=تظهر بشكل افتراضي على عرض القائمة
-YouUseLastStableVersion=كنت تستخدم إصدار مستقر الماضي
+YouUseLastStableVersion=You use the latest stable version
 TitleExampleForMajorRelease=مثال على رسالة يمكنك استخدامها ليعلن هذا الإصدار الرئيسي (لا تتردد في استخدامها على مواقع الويب الخاص بك)
 TitleExampleForMaintenanceRelease=مثال على الرسالة التي يمكن استخدامها ليعلن هذا البيان الصيانة (لا تتردد في استخدامها على مواقع الويب الخاص بك)
 ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.

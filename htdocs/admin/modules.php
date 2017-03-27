@@ -235,6 +235,8 @@ $help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones'
 llxHeader('',$langs->trans("Setup"),$help_url);
 
 $arrayofnatures=array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - '.$langs->trans("AllPublishers"));
+$arrayofwarnings=array();    // Array of warning each module want to show when activated
+$arrayofwarningsext=array();    // Array of warning each module want to show when we activate an external module
 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs();
@@ -266,7 +268,7 @@ foreach ($modulesdir as $dir)
 
 		        if ($modName)
 		        {
-		        	if (! empty($modNameLoaded[$modName]))
+		        	if (! empty($modNameLoaded[$modName]))   // In cache of already loaded modules ?
 		        	{
 		        		$mesg="Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";
 		        		setEventMessages($mesg, null, 'warnings');
@@ -297,7 +299,7 @@ foreach ($modulesdir as $dir)
 		    					if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=0;
 								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified=0;
 
-		    					// We discard modules according to property disabled
+		    					// We discard modules according to property ->hidden
 		    					if (! empty($objMod->hidden)) $modulequalified=0;
 
 		    					if ($modulequalified > 0)
@@ -321,8 +323,8 @@ foreach ($modulesdir as $dir)
 		    					// Define array $categ with categ with at least one qualified module
 		    					if ($modulequalified > 0)
 		    					{
-		    						$modules[$i] = $objMod;
 		    			            $filename[$i]= $modName;
+		    					    $modules[$modName] = $objMod;
 
 		    			            $special = $objMod->special;
 
@@ -342,6 +344,16 @@ foreach ($modulesdir as $dir)
 
 		    			            if ($special == 1) $familykey='interface';
 
+		    			            // Add list of warnings to show into arrayofwarnings and arrayofwarningsext
+		    			            if (! empty($objMod->warnings_activation))
+		    			            {
+		    			                $arrayofwarnings[$modName]=$objMod->warnings_activation;
+		    			            }
+		    			            if (! empty($objMod->warnings_activation_ext))
+		    			            {
+		    			                $arrayofwarningsext[$modName]=$objMod->warnings_activation_ext;
+		    			            }
+		    			             
 		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
 		    						$dirmod[$i]  = $dir;
 		    						//print $i.'-'.$dirmod[$i].'<br>';
@@ -428,7 +440,7 @@ if ($mode == 'common')
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-    dol_fiche_head($head, $mode, '');
+    dol_fiche_head($head, $mode, '', -1);
 
     $moreforfilter = '';
     $moreforfilter.='<div class="divsearchfield">';
@@ -484,7 +496,7 @@ if ($mode == 'common')
         $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$tab[3];
 
         $modName = $filename[$key];
-    	$objMod  = $modules[$key];
+    	$objMod  = $modules[$modName];
     	$dirofmodule = $dirmod[$key];
 
     	$special = $objMod->special;
@@ -504,6 +516,7 @@ if ($mode == 'common')
 
         // Check filters
         $modulename=$objMod->getName();
+        $moduletechnicalname=$objMod->name;
         $moduledesc=$objMod->getDesc();
         $moduledesclong=$objMod->getDescLong();
         $moduleauthor=$objMod->getPublisher();
@@ -513,6 +526,7 @@ if ($mode == 'common')
         {
             $qualified=0;
             if (preg_match('/'.preg_quote($search_keyword).'/i', $modulename)
+                || preg_match('/'.preg_quote($search_keyword).'/i', $moduletechnicalname)
                 || preg_match('/'.preg_quote($search_keyword).'/i', $moduledesc)
                 || preg_match('/'.preg_quote($search_keyword).'/i', $moduledesclong)
                 || preg_match('/'.preg_quote($search_keyword).'/i', $moduleauthor)
@@ -633,7 +647,7 @@ if ($mode == 'common')
         print "</td>\n";
 
         // Activate/Disable and Setup (2 columns)
-        if (! empty($conf->global->$const_name))	// If module is activated
+        if (! empty($conf->global->$const_name))	// If module is already activated
         {
         	$disableSetup = 0;
 
@@ -699,12 +713,12 @@ if ($mode == 'common')
         	}
 
         }
-        else	// Module not activated
+        else	// Module not yet activated
 		{
         	print '<td align="center" valign="middle">';
 		    if (! empty($objMod->always_enabled))
         	{
-        		// Ne devrait pas arriver.
+        		// Should never happened
         	}
         	else if (! empty($objMod->disabled))
         	{
@@ -712,7 +726,34 @@ if ($mode == 'common')
         	}
         	else
         	{
-	        	// Module non actif
+	        	// Module qualified for activation
+        	    $warningmessage='';
+	        	if (! empty($arrayofwarnings[$modName]))
+	        	{
+                    print '<!-- This module has a warning to show when we activate it (note: your country is '.$mysoc->country_code.') -->'."\n";
+	        	    foreach ($arrayofwarnings[$modName] as $keycountry => $cursorwarningmessage)
+   	        	    {
+	        	        $warningmessage .= ($warningmessage?"\n":"").$langs->trans($cursorwarningmessage, $objMod->getName(), $mysoc->country_code);
+   	        	    }
+	        	}
+        		if ($objMod->isCoreOrExternalModule() == 'external' && ! empty($arrayofwarningsext))
+	        	{
+	        	    print '<!-- This module is an external module and it may have a warning to show (note: your country is '.$mysoc->country_code.') -->'."\n";
+	        	    foreach ($arrayofwarningsext as $keymodule => $arrayofwarningsextbycountry)
+	        	    {
+	        	        if (! empty($modules[$keymodule]->const_name))    // If module that request warning is on
+	        	        {
+        	        	    foreach ($arrayofwarningsextbycountry as $keycountry => $cursorwarningmessage)
+        	        	    {
+        	        	        if ($keycountry == 'always' || $keycountry == $mysoc->country_code)
+        	        	        {
+        	        	            $warningmessage .= ($warningmessage?"\n":"").$langs->trans($cursorwarningmessage, $objMod->getName(), $mysoc->country_code, $modules[$keymodule]->getName());
+        	        	        }
+        	        	    }
+	        	        }
+	        	    }
+	        	}
+        	    print '<!-- Message to show: '.$warningmessage.' -->'."\n";
 	        	print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
 	        	print img_picto($langs->trans("Disabled"),'switch_off');
 	        	print "</a>\n";
@@ -732,7 +773,7 @@ if ($mode == 'common')
 
 if ($mode == 'marketplace')
 {
-    dol_fiche_head($head, $mode, '');
+    dol_fiche_head($head, $mode, '', -1);
     
     // Marketplace
     print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
@@ -768,7 +809,7 @@ if ($mode == 'marketplace')
    
 if ($mode == 'deploy')
 {
-    dol_fiche_head($head, $mode, '');
+    dol_fiche_head($head, $mode, '', -1);
 
     
     $allowonlineinstall=true;

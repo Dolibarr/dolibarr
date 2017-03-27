@@ -329,7 +329,7 @@ class FormMail extends Form
         	    $out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
 	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	        	$out.= ' &nbsp; ';
-	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" id="modelselected">';
+	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 	        	$out.= ' &nbsp; ';
 	        	$out.= '</div>';
         	}
@@ -343,7 +343,7 @@ class FormMail extends Form
         	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put disabled on option, it is already on select and it makes chrome crazy.
         	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         	    $out.= ' &nbsp; ';
-        	    $out.= '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" disabled="disabled" id="modelselected">';
+        	    $out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
         	    $out.= ' &nbsp; ';
         	    $out.= '</div>';
         	}
@@ -521,19 +521,13 @@ class FormMail extends Form
         			if (! empty($this->withto) && is_array($this->withto))
         			{
         				if (! empty($this->withtofree)) $out.= " ".$langs->trans("or")." ";
-        				$out.= $form->selectarray("receiver", $this->withto, GETPOST("receiver"), 1, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
-        			}
-        			if (isset($this->withtosocid) && $this->withtosocid > 0) // deprecated. TODO Remove this. Instead, fill withto with array before calling method.
-        			{
-        				$liste=array();
-        				$soc=new Societe($this->db);
-        				$soc->fetch($this->withtosocid);
-        				foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
+        			    // multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+        				$tmparray = $this->withto;
+        				foreach($tmparray as $key => $val)
         				{
-        					$liste[$key]=$value;
+        				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
         				}
-        				if ($this->withtofree) $out.= " ".$langs->trans("or")." ";
-        				$out.= $form->selectarray("receiver", $liste, GETPOST("receiver"), 1, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
+        				$out.= $form->multiselectarray("receiver", $tmparray, GETPOST("receiver"), null, null, 'inline-block minwidth500', null, "");
         			}
         		}
         		$out.= "</td></tr>\n";
@@ -555,7 +549,13 @@ class FormMail extends Form
         			if (! empty($this->withtocc) && is_array($this->withtocc))
         			{
         				$out.= " ".$langs->trans("or")." ";
-        				$out.= $form->selectarray("receivercc", $this->withtocc, GETPOST("receivercc"), 1, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
+        				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+        				$tmparray = $this->withtocc;
+        				foreach($tmparray as $key => $val)
+        				{
+        				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+        				}
+        				$out.= $form->multiselectarray("receivercc", $tmparray, GETPOST("receivercc"), null, null, 'inline-block minwidth500',null, "");
         			}
         		}
         		$out.= "</td></tr>\n";
@@ -577,7 +577,14 @@ class FormMail extends Form
         			if (! empty($this->withtoccc) && is_array($this->withtoccc))
         			{
         				$out.= " ".$langs->trans("or")." ";
-        				$out.= $form->selectarray("receiverccc", $this->withtoccc, GETPOST("receiverccc"), 1);
+        				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+        				$tmparray = $this->withtoccc;
+        				foreach($tmparray as $key => $val)
+        				{
+        				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+        				}
+        				//$out.= $form->selectarray("receiverccc", $this->withtoccc, GETPOST("receiverccc"), 1);
+        				$out.= $form->multiselectarray("receiverccc", $tmparray, GETPOST("receiverccc"), null, null, null,null, "90%");
         			}
         		}
 
@@ -1005,7 +1012,14 @@ class FormMail extends Form
 		$this->substit['__SIGNATURE__'] = $user->signature;
 		$this->substit['__PERSONALIZED__'] = '';
 		$this->substit['__CONTACTCIVNAME__'] = '';	// Will be replace just before sending
-        
+
+        // Create dinamic tags for __EXTRAFIELD_FIELD__
+        $extrafields = new ExtraFields($this->db);
+        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element, true);
+        $object->fetch_optionals($object->id, $extralabels);
+        foreach ($extrafields->attribute_label as $key => $label) {
+            $this->substit['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
+        }
 		
         //Fill substit_lines with each object lines content
         if (is_array($object->lines))

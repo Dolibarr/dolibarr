@@ -9,14 +9,20 @@ VersionDevelopment=开发
 VersionUnknown=未知
 VersionRecommanded=推荐
 FileCheck=Files integrity checker
-FileCheckDesc=This tool allows you to check the integrity of files of your application, comparing each files with the official ones. You can use this tool to detect if some files were modified by a hacker for example.
+FileCheckDesc=This tool allows you to check the integrity of files and setup of your application, comparing each files with the official ones. Value of some setup constants may also be checked. You can use this tool to detect if some files were modified by a hacker for example.
+FileIntegrityIsStrictlyConformedWithReference=Files integrity is strictly conformed with the reference.
+FileIntegrityIsOkButFilesWereAdded=Files integrity check has passed, however some new files were added.
+FileIntegritySomeFilesWereRemovedOrModified=Files integrity check has failed. Some files were modified, removed or added.
+GlobalChecksum=Global checksum
 MakeIntegrityAnalysisFrom=Make integrity analysis of application files from
 LocalSignature=Embedded local signature (less reliable)
 RemoteSignature=Remote distant signature (more reliable)
 FilesMissing=缺少文件
 FilesUpdated=已更新的文件
+FilesModified=Modified Files
+FilesAdded=Added Files
 FileCheckDolibarr=Check integrity of application files
-AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from a certified package
+AvailableOnlyOnPackagedVersions=The local file for integrity checking is only available when application is installed from an official package
 XmlNotFound=Xml Integrity File of application not found
 SessionId=会话 ID
 SessionSaveHandler=会话保存处理程序
@@ -185,7 +191,9 @@ BoxesDesc=小组件展示一些可以添加到您个人页面的信息。您可�
 OnlyActiveElementsAreShown=仅显示 <a href="%s">已启用模块</a> 的元素。
 ModulesDesc=激活并启用Dolibarr定义的功能模块。部分模块启用后，需要您给予相应用户权限他才能使用到该模块。点击 on/off 来启用/禁用功能/模块。
 ModulesMarketPlaceDesc=你能在外部互联网查找到并下载更多的功能模块...
-ModulesMarketPlaces=更多模块...
+ModulesDeployDesc=If permissions on your file system allows it, you can use this tool to deploy an external module. The module wil then be visible on the tab <strong>%s</strong>.
+ModulesMarketPlaces=Find external modules...
+GoModuleSetupArea=To deploy/install a new module, go onto the Module setup area at <a href="%s">%s</a>.
 DoliStoreDesc=DoliStore，为 Dolibarr 的 ERP/CRM 的外部模块官方市场
 DoliPartnersDesc=List of companies providing custom developed modules or features (Note: anyone experienced in PHP programming can provide custom development for an open source project)
 WebSiteDesc=参考网址查找更多模块...
@@ -276,21 +284,22 @@ ModuleFamilyInterface=系统外部扩展接口
 MenuHandlers=菜单处理程序
 MenuAdmin=菜单编辑器
 DoNotUseInProduction=请勿用于生产环境
-ThisIsProcessToFollow=以下为软体的安装过程：
-ThisIsAlternativeProcessToFollow=这是另一种设置的过程：
+ThisIsProcessToFollow=This is steps to process:
+ThisIsAlternativeProcessToFollow=This is an alternative setup to process manually:
 StepNb=第 %s 步
 FindPackageFromWebSite=搜索你需要的功能(例如在官方 %s )。
 DownloadPackageFromWebSite=下载安装包 (例如从官方网站上 %s)
-UnpackPackageInDolibarrRoot=解压缩安装包到 Dolibarr 的服务器中 <b>%s</b> 模块的目录下
-SetupIsReadyForUse=安装完成，Dolibarr 已可以使用此新组件。
-NotExistsDirect=未设置可选备用根目录。<br>
-InfDirAlt=自 v3 版本开始，Dolibarr 可以定义备用根目录地址。这令您可以将插件和自定义模板保存至同一位置。<br>您只需在Dolibarr的根目录下创建一个目录(例如custom)。<br>
-InfDirExample=<br>然后在 conf.php 中声明它<br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>*这些行已经作为注释行存在，移除注释符"#"即可生效。
+UnpackPackageInDolibarrRoot=Unpack the packaged files into server directory dedicated to Dolibarr: <b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, unpack the packaged files into the server directory dedicated to modules: <b>%s</b>
+SetupIsReadyForUse=Module deployment is finished. You must however enable and setup the module in your application by going on the page to setup modules: <a href="%s">%s</a>.
+NotExistsDirect=The alternative root directory is not defined to an existing directory.<br>
+InfDirAlt=Since version 3, it is possible to define an alternative root directory. This allows you to store, into a dedicated directory, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=在这一步中，你可以使用 选择模块文件 来发送包
 CurrentVersion=Dolibarr 当前版本
 CallUpdatePage=升级更新数据库和数据请到: %s.
 LastStableVersion=最新稳定版
-LastActivationDate=Last activation date
+LastActivationDate=Latest activation date
 UpdateServerOffline=离线升级服务器
 GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags could be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as previous but an offset corresponding to the number to the right of the + sign is applied starting on first %s. <br><b>{000000@x}</b> same as previous but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
 GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of third party type on n characters (see dictionary-thirdparty types).<br>
@@ -373,11 +382,11 @@ ExtrafieldCheckBox=复选框
 ExtrafieldRadio=单选框
 ExtrafieldCheckBoxFromList= 表格的勾选框
 ExtrafieldLink=连接到项目
-ExtrafieldParamHelpselect=字符列表类似于 key,value<br><br> 举例说明 : <br>1,value1<br>2,value2<br>3,value3<br>等等等...<br><br>为了得到字符列表取决于以下：<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
+ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list :<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list :<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=字符列表类似于 key,value<br><br> 举例说明 :: <br>1,value1<br>2,value2<br>3,value3<br>等等等...
 ExtrafieldParamHelpradio=字符列表类似于 key,value<br><br> 举例说明 :: <br>1,value1<br>2,value2<br>3,value3<br>等等等...
-ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list :<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Parameters must be ObjectName:Classpath<br>Syntax : ObjectName:Classpath<br>Example : Societe:societe/class/societe.class.php
 LibraryToBuildPDF=已使用资料库以支持生成PDF文件
 WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
@@ -411,10 +420,11 @@ ModuleCompanyCodePanicum=返回一个空的财务会计科目代码
 ModuleCompanyCodeDigitaria=会计编号取决于客户的编号。代码以C开头，后跟第三方单位的 5 位代码
 Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=Use a 3 steps approval when amount (without tax) is higher than...
-
+WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to send an email from another server than the Yahoo server if the email address used as a sender is your Yahoo email (like myemail@yahoo.com, myemail@yahoo.fr, ...). Your current setup use the server of the application to send email, so some recipients (the one compatible with the restrictive DMARC protocol), will ask Yahoo if they can accept your email and Yahoo will respond "no" because the server is not a server owned by Yahoo, so few of your sent Emails may not be accepted.<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account).
+ClickToShowDescription=Click to show description
 # Modules
 Module0Name=用户和组
-Module0Desc=用户和群组管理模块
+Module0Desc=Users / Employees and Groups management
 Module1Name=合伙人
 Module1Desc=公司和联络人管理(客户、准客户潜在客户...等等)模块
 Module2Name=商业交易
@@ -515,8 +525,8 @@ Module2200Name=动态定价
 Module2200Desc=允许价格的数学表达式
 Module2300Name=计划任务
 Module2300Desc=排定任务管理
-Module2400Name=议程/活动
-Module2400Desc=Follow events or rendez-vous. Record manual events into Agendas or let application logs automatic events for tracking purposes.
+Module2400Name=Events/Agenda
+Module2400Desc=Follow done and upcoming events. Let application logs automatic events for tracking purposes or record manual events or rendez-vous.
 Module2500Name=电子内容管理
 Module2500Desc=保存和共享文件
 Module2600Name=API/Web 服务 (SOAP 服务器)
@@ -582,7 +592,7 @@ Permission34=删除产品信息
 Permission36=查看/管理隐藏产品
 Permission38=导出产品信息
 Permission41=读取项目和任务(共享的工程和我参与的项目)。还可输入项目所消耗的时间(时间表)
-Permission42=创建/变更项目(公开项目和私人项目)
+Permission42=Create/modify projects (shared project and projects i'm contact for). Can also create tasks and assign users to project and tasks
 Permission44=删除项目(共享的项目和我参与的项目)
 Permission45=导出项目
 Permission61=读取干预
@@ -685,7 +695,7 @@ PermissionAdvanced253=创建/变更内部/外部用户和权限
 Permission254=只能创建/变更外部用户资料
 Permission255=修改其他用户密码
 Permission256=删除或暂时关闭其他用户
-Permission262=扩展权限到所有合伙人(不仅限于与此账户相关联的单位)。对外单位用户无效(他们始终只能访问自己的信息)。
+Permission262=Extend access to all third parties (not only third parties that user is a sale representative).<br>Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc).<br>Not effective for projects (only rules on project permissions, visibility and assignement matters).
 Permission271=读取 CA
 Permission272=读取发票
 Permission273=开具发票
@@ -832,7 +842,7 @@ DictionaryStaff=员工
 DictionaryAvailability=送货延迟
 DictionaryOrderMethods=订单类型
 DictionarySource=报价/订单来源方式
-DictionaryAccountancyCategory=会计分类
+DictionaryAccountancyCategory=Accounting account groups
 DictionaryAccountancysystem=账户图标模块
 DictionaryEMailTemplates=电子邮件模板
 DictionaryUnits=单位
@@ -887,7 +897,7 @@ Offset=偏移
 AlwaysActive=此项必须始终保持启用状态
 Upgrade=升级
 MenuUpgrade=升级/扩展
-AddExtensionThemeModuleOrOther=添加扩展(主题、模块...)
+AddExtensionThemeModuleOrOther=Deploy/install external module
 WebServer=网页服务器
 DocumentRootServer=网页服务器的根目录
 DataRootServer=数据文件的目录
@@ -994,7 +1004,7 @@ TriggerAlwaysActive=无论 Dolibarr 的各模块是否启用，此文件中的�
 TriggerActiveAsModuleActive=此文件中的触发器将于 <b>%s</b> 模块启用后启用。
 GeneratedPasswordDesc=在此设定新密码的生成规则，如果您选择使用自动生成的密码。
 DictionaryDesc=输入全部参考数据.你能添加你的参数值为默认值。
-ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting.
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting. For a list of options <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site - opens in a new window" target="_blank">check here</a>.
 MiscellaneousDesc=所有其他安全相关的参数定义在这里。
 LimitsSetup=范围及精确度
 LimitsDesc=这里您可以设置 Dolibarr 的范围、精度和优化参数。
@@ -1161,10 +1171,6 @@ FreeLegalTextOnOrders=订单中的额外说明文本
 WatermarkOnDraftOrders=为订单草稿添加水印(无则留空)
 ShippableOrderIconInList=如果订单是可以送货的则添加一个标记用于提醒
 BANK_ASK_PAYMENT_BANK_DURING_ORDER=为账单询问银行卡账户
-##### Clicktodial #####
-ClickToDialSetup=点击拨号模块设置
-ClickToDialUrlDesc=Url called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with your clicktodial login (defined on your user card)<br><b>__PASS__</b> that will be replaced with your clicktodial password (defined on your user card).
-##### Bookmark4u #####
 ##### Interventions #####
 InterventionsSetup=干预模块设置
 FreeLegalTextOnInterventions=干预文档中的额外说明文本
@@ -1391,7 +1397,7 @@ SendingsSetup=运输模块设置
 SendingsReceiptModel=运输模板
 SendingsNumberingModules=运输编号模块
 SendingsAbility=支持为客户送货时采用发货单
-NoNeedForDeliveryReceipts=通常发货单同时被用来作为发货清单和收货回执，由客户接收并签字。所以产品收货回执/交付回执是此功能的重复，很少使用。
+NoNeedForDeliveryReceipts=In most cases, shipping sheets are used both as sheets for customer deliveries (list of products to send) and sheets that is received and signed by customer. So product deliveries receipts is a duplicated feature and is rarely activated.
 FreeLegalTextOnShippings=运单中的额外说明文本
 ##### Deliveries #####
 DeliveryOrderNumberingModules=收货回执编号模块
@@ -1471,7 +1477,11 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Set automatically this default value for type of e
 AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
 AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
 AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
-##### ClickToDial #####
+AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
+AGENDA_NOTIFICATION_SOUND=Enable sound notification
+##### Clicktodial #####
+ClickToDialSetup=点击拨号模块设置
+ClickToDialUrlDesc=Url called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with your clicktodial login (defined on your user card)<br><b>__PASS__</b> that will be replaced with your clicktodial password (defined on your user card).
 ClickToDialDesc=This module allows to make phone numbers clickable. A click on this icon will call make your phone to call the phone number. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
 ClickToDialUseTelLink=在电话号码上链接 "tel:" 
 ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface installed on same computer than the browser, and called when you click on a link in your browser that start with "tel:". If you need a full server solution (no need of local software installation), you must set this to "No" and fill next field.
@@ -1499,10 +1509,11 @@ EndPointIs=SOAP clients must send their requests to the Dolibarr endpoint availa
 ##### API ####
 ApiSetup=API模块设置
 ApiDesc=By enabling this module, Dolibarr become a REST server to provide miscellaneous web services.
-ApiProductionMode=Enable production mode (this will activate use of a caches for services management)
+ApiProductionMode=Enable production mode (this will activate use of a cache for services management)
 ApiExporerIs=你可浏览 APIs 地址
 OnlyActiveElementsAreExposed=Only elements from enabled modules are exposed
 ApiKey=API的Key
+WarningAPIExplorerDisabled=The API explorer has been disabled. API explorer is not required to provide API services. It is a tool for developer to find/test REST APIs. If you need this tool, go into setup of module API REST to activate it.
 ##### Bank #####
 BankSetupModule=银行模块设置
 FreeLegalTextOnChequeReceipts=支票回执中的额外说明文本
@@ -1571,7 +1582,7 @@ BackupDumpWizard=数据库转储备份向导
 SomethingMakeInstallFromWebNotPossible=Installation of external module is not possible from the web interface for the following reason:
 SomethingMakeInstallFromWebNotPossible2=For this reason, process to upgrade described here is only manual steps a privileged user can do.
 InstallModuleFromWebHasBeenDisabledByFile=Install of external module from application has been disabled by your administrator. You must ask him to remove the file <strong>%s</strong> to allow this feature.
-ConfFileMuseContainCustom=Installing an external module from application save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
+ConfFileMuseContainCustom=Installing an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=当鼠标经过表格明细时高亮显示
 HighlightLinesColor=Highlight color of the line when the mouse passes over (keep empty for no highlight)
 TextTitleColor=页面标题颜色
@@ -1601,6 +1612,7 @@ FixTZ=时区修复
 FillFixTZOnlyIfRequired=例：+2 (只有问题发生时才填写)
 ExpectedChecksum=预计校验
 CurrentChecksum=当前校验
+ForcedConstants=Required constant values
 MailToSendProposal=发送客户报价
 MailToSendOrder=发送客户订单
 MailToSendInvoice=发送客户发票
@@ -1609,13 +1621,14 @@ MailToSendIntervention=发送干预
 MailToSendSupplierRequestForQuotation=发送供应商报价请求
 MailToSendSupplierOrder=发送采购订单
 MailToSendSupplierInvoice=发送供应商发票
+MailToSendContract=To send a contract
 MailToThirdparty=To send email from third party page
 ByDefaultInList=默认显示列表视图
-YouUseLastStableVersion=您正在使用最新稳定版
+YouUseLastStableVersion=You use the latest stable version
 TitleExampleForMajorRelease=Example of message you can use to announce this major release (feel free to use it on your web sites)
 TitleExampleForMaintenanceRelease=Example of message you can use to announce this maintenance release (feel free to use it on your web sites)
-ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
-ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of https://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 MultiPriceRuleDesc=When option "Several level of prices per product/service" is on, you can define different prices (one per price level) for each product. To save you time, you can enter here rule to have price for each level autocalculated according to price of first level, so you will have to enter only price for first level on each product. This page is here to save you time and can be usefull only if your prices for each leve are relative to first level. You can ignore this page in most cases.
 ModelModulesProduct=产品文件模板
 ToGenerateCodeDefineAutomaticRuleFirst=To be able to generate automatically codes, you must first define a manager to auto define barcode number.

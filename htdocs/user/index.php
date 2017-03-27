@@ -461,12 +461,10 @@ print "</tr>\n";
 
 $user2=new User($db);
 
-$var=True;
 $i = 0;
 while ($i < min($num,$limit))
 {
     $obj = $db->fetch_object($result);
-    $var=!$var;
 
 	$userstatic->id=$obj->rowid;
 	$userstatic->ref=$obj->label;
@@ -482,18 +480,18 @@ while ($i < min($num,$limit))
 
 	$li=$userstatic->getNomUrl(-1,'',0,0,24,1,'login');
 
-    print "<tr ".$bc[$var].">";
+    print "<tr>";
     if (! empty($arrayfields['u.login']['checked']))
 	{
 	    print '<td>';
 		print $li;
         if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
         {
-          	print img_picto($langs->trans("SuperAdministrator"),'redstar');
+          	print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
         }
         else if ($obj->admin)
         {
-        	print img_picto($langs->trans("Administrator"),'star');
+        	print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
         }
         print '</td>';
 	}
@@ -584,11 +582,11 @@ while ($i < min($num,$limit))
 	        print $user2->getNomUrl(-1,'',0,0,24,0,'');
             if (! empty($conf->multicompany->enabled) && $obj->admin2 && ! $obj->entity2)
             {
-              	print img_picto($langs->trans("SuperAdministrator"),'redstar');
+              	print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
             }
             else if ($obj->admin2)
             {
-            	print img_picto($langs->trans("Administrator"),'star');
+            	print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
             }
         }
         print '</td>';

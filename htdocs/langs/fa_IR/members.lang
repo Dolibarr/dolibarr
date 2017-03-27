@@ -136,8 +136,8 @@ DocForAllMembersCards=ایجاد کارت های کسب و کار برای هم�
 DocForOneMemberCards=ایجاد کارت های کسب و کار برای یک عضو خاص
 DocForLabels=تولید ورق آدرس
 SubscriptionPayment=پرداخت اشتراک
-LastSubscriptionDate=آخرین تاریخ اشتراک
-LastSubscriptionAmount=تاریخ و زمان آخرین مبلغ آبونمان
+LastSubscriptionDate=Latest subscription date
+LastSubscriptionAmount=Latest subscription amount
 MembersStatisticsByCountries=آمار کاربران بر اساس کشور
 MembersStatisticsByState=آمار کاربران توسط ایالت / استان
 MembersStatisticsByTown=آمار کاربران توسط شهر
@@ -149,7 +149,7 @@ MembersByStateDesc=این صفحه آمار در عضو های دولتی / اس
 MembersByTownDesc=این صفحه آمار در عضو های شهر شما نشان می دهد.
 MembersStatisticsDesc=را انتخاب کنید آمار شما می خواهید به عنوان خوانده شده ...
 MenuMembersStats=ارقام
-LastMemberDate=آخرین تاریخ عضو
+LastMemberDate=Latest member date
 Nature=طبیعت
 Public=اطلاعات عمومی
 NewMemberbyWeb=عضو جدید اضافه شده است. در انتظار تایید
