@@ -2462,7 +2462,7 @@ div.refidpadding  {
 }
 div.refid  {
 	font-weight: bold;
-  	color: #866;
+  	color: #868;
   	font-size: 160%;
 }
 div.refidno  {
@@ -2916,6 +2916,7 @@ span.boxstatstext {
 span.boxstatsindicator {
 	font-size: 130%;
 	font-weight: normal;
+	line-height: 29px;
 }
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 130%;
@@ -2929,17 +2930,32 @@ span.dashboardlineok {
 }
 span.dashboardlineko {
 	color: #FFF;
-	font-size: 80%;	
+	/*color: #8c4446 ! important;
+	padding-left: 1px;*/
+	
+	font-size: 80%;
 }
 .dashboardlinelatecoin {
 	float: right;
 	position: relative;
     text-align: right;
-    top: -28px;
-    padding: 1px 6px 1px 6px;
+    top: -24px;
+    padding: 1px 2px 1px 2px;
+    border-radius: .25em;    
+
+    background-color: #af4705;
+    padding: 0px 5px 0px 5px;
+    top: -26px;
+}
+.imglatecoin {
+    padding: 1px 3px 1px 1px;
+    margin-left: 4px;
+    margin-right: 2px;
     background-color: #8c4446;
     color: #FFFFFF ! important;
     border-radius: .25em;    
+	display: inline-block;
+	vertical-align: middle;
 }
 .boxtable {
     margin-bottom: 8px !important;
