@@ -139,12 +139,12 @@ class Listview
 	}
 
     /**
-     * @param string    $date   date to convert
+     * @param timestamp    $date   date to convert
      * @return int|string   Date TMS or ''
      */
     private function dateToSQLDate($date)
     {
-		return $this->db->jdate($date);
+		return $this->db->idate($date);
 	}
 
 
@@ -160,21 +160,21 @@ class Listview
 			$TSQLDate=array();
 			if(!empty($value['start']))
 			{
-				$valueDeb = $this->dateToSQLDate($value['start']);
-				$TSQLDate[]=$sKey." >= '".$valueDeb." 00:00:00'" ;
+//				$valueDeb = $this->dateToSQLDate($value['start'].' 00:00:00');
+				$TSQLDate[]=$sKey." >= '".$value['start']."'" ;
 			}
 
 			if(!empty($value['end']))
 			{
-				$valueFin = $this->dateToSQLDate($value['end']);
-				$TSQLDate[]=$sKey." <= '".$valueFin." 23:59:59'" ;
+//				$valueFin = $this->dateToSQLDate($value['end'].' 23:59:59');
+				$TSQLDate[]=$sKey." <= '".$value['end']."'" ;
 			}
 
 			if(!empty($TSQLDate)) $TSQLMore[] = implode(' AND ', $TSQLDate);
 		}
 		else
 		{
-			$value = $this->dateToSQLDate($value);
+//			$value = $this->dateToSQLDate($value);
 			$TSQLMore[]=$sKey." LIKE '".$value."%'" ;
 		}
 	}
@@ -190,7 +190,9 @@ class Listview
      */
     private function addSqlFromOther(&$TSQLMore, &$value, &$TParam, $sKey, $key)
 	{
-		if($value==-1) return false;
+		// Do not use empty() function, statut 0 exist
+		if ($value == '') return false;
+		elseif($value==-1) return false;
 			
 		if(isset($TParam['operator'][$key]))
 		{
@@ -227,56 +229,60 @@ class Listview
     {
 		$ListPOST = GETPOST('Listview');
 		
-		if (!empty($ListPOST[$this->id]['search']))
+		if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter.x") && !GETPOST("button_removefilter"))
 		{
-			$sqlGROUPBY='';
-			if(strpos($sql,'GROUP BY')!==false)
+			foreach ($TParam['search'] as $field => $info)
 			{
-				list($sql, $sqlGROUPBY) = explode('GROUP BY', $sql);
-			}
-			
-			if(strpos($sql,'WHERE ')===false) $sql.=' WHERE 1 ';
-			
-			if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter.x") && !GETPOST("button_removefilter"))
-			{
-				// TODO input date are not supported yet
-				foreach($ListPOST[$this->id]['search'] as $key => $value)
+				$TsKey = $this->getSearchKey($field, $TParam);
+				$TSQLMore = array();
+				$allow_is_null = $this->getSearchNull($field,$TParam);
+				
+				foreach ($TsKey as $i => &$sKey)
 				{
-					$TsKey = $this->getSearchKey($key, $TParam);
-					$TSQLMore = array();
-					$allow_is_null = $this->getSearchNull($key,$TParam);
-
-					foreach ($TsKey as $i => &$sKey)
+					$value = '';
+					if (isset($ListPOST[$this->id]['search'][$field])) $value = $ListPOST[$this->id]['search'][$field];
+					
+					if ($allow_is_null && !empty($ListPOST[$this->id]['search_on_null'][$field]))
 					{
-						if($allow_is_null && !empty($ListPOST[$this->id]['search_on_null'][$key]))
-						{
-							$TSQLMore[] = $sKey.' IS NULL ';
-							$value = '';
-						}
-
-						// Do not use empty() function, statut 0 exist
-						if($value != '')
-						{
-							if(isset($TParam['type'][$key]) && ($TParam['type'][$key]==='date' || $TParam['type'][$key]==='datetime'))
-							{
-								$this->addSqlFromTypeDate($TSQLMore, $value, $sKey);
-							}
-							else
-							{
-								$this->addSqlFromOther($TSQLMore, $value, $TParam, $sKey, $key);
-							}
-						}
+						$TSQLMore[] = $sKey.' IS NULL ';
+						$value = '';
 					}
-
-					if(!empty($TSQLMore))
+					
+					if (isset($TParam['type'][$field]) && ($TParam['type'][$field]==='date' || $TParam['type'][$field]==='datetime'))
 					{
-						$sql.=' AND ( '.implode(' OR ',$TSQLMore).' ) ';
+						$k = 'Listview_'.$this->id.'_search_'.$field;
+						if ($info['recherche'] === 'calendars')
+						{
+							$value = array();
+							
+							$timestart = dol_mktime(0, 0, 0, GETPOST($k.'_startmonth'), GETPOST($k.'_startday'), GETPOST($k.'_startyear'));
+							if ($timestart) $value['start'] = date('Y-m-d', $timestart);
+							
+							$timeend = dol_mktime(23, 59, 59, GETPOST($k.'_endmonth'), GETPOST($k.'_endday'), GETPOST($k.'_endyear'));
+							if ($timeend) $value['end'] = date('Y-m-d', $timeend);
+						}
+						else
+						{
+							$time = dol_mktime(12, 0, 0, GETPOST($k.'month'), GETPOST($k.'day'), GETPOST($k.'year'));
+							if ($time) $value = date('Y-m-d', $time);
+						}
+						
+						if (!empty($value)) $this->addSqlFromTypeDate($TSQLMore, $value, $sKey);
+					}
+					else
+					{
+						$this->addSqlFromOther($TSQLMore, $value, $TParam, $sKey, $field);
 					}
 				}
+				
+				if (!empty($TSQLMore))
+				{
+					$sql.=' AND ( '.implode(' OR ',$TSQLMore).' ) ';
+				}
 			}
-			
-			if ($sqlGROUPBY!='')	$sql.=' GROUP BY '.$sqlGROUPBY;
 		}
+		
+		if ($sqlGROUPBY!='') $sql.=' GROUP BY '.$sqlGROUPBY;
 
 		return $sql;
 	}
