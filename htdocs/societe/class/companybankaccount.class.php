@@ -183,7 +183,7 @@ class CompanyBankAccount extends Account
 			}
 			else
 			{
-				return 0;
+				return -1;
 			}
 		}
 		else
@@ -195,7 +195,7 @@ class CompanyBankAccount extends Account
         else
         {
             dol_print_error($this->db);
-            return 0;
+            return -1;
         }
     }
 
