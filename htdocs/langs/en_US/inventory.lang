@@ -11,7 +11,7 @@ inventoryWritePermission=Update inventories
 inventoryValidatePermission=Validate inventory
 
 inventoryTitle=Inventory
-inventoryListTitle=List
+inventoryListTitle=Inventories
 inventoryListEmpty=No inventory in progress
 
 inventoryCreateDelete=Create/Delete inventory
@@ -50,5 +50,5 @@ InventoryFlushed=Inventory flushed
 ExitEditMode=Exit edition
 inventoryDeleteLine=Delete line
 RegulateStock=Regulate Stock
-ListInventory=Inventories list
+ListInventory=List
 NewInventory=New inventory

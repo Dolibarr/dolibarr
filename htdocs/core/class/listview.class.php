@@ -37,6 +37,8 @@ class Listview
 		$this->TTotalTmp=array();
 		$this->sql = '';
 		$this->form = null;
+		$this->totalRowToShow=0;
+		$this->totalRow=0;
 	}
 
     /**
@@ -70,13 +72,12 @@ class Listview
 			,'view_type'=>''
 		),$TParam['list']);
 		
-		$POSTList = GETPOST('Listview');
+		if (empty($TParam['limit'])) $TParam['limit'] = array();
 		
-		if (empty($TParam['limit']))$TParam['limit'] = array();
-		if (!empty($POSTList[$this->id]['page'])) $TParam['limit']['page'] = $POSTList[$this->id]['page'];
+		$page = GETPOST('page');
+		if (!empty($page)) $TParam['limit']['page'] = $page+1; // TODO dolibarr start page at 0 instead 1
 		
-		$nbLine = !empty($user->conf->MAIN_SIZE_LISTE_LIMIT) ? $user->conf->MAIN_SIZE_LISTE_LIMIT : $conf->global->MAIN_SIZE_LISTE_LIMIT;
-		$TParam['limit'] = array_merge(array('page'=>1, 'nbLine' => $nbLine, 'global'=>0), $TParam['limit']);
+		$TParam['limit'] = array_merge(array('page'=>1, 'nbLine' => $conf->liste_limit, 'global'=>0), $TParam['limit']);
 		
 		if (GETPOST('sortfield'))
 		{
@@ -226,7 +227,7 @@ class Listview
     {
 		$ListPOST = GETPOST('Listview');
 		
-		if(!empty($ListPOST[$this->id]['search']))
+		if (!empty($ListPOST[$this->id]['search']))
 		{
 			$sqlGROUPBY='';
 			if(strpos($sql,'GROUP BY')!==false)
@@ -236,43 +237,45 @@ class Listview
 			
 			if(strpos($sql,'WHERE ')===false) $sql.=' WHERE 1 ';
 			
-			foreach($ListPOST[$this->id]['search'] as $key => $value)
+			if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter.x") && !GETPOST("button_removefilter"))
 			{
-				$TsKey = $this->getSearchKey($key, $TParam);
-				$TSQLMore = array();
-				
-				$allow_is_null = $this->getSearchNull($key,$TParam);
-				
-				foreach ($TsKey as $i => &$sKey)
+				// TODO input date are not supported yet
+				foreach($ListPOST[$this->id]['search'] as $key => $value)
 				{
-					if($allow_is_null && !empty($ListPOST[$this->id]['search_on_null'][$key]))
+					$TsKey = $this->getSearchKey($key, $TParam);
+					$TSQLMore = array();
+					$allow_is_null = $this->getSearchNull($key,$TParam);
+
+					foreach ($TsKey as $i => &$sKey)
 					{
-						$TSQLMore[] = $sKey.' IS NULL ';
-						$value = '';
+						if($allow_is_null && !empty($ListPOST[$this->id]['search_on_null'][$key]))
+						{
+							$TSQLMore[] = $sKey.' IS NULL ';
+							$value = '';
+						}
+
+						// Do not use empty() function, statut 0 exist
+						if($value != '')
+						{
+							if(isset($TParam['type'][$key]) && ($TParam['type'][$key]==='date' || $TParam['type'][$key]==='datetime'))
+							{
+								$this->addSqlFromTypeDate($TSQLMore, $value, $sKey);
+							}
+							else
+							{
+								$this->addSqlFromOther($TSQLMore, $value, $TParam, $sKey, $key);
+							}
+						}
 					}
 
-					// Do not use empty() function, statut 0 exist
-					if($value != '')
+					if(!empty($TSQLMore))
 					{
-						if(isset($TParam['type'][$key]) && ($TParam['type'][$key]==='date' || $TParam['type'][$key]==='datetime'))
-						{
-							$this->addSqlFromTypeDate($TSQLMore, $value, $sKey);
-						}
-						else
-						{
-							$this->addSqlFromOther($TSQLMore, $value, $TParam, $sKey, $key);
-						}
+						$sql.=' AND ( '.implode(' OR ',$TSQLMore).' ) ';
 					}
 				}
-
-				if(!empty($TSQLMore))
-				{
-					$sql.=' AND ( '.implode(' OR ',$TSQLMore).' ) ';
-				}
-				
 			}
 			
-			if($sqlGROUPBY!='')	$sql.=' GROUP BY '.$sqlGROUPBY;
+			if ($sqlGROUPBY!='')	$sql.=' GROUP BY '.$sqlGROUPBY;
 		}
 
 		return $sql;
@@ -326,6 +329,7 @@ class Listview
 		foreach($TParam['search'] as $key => $param_search)
 		{
 			$value = isset($ListPOST[$this->id]['search'][$key]) ? $ListPOST[$this->id]['search'][$key] : '';
+			if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) $value = '';
 			
 			$typeRecherche = (is_array($param_search) && isset($param_search['recherche'])) ? $param_search['recherche'] : $param_search;  
 			
@@ -335,14 +339,14 @@ class Listview
 			}
 			else if($typeRecherche==='calendar')
 			{
-				$value = GETPOST('Listview_'.$this->id.'_search_'.$key) ? mktime(0,0,0, (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'month'), (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'day'), (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'year') ) : '';
+				$value = GETPOST('Listview_'.$this->id.'_search_'.$key) ? mktime(0,0,0, (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'month'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'day'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'year') ) : '';
 				
 				$fsearch = $form->select_date($value, 'Listview_'.$this->id.'_search_'.$key,0, 0, 1, "", 1, 0, 1);
 			}
 			else if($typeRecherche==='calendars')
 			{
-				$value_start = GETPOST('Listview_'.$this->id.'_search_'.$key.'_start') ? mktime(0,0,0, (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'_startmonth'), (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'_startday'), (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'_startyear') ) : '';
-				$value_end = GETPOST('Listview_'.$this->id.'_search_'.$key.'_end') ? mktime(0,0,0, (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'_endmonth'), (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'_endday'), (int)GETPOST('Listview_'.$this->id.'_search_'.$key.'_endyear') ) : '';
+				$value_start = GETPOST('Listview_'.$this->id.'_search_'.$key.'_start') ? mktime(0,0,0, (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_startmonth'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_startday'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_startyear') ) : '';
+				$value_end = GETPOST('Listview_'.$this->id.'_search_'.$key.'_end') ? mktime(0,0,0, (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_endmonth'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_endday'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_endyear') ) : '';
 			
 				$fsearch = $form->select_date($value_start, 'Listview_'.$this->id.'_search_'.$key.'_start',0, 0, 1, "", 1, 0, 1)
 						 . $form->select_date($value_end, 'Listview_'.$this->id.'_search_'.$key.'_end',0, 0, 1, "", 1, 0, 1);
@@ -581,7 +585,13 @@ class Listview
 		$TField = $this->addTotalGroup($TField,$TTotalGroup);
 		
 		$out = $this->getJS();
-		$out.= load_fiche_titre($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $TParam['limit']['page'], count($TField), 'title_products.png', 0, '', '', $limit);
+		
+		$dolibarr_decalage = $this->totalRow > $this->totalRowToShow ? 1 : 0;
+		ob_start();
+		print_barre_liste($TParam['list']['title'], $TParam['limit']['page']-1, $_SERVER["PHP_SELF"], '&param', $TParam['sortfield'], $TParam['sortorder'], '', $this->totalRowToShow+$dolibarr_decalage, $this->totalRow, $TParam['list']['image'], 0, '', '', $TParam['limit']['nbLine']);
+		$out .= ob_get_clean();
+		
+	
 		$out.= '<table id="'.$this->id.'" class="liste" width="100%"><thead>';
 			
 		$out.= '<tr class="liste_titre">';
@@ -617,7 +627,7 @@ class Listview
 		if(count($TSearch)>0)
 		{
 			$out.='<tr class="liste_titre barre-recherche">';
-//			foreach($TSearch as $field => $search)
+			
 			foreach ($THeader as $field => $head)
 			{
 				if ($field === 'selectedfields')
@@ -643,18 +653,24 @@ class Listview
 		else
         {
 			$var=true;
+			$line_number = 0;
 			foreach($TField as $fields)
 			{
-				$var=!$var;
-				$out.='<tr '.$bc[$var].'> <!-- '.$field.' -->';
-			
-				foreach ($THeader as $field => $head)
+				if($this->in_view($TParam, $line_number))
 				{
-					$moreattrib = 'style="width:'.$head['width'].';text-align:'.$head['text-align'].'"';
-					$out.='<td class="'.$field.'" '.$moreattrib.'>'.$fields[$field].'</td>';
+					$var=!$var;
+					$out.='<tr '.$bc[$var].'> <!-- '.$field.' -->';
+
+					foreach ($THeader as $field => $head)
+					{
+						$moreattrib = 'style="width:'.$head['width'].';text-align:'.$head['text-align'].'"';
+						$out.='<td class="'.$field.'" '.$moreattrib.'>'.$fields[$field].'</td>';
+					}
+
+					$out.='</tr>';
 				}
-					
-				$out.='</tr>';
+				
+				$line_number++;
 			}
 			
 			$out.='</tbody>';
@@ -731,6 +747,8 @@ class Listview
      */
     private function parse_array(&$THeader, &$TField, &$TParam)
     {
+		$this->totalRow = count($TField);
+		
 		$this->THideFlip = array_flip($TParam['hide']);
 		$this->TTotalTmp=array();
 		
@@ -864,6 +882,7 @@ class Listview
 
         if($this->in_view($TParam,$line_number))
         {
+			$this->totalRowToShow++;
             $row=array(); $trans = array();
             foreach($currentLine as $field=>$value)
             {
@@ -993,6 +1012,7 @@ class Listview
 		$res = $this->db->query($this->sql);
 		if($res!==false)
 		{
+			$this->totalRow = $this->db->num_rows($res);
 			dol_syslog(get_class($this)."::parse_sql id=".$this->id." sql=".$this->sql, LOG_DEBUG);
 			
 			while($currentLine = $this->db->fetch_object($res))

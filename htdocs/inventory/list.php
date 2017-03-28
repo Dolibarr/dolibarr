@@ -61,7 +61,8 @@ echo $list->render(Inventory::getSQL('All'), array(
     ),
     'list'=>array(
         'title'=>$langs->trans('inventoryListTitle'),
-        'messageNothing'=>$langs->trans('inventoryListEmpty')
+        'messageNothing'=>$langs->trans('inventoryListEmpty'),
+		'image' => 'inventory.png@inventory'
     ),
     'title'=>array(
         'rowid'=>$langs->trans('Title'),
@@ -81,7 +82,7 @@ echo $list->render(Inventory::getSQL('All'), array(
 	),
     'search'=>array(
 		'rowid' => array('recherche' => true, 'table' => array('i'), 'field' => array('title')),
-        'date_inventory'=>array('recherche' => 'calendars'),
+        'date_inventory'=>array('recherche' => 'calendars', 'table' => array('i'), 'field' => array('date_inventory')),
         'status'=>array(1=>$langs->trans("inventoryValidate"), 0=>$langs->trans("inventoryDraft"))
     )
 ));
