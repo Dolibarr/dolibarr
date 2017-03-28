@@ -48,6 +48,9 @@ $list = new ListView($db, 'listInventory');
 $THide = array('label','title');
 
 echo $list->render(Inventory::getSQL('All'), array(
+	'limit' => array(
+		'nbLine' => GETPOST('limit')
+	),
 	'allow-field-select' => true,
     'link'=>array(
         'fk_warehouse'=>'<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id=@val@">'.img_picto('','object_stock.png','',0).' @label@</a>'
