@@ -198,6 +198,14 @@ ChangeBinding=Change the binding
 ApplyMassCategories=Apply mass categories
 AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
 CategoryDeleted=Category for the accounting account has been removed
+AccountingJournals=Accounting journals
+NewAccountingJournal=New accounting journal
+ShowAccoutingJournal=Show accounting journal
+AccountingJournalTypeVariousOperation=Various operation
+AccountingJournalTypeSale=Sale
+AccountingJournalTypePurchase=Purchase
+AccountingJournalTypeBank=Bank
+AccountingJournalTypeHasNew=Has-new
 
 ## Export
 Exports=Exports

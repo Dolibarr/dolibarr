@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,7 @@ function admin_accounting_prepare_head(AccountingAccount $object=null)
 	$head[$h][2] = 'general';
 	$h ++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/journal.php';
+	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/journals.php';
 	$head[$h][1] = $langs->trans("Journaux");
 	$head[$h][2] = 'journal';
 	$h ++;
