@@ -235,47 +235,49 @@ class CompanyBankAccount extends Account
     /**
      *  Delete a rib from database
      *
-     *	@param		User		$user		User deleting
+     *	@param		User	$user		User deleting
      *	@param  	int		$notrigger	1=Disable triggers
-     *  @return		int		<0 if KO, >0 if OK
+     *  @return		int		            <0 if KO, >0 if OK
      */
     function delete(User $user = null, $notrigger=0)
     {
         global $conf;
-	$error = 0;
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
-        $sql.= " WHERE rowid  = ".$this->id;
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-        $result = $this->db->query($sql);
-        if ($result)
-	{
+        
+        $error = 0;
+        
+        dol_syslog(get_class($this) . "::delete ".$this->id, LOG_DEBUG);
+        
+        $this->db->begin();
+        
+        if (! $error && ! $notrigger)
+        {
+            // Call trigger
+            $result=$this->call_trigger('COMAPNY_RIB_DELETE',$user);
+            if ($result < 0) $error++;
+            // End call triggers
+        }
 
-		if (! $notrigger)
-		{
-			// Call trigger
-			$result=$this->call_trigger('COMPANY_RIB_CREATE',$user);
-			if ($result < 0) $error++;
-			// End call triggers
-			
-			if(! $error )
-			{
-				return 1;
-			}
-			else
-			{
-				return -1;
-			}
-		}
-		else
-		{
-			return 1;
-		}
-	
+        if (! $error)
+        {
+            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "societe_rib";
+            $sql .= " WHERE rowid  = " . $this->id;
+            
+            if (! $this->db->query($sql))
+        	{
+        		$error++;
+        		$this->errors[]=$this->db->lasterror();
+        	}
+        }
+        
+        if (! $error)
+        {
+            $this->db->commit();
+            return 1;
         }
         else
-	{
-            dol_print_error($this->db);
-            return -1;
+        {
+            $this->db->rollback();
+            return -1*$error;
         }
     }
 

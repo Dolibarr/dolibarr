@@ -3102,6 +3102,8 @@ class Commande extends CommonOrder
 
         $error = 0;
 
+        dol_syslog(get_class($this) . "::delete ".$this->id, LOG_DEBUG);
+        
         $this->db->begin();
 
         if (! $error && ! $notrigger)
@@ -3117,7 +3119,6 @@ class Commande extends CommonOrder
         {
         	// Delete order details
         	$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = ".$this->id;
-        	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         	if (! $this->db->query($sql) )
         	{
         		$error++;
@@ -3126,7 +3127,6 @@ class Commande extends CommonOrder
 
         	// Delete order
         	$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;
-        	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         	if (! $this->db->query($sql) )
         	{
         		$error++;
@@ -3184,7 +3184,6 @@ class Commande extends CommonOrder
 
         if (! $error)
         {
-        	dol_syslog(get_class($this)."::delete $this->id by $user->id", LOG_DEBUG);
         	$this->db->commit();
         	return 1;
         }
@@ -3192,7 +3191,6 @@ class Commande extends CommonOrder
         {
 	        foreach($this->errors as $errmsg)
 	        {
-		        dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 		        $this->error.=($this->error?', '.$errmsg:$errmsg);
 	        }
 	        $this->db->rollback();
