@@ -131,7 +131,6 @@ $chargestatic = new ChargeSociales($db);
 $paymentdonstatic = new PaymentDonation($db);
 $paymentvatstatic = new TVA($db);
 $paymentsalstatic = new PaymentSalary($db);
-$paymentsalstatic = new PaymentSalary($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 
 // Get code of finance journal
