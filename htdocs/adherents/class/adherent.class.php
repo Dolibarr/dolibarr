@@ -1775,7 +1775,7 @@ class Adherent extends CommonObject
 	        $response->warning_delay=$conf->adherent->subscription->warning_delay/60/60/24;
 	        $response->label=$langs->trans("MembersWithSubscriptionToReceive");
 	        $response->url=DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1&amp;filter=outofdate';
-	        $response->img=img_object($langs->trans("Members"),"user");
+	        $response->img=img_object('',"user");
 
             $adherentstatic = new Adherent($this->db);
 

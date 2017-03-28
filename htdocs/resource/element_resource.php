@@ -197,7 +197,7 @@ else
 
 			$head=actions_prepare_head($act);
 
-			dol_fiche_head($head, 'resources', $langs->trans("Action"),0,'action');
+			dol_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
 			$linkback =img_picto($langs->trans("BackToList"),'object_list','class="hideonsmartphone pictoactionview"');
 			$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php">'.$langs->trans("BackToList").'</a>';
@@ -327,7 +327,7 @@ else
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 			$head = societe_prepare_head($socstatic);
 
-			dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"), 0, 'company');
+			dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"), -1, 'company');
 
 			dol_banner_tab($socstatic, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom', '', '&element='.$element);
 
@@ -363,7 +363,7 @@ else
 		if (is_object($fichinter)) 
 		{
 			$head=fichinter_prepare_head($fichinter);
-			dol_fiche_head($head, 'resource', $langs->trans("InterventionCard"),0,'intervention');
+			dol_fiche_head($head, 'resource', $langs->trans("InterventionCard"), -1, 'intervention');
 
 			// Intervention card
 			$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';

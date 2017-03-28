@@ -55,6 +55,7 @@ class Cronjob extends CommonObject
 	var $unitfrequency;
 	var $frequency;
 	var $status;
+	var $processing;
 	var $fk_user_author;
 	var $fk_user_mod;
 	var $nbrun;
@@ -287,6 +288,7 @@ class Cronjob extends CommonObject
 		$sql.= " t.unitfrequency,";
 		$sql.= " t.frequency,";
 		$sql.= " t.status,";
+		$sql.= " t.processing,";
 		$sql.= " t.fk_user_author,";
 		$sql.= " t.fk_user_mod,";
 		$sql.= " t.note,";
@@ -330,6 +332,7 @@ class Cronjob extends CommonObject
 				$this->unitfrequency = $obj->unitfrequency;
 				$this->frequency = $obj->frequency;
 				$this->status = $obj->status;
+				$this->processing = $obj->processing;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->fk_user_mod = $obj->fk_user_mod;
 				$this->note = $obj->note;
@@ -352,15 +355,16 @@ class Cronjob extends CommonObject
     /**
      *  Load object in memory from the database
      *
-	 *  @param	string		$sortorder    sort order
-	 *  @param	string		$sortfield    sort field
-	 *  @param	int			$limit		  limit page
-	 *  @param	int			$offset    	  page
-	 *  @param	int			$status    	  display active or not
-	 *  @param	array		$filter    	  filter output
-     *  @return int          			<0 if KO, >0 if OK
+	 *  @param	string		$sortorder      sort order
+	 *  @param	string		$sortfield      sort field
+	 *  @param	int			$limit		    limit page
+	 *  @param	int			$offset    	    page
+	 *  @param	int			$status    	    display active or not
+	 *  @param	array		$filter    	    filter output
+	 *  @param  int         $processing     Processing or not 
+     *  @return int          			    <0 if KO, >0 if OK
      */
-    function fetch_all($sortorder='DESC', $sortfield='t.rowid', $limit=0, $offset=0, $status=1, $filter='')
+    function fetch_all($sortorder='DESC', $sortfield='t.rowid', $limit=0, $offset=0, $status=1, $filter='', $processing=-1)
     {
     	global $langs;
     	
@@ -391,6 +395,7 @@ class Cronjob extends CommonObject
     	$sql.= " t.unitfrequency,";
     	$sql.= " t.frequency,";
     	$sql.= " t.status,";
+    	$sql.= " t.processing,";
     	$sql.= " t.fk_user_author,";
     	$sql.= " t.fk_user_mod,";
     	$sql.= " t.note,";
@@ -399,6 +404,7 @@ class Cronjob extends CommonObject
     	$sql.= " t.test";
     	$sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
     	$sql.= " WHERE 1 = 1";
+    	if ($processing >= 0) $sql.= " AND t.processing = ".(empty($processing)?'0':'1');
     	if ($status >= 0 && $status < 2) $sql.= " AND t.status = ".(empty($status)?'0':'1');
     	if ($status == 2) $sql.= " AND t.status = 2";
     	//Manage filter
@@ -463,6 +469,7 @@ class Cronjob extends CommonObject
 	    			$line->unitfrequency = $obj->unitfrequency;
 	    			$line->frequency = $obj->frequency;
 	    			$line->status = $obj->status;
+	    			$line->processing = $obj->processing;
 	    			$line->fk_user_author = $obj->fk_user_author;
 	    			$line->fk_user_mod = $obj->fk_user_mod;
 	    			$line->note = $obj->note;
@@ -520,9 +527,11 @@ class Cronjob extends CommonObject
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->note)) $this->note=trim($this->note);
 		if (isset($this->nbrun)) $this->nbrun=trim($this->nbrun);
-		if (empty($this->maxrun)) $this->maxrun=0;
         if (isset($this->libname)) $this->libname = trim($this->libname);
         if (isset($this->test)) $this->test = trim($this->test);
+
+		if (empty($this->maxrun)) $this->maxrun=0;
+        if (empty($this->processing)) $this->processing=0;
         
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -588,6 +597,7 @@ class Cronjob extends CommonObject
 		$sql.= " unitfrequency=".(isset($this->unitfrequency)?$this->unitfrequency:"null").",";
 		$sql.= " frequency=".(isset($this->frequency)?$this->frequency:"null").",";
 		$sql.= " status=".(isset($this->status)?$this->status:"null").",";
+		$sql.= " processing=".((isset($this->processing) && $this->processing > 0)?$this->processing:"0").",";
 		$sql.= " fk_user_mod=".$user->id.",";
 		$sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
 		$sql.= " nbrun=".((isset($this->nbrun) && $this->nbrun >0)?$this->nbrun:"null").",";
@@ -786,7 +796,8 @@ class Cronjob extends CommonObject
 		$this->lastresult='';
 		$this->unitfrequency='';
 		$this->frequency='';
-		$this->status='';
+		$this->status=0;
+		$this->processing=0;
 		$this->fk_user_author='';
 		$this->fk_user_mod='';
 		$this->note='';
@@ -898,6 +909,7 @@ class Cronjob extends CommonObject
 		$this->datelastresult=null;
 		$this->lastoutput='';
 		$this->lastresult='';
+		$this->processing = 1;                // To know job was started
 		$this->nbrun=$this->nbrun + 1;
 		$result = $this->update($user);       // This include begin/commit
 		if ($result<0) {
@@ -1099,6 +1111,7 @@ class Cronjob extends CommonObject
 		dol_syslog(get_class($this)."::run_jobs now we update job to track it is finished (with success or error)");
 		
 		$this->datelastresult=dol_now();
+		$this->processing=0;
 		$result = $this->update($user);       // This include begin/commit
 		if ($result < 0)
 		{

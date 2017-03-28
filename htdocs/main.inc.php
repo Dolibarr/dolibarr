@@ -848,9 +848,9 @@ if (! defined('NOREQUIRETRAN'))
 
 // Define some constants used for style of arrays
 $bc=array(0=>'class="impair"',1=>'class="pair"');
-$bcdd=array(0=>'class="impair drag drop"',1=>'class="pair drag drop"');
-$bcnd=array(0=>'class="impair nodrag nodrop nohover"',1=>'class="pair nodrag nodrop nohoverpair"');		// Used for tr to add new lines
-$bctag=array(0=>'class="impair tagtr"',1=>'class="pair tagtr"');
+$bcdd=array(0=>'class="drag drop"',1=>'class="drag drop"');
+$bcnd=array(0=>'class="nodrag nodrop nohover"',1=>'class="nodrag nodrop nohoverpair"');		// Used for tr to add new lines
+$bctag=array(0=>'class="tagtr"',1=>'class="pair tagtr"');
 
 // Define messages variables
 $mesg=''; $warning=''; $error=0;

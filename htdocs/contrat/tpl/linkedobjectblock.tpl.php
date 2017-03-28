@@ -43,7 +43,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     <td></td>
 	<td align="center"><?php echo dol_print_date($objectlink->date_contrat,'day'); ?></td>
 	<td align="right">&nbsp;</td>
-	<td align="right"><?php echo $objectlink->getLibStatut(6); ?></td>
+	<td align="right"><?php echo $objectlink->getLibStatut(7); ?></td>
 	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
 </tr>
 <?php } ?>

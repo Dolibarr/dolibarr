@@ -1014,6 +1014,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	if ($object->element == 'propal')    $modulepart='propal';
 	if ($object->element == 'commande')  $modulepart='commande';
 	if ($object->element == 'facture')   $modulepart='facture';
+	if ($object->element == 'fichinter') $modulepart='ficheinter';
 	
 	if ($object->element == 'product')
 	{
@@ -1041,7 +1042,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
             if ($modulepart != 'unknown')
             {
                 // Check if a preview file is available
-                if (in_array($modulepart, array('propal', 'commande', 'facture')) && class_exists("Imagick"))
+                if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter')) && class_exists("Imagick"))
                 {
                     $objectref = dol_sanitizeFileName($object->ref);
                     $dir_output = $conf->$modulepart->dir_output . "/";
@@ -2694,6 +2695,7 @@ function img_warning($titlealt = 'default', $morealt = '')
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
+	//return '<div class="imglatecoin">'.img_picto($titlealt, 'warning_white.png', 'class="pictowarning valignmiddle"'.($morealt ? ($morealt == '1' ? ' style="float: right"' : ' '.$morealt): '')).'</div>';
 	return img_picto($titlealt, 'warning.png', 'class="pictowarning valignmiddle"'.($morealt ? ($morealt == '1' ? ' style="float: right"' : ' '.$morealt): ''));
 }
 
