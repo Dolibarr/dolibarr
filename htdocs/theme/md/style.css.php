@@ -281,7 +281,7 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
-.liste_titre input[name=month], .liste_titre input[name=month_lim] {
+.liste_titre input[name=monthvalid], .liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre input[name=month_lim] {
 	margin-right: 4px;
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
@@ -1108,6 +1108,9 @@ table.noborder tr.liste_titre td {
 }
 .pictowarning, .pictopreview {
     padding-<?php echo $left; ?>: 3px;
+}
+.pictoedit, .pictowarning, .pictopreview, .pictodelete {
+    vertical-align: text-bottom;
 }
 .colorthumb {
 	padding-left: 1px !important;

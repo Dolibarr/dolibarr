@@ -269,7 +269,7 @@ input.select2-input {
 	border-bottom:  solid 1px rgba(0,0,0,.2) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
 
-.liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre input[name=month_lim] {
+.liste_titre input[name=monthvalid], .liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre input[name=month_lim] {
 	margin-right: 4px;
 }
 input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
@@ -1063,6 +1063,9 @@ div.nopadding {
 }
 .pictowarning, .pictopreview {
     padding-<?php echo $left; ?>: 3px;
+}
+.pictoedit, .pictowarning, .pictopreview, .pictodelete {
+    vertical-align: text-bottom;
 }
 .colorthumb {
 	padding-left: 1px !important;
@@ -2729,7 +2732,6 @@ tr.liste_titre th, tr.liste_titre td, th.liste_titre
 /*	border-bottom: 1px solid #<?php echo ($colorbacktitle1 == '255,255,255'?'BBBBBB':'ddd'); ?>; */
 	border-bottom: 1px solid #888;
 }
-/* TODO Once title line is moved under title search, make border bottom of all th black and force to white when it's first tr */ 
 tr.liste_titre:first-child th, tr:first-child th.liste_titre {
     border-bottom: 1px solid #ddd ! important;
 }
@@ -2758,7 +2760,7 @@ tr.liste_titre_topborder td {
 	background: transparent;
 }
 tr.liste_titre:last-child th.liste_titre, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
-    border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+    border-bottom: 1px solid #ddd;
 }
 
 

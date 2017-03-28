@@ -91,7 +91,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	// Onglets
 	$head=bank_prepare_head($object);
-	dol_fiche_head($head,'cash',$langs->trans("FinancialAccount"),0,'account');
+	dol_fiche_head($head, 'cash', $langs->trans("FinancialAccount"), -1, 'account');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 

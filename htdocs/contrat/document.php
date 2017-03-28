@@ -93,7 +93,7 @@ if ($object->id)
 {
 	$head=contract_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("Contract"), 0, 'contract');
+	dol_fiche_head($head, 'documents', $langs->trans("Contract"), -1, 'contract');
 
 
 	// Construit liste des fichiers

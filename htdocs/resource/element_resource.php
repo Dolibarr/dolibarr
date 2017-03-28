@@ -39,6 +39,7 @@ if (! empty($conf->projet->enabled)) {
 // Load traductions files requiredby by page
 $langs->load("resource");
 $langs->load("other");
+$langs->load("interventions");
 
 /*
 $sortorder                      = GETPOST('sortorder','alpha');

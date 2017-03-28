@@ -269,22 +269,27 @@ if ($result)
         print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
         print '<input type="hidden" name="id" value="'.$acct->id.'">';
 
-        print '<table class="border" width="100%">';
-
         $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php">'.$langs->trans("BackToList").'</a>';
 
+        
+        dol_banner_tab($bankline, 'rowid', $linkback);
+        
+        print '<div class="underbanner clearboth"></div>';       
+        print '<table class="border" width="100%">';
+
         // Ref
+        /*
         print '<tr><td class="titlefield">'.$langs->trans("Ref")."</td>";
         print '<td>';
         print $form->showrefnav($bankline, 'rowid', $linkback, 1, 'rowid', 'rowid');
         print '</td>';
         print '</tr>';
-
+        */
+        
         $i++;
 
-
         // Bank account
-        print "<tr><td>".$langs->trans("Account")."</td>";
+        print '<tr><td class="titlefield">'.$langs->trans("Account").'</td>';
         print '<td>';
         print $acct->getNomUrl(1,'transactions');
         print '</td>';

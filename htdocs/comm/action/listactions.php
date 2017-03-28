@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
 $langs->load("users");
 $langs->load("companies");
@@ -147,6 +148,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 
 $form=new Form($db);
 $userstatic=new User($db);
+$formactions=new FormActions($db);
 
 $nav='';
 $nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
@@ -227,6 +229,7 @@ if ($type) $sql.= " AND c.id = ".$type;
 if ($status == '0') { $sql.= " AND a.percent = 0"; }
 if ($status == '-1') { $sql.= " AND a.percent = -1"; }	// Not applicable
 if ($status == '50') { $sql.= " AND (a.percent > 0 AND a.percent < 100)"; }	// Running already started
+if ($status == '100') { $sql.= " AND a.percent = 100"; }
 if ($status == 'done' || $status == '100') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
 if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
 if ($search_title) $sql.=natural_search("a.label", $search_title);
@@ -324,7 +327,6 @@ if ($resql)
     if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     if ($actioncode) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
     if ($resourceid) $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
-    if ($status || isset($_GET['status']) || isset($_POST['status']))  $nav.='<input type="hidden" name="status" value="'.$status.'">';
     if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
     if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
     if ($socid)   $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
@@ -368,7 +370,9 @@ if ($resql)
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
-    print '<td class="liste_titre"></td>';
+    print '<td class="liste_titre center">';
+    print $formactions->form_select_status_action('formaction',$status,1,'status',1,2);
+    print '</td>';
 	// Action column
 	print '<td class="liste_titre" align="middle">';
 	$searchpitco=$form->showFilterAndCheckAddButtons(0);

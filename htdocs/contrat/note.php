@@ -70,7 +70,7 @@ if ($id > 0 || ! empty($ref))
 
     $hselected = 2;
 
-    dol_fiche_head($head, 'note', $langs->trans("Contract"), 0, 'contract');
+    dol_fiche_head($head, 'note', $langs->trans("Contract"), -1, 'contract');
 
     // Contract card
 
