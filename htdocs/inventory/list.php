@@ -48,6 +48,7 @@ $list = new ListView($db, 'listInventory');
 $THide = array('label','title');
 
 echo $list->render(Inventory::getSQL('All'), array(
+	'allow-field-select' => true,
     'link'=>array(
         'fk_warehouse'=>'<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id=@val@">'.img_picto('','object_stock.png','',0).' @label@</a>'
     ),
@@ -64,9 +65,9 @@ echo $list->render(Inventory::getSQL('All'), array(
     ),
     'title'=>array(
         'rowid'=>$langs->trans('Title'),
-        'fk_warehouse'=>$langs->trans('Warehouse'),
-        'date_inventory'=>$langs->trans('InventoryDate'),
+		'date_inventory'=>$langs->trans('InventoryDate'),
         'datec'=>$langs->trans('DateCreation'),
+        'fk_warehouse'=>$langs->trans('Warehouse'),
         'tms'=>$langs->trans('DateUpdate'),
         'status'=>$langs->trans('Status')
     ),
@@ -74,8 +75,13 @@ echo $list->render(Inventory::getSQL('All'), array(
         'status' => '(@val@ ? img_picto("'.$langs->trans("inventoryValidate").'", "statut4") : img_picto("'.$langs->trans("inventoryDraft").'", "statut3"))',
         'rowid'=>'Inventory::getLink(@val@)'
     ),
+	'position' => array(
+		'text-align' => array('status' => 'right')
+		
+	),
     'search'=>array(
-        'date_inventory'=>'calendars',
+		'rowid' => array('recherche' => true, 'table' => array('i'), 'field' => array('title')),
+        'date_inventory'=>array('recherche' => 'calendars'),
         'status'=>array(1=>$langs->trans("inventoryValidate"), 0=>$langs->trans("inventoryDraft"))
     )
 ));

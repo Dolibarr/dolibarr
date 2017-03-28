@@ -36,6 +36,7 @@ class Listview
 		$this->id = $id;
 		$this->TTotalTmp=array();
 		$this->sql = '';
+		$this->form = null;
 	}
 
     /**
@@ -46,12 +47,12 @@ class Listview
      */
 	private function init(&$TParam)
     {
-		global $conf, $langs;
+		global $conf, $langs, $user;
 		
-		if(!isset($TParam['hide']))$TParam['hide']=array();
-		if(!isset($TParam['link']))$TParam['link']=array();
-		if(!isset($TParam['type']))$TParam['type']=array();
-		if(!isset($TParam['orderby']['noOrder']))$TParam['orderby']['noOrder']=array();
+		if(!isset($TParam['hide'])) $TParam['hide']=array();
+		if(!isset($TParam['link'])) $TParam['link']=array();
+		if(!isset($TParam['type'])) $TParam['type']=array();
+		if(!isset($TParam['orderby']['noOrder'])) $TParam['orderby']['noOrder']=array();
 		if(!isset($TParam['allow-fields-select'])) $TParam['allow-fields-select'] = 0;
 		
 		if(!isset($TParam['list']))$TParam['list']=array();
@@ -74,12 +75,17 @@ class Listview
 		if (empty($TParam['limit']))$TParam['limit'] = array();
 		if (!empty($POSTList[$this->id]['page'])) $TParam['limit']['page'] = $POSTList[$this->id]['page'];
 		
-		$TParam['limit'] = array_merge(array('page'=>1, 'nbLine'=>$conf->liste_limit, 'global'=>0), $TParam['limit']);
+		$nbLine = !empty($user->conf->MAIN_SIZE_LISTE_LIMIT) ? $user->conf->MAIN_SIZE_LISTE_LIMIT : $conf->global->MAIN_SIZE_LISTE_LIMIT;
+		$TParam['limit'] = array_merge(array('page'=>1, 'nbLine' => $nbLine, 'global'=>0), $TParam['limit']);
 		
-		if(!empty($POSTList[$this->id]['orderBy']))
+		if (GETPOST('sortfield'))
 		{
-			$TParam['orderBy'] = $POSTList[$this->id]['orderBy']; 
+			$TParam['sortfield'] = GETPOST('sortfield');
+			$TParam['sortorder'] = GETPOST('sortorder');
 		}
+		
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+		$this->form = new Form($this->db);
 	}
 
 
@@ -279,19 +285,18 @@ class Listview
      */
     public function render($sql, $TParam=array())
     {
-		$THeader=array();
-		$TField=array();	
+		$TField=array();
 		
 		$this->init($TParam);
+		$THeader = $this->initHeader($TParam);
 		
 		$sql = $this->search($sql,$TParam);
 		$sql = $this->order_by($sql, $TParam);		
 		
 		$this->parse_sql($THeader, $TField, $TParam, $sql);	
-		
 		list($TTotal, $TTotalGroup)=$this->get_total($TField, $TParam);
 		
-		return $this->renderList($THeader, $TField,$TTotal,$TTotalGroup, $TParam);
+		return $this->renderList($THeader, $TField, $TTotal, $TTotalGroup, $TParam);
 	}
 
     /**
@@ -365,9 +370,9 @@ class Listview
 			}
 			else
             {
-				
 				$label = !empty($TParam['title'][$key]) ? $TParam['title'][$key] : $key ;
-				$TParam['list']['head_search'].='<div><span style="min-width:200px;display:inline-block;">'.$libelle.'</span> '.$fsearch.'</div>';	
+				$TParam['list']['head_search'].= '<th>'.$label.'</th>';
+//				$TParam['list']['head_search'].='<div><span style="min-width:200px;display:inline-block;">'.$label.'</span> '.$fsearch.'</div>';	
 			}
 		}
 		
@@ -569,72 +574,84 @@ class Listview
      */
     private function renderList(&$THeader, &$TField, &$TTotal, &$TTotalGroup, &$TParam)
     {
+		global $bc;
+		
 		$TSearch = $this->setSearch($THeader, $TParam);
-		$TExport=$this->setExport($TParam, $TField, $THeader);
+		$TExport = $this->setExport($TParam, $TField, $THeader);
 		$TField = $this->addTotalGroup($TField,$TTotalGroup);
 		
 		$out = $this->getJS();
-		$out.=load_fiche_titre($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $TParam['limit']['page'], count($TField), 'title_products.png', 0, '', '', $limit);
-		$out.='<table id="'.$this->id.'" class="liste" width="100%"><thead>';
-		
-		if(!empty($TParam['list']['head_search']))
-		{
-			$out.='<tr class="liste_titre barre-recherche-head">
-					<td colspan="'.count($THeader).'">'.$TParam['list']['head_search'].'</td>
-				</tr>';
-		}
+		$out.= load_fiche_titre($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $TParam['limit']['page'], count($TField), 'title_products.png', 0, '', '', $limit);
+		$out.= '<table id="'.$this->id.'" class="liste" width="100%"><thead>';
 			
-		$out.='<tr class="liste_titre">';
-		
-		foreach($THeader as $field=>$head)
+		$out.= '<tr class="liste_titre">';
+		foreach($THeader as $field => $head)
 		{
-			if(empty($head['width']))$head['width']='auto';
+			$moreattrib = '';
+			$search = '';
+			$prefix = '';
 
+			if ($field === 'selectedfields')
+			{
+				$moreattrib = 'align="right" ';
+				$prefix = 'maxwidthsearch ';
+			}
 
-			$out.='<th style="width:'.$head['width'].';text-align:'.$head['text-align'].'" class="liste_titre">'.$head['libelle'];
-			// TODO replace the actual html by this function call to print a standard output as Dolibarr then add extrafields
-//            $out .= getTitleFieldOfList($head, $_SERVER["PHP_SELF"],"p.ref");
+			if (empty($head['width'])) $head['width'] = 'auto';
+			if (!empty($head['width']) && !empty($head['text-align'])) $moreattrib .= 'style="width:'.$head['width'].';text-align:'.$head['text-align'].'"';
 
-			if($head['order']) $out.='<span class="nowrap">
-					<a href="javascript:Listview_OrderDown(\''.$this->id.'\',\''.$field.'\')">'.img_down().'</a>
-					<a href="javascript:Listview_OrderUp(\''.$this->id.'\', \''.$field.'\')">'.img_up().'</a>
-			</span>';
+			if (isset($TParam['search'][$field]['recherche']) && $TParam['search'][$field]['recherche'] !== false)
+			{
+				$TsKey = $this->getSearchKey($field, $TParam);
+				if (!empty($TsKey)) $search = implode(',', $TsKey);
+				else $search = $field;
+			}
 
-			$out.=$head['more'];
-			$out.='</th>';
+			$out .= getTitleFieldOfList($head['label'], 0, $_SERVER["PHP_SELF"], $search, '', $moreparam, $moreattrib, $TParam['sortfield'], $TParam['sortorder'], $prefix);
+			$out .= $head['more'];
 		}
 		
-		$out.='</tr>';
-			
+		//$out .= '<th aligne="right" class="maxwidthsearch liste_titre">--</th>';
+		$out .= '</tr>';
+		
 		if(count($TSearch)>0)
 		{
 			$out.='<tr class="liste_titre barre-recherche">';
-			foreach($TSearch as $field=>$search)
+//			foreach($TSearch as $field => $search)
+			foreach ($THeader as $field => $head)
 			{
-				$out.='<td class="liste_titre">'.$search.'</td>';
+				if ($field === 'selectedfields')
+				{
+					$out.= '<td class="liste_titre" align="right">'.$this->form->showFilterAndCheckAddButtons(0).'</td>';
+				}
+				else
+				{
+					$moreattrib = 'style="width:'.$head['width'].';text-align:'.$head['text-align'].'"';
+					$out .= '<td class="liste_titre" '.$moreattrib.'>'.$TSearch[$field].'</td>';
+				}
 			}
-
+			
 			$out.='</tr>';
 		}
 				
 		$out.='</thead><tbody>';
 		
-		$class='pair';
-		
 		if(empty($TField))
 		{
-			$out.='<tr class="'.$class.'"><td colspan="'.$TParam['list']['nb_columns'].'">'.$TParam['list']['messageNothing'].'</td></tr>';
+			if (!empty($TParam['list']['messageNothing'])) $out .= '<tr class="'.$class.'"><td colspan="'.$TParam['list']['nb_columns'].'">'.$TParam['list']['messageNothing'].'</td></tr>';
 		}
 		else
         {
+			$var=true;
 			foreach($TField as $fields)
 			{
-				$class = ($class=='pair') ? 'impair' : 'pair';
-				$out.='<tr class="'.$class.'"> <!-- '.$field.' -->';
+				$var=!$var;
+				$out.='<tr '.$bc[$var].'> <!-- '.$field.' -->';
 			
-				foreach($fields as $field=>$value)
+				foreach ($THeader as $field => $head)
 				{
-					$out.='<td field="'.$field.'">'.$value.'</td>';
+					$moreattrib = 'style="width:'.$head['width'].';text-align:'.$head['text-align'].'"';
+					$out.='<td class="'.$field.'" '.$moreattrib.'>'.$fields[$field].'</td>';
 				}
 					
 				$out.='</tr>';
@@ -642,20 +659,24 @@ class Listview
 			
 			$out.='</tbody>';
 			
-			if(!empty($TParam['list']['haveTotal']))
+			if (!empty($TParam['list']['haveTotal']))
 			{
 				$out.='<tfoot><tr class="liste_total">';
 			
-				foreach($TTotal as $field=>$total)
+				foreach ($THeader as $field => $head)
 				{
-					$out.='<td align="right" field="'.$field.'">'.price($total).'</td>';
+					if (isset($TTotal[$field]))
+					{
+						$moreattrib = 'style="width:'.$head['width'].';text-align:'.$head['text-align'].'"';
+						$out.='<td align="right" class="'.$field.'" '.$moreattrib.'>'.price($TTotal[$field]).'</td>';
+					}
 				}
 					
 				$out.='</tr></tfoot>';
 			}
 		}
 
-		$out.='</table>';
+		$out .= '</table>';
 		
 		return $out;
 	}
@@ -669,15 +690,15 @@ class Listview
     {
 		$this->typeRender = 'array';
 
-		$THeader=array();
 		$TField=array();	
 		
 		$this->init($TParam);
+		$THeader = $this->initHeader($TParam);
 		
 		$this->parse_array($THeader, $TField, $TParam);
 		list($TTotal, $TTotalGroup)=$this->get_total($TField, $TParam);
 		
-		$this->renderList($THeader, $TField,$TTotal,$TTotalGroup, $TParam);
+		$this->renderList($THeader, $TField, $TTotal, $TTotalGroup, $TParam);
 	}
 
 
@@ -688,29 +709,15 @@ class Listview
      */
     private function order_by($sql, &$TParam)
     {
-		$first = true;
-		if(!empty($TParam['orderBy']))
+		global $db;
+		
+		if (!empty($TParam['sortfield']))
 		{
-			if(strpos($sql,'LIMIT ')!==false)
-			{
-				list($sql, $sqlLIMIT) = explode('LIMIT ', $sql);
-			}
+			if(strpos($sql,'LIMIT ') !== false) list($sql, $sqlLIMIT) = explode('LIMIT ', $sql);
 			
-			$sql.=' ORDER BY '; 
-			foreach($TParam['orderBy'] as $field=>$order)
-			{
-				if(!$first) $sql.=',';
-				
-				if($order=='DESC')$TParam['list']['orderDown'] = $field;
-				else $TParam['list']['orderUp'] = $field;
-				
-				if(strpos($field,'.')===false)	$sql.='`'.$field.'` '.$order;
-				else $sql.=$field.' '.$order;
-				
-				$first=false;
-			}
+			$sql .= $db->order($TParam['sortfield'], $TParam['sortorder']);
 			
-			if(!empty($sqlLIMIT))$sql.=' LIMIT '.$sqlLIMIT;
+			if (!empty($sqlLIMIT)) $sql .= ' LIMIT '.$sqlLIMIT;
 		}
 		
 		return $sql;
@@ -724,8 +731,6 @@ class Listview
      */
     private function parse_array(&$THeader, &$TField, &$TParam)
     {
-		$first = true;
-
 		$this->THideFlip = array_flip($TParam['hide']);
 		$this->TTotalTmp=array();
 		
@@ -733,27 +738,19 @@ class Listview
 		
 		foreach($TField as $row)
 		{
-			if($first)
-			{
-				$this->initHeader($THeader, $TParam, $row);
-				$first=false;
-			}	
-			
 			$this->set_line($TField, $TParam, $row);
 		}
 	}
 
-    /**
-     * @param $THeader
-     * @param $TParam
-     * @param $currentLine
-     */
-    private function initHeader(&$THeader, &$TParam, $currentLine)
-    {
-        global $db,$conf,$user;
-
+	
+	private function initHeader(&$TParam)
+	{
+		global $user,$conf;
+		
+		$THeader = array();
+		
 		$TField=$TFieldVisibility=array();
-		foreach ($currentLine as $field => $value)
+		foreach ($TParam['title'] as $field => $value)
 		{
 			$TField[$field]=true;
 		}
@@ -761,35 +758,35 @@ class Listview
 		$contextpage=md5($_SERVER['PHP_SELF']);
 		if(!empty($TParam['allow-field-select']))
 		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-			$form=new Form($db);
 			$selectedfields = GETPOST('Listview'.$this->id.'_selectedfields');
 			
 			if(!empty($selectedfields))
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				$tabparam['MAIN_SELECTEDFIELDS_'.$contextpage]=$selectedfields;
-	    		$result=dol_set_user_param($db, $conf, $user, $tabparam);
+				$tabparam['MAIN_SELECTEDFIELDS_'.$contextpage] = $selectedfields;
+	    		$result=dol_set_user_param($this->db, $conf, $user, $tabparam);
 			}
 			
 			$tmpvar='MAIN_SELECTEDFIELDS_'.$contextpage;
-			if (! empty($user->conf->$tmpvar)) {
-				$tmparray=explode(',', $user->conf->$tmpvar);
-				$TParam['hide']=array();
-		        foreach($TField as $field=>$dummy)
+			if (! empty($user->conf->{$tmpvar}))
+			{
+				$tmparray = explode(',', $user->conf->{$tmpvar});
+				$TParam['hide'] = array();
+		        foreach($TField as $field => $dummy)
 		        {
-		          	$libelle = isset($TParam['title'][$field]) ? $TParam['title'][$field] : $field;
-
-					if(!in_array($field,$tmparray)) {
+		          	$label = $TParam['title'][$field];
+					if(!in_array($field, $tmparray))
+					{
 				  		$TParam['hide'][] = $field;
 						$visible = 0;
 				  	}
-					else{
+					else
+					{
 						$visible = 1;
 					}
 		            
-					$TFieldVisibility[$field]=array(
-						'label'=>$libelle
+					$TFieldVisibility[$field] = array(
+						'label'=>$label
 						,'checked'=>$visible
 					);
 		        }
@@ -798,28 +795,25 @@ class Listview
             {
 				foreach($TField as $field=>$dummy)
 		        {
-		        	$libelle = isset($TParam['title'][$field]) ? $TParam['title'][$field] : $field;
+		        	$label = isset($TParam['title'][$field]) ? $TParam['title'][$field] : $field;
 					$visible = (!in_array($field, $TParam['hide'])) ? 1 : 0;
 					$TFieldVisibility[$field]=array(
-						'label'=>$libelle,
+						'label'=>$label,
 						'checked'=>$visible
 					);
 				}
 			}	
 
-			$selectedfields=$form->multiSelectArrayWithCheckbox('Listview'.$this->id.'_selectedfields', $TFieldVisibility, $contextpage);	// This also change content of $arrayfields_0
+			$selectedfields = $this->form->multiSelectArrayWithCheckbox('Listview'.$this->id.'_selectedfields', $TFieldVisibility, $contextpage);	// This also change content of $arrayfields_0
 		}
-		
-		foreach ($currentLine as $field => $value)
+
+		foreach ($TParam['title'] as $field => $label)
 		{
-			$libelle = isset($TParam['title'][$field]) ? $TParam['title'][$field] : $field;
-			$visible = (!in_array($field,$TParam['hide'])) ? 1 : 0;	
-			
+			$visible = (!in_array($field, $TParam['hide'])) ? 1 : 0;
 			if($visible)
 			{
-				$lastfield = $field;
 				$THeader[$field] = array(
-					'libelle'=>$libelle,
+					'label'=>$label,
 					'order'=>(in_array($field, $TParam['orderby']['noOrder']) ? 0 : 1),
 					'width'=>(!empty($TParam['size']['width'][$field]) ? $TParam['size']['width'][$field] : 'auto'),
 					'text-align'=>(!empty($TParam['position']['text-align'][$field]) ? $TParam['position']['text-align'][$field] : 'auto'),
@@ -828,10 +822,12 @@ class Listview
 			}
 		}
 		
-		if(!empty($selectedfields) && !empty($lastfield))
+		if(!empty($selectedfields))
 		{
-			$THeader[$lastfield]['more']='<div style="float:right">'.$selectedfields.'</div>';
+			$THeader['selectedfields']['label']='<div style="float:right">'.$selectedfields.'</div>';
 		}
+		
+		return $THeader;
 	}
 
     /**
@@ -868,21 +864,20 @@ class Listview
 
         if($this->in_view($TParam,$line_number))
         {
-
             $row=array(); $trans = array();
             foreach($currentLine as $field=>$value)
             {
                 if(is_object($value))
                 {
                     if(get_class($value)=='stdClass') {$value=print_r($value, true);}
-                    else $value=(string)$value;
+                    else $value=(string) $value;
                 }
 
                 $trans['@'.$field.'@'] = $value;
 
                 if(!empty($TParam['math'][$field]))
                 {
-                    $float_value = (double)strip_tags($value);
+                    $float_value = (double) strip_tags($value);
                     $this->TTotalTmp[$field][] = $float_value;
                 }
 
@@ -900,7 +895,6 @@ class Listview
                     {
                         if($TParam['type'][$field]=='date' || $TParam['type'][$field]=='datetime' )
                         {
-
                             if($row[$field] != '0000-00-00 00:00:00' && $row[$field] != '1000-01-01 00:00:00' && $row[$field] != '0000-00-00' && !empty($row[$field]))
                             {
                                 if($TParam['type'][$field]=='datetime')$row[$field] = dol_print_date(strtotime($row[$field]),'dayhoursec');
@@ -943,7 +937,7 @@ class Listview
                 {
                     if(isset($TParam['math'][$field]) && !empty($TParam['math'][$field]))
                     {
-                        $float_value = (double)strip_tags($value);
+                        $float_value = (double) strip_tags($value);
                         $this->TTotalTmp[$field][] = $float_value;
                     }
 
@@ -959,8 +953,8 @@ class Listview
                 if(!empty($TParam['math'][$field]) && is_array($TParam['math'][$field]))
                 {
                     $toField = $TParam['math'][$field][1];
-                    $float_value = (double)strip_tags($row[$toField]);
-                    $this->TTotalTmp['@groupsum'][$toField][ $row[$field]  ] +=$float_value;
+                    $float_value = (double) strip_tags($row[$toField]);
+                    $this->TTotalTmp['@groupsum'][$toField][ $row[$field]  ] += $float_value;
                 }
             }
         }
@@ -977,7 +971,7 @@ class Listview
     {
 		if(!empty($TParam['limit']['global']) && strpos($sql,'LIMIT ')===false )
 		{
-			$sql.=' LIMIT '.(int)$TParam['limit']['global'];
+			$sql.=' LIMIT '.(int) $TParam['limit']['global'];
 		}
 		
 		return $sql;
@@ -994,26 +988,17 @@ class Listview
 		$this->sql = $this->limitSQL($sql, $TParam);
 		
 		$this->TTotalTmp=array();
-		
 		$this->THideFlip = array_flip($TParam['hide']);
-
+		
 		$res = $this->db->query($this->sql);
 		if($res!==false)
 		{
 			dol_syslog(get_class($this)."::parse_sql id=".$this->id." sql=".$this->sql, LOG_DEBUG);
 			
-			$first=true;
 			while($currentLine = $this->db->fetch_object($res))
             {
-				if($first)
-				{
-					$this->initHeader($THeader, $TParam, $currentLine);
-					$first = false;
-				}
-				
 				$this->set_line($TField, $TParam, $currentLine);
 			}
-			
 		}
 		else
         {
