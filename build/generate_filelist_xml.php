@@ -123,16 +123,21 @@ foreach ($includeconstants as $countrycode => $tmp)
 
 fputs($fp, '<dolibarr_htdocs_dir includecustom="'.$includecustom.'">'."\n");
 
-// TODO Replace RecursiveDirectoryIterator with dol_dir_list
-$dir_iterator1 = new RecursiveDirectoryIterator(dirname(__FILE__).'/../htdocs/');
+/*$dir_iterator1 = new RecursiveDirectoryIterator(dirname(__FILE__).'/../htdocs/');
 $iterator1 = new RecursiveIteratorIterator($dir_iterator1);
 // Need to ignore document custom etc. Note: this also ignore natively symbolic links.
 $files = new RegexIterator($iterator1, '#^(?:[A-Z]:)?(?:/(?!(?:'.($includecustom?'':'custom\/|').'documents\/|conf\/|install\/))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
+*/
+$regextoinclude='\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
+$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install)$';  // Exclude dirs
+$files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 $dir='';
 $needtoclose=0;
-foreach ($files as $file) {
-    $newdir = str_replace(dirname(__FILE__).'/../htdocs', '', dirname($file));
-    if ($newdir!=$dir) {
+foreach ($files as $filetmp) {
+	$file = $filetmp['fullname'];
+	//$newdir = str_replace(dirname(__FILE__).'/../htdocs', '', dirname($file));
+	$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
+	if ($newdir!=$dir) {
         if ($needtoclose)
             fputs($fp, '  </dir>'."\n");
         fputs($fp, '  <dir name="'.$newdir.'" >'."\n");
@@ -160,14 +165,21 @@ $checksumconcat=array();
 fputs($fp, '<dolibarr_script_dir version="'.$release.'">'."\n");
 
 // TODO Replace RecursiveDirectoryIterator with dol_dir_list
-$dir_iterator2 = new RecursiveDirectoryIterator(dirname(__FILE__).'/../scripts/');
+/*$dir_iterator2 = new RecursiveDirectoryIterator(dirname(__FILE__).'/../scripts/');
 $iterator2 = new RecursiveIteratorIterator($dir_iterator2);
 // Need to ignore document custom etc. Note: this also ignore natively symbolic links.
 $files = new RegexIterator($iterator2, '#^(?:[A-Z]:)?(?:/(?!(?:custom|documents|conf|install))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
+*/
+$regextoinclude='\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
+$regextoexclude='(custom|documents|conf|install)$';  // Exclude dirs
+$files = dol_dir_list(dirname(__FILE__).'/../scripts/', 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 $dir='';
 $needtoclose=0;
-foreach ($files as $file) {
-    $newdir = str_replace(dirname(__FILE__).'/../scripts', '', dirname($file));
+foreach ($files as $filetmp) {
+	$file = $filetmp['fullname'];
+	//$newdir = str_replace(dirname(__FILE__).'/../scripts', '', dirname($file));
+	$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
+	$newdir = str_replace(dirname(__FILE__).'/../scripts', '', dirname($file));
     if ($newdir!=$dir) {
         if ($needtoclose)
             fputs($fp, '  </dir>'."\n");

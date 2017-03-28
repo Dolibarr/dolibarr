@@ -1713,7 +1713,7 @@ class Task extends CommonObject
 	        $response->label = $langs->trans("OpenedTasks");
 	        if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
 	        else $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mode=mine&amp;mainmenu=project';
-	        $response->img = img_object($langs->trans("Tasks"),"task");
+	        $response->img = img_object('',"task");
 	
 	        // This assignment in condition is not a bug. It allows walking the results.
 	        while ($obj=$this->db->fetch_object($resql))

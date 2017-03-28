@@ -1913,7 +1913,7 @@ class ExpenseReport extends CommonObject
 	            $response->label=$langs->trans("ExpenseReportsToPay");
 	            $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=5';
 	        }
-	        $response->img=img_object($langs->trans("ExpenseReports"),"trip");
+	        $response->img=img_object('',"trip");
 
             while ($obj=$this->db->fetch_object($resql))
             {

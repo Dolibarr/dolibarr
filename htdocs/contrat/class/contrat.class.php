@@ -1765,7 +1765,7 @@ class Contrat extends CommonObject
 	/**
 	 *  Return label of a contract status
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
+	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services, 7=Same than 6 with fixed length
 	 *  @return string      		Label
 	 */
 	function getLibStatut($mode)
@@ -1777,7 +1777,7 @@ class Contrat extends CommonObject
 	 *  Renvoi label of a given contrat status
 	 *
 	 *  @param	int		$statut      	Status id
-	 *  @param  int		$mode          	0=Long label, 1=Short label, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
+	 *  @param  int		$mode          	0=Long label, 1=Short label, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services, 7=Same than 6 with fixed length
 	 *	@return string      			Label
 	 */
 	function LibStatut($statut,$mode)
@@ -1808,7 +1808,7 @@ class Contrat extends CommonObject
 			if ($statut == 1) { return img_picto($langs->trans('ContractStatusValidated'),'statut4'); }
 			if ($statut == 2) { return img_picto($langs->trans('ContractStatusClosed'),'statut6'); }
 		}
-		if ($mode == 4 || $mode == 6)
+		if ($mode == 4 || $mode == 6 || $mode == 7)
 		{
 			$line=new ContratLigne($this->db);
 			$text='';
@@ -1818,10 +1818,15 @@ class Contrat extends CommonObject
 				$text.=' '.$langs->trans("Services");
 				$text.=': &nbsp; &nbsp; ';
 			}
-			$text.=$this->nbofserviceswait.' '.$line->LibStatut(0,3).' &nbsp; ';
-			$text.=$this->nbofservicesopened.' '.$line->LibStatut(4,3,0).' &nbsp; ';
-			$text.=$this->nbofservicesexpired.' '.$line->LibStatut(4,3,1).' &nbsp; ';
-			$text.=$this->nbofservicesclosed.' '.$line->LibStatut(5,3);
+			$text.=($mode == 7?'<div class="inline-block">':'');
+			$text.=($mode != 7 || $this->nbofserviceswait > 0) ? $this->nbofserviceswait.' '.$line->LibStatut(0,3).' &nbsp; ' : '';
+			$text.=($mode == 7?'</div><div class="inline-block">':'');
+			$text.=($mode != 7 || $this->nbofservicesopened > 0) ? $this->nbofservicesopened.' '.$line->LibStatut(4,3,0).' &nbsp; ' : '';
+			$text.=($mode == 7?'</div><div class="inline-block">':'');
+			$text.=($mode != 7 || $this->nbofservicesexpired > 0) ? $this->nbofservicesexpired.' '.$line->LibStatut(4,3,1).' &nbsp; ' : '';
+			$text.=($mode == 7?'</div><div class="inline-block">':'');
+			$text.=($mode != 7 || $this->nbofservicesclosed > 0) ? $this->nbofservicesclosed.' '.$line->LibStatut(5,3).' &nbsp; ' : '';
+			$text.=($mode == 7?'</div>':'');
 			return $text;
 		}
 		if ($mode == 5)
@@ -2070,7 +2075,7 @@ class Contrat extends CommonObject
 			$response->warning_delay = $warning_delay/60/60/24;
 			$response->label = $label;
 			$response->url = $url;
-			$response->img = img_object($langs->trans("Contract"),"contract");
+			$response->img = img_object('',"contract");
 
 			while ($obj=$this->db->fetch_object($resql))
 			{

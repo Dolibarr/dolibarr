@@ -39,6 +39,7 @@ $langs->load("bills");
 $langs->load("admin");
 $langs->load("accountancy");
 $langs->load("salaries");
+$langs->load("loan");
 
 // Security check
 if (! empty($user->rights->accountancy->chartofaccount))

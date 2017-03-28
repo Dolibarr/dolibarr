@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015 Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ class box_contracts extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="nowrap right"',
-                        'text' => $contractstatic->getLibStatut(6),
+                        'text' => $contractstatic->getLibStatut(7),
                         'asis'=>1,
                     );
 

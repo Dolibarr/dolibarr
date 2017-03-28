@@ -1769,7 +1769,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$res = $object->fetch_optionals($object->id, $extralabels);
 
 		$head = commande_prepare_head($object);
-		dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), 0, 'order');
+		dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order');
 
 		$formconfirm = '';
 
@@ -2651,6 +2651,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$file = $fileparams['fullname'];
 			}
 
+			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 			print '<div class="clearboth"></div>';
 			print '<br>';
 			print load_fiche_titre($langs->trans('SendOrderByMail'));

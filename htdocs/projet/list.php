@@ -116,7 +116,7 @@ $arrayfields=array(
     'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
     'p.title'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
     's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'enabled'=>$conf->societe->enabled),
-    'commercial'=>array('label'=>$langs->trans("SalesRepresentative"), 'checked'=>1),
+    'commercial'=>array('label'=>$langs->trans("ThirdPartiesOfSaleRepresentative"), 'checked'=>1),
 	'p.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>100),
     'p.datee'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>101),
     'p.public'=>array('label'=>$langs->trans("Visibility"), 'checked'=>1, 'position'=>102),
@@ -339,7 +339,6 @@ if (! $resql)
     exit;
 }
 
-$var=true;
 $num = $db->num_rows($resql);
 
 if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
@@ -547,7 +546,7 @@ if (! empty($arrayfields['p.opp_amount']['checked']))
 if (! empty($arrayfields['p.fk_opp_status']['checked']))
 {
 	print '<td class="liste_titre nowrap center">';
-	print $formproject->selectOpportunityStatus('search_opp_status',$search_opp_status,1,1,1);
+	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 1, 1, 0, 'maxwidth100');
     print '</td>';
 }
 if (! empty($arrayfields['p.opp_percent']['checked']))
@@ -619,7 +618,6 @@ print '</td>';
 print '</tr>'."\n";
 
 $i=0;
-$var=true;
 $totalarray=array();
 while ($i < min($num,$limit))
 {
@@ -636,8 +634,7 @@ while ($i < min($num,$limit))
 	$userAccess = $projectstatic->restrictedProjectArea($user);    // why this ?
 	if ($userAccess >= 0)
 	{
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print "<tr>";
 
 		// Project url
     	if (! empty($arrayfields['p.ref']['checked']))
@@ -651,7 +648,7 @@ while ($i < min($num,$limit))
 		// Title
     	if (! empty($arrayfields['p.title']['checked']))
     	{
-        	print '<td>';
+        	print '<td class="tdoverflowmax100">';
     		print dol_trunc($obj->title,80);
     		print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
@@ -659,7 +656,7 @@ while ($i < min($num,$limit))
 		// Company
     	if (! empty($arrayfields['s.nom']['checked']))
     	{
-        	print '<td>';
+        	print '<td class="tdoverflowmax100">';
     		if ($obj->socid)
     		{
     			$socstatic->id=$obj->socid;
@@ -701,9 +698,11 @@ while ($i < min($num,$limit))
     					$userstatic->email=$val['email'];
     					$userstatic->statut=$val['statut'];
     					$userstatic->entity=$val['entity'];
-    					print $userstatic->getNomUrl(1);
+    					$userstatic->photo=$val['photo'];
+    					//print $userstatic->getNomUrl(1, '', 0, 0, 12);
+    					print $userstatic->getNomUrl(-2);
     					$j++;
-    					if ($j < $nbofsalesrepresentative) print ', ';
+    					if ($j < $nbofsalesrepresentative) print ' ';
     				}
     			}
     			//else print $langs->trans("NoSalesRepresentativeAffected");
@@ -756,7 +755,7 @@ while ($i < min($num,$limit))
     	// Opp Status
     	if (! empty($arrayfields['p.fk_opp_status']['checked']))
     	{
-            print '<td align="middle">';
+            print '<td class="center">';
 			if ($obj->opp_status_code) print $langs->trans("OppStatusShort".$obj->opp_status_code);
 			print '</td>';
 		    if (! $i) $totalarray['nbfield']++;

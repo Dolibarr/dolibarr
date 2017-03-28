@@ -1271,7 +1271,7 @@ else
 
         $hselected = 0;
 
-        dol_fiche_head($head, $hselected, $langs->trans("Contract"), 0, 'contract');
+        dol_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
 
 
         /*
@@ -1595,7 +1595,7 @@ else
 
                     print "</tr>\n";
 
-                    // Dates de en service prevues et effectives
+                    // Dates of service planed and real
                     if ($objp->subprice >= 0)
                     {
 	                    $colspan = 6;
@@ -1862,15 +1862,13 @@ else
                 print '</table>';
             }
 
+            // Form to activate line
             if ($user->rights->contrat->activer && $action == 'activateline' && $object->lines[$cursorline-1]->id == GETPOST('ligne'))
             {
-                /**
-                 * Activer la ligne de contrat
-                 */
                 print '<form name="active" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.GETPOST('ligne').'&amp;action=active" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-                print '<table class="noborder tableforservicepart2" width="100%">';
+                print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ?'  boxtablenobottom':'').'" width="100%">';
 
                 // Definie date debut et fin par defaut
                 $dateactstart = $objp->date_debut;

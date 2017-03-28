@@ -125,6 +125,9 @@ INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USER_A
 ALTER TABLE llx_chargesociales ADD COLUMN ref varchar(16);
 ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;
 
+ALTER TABLE llx_cronjob ADD COLUMN processing integer NOT NULL DEFAULT 0;
+
+
 create table llx_payment_various
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,

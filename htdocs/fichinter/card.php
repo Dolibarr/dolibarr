@@ -1079,7 +1079,7 @@ else if ($id > 0 || ! empty($ref))
 
 	$head = fichinter_prepare_head($object);
 
-	dol_fiche_head($head, 'card', $langs->trans("InterventionCard"), 0, 'intervention');
+	dol_fiche_head($head, 'card', $langs->trans("InterventionCard"), -1, 'intervention');
 
 	$formconfirm='';
 
