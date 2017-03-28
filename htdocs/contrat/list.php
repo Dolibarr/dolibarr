@@ -340,7 +340,7 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-
+	
     print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'title_commercial.png', 0, '', '', $limit);
 
 	if ($sall)
@@ -393,51 +393,12 @@ if ($resql)
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	
+	if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+    
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-    print '<tr class="liste_titre">';
-    if (! empty($arrayfields['c.ref']['checked']))               print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref","","$param",'',$sortfield,$sortorder);
-    if (! empty($arrayfields['c.ref_customer']['checked']))      print_liste_field_titre($arrayfields['c.ref_customer']['label'], $_SERVER["PHP_SELF"], "c.ref_customer","","$param",'',$sortfield,$sortorder);
-    if (! empty($arrayfields['c.ref_supplier']['checked']))      print_liste_field_titre($arrayfields['c.ref_supplier']['label'], $_SERVER["PHP_SELF"], "c.ref_supplier","","$param",'',$sortfield,$sortorder);
-    if (! empty($arrayfields['s.nom']['checked']))               print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom","","$param",'',$sortfield,$sortorder);
-	if (! empty($arrayfields['s.town']['checked']))              print_liste_field_titre($arrayfields['s.town']['label'],$_SERVER["PHP_SELF"],'s.town','',$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['s.zip']['checked']))               print_liste_field_titre($arrayfields['s.zip']['label'],$_SERVER["PHP_SELF"],'s.zip','',$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['state.nom']['checked']))           print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['country.code_iso']['checked']))    print_liste_field_titre($arrayfields['country.code_iso']['label'],$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['typent.code']['checked']))         print_liste_field_titre($arrayfields['typent.code']['label'],$_SERVER["PHP_SELF"],"typent.code","",$param,'align="center"',$sortfield,$sortorder);
-    if (! empty($arrayfields['sale_representative']['checked'])) print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "","","$param",'',$sortfield,$sortorder);
-    if (! empty($arrayfields['c.date_contrat']['checked']))      print_liste_field_titre($arrayfields['c.date_contrat']['label'], $_SERVER["PHP_SELF"], "c.date_contrat","","$param",'align="center"',$sortfield,$sortorder);
-	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-	   foreach($extrafields->attribute_label as $key => $val) 
-	   {
-           if (! empty($arrayfields["ef.".$key]['checked'])) 
-           {
-				$align=$extrafields->getAlignFlag($key);
-				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-           }
-	   }
-	}
-	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields);
-    $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-	if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'],$_SERVER["PHP_SELF"],"c.date_creation","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	if (! empty($arrayfields['c.tms']['checked']))       print_liste_field_titre($arrayfields['c.tms']['label'],$_SERVER["PHP_SELF"],"c.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-    if (! empty($arrayfields['status']['checked']))
-    {
-        print_liste_field_titre($staticcontratligne->LibStatut(0,3), '', '', '', '', 'width="16"');
-        print_liste_field_titre($staticcontratligne->LibStatut(4,3,0), '', '', '', '', 'width="16"');
-        print_liste_field_titre($staticcontratligne->LibStatut(4,3,1), '', '', '', '', 'width="16"');
-        print_liste_field_titre($staticcontratligne->LibStatut(5,3), '', '', '', '', 'width="16"');
-    }
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
-    print "</tr>\n";
 
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<tr class="liste_titre">';
+    print '<tr class="liste_titre_filter">';
     if (! empty($arrayfields['c.ref']['checked']))
     {
         print '<td class="liste_titre">';
@@ -486,7 +447,7 @@ if ($resql)
         print '<td class="liste_titre maxwidthonsmartphone" align="center">';
         print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
         print '</td>';
-    }    
+    }
     if (! empty($arrayfields['sale_representative']['checked']))
     {
         print '<td class="liste_titre"></td>';
@@ -495,12 +456,12 @@ if ($resql)
     {
         // Date contract
         print '<td class="liste_titre center">';
-      	//print $langs->trans('Month').': ';
-       	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-       	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-       	//print '&nbsp;'.$langs->trans('Year').': ';
-       	$syear = $year;
-       	$formother->select_year($syear,'year',1, 20, 5);
+        //print $langs->trans('Month').': ';
+        if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+        print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+        //print '&nbsp;'.$langs->trans('Year').': ';
+        $syear = $year;
+        $formother->select_year($syear,'year',1, 20, 5);
         print '</td>';
     }
     // Extra fields
@@ -541,19 +502,58 @@ if ($resql)
     {
         print '<td class="liste_titre">';
         print '</td>';
-    }    
+    }
     // Status
     if (! empty($arrayfields['status']['checked']))
     {
         print '<td class="liste_titre" colspan="4" align="right"></td>';
     }
     print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-	print $searchpitco;
+    $searchpitco=$form->showFilterButtons();
+    print $searchpitco;
     print '</td>';
     print "</tr>\n";
+    
+    print '<tr class="liste_titre">';
+    if (! empty($arrayfields['c.ref']['checked']))               print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref","","$param",'',$sortfield,$sortorder);
+    if (! empty($arrayfields['c.ref_customer']['checked']))      print_liste_field_titre($arrayfields['c.ref_customer']['label'], $_SERVER["PHP_SELF"], "c.ref_customer","","$param",'',$sortfield,$sortorder);
+    if (! empty($arrayfields['c.ref_supplier']['checked']))      print_liste_field_titre($arrayfields['c.ref_supplier']['label'], $_SERVER["PHP_SELF"], "c.ref_supplier","","$param",'',$sortfield,$sortorder);
+    if (! empty($arrayfields['s.nom']['checked']))               print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom","","$param",'',$sortfield,$sortorder);
+	if (! empty($arrayfields['s.town']['checked']))              print_liste_field_titre($arrayfields['s.town']['label'],$_SERVER["PHP_SELF"],'s.town','',$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['s.zip']['checked']))               print_liste_field_titre($arrayfields['s.zip']['label'],$_SERVER["PHP_SELF"],'s.zip','',$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['state.nom']['checked']))           print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['country.code_iso']['checked']))    print_liste_field_titre($arrayfields['country.code_iso']['label'],$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['typent.code']['checked']))         print_liste_field_titre($arrayfields['typent.code']['label'],$_SERVER["PHP_SELF"],"typent.code","",$param,'align="center"',$sortfield,$sortorder);
+    if (! empty($arrayfields['sale_representative']['checked'])) print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "","","$param",'',$sortfield,$sortorder);
+    if (! empty($arrayfields['c.date_contrat']['checked']))      print_liste_field_titre($arrayfields['c.date_contrat']['label'], $_SERVER["PHP_SELF"], "c.date_contrat","","$param",'align="center"',$sortfield,$sortorder);
+	// Extra fields
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	{
+	   foreach($extrafields->attribute_label as $key => $val) 
+	   {
+           if (! empty($arrayfields["ef.".$key]['checked'])) 
+           {
+				$align=$extrafields->getAlignFlag($key);
+				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+           }
+	   }
+	}
+	// Hook fields
+	$parameters=array('arrayfields'=>$arrayfields);
+    $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+	if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'],$_SERVER["PHP_SELF"],"c.date_creation","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['c.tms']['checked']))       print_liste_field_titre($arrayfields['c.tms']['label'],$_SERVER["PHP_SELF"],"c.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+    if (! empty($arrayfields['status']['checked']))
+    {
+        print_liste_field_titre($staticcontratligne->LibStatut(0,3), '', '', '', '', 'width="16"');
+        print_liste_field_titre($staticcontratligne->LibStatut(4,3,0), '', '', '', '', 'width="16"');
+        print_liste_field_titre($staticcontratligne->LibStatut(4,3,1), '', '', '', '', 'width="16"');
+        print_liste_field_titre($staticcontratligne->LibStatut(5,3), '', '', '', '', 'width="16"');
+    }
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
+    print "</tr>\n";
 
-    $var=true;
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($resql);
@@ -563,8 +563,7 @@ if ($resql)
         $contracttmp->ref_customer=$obj->ref_customer;
         $contracttmp->ref_supplier=$obj->ref_supplier;
         
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
+        print '<tr>';
         if (! empty($arrayfields['c.ref']['checked']))
         {
             print '<td class="nowrap">';

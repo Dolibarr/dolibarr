@@ -584,7 +584,7 @@ div.myavailability {
 	padding-bottom: 4px;
 }
 .checkallactions {
-	vertical-align: top;
+	vertical-align: text-bottom;
     margin-top: 6px;
     margin-left: 4px;
 }
@@ -2505,7 +2505,6 @@ div.pagination li {
 div.pagination li.pagination a,
 div.pagination li.pagination span {
   padding: 6px 12px;
-  margin-left: -1px;
   line-height: 1.42857143;
   color: #000;
   text-decoration: none;
