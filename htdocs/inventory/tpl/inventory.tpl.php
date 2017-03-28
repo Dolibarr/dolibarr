@@ -198,8 +198,8 @@
 		</div>
 	<?php } ?>
 </form>
-<p>Date de création : <?php echo $inventory->get_date('datec') ?>
-<br />Dernière mise à jour : <?php echo $inventory->get_date('tms') ?></p>
+<p>Date de création : <?php echo $inventory->getDate('datec') ?>
+<br />Dernière mise à jour : <?php echo $inventory->getDate('tms') ?></p>
 	
 
 	
