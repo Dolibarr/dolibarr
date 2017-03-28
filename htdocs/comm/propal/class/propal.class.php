@@ -3027,7 +3027,7 @@ class Propal extends CommonObject
 	        $response->label = $label;
 	        $response->url = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals';
 	        $response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
-	        $response->img = img_object($langs->trans("Propals"),"propal");
+	        $response->img = img_object('',"propal");
 
             // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))

@@ -2070,7 +2070,7 @@ class Contrat extends CommonObject
 			$response->warning_delay = $warning_delay/60/60/24;
 			$response->label = $label;
 			$response->url = $url;
-			$response->img = img_object($langs->trans("Contract"),"contract");
+			$response->img = img_object('',"contract");
 
 			while ($obj=$this->db->fetch_object($resql))
 			{
