@@ -332,10 +332,11 @@ class Listview
 		}	
 		
 		$ListPOST = GETPOST('Listview');
+		$removeFilter = (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter"));
 		foreach($TParam['search'] as $key => $param_search)
 		{
 			$value = isset($ListPOST[$this->id]['search'][$key]) ? $ListPOST[$this->id]['search'][$key] : '';
-			if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) $value = '';
+			if ($removeFilter) $value = '';
 			
 			$typeRecherche = (is_array($param_search) && isset($param_search['recherche'])) ? $param_search['recherche'] : $param_search;  
 			
@@ -345,14 +346,18 @@ class Listview
 			}
 			else if($typeRecherche==='calendar')
 			{
-				$value = GETPOST('Listview_'.$this->id.'_search_'.$key) ? mktime(0,0,0, (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'month'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'day'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'year') ) : '';
+				if (!$removeFilter) $value = GETPOST('Listview_'.$this->id.'_search_'.$key) ? mktime(0,0,0, (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'month'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'day'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'year') ) : '';
 				
 				$fsearch = $form->select_date($value, 'Listview_'.$this->id.'_search_'.$key,0, 0, 1, "", 1, 0, 1);
 			}
 			else if($typeRecherche==='calendars')
 			{
-				$value_start = GETPOST('Listview_'.$this->id.'_search_'.$key.'_start') ? mktime(0,0,0, (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_startmonth'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_startday'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_startyear') ) : '';
-				$value_end = GETPOST('Listview_'.$this->id.'_search_'.$key.'_end') ? mktime(0,0,0, (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_endmonth'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_endday'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_endyear') ) : '';
+				$value_start = $value_end = '';
+				if (!$removeFilter)
+				{
+					$value_start = GETPOST('Listview_'.$this->id.'_search_'.$key.'_start') ? mktime(0,0,0, (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_startmonth'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_startday'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_startyear') ) : '';
+					$value_end = GETPOST('Listview_'.$this->id.'_search_'.$key.'_end') ? mktime(0,0,0, (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_endmonth'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_endday'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_endyear') ) : '';
+				}
 			
 				$fsearch = $form->select_date($value_start, 'Listview_'.$this->id.'_search_'.$key.'_start',0, 0, 1, "", 1, 0, 1)
 						 . $form->select_date($value_end, 'Listview_'.$this->id.'_search_'.$key.'_end',0, 0, 1, "", 1, 0, 1);
@@ -654,7 +659,7 @@ class Listview
 		
 		if(empty($TField))
 		{
-			if (!empty($TParam['list']['messageNothing'])) $out .= '<tr class="'.$class.'"><td colspan="'.$TParam['list']['nb_columns'].'">'.$TParam['list']['messageNothing'].'</td></tr>';
+			if (!empty($TParam['list']['messageNothing'])) $out .= '<tr class="pair" align="center"><td colspan="'.(count($TParam['title'])+1).'">'.$TParam['list']['messageNothing'].'</td></tr>';
 		}
 		else
         {
