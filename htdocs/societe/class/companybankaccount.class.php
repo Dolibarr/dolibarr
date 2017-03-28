@@ -235,22 +235,45 @@ class CompanyBankAccount extends Account
     /**
      *  Delete a rib from database
      *
-     *	@param	User	$user	User deleting
-     *  @return int         	<0 if KO, >0 if OK
+     *	@param		User		$user		User deleting
+     *	@param  	int		$notrigger	1=Disable triggers
+     *  @return		int		<0 if KO, >0 if OK
      */
-    function delete(User $user = null)
+    function delete(User $user = null, $notrigger=0)
     {
         global $conf;
-
+	$error = 0;
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
         $sql.= " WHERE rowid  = ".$this->id;
-
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $result = $this->db->query($sql);
-        if ($result) {
-            return 1;
+        if ($result)
+	{
+
+		if (! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('COMPANY_RIB_CREATE',$user);
+			if ($result < 0) $error++;
+			// End call triggers
+			
+			if(! $error )
+			{
+				return 1;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+		else
+		{
+			return 1;
+		}
+	
         }
-        else {
+        else
+	{
             dol_print_error($this->db);
             return -1;
         }
