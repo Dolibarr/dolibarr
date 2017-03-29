@@ -604,10 +604,22 @@ class FormOther
     	$textcolor='FFF';
     	if ($color)
     	{
-        	$hex=$color;
-        	$r = hexdec($hex[0].$hex[1]);
-        	$g = hexdec($hex[2].$hex[3]);
-        	$b = hexdec($hex[4].$hex[5]);
+    	    $tmp=explode(',', $color);
+    	    if (count($tmp) > 1)   // This is a comma RGB ('255','255','255')
+    	    {
+    	        $r = $tmp[0];
+    	        $g = $tmp[1];
+    	        $b = $tmp[2];
+    	    }
+    	    else
+    	    {
+    	        $hexr=$color[0].$color[1];
+    	        $hexg=$color[2].$color[3];
+    	        $hexb=$color[4].$color[5];
+            	$r = hexdec($hexr);
+            	$g = hexdec($hexg);
+            	$b = hexdec($hexb);
+    	    }
         	$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
             if ($bright > 0.6) $textcolor='000';     	   
     	}
