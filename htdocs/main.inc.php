@@ -1377,8 +1377,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    $menumanager->showmenu('top', array('searchform'=>$searchform, 'bookmarks'=>$bookmarks));      // This contains a \n
 	    print "</div>\n";
 
-	    //$form=new Form($db);
-
 	    // Define link to login card
         $appli=constant('DOL_APPLICATION_TITLE');
 	    if (! empty($conf->global->MAIN_APPLICATION_TITLE))
@@ -1403,7 +1401,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     	    	$logouthtmltext.=$langs->trans("Logout").'<br>';
 
     	    	$logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php">';
-    	        $logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
+    	        //$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
+    	    	$logouttext .='<span class="fa fa-sign-out atoplogin"></span>';
     	        $logouttext .='</a>';
     	    }
     	    else
@@ -1427,6 +1426,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		$toprightmenu.='</div>';
 
 	    $toprightmenu.='<div class="login_block_other">';
+		
 		// Execute hook printTopRightMenu (hooks should output string like '<div class="login"><a href="">mylink</a></div>')
 	    $parameters=array();
 	    $result=$hookmanager->executeHooks('printTopRightMenu',$parameters);    // Note that $action and $object may have been modified by some hooks
@@ -1437,7 +1437,17 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		}
 		else $toprightmenu.=$result;	// For backward compatibility
 
-	    // Link to print main content area
+    	// Link to module builder
+	    if (! empty($conf->modulebuilder->enabled))
+	    {
+	        $text ='<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="_blank">';
+	        //$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
+	        $text.='<span class="fa fa-bug atoplogin"></span>';
+	        $text.='</a>';
+	        $toprightmenu.=@Form::textwithtooltip('',$langs->trans("ModuleBuilder"),2,1,$text,'login_block_elem',2);
+	    }
+
+		// Link to print main content area
 	    if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && empty($conf->browser->phone))
 	    {
 	        $qs=$_SERVER["QUERY_STRING"];
@@ -1448,7 +1458,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 			$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
 	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
-	        $text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
+	        //$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
+	        $text.='<span class="fa fa-print atoplogin"></span>';
 	        $text.='</a>';
 	        $toprightmenu.=@Form::textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
 	    }
@@ -1481,7 +1492,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	            if ($mode == 'wiki') $text.=sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
 	            else $text.=sprintf($helpbaseurl,$helppage);
 	            $text.='">';
-	            $text.=img_picto('', 'helpdoc_top').' ';
+	            //$text.=img_picto('', 'helpdoc_top').' ';
+	            $text.='<span class="fa fa-question-circle atoplogin"></span>';
 	            //$toprightmenu.=$langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
 	            //if ($mode == 'wiki') $text.=' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
 	            $text.='</a>';
@@ -1641,11 +1653,11 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
         {
             $doliurl='https://www.dolibarr.org';
     		//local communities
-    		if (preg_match('/fr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.fr';
-    		if (preg_match('/es/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.es';
-    		if (preg_match('/de/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.de';
-    		if (preg_match('/it/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.it';
-    		if (preg_match('/gr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.gr';
+    		if (preg_match('/fr/i',$langs->defaultlang)) $doliurl='https://www.dolibarr.fr';
+    		if (preg_match('/es/i',$langs->defaultlang)) $doliurl='https://www.dolibarr.es';
+    		if (preg_match('/de/i',$langs->defaultlang)) $doliurl='https://www.dolibarr.de';
+    		if (preg_match('/it/i',$langs->defaultlang)) $doliurl='https://www.dolibarr.it';
+    		if (preg_match('/gr/i',$langs->defaultlang)) $doliurl='https://www.dolibarr.gr';
     
             $appli=constant('DOL_APPLICATION_TITLE');
     	    if (! empty($conf->global->MAIN_APPLICATION_TITLE))
@@ -1676,7 +1688,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 			$bugbaseurl.= '?title=';
 			$bugbaseurl.= urlencode("Bug: ");
 			$bugbaseurl.= '&body=';
-			// FIXME: use .github/ISSUE_TEMPLATE.md to generate?
+			// TODO use .github/ISSUE_TEMPLATE.md to generate?
 			$bugbaseurl .= urlencode("# Bug\n");
 			$bugbaseurl .= urlencode("\n");
 			$bugbaseurl.= urlencode("## Environment\n");

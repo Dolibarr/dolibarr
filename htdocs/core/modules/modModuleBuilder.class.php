@@ -16,18 +16,18 @@
  */
 
 /**
- * 	\defgroup   blockedlog   Module BlockedLog
+ * 	\defgroup   modulebuilder   Module ModuleBuilder
  *  \brief      Add a log into a block chain for some actions.
  *  \file       htdocs/core/modules/modBlockedLog.class.php
  *  \ingroup    blockedlog
- *  \brief      Description and activation file for module BlockedLog
+ *  \brief      Description and activation file for module ModuleBuilder
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *	Class to describe a BlockedLog module
+ *	Class to describe a ModuleBuilder module
  */
-class modBlockedLog extends DolibarrModules
+class modModuleBuilder extends DolibarrModules
 {
     /**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
@@ -39,14 +39,14 @@ class modBlockedLog extends DolibarrModules
     	global $langs,$conf;
 
         $this->db = $db;
-        $this->numero = 3200;
+        $this->numero = 3300;
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
         $this->family = "technic";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
-        $this->description = "Enable a log on some business events into a reserved log. This module may be mandatory for some countries.";
+        $this->description = "A tool to help developers to build their own module.";
         $this->version = 'development';                        // 'development', 'experimental' or 'dolibarr' or version
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -65,7 +65,7 @@ class modBlockedLog extends DolibarrModules
         // Dependancies
         //-------------
 	    $this->hidden = false;	// A condition to disable module
-	    $this->depends = array('modFacture');		// List of modules id that must be enabled if this module is enabled
+	    $this->depends = array();		// List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	// List of modules id to disable if this one is disabled
 	    $this->conflictwith = array();	// List of modules id this module is in conflict with
         $this->langfiles = array();

@@ -321,8 +321,8 @@ if (($action=="create") || ($action=="edit"))
 		print '<input type="hidden" name="action" value="add">'."\n";
 	}
 
-	
-	dol_fiche_head('');
+	if ($action=="edit") dol_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'cron');
+	else dol_fiche_head('');
 
 	print '<table class="border" width="100%">';
 
@@ -558,6 +558,8 @@ else
 	dol_fiche_head($head, 'card', $langs->trans("CronTask"), -1, 'cron');
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/cron/list.php?status=-2">' . $langs->trans("BackToList") . '</a>';
+
+	// TODO Use dol_banner
 	
 	// box add_jobs_box
 	print '<div class="fichecenter">';
@@ -616,7 +618,7 @@ else
 
 	print '<tr><td>';
 	print $langs->trans('Active')."</td><td>";
-	print yn($object->status);
+	print $object->getLibStatut(4);
 	print "</td></tr>";
 
 	print '</table>';

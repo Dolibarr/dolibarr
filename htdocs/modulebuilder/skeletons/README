@@ -1,0 +1,34 @@
+README (English)
+--------------------------------
+This directory contains PHP script samples that can be used to start a development on Dolibarr.
+
+
+*** build_class_from_table.php:
+
+This is the script to use to generate PHP code of a PHP POJO class
+object, a PHP script that use this POJO. This script use the files
+skeleton_*.php to build its generated code. 
+
+
+*** modMyModule.class.php:
+
+Is a sample of module descriptor that you can use if you want to build a new module/plugin for
+Dolibarr.
+
+
+*** skeleton_script.php:
+
+Is a sample you can use as an example if you need to build a script to run on command line
+
+
+*** skeleton_page.php:
+
+Is a sample you can use as an example if you need to build an HTML page to include in Dolibarr GUI.
+
+
+*** skeleton_class.class.php:
+
+Is a sample you can use as an example if you need to build a class file to access a new table required by a Dolibarr development.
+However it is better to run the build_class_from_table.php script that accepts a table name as a parameter and will uses the description table within database and the skeleton_class.class.php file to generate full code for your class file.
+After running this script, the class to access your table (insert a record, update, delete and select) is directly finished and can be used by your module's code. 
+No more coding is needed to get access to table with this script because the file is completely generated once.

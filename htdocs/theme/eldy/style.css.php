@@ -1642,6 +1642,10 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 .alogin:hover, .atoplogin:hover {
 	text-decoration:underline !important;
 }
+span.fa.atoplogin, span.fa.atoplogin:hover {
+    font-size: 16px;
+    text-decoration: none !important;
+}
 img.login, img.printer, img.entity {
 	/* padding: 0px 0px 0px 4px; */
 	/* margin: 0px 0px 0px 8px; */

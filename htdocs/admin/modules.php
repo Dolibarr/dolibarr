@@ -278,13 +278,12 @@ foreach ($modulesdir as $dir)
 
 		            try
 		            {
-		                $res=include_once $dir.$file;
+		                $res=include_once $dir.$file;     // A class already exists in a different file will send a non catchable fatal error. 
 		                if (class_exists($modName))
 						{
 							try {
 				                $objMod = new $modName($db);
 								$modNameLoaded[$modName]=$dir;
-
     		    		        if (! $objMod->numero > 0 && $modName != 'modUser')
     		            		{
     		         		    	dol_syslog('The module descriptor '.$modName.' must have a numero property', LOG_ERR);

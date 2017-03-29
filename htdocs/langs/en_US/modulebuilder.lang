@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - loan
+ModuleBuilder=Module Builder
+ModuleBuilderDesc=This tools give you utilites to build your own module. Your modules will be generated into the first alternative directory: <strong>%s</strong>.
