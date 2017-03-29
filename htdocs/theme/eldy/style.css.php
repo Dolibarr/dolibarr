@@ -82,7 +82,7 @@ $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 $colorbackhmenu1='110,120,160';      // topmenu
 $colorbackvmenu1='255,255,255';      // vmenu
 $colortopbordertitle1='120,120,120';    // top border of title
-$colorbacktitle1='230,230,230';      // title of tables,list
+$colorbacktitle1='240,240,240';      // title of tables,list
 $colorbacktabcard1='255,255,255';  // card
 $colorbacktabactive='234,234,234';
 $colorbacklineimpair1='255,255,255';    // line impair
@@ -98,7 +98,6 @@ $colortextlink='0,0,120';
 $fontsize='13';
 $fontsizesmaller='12';
 $usegradienttop=(isset($conf->global->THEME_ELDY_TOPMENU_BACK1)?0:1);
-$usegradienttitle=(isset($conf->global->THEME_ELDY_BACKTITLE1)?0:1);
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
 $borderwith=2;
 
@@ -2399,8 +2398,11 @@ table.paddingtopbottomonly tr td {
 	padding-top: 1px;
 	padding-bottom: 2px;
 }
+.liste_titre_filter {
+	background: rgb(<?php echo $colorbacktitle1; ?>) !important;
+}
 tr.liste_titre_filter td.liste_titre {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #ddd;
 }
 .liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
 {
@@ -2715,11 +2717,7 @@ tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, tabl
 }
 div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
-	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: rgb(<?php echo $colorbacktitle1; ?>);
 	font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
     border-bottom: 1px solid #ddd;
 	
@@ -2987,16 +2985,7 @@ tr.box_titre {
 	color: #000 !important;*/
 
 	/* TO MATCH ELDY */
-	<?php if ($usegradienttitle) { ?>
-	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
-	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
-	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
-	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
-	<?php } else { ?>
-	background: rgb(<?php echo $colorbacktitle1; ?>);
-	<?php } ?>
-
+	background: rgb(<?php echo $colorbacktitle1; ?>)
 	color: rgb(<?php echo $colortexttitle; ?>);
     font-family: <?php print $fontlist ?>, sans-serif;
     font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;

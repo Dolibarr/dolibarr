@@ -634,7 +634,7 @@ while ($i < min($num,$limit))
 	$userAccess = $projectstatic->restrictedProjectArea($user);    // why this ?
 	if ($userAccess >= 0)
 	{
-		print "<tr>";
+		print '<tr class="oddeven">';
 
 		// Project url
     	if (! empty($arrayfields['p.ref']['checked']))

@@ -751,7 +751,7 @@ if ($resql)
     	$objectstatic->id=$obj->rowid;
     	$objectstatic->ref=$obj->ref;
     		
-		print '<tr>';
+		print '<tr class="oddeven">';
 		
 		if (! empty($arrayfields['p.ref']['checked']))
 		{

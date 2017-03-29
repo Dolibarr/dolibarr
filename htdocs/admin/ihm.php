@@ -165,14 +165,14 @@ if ($action == 'edit')	// Edit
 	print '</tr>';
 
     // Default language
-    print '<tr><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
     print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'main_lang_default', 1, 0, 0, 0, 0, 'minwidth300');
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Multilingual GUI
-    print '<tr><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>';
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>';
     print $form->selectyesno('main_multilangs',$conf->global->MAIN_MULTILANGS,1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
@@ -348,7 +348,7 @@ else	// Show
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td><td>&nbsp;</td></tr>';
 
-    print '<tr><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
     $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
     print ($s?$s.' ':'');
     print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
@@ -358,7 +358,7 @@ else	// Show
 	print '</td>';
 	print "</tr>";
     
-    print '<tr><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>' . yn($conf->global->MAIN_MULTILANGS) . '</td>';
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>' . yn($conf->global->MAIN_MULTILANGS) . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
@@ -378,7 +378,7 @@ else	// Show
         foreach ($searchform as $key => $value)
         {
             
-            print '<tr><td width="35%">'.$searchformtitle[$key].'</td><td>'.yn($searchformconst[$key]).'</td>';
+            print '<tr class="oddeven"><td width="35%">'.$searchformtitle[$key].'</td><td>'.yn($searchformconst[$key]).'</td>';
     		print '<td align="left">';
     		if (! empty($searchformmodule[$key])) print $langs->trans("IfModuleEnabled",$langs->transnoentitiesnoconv($searchformmodule[$key]));
             print '</td></tr>';
@@ -391,11 +391,11 @@ else	// Show
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameters").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
 
-    print '<tr><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '</td>';
+    print '<tr class="oddeven"><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 	
-    print '<tr><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td>' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '</td>';
+    print '<tr class="oddeven"><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td>' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
@@ -407,7 +407,7 @@ else	// Show
 	*/
 	
     // Disable javascript/ajax
-    print '<tr><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
     print yn($conf->global->MAIN_DISABLE_JAVASCRIPT)."</td>";
     print '<td width="20">&nbsp;</td>';
     print "</tr>";
@@ -416,35 +416,35 @@ else	// Show
     if (class_exists("Imagick"))
 	{
 		
-	    print '<tr><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
+	    print '<tr class="oddeven"><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
 	    print yn(isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:0)."</td>";
 		print '<td width="20">&nbsp;</td>';
 		print "</tr>";
 	}
 
 	// First day for weeks
-    print '<tr><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
     print $langs->trans("Day".(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'));
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
     // DefaultWorkingDays
-    print '<tr><td width="35%">'.$langs->trans("DefaultWorkingDays").'</td><td>';
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("DefaultWorkingDays").'</td><td>';
     print isset($conf->global->MAIN_DEFAULT_WORKING_DAYS)?$conf->global->MAIN_DEFAULT_WORKING_DAYS:'1-5';
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
     // DefaultWorkingHours
-    print '<tr><td width="35%">'.$langs->trans("DefaultWorkingHours").'</td><td>';
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("DefaultWorkingHours").'</td><td>';
     print isset($conf->global->MAIN_DEFAULT_WORKING_HOURS)?$conf->global->MAIN_DEFAULT_WORKING_HOURS:'9-18';
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Firstname / Name position
-    print '<tr><td width="35%">'.$langs->trans("FirstnameNamePosition").'</td><td>';
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("FirstnameNamePosition").'</td><td>';
     if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) { print $langs->trans("Firstname").' '.$langs->trans("Lastname"); }
     else { print $langs->trans("Lastname").' '.$langs->trans("Firstname"); }
     print '</td>';
@@ -452,12 +452,12 @@ else	// Show
 	print '</tr>';
 
 	// Hide unauthorized button
-	print '<tr><td width="35%">'.$langs->trans("ButtonHideUnauthorized").'</td><td colspan="2">';
+	print '<tr class="oddeven"><td width="35%">'.$langs->trans("ButtonHideUnauthorized").'</td><td colspan="2">';
 	print yn((isset($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)?$conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED:0),1);
 	print '</td></tr>';
 
     // Show logo
-    print '<tr><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
+    print '<tr class="oddeven"><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
@@ -471,29 +471,29 @@ else	// Show
 	 */
 	
     // Show bugtrack link
-	print '<tr"><td width="35%">'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
+	print '<tr class="oddeven"><td width="35%">'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
 	print yn($conf->global->MAIN_BUGTRACK_ENABLELINK)."</td>";
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
     // Link to wiki help
-    print '<tr><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/helpdoc.png','',1)).'</td><td colspan="2">';
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/helpdoc.png','',1)).'</td><td colspan="2">';
     print yn((isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0),1);
     print '</td></tr>';
 
 	// Link to help center
-    print '<tr><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td colspan="2">';
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td colspan="2">';
     print yn((isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0),1);
     print '</td></tr>';
 
 	// Message login
-    print '<tr><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
     if (isset($conf->global->MAIN_HOME)) print dol_htmlcleanlastbr($conf->global->MAIN_HOME);
     else print '&nbsp;';
     print '</td></tr>'."\n";
 
     // Message of the day
-    print '<tr><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
     if (isset($conf->global->MAIN_MOTD)) print dol_htmlcleanlastbr($conf->global->MAIN_MOTD);
     else print '&nbsp;';
     print '</td></tr>'."\n";

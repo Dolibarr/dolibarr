@@ -651,7 +651,7 @@ while ($i < min($num,$limit))
 {
     $obj = $db->fetch_object($result);
 
-    print "<tr>";
+    print '<tr class="oddeven">';
 
 	$contactstatic->lastname=$obj->lastname;
 	$contactstatic->firstname='';
@@ -669,8 +669,8 @@ while ($i < min($num,$limit))
     if (! empty($arrayfields['p.lastname']['checked']))
     {
         print '<td valign="middle">';
-	  print $contactstatic->getNomUrl(1,'',0);
-	  print '</td>';
+        print $contactstatic->getNomUrl(1,'',0);
+        print '</td>';
     }
 	// Firstname
     if (! empty($arrayfields['p.firstname']['checked']))

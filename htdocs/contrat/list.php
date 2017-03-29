@@ -563,7 +563,7 @@ if ($resql)
         $contracttmp->ref_customer=$obj->ref_customer;
         $contracttmp->ref_supplier=$obj->ref_supplier;
         
-        print '<tr>';
+        print '<tr class="oddeven">';
         if (! empty($arrayfields['c.ref']['checked']))
         {
             print '<td class="nowrap">';

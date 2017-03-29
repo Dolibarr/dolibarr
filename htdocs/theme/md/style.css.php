@@ -82,7 +82,7 @@ $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 $colorbackhmenu1='90,50,120';      // topmenu
 $colorbackvmenu1='255,255,255';      // vmenu
 $colortopbordertitle1='';           // top border of tables-lists title. not defined = default to colorbackhmenu1
-$colorbacktitle1='230,230,230';      // title of tables-lists
+$colorbacktitle1='240,240,240';      // title of tables-lists
 $colorbacktabcard1='255,255,255';  // card
 $colorbacktabactive='234,234,234';
 $colorbacklineimpair1='255,255,255';    // line impair
@@ -2304,8 +2304,11 @@ table.paddingtopbottomonly tr td {
 	padding-bottom: 2px;
 }
 
+.liste_titre_filter {
+	background: rgb(<?php echo $colorbacktitle1; ?>) !important;
+}
 tr.liste_titre_filter td.liste_titre {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #FDFFFF;
 }
 .liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
 {

@@ -234,7 +234,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
             // Show box title
             if (! empty($head['text']) || ! empty($head['sublink']) || ! empty($head['subpicto']))
             {
-                $out.= '<tr class="box_titre">';
+                $out.= '<tr class="liste_titre box_titre">';
                 $out.= '<td';
                 if ($nbcol > 0) { $out.= ' colspan="'.$nbcol.'"'; }
                 $out.= '>';

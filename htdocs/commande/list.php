@@ -1048,7 +1048,8 @@ if ($resql)
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($resql);
-        print '<tr>';
+        
+        print '<tr class="oddeven">';
 
         $notshippable=0;
         $warning = 0;

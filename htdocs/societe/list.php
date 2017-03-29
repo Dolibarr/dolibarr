@@ -907,10 +907,10 @@ while ($i < min($num, $limit))
 	$companystatic->code_compta_client=$obj->code_compta;
 	$companystatic->code_compta_fournisseur=$obj->code_compta_fournisseur;
 
-    	$companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
-    	$companystatic->name_alias=$obj->name_alias;
+   	$companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
+   	$companystatic->name_alias=$obj->name_alias;
 
-	print "<tr>";
+	print '<tr class="oddeven">';
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td class="tdoverflowmax200">';
