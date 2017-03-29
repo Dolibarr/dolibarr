@@ -26,24 +26,18 @@
  */
 class AccountingJournal extends CommonObject
 {
-	var $db;
-	var $error;
-	var $errors;
-	var $id;
+	public $element='accounting_journal';
+	public $table_element='accounting_journal';
+	public $fk_element = '';
+	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
 	var $rowid;
-	var $datec; // Creation date
-	var $fk_pcg_version;
-	var $pcg_type;
-	var $pcg_subtype;
-	var $account_number;
-	var $account_parent;
-	var $account_category;
+
+	var $code;
 	var $label;
-	var $fk_user_author;
-	var $fk_user_modif;
-	var $active;       // duplicate with status
-	var $status;
-	
+	var $nature;		// 0:various operations, 1:sale, 2:purchase, 3:bank, 9: has-new
+	var $active;
+
 	/**
 	 * Constructor
 	 *
@@ -54,133 +48,75 @@ class AccountingJournal extends CommonObject
 	}
 	
 	/**
-	 * Load record in memory
-	 *
-	 * @param 	int 	$rowid 				   Id
-	 * @param 	string 	$account_number 	   Account number
-	 * @param 	int 	$limittocurrentchart   1=Do not load record if it is into another accounting system
-	 * @return 	int                            <0 if KO, Id of record if OK and found
-	 */
-	function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0) {
-		global $conf;
-		
-		if ($rowid || $account_number) {
-			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.pcg_subtype, a.account_number, a.account_parent, a.label, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active";
-			$sql .= ", ca.label as category_label";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as a";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_accounting_category as ca ON a.fk_accounting_category = ca.rowid";
-			$sql .= " WHERE";
-			if ($rowid) {
-				$sql .= " a.rowid = '" . $rowid . "'";
-			} elseif ($account_number) {
-				$sql .= " a.account_number = '" . $account_number . "'";
-			}
-			if (! empty($limittocurrentchart)) {
-				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
-			}
+	* Load an object from database
+	*
+	* @param	int		$id		Id of record to load
+	* @return	int				<0 if KO, >0 if OK
+	*/
+	function fetch($id)
+	{
+		$sql = "SELECT rowid, code, label, nature, active";
+		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
+		$sql.= " WHERE rowid = ".$id;
 
-			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
-			$result = $this->db->query($sql);
-			if ($result) {
-				$obj = $this->db->fetch_object($result);
-				
-				if ($obj) {
-					$this->id = $obj->rowid;
-					$this->rowid = $obj->rowid;
-					$this->datec = $obj->datec;
-					$this->tms = $obj->tms;
-					$this->fk_pcg_version = $obj->fk_pcg_version;
-					$this->pcg_type = $obj->pcg_type;
-					$this->pcg_subtype = $obj->pcg_subtype;
-					$this->account_number = $obj->account_number;
-					$this->account_parent = $obj->account_parent;
-					$this->label = $obj->label;
-					$this->account_category = $obj->fk_accounting_category;
-					$this->account_category_label = $obj->category_label;
-					$this->fk_user_author = $obj->fk_user_author;
-					$this->fk_user_modif = $obj->fk_user_modif;
-					$this->active = $obj->active;
-					$this->status = $obj->active;
-					
-					return $this->id;
-				} else {
-					return 0;
-				}
-			} else {
-				$this->error = "Error " . $this->db->lasterror();
-				$this->errors[] = "Error " . $this->db->lasterror();
-			}
+		dol_syslog(get_class($this)."::fetch sql=" . $sql, LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ( $result )
+		{
+			$obj = $this->db->fetch_object($result);
+
+			$this->id			= $obj->rowid;
+
+			$this->code			= $obj->code;
+			$this->ref			= $obj->code;
+			$this->label		= $obj->label;
+			$this->nature	    = $obj->nature;
+			$this->active		= $obj->active;
+
+			return 1;
 		}
-		return - 1;
+		else
+		{
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
 	}
 	
 	/**
-	 * Insert new accounting account in chart of accounts
+	 * Insert journal in database
 	 *
-	 * @param User $user Use making action
-	 * @param int $notrigger Disable triggers
-	 * @return int <0 if KO, >0 if OK
+	 * @param	User	$user		Use making action
+	 * @param	int		$notrigger	Disable triggers
+	 * @return 	int 				<0 if KO, >0 if OK
 	 */
-	function create($user, $notrigger = 0) {
+	function create($user, $notrigger = 0)
+	{
 		global $conf;
 		$error = 0;
 		$now = dol_now();
 		
 		// Clean parameters
-		if (isset($this->fk_pcg_version))
-			$this->fk_pcg_version = trim($this->fk_pcg_version);
-		if (isset($this->pcg_type))
-			$this->pcg_type = trim($this->pcg_type);
-		if (isset($this->pcg_subtype))
-			$this->pcg_subtype = trim($this->pcg_subtype);
-		if (isset($this->account_number))
-			$this->account_number = trim($this->account_number);
-		if (isset($this->account_parent))
-			$this->account_parent = trim($this->account_parent);
+		if (isset($this->code))
+			$this->code = trim($this->code);
 		if (isset($this->label))
 			$this->label = trim($this->label);
-		if (isset($this->account_category))
-			$this->account_category = trim($this->account_category);
-		if (isset($this->fk_user_author))
-			$this->fk_user_author = trim($this->fk_user_author);
-		if (isset($this->active))
-			$this->active = trim($this->active);
-			
-		if (empty($this->pcg_type) || $this->pcg_type == '-1')
-		{
-		    $this->pcg_type = 'XXXXXX';
-		}
-		if (empty($this->pcg_subtype) || $this->pcg_subtype == '-1')
-		{
-		    $this->pcg_subtype = 'XXXXXX';
-		}
+
 		// Check parameters
-		// Put here code to add control on parameters values
-			
+		if (empty($this->nature) || $this->nature == '-1')
+		{
+		    $this->nature = '0';
+		}
+
 		// Insert request
-		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_account(";
-		$sql .= "datec";
-		$sql .= ", entity";
-		$sql .= ", fk_pcg_version";
-		$sql .= ", pcg_type";
-		$sql .= ", pcg_subtype";
-		$sql .= ", account_number";
-		$sql .= ", account_parent";
+		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_journal(";
+		$sql .= "code";
 		$sql .= ", label";
-		$sql .= ", fk_accounting_category";
-		$sql .= ", fk_user_author";
+		$sql .= ", nature";
 		$sql .= ", active";
 		$sql .= ") VALUES (";
-		$sql .= " '" . $this->db->idate($now) . "'";
-		$sql .= ", " . $conf->entity;
-		$sql .= ", " . (empty($this->fk_pcg_version) ? 'NULL' : "'" . $this->db->escape($this->fk_pcg_version) . "'");
-		$sql .= ", " . (empty($this->pcg_type) ? 'NULL' : "'" . $this->db->escape($this->pcg_type) . "'");
-		$sql .= ", " . (empty($this->pcg_subtype) ? 'NULL' : "'" . $this->pcg_subtype . "'");
-		$sql .= ", " . (empty($this->account_number) ? 'NULL' : "'" . $this->account_number . "'");
-		$sql .= ", " . (empty($this->account_parent) ? 'NULL' : "'" . $this->db->escape($this->account_parent) . "'");
+		$sql .= " " . (empty($this->code) ? 'NULL' : "'" . $this->db->escape($this->code) . "'");
 		$sql .= ", " . (empty($this->label) ? 'NULL' : "'" . $this->db->escape($this->label) . "'");
-		$sql .= ", " . (empty($this->account_category) ? 'NULL' : "'" . $this->db->escape($this->account_category) . "'");
-		$sql .= ", " . $user->id;
+		$sql .= ", " . (empty($this->nature) ? '0' : "'" . $this->db->escape($this->nature) . "'");
 		$sql .= ", " . (! isset($this->active) ? 'NULL' : $this->db->escape($this->active));
 		$sql .= ")";
 		
@@ -194,7 +130,7 @@ class AccountingJournal extends CommonObject
 		}
 		
 		if (! $error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_account");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_journal");
 			
 			// if (! $notrigger) {
 			// Uncomment this and change MYOBJECT to your own tag if you
@@ -232,26 +168,17 @@ class AccountingJournal extends CommonObject
 	function update($user) 
 	{
 	    // Check parameters
-	    if (empty($this->pcg_type) || $this->pcg_type == '-1')
+	    if (empty($this->nature) || $this->nature == '-1')
 	    {
-	        $this->pcg_type = 'XXXXXX';
+	        $this->nature = '0';
 	    }
-	    if (empty($this->pcg_subtype) || $this->pcg_subtype == '-1')
-	    {
-	        $this->pcg_subtype = 'XXXXXX';
-	    }
-	     
+
 	    $this->db->begin();
 		
-		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
-		$sql .= " SET fk_pcg_version = " . ($this->fk_pcg_version ? "'" . $this->db->escape($this->fk_pcg_version) . "'" : "null");
-		$sql .= " , pcg_type = " . ($this->pcg_type ? "'" . $this->db->escape($this->pcg_type) . "'" : "null");
-		$sql .= " , pcg_subtype = " . ($this->pcg_subtype ? "'" . $this->db->escape($this->pcg_subtype) . "'" : "null");
-		$sql .= " , account_number = '" . $this->account_number . "'";
-		$sql .= " , account_parent = '" . $this->account_parent . "'";
+		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_journal ";
+		$sql .= " SET code = " . ($this->code ? "'" . $this->db->escape($this->code) . "'" : "null");
 		$sql .= " , label = " . ($this->label ? "'" . $this->db->escape($this->label) . "'" : "null");
-		$sql .= " , fk_accounting_category = '" . $this->account_category . "'";
-		$sql .= " , fk_user_modif = " . $user->id;
+		$sql .= " , nature = " . ($this->nature ? "'" . $this->db->escape($this->nature) . "'" : "0");
 		$sql .= " , active = '" . $this->active . "'";
 		$sql .= " WHERE rowid = " . $this->id;
 		
@@ -268,7 +195,7 @@ class AccountingJournal extends CommonObject
 	}
 	
 	/**
-	 * Check usage of accounting code
+	 * Check usage of accounting journal
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
@@ -287,7 +214,7 @@ class AccountingJournal extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			if ($num > 0) {
-				$this->error = $langs->trans('ErrorAccountancyCodeIsAlreadyUse');
+				$this->error = $langs->trans('ErrorAccountingJournalIsAlreadyUse');
 				return 0;
 			} else {
 				return 1;
@@ -329,7 +256,7 @@ class AccountingJournal extends CommonObject
 			// }
 			
 			if (! $error) {
-				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accounting_account";
+				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accounting_journal";
 				$sql .= " WHERE rowid=" . $this->id;
 				
 				dol_syslog(get_class($this) . "::delete sql=" . $sql);
@@ -360,85 +287,47 @@ class AccountingJournal extends CommonObject
 	/**
 	 * Return clicable name (with picto eventually)
 	 *
-	 * @param int $withpicto 0=No picto, 1=Include picto into link, 2=Only picto
-	 * @return string Chaine avec URL
+	 * @param	int		$withpicto	0=No picto, 1=Include picto into link, 2=Only picto
+	 * @return	string				Chaine avec URL
 	 */
 	function getNomUrl($withpicto = 0) {
 		global $langs;
 
 		$result = '';
 
-		$link = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/card.php?id=' . $this->id . '">';
+		$link = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/journals_card.php?id=' . $this->id . '">';
 		$linkend = '</a>';
 
 		$picto = 'billr';
 
-		$label = $langs->trans("Show") . ': ' . $this->account_number . ' - ' . $this->label;
+		$label = $langs->trans("Show") . ': ' . $this->code . ' - ' . $this->label;
 
 		if ($withpicto)
 			$result .= ($link . img_object($label, $picto) . $linkend);
 		if ($withpicto && $withpicto != 2)
 			$result .= ' ';
 		if ($withpicto != 2)
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-			$result .= $link . length_accountg($this->account_number) . ' - ' . $this->label . $linkend;
+			$result .= $link . $this->code . ' - ' . $this->label . $linkend;
 		return $result;
 	}
 	
 	/**
-	 * Information on record
-	 *
-	 * @param int $id of record
-	 * @return void
-	 */
-	function info($id) {
-		$sql = 'SELECT a.rowid, a.datec, a.fk_user_author, a.fk_user_modif, a.tms';
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'accounting_account as a';
-		$sql .= ' WHERE a.rowid = ' . $id;
-		
-		dol_syslog(get_class($this) . '::info sql=' . $sql);
-		$result = $this->db->query($sql);
-		
-		if ($result) {
-			if ($this->db->num_rows($result)) {
-				$obj = $this->db->fetch_object($result);
-				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
-				$this->date_creation = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->tms);
-			}
-			$this->db->free($result);
-		} else {
-			dol_print_error($this->db);
-		}
-	}
-	
-	/**
-	 * Account desactivate
+	 * Deactivate journal
 	 *
 	 * @param int $id Id
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function account_desactivate($id) {
+	function journal_deactivate($id) {
 		$result = $this->checkUsage();
 		
 		if ($result > 0) {
 			$this->db->begin();
 			
-			$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_journal ";
 			$sql .= "SET active = '0'";
 			$sql .= " WHERE rowid = " . $this->db->escape($id);
 			
-			dol_syslog(get_class($this) . "::desactivate sql=" . $sql, LOG_DEBUG);
+			dol_syslog(get_class($this) . "::deactivate sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			
 			if ($result) {
@@ -455,15 +344,15 @@ class AccountingJournal extends CommonObject
 	}
 	
 	/**
-	 * Account activate
+	 * Activate journal
 	 *
 	 * @param int $id Id
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function account_activate($id) {
+	function journal_activate($id) {
 		$this->db->begin();
 		
-		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
+		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_journal ";
 		$sql .= "SET active = '1'";
 		$sql .= " WHERE rowid = " . $this->db->escape($id);
 		

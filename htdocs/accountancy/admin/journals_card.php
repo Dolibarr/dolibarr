@@ -122,6 +122,15 @@ else if ($action == 'update') {
 		$object->label = GETPOST('label', 'alpha');
 		$object->nature = GETPOST('nature', 'int');
 
+		if (empty($object->code)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Code")), null, 'errors');
+			$error ++;
+		}
+		if (empty($object->label)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
+			$error ++;
+		}
+
 		$result = $object->update($user);
 		
 		if ($result > 0) {
@@ -161,15 +170,15 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Code
-	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Code") . '</td><td><input name="code" size="32" value="' . GETPOST("code") . '"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Code") . '</td><td><input name="code" size="10" value="' . GETPOST("code") . '"></td></tr>';
 
 
 	// Label
-	print '<tr><td class="fieldrequired">' . $langs->trans("Label") . '</td><td><input name="label" size="128" value="' . GETPOST("label") . '"></td></tr>';
+	print '<tr><td class="fieldrequired">' . $langs->trans("Label") . '</td><td><input name="label" size="32" value="' . GETPOST("label") . '"></td></tr>';
 
 	// Nature
 	print '<tr>';
-	print '<td class="fieldrequired">' . $langs->trans("Status") . '</td>';
+	print '<td class="fieldrequired">' . $langs->trans("Type") . '</td>';
 	print '<td class="valeur">';
 	print $form->selectarray('nature', $type2label, GETPOST('nature'));
 	print '</td></tr>';
@@ -188,10 +197,10 @@ if ($action == 'create')
 } else if ($id) {
 	$result = $object->fetch($id);
 	if ($result > 0) {
-		$head = fiscalyear_prepare_head($object);
+		$head = accounting_journal_prepare_head($object);
 
 		if ($action == 'edit') {
-			dol_fiche_head($head, 'card', $langs->trans("Fiscalyear"), 0, 'cron');
+			dol_fiche_head($head, 'card', $langs->trans("AccountingJournal"), 0, 'cron');
 
 			print '<form name="update" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
@@ -200,10 +209,10 @@ if ($action == 'create')
 
 			print '<table class="border" width="100%">';
 
-			// Ref
+			// Code
 			print "<tr>";
-			print '<td class="titlefieldcreate titlefield">' . $langs->trans("Ref") . '</td><td>';
-			print $object->ref;
+			print '<td class="titlefieldcreate fieldrequired">' . $langs->trans("Code") . '</td><td>';
+			print '<input name="code" class="flat" size="8" value="' . $object->code . '">';
 			print '</td></tr>';
 
 			// Label
@@ -211,20 +220,9 @@ if ($action == 'create')
 			print '<input name="label" class="flat" size="32" value="' . $object->label . '">';
 			print '</td></tr>';
 
-			// Date start
-			print '<tr><td class="fieldrequired">' . $langs->trans("DateStart") . '</td><td>';
-			print $form->select_date($object->date_start ? $object->date_start : - 1, 'fiscalyear');
-			print '</td></tr>';
-
-			// Date end
-			print '<tr><td class="fieldrequired">' . $langs->trans("DateEnd") . '</td><td>';
-			print $form->select_date($object->date_end ? $object->date_end : - 1, 'fiscalyearend');
-			print '</td></tr>';
-
 			// Nature
 			print '<tr><td>' . $langs->trans("Type") . '</td><td>';
-			// print $form->selectarray('statut', $statut2label, $object->statut);
-			print $object->getLibStatut(4);
+			print $form->selectarray('nature', $type2label, $object->nature);
 			print '</td></tr>';
 
 			print '</table>';
@@ -246,15 +244,15 @@ if ($action == 'create')
 				print $form->formconfirm($_SERVER["PHP_SELF"] . "?id=" . $id, $langs->trans("DeleteFiscalYear"), $langs->trans("ConfirmDeleteFiscalYear"), "confirm_delete");
 			}
 
-			dol_fiche_head($head, 'card', $langs->trans("Fiscalyear"), 0, 'cron');
+			dol_fiche_head($head, 'card', $langs->trans("AccountingJournal"), 0, 'cron');
 
 			print '<table class="border" width="100%">';
 
-			$linkback = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/fiscalyear.php">' . $langs->trans("BackToList") . '</a>';
+			$linkback = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/journals.php">' . $langs->trans("BackToList") . '</a>';
 
 			// Ref
-			print '<tr><td class="titlefield">' . $langs->trans("Ref") . '</td><td width="50%">';
-			print $object->ref;
+			print '<tr><td class="titlefield">' . $langs->trans("Code") . '</td><td width="50%">';
+			print $object->code;
 			print '</td><td>';
 			print $linkback;
 			print '</td></tr>';
@@ -267,7 +265,7 @@ if ($action == 'create')
 			print "</td></tr>";
 
 			// Nature
-			print '<tr><td>' . $langs->trans("Type") . '</td><td>' . $object->getLibType(0) . '</td></tr>';
+			print '<tr><td>' . $langs->trans("Type") . '</td><td colspan="2">' . $object->getLibType(0) . '</td></tr>';
 
 			print "</table>";
 
@@ -281,9 +279,9 @@ if ($action == 'create')
     			print '<div class="tabsAction">';
 
     			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=edit&id=' . $id . '">' . $langs->trans('Modify') . '</a>';
-    
-    			// print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
-			
+
+    			print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
+
     			print '</div>';
 			}
 		}
