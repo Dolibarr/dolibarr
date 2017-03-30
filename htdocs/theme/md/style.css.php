@@ -1941,7 +1941,7 @@ div.tabBar table.tableforservicepart2:last-child {
 }
 
 div.tabsAction {
-    margin: 20px 0em 25px 0em;
+    margin: 20px 0em 20px 0em;
     padding: 0em 0em;
     text-align: right;
 }

@@ -2711,7 +2711,7 @@ function img_error($titlealt = 'default')
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Error');
 
-	return img_picto($titlealt, 'error.png');
+	return img_picto($titlealt, 'error.png', 'class="valigntextbottom"');
 }
 
 /**
@@ -2727,7 +2727,8 @@ function img_next($titlealt = 'default', $morealt='')
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Next');
 
-	return img_picto($titlealt, 'next.png', $morealt);
+	//return img_picto($titlealt, 'next.png', $morealt);
+	return '<span class="fa fa-chevron-right paddingright paddingleft" title="'.dol_escape_htmltag($titlealt).'"></span>';
 }
 
 /**
@@ -2743,7 +2744,8 @@ function img_previous($titlealt = 'default', $morealt='')
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Previous');
 
-	return img_picto($titlealt, 'previous.png', $morealt);
+	//return img_picto($titlealt, 'previous.png', $morealt);
+	return '<span class="fa fa-chevron-left paddingright paddingleft" title="'.dol_escape_htmltag($titlealt).'"></span>';
 }
 
 /**
@@ -3109,7 +3111,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
  *	@param	string	$begin       ("" by defaut)
  *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
- *	@param  string	$moreattrib  Add more attributes on th ("" by defaut)
+ *	@param  string	$moreattrib  Add more attributes on th ("" by defaut). To add more css class, use param $prefix.
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
