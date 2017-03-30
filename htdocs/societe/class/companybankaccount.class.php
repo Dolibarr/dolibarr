@@ -174,7 +174,7 @@ class CompanyBankAccount extends Account
 		if (! $notrigger)
 		{
 			// Call trigger
-			$result=$this->call_trigger('COMPANY_RIB_UPDATE',$user);
+			$result=$this->call_trigger('COMPANY_RIB_MODIFY',$user);
 			if ($result < 0) $error++;
 			// End call triggers
 			if(! $error )
