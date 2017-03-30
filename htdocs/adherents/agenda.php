@@ -167,10 +167,10 @@ if ($object->id > 0)
     print load_fiche_titre($langs->trans("ActionsOnMember"),$out,'');
 
     // List of todo actions
-    show_actions_todo($conf,$langs,$db,$object);
+    //show_actions_todo($conf,$langs,$db,$object);
 
     // List of done actions
-    show_actions_done($conf,$langs,$db,$object);
+    show_actions_done($conf,$langs,$db,$object,null,0,'','');
 }
 
 
