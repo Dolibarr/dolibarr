@@ -425,6 +425,8 @@ Use3StepsApproval=By default, Purchase Orders need to be created and approved by
 UseDoubleApproval=Use a 3 steps approval when amount (without tax) is higher than...
 WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to send an email from another server than the Yahoo server if the email address used as a sender is your Yahoo email (like myemail@yahoo.com, myemail@yahoo.fr, ...). Your current setup use the server of the application to send email, so some recipients (the one compatible with the restrictive DMARC protocol), will ask Yahoo if they can accept your email and Yahoo will respond "no" because the server is not a server owned by Yahoo, so few of your sent Emails may not be accepted.<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account). 
 ClickToShowDescription=Click to show description
+DependsOn=This module need the module(s)
+RequiredBy=This module is required by module(s)
 # Modules
 Module0Name=Users & groups
 Module0Desc=Users / Employees and Groups management
