@@ -38,7 +38,7 @@
  * @param 	string	$filtert		Filter on assigned to user
  * @param 	string	$filterd		Filter of done by user
  * @param 	int		$pid			Product id
- * @param 	int		$socid			Third party id
+ * @param 	int|array 	$socid			Third party id
  * @param	string	$action			Action string
  * @param	array	$showextcals	Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
  * @param	string|array	$actioncode		Preselected value(s) of actioncode for filter on event type
@@ -112,15 +112,21 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '</td></tr>';
 	}
 
+	
 	if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 	{
+		if (! empty($socid))
+		{
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ThirdParty").' &nbsp; ';
 		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
-		print $form->select_company($socid, 'socid', '', 1);
+		if (is_array($socid)) $societefilter=implode(",",$socid);
+		print $form->select_company($_GET['socid'], 'socid', 's.rowid IN ('.$societefilter.')',1,'',1);
 		print '</td></tr>';
+		}	
 	}
+	
 
 	if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 	{
@@ -238,8 +244,8 @@ function show_array_actions_to_do($max=5)
 	    $num = $db->num_rows($resql);
 
 	    print '<table class="noborder" width="100%">';
-	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo",$max).'</th>';
-		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$langs->trans("FullList").'</a></th>';
+	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastActionsToDo",$max).'</td>';
+		print '<td colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$langs->trans("FullList").'</a>';
 		print '</tr>';
 
 		$var = true;
@@ -335,8 +341,8 @@ function show_array_last_actions_done($max=5)
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks",$max).'</th>';
-		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=done">'.$langs->trans("FullList").'</a></th>';
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastDoneTasks",$max).'</td>';
+		print '<td colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=done">'.$langs->trans("FullList").'</a>';
 		print '</tr>';
 		$var = true;
 		$i = 0;
@@ -553,3 +559,45 @@ function calendars_prepare_head($param)
     return $head;
 }
 
+/**
+*    Return Array List with in agenda used thirdparties
+*
+*		@param		int			$socid  	Id of thirdparty
+*		@param		string	$filter  	Filter String for Where Clause (Example: code = "AC_OTH_AUTO")
+*   @return   array      with in agenda used fk_soc numbers
+*/
+function used_thirdparties_array($socid=0, $filter=false)
+{
+	global $langs, $conf, $user, $db;
+        
+  if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
+	{
+		
+    $thirdparties = array();
+		if ($socid > 0) $thirdparties[]=$socid;
+    $sql = 'SELECT fk_soc'; 
+    $sql.= ' FROM '.MAIN_DB_PREFIX."actioncomm";
+    $sql.= ' where fk_soc > 0';
+    if ($socid > 0) $sql.= ' AND fk_soc = '.$socid;
+    if (! $filter == false) $sql.= ' AND '.$filter;
+    $sql.= ' GROUP BY fk_soc;';
+   	
+    $resql=$db->query($sql);
+    
+    if ($resql)
+    {
+    	  $i = 0;
+        while ($obj = $db->fetch_object($resql))
+        {
+        	  if ($obj->fk_soc > 0 && (! in_array($obj->fk_soc, $thirdparties) )) $thirdparties[] = $obj->fk_soc;
+            $i++;
+        }
+    		return $thirdparties;
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+    return -1;
+  } else return -1;
+}

@@ -336,9 +336,6 @@ if ($action=='show_day')
 $param.='&year='.$year.'&month='.$month.($day?'&day='.$day:'');
 //print 'x'.$param;
 
-
-
-
 $tabactive='';
 if ($action == 'show_month') $tabactive='cardmonth';
 if ($action == 'show_week') $tabactive='cardweek';
@@ -348,85 +345,6 @@ if ($action == 'show_list') $tabactive='cardlist';
 $paramnoaction=preg_replace('/action=[a-z_]+/','',$param);
 
 $head = calendars_prepare_head($paramnoaction);
-
-dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,0,$filtert,0,$pid,$socid,$action,$listofextcals,$actioncode,$usergroup,'', $resourceid);
-dol_fiche_end();
-
-
-// Define the legend/list of calendard to show
-$s=''; $link='';
-
-$showextcals=$listofextcals;
-
-if (! empty($conf->use_javascript_ajax))	// If javascript on
-{
-    $s.='<!-- Div to calendars selectors -->'."\n";
-	$s.='<script type="text/javascript">' . "\n";
-	$s.='jQuery(document).ready(function () {' . "\n";
-	$s.='jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });' . "\n";
-	$s.='jQuery(".family_birthday").toggle();' . "\n";
-	if ($action=="show_week" || $action=="show_month" || empty($action))
-	{
-    	$s.='jQuery( "td.sortable" ).sortable({connectWith: ".sortable", placeholder: "ui-state-highlight", items: "div.movable", receive: function( event, ui ) {';
-    	$s.='var frm=jQuery("#move_event");frm.attr("action",ui.item.find("a.cal_event").attr("href")).children("#newdate").val(jQuery(event.target).closest("div").attr("id"));frm.submit();}});'."\n";
-	}
-  	$s.='});' . "\n";
-	$s.='</script>' . "\n";
-
-	// Local calendar
-	$s.='<div class="nowrap clear float minheight20"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
-
-	// External calendars
-	if (is_array($showextcals) && count($showextcals) > 0)
-	{
-		$s.='<script type="text/javascript">' . "\n";
-		$s.='jQuery(document).ready(function () {
-				jQuery("table input[name^=\"check_ext\"]").click(function() {
-					var name = $(this).attr("name");
-
-					jQuery(".family_ext" + name.replace("check_ext", "")).toggle();
-				});
-			});' . "\n";
-		$s.='</script>' . "\n";
-
-		foreach ($showextcals as $val)
-		{
-			$htmlname = md5($val['name']);
-			$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked> ' . $val['name'] . ' &nbsp; </div>';
-		}
-	}
-
-	// Birthdays
-	$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
-
-	// Calendars from hooks
-    $parameters=array(); $object=null;
-	$reshook=$hookmanager->executeHooks('addCalendarChoice',$parameters,$object,$action);
-    if (empty($reshook))
-    {
-		$s.= $hookmanager->resPrint;
-    }
-    elseif ($reshook > 1)
-	{
-    	$s = $hookmanager->resPrint;
-    }
-}
-else 									// If javascript off
-{
-	$newparam=$param;   // newparam is for birthday links
-    $newparam=preg_replace('/showbirthday=[0-1]/i','showbirthday='.(empty($showbirthday)?1:0),$newparam);
-    if (! preg_match('/showbirthday=/i',$newparam)) $newparam.='&showbirthday=1';
-    $link='<a href="'.$_SERVER['PHP_SELF'];
-    $link.='?'.$newparam;
-    $link.='">';
-    if (empty($showbirthday)) $link.=$langs->trans("AgendaShowBirthdayEvents");
-    else $link.=$langs->trans("AgendaHideBirthdayEvents");
-    $link.='</a>';
-}
-
-print load_fiche_titre($s, $link.' &nbsp; &nbsp; '.$nav, '', 0, 0, 'tablelistofcalendars');
-
 
 // Load events from database into $eventarray
 $eventarray=array();
@@ -522,8 +440,6 @@ if ($filtert > 0 || $usergroup > 0)
 }
 // Sort on date
 $sql.= ' ORDER BY datep';
-//print $sql;
-
 
 dol_syslog("comm/action/index.php", LOG_DEBUG);
 $resql=$db->query($sql);
@@ -531,6 +447,8 @@ if ($resql)
 {
     $num = $db->num_rows($resql);
     $i=0;
+    $societefilter=array();
+    if ($socid > 0) $societefilter[]=$socid;
     while ($i < $num)
     {
         $obj = $db->fetch_object($resql);
@@ -566,6 +484,7 @@ if ($resql)
         $event->transparency=$obj->transparency;
 
         $event->societe->id=$obj->fk_soc;
+        if ($obj->fk_soc > 0 && (! in_array($obj->fk_soc, $societefilter) )) $societefilter[]=$obj->fk_soc;
         $event->contact->id=$obj->fk_contact;
 
         // Defined date_start_in_calendar and date_end_in_calendar property
@@ -631,6 +550,85 @@ else
 {
     dol_print_error($db);
 }
+
+if ($event->societe->id) $socid = $event->societe->id;
+dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
+print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,0,$filtert,0,$pid,$societefilter,$action,$listofextcals,$actioncode,$usergroup,'', $resourceid);
+dol_fiche_end();
+
+
+// Define the legend/list of calendard to show
+$s=''; $link='';
+
+$showextcals=$listofextcals;
+
+if (! empty($conf->use_javascript_ajax))	// If javascript on
+{
+    $s.='<!-- Div to calendars selectors -->'."\n";
+	$s.='<script type="text/javascript">' . "\n";
+	$s.='jQuery(document).ready(function () {' . "\n";
+	$s.='jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });' . "\n";
+	$s.='jQuery(".family_birthday").toggle();' . "\n";
+	if ($action=="show_week" || $action=="show_month" || empty($action))
+	{
+    	$s.='jQuery( "td.sortable" ).sortable({connectWith: ".sortable", placeholder: "ui-state-highlight", items: "div.movable", receive: function( event, ui ) {';
+    	$s.='var frm=jQuery("#move_event");frm.attr("action",ui.item.find("a.cal_event").attr("href")).children("#newdate").val(jQuery(event.target).closest("div").attr("id"));frm.submit();}});'."\n";
+	}
+  	$s.='});' . "\n";
+	$s.='</script>' . "\n";
+
+	// Local calendar
+	$s.='<div class="nowrap clear float minheight20"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
+
+	// External calendars
+	if (is_array($showextcals) && count($showextcals) > 0)
+	{
+		$s.='<script type="text/javascript">' . "\n";
+		$s.='jQuery(document).ready(function () {
+				jQuery("table input[name^=\"check_ext\"]").click(function() {
+					var name = $(this).attr("name");
+
+					jQuery(".family_ext" + name.replace("check_ext", "")).toggle();
+				});
+			});' . "\n";
+		$s.='</script>' . "\n";
+
+		foreach ($showextcals as $val)
+		{
+			$htmlname = md5($val['name']);
+			$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked> ' . $val['name'] . ' &nbsp; </div>';
+		}
+	}
+
+	// Birthdays
+	$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
+
+	// Calendars from hooks
+    $parameters=array(); $object=null;
+	$reshook=$hookmanager->executeHooks('addCalendarChoice',$parameters,$object,$action);
+    if (empty($reshook))
+    {
+		$s.= $hookmanager->resPrint;
+    }
+    elseif ($reshook > 1)
+	{
+    	$s = $hookmanager->resPrint;
+    }
+}
+else 									// If javascript off
+{
+	$newparam=$param;   // newparam is for birthday links
+    $newparam=preg_replace('/showbirthday=[0-1]/i','showbirthday='.(empty($showbirthday)?1:0),$newparam);
+    if (! preg_match('/showbirthday=/i',$newparam)) $newparam.='&showbirthday=1';
+    $link='<a href="'.$_SERVER['PHP_SELF'];
+    $link.='?'.$newparam;
+    $link.='">';
+    if (empty($showbirthday)) $link.=$langs->trans("AgendaShowBirthdayEvents");
+    else $link.=$langs->trans("AgendaHideBirthdayEvents");
+    $link.='</a>';
+}
+
+print load_fiche_titre($s, $link.' &nbsp; &nbsp; '.$nav, '', 0, 0, 'tablelistofcalendars');
 
 // Complete $eventarray with birthdates
 if ($showbirthday)
@@ -1185,6 +1183,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     global $action, $filter, $filtert, $status, $actioncode;	// Filters used into search form
     global $theme_datacolor;
     global $cachethirdparties, $cachecontacts, $cacheusers, $colorindexused;
+    
 
     print "\n".'<div id="dayevent_'.sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day).'" class="dayevent">';
 
@@ -1353,7 +1352,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     print '<ul class="cal_event" style="'.$h.'">';	// always 1 li per ul, 1 ul per event
                     print '<li class="cal_event" style="'.$h.'">';
                     print '<table class="cal_event'.(empty($event->transparency)?'':' cal_event_busy').'" style="'.$h;
-                    print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, -3).'), to(#'.dol_color_minus($color, -3).'));';
+                    print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
                     //if (! empty($event->transparency)) print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
                     //else print 'background-color: transparent !important; background: none; border: 1px solid #bbb;';
                     print ' -moz-border-radius:4px;" width="100%"><tr>';
@@ -1413,9 +1412,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             {
                                 $savlabel=$event->libelle;
                                 $event->libelle=$daterange;
-                                //print '<strong>';
                                 print $event->getNomUrl(0);
-                                //print '</strong>';
                                 $event->libelle=$savlabel;
                             }
                             else
@@ -1423,7 +1420,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                                 print $daterange;
                             }
                             //print '</strong> ';
-                            print " ";
+                            print "<br>\n";
                         }
                         else
 						{
@@ -1440,6 +1437,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         if ($event->type_code == 'ICALEVENT') print '<br>('.dol_trunc($event->icalname,$maxnbofchar).')';
 
                         // If action related to company / contact
+                        
                         $linerelatedto='';
                         if (! empty($event->societe->id) && $event->societe->id > 0)
                         {
@@ -1465,6 +1463,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             if (! empty($contact->id)) $linerelatedto.=$contact->getNomUrl(1,'',0);
                         }
                         if ($linerelatedto) print '<br>'.$linerelatedto;
+                        
                     }
 
                     // Show location
@@ -1537,22 +1536,14 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
  * Change color with a delta
  *
  * @param	string	$color		Color
- * @param 	int		$minus		Delta (1 = 16 unit)
- * @param   int     $minusunit  Minus unit
+ * @param 	int		$minus		Delta
  * @return	string				New color
  */
-function dol_color_minus($color, $minus, $minusunit = 16)
+function dol_color_minus($color, $minus)
 {
 	$newcolor=$color;
-	if ($minusunit == 16)
-	{
-    	$newcolor[0]=dechex(max(min(hexdec($newcolor[0])-$minus, 15), 0));
-    	$newcolor[2]=dechex(max(min(hexdec($newcolor[2])-$minus, 15), 0));
-    	$newcolor[4]=dechex(max(min(hexdec($newcolor[4])-$minus, 15), 0));
-	}
-	else
-	{
-	    // Not yet implemented
-	}
+	$newcolor[0]=((hexdec($newcolor[0])-$minus)<0)?0:dechex((hexdec($newcolor[0])-$minus));
+	$newcolor[2]=((hexdec($newcolor[2])-$minus)<0)?0:dechex((hexdec($newcolor[2])-$minus));
+	$newcolor[4]=((hexdec($newcolor[4])-$minus)<0)?0:dechex((hexdec($newcolor[4])-$minus));
 	return $newcolor;
 }

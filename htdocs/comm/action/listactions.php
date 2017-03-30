@@ -266,7 +266,7 @@ if ($resql)
 	$societestatic=new Societe($db);
 
 	$num = $db->num_rows($resql);
-
+	
 	/*$title=$langs->trans("DoneAndToDoActions");
 	if ($status == 'done') $title=$langs->trans("DoneActions");
 	if ($status == 'todo') $title=$langs->trans("ToDoActions");
@@ -280,7 +280,10 @@ if ($resql)
 	$head = calendars_prepare_head($param);
 
     dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-    print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,0,$filtert,0,$pid,$socid,$action,-1,$actioncode,$usergroup,'',$resourceid);
+    if ($socid > 0) $societefilter=used_thirdparties_array($socid);
+    else $societefilter=used_thirdparties_array();
+    
+    print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,0,$filtert,0,$pid,$societefilter,$action,-1,$actioncode,$usergroup,'',$resourceid);
     dol_fiche_end();
 
     // Add link to show birthdays
