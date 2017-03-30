@@ -85,5 +85,19 @@ class modModuleBuilder extends DolibarrModules
         // Main menu entries
         //------------------
         $this->menu = array();
+        
+        $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',
+            'type'=>'left',
+            'titre'=>'ModuleBuilder',
+            'mainmenu'=>'home',
+            'leftmenu'=>'admintools_modulebuilder',
+            'url'=>'/modulebuilder/index.php?mainmenu=home&amp;leftmenu=admintools_modulebuilder',
+            'langs'=>'modulebuilder',
+            'position'=>100,
+            'perms'=>'1',
+            'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^admintools/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
+            'target'=>'_modulebuilder',
+            'user'=>0);
+        
     }
 }
