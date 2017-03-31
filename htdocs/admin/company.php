@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -51,8 +52,6 @@ $error=0;
 if ( ($action == 'update' && empty($_POST["cancel"]))
 || ($action == 'updateedit') )
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 	$tmparray=getCountry(GETPOST('country_id','int'),'all',$db,$langs,0);
 	if (! empty($tmparray['id']))
 	{
@@ -76,21 +75,23 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB",$_POST["web"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE",$_POST["note"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GENCOD",$_POST["barcode"],'chaine',0,'',$conf->entity);
-	if ($_FILES["logo"]["tmp_name"])
+	
+	$varforimage='logo'; $dirforimage=$conf->mycompany->dir_output.'/logos/';
+	if ($_FILES[$varforimage]["tmp_name"])
 	{
-		if (preg_match('/([^\\/:]+)$/i',$_FILES["logo"]["name"],$reg))
+		if (preg_match('/([^\\/:]+)$/i',$_FILES[$varforimage]["name"],$reg))
 		{
 			$original_file=$reg[1];
 
 			$isimage=image_format_supported($original_file);
 			if ($isimage >= 0)
 			{
-				dol_syslog("Move file ".$_FILES["logo"]["tmp_name"]." to ".$conf->mycompany->dir_output.'/logos/'.$original_file);
-				if (! is_dir($conf->mycompany->dir_output.'/logos/'))
+				dol_syslog("Move file ".$_FILES[$varforimage]["tmp_name"]." to ".$dirforimage.$original_file);
+				if (! is_dir($dirforimage))
 				{
-					dol_mkdir($conf->mycompany->dir_output.'/logos/');
+					dol_mkdir($dirforimage);
 				}
-				$result=dol_move_uploaded_file($_FILES["logo"]["tmp_name"],$conf->mycompany->dir_output.'/logos/'.$original_file,1,0,$_FILES['logo']['error']);
+				$result=dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"],$dirforimage.$original_file,1,0,$_FILES[$varforimage]['error']);
 				if ($result > 0)
 				{
 					dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file,'chaine',0,'',$conf->entity);
@@ -101,8 +102,8 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
 					    // Create thumbs
 					    //$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retreive value with get... 
 					    	
-						// Used on logon for example
-						$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+						// Create small thumb, Used on logon for example
+						$imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
 						if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbSmall,$reg))
 						{
 							$imgThumbSmall = $reg[1];    // Save only basename
@@ -110,9 +111,8 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
 						}
 						else dol_syslog($imgThumbSmall);
 
-						// Create mini thumbs for company (Ratio is near 16/9)
-						// Used on menu or for setup page for example
-						$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
+						// Create mini thumb, Used on menu or for setup page for example
+						$imgThumbMini = vignette($dirforimage.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
 						if (image_format_supported($imgThumbMini) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbMini,$reg))
 						{
 							$imgThumbMini = $reg[1];     // Save only basename
@@ -143,6 +143,7 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
 			}
 		}
 	}
+	
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MANAGERS",$_POST["MAIN_INFO_SOCIETE_MANAGERS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",$_POST["forme_juridique_code"],'chaine',0,'',$conf->entity);
@@ -196,7 +197,7 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
 	}
 }
 
-if ($action == 'addthumb')
+if ($action == 'addthumb')  // Regenerate thumbs
 {
 	if (file_exists($conf->mycompany->dir_output.'/logos/'.$_GET["file"]))
 	{
@@ -208,7 +209,7 @@ if ($action == 'addthumb')
 		    // Create thumbs
 		    //$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retreive value with get... 
 
-			// Used on logon for example
+			// Create small thumb. Used on logon for example
 			$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthsmall, $maxheightsmall, '_small',$quality);
 			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbSmall,$reg))
 			{
@@ -217,8 +218,7 @@ if ($action == 'addthumb')
 			}
 			else dol_syslog($imgThumbSmall);
 
-			// Create mini thumbs for company (Ratio is near 16/9)
-			// Used on menu or for setup page for example
+			// Create mini thumbs. Used on menu or for setup page for example
 			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthmini, $maxheightmini, '_mini',$quality);
 			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbMini,$reg))
 			{
@@ -300,7 +300,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		  });';
 	print '</script>'."\n";
 
-	print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
+	print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
 	$var=true;
@@ -383,7 +383,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
 		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
 			print ' &nbsp; ';
-			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
+			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
 		}
 	} else {
 		print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
@@ -775,7 +775,7 @@ else
 	}
 	else if ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 	{
-		print '<img class="img_logo" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
+		print '<img class="img_logo" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
 	}
 	else
 	{

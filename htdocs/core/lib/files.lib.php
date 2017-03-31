@@ -1590,7 +1590,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	$relative_original_file = $original_file;
 	
 	// Wrapping for some images
-	if ($modulepart == 'companylogo' && !empty($conf->mycompany->dir_output))
+	if (($modulepart == 'mycompany' || $modulepart == 'companylogo') && !empty($conf->mycompany->dir_output))
 	{
 		$accessallowed=1;
 		$original_file=$conf->mycompany->dir_output.'/logos/'.$original_file;
