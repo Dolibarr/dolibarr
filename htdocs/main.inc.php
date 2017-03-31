@@ -1146,8 +1146,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<!-- Includes JS for JQuery -->'."\n";
             if (constant('JS_JQUERY')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-            if (constant('JS_JQUERY_MIGRATE')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery-migrate.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-            else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-migrate.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+            if (! empty($conf->global->MAIN_FEATURES_LEVEL))
+            {
+                if (constant('JS_JQUERY_MIGRATE')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery-migrate.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+                else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-migrate.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+            }
             if (constant('JS_JQUERY_UI')) print '<script type="text/javascript" src="'.JS_JQUERY_UI.'jquery-ui.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             if (! defined('DISABLE_JQUERY_TABLEDND')) print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
