@@ -752,6 +752,8 @@ if ($action == 'create')
 
 	print '</table>';
 	print '<br><br>';
+	
+	
 	print '<table class="border" width="100%">';
 
 	// Related company
@@ -1184,7 +1186,7 @@ if ($id > 0)
 	}
 	else
 	{
-		dol_fiche_head($head, 'card', $langs->trans("Action"),0,'action');
+		dol_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action');
 
 
 		// Clone event
@@ -1255,6 +1257,8 @@ if ($id > 0)
 		
 		dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref);
 		
+	    print '<div class="fichecenter">';
+	
 		print '<div class="underbanner clearboth"></div>';
 		
 		// Affichage fiche action en mode visu
@@ -1345,6 +1349,7 @@ if ($id > 0)
 
 		print '<br>';
 
+		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border" width="100%">';
 
 		if ($conf->societe->enabled)
@@ -1380,21 +1385,6 @@ if ($id > 0)
 			}
 			print '</td></tr>';
 		}
-
-		// Project
-		/*
-		if (! empty($conf->projet->enabled))
-		{
-			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-			if ($object->fk_project)
-			{
-				$project=new Project($db);
-				$project->fetch($object->fk_project);
-				print $project->getNomUrl(1,'',1);
-			}
-			print '</td></tr>';
-		}
-        */
 		
 		// Priority
 		print '<tr><td class="nowrap" class="titlefield">'.$langs->trans("Priority").'</td><td colspan="3">';
@@ -1423,7 +1413,9 @@ if ($id > 0)
 		//Extra field
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			print '<br><br><table class="border" width="100%">';
+			print '<br><br>';
+		    print '<div class="underbanner clearboth"></div>';
+			print '<table class="border" width="100%">';
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				if (isset($_POST["options_" . $key])) {
@@ -1443,6 +1435,8 @@ if ($id > 0)
 			print '</table>';
 		}
 
+		print '</div>';
+		
 		dol_fiche_end();
 	}
 

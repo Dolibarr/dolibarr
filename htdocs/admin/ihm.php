@@ -119,7 +119,7 @@ if ($action == 'update')
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $conf->entity);
     else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLENOTAB', implode(',',colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'),array())),'chaine',0,'',$conf->entity);
     
-    if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_del_const($db, "THEME_ELDY_USE_HOVER", $conf->entity);
+    if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", '0', 'chaine', 0, '', $conf->entity);    // If empty, we set to '0' ('000000' is for black)
 	else dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $_POST["THEME_ELDY_USE_HOVER"], 'chaine', 0, '', $conf->entity);
 
 	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array()))));
@@ -141,9 +141,6 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_HOME",						dol_htmlcleanlastbr($_POST["main_home"]),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK",			$_POST["MAIN_HELP_DISABLELINK"],'chaine',0,'',0);	    // Param for all entities
 	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK",         $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
-
-	// This one is not always defined
-	if (isset($_POST["MAIN_USE_PREVIEW_TABS"])) dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS", $_POST["MAIN_USE_PREVIEW_TABS"],'chaine',0,'',$conf->entity);
 
 	$varforimage='imagebackground'; $dirforimage=$conf->mycompany->dir_output.'/logos/';
 	if ($_FILES[$varforimage]["tmp_name"])
@@ -324,16 +321,6 @@ if ($action == 'edit')	// Edit
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
-
-    // Activate preview tab on element card
-    if (class_exists("Imagick"))
-	{
-	    print '<tr><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
-	    print $form->selectyesno('MAIN_USE_PREVIEW_TABS',isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:0,1);
-	    print '</td>';
-		print '<td width="20">&nbsp;</td>';
-		print '</tr>';
-	}
 
     // First day for weeks
     print '<tr><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
@@ -531,16 +518,6 @@ else	// Show
     print yn($conf->global->MAIN_DISABLE_JAVASCRIPT)."</td>";
     print '<td width="20">&nbsp;</td>';
     print "</tr>";
-
-    // Activate preview tab on element card
-    if (class_exists("Imagick"))
-	{
-		
-	    print '<tr class="oddeven"><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
-	    print yn(isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:0)."</td>";
-		print '<td width="20">&nbsp;</td>';
-		print "</tr>";
-	}
 
 	// First day for weeks
     print '<tr class="oddeven"><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';

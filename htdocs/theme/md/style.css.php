@@ -521,6 +521,9 @@ textarea.centpercent {
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
 }
+.nowraponall {
+	white-space: nowrap;
+}
 .nobold {
 	font-weight: normal !important;
 }
@@ -536,6 +539,9 @@ textarea.centpercent {
 .cursorpointer {
 	cursor: pointer;
 }
+.cusormove {
+	cursor: move;
+}
 .badge {
 	display: inline-block;
 	min-width: 10px;
@@ -549,9 +555,6 @@ textarea.centpercent {
 	vertical-align: baseline;
 	background-color: #777;
 	border-radius: 10px;
-}
-.movable {
-	cursor: move;
 }
 
 .borderrightlight
@@ -1144,6 +1147,9 @@ div.statusref {
 	margin-top: 8px;
 	margin-bottom: 10px;
 	clear: both;
+}
+div.statusref img {
+    padding-left: 8px;
 }
 img.photoref, div.photoref {
 	border: 1px solid #CCC;

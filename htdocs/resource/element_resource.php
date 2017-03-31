@@ -241,8 +241,10 @@ else
 			
 			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref, '&element='.$element, 0, '', '');
 
+			print '<div class="fichecenter">';
+				
 			print '<div class="underbanner clearboth"></div>';
-
+				
 			print '<table class="border" width="100%">';
 
 			// Type
@@ -312,6 +314,8 @@ else
 
 			print '</table>';
 
+			print '</div>';
+			
 			dol_fiche_end();
 		}
 	}

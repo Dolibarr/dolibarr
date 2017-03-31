@@ -121,7 +121,7 @@ if ($object->id > 0)
 	$now=dol_now();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
-	dol_fiche_head($head, 'documents', $langs->trans("Action"),0,'action');
+	dol_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action');
 
 	$linkback = img_picto($langs->trans("BackToList"),'object_list','class="hideonsmartphone pictoactionview"');
 	$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php">'.$langs->trans("BackToList").'</a>';
@@ -163,6 +163,8 @@ if ($object->id > 0)
 	$morehtmlref.='</div>';
 	
 	dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref);
+	
+	print '<div class="fichecenter">';
 	
 	print '<div class="underbanner clearboth"></div>';
 	
@@ -236,9 +238,6 @@ if ($object->id > 0)
 
 	print '</table>';
 	
-
-	print '<br>';
-
 	print '<table class="border" width="100%">';
 
 	// Construit liste des fichiers
@@ -255,7 +254,9 @@ if ($object->id > 0)
 
 	print '</table>';
 
-	dol_fiche_end();
+    print '</div>';
+	
+    dol_fiche_end();
 
 
 	$modulepart = 'actions';

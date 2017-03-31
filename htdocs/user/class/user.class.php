@@ -1986,12 +1986,18 @@ class User extends CommonObject
 
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
 
-		$result = '';
-		$companylink = '';
-		$link = '';
-
-		$label = '<u>' . $langs->trans("User") . '</u>';
-		$label.= '<div width="100%">';
+        $result=''; $label='';
+        $linkstart=''; $linkend='';
+		
+		if (! empty($this->photo))
+		{
+		    $label.= '<div class="photointooltip">';
+		    $label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip', 'small', 0, 1);
+		    $label.= '</div><div style="clear: both;"></div>';
+		}
+		
+		$label.= '<div class="centpercent">';
+		$label.= '<u>' . $langs->trans("User") . '</u><br>';
 		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','');
 		if (! empty($this->login))
 			$label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
@@ -2008,12 +2014,6 @@ class User extends CommonObject
 		$type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
 		$label.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
 		$label.='</div>';
-		if (! empty($this->photo))
-		{
-			$label.= '<div class="photointooltip">';
-			$label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip', 'small', 0, 1);
-			$label.= '</div><div style="clear: both;"></div>';
-		}
 
 		// Info Login
 		if ($infologin)
