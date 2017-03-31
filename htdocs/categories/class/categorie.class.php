@@ -1489,14 +1489,14 @@ class Categorie extends CommonObject
             {
     			while (($file = readdir($handle)) !== false)
     			{
-    				if (dol_is_file($dir.$file) && preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$dir.$file))
+    				if (dol_is_file($dir.$file) && preg_match('/(\.jpeg|\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$dir.$file))
     				{
     					$nbphoto++;
     					$photo = $file;
 
     					// On determine nom du fichier vignette
     					$photo_vignette='';
-    					if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$photo,$regs))
+    					if (preg_match('/(\.jpeg|\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$photo,$regs))
     					{
     						$photo_vignette=preg_replace('/'.$regs[0].'/i','',$photo).'_small'.$regs[0];
     					}
@@ -1539,7 +1539,7 @@ class Categorie extends CommonObject
 		dol_delete_file($file,1);
 
 		// Si elle existe, on efface la vignette
-		if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$filename,$regs))
+		if (preg_match('/(\.jpeg|\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$filename,$regs))
 		{
 			$photo_vignette=preg_replace('/'.$regs[0].'/i','',$filename).'_small'.$regs[0];
 			if (file_exists($dirthumb.$photo_vignette))
