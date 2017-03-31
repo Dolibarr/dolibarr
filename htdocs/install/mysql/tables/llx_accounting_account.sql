@@ -29,7 +29,7 @@ create table llx_accounting_account
   pcg_type        			varchar(20)  NOT NULL,
   pcg_subtype     			varchar(20)  NOT NULL,
   account_number  			varchar(32)  NOT NULL,
-  account_parent  			varchar(32)  DEFAULT '0',							-- Hierarchic parent
+  account_parent  			varchar(32)  DEFAULT '0',							-- Hierarchic parent TODO Move this as integer, it is a foreign key of llx_accounting_account.rowid
   label           			varchar(255) NOT NULL,
   fk_accounting_category 	integer DEFAULT 0,
   fk_user_author  			integer DEFAULT NULL,

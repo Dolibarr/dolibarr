@@ -76,8 +76,8 @@ BoxTitleLastLeaveRequests=Siste %s endrede ferieforespørsler
 HolidaysMonthlyUpdate=Månedlig oppdatering
 ManualUpdate=Manuell oppdatering
 HolidaysCancelation=Kansellering av feriesøknader
-EmployeeLastname=Employee last name
-EmployeeFirstname=Employee first name
+EmployeeLastname=Ansattes etternavn
+EmployeeFirstname=Ansattes fornavn
 TypeWasDisabledOrRemoved=Ferietype (id %s) ble deaktivert eller slettet
 
 ## Configuration du Module ##

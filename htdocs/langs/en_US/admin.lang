@@ -916,7 +916,7 @@ Host=Server
 DriverType=Driver type
 SummarySystem=System information summary
 SummaryConst=List of all Dolibarr setup parameters
-MenuCompanySetup=Company/Foundation
+MenuCompanySetup=Company/Organisation
 DefaultMenuManager= Standard menu manager
 DefaultMenuSmartphoneManager=Smartphone menu manager
 Skin=Skin theme
@@ -930,8 +930,8 @@ PermanentLeftSearchForm=Permanent search form on left menu
 DefaultLanguage=Default language to use (language code)
 EnableMultilangInterface=Enable multilingual interface
 EnableShowLogo=Show logo on left menu
-CompanyInfo=Company/foundation information
-CompanyIds=Company/foundation identities
+CompanyInfo=Company/organisation information
+CompanyIds=Company/organisation identities
 CompanyName=Name
 CompanyAddress=Address
 CompanyZip=Zip
@@ -964,8 +964,8 @@ Delays_MAIN_DELAY_MEMBERS=Tolerance delay (in days) before alert on delayed memb
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Tolerance delay (in days) before alert for cheques deposit to do
 Delays_MAIN_DELAY_EXPENSEREPORTS=Tolerance delay (in days) before alert for expense reports to approve
 SetupDescription1=The setup area is for initial setup parameters before starting to use Dolibarr.
-SetupDescription2=The two most important setup steps are the first two in the setup menu on the left: Company/foundation setup page and Modules setup page:
-SetupDescription3=Parameters in menu <a href="%s">Setup -> Company/foundation</a> are required because submitted data are used on Dolibarr displays and to customize the default behaviour of the software (for country-related features for example).
+SetupDescription2=The two most important setup steps are the first two in the setup menu on the left: Company/Organisation setup page and Modules setup page:
+SetupDescription3=Parameters in menu <a href="%s">Setup -> Company/Organisation</a> are required because submitted data are used on Dolibarr displays and to customize the default behaviour of the software (for country-related features for example).
 SetupDescription4=Parameters in menu <a href="%s">Setup -> Modules</a> are required because Dolibarr is not a monolithic ERP/CRM but a collection of several modules, all more or less independent. New features will be added to menus for every module you'll enable.
 SetupDescription5=Other menu entries manage optional parameters.
 LogEvents=Security audit events
@@ -1463,7 +1463,7 @@ SupposedToBeInvoiceDate=Invoice date used
 Buy=Buy
 Sell=Sell
 InvoiceDateUsed=Invoice date used
-YourCompanyDoesNotUseVAT=Your company has been defined to not use VAT (Home - Setup - Company/Foundation), so there is no VAT options to setup.
+YourCompanyDoesNotUseVAT=Your company has been defined to not use VAT (Home - Setup - Company/Organisation), so there is no VAT options to setup.
 AccountancyCode=Accountancy Code
 AccountancyCodeSell=Sale account. code
 AccountancyCodeBuy=Purchase account. code 
@@ -1651,6 +1651,7 @@ SamePriceAlsoForSharedCompanies=If you use a multicompany module, with the choic
 ModuleEnabledAdminMustCheckRights=Module has been activated. Permissions for activated module(s) were given to admin users only. You may need to grant permissions to other users or groups manually if necessary.
 UserHasNoPermissions=This user has no permission defined
 TypeCdr=Use "None" if the date of payment term is date of invoice plus a delta in days (delta is field "Nb of days")<br>Use "At end of month", if, after delta, the date must be increased to reach the end of month (+ an optional "Offset" in days)<br>Use "Current/Next" to have payment term date being the first Nth of the month (N is stored into field "Nb of days")
+BaseCurrency=Reference currency of the company (go into setup of company to change this)
 ##### Resource ####
 ResourceSetup=Configuration du module Resource 
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).
