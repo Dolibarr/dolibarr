@@ -188,11 +188,16 @@ if ($result > 0)
         print '</td></tr>';
     }
 
-    print '<tr><td class="titlefield">'.$langs->trans("NbOfActiveNotifications").'</td>';
+    print '<tr><td class="titlefield">'.$langs->trans("NbOfActiveNotifications").'</td>';   // Notification for this thirdparty
     print '<td colspan="3">';
+    $nbofrecipientemails=0;
     $notify=new Notify($db);
-    $tmparray = $notify->getNotificationsArray('', $object->id);
-    print count($tmparray);
+    $tmparray = $notify->getNotificationsArray('', $object->id, null, 0, array('thirdparty'));
+    foreach($tmparray as $tmpkey => $tmpval)
+    {
+        if (! empty($tmpkey)) $nbofrecipientemails++;
+    }
+    print $nbofrecipientemails;
     print '</td></tr>';
     print '</table>';
 
@@ -394,13 +399,14 @@ if ($result > 0)
 		print '<td align="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
 		print '</tr>';
     }*/
-    if ($user->admin)
+    
+    /*if ($user->admin)
     {
 	    $var = ! $var;
 		print '<tr '.$bc[$var].'><td colspan="4">';
 		print '+ <a href="'.DOL_URL_ROOT.'/admin/notification.php">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</a>';
 		print '</td></tr>';
-    }
+    }*/
 
     print '</table>';
     
