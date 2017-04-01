@@ -135,36 +135,12 @@ if ($result > 0)
 
     $head = user_prepare_head($object);
 
-    dol_fiche_head($head, 'notify', $langs->trans("User"),0,'user');
+    dol_fiche_head($head, 'notify', $langs->trans("User"), 0, 'user');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
     
-    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
-    
-    /*print '<table class="border"width="100%">';
-
-    // Ref
-    print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-    print '<td colspan="3">';
-    print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
-    print '</td>';
-    print '</tr>'."\n";
-
-    print '<tr><td>'.$langs->trans("Lastname").'</td>';
-    print '<td colspan="2">'.$object->lastname.'</td>';
-
-    // Firstname
-    print '<tr><td>'.$langs->trans("Firstname").'</td>';
-    print '<td colspan="2">'.$object->firstname.'</td>';
-    print '</tr>'."\n";
-
-    // EMail
-    print '<tr><td>'.$langs->trans("EMail").'</td>';
-    print '<td colspan="2">'.dol_print_email($object->email,0,0,1).'</td>';
-    print "</tr>\n";
-
-    print '</table>';*/
-
+    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', '', '', 0, '', '', 1, '');
+        
     dol_fiche_end();
 
     print "\n";

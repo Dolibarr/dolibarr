@@ -129,12 +129,13 @@ if ($object->id)
 
 	$form=new Form($db);
 
-	dol_fiche_head($head, 'document', $langs->trans("User"),0,'user');
+	dol_fiche_head($head, 'document', $langs->trans("User"), -1, 'user');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
+    print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
 	// Construit liste des fichiers
@@ -158,7 +159,8 @@ if ($object->id)
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 
 	print '</table>';
-
+    print '</div>';
+    
 	dol_fiche_end();
 
 
