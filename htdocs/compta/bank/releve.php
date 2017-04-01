@@ -603,28 +603,32 @@ function Get_attach_files($bankId,$num,$label){
             
             
             $objd = $db->fetch_object($resd);
-          
-            switch($objd->type){
+          switch($objd->type){
             case "payment":    
-                $upload_dir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($objd->ref);
-                $link="../../document.php?modulepart=facture&file={$objd->ref}%2F";
+                $subdir=dol_sanitizeFileName($objd->ref);
+                $upload_dir = $conf->facture->dir_output.'/'.$subdir;
+                $link="../../document.php?modulepart=facture&file=".str_replace('/','%2F',$subdir).'%2F';
                 break;
                
             case "payment_supplier":      
-                $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($objd->id,2,0,0,$objd,'invoice_supplier').$objd->reff;
-                $link="../../document.php?modulepart=facture_fournisseur&file={$objd->id}%2F0%2F{$objd->reff}%2F";
+                $subdir=get_exdir($objd->id,2,0,0,$objd,'invoice_supplier').$objd->reff;
+                $upload_dir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
+                $link="../../document.php?modulepart=facture_fournisseur&file=".str_replace('/','%2F',$subdir).'%2F';
                 break;  
             case "payment_expensereport":
-                $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($objd->refe);
-                $link="../../document.php?modulepart=expensereport&file={$objd->refe}%2F";
+                $subdir=dol_sanitizeFileName($objd->refe);
+                $upload_dir = $conf->expensereport->dir_output.'/'.$subdir;
+                $link="../../document.php?modulepart=expensereport&file=".str_replace('/','%2F',$subdir).'%2F';
                 break;
             case "payment_salary":
-                $upload_dir = $conf->salaries->dir_output.'/'.dol_sanitizeFileName($objd->ids);
-                $link="../../document.php?modulepart=salaries&file={$objd->idd}%2F";
+                $subdir=dol_sanitizeFileName($objd->ids);
+                $upload_dir = $conf->salaries->dir_output.'/'.$subdir;
+                $link="../../document.php?modulepart=salaries&file=".str_replace('/','%2F',$subdir).'%2F';
                 break;
             case "payment_donation":
-                $upload_dir = $conf->don->dir_output . '/' . get_exdir(null,2,0,1,$objd,'donation'). '/'. dol_sanitizeFileName($objd->idd);
-                $link="../../document.php?modulepart=don&file=0%2F0%2F{$objd->idd}%2F";
+                $subdir=get_exdir(null,2,0,1,$objd,'donation'). '/'. dol_sanitizeFileName($objd->idd);
+                $upload_dir = $conf->don->dir_output . '/' . $subdir;
+                $link="../../document.php?modulepart=don&file=".str_replace('/','%2F',$subdir).'%2F';
                 break;
             default:
                 break;
