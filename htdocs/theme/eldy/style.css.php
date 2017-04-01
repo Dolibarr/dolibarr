@@ -590,7 +590,8 @@ div.myavailability {
 .checkallactions {
 	vertical-align: text-bottom;
     margin-top: 6px;
-    margin-left: 4px;
+    margin-left: 4px;		/* left must be same than right to keep checkbox centered */
+    margin-right: 4px;		/* left must be same than right to keep checkbox centered */
 }
 .selectlimit, .marginrightonly {
 	margin-right: 10px !important;
@@ -1736,7 +1737,7 @@ div.vmenu, td.vmenu {
 }
 #menu_contenu_logo { padding-top: 0; }
 .companylogo { }
-.searchform { padding-top: 4px; }
+.searchform { padding-top: 10px; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
@@ -2434,18 +2435,7 @@ div.pagination li span:focus {
   -moz-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-  /*
-  color: #000;
-  background-color: #eee;
-  border-color: #ccc;
-
-	background-image: -moz-linear-gradient(top, #eee, #ddd);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#eee), to(#ddd));
-	background-image: -webkit-linear-gradient(top, #eee, #ddd);
-	background-image: -o-linear-gradient(top, #eee, #ddd);
-	background-image: linear-gradient(to bottom, #eee, #ddd);
-	background-repeat: repeat-x;
-*/
+	padding-top: 8px;
 }
 div.pagination li .active a,
 div.pagination li .active span,
@@ -2622,7 +2612,7 @@ tr.liste_titre_topborder td {
 .liste_titre td a.notasortlink:hover {
 	background: transparent;
 }
-tr.liste_titre:last-child th.liste_titre, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
+tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_titre_sel, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
     border-bottom: 1px solid #ddd;
 }
 
@@ -4316,6 +4306,7 @@ ul.ulmenu {
 }
 .alilevel0 {
     color: rgb(<?php echo $colortexttitle; ?>) !important;
+    background: #f8f8f8
 }
 .ulmenu {
 	box-shadow: none !important;
@@ -4339,24 +4330,9 @@ ul.ulmenu {
 	color: #<?php echo $colorshadowtitle; ?> !important;
 	text-shadow: none !important;
 }
-/*
-.ui-btn-up-c {
-	background: transparent;
-}
-*/
 div.tabsElem a.tab {
 	background: transparent;
 }
-
-/*.ui-controlgroup-horizontal .ui-btn.ui-first-child {
--webkit-border-top-left-radius: 6px;
-border-top-left-radius: 6px;
-}
-.ui-controlgroup-horizontal .ui-btn.ui-last-child {
--webkit-border-top-right-radius: 6px;
-border-top-right-radius: 6px;
-}*/
-
 .alilevel1 {
     color: rgb(<?php print $colortexttitlenotab; ?>) !important;
 }

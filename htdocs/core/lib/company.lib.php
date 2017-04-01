@@ -763,7 +763,6 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
         while ($i < $num)
         {
             $obj = $db->fetch_object($result);
-            $var = !$var;
             
             $contactstatic->id = $obj->rowid;
             $contactstatic->ref = $obj->ref;
@@ -789,7 +788,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
             $contactstatic->setGenderFromCivility();
             
-            print "<tr ".$bc[$var].">";
+            print "<tr>";
 
 			// Photo - Name
 			print '<td>';

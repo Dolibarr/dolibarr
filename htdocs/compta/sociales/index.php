@@ -177,18 +177,7 @@ if ($resql)
 	    print '<div class="div-table-responsive">';
 	    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	    
-		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"id","",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"cs.libelle","",$param,'align="left"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"periode","",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"cs.date_ech","",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cs.paye","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
-		print "</tr>\n";
-
-		print '<tr class="liste_titre">';
+		print '<tr class="liste_titre_filter">';
 		// Ref
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="3" name="search_ref" value="'.$search_ref.'">';
@@ -218,14 +207,24 @@ if ($resql)
         print '</td>';
 		print "</tr>\n";
 
+		print '<tr class="liste_titre">';
+		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"id","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"cs.libelle","",$param,'align="left"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"periode","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"cs.date_ech","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cs.paye","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+		print "</tr>\n";
+		
 		$i=0;
 		$totalarray=array();
 		while ($i < min($num,$limit))
 		{
 			$obj = $db->fetch_object($resql);
 
-			$var = !$var;
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 
 			// Ref
 			print '<td width="60">';

@@ -806,7 +806,7 @@ if ($id)
         print '</tr>';
 
         // Title line with search boxes
-        print '<tr class="liste_titre">';
+        print '<tr class="liste_titre_filter">';
         $filterfound=0;
         foreach ($fieldlist as $field => $value)
         {
@@ -831,14 +831,16 @@ if ($id)
         }
         if ($id == 4) print '<td></td>';
         print '<td class="liste_titre"></td>';
-    	print '<td class="liste_titre" colspan="3" align="center">';
+        print '<td class="liste_titre"></td>';
+        print '<td class="liste_titre"></td>';
+        print '<td class="liste_titre" align="center">';
     	if ($filterfound)
     	{
         	$searchpitco=$form->showFilterAndCheckAddButtons(0);
         	print $searchpitco;
     	}
     	print '</td>';
-        print '</tr>';
+    	print '</tr>';
             
         if ($num)
         {
@@ -860,7 +862,9 @@ if ($id)
                     // Show fields
                     if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
 
-                    print '<td colspan="3" align="center">';
+                    print '<td></td>';
+                    print '<td></td>';
+                    print '<td align="center">';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
                     print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';

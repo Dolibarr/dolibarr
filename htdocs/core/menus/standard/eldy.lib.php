@@ -1005,18 +1005,25 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 						$i = 0;
 
 						if ($numr > 0)
-						while ($i < $numr)
 						{
-							$objp = $db->fetch_object($resql);
-
-							if ($objp->nature == 1) $nature="sells";
-							if ($objp->nature == 2) $nature="purchases";
-							if ($objp->nature == 3) $nature="bank";
-							if ($objp->nature == 4) $nature="various";
-							if ($objp->nature == 9) $nature="hasnew";
-
-							if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&code_journal='.$objp->code,dol_trunc($objp->label,25),2,$user->rights->accounting->comptarapport->lire);
-							$i++;
+    						while ($i < $numr)
+    						{
+    							$objp = $db->fetch_object($resql);
+    
+    							if ($objp->nature == 1) $nature="sells";
+    							if ($objp->nature == 2) $nature="purchases";
+    							if ($objp->nature == 3) $nature="bank";
+    							if ($objp->nature == 4) $nature="various";
+    							if ($objp->nature == 9) $nature="hasnew";
+    
+    							if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&code_journal='.$objp->code,dol_trunc($objp->label,25),2,$user->rights->accounting->comptarapport->lire);
+    							$i++;
+    						}
+						}
+						else
+						{
+						    // Should not happend. Entries are added
+						    $newmenu->add('',$langs->trans("NoJournalDefined"), 2, $user->rights->accounting->comptarapport->lire);
 						}
 					}
 					else dol_print_error($db);
@@ -1075,7 +1082,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				// Fiscal year
 				if ($conf->global->MAIN_FEATURES_LEVEL > 0)     // Not yet used. In a future will lock some periods.
 				{
-				    if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("FiscalPeriod"),1,$user->rights->accounting->fiscalyear, '', $mainmenu, 'fiscalyear');
+				    if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy&leftmenu=accountancy_periods", $langs->trans("FiscalPeriod"),1,$user->rights->accounting->fiscalyear, '', $mainmenu, 'fiscalyear');
 				}
 			}
 
