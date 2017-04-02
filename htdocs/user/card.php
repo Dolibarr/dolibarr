@@ -723,11 +723,10 @@ if (($action == 'create') || ($action == 'adduserldap'))
 
     print dol_set_focus('#lastname');
 
-    print '<table class="border" width="100%">';
-
-    print '<tr>';
+    print '<table class="border centpercent">';
 
     // Lastname
+    print '<tr>';
     print '<td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
     print '<td>';
     if (! empty($ldap_lastname))
@@ -1256,7 +1255,6 @@ else
 			dol_fiche_head($head, 'user', $title, 0, 'user');
 
             dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-
 
 	        print '<div class="fichecenter">';
 	        print '<div class="fichehalfleft">';

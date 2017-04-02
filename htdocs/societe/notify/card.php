@@ -44,15 +44,16 @@ $actionid=GETPOST('actionid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield=GETPOST("sortfield",'alpha');
+$sortorder=GETPOST("sortorder",'alpha');
+$page=GETPOST("page",'int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="n.daten";
+if (empty($page) || $page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 $now=dol_now();
 
@@ -188,7 +189,7 @@ if ($result > 0)
         print '</td></tr>';
     }
 
-    print '<tr><td class="titlefield">'.$langs->trans("NbOfActiveNotifications").'</td>';   // Notification for this thirdparty
+    /*print '<tr><td class="titlefield">'.$langs->trans("NbOfActiveNotifications").'</td>';   // Notification for this thirdparty
     print '<td colspan="3">';
     $nbofrecipientemails=0;
     $notify=new Notify($db);
@@ -198,7 +199,8 @@ if ($result > 0)
         if (! empty($tmpkey)) $nbofrecipientemails++;
     }
     print $nbofrecipientemails;
-    print '</td></tr>';
+    print '</td></tr>';*/
+    
     print '</table>';
 
     print '</div>';
@@ -286,7 +288,7 @@ if ($result > 0)
     $sql.= " WHERE a.rowid = n.fk_action";
     $sql.= " AND c.rowid = n.fk_contact";
     $sql.= " AND c.fk_soc = ".$object->id;
-    
+
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -299,8 +301,7 @@ if ($result > 0)
     
     // List of active notifications
     print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')','','');
-    $var=true;
-
+    
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
@@ -321,14 +322,12 @@ if ($result > 0)
 
         while ($i < $num)
         {
-            $var = !$var;
-
             $obj = $db->fetch_object($resql);
 
             $contactstatic->id=$obj->contactid;
             $contactstatic->lastname=$obj->lastname;
             $contactstatic->firstname=$obj->firstname;
-            print '<tr '.$bc[$var].'><td>'.$contactstatic->getNomUrl(1);
+            print '<tr class="oddeven"><td>'.$contactstatic->getNomUrl(1);
             if ($obj->type == 'email')
             {
                 if (isValidEmail($obj->email))
@@ -425,6 +424,16 @@ if ($result > 0)
     $sql.= " AND n.fk_soc = ".$object->id;
     $sql.= $db->order($sortfield, $sortorder);
 
+    // Count total nb of records
+    $nbtotalofrecords = '';
+    if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+    {
+        $result = $db->query($sql);
+        $nbtotalofrecords = $db->num_rows($result);
+    }
+    
+    $sql.= $db->plimit($limit+1, $offset);
+    
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -435,9 +444,20 @@ if ($result > 0)
         dol_print_error($db);
     }
     
-    // List of notifications done
-    print load_fiche_titre($langs->trans("ListOfNotificationsDone").' ('.$num.')','','');
-    $var=true;
+    $param='&socid='.$object->id;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    
+    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="socid" value="'.$object->id.'">';
+    
+    // List of active notifications
+    print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
     // Line with titles
     print '<table width="100%" class="noborder">';
@@ -457,11 +477,9 @@ if ($result > 0)
 
         while ($i < $num)
         {
-            $var = !$var;
-
             $obj = $db->fetch_object($resql);
 
-            print '<tr '.$bc[$var].'><td>';
+            print '<tr class="oddeven"><td>';
             if ($obj->id > 0)
             {
 	            $contactstatic->id=$obj->id;
@@ -501,6 +519,8 @@ if ($result > 0)
     }
 
     print '</table>';
+    
+    print '</form>';
 }
 else dol_print_error('','RecordNotFound');
 
