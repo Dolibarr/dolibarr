@@ -24,7 +24,7 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
-
+ALTER TABLE llx_projet_task_time ADD COLUMN status enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED') DEFAULT 'DRAFT';
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN fk_unit integer DEFAULT NULL;
 
 ALTER TABLE llx_ecm_files ADD COLUMN ref varchar(128) AFTER rowid;
