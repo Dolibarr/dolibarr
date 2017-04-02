@@ -2,8 +2,28 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-
-
+***** ChangeLog for 5.0.1 compared to 5.0.0 *****
+FIX: #6503: SQL error in "Last pending payment invoices"
+FIX: #6505 Project elements page shows greyed-out links even if the option to show actions not available is disabled
+FIX: #6507: Statistics counter show wrong total Contract numbers when the user does not have full access
+FIX: #6533 #6590
+FIX: #6535
+FIX: bank account not visible on payment card
+FIX: colspan
+FIX: Data lost during merge of thirdparties
+FIX: Detection of color brightness
+FIX: Filter on date lost after submit on time spent page
+FIX: forgottent fk_unit field on llx_supplier_propaldet
+FIX: list of projects
+FIX: LOG_ERROR does not exists. Use LOG_ERR.
+FIX: Missing total on project overview.
+FIX: multicurrency management on supplier order/invoice
+FIX: Notification sending was broken.
+FIX: origin & origin id on supplier order line
+FIX: param php doc
+FIX: Picto of project on dol_banner and box
+FIX: Some errors when downloading files.
+ 
 ***** ChangeLog for 5.0.0 compared to 4.0.* *****
 For users:
 NEW: Add module mulicurrency.
