@@ -1112,7 +1112,7 @@ table.noborder tr.liste_titre td {
 .pictowarning, .pictopreview {
     padding-<?php echo $left; ?>: 3px;
 }
-.pictoedit, .pictowarning, .pictopreview, .pictodelete {
+.pictoedit, .pictowarning, .pictodelete {
     vertical-align: text-bottom;
 }
 .colorthumb {
