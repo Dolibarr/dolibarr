@@ -1637,21 +1637,8 @@ else
 			print '<div class="div-table-responsive">';
             print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans("Ref"),$_SERVER['PHP_SELF'],"f.titre","",$param,"",$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER['PHP_SELF'],"s.nom","",$param,"",$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("AmountHT"),$_SERVER['PHP_SELF'],"f.total","",$param,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("AmountVAT"),$_SERVER['PHP_SELF'],"f.tva","",$param,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER['PHP_SELF'],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("RecurringInvoiceTemplate"),$_SERVER['PHP_SELF'],"f.frequency","",$param,'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("DateLastGeneration"),$_SERVER['PHP_SELF'],"f.date_last_gen","",$param,'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("NextDateToExecution"),$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre('');		// Field may contains ling text
-			print "</tr>\n";
-
-
 			// Filters lines
-			print '<tr class="liste_titre">';
+			print '<tr class="liste_titre_filter">';
 			// Ref
 			if (! empty($arrayfields['f.titre']['checked']))
 			{
@@ -1756,7 +1743,19 @@ else
 			print '</td>';
 			print "</tr>\n";
 
-
+			print '<tr class="liste_titre">';
+			print_liste_field_titre($langs->trans("Ref"),$_SERVER['PHP_SELF'],"f.titre","",$param,"",$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER['PHP_SELF'],"s.nom","",$param,"",$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("AmountHT"),$_SERVER['PHP_SELF'],"f.total","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("AmountVAT"),$_SERVER['PHP_SELF'],"f.tva","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER['PHP_SELF'],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("RecurringInvoiceTemplate"),$_SERVER['PHP_SELF'],"f.frequency","",$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("DateLastGeneration"),$_SERVER['PHP_SELF'],"f.date_last_gen","",$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("NextDateToExecution"),$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre('');		// Field may contains ling text
+			print "</tr>\n";
+			
+			
 			if ($num > 0)
 			{
 				$var=true;

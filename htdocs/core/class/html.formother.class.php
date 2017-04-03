@@ -121,7 +121,7 @@ class FormOther
         $result = $this->db->query($sql);
         if ($result)
         {
-            print '<select class="flat" name="'.$htmlname.'">';
+            print '<select class="flat minwidth200" name="'.$htmlname.'">';
             if ($useempty)
             {
                 print '<option value="-1">&nbsp;</option>';

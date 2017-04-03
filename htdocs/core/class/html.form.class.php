@@ -219,10 +219,10 @@ class Form
                 if (empty($notabletag)) $ret.='</td>';
 
                 if (empty($notabletag)) $ret.='<td align="left">';
-                else $ret.='<div class="clearboth"></div>';
-               	$ret.='<input type="submit" class="button'.(empty($notabletag)?'':' marginrightonly').'" name="modify" value="'.$langs->trans("Modify").'">';
+                //else $ret.='<div class="clearboth"></div>';
+               	$ret.='<input type="submit" class="button'.(empty($notabletag)?'':' ').'" name="modify" value="'.$langs->trans("Modify").'">';
                	if (preg_match('/ckeditor|textarea/',$typeofdata) && empty($notabletag)) $ret.='<br>'."\n";
-               	$ret.='<input type="submit" class="button'.(empty($notabletag)?'':' marginrightonly').'" name="cancel" value="'.$langs->trans("Cancel").'">';
+               	$ret.='<input type="submit" class="button'.(empty($notabletag)?'':' ').'" name="cancel" value="'.$langs->trans("Cancel").'">';
                	if (empty($notabletag)) $ret.='</td>';
 
                	if (empty($notabletag)) $ret.='</tr></table>'."\n";
@@ -1634,7 +1634,7 @@ class Form
 		{
 			if ($value['id'] == $ownerid) continue;
 			$userstatic->fetch($value['id']);
-			$out.=$userstatic->getNomUrl(1);
+			$out.=$userstatic->getNomUrl(-1);
 			if ($i == 0) { $ownerid = $value['id']; $out.=' ('.$langs->trans("Owner").')'; }
 			if ($nbassignetouser > 1 && $action != 'view') $out.=' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
 			//$out.=' '.($value['mandatory']?$langs->trans("Mandatory"):$langs->trans("Optional"));

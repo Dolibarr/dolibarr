@@ -93,10 +93,14 @@ print '
         padding: 1em 15px 1em 40px;
     }
     li.lilevel1 {
-        padding: 1em 15px 0.5em 20px;
-        border-top: 1px solid #ccc;
+        padding: 1em 15px 0.5em 40px;
+        border-top: 1px solid #aaa;
         margin-right: 20px;
         border-right: 0px ! important;
+    }
+    li.lilevel1:first-child {
+        margin-right: 0px;
+        margin-left: 0px;
     }
     li.lilevel1 a {
         padding-bottom: 5px;

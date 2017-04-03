@@ -225,7 +225,7 @@ if ($mode == 'supplier') $type='supplier_invoice_stats';
 
 complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
-dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
+dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 $tmp_companies = $form->select_thirdparty_list($socid,'socid',$filter,1, 0, 0, array(), '', 1);
 //Array passed as an argument to Form::selectarray to build a proper select input

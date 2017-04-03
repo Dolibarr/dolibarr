@@ -93,7 +93,7 @@ if ($id > 0 || ! empty($ref))
 		$head=product_prepare_head($object);
 		$titre=$langs->trans("CardProduct".$object->type);
 		$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-		dol_fiche_head($head, 'margin', $titre, 0, $picto);
+		dol_fiche_head($head, 'margin', $titre, -1, $picto);
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
 		

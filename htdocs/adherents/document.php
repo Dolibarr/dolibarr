@@ -108,7 +108,7 @@ if ($id > 0)
 
 		$head = member_prepare_head($object);
 
-		dol_fiche_head($head, 'document', $langs->trans("Member"),0,'user');
+		dol_fiche_head($head, 'document', $langs->trans("Member"), -1, 'user');
 
     	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
     	

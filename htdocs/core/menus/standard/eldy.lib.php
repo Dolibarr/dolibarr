@@ -466,7 +466,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
 		if (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 		{
-			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_mini);
+			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('thumbs/'.$mysoc->logo_mini);
 		}
 		else
 		{
@@ -478,7 +478,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		print '<div class="menu_titre" id="menu_titre_logo"></div>';
 		print '<div class="menu_top" id="menu_top_logo"></div>';
 		print '<div class="menu_contenu" id="menu_contenu_logo">';
-		print '<div class="center"><img class="companylogo" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 80%"></div>'."\n";
+		print '<div class="center"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 80%"></div>'."\n";
 		print '</div>';
 		print '<div class="menu_end" id="menu_end_logo"></div>';
 		print '</div>'."\n";
@@ -992,6 +992,44 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				{
 					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('',$langs->trans("Journalization"),1,$user->rights->accounting->comptarapport->lire);
 
+					// Multi journal
+					$sql = "SELECT rowid, code, label, nature";
+					$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
+					// $sql.= " WHERE entity = ".$conf->entity;
+					$sql.= " ORDER BY code";
+
+					$resql = $db->query($sql);
+					if ($resql)
+					{
+						$numr = $db->num_rows($resql);
+						$i = 0;
+
+						if ($numr > 0)
+						{
+    						while ($i < $numr)
+    						{
+    							$objp = $db->fetch_object($resql);
+    
+    							if ($objp->nature == 1) $nature="sells";
+    							if ($objp->nature == 2) $nature="purchases";
+    							if ($objp->nature == 3) $nature="bank";
+    							if ($objp->nature == 4) $nature="various";
+    							if ($objp->nature == 9) $nature="hasnew";
+    
+    							if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&code_journal='.$objp->code,dol_trunc($objp->label,25),2,$user->rights->accounting->comptarapport->lire);
+    							$i++;
+    						}
+						}
+						else
+						{
+						    // Should not happend. Entries are added
+						    $newmenu->add('',$langs->trans("NoJournalDefined"), 2, $user->rights->accounting->comptarapport->lire);
+						}
+					}
+					else dol_print_error($db);
+					$db->free($resql);
+
+					/*
 					$sql = "SELECT rowid, label, accountancy_journal";
 					$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 					$sql.= " WHERE entity = ".$conf->entity;
@@ -1019,6 +1057,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/journal/sellsjournal.php?mainmenu=accountancy&amp;leftmenu=accountancy_journal",$langs->trans("SellsJournal"),2,$user->rights->accounting->comptarapport->lire);
 					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/journal/purchasesjournal.php?mainmenu=accountancy&amp;leftmenu=accountancy_journal",$langs->trans("PurchasesJournal"),2,$user->rights->accounting->comptarapport->lire);
 					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/journal/expensereportsjournal.php?mainmenu=accountancy&amp;leftmenu=accountancy_journal",$langs->trans("ExpenseReportsJournal"),2,$user->rights->accounting->comptarapport->lire);
+					*/
 				}
 
 				// General Ledger
@@ -1043,7 +1082,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				// Fiscal year
 				if ($conf->global->MAIN_FEATURES_LEVEL > 0)     // Not yet used. In a future will lock some periods.
 				{
-				    if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("FiscalPeriod"),1,$user->rights->accounting->fiscalyear, '', $mainmenu, 'fiscalyear');
+				    if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy&leftmenu=accountancy_periods", $langs->trans("FiscalPeriod"),1,$user->rights->accounting->fiscalyear, '', $mainmenu, 'fiscalyear');
 				}
 			}
 

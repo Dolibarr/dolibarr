@@ -507,8 +507,11 @@ if ($step == 3 && $datatoimport)
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
-	print '</table><br>';
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print '</table>';
+	
+	print '<br>';
+	
+	print '<b>'.$langs->trans("InformationOnSourceFile").'</b><hr>';
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
@@ -752,8 +755,11 @@ if ($step == 4 && $datatoimport)
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
-	print '</table><br>';
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print '</table>';
+	
+	print '<br>';
+	
+	print '<b>'.$langs->trans("InformationOnSourceFile").'</b><hr>';
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
@@ -1219,8 +1225,11 @@ if ($step == 5 && $datatoimport)
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
-	print '</table><br>';
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print '</table>';
+	
+	print '<br>';
+	
+	print '<b>'.$langs->trans("InformationOnSourceFile").'</b><hr>';
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
@@ -1259,40 +1268,35 @@ if ($step == 5 && $datatoimport)
 	print $nboflines;
 	print '</td></tr>';
 
-	// Do not import first lines
+	// Lines nb to import
 	print '<tr><td>';
-	print $langs->trans("ImportFromLine");
+	print $langs->trans("ImportFromToLine");
 	print '</td><td>';
 	if ($action=='launchsimu')
 	{
-	    print '<input type="text" size="4" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
+	    print '<input type="number" class="maxwidth50" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
 	    print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
         print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
 	}
 	else
 	{
-	    print '<input type="text" size="4" name="excludefirstline" value="'.$excludefirstline.'">';
+	    print '<input type="number" class="maxwidth50" name="excludefirstline" value="'.$excludefirstline.'">';
 	    print $form->textwithpicto("", $langs->trans("SetThisValueTo2ToExcludeFirstLine"));
 	}
-	print '</td></tr>';
-
-	// Do not import end lines
-	print '<tr><td>';
-	print $langs->trans("EndAtLineNb");
-	print '</td><td>';
+	print ' - ';
 	if ($action=='launchsimu')
 	{
-	    print '<input type="text" size="4" name="endatlinenbbis" disabled="disabled" value="'.$endatlinenb.'">';
+	    print '<input type="text" class="maxwidth50" name="endatlinenbbis" disabled="disabled" value="'.$endatlinenb.'">';
 	    print '<input type="hidden" name="endatlinenb" value="'.$endatlinenb.'">';
         print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
 	}
 	else
 	{
-	    print '<input type="text" size="4" name="endatlinenb" value="'.$endatlinenb.'">';
+	    print '<input type="text" class="maxwidth50" name="endatlinenb" value="'.$endatlinenb.'">';
 	    print $form->textwithpicto("", $langs->trans("KeepEmptyToGoToEndOfFile"));
 	}
 	print '</td></tr>';
-	
+
 	print '<tr><td>';
 	print $langs->trans("KeysToUseForUpdates");
 	print '</td><td>';
@@ -1303,8 +1307,15 @@ if ($step == 5 && $datatoimport)
 		}
 		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
 	} else {
-		print $form->multiselectarray('updatekeys', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '80%');
-		print $form->textwithpicto("", $langs->trans("SelectColumnsOfYourFileForUpdateAttempt"));
+	    if (count($objimport->array_import_updatekeys[0]))
+	    {
+		  print $form->multiselectarray('updatekeys', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '80%');
+	    }
+		else
+		{
+		    print '<span class="opacitymedium">'.$langs->trans("UpdateNotYetSupportedForThisImport").'</span>';
+		}
+	    print $form->textwithpicto("", $langs->trans("SelectPrimaryColumnsForUpdateAttempt"));
 	}
 	/*echo '<pre>';
 	print_r($objimport->array_import_updatekeys);
@@ -1315,7 +1326,7 @@ if ($step == 5 && $datatoimport)
 
 	print '<br>';
 
-	print '<b>'.$langs->trans("InformationOnTargetTables").'</b>';
+	print '<b>'.$langs->trans("InformationOnTargetTables").'</b><hr>';
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnTargetTables").'</b></td></tr>';
 
@@ -1643,8 +1654,11 @@ if ($step == 6 && $datatoimport)
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
-	print '</table><br>';
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print '</table>';
+	
+	print '<br>';
+	
+	print '<b>'.$langs->trans("InformationOnSourceFile").'</b><hr>';
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
@@ -1701,7 +1715,7 @@ if ($step == 6 && $datatoimport)
 
 	print '<br>';
 
-	print '<b>'.$langs->trans("InformationOnTargetTables").'</b>';
+	print '<b>'.$langs->trans("InformationOnTargetTables").'</b><hr>';
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnTargetTables").'</b></td></tr>';
 

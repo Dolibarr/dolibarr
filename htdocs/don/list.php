@@ -160,23 +160,8 @@ if ($resql)
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","", $param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"d.societe","", $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"d.lastname","", $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.datedon","", $param,'align="center"',$sortfield,$sortorder);
-	if (! empty($conf->projet->enabled))
-	{
-		$langs->load("projects");
-		print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"fk_projet","", $param,"",$sortfield,$sortorder);
-	}
-	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"d.amount","", $param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.fk_statut","", $param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('');
-	print "</tr>\n";
-
     // Filters lines
-    print '<tr class="liste_titre">';
+    print '<tr class="liste_titre_filter">';
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
@@ -203,12 +188,26 @@ if ($resql)
     print '</td>';
 	print "</tr>\n";
 
-	$var=True;
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","", $param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"d.societe","", $param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"d.lastname","", $param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.datedon","", $param,'align="center"',$sortfield,$sortorder);
+	if (! empty($conf->projet->enabled))
+	{
+	    $langs->load("projects");
+	    print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"fk_projet","", $param,"",$sortfield,$sortorder);
+	}
+	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"d.amount","", $param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.fk_statut","", $param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('');
+	print "</tr>\n";
+	
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+
+		print '<tr class="oddeven">';
 		$donationstatic->id=$objp->rowid;
 		$donationstatic->ref=$objp->rowid;
 		$donationstatic->lastname=$objp->lastname;

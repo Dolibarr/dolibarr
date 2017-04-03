@@ -723,11 +723,10 @@ if (($action == 'create') || ($action == 'adduserldap'))
 
     print dol_set_focus('#lastname');
 
-    print '<table class="border" width="100%">';
-
-    print '<tr>';
+    print '<table class="border centpercent">';
 
     // Lastname
+    print '<tr>';
     print '<td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
     print '<td>';
     if (! empty($ldap_lastname))
@@ -1256,7 +1255,6 @@ else
 			dol_fiche_head($head, 'user', $title, 0, 'user');
 
             dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-
 
 	        print '<div class="fichecenter">';
 	        print '<div class="fichehalfleft">';
@@ -2346,35 +2344,38 @@ else
             print '</form>';
         }
 
-        print '<div class="fichecenter"><div class="fichehalfleft">';
-        /*
-         * Documents generes
-        */
-        $filename = dol_sanitizeFileName($object->ref);
-        $filedir = $conf->user->dir_output . "/" . dol_sanitizeFileName($object->ref);
-        $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-        $genallowed = $user->rights->user->user->creer;
-        $delallowed = $user->rights->user->user->supprimer;
-
-        $var = true;
-
-        $somethingshown = $formfile->show_documents('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
-
-		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, null);
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
-        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
-		// List of actions on element
-		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'user', $socid);
+        if ($action != 'edit')
+        {
+            print '<div class="fichecenter"><div class="fichehalfleft">';
+            /*
+             * Documents generes
+            */
+            $filename = dol_sanitizeFileName($object->ref);
+            $filedir = $conf->user->dir_output . "/" . dol_sanitizeFileName($object->ref);
+            $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+            $genallowed = $user->rights->user->user->creer;
+            $delallowed = $user->rights->user->user->supprimer;
+    
+            $var = true;
+    
+            $somethingshown = $formfile->show_documents('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+    
+    		// Show links to link elements
+    		$linktoelem = $form->showLinkToObjectBlock($object, null, null);
+    		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+    
+            print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+    
+    		// List of actions on element
+    		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+    		$formactions = new FormActions($db);
+    		$somethingshown = $formactions->showactions($object, 'user', $socid);
+            
+            
+            print '</div></div></div>';
+        }
         
-        
-        print '</div></div></div>';
-
-		if (! empty($conf->ldap->enabled) && ! empty($object->ldap_sid)) $ldap->close;
+		if (! empty($conf->ldap->enabled) && ! empty($object->ldap_sid)) $ldap->close();
     }
     
 }

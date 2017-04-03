@@ -521,6 +521,9 @@ textarea.centpercent {
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
 }
+.nowraponall {
+	white-space: nowrap;
+}
 .nobold {
 	font-weight: normal !important;
 }
@@ -536,6 +539,9 @@ textarea.centpercent {
 .cursorpointer {
 	cursor: pointer;
 }
+.cusormove {
+	cursor: move;
+}
 .badge {
 	display: inline-block;
 	min-width: 10px;
@@ -549,9 +555,6 @@ textarea.centpercent {
 	vertical-align: baseline;
 	background-color: #777;
 	border-radius: 10px;
-}
-.movable {
-	cursor: move;
 }
 
 .borderrightlight
@@ -1145,6 +1148,9 @@ div.statusref {
 	margin-bottom: 10px;
 	clear: both;
 }
+div.statusref img {
+    padding-left: 8px;
+}
 img.photoref, div.photoref {
 	border: 1px solid #CCC;
 	-moz-box-shadow: 3px 3px 4px #DDD;
@@ -1523,20 +1529,28 @@ foreach($mainmenuusedarray as $val)
 .bodylogin
 {
 	background: #f0f0f0;
+	display: table;
+    position: absolute;
+    height: 100%;
+    width: 100%;	
 }
+.login_center {
+	display: table-cell;
+    vertical-align: middle;
+}	
 .login_vertical_align {
 	padding: 10px;
 }
 form#login {
-	margin-top: <?php echo $dol_optimize_smallscreen?'30':'60' ?>px;
-	margin-bottom: 30px;
+	padding-bottom: 30px;
 	font-size: 13px;
 	vertical-align: middle;
 }
 .login_table_title {
 	max-width: 530px;
-	color: #888888 !important;
-	text-shadow: 1px 1px 1px #FFF;
+	color: #aaa !important;
+	padding-top: 30px;
+	/* text-shadow: 1px 1px 1px #FFF; */
 }
 .login_table label {
 	text-shadow: 1px 1px 1px #FFF;
@@ -1687,14 +1701,24 @@ img.login, img.printer, img.entity {
 	font-weight: bold;
 }
 .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
-	border-radius: 5px;
+	border-radius: 8px;
 	width: 16px;
 	height: 16px;
+    background-size: contain;
 	vertical-align: text-bottom;
 }
 img.userphoto {			/* size for user photo in lists */
+    border-radius: 9px;
     width: 18px;
     height: 18px;
+    background-size: contain;
+    vertical-align: middle;
+}
+img.userphotosmall {			/* size for user photo in lists */
+	border-radius: 6px;
+	width: 12px;
+    height: 12px;
+    background-size: contain;
     vertical-align: middle;
 }
 .span-icon-user {
@@ -1744,7 +1768,7 @@ div.vmenu, td.vmenu {
 }
 #menu_contenu_logo { padding-right: 4px; }
 .companylogo { padding-top: 4px; }
-.searchform { padding-top: 8px; }
+.searchform { padding-top: 10px; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
@@ -1941,7 +1965,7 @@ div.tabBar table.tableforservicepart2:last-child {
 }
 
 div.tabsAction {
-    margin: 20px 0em 25px 0em;
+    margin: 20px 0em 20px 0em;
     padding: 0em 0em;
     text-align: right;
 }
@@ -2423,6 +2447,7 @@ div.pagination li {
 div.pagination li.pagination a,
 div.pagination li.pagination span {
   padding: 6px 12px;
+  padding-top: 8px;
   line-height: 1.42857143;
   color: #000;
   text-decoration: none;
@@ -2462,9 +2487,10 @@ div.pagination li a:hover,
 div.pagination li span:hover,
 div.pagination li a:focus,
 div.pagination li span:focus {
-  color: #000;
-  background-color: #eee;
-  border-color: #ddd;
+    color: #000;
+    background-color: #eee;
+    border-color: #ddd;
+  	padding-top: 8px;
 }
 div.pagination li .active a,
 div.pagination li .active span,
@@ -2676,7 +2702,7 @@ tr.liste_titre_topborder td {
 .liste_titre td a.notasortlink:hover {
 	background: transparent;
 }
-tr.liste_titre:last-child th.liste_titre, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
+tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_titre_sel, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
     border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
@@ -3352,6 +3378,7 @@ a.websitebuttonsitepreview img {
 /*  Module agenda                                                                 */
 /* ============================================================================== */
 
+.agendacell { height: 60px; }
 table.cal_month    { border-spacing: 0px; }
 table.cal_month td:first-child  { border-left: 0px; }
 table.cal_month td:last-child   { border-right: 0px; }
@@ -3375,18 +3402,10 @@ table.cal_month td:last-child   { border-right: 0px; }
 .cal_today_peruser_impair { background: #F8F8F0; }
 .peruser_busy      { background: #CC8888; }
 .peruser_notbusy   { background: #EEDDDD; opacity: 0.5; }
-table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; -webkit-border-radius: 3px; border-radius: 3px;
-						-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.25);
-						moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.25);
-						box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.25);
-						background: -webkit-gradient(linear, left top, left bottom, from(#006aac), to(#00438d));
-						min-height: 20px;
-						}
+table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; -webkit-border-radius: 3px; border-radius: 3px; min-height: 20px;	}
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event td.cal_event { padding: 4px 4px !important; }
 table.cal_event td.cal_event_right { padding: 4px 4px !important; }
-ul.cal_event       { padding-right: 2px; padding-top: 1px; border: none; list-style-type: none; margin: 0 auto; padding-left: 0px; padding-start: 0px; -khtml-padding-start: 0px; -o-padding-start: 0px; -moz-padding-start: 0px; -webkit-padding-start: 0px; }
-li.cal_event       { border: none; list-style-type: none; }
 .cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }

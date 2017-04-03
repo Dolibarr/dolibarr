@@ -141,7 +141,7 @@ if (! $mesg)
 
 $head = member_stats_prepare_head($adh);
 
-dol_fiche_head($head, 'statssubscription', $langs->trans("Statistics"), 0, 'user');
+dol_fiche_head($head, 'statssubscription', $langs->trans("Statistics"), -1, 'user');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

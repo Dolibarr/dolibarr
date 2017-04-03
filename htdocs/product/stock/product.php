@@ -538,7 +538,8 @@ if ($id > 0 || $ref)
 		$head=product_prepare_head($object);
 		$titre=$langs->trans("CardProduct".$object->type);
 		$picto=($object->type==Product::TYPE_SERVICE?'service':'product');
-		dol_fiche_head($head, 'stock', $titre, 0, $picto);
+		
+		dol_fiche_head($head, 'stock', $titre, -1, $picto);
 
 		dol_htmloutput_events();
 

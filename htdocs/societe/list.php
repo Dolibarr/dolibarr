@@ -88,7 +88,7 @@ $sortorder=GETPOST("sortorder",'alpha');
 $page=GETPOST("page",'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
-if (empty($page) || $page == -1) { $page = 0 ; }
+if (empty($page) || $page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;

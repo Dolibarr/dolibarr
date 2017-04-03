@@ -1164,7 +1164,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye); 
 		$morehtmlstatus.=$tmptxt;
 	}
-	elseif ($object->element == 'contrat') 
+	elseif ($object->element == 'contrat' || $object->element == 'contract') 
 	{
         if ($object->statut==0) $morehtmlstatus.=$object->getLibStatut(2);
         else $morehtmlstatus.=$object->getLibStatut(4);
@@ -2038,12 +2038,12 @@ function dol_print_address($address, $htmlid, $mode, $id, $noprint=0, $charfornl
             if ($showgmap)
             {
                 $url=dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id,1);
-                $out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+                $out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" class="valigntextbottom" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
             }
             if ($showomap)
             {
                 $url=dol_buildpath('/openstreetmap/maps.php?mode='.$mode.'&id='.$id,1);
-                $out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+                $out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" class="valigntextbottom" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
             }
         }
 	}
@@ -2375,14 +2375,14 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  *                                  			Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
  *                                  			Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
  *                                  			Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
- *	@param		string		$morealt			Add more attribute on img tag (For example 'style="float: right"')
+ *	@param		string		$moreatt			Add more attribute on img tag (For example 'style="float: right"')
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
  *	@param		int			$srconly			Return only content of the src attribute of img.
  *  @param		int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *  @return     string       				    Return img tag
  *  @see        #img_object, #img_picto_common
  */
-function img_picto($titlealt, $picto, $morealt = '', $pictoisfullpath = false, $srconly=0, $notitle=0)
+function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly=0, $notitle=0)
 {
 	global $conf;
 
@@ -2434,7 +2434,8 @@ function img_picto($titlealt, $picto, $morealt = '', $pictoisfullpath = false, $
 		if (preg_match('/:[^\s0-9]/',$titlealt)) $tmparray=explode(':',$titlealt);		// We explode if we have TextA:TextB. Not if we have TextA: TextB
 		$title=$tmparray[0];
 		$alt=empty($tmparray[1])?'':$tmparray[1];
-		return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($title).'"').($morealt?' '.$morealt:'').'>';	// Alt is used for accessibility, title for popup
+		if ($picto == 'refresh') var_dump($moreatt);
+		return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:' class="inline-block valigntextbottom"').'>';	// Alt is used for accessibility, title for popup
 	}
 }
 
@@ -2444,16 +2445,16 @@ function img_picto($titlealt, $picto, $morealt = '', $pictoisfullpath = false, $
  *	@param	string	$titlealt			Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param	string	$picto				Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
  *										For external modules use imagename@mymodule to search into directory "img" of module.
- *	@param	string	$morealt			Add more attribute on img tag (ie: class="datecallink")
+ *	@param	string	$moreatt			Add more attribute on img tag (ie: class="datecallink")
  *	@param	int		$pictoisfullpath	If 1, image path is a full path
  *	@param	int		$srconly			Return only content of the src attribute of img.
  *  @param	int		$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *	@return	string						Return img tag
  *	@see	#img_picto, #img_picto_common
  */
-function img_object($titlealt, $picto, $morealt = '', $pictoisfullpath = false, $srconly=0, $notitle=0)
+function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly=0, $notitle=0)
 {
-	return img_picto($titlealt, 'object_'.$picto, $morealt, $pictoisfullpath, $srconly, $notitle);
+	return img_picto($titlealt, 'object_'.$picto, $moreatt, $pictoisfullpath, $srconly, $notitle);
 }
 
 /**
@@ -2461,12 +2462,12 @@ function img_object($titlealt, $picto, $morealt = '', $pictoisfullpath = false, 
  *
  *	@param      string		$titlealt         	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param      string		$picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
- *	@param		string		$morealt			Add more attribute on img tag
+ *	@param		string		$moreatt			Add more attribute on img tag
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
  *	@return     string      					Return img tag
  *  @see        #img_object, #img_picto
  */
-function img_weather($titlealt, $picto, $morealt = '', $pictoisfullpath = 0)
+function img_weather($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0)
 {
 	global $conf;
 
@@ -2474,7 +2475,7 @@ function img_weather($titlealt, $picto, $morealt = '', $pictoisfullpath = 0)
 
 	$path = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/weather/'.$picto;
 
-	return img_picto($titlealt, $path, $morealt, 1);
+	return img_picto($titlealt, $path, $moreatt, 1);
 }
 
 /**
@@ -2482,12 +2483,12 @@ function img_weather($titlealt, $picto, $morealt = '', $pictoisfullpath = 0)
  *
  *	@param      string		$titlealt         	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param      string		$picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
- *	@param		string		$morealt			Add more attribute on img tag
+ *	@param		string		$moreatt			Add more attribute on img tag
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
  *	@return     string      					Return img tag
  *  @see        #img_object, #img_picto
  */
-function img_picto_common($titlealt, $picto, $morealt = '', $pictoisfullpath = 0)
+function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0)
 {
 	global $conf;
 
@@ -2506,7 +2507,7 @@ function img_picto_common($titlealt, $picto, $morealt = '', $pictoisfullpath = 0
 		}
 	}
 
-	return img_picto($titlealt, $path, $morealt, 1);
+	return img_picto($titlealt, $path, $moreatt, 1);
 }
 
 /**
@@ -2612,9 +2613,9 @@ function img_view($titlealt = 'default', $float = 0, $other = '')
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('View');
 
-	$morealt = ($float ? 'style="float: right" ' : '').$other;
+	$moreatt = ($float ? 'style="float: right" ' : '').$other;
 
-	return img_picto($titlealt, 'view.png', $morealt);
+	return img_picto($titlealt, 'view.png', $moreatt);
 }
 
 /**
@@ -2686,17 +2687,17 @@ function img_info($titlealt = 'default')
  *	Show warning logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param	string	$morealt	Add more attribute on img tag (For example 'style="float: right"'). If 1
+ *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"'). If 1
  *	@return string      		Return img tag
  */
-function img_warning($titlealt = 'default', $morealt = '')
+function img_warning($titlealt = 'default', $moreatt = '')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
-	//return '<div class="imglatecoin">'.img_picto($titlealt, 'warning_white.png', 'class="pictowarning valignmiddle"'.($morealt ? ($morealt == '1' ? ' style="float: right"' : ' '.$morealt): '')).'</div>';
-	return img_picto($titlealt, 'warning.png', 'class="pictowarning valignmiddle"'.($morealt ? ($morealt == '1' ? ' style="float: right"' : ' '.$morealt): ''));
+	//return '<div class="imglatecoin">'.img_picto($titlealt, 'warning_white.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): '')).'</div>';
+	return img_picto($titlealt, 'warning.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): ''));
 }
 
 /**
@@ -2711,39 +2712,41 @@ function img_error($titlealt = 'default')
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Error');
 
-	return img_picto($titlealt, 'error.png');
+	return img_picto($titlealt, 'error.png', 'class="valigntextbottom"');
 }
 
 /**
  *	Show next logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
-*	@param	string	$morealt	Add more attribute on img tag (For example 'style="float: right"')
+*	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"')
   *	@return string      		Return img tag
  */
-function img_next($titlealt = 'default', $morealt='')
+function img_next($titlealt = 'default', $moreatt='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Next');
 
-	return img_picto($titlealt, 'next.png', $morealt);
+	//return img_picto($titlealt, 'next.png', $moreatt);
+	return '<span class="fa fa-chevron-right paddingright paddingleft" title="'.dol_escape_htmltag($titlealt).'"></span>';
 }
 
 /**
  *	Show previous logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param	string	$morealt	Add more attribute on img tag (For example 'style="float: right"')
+ *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_previous($titlealt = 'default', $morealt='')
+function img_previous($titlealt = 'default', $moreatt='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Previous');
 
-	return img_picto($titlealt, 'previous.png', $morealt);
+	//return img_picto($titlealt, 'previous.png', $moreatt);
+	return '<span class="fa fa-chevron-left paddingright paddingleft" title="'.dol_escape_htmltag($titlealt).'"></span>';
 }
 
 /**
@@ -2785,16 +2788,16 @@ function img_up($titlealt = 'default', $selected = 0, $moreclass='')
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$selected	Selected
- *	@param	string	$morealt	Add more attribute on img tag (For example 'style="float: right"')
+ *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_left($titlealt = 'default', $selected = 0, $morealt='')
+function img_left($titlealt = 'default', $selected = 0, $moreatt='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Left');
 
-	return img_picto($titlealt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'), $morealt);
+	return img_picto($titlealt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'), $moreatt);
 }
 
 /**
@@ -2802,16 +2805,16 @@ function img_left($titlealt = 'default', $selected = 0, $morealt='')
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$selected	Selected
- *	@param	string	$morealt	Add more attribute on img tag (For example 'style="float: right"')
+ *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_right($titlealt = 'default', $selected = 0, $morealt='')
+function img_right($titlealt = 'default', $selected = 0, $moreatt='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Right');
 
-	return img_picto($titlealt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'), $morealt);
+	return img_picto($titlealt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'), $moreatt);
 }
 
 /**
@@ -3109,7 +3112,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
  *	@param	string	$begin       ("" by defaut)
  *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
- *	@param  string	$moreattrib  Add more attributes on th ("" by defaut)
+ *	@param  string	$moreattrib  Add more attributes on th ("" by defaut). To add more css class, use param $prefix.
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.

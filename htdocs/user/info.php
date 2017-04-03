@@ -65,7 +65,7 @@ llxHeader();
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
-dol_fiche_head($head, 'info', $title, 0, 'user');
+dol_fiche_head($head, 'info', $title, -1, 'user');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';

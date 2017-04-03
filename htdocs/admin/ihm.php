@@ -26,6 +26,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -70,6 +72,26 @@ if (GETPOST('cancel'))
     $action='';
 }
 
+if ($action == 'removebackgroundlogin' && ! empty($conf->global->MAIN_LOGIN_BACKGROUND))
+{
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+    $logofile=$conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND;
+    dol_delete_file($logofile);
+    dolibarr_del_const($db, "MAIN_LOGIN_BACKGROUND",$conf->entity);
+    $mysoc->logo='';
+
+    /*$logosmallfile=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
+    dol_delete_file($logosmallfile);
+    dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$conf->entity);
+    $mysoc->logo_small='';
+
+    $logominifile=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini;
+    dol_delete_file($logominifile);
+    dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$conf->entity);
+    $mysoc->logo_mini='';*/
+}
+
 if ($action == 'update')
 {
 	dolibarr_set_const($db, "MAIN_LANG_DEFAULT",				$_POST["main_lang_default"],'chaine',0,'',$conf->entity);
@@ -97,7 +119,7 @@ if ($action == 'update')
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $conf->entity);
     else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLENOTAB', implode(',',colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'),array())),'chaine',0,'',$conf->entity);
     
-    if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_del_const($db, "THEME_ELDY_USE_HOVER", $conf->entity);
+    if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", '0', 'chaine', 0, '', $conf->entity);    // If empty, we set to '0' ('000000' is for black)
 	else dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $_POST["THEME_ELDY_USE_HOVER"], 'chaine', 0, '', $conf->entity);
 
 	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array()))));
@@ -120,9 +142,78 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK",			$_POST["MAIN_HELP_DISABLELINK"],'chaine',0,'',0);	    // Param for all entities
 	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK",         $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
 
-	// This one is not always defined
-	if (isset($_POST["MAIN_USE_PREVIEW_TABS"])) dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS", $_POST["MAIN_USE_PREVIEW_TABS"],'chaine',0,'',$conf->entity);
-
+	$varforimage='imagebackground'; $dirforimage=$conf->mycompany->dir_output.'/logos/';
+	if ($_FILES[$varforimage]["tmp_name"])
+	{
+	    if (preg_match('/([^\\/:]+)$/i',$_FILES[$varforimage]["name"],$reg))
+	    {
+	        $original_file=$reg[1];
+	
+	        $isimage=image_format_supported($original_file);
+	        if ($isimage >= 0)
+	        {
+	            dol_syslog("Move file ".$_FILES[$varforimage]["tmp_name"]." to ".$dirforimage.$original_file);
+	            if (! is_dir($dirforimage))
+	            {
+	                dol_mkdir($dirforimage);
+	            }
+	            $result=dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"],$dirforimage.$original_file,1,0,$_FILES[$varforimage]['error']);
+	            if ($result > 0)
+	            {
+	                dolibarr_set_const($db, "MAIN_LOGIN_BACKGROUND",$original_file,'chaine',0,'',$conf->entity);
+	
+	                // Create thumbs of logo (Note that PDF use original file and not thumbs)
+	                /*
+	                if ($isimage > 0)
+	                {
+	                    // Create thumbs
+	                    //$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retreive value with get...
+	
+	                    // Create small thumb, Used on logon for example
+	                    $imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+	                    if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbSmall,$reg))
+	                    {
+	                        $imgThumbSmall = $reg[1];    // Save only basename
+	                        dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall,'chaine',0,'',$conf->entity);
+	                    }
+	                    else dol_syslog($imgThumbSmall);
+	
+	                    // Create mini thumb, Used on menu or for setup page for example
+	                    $imgThumbMini = vignette($dirforimage.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
+	                    if (image_format_supported($imgThumbMini) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbMini,$reg))
+	                    {
+	                        $imgThumbMini = $reg[1];     // Save only basename
+	                        dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini,'chaine',0,'',$conf->entity);
+	                    }
+	                    else dol_syslog($imgThumbMini);
+	                }
+	                else dol_syslog("ErrorImageFormatNotSupported",LOG_WARNING);
+	                */
+	            }
+	            else if (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
+	            {
+	                $error++;
+	                $langs->load("errors");
+	                $tmparray=explode(':',$result);
+	                setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus',$tmparray[1]), null, 'errors');
+	            }
+	            else
+	            {
+	                $error++;
+	                setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+	            }
+	        }
+	        else
+	        {
+	            $error++;
+	            $langs->load("errors");
+	            setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
+	        }
+	    }
+	}
+	
+	
+	
 	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -152,7 +243,7 @@ if ($action == 'edit')	// Edit
     //WYSIWYG Editor
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
 
@@ -160,7 +251,7 @@ if ($action == 'edit')	// Edit
     
     print '<br>';
     print '<table summary="edit" class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Language").'</td><td></td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
@@ -230,16 +321,6 @@ if ($action == 'edit')	// Edit
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
-
-    // Activate preview tab on element card
-    if (class_exists("Imagick"))
-	{
-	    print '<tr><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
-	    print $form->selectyesno('MAIN_USE_PREVIEW_TABS',isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:0,1);
-	    print '</td>';
-		print '<td width="20">&nbsp;</td>';
-		print '</tr>';
-	}
 
     // First day for weeks
     print '<tr><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
@@ -315,14 +396,6 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 	
-	// Message on login page
-    print '<tr><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
-
-    $doleditor = new DolEditor('main_home', (isset($conf->global->MAIN_HOME)?$conf->global->MAIN_HOME:''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
-	$doleditor->Create();
-
-	print '</td></tr>'."\n";
-
 	// Message of the day on home page
     print '<tr><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
 
@@ -333,6 +406,40 @@ if ($action == 'edit')	// Edit
 
 	print '</table>'."\n";
 
+	print '<br>';
+	
+	// Other
+	print '<table summary="edit" class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td width="35%">'.$langs->trans("LoginPage").'</td><td></td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+	
+	// Message on login page
+	print '<tr><td>'.$langs->trans("MessageLogin").'</td><td colspan="2">';
+	$doleditor = new DolEditor('main_home', (isset($conf->global->MAIN_HOME)?$conf->global->MAIN_HOME:''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
+	$doleditor->Create();
+	print '</td></tr>'."\n";
+	
+	// Logo
+	$var=!$var;
+	print '<tr'.dol_bc($var,'hideonsmartphone').'><td><label for="imagebackground">'.$langs->trans("BackgroundImageLogin").' (png,jpg)</label></td><td colspan="2">';
+	print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
+	print '<input type="file" class="flat class=minwidth200" name="imagebackground" id="imagebackground">';
+	print '</td><td class="nocellnopadd" valign="middle" align="right">';
+	if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
+	    print '<a href="'.$_SERVER["PHP_SELF"].'?action=removebackgroundlogin">'.img_delete($langs->trans("Delete")).'</a>';
+	    if (file_exists($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND)) {
+	        print ' &nbsp; ';
+	        print '<img width="100px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/'.$conf->global->MAIN_LOGIN_BACKGROUND).'">';
+	    }
+	} else {
+	    print '<img width="100" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+	}
+	print '</td></tr></table>';
+	print '</td></tr>';
+	
+	print '</table>'."\n";
+	
 
     print '<br><div class="center">';
     print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
@@ -346,7 +453,7 @@ else	// Show
 {
     // Language
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td><td>&nbsp;</td></tr>';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Language").'</td><td></td><td>&nbsp;</td></tr>';
 
     print '<tr class="oddeven"><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
     $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
@@ -412,16 +519,6 @@ else	// Show
     print '<td width="20">&nbsp;</td>';
     print "</tr>";
 
-    // Activate preview tab on element card
-    if (class_exists("Imagick"))
-	{
-		
-	    print '<tr class="oddeven"><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
-	    print yn(isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:0)."</td>";
-		print '<td width="20">&nbsp;</td>';
-		print "</tr>";
-	}
-
 	// First day for weeks
     print '<tr class="oddeven"><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
     print $langs->trans("Day".(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'));
@@ -486,12 +583,6 @@ else	// Show
     print yn((isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0),1);
     print '</td></tr>';
 
-	// Message login
-    print '<tr class="oddeven"><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
-    if (isset($conf->global->MAIN_HOME)) print dol_htmlcleanlastbr($conf->global->MAIN_HOME);
-    else print '&nbsp;';
-    print '</td></tr>'."\n";
-
     // Message of the day
     print '<tr class="oddeven"><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
     if (isset($conf->global->MAIN_MOTD)) print dol_htmlcleanlastbr($conf->global->MAIN_MOTD);
@@ -500,6 +591,39 @@ else	// Show
 
     print '</table>'."\n";
 
+    print '<br>';
+    
+    // Login page
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("LoginPage").'</td><td></td><td>&nbsp;</td></tr>';
+
+    // Message login
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
+    if (isset($conf->global->MAIN_HOME)) print dol_htmlcleanlastbr($conf->global->MAIN_HOME);
+    else print '&nbsp;';
+    print '</td></tr>'."\n";
+    
+    // Background login
+    // Logo
+    $var=!$var;
+    print '<tr class="oddeven"><td>'.$langs->trans("BackgroundImageLogin").'</td><td colspan="2">';
+    print '<div class="tagtable centpercent"><div class="tagtr inline-block centpercent valignmiddle"><div class="tagtd inline-block valignmiddle left">';
+    print $conf->global->MAIN_LOGIN_BACKGROUND;
+    print '</div><div class="tagtd inline-block valignmiddle left">';
+    // It offers the generation of the thumbnail if it does not exist
+    if ($conf->global->MAIN_LOGIN_BACKGROUND && is_file($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND))
+    {
+        print '<img class="img_logo" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'">';
+    }
+    else
+    {
+        print '<img class="img_logo" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+    }
+    print '</div></div></div>';
+    print '</td></tr>';
+    
+    print '</table>'."\n";
+    
     print '<div class="tabsAction">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
     print '</div>';

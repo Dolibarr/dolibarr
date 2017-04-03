@@ -79,7 +79,7 @@ class box_lastlogin extends ModeleBoxes
         );
         $this->info_box_contents[$line][1] = array(
             'td' => '',
-            'text' => $user->getNomUrl(1),
+            'text' => $user->getNomUrl(-1),
             'asis' => 1
         );
         
