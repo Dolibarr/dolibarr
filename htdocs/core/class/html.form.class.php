@@ -5176,7 +5176,7 @@ class Form
      */
     static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
     {
-        global $conf,$user;
+        global $conf,$langs,$user;
 
         if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
 
@@ -5209,7 +5209,7 @@ class Form
            }
            if ($val['label'])
 	       {
-	           $lis.='<li><input type="checkbox" value="'.$key.'"'.(empty($val['checked'])?'':' checked="checked"').'/>'.dol_escape_htmltag($val['label']).'</li>';
+	           $lis.='<li><input type="checkbox" value="'.$key.'"'.(empty($val['checked'])?'':' checked="checked"').'/>'.dol_escape_htmltag($langs->trans($val['label'])).'</li>';
 	           $listcheckedstring.=(empty($val['checked'])?'':$key.',');
 	       }
         }
