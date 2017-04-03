@@ -731,7 +731,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
                if (! empty($arrayfields["ef.".$key]['checked'])) 
                {
     				$align=$extrafields->getAlignFlag($key);
-    				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    				print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
                }
     	   }
     	}*/
