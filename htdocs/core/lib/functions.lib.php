@@ -3106,7 +3106,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
 /**
  *	Get title line of an array
  *
- *	@param	string	$name        Label of field
+ *	@param	string	$name        Translation key of field
  *	@param	int		$thead		 0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
  *	@param	string	$file        Url used when we click on sort picto
  *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
@@ -3120,7 +3120,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  */
 function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="", $prefix="")
 {
-	global $conf;
+	global $conf, $langs;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
 
 	$sortorder=strtoupper($sortorder);
@@ -3154,7 +3154,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		}
 	}
 
-	$out.=$name;
+	$out.=$langs->trans($name);
 
 	if (empty($thead) && $field)    // If this is a sort field
 	{

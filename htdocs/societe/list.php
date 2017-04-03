@@ -147,32 +147,32 @@ $checkedprofid6=0;
 $checkprospectlevel=(in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $checkstcomm=(in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $arrayfields=array(
-    's.nom'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
-    's.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
-    's.code_client'=>array('label'=>$langs->trans("CustomerCodeShort"), 'checked'=>$checkedcustomercode),
-    's.code_fournisseur'=>array('label'=>$langs->trans("SupplierCodeShort"), 'checked'=>$checkedsuppliercode, 'enabled'=>(! empty($conf->fournisseur->enabled))),
-    's.code_compta'=>array('label'=>$langs->trans("CustomerAccountancyCodeShort"), 'checked'=>$checkedcustomeraccountcode),
-    's.code_compta_fournisseur'=>array('label'=>$langs->trans("SupplierAccountancyCodeShort"), 'checked'=>$checkedsupplieraccountcode, 'enabled'=>(! empty($conf->fournisseur->enabled))),
-    's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
-    's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
-    'state.nom'=>array('label'=>$langs->trans("State"), 'checked'=>0),
-	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
-    's.email'=>array('label'=>$langs->trans("Email"), 'checked'=>0),
-    's.url'=>array('label'=>$langs->trans("Url"), 'checked'=>0),
-    's.phone'=>array('label'=>$langs->trans("Phone"), 'checked'=>1),
-    'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
-    's.siren'=>array('label'=>$langs->trans("ProfId1Short"), 'checked'=>$checkedprofid1),
-    's.siret'=>array('label'=>$langs->trans("ProfId2Short"), 'checked'=>$checkedprofid2),
-    's.ape'=>array('label'=>$langs->trans("ProfId3Short"), 'checked'=>$checkedprofid3),
-    's.idprof4'=>array('label'=>$langs->trans("ProfId4Short"), 'checked'=>$checkedprofid4),
-    's.idprof5'=>array('label'=>$langs->trans("ProfId5Short"), 'checked'=>$checkedprofid5),
-    's.idprof6'=>array('label'=>$langs->trans("ProfId6Short"), 'checked'=>$checkedprofid6),
+    's.nom'=>array('label'=>"Company", 'checked'=>1),
+    's.barcode'=>array('label'=>"Gencod", 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
+    's.code_client'=>array('label'=>"CustomerCodeShort", 'checked'=>$checkedcustomercode),
+    's.code_fournisseur'=>array('label'=>"SupplierCodeShort", 'checked'=>$checkedsuppliercode, 'enabled'=>(! empty($conf->fournisseur->enabled))),
+    's.code_compta'=>array('label'=>"CustomerAccountancyCodeShort", 'checked'=>$checkedcustomeraccountcode),
+    's.code_compta_fournisseur'=>array('label'=>"SupplierAccountancyCodeShort", 'checked'=>$checkedsupplieraccountcode, 'enabled'=>(! empty($conf->fournisseur->enabled))),
+    's.town'=>array('label'=>"Town", 'checked'=>1),
+    's.zip'=>array('label'=>"Zip", 'checked'=>1),
+    'state.nom'=>array('label'=>"State", 'checked'=>0),
+	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
+    's.email'=>array('label'=>"Email", 'checked'=>0),
+    's.url'=>array('label'=>"Url", 'checked'=>0),
+    's.phone'=>array('label'=>"Phone", 'checked'=>1),
+    'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers),
+    's.siren'=>array('label'=>"ProfId1Short", 'checked'=>$checkedprofid1),
+    's.siret'=>array('label'=>"ProfId2Short", 'checked'=>$checkedprofid2),
+    's.ape'=>array('label'=>"ProfId3Short", 'checked'=>$checkedprofid3),
+    's.idprof4'=>array('label'=>"ProfId4Short", 'checked'=>$checkedprofid4),
+    's.idprof5'=>array('label'=>"ProfId5Short", 'checked'=>$checkedprofid5),
+    's.idprof6'=>array('label'=>"ProfId6Short", 'checked'=>$checkedprofid6),
     'customerorsupplier'=>array('label'=>'Nature', 'checked'=>1),
-    's.fk_prospectlevel'=>array('label'=>$langs->trans("ProspectLevelShort"), 'checked'=>$checkprospectlevel),
-	's.fk_stcomm'=>array('label'=>$langs->trans("StatusProsp"), 'checked'=>$checkstcomm),
-    's.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-    's.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-    's.status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+    's.fk_prospectlevel'=>array('label'=>"ProspectLevelShort", 'checked'=>$checkprospectlevel),
+	's.fk_stcomm'=>array('label'=>"StatusProsp", 'checked'=>$checkstcomm),
+    's.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
+    's.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+    's.status'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -870,14 +870,14 @@ if (! empty($arrayfields['s.fk_stcomm']['checked']))               print_liste_f
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val)
-   {
-       if (! empty($arrayfields["ef.".$key]['checked']))
-       {
-			$align=$extrafields->getAlignFlag($key);
-			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-       }
-   }
+    foreach($extrafields->attribute_label as $key => $val)
+    {
+        if (! empty($arrayfields["ef.".$key]['checked']))
+        {
+            $align=$extrafields->getAlignFlag($key);
+            print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+        }
+    }
 }
 // Hook fields
 $parameters=array('arrayfields'=>$arrayfields);

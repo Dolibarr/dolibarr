@@ -109,12 +109,12 @@ if (empty($user->socid)) $fieldstosearchall["t.note_private"]="NotePrivate";
 
 // Definition of fields for list
 $arrayfields=array(
-    't.field1'=>array('label'=>$langs->trans("Field1"), 'checked'=>1),
-    't.field2'=>array('label'=>$langs->trans("Field2"), 'checked'=>1),
-    //'t.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))),
-    't.datec'=>array('label'=>$langs->trans("DateCreationShort"), 'checked'=>0, 'position'=>500),
-    't.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-    //'t.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+    't.field1'=>array('label'=>"Field1", 'checked'=>1),
+    't.field2'=>array('label'=>"Field2", 'checked'=>1),
+    //'t.entity'=>array('label'=>"Entity", 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))),
+    't.datec'=>array('label'=>"DateCreationShort", 'checked'=>0, 'position'=>500),
+    't.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+    //'t.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -354,7 +354,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
        if (! empty($arrayfields["ef.".$key]['checked'])) 
        {
 			$align=$extrafields->getAlignFlag($key);
-			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
        }
    }
 }
