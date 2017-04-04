@@ -692,7 +692,7 @@ div.fiche>form>div.div-table-responsive {
     justify-content: flex-start;
 }
 .thumbstat {
-	flex: 1 1 120px;
+	flex: 1 1 114px;
 }
 .thumbstat150 {
 	flex: 1 1 150px;
@@ -1681,7 +1681,7 @@ div.login_block_other { padding-top: 3px; }
 	height: 16px;
 }
 .login_block_elem_name {
-	margin-top: 5px;
+	margin-top: 1px;
 }
 .atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackvmenu; ?> !important;

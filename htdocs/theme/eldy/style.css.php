@@ -691,7 +691,7 @@ div.fiche>form>div.div-table-responsive {
     justify-content: flex-start;
 }
 .thumbstat {
-	flex: 1 1 120px;
+	flex: 1 1 114px;
 }
 .thumbstat150 {
 	flex: 1 1 170px;
@@ -4538,10 +4538,17 @@ div.tabsElem a.tab {
 /* rule to reduce top menu - 3rd reduction */
 @media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 8; ?>px)	/* reduction 3 */
 {
-	/* Reduce login top right info */
-	.usertextatoplogin {
-		display: none;
+	.side-nav {
+		z-index: 200;
+    	background: #FFF;
+		padding-top: 70px;
+    }
+	#id-left {
+    	z-index: 201;
+        background: #FFF;
 	}
+	    
+	/* Reduce login top right info */
 	.help {
 	<?php if ($disableimages) {  ?>
 		display: none;
@@ -4551,19 +4558,33 @@ div.tabsElem a.tab {
 	<?php if (GETPOST("optioncss") == 'print') {  ?>
 		display:none;
 	<?php } else { ?>
-		padding-<?php echo $right; ?>: 78px;
+		padding-<?php echo $right; ?>: 0;
 	<?php } ?>
 	}
 	div.login_block_user {
 		min-width: 0;
+		width: 100%;
 	}
 	div.login_block {
-		top: 2px;
-		<?php if ($disableimages) {  ?>
-			max-width: 100px;
-		<?php } else { ?>
-			max-width: 82px;
-		<?php } ?>
+		display: none;
+		top: inherit !important;
+		left: 0 !important;
+		text-align: center;
+        vertical-align: middle;
+        background: #FFF;
+        height: 42px;
+		padding-top: 20px;
+		padding-left: 20px;
+    	padding-right: 20px;
+    	z-index: 202;
+    	min-width: 190px;
+    	max-width: 190px;
+    	width: 190px;
+    }
+	div.login_block_user, div.login_block_other { clear: both; }
+	.atoplogin, .atoplogin:hover
+	{
+		color: #000 !important;
 	}
 	.login_block_elem {
 		padding: 0 !important;
