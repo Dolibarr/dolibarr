@@ -349,6 +349,12 @@ span.timesheetalreadyrecorded input {
 select.flat, form.flat select {
 	font-weight: normal;
 }
+.optionblue {
+	color: rgb(<?php echo $colortextlink; ?>) !important;
+}
+.select2-results .select2-highlighted.optionblue {
+	color: #FFF !important;
+}
 .optiongrey, .opacitymedium {
 	opacity: 0.5;
 }
@@ -906,14 +912,14 @@ div.blockvmenulogo
 {
 	border-bottom: 0 !important;
 }
-div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks {
+div.blockvmenupair, div.blockvmenuimpair {
 	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
 	border-bottom: 1px solid #e0e0e0;
 	padding-left: 0 !important;
 }
-div.blockvmenuend {
+div.blockvmenuend, div.blockvmenubookmarks {
 	border: none !important;
 	padding-left: 0 !important;
 }
@@ -1718,14 +1724,19 @@ div.vmenu, td.vmenu {
 }
 
 .vmenu {
+    width: 190px;
 	margin-left: 4px;
 	<?php if (GETPOST("optioncss") == 'print') { ?>
     display: none;
 	<?php } ?>
 }
 
+/* Force vmenusearchselectcombo with type=text differently than without because beautify with select2 affect vmenusearchselectcombo differently */ 
+input.vmenusearchselectcombo[type=text] {
+	width: 180px !important;
+}
 .vmenusearchselectcombo {
-	width: 188px;
+	width: 188px; 
 }
 
 .menu_contenu {
@@ -1757,10 +1768,6 @@ a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { font-size:
 a.vsmenu.addbookmarkpicto {
     padding-right: 10px;
 }
-.vmenu div.blockvmenubookmarks, .vmenu div.blockvmenuend, .vmenu div.blockvmenulogo, .vmenu div.blockvmenusearchphone
-{
-/*	border-bottom: 1px solid #BBB; */
-}
 div.blockvmenusearchphone
 {
 	border-bottom: none !important;
@@ -1771,7 +1778,7 @@ div.blockvmenusearchphone
 }
 .vmenu div.blockvmenusearch
 {
-	padding-bottom: 14px;
+	padding-bottom: 4px;
 /*	border-bottom: 1px solid #e0e0e0;  */
 }
 .vmenu div.blockvmenuend
@@ -1785,7 +1792,7 @@ div.blockvmenusearchphone
 }
 div.blockvmenubookmarks
 {
-	padding-bottom: 6px !important;
+	padding-bottom: 16px !important;
 }
 div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend
 {
@@ -3862,14 +3869,19 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.select2-default {
+    color: #999 !important;
+    /*opacity: 0.2;*/
+}
 .select2-choice, .select2-container .select2-choice {
-	border-bottom: solid 1px rgba(0,0,0,.2);
+	border-bottom: solid 1px rgba(0,0,0,.4);
 }
 .select2-container .select2-choice > .select2-chosen {
     margin-right: 23px;
 }
 .select2-container .select2-choice .select2-arrow {
 	border-radius: 0;
+    background: transparent;
 }
 .select2-container-multi .select2-choices {
 	background-image: none;
@@ -3988,18 +4000,18 @@ a span.select2-chosen
 
 
 /* Special case for the select2 add widget */
-#addbox .select2-container .select2-choice > .select2-chosen {
+#addbox .select2-container .select2-choice > .select2-chosen, #actionbookmark .select2-container .select2-choice > .select2-chosen {
     text-align: left;
-    opacity: 0.2;
+    opacity: 0.4;
 }
 /* Style used before the select2 js is executed on boxcombo */
-#boxcombo.boxcombo {
+#boxbookmark.boxcombo, #boxcombo.boxcombo {
     text-align: left;
-    opacity: 0.2;
-    border-bottom: 1px solid #000;
+    opacity: 0.4;
+    border-bottom: solid 1px rgba(0,0,0,.4) !important;
     height: 26px;
     line-height: 24px;
-    padding: 0 0 5px 5px;
+    padding: 0 0 2px 0;
     vertical-align: top;
 }
 
