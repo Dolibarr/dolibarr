@@ -286,10 +286,20 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
  *  This prefix is unique for instance and avoid conflict between multi-instances,
  *  even when having two instances with one root dir or two instances in virtual servers
  *
+ *  @param  string  $mode       '' or 'email'              
  *  @return	string      		A calculated prefix
  */
-function dol_getprefix()
+function dol_getprefix($mode='')
 {
+    global $conf;
+    
+    // If MAIL_PREFIX_FOR_EMAIL_ID is set and prefix is for email
+    if ($mode == 'email' && ! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))
+    {
+        if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
+        else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
+    }
+
 	if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
 	{
 		return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
@@ -3320,7 +3330,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
  * 	@param	float		$vatrate		        Vat rate. Can be '8.5' or '8.5 (VATCODEX)' for example
  * 	@param  int			$local		         	Local tax to search and return (1 or 2 return only tax rate 1 or tax rate 2)
  *  @param  Societe		$thirdparty_buyer    	Object of buying third party
- *  @param	Societe		$thirdparty_seller		Object of selling third party
+ *  @param	Societe		$thirdparty_seller		Object of selling third party ($mysoc if not defined)
  *  @param	int			$vatnpr					If vat rate is NPR or not
  * 	@return	mixed			   					0 if not found, localtax rate if found
  *  @see get_default_tva
@@ -3379,18 +3389,15 @@ function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller
 		if ($local == 1 && ! $thirdparty_seller->localtax1_assuj) return 0;
 		if ($local == 2 && ! $thirdparty_seller->localtax2_assuj) return 0;
 	}
-	//if ($local == 0 && ! $thirdparty_seller->localtax1_assuj && ! $thirdparty_seller->localtax2_assuj) return array('localtax1'=>0,'localtax2'=>0);
 
-	// Do not enabled this. We want localtax that match the vat rate.
-	// If we forced a vat, we must also force local tax
-	/*
-	if (is_object($thirdparty_buyer))
+	// For some country MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY is forced to on.
+	if (in_array($mysoc->country_code, array('ES')))
 	{
-		if ($thirdparty_seller->country_code != $thirdparty_buyer->country_code) return 0;
-	}*/
-
+	    $conf->global->MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY = 1;
+	}
+	    
 	// Search local taxes
-	if ($mysoc->country_code == 'ES' || ! empty($conf->global->MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY))
+	if (! empty($conf->global->MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY))
 	{
     	if ($local==1)
     	{

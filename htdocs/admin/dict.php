@@ -1292,8 +1292,6 @@ if ($id)
 							}
 							else if ($fieldlist[$field]=='taux') {
                                 $valuetoshow = price($valuetoshow, 0, $langs, 0, 0);
-							  if ($obj->localtax1 == 0)
-							    $valuetoshow = '';
 							  $align="right";
 							}
 							else if (in_array($fieldlist[$field],array('recuperableonly')))
