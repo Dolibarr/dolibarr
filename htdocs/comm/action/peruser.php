@@ -598,12 +598,7 @@ echo '<td></td>';
 $i=0;	// 0 = sunday,
 while ($i < 7)
 {
-	if (($i + 1) < $begin_d || ($i + 1) > $end_d)
-	{
-		$i++;
-		continue;
-	}
-	echo '<td align="center" colspan="'.($end_h - $begin_h).'">';
+	echo '<td align="center" colspan="'.($end_h + 1 - $begin_h).'">';
 	echo $langs->trans("Day".(($i+(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1)) % 7));
 	print "<br>";
 	if ($i) print dol_print_date(dol_time_plus_duree($firstdaytoshow, $i, 'd'),'day');
@@ -618,12 +613,7 @@ echo '<td></td>';
 $i=0;
 while ($i < 7)
 {
-	if (($i + 1) < $begin_d || ($i + 1) > $end_d)
-	{
-		$i++;
-		continue;
-	}
-	for ($h = $begin_h; $h < $end_h; $h++)
+	for ($h = $begin_h; $h <= $end_h; $h++)
 	{
 		echo '<td align="center">';
 		print '<small style="font-family: courier">'.sprintf("%02d",$h).'</small>';
@@ -737,14 +727,8 @@ foreach ($usernames as $username)
 
 	// Lopp on each day of week
 	$i = 0;
-	for ($iter_day = 0; $iter_day < 8; $iter_day++)
+	for ($iter_day = 0; $iter_day < 7; $iter_day++)
 	{
-		if (($i + 1) < $begin_d || ($i + 1) > $end_d)
-		{
-			$i++;
-			continue;
-		}
-
         // Show days of the current week
 		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
 		$tmparray = dol_getdate($curtime,'fast');
@@ -1030,7 +1014,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		}
 	}
 
-	for ($h = $begin_h; $h < $end_h; $h++)
+	for ($h = $begin_h; $h <= $end_h; $h++)
 	{
 		$color1='';$color2='';
 		$style1='';$style2='';
