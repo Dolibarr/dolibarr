@@ -494,6 +494,16 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
         print "<!-- End SearchForm -->\n";
 	}
 
+	if (is_array($moredata) && ! empty($moredata['bookmarks']))
+	{
+	    print "\n";
+	    print "<!-- Begin Bookmarks -->\n";
+	    print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
+	    print $moredata['bookmarks'];
+	    print '</div>'."\n";
+	    print "<!-- End Bookmarks -->\n";
+	}
+	
 	/**
 	 * We update newmenu with entries found into database
 	 * --------------------------------------------------
@@ -1630,16 +1640,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		}
 
 		if ($altok) print '<div class="blockvmenuend"></div>';
-	}
-
-	if (is_array($moredata) && ! empty($moredata['bookmarks']))
-	{
-	        print "\n";
-	        print "<!-- Begin Bookmarks -->\n";
-	        print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
-	        print $moredata['bookmarks'];
-	        print '</div>'."\n";
-	        print "<!-- End Bookmarks -->\n";
 	}
 
 	return count($menu_array);

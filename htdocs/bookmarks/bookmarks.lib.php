@@ -41,9 +41,12 @@ function printBookmarksList($aDb, $aLangs)
 	$langs->load("bookmarks");
 
 	$url= $_SERVER["PHP_SELF"].(! empty($_SERVER["QUERY_STRING"])?'?'.$_SERVER["QUERY_STRING"]:'');
-
+    // TODO Add post param to $url
+    
 	$ret = '';
+	
 	// Menu bookmark
+	/*
 	$ret.= '<div class="menu_titre">';
 	$ret.= '<table class="nobordernopadding" width="100%" summary="bookmarkstable"><tr><td>';
 	$ret.= '<a class="vmenu" href="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</a>';
@@ -56,9 +59,18 @@ function printBookmarksList($aDb, $aLangs)
 	}
 	$ret.= '</td></tr></table>';
 	$ret.= '</div>';
-
+    */
 	$ret.= '<div class="menu_top"></div>'."\n";
 
+	$ret.= '<form id="actionbookmark" name="actionbookmark" method="POST" action="">';
+	$ret.= '<select name="bookmark" id="boxbookmark" class="flat boxcombo vmenusearchselectcombo">';
+	$ret.= '<option hidden value="listbookmarks" class="optiongrey" selected rel="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</option>';
+    $ret.= '<option value="listbookmark" class="optionblue" rel="'.dol_escape_js(DOL_URL_ROOT.'/bookmarks/list.php').'">'.dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
+	if ($user->rights->bookmark->creer)
+	{
+    	$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
+    	$ret.= '<option value="newbookmark" class="optionblue" rel="'.dol_escape_js($urltoadd).'">'.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks')).'...</option>';
+	}
 	// Menu with all bookmarks
 	if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU))
 	{
@@ -71,9 +83,12 @@ function printBookmarksList($aDb, $aLangs)
 			$i=0;
 			while ($i < $conf->global->BOOKMARKS_SHOW_IN_MENU && $obj = $db->fetch_object($resql))
 			{
-				$ret.='<div class="menu_contenu"><a class="vsmenu" title="'.$obj->title.'" href="'.$obj->url.'"'.($obj->target == 1?' target="_blank"':'').'>';
+				//$ret.='<div class="menu_contenu">';
+			    $ret.='<option name="bookmark'.$obj->rowid.'" value="'.$obj->rowid.'" '.($obj->target == 1?' target="_blank"':'').' rel="'.dol_escape_js($obj->url).'">'.img_picto('','object_bookmark').' '.$obj->title.'</option>';
+				/*$ret.='<a class="vsmenu" title="'.$obj->title.'" href="'.$obj->url.'"'.($obj->target == 1?' target="_blank"':'').'>';
 				if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $ret.=' '.img_object('','bookmark').' ';
-				$ret.= dol_trunc($obj->title, 20).'</a><br></div>';
+				$ret.= dol_trunc($obj->title, 20).'</a><br>';*/
+				//$ret.='</div>';
 				$i++;
 			}
 		}
@@ -82,7 +97,24 @@ function printBookmarksList($aDb, $aLangs)
 			dol_print_error($db);
 		}
 	}
-
+	
+	$ret.= '</select>';
+	$ret.= '</form>';
+	
+	$ret.=ajax_combobox('boxbookmark');
+	
+	$ret.='<script type="text/javascript">
+        	$(document).ready(function () {';
+	$ret.='    jQuery("#boxbookmark").change(function() {
+	            var urlselected = jQuery("#boxbookmark option:selected").attr("rel");
+	            var urltarget = jQuery("#boxbookmark option:selected").attr("target");
+	            if (! urltarget) { urltarget=""; }
+	            console.log("We change select bookmark. We choose "+urlselected+" with target "+urltarget);
+                jQuery("form#actionbookmark").attr("target",urltarget);
+	            jQuery("form#actionbookmark").attr("action",urlselected);
+	            jQuery("#actionbookmark").submit();
+	       });';
+	$ret.='})</script>';
 	$ret .= '<div class="menu_end"></div>';
 
 	return $ret;

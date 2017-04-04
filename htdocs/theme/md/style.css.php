@@ -346,6 +346,12 @@ span.timesheetalreadyrecorded input {
 select.flat, form.flat select {
 	font-weight: normal;
 }
+.optionblue {
+	color: rgb(<?php echo $colortextlink; ?>) !important;
+}
+.select2-results .select2-highlighted.optionblue {
+	color: #FFF !important;
+}
 .optiongrey, .opacitymedium {
 	opacity: 0.5;
 }
@@ -686,7 +692,7 @@ div.fiche>form>div.div-table-responsive {
     justify-content: flex-start;
 }
 .thumbstat {
-	flex: 1 1 120px;
+	flex: 1 1 114px;
 }
 .thumbstat150 {
 	flex: 1 1 150px;
@@ -1112,7 +1118,7 @@ table.noborder tr.liste_titre td {
 .pictowarning, .pictopreview {
     padding-<?php echo $left; ?>: 3px;
 }
-.pictoedit, .pictowarning, .pictopreview, .pictodelete {
+.pictoedit, .pictowarning, .pictodelete {
     vertical-align: text-bottom;
 }
 .colorthumb {
@@ -1675,7 +1681,7 @@ div.login_block_other { padding-top: 3px; }
 	height: 16px;
 }
 .login_block_elem_name {
-	margin-top: 5px;
+	margin-top: 1px;
 }
 .atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackvmenu; ?> !important;
@@ -1782,7 +1788,7 @@ font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; text-decoration: none; }
 
 
-div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
+div.blockvmenupair, div.blockvmenuimpair
 {
 	font-family: <?php print $fontlist ?>;
 	color: #000000;
@@ -1797,11 +1803,21 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
     padding-bottom: 10px;
     border-bottom: 1px solid #e0e0e0;
 }
+div.blockvmenubookmarks
+{
+	padding-bottom: 16px !important;
+}
+div.blockvmenuend {
+	border: none !important;
+	padding-left: 0 !important;
+}
 a.vsmenu.addbookmarkpicto {
     padding-right: 10px;
 }
-
-div.blockvmenusearch
+div.blockvmenufirst {
+	padding-top: 10px;
+}
+div.blockvmenusearch, div.blockvmenubookmarks
 {
 	font-family: <?php print $fontlist ?>;
 	color: #000000;
@@ -1811,7 +1827,7 @@ div.blockvmenusearch
     padding-right: 1px;
     padding-top: 3px;
     padding-bottom: 3px;
-    margin: 1px 0px 12px 0px;
+    margin: 1px 0px 2px 0px;
 
     padding-bottom: 10px;
     /* border-bottom: 1px solid #f4f4f4; */
@@ -4103,15 +4119,15 @@ a span.select2-chosen
 
 
 /* Special case for the select2 add widget */
-#addbox .select2-container .select2-choice > .select2-chosen {
+#addbox .select2-container .select2-choice > .select2-chosen, #actionbookmark .select2-container .select2-choice > .select2-chosen {
     text-align: left;
-    opacity: 0.2;
+    opacity: 0.3;
 }
 /* Style used before the select2 js is executed on boxcombo */
-#boxcombo.boxcombo {
+#boxbookmark.boxcombo, #boxcombo.boxcombo {
     text-align: left;
-    opacity: 0.2;
-    border-bottom: 1px solid #000;
+    opacity: 0.3;
+    border-bottom: solid 1px rgba(0,0,0,.4) !important;
     height: 26px;
     line-height: 24px;
     padding: 0 0 5px 5px;
@@ -4124,7 +4140,7 @@ a span.select2-chosen
   margin: 0 0 2px 3px;
   position: relative;
   line-height: 13px;
-  color: #333;
+  color: #444;
   cursor: default;
   border: 1px solid #ddd;
   border-radius: 3px;

@@ -5618,11 +5618,11 @@ function printCommonFooter($zone='private')
     	
     	if (empty($conf->dol_use_jmobile))
     	{
-        	print '<!-- Set handler to switch left menu page -->'."\n";
+        	print '<!-- Set handler to switch left menu page (menuhider) -->'."\n";
         	print 'jQuery(".menuhider").click(function() {';
         	print '  console.log("We click on .menuhider");'."\n";
         	print "  $('.side-nav').toggle();";
-        	if ($conf->theme == 'md') print "  $('.login_block').toggle();";
+        	print "  $('.login_block').toggle();";
         	print '});'."\n";
     	}
     	

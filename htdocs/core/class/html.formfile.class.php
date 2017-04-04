@@ -229,7 +229,7 @@ class FormFile
      *      @param      integer				$allowgenifempty	Show warning if no model activated
      *      @param      integer				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
      *      @param      int					$iconPDF            Show only PDF icon with link (1/0)
-     * 		@param		int					$maxfilenamelength	Max length for filename shown
+     * 		@param		int					$notused	        Not used
      * 		@param		integer				$noform				Do not output html form tags
      * 		@param		string				$param				More param on http links
      * 		@param		string				$title				Title to show on top of form
@@ -238,10 +238,10 @@ class FormFile
      * 		@return		int										<0 if KO, number of shown files if OK
      *      @deprecated                                         Use print xxx->showdocuments() instead.
      */
-    function show_documents($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
+    function show_documents($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$notused=0,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
     {
         $this->numoffiles=0;
-        print $this->showdocuments($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed,$modelselected,$allowgenifempty,$forcenomultilang,$iconPDF,$maxfilenamelength,$noform,$param,$title,$buttonlabel,$codelang);
+        print $this->showdocuments($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed,$modelselected,$allowgenifempty,$forcenomultilang,$iconPDF,$notused,$noform,$param,$title,$buttonlabel,$codelang);
         return $this->numoffiles;
     }
 
@@ -259,7 +259,7 @@ class FormFile
      *      @param      integer				$allowgenifempty	Allow generation even if list of template ($genallowed) is empty (show however a warning)
      *      @param      integer				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
      *      @param      int					$iconPDF            Deprecated, see getDocumentsLink
-     * 		@param		int					$maxfilenamelength	Max length for filename shown
+     * 		@param		int					$notused	        Not used
      * 		@param		integer				$noform				Do not output html form tags
      * 		@param		string				$param				More param on http links
      * 		@param		string				$title				Title to show on top of form
@@ -269,7 +269,7 @@ class FormFile
      *      @param      Object              $object             Object when method is called from an object card.
      * 		@return		string              					Output string with HTML array of documents (might be empty string)
      */
-    function showdocuments($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$morepicto='',$object=null)
+    function showdocuments($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$notused=0,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$morepicto='',$object=null)
     {
 		// Deprecation warning
 		if (0 !== $iconPDF) {
@@ -297,7 +297,6 @@ class FormFile
         $hookmanager->initHooks(array('formfile'));
         $forname='builddoc';
         $out='';
-        $var=true;
 
         $headershown=0;
         $showempty=0;
@@ -691,27 +690,26 @@ class FormFile
 			{
 				foreach($file_list as $file)
 				{
-					$var=!$var;
-
 					// Define relative path for download link (depends on module)
 					$relativepath=$file["name"];										// Cas general
                     if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
 					if ($modulepart == 'export') $relativepath = $file["name"];			// Other case
 
-					$out.= "<tr ".$bc[$var].">";
+					$out.= '<tr class="oddeven">';
 
 					$documenturl = DOL_URL_ROOT.'/document.php';
 					if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) $documenturl=$conf->global->DOL_URL_ROOT_DOCUMENT_PHP;
 					
 					// Show file name with link to download
-					$out.= '<td class="nowrap">';
-					$out.= '<a data-ajax="false" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
+					$out.= '<td class="tdoverflowmax300">';
+                    $tmp = $this->showPreview($file,$modulepart,$relativepath);
+                    $out.= ($tmp?$tmp.' ':'');
+					$out.= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
 					$mime=dol_mimetype($relativepath,'',0);
 					if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
 					$out.= ' target="_blank">';
-					$out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
+					$out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.$file["name"];
 					$out.= '</a>'."\n";
-                    $out.= $this->showPreview($file,$modulepart,$relativepath);
 					$out.= '</td>';
 
 					// Show file size

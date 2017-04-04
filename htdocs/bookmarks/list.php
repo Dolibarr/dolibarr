@@ -71,9 +71,9 @@ if ($_GET["action"] == 'delete')
 
 $userstatic=new User($db);
 
-llxHeader();
+llxHeader('', $langs->trans("ListOfBookmarks"));
 
-print load_fiche_titre($langs->trans("Bookmarks"));
+print load_fiche_titre($langs->trans("ListOfBookmarks"));
 
 $sql = "SELECT b.fk_soc as rowid, b.dateb, b.rowid as bid, b.fk_user, b.url, b.target, b.title, b.favicon, b.position,";
 $sql.= " u.login, u.lastname, u.firstname";

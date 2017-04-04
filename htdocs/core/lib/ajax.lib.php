@@ -401,7 +401,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
 	$msg.= ';'."\n";
 
-	if (count($events))
+	if (count($events))    // If an array of js events to do were provided.
 	{
 		$msg.= '
 			jQuery("#'.$htmlname.'").change(function () {
@@ -414,6 +414,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 			});
 
 			function runJsCodeForEvent'.$htmlname.'(obj) {
+			    console.log("Run runJsCodeForEvent'.$htmlname.'");
 				var id = $("#'.$htmlname.'").val();
 				var method = obj.method;
 				var url = obj.url;
