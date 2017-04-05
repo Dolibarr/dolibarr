@@ -552,7 +552,7 @@ else
 					dol_print_error($db);
 				}
 			}
-                        print Get_attach_files($db,$objp->rowid,$objp->label);
+                        print Get_attach_files($db,$objp->rowid,$num,$objp->label);
 			print "</td>";
 
 			if ($objp->amount < 0)
@@ -608,10 +608,11 @@ $db->close();
 /*Function to generate the HTML code used to show the file name & download link attached to the Item covered by the bank line
  * @param $db       Object          database object   
  * @param $bankId   int             bank line id
- * @param $label      
+ * @param $num      int 	    bank statement      
+ * @param $label    string	    label used to optimise the sql querry
  * 
  */
-function Get_attach_files($db, $bankId,$label=''){
+function Get_attach_files($db, $bankId,$num,$label=''){
     $out='';
     global$conf;
      $sql='SELECT u.url_id, u.type,ff.rowid as id , ff.`ref` AS reff, f.facnumber AS `ref`,';
