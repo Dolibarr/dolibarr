@@ -150,10 +150,9 @@ class FormProjets
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
 		}
 
-
 		// Search all projects
-		$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
-		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
+		$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, s.nom as name, s.name_alias';
+		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p LEFT JOIN '.MAIN_DB_PREFIX .'societe as s ON s.rowid = p.fk_soc';
 		$sql.= " WHERE p.entity IN (".getEntity('project', 1).")";
 		if ($projectsListId !== false) $sql.= " AND p.rowid IN (".$projectsListId.")";
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
@@ -165,15 +164,9 @@ class FormProjets
 		        $sql.= " AND (p.fk_soc IN (".$socid.", ".$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.") OR p.fk_soc IS NULL)";
 		    }
 		}
-		if (!empty($filterkey)) {
-			$sql .= ' AND (';
-			$sql .= ' p.title LIKE "%'.$this->db->escape($filterkey).'%"';
-			$sql .= ' OR p.ref LIKE "%'.$this->db->escape($filterkey).'%"';
-			$sql .= ')';
-		}
+		if (!empty($filterkey)) $sql .= natural_search(array('p.title', 'p.ref'), $filterkey);
 		$sql.= " ORDER BY p.ref ASC";
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -219,8 +212,13 @@ class FormProjets
 						$labeltoshow=dol_trunc($obj->ref,18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
-						$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
-
+						$labeltoshow.=', '.dol_trunc($obj->title, $maxlength);
+						if ($obj->name) 
+						{
+						    $labeltoshow.=' - '.$obj->name;
+						    if ($obj->name_alias) $labeltoshow.=' ('.$obj->name_alias.')';
+						}
+						
 						$disabled=0;
 						if ($obj->fk_statut == 0)
 						{
