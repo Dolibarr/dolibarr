@@ -1896,15 +1896,15 @@ else
 						}
 						print '</tr>';
 
-						$var=true;
 						while ($i < $num_lignes)
 						{
 							$piece_comptable = $i + 1;
 							$objp = $db->fetch_object($resql);
-							$var=!$var;
+
 							if ($action != 'editline' || $objp->rowid != GETPOST('rowid'))
 							{
-								print '<tr '.$bc[$var].'>';
+								print '<tr class="oddeven">';
+								
 								print '<td style="text-align:center;">';
 								print img_picto($langs->trans("Document"), "object_generic");
 								print ' <span>'.$piece_comptable.'</span></td>';
@@ -1953,8 +1953,7 @@ else
 
 							if ($action == 'editline' && $objp->rowid == GETPOST('rowid'))
 							{
-									//modif ligne!!!!!
-									print '<tr '.$bc[$var].'>';
+									print '<tr class="oddeven">';
 									
 									print '<td></td>';
 
