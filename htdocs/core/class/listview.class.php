@@ -251,7 +251,7 @@ class Listview
 					if (isset($TParam['type'][$field]) && ($TParam['type'][$field]==='date' || $TParam['type'][$field]==='datetime'))
 					{
 						$k = 'Listview_'.$this->id.'_search_'.$field;
-						if ($info['recherche'] === 'calendars')
+						if ($info['search_type'] === 'calendars')
 						{
 							$value = array();
 							
@@ -338,7 +338,7 @@ class Listview
 			$value = isset($ListPOST[$this->id]['search'][$key]) ? $ListPOST[$this->id]['search'][$key] : '';
 			if ($removeFilter) $value = '';
 			
-			$typeRecherche = (is_array($param_search) && isset($param_search['recherche'])) ? $param_search['recherche'] : $param_search;  
+			$typeRecherche = (is_array($param_search) && isset($param_search['search_type'])) ? $param_search['search_type'] : $param_search;  
 			
 			if(is_array($typeRecherche))
 			{
@@ -599,7 +599,7 @@ class Listview
 		
 		$dolibarr_decalage = $this->totalRow > $this->totalRowToShow ? 1 : 0;
 		ob_start();
-		print_barre_liste($TParam['list']['title'], $TParam['limit']['page']-1, $_SERVER["PHP_SELF"], '&param', $TParam['sortfield'], $TParam['sortorder'], '', $this->totalRowToShow+$dolibarr_decalage, $this->totalRow, $TParam['list']['image'], 0, '', '', $TParam['limit']['nbLine']);
+		print_barre_liste($TParam['list']['title'], $TParam['limit']['page']-1, $_SERVER["PHP_SELF"], '&'.$TParam['list']['param_url'], $TParam['sortfield'], $TParam['sortorder'], '', $this->totalRowToShow+$dolibarr_decalage, $this->totalRow, $TParam['list']['image'], 0, '', '', $TParam['limit']['nbLine']);
 		$out .= ob_get_clean();
 		
 	
@@ -621,7 +621,7 @@ class Listview
 			if (empty($head['width'])) $head['width'] = 'auto';
 			if (!empty($head['width']) && !empty($head['text-align'])) $moreattrib .= 'style="width:'.$head['width'].';text-align:'.$head['text-align'].'"';
 
-			if (isset($TParam['search'][$field]['recherche']) && $TParam['search'][$field]['recherche'] !== false)
+			if (isset($TParam['search'][$field]['search_type']) && $TParam['search'][$field]['search_type'] !== false)
 			{
 				$TsKey = $this->getSearchKey($field, $TParam);
 				if (!empty($TsKey)) $search = implode(',', $TsKey);
