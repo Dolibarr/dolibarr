@@ -84,9 +84,9 @@ echo $list->render(Inventory::getSQL('All'), array(
 		
 	),
     'search'=>array(
-		'rowid' => array('recherche' => true, 'table' => array('i'), 'field' => array('title')),
-        'date_inventory'=>array('recherche' => 'calendars', 'table' => array('i'), 'field' => array('date_inventory')),
-        'status'=>array(1=>$langs->trans("inventoryValidate"), 0=>$langs->trans("inventoryDraft"))
+		'rowid' => array('search_type' => true, 'table' => array('i'), 'field' => array('title')),
+		'date_inventory'=>array('search_type' => 'calendars', 'table' => array('i'), 'field' => array('date_inventory')),
+		'status'=>array('search_type' => array(1=>$langs->trans("inventoryValidate"), 0=>$langs->trans("inventoryDraft")))
     )
 ));
 
