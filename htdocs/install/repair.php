@@ -76,6 +76,7 @@ print 'Option restore_thirdparties_logos is '.(GETPOST('restore_thirdparties_log
 print 'Option clean_linked_elements is '.(GETPOST('clean_linked_elements')?GETPOST('clean_linked_elements'):'0').'<br>'."\n";
 print 'Option clean_orphelin_dir (1 or confirmed) is '.(GETPOST('clean_orphelin_dir')?GETPOST('clean_orphelin_dir'):'0').'<br>'."\n";
 print 'Option clean_product_stock_batch (1 or confirmed) is '.(GETPOST('clean_product_stock_batch')?GETPOST('clean_product_stock_batch'):'0').'<br>'."\n";
+print 'Option set_empty_time_spent_amount (1 or confirmed) is '.(GETPOST('set_empty_time_spent_amount')?GETPOST('set_empty_time_spent_amount'):'0').'<br>'."\n";
 print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
@@ -151,7 +152,7 @@ if ($ok)
 }
 
 // Show wait message
-print '<tr><td colspan="2">'.$langs->trans("PleaseBePatient").'</td></tr>';
+print '<tr><td colspan="2">'.$langs->trans("PleaseBePatient").'<br><br></td></tr>';
 flush();
 
 
@@ -190,7 +191,7 @@ if ($ok)
     // Loop on each file
     foreach($filelist as $file)
     {
-        print '<tr><td class="nowrap">';
+        print '<tr><td class="nowrap">*** ';
         print $langs->trans("Script").'</td><td align="right">'.$file.'</td></tr>';
 
         $name = substr($file, 0, dol_strlen($file) - 4);
@@ -210,7 +211,7 @@ if ($ok)
 				'socpeople'=>'socpeople', 'commande'=>'commande', 'facture'=>'facture',
 				'commande_fournisseur'=>'commande_fournisseur', 'actioncomm'=>'actioncomm',
 				'adherent_type'=>'adherent_type','user'=>'user','projet'=>'projet', 'projet_task'=>'projet_task');
-	print '<tr><td colspan="2"><br>Check fields into extra table structure match table of definition. If not add column into table</td></tr>';
+	print '<tr><td colspan="2"><br>*** Check fields into extra table structure match table of definition. If not add column into table</td></tr>';
 	foreach($listofmodulesextra as $tablename => $elementtype)
 	{
 	    // Get list of fields
@@ -324,7 +325,7 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 
 	$ext='';
 	
-	print '<tr><td colspan="2"><br>';
+	print '<tr><td colspan="2"><br>*** Restore thirdparties logo<br>';
 	//foreach($exts as $ext)
 	//{
 		$sql="SELECT s.rowid, s.nom as name, s.logo FROM ".MAIN_DB_PREFIX."societe as s ORDER BY s.nom";
@@ -395,7 +396,7 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('clean_linked_elements'))
 {
-    print '<tr><td colspan="2"><br>Check table of linked elements and delete orphelins links</td></tr>';
+    print '<tr><td colspan="2"><br>*** Check table of linked elements and delete orphelins links</td></tr>';
 	// propal => order
 	print '<tr><td colspan="2">'.checkLinkedElements('propal', 'commande')."</td></tr>\n";
 
@@ -435,7 +436,7 @@ if ($ok && GETPOST('clean_orphelin_dir'))
 
         if (empty($upload_dir)) continue;
 
-        print '<tr><td colspan="2"><br>Clean orphelins files into files '.$upload_dir.'</td></tr>';
+        print '<tr><td colspan="2"><br>*** Clean orphelins files into files '.$upload_dir.'</td></tr>';
 
         $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview\.png)$','^temp$','^payments$','^CVS$','^thumbs$'),'',SORT_DESC,1,true);
 
@@ -546,7 +547,7 @@ if ($ok && GETPOST('clean_orphelin_dir'))
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('clean_product_stock_batch'))
 {
-    print '<tr><td colspan="2"><br>Clean table product_batch</td></tr>';
+    print '<tr><td colspan="2"><br>*** Clean table product_batch</td></tr>';
     
     $sql ="SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
     $sql.=" FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product_batch as pb";
@@ -636,10 +637,67 @@ if ($ok && GETPOST('clean_product_stock_batch'))
     {
         dol_print_error($db);
     }
-    
-    
 }
 
+
+
+// clean_linked_elements: Check and clean linked elements
+if ($ok && GETPOST('set_empty_time_spent_amount'))
+{
+    print '<tr><td colspan="2"><br>*** Set value of time spent without amount</td></tr>';
+
+    $sql ="SELECT COUNT(ptt.rowid) as nb, u.rowid as user_id, u.login, u.thm as user_thm";
+    $sql.=" FROM ".MAIN_DB_PREFIX."projet_task_time as ptt, ".MAIN_DB_PREFIX."user as u";
+    $sql.=" WHERE ptt.fk_user = u.rowid";
+    $sql.=" AND ptt.thm IS NULL and u.thm > 0";
+    $sql.=" GROUP BY u.rowid, u.login, u.thm";
+    
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+
+        if ($num)
+        {
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj=$db->fetch_object($resql);
+                print '<tr><td>'.$obj->login.'-'.$obj->user_id.' ('.$obj->nb.' lines to fix) -> '.$obj->user_thm;
+
+                $db->begin();
+
+                $sql2 ="UPDATE ".MAIN_DB_PREFIX."projet_task_time";
+                $sql2.=" SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".$obj->user_id;
+                $resql2=$db->query($sql2);
+                if (! $resql2)
+                {
+                    $error++;
+                    dol_print_error($db);
+                }
+
+                if (!$error) $db->commit();
+                else $db->rollback();
+
+                print'</td></tr>';
+
+                if ($error) break;
+                
+                $i++;
+            }
+        }
+        else
+        {
+            print '<tr><td>No time spent with empty line on users with a hourly rate defined</td></tr>';
+        }
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+
+
+}
 
 
 
