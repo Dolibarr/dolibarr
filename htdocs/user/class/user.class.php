@@ -1987,7 +1987,7 @@ class User extends CommonObject
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
 
         $result=''; $label='';
-        $linkstart=''; $linkend='';
+        $link=''; $linkstart=''; $linkend='';
 		
 		if (! empty($this->photo))
 		{
@@ -2086,7 +2086,9 @@ class User extends CommonObject
 		}
 		$result.=$linkend;
 		//if ($withpictoimg == -1) $result.='</div>';
+		
 		$result.=$companylink;
+		
 		return $result;
 	}
 

@@ -196,7 +196,9 @@ if ($permission) {
 				$userstatic->id=$tab[$i]['id'];
 				$userstatic->lastname=$tab[$i]['lastname'];
 				$userstatic->firstname=$tab[$i]['firstname'];
-				echo $userstatic->getNomUrl(1);
+				$userstatic->photo=$tab[$i]['photo'];
+				$userstatic->login=$tab[$i]['login'];
+				echo $userstatic->getNomUrl(-1);
 			}
 			if ($tab[$i]['source']=='external')
 			{

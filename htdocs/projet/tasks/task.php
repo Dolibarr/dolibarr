@@ -221,7 +221,7 @@ if ($id > 0 || ! empty($ref))
 			// Tabs for project
 			$tab='tasks';
 			$head=project_prepare_head($projectstatic);
-			dol_fiche_head($head, $tab, $langs->trans("Project"),0,($projectstatic->public?'projectpub':'project'));
+			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'));
 
 			$param=($mode=='mine'?'&mode=mine':'');
 
@@ -306,6 +306,8 @@ if ($id > 0 || ! empty($ref))
             print '<div class="clearboth"></div>';
         
 			dol_fiche_end();
+
+			print '<br>';
 		}
 
 		/*
@@ -437,9 +439,22 @@ if ($id > 0 || ! empty($ref))
 				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
 			}
 
+			if (! GETPOST('withproject') || empty($projectstatic->id))
+			{
+			    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+			    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
+			}
+			else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
+			
+			$morehtmlref='';
+			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
+			
 			print '<div class="fichecenter">';
+			
+			print '<div class="underbanner clearboth"></div>';			
 			print '<table class="border" width="100%">';
 
+			/*
 			// Ref
 			print '<tr><td class="titlefield">';
 			print $langs->trans("Ref");
@@ -456,11 +471,12 @@ if ($id > 0 || ! empty($ref))
 
 			// Label
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
-
+            */
+			
 			// Project
 			if (empty($withproject))
 			{
-				print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
+				print '<tr><td class="titlefield">'.$langs->trans("Project").'</td><td colspan="3">';
 				print $projectstatic->getNomUrl(1);
 				print '</td></tr>';
 
@@ -471,15 +487,14 @@ if ($id > 0 || ! empty($ref))
 				print '</td></tr>';
 			}
 
-			// Date start
-			print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
-			print dol_print_date($object->date_start,'dayhour');
-			print '</td></tr>';
-
-			// Date end
-			print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
-			print dol_print_date($object->date_end,'dayhour');
-        	if ($object->hasDelay()) print img_warning("Late");
+			// Date start - Date end
+			print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td colspan="3">';
+			$start = dol_print_date($object->date_start,'dayhour');
+    		print ($start?$start:'?');
+			$end = dol_print_date($object->date_end,'dayhour');
+    		print ' - ';
+    		print ($end?$end:'?');
+    		if ($object->hasDelay()) print img_warning("Late");
 			print '</td></tr>';
 
 			// Planned workload
@@ -523,7 +538,8 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			print '</table>';
-            print '</div>';
+            
+			print '</div>';
             
 			dol_fiche_end();
 		}

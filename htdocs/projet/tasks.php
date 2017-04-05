@@ -207,7 +207,7 @@ if ($id > 0 || ! empty($ref))
 	$tab=GETPOST('tab')?GETPOST('tab'):'tasks';
 
 	$head=project_prepare_head($object);
-	dol_fiche_head($head, $tab, $langs->trans("Project"),0,($object->public?'projectpub':'project'));
+	dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
 	$param=($mode=='mine'?'&mode=mine':'');
 
@@ -268,9 +268,12 @@ if ($id > 0 || ! empty($ref))
 
     // Date start - end
     print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-    print dol_print_date($object->date_start,'day');
-    $end=dol_print_date($object->date_end,'day');
-    if ($end) print ' - '.$end;
+    $start = dol_print_date($object->date_start,'dayhour');
+    print ($start?$start:'?');
+    $end = dol_print_date($object->date_end,'dayhour');
+    print ' - ';
+    print ($end?$end:'?');
+    if ($object->hasDelay()) print img_warning("Late");
     print '</td></tr>';
     
     // Budget

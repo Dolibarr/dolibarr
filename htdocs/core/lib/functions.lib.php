@@ -1176,7 +1176,8 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
 	
-	if ($object->element == 'product' || $object->element == 'bank_account')
+	// Add label
+	if ($object->element == 'product' || $object->element == 'bank_account' || $object->element == 'project_task')
 	{
 		if (! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
 	}
