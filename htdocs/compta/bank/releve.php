@@ -595,6 +595,9 @@ else
 	print "</div>";
 	
 	print "</form>\n";
+	 // download button
+         echo  '<a href="releve.php?num='.$num.'&account='.$id.'&action=dl" class="butAction" name="Send" >'.$langs->trans('DownloadFile')." </a>\n";
+
 }
 
 
