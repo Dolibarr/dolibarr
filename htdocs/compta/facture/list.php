@@ -551,7 +551,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql.= $db->plimit($limit+1,$offset);
+$sql.= $db->plimit($limit,$offset);
 //print $sql;
 
 $resql = $db->query($sql);
