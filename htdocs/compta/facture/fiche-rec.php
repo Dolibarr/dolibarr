@@ -1540,8 +1540,14 @@ else
 		$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency,";
 		$sql.= " f.date_last_gen, f.date_when";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
+		if (! $user->rights->societe->client->voir && ! $socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql.= " WHERE f.fk_soc = s.rowid";
 		$sql.= " AND f.entity = ".$conf->entity;
+		if (! $user->rights->societe->client->voir && ! $socid) {
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		}
 		if ($search_ref) $sql .= natural_search('f.titre', $search_ref);
 		if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 		if ($search_frequency) $sql .= natural_search('f.frequency', $search_frequency);
