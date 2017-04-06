@@ -179,7 +179,7 @@ $formfile = new FormFile($db);
 
 $head = payment_supplier_prepare_head($object);
 
-dol_fiche_head($head, 'payment', $langs->trans('SupplierPayment'), 0, 'payment');
+dol_fiche_head($head, 'payment', $langs->trans('SupplierPayment'), -1, 'payment');
 
 if ($result > 0)
 {
@@ -201,15 +201,23 @@ if ($result > 0)
 
 	}
 
+	$linkback = '<a href="' . DOL_URL_ROOT . '/fourn/facture/paiement.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	
+	
+	dol_banner_tab($object,'id',$linkback,1,'rowid','ref');
+	
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+	
 	print '<table class="border" width="100%">';
 
-	print '<tr>';
+	/*print '<tr>';
 	print '<td width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">';
     print $form->showrefnav($object,'id','',1,'rowid','ref');
-	print '</td></tr>';
+	print '</td></tr>';*/
 
 	// Date payment
-    print '<tr><td colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print '<tr><td class="titlefield" colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
     print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
     print '</td></tr>';
 
@@ -270,6 +278,8 @@ if ($result > 0)
 
 	print '</table>';
 
+	print '</div>';
+	
 	print '<br>';
 
 	/**
