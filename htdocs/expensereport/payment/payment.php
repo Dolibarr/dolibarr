@@ -134,6 +134,18 @@ if ($action == 'add_payment')
                 }
             }
 
+            if (!$error) {
+                $payment->fetch($paymentid);
+                if ($expensereport->total_ttc - $payment->amount == 0) {
+                    $result = $expensereport->set_paid($expensereport->id, $user);
+                    if (!$result > 0) {
+                        $errmsg = $payment->error;
+                        $error++;
+                    }
+                }
+
+            }
+
     	    if (! $error)
             {
                 $db->commit();
