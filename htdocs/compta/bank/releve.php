@@ -44,7 +44,7 @@ $action=GETPOST('action', 'alpha');
 $id=GETPOST('account');
 $ref=GETPOST('ref');
 $dvid=GETPOST('dvid');
-$num=GETPOST('num');
+$numref=GETPOST('num');
 
 // Security check
 $fieldid = (! empty($ref)?$ref:$id);
@@ -116,7 +116,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($id > 0) $param.='&id='.urlencode($id);
 
 
-if (empty($num))
+if (empty($numref))
 {
 	/*
 	 *	Vue liste tous releves confondus
@@ -176,14 +176,14 @@ if (empty($num))
 		while ($i < min($numrows,$conf->liste_limit))
 		{
 			$objp = $db->fetch_object($result);
-			$var=!$var;
+
 			if (! isset($objp->numr))
 			{
 				//
 			}
 			else
 			{
-				print '<tr '.$bc[$var].'><td><a href="releve.php?num='.$objp->numr.'&amp;account='.$object->id.'">'.$objp->numr.'</a></td>';
+				print '<tr class="oddeven"><td><a href="releve.php?num='.$objp->numr.'&amp;account='.$object->id.'">'.$objp->numr.'</a></td>';
 
 				// Calculate start amount
 				$sql = "SELECT sum(b.amount) as amount";
@@ -240,7 +240,7 @@ else
 		// Recherche valeur pour num = numero releve precedent
 		$sql = "SELECT DISTINCT(b.num_releve) as num";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= " WHERE b.num_releve < '".$db->escape($num)."'";
+		$sql.= " WHERE b.num_releve < '".$db->escape($numref)."'";
 		$sql.= " AND b.fk_account = ".$object->id;
 		$sql.= " ORDER BY b.num_releve DESC";
 
@@ -252,7 +252,7 @@ else
 			if ($numrows > 0)
 			{
 				$obj = $db->fetch_object($resql);
-				$num = $obj->num;
+				$numref = $obj->num;
 				$found=true;
 			}
 		}
@@ -262,7 +262,7 @@ else
 		// Recherche valeur pour num = numero releve precedent
 		$sql = "SELECT DISTINCT(b.num_releve) as num";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= " WHERE b.num_releve > '".$db->escape($num)."'";
+		$sql.= " WHERE b.num_releve > '".$db->escape($numref)."'";
 		$sql.= " AND b.fk_account = ".$object->id;
 		$sql.= " ORDER BY b.num_releve ASC";
 
@@ -274,7 +274,7 @@ else
 			if ($numrows > 0)
 			{
 				$obj = $db->fetch_object($resql);
-				$num = $obj->num;
+				$numref = $obj->num;
 				$found=true;
 			}
 		}
@@ -286,13 +286,16 @@ else
 
     $mesprevnext='';
 	$mesprevnext.='<div class="pagination"><ul>';
-	$mesprevnext.='<li class="pagination"><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?rel=prev&amp;num='.$num.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><</a></li>';
+	$mesprevnext.='<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=prev&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
 	//$mesprevnext.=' &nbsp; ';
-	$mesprevnext.='<li class="pagination"><span class="active">'.$langs->trans("AccountStatement")." ".$num.'</span></li>';
+	$mesprevnext.='<li class="pagination"><span class="active">'.$langs->trans("AccountStatement")." ".$numref.'</span></li>';
 	//$mesprevnext.=' &nbsp; ';
-    $mesprevnext.='<li class="pagination"><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?rel=next&amp;num='.$num.'&amp;ve='.$ve.'&amp;account='.$object->id.'">></a></li>';
+    $mesprevnext.='<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=next&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
     $mesprevnext.='</ul></div>';
-	print load_fiche_titre($langs->trans("AccountStatement").' '.$num.', '.$langs->trans("BankAccount").' : '.$object->getNomUrl(0, 'receipts'), $mesprevnext, 'title_bank.png');
+    
+    $title=$langs->trans("AccountStatement").' '.$numref.', '.$langs->trans("BankAccount").' : '.$object->getNomUrl(0, 'receipts');
+	print load_fiche_titre($title, $mesprevnext, 'title_bank.png');
+	//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 0, $nbtotalofrecords, 'title_bank.png', 0, '', '', 0, 1);
 	print '<br>';
 
 	print "<form method=\"post\" action=\"releve.php\">";
@@ -315,7 +318,7 @@ else
 	// Calcul du solde de depart du releve
 	$sql = "SELECT sum(b.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql.= " WHERE b.num_releve < '".$db->escape($num)."'";
+	$sql.= " WHERE b.num_releve < '".$db->escape($numref)."'";
 	$sql.= " AND b.fk_account = ".$object->id;
 
 	$resql=$db->query($sql);
@@ -335,8 +338,8 @@ else
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bordereau_cheque as bc ON bc.rowid=b.fk_bordereau';
-	$sql.= " WHERE b.num_releve='".$db->escape($num)."'";
-	if (!isset($num))	$sql.= " OR b.num_releve is null";
+	$sql.= " WHERE b.num_releve='".$db->escape($numref)."'";
+	if (!isset($numref))	$sql.= " OR b.num_releve is null";
 	$sql.= " AND b.fk_account = ".$object->id;
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
@@ -368,9 +371,9 @@ else
 			// Date de valeur
 			print '<td align="center" valign="center" class="nowrap">';
 			print dol_print_date($db->jdate($objp->dv),"day") .' ';
-			print '<a href="releve.php?action=dvprev&amp;num='.$num.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
+			print '<a href="releve.php?action=dvprev&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_remove() . "</a> ";
-			print '<a href="releve.php?action=dvnext&amp;num='.$num.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
+			print '<a href="releve.php?action=dvnext&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_add() ."</a>";
 			print "</td>\n";
 			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';

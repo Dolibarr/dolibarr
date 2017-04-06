@@ -1243,9 +1243,10 @@ class Account extends CommonObject
      *
      *		@param	int		$withpicto		Include picto into link
      *      @param  string	$mode           ''=Link to card, 'transactions'=Link to transactions card
+     *      @param  string  $option         ''=Show ref, 'reflabel'=Show ref+label
      *		@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0, $mode='')
+    function getNomUrl($withpicto=0, $mode='', $option='')
     {
         global $conf, $langs;
 
@@ -1279,7 +1280,7 @@ class Account extends CommonObject
         }
 
         if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
-        $result.=$link.$this->ref.$linkend;
+        $result.=$link.$this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '').$linkend;
         return $result;
     }
 

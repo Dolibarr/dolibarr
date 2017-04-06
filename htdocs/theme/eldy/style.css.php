@@ -2469,6 +2469,7 @@ div.pagination .disabled a:focus {
 }
 div.pagination li.pagination .active {
   text-decoration: underline;
+  box-shadow: none;
 }
 div.pagination li.paginationafterarrows {
 	margin-left: 10px;

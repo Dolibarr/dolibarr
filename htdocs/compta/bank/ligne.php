@@ -293,7 +293,7 @@ if ($result)
         // Bank account
         print '<tr><td class="titlefield">'.$langs->trans("Account").'</td>';
         print '<td>';
-        print $acct->getNomUrl(1,'transactions');
+        print $acct->getNomUrl(1,'transactions','reflabel');
         print '</td>';
         print '</tr>';
 
