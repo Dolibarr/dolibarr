@@ -1,6 +1,6 @@
 <?php
-
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+/* Copyright (C) 2016	Marcos García	      <marcosgdf@gmail.com>
+ * Copyright (C) 2017	Laurent Destailleur   <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,12 @@ $weight_impact = (float) GETPOST('weight_impact');
 $price_impact = (float) GETPOST('price_impact');
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
 $form = new Form($db);
-$action = GETPOST('action');
+
+$action=GETPOST('action','alpha');
+$massaction=GETPOST('massaction','alpha');
+$show_files=GETPOST('show_files','int');
+$confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
 $cancel = GETPOST('cancel');
 
 // Security check
@@ -53,6 +58,8 @@ if ($id > 0 || $ref)
     $object->fetch($id, $ref);
 }
 
+$selectedvariant = $_SESSION['addvariant_'.$object->id];
+
 
 /*
  * Actions
@@ -60,11 +67,23 @@ if ($id > 0 || $ref)
 
 if ($cancel) {
     $action='';
+    $massactions='';
+    unset($_SESSION['addvariant_'.$object->id]);
 }
-    
+
 if (! $object->isProduct()) {
 	header('Location: '.dol_buildpath('/product/card.php?id='.$object->id, 2));
 	exit();
+}
+
+if (GETPOST('selectvariant'))
+{
+    $action = 'add';
+    if (GETPOST('attribute') != '-1' && GETPOST('value') != '-1')
+    {
+        $selectedvariant[GETPOST('attribute').':'.GETPOST('value')]=GETPOST('attribute').':'.GETPOST('value');
+        $_SESSION['addvariant_'.$object->id]=$selectedvariant;
+    }
 }
 
 
@@ -75,13 +94,16 @@ $productCombination2ValuePairs1 = array();
 
 if ($_POST) {
 
-	if ($action == 'add') {
+	if (($action == 'add' || $action == 'create') && empty($massaction) && ! GETPOST('selectvariant')) {
 
-		$features = GETPOST('features', 'array');
+		//$features = GETPOST('features', 'array');
+        $features = $_SESSION['addvariant_'.$object->id];
 
 		if (!$features) {
 			setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
-		} else {
+		} 
+		else 
+		{
 			$weight_impact = price2num($weight_impact);
 			$price_impact = price2num($price_impact);
 			$sanit_features = array();
@@ -115,6 +137,7 @@ if ($_POST) {
 				if (ProductCombination::createProductCombination($object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact)) {
 					$db->commit();
 					setEventMessage($langs->trans('RecordSaved'));
+					unset($_SESSION['addvariant_'.$object->id]);
 					header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
 					exit();
 				} else {
@@ -126,17 +149,17 @@ if ($_POST) {
 
 			$db->rollback();
 		}
-	} elseif ($action == 'bulk_actions') {
-
-		$prodarray = array_keys(GETPOST('select', 'array'));
-		$bulkaction = GETPOST('bulk_action');
+	} 
+	elseif (! empty($massaction)) 
+	{
+		$bulkaction = $massaction;
 		$error = 0;
 
 		$prodstatic = new Product($db);
 
 		$db->begin();
 
-		foreach ($prodarray as $prodid) {
+		foreach ($toselect as $prodid) {
 
 			if ($prodstatic->fetch($prodid) < 0) {
 				continue;
@@ -180,7 +203,8 @@ if ($_POST) {
 			setEventMessage($langs->trans('RecordSaved'));
 		}
 
-	} elseif ($valueid > 0) {
+	} 
+	elseif ($valueid > 0) {
 
 		if ($prodcomb->fetch($valueid) < 0) {
 			dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
@@ -201,6 +225,7 @@ if ($_POST) {
 	}
 }
 
+// Reload variants
 $productCombinations = $prodcomb->fetchAllByFkProductParent($object->id);
 
 if ($action === 'confirm_deletecombination') {
@@ -263,29 +288,26 @@ if ($action === 'confirm_deletecombination') {
 
 $form = new Form($db);
 
-
-if (! empty($id) || ! empty($ref)) {
-
+if (! empty($id) || ! empty($ref)) 
+{
 	llxHeader("", "", $langs->trans("CardProduct".$object->type));
 
-	if ($result) 
-	{
-	    $showbarcode=empty($conf->barcode->enabled)?0:1;
-	    if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
-	    
-	    $head=product_prepare_head($object);
-	    $titre=$langs->trans("CardProduct".$object->type);
-	    $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-	    dol_fiche_head($head, 'combinations', $titre, 0, $picto);
-	    
-	    $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-	    $object->next_prev_filter=" fk_product_type = ".$object->type;
-	    
-	    dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
-	     
-		dol_fiche_end();
-	}
+    $showbarcode=empty($conf->barcode->enabled)?0:1;
+    if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
+    
+    $head=product_prepare_head($object);
+    $titre=$langs->trans("CardProduct".$object->type);
+    $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
+    dol_fiche_head($head, 'combinations', $titre, 0, $picto);
+    
+    $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
+    $object->next_prev_filter=" fk_product_type = ".$object->type;
+    
+    dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
+     
+	dol_fiche_end();
 
+	
 	// Create or edit a varian
 	if ($action == 'add' || ($action == 'edit')) {
 
@@ -295,6 +317,7 @@ if (! empty($id) || ! empty($ref)) {
 			$title = $langs->trans('EditProductCombination');
 		}
 
+		print '<div id="parttoaddvariant"></div>';
 		print_fiche_titre($title);
 
 		if ($action == 'add') {
@@ -312,7 +335,7 @@ if (! empty($id) || ! empty($ref)) {
 
 		?>
 
-		<script>
+		<script type="text/javascript">
 
 			variants_available = <?php echo json_encode($prodattr_alljson) ?>;
 			variants_selected = {
@@ -346,26 +369,7 @@ if (! empty($id) || ! empty($ref)) {
 				});
 			};
 
-			paintAttributes = function() {
-				var select = jQuery("select#features");
-
-				select.empty();
-
-				jQuery("form#combinationform input[type=hidden]").detach();
-
-				jQuery.each(variants_selected.index, function (key, val) {
-					var attr_info = variants_selected.info[val];
-
-					var opt_key = val + ':' + attr_info.value.id;
-					var opt_label = attr_info.attribute.label + ': ' + attr_info.value.label;
-
-					//Add combination to the list
-					select.append('<option value="' + opt_key + '">' + opt_label + '</option>');
-					//Add hidden input to catch the new combination
-					jQuery("form#combinationform").append('<input type="hidden" name="features[]" value="' + opt_key + '">');
-				});
-			};
-
+			
 			jQuery(document).ready(function() {
 				jQuery("select#attribute").change(function () {
 					console.log("Change of field variant attribute");
@@ -398,63 +402,15 @@ if (! empty($id) || ! empty($ref)) {
 						});
 					});
 				});
-
-				/* Click on button Add combination
-				@FIXME Not compatible with all browsers.
-				 */
-				jQuery("#addfeature").click(function () {
-					console.log("Click on add");
-					var selectedattr = jQuery("select[name=attribute] option:selected");
-					var selectedvalu = jQuery("select[name=value] option:selected");
-
-					if (!selectedattr.val().length || !selectedvalu.val().length) {
-						return;
-					}
-
-					var selectedattr_val = parseInt(selectedattr.val());
-
-					if (jQuery.inArray(selectedattr_val, variants_selected.index) != -1) {
-						return;
-					}
-
-					variants_selected.index.push(selectedattr_val);
-					variants_selected.info[selectedattr_val] = {
-						attribute: variants_available[selectedattr_val],
-						value: {
-							id: selectedvalu.val(),
-							label: selectedvalu.html()
-						}
-					};
-
-					paintAttributes();
-
-					selectedattr.detach();
-					jQuery("select[name=value] option").detach();
-				});
-
-				jQuery("#delfeature").click(function() {
-					jQuery("#features option:selected").each(function (key, val) {
-						var explode = jQuery(val).val().split(':');
-						var indexOf = variants_selected.index.indexOf(parseInt(explode[0]));
-
-						if (indexOf != -1) {
-							variants_selected.index.splice(indexOf, 1);
-							jQuery(variants_selected.info[parseInt(explode[0])]).detach();
-						}
-
-						jQuery(val).detach();
-					});
-
-					restoreAttributes();
-					paintAttributes();
-				});
 			});
 		</script>
+		
 		<?php 
 		}
 		
-		print '<form method="post" id="combinationform">';
-		print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">';
+		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"].'#parttoaddvariant">'."\n";
+		print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
+		print '<input type="hidden" name="action" value="add">'."\n";
 		
 		print dol_fiche_head();
 		
@@ -483,7 +439,8 @@ if (! empty($id) || ! empty($ref)) {
 			</tr>
 			<tr>
 				<td></td><td>
-					<a href="#" class="button" id="addfeature"><?php echo $langs->trans("SelectCombination"); ?></a>
+					<input type="submit" class="button" name="selectvariant" id="selectvariant" value="<?php echo dol_escape_htmltag($langs->trans("SelectCombination")); ?>">
+					<!-- <a href="#" class="button" id="addfeature"><?php echo $langs->trans("SelectCombination"); ?></a> -->
 				</td>
 			</tr>
 		</table>
@@ -493,17 +450,27 @@ if (! empty($id) || ! empty($ref)) {
 		<table class="border" style="width: 100%">
 			<tr>
 				<td class="titlefieldcreate fieldrequired tdtop"><label for="features"><?php echo $langs->trans('Variant') ?></label></td>
-				<td class="valignmiddle">
+				<td class="tdtop">
 					<div class="inline-block valignmiddle quatrevingtpercent">
-					<select multiple class="centpercent" id="features">
-						<?php
-						foreach ($productCombination2ValuePairs1 as $pc2v): ?>
-							<option value="<?php echo $pc2v->fk_prod_attr ?>:<?php echo $pc2v->fk_prod_attr_val ?>"><?php echo dol_htmlentities($pc2v) ?></option>
-						<?php endforeach ?>
-					</select></div>
-					<div class="inline-block valignmiddle">
-					<a href="#" class="inline-block valignmiddle button" id="delfeature"><?php echo img_edit_remove() ?></a>
+					<?php
+					if (is_array($selectedvariant))
+					{
+    					foreach ($selectedvariant as $key => $val) {
+    				        $tmp = explode(':',$val);
+    				        $result1 = $prodattr->fetch($tmp[0]);
+    				        $result2 = $prodattr_val->fetch($tmp[1]);
+    				        if ($result1 > 0 && $result2 > 0)
+    				        {
+    					       print $prodattr->label . ' - '.$prodattr_val->value.'<br>';
+    					       // TODO Add delete link
+    				        }
+    					}
+					}
+					?>
 					</div>
+					<!-- <div class="inline-block valignmiddle">
+					<a href="#" class="inline-block valignmiddle button" id="delfeature"><?php echo img_edit_remove() ?></a>
+					</div>-->
 				</td>
 				<td>
 				</td>
@@ -524,15 +491,12 @@ if (! empty($id) || ! empty($ref)) {
         ?>
 
 		<div style="text-align: center">
-		<input type="submit" value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button">
+		<input type="submit" name="create" <?php if (! is_array($selectedvariant)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button">
 		&nbsp;
 		<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel'); ?>" class="button">
 		</div>
 		
-		<?php foreach ($productCombination2ValuePairs1 as $pc2v): ?>
-				<input type="hidden" name="features[]" value="<?php echo $pc2v->fk_prod_attr.':'.$pc2v->fk_prod_attr_val ?>">
-		<?php endforeach; ?>
-<?php
+		<?php
 
         print '</form>';
 	}
@@ -606,36 +570,56 @@ if (! empty($id) || ! empty($ref)) {
 		
 		print '	<div class="inline-block divButAction">';
 		if ($productCombinations) {
-		    print '<a href="combinations.php?id='.$id.'&action=copy" class="butAction">'.$langs->trans('Copy').'</a>';
+		    print '<a href="combinations.php?id='.$object->id.'&action=copy" class="butAction">'.$langs->trans('PropagateVariant').'</a>';
 		}
 		
-		print '<a href="combinations.php?id='.$id.'&action=add" class="butAction">'.$langs->trans('NewProductCombination').'</a>';
+		print '<a href="combinations.php?id='.$object->id.'&action=add#parttoaddvariant" class="butAction">'.$langs->trans('NewProductCombination').'</a>'; // NewVariant
 		
-		if (empty($conf->dol_optimize_smallscreen) && $conf->use_javascript_ajax)     // Bugged page. Too much useless javascript.
-		{
-		  print '<a href="generator.php?id='.$id.'" class="butAction">'.$langs->trans('ProductCombinationGenerator').'</a>';
-		}
+		// Too much bugged page.
+		/*
+		print '<a href="generator.php?id='.$object->id.'" class="butAction">'.$langs->trans('ProductCombinationGenerator').'</a>';
+		*/
 		
 		print '	</div>';
 		
 		print '</div>';
 		
-		print '<form method="post">';
+		
+		
+		$arrayofselected=is_array($toselect)?$toselect:array();
+		
+		
+		// List of variants
+		print '<form method="POST" action="#parttoaddvariant">';
+		
+		
+		// List of mass actions available
+		/*
+		$arrayofmassactions =  array(
+		    'presend'=>$langs->trans("SendByMail"),
+		    'builddoc'=>$langs->trans("PDFMerge"),
+		);
+		if ($user->rights->product->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+		if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
+		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+		*/
 		
 		$aaa='';
 		if (count($productCombinations))
 		{
-    		$aaa = '<label for="bulk_action">'.$langs->trans('BulkActions').'</label>';
-    		$aaa .= '<select id="bulk_action" name="bulk_action" class="flat">';
+    		$aaa = '<label for="massaction">'.$langs->trans('BulkActions').'</label>';
+    		$aaa .= '<select id="bulk_action" name="massaction" class="flat">';
+    		$aaa .= '	<option value="nothing">&nbsp;</option>';
     		$aaa .= '	<option value="not_buy">'.$langs->trans('ProductStatusNotOnBuy').'</option>';
     		$aaa .= '	<option value="not_sell">'.$langs->trans('ProductStatusNotOnSell').'</option>';
     		$aaa .= '	<option value="on_buy">'.$langs->trans('ProductStatusOnBuy').'</option>';
     		$aaa .= '	<option value="on_sell">'.$langs->trans('ProductStatusOnSell').'</option>';
     		$aaa .= '	<option value="delete">'.$langs->trans('Delete').'</option>';
     		$aaa .= '</select>';
-    		$aaa .= '<input type="hidden" name="action" value="bulk_actions">';
+    		$aaa .= '<input type="hidden" name="action" value="massaction">';
     		$aaa .= '<input type="submit" value="'.dol_escape_htmltag($langs->trans("Apply")).'" class="button">';
 		}
+		$massactionbutton = $aaa;
 		
 		$title = $langs->trans("ProductCombinations");
 		
@@ -645,18 +629,19 @@ if (! empty($id) || ! empty($ref)) {
 		?>
 		<table class="liste">
 			<tr class="liste_titre">
-				<th class="liste_titre"><?php echo $langs->trans('Product') ?></th>
-				<th class="liste_titre"><?php echo $langs->trans('Combination') ?></th>
-				<th class="liste_titre right"><?php echo $langs->trans('PriceImpact') ?></th>
-				<th class="liste_titre right"><?php echo $langs->trans('WeightImpact') ?></th>
-				<th class="liste_titre center"><?php echo $langs->trans('OnSell') ?></th>
-				<th class="liste_titre center"><?php echo $langs->trans('OnBuy') ?></th>
-				<th class="liste_titre"></th>
-				<th class="liste_titre center">
-					<?php if ($productCombinations): ?>
-					<input type="checkbox" name="select_all">
-					<?php endif ?>
-				</th>
+				<td class="liste_titre"><?php echo $langs->trans('Product') ?></td>
+				<td class="liste_titre"><?php echo $langs->trans('Combination') ?></td>
+				<td class="liste_titre right"><?php echo $langs->trans('PriceImpact') ?></td>
+				<td class="liste_titre right"><?php echo $langs->trans('WeightImpact') ?></td>
+				<td class="liste_titre center"><?php echo $langs->trans('OnSell') ?></td>
+				<td class="liste_titre center"><?php echo $langs->trans('OnBuy') ?></td>
+				<td class="liste_titre"></td>
+        		<?php 
+        		print '<td class="liste_titre" align="middle">';
+        		$searchpitco=$form->showCheckAddButtons('checkforselect', 1);
+        		print $searchpitco;
+        		print '</td>';
+                ?>
 			</tr>
 			<?php
 			
@@ -689,7 +674,16 @@ if (! empty($id) || ! empty($ref)) {
     					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=edit&valueid='.$currcomb->id, 2) ?>"><?php echo img_edit() ?></a>
     					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=delete&valueid='.$currcomb->id, 2) ?>"><?php echo img_delete() ?></a>
     				</td>
-    				<td class="center"><input type="checkbox" name="select[<?php echo $prodstatic->id ?>]"></td>
+    				<?php 
+    				print '<td class="nowrap" align="center">';
+    				if ($productCombinations || $massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+    				{
+    				    $selected=0;
+    				    if (in_array($prodstatic->id, $arrayofselected)) $selected=1;
+    				    print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected?' checked="checked"':'').'>';
+    				}
+    				print '</td>';
+    				?>
     			</tr>
     			<?php
 			    }
