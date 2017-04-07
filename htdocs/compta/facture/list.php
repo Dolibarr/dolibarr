@@ -738,7 +738,8 @@ if ($resql)
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-
+    if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+    
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -748,14 +749,14 @@ if ($resql)
 	if (! empty($arrayfields['f.facnumber']['checked'])) 
 	{
         print '<td class="liste_titre" align="left">';
-        print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
+        print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
         print '</td>';
 	}
 	// Ref customer
 	if (! empty($arrayfields['f.ref_client']['checked'])) 
 	{
     	print '<td class="liste_titre">';
-    	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
+    	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.dol_escape_htmltag($search_refcustomer).'">';
     	print '</td>';
 	}
 	// Type
@@ -776,8 +777,8 @@ if ($resql)
 	if (! empty($arrayfields['f.date']['checked'])) 
 	{
     	print '<td class="liste_titre" align="center">';
-        if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-        print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+        if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
+        print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
         $formother->select_year($year?$year:-1,'year',1, 20, 5);
         print '</td>';
 	}
@@ -785,8 +786,8 @@ if ($resql)
 	if (! empty($arrayfields['f.date_lim_reglement']['checked'])) 
 	{
     	print '<td class="liste_titre" align="center">';
-        if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day_lim" value="'.$day_lim.'">';
-        print '<input class="flat" type="text" size="1" maxlength="2" name="month_lim" value="'.$month_lim.'">';
+        if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day_lim" value="'.dol_escape_htmltag($day_lim).'">';
+        print '<input class="flat" type="text" size="1" maxlength="2" name="month_lim" value="'.dol_escape_htmltag($month_lim).'">';
         $formother->select_year($year_lim?$year_lim:-1,'year_lim',1, 20, 5);
     	print '<br><input type="checkbox" name="option" value="late"'.($option == 'late'?' checked':'').'> '.$langs->trans("Late");
         print '</td>';
@@ -797,9 +798,9 @@ if ($resql)
 	   print '<td class="liste_titre" align="left"><input class="flat" type="text" size="6" name="search_societe" value="'.$search_societe.'"></td>';
 	}
 	// Town
-	if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
+	if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.dol_escape_htmltag($search_town).'"></td>';
 	// Zip
-	if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="4" name="search_zip" value="'.$search_zip.'"></td>';
+	if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="4" name="search_zip" value="'.dol_escape_htmltag($search_zip).'"></td>';
 	// State
 	if (! empty($arrayfields['state.nom']['checked']))
 	{
@@ -832,21 +833,21 @@ if ($resql)
 	{
     	// Amount
     	print '<td class="liste_titre" align="right">';
-    	print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.$search_montant_ht.'">';
+    	print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
     	print '</td>';
 	}
 	if (! empty($arrayfields['f.total_vat']['checked']))
 	{
     	// Amount
     	print '<td class="liste_titre" align="right">';
-    	print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.$search_montant_vat.'">';
+    	print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
     	print '</td>';
 	}
 	if (! empty($arrayfields['f.total_ttc']['checked']))
 	{
     	// Amount
     	print '<td class="liste_titre" align="right">';
-    	print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
+    	print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
     	print '</td>';
 	}
     if (! empty($arrayfields['dynamount_payed']['checked']))
@@ -908,7 +909,7 @@ if ($resql)
 	}
 	// Action column
 	print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+	$searchpitco=$form->showFilterButtons();
 	print $searchpitco;
     print '</td>';
     print "</tr>\n";
@@ -956,12 +957,10 @@ if ($resql)
     if ($num > 0)
     {
         $i=0;
-        $var=true;
         $totalarray=array();
         while ($i < min($num,$limit))
         {
             $obj = $db->fetch_object($resql);
-            $var=!$var;
 
             $datelimit=$db->jdate($obj->datelimite);
             $facturestatic->id=$obj->facid;
@@ -978,7 +977,7 @@ if ($resql)
             $totalpay = $paiement + $totalcreditnotes + $totaldeposits;
             $remaintopay = $obj->total_ttc - $totalpay;
             
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
     		if (! empty($arrayfields['f.facnumber']['checked']))
     		{
                 print '<td class="nowrap">';
@@ -1045,7 +1044,7 @@ if ($resql)
     		// Third party
     		if (! empty($arrayfields['s.nom']['checked']))
     		{
-                print '<td>';
+                print '<td class="tdoverflowmax200">';
                 $thirdparty=new Societe($db);
                 $thirdparty->id=$obj->socid;
                 $thirdparty->name=$obj->name;
