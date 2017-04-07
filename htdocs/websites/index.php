@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,6 +143,8 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
  */
 
 if (GETPOST('refreshsite')) $pageid=0;      // If we change the site, we reset the pageid.
+if (GETPOST('refreshpage')) $action='preview'; 
+
 
 // Add page
 if ($action == 'add')
@@ -434,7 +436,7 @@ if ($action == 'updatemeta')
 }
 
 // Update page
-if ($action == 'updatecontent')
+if ($action == 'updatecontent' || GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))
 {
     $db->begin();
     $object->fetch(0, $website);
@@ -444,110 +446,123 @@ if ($action == 'updatecontent')
     $res = $objectpage->fetch($pageid, $object->fk_website);
     if ($res > 0)
     {
-        $objectpage->content = GETPOST('PAGE_CONTENT');
-
-        // Clean data. We remove all the head section.
-        $objectpage->content = preg_replace('/<head.*<\/head>/s', '', $objectpage->content);
-        /* $objectpage->content = preg_replace('/<base\s+href=[\'"][^\'"]+[\'"]\s/?>/s', '', $objectpage->content); */
-        
-        $res = $objectpage->update($user);
-        if ($res < 0)
+        if ($action == 'updatecontent')
         {
-            $error++;
-            setEventMessages($objectpage->error, $objectpage->errors, 'errors');
-        }
-
-    	if (! $error)
-    	{
-    		$db->commit();
-    	    
-    		$filemaster=$pathofwebsite.'/master.inc.php';
-    		//$fileoldalias=$pathofwebsite.'/'.$objectpage->old_object->pageurl.'.php';
-    		$filealias=$pathofwebsite.'/'.$objectpage->pageurl.'.php';
-    		
-    	    dol_mkdir($pathofwebsite);
-    		
-    		
-    		// Now generate the master.inc.php page
-    		dol_syslog("We regenerate the master file");
-    		dol_delete_file($filemaster);
-    		
-    		$mastercontent = '<?php'."\n";
-    		$mastercontent.= '// File generated to link to the master file'."\n";
-    		$mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
-    		$mastercontent.= '?>'."\n";
-    		$result = file_put_contents($filemaster, $mastercontent);
-    		if (! empty($conf->global->MAIN_UMASK))
-    		    @chmod($filemaster, octdec($conf->global->MAIN_UMASK));
-    		
-		    if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
-		
-		
-		    // Now generate the alias.php page
-            if (! empty($fileoldalias))
-            {
-    		    dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
-    		    dol_delete_file($fileoldalias);
-            }
+            $objectpage->content = GETPOST('PAGE_CONTENT');
+    
+            // Clean data. We remove all the head section.
+            $objectpage->content = preg_replace('/<head.*<\/head>/s', '', $objectpage->content);
+            /* $objectpage->content = preg_replace('/<base\s+href=[\'"][^\'"]+[\'"]\s/?>/s', '', $objectpage->content); */
             
-		    $aliascontent = '<?php'."\n";
-		    $aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a copy of database page content\n";
-		    $aliascontent.= "include_once './page".$objectpage->id.".tpl.php';\n";
-		    $aliascontent.= '?>'."\n";
-		    $result = file_put_contents($filealias, $aliascontent);
-		    if (! empty($conf->global->MAIN_UMASK))
-		        @chmod($filealias, octdec($conf->global->MAIN_UMASK));
-		
-            if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
-		
-    		        
-    	    // Now create the .tpl file with code to be able to make dynamic changes
-    	    dol_delete_file($filetpl);
-
-            $tplcontent ='';
-            $tplcontent.= "<?php // BEGIN PHP\n";
-            $tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require './master.inc.php'; } // Not already loaded"."\n";
-            $tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-            $tplcontent.= "ob_start();\n";
-            $tplcontent.= "// END PHP ?>\n";
-    	    $tplcontent.= '<html>'."\n";
-    	    $tplcontent.= '<header>'."\n";
-    	    $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
-    	    $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
-    	    $tplcontent.= '<meta name="viewport" content="width=device-width, initial-scale=0.8">'."\n";
-    	    $tplcontent.= '<meta name="keywords" content="'.join(', ', explode(',',$objectpage->keywords)).'" />'."\n";
-    	    $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
-    	    $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
-    	    $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";
-    	    $tplcontent.= '<link rel="stylesheet" href="styles.css.php?website='.$website.'" type="text/css" />'."\n";
-    	    $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
-    	    $tplcontent.= '</header>'."\n";
-    	    	
-    	    $tplcontent.= '<body>'."\n";
-    	    $tplcontent.= $objectpage->content."\n";
-    	    $tplcontent.= '</body>'."\n";
-    	    
-    	    $tplcontent.= '<?php // BEGIN PHP'."\n";
-    	    $tplcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
-    	    $tplcontent.= "// END PHP ?>"."\n";
-    	    
-            //var_dump($filetpl);exit;	    
-    	    $result = file_put_contents($filetpl, $tplcontent);
-    	    if (! empty($conf->global->MAIN_UMASK))
-    	        @chmod($filetpl, octdec($conf->global->MAIN_UMASK));
-                 
-    	    if ($result)
-    	    {
-    	        setEventMessages($langs->trans("Saved"), null, 'mesgs');
-    	        header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
-   	            exit;
-    	    }
-    	    else setEventMessages('Failed to write file '.$filetpl, null, 'errors');    	        
-    	}
-    	else
-    	{
-    		$db->rollback();
-    	}
+            $res = $objectpage->update($user);
+            if ($res < 0)
+            {
+                $error++;
+                setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+            }
+    
+        	if (! $error)
+        	{
+        		$db->commit();
+        	    
+        		$filemaster=$pathofwebsite.'/master.inc.php';
+        		//$fileoldalias=$pathofwebsite.'/'.$objectpage->old_object->pageurl.'.php';
+        		$filealias=$pathofwebsite.'/'.$objectpage->pageurl.'.php';
+        		
+        	    dol_mkdir($pathofwebsite);
+        		
+        		
+        		// Now generate the master.inc.php page
+        		dol_syslog("We regenerate the master file");
+        		dol_delete_file($filemaster);
+        		
+        		$mastercontent = '<?php'."\n";
+        		$mastercontent.= '// File generated to link to the master file'."\n";
+        		$mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+        		$mastercontent.= '?>'."\n";
+        		$result = file_put_contents($filemaster, $mastercontent);
+        		if (! empty($conf->global->MAIN_UMASK))
+        		    @chmod($filemaster, octdec($conf->global->MAIN_UMASK));
+        		
+    		    if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+    		
+    		
+    		    // Now generate the alias.php page
+                if (! empty($fileoldalias))
+                {
+        		    dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
+        		    dol_delete_file($fileoldalias);
+                }
+                
+    		    $aliascontent = '<?php'."\n";
+    		    $aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a copy of database page content\n";
+    		    $aliascontent.= "include_once './page".$objectpage->id.".tpl.php';\n";
+    		    $aliascontent.= '?>'."\n";
+    		    $result = file_put_contents($filealias, $aliascontent);
+    		    if (! empty($conf->global->MAIN_UMASK))
+    		        @chmod($filealias, octdec($conf->global->MAIN_UMASK));
+    		
+                if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
+    		
+        		        
+        	    // Now create the .tpl file with code to be able to make dynamic changes
+        	    dol_delete_file($filetpl);
+    
+                $tplcontent ='';
+                $tplcontent.= "<?php // BEGIN PHP\n";
+                $tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require './master.inc.php'; } // Not already loaded"."\n";
+                $tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+                $tplcontent.= "ob_start();\n";
+                $tplcontent.= "// END PHP ?>\n";
+        	    $tplcontent.= '<html>'."\n";
+        	    $tplcontent.= '<header>'."\n";
+        	    $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
+        	    $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
+        	    $tplcontent.= '<meta name="viewport" content="width=device-width, initial-scale=0.8">'."\n";
+        	    $tplcontent.= '<meta name="keywords" content="'.join(', ', explode(',',$objectpage->keywords)).'" />'."\n";
+        	    $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
+        	    $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
+        	    $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";
+        	    $tplcontent.= '<link rel="stylesheet" href="styles.css.php?website='.$website.'" type="text/css" />'."\n";
+        	    $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
+        	    $tplcontent.= '</header>'."\n";
+        	    	
+        	    $tplcontent.= '<body>'."\n";
+        	    $tplcontent.= $objectpage->content."\n";
+        	    $tplcontent.= '</body>'."\n";
+        	    
+        	    $tplcontent.= '<?php // BEGIN PHP'."\n";
+        	    $tplcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+        	    $tplcontent.= "// END PHP ?>"."\n";
+        	    
+                //var_dump($filetpl);exit;	    
+        	    $result = file_put_contents($filetpl, $tplcontent);
+        	    if (! empty($conf->global->MAIN_UMASK))
+        	        @chmod($filetpl, octdec($conf->global->MAIN_UMASK));
+                     
+        	    if ($result)
+        	    {
+        	        setEventMessages($langs->trans("Saved"), null, 'mesgs');
+        	        header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+       	            exit;
+        	    }
+        	    else 
+        	    {
+        	        setEventMessages('Failed to write file '.$filetpl, null, 'errors');    	        
+        	        header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+       	            exit;
+        	    }
+        	}
+        	else
+        	{
+        		$db->rollback();
+        	}
+        }
+        else
+        {
+            header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+            exit;
+        }
     }
     else
     {
@@ -603,7 +618,7 @@ if ($action == 'edit')
 $style='';
 if ($action != 'preview' && $action != 'editcontent') $style=' margin-bottom: 5px;';
 
-
+//var_dump($objectpage);exit;
 print '<div class="centpercent websitebar">';
 
 if (count($object->records) > 0)
