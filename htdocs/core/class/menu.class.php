@@ -56,8 +56,8 @@ class Menu
      * @param   integer	$level      Level of menu to add
      * @param   int		$enabled    Menu active or not (0=Not active, 1=Active, 2=Active but grey)
      * @param   string	$target		Target lien
-     * @param	string	$mainmenu	Main menu ('home', 'companies', 'products', ...)
-     * @param	string	$leftmenu	Left menu ('setup', 'system', 'admintools', ...)
+     * @param	string	$mainmenu	This main menu name ('home', 'companies', 'products', ...)
+     * @param	string	$leftmenu	This left menu name ('setup', 'system', 'admintools', ...)
      * @param	int		$position	Position (not used yet)
      * @return	void
      */
@@ -75,8 +75,8 @@ class Menu
      * @param   integer	$level      Level of menu to add
      * @param   int		$enabled    Menu active or not
      * @param   string	$target		Target lien
-     * @param	string	$mainmenu	Main menu ('home', 'companies', 'products', ...)
-     * @param	string	$leftmenu	Left menu ('setup', 'system', 'admintools', ...)
+     * @param	string	$mainmenu	This main menu name ('home', 'companies', 'products', ...)
+     * @param	string	$leftmenu	This left menu name ('setup', 'system', 'admintools', ...)
      * @param	int		$position	Position (not used yet)
      * @return	void
      */
