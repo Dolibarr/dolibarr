@@ -49,9 +49,10 @@ class Categorie extends CommonObject
 	const TYPE_MEMBER = 3;     // TODO Replace this value with 'member'
 	const TYPE_CONTACT = 4;    // TODO Replace this value with 'contact'
 	const TYPE_USER = 4;       // categorie contact and user are same !   TODO Replace this value with 'user'
-    const TYPE_ACCOUNT = 5;    // for bank account TODO Replace this value with 'account'
-    const TYPE_PROJECT = 6;
-    public $picto = 'category';
+    const TYPE_ACCOUNT = 5;    // TODO Replace this value with 'bank_account'
+	const TYPE_PROJECT = 6;
+    const TYPE_BANK_LINE = 'bank_line';
+	public $picto = 'category';
     
 
 	/**
@@ -1337,34 +1338,68 @@ class Categorie extends CommonObject
 			$type = $map_type[$type];
 		}
 
-		$sql = "SELECT ct.fk_categorie, c.label, c.rowid";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as ct, " . MAIN_DB_PREFIX . "categorie as c";
-		$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_" . $this->MAP_CAT_FK[$type] . " = " . (int) $id . " AND c.type = " . $this->MAP_ID[$type];
-		$sql .= " AND c.entity IN (" . getEntity( 'category', 1 ) . ")";
-
-		$res = $this->db->query($sql);
-		if ($res)
+		if ($type == Categorie::TYPE_BANK_LINE)   // TODO Remove this with standard category code
 		{
-			while ($obj = $this->db->fetch_object($res))
-			{
-				if ($mode == 'id') {
-					$cats[] = $obj->rowid;
-				} else if ($mode == 'label') {
-					$cats[] = $obj->label;
-				} else {
-					$cat = new Categorie($this->db);
-					$cat->fetch($obj->fk_categorie);
-					$cats[] = $cat;
-				}
-			}
-
-			return $cats;
+		    // Load bank groups
+		    $sql = "SELECT c.label, c.rowid";
+		    $sql.= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c";
+		    $sql.= " WHERE a.lineid=".$id." AND a.fk_categ = c.rowid";
+		    $sql.= " ORDER BY c.label";
+		    
+		    $res = $this->db->query($sql);
+		    if ($res)
+		    {
+		        while ($obj = $this->db->fetch_object($res))
+		        {
+    				if ($mode == 'id') {
+    				    $cats[] = $obj->rowid;
+    				} else if ($mode == 'label') {
+    				    $cats[] = $obj->label;
+    				} else {
+    				    $cat = new Categorie($this->db);
+    				    $cat->id = $obj->rowid;
+    				    $cat->label = $obj->label;
+    				    $cats[] = $cat;
+    				}
+		        }
+		    }
+		    else
+		    {
+		        dol_print_error($this->db);
+		        return -1;
+		    }		    
 		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
+        else
+        {
+    		$sql = "SELECT ct.fk_categorie, c.label, c.rowid";
+    		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as ct, " . MAIN_DB_PREFIX . "categorie as c";
+    		$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_" . $this->MAP_CAT_FK[$type] . " = " . (int) $id . " AND c.type = " . $this->MAP_ID[$type];
+    		$sql .= " AND c.entity IN (" . getEntity( 'category', 1 ) . ")";
+    
+    		$res = $this->db->query($sql);
+    		if ($res)
+    		{
+    			while ($obj = $this->db->fetch_object($res))
+    			{
+    				if ($mode == 'id') {
+    					$cats[] = $obj->rowid;
+    				} else if ($mode == 'label') {
+    					$cats[] = $obj->label;
+    				} else {
+    					$cat = new Categorie($this->db);
+    					$cat->fetch($obj->fk_categorie);
+    					$cats[] = $cat;
+    				}
+    			}
+    		}
+    		else
+    		{
+    			dol_print_error($this->db);
+    			return -1;
+    		}
+        }
+    
+        return $cats;
 	}
 
 
