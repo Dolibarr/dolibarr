@@ -121,7 +121,7 @@ class box_commandes extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax100"',
                         'text' => $societestatic->getNomUrl(1),
                         'asis' => 1,
                     );

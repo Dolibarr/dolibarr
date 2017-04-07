@@ -57,7 +57,10 @@ $nolinesbefore=(count($this->lines) == 0 || $forcetoshowtitlelines);
 if ($nolinesbefore) {
 ?>
 <tr class="liste_titre<?php echo (($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add') ?> nodrag nodrop">
-	<td class="linecoldescription" <?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
+	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+	<td class="linecolnum" align="center"></td>
+	<?php } ?>
+	<td class="linecoldescription minwidth500imp">
 	<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span><?php // echo $langs->trans("FreeZone"); ?>
 	</td>
 	<?php if ($object->element == 'supplier_proposal') { ?>
@@ -114,12 +117,17 @@ if ($nolinesbefore) {
 <tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add'; ?>">
 <?php
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-	$coldisplay=2; }
+	$coldisplay=2;
+	?>
+	<td class="linecolnum" align="center" width="5">
+	<?php 
+}
 else {
-	$coldisplay=0; }
+	$coldisplay=0; 
+}
 ?>
 
-	<td class="nobottom linecoldescription"<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
+	<td class="nobottom linecoldescription minwidth500imp">
 
 	<?php
 

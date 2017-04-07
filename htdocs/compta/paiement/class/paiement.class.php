@@ -96,7 +96,7 @@ class Paiement extends CommonObject
 		if ($id > 0)
 			$sql.= ' AND p.rowid = '.$id;
 		else if ($ref)
-			$sql.= ' AND p.rowid = '.$ref;
+			$sql.= " AND p.ref = '".$ref."'";
 		else if ($fk_bank)
 			$sql.= ' AND p.fk_bank = '.$fk_bank;
 

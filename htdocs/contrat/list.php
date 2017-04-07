@@ -551,7 +551,7 @@ if ($resql)
         print_liste_field_titre($staticcontratligne->LibStatut(4,3,1), '', '', '', '', 'width="16"');
         print_liste_field_titre($staticcontratligne->LibStatut(5,3), '', '', '', '', 'width="16"');
     }
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
 
     while ($i < min($num,$limit))

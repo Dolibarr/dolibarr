@@ -834,8 +834,8 @@ class FormFile
     	$out='';
     	$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
 
-    	if (! empty($conf->dol_use_jmobile)) return '';
-    	 
+    	//if (! empty($conf->dol_use_jmobile)) return '';
+  	 
 		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir),'/').'[^\-]+', '\.meta$|\.png$');	// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files)
 
     	// For ajax treatment
