@@ -131,9 +131,12 @@ class FormContract
 			print '</select>';
 			$db->free($resql);
 			
-			// Make select dynamic
-			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-			print ajax_combobox($htmlname);
+			if (!empty($conf->use_javascript_ajax))
+			{
+				// Make select dynamic
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+				print ajax_combobox($htmlname);
+			}
 			
 			return $num;
 		}
