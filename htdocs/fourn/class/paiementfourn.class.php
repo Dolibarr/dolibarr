@@ -349,7 +349,7 @@ class PaiementFourn extends Paiement
     			$result=$accline->fetch($bank_line_id);
     			if ($result > 0) // If result = 0, record not found, we don't try to delete
     			{
-    				$result=$accline->delete();
+    				$result=$accline->delete($user);
     			}
     			if ($result < 0)
     			{

@@ -48,6 +48,12 @@ $langs->load("companies");
 $langs->load('products');
 $langs->load('projects');
 
+$action=GETPOST('action','alpha');
+$massaction=GETPOST('massaction','alpha');
+$show_files=GETPOST('show_files','int');
+$confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
+
 $socid = GETPOST('socid','int');
 
 // Security check
@@ -110,7 +116,7 @@ if (! $sortfield) $sortfield="f.datef,f.rowid";
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $contextpage='supplierinvoicelist';
 
-$diroutputmassaction=$conf->facture->dir_output . '/temp/massgeneration/'.$user->id;
+$diroutputmassaction=$conf->fournisseur->facture->dir_output . '/temp/massgeneration/'.$user->id;
 
 $object=new FactureFournisseur($db);
 
@@ -171,67 +177,62 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  */
 
 if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction')) { $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOST("button_removefilter.x"))		// All test must be present to be compatible with all browsers
-{
-    $search_all="";
-    $search_user='';
-    $search_sale='';
-    $search_product_category='';
-    $search_ref="";
-    $search_refsupplier="";
-    $search_label="";
-    $search_project='';
-    $search_societe="";
-    $search_company="";
-    $search_amount_no_tax="";
-    $search_amount_all_tax="";
-    $search_montant_ht='';
-    $search_montant_vat='';
-    $search_montant_ttc='';
-    $search_status='';
-    $search_paymentmode='';
-    $search_town='';
-    $search_zip="";
-    $search_state="";
-    $search_type='';
-    $search_country='';
-    $search_type_thirdparty='';
-    $year="";
-    $month="";
-    $day="";
-    $year_lim="";
-    $month_lim="";
-    $day_lim="";
-    $search_array_options=array();
-    $filter='';
-    $option='';
-}
-
 if (empty($reshook))
 {
-    // Mass actions. Controls on number of lines checked
-    $maxformassaction=1000;
-    if (! empty($massaction) && count($toselect) < 1)
+    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+    
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOST("button_removefilter.x"))		// All test must be present to be compatible with all browsers
     {
-        $error++;
-        setEventMessages($langs->trans("NoLineChecked"), null, "warnings");
+        $search_all="";
+        $search_user='';
+        $search_sale='';
+        $search_product_category='';
+        $search_ref="";
+        $search_refsupplier="";
+        $search_label="";
+        $search_project='';
+        $search_societe="";
+        $search_company="";
+        $search_amount_no_tax="";
+        $search_amount_all_tax="";
+        $search_montant_ht='';
+        $search_montant_vat='';
+        $search_montant_ttc='';
+        $search_status='';
+        $search_paymentmode='';
+        $search_town='';
+        $search_zip="";
+        $search_state="";
+        $search_type='';
+        $search_country='';
+        $search_type_thirdparty='';
+        $year="";
+        $month="";
+        $day="";
+        $year_lim="";
+        $month_lim="";
+        $day_lim="";
+        $toselect='';
+        $search_array_options=array();
+        $filter='';
+        $option='';
     }
-    if (! $error && count($toselect) > $maxformassaction)
-    {
-        setEventMessages($langs->trans('TooManyRecordForMassAction',$maxformassaction), null, 'errors');
-        $error++;
-    }
-
-
+    
+    // Mass actions
+    $objectclass='FactureFournisseur';
+    $objectlabel='SupplierInvoices';
+    $permtoread = $user->rights->fournisseur->facture->lire;
+    $permtodelete = $user->rights->fournisseur->facture->supprimer;
+    $uploaddir = $conf->fournisseur->facture->dir_output;
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
+
     
 /*
  * View
@@ -424,7 +425,15 @@ if ($resql)
 	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
 	
-	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
+	// List of mass actions available
+	$arrayofmassactions =  array(
+	    //'presend'=>$langs->trans("SendByMail"),
+	    //'builddoc'=>$langs->trans("PDFMerge"),
+	);
+	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
+	if ($user->rights->fournisseur->facture->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+	//if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
+	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 	
 	$i = 0;
 	print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -437,7 +446,144 @@ if ($resql)
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 	print '<input type="hidden" name="socid" value="'.$socid.'">';
 
-	print_barre_liste($langs->trans("BillsSuppliers").($socid?" - $soc->name":""), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
+	print_barre_liste($langs->trans("BillsSuppliers").($socid?" - $soc->name":""), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
+	
+	if ($massaction == 'presend')
+	{
+	    $langs->load("mails");
+	
+	    if (! GETPOST('cancel'))
+	    {
+	        $objecttmp=new Commande($db);
+	        $listofselectedid=array();
+	        $listofselectedthirdparties=array();
+	        $listofselectedref=array();
+	        foreach($arrayofselected as $toselectid)
+	        {
+	            $result=$objecttmp->fetch($toselectid);
+	            if ($result > 0)
+	            {
+	                $listofselectedid[$toselectid]=$toselectid;
+	                $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
+	                $listofselectedthirdparties[$thirdpartyid]=$thirdpartyid;
+	                $listofselectedref[$thirdpartyid][$toselectid]=$objecttmp->ref;
+	            }
+	        }
+	    }
+	
+	    print '<input type="hidden" name="massaction" value="confirm_presend">';
+	
+	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+	    $formmail = new FormMail($db);
+	
+	    dol_fiche_head(null, '', '');
+	
+	    $topicmail="SendOrderRef";
+	    $modelmail="order_send";
+	
+	    // Cree l'objet formulaire mail
+	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+	    $formmail = new FormMail($db);
+	    $formmail->withform=-1;
+	    $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+	
+	    if($formmail->fromtype === 'user'){
+	        $formmail->fromid = $user->id;
+	
+	    }
+	    if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
+	    {
+	        $formmail->trackid='ord'.$object->id;
+	    }
+	    if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+	    {
+	        include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+	        $formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
+	    }
+	    $formmail->withfrom=1;
+	    $liste=$langs->trans("AllRecipientSelected");
+	    if (count($listofselectedthirdparties) == 1)
+	    {
+	        $liste=array();
+	        $thirdpartyid=array_shift($listofselectedthirdparties);
+	        $soc=new Societe($db);
+	        $soc->fetch($thirdpartyid);
+	        foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
+	        {
+	            $liste[$key]=$value;
+	        }
+	        $formmail->withtoreadonly=0;
+	    }
+	    else
+	    {
+	        $formmail->withtoreadonly=1;
+	    }
+	    $formmail->withto=$liste;
+	    $formmail->withtofree=0;
+	    $formmail->withtocc=1;
+	    $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+	    $formmail->withtopic=$langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
+	    $formmail->withfile=$langs->trans("OnlyPDFattachmentSupported");
+	    $formmail->withbody=1;
+	    $formmail->withdeliveryreceipt=1;
+	    $formmail->withcancel=1;
+	    // Tableau des substitutions
+	    $formmail->substit['__REF__']='__REF__';	// We want to keep the tag
+	    $formmail->substit['__SIGNATURE__']=$user->signature;
+	    $formmail->substit['__REFCLIENT__']='__REFCLIENT__';	// We want to keep the tag
+	    $formmail->substit['__PERSONALIZED__']='';
+	    $formmail->substit['__CONTACTCIVNAME__']='';
+	
+	    // Tableau des parametres complementaires du post
+	    $formmail->param['action']=$action;
+	    $formmail->param['models']=$modelmail;
+	    $formmail->param['models_id']=GETPOST('modelmailselected','int');
+	    $formmail->param['id']=join(',',$arrayofselected);
+	    //$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
+	
+	    print $formmail->get_form();
+	
+	    dol_fiche_end();
+	}
+	elseif ($massaction == 'createbills')
+	{
+	    //var_dump($_REQUEST);
+	    print '<input type="hidden" name="massaction" value="confirm_createbills">';
+	
+	    print '<table class="border" width="100%" >';
+	    print '<tr>';
+	    print '<td class="titlefieldmiddle">';
+	    print $langs->trans('DateInvoice');
+	    print '</td>';
+	    print '<td>';
+	    print $form->select_date('', '', '', '', '', '', 1, 1);
+	    print '</td>';
+	    print '</tr>';
+	    print '<tr>';
+	    print '<td>';
+	    print $langs->trans('CreateOneBillByThird');
+	    print '</td>';
+	    print '<td>';
+	    print $form->selectyesno('createbills_onebythird', '', 1);
+	    print '</td>';
+	    print '</tr>';
+	    print '<tr>';
+	    print '<td>';
+	    print $langs->trans('ValidateInvoices');
+	    print '</td>';
+	    print '<td>';
+	    print $form->selectyesno('valdate_invoices', 1, 1);
+	    print '</td>';
+	    print '</tr>';
+	    print '</table>';
+	
+	    print '<br>';
+	    print '<div class="center">';
+	    print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomer').'">  ';
+	    print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+	    print '</div>';
+	    print '<br>';
+	}
 	
 	if ($search_all)
     {
@@ -487,10 +633,10 @@ if ($resql)
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	
+    if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+    
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-
 
 	// Line for filters
 	print '<tr class="liste_titre_filter">';
@@ -646,7 +792,7 @@ if ($resql)
 	}
 	// Action column
 	print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterAndCheckAddButtons(0, 'checkforselect', 0);
+	$searchpitco=$form->showFilterButtons('checkforselect', 0);
 	print $searchpitco;
 	print '</td>';
 
@@ -688,7 +834,7 @@ if ($resql)
 	if (! empty($arrayfields['f.datec']['checked']))     print_liste_field_titre($arrayfields['f.datec']['label'],$_SERVER["PHP_SELF"],"f.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.tms']['checked']))       print_liste_field_titre($arrayfields['f.tms']['label'],$_SERVER["PHP_SELF"],"f.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.fk_statut']['checked'])) print_liste_field_titre($arrayfields['f.fk_statut']['label'],$_SERVER["PHP_SELF"],"fk_statut,paye","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";	
 	
     $facturestatic=new FactureFournisseur($db);
@@ -944,11 +1090,15 @@ if ($resql)
             }
             
     		// Action column
+            // Action column
             print '<td class="nowrap" align="center">';
-            $selected=0;
-    		if (in_array($obj->facid, $arrayofselected)) $selected=1;
-    		//print '<input id="cb'.$obj->facid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->facid.'"'.($selected?' checked="checked"':'').'>';
-    		print '</td>' ;
+            if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+            {
+                $selected=0;
+                if (in_array($obj->facid, $arrayofselected)) $selected=1;
+                print '<input id="cb'.$obj->facid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->facid.'"'.($selected?' checked="checked"':'').'>';
+            }
+            print '</td>';
     		if (! $i) $totalarray['nbfield']++;
     		
 			print "</tr>\n";

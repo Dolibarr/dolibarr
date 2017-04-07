@@ -1922,7 +1922,7 @@ if (! function_exists("llxFooter"))
         }
         
         // Wrapper to manage document_preview
-        if (! empty($conf->use_javascript_ajax))
+        if (! empty($conf->use_javascript_ajax) && ! empty($conf->browser->layout != 'phone'))
         {
             print "\n<!-- JS CODE TO ENABLE document_preview -->\n";
             print '<script type="text/javascript">

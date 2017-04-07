@@ -5913,7 +5913,7 @@ function getImageFileNameForSize($file, $extName, $extImgTarget='')
  *
  * @param   string    $modulepart     propal, facture, facture_fourn, ...
  * @param   string    $relativepath   Relative path of docs.
- * @param	int		  $alldata		  Return array with all components (1 is recommended)  
+ * @param	int		  $alldata		  Return array with all components (1 is recommended, then use a simple a href link with the class, target and mime attribute added. 'documentpreview' css class is handled by jquery code into main.inc.php)  
  * @return  string|array              Output string with href link or array with all components of link
  */
 function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0)
