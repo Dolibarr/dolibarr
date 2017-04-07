@@ -37,7 +37,8 @@ class Paiement extends CommonObject
 {
     public $element='payment';
     public $table_element='paiement';
-
+    public $picto = 'payment';
+    
 	var $facid;
 	var $datepaye;
 	/**
@@ -1016,7 +1017,7 @@ class Paiement extends CommonObject
 		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 
 		$langs->load('compta');
-		if ($mode == 0)
+		/*if ($mode == 0)
 		{
 			if ($status == 0) return $langs->trans('ToValidate');
 			if ($status == 1) return $langs->trans('Validated');
@@ -1046,7 +1047,12 @@ class Paiement extends CommonObject
 			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
 			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
 		}
-		return $langs->trans('Unknown');
+		if ($mode == 6)
+	    {
+	        if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+	        if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+	    }*/
+		return '';
 	}
 
 }

@@ -192,7 +192,7 @@ else                                        $title=$langs->trans("Category");
 $head = categories_prepare_head($object,$type);
 
 
-dol_fiche_head($head, 'card', $title, 0, 'category');
+dol_fiche_head($head, 'card', $title, -1, 'category');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
 
@@ -219,6 +219,7 @@ if ($action == 'delete')
 
 print '<br>';
 
+print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 print '<table width="100%" class="border">';
 
@@ -241,6 +242,7 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 }
 
 print '</table>';
+print '</div>';
 
 dol_fiche_end();
 

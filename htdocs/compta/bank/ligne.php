@@ -228,7 +228,6 @@ $tabs = array(
     )
 );
 
-dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), 0, 'account');
 
 $sql = "SELECT b.rowid,b.dateo as do,b.datev as dv, b.amount, b.label, b.rappro,";
 $sql.= " b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, b.fk_account, b.fk_bordereau as receiptid,";
@@ -269,11 +268,14 @@ if ($result)
         print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
         print '<input type="hidden" name="id" value="'.$acct->id.'">';
 
+        dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), 0, 'account');
+        
         $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php">'.$langs->trans("BackToList").'</a>';
 
         
         dol_banner_tab($bankline, 'rowid', $linkback);
         
+
         print '<div class="underbanner clearboth"></div>';       
         print '<table class="border" width="100%">';
 
@@ -291,7 +293,7 @@ if ($result)
         // Bank account
         print '<tr><td class="titlefield">'.$langs->trans("Account").'</td>';
         print '<td>';
-        print $acct->getNomUrl(1,'transactions');
+        print $acct->getNomUrl(1,'transactions','reflabel');
         print '</td>';
         print '</tr>';
 
@@ -542,8 +544,10 @@ if ($result)
         print "</tr>";
 
         print "</table>";
-
-        print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
+        
+        dol_fiche_end();
+        
+        print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div><br>';
 
         print "</form>";
 
@@ -596,7 +600,7 @@ if ($result)
             print '</tr>';
             print '</table>';
 
-			print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
+            print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div><br>';
 
 			print '</form>';
         }
@@ -606,7 +610,6 @@ if ($result)
     $db->free($result);
 }
 else dol_print_error($db);
-print '</div>';
 
 
 
@@ -641,8 +644,7 @@ if ($result)
     {
         $objp = $db->fetch_object($result);
 
-        $var=!$var;
-        print "<tr ".$bc[$var].">";
+        print '<tr clas"oddeven">';
 
         print "<td>".$objp->label."</td>";
         print "<td align=\"center\"><a href=\"budget.php?bid=".$objp->rowid."\">".$langs->trans("ListBankTransactions")."</a></td>";

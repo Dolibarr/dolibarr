@@ -89,6 +89,11 @@ class FormFile
         }
         else
        	{
+	        //If there is no permission and the option to hide unauthorized actions is enabled, then nothing is printed
+	        if (!$perm && !empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
+		        return 1;
+	        }
+
             $maxlength=$size;
 
             $out = "\n\n<!-- Start form attach new file -->\n";
@@ -1103,19 +1108,16 @@ class FormFile
 			        // Do we have entry into database ?
 			        print '<!-- In database: position='.$filearray[$key]['position'].' -->'."\n";
 					print '<tr id="row-'.($filearray[$key]['rowid']>0?$filearray[$key]['rowid']:'-AFTER'.$lastrowid.'POS'.($i+1)).'" '.$bcdd[$var].'>';
-					print '<td class="tdoverflow">';
+					print '<td class="tdoverflowmax300">';
+					
+					$filepath=$relativepath.$file['name'];
+					
+					if (! $editline) print $this->showPreview($file,$modulepart,$filepath);
 					
 					//print "XX".$file['name'];	//$file['name'] must be utf8
-					print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+					print '<a class="paddingleft" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 					if ($forcedownload) print '&attachment=1';
 					if (! empty($object->entity)) print '&entity='.$object->entity;
-					$filepath=$relativepath.$file['name'];
-					/* Restore old code: When file is at level 2+, full relative path (and not only level1) must be into url
-					if ($file['level1name'] <> $object->id)
-						$filepath=$object->id.'/'.$file['level1name'].'/'.$file['name'];
-					else
-						$filepath=$object->id.'/'.$file['name'];
-					*/
 					print '&file='.urlencode($filepath);
 					print '">';
 
@@ -1135,10 +1137,10 @@ class FormFile
 					    print '</a>';
 					}
 					
-                    if (! $editline) print $this->showPreview($file,$modulepart,$filepath);
-
 					print "</td>\n";
+					
 					print '<td align="right" width="80px">'.dol_print_size($file['size'],1,1).'</td>';
+					
 					print '<td align="center" width="130px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
 				
 					// Preview

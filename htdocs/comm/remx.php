@@ -92,7 +92,7 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 		$newdiscount2->fk_facture=$discount->fk_facture;
 		$newdiscount1->fk_facture_line=$discount->fk_facture_line;
 		$newdiscount2->fk_facture_line=$discount->fk_facture_line;
-		if ($discount->description == '(CREDIT_NOTE)')
+		if ($discount->description == '(CREDIT_NOTE)' || $discount->description == '(DEPOSIT)')
 		{
 			$newdiscount1->description=$discount->description;
 			$newdiscount2->description=$discount->description;

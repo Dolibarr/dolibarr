@@ -611,6 +611,7 @@ while ($i < min($num, $limit))
 	$memberstatic->statut=$obj->statut;
 	$memberstatic->datefin= $datefin;
 	$memberstatic->socid = $obj->fk_soc;
+	$memberstatic->photo = $obj->photo;
 	
 	if (! empty($obj->fk_soc)) {
 	    $memberstatic->fetch_thirdparty();
@@ -619,8 +620,7 @@ while ($i < min($num, $limit))
 		$companyname=$obj->company;
 	}
 
-	$var=!$var;
-	print "<tr>";
+	print '<tr class="oddeven">';
 	
 	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 	{
@@ -631,7 +631,7 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['d.ref']['checked'])) 
 	{
    		print "<td>";
-		print $memberstatic->getNomUrl(1);
+		print $memberstatic->getNomUrl(-1);
 		print "</td>\n";
 	}		
 	// Firstname

@@ -848,7 +848,7 @@ if (! defined('NOREQUIRETRAN'))
 
 // Define some constants used for style of arrays
 $bc=array(0=>'class="impair"',1=>'class="pair"');
-$bcdd=array(0=>'class="drag drop"',1=>'class="drag drop"');
+$bcdd=array(0=>'class="drag drop oddeven"',1=>'class="drag drop oddeven"');
 $bcnd=array(0=>'class="nodrag nodrop nohover"',1=>'class="nodrag nodrop nohoverpair"');		// Used for tr to add new lines
 $bctag=array(0=>'class="tagtr"',1=>'class="pair tagtr"');
 
