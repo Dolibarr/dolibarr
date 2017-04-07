@@ -36,6 +36,7 @@ $price_impact = (float) GETPOST('price_impact');
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
 $form = new Form($db);
 $action = GETPOST('action');
+$cancel = GETPOST('cancel');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : $ref);
@@ -57,6 +58,10 @@ if ($id > 0 || $ref)
  * Actions
  */
 
+if ($cancel) {
+    $action='';
+}
+    
 if (! $object->isProduct()) {
 	header('Location: '.dol_buildpath('/product/card.php?id='.$object->id, 2));
 	exit();
@@ -107,7 +112,7 @@ if ($_POST) {
 			$db->begin();
 
 			if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features)) {
-				if (ProductCombination::createProductCombination($product, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact)) {
+				if (ProductCombination::createProductCombination($object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact)) {
 					$db->commit();
 					setEventMessage($langs->trans('RecordSaved'));
 					header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
@@ -175,7 +180,7 @@ if ($_POST) {
 			setEventMessage($langs->trans('RecordSaved'));
 		}
 
-	} else {
+	} elseif ($valueid > 0) {
 
 		if ($prodcomb->fetch($valueid) < 0) {
 			dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
@@ -255,6 +260,9 @@ if ($action === 'confirm_deletecombination') {
 /*
  *	View
  */
+
+$form = new Form($db);
+
 
 if (! empty($id) || ! empty($ref)) {
 
@@ -342,6 +350,7 @@ if (! empty($id) || ! empty($ref)) {
 				var select = jQuery("select#features");
 
 				select.empty();
+
 				jQuery("form#combinationform input[type=hidden]").detach();
 
 				jQuery.each(variants_selected.index, function (key, val) {
@@ -359,11 +368,12 @@ if (! empty($id) || ! empty($ref)) {
 
 			jQuery(document).ready(function() {
 				jQuery("select#attribute").change(function () {
-					console.log("Change of field attribute");
+					console.log("Change of field variant attribute");
 					var select = jQuery("select#value");
 
 					if (!jQuery(this).val().length || jQuery(this).val() == '-1') {
 						select.empty();
+						select.append('<option value="-1">&nbsp;</option>');
 						return;
 					}
 
@@ -373,22 +383,27 @@ if (! empty($id) || ! empty($ref)) {
 						id: jQuery(this).val()
 					}, function(data) {
 						if (data.error) {
-							jQuery("select#value").empty();
+							select.empty();
+							select.append('<option value="-1">&nbsp;</option>');
 							return alert(data.error);
 						}
 
 						select.empty();
-						/* console.log(data.length); */
+						select.append('<option value="-1">&nbsp;</option>');
 
 						jQuery(data).each(function (key, val) {
 							keyforoption = val.id
 							valforoption = val.value
-							jQuery("select#value").append('<option value="' + keyforoption + '">' + valforoption + '</option>');
+							select.append('<option value="' + keyforoption + '">' + valforoption + '</option>');
 						});
 					});
 				});
 
+				/* Click on button Add combination
+				@FIXME Not compatible with all browsers.
+				 */
 				jQuery("#addfeature").click(function () {
+					console.log("Click on add");
 					var selectedattr = jQuery("select[name=attribute] option:selected");
 					var selectedvalu = jQuery("select[name=value] option:selected");
 
@@ -438,54 +453,69 @@ if (! empty($id) || ! empty($ref)) {
 		<?php 
 		}
 		
-        print '<form method="post" id="combinationform">';		
+		print '<form method="post" id="combinationform">';
+		print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">';
+		
 		print dol_fiche_head();
 		
 		?>
 		
 		<table class="border" style="width: 100%">
 			<?php if ($action == 'add') { ?>
+			<!--  Variant -->
 			<tr>
 				<td class="titlefieldcreate fieldrequired"><label for="attribute"><?php echo $langs->trans('ProductAttribute') ?></label></td>
-				<td colspan="2"><select class="flat minwidth100" id="attribute" name="attribute">
+				<td><select class="flat minwidth100" id="attribute" name="attribute">
 					<option value="-1">&nbsp;</option>
 					<?php foreach ($prodattr_all as $attr): ?>
 					<option value="<?php echo $attr->id ?>"><?php echo $attr->label ?></option>
 					<?php endforeach ?>
 				</select></td>
 			</tr>
+			<!-- Value -->
 			<tr>
 				<td class="fieldrequired"><label for="value"><?php echo $langs->trans('Value') ?></label></td>
-				<td colspan="2">
+				<td>
 					<select class="flat minwidth100" id="value" name="value">
 						<option value="-1">&nbsp;</option>
 					</select>
 				</td>
 			</tr>
-			<?php } ?>
 			<tr>
-				<td class="titlefieldcreate fieldrequired"><label for="features"><?php echo $langs->trans('Features') ?></label></td>
-				<td><select multiple style="width: 100%" id="features">
+				<td></td><td>
+					<a href="#" class="button" id="addfeature"><?php echo $langs->trans("SelectCombination"); ?></a>
+				</td>
+			</tr>
+		</table>
+		<hr>
+			<?php } 
+			?>
+		<table class="border" style="width: 100%">
+			<tr>
+				<td class="titlefieldcreate fieldrequired tdtop"><label for="features"><?php echo $langs->trans('Variant') ?></label></td>
+				<td class="valignmiddle">
+					<div class="inline-block valignmiddle quatrevingtpercent">
+					<select multiple class="centpercent" id="features">
 						<?php
 						foreach ($productCombination2ValuePairs1 as $pc2v): ?>
 							<option value="<?php echo $pc2v->fk_prod_attr ?>:<?php echo $pc2v->fk_prod_attr_val ?>"><?php echo dol_htmlentities($pc2v) ?></option>
 						<?php endforeach ?>
-					</select></td>
+					</select></div>
+					<div class="inline-block valignmiddle">
+					<a href="#" class="inline-block valignmiddle button" id="delfeature"><?php echo img_edit_remove() ?></a>
+					</div>
+				</td>
 				<td>
-					<?php if ($action == 'add'): ?>
-					<a href="#" class="button" id="addfeature"><?php echo img_edit_add() ?></a><br><br>
-					<a href="#" class="button" id="delfeature"><?php echo img_edit_remove() ?></a>
-					<?php endif; ?>
 				</td>
 			</tr>
 			<tr>
 				<td><label for="price_impact"><?php echo $langs->trans('PriceImpact') ?></label></td>
-				<td colspan="2"><input type="text" id="price_impact" name="price_impact" value="<?php echo price($price_impact) ?>">
+				<td><input type="text" id="price_impact" name="price_impact" value="<?php echo price($price_impact) ?>">
 				<input type="checkbox" id="price_impact_percent" name="price_impact_percent" <?php echo $price_impact_percent ? ' checked' : '' ?>> <label for="price_impact_percent"><?php echo $langs->trans('PercentageVariation') ?></label></td>
 			</tr>
 			<tr>
 				<td><label for="weight_impact"><?php echo $langs->trans('WeightImpact') ?></label></td>
-				<td colspan="2"><input type="text" id="weight_impact" name="weight_impact" value="<?php echo price($weight_impact) ?>"></td>
+				<td><input type="text" id="weight_impact" name="weight_impact" value="<?php echo price($weight_impact) ?>"></td>
 			</tr>
 		</table>
 
@@ -494,8 +524,10 @@ if (! empty($id) || ! empty($ref)) {
         ?>
 
 		<div style="text-align: center">
-		
-		<input type="submit" value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button"></div>
+		<input type="submit" value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button">
+		&nbsp;
+		<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel'); ?>" class="button">
+		</div>
 		
 		<?php foreach ($productCombination2ValuePairs1 as $pc2v): ?>
 				<input type="hidden" name="features[]" value="<?php echo $pc2v->fk_prod_attr.':'.$pc2v->fk_prod_attr_val ?>">
@@ -509,7 +541,6 @@ if (! empty($id) || ! empty($ref)) {
 		if ($action === 'delete') {
 
 			if ($prodcomb->fetch($valueid) > 0) {
-				$form = new Form($db);
 				$prodstatic->fetch($prodcomb->fk_product_child);
 
 				print $form->formconfirm(
@@ -523,8 +554,6 @@ if (! empty($id) || ! empty($ref)) {
 				);
 			}
 		} elseif ($action === 'copy') {
-
-			$form = new Form($db);
 
 			print $form->formconfirm(
 				'combinations.php?id='.$id,
@@ -570,50 +599,64 @@ if (! empty($id) || ! empty($ref)) {
 				});
 			</script>
 
-		<form method="post">
-		<label for="bulk_action"><?php echo $langs->trans('BulkActions') ?></label>
-		<select id="bulk_action" name="bulk_action" class="flat">
-			<option value="not_buy"><?php echo $langs->trans('ProductStatusNotOnBuy') ?></option>
-			<option value="not_sell"><?php echo $langs->trans('ProductStatusNotOnSell') ?></option>
-			<option value="on_buy"><?php echo $langs->trans('ProductStatusOnBuy') ?></option>
-			<option value="on_sell"><?php echo $langs->trans('ProductStatusOnSell') ?></option>
-			<option value="delete"><?php echo $langs->trans('Delete') ?></option>
-		</select>
-		<input type="hidden" name="action" value="bulk_actions">
-		<input type="submit" value="<?php echo $langs->trans("Apply") ?>" class="button">
-		<br>
-		<br>
 		<?php } 
 		
-
+        // Buttons
 		print '<div class="tabsAction">';
+		
 		print '	<div class="inline-block divButAction">';
 		if ($productCombinations) {
 		    print '<a href="combinations.php?id='.$id.'&action=copy" class="butAction">'.$langs->trans('Copy').'</a>';
 		}
+		
 		print '<a href="combinations.php?id='.$id.'&action=add" class="butAction">'.$langs->trans('NewProductCombination').'</a>';
-		print '<a href="generator.php?id='.$id.'" class="butAction">'.$langs->trans('ProductCombinationGenerator').'</a>';
+		
+		if (empty($conf->dol_optimize_smallscreen) && $conf->use_javascript_ajax)     // Bugged page. Too much useless javascript.
+		{
+		  print '<a href="generator.php?id='.$id.'" class="butAction">'.$langs->trans('ProductCombinationGenerator').'</a>';
+		}
+		
 		print '	</div>';
+		
 		print '</div>';
 		
+		print '<form method="post">';
 		
+		$aaa='';
+		if (count($productCombinations))
+		{
+    		$aaa = '<label for="bulk_action">'.$langs->trans('BulkActions').'</label>';
+    		$aaa .= '<select id="bulk_action" name="bulk_action" class="flat">';
+    		$aaa .= '	<option value="not_buy">'.$langs->trans('ProductStatusNotOnBuy').'</option>';
+    		$aaa .= '	<option value="not_sell">'.$langs->trans('ProductStatusNotOnSell').'</option>';
+    		$aaa .= '	<option value="on_buy">'.$langs->trans('ProductStatusOnBuy').'</option>';
+    		$aaa .= '	<option value="on_sell">'.$langs->trans('ProductStatusOnSell').'</option>';
+    		$aaa .= '	<option value="delete">'.$langs->trans('Delete').'</option>';
+    		$aaa .= '</select>';
+    		$aaa .= '<input type="hidden" name="action" value="bulk_actions">';
+    		$aaa .= '<input type="submit" value="'.dol_escape_htmltag($langs->trans("Apply")).'" class="button">';
+		}
 		
+		$title = $langs->trans("ProductCombinations");
+		
+		print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $aaa, 0);
+		
+		print '<div class="div-table-responsive">';
 		?>
-
 		<table class="liste">
 			<tr class="liste_titre">
-				<th class="liste_titre">
+				<th class="liste_titre"><?php echo $langs->trans('Product') ?></th>
+				<th class="liste_titre"><?php echo $langs->trans('Combination') ?></th>
+				<th class="liste_titre right"><?php echo $langs->trans('PriceImpact') ?></th>
+				<th class="liste_titre right"><?php echo $langs->trans('WeightImpact') ?></th>
+				<th class="liste_titre center"><?php echo $langs->trans('OnSell') ?></th>
+				<th class="liste_titre center"><?php echo $langs->trans('OnBuy') ?></th>
+				<th class="liste_titre"></th>
+				<th class="liste_titre center">
 					<?php if ($productCombinations): ?>
 					<input type="checkbox" name="select_all">
 					<?php endif ?>
 				</th>
-				<th class="liste_titre"><?php echo $langs->trans('Product') ?></th>
-				<th class="liste_titre"><?php echo $langs->trans('Combination') ?></th>
-				<th class="liste_titre" style="text-align: center"><?php echo $langs->trans('PriceImpact') ?></th>
-				<th class="liste_titre" style="text-align: center"><?php echo $langs->trans('WeightImpact') ?></th>
-				<th class="liste_titre" style="text-align: center;"><?php echo $langs->trans('OnSell') ?></th>
-				<th class="liste_titre" style="text-align: center;"><?php echo $langs->trans('OnBuy') ?></th>
-				<th class="liste_titre"></th>
 			</tr>
 			<?php
 			
@@ -622,8 +665,7 @@ if (! empty($id) || ! empty($ref)) {
     			foreach ($productCombinations as $currcomb) {
     				$prodstatic->fetch($currcomb->fk_product_child); 
     				?>
-    				<tr <?php echo $bc[!$var] ?>>
-    				<td><input type="checkbox" name="select[<?php echo $prodstatic->id ?>]"></td>
+    				<tr class="oddeven">
     				<td><?php echo $prodstatic->getNomUrl(1) ?></td>
     				<td>
     					<?php
@@ -639,17 +681,17 @@ if (! empty($id) || ! empty($ref)) {
     						}
     					} ?>
     				</td>
-    				<td style="text-align: right"><?php echo ($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '') ?></td>
-    				<td style="text-align: right"><?php echo ($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuring_units_string($prodstatic->weight_units, 'weight') ?></td>
+    				<td class="right"><?php echo ($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '') ?></td>
+    				<td class="right"><?php echo ($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuring_units_string($prodstatic->weight_units, 'weight') ?></td>
     				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 0) ?></td>
     				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
-    				<td style="text-align: right">
-    					<a href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=edit&valueid='.$currcomb->id, 2) ?>"><?php echo img_edit() ?></a>
-    					<a href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=delete&valueid='.$currcomb->id, 2) ?>"><?php echo img_delete() ?></a>
+    				<td class="right">
+    					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=edit&valueid='.$currcomb->id, 2) ?>"><?php echo img_edit() ?></a>
+    					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=delete&valueid='.$currcomb->id, 2) ?>"><?php echo img_delete() ?></a>
     				</td>
+    				<td class="center"><input type="checkbox" name="select[<?php echo $prodstatic->id ?>]"></td>
     			</tr>
     			<?php
-    			$var = !$var; 
 			    }
 			}
 			else
@@ -659,12 +701,12 @@ if (! empty($id) || ! empty($ref)) {
 			?>
 		</table>
 
-		<?php if ($productCombinations): ?>
-		</form>
-		<?php endif ?>
-
 		<?php
+		print '</div>';
+		print '</form>';
 	}
 }
 
 llxFooter();
+
+$db->close();

@@ -593,6 +593,7 @@ class FormFile
             $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             
             $out.= load_fiche_titre($titletoshow, '', '');
+            $out.= '<div class="div-table-responsive-no-min">';
             $out.= '<table class="liste formdoc noborder" summary="listofdocumentstable" width="100%">';
 
             $out.= '<tr class="liste_titre">';
@@ -802,6 +803,7 @@ class FormFile
         {
             // Affiche pied du tableau
             $out.= "</table>\n";
+            $out.= "</div>\n";
             if ($genallowed)
             {
                 if (empty($noform)) $out.= '</form>'."\n";
