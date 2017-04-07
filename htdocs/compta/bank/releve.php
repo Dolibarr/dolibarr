@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2017      Patrick Delcroix	<pmpdelcroix@gmail.com>
@@ -403,8 +403,7 @@ else
 			$objp = $db->fetch_object($result);
 			$total = $total + $objp->amount;
 
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 
 			// Date operation
 			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->do),"day").'</td>';
@@ -595,7 +594,7 @@ else
 
 			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 			{
-				print "<td align=\"center\"><a href=\"ligne.php?rowid=$objp->rowid&amp;account=".$object->id."\">";
+				print '<td align="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&account='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?account='.$object->id.'&num='.$numref).'">';
 				print img_edit();
 				print "</a></td>";
 			}

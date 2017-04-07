@@ -3395,7 +3395,7 @@ class Form
      */
     function select_all_categories($type, $selected='', $htmlname="parent", $maxlength=64, $excludeafterid=0, $outputmode=0)
     {
-        global $langs;
+        global $conf, $langs;
         $langs->load("categories");
 
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -3406,9 +3406,35 @@ class Form
 		    dol_syslog(__METHOD__ . ': using numeric value for parameter type is deprecated. Use string code instead.', LOG_WARNING);
 		}
 
-        $cat = new Categorie($this->db);
-        $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
-
+		if ($type == Categorie::TYPE_BANK_LINE)
+		{
+		    // TODO Move this into common category feature
+		    $categids=array();
+		    $sql = "SELECT c.label, c.rowid";
+		    $sql.= " FROM ".MAIN_DB_PREFIX."bank_categ as c";
+		    $sql.= " WHERE entity = ".$conf->entity;
+		    $sql.= " ORDER BY c.label";
+		    $result = $this->db->query($sql);
+		    if ($result)
+		    {
+		        $num = $this->db->num_rows($result);
+		        $i = 0;
+		        while ($i < $num)
+		        {
+		            $objp = $this->db->fetch_object($result);
+		            if ($objp) $cate_arbo[$objp->rowid]=array('id'=>$objp->rowid, 'fulllabel'=>$objp->label);
+		            $i++;
+		        }
+		        $this->db->free($result);
+		    }
+		    else dol_print_error($this->db);
+		}
+		else
+		{
+            $cat = new Categorie($this->db);
+            $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
+		}
+		
         $output = '<select class="flat" name="'.$htmlname.'">';
 		$outarray=array();
         if (is_array($cate_arbo))
