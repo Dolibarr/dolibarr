@@ -929,7 +929,7 @@ td.showDragHandle {
 	display: block;
 	font-family: "RobotoDraft","Roboto",sans-serif;
 	left: 0;
-<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 <?php } else { ?>
 	position: fixed;
 	top: 50px;
@@ -958,7 +958,7 @@ td.showDragHandle {
 	-moz-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	-webkit-overflow-scrolling: touch;
-<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 <?php } else { ?>
 	overflow-x: hidden;
 	overflow-y: auto;
@@ -970,7 +970,7 @@ td.showDragHandle {
 }
 
 /* For smartphone (testmenuhider is on) */
-<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 #id-container {
 	width: 100%;
 }
@@ -982,7 +982,7 @@ div.login_block {
 	top: inherit !important;
 }
 .side-nav {
-<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 <?php } else { ?>
 	overflow-x: initial !important;
 	overflow-y: scroll;
@@ -1004,7 +1004,7 @@ div.login_block {
 	z-index: 201;
 	background: #FFF;
 	border-right: 1px solid rgba(0,0,0,0.3);
-<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 	top: 50px ! important;
 <?php } else { ?>
 	top: 60px ! important;
@@ -1647,7 +1647,7 @@ div.login_block {
     padding-bottom: 3px;
 	<?php print $left; ?>: 0;
 	top: 0px;
-<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 	position: absolute;
 <?php } else { ?>
 	position: fixed;

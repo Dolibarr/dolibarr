@@ -35,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 //show files
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
@@ -93,6 +95,27 @@ if ($id > 0 || ! empty($ref))
 // Initialize technical object to manage context to save list fields
 $contextpage='banktransactionlist'.(empty($object->ref)?'':'-'.$object->id);
 
+$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
+$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
+$sql.= " b.fk_bordereau,";
+$sql.= " bc.ref,";
+$sql.= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
+$sql.= ", ".MAIN_DB_PREFIX."bank as b";
+$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bordereau_cheque as bc ON bc.rowid=b.fk_bordereau';
+$sql.= " WHERE b.num_releve='".$db->escape($numref)."'";
+if (!isset($numref))	$sql.= " OR b.num_releve is null";
+$sql.= " AND b.fk_account = ".$object->id;
+$sql.= " AND b.fk_account = ba.rowid";
+$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
+
+$sqlrequestforbankline = $sql;
+
+
+
+/*
+ * Actions
+ */
 
 // ZIP creation
 if ($action=="dl" && $numref > 0)
@@ -100,36 +123,161 @@ if ($action=="dl" && $numref > 0)
 	// TODO Replace this with a standard builddoc action that use a document generation module to build the ZIP
     $log = '';
     
-    getAttachedFiles($db, $numref); // Build array $_SESSION["releve"][$numref] with all files to includes
+    $outdir = $conf->bank->dir_temp.'/'.$numref.'-'.$object->label;
+    $outdirinvoices = $outdir.'/'.$langs->trans("BillsCustomers");
+    $outdirsupplierinvoices = $outdir.'/'.$langs->trans("BillsSuppliers");
+
+    dol_mkdir($outdir);
+    dol_mkdir($outdirinvoices);
+    dol_mkdir($outdirsupplierinvoices);
     
-    $filearray = $_SESSION["releve"][$numref];
-    $zipname = $numref . '.zip';
+    //$zipname = $object->label.'-'.$numref . '.zip';
+    //$zip = new ZipArchive();
+    //$zip->open($zipname, ZipArchive::OVERWRITE);
+
+    $sql = $sqlrequestforbankline;
+
+    $facturestatic=new Facture($db);
     
-    $zip = new ZipArchive();
-    $zip->open($zipname, ZipArchive::OVERWRITE);
-    foreach ($filearray as $key => $files) {
-        if (is_array($files)) {
-            foreach ($files as $file) {
-                $zip->addFile($file["fullname"], $file["name"]); //
-                $log .= $key . ',' . $file["name"] . "\n";
+    $resd = $db->query($sql);
+    if ($resd) {
+        $numd = $db->num_rows($resd);
+        $i = 0;
+        if ($numd > 0)
+        {
+            $objd = $db->fetch_object($resd);
+            
+            $log.='Transaction '.$objd->rowid;
+            $links = $object->get_url($objd->rowid);
+
+            foreach($links as $key=>$val)
+            {
+                $link = ''; $upload_dir = '';
+
+                switch ($val['type']) {
+                    case "payment":
+                        $payment = new Paiement($db);
+                        $payment->fetch($val['url_id']);
+                        $arraybill = $payment->getBillsArray();
+                        if (count($arraybill) > 0)
+                        {
+                            foreach ($arraybill as $billid)
+                            {
+                                $facturestatic->fetch($billid);
+                                $subdir = get_exdir($facturestatic->id, 2, 0, 0, $facturestatic, 'invoice');
+                                
+                                $arrayofinclusion=array();              // TODO Find a way to get doc ODT or other
+                                // TODO Use get_exdir
+                                $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf','/');
+                                $listoffiles = dol_dir_list($conf->facture->dir_output.$subdir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
+                                // build list of files with full path
+                                $files = array();
+                                foreach($listoffiles as $filefound)
+                                {
+                                    if (strstr($filefound["name"],$facturestatic->ref))
+                                    {
+                                        $files[] = $uploaddir.'/'.$facturestatic->ref.'/'.$filefound["name"];
+                                        break;
+                                    }
+                                }
+                                /*var_dump($files);*/
+                                //var_dump($listoffiles);
+                                foreach($listoffiles as $key => $srcfileobj)
+                                {
+                                    $srcfile = $srcfileobj['fullname'];
+                                    $destfile = $outdirinvoices.'/'.$srcfileobj['name'];
+                                    //var_dump($srcfile.' - '.$destfile);
+                                    dol_copy($srcfile, $destfile);
+                                }
+                            }
+                        }
+                        break;
+                    case "payment_supplier":
+                        $payment = new PaiementFourn($db);
+                        $payment->fetch($val['url_id']);
+                        $arraybill = $payment->getBillsArray();
+                        if (count($arraybill) > 0)
+                        {
+                            foreach ($arraybill as $billid)
+                            {
+                                $facturestatic->fetch($billid);
+                                $subdir = get_exdir($facturestatic->id, 2, 0, 0, $facturestatic, 'invoice_supplier');
+                                
+                                $arrayofinclusion=array();              // TODO Find a way to get doc ODT or other
+                                // TODO Use get_exdir
+                                $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf','/');
+                                $listoffiles = dol_dir_list($conf->fournisseur->facture->dir_output.$subdir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
+                                // build list of files with full path
+                                $files = array();
+                                foreach($listoffiles as $filefound)
+                                {
+                                    if (strstr($filefound["name"],$facturestatic->ref))
+                                    {
+                                        $files[] = $uploaddir.'/'.$facturestatic->ref.'/'.$filefound["name"];
+                                        break;
+                                    }
+                                }
+                                /*var_dump($files);*/
+                                //var_dump($listoffiles);
+                                foreach($listoffiles as $key => $srcfileobj)
+                                {
+                                    $srcfile = $srcfileobj['fullname'];
+                                    $destfile = $outdirinvoices.'/'.$srcfileobj['name'];
+                                    //var_dump($srcfile.' - '.$destfile);
+                                    dol_copy($srcfile, $destfile);
+                                }
+                            }
+                        }                        
+                        break;
+                    case "payment_expensereport":
+                        /*$subdir = dol_sanitizeFileName($objd->refe);
+                        $upload_dir = $conf->expensereport->dir_output . '/' . $subdir;*/
+                        break;
+                    case "payment_salary":
+                        /*$subdir = dol_sanitizeFileName($objd->ids);
+                        $upload_dir = $conf->salaries->dir_output . '/' . $subdir;*/
+                        break;
+                    case "payment_donation":
+                        /*$subdir = get_exdir(null, 2, 0, 1, $objd, 'donation') . '/' . dol_sanitizeFileName($objd->idd);
+                        $upload_dir = $conf->don->dir_output . '/' . $subdir;*/
+                        break;
+                    default:
+                        break;
+                }
             }
-        } else {
-            $log .= $key . ',' . $langs->trans("Nofile") . "\n";
+            $log.="\n";
+            
+            /*if (! empty($upload_dir))
+            {
+                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview\.png)$', '', SORT_ASC, 1);
+
+                if (is_array($files)) {
+                    foreach ($files as $file) {
+                        $zip->addFile($file["fullname"], $file["name"]); //
+                        $log .= $key . ',' . $file["name"] . "\n";
+                    }
+                } else {
+                    $log .= $key . ',' . $langs->trans("Nofile") . "\n";
+                }
+                
+            }*/
         }
     }
-    $zip->addFromString('log '.$numref.'.csv', $log);
-    $zip->close();
+    
+    $db->free($resd);
+    
+    
+    //$zip->addFromString('log '.$numref.'.csv', $log);
+    //$zip->close();
     
     // /Then download the zipped file.
-    header('Content-Type: application/zip');
+    /*header('Content-Type: application/zip');
     header('Content-disposition: attachment; filename=' . $zipname);
     header('Content-Length: ' . filesize($zipname));
     
     readfile($zipname);
     
-    unset($_SESSION["releve"][$numref]);
-    
-    exit;
+    exit;*/
 }
 
 
@@ -371,20 +519,8 @@ else
 	}
 
 	// Recherche les ecritures pour le releve
-	$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
-	$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
-	$sql.= " b.fk_bordereau,";
-    $sql.= " bc.ref,";
-	$sql.= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
-	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
-    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bordereau_cheque as bc ON bc.rowid=b.fk_bordereau';
-	$sql.= " WHERE b.num_releve='".$db->escape($numref)."'";
-	if (!isset($numref))	$sql.= " OR b.num_releve is null";
-	$sql.= " AND b.fk_account = ".$object->id;
-	$sql.= " AND b.fk_account = ba.rowid";
-	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
-
+    $sql = $sqlrequestforbankline;
+    
 	$result = $db->query($sql);
 	if ($result)
 	{
@@ -393,9 +529,9 @@ else
 		$i = 0;
 
 		// Ligne Solde debut releve
-		print "<tr ".$bc[$var]."><td colspan=\"3\"></td>";
-		print "<td colspan=\"3\"><b>".$langs->trans("InitialBankBalance")." :</b></td>";
-		print '<td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td>';
+		print '<tr class="oddeven"><td colspan="3"></td>';
+		print '<td colspan="3"><b>'.$langs->trans("InitialBankBalance")." :</b></td>";
+		print '<td class="right"><b>'.price($total).'</b></td><td>&nbsp;</td>';
 		print "</tr>\n";
 
 		while ($i < $numrows)
@@ -613,7 +749,7 @@ else
 
 	// Line Balance
 	print "\n<tr><td align=\"right\" colspan=\"3\">&nbsp;</td><td colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
-	print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td>";
+	print '<td class="right"><b>'.price($total)."</b></td><td>&nbsp;</td>";
 	print "</tr>\n";
 	print "</table>";
 	print "</div>";
@@ -632,103 +768,3 @@ else
 llxFooter();
 
 $db->close();
-
-
-
-
-/**
- * Function to generate the HTML code used to show the file name & download link attached to the Item covered by the bank line
- * 
- * @param DoliDB    $db         database object   
- * @param int       $bankId     bank line id
- * @param int       $num        bank statement      
- * @param string    $label     label used to optimise the sql querry
- */
-function getAttachedFiles($db, $numref, $label='')
-{
-    $out = '';
-    global $conf;
-    $sql = 'SELECT u.url_id, u.type,ff.rowid as id , ff.`ref` AS reff, f.facnumber AS `ref`,';
-    $sql .= ' e.`ref` AS refe, sp.rowid AS ids, d.rowid AS idd';
-    $sql .= ' FROM ' . MAIN_DB_PREFIX . 'bank_url AS u, ' . MAIN_DB_PREFIX . 'bank AS b';
-    if (! empty($label) || $label == '(CustomerInvoicePayment)') {
-        $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'paiement AS p ON p.fk_bank = u.fk_bank';
-        $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'paiement_facture AS pf ON pf.fk_paiement = p.rowid';
-        $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'facture AS f ON f.rowid = pf.fk_facture';
-    }
-    if (! empty($label) || $label == '(SupplierInvoicePayment)') {
-        // invoice suplier (SupplierInvoicePayment)
-        $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'paiementfourn AS fp ON fp.fk_bank = u.fk_bank';
-        $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'paiementfourn_facturefourn AS fpf ON fpf.fk_paiementfourn = fp.rowid';
-        $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'facture_fourn AS ff ON ff.rowid = fpf.fk_facturefourn';
-    }
-    if (! empty($label) || $label == '(ExpenseReportPayment)') {
-        // EXPENSEs (ExpenseReportPayment)
-        $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'payment_expensereport AS ep ON ep.fk_bank = u.fk_bank';
-        $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'expensereport AS e ON e.rowid = ep.fk_expensereport';
-    }
-    if (! empty($label) || $label == '(DonationPayment)') {
-        // donation
-        $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'payment_donation AS dp ON dp.fk_bank = u.fk_bank';
-        $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'don AS d ON d.rowid = dp.fk_donation';
-    }
-    if (! empty($label) || $label == '(SalaryPayment)') {
-        // loan
-        // $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'payment_loan AS lp ON lp.fk_bank = u.fk_bank';
-        // salary
-        $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'payment_salary AS sp ON sp.fk_bank = u.fk_bank';
-    }
-    // END SQL
-    $sql .= " WHERE u.fk_bank = b.rowid AND u.type in ('payment','payment_supplier','payment_expensereport','payment_salary','payment_donation' )";
-    $resd = $db->query($sql);
-    $files = array();
-    $link = '';
-    if ($resd) {
-        $numd = $db->num_rows($resd);
-        $upload_dir = '';
-        $i = 0;
-        if ($numd > 0) 
-        {
-            $objd = $db->fetch_object($resd);
-            
-            switch ($objd->type) {
-                case "payment":
-                    $subdir = dol_sanitizeFileName($objd->ref);
-                    $upload_dir = $conf->facture->dir_output . '/' . $subdir;
-                    $link = DOL_URL_ROOT."/document.php?modulepart=facture&file=" . str_replace('/', '%2F', $subdir) . '%2F';
-                    break;
-                case "payment_supplier":
-                    $subdir = get_exdir($objd->id, 2, 0, 0, $objd, 'invoice_supplier') . $objd->reff;
-                    $upload_dir = $conf->fournisseur->facture->dir_output . '/' . $subdir;
-                    $link = DOL_URL_ROOT."/document.php?modulepart=facture_fournisseur&file=" . str_replace('/', '%2F', $subdir) . '%2F';
-                    break;
-                case "payment_expensereport":
-                    $subdir = dol_sanitizeFileName($objd->refe);
-                    $upload_dir = $conf->expensereport->dir_output . '/' . $subdir;
-                    $link = DOL_URL_ROOT."/document.php?modulepart=expensereport&file=" . str_replace('/', '%2F', $subdir) . '%2F';
-                    break;
-                case "payment_salary":
-                    $subdir = dol_sanitizeFileName($objd->ids);
-                    $upload_dir = $conf->salaries->dir_output . '/' . $subdir;
-                    $link = DOL_URL_ROOT."/document.php?modulepart=salaries&file=" . str_replace('/', '%2F', $subdir) . '%2F';
-                    break;
-                case "payment_donation":
-                    $subdir = get_exdir(null, 2, 0, 1, $objd, 'donation') . '/' . dol_sanitizeFileName($objd->idd);
-                    $upload_dir = $conf->don->dir_output . '/' . $subdir;
-                    $link = DOL_URL_ROOT."/document.php?modulepart=don&file=" . str_replace('/', '%2F', $subdir) . '%2F';
-                    break;
-                default:
-                    break;
-            }
-            
-            if (! empty($upload_dir)) 
-            {
-                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview\.png)$', '', SORT_ASC, 1);
-                $_SESSION["releve"][$numref][] = $files;
-            }
-        }
-    }
-
-    $db->free($resd);
-    return $out;
-}

@@ -932,7 +932,7 @@ div.vmenu, td.vmenu {
 
 
 /* For smartphone (testmenuhider is on) */
-<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php if ($conf->browser->layout == 'phone' && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 #id-container {
 	width: 100%;
 }
@@ -4540,7 +4540,7 @@ div.tabsElem a.tab {
 	}
 }
 /* rule to reduce top menu - 3rd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 8; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 3.6, 0) + 12; ?>px)	/* reduction 3 */
 {
 	.side-nav {
 		z-index: 200;
@@ -4570,16 +4570,23 @@ div.tabsElem a.tab {
 		width: 100%;
 	}
 	div.login_block {
+		<?php if ($conf->browser->layout == 'phone' && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 		display: none;
+		padding-top: 20px;
+		padding-left: 20px;
+    	padding-right: 20px;
+		<?php } else { ?>
+		padding-top: 10px;
+		padding-left: 5px;
+    	padding-right: 5px;
+    	<?php } ?>
 		top: inherit !important;
 		left: 0 !important;
 		text-align: center;
         vertical-align: middle;
         background: #FFF;
         height: 42px;
-		padding-top: 20px;
-		padding-left: 20px;
-    	padding-right: 20px;
+        
     	z-index: 202;
     	min-width: 190px;
     	max-width: 190px;
