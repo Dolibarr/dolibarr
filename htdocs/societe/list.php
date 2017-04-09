@@ -40,6 +40,7 @@ $langs->load("customers");
 $langs->load("suppliers");
 $langs->load("bills");
 $langs->load("compta");
+$langs->load('commercial');
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -160,7 +161,7 @@ $arrayfields=array(
     's.idprof4'=>array('label'=>$langs->trans("ProfId4Short"), 'checked'=>$checkedprofid4),
     's.idprof5'=>array('label'=>$langs->trans("ProfId5Short"), 'checked'=>$checkedprofid5),
     's.idprof6'=>array('label'=>$langs->trans("ProfId6Short"), 'checked'=>$checkedprofid6),
-    'customerorsupplier'=>array('label'=>'Nature', 'checked'=>1),
+    'customerorsupplier'=>array('label'=>$langs->trans('Nature'), 'checked'=>1),
     's.fk_prospectlevel'=>array('label'=>$langs->trans("ProspectLevelShort"), 'checked'=>$checkprospectlevel),
 	's.fk_stcomm'=>array('label'=>$langs->trans("StatusProsp"), 'checked'=>$checkstcomm),
     's.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
@@ -592,7 +593,7 @@ if (! empty($arrayfields['s.ape']['checked']))            print_liste_field_titr
 if (! empty($arrayfields['s.idprof4']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof4","",$param,'class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.idprof5']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId5Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof5","",$param,'class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.idprof6']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId6Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof6","",$param,'class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['customerorsupplier']['checked'])) print_liste_field_titre('');   // type of customer
+if (! empty($arrayfields['customerorsupplier']['checked'])) print_liste_field_titre($arrayfields['customerorsupplier']['label']);   // type of customer
 if (! empty($arrayfields['s.fk_prospectlevel']['checked'])) print_liste_field_titre($arrayfields['s.fk_prospectlevel']['label'],$_SERVER["PHP_SELF"],"s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.fk_stcomm']['checked']))      print_liste_field_titre($arrayfields['s.fk_stcomm']['label'],$_SERVER["PHP_SELF"],"s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
 // Extra fields
