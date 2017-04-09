@@ -165,9 +165,9 @@ function invoice_rec_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$object->id;
-	$head[$h][1] = $langs->trans('Card');
-	$head[$h][2] = 'compta';
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/fiche-rec.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("CardBill");
+	$head[$h][2] = 'card';
 	$h++;
 
     // Show more tabs from modules
