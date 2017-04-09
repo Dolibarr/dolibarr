@@ -1821,7 +1821,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	    {
 	        $accessallowed=1;
 	    }
-	    $original_file=$conf->propal->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+	    $original_file=$conf->supplier_proposal->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
 	else if ($modulepart == 'massfilesarea_supplier_order')
 	{

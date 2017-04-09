@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@capnetworks.com>
@@ -316,11 +316,11 @@ if ($result)
 	{
 	    $soc = new Societe($db);
 	    $soc->fetch($socid);
-	    $title = $langs->trans('ListOfProposals') . ' - '.$soc->name;
+	    $title = $langs->trans('ListOfSupplierProposals') . ' - '.$soc->name;
 	}
 	else
 	{
-	    $title = $langs->trans('ListOfProposals');
+	    $title = $langs->trans('ListOfSupplierProposals');
 	}
 	
 	$num = $db->num_rows($result);
@@ -706,10 +706,10 @@ if ($result)
 	    $urlsource.=str_replace('&amp;','&',$param);
 	
 	    $filedir=$diroutputmassaction;
-	    $genallowed=$user->rights->propal->lire;
-	    $delallowed=$user->rights->propal->lire;
+	    $genallowed=$user->rights->supplier_proposal->lire;
+	    $delallowed=$user->rights->supplier_proposal->lire;
 	
-	    print $formfile->showdocuments('massfilesarea_proposals','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,'','');
+	    print $formfile->showdocuments('massfilesarea_supplier_proposal','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,'','');
 	}
 	else
 	{
