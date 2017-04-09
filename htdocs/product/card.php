@@ -562,7 +562,7 @@ if (empty($reshook))
     {
         if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer))
         {
-            $result = $object->delete($object->id);
+            $result = $object->delete(DolibarrApiAccess::$user);
         }
 
         if ($result > 0)

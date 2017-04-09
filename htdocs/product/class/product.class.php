@@ -1012,18 +1012,18 @@ class Product extends CommonObject
 	/**
 	 *  Delete a product from database (if not used)
 	 *
-	 *	@param      int		$id         Product id (usage of this is deprecated, delete should be called without parameters on a fetched object)
+	 *	@param      User	$user       Product id (usage of this is deprecated, delete should be called without parameters on a fetched object)
 	 *  @param      int     $notrigger  Do not execute trigger
 	 * 	@return		int					< 0 if KO, 0 = Not possible, > 0 if OK
 	 */
-	function delete($id=0, $notrigger=0)
+	function delete(User $user, $notrigger=0)
 	{
 		// Deprecation warning
 		if ($id > 0) {
 			dol_syslog(__METHOD__ . " with parameter is deprecated", LOG_WARNING);
 		}
 
-		global $conf,$user,$langs;
+		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$error=0;

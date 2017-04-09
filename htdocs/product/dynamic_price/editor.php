@@ -149,7 +149,8 @@ if ($action == 'delete')
 {
 	if ($eid != 0)
 	{
-		$result = $price_expression->delete($eid, $user);
+	    $price_expression->fetch($eid);
+		$result = $price_expression->delete($user);
 		if ($result < 0)
 		{
 			setEventMessages("delete: ".$price_expression->error, $price_expression->errors, 'errors');

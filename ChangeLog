@@ -11,6 +11,8 @@ Following changes may create regression for some external modules, but were nece
 * The trigger USER_SETINGROUP and USER_REMOVEFROMGROUP has been replaced with trigger USER_MODIFY.
 * The page societe/soc.php was renamed into societe/card.php to match page naming conventions.
 * The page compta/facture.php was renamed into compta/facture/card.php to match page naming conventions.
+* The signature of method ->delete() of class Product and PriceExpression was changed from 
+  ->delete($id, notrigger) to ->delete(User, notrigger) to match standard dev rules.
 
 
 ***** ChangeLog for 5.0.1 compared to 5.0.0 *****
