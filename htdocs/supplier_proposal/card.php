@@ -1907,7 +1907,7 @@ if ($action == 'create')
 		$formmail->withtocc = $liste;
 		$formmail->withtoccc = (! empty($conf->global->MAIN_EMAIL_USECCC) ? $conf->global->MAIN_EMAIL_USECCC : false);
 
-		$formmail->withtopic = $outputlangs->trans('SendAskRef', '__ASKREF__');
+		$formmail->withtopic = $outputlangs->trans('SendAskRef', '__SUPPLIERPROPREF__');
 
 		$formmail->withfile = 2;
 		$formmail->withbody = 1;
