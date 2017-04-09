@@ -596,9 +596,10 @@ div.myavailability {
 	padding-bottom: 4px;
 }
 .checkallactions {
-	vertical-align: text-bottom;
-    margin-top: 6px;
-    margin-left: 4px;
+	/*vertical-align: text-bottom;
+    margin-top: 6px;*/
+    margin-left: 2px;		/* left must be same than right to keep checkbox centered */
+    margin-right: 2px;		/* left must be same than right to keep checkbox centered */
 }
 .selectlimit, .marginrightonly {
 	margin-right: 10px !important;
@@ -611,6 +612,9 @@ div.myavailability {
 }
 .strikefordisabled {
 	text-decoration: line-through;
+}
+.widthdate {
+	width: 130px;
 }
 /* using a tdoverflowxxx make the min-width not working */
 .tdoverflow {
@@ -4219,7 +4223,9 @@ ul.ulselectedfields {
 dl.dropdown {
     margin:0px;
     padding:0px;
-    vertical-align: middle;
+	margin-left: 2px;
+    margin-right: 2px;
+    vertical-align: text-bottom;
     display: inline-block;
 }
 .dropdown dd, .dropdown dt {

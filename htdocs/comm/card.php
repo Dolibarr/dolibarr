@@ -460,7 +460,7 @@ if ($id > 0)
         }
         else
         {
-            print $langs->trans("ThirdpartyNotLinkedToMember");
+            print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
         }
         print '</td>';
         print "</tr>\n";
