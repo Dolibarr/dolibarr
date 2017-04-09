@@ -38,6 +38,7 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 
 $langs->load('bills');
 $langs->load('compta');
@@ -1109,11 +1110,7 @@ else
 		$author = new User($db);
 		$author->fetch($object->user_author);
 
-		$head=array();
-		$h=0;
-		$head[$h][0] = $_SERVER["PHP_SELF"].'?id='.$object->id;
-		$head[$h][1] = $langs->trans("CardBill");
-		$head[$h][2] = 'card';
+		$head=invoice_rec_prepare_head($object);
 
 		dol_fiche_head($head, 'card', $langs->trans("RepeatableInvoice"),0,'bill');	// Add a div
 
