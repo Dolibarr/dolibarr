@@ -563,8 +563,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 
 $sql.= $db->plimit($limit + 1,$offset);
-
 //print $sql;
+
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -1435,7 +1435,7 @@ if ($resql)
 	
 	    $filedir=$diroutputmassaction;
 	    $genallowed=$user->rights->commande->lire;
-	    $delallowed=$user->rights->commande->lire;
+	    $delallowed=$user->rights->commande->supprimer;
 	
 	    print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
 	}
@@ -1450,6 +1450,5 @@ else
 	dol_print_error($db);
 }
 
-// End of page
 llxFooter();
 $db->close();
