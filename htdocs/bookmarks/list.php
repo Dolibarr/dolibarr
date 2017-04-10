@@ -101,11 +101,8 @@ if ($resql)
     //print "<td>&nbsp;</td>";
     print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bid","", $param,'align="left"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Title"),'','');
-    print "</td>";
     print_liste_field_titre($langs->trans("Link"),'','');
-    print "</td>";
     print_liste_field_titre($langs->trans("Target"),'','','','','align="center"');
-    print "</td>";
     print_liste_field_titre($langs->trans("Owner"),$_SERVER["PHP_SELF"],"u.lastname","", $param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"b.dateb","", $param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Position"),$_SERVER["PHP_SELF"],"b.position","", $param,'align="right"',$sortfield,$sortorder);
@@ -126,8 +123,8 @@ if ($resql)
         print '</td>';
 
         $linkintern=0;
-        $title=dol_trunc($obj->title,24);
-        $link=dol_trunc($obj->url,24);
+        $title=$obj->title;
+        $link=$obj->url;
 
         // Title
         print "<td>";
@@ -152,7 +149,7 @@ if ($resql)
         print "</td>\n";
 
         // Url
-        print "<td>";
+        print '<td class="tdoverflowmax200">';
         if (! $linkintern) print '<a href="'.$obj->url.'"'.($obj->target?' target="newlink"':'').'>';
         print $link;
         if (! $linkintern) print '</a>';

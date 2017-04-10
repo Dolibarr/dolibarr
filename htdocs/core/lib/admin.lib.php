@@ -609,9 +609,19 @@ function defaultvalues_prepare_head()
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=overwrite";
-    $head[$h][1] = $langs->trans("DefaultValuesOverwriteKey");
-    $head[$h][2] = 'overwrite';
+    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=createform";
+    $head[$h][1] = $langs->trans("DefaultCreateForm");
+    $head[$h][2] = 'createform';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=filters";
+    $head[$h][1] = $langs->trans("DefaultSearchFilters");
+    $head[$h][2] = 'filters';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=sortorder";
+    $head[$h][1] = $langs->trans("DefaultSortOrder");
+    $head[$h][2] = 'sortorder';
     $h++;
 
     /*$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=searchkey";
