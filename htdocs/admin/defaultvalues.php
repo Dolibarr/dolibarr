@@ -83,25 +83,23 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 {
 	$error=0;
 
-	if (empty($langcode))
+	if (empty($defaulturl))
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Language")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Url")), null, 'errors');
 		$error++;
 	}
-	if ($transkey == '')
+	if (empty($defaultkey))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Key")), null, 'errors');
 		$error++;
 	}
-	if ($transvalue == '')
-	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NewTranslationStringToShow")), null, 'errors');
-		$error++;
-	}
 	if (! $error)
 	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans(lang, transkey, transvalue) VALUES ('".$db->escape($langcode)."','".$db->escape($transkey)."','".$db->escape($transvalue)."')";
-		$result = $db->query($sql);
+		//$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans(lang, transkey, transvalue) VALUES ('".$db->escape($langcode)."','".$db->escape($transkey)."','".$db->escape($transvalue)."')";
+		//$result = $db->query($sql);
+		
+	    // TODO Insert var
+	    
 		if ($result > 0)
 		{
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
@@ -121,7 +119,8 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 // Delete line from delete picto
 if ($action == 'delete')
 {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."overwrite_trans WHERE rowid = ".$db->escape($id);
+	//$sql = "DELETE FROM ".MAIN_DB_PREFIX."overwrite_trans WHERE rowid = ".$db->escape($id);
+	// Delete const
 	$result = $db->query($sql);
 	if ($result >= 0)
 	{
@@ -186,8 +185,15 @@ if ($mode == 'createform') $texthelp.=$langs->trans("PageUrlForDefaultValuesCrea
 else $texthelp.=$langs->trans("PageUrlForDefaultValuesList", 'societe/list.php');
 $texturl=$form->textwithpicto($langs->trans("Url"), $texthelp);
 print_liste_field_titre($texturl,$_SERVER["PHP_SELF"],'defaulturl','',$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Key"),$_SERVER["PHP_SELF"],'defaultkey','',$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Value"),$_SERVER["PHP_SELF"],'defaultvalue','',$param,'',$sortfield,$sortorder);
+if ($mode != 'sortorder')
+{
+    $texthelp=$langs->trans("TheKeyIsTheNameOfHtmlField");
+    $textkey=$form->textwithpicto($langs->trans("Key"), $texthelp);
+    print_liste_field_titre($textkey,$_SERVER["PHP_SELF"],'defaultkey','',$param,'',$sortfield,$sortorder);
+}
+$texthelp=$langs->trans("YouCanUseSubstitutionValue");
+$textvalue=$form->textwithpicto($langs->trans("Value"), $texthelp);
+print_liste_field_titre($textvalue, $_SERVER["PHP_SELF"], 'defaultvalue', '', $param, '', $sortfield, $sortorder);
 //if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],'entity,transkey','',$param,'',$sortfield,$sortorder);
 print '<td align="center"></td>';
 print "</tr>\n";
@@ -200,9 +206,13 @@ print '<tr class="oddeven">';
 print '<td>';
 print '<input type="text" class="flat minwidth200 maxwidthonsmartphone" name="defaulturl" value="">';
 print '</td>'."\n";
+if ($mode != 'sortorder')
+{
+    print '<td>';
+    print '<input type="text" class="flat maxwidth100" name="defaultkey" value="">';
+    print '</td>';
+}
 print '<td>';
-print '<input type="text" class="flat maxwidth100" name="defaultkey" value="">';
-print '</td><td>';
 print '<input type="text" class="flat maxwidthonsmartphone" name="defaultvalue" value="">';
 print '</td>';
 // Limit to superadmin
@@ -224,13 +234,13 @@ print '</tr>';
 
 
 // Show constants
-$sql = "SELECT";
+/*$sql = "SELECT";
 $sql.= " rowid";
 $sql.= ", lang";
 $sql.= ", transkey";
 $sql.= ", transvalue";
 $sql.= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
-$sql.= " WHERE 1 = 1";
+$sql.= " WHERE 1 = 1";*/
 //$sql.= " AND entity IN (".$user->entity.",".$conf->entity.")";
 //if ((empty($user->entity) || $user->admin) && $debug) {} 										// to force for superadmin to debug
 //else if (! GETPOST('visible') || GETPOST('visible') != 'all') $sql.= " AND visible = 1";		// We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
@@ -253,11 +263,14 @@ if ($result)
 
 		print "\n";
 
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 		
 		print '<td>'.$obj->lang.'</td>'."\n";
-		print '<td>'.$obj->transkey.'</td>'."\n";
-
+        if ($mode != 'sortorder')
+        {
+	   	   print '<td>'.$obj->transkey.'</td>'."\n";
+        }
+        
 		// Value
 		print '<td>';
 		/*print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
