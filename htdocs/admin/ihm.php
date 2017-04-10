@@ -420,22 +420,21 @@ if ($action == 'edit')	// Edit
 	$doleditor->Create();
 	print '</td></tr>'."\n";
 	
-	// Logo
+	// Background
 	$var=!$var;
-	print '<tr'.dol_bc($var,'hideonsmartphone').'><td><label for="imagebackground">'.$langs->trans("BackgroundImageLogin").' (png,jpg)</label></td><td colspan="2">';
-	print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
+	print '<tr><td><label for="imagebackground">'.$langs->trans("BackgroundImageLogin").' (png,jpg)</label></td><td colspan="2">';
+    print '<div class="centpercent inline-block">';
 	print '<input type="file" class="flat class=minwidth200" name="imagebackground" id="imagebackground">';
-	print '</td><td class="nocellnopadd" valign="middle" align="right">';
 	if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 	    print '<a href="'.$_SERVER["PHP_SELF"].'?action=removebackgroundlogin">'.img_delete($langs->trans("Delete")).'</a>';
 	    if (file_exists($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND)) {
 	        print ' &nbsp; ';
-	        print '<img width="100px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/'.$conf->global->MAIN_LOGIN_BACKGROUND).'">';
+	        print '<img class="paddingleft valignmiddle" width="100px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/'.$conf->global->MAIN_LOGIN_BACKGROUND).'">';
 	    }
 	} else {
-	    print '<img width="100" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+	    print '<img class="paddingleft valignmiddle" width="100" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 	}
-	print '</td></tr></table>';
+	print '</div>';
 	print '</td></tr>';
 	
 	print '</table>'."\n";
@@ -604,22 +603,19 @@ else	// Show
     print '</td></tr>'."\n";
     
     // Background login
-    // Logo
     $var=!$var;
     print '<tr class="oddeven"><td>'.$langs->trans("BackgroundImageLogin").'</td><td colspan="2">';
-    print '<div class="tagtable centpercent"><div class="tagtr inline-block centpercent valignmiddle"><div class="tagtd inline-block valignmiddle left">';
+    print '<div class="centpercent inline-block">';
     print $conf->global->MAIN_LOGIN_BACKGROUND;
-    print '</div><div class="tagtd inline-block valignmiddle left">';
-    // It offers the generation of the thumbnail if it does not exist
     if ($conf->global->MAIN_LOGIN_BACKGROUND && is_file($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND))
     {
-        print '<img class="img_logo" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'">';
+        print '<img class="img_logo paddingleft valignmiddle" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'">';
     }
     else
     {
-        print '<img class="img_logo" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+        print '<img class="img_logo paddingleft valignmiddle" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
     }
-    print '</div></div></div>';
+    print '</div>';
     print '</td></tr>';
     
     print '</table>'."\n";
