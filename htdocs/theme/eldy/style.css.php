@@ -590,10 +590,10 @@ div.myavailability {
 	padding-bottom: 4px;
 }
 .checkallactions {
-	vertical-align: text-bottom;
-    margin-top: 6px;
-    margin-left: 4px;		/* left must be same than right to keep checkbox centered */
-    margin-right: 4px;		/* left must be same than right to keep checkbox centered */
+	/* vertical-align: text-bottom;
+    margin-top: 6px; */
+    margin-left: 2px;		/* left must be same than right to keep checkbox centered */
+    margin-right: 2px;		/* left must be same than right to keep checkbox centered */
 }
 .selectlimit, .marginrightonly {
 	margin-right: 10px !important;
@@ -606,6 +606,9 @@ div.myavailability {
 }
 .strikefordisabled {
 	text-decoration: line-through;
+}
+.widthdate {
+	width: 130px;
 }
 /* using a tdoverflowxxx make the min-width not working */
 .tdoverflow {
@@ -932,7 +935,7 @@ div.vmenu, td.vmenu {
 
 
 /* For smartphone (testmenuhider is on) */
-<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php if ($conf->browser->layout == 'phone' && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 #id-container {
 	width: 100%;
 }
@@ -1611,7 +1614,7 @@ div.login_block {
 	position: absolute;
 	text-align: <?php print $right; ?>;
 	<?php print $right; ?>: 5px;
-	top: 3px;
+	top: 4px;
 	font-weight: bold;
 	max-width: <?php echo $maxwidthloginblock; ?>px;
 	<?php if (GETPOST("optioncss") == 'print') { ?>
@@ -2346,7 +2349,7 @@ div.refid  {
   	font-size: 160%;
 }
 div.refidno  {
-	padding-top: 8px;
+	padding-top: 3px;
 	font-weight: normal;
   	color: #444;
   	font-size: <?php print $fontsize ?>px;
@@ -4097,8 +4100,10 @@ ul.ulselectedfields {
 }
 dl.dropdown {
     margin:0px;
+	margin-left: 2px;
+    margin-right: 2px;
     padding:0px;
-    vertical-align: middle;
+    vertical-align: text-bottom;
     display: inline-block;
 }
 .dropdown dd, .dropdown dt {
@@ -4488,7 +4493,7 @@ div.tabsElem a.tab {
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
 /* rule to reduce top menu - 1st reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 6.9, 0) + 20; ?>px)	/* reduction 1 */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 6.9, 0) + 24; ?>px)	/* reduction 1 */
 {
 	div.tmenucenter {
 	    width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
@@ -4517,7 +4522,7 @@ div.tabsElem a.tab {
 	}
 }
 /* rule to reduce top menu - 2nd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.9, 0) + 10; ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 5, 0) + 24; ?>px)	/* reduction 2 */
 {
 	div.mainmenu {
 		height: 23px;
@@ -4540,7 +4545,7 @@ div.tabsElem a.tab {
 	}
 }
 /* rule to reduce top menu - 3rd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 8; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 3.6, 0) + 12; ?>px)	/* reduction 3 */
 {
 	.side-nav {
 		z-index: 200;
@@ -4570,16 +4575,23 @@ div.tabsElem a.tab {
 		width: 100%;
 	}
 	div.login_block {
+		<?php if ($conf->browser->layout == 'phone' && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 		display: none;
+		padding-top: 20px;
+		padding-left: 20px;
+    	padding-right: 20px;
+		<?php } else { ?>
+		padding-top: 10px;
+		padding-left: 5px;
+    	padding-right: 5px;
+    	<?php } ?>
 		top: inherit !important;
 		left: 0 !important;
 		text-align: center;
         vertical-align: middle;
         background: #FFF;
         height: 42px;
-		padding-top: 20px;
-		padding-left: 20px;
-    	padding-right: 20px;
+        
     	z-index: 202;
     	min-width: 190px;
     	max-width: 190px;

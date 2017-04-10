@@ -598,6 +598,35 @@ function translation_prepare_head()
 }
 
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @return  array				Array of tabs to show
+ */
+function defaultvalues_prepare_head()
+{
+    global $langs, $conf, $user;
+    $h = 0;
+    $head = array();
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=overwrite";
+    $head[$h][1] = $langs->trans("DefaultValuesOverwriteKey");
+    $head[$h][2] = 'overwrite';
+    $h++;
+
+    /*$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=searchkey";
+    $head[$h][1] = $langs->trans("TranslationKeySearch");
+    $head[$h][2] = 'searchkey';
+    $h++;*/
+
+    complete_head_from_modules($conf,$langs,null,$head,$h,'defaultvalues_admin');
+
+    complete_head_from_modules($conf,$langs,null,$head,$h,'defaultvalues_admin','remove');
+
+
+    return $head;
+}
+
 
 /**
  * 	Return list of session

@@ -434,8 +434,11 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
     // Create output dir if not exists
     dol_mkdir($diroutputmassaction);
 
-    // Save merged file
+    // Defined name of merged file
     $filename=strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
+    $filename=preg_replace('/\s/','_',$filename);
+    
+    // Save merged file
     if ($filter=='paye:0')
     {
         if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));

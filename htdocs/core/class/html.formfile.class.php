@@ -312,7 +312,7 @@ class FormFile
 
         if (preg_match('/massfilesarea_/', $modulepart))
         {
-	        $out.='<br><a name="show_files"></a>';
+	        $out.='<div id="show_files"><br></div>';
 			$title=$langs->trans("MassFilesArea").' <a href="" id="togglemassfilesarea" ref="shown">('.$langs->trans("Hide").')</a>';
 			$title.='<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
@@ -337,7 +337,7 @@ class FormFile
         
         $titletoshow=$langs->trans("Documents");
         if (! empty($title)) $titletoshow=$title;
-        
+
         // Show table
         if ($genallowed)
         {
@@ -461,7 +461,7 @@ class FormFile
                     $modellist=ModeleExports::liste_modeles($this->db);
                 }
             }
-            else if ($modulepart == 'commande_fournisseur')
+            else if ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
@@ -470,7 +470,7 @@ class FormFile
                     $modellist=ModelePDFSuppliersOrders::liste_modeles($this->db);
                 }
             }
-            else if ($modulepart == 'facture_fournisseur')
+            else if ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
@@ -688,7 +688,7 @@ class FormFile
             {
                 $headershown=1;
                 $out.= '<div class="titre">'.$titletoshow.'</div>'."\n";
-                $out.= '<table class="border" summary="listofdocumentstable" id="'.$modulepart.'_table" width="100%">'."\n";
+                $out.= '<table class="noborder" summary="listofdocumentstable" id="'.$modulepart.'_table" width="100%">'."\n";
             }
 
             // Loop on each file found

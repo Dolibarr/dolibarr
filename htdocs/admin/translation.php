@@ -61,10 +61,6 @@ if (! $sortorder) $sortorder='ASC';
  * Actions
  */
 
-/*
- * Actions
- */
-
 if (GETPOST('cancel')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 

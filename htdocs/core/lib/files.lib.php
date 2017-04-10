@@ -1783,6 +1783,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		$original_file=$conf->facture->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
+	// Wrapping for mass actions
 	else if ($modulepart == 'massfilesarea_proposals' && !empty($conf->propal->dir_output))
 	{
 	    if ($fuser->rights->propal->lire || preg_match('/^specimen/i',$original_file))
@@ -1814,6 +1815,38 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	        $accessallowed=1;
 	    }
 	    $original_file=$conf->expensereport->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+	}
+	else if ($modulepart == 'massfilesarea_interventions')
+	{
+	    if ($fuser->rights->ficheinter->lire || preg_match('/^specimen/i',$original_file))
+	    {
+	        $accessallowed=1;
+	    }
+	    $original_file=$conf->ficheinter->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+	}
+	else if ($modulepart == 'massfilesarea_supplier_proposal' && !empty($conf->propal->dir_output))
+	{
+	    if ($fuser->rights->supplier_proposal->lire || preg_match('/^specimen/i',$original_file))
+	    {
+	        $accessallowed=1;
+	    }
+	    $original_file=$conf->supplier_proposal->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+	}
+	else if ($modulepart == 'massfilesarea_supplier_order')
+	{
+	    if ($fuser->rights->fournisseur->commande->lire || preg_match('/^specimen/i',$original_file))
+	    {
+	        $accessallowed=1;
+	    }
+	    $original_file=$conf->fournisseur->commande->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+	}
+	else if ($modulepart == 'massfilesarea_supplier_invoice')
+	{
+	    if ($fuser->rights->fournisseur->facture->lire || preg_match('/^specimen/i',$original_file))
+	    {
+	        $accessallowed=1;
+	    }
+	    $original_file=$conf->fournisseur->facture->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
 	
 	// Wrapping for interventions

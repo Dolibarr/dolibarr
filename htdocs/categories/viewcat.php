@@ -224,7 +224,7 @@ print '<div class="underbanner clearboth"></div>';
 print '<table width="100%" class="border">';
 
 // Description
-print '<tr><td class="titlefield notopnoleft">';
+print '<tr><td class="titlefield notopnoleft tdtop">';
 print $langs->trans("Description").'</td><td>';
 print dol_htmlentitiesbr($object->description);
 print '</td></tr>';

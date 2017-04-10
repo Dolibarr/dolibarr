@@ -6218,7 +6218,7 @@ class Form
         global $conf, $langs;
     
         $out='';
-        if (! empty($conf->use_javascript_ajax)) $out.='<input type="checkbox" id="checkallactions" name="checkallactions" class="checkallactions">';
+        if (! empty($conf->use_javascript_ajax)) $out.='<div class="inline-block checkallactions"><input type="checkbox" id="checkallactions" name="checkallactions" class="checkallactions"></div>';
         $out.='<script type="text/javascript">
             $(document).ready(function() {
             	$("#checkallactions").click(function() {
