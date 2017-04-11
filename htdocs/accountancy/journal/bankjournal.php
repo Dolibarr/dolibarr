@@ -749,7 +749,6 @@ if (empty($action) || $action == 'view') {
 	print "<td align='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
-	$var = true;
 	$r = '';
 
 	foreach ( $tabpay as $key => $val ) {      // $key is rowid in llx_bank
@@ -826,7 +825,7 @@ if (empty($action) || $action == 'view') {
 		// Bank
 		foreach ( $tabbq[$key] as $k => $mt ) 
 		{
-		    print "<tr " . $bc[$var] . ">";
+		    print '<tr class="oddeven">';
 		    print "<td><!-- Bank bank.rowid=".$key."--></td>";
 		    print "<td>" . $date . "</td>";
 			print "<td>" . $ref . "</td>";
@@ -853,7 +852,7 @@ if (empty($action) || $action == 'view') {
 		if (is_array($tabtp[$key])) {
 			foreach ( $tabtp[$key] as $k => $mt ) {
 				if ($k != 'type') {
-					print "<tr " . $bc[$var] . ">";
+					print '<tr class="oddeven">';
 					print "<td><!-- Thirdparty bank.rowid=".$key." --></td>";
 					print "<td>" . $date . "</td>";
 					print "<td>" . $ref . "</td>";
@@ -874,7 +873,7 @@ if (empty($action) || $action == 'view') {
 			}
 		} else {
 			foreach ( $tabbq[$key] as $k => $mt ) {
-				print "<tr " . $bc[$var] . ">";
+				print '<tr class="oddeven">';
 				print "<td><!-- Wait bank.rowid=".$key." --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $ref . "</td>";
@@ -892,7 +891,6 @@ if (empty($action) || $action == 'view') {
 				print "</tr>";
 			}
 		}
-		$var = ! $var;
 	}
 
 	print "</table>";
