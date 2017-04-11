@@ -189,6 +189,7 @@ if ($resql)
 						$substitutionisok=true;
 
 						// Fabrication du mail
+						$trackid='emailing-'.$obj2->source_type.$obj2->source_id;
 						$mail = new CMailFile(
 						    $newsubject,
 						    $sendto,
@@ -201,7 +202,11 @@ if ($resql)
 						    '',
 						    0,
 						    $msgishtml,
-						    $errorsto
+						    $errorsto,
+						    '',
+						    $trackid,
+						    '',
+						    'emailing'
 						);
 
 						if ($mail->error)

@@ -113,7 +113,6 @@ $sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result) {
-	$var = false;
 	$num = $db->num_rows($result);
 
 	$i = 0;
@@ -136,16 +135,15 @@ if ($result) {
 		while ( $i < $num && $i < $max ) {
 			$obj = $db->fetch_object($result);
 			$accountingjournalstatic->id = $obj->rowid;
-			print '<tr ' . $bc[$var] . '>';
+			print '<tr class="oddeven">';
 			print '<td><a href="journals_card.php?id=' . $obj->rowid . '">' . img_object($langs->trans("ShowJournal"), "technic") . ' ' . $obj->code . '</a></td>';
 			print '<td align="left">' . $obj->label . '</td>';
 			print '<td>' . $accountingjournalstatic->LibType($obj->nature, 0) . '</td>';
 			print '</tr>';
-			$var = ! $var;
 			$i ++;
 		}
 	} else {
-		print '<tr ' . $bc[$var] . '><td colspan="3" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
+		print '<tr class="oddeven"><td colspan="3" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
 	}
 	print '</table>';
 } else {

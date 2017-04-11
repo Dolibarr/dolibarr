@@ -170,6 +170,7 @@ if (empty($reshook))
     	$catid="";
     	$sall="";
     	$statut='';
+    	$toselect='';
     	$search_array_options=array();
     }
 }
@@ -270,6 +271,8 @@ if (! $resql)
 
 $num = $db->num_rows($resql);
 
+$arrayofselected=is_array($toselect)?$toselect:array();
+
 if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
 {
     $obj = $db->fetch_object($resql);
@@ -333,7 +336,15 @@ foreach ($search_array_options as $key => $val)
     if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 }
 
-//$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
+// List of mass actions available
+$arrayofmassactions =  array(
+//    'presend'=>$langs->trans("SendByMail"),
+//    'builddoc'=>$langs->trans("PDFMerge"),
+);
+//if($user->rights->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
+if ($user->rights->adherent->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+//if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
+$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -342,8 +353,9 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
 
 if ($sall)
 {
@@ -374,6 +386,7 @@ if (! empty($moreforfilter))
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -547,7 +560,7 @@ if (! empty($arrayfields['d.statut']['checked']))
 }
 // Action column
 print '<td class="liste_titre" align="middle">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
+$searchpitco=$form->showFilterButtons();
 print $searchpitco;
 print '</td>';
 
@@ -631,7 +644,7 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['d.ref']['checked'])) 
 	{
    		print "<td>";
-		print $memberstatic->getNomUrl(-1);
+		print $memberstatic->getNomUrl(-1, 0, 'card', 'ref');
 		print "</td>\n";
 	}		
 	// Firstname

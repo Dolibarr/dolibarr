@@ -275,7 +275,7 @@ class CompanyBankAccount extends Account
         if (! $error && ! $notrigger)
         {
             // Call trigger
-            $result=$this->call_trigger('COMAPNY_RIB_DELETE',$user);
+            $result=$this->call_trigger('COMPANY_RIB_DELETE',$user);
             if ($result < 0) $error++;
             // End call triggers
         }

@@ -102,13 +102,16 @@ class CMailFile
 	 *	@param 	int		$msgishtml           1=String IS already html, 0=String IS NOT html, -1=Unknown make autodetection (with fast mode, not reliable)
 	 *	@param 	string	$errors_to      	 Email for errors-to
 	 *	@param	string	$css                 Css option
-	 *	@param	string	$trackid             Tracking string
+	 *	@param	string	$trackid             Tracking string (contains type and id of related element)
 	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" (TODO not supported for other MAIL_SEND_MODE different than 'phpmail' and 'smtps' for the moment)
+	 *  @param  string  $sendingcontext      'standard', 'emailing', ...
 	 */
-	function __construct($subject,$to,$from,$msg,$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='',$trackid='',$moreinheader='')
+	function __construct($subject,$to,$from,$msg,$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='',$trackid='',$moreinheader='',$sendingcontext='standard')
 	{
 		global $conf, $dolibarr_main_data_root;
 
+		$this->sendingcontext = $sendingcontext;
+		
 		// We define end of line (RFC 821).
 		$this->eol="\r\n";
 		// We define end of line for header fields (RFC 822bis section 2.3 says header must contains \r\n).
@@ -132,7 +135,7 @@ class CMailFile
 		// If ending method not defined
 		if (empty($conf->global->MAIN_MAIL_SENDMODE)) $conf->global->MAIN_MAIL_SENDMODE='mail';
 
-		dol_syslog("CMailFile::CMailfile: MAIN_MAIL_SENDMODE=".$conf->global->MAIN_MAIL_SENDMODE." charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, trackid=$trackid", LOG_DEBUG);
+		dol_syslog("CMailFile::CMailfile: MAIN_MAIL_SENDMODE=".$conf->global->MAIN_MAIL_SENDMODE." charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, trackid=$trackid sendingcontext=$sendingcontext", LOG_DEBUG);
 		dol_syslog("CMailFile::CMailfile: subject=$subject, deliveryreceipt=$deliveryreceipt, msgishtml=$msgishtml", LOG_DEBUG);
 
 		if (empty($subject))
@@ -604,20 +607,31 @@ class CMailFile
 				// ------------------------------------------
 				$this->smtps->setTransportType(0);	// Only this method is coded in SMTPs library
 
-				// Forcage parametres
+				// Clean parameters
 				if (empty($conf->global->MAIN_MAIL_SMTP_SERVER)) $conf->global->MAIN_MAIL_SMTP_SERVER=ini_get('SMTP');
 				if (empty($conf->global->MAIN_MAIL_SMTP_PORT))   $conf->global->MAIN_MAIL_SMTP_PORT=ini_get('smtp_port');
 
+				// TODO Manage alternative parameters
+				
 				// If we use SSL/TLS
 				$server=$conf->global->MAIN_MAIL_SMTP_SERVER;
 				if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
-
+                $port=$conf->global->MAIN_MAIL_SMTP_PORT;
+                
 				$this->smtps->setHost($server);
-				$this->smtps->setPort($conf->global->MAIN_MAIL_SMTP_PORT); // 25, 465...;
+				$this->smtps->setPort($port); // 25, 465...;
 
-				if (! empty($conf->global->MAIN_MAIL_SMTPS_ID)) $this->smtps->setID($conf->global->MAIN_MAIL_SMTPS_ID);
-				if (! empty($conf->global->MAIN_MAIL_SMTPS_PW)) $this->smtps->setPW($conf->global->MAIN_MAIL_SMTPS_PW);
-				//$smtps->_msgReplyTo  = 'reply@web.com';
+				$loginid=''; $loginpass='';
+				if (! empty($conf->global->MAIN_MAIL_SMTPS_ID)) 
+				{
+				    $loginid = $conf->global->MAIN_MAIL_SMTPS_ID;
+				    $this->smtps->setID($loginid);
+				}
+				if (! empty($conf->global->MAIN_MAIL_SMTPS_PW)) 
+				{
+				    $loginpass = $conf->global->MAIN_MAIL_SMTPS_PW;
+				    $this->smtps->setPW($loginpass);
+				}
 
 				$res=true;
 				$from=$this->smtps->getFrom('org');
@@ -638,6 +652,7 @@ class CMailFile
 				if ($res)
 				{
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->smtps->setDebug(true);
+					
 					$result=$this->smtps->sendMsg();
 					//print $result;
 
