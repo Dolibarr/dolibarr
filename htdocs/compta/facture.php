@@ -3744,7 +3744,9 @@ else if ($id > 0 || ! empty($ref))
 		print '</td>';
 		if ($action != 'classify') {
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=classify&amp;facid=' . $object->id . '">';
-			print img_edit($langs->trans('SetProject'), 1);
+			if ($user->rights->facture->creer) {
+				print img_edit($langs->trans('SetProject'), 1);
+			}
 			print '</a></td>';
 		}
 		print '</tr></table>';
