@@ -2645,7 +2645,7 @@ if ($action == 'create')
 
 	// Public note
 	print '<tr>';
-	print '<td class="border tdtop">';
+	print '<td class="tdtop">';
 	print $form->textwithpicto($langs->trans('NotePublic'), $htmltext);
 	print '</td>';
 	print '<td valign="top" colspan="2">';
@@ -2656,7 +2656,7 @@ if ($action == 'create')
 	if (empty($user->societe_id))
 	{
 		print '<tr>';
-		print '<td class="border tdtop">';
+		print '<td class="tdtop">';
 		print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext);
 		print '</td>';
 		print '<td valign="top" colspan="2">';
