@@ -215,7 +215,7 @@ if ($id > 0 || ! empty($ref))
 	$tab=GETPOST('tab')?GETPOST('tab'):'tasks';
 
 	$head=project_prepare_head($object);
-	dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
+	dol_fiche_head($head, $tab, $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
 
 	$param='';
     if ($search_user_id > 0) $param.='&search_user_id='.dol_escape_htmltag($search_user_id);
