@@ -259,8 +259,8 @@ if (empty($reshook))
 						}
 
 						// Fabrication du mail
-						$trackid='';  // TODO Define a trackid for mass emailing too. We can use source type for this.
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid);
+						$trackid='emailing-'.$obj2->source_type.$obj2->source_id;
+						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, '', 'emailing');
 
 						if ($mail->error)
 						{
@@ -433,7 +433,8 @@ if (empty($reshook))
 				}
 			}
 
-			$mailfile = new CMailFile($tmpsujet,$object->sendto,$object->email_from,$tmpbody, $arr_file,$arr_mime,$arr_name,'', '', 0, $msgishtml,$object->email_errorsto,$arr_css);
+			$trackid='emailingtest';
+			$mailfile = new CMailFile($tmpsujet, $object->sendto, $object->email_from, $tmpbody, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $object->email_errorsto, $arr_css, $trackid, '', 'emailing');
 
 			$result=$mailfile->sendfile();
 			if ($result)
