@@ -1577,7 +1577,7 @@ class Adherent extends CommonObject
      *      @param  string  $morecss        Add more css on link
      *		@return	string					Chaine avec URL
      */
-    function getNomUrl($withpictoimg=0,$maxlen=0,$option='card',$mode='ref',$morecss='')
+    function getNomUrl($withpictoimg=0,$maxlen=0,$option='card',$mode='',$morecss='')
     {
         global $conf, $langs;
 
