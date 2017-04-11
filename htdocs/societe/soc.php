@@ -509,8 +509,8 @@ if (empty($reshook))
                 }
                 else
 				{
-					
-					if($result == -3) {
+				    if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') // TODO Sometime errors on duplicate on profid and not on code, so 
+				    {
 						$duplicate_code_error = true;
 						$object->code_fournisseur = null;
 						$object->code_client = null;
@@ -2524,7 +2524,7 @@ else
 
 	            $var=true;
 
-	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang);
+	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

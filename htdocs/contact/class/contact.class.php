@@ -124,12 +124,13 @@ class Contact extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
-		    $sql.= " OUTER JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
-		    $sql.= " OUTER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-			$sql.= " WHERE sc.fk_user = " .$user->id;
+		    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+		    $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
 		$sql.= ' '.$clause.' sp.entity IN ('.getEntity($this->element, 1).')';
+		$sql.= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat=".$user->id."))";
         if ($user->societe_id > 0) $sql.=" AND sp.fk_soc = ".$user->societe_id;
         
 		$resql=$this->db->query($sql);

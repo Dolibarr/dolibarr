@@ -1164,7 +1164,7 @@ class Facture extends CommonInvoice
 	{
 		$this->lines=array();
 
-		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.tva_tx, ';
+		$sql = 'SELECT l.rowid, l.fk_facture, l.fk_product, l.fk_parent_line, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.tva_tx, ';
 		$sql.= ' l.situation_percent, l.fk_prev_id,';
 		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql.= ' l.rang, l.special_code,';
@@ -1191,6 +1191,7 @@ class Facture extends CommonInvoice
 
 				$line->id               = $objp->rowid;
 				$line->rowid	        = $objp->rowid;             // deprecated
+				$line->fk_facture       = $objp->fk_facture;
 				$line->label            = $objp->custom_label;		// deprecated
 				$line->desc             = $objp->description;		// Description line
 				$line->description      = $objp->description;		// Description line
@@ -1443,6 +1444,18 @@ class Facture extends CommonInvoice
 			$facligne->rang=-1;
 			$facligne->info_bits=2;
 
+			// Get buy/cost price of invoice that is source of discount
+			if ($remise->fk_facture_source > 0)
+			{
+    			$srcinvoice=new Facture($this->db);
+    			$srcinvoice->fetch($remise->fk_facture_source);
+    			$totalcostpriceofinvoice=0;
+    			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';  // TODO Move this into commonobject
+    			$formmargin=new FormMargin($this->db);
+    			$arraytmp=$formmargin->getMarginInfosArray($srcinvoice, false);
+        		$facligne->pa_ht = $arraytmp['pa_total'];
+			}
+			
 			$facligne->total_ht  = -$remise->amount_ht;
 			$facligne->total_tva = -$remise->amount_tva;
 			$facligne->total_ttc = -$remise->amount_ttc;
@@ -3003,7 +3016,8 @@ class Facture extends CommonInvoice
 			 * set up mask.
 			 */
 			if ($mode != 'last' && !$numref) {
-				dol_print_error($this->db,"Facture::getNextNumRef ".$obj->error);
+				$this->error=$obj->error;
+				//dol_print_error($this->db,"Facture::getNextNumRef ".$obj->error);
 				return "";
 			}
 
@@ -4083,10 +4097,11 @@ class FactureLigne extends CommonInvoiceLine
 	/**
 	 *	Insert line into database
 	 *
-	 *	@param      int		$notrigger		1 no triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@param      int		$notrigger		                 1 no triggers
+	 *  @param      int     $noerrorifdiscountalreadylinked  1=Do not make error if lines is linked to a discount and discount already linked to another
+	 *	@return		int						                 <0 if KO, >0 if OK
 	 */
-	function insert($notrigger=0)
+	function insert($notrigger=0, $noerrorifdiscountalreadylinked=0)
 	{
 		global $langs,$user,$conf;
 
@@ -4230,13 +4245,16 @@ class FactureLigne extends CommonInvoiceLine
 					// Check if discount was found
 					if ($result > 0)
 					{
-						// Check if discount not already affected to another invoice
-						if ($discount->fk_facture)
+					    // Check if discount not already affected to another invoice
+						if ($discount->fk_facture_line > 0)
 						{
-							$this->error=$langs->trans("ErrorDiscountAlreadyUsed",$discount->id);
-							dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
-							$this->db->rollback();
-							return -3;
+						    if (empty($noerrorifdiscountalreadylinked))
+						    {
+    							$this->error=$langs->trans("ErrorDiscountAlreadyUsed",$discount->id);
+    							dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
+    							$this->db->rollback();
+    							return -3;
+						    }
 						}
 						else
 						{

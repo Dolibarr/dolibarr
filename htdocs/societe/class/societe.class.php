@@ -1915,7 +1915,14 @@ class Societe extends CommonObject
         }
         $link.='>';
         $linkend='</a>';
-
+        
+        global $user;
+        if (! $user->rights->societe->client->voir && $user->societe_id > 0 && $this->id != $user->societe_id)
+        {
+            $link='';
+            $linkend='';
+        }
+        
         if ($withpicto) $result.=($link.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"')).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
@@ -3421,7 +3428,9 @@ class Societe extends CommonObject
 	 */
 	public function setCategories($categories, $type)
 	{
-		// Decode type
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+	    
+	    // Decode type
 		if ($type == 'customer') {
 			$type_id = Categorie::TYPE_CUSTOMER;
 			$type_text = 'customer';
@@ -3439,7 +3448,6 @@ class Societe extends CommonObject
 		}
 
 		// Get current categories
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$c = new Categorie($this->db);
 		$existing = $c->containing($this->id, $type_id, 'id');
 

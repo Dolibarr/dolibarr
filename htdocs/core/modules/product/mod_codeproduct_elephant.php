@@ -252,7 +252,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 			// Get Mask value
 			$mask = '';
 			if ($type==0) $mask = empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT)?'':$conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
-			if ($type==1) $mask = empty($conf->global->PRODUCT_ELEPHANT_MASK_SSERVICE)?'':$conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
+			if ($type==1) $mask = empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE)?'':$conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
 			if (! $mask)
 			{
 				$this->error='NotConfigured';

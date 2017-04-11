@@ -72,6 +72,7 @@ if ($categid) {
 	}
 }
 
+
 /*
  * View
  */
@@ -79,7 +80,7 @@ if ($categid) {
 llxHeader();
 
 
-print load_fiche_titre($langs->trans("Rubriques"), '', 'title_bank.png');
+print load_fiche_titre($langs->trans("RubriquesTransactions"), '', 'title_bank.png');
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

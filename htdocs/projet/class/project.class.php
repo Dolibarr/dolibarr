@@ -3,7 +3,8 @@
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2017 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -292,7 +293,7 @@ class Project extends CommonObject
                 	}
                 }
 
-                if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref != $this->ref))
+                if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref))
                 {
                 	// We remove directory
                 	if ($conf->projet->dir_output)
@@ -1689,17 +1690,21 @@ class Project extends CommonObject
 	 */
 	function load_state_board()
 	{
-	    global $conf;
+	    global $user;
 	
 	    $this->nb=array();
-	
-	    $sql = "SELECT count(u.rowid) as nb";
-	    $sql.= " FROM ".MAIN_DB_PREFIX."projet as u";
-	    $sql.= " WHERE";
-	    //$sql.= " WHERE u.fk_statut > 0";
-	    //$sql.= " AND employee != 0";
-	    $sql.= " u.entity IN (".getEntity('projet', 1).")";
-	
+
+		$sql = "SELECT DISTINCT
+  count(p.rowid) as nb
+FROM ".MAIN_DB_PREFIX."projet AS p LEFT JOIN ".MAIN_DB_PREFIX."societe AS s ON p.fk_soc = s.rowid
+  LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status AS cls ON p.fk_opp_status = cls.rowid
+WHERE p.entity IN (".getEntity('projet', 1).")";
+
+		if (! $user->rights->projet->all->lire) {
+			$projectsListId = $this->getProjectsAuthorizedForUser($user,0,1);
+			$sql .= "AND p.rowid IN (".$projectsListId.")";
+		}
+
 	    $resql=$this->db->query($sql);
 	    if ($resql)
 	    {

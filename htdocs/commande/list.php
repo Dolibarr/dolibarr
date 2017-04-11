@@ -401,6 +401,8 @@ if ($resql)
 	if ($search_total_vat != '') $param.='&search_total_vat='.$search_total_vat;
 	if ($search_total_ttc != '') $param.='&search_total_ttc='.$search_total_ttc;
 	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
+	if ($billed != '')          $param.='&billed='.$billed;
+	
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
 	{

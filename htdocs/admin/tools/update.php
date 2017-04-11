@@ -69,10 +69,16 @@ if ($action=='install')
 	}
 	else
 	{
-		if (! preg_match('/\.zip/i',$original_file))
+		if (! preg_match('/\.zip$/i',$original_file))
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFileMustBeADolibarrPackage",$original_file), null, 'errors');
+			$error++;
+		}
+		if (! preg_match('/module_.*\-[\d]+\.[\d]+.*$/i',$original_file))
+		{
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules",$original_file, 'module_*-x.y*.zip'), null, 'errors');
 			$error++;
 		}
 	}
@@ -117,7 +123,7 @@ if ($action=='install')
 					//var_dump($modulenamedir);
 					if (! dol_is_dir($modulenamedir))
 					{
-						setEventMessages($langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat"), null, 'errors');
+						setEventMessages($langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat").'<br>Dir not found: '.$conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulename.'<br>'.$conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename, null, 'errors');
 						$error++;
 					}
 				}
