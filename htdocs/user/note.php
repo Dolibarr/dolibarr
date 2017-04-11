@@ -89,7 +89,11 @@ if ($id)
 	$title = $langs->trans("User");
 	dol_fiche_head($head, 'note', $title, 0, 'user');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '';
+
+	if ($user->rights->user->user->lire || $user->admin) {
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	}
 	
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
     

@@ -1183,7 +1183,11 @@ else
 		else
 		{
 			$title = $langs->trans("User");
-			$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '';
+
+			if ($user->rights->user->user->lire || $user->admin) {
+				$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+			}
 		}
 
         $head = user_prepare_head($object);
