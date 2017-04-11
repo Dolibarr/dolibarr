@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ if (!$user->admin) accessforbidden();
 $id=GETPOST('rowid','int');
 $action=GETPOST('action','alpha');
 
-$mode = GETPOST('mode')?GETPOST('mode'):'overwrite';
+$mode = GETPOST('mode')?GETPOST('mode'):'createform';
 
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
