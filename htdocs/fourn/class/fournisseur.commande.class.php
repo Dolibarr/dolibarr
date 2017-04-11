@@ -1373,7 +1373,7 @@ class CommandeFournisseur extends CommonOrder
                         if ($result > 0)
                         {
                             $pu    = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
-                            $ref   = $prod->ref_fourn;      // Ref supplier price set by get_buyprice
+                            $fourn_ref   = $prod->ref_fourn;      // Ref supplier price set by get_buyprice
                         }
                         if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
                         {
@@ -1457,7 +1457,7 @@ class CommandeFournisseur extends CommonOrder
            	$sql.= ", '".$localtax1_type."',";
 			$sql.= " '".$localtax2_type."'";
 
-            $sql.= ", ".$remise_percent.",'".price2num($subprice,'MU')."','".$this->db->escape($ref)."',";
+            $sql.= ", ".$remise_percent.",'".price2num($subprice,'MU')."','".$this->db->escape($fourn_ref)."',";
             $sql.= "'".price2num($total_ht)."',";
             $sql.= "'".price2num($total_tva)."',";
             $sql.= "'".price2num($total_localtax1)."',";
