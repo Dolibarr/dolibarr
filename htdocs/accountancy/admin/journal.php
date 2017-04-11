@@ -125,9 +125,8 @@ print '<td colspan="2">' . $langs->trans('Journaux') . '</td>';
 print "</tr>\n";
 
 foreach ( $list as $key ) {
-	$var = ! $var;
 
-	print '<tr ' . $bc[$var] . ' class="value">';
+	print '<tr class="oddeven value">';
 
 	// Param
 	$label = $langs->trans($key);
@@ -167,8 +166,6 @@ if ($resql) {
 	while ( $i < $numr ) {
 		$objp = $db->fetch_object($resql);
 
-		$var = ! $var;
-
 		$bankaccountstatic->rowid = $objp->rowid;
 		$bankaccountstatic->id = $objp->rowid;
 		$bankaccountstatic->ref = $objp->ref;
@@ -177,7 +174,7 @@ if ($resql) {
 		$bankaccountstatic->account_number = $objp->account_number;
 		$bankaccountstatic->accountancy_journal = $objp->accountancy_journal;
 
-		print '<tr ' . $bc[$var] . ' class="value">';
+		print '<tr class="oddeven value">';
 
 		// Param
 		print '<td width="50%"><label for="' . $objp->rowid . '">' . $langs->trans("Journal");

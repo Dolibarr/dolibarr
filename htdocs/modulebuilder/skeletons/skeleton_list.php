@@ -428,17 +428,14 @@ print '</tr>'."\n";
     
 
 $i=0;
-$var=true;
 $totalarray=array();
 while ($i < min($num, $limit))
 {
     $obj = $db->fetch_object($resql);
     if ($obj)
     {
-        $var = !$var;
-        
         // Show here line of result
-        print '<tr '.$bc[$var].'>';
+        print '<tr class="oddeven">';
         // LIST_OF_TD_FIELDS_LIST
         /*
         if (! empty($arrayfields['t.field1']['checked'])) 
