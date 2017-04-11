@@ -3141,8 +3141,16 @@ abstract class CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$res = $this->db->fetch_object($resql);
-			return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
+			$num = $this->db->num_rows($resql);
+			if ($num > 0)
+			{
+				$res = $this->db->fetch_object($resql);
+				return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
+			}
+			else
+			{
+				return '';
+			}
 		}
 		else
 		{
