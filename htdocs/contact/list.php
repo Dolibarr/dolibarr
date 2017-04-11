@@ -129,7 +129,7 @@ $fieldstosearchall = array(
 $arrayfields=array(
     'p.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
     'p.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
-    'p.poste'=>array('label'=>$langs->trans("Post"), 'checked'=>1),
+    'p.poste'=>array('label'=>$langs->trans("PostOrFunction"), 'checked'=>1),
     'p.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0),
     'p.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
     'p.phone'=>array('label'=>$langs->trans("PhonePro"), 'checked'=>1),
@@ -761,8 +761,10 @@ if ($result)
         }
         // Action column - Links Add action and Export vcard
         print '<td align="right">';
-        print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.img_object($langs->trans("AddAction"),"action").'</a>';
-        print ' &nbsp; ';
+        if ($user->rights->agenda->myactions->create) {
+        	print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.img_object($langs->trans("AddAction"),"action").'</a>';
+	        print ' &nbsp; ';
+        }
         print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
         print img_picto($langs->trans("VCard"),'vcard.png').' ';
         print '</a></td>';
