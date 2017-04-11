@@ -489,7 +489,8 @@ if (! $error && $massaction == 'delete' && $permtodelete)
         $result=$objecttmp->fetch($toselectid);
         if ($result > 0)
         {
-            $result = $objecttmp->delete($user);
+            if ($objecttmp->element == 'societe') $result = $objecttmp->delete($objecttmp->id, $user, 1);
+            else $result = $objecttmp->delete($user);
             if ($result <= 0)
             {
                 setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');

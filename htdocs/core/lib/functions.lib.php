@@ -274,6 +274,8 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 
 	if (! empty($check))
 	{
+	    // Replace vars like __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__
+	    // TODO Add more var like __PREVIOUSDAY__, __PREVIOUSMONTH__, __PREVIOUSYEAR__
 	    if (! is_array($out) && preg_match('/^__([a-z0-9]+)__$/i', $out, $reg))
 	    {
 	        if ($reg[1] == 'DAY')
@@ -295,6 +297,16 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	        {
 	            global $mysoc;
 	            $out = $mysoc->country_id;
+	        }
+	        elseif ($reg[1] == 'USERID')
+	        {
+	            global $user;
+	            $out = $user->id;
+	        }
+	        elseif ($reg[1] == 'ENTITYID')
+	        {
+	            global $conf;
+	            $out = $conf->entity;
 	        }
 	    }
 

@@ -337,7 +337,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     // Title
     if ($foruserprofile)
     {
-    	print '<tr class="liste_titre"><th width="25%">'.$langs->trans("Parameter").'</th><th width="25%">'.$langs->trans("DefaultValue").'</th>';
+    	print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("Parameter").'</th><th>'.$langs->trans("DefaultValue").'</th>';
     	print '<th colspan="2">&nbsp;</th>';
 	    print '</tr>';
 
@@ -350,7 +350,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     }
     else
     {
-    	print '<tr class="liste_titre"><th width="35%">'.$langs->trans("DefaultSkin").'</th>';
+    	print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("DefaultSkin").'</th>';
     	print '<th align="right">';
     	$url='https://www.dolistore.com/lang-en/4-skins';
     	if (preg_match('/fr/i',$langs->defaultlang)) $url='https://www.dolistore.com/fr/4-themes';

@@ -150,8 +150,23 @@ function task_prepare_head($object)
 	$head[$h][2] = 'task_contact';
 	$h++;
 
+	// Is there timespent ?
+	$nbTimeSpent=0;
+	$sql = "SELECT t.rowid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
+	$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
+	$sql .= " AND t.fk_task =".$object->id;
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+	    $obj = $db->fetch_object($resql);
+	    if ($obj) $nbTimeSpent=1;
+	}
+	else dol_print_error($db);
+	
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
 	$head[$h][1] = $langs->trans("TimeSpent");
+	if ($nbTimeSpent > 0) $head[$h][1].= ' <span class="badge">...</span>';
 	$head[$h][2] = 'task_time';
 	$h++;
 

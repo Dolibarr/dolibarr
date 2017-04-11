@@ -35,12 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
-$langs->load("companies");
-$langs->load("commercial");
-$langs->load("customers");
-$langs->load("suppliers");
-$langs->load("bills");
-$langs->load("compta");
+$langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta"));
+
+$action=GETPOST('action','alpha');
+$massaction=GETPOST('massaction','alpha');
+$show_files=GETPOST('show_files','int');
+$confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -80,7 +81,8 @@ $search_stcomm=GETPOST('search_stcomm','int');
 $type=GETPOST('type');
 $optioncss=GETPOST('optioncss','alpha');
 $mode=GETPOST("mode");
-$action=GETPOST('action');
+
+$diroutputmassaction=$conf->societe->dir_output . '/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield=GETPOST("sortfield",'alpha');
@@ -230,9 +232,18 @@ if (empty($reshook))
     	$search_stcomm='';
      	$search_level_from='';
      	$search_level_to='';
+     	$toselect='';
     	$search_array_options=array();
     }
 
+    // Mass actions
+    $objectclass='Societe';
+    $objectlabel='ThirdParty';
+    $permtoread = $user->rights->societe->lire;
+    $permtodelete = $user->rights->societe->supprimer;
+    $uploaddir = $conf->societe->dir_output;
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+    
     if ($action == 'setstcomm')
     {
         $object = new Client($db);
@@ -457,6 +468,8 @@ if (! $resql)
 
 $num = $db->num_rows($resql);
 
+$arrayofselected=is_array($toselect)?$toselect:array();
+
 if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && $action != 'list')
 {
     $obj = $db->fetch_object($resql);
@@ -513,6 +526,16 @@ if (GETPOST('delsoc'))
     setEventMessages($langs->trans("CompanyDeleted",GETPOST('delsoc')), null, 'mesgs');
 }
 
+// List of mass actions available
+$arrayofmassactions =  array(
+//    'presend'=>$langs->trans("SendByMail"),
+//    'builddoc'=>$langs->trans("PDFMerge"),
+);
+//if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
+if ($user->rights->societe->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+if ($massaction == 'presend') $arrayofmassactions=array();
+$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -520,7 +543,7 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
 
 $langs->load("other");
 $textprofid=array();
@@ -586,6 +609,7 @@ if (! empty($moreforfilter))
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 if (empty($arrayfields['customerorsupplier']['checked'])) print '<input type="hidden" name="type" value="'.$type.'">';
 
@@ -837,7 +861,7 @@ if (! empty($arrayfields['s.status']['checked']))
 }
 // Action column
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
+$searchpitco=$form->showFilterButtons();
 print $searchpitco;
 print '</td>';
 
@@ -1100,9 +1124,18 @@ while ($i < min($num, $limit))
     {
         print '<td align="center" class="nowrap">'.$companystatic->getLibStatut(3).'</td>';
     }
-    // Action column
-    print '<td></td>';
 
+    // Action column
+    print '<td class="nowrap" align="center">';
+    if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+    {
+        $selected=0;
+		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+    }
+    print '</td>';
+    if (! $i) $totalarray['nbfield']++;
+    
 	print '</tr>'."\n";
 	$i++;
 }
