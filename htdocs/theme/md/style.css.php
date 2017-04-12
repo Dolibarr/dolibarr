@@ -2292,7 +2292,7 @@ table.borderplus {
 }
 
 .border tbody tr, .border tbody tr td, div.tabBar table.border tr {
-	height: 20px;
+	height: 22px;
 }
 
 table.border td, div.border div div.tagtd {
