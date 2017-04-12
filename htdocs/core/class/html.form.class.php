@@ -3406,7 +3406,7 @@ class Form
 		    dol_syslog(__METHOD__ . ': using numeric value for parameter type is deprecated. Use string code instead.', LOG_WARNING);
 		}
 
-		if ($type == Categorie::TYPE_BANK_LINE)
+		if ($type === Categorie::TYPE_BANK_LINE)
 		{
 		    // TODO Move this into common category feature
 		    $categids=array();

@@ -272,6 +272,8 @@ SizeUnits=Size unit
 DeleteProductBuyPrice=Delete buying price
 ConfirmDeleteProductBuyPrice=Are you sure you want to delete this buying price?
 SubProduct=Sub product
+ProductSheet=Product sheet
+ServiceSheet=Service sheet
 
 #Attributes
 VariantAttributes=Variant attributes

@@ -33,6 +33,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 
 $langs->load("admin");
@@ -66,6 +67,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_
 	dolibarr_set_const($db, 'PRODUIT_MULTIPRICES_LIMIT', 5, 'chaine', 0, '', $conf->entity);
 }
 
+$error = 0;
 
 
 /*
@@ -118,10 +120,12 @@ if ($action == 'setModuleOptions')
 if ($action == 'other' && GETPOST('value_PRODUIT_LIMIT_SIZE') >= 0)
 {
 	$res = dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", GETPOST('value_PRODUIT_LIMIT_SIZE'),'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
 }
 if ($action == 'other' && GETPOST('value_PRODUIT_MULTIPRICES_LIMIT') > 0)
 {
 	$res = dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", GETPOST('value_PRODUIT_MULTIPRICES_LIMIT'),'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
 }
 if ($action == 'other')
 {
@@ -154,28 +158,19 @@ if ($action == 'other')
 		}
 
 	}
-}
-if ($action == 'other')
-{
+
 	$value = GETPOST('activate_sousproduits','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $value,'chaine',0,'',$conf->entity);
-}
-if ($action == 'other')
-{
+
 	$value = GETPOST('activate_viewProdDescInForm','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $value,'chaine',0,'',$conf->entity);
-}
-if ($action == 'other')
-{
+
 	$value = GETPOST('activate_viewProdTextsInThirdpartyLanguage','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE", $value,'chaine',0,'',$conf->entity);
-}
-if ($action == 'other') {
+
 	$value = GETPOST('activate_mergePropalProductCard','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_PDF_MERGE_PROPAL", $value,'chaine',0,'',$conf->entity);
-}
-if ($action == 'other')
-{
+
 	$value = GETPOST('activate_usesearchtoselectproduct','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $value,'chaine',0,'',$conf->entity);
 }
@@ -184,8 +179,8 @@ if ($action == 'specimen') // For products
 {
 	$modele= GETPOST('module','alpha');
 
-	$inter = new Fichinter($db);
-	$inter->initAsSpecimen();
+	$product = new Product($db);
+	$product->initAsSpecimen();
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
@@ -207,9 +202,9 @@ if ($action == 'specimen') // For products
 
 		$module = new $classname($db);
 
-		if ($module->write_file($inter,$langs) > 0)
+		if ($module->write_file($product, $langs, '') > 0)
 		{
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=products&file=SPECIMEN.pdf");
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=product&file=SPECIMEN.pdf");
 			return;
 		}
 		else
@@ -265,24 +260,19 @@ if ($action == 'set')
 	$value = GETPOST('value');
 	if (GETPOST('value','alpha')) $res = dolibarr_set_const($db, $const, $value,'chaine',0,'',$conf->entity);
 	else $res = dolibarr_del_const($db, $const,$conf->entity);
+	if (! $res > 0) $error++;
 }
-/*else if ($action == 'useecotaxe')
-{
-	$ecotaxe = GETPOST("activate_useecotaxe");
-	$res = dolibarr_set_const($db, "PRODUIT_USE_ECOTAXE", $ecotaxe,'chaine',0,'',$conf->entity);
-}*/
 
 if ($action == 'other')
 {
     $value = GETPOST('activate_units', 'alpha');
     $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $value, 'chaine', 0, '', $conf->entity);
+	if (! $res > 0) $error++;
 }
 
 if ($action)
 {
-	if (! $res > 0) $error++;
-
- 	if (! $error)
+    if (! $error)
     {
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
@@ -317,13 +307,11 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print load_fiche_titre($title,$linkback,'title_setup');
 
 $head = product_admin_prepare_head();
-dol_fiche_head($head, 'general', $tab, 0, 'product');
+dol_fiche_head($head, 'general', $tab, -1, 'product');
 
 $form=new Form($db);
 
-/*
- * Module to manage product / services code
- */
+// Module to manage product / services code
 $dirproduct=array('/core/modules/product/');
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
@@ -403,7 +391,7 @@ foreach ($dirproduct as $dirroot)
 }
 print '</table>';
 
-// Defini tableau def des modeles
+// Module to build doc
 $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
@@ -425,6 +413,10 @@ else
 {
 	dol_print_error($db);
 }
+
+print '<br>';
+
+print load_fiche_titre($langs->trans("ProductDocumentTemplates"), '', '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
