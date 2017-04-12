@@ -78,7 +78,7 @@ $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
 // Colors
-$colorbackhmenu1='90,100,130';      // topmenu
+$colorbackhmenu1='80,90,120';      // topmenu
 $colorbackvmenu1='255,255,255';      // vmenu
 $colortopbordertitle1='120,120,120';    // top border of title
 $colorbacktitle1='240,240,240';      // title of tables,list
