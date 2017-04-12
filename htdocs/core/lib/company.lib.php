@@ -960,7 +960,7 @@ function show_actions_todo($conf,$langs,$db,$filterobj,$objcon='',$noprint=0,$ac
  * 		@param	Contact		       $objcon		   Object contact
  *      @param  int			       $noprint        Return string but does not output it
  *      @param  string		       $actioncode     Filter on actioncode
- *      @param  string             $donetodo       Filter on event 'done' or 'todo' or ''=nofilter.
+ *      @param  string             $donetodo       Filter on event 'done' or 'todo' or ''=nofilter (all).
  *      @param  array              $filters        Filter on other fields
  *      @param  string             $sortfield      Sort field
  *      @param  string             $sortorder      Sort order
@@ -1181,7 +1181,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		{
             $out.='<td>';
             if (get_class($filterobj) == 'Societe') $out.='<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$filterobj->id.'&amp;status=done">';
-            $out.=$langs->trans("ActionsToDoShort").' / '.$langs->trans("ActionsDoneShort");
+            $out.=($donetodo != 'done' ? $langs->trans("ActionsToDoShort") : '');
+            $out.=($donetodo != 'done' && $donetodo != 'todo' ? ' / ' : '');
+            $out.=($donetodo != 'todo' ? $langs->trans("ActionsDoneShort") : '');
+            //$out.=$langs->trans("ActionsToDoShort").' / '.$langs->trans("ActionsDoneShort");
             if (get_class($filterobj) == 'Societe') $out.='</a>';
             $out.='</td>';
 		}

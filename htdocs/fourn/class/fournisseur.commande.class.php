@@ -1503,6 +1503,7 @@ class CommandeFournisseur extends CommonOrder
             $this->line->product_type=$product_type;
             $this->line->remise_percent=$remise_percent;
             $this->line->subprice=$pu_ht;
+            $this->line->rang=$this->rang;
             $this->line->info_bits=$info_bits;
             
             $this->line->vat_src_code=$vat_src_code;

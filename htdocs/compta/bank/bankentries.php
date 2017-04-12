@@ -177,7 +177,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $search_dt_start='';
     $search_dt_end='';
@@ -297,7 +297,7 @@ if (GETPOST('save') && $id && ! $cancel && $user->rights->banque->modifier)
     if (! $error)
     {
         $object->fetch($id);
-        $insertid = $object->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
+        $insertid = $object->addline($dateop, $operation, $label, $amount, $num_chq, ($cat1 > 0 ? $cat1 : 0), $user);
         if ($insertid > 0)
         {
             setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');

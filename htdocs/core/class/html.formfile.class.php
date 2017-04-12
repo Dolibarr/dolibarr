@@ -89,6 +89,11 @@ class FormFile
         }
         else
        	{
+	        //If there is no permission and the option to hide unauthorized actions is enabled, then nothing is printed
+	        if (!$perm && !empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
+		        return 1;
+	        }
+
             $maxlength=$size;
 
             $out = "\n\n<!-- Start form attach new file -->\n";
