@@ -821,12 +821,10 @@ if ($rowid > 0)
             }
             print "</tr>\n";
 
-            $var=True;
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
-                $var=!$var;
-                print "<tr ".$bc[$var].">";
+                print '<tr class="oddeven">';
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';

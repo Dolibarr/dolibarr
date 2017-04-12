@@ -176,15 +176,13 @@ print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
-$var=true;
 foreach ($data as $val)
 {
     $year = $val['year'];
     while ($oldyear > $year+1)
     {	// If we have empty year
         $oldyear--;
-        $var=!$var;
-        print '<tr '.$bc[$var].' height="24">';
+        print '<tr class="oddeven" height="24">';
         print '<td align="center">';
         print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
         print $oldyear;
@@ -195,8 +193,7 @@ foreach ($data as $val)
         print '<td align="right">0</td>';
         print '</tr>';
     }
-    $var=!$var;
-    print '<tr '.$bc[$var].' height="24">';
+    print '<tr class="oddeven" height="24">';
     print '<td align="center">';
     //print '<a href="month.php?year='.$year.'">';
     print $year;
