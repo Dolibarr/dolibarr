@@ -1113,7 +1113,7 @@ else
 
 		$head=invoice_rec_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("RepeatableInvoice"),0,'bill');	// Add a div
+		dol_fiche_head($head, 'card', $langs->trans("RepeatableInvoice"), -1, 'bill');	// Add a div
 
 		// Recurring invoice content
 

@@ -1481,7 +1481,7 @@ class Task extends CommonObject
 				$clone_task_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($clone_project_ref). "/" . dol_sanitizeFileName($clone_task_ref);
 				$ori_task_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($ori_project_ref). "/" . dol_sanitizeFileName($fromid);
 
-				$filearray=dol_dir_list($ori_task_dir,"files",0,'','(\.meta|_preview\.png)$','',SORT_ASC,1);
+				$filearray=dol_dir_list($ori_task_dir,"files",0,'','(\.meta|_preview.*\.png)$','',SORT_ASC,1);
 				foreach($filearray as $key => $file)
 				{
 					if (!file_exists($clone_task_dir))

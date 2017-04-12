@@ -91,35 +91,6 @@ if ($object->id > 0)
 	
 	dol_banner_tab($object, 'rowid', $linkback);
     
-	/*
-    print '<div class="fichecenter">';
-    
-    print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
-
-	// Login
-	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-	{
-	    print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
-	}
-
-	// Type
-	print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
-
-	// Morphy
-	print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
-	print '</tr>';
-
-	// Company
-	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
-
-	// Civility
-	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
-	print '</tr>';
-
-	print '</table>';
-    */
-	
 	print '<div class="fichecenter">';
 	
 	print '<div class="underbanner clearboth"></div>';

@@ -438,7 +438,7 @@ if ($ok && GETPOST('clean_orphelin_dir'))
 
         print '<tr><td colspan="2"><br>*** Clean orphelins files into files '.$upload_dir.'</td></tr>';
 
-        $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview\.png)$','^temp$','^payments$','^CVS$','^thumbs$'),'',SORT_DESC,1,true);
+        $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview.*\.png)$','^temp$','^payments$','^CVS$','^thumbs$'),'',SORT_DESC,1,true);
 
         // To show ref or specific information according to view to show (defined by $module)
         if ($modulepart == 'company')

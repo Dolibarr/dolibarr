@@ -667,7 +667,7 @@ class EcmDirectory // extends CommonObject
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dir=$conf->ecm->dir_output.'/'.$this->getRelativePath();
-		$filelist=dol_dir_list($dir,'files',0,'','(\.meta|_preview\.png)$');
+		$filelist=dol_dir_list($dir,'files',0,'','(\.meta|_preview.*\.png)$');
 
 		// Test if filelist is in database
 
