@@ -90,7 +90,7 @@ $colorbacklineimpair2='255,255,255';    // line impair
 $colorbacklinepair1='250,250,250';    // line pair
 $colorbacklinepair2='248,248,248';    // line pair
 $colorbacklinepairhover='244,244,244';    // line pair
-$colorbackbody='248,248,248';
+$colorbackbody='240,240,240';
 $colortexttitlenotab='90,90,90';
 $colortexttitle='20,20,20';
 $colortext='0,0,0';
@@ -2292,7 +2292,7 @@ table.borderplus {
 }
 
 .border tbody tr, .border tbody tr td, div.tabBar table.border tr {
-	height: 20px;
+	height: 22px;
 }
 
 table.border td, div.border div div.tagtd {
@@ -2366,6 +2366,12 @@ table.paddingtopbottomonly tr td {
 }
 tr.liste_titre_filter td.liste_titre {
     border-bottom: 1px solid #FDFFFF;
+}
+.liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
+{
+    /*border-top-width: 1px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;*/
 }
 .liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
 {
