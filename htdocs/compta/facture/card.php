@@ -3692,8 +3692,6 @@ else if ($id > 0 || ! empty($ref))
     print '<td class="liste_titre" width="18">&nbsp;</td>';
     print '</tr>';
 
-    $var = true;
-
     // Payments already done (from payment on this invoice)
     $sql = 'SELECT p.datep as dp, p.ref, p.num_paiement, p.rowid, p.fk_bank,';
     $sql .= ' c.code as payment_code, c.libelle as payment_label,';
@@ -3715,8 +3713,7 @@ else if ($id > 0 || ! empty($ref))
         if ($num > 0) {
             while ($i < $num) {
                 $objp = $db->fetch_object($result);
-                $var = ! $var;
-                print '<tr ' . $bc[$var] . '><td>';
+                print '<tr class="oddeven"><td>';
                 $paymentstatic->id = $objp->rowid;
                 $paymentstatic->datepaye = $db->jdate($objp->dp);
                 $paymentstatic->ref = $objp->ref;
@@ -3741,9 +3738,10 @@ else if ($id > 0 || ! empty($ref))
                 print '</tr>';
                 $i ++;
             }
-        } else {
-            print '<tr ' . $bc[false] . '><td colspan="' . $nbcols . '" class="opacitymedium">' . $langs->trans("None") . '</td><td></td><td></td></tr>';
-        }
+        } 
+        /*else {
+            print '<tr class="oddeven"><td colspan="' . $nbcols . '" class="opacitymedium">' . $langs->trans("None") . '</td><td></td><td></td></tr>';
+        }*/
         // }
         $db->free($result);
     } else {

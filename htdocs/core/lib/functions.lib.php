@@ -1090,13 +1090,10 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                         // Si fichier png PDF de plus d'1 page trouve
                         elseif (file_exists($fileimagebis))
                         {
-                            $preview = preg_replace('/\.png/','',$relativepath) . "-0.png";
-                            if (file_exists($dir_output.$preview))
-                            {
-                                $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
-                                $phototoshow.= '<img height="70" class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
-                                $phototoshow.= '</div></div>';
-                            }
+                            $preview = preg_replace('/\.png/','',$relativepathimage) . "-0.png";
+                            $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
+                            $phototoshow.= '<img height="70" class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
+                            $phototoshow.= '</div></div>';
                         }
                     }
                 }

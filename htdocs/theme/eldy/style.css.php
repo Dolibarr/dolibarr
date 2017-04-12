@@ -2281,6 +2281,12 @@ table.paddingtopbottomonly tr td {
 tr.liste_titre_filter td.liste_titre {
     border-bottom: 1px solid #ddd;
 }
+.liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
+{
+    /*border-top-width: 1px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;*/
+}
 .liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
 {
     border-top-width: 2px;
