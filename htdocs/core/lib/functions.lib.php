@@ -1064,7 +1064,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     
                     // Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
                     $fileimage = $file.'_preview.png';              // If PDF has 1 page
-                    $fileimagebis = $file.'_preview-0.pdf.png';     // If PDF has more than one page
+                    $fileimagebis = $file.'_preview-0.png';         // If PDF has more than one page
                     $relativepathimage = $relativepath.'_preview.png';
                     
                     // Si fichier PDF existe
@@ -1072,9 +1072,11 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     {
                         $encfile = urlencode($file);
                         // Conversion du PDF en image png si fichier png non existant
-                        if ((! file_exists($fileimage) && ! file_exists($fileimagebis)) || (filemtime($fileimage) < filemtime($file)))
+                        if ( (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($file)))
+                          && (! file_exists($fileimagebis) || (filemtime($fileimagebis) < filemtime($file)))
+                           )
                         {
-                            $ret = dol_convert_file($file,'png',$fileimage);
+                            $ret = dol_convert_file($file, 'png', $fileimage);
                             if ($ret < 0) $error++;
                         }
     

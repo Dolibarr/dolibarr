@@ -1348,7 +1348,7 @@ class Project extends CommonObject
 
 				if (dol_mkdir($clone_project_dir) >= 0)
 				{
-					$filearray=dol_dir_list($ori_project_dir,"files",0,'','(\.meta|_preview\.png)$','',SORT_ASC,1);
+					$filearray=dol_dir_list($ori_project_dir,"files",0,'','(\.meta|_preview.*\.png)$','',SORT_ASC,1);
 					foreach($filearray as $key => $file)
 					{
 						$rescopy = dol_copy($ori_project_dir . '/' . $file['name'], $clone_project_dir . '/' . $file['name'],0,1);
