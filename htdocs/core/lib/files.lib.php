@@ -1725,7 +1725,6 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		}
 		$original_file=$conf->expedition->dir_output."/sending/".$original_file;
 	}
-
 	// Wrapping pour les bons de livraison
 	else if ($modulepart == 'livraison' && !empty($conf->expedition->dir_output))
 	{

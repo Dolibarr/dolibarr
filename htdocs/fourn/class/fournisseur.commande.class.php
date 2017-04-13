@@ -1950,7 +1950,7 @@ class CommandeFournisseur extends CommonOrder
 		    		}
 
 		    	}
-	    		if (! $error && ! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS_NEED_APPROVE) && ($type == 'tot'))	// Accept to move to rception done, only if status of all line are ok (refuse denied)
+	    		if (! $error && ! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS_NEED_APPROVE) && ($type == 'tot'))	// Accept to move to reception done, only if status of all line are ok (refuse denied)
 	    		{
 	    			$dispatcheddenied=$this->getDispachedLines(2);
 	    			if (count($dispatchedlinearray) > 0)
@@ -1989,7 +1989,8 @@ class CommandeFournisseur extends CommonOrder
                     $result = 0;
                     $old_statut = $this->statut;
                     $this->statut = $statut;
-
+					$this->actionmsg2 = $comment;
+					
                     // Call trigger
                     $result=$this->call_trigger('ORDER_SUPPLIER_RECEIVE',$user);
                     if ($result < 0) $error++;
@@ -2811,13 +2812,14 @@ class CommandeFournisseur extends CommonOrder
      *
      * @param 		User 	$user                   User action
      * @param       int     $closeopenorder         Close if received
+     * @param		string	$comment				Comment
      * @return		int		                        <0 if KO, 0 if not applicable, >0 if OK
      */
-    public function calcAndSetStatusDispatch(User $user, $closeopenorder=1) 
+    public function calcAndSetStatusDispatch(User $user, $closeopenorder=1, $comment='') 
     {
-    	global $conf;
+    	global $conf, $langs;
 
-    	if (! empty($conf->commande->enabled) && ! empty($conf->fournisseur->enabled))
+    	if (! empty($conf->fournisseur->enabled))
     	{
     		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
@@ -2846,14 +2848,18 @@ class CommandeFournisseur extends CommonOrder
     				foreach($this->lines as $line) {
     					$qtywished[$line->fk_product]+=$line->qty;
     				}
+    				
+    				$date_liv = dol_now();
+    				
     				//Compare array
     				$diff_array=array_diff_assoc($qtydelivered,$qtywished);
-    				if (count($diff_array)==0) 
+			
+    				if (count($diff_array)==0) //No diff => mean everythings is received
     				{
-    					//No diff => mean everythings is received
     					if ($closeopenorder)
     					{
-        					$ret=$this->setStatus($user,5);
+        					//$ret=$this->setStatus($user,5);
+    						$ret = $this->Livraison($user, $date_liv, 'tot', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
         					if ($ret<0) {
         						return -1;
         					}
@@ -2862,7 +2868,8 @@ class CommandeFournisseur extends CommonOrder
     					else
     					{
     					    //Diff => received partially
-    					    $ret=$this->setStatus($user,4);
+    					    //$ret=$this->setStatus($user,4);
+    						$ret = $this->Livraison($user, $date_liv, 'par', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
     					    if ($ret<0) {
     					        return -1;
     					    }
@@ -2872,7 +2879,7 @@ class CommandeFournisseur extends CommonOrder
     				else 
     				{
     					//Diff => received partially
-    					$ret=$this->setStatus($user,4);
+    					$ret = $this->Livraison($user, $date_liv, 'par', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
     					if ($ret<0) {
     						return -1;
     					}

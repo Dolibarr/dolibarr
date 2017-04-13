@@ -230,7 +230,7 @@ if ($action == 'create')
 	}
 
     // Capital
-    print '<tr><td class="fieldrequired">'.$langs->trans("LoanCapital").'</td><td><input name="capital" size="10" value="' . GETPOST("capital") . '"></td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("LoanCapital").'</td><td><input name="capital" size="10" value="' . dol_escape_htmltag(GETPOST("capital")) . '"></td></tr>';
 
 	// Date Start
 	print "<tr>";
@@ -245,10 +245,10 @@ if ($action == 'create')
     print '</td></tr>';
 
 	// Number of terms
-	print '<tr><td class="fieldrequired">'.$langs->trans("Nbterms").'</td><td><input name="nbterm" size="5" value="' . GETPOST('nbterm') . '"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Nbterms").'</td><td><input name="nbterm" size="5" value="' . dol_escape_htmltag(GETPOST('nbterm')) . '"></td></tr>';
 
 	// Rate
-    print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . GETPOST("rate") . '"> %</td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . dol_escape_htmltag(GETPOST("rate")) . '"> %</td></tr>';
 
     // Note Private
     print '<tr>';
