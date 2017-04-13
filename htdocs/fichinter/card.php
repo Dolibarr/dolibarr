@@ -1400,9 +1400,9 @@ else if ($id > 0 || ! empty($ref))
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=ask_deleteline&amp;line_id='.$objp->rowid.'">';
 						print img_delete();
 						print '</a></td>';
+						print '<td align="center">';
 						if ($num > 1)
 						{
-							print '<td align="center">';
 							if ($i > 0)
 							{
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=up&amp;line_id='.$objp->rowid.'">';
@@ -1415,8 +1415,8 @@ else if ($id > 0 || ! empty($ref))
 								print img_down();
 								print '</a>';
 							}
-							print '</td>';
 						}
+						print '</td>';
 					}
 					else
 					{
@@ -1441,7 +1441,7 @@ else if ($id > 0 || ! empty($ref))
 				// Line in update mode
 				if ($object->statut == 0 && $action == 'editline' && $user->rights->ficheinter->creer && GETPOST('line_id','int') == $objp->rowid)
 				{
-					print '<tr '.$bc[$var].'>';
+					print '<tr class="oddeven">';
 					print '<td>';
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
@@ -1490,21 +1490,21 @@ else if ($id > 0 || ! empty($ref))
 			// Add new line
 			if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline' && empty($conf->global->FICHINTER_DISABLE_DETAILS))
 			{
-				if (! $num) print '<br><table class="noborder" width="100%">';
+				if (! $num) 
+				{
+				    print '<br><table class="noborder" width="100%">';
 
-				print '<tr class="liste_titre">';
-				print '<td>';
-				print '<a name="add"></a>'; // ancre
-				print $langs->trans('Description').'</td>';
-				print '<td align="center">'.$langs->trans('Date').'</td>';
-				print '<td align="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?$langs->trans('Duration'):'').'</td>';
-
-				print '<td colspan="4">&nbsp;</td>';
-				print "</tr>\n";
-
-				$var=true;
-
-				print '<tr '.$bcnd[$var] . ">\n";
+    				print '<tr class="liste_titre">';
+    				print '<td>';
+    				print '<a name="add"></a>'; // ancre
+    				print $langs->trans('Description').'</td>';
+    				print '<td align="center">'.$langs->trans('Date').'</td>';
+    				print '<td align="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?$langs->trans('Duration'):'').'</td>';
+      				print '<td colspan="3">&nbsp;</td>';
+    				print "</tr>\n";
+				}
+				
+				print '<tr class="oddeven">'."\n";
                 print '<td>';
                 // editeur wysiwyg
                 if (empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
@@ -1533,7 +1533,7 @@ else if ($id > 0 || ! empty($ref))
                 }
                 print '</td>';
 
-                print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
+                print '<td align="center" valign="middle" colspan="3"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
 				print '</tr>';
 
 				//Line extrafield

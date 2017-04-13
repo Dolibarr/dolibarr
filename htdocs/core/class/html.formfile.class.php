@@ -775,9 +775,7 @@ class FormFile
                     
                 foreach($link_list as $file)
                 {
-                    $var=!$var;
-                    
-                    $out.= "<tr ".$bc[$var].">";
+                    $out.='<tr class="oddeven">';
                     $out.='<td colspan="'.$colspan.'" class="maxwidhtonsmartphone">';
                     $out.='<a data-ajax="false" href="' . $link->url . '" target="_blank">';
                     $out.=$file->label;
@@ -794,7 +792,7 @@ class FormFile
             
 		 	if (count($file_list) == 0 && count($link_list) == 0 && $headershown)
             {
-	        	$out.='<tr '.$bc[0].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	        	$out.='<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     	    }
 
         }
