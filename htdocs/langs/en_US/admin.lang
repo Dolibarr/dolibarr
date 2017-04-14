@@ -427,6 +427,11 @@ WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to 
 ClickToShowDescription=Click to show description
 DependsOn=This module need the module(s)
 RequiredBy=This module is required by module(s)
+TheKeyIsTheNameOfHtmlField=The key is the name of the html field. This need to have technical knowledges to read the content of the HTML page to get the key name of a field.
+PageUrlForDefaultValues=You must enter here the relative url of the page. Examples:
+PageUrlForDefaultValuesCreate=<br>For form to create a new thirdparty, it is <strong>%s</strong>
+PageUrlForDefaultValuesList=<br>For page that list thirdparties, it is <strong>%s</strong>
+
 # Modules
 Module0Name=Users & groups
 Module0Desc=Users / Employees and Groups management
@@ -1338,7 +1343,7 @@ CacheByServer=Cache by server
 CacheByClient=Cache by browser
 CompressionOfResources=Compression of HTTP responses
 TestNotPossibleWithCurrentBrowsers=Such an automatic detection is not possible with current browsers 
-DefaultValuesDesc=You can define/force here the default value you want to get when your create a new record, and/or defaut filters or soting order when your list record. 
+DefaultValuesDesc=You can define/force here the default value you want to get when your create a new record, and/or defaut filters or sort order when your list record. 
 DefaultCreateForm=Create forms
 DefaultSearchFilters=Search filters
 DefaultSortOrder=Sort orders
@@ -1535,7 +1540,6 @@ BankOrderGlobalDesc=General display order
 BankOrderES=Spanish
 BankOrderESDesc=Spanish display order
 ChequeReceiptsNumberingModule=Cheque Receipts Numbering module
-
 ##### Multicompany #####
 MultiCompanySetup=Multi-company module setup
 ##### Suppliers #####

@@ -42,50 +42,59 @@ abstract class CommonObject
      * @var DoliDb		Database handler (result of a new DoliDB)
      */
 	public $db;
-
 	/**
 	 * @var int The object identifier
 	 */
 	public $id;
-
     /**
      * @var string 		Error string
      * @deprecated		Use instead the array of error strings
      * @see             errors
      */
     public $error;
-
 	/**
      * @var string[]	Array of error strings
      */
     public $errors=array();
-
+	/**
+	 * @var string
+	 */
+	public $element;
+	/**
+	 * @var string
+	 */
+	public $table_element;
+	/**
+	 * @var
+	 */
+	public $table_element_line;
     /**
      * @var string		Key value used to track if data is coming from import wizard
      */
     public $import_key;
-
     /**
      * @var mixed		Contains data to manage extrafields
      */
     public $array_options=array();
-
     /**
      * @var int[]		Array of linked objects ids. Loaded by ->fetchObjectLinked
      */
     public $linkedObjectsIds;
-
     /**
      * @var mixed		Array of linked objects. Loaded by ->fetchObjectLinked
      */
     public $linkedObjects;
-
+    /**
+     * @var Object      To store a cloned copy of object before to edit it and keep track of old properties
+     */
+    public $oldcopy;
+   
     /**
      * @var string		Column name of the ref field.
      */
     protected $table_ref_field = '';
 
-
+    
 
     // Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
 
@@ -165,19 +174,6 @@ abstract class CommonObject
 	 * @var string An external reference for the object
 	 */
 	public $ref_ext;
-
-	/**
-	 * @var string
-	 */
-	public $element;
-	/**
-	 * @var string
-	 */
-	public $table_element;
-	/**
-	 * @var
-	 */
-	public $table_element_line;
 
 	/**
 	 * @var int The object's status
@@ -332,8 +328,10 @@ abstract class CommonObject
     public $firstname;
     public $civility_id;
 
+    
     // No constructor as it is an abstract class
 
+    
     /**
      * Check an object id/ref exists
      * If you don't need/want to instantiate object and just need to know if object exists, use this method instead of fetch
