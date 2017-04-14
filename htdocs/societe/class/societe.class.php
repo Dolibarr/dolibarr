@@ -402,7 +402,7 @@ class Societe extends CommonObject
      */
     function create($user)
     {
-        global $langs,$conf;
+        global $conf,$langs;
 
 		$error=0;
 
