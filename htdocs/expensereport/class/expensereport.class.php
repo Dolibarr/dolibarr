@@ -129,6 +129,13 @@ class ExpenseReport extends CommonObject
 
         $error = 0;
 		
+        // Check parameters
+        if (empty($this->date_debut) || empty($this->date_fin)) 
+        {
+            $this->error='ErrorFieldRequired';
+            return -1;
+        }
+        
         $fuserid = $this->fk_user_author;       // Note fk_user_author is not the 'author' but the guy the expense report is for.
         if (empty($fuserid)) $fuserid = $user->id;
         
@@ -170,7 +177,6 @@ class ExpenseReport extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -178,7 +184,6 @@ class ExpenseReport extends CommonObject
             $this->ref='(PROV'.$this->id.')';
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET ref='".$this->ref."' WHERE rowid=".$this->id;
-            dol_syslog(get_class($this)."::create sql=".$sql);
             $resql=$this->db->query($sql);
             if (!$resql) $error++;
 
