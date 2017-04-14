@@ -259,7 +259,6 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 	$i = 0;
-	$var=false;
 
 	while ($i < $num)
 	{

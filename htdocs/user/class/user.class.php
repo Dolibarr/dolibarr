@@ -104,16 +104,17 @@ class User extends CommonObject
 	public $lang;
 
 	public $rights;                        // Array of permissions user->rights->permx
-	public $all_permissions_are_loaded;	/**< \private all_permissions_are_loaded */
-	private $_tab_loaded=array();		// Array of cache of already loaded permissions
-	public $nb_rights;			// Number of rights granted to the user
-
+	public $all_permissions_are_loaded;	   // All permission are loaded
+	public $nb_rights;			           // Number of rights granted to the user
+	private $_tab_loaded=array();		   // Cache array of already loaded permissions
+	
 	public $conf;           		// To store personal config
-	var $oldcopy;                	// To contains a clone of this when we need to save old properties of object
-
+	public $default_values;         // To store default values for user
+	
 	public $users;					// To store all tree of users hierarchy
 	public $parentof;				// To store an array of all parents for all ids.
-
+	private $cache_childids;
+	
 	public $accountancy_code;			// Accountancy code in prevision of the complete accountancy module
 
 	public $thm;					// Average cost of employee - Used for valuation of time spent
@@ -127,7 +128,6 @@ class User extends CommonObject
 
 	public $dateemployment;			// Define date of employment by company
 
-	private $cache_childids;
 
 
 	/**
@@ -339,6 +339,7 @@ class User extends CommonObject
 		// To get back the global configuration unique to the user
 		if ($loadpersonalconf)
 		{
+		    // Load user->conf for user
 			$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
 			$sql.= " WHERE fk_user = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
@@ -361,6 +362,24 @@ class User extends CommonObject
 			{
 				$this->error=$this->db->error();
 				return -2;
+			}
+			
+			// Load user->default_values for user. TODO Save this in memcached ?
+			$sql = "SELECT rowid, entity, type, page, param, value";
+			$sql.= " FROM ".MAIN_DB_PREFIX."default_values";
+			$sql.= " WHERE entity IN (".$this->entity.",".$conf->entity.")";
+			$sql.= " AND user_id IN (0, ".$this->id.")";
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+			    while ($obj = $this->db->fetch_object($resql))
+			    {
+			        if (! empty($obj->page) && ! empty($obj->type) && ! empty($obj->param)) 
+			        {
+			            $user->default_values[$obj->page][$obj->type][$obj->param]=$obj->value;
+			        }
+			    }
+			    $this->db->free($resql);
 			}
 		}
 
