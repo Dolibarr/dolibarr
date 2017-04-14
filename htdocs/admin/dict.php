@@ -78,6 +78,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_country_id = GETPOST('search_country_id','int');
+$search_code = GETPOST('search_code','alpha');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('admin'));
@@ -569,6 +570,7 @@ if ($id == 10)
 if (GETPOST('button_removefilter') || GETPOST('button_removefilter.x') || GETPOST('button_removefilter_x'))
 {
     $search_country_id = '';    
+    $search_code = '';    
 }
 
 // Actions add or modify an entry into a dictionary
@@ -803,7 +805,7 @@ if ($action == $acts[0])
         $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'";
     }
     elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$_GET["code"]."'";
+        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".dol_escape_htmltag($_GET["code"])."'";
     }
 
     $result = $db->query($sql);
@@ -823,7 +825,7 @@ if ($action == $acts[1])
         $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'";
     }
     elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$_GET["code"]."'";
+        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".dol_escape_htmltag($_GET["code"])."'";
     }
 
     $result = $db->query($sql);
@@ -843,7 +845,7 @@ if ($action == 'activate_favorite')
         $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol."='".$rowid."'";
     }
     elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".$_GET["code"]."'";
+        $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".dol_escape_htmltag($_GET["code"])."'";
     }
 
     $result = $db->query($sql);
@@ -863,7 +865,7 @@ if ($action == 'disable_favorite')
         $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol."='".$rowid."'";
     }
     elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".$_GET["code"]."'";
+        $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".dol_escape_htmltag($_GET["code"])."'";
     }
 
     $result = $db->query($sql);
@@ -915,7 +917,7 @@ print "<br>\n";
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$_GET["code"].'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.urlencode($_GET["code"]).'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
 }
 //var_dump($elementList);
 
@@ -927,12 +929,9 @@ if ($id)
     // Complete requete recherche valeurs avec critere de tri
     $sql=$tabsql[$id];
 
-    if ($search_country_id > 0)
-    {
-        if (preg_match('/ WHERE /',$sql)) $sql.= " AND ";
-        else $sql.=" WHERE ";
-        $sql.= " c.rowid = ".$search_country_id;
-    }
+    $sql.=" WHERE 1 = 1";
+    if ($search_country_id > 0) $sql.= " AND c.rowid = ".$search_country_id;
+    if ($search_code != '')     $sql.= natural_search("code", $search_code);
     
     if ($sortfield)
     {
@@ -1126,6 +1125,7 @@ if ($id)
 
         $param = '&id='.$id;
         if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
+        if ($search_code != '')     $param.= '&search_code='.urlencode($search_country_id);
         $paramwithsearch = $param;
         if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
         if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
@@ -1139,8 +1139,51 @@ if ($id)
             print '</td></tr>';
         }
 
+        // Title line with search boxes
+        print '<tr class="liste_titre_filter liste_titre_add">';
+        $filterfound=0;
+        foreach ($fieldlist as $field => $value)
+        {
+            $showfield=1;							  	// By defaut
+            
+            if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
+            
+            if ($showfield)
+            {
+                if ($value == 'country')
+                {
+                    print '<td class="liste_titre">';
+                    print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth200 maxwidthonsmartphone');
+                    print '</td>';
+                    $filterfound++;
+                }
+                elseif ($value == 'code')
+                {
+                    print '<td class="liste_titre">';
+                    print '<input type="text" name="search_code" value="'.dol_escape_htmltag($search_code).'">';
+                    print '</td>';
+                    $filterfound++;
+                }
+                else
+                {
+                    print '<td class="liste_titre">';
+                    print '</td>';
+                }
+            }
+        }
+        if ($id == 4) print '<td></td>';
+        print '<td class="liste_titre"></td>';
+    	print '<td class="liste_titre" colspan="2" align="right">';
+    	if ($filterfound)
+    	{
+        	$searchpitco=$form->showFilterAndCheckAddButtons(0);
+        	print $searchpitco;
+    	}
+    	print '</td>';
+        print '</tr>';
+            
         // Title of lines
-        print '<tr class="liste_titre liste_titre_add">';
+        print '<tr class="liste_titre">';
         foreach ($fieldlist as $field => $value)
         {
             // Determine le nom du champ par rapport aux noms possibles
@@ -1229,51 +1272,14 @@ if ($id)
         print getTitleFieldOfList('');
         print '</tr>';
 
-        // Title line with search boxes
-        print '<tr class="liste_titre">';
-        $filterfound=0;
-        foreach ($fieldlist as $field => $value)
-        {
-            $showfield=1;							  	// By defaut
-            
-            if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
-            
-            if ($showfield)
-            {
-                if ($value == 'country')
-                {
-                    print '<td class="liste_titre">';
-                    print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth200 maxwidthonsmartphone');
-                    print '</td>';
-                    $filterfound++;
-                }
-                else
-                {
-                    print '<td class="liste_titre"></td>';
-                }
-            }
-        }
-        if ($id == 4) print '<td></td>';
-        print '<td class="liste_titre"></td>';
-    	print '<td class="liste_titre" colspan="2" align="right">';
-    	if ($filterfound)
-    	{
-        	$searchpitco=$form->showFilterAndCheckAddButtons(0);
-        	print $searchpitco;
-    	}
-    	print '</td>';
-        print '</tr>';
-            
         if ($num)
         {
             // Lines with values
             while ($i < $num)
             {
-                $var = ! $var;
-
                 $obj = $db->fetch_object($resql);
                 //print_r($obj);
-                print '<tr '.$bc[$var].' id="rowid-'.$obj->rowid.'">';
+                print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
                 if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
                 {
                     $tmpaction='edit';
@@ -1491,8 +1497,10 @@ if ($id)
                     $canbemodified=$iserasable;
                     if ($obj->code == 'RECEP') $canbemodified=1;
 
+                    // Url 
                     $rowidcol=$tabrowid[$id];
-                    $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->{$rowidcol})?$obj->{$rowidcol}:(! empty($obj->code)?$obj->code:'')).'&code='.(! empty($obj->code)?urlencode($obj->code):'');
+                    if ($id == 17) $rowidcol='rowid';
+                    $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->{$rowidcol})?$obj->{$rowidcol}:(! empty($obj->code)?urlencode($obj->code):'')).'&code='.(! empty($obj->code)?urlencode($obj->code):'');
                     if ($param) $url .= '&'.$param;
                     $url.='&';
 
