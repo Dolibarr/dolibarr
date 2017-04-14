@@ -295,7 +295,7 @@ if ($action == 'edit')
 }
 else
 {
-    dol_fiche_head($head, 'guisetup', $title, 0, 'user');
+    dol_fiche_head($head, 'guisetup', $title, -1, 'user');
     
     $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
     

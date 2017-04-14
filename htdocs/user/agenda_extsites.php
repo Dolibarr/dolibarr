@@ -151,7 +151,7 @@ print '<input type="hidden" name="id" value="'.$id.'">';
 
 $head=user_prepare_head($object);
 
-dol_fiche_head($head, 'extsites', $langs->trans("User"), 0, 'user');
+dol_fiche_head($head, 'extsites', $langs->trans("User"), -1, 'user');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 

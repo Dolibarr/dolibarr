@@ -131,7 +131,7 @@ if ($id && $action == 'create' && $user->rights->user->user->creer)
 if ($id && $action != 'edit')
 {
 	$title = $langs->trans("User");
-	dol_fiche_head($head, 'bank', $title, 0, 'user');
+	dol_fiche_head($head, 'bank', $title, -1, 'user');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 	
@@ -232,14 +232,14 @@ if ($id && $action == 'edit' && $user->rights->user->user->creer)
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 	
-    dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+    dol_banner_tab($object, 'id', $linkback,$user->rights->user->user->lire || $user->admin);
         
-    print '<div class="fichecenter">';
+    //print '<div class="fichecenter">';
     
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
-    print '<tr><td valign="top" width="35%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
+    print '<tr><td class="titlefield fieldrequired">'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
 
     print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
@@ -271,29 +271,29 @@ if ($id && $action == 'edit' && $user->rights->user->user->creer)
 	}
 
     // IBAN
-    print '<tr><td class="tdtop fieldrequired">'.$langs->trans("IBAN").'</td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("IBAN").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="iban" value="'.$account->iban.'"></td></tr>';
 
-    print '<tr><td class="tdtop fieldrequired">'.$langs->trans("BIC").'</td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("BIC").'</td>';
     print '<td colspan="4"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
 
     print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
-    print '<textarea name="domiciliation" rows="4" cols="40">';
+    print '<textarea name="domiciliation" rows="4" class="quatrevingtpercent">';
     print $account->domiciliation;
     print "</textarea></td></tr>";
 
-    print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwner").'</td>';
+    print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
     print "</td></tr>\n";
 
     print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
-    print "<textarea name=\"owner_address\" rows=\"4\" cols=\"40\">";
+    print '<textarea name="owner_address" rows="4" class="quatrevingtpercent">';
     print $account->owner_address;
     print "</textarea></td></tr>";
 
     print '</table>';
 
-    print '</div>';
+    //print '</div>';
     
     dol_fiche_end();
 
@@ -304,6 +304,10 @@ if ($id && $action == 'edit' && $user->rights->user->user->creer)
     print '</div>';
 }
 
+if ($id && $action == 'edit' && $user->rights->user->user->creer) print '</form>';
+
+if ($id && $action == 'edit' && $user->rights->user->user->creer) print '</form>';
+    
 llxFooter();
 
 $db->close();

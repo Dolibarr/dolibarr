@@ -125,7 +125,7 @@ $form=new Form($db);
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
-dol_fiche_head($head, 'rights', $title, 0, 'user');
+dol_fiche_head($head, 'rights', $title, -1, 'user');
 
 
 $db->begin();
