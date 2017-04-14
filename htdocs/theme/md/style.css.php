@@ -727,6 +727,9 @@ div.fiche>form>div.div-table-responsive {
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
 {
+    .width50  { width: 50px; }
+    .width100 { width: 100px; }
+    .width200 { width: 200px; }
 	.minwidth100 { min-width: 100px; }
 	.minwidth200 { min-width: 200px; }
 	.minwidth300 { min-width: 300px; }
@@ -740,6 +743,9 @@ div.fiche>form>div.div-table-responsive {
 	.minwidth400imp { min-width: 400px !important; }
 	.minwidth500imp { min-width: 500px !important; }
 }
+.width50  { width: 50px; }
+.width100 { width: 100px; }
+.width200 { width: 200px; }
 .maxwidth25  { max-width: 25px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
