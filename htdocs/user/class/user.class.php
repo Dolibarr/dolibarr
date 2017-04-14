@@ -164,11 +164,11 @@ class User extends CommonObject
 	 *	@param	int		$id		       		If defined, id to used for search
 	 * 	@param  string	$login       		If defined, login to used for search
 	 *	@param  string	$sid				If defined, sid to used for search
-	 * 	@param	int		$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx)
+	 * 	@param	int		$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx), 0=do not load personal conf.
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
-	function fetch($id='', $login='',$sid='',$loadpersonalconf=1, $entity=-1)
+	function fetch($id='', $login='', $sid='', $loadpersonalconf=0, $entity=-1)
 	{
 		global $conf, $user;
 
@@ -360,7 +360,7 @@ class User extends CommonObject
 			}
 			else
 			{
-				$this->error=$this->db->error();
+				$this->error=$this->db->lasterror();
 				return -2;
 			}
 			
@@ -380,6 +380,11 @@ class User extends CommonObject
 			        }
 			    }
 			    $this->db->free($resql);
+			}
+			else
+			{
+				$this->error=$this->db->lasterror();
+				return -3;
 			}
 		}
 
