@@ -76,14 +76,14 @@ $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
+print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td align="right">';
 print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0">';
 print $bprev->NbFactureAPrelever();
 print '</a>';
 print '</td></tr>';
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("AmountToWithdraw").'</td>';
+print '<tr class="oddeven"><td>'.$langs->trans("AmountToWithdraw").'</td>';
 print '<td align="right">';
 print price($bprev->SommeAPrelever(),'','',1,-1,-1,'auto');
 print '</td></tr></table><br>';
@@ -130,7 +130,7 @@ if ($resql)
             $alreadypayed=$invoicestatic->getSommePaiement();
 
             
-            print '<tr '.$bc[$var].'><td>';
+            print '<tr class="oddeven"><td>';
             print $invoicestatic->getNomUrl(1,'withdraw');
             print '</td>';
 

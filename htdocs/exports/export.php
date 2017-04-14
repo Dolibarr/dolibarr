@@ -1052,7 +1052,7 @@ if ($step == 4 && $datatoexport)
 			{
 				
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td>';
+				print '<tr class="oddeven"><td>';
 				print $obj->label;
 				print '</td><td align="right">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=deleteprof&id='.$obj->rowid.'">';

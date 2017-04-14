@@ -258,7 +258,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td class="nowrap">';
+				print '<tr class="oddeven"><td class="nowrap">';
 				$staticcontrat->ref=$obj->ref;
 				$staticcontrat->id=$obj->rowid;
 				print $staticcontrat->getNomUrl(1,'');

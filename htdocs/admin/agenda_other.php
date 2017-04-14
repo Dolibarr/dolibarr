@@ -352,7 +352,7 @@ print '</tr>'."\n";
 
 // Manual or automatic
 
-print '<tr '.$bc[$var].'>'."\n";
+print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
@@ -371,7 +371,7 @@ if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {
     
     print '<!-- AGENDA_USE_EVENT_TYPE_DEFAULT -->';
-    print '<tr '.$bc[$var].'>'."\n";
+    print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";
     print '<td align="center">&nbsp;</td>'."\n";
     print '<td align="right" class="nowrap">'."\n";
@@ -381,7 +381,7 @@ if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 
 // AGENDA_DEFAULT_FILTER_TYPE
 
-print '<tr '.$bc[$var].'>'."\n";
+print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_TYPE").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right" class="nowrap">'."\n";
@@ -390,7 +390,7 @@ print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_STATUS
 
-print '<tr '.$bc[$var].'>'."\n";
+print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_STATUS").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
@@ -399,7 +399,7 @@ print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_VIEW
 
-print '<tr '.$bc[$var].'>'."\n";
+print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
@@ -411,7 +411,7 @@ print '</td></tr>'."\n";
 if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 {
     
-    print '<tr '.$bc[$var].'>'."\n";
+    print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans('AGENDA_NOTIFICATION').'</td>'."\n";
     print '<td align="center">&nbsp;</td>'."\n";
     print '<td align="right">'."\n";
@@ -423,7 +423,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
         print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_NOTIFICATION">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
         print '</td></tr>'."\n";
     	
-        print '<tr '.$bc[$var].'>'."\n";
+        print '<tr class="oddeven">'."\n";
         print '<td>'.$langs->trans('AGENDA_NOTIFICATION_SOUND').'</td>'."\n";
         print '<td align="center">&nbsp;</td>'."\n";
         print '<td align="right">'."\n";

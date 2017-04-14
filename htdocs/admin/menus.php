@@ -180,7 +180,7 @@ if ($action == 'edit')
 
 	// Menu top
 	
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuManager").'</td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuManager").'</td>';
 	print '<td>';
 	$formadmin->select_menu(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED, 'MAIN_MENU_STANDARD', $dirstandard, empty($conf->global->MAIN_MENU_STANDARD_FORCED)?'':' disabled');
 	print '</td>';
@@ -191,7 +191,7 @@ if ($action == 'edit')
 
 	// Menu smartphone
 	
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
 	print '<td>';
 	$formadmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard,$dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled');
 	print '</td>';
@@ -218,7 +218,7 @@ else
 	print '</tr>';
 
 	
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuManager").'</td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuManager").'</td>';
 	print '<td>';
 	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED));
 	print $filelib;

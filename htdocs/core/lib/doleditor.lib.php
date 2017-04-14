@@ -82,7 +82,7 @@ function show_skin($fuser,$edit=0)
    	print '</tr>';
 
     //
-    print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">';
+    print '<tr class="oddeven"><td colspan="'.$colspan.'">';
 
     print '<table class="nobordernopadding" width="100%"><tr><td><div align="center">';
 

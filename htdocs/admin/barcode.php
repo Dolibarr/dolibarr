@@ -215,7 +215,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		print '<tr '.$bc[$var].'><td width="100">';
+		print '<tr class="oddeven"><td width="100">';
 		print $obj->libelle;
 		print "</td><td>\n";
 		print $langs->trans('BarcodeDesc'.$obj->encoding);

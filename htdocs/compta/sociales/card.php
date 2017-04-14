@@ -617,7 +617,7 @@ if ($id > 0)
             else
 		    {
 		        
-		        print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td><td></td></tr>';
+		        print '<tr class="oddeven"><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td><td></td></tr>';
 		    }
                 
 		    //if ($object->status == ChargeSociales::STATUS_DRAFT)

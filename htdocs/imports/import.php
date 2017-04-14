@@ -553,7 +553,7 @@ if ($step == 3 && $datatoimport)
 
 	// Input file name box
 	$var=false;
-	print '<tr '.$bc[$var].'><td colspan="6">';
+	print '<tr class="oddeven"><td colspan="6">';
 	print '<input type="file"   name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 	$out = (empty($conf->global->MAIN_UPLOAD_DOC)?' disabled':'');
 	print '<input type="submit" class="button" value="'.$langs->trans("AddFile").'"'.$out.' name="sendit">';
@@ -1131,7 +1131,7 @@ if ($step == 4 && $datatoimport)
 			{
 				
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td>';
+				print '<tr class="oddeven"><td>';
 				print $obj->label;
 				print '</td><td align="right">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.$param.'&action=deleteprof&id='.$obj->rowid.'&filetoimport='.urlencode($filetoimport).'">';

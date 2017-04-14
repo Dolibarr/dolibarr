@@ -242,7 +242,7 @@ if ($action == 'edit')
 
     // Landing page
     
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("LandingPage").'</td>';
+    print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
     print '<td>';
     print (empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE);
     print '</td>';
@@ -256,7 +256,7 @@ if ($action == 'edit')
     
     // Langue par defaut
     
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
+    print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td>';
     print '<td>';
     $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
     print $s?$s.' ':'';
@@ -271,7 +271,7 @@ if ($action == 'edit')
 
     // Taille max des listes
     
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
+    print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"");
     print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
@@ -308,7 +308,7 @@ else
 
     // Landing page
     
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("LandingPage").'</td>';
+    print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
     print '<td>';
     print (empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE);
     print '</td>';
@@ -326,7 +326,7 @@ else
     
     // Language
     
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
+    print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td>';
     print '<td>';
     $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
     print ($s?$s.' ':'');
@@ -340,7 +340,7 @@ else
     print '</td></tr>';
 
     
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
+    print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.(! empty($conf->global->MAIN_SIZE_LISTE_LIMIT)?$conf->global->MAIN_SIZE_LISTE_LIMIT:'&nbsp;').'</td>';
     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' type="checkbox" disabled '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>' . (! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?$object->conf->MAIN_SIZE_LISTE_LIMIT:'&nbsp;') . '</td></tr>';

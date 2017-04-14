@@ -73,7 +73,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("CurrentVersion").' ('.$langs->trans("Programs").')</td><td>'.DOL_VERSION;
+print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").' ('.$langs->trans("Programs").')</td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE))
 {
@@ -124,9 +124,9 @@ if (function_exists('curl_init'))
 
 print '</td></tr>'."\n";
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("VersionLastUpgrade").' ('.$langs->trans("Database").')</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").' ('.$langs->trans("Database").')</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
 print '</table>';
 print '</div>';
 print '<br>';
@@ -137,28 +137,28 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Session").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("SessionSavePath").'</td><td colspan="2">'.session_save_path().'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("SessionSavePath").'</td><td colspan="2">'.session_save_path().'</td></tr>'."\n";
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("SessionName").'</td><td colspan="2">'.session_name().'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("SessionName").'</td><td colspan="2">'.session_name().'</td></tr>'."\n";
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("SessionId").'</td><td colspan="2">'.session_id().'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("SessionId").'</td><td colspan="2">'.session_id().'</td></tr>'."\n";
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("CurrentSessionTimeOut").'</td><td>'.ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds");
+print '<tr class="oddeven"><td>'.$langs->trans("CurrentSessionTimeOut").'</td><td>'.ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds");
 print '</td><td align="right">';
 print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print "</td></tr>\n";
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("CurrentTheme").'</td><td colspan="2">'.$conf->theme.'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("CurrentTheme").'</td><td colspan="2">'.$conf->theme.'</td></tr>'."\n";
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("CurrentMenuHandler").'</td><td colspan="2">';
+print '<tr class="oddeven"><td>'.$langs->trans("CurrentMenuHandler").'</td><td colspan="2">';
 print $conf->standard_menu;
 print '</td></tr>'."\n";
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("Screen").'</td><td colspan="2">';
+print '<tr class="oddeven"><td>'.$langs->trans("Screen").'</td><td colspan="2">';
 print $_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
 print '</td></tr>'."\n";
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("Session").'</td><td colspan="2">';
+print '<tr class="oddeven"><td>'.$langs->trans("Session").'</td><td colspan="2">';
 $i=0;
 foreach($_SESSION as $key => $val)
 {
@@ -189,7 +189,7 @@ if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_S
 	foreach($shmoparray as $key => $val)
 	{
 		
-		print '<tr '.$bc[$var].'><td>'.$key.'</td>';
+		print '<tr class="oddeven"><td>'.$key.'</td>';
 		print '<td>'.count($val).'</td>';
 		print '<td align="right">'.dol_getshmopaddress($key).'</td>';
 		print '</tr>'."\n";
@@ -207,22 +207,22 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("LocalisationDolibarrParameters").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LanguageBrowserParameter","HTTP_ACCEPT_LANGUAGE").'</td><td>'.$_SERVER["HTTP_ACCEPT_LANGUAGE"].'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("LanguageBrowserParameter","HTTP_ACCEPT_LANGUAGE").'</td><td>'.$_SERVER["HTTP_ACCEPT_LANGUAGE"].'</td></tr>'."\n";
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("CurrentUserLanguage").'</td><td>'.$langs->getDefaultLang().'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("CurrentUserLanguage").'</td><td>'.$langs->getDefaultLang().'</td></tr>'."\n";
 // Thousands
 
 $thousand=$langs->transnoentitiesnoconv("SeparatorThousand");
 if ($thousand == 'SeparatorThousand') $thousand=' ';	// ' ' does not work on trans method
 if ($thousand == 'None') $thousand='';
-print '<tr '.$bc[$var].'><td>'.$langs->trans("CurrentValueSeparatorThousand").'</td><td>'.($thousand==' '?$langs->transnoentitiesnoconv("Space"):$thousand).'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("CurrentValueSeparatorThousand").'</td><td>'.($thousand==' '?$langs->transnoentitiesnoconv("Space"):$thousand).'</td></tr>'."\n";
 // Decimals
 
 $dec=$langs->transnoentitiesnoconv("SeparatorDecimal");
-print '<tr '.$bc[$var].'><td>'.$langs->trans("CurrentValueSeparatorDecimal").'</td><td>'.$dec.'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("CurrentValueSeparatorDecimal").'</td><td>'.$dec.'</td></tr>'."\n";
 // Show results of functions to see if everything works
 
-print '<tr '.$bc[$var].'><td>&nbsp; => price2num(1233.56+1)</td><td>'.price2num(1233.56+1,'2').'</td></tr>'."\n";
+print '<tr class="oddeven"><td>&nbsp; => price2num(1233.56+1)</td><td>'.price2num(1233.56+1,'2').'</td></tr>'."\n";
 
 print "<tr ".$bc[$var].'><td>&nbsp; => price2num('."'1".$thousand."234".$dec."56')</td><td>".price2num("1".$thousand."234".$dec."56",'2')."</td></tr>\n";
 if (($thousand != ',' && $thousand != '.') || ($thousand != ' '))
@@ -232,14 +232,14 @@ if (($thousand != ',' && $thousand != '.') || ($thousand != ' '))
 	print "</tr>\n";
 }
 
-print '<tr '.$bc[$var].'><td>&nbsp; => price(1234.56)</td><td>'.price(1234.56).'</td></tr>'."\n";
+print '<tr class="oddeven"><td>&nbsp; => price(1234.56)</td><td>'.price(1234.56).'</td></tr>'."\n";
 // Timezone
 $txt =$langs->trans("OSTZ").' (variable system TZ): '.(! empty($_ENV["TZ"])?$_ENV["TZ"]:$langs->trans("NotDefined")).'<br>'."\n";
 $txt.=$langs->trans("PHPTZ").' (php.ini date.timezone): '.(ini_get("date.timezone")?ini_get("date.timezone"):$langs->trans("NotDefined")).''."<br>\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
 $txt.=$langs->trans("Dolibarr constant MAIN_SERVER_TZ").': '.(empty($conf->global->MAIN_SERVER_TZ)?$langs->trans("NotDefined"):$conf->global->MAIN_SERVER_TZ);
 //$txt.=$langs->trans("YouCanEditPHPTZ"); // deprecated
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("CurrentTimeZone").'</td><td>';	// Timezone server PHP
+print '<tr class="oddeven"><td>'.$langs->trans("CurrentTimeZone").'</td><td>';	// Timezone server PHP
 $a=getServerTimeZoneInt('now');
 $b=getServerTimeZoneInt('winter');
 $c=getServerTimeZoneInt('summer');
@@ -252,18 +252,18 @@ $val.=' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': '.($dayligh
 print $form->textwithtooltip($val,$txt,2,1,img_info(''));
 print '</td></tr>'."\n";	// value defined in http://fr3.php.net/manual/en/timezones.europe.php
 
-print '<tr '.$bc[$var].'><td>&nbsp; => '.$langs->trans("CurrentHour").'</td><td>'.dol_print_date(dol_now(),'dayhour','tzserver').'</td></tr>'."\n";
+print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("CurrentHour").'</td><td>'.dol_print_date(dol_now(),'dayhour','tzserver').'</td></tr>'."\n";
 
-print '<tr '.$bc[$var].'><td>&nbsp; => dol_print_date(0,"dayhourtext")</td><td>'.dol_print_date(0,"dayhourtext").'</td>';
+print '<tr class="oddeven"><td>&nbsp; => dol_print_date(0,"dayhourtext")</td><td>'.dol_print_date(0,"dayhourtext").'</td>';
 
-print '<tr '.$bc[$var].'><td>&nbsp; => dol_get_first_day(1970,1,false)</td><td>'.dol_get_first_day(1970,1,false).' &nbsp; &nbsp; (=> dol_print_date() or idate() of this value = '.dol_print_date(dol_get_first_day(1970,1,false),'dayhour').')</td>';
+print '<tr class="oddeven"><td>&nbsp; => dol_get_first_day(1970,1,false)</td><td>'.dol_get_first_day(1970,1,false).' &nbsp; &nbsp; (=> dol_print_date() or idate() of this value = '.dol_print_date(dol_get_first_day(1970,1,false),'dayhour').')</td>';
 
-print '<tr '.$bc[$var].'><td>&nbsp; => dol_get_first_day(1970,1,true)</td><td>'.dol_get_first_day(1970,1,true).' &nbsp; &nbsp; (=> dol_print_date() or idate() of this value = '.dol_print_date(dol_get_first_day(1970,1,true),'dayhour').')</td>';
+print '<tr class="oddeven"><td>&nbsp; => dol_get_first_day(1970,1,true)</td><td>'.dol_get_first_day(1970,1,true).' &nbsp; &nbsp; (=> dol_print_date() or idate() of this value = '.dol_print_date(dol_get_first_day(1970,1,true),'dayhour').')</td>';
 // Database timezone
 if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 {
 	
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MySQLTimeZone").' (database)</td><td>';	// Timezone server base
+	print '<tr class="oddeven"><td>'.$langs->trans("MySQLTimeZone").' (database)</td><td>';	// Timezone server base
 	$sql="SHOW VARIABLES where variable_name = 'system_time_zone'";
 	$resql = $db->query($sql);
 	if ($resql)
@@ -276,7 +276,7 @@ if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 // Client
 
 $tz=(int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst'];
-print '<tr '.$bc[$var].'><td>'.$langs->trans("ClientTZ").'</td><td>'.($tz?($tz>=0?'+':'').$tz:'').' ('.($tz>=0?'+':'').($tz*60*60).')';
+print '<tr class="oddeven"><td>'.$langs->trans("ClientTZ").'</td><td>'.($tz?($tz>=0?'+':'').$tz:'').' ('.($tz>=0?'+':'').($tz*60*60).')';
 print ' &nbsp; &nbsp; &nbsp; '.$_SESSION['dol_tz_string'];
 print ' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': ';
 if ($_SESSION['dol_dst']>0) print yn(1);
@@ -285,18 +285,18 @@ if (! empty($_SESSION['dol_dst_first'])) print ' &nbsp; &nbsp; ('.dol_print_date
 print '</td></tr>'."\n";
 print '</td></tr>'."\n";
 
-print '<tr '.$bc[$var].'><td>&nbsp; => '.$langs->trans("ClientHour").'</td><td>'.dol_print_date(dol_now(),'dayhour','tzuser').'</td></tr>'."\n";
+print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("ClientHour").'</td><td>'.dol_print_date(dol_now(),'dayhour','tzuser').'</td></tr>'."\n";
 
 
 $filesystemencoding=ini_get("unicode.filesystem_encoding");	// Disponible avec PHP 6.0
-print '<tr '.$bc[$var].'><td>'.$langs->trans("File encoding").' (php.ini unicode.filesystem_encoding)</td><td>'.$filesystemencoding.'</td></tr>'."\n";	// date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
+print '<tr class="oddeven"><td>'.$langs->trans("File encoding").' (php.ini unicode.filesystem_encoding)</td><td>'.$filesystemencoding.'</td></tr>'."\n";	// date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
 
 
 $tmp=ini_get("unicode.filesystem_encoding");						// Disponible avec PHP 6.0
 if (empty($tmp) && ! empty($_SERVER["WINDIR"])) $tmp='iso-8859-1';	// By default for windows
 if (empty($tmp)) $tmp='utf-8';										// By default for other
 if (! empty($conf->global->MAIN_FILESYSTEM_ENCODING)) $tmp=$conf->global->MAIN_FILESYSTEM_ENCODING;
-print '<tr '.$bc[$var].'><td>&nbsp; => '.$langs->trans("File encoding").'</td><td>'.$tmp.'</td></tr>'."\n";	// date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
+print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("File encoding").'</td><td>'.$tmp.'</td></tr>'."\n";	// date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
 
 print '</table>';
 print '</div>';

@@ -354,7 +354,7 @@ foreach ($dirsociete as $dirroot)
     			if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
     			$var = !$var;
-    			print '<tr '.$bc[$var].'>'."\n";
+    			print '<tr class="oddeven">'."\n";
     			print '<td width="140">'.$modCodeTiers->name.'</td>'."\n";
     			print '<td>'.$modCodeTiers->info($langs).'</td>'."\n";
     			print '<td class="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
@@ -534,7 +534,7 @@ foreach ($dirsociete as $dirroot)
 				if ($modulequalified)
 				{
 					$var = !$var;
-					print '<tr '.$bc[$var].'><td width="100">';
+					print '<tr class="oddeven"><td width="100">';
 					print $module->name;
 					print "</td><td>\n";
 					if (method_exists($module,'info')) print $module->info($langs);

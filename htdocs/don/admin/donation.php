@@ -270,7 +270,7 @@ if (is_resource($handle))
 
 			if ($module->isEnabled())
 			{
-				print '<tr '.$bc[$var].'><td width=\"100\">';
+				print '<tr class="oddeven"><td width=\"100\">';
 				echo $module->name;
 				print '</td>';
 				print '<td>';
@@ -384,7 +384,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_DONATION_MESSAGE" />';
 
 $var=! $var;
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("FreeTextOnDonations").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
 print '<textarea name="DONATION_MESSAGE" class="flat" cols="80">'.$conf->global->DONATION_MESSAGE.'</textarea>';
 print '</td><td align="right">';

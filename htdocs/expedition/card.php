@@ -1067,7 +1067,7 @@ if ($action == 'create')
 						else
 						{
 						    print '<!-- Case there is no details of lot at all -->';
-						    print '<tr '.$bc[$var].'><td colspan="3"></td><td align="center">';
+						    print '<tr class="oddeven"><td colspan="3"></td><td align="center">';
 							print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
 							print '</td>';
 							
@@ -1227,7 +1227,7 @@ if ($action == 'create')
 					if ($subj == 0) // Line not shown yet, we show it
 					{
 					    print '<!-- line not shown yet, we show it -->';
-						print '<tr '.$bc[$var].'><td colspan="3" ></td><td align="center">';
+						print '<tr class="oddeven"><td colspan="3" ></td><td align="center">';
 						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
 						    $disabled='';

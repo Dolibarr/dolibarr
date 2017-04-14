@@ -168,7 +168,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			{
 				$obj = $db->fetch_object($resql);
 				
-				print '<tr '.$bc[$var].'><td  class="nowrap">';
+				print '<tr class="oddeven"><td  class="nowrap">';
 				$propalstatic->id=$obj->rowid;
 				$propalstatic->ref=$obj->ref;
                 $propalstatic->ref_client=$obj->ref_client;
@@ -199,7 +199,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		else
 		{
 			
-			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
 		}
 		print "</table><br>";
 
@@ -249,7 +249,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
             {
                 $obj = $db->fetch_object($resql);
                 
-                print '<tr '.$bc[$var].'><td  class="nowrap">';
+                print '<tr class="oddeven"><td  class="nowrap">';
                 $supplierproposalstatic->id=$obj->rowid;
                 $supplierproposalstatic->ref=$obj->ref;
                 $supplierproposalstatic->total_ht = $obj->total_ht;
@@ -279,7 +279,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
         else
         {
             
-            print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
+            print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
         }
         print "</table><br>";
 
@@ -328,7 +328,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 			{
 				
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td class="nowrap">';
+				print '<tr class="oddeven"><td class="nowrap">';
                 $orderstatic->id=$obj->rowid;
                 $orderstatic->ref=$obj->ref;
                 $orderstatic->ref_client=$obj->ref_client;
@@ -359,7 +359,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		else
 		{
 			
-			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoOrder").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table><br>";
 
@@ -409,7 +409,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
             {
                 
                 $obj = $db->fetch_object($resql);
-                print '<tr '.$bc[$var].'><td class="nowrap">';
+                print '<tr class="oddeven"><td class="nowrap">';
                 $supplierorderstatic->id=$obj->rowid;
                 $supplierorderstatic->ref=$obj->ref;
                 $supplierorderstatic->ref_supplier=$obj->ref_suppliert;
@@ -440,7 +440,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
         else
         {
 			
-            print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</td></tr>';
+            print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</td></tr>';
         }
         print "</table><br>";
 
@@ -519,7 +519,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table><br>";
 	}
@@ -573,7 +573,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}

@@ -428,7 +428,7 @@ function activitytrim($product_type)
 				if ($trim1+$trim2+$trim3+$trim4 > 0)
 				{
 				    
-					print '<tr '.$bc[$var].'><td align=left>'.$tmpyear.'</td>';
+					print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
 					print '<td align=right>'.price($trim1).'</td>';
 					print '<td align=right>'.price($trim2).'</td>';
 					print '<td align=right>'.price($trim3).'</td>';
@@ -462,7 +462,7 @@ function activitytrim($product_type)
 		if ($trim1+$trim2+$trim3+$trim4 > 0)
 		{
 		    
-			print '<tr '.$bc[$var].'><td align=left>'.$tmpyear.'</td>';
+			print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
 			print '<td align=right>'.price($trim1).'</td>';
 			print '<td align=right>'.price($trim2).'</td>';
 			print '<td align=right>'.price($trim3).'</td>';

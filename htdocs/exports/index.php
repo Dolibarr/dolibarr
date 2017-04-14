@@ -68,7 +68,7 @@ if (count($export->array_export_code))
 	foreach ($export->array_export_code as $key => $value)
 	{
 		
-		print '<tr '.$bc[$var].'><td>';
+		print '<tr class="oddeven"><td>';
 		//print img_object($export->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
 		print $export->array_export_module[$key]->getName();
 		print '</td><td>';

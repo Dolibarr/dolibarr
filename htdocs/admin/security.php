@@ -250,7 +250,7 @@ foreach ($arrayhandler as $key => $module)
 	if ($module->isEnabled())
 	{
         $var = !$var;
-        print '<tr '.$bc[$var].'><td width="100">';
+        print '<tr class="oddeven"><td width="100">';
         print ucfirst($key);
         print "</td><td>\n";
         print $module->getDescription().'<br>';
