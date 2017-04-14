@@ -998,10 +998,12 @@ if ($id)
             if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); $class='width100'; }
             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
             {
-            	$valuetoshow=$langs->trans("Label");
-            	if ($id != 25) $valuetoshow.="*";
+            	if ($id != 25) $valuetoshow=$form->textwithtooltip($langs->trans("Label"), $langs->trans("LabelUsedByDefault"),2,1,img_help(1,''));
+            	else $valuetoshow=$langs->trans("Label"); 
             }
-            if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
+            if ($fieldlist[$field]=='libelle_facture') { 
+                $valuetoshow=$form->textwithtooltip($langs->trans("LabelOnDocuments"), $langs->trans("LabelUsedByDefault"),2,1,img_help(1,''));
+            }
             if ($fieldlist[$field]=='country')         {
                 if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }		// For region page, we do not show the country input
                 $valuetoshow=$langs->trans("Country");
@@ -1106,10 +1108,10 @@ if ($id)
 
         print '</table>';
         
-        if (! empty($alabelisused) && $id != 25)  // If there is one label among fields, we show legend of *
+        /*if (! empty($alabelisused) && $id != 25)  // If there is one label among fields, we show legend of *
         {
         	print '* '.$langs->trans("LabelUsedByDefault").'.<br>';
-        }
+        }*/
     }
 
     print '</form>';
@@ -1223,10 +1225,14 @@ if ($id)
             if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
             {
-            	$valuetoshow=$langs->trans("Label");
-               	if ($id != 25) $valuetoshow.="*";
+                //if ($id != 25) $valuetoshow=$form->textwithtooltip($langs->trans("Label"), $langs->trans("LabelUsedByDefault"),2,1,img_help(1,''));
+                //else $valuetoshow=$langs->trans("Label");
+                $valuetoshow=$langs->trans("Label");
             }
-            if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
+            if ($fieldlist[$field]=='libelle_facture') { 
+                //$valuetoshow=$form->textwithtooltip($langs->trans("LabelOnDocuments"), $langs->trans("LabelUsedByDefault"),2,1,img_help(1,''));
+                $valuetoshow=$langs->trans("LabelOnDocuments");
+            }
             if ($fieldlist[$field]=='country')         { $valuetoshow=$langs->trans("Country"); }
             if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=$langs->trans("NPR"); $align="center"; }
             if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
@@ -1739,7 +1745,23 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			print '</td>';
 		}
 		elseif (in_array($fieldlist[$field], array('libelle_facture'))) {
-			print '<td><textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea></td>';
+		    print '<td>';
+		    $transfound=0;
+	        // Special case for labels
+	        if ($tabname == MAIN_DB_PREFIX.'c_payment_term') {
+	            $langs->load("bills");
+	            $transkey="PaymentCondition".strtoupper($obj->code);
+	        }
+	        if ($langs->trans($transkey) != $transkey)
+            {
+                $transfound=1;
+                print $form->textwithpicto($langs->trans($transkey), $langs->trans("GoIntoTranslationMenuToChangeThis"));
+            }
+		    if (! $transfound)
+		    {
+		        print '<textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
+		    }
+		    print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'price' || preg_match('/^amount/i',$fieldlist[$field])) {
 			print '<td><input type="text" class="flat minwidth75" value="'.price((! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'')).'" name="'.$fieldlist[$field].'"></td>';
@@ -1792,7 +1814,27 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			if ($fieldlist[$field]=='tracking') $class='quatrevingtpercent';
 			if ($fieldlist[$field]=='sortorder' || $fieldlist[$field]=='sens' || $fieldlist[$field]=='category_type') $class='maxwidth50';
 			print '<td class="'.$classtd.'">';
-			print '<input type="text" class="flat'.($class?' '.$class:'').'" value="'.(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
+			$transfound=0;
+			if (in_array($fieldlist[$field], array('label','libelle')))
+			{
+			    // Special case for labels
+			    if ($tabname == MAIN_DB_PREFIX.'c_civility') {
+			        $transkey="Civility".strtoupper($obj->code);
+			    }
+			    if ($tabname == MAIN_DB_PREFIX.'c_payment_term') {
+			        $langs->load("bills");
+			        $transkey="PaymentCondition".strtoupper($obj->code);
+			    }
+			    if ($langs->trans($transkey) != $transkey)
+			    {
+			        $transfound=1;
+			        print $form->textwithpicto($langs->trans($transkey), $langs->trans("GoIntoTranslationMenuToChangeThis"));
+			    }
+			}
+			if (! $transfound)
+			{
+                print '<input type="text" class="flat'.($class?' '.$class:'').'" value="'.(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
+			}
 			print '</td>';
 		}
 	}
