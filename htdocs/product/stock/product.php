@@ -831,7 +831,7 @@ if ($resql)
 		$entrepotstatic->libelle=$obj->label;
 		$entrepotstatic->lieu=$obj->lieu;
 		$stock_real = price2num($obj->reel, 'MS');
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 		print '<td colspan="4">'.$entrepotstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$stock_real.($stock_real < 0 ?' '.img_warning():'').'</td>';
 		// PMP
@@ -897,7 +897,7 @@ if ($resql)
 			}
 		}
 		$i++;
-		$var=!$var;
+		
 	}
 }
 else dol_print_error($db);
@@ -956,7 +956,7 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 			print '<td align="right">'.$line['desiredstock'].'</td>';
 			print '<td align="right"><a href="?id='.GETPOST('id').'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse">'.img_delete().'</a></td>';
 			print '</tr>';
-			$var=!$var;
+			
 		}
 	}
 	

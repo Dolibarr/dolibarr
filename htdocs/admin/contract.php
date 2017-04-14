@@ -266,7 +266,7 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-						$var=!$var;
+						
 						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -519,7 +519,7 @@ else
 print '</td></tr>'."\n";
 
 //Use draft Watermark
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("WatermarkOnDraftContractCards").'</td><td>';
 print '<input size="50" class="flat" type="text" name="CONTRACT_DRAFT_WATERMARK" value="'.$conf->global->CONTRACT_DRAFT_WATERMARK.'">';

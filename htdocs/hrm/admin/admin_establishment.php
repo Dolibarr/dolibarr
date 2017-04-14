@@ -112,8 +112,8 @@ if ($result)
 			$establishmentstatic->name=$obj->name;
 			$establishmentstatic->status=$obj->status;
 			
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			
+			print '<tr class="oddeven">';
 			print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
             print '<td align="left">'.$obj->address.'</td>';
 			print '<td align="left">'.$obj->zip.'</td>';

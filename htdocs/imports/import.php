@@ -446,8 +446,8 @@ if ($step == 2 && $datatoimport)
 	$liste=$objmodelimport->liste_modeles($db);
 	foreach($liste as $key)
 	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+		
+		print '<tr class="oddeven">';
 		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPictoForKey($key)).'</td>';
     	$text=$objmodelimport->getDriverDescForKey($key);
     	print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key),$text).'</td>';
@@ -601,8 +601,8 @@ if ($step == 3 && $datatoimport)
 			$modulepart='import';
 			$urlsource=$_SERVER["PHP_SELF"].'?step='.$step.$param.'&filetoimport='.urlencode($filetoimport);
 			$relativepath=$file;
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			
+			print '<tr class="oddeven">';
 			print '<td width="16">'.img_mime($file).'</td>';
 			print '<td>';
     		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=3'.$param.'" target="_blank">';
@@ -854,7 +854,7 @@ if ($step == 4 && $datatoimport)
 	$lefti=1;
 	foreach ($array_match_file_to_database as $key => $val)
 	{
-		$var=!$var;
+		
 		show_elem($fieldssource,$key,$val,$var);		// key is field number in source file
 		//print '> '.$lefti.'-'.$key.'-'.$val;
 		$listofkeys[$key]=1;
@@ -871,7 +871,7 @@ if ($step == 4 && $datatoimport)
 	$num=count($fieldssource);
 	while ($lefti <= $num)
 	{
-		$var=!$var;
+		
 		$newkey=getnewkey($fieldssource,$listofkeys);
 		show_elem($fieldssource,$newkey,'',$var);	// key start after field number in source file
 		//print '> '.$lefti.'-'.$newkey;
@@ -894,7 +894,7 @@ if ($step == 4 && $datatoimport)
 	print '<table width="100%" class="nobordernopadding">';
 	foreach($fieldstarget as $code=>$label)
 	{
-		$var=!$var;
+		
 		print '<tr '.$bc[$var].' height="'.$height.'">';
 
 		$i++;
@@ -995,7 +995,7 @@ if ($step == 4 && $datatoimport)
 	{
 		if (empty($fieldsplaced[$key]))
 		{
-			//$var=!$var;
+			//
 			$nbofnotimportedfields++;
 			show_elem($fieldssource,$key,'',$var,'nostyle');
 			//print '> '.$lefti.'-'.$key;
@@ -1111,7 +1111,7 @@ if ($step == 4 && $datatoimport)
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 		$var=false;
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 		print '<td><input name="import_name" size="48" value=""></td><td align="right">';
 		print '<input type="submit" class="button" value="'.$langs->trans("SaveImportProfile").'">';
 		print '</td></tr>';
@@ -1129,7 +1129,7 @@ if ($step == 4 && $datatoimport)
 			$var=false;
 			while ($i < $num)
 			{
-				$var=!$var;
+				
 				$obj = $db->fetch_object($resql);
 				print '<tr '.$bc[$var].'><td>';
 				print $obj->label;

@@ -185,8 +185,8 @@ while ($i <= $MAXAGENDA)
 	$offsettz='AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key;
 	$color='AGENDA_EXT_COLOR_'.$id.'_'.$key;
 
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	
+	print '<tr class="oddeven">';
 	// Nb
 	print '<td class="maxwidth50onsmartphone">'.$langs->trans("AgendaExtNb",$key)."</td>";
 	// Name

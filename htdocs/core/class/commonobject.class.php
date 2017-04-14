@@ -3422,7 +3422,7 @@ abstract class CommonObject
 			//Line extrafield
 			$line->fetch_optionals($line->id,$extralabelslines);
 
-			$var=!$var;
+			
 
 			//if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
             if (is_object($hookmanager))   // Old code is commented on preceding line.
@@ -3603,7 +3603,7 @@ abstract class CommonObject
 
         foreach ($this->lines as $line)
         {
-            $var=!$var;
+            
 
             if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
             {

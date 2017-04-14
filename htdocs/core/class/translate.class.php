@@ -175,18 +175,20 @@ class Translate
 	{
 		global $conf,$db;
 
-		// Load $this->tab_translate[] from database
-		if (empty($loadfromfileonly) && count($this->tab_translate) == 0) $this->loadFromDatabase($db);      // Nothing was loaded yet, so we load database.
-
+		//dol_syslog("Translate::Load Start domain=".$domain." alt=".$alt." forcelangdir=".$forcelangdir." this->defaultlang=".$this->defaultlang);
+		
 		// Check parameters
 		if (empty($domain))
 		{
-			dol_print_error('',get_class($this)."::Load ErrorWrongParameters");
-			return -1;
+		    dol_print_error('',get_class($this)."::Load ErrorWrongParameters");
+		    return -1;
 		}
 		if ($this->defaultlang == 'none_NONE') return 0;    // Special language code to not translate keys
+		
+		
+		// Load $this->tab_translate[] from database
+		if (empty($loadfromfileonly) && count($this->tab_translate) == 0) $this->loadFromDatabase($db);      // Nothing was loaded yet, so we load database.
 
-		//dol_syslog("Translate::Load Start domain=".$domain." alt=".$alt." forcelangdir=".$forcelangdir." this->defaultlang=".$this->defaultlang);
 
 		$newdomain = $domain;
 		$modulename = '';
@@ -275,12 +277,15 @@ class Translate
 						 * and split the rest until a line feed.
 						 * This is more efficient than fgets + explode + trim by a factor of ~2.
 						 */
-						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n]")) {
-							if (isset($line[1])) {
+						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n]")) 
+						{
+							if (isset($line[1])) 
+							{
 								list($key, $value) = $line;
 								//if ($domain == 'orders') print "Domain=$domain, found a string for $tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
 								//if ($key == 'Order') print "Domain=$domain, found a string for key=$key=$tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
-								if (empty($this->tab_translate[$key])) { // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
+								if (empty($this->tab_translate[$key])) 
+								{ // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
 									$value = preg_replace('/\\n/', "\n", $value); // Parse and render carriage returns
 									if ($key == 'DIRECTION') { // This is to declare direction of language
 										if ($alt < 2 || empty($this->tab_translate[$key])) { // We load direction only for primary files or if not yet loaded
@@ -391,8 +396,6 @@ class Translate
 
 		$domain='database';
 		
-		if ($this->defaultlang == 'none_NONE') return 0;    // Special language code to not translate keys
-		
 		// Check parameters
 		if (empty($db)) return 0;    // Database handler can't be used
 
@@ -450,7 +453,7 @@ class Translate
 				$this->tab_translate+=$tmparray;	// Faster than array_merge($tmparray,$this->tab_translate). Note: If a valuer already exists into tab_translate, value into tmparaay is not added.
 				//print $newdomain."\n";
 				//var_dump($this->tab_translate);
-				if ($alt == 2) $fileread=1;
+				$fileread=1;
 				$found=true;						// Found in dolibarr PHP cache
 			}
 		}
@@ -509,16 +512,9 @@ class Translate
 		    }
 		}
 
-		if ($alt == 2)
-		{
-			if ($fileread) $this->_tab_loaded[$newdomain]=1;	// Set domain file as loaded
+		if ($fileread) $this->_tab_loaded[$newdomain]=1;	// Set domain file as loaded
 
-			if (empty($this->_tab_loaded[$newdomain])) $this->_tab_loaded[$newdomain]=2;           // Marque ce cas comme non trouve (no lines found for language)
-		}
-
-        // Check to be sure that SeparatorDecimal differs from SeparatorThousand
-		if (! empty($this->tab_translate["SeparatorDecimal"]) && ! empty($this->tab_translate["SeparatorThousand"])
-		&& $this->tab_translate["SeparatorDecimal"] == $this->tab_translate["SeparatorThousand"]) $this->tab_translate["SeparatorThousand"]='';
+		if (empty($this->_tab_loaded[$newdomain])) $this->_tab_loaded[$newdomain]=2;           // Marque ce cas comme non trouve (no lines found for language)
 
 		return 1;
 	}

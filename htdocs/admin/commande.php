@@ -330,7 +330,7 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-						$var=!$var;
+						
 						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -588,7 +588,7 @@ print "</td></tr>\n";
 print '</form>';
 
 //Use draft Watermark
-$var=!$var;
+
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_COMMANDE_DRAFT_WATERMARK\">";
@@ -603,8 +603,8 @@ print '</form>';
 // Shippable Icon in List
 /* Kept as hidden feature for the moment, result seems bugged. 
 Whet is definition of "shippable" according to all different STOCK_CALCULATE_... options ?
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ShippableOrderIconInList").'</td>';
 print '<td>&nbsp</td>';
 print '<td align="center">';
@@ -623,7 +623,7 @@ print '</tr>';
 // Ask for payment bank during order
 if ($conf->banque->enabled)
 {
-    $var=!$var;
+    
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp</td><td align="center">';
     if (! empty($conf->use_javascript_ajax))
@@ -645,7 +645,7 @@ if ($conf->banque->enabled)
 }
 else
 {
-    $var=!$var;
+    
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
@@ -653,7 +653,7 @@ else
 // Ask for warehouse during order
 if ($conf->stock->enabled)
 {
-    $var=!$var;
+    
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp</td><td align="center">';
     if (! empty($conf->use_javascript_ajax))
@@ -675,7 +675,7 @@ if ($conf->stock->enabled)
 }
 else
 {
-    $var=!$var;
+    
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }

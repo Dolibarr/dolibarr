@@ -460,7 +460,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
         foreach ($rib_list as $rib)
         {
-            print "<tr ".$bc[$var].">";
+            print '<tr class="oddeven">';
             // Label
             print '<td>'.$rib->label.'</td>';
             // Bank name

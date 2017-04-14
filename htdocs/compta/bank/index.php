@@ -442,7 +442,7 @@ foreach ($accounts as $key=>$type)
 		$lastcurrencycode=$acc->currency_code;
 	}
 	
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 
     // Ref
     if (! empty($arrayfields['b.ref']['checked']))

@@ -146,7 +146,7 @@ if ($prev_id)
 
 			print "</tr>\n";
 
-			$var=!$var;
+			
 			$i++;
 		}
 

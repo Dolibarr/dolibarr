@@ -119,8 +119,8 @@ if ($resql)
 		$dataseries[]=array('label'=>$commandestatic->LibStatut($statut,1),'data'=>(isset($vals[$statut])?(int) $vals[$statut]:0));
 		if (! $conf->use_javascript_ajax)
 		{
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			
+			print '<tr class="oddeven">';
 			print '<td>'.$commandestatic->LibStatut($statut,0).'</td>';
 			print '<td align="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
 			print "</tr>\n";
@@ -177,9 +177,9 @@ if ($resql)
 	while ($i < $num)
 	{
 		$row = $db->fetch_row($resql);
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans($commandestatic->statuts[$row[1]]).'</td>';
 		print '<td align="right"><a href="list.php?statut='.$row[1].'">'.$row[0].' '.$commandestatic->LibStatut($row[1],3).'</a></td>';
 
@@ -225,9 +225,9 @@ if (! empty($conf->fournisseur->enabled))
 			$var = True;
 			while ($i < $num)
 			{
-				$var=!$var;
+				
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td></tr>';
@@ -268,9 +268,9 @@ if ($resql)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print '<td>';
 		$userstatic->id=$obj->rowid;
 		$userstatic->lastname=$obj->lastname;
@@ -324,10 +324,10 @@ if ($resql)
 		$var = True;
 		while ($i < $num)
 		{
-			$var=!$var;
+			
 			$obj = $db->fetch_object($resql);
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td width="20%" class="nowrap">';
 
 			$commandestatic->id=$obj->rowid;
@@ -393,9 +393,9 @@ $i = 0;
 $var = True;
 while ($i < $num)
 {
-$var=!$var;
+
 $obj = $db->fetch_object($resql);
-print "<tr ".$bc[$var].">";
+print '<tr class="oddeven">';
 print '<td class="nowrap">';
 
 $commandestatic->id=$obj->rowid;

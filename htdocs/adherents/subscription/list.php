@@ -285,7 +285,7 @@ if ($result)
         $adherent->login=$obj->login;
         $adherent->photo=$obj->photo;
 
-        $var=!$var;
+        
 
         print '<tr class="oddeven">';
 
@@ -337,7 +337,7 @@ if ($result)
     }
 
     // Total
-    $var=!$var;
+    
     print '<tr class="liste_total">';
     print "<td>".$langs->trans("Total")."</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";

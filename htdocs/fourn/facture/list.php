@@ -850,7 +850,7 @@ if ($resql)
 		while ($i < min($num,$limit))
 		{
 			$obj = $db->fetch_object($resql);
-			$var=!$var;
+			
 		
 			$datelimit=$db->jdate($obj->datelimite);
 			$facturestatic->id=$obj->facid;
@@ -859,7 +859,7 @@ if ($resql)
 			$facturestatic->date_echeance = $db->jdate($obj->datelimite);
 			$facturestatic->statut = $obj->fk_statut;
 	
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
     		if (! empty($arrayfields['f.ref']['checked']))
     		{
                 print '<td class="nowrap">';

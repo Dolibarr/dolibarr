@@ -129,7 +129,7 @@ print '<td colspan="4">'.$langs->trans("LDAPSynchronizeUsers").'</td>';
 print "</tr>\n";
 
 // DN Pour les utilisateurs
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPUserDn").'</span></td><td>';
 print '<input size="48" type="text" name="user" value="'.$conf->global->LDAP_USER_DN.'">';
 print '</td><td>'.$langs->trans("LDAPUserDnExample").'</td>';
@@ -137,7 +137,7 @@ print '<td>&nbsp;</td>';
 print '</tr>';
 
 // List of object class used to define attributes in structure
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPUserObjectClassList").'</span></td><td>';
 print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_USER_OBJECT_CLASS.'">';
 print '</td><td>'.$langs->trans("LDAPUserObjectClassListExample").'</td>';
@@ -145,7 +145,7 @@ print '<td>&nbsp;</td>';
 print '</tr>';
 
 // Filter, used to filter search
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFilterConnection").'</td><td>';
 print '<input size="48" type="text" name="filterconnection" value="'.$conf->global->LDAP_FILTER_CONNECTION.'">';
 print '</td><td>'.$langs->trans("LDAPFilterConnectionExample").'</td>';
@@ -164,7 +164,7 @@ print '<td align="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
 print "</tr>\n";
 
 // Common name
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFullname").'</td><td>';
 print '<input size="25" type="text" name="fieldfullname" value="'.$conf->global->LDAP_FIELD_FULLNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFullnameExample").'</td>';
@@ -172,7 +172,7 @@ print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_FULLNA
 print '</tr>';
 
 // Name
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldname" value="'.$conf->global->LDAP_FIELD_NAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td>';
@@ -180,7 +180,7 @@ print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_NAME"'
 print '</tr>';
 
 // Firstname
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFirstName").'</td><td>';
 print '<input size="25" type="text" name="fieldfirstname" value="'.$conf->global->LDAP_FIELD_FIRSTNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFirstNameExample").'</td>';
@@ -188,7 +188,7 @@ print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_FIRSTN
 print '</tr>';
 
 // Login unix
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginUnix").'</td><td>';
 print '<input size="25" type="text" name="fieldlogin" value="'.$conf->global->LDAP_FIELD_LOGIN.'">';
 print '</td><td>'.$langs->trans("LDAPFieldLoginExample").'</td>';
@@ -196,7 +196,7 @@ print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_LOGIN"
 print '</tr>';
 
 // Login samba
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginSamba").'</td><td>';
 print '<input size="25" type="text" name="fieldloginsamba" value="'.$conf->global->LDAP_FIELD_LOGIN_SAMBA.'">';
 print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td>';
@@ -204,7 +204,7 @@ print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_LOGIN_
 print '</tr>';
 
 // Password not crypted
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td><td>';
 print '<input size="25" type="text" name="fieldpassword" value="'.$conf->global->LDAP_FIELD_PASSWORD.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
@@ -212,7 +212,7 @@ print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_PASSWO
 print '</tr>';
 
 // Password crypted
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td><td>';
 print '<input size="25" type="text" name="fieldpasswordcrypted" value="'.$conf->global->LDAP_FIELD_PASSWORD_CRYPTED.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
@@ -220,7 +220,7 @@ print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_PASSWO
 print '</tr>';
 
 // Mail
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMail").'</td><td>';
 print '<input size="25" type="text" name="fieldmail" value="'.$conf->global->LDAP_FIELD_MAIL.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMailExample").'</td>';
@@ -228,7 +228,7 @@ print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_MAIL"'
 print '</tr>';
 
 // Phone
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPhone").'</td><td>';
 print '<input size="25" type="text" name="fieldphone" value="'.$conf->global->LDAP_FIELD_PHONE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPhoneExample").'</td>';
@@ -236,7 +236,7 @@ print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_PHONE"
 print '</tr>';
 
 // Mobile
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
 print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_FIELD_MOBILE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td>';
@@ -244,7 +244,7 @@ print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_MOBILE
 print '</tr>';
 
 // Skype
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldSkype").'</td><td>';
 print '<input size="25" type="text" name="fieldskype" value="'.$conf->global->LDAP_FIELD_SKYPE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldSkypeExample").'</td>';
@@ -252,7 +252,7 @@ print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_SKYPE"
 print '</tr>';
 
 // Fax
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
 print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_FIELD_FAX.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
@@ -260,7 +260,7 @@ print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_FAX"'.
 print '</tr>';
 
 // Title
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldTitle").'</td><td>';
 print '<input size="25" type="text" name="fieldtitle" value="'.$conf->global->LDAP_FIELD_TITLE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldTitleExample").'</td>';
@@ -268,7 +268,7 @@ print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_TITLE"
 print '</tr>';
 
 // Note
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("Note").'</td><td>';
 print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_FIELD_DESCRIPTION.'">';
 print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
@@ -276,7 +276,7 @@ print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_DESCRI
 print '</tr>';
 
 // Sid
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldSid").'</td><td>';
 print '<input size="25" type="text" name="fieldsid" value="'.$conf->global->LDAP_FIELD_SID.'">';
 print '</td><td>'.$langs->trans("LDAPFieldSidExample").'</td>';

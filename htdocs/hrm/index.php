@@ -198,7 +198,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
                 $userstatic->login=$obj->login;
                 $userstatic->photo=$obj->photo;
                 $userstatic->statut=$obj->statut;
-                print '<tr '.$bc[$var].'>';
+                print '<tr class="oddeven">';
                 print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
                 print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
                 print '<td>'.$typeleaves[$obj->fk_type]['label'].'</td>';
@@ -211,7 +211,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
                 print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
                 print '<td>'.$holidaystatic->LibStatut($obj->status,3).'</td>';
                 print '</tr>';
-                $var=!$var;
+                
                 $i++;
             }
 
@@ -272,14 +272,14 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 				$userstatic->login=$obj->login;
 				$userstatic->statut=$obj->statut;
 				$userstatic->photo=$obj->photo;
-				print '<tr '.$bc[$var].'>';
+				print '<tr class="oddeven">';
 				print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td align="right">'.$obj->km.'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
 				print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut,3).'</td>';
 				print '</tr>';
-				$var=!$var;
+				
 				$i++;
 			}
 
@@ -339,14 +339,14 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 				$userstatic->login=$obj->login;
 				$userstatic->statut=$obj->statut;
 				$userstatic->photo=$obj->photo;
-				print '<tr '.$bc[$var].'>';
+				print '<tr class="oddeven">';
 				print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
 				print '<td>'.$expensereportstatic->LibStatut($obj->status,3).'</td>';
 				print '</tr>';
-				$var=!$var;
+				
 				$i++;
 			}
 

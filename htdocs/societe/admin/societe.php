@@ -431,7 +431,7 @@ foreach ($dirsociete as $dirroot)
     			$modCodeCompta = new $file;
     			$var = !$var;
 
-    			print '<tr '.$bc[$var].'>';
+    			print '<tr class="oddeven">';
     			print '<td>'.$modCodeCompta->name."</td><td>\n";
     			print $modCodeCompta->info($langs);
     			print '</td>';
@@ -646,7 +646,7 @@ while ($i < $nbofloop)
 	{
 		$var = !$var;
 
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 		print '<td>'.$profid[$i][0]."</td><td>\n";
 		print $profid[$i][1];
 		print '</td>';
@@ -722,8 +722,8 @@ print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
 
 // Utilisation formulaire Ajax sur choix societe
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectCompany"),$langs->trans('UseSearchToSelectCompanyTooltip'),1).' </td>';
 if (! $conf->use_javascript_ajax)
 {
@@ -746,8 +746,8 @@ else
 }
 print '</tr>';
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectContact"),$langs->trans('UseSearchToSelectContactTooltip'),1).'</td>';
 if (! $conf->use_javascript_ajax)
 {
@@ -771,8 +771,8 @@ else
 print '</tr>';
 
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddRefInList").'</td>';
 print '<td>&nbsp</td>';
 print '<td align="center">';
@@ -791,8 +791,8 @@ print '</a></td>';
 print '</tr>';
 
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AskForPreferredShippingMethod").'</td>';
 print '<td>&nbsp</td>';
 print '<td align="center">';
@@ -813,8 +813,8 @@ print '</tr>';
 
 /*
 // COMPANY_USE_SEARCH_TO_SELECT
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("HideClosedThirdpartyComboBox").'</td>';
 if (! empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX))
 {

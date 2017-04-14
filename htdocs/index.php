@@ -332,7 +332,7 @@ if (empty($user->societe_id))
 	                $board=$boardloaded[$classe];
 	            }
 
-	            $var=!$var;
+	            
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
 	            $text=$langs->trans($titres[$key]);
 	            $boxstat.='<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';

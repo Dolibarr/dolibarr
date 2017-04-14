@@ -899,9 +899,9 @@ if ($resql)
             $bankaccount = $cachebankaccount[$objp->bankid];
         }
          
-        $var=!$var;
+        
 
-        print "<tr ".$bc[$var].">";
+        print '<tr class="oddeven">';
 
         // Ref
     	if (! empty($arrayfields['b.rowid']['checked']))            

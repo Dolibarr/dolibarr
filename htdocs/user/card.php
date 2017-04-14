@@ -1716,9 +1716,9 @@ else
 
                     foreach($groupslist as $group)
                     {
-                        $var=!$var;
+                        
 
-                        print "<tr ".$bc[$var].">";
+                        print '<tr class="oddeven">';
                         print '<td>';
                         if ($caneditgroup)
                         {

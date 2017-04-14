@@ -384,7 +384,7 @@ foreach ($dirmodels as $reldir)
 	                require_once $dir.'/'.$file;
 	                $module = new $classname($db, new PaiementFourn($db));
 
-                    $var=!$var;
+                    
                     print "<tr ".$bc[$var].">\n";
                     print "<td>";
 	                print (empty($module->name)?$name:$module->name);

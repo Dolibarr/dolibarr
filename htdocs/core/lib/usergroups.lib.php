@@ -499,7 +499,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	{
 	    $default='5a6482';
 	    if ($conf->theme == 'md') $default='5a3278';
-	    $var=!$var;
+	    
 	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
 	    print '<td colspan="'.($colspan-1).'">';

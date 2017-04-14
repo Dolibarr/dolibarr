@@ -361,7 +361,7 @@ if ($id > 0 || ! empty($ref))
 			if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 			// Ligne ajout pour contact interne
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 
 			print '<td class="nowrap">';
 			print img_object('','user').' '.$langs->trans("Users");
@@ -395,8 +395,8 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
 
 				print '<td class="nowrap">';
 				print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");

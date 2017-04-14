@@ -654,7 +654,7 @@ if ($id > 0 || ! empty($ref))
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				$var=!$var;
+				
 
 				// Show product and description
 				$type=isset($objp->type)?$objp->type:$objp->product_type;
@@ -664,7 +664,7 @@ if ($id > 0 || ! empty($ref))
 				if (! empty($objp->date_start)) $type=1;
 				if (! empty($objp->date_end)) $type=1;
 
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 
 				// Product label
 				if ($objp->fk_product > 0)

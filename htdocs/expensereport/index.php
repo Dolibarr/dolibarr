@@ -197,7 +197,7 @@ if ($result)
             $userstatic->login=$obj->login;
             $userstatic->statut=$obj->statut;
             $userstatic->photo=$obj->photo;
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
             print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
             print '<td>'.$userstatic->getNomUrl(-1).'</td>';
             print '<td align="right">'.price($obj->total_ht).'</td>';
@@ -208,7 +208,7 @@ if ($result)
 			print $expensereportstatic->LibStatut($obj->fk_status,3);
             print '</td>';
             print '</tr>';
-            $var=!$var;
+            
             $i++;
         }
 

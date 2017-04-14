@@ -164,7 +164,7 @@ if ($resql)
     		print "</tr>\n";
     
     		$total += $obj->amount;
-    		$var=!$var;
+    		
     		$i++;
     	}
 	}

@@ -110,7 +110,7 @@ print '<td colspan="3">'.$langs->trans("LDAPSynchronization").'</td>';
 print "</tr>\n";
 
 // Synchro utilisateurs/groupes active
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPDnSynchroActive").'</td><td>';
 $arraylist=array();
 $arraylist['0']=$langs->trans("No");
@@ -127,7 +127,7 @@ print '</td></tr>';
 // Synchro contact active
 if (! empty($conf->societe->enabled))
 {
-	$var=!$var;
+	
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPDnContactActive").'</td><td>';
 	$arraylist=array();
 	$arraylist['0']=$langs->trans("No");
@@ -139,7 +139,7 @@ if (! empty($conf->societe->enabled))
 // Synchro member active
 if (! empty($conf->adherent->enabled))
 {
-	$var=!$var;
+	
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPDnMemberActive").'</td><td>';
 	$arraylist=array();
 	$arraylist['0']=$langs->trans("No");
@@ -156,7 +156,7 @@ print '<td>'.$langs->trans("Example").'</td>';
 print "</tr>\n";
 
 // Type
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("Type").'</td><td>';
 $arraylist=array();
 $arraylist['activedirectory']='Active Directory';
@@ -166,7 +166,7 @@ print $form->selectarray('type',$arraylist,$conf->global->LDAP_SERVER_TYPE);
 print '</td><td>&nbsp;</td></tr>';
 
 // Version
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("Version").'</td><td>';
 $arraylist=array();
 $arraylist['3']='Version 3';
@@ -175,21 +175,21 @@ print $form->selectarray('LDAP_SERVER_PROTOCOLVERSION',$arraylist,$conf->global-
 print '</td><td>'.$langs->trans("LDAPServerProtocolVersion").'</td></tr>';
 
 // Serveur primaire
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("LDAPPrimaryServer").'</td><td>';
 print '<input size="25" type="text" name="host" value="'.$conf->global->LDAP_SERVER_HOST.'">';
 print '</td><td>'.$langs->trans("LDAPServerExample").'</td></tr>';
 
 // Serveur secondaire
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("LDAPSecondaryServer").'</td><td>';
 print '<input size="25" type="text" name="slave" value="'.$conf->global->LDAP_SERVER_HOST_SLAVE.'">';
 print '</td><td>'.$langs->trans("LDAPServerExample").'</td></tr>';
 
 // Port
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPServerPort").'</td><td>';
 if (! empty($conf->global->LDAP_SERVER_PORT))
 {
@@ -202,13 +202,13 @@ else
 print '</td><td>'.$langs->trans("LDAPServerPortExample").'</td></tr>';
 
 // DNserver
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPServerDn").'</td><td>';
 print '<input size="25" type="text" name="dn" value="'.$conf->global->LDAP_SERVER_DN.'">';
 print '</td><td>'.$langs->trans("LDAPServerDnExample").'</td></tr>';
 
 // Utiliser TLS
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPServerUseTLS").'</td><td>';
 $arraylist=array();
 $arraylist['0']=$langs->trans("No");
@@ -221,13 +221,13 @@ print '<td colspan="3">'.$langs->trans("ForANonAnonymousAccess").'</td>';
 print "</tr>\n";
 
 // DNAdmin
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPAdminDn").'</td><td>';
 print '<input size="25" type="text" name="admin" value="'.$conf->global->LDAP_ADMIN_DN.'">';
 print '</td><td>'.$langs->trans("LDAPAdminDnExample").'</td></tr>';
 
 // Pass
-$var=!$var;
+
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPPassword").'</td><td>';
 if (! empty($conf->global->LDAP_ADMIN_PASS))
 {

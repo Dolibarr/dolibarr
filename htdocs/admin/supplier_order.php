@@ -279,7 +279,7 @@ foreach ($dirmodels as $reldir)
                         if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
                         if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-                        $var=!$var;
+                        
                         print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
                         print $module->info();
                         print '</td>';
@@ -402,7 +402,7 @@ foreach ($dirmodels as $reldir)
 	                require_once $dir.'/'.$file;
 	                $module = new $classname($db, new CommandeFournisseur($db));
 
-                    $var=!$var;
+                    
                     print "<tr ".$bc[$var].">\n";
                     print "<td>";
 	                print (empty($module->name)?$name:$module->name);
@@ -501,14 +501,14 @@ $var=false;
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</td></tr>\n";
-	$var=!$var;
+	
 //}
 
 // Ask for payment bank during supplier order
 /* Kept as hidden for the moment
 if ($conf->banque->enabled)
 {
-    $var=!$var;
+    
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp</td><td align="center">';
     if (! empty($conf->use_javascript_ajax))
@@ -530,7 +530,7 @@ if ($conf->banque->enabled)
 }
 else
 {
-    $var=!$var;
+    
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }

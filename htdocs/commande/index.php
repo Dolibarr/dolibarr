@@ -141,8 +141,8 @@ if ($resql)
     {
         if (! $conf->use_javascript_ajax)
         {
-            $var=!$var;
-            print "<tr ".$bc[$var].">";
+            
+            print '<tr class="oddeven">';
             print '<td>'.$commandestatic->LibStatut($status,$bool,0).'</td>';
             print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
             print $commandestatic->LibStatut($status,$bool,3);
@@ -196,7 +196,7 @@ if (! empty($conf->commande->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-				$var=!$var;
+				
 				$obj = $db->fetch_object($resql);
 
                 $commandestatic->id=$obj->rowid;
@@ -208,7 +208,7 @@ if (! empty($conf->commande->enabled))
 				$companystatic->code_client=$obj->code_client;
 				$companystatic->canvas=$obj->canvas;
 
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 				print $commandestatic->getNomUrl(1);
                 print "</td>";
@@ -220,7 +220,7 @@ if (! empty($conf->commande->enabled))
 		}
 		else
 		{
-			$var=!$var;
+			
 			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table><br>";
@@ -268,10 +268,10 @@ if ($resql)
 		$var = true;
 		while ($i < $num)
 		{
-			$var=!$var;
+			
 			$obj = $db->fetch_object($resql);
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td width="20%" class="nowrap">';
 
 			$commandestatic->id=$obj->rowid;
@@ -349,9 +349,9 @@ if (! empty($conf->commande->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-				$var=!$var;
+				
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td class="nowrap" width="20%">';
 
 				$commandestatic->id=$obj->rowid;
@@ -431,9 +431,9 @@ if (! empty($conf->commande->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-				$var=!$var;
+				
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td width="20%" class="nowrap">';
 
 				$commandestatic->id=$obj->rowid;

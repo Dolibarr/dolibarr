@@ -110,7 +110,7 @@ if (is_resource($handle))
 
                     foreach ($mailmodule->getSqlArrayForStats() as $sql)
                     {
-                        print '<tr '.$bc[$var].'>';
+                        print '<tr class="oddeven">';
 
                         $result=$db->query($sql);
                         if ($result)
@@ -176,9 +176,9 @@ if ($result)
       while ($i < $num )
 	{
 	  $obj = $db->fetch_object($result);
-	  $var=!$var;
+	  
 
-	  print "<tr ".$bc[$var].">";
+	  print '<tr class="oddeven">';
 	  print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->rowid.'</a></td>';
 	  print '<td>'.dol_trunc($obj->titre,38).'</td>';
 	  print '<td align="center">'.dol_print_date($db->jdate($obj->date_creat),'day').'</td>';

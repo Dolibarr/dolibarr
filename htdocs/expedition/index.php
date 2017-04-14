@@ -99,7 +99,7 @@ if ($resql)
 			$shipment->ref=$obj->ref;
 			$shipment->ref_customer=$obj->ref_customer;
 				
-			$var=!$var;
+			
 			print "<tr ".$bc[$var].'><td class="nowrap">';
 			print $shipment->getNomUrl(1);
 			print "</td>";
@@ -156,8 +156,8 @@ if ($resql)
 			$companystatic->name=$obj->name;
 			$companystatic->id=$obj->socid;
 			
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">';
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
@@ -218,7 +218,7 @@ if ( $resql )
             $companystatic->name=$obj->name;
 			$companystatic->id=$obj->socid;
 				
-			$var=!$var;
+			
 			print "<tr ".$bc[$var]."><td>";
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
@@ -274,7 +274,7 @@ if ($resql)
 			$shipment->ref=$obj->ref;
 			$shipment->ref_customer=$obj->ref_customer;
 				
-			$var=!$var;
+			
 			print '<tr '.$bc[$var].'><td>';
 			print $shipment->getNomUrl(1);
 			print '</td>';

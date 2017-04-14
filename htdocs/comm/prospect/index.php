@@ -96,7 +96,7 @@ if ($resql)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			$var=!$var;
+			
 			print '<tr '.$bc[$var].'><td>';
 			print '<a href="prospects.php?page=0&amp;stcomm='.$obj->id.'">';
 			print img_action($langs->trans("Show"),$obj->id).' ';
@@ -140,7 +140,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				$var=!$var;
+				
 				print '<tr '.$bc[$var].'><td>';
 				print '<a href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a>';
 				print '</td><td align="right">';
@@ -150,7 +150,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$total += $obj->price;
 			}
 			if ($total>0) {
-				$var=!$var;
+				
 				print '<tr class="liste_total"><td>'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
 			}
 			print "</table><br>";
@@ -205,7 +205,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				$var=!$var;
+				
 				print '<tr '.$bc[$var].'><td>';
 				print '<a href="../propal.php?id='.$obj->propalid.'">';
 				print img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a></td>';
@@ -263,7 +263,7 @@ if ($resql)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			$var=!$var;
+			
 			print '<tr '.$bc[$var].'><td width="12%">';
             $companystatic->id=$obj->socid;
             $companystatic->name=$obj->name;

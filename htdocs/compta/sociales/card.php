@@ -602,7 +602,7 @@ if ($id > 0)
     		    while ($i < $num)
     		    {
     		        $objp = $db->fetch_object($resql);
-    		        $var=!$var;
+    		        
     		        print "<tr ".$bc[$var]."><td>";
     		        print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
     		        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
@@ -616,7 +616,7 @@ if ($id > 0)
             }
             else
 		    {
-		        $var=!$var;
+		        
 		        print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td><td></td></tr>';
 		    }
                 

@@ -193,7 +193,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '</tr>';
 				$tot_ttc+=$obj->total_ttc;
 				$i++;
-				$var=!$var;
+				
 			}
 
 			print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
@@ -335,7 +335,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			{
 				$obj = $db->fetch_object($resql);
 
-				print '<tr '.$bc[$var].'>';
+				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
@@ -380,7 +380,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$total_ttc +=  $obj->total_ttc;
 				$total += $obj->total;
 				$totalam +=  $obj->am;
-				$var=!$var;
+				
 				$i++;
 			}
 		}
@@ -525,8 +525,8 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 			while ($i < $num && $i < $max)
 			{
 				$objp = $db->fetch_object($result);
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				
+				print '<tr class="oddeven">';
 				$donationstatic->id=$objp->rowid;
 				$donationstatic->lastname=$objp->lastname;
 				$donationstatic->firstname=$objp->firstname;
@@ -592,7 +592,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 				while ($i < $num)
 				{
 					$obj = $db->fetch_object($resql);
-					print "<tr ".$bc[$var].">";
+					print '<tr class="oddeven">';
 					$chargestatic->id=$obj->rowid;
 					$chargestatic->ref=$obj->libelle;
 					$chargestatic->lib=$obj->libelle;
@@ -677,7 +677,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 			{
 				$obj = $db->fetch_object($resql);
 
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 
 				$commandestatic->id=$obj->rowid;
@@ -717,7 +717,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 				//print "x".$tot_ttc."z".$obj->tot_fttc;
 				$tot_tobill += ($obj->total_ttc-$obj->tot_fttc);
 				$i++;
-				$var=!$var;
+				
 			}
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</font> </td>';
@@ -783,7 +783,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			{
 				$obj = $db->fetch_object($resql);
 
-				print '<tr '.$bc[$var].'>';
+				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
@@ -829,7 +829,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$total_ttc +=  $obj->total_ttc;
 				$total += $obj->total_ht;
 				$totalam +=  $obj->am;
-				$var=!$var;
+				
 				$i++;
 			}
 
@@ -970,7 +970,7 @@ if ($resql)
 	while ($i < $db->num_rows($resql))
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
+		
 
 		print "<tr ".$bc[$var]."><td>".dol_print_date($db->jdate($obj->da),"day")."</td>";
 		print '<td><a href="action/card.php">'.$obj->libelle.' '.$obj->label.'</a></td></tr>';

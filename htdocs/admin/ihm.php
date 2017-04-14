@@ -421,7 +421,7 @@ if ($action == 'edit')	// Edit
 	print '</td></tr>'."\n";
 	
 	// Background
-	$var=!$var;
+	
 	print '<tr><td><label for="imagebackground">'.$langs->trans("BackgroundImageLogin").' (png,jpg)</label></td><td colspan="2">';
     print '<div class="centpercent inline-block">';
 	print '<input type="file" class="flat class=minwidth200" name="imagebackground" id="imagebackground">';
@@ -603,7 +603,7 @@ else	// Show
     print '</td></tr>'."\n";
     
     // Background login
-    $var=!$var;
+    
     print '<tr class="oddeven"><td>'.$langs->trans("BackgroundImageLogin").'</td><td colspan="2">';
     print '<div class="centpercent inline-block">';
     print $conf->global->MAIN_LOGIN_BACKGROUND;

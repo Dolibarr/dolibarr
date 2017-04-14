@@ -171,9 +171,9 @@ if ($resql)
     while ($i < $num)
     {
         $obj = $db->fetch_object($resql);
-        $var=!$var;
+        
 
-        print "<tr ".$bc[$var].">";
+        print '<tr class="oddeven">';
         print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->name.'</a>';
         if (! $obj->entity)
         {

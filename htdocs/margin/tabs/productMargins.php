@@ -196,12 +196,12 @@ if ($id > 0 || ! empty($ref))
                     $var=True;
                     while ($i < $num /*&& $i < $conf->liste_limit*/) {
                         $objp = $db->fetch_object($result);
-                        $var=!$var;
+                        
 
 						$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
 						$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
 
-                        print '<tr '.$bc[$var].'>';
+                        print '<tr class="oddeven">';
                         print '<td>';
                         $invoicestatic->id=$objp->facid;
                         $invoicestatic->ref=$objp->facnumber;
@@ -229,7 +229,7 @@ if ($id > 0 || ! empty($ref))
                 }
 
                 // affichage totaux marges
-                $var=!$var;
+                
                 $totalMargin = $cumul_vente - $cumul_achat;
                 if ($totalMargin < 0)
                 {

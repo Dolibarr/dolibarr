@@ -105,8 +105,8 @@ if ($result)
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($result);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
 		if (GETPOST("action") == 'edit' && GETPOST("categid")== $objp->rowid)
 		{
@@ -136,8 +136,8 @@ if ($result)
  */
 if ($action != 'edit')
 {
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	
+	print '<tr class="oddeven">';
 	print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
 	print '<td align="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';

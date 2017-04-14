@@ -82,7 +82,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     	print '<table class="noborder nohover" width="100%">';
     	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    	print '<tr '.$bc[$var].'>';
+    	print '<tr class="oddeven">';
     	print '<td class="nowrap">'.$langs->trans("Contract").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
     	print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
     	print "</table></form>\n";
@@ -188,8 +188,8 @@ foreach($listofstatus as $status)
     $dataseries[]=array('label'=>$staticcontratligne->LibStatut($status,1,($bool?1:0)),'data'=>(isset($nb[$status.$bool])?(int) $nb[$status.$bool]:0));
     if (empty($conf->use_javascript_ajax))
     {
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
+        
+        print '<tr class="oddeven">';
         print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
         print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
         print "</tr>\n";
@@ -210,8 +210,8 @@ foreach($listofstatus as $status)
 {
     if (empty($conf->use_javascript_ajax))
     {
-        $var=!$var;
-    	print '<tr '.$bc[$var].'>';
+        
+    	print '<tr class="oddeven">';
     	print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
     	print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
     	if ($status==4 && ! $bool) $bool=true;
@@ -272,7 +272,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 				print '</tr>';
 				//$tot_ttc+=$obj->total_ttc;
 				$i++;
-				$var=!$var;
+				
 			}
 		}
 		else
@@ -334,9 +334,9 @@ if ($result)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-		$var=!$var;
+		
 
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->cid);
 		$staticcontrat->id=$obj->cid;
@@ -401,8 +401,8 @@ if ($resql)
 	while ($i < min($num,$max))
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+		
+		print '<tr class="oddeven">';
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
@@ -482,8 +482,8 @@ if ($resql)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+		
+		print '<tr class="oddeven">';
 
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
@@ -563,8 +563,8 @@ if ($resql)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+		
+		print '<tr class="oddeven">';
 
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);

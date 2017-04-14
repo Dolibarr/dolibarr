@@ -250,7 +250,7 @@ foreach ($dirmodels as $reldir)
                         if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
                         if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-                        $var=!$var;
+                        
                         print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
                         print $module->info();
                         print '</td>';
@@ -378,7 +378,7 @@ foreach ($dirmodels as $reldir)
 	                require_once $dir.'/'.$file;
 	                $module = new $classname($db, new FactureFournisseur($db));
 
-                    $var=!$var;
+                    
                     print "<tr ".$bc[$var].">\n";
                     print "<td>";
 	                print (empty($module->name)?$name:$module->name);

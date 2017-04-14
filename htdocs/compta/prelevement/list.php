@@ -165,7 +165,7 @@ if ($result)
     {
         $obj = $db->fetch_object($result);
 
-        $var=!$var;
+        
 
         print "<tr ".$bc[$var]."><td>";
 

@@ -1570,12 +1570,12 @@ else
         {
         	if ($showemptyline)
         	{
-        		$var=!$var;
+        		
         		print '<tr '.$bc[$var].'><td width="30%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
         		$showemptyline=0;
         	}
 
-            $var=!$var;
+            
             $value=$tabname[$i];
             print '<tr '.$bc[$var].'><td width="50%">';
             if (! empty($tabcond[$i]))
