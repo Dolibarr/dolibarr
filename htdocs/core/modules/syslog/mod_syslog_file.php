@@ -104,8 +104,9 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	private function getFilename($suffixinfilename='')
 	{
 	    global $conf;
-		$tmp=str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $conf->global->SYSLOG_FILE);
-		return $suffixinfilename?preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp):$tmp;
+	    if (! empty($conf->global->SYSLOG_FILE)) $tmp=str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $conf->global->SYSLOG_FILE);
+	    else $tmp='dolibarr.log';
+	    return $suffixinfilename?preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp):$tmp;
 	}
 
 	/**
