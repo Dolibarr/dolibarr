@@ -1899,7 +1899,7 @@ if (! function_exists("llxFooter"))
 
         if (! empty($delayedhtmlcontent)) print $delayedhtmlcontent;
 
-        // TODO Move this in lib_head.js
+        // TODO Move this in lib_head.js.php
 
         // Wrapper to show tooltips (html or onclick popup)
         if (! empty($conf->use_javascript_ajax) && empty($conf->dol_no_mouse_hover))
@@ -1922,7 +1922,7 @@ if (! function_exists("llxFooter"))
         }
         
         // Wrapper to manage document_preview
-        if (! empty($conf->use_javascript_ajax) && ! empty($conf->browser->layout != 'phone'))
+        if (! empty($conf->use_javascript_ajax) && ($conf->browser->layout != 'phone'))
         {
             print "\n<!-- JS CODE TO ENABLE document_preview -->\n";
             print '<script type="text/javascript">

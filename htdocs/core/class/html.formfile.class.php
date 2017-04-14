@@ -869,7 +869,7 @@ class FormFile
     			else $this->infofiles['extensions'][$ext]++;
 
     			// Preview
-    			if (! empty($conf->use_javascript_ajax) && ! empty($conf->browser->layout != 'phone'))
+    			if (! empty($conf->use_javascript_ajax) && ($conf->browser->layout != 'phone'))
     			{
                     $tmparray = getAdvancedPreviewUrl($modulepart, $relativepath, 1);
                     if ($tmparray && $tmparray['url']) $tmpout.= '<li><a href="'.$tmparray['url'].'"'.($tmparray['css']?' class="'.$tmparray['css'].'"':'').($tmparray['mime']?' mime="'.$tmparray['mime'].'"':'').($tmparray['target']?' target="'.$tmparray['target'].'"':'').'>'.img_picto('','detail').' '.$langs->trans("Preview").' '.$ext.'</a></li>';
