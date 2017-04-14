@@ -227,9 +227,8 @@ if ($result > 0)
 	    	print '<td colspan="2">'.$langs->trans('BankAccount').'</td>';
 			print '<td colspan="3">';
 			$accountstatic=new Account($db);
-	        $accountstatic->id=$bankline->fk_account;
-	        $accountstatic->label=$bankline->bank_account_ref.' - '.$bankline->bank_account_label;
-	        print $accountstatic->getNomUrl(0);
+			$accountstatic->fetch($bankline->fk_account);
+	        print $accountstatic->getNomUrl(1);
 	    	print '</td>';
 	    	print '</tr>';
         }
