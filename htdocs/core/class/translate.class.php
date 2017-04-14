@@ -39,7 +39,7 @@ class Translate
 
 	public $cache_labels=array();         // Cache for labels return by getLabelFromKey method
 	public $cache_currencies=array();     // Cache to store currency symbols
-
+    private $cache_currencies_all_loaded=false;
 
 
 	/**
@@ -961,7 +961,8 @@ class Translate
 	{
 		global $db;
 
-		if (! empty($currency_code) && isset($this->cache_currencies[$currency_code])) return 0;    // Value already into cache
+		if ($this->cache_currencies_all_loaded) return 0;                                           // Cache already loaded for all
+		if (! empty($currency_code) && isset($this->cache_currencies[$currency_code])) return 0;    // Cache already loaded for the currency
 
 		$sql = "SELECT code_iso, label, unicode";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_currencies";
@@ -975,7 +976,7 @@ class Translate
 		{
 			$this->load("dict");
 			$label=array();
-			foreach($this->cache_currencies as $key => $val) $label[$key]=$val['label'];
+			if (! empty($currency_code)) foreach($this->cache_currencies as $key => $val) $label[$key]=$val['label']; // Label in already loaded cache
 
 			$num = $db->num_rows($resql);
 			$i = 0;
@@ -989,7 +990,10 @@ class Translate
 				$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
 				$i++;
 			}
+			if (empty($currency_code)) $this->cache_currencies_all_loaded=true;
 			//print count($label).' '.count($this->cache_currencies);
+
+			// Resort cache
 			array_multisort($label, SORT_ASC, $this->cache_currencies);
 			//var_dump($this->cache_currencies);	$this->cache_currencies is now sorted onto label
 			return $num;
