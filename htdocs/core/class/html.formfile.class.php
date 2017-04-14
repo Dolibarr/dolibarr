@@ -999,6 +999,7 @@ class FormFile
 			    print '<input type="hidden" name="id" value="'.$object->id.'">';
 			    print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
+			print '<div class="div-table-responsive-no-min">';
 			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborder':'liste').'">'."\n";
 			
 			print '<tr class="liste_titre nodrag nodrop">';
@@ -1182,7 +1183,7 @@ class FormFile
         					if (in_array($modulepart, array('product','produit','service'))) $newmodulepart='produit|service';
     						
         					$disablecrop=1; 
-        					if (in_array($modulepart, array('product','produit','service','holiday','project'))) $disablecrop=0;
+        					if (in_array($modulepart, array('product','produit','service','expensereport','holiday','project','user'))) $disablecrop=0;
         					
     					    if (! $disablecrop && image_format_supported($file['name']) > 0)
     						{
@@ -1256,7 +1257,7 @@ class FormFile
 				print '</td></tr>';
 			}
 			print "</table>";
-			
+			print '</div>';
 			
 			if (! $editline && $nboflines > 1) { 
 				if (! empty($conf->use_javascript_ajax) && $permtoeditline) {
