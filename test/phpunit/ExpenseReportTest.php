@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/CommandeFournisseurTest.php
+ *      \file       test/phpunit/ExpenseReportTest.php
  *      \ingroup    test
  *      \brief      PHPUnit test
  *      \remarks    To run this script as CLI:  phpunit filename.php
@@ -27,8 +27,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.commande.class.php';
-require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.product.class.php';
+require_once dirname(__FILE__).'/../../htdocs/expensereport/class/expensereport.class.php';
 
 if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
@@ -46,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
+class ExpenseReportTest extends PHPUnit_Framework_TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -57,7 +56,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
      * Constructor
      * We save global variables into local variables
      *
-     * @return CommandeFournisseurTest
+     * @return ExpenseReportTest
      */
     function __construct()
     {
@@ -118,11 +117,11 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testCommandeFournisseurCreate
+     * testExpenseReportCreate
      *
      * @return	void
      */
-    public function testCommandeFournisseurCreate()
+    public function testExpenseReportCreate()
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -132,51 +131,27 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
 
         // Set supplier and product to use
         $socid=1;
-        $societe=new Societe($db);
-        $societe->fetch($socid);
-        $product=new ProductFournisseur($db);
-        $product->fetch(0,'PIDRESS');
-        if ($product->id <= 0) { print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(); }
-
-        $quantity=10;
-        $ref_fourn='SUPPLIER_REF_PHPUNIT';
-        $tva_tx=19.6;
-
-        // Create supplier price
-        $result=$product->add_fournisseur($user, $societe->id, $ref_fourn, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
-        $this->assertGreaterThanOrEqual(1, $result);
-        $result=$product->update_buyprice($quantity, 20, $user, 'HT', $societe, '', $ref_fourn, $tva_tx, 0, 0);
-        $this->assertGreaterThanOrEqual(0, $result);
 
         // Create supplier order with a too low quantity
-        $localobject=new CommandeFournisseur($db);
-        $localobject->initAsSpecimen();
-        $localobject->lines=array();    // Overwrite lines of order
-        $line=new CommandeFournisseurLigne($db);
-        $line->desc=$langs->trans("Description")." specimen line too low";
-        $line->qty=1;                   // So lower than $quantity
-        $line->fk_product=$product->id;
-        $line->ref_fourn=$ref_fourn;
-        $localobject->lines[]=$line;
+        $localobject=new ExpenseReport($db);
+        $localobject->initAsSpecimen();         // Init a speciment with lines
+        $localobject->status = 0;
+        $localobject->fk_statut = 0;
+        $localobject->date_fin = null;  // Force bad value
 
         $result=$localobject->create($user);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(-1, $result);   // must be -1 because quantity is lower than minimum of supplier price
+        $this->assertEquals(-1, $result);       // must be -1 because of missing mandatory fields
 
-        $sql="DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur where ref=''";
+        $sql="DELETE FROM ".MAIN_DB_PREFIX."expensereport where ref=''";
         $db->query($sql);
 
         // Create supplier order
-        $localobject2=new CommandeFournisseur($db);
-        $localobject2->initAsSpecimen();    // This create 5 lines of first product found for socid 1
-        $localobject2->lines=array();       // Overwrite lines of order
-        $line=new CommandeFournisseurLigne($db);
-        $line->desc=$langs->trans("Description")." specimen line ok";
-        $line->qty=10;                      // So enough quantity
-        $line->fk_product=$product->id;
-        $line->ref_fourn=$ref_fourn;
-        $localobject2->lines[]=$line;
-
+        $localobject2=new ExpenseReport($db);
+        $localobject2->initAsSpecimen();        // Init a speciment with lines
+        $localobject2->status = 0;
+        $localobject2->fk_statut = 0;
+        
         $result=$localobject2->create($user);
         print __METHOD__." result=".$result."\n";
         $this->assertGreaterThanOrEqual(0, $result);
@@ -186,15 +161,15 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * testCommandeFournisseurFetch
+     * testExpenseReportFetch
      *
      * @param   int $id     Id of supplier order
      * @return  void
      *
-     * @depends testCommandeFournisseurCreate
+     * @depends testExpenseReportCreate
      * The depends says test is run only if previous is ok
      */
-    public function testCommandeFournisseurFetch($id)
+    public function testExpenseReportFetch($id)
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -202,7 +177,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $localobject=new CommandeFournisseur($this->savdb);
+        $localobject=new ExpenseReport($this->savdb);
         $result=$localobject->fetch($id);
 
         print __METHOD__." id=".$id." result=".$result."\n";
@@ -211,15 +186,15 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testCommandeFournisseurValid
+     * testExpenseReportValid
      *
      * @param   Object $localobject     Supplier order
      * @return  void
      *
-     * @depends testCommandeFournisseurFetch
+     * @depends testExpenseReportFetch
      * The depends says test is run only if previous is ok
      */
-    public function testCommandeFournisseurValid($localobject)
+    public function testExpenseReportValid($localobject)
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -227,7 +202,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $result=$localobject->valid($user);
+        $result=$localobject->setValidate($user);
 
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
@@ -235,15 +210,15 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testCommandeFournisseurApprove
+     * testExpenseReportApprove
      *
      * @param   Object $localobject Supplier order
      * @return  void
      *
-     * @depends testCommandeFournisseurValid
+     * @depends testExpenseReportValid
      * The depends says test is run only if previous is ok
      */
-    public function testCommandeFournisseurApprove($localobject)
+    public function testExpenseReportApprove($localobject)
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -251,7 +226,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $result=$localobject->approve($user);
+        $result=$localobject->setApproved($user);
 
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
@@ -259,15 +234,15 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testCommandeFournisseurCancel
+     * testExpenseReportCancel
      *
      * @param   Object  $localobject        Supplier order
      * @return  void
      *
-     * @depends testCommandeFournisseurApprove
+     * @depends testExpenseReportApprove
      * The depends says test is run only if previous is ok
      */
-    public function testCommandeFournisseurCancel($localobject)
+    public function testExpenseReportCancel($localobject)
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -275,7 +250,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $result=$localobject->cancel($user);
+        $result=$localobject->set_cancel($user, 'Because...');
 
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
@@ -283,15 +258,15 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testCommandeFournisseurOther
+     * testExpenseReportOther
      *
      * @param   Object $localobject     Supplier order
      * @return  void
      *
-     * @depends testCommandeFournisseurCancel
+     * @depends testExpenseReportCancel
      * The depends says test is run only if previous is ok
      */
-    public function testCommandeFournisseurOther($localobject)
+    public function testExpenseReportOther($localobject)
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -313,15 +288,15 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testCommandeFournisseurDelete
+     * testExpenseReportDelete
      *
      * @param   int $id     Id of order
      * @return  void
      *
-     * @depends testCommandeFournisseurOther
+     * @depends testExpenseReportOther
      * The depends says test is run only if previous is ok
      */
-    public function testCommandeFournisseurDelete($id)
+    public function testExpenseReportDelete($id)
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -329,7 +304,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $localobject=new CommandeFournisseur($this->savdb);
+        $localobject=new ExpenseReport($this->savdb);
         $result=$localobject->fetch($id);
         $result=$localobject->delete($user);
 

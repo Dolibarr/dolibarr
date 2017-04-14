@@ -2141,7 +2141,7 @@ if ($action != 'create' && $action != 'edit')
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
 			// Validate
-			if (count($object->lines) > 0 || count($object->lignes) > 0)
+			if (count($object->lines) > 0)
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a></div>';
 			}
