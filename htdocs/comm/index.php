@@ -160,10 +160,10 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("ProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
+		$var=true;
 		if ($num > 0)
 		{
 			$i = 0;
-			$var=true;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
@@ -241,10 +241,10 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
         print '<tr class="liste_titre">';
         print '<th colspan="3">'.$langs->trans("SupplierProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
+        $var=true;
         if ($num > 0)
         {
             $i = 0;
-            $var=true;
             while ($i < $num)
             {
                 $obj = $db->fetch_object($resql);
@@ -320,10 +320,10 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("DraftOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
-		if ($num)
+		$var = true;
+		if ($num > 0)
 		{
 			$i = 0;
-			$var = true;
 			while ($i < $num)
 			{
 				
@@ -401,10 +401,10 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
         print '<tr class="liste_titre">';
         print '<th colspan="3">'.$langs->trans("DraftSuppliersOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
-        if ($num)
+        $var = true;
+        if ($num > 0)
         {
             $i = 0;
-            $var = true;
             while ($i < $num)
             {
                 
