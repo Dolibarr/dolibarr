@@ -4527,11 +4527,10 @@ class FactureLigne extends CommonInvoiceLine
 	/**
 	 *	Update line into database
 	 *
-	 *	@param		User	$user		User object
 	 *	@param		int		$notrigger	Disable triggers
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	function update($user='',$notrigger=0)
+	function update($notrigger=0)
 	{
 		global $user,$conf;
 
