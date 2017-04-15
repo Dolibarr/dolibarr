@@ -870,7 +870,7 @@ if (empty($reshook))
 	    $action = '';
 	}
 
-	elseif ($action == 'classin')
+	elseif ($action == 'classin' && $user->rights->fournisseur->facture->creer)
 	{
 	    $object->fetch($id);
 	    $result=$object->setProject($projectid);
@@ -1844,7 +1844,9 @@ else
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentConditions');
 		print '<td>';
-		if ($action != 'editconditions') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+		if ($action != 'editconditions' && $user->rights->fournisseur->facture->creer) {
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+		}
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editconditions')
@@ -1864,7 +1866,9 @@ else
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+		if ($action != 'editmode' && $user->rights->fournisseur->facture->creer) {
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+		}
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editmode')
@@ -1994,7 +1998,7 @@ else
             print '<table class="nobordernopadding" width="100%"><tr><td>';
             print $langs->trans('Project');
             print '</td>';
-            if ($action != 'classify')
+            if ($action != 'classify' && $user->rights->fournisseur->facture->creer)
             {
                 print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$object->id.'">';
                 print img_edit($langs->trans('SetProject'),1);
@@ -2135,13 +2139,17 @@ else
 	 	 		// Reopen a standard paid invoice
 	            if (($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
 	            {
-	                if (! $facidnext && $object->close_code != 'replaced')	// Not replaced by another invoice
+	                if (! $facidnext && $object->close_code != 'replaced' && $user->rights->fournisseur->facture->creer)	// Not replaced by another invoice
 	                {
 	                    print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
 	                }
 	                else
 	                {
-	                    print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span>';
+	                	if ($user->rights->fournisseur->facture->creer) {
+			                print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span>';
+		                } elseif (!$conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) {
+			                print '<span class="butActionRefused">'.$langs->trans('ReOpen').'</span>';
+		                }
 	                }
 	            }
 
