@@ -545,7 +545,7 @@ if ($ok && GETPOST('clean_product_stock_batch'))
             while ($i < $num)
             {
                 $obj=$db->fetch_object($resql);
-                print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehose '.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' (product_stock.reel) != '.$obj->reelbatch.' (sum product_batch)';
+                print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehose '.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' (product_stock.reel) != '.($obj->reelbatch?$obj->reelbatch:'0').' (sum product_batch)';
                 
                 // Fix
                 if ($obj->reel != $obj->reelbatch)
@@ -571,7 +571,7 @@ if ($ok && GETPOST('clean_product_stock_batch'))
                     if ($methodtofix == 'updatestock')
                     {
                         // Method 2
-                        print ' -> Update qty of product_stock with qty = '.$obj->reelbatch.' for ps.rowid = '.$obj->psrowid;
+                        print ' -> Update qty of product_stock with qty = '.($obj->reelbatch?$obj->reelbatch:'0').' for ps.rowid = '.$obj->psrowid;
                         if (GETPOST('clean_product_stock_batch') == 'confirmed')
                         {
                             $error=0;
@@ -579,7 +579,7 @@ if ($ok && GETPOST('clean_product_stock_batch'))
                             $db->begin();
                             
                             $sql2 ="UPDATE ".MAIN_DB_PREFIX."product_stock";
-                            $sql2.=" SET reel = ".$obj->reelbatch." WHERE rowid = ".$obj->psrowid;
+                            $sql2.=" SET reel = ".($obj->reelbatch?$obj->reelbatch:'0')." WHERE rowid = ".$obj->psrowid;
                             $resql2=$db->query($sql2);
                             if ($resql2)
                             {
