@@ -1047,6 +1047,17 @@ class Product extends CommonObject
 		$objectisused = $this->isObjectUsed($id);
 		if (empty($objectisused))
 		{
+		    // This function might have been called without fetch before (ie by external module) since it receives $id as parameter (and without fetch, the delete of extrafields will fail and other problem may appear with external triggers)
+		    if(empty($this->id))
+		    {
+				$ret = $this->fetch($id);
+				if ($ret < 0)
+				{
+					$this->error = "UnknownProduct";
+					return -1;
+				}
+			}
+		
 			$this->db->begin();
 
 			if (! $error && empty($notrigger))
