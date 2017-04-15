@@ -634,6 +634,8 @@ class pdf_azur extends ModelePDFPropales
 						$pdf->AddPage();
 						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
+						$pdf->setTopMargin($tab_top_newpage);
+						$nexY = $pdf->GetY() + 2;
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
 				}
