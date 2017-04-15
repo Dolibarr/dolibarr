@@ -3765,7 +3765,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller
    	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$thirdparty_seller->country_code."'";
    	$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
    	if ($vatratecode) $sql.= " AND t.code ='".$vatratecode."'";		// If we have the code, we use it in priority
-   	else $sql.= " AND t.recuperableonly ='".$npr."'";
+   	else $sql.= " AND t.recuperableonly ='".$vatnpr."'";
    	dol_syslog("get_localtax", LOG_DEBUG);
    	$resql=$db->query($sql);
 
