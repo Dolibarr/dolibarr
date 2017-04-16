@@ -171,6 +171,9 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 	$conf_css = $themepath."?lang=".$langs->defaultlang;
 
+	// Allows override login page via theme tpl folder
+	$conf->modules_parts['tpl'] = array_merge($conf->modules_parts['tpl'], array("/theme/{$conf->theme}/tpl/"));
+
 	// Select templates
 	if (! empty($conf->modules_parts['tpl']))	// Using this feature slow down application
 	{
