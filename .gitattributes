@@ -7,7 +7,7 @@
 # to native line endings on checkout.
 *.php text eol=lf
 *.pl text eol=lf
-*.sql text eol=lf
+*.sql text eol=lf;
 *.htm text eol=lf
 *.html text eol=lf
 *.js text eol=lf
