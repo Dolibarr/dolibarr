@@ -141,7 +141,7 @@ if (! $mesg)
 
 $head = member_stats_prepare_head($adh);
 
-dol_fiche_head($head, 'statssubscription', $langs->trans("Statistics"), 0, 'user');
+dol_fiche_head($head, 'statssubscription', $langs->trans("Statistics"), -1, 'user');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -183,7 +183,7 @@ foreach ($data as $val)
     while ($oldyear > $year+1)
     {	// If we have empty year
         $oldyear--;
-        $var=!$var;
+        
         print '<tr '.$bc[$var].' height="24">';
         print '<td align="center">';
         print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
@@ -195,7 +195,7 @@ foreach ($data as $val)
         print '<td align="right">0</td>';
         print '</tr>';
     }
-    $var=!$var;
+    
     print '<tr '.$bc[$var].' height="24">';
     print '<td align="center">';
     //print '<a href="month.php?year='.$year.'">';

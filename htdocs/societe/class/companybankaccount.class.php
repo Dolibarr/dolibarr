@@ -130,7 +130,9 @@ class CompanyBankAccount extends Account
      */
     function update(User $user = null, $notrigger = 0)
     {
-    	global $conf;
+	    global $conf;
+	    $error = 0;
+	   
 
         if (! $this->id)
         {
@@ -167,12 +169,33 @@ class CompanyBankAccount extends Account
         $result = $this->db->query($sql);
         if ($result)
         {
-            return 1;
+		
+		
+		if (! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('COMPANY_RIB_MODIFY',$user);
+			if ($result < 0) $error++;
+			// End call triggers
+			if(! $error )
+			{
+				return 1;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+		else
+		{
+			return 1;
+		}
+		
         }
         else
         {
             dol_print_error($this->db);
-            return 0;
+            return -1;
         }
     }
 
@@ -235,24 +258,49 @@ class CompanyBankAccount extends Account
     /**
      *  Delete a rib from database
      *
-     *	@param	User	$user	User deleting
-     *  @return int         	<0 if KO, >0 if OK
+     *	@param		User	$user		User deleting
+     *	@param  	int		$notrigger	1=Disable triggers
+     *  @return		int		            <0 if KO, >0 if OK
      */
-    function delete(User $user = null)
+    function delete(User $user = null, $notrigger=0)
     {
         global $conf;
+        
+        $error = 0;
+        
+        dol_syslog(get_class($this) . "::delete ".$this->id, LOG_DEBUG);
+        
+        $this->db->begin();
+        
+        if (! $error && ! $notrigger)
+        {
+            // Call trigger
+            $result=$this->call_trigger('COMPANY_RIB_DELETE',$user);
+            if ($result < 0) $error++;
+            // End call triggers
+        }
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
-        $sql.= " WHERE rowid  = ".$this->id;
-
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-        $result = $this->db->query($sql);
-        if ($result) {
+        if (! $error)
+        {
+            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "societe_rib";
+            $sql .= " WHERE rowid  = " . $this->id;
+            
+            if (! $this->db->query($sql))
+        	{
+        		$error++;
+        		$this->errors[]=$this->db->lasterror();
+        	}
+        }
+        
+        if (! $error)
+        {
+            $this->db->commit();
             return 1;
         }
-        else {
-            dol_print_error($this->db);
-            return -1;
+        else
+        {
+            $this->db->rollback();
+            return -1*$error;
         }
     }
 

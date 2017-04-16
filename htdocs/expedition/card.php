@@ -115,7 +115,11 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if ($cancel) { $action = ''; }
+    if ($cancel) 
+	{ 
+		$action = ''; 
+		$object->fetch($id); // show shipment also after canceling modification
+	}
     
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
@@ -852,7 +856,7 @@ if ($action == 'create')
                 $product = new Product($db);
 
                 $line = $object->lines[$indiceAsked];
-                $var=!$var;
+                
 
                 // Show product and description
                 $type=$line->product_type?$line->product_type:$line->fk_product_type;
@@ -1063,7 +1067,7 @@ if ($action == 'create')
 						else
 						{
 						    print '<!-- Case there is no details of lot at all -->';
-						    print '<tr '.$bc[$var].'><td colspan="3"></td><td align="center">';
+						    print '<tr class="oddeven"><td colspan="3"></td><td align="center">';
 							print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
 							print '</td>';
 							
@@ -1223,7 +1227,7 @@ if ($action == 'create')
 					if ($subj == 0) // Line not shown yet, we show it
 					{
 					    print '<!-- line not shown yet, we show it -->';
-						print '<tr '.$bc[$var].'><td colspan="3" ></td><td align="center">';
+						print '<tr class="oddeven"><td colspan="3" ></td><td align="center">';
 						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
 						    $disabled='';
@@ -1268,7 +1272,7 @@ if ($action == 'create')
 					$colspan=5;
 					$line = new ExpeditionLigne($db);
 					$line->fetch_optionals($object->id,$extralabelslines);
-					print '<tr '.$bc[$var].'>';
+					print '<tr class="oddeven">';
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
 					print '</tr>';
 				}
@@ -1784,7 +1788,7 @@ else if ($id || $ref)
 		// Loop on each product to send/sent
 		for ($i = 0 ; $i < $num_prod ; $i++)
 		{
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 
 			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 			{
@@ -1949,12 +1953,12 @@ else if ($id || $ref)
 				$colspan= empty($conf->productbatch->enabled) ? 5 : 6;
 				$line = new ExpeditionLigne($db);
 				$line->fetch_optionals($lines[$i]->id,$extralabelslines);
-				print '<tr '.$bc[$var].'>';
+				print '<tr class="oddeven">';
 				print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
 				print '</tr>';
 			}
 
-			$var=!$var;
+			
 		}
 		
 		// TODO Show also lines ordered but not delivered

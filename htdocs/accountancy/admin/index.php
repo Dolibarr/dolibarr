@@ -142,17 +142,16 @@ if ($action == 'setmanagezero') {
 }
 
 if ($action == 'setdisabledirectinput') {
-    $setdisabledirectinput = GETPOST('value', 'int');
-    $res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
-    if (! $res > 0)
-        $error ++;
-        if (! $error) {
-            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        } else {
-            setEventMessages($langs->trans("Error"), null, 'mesgs');
-        }
+	$setdisabledirectinput = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
+	if (! $res > 0)
+		$error ++;
+		if (! $error) {
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'mesgs');
+		}
 }
-
 
 /*
  * View
@@ -215,8 +214,7 @@ print "</tr>\n";
 if (! empty($user->admin))
 {
     // TO DO Mutualize code for yes/no constants
-    $var = ! $var;
-    print "<tr " . $bc[$var] . ">";
+    print '<tr class="oddeven">';
     print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
     if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
         print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
@@ -229,8 +227,7 @@ if (! empty($user->admin))
     }
     print '</tr>';
 
-    $var = ! $var;
-    print "<tr " . $bc[$var] . ">";
+    print '<tr class="oddeven">';
     print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE") . '</td>';
     if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
         print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=0">';
@@ -243,22 +240,20 @@ if (! empty($user->admin))
     }
     print '</tr>';
 
-    $var = ! $var;
-    print "<tr " . $bc[$var] . ">";
-    print '<td>' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
-    if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
-        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
-        print img_picto($langs->trans("Activated"), 'switch_on');
-        print '</a></td>';
-    } else {
-        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
-        print img_picto($langs->trans("Disabled"), 'switch_off');
-        print '</a></td>';
-    }
-    print '</tr>';
-    
-    $var = ! $var;
-    print "<tr " . $bc[$var] . ">";
+	print '<tr class="oddeven">';
+	print '<td>' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
+	if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
+		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+	print '</tr>';
+
+    print '<tr class="oddeven">';
     print '<td>' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
     if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
         print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
@@ -276,9 +271,7 @@ if (! empty($user->admin))
 // Param a user $user->rights->accountancy->chartofaccount can access
 foreach ($list as $key) 
 {
-    $var = ! $var;
-
-    print '<tr ' . $bc[$var] . ' class="value">';
+    print '<tr class="oddeven value">';
     
     if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO) && ($key == 'ACCOUNTING_LENGTH_GACCOUNT' || $key == 'ACCOUNTING_LENGTH_AACCOUNT')) continue;
 

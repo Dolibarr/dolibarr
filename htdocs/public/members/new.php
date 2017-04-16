@@ -99,11 +99,11 @@ function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayo
 
     if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
     {
-        $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
+        $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
     }
     elseif (! empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
     {
-        $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
+        $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode($mysoc->logo);
         $width=128;
     }
     elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
@@ -223,7 +223,7 @@ if ($action == 'add')
         // email a peu pres correct et le login n'existe pas
         $adh = new Adherent($db);
         $adh->statut      = -1;
-        $adh->public      = $_POST["public"];
+        $adh->public      = $public;
         $adh->firstname   = $_POST["firstname"];
         $adh->lastname    = $_POST["lastname"];
         $adh->civility_id = $_POST["civility_id"];
@@ -508,7 +508,7 @@ print '</td></tr>'."\n";
 // Photo
 print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" size="40" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
 // Public
-print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public" value="1" checked></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
 // Extrafields
 foreach($extrafields->attribute_label as $key=>$value)
 {

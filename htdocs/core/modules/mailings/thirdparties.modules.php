@@ -23,7 +23,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_thirdparties extends MailingTargets
 {
-	var $name='ContactsCategories';
+	var $name='ThirdPartiesByCategories';
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
 	var $desc="Third parties (by categories)";
 	var $require_admin=0;

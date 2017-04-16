@@ -234,7 +234,7 @@ $head[$h][1] = $langs->trans("Miscellaneous");
 $head[$h][2] = 'misc';
 $h++;
 
-dol_fiche_head($head, 'editor', $langs->trans("Menus"));
+dol_fiche_head($head, 'editor', $langs->trans("Menus"), -1);
 
 print $langs->trans("MenusEditorDesc")."<br>\n";
 print "<br>\n";

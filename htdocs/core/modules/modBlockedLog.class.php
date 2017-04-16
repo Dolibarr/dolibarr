@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013   Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2017   Laurent Destailleur  <eldy@users.sourcefore.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,20 +16,19 @@
  */
 
 /**
- * 	\defgroup   blockchainlog   Module BlockChainLog
+ * 	\defgroup   blockedlog   Module BlockedLog
  *  \brief      Add a log into a block chain for some actions.
- *  \file       htdocs/core/modules/modBlockChainLog.class.php
- *  \ingroup    blockchainlog
- *  \brief      Description and activation file for module BlockChainLog
+ *  \file       htdocs/core/modules/modBlockedLog.class.php
+ *  \ingroup    blockedlog
+ *  \brief      Description and activation file for module BlockedLog
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *	Class to describe a Cron module
+ *	Class to describe a BlockedLog module
  */
-class modBlockChainLog extends DolibarrModules
+class modBlockedLog extends DolibarrModules
 {
-
     /**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -47,14 +46,14 @@ class modBlockChainLog extends DolibarrModules
         $this->family = "technic";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
-        $this->description = "Enable a log of some business events into a non reversible block chain. This module may be mandatory for some countries.";
+        $this->description = "Enable a log on some business events into a reserved log. This module may be mandatory for some countries.";
         $this->version = 'development';                        // 'development', 'experimental' or 'dolibarr' or version
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
         $this->special = 1;
         // Name of image file used for this module.
-        $this->picto='skype';
+        $this->picto='technic';
 
         // Data directories to create when module is enabled
         $this->dirs = array();

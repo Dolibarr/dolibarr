@@ -112,7 +112,7 @@ if ($result)
 
 		print '<td>'.$rej->motifs[$obj->motif].'</td>';
 		print "</tr>\n";
-		$var=!$var;
+		
 		$i++;
 	}
 

@@ -103,7 +103,7 @@ $head[$h][1] = $title;
 $head[$h][2] = 'popularityprop';
 $h++;
 
-dol_fiche_head($head,'popularityprop',$langs->trans("Statistics"));
+dol_fiche_head($head, 'popularityprop', $langs->trans("Statistics"), -1);
 
 
 // Array of liens to show
@@ -136,7 +136,6 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    $var=True;
     while ($i < $num)
     {
         $objp = $db->fetch_object($resql);
@@ -166,7 +165,6 @@ print_liste_field_titre($langs->trans('Label'), $_SERVER["PHP_SELF"], 'p.label',
 print_liste_field_titre($langs->trans('NbOfQtyInProposals'), $_SERVER["PHP_SELF"], 'c', '', $param, 'align="right"', $sortfield, $sortorder);
 print "</tr>\n";
 
-$var=True;
 foreach($infoprod as $prodid => $vals)
 {
 	// Multilangs
@@ -186,8 +184,7 @@ foreach($infoprod as $prodid => $vals)
 		}
 	}
 
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	print "<tr>";
 	print '<td><a href="'.DOL_URL_ROOT.'/product/stats/card.php?id='.$prodid.'">';
 	if ($vals['type'] == 1) print img_object($langs->trans("ShowService"),"service");
 	else print img_object($langs->trans("ShowProduct"),"product");

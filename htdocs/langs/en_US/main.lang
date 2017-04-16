@@ -309,6 +309,7 @@ Copy=Copy
 Paste=Paste
 Default=Default
 DefaultValue=Default value
+DefaultValues=Default values
 Price=Price
 UnitPrice=Unit price
 UnitPriceHT=Unit price (net)
@@ -763,6 +764,7 @@ DirectDownloadLink=Direct download link
 Download=Download
 ActualizeCurrency=Update currency rate
 Fiscalyear=Fiscal year
+ModuleBuilder=Module Builder
 # Week day
 Monday=Monday
 Tuesday=Tuesday

@@ -145,8 +145,7 @@ if ($result) {
 	$var = true;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
-		$var = ! $var;
-		print '<tr'. $bc[$var].'>';
+		print '<tr class="oddeven">';
 		
 		print '<td align="left">';
 		print $objp->accounting;

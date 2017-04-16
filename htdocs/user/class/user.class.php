@@ -104,16 +104,17 @@ class User extends CommonObject
 	public $lang;
 
 	public $rights;                        // Array of permissions user->rights->permx
-	public $all_permissions_are_loaded;	/**< \private all_permissions_are_loaded */
-	private $_tab_loaded=array();		// Array of cache of already loaded permissions
-	public $nb_rights;			// Number of rights granted to the user
-
+	public $all_permissions_are_loaded;	   // All permission are loaded
+	public $nb_rights;			           // Number of rights granted to the user
+	private $_tab_loaded=array();		   // Cache array of already loaded permissions
+	
 	public $conf;           		// To store personal config
-	var $oldcopy;                	// To contains a clone of this when we need to save old properties of object
-
+	public $default_values;         // To store default values for user
+	
 	public $users;					// To store all tree of users hierarchy
 	public $parentof;				// To store an array of all parents for all ids.
-
+	private $cache_childids;
+	
 	public $accountancy_code;			// Accountancy code in prevision of the complete accountancy module
 
 	public $thm;					// Average cost of employee - Used for valuation of time spent
@@ -127,7 +128,6 @@ class User extends CommonObject
 
 	public $dateemployment;			// Define date of employment by company
 
-	private $cache_childids;
 
 
 	/**
@@ -164,11 +164,11 @@ class User extends CommonObject
 	 *	@param	int		$id		       		If defined, id to used for search
 	 * 	@param  string	$login       		If defined, login to used for search
 	 *	@param  string	$sid				If defined, sid to used for search
-	 * 	@param	int		$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx)
+	 * 	@param	int		$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx), 0=do not load personal conf.
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
-	function fetch($id='', $login='',$sid='',$loadpersonalconf=1, $entity=-1)
+	function fetch($id='', $login='', $sid='', $loadpersonalconf=0, $entity=-1)
 	{
 		global $conf, $user;
 
@@ -339,6 +339,7 @@ class User extends CommonObject
 		// To get back the global configuration unique to the user
 		if ($loadpersonalconf)
 		{
+		    // Load user->conf for user
 			$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
 			$sql.= " WHERE fk_user = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
@@ -359,8 +360,31 @@ class User extends CommonObject
 			}
 			else
 			{
-				$this->error=$this->db->error();
+				$this->error=$this->db->lasterror();
 				return -2;
+			}
+			
+			// Load user->default_values for user. TODO Save this in memcached ?
+			$sql = "SELECT rowid, entity, type, page, param, value";
+			$sql.= " FROM ".MAIN_DB_PREFIX."default_values";
+			$sql.= " WHERE entity IN (".$this->entity.",".$conf->entity.")";
+			$sql.= " AND user_id IN (0, ".$this->id.")";
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+			    while ($obj = $this->db->fetch_object($resql))
+			    {
+			        if (! empty($obj->page) && ! empty($obj->type) && ! empty($obj->param)) 
+			        {
+			            $user->default_values[$obj->page][$obj->type][$obj->param]=$obj->value;
+			        }
+			    }
+			    $this->db->free($resql);
+			}
+			else
+			{
+				$this->error=$this->db->lasterror();
+				return -3;
 			}
 		}
 
@@ -1968,7 +1992,7 @@ class User extends CommonObject
 	 *  Return a link to the user card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
-	 *	@param	int		$withpictoimg		Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo)
+	 *	@param	int		$withpictoimg		Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
 	 *	@param	string	$option				On what the link point to
      *  @param  integer $infologin      	Add complete info tooltip
      *  @param	integer	$notooltip			1=Disable tooltip on picto and name
@@ -1986,12 +2010,18 @@ class User extends CommonObject
 
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
 
-		$result = '';
-		$companylink = '';
-		$link = '';
-
-		$label = '<u>' . $langs->trans("User") . '</u>';
-		$label.= '<div width="100%">';
+        $result=''; $label='';
+        $link=''; $linkstart=''; $linkend='';
+		
+		if (! empty($this->photo))
+		{
+		    $label.= '<div class="photointooltip">';
+		    $label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip', 'small', 0, 1);
+		    $label.= '</div><div style="clear: both;"></div>';
+		}
+		
+		$label.= '<div class="centpercent">';
+		$label.= '<u>' . $langs->trans("User") . '</u><br>';
 		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','');
 		if (! empty($this->login))
 			$label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
@@ -2008,12 +2038,6 @@ class User extends CommonObject
 		$type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
 		$label.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
 		$label.='</div>';
-		if (! empty($this->photo))
-		{
-			$label.= '<div class="photointooltip">';
-			$label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip', 'small', 0, 1);
-			$label.= '</div><div style="clear: both;"></div>';
-		}
 
 		// Info Login
 		if ($infologin)
@@ -2072,12 +2096,12 @@ class User extends CommonObject
 	      	$paddafterimage='';
 			if (abs($withpictoimg) == 1) $paddafterimage='style="margin-right: 3px;"';
         	// Only picto
-			if ($withpictoimg > 0) $picto='<div class="inline-block nopadding valignmiddle'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</div>';
+			if ($withpictoimg > 0) $picto='<div class="inline-block nopadding '.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</div>';
         	// Picto must be a photo
-			else $picto='<div class="inline-block nopadding valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto', 'mini', 0, 1).'</div>';
+			else $picto='<div class="inline-block nopadding '.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg==-3?'small':''), 'mini', 0, 1).'</div>';
             $result.=$picto;
 		}
-		if (abs($withpictoimg) != 2)
+		if ($withpictoimg > -2 && $withpictoimg != 2)
 		{
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<div class="inline-block nopadding valignmiddle'.((! isset($this->statut) || $this->statut)?'':' strikefordisabled').($morecss?' usertext'.$morecss:'').'">';
 			if ($mode == 'login') $result.=dol_trunc($this->login, $maxlen);
@@ -2086,7 +2110,9 @@ class User extends CommonObject
 		}
 		$result.=$linkend;
 		//if ($withpictoimg == -1) $result.='</div>';
+		
 		$result.=$companylink;
+		
 		return $result;
 	}
 
@@ -2118,7 +2144,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du statut d'un user (actif, inactif)
+	 *  Return label of status of user (active, inactive)
 	 *
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status

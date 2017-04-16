@@ -235,9 +235,9 @@ if ($user->rights->fournisseur->facture->lire)
 				$facturestatic->statut = $objp->fk_statut;
 				$facturestatic->date_echeance = $db->jdate($objp->datelimite);
 
-				$var=!$var;
+				
 
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				$classname = "impayee";
 
 				print '<td class="nowrap">';

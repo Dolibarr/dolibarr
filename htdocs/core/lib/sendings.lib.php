@@ -233,9 +233,9 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 			$var=True;
 			while ($i < $num)
 			{
-				$var=!$var;
+				
 				$objp = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 
 				// Sending id
 				print '<td align="left" class="nowrap">';

@@ -246,7 +246,7 @@ class Products extends DolibarrApi
         global $user;
         $user = DolibarrApiAccess::$user;
 
-        return $this->product->delete($id);
+        return $this->product->delete(DolibarrApiAccess::$user);
     }
     
     /**

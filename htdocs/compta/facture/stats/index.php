@@ -225,7 +225,7 @@ if ($mode == 'supplier') $type='supplier_invoice_stats';
 
 complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
-dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
+dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 $tmp_companies = $form->select_thirdparty_list($socid,'socid',$filter,1, 0, 0, array(), '', 1);
 //Array passed as an argument to Form::selectarray to build a proper select input
@@ -300,7 +300,7 @@ foreach ($data as $val)
 	while ($year && $oldyear > $year+1)
 	{	// If we have empty year
 		$oldyear--;
-		$var=!$var;
+		
 		print '<tr '.$bc[$var].' height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		print '<td align="right">0</td>';
@@ -311,7 +311,7 @@ foreach ($data as $val)
 		print '<td align="right"></td>';
 		print '</tr>';
 	}
-	$var=!$var;
+	
 	print '<tr '.$bc[$var].' height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';

@@ -150,7 +150,7 @@ if ($type == 'directory')
     $formfile=new FormFile($db);
 
     $maxlengthname=40;
-    $excludefiles = array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview\.png)$','^temp$','^payments$','^CVS$','^thumbs$');
+    $excludefiles = array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview.*\.png)$','^temp$','^payments$','^CVS$','^thumbs$');
     $sorting = (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC);
 
     // Right area. If module is defined, we are in automatic ecm.
@@ -212,7 +212,7 @@ if ($type == 'directory')
         {
             $filearray=array();
         }
-        else $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','(\.meta|_preview\.png)$','^temp$','^CVS$'),$sortfield, $sorting,1);
+        else $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','(\.meta|_preview.*\.png)$','^temp$','^CVS$'),$sortfield, $sorting,1);
 
         if ($section)
         {

@@ -148,9 +148,8 @@ $var = ! $var;
 $num = count($main_option);
 if ($num) {
 	foreach ( $main_option as $key ) {
-		$var = ! $var;
 		
-		print '<tr ' . $bc[$var] . ' class="value">';
+		print '<tr class="oddeven value">';
 		
 		// Param
 		$label = $langs->trans($key);
@@ -178,7 +177,7 @@ print '</tr>';
 
 $var = ! $var;
 
-print '<tr ' . $bc[$var] . '>';
+print '<tr class="oddeven">';
 print '<td width="50%">' . $langs->trans("Selectmodelcsv") . '</td>';
 if (! $conf->use_javascript_ajax) {
 	print '<td class="nowrap">';
@@ -212,7 +211,7 @@ if ($num2) {
 		print '<tr><td colspan="2" bgcolor="red"><b>' . $langs->trans('OptionsDeactivatedForThisExportModel') . '</b></td></tr>';
 	}
 	
-	print '<tr ' . $bc[$var] . '>';
+	print '<tr class="oddeven">';
 	print '<td width="50%">' . $langs->trans("Selectformat") . '</td>';
 	if (! $conf->use_javascript_ajax) {
 	    print '<td class="nowrap">';
@@ -230,10 +229,8 @@ if ($num2) {
 	}
 	print "</td></tr>";
 	
-	foreach ( $model_option as $key ) {
-		$var = ! $var;
-		
-		print '<tr ' . $bc[$var] . ' class="value">';
+	foreach ( $model_option as $key ) {		
+		print '<tr class="oddeven value">';
 		
 		// Param
 		$label = $langs->trans($key);

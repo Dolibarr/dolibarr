@@ -213,7 +213,7 @@ MainDbPasswordFileConfEncrypted=Database password encrypted in conf.php (Activat
 InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
 InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
 ProtectAndEncryptPdfFiles=Protection of generated pdf files (Activated NOT recommended, breaks mass pdf generation)
-ProtectAndEncryptPdfFilesDesc=Protection of a PDF document keeps it available to read and print with any PDF browser. However, editing and copying is not possible anymore. Note that using this feature make building of a global cumulated pdf not working (like unpaid invoices).
+ProtectAndEncryptPdfFilesDesc=Protection of a PDF document keeps it available to read and print with any PDF browser. However, editing and copying is not possible anymore. Note that using this feature makes building of a global merged PDFs not working.
 Feature=Feature
 DolibarrLicense=License
 Developpers=Developers/contributors
@@ -425,6 +425,13 @@ Use3StepsApproval=By default, Purchase Orders need to be created and approved by
 UseDoubleApproval=Use a 3 steps approval when amount (without tax) is higher than...
 WarningPHPMail=WARNING: Some email providers (like Yahoo) does not allow you to send an email from another server than the Yahoo server if the email address used as a sender is your Yahoo email (like myemail@yahoo.com, myemail@yahoo.fr, ...). Your current setup use the server of the application to send email, so some recipients (the one compatible with the restrictive DMARC protocol), will ask Yahoo if they can accept your email and Yahoo will respond "no" because the server is not a server owned by Yahoo, so few of your sent Emails may not be accepted.<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account). 
 ClickToShowDescription=Click to show description
+DependsOn=This module need the module(s)
+RequiredBy=This module is required by module(s)
+TheKeyIsTheNameOfHtmlField=The key is the name of the html field. This need to have technical knowledges to read the content of the HTML page to get the key name of a field.
+PageUrlForDefaultValues=You must enter here the relative url of the page. Examples:
+PageUrlForDefaultValuesCreate=<br>For form to create a new thirdparty, it is <strong>%s</strong>
+PageUrlForDefaultValuesList=<br>For page that list thirdparties, it is <strong>%s</strong>
+GoIntoTranslationMenuToChangeThis=A translation has been found for the key with this code, so to change this value, you must edit it fom Home-Setup-translation.
 # Modules
 Module0Name=Users & groups
 Module0Desc=Users / Employees and Groups management
@@ -934,6 +941,8 @@ DefaultMaxSizeList=Default max length for lists
 DefaultMaxSizeShortList=Default max length for short lists (ie in customer card)
 MessageOfDay=Message of the day
 MessageLogin=Login page message
+LoginPage=Login page
+BackgroundImageLogin=Background image
 PermanentLeftSearchForm=Permanent search form on left menu
 DefaultLanguage=Default language to use (language code)
 EnableMultilangInterface=Enable multilingual interface
@@ -1334,6 +1343,10 @@ CacheByServer=Cache by server
 CacheByClient=Cache by browser
 CompressionOfResources=Compression of HTTP responses
 TestNotPossibleWithCurrentBrowsers=Such an automatic detection is not possible with current browsers 
+DefaultValuesDesc=You can define/force here the default value you want to get when your create a new record, and/or defaut filters or sort order when your list record. 
+DefaultCreateForm=Create forms
+DefaultSearchFilters=Search filters
+DefaultSortOrder=Sort orders
 ##### Products #####
 ProductSetup=Products module setup
 ServiceSetup=Services module setup
@@ -1527,7 +1540,6 @@ BankOrderGlobalDesc=General display order
 BankOrderES=Spanish
 BankOrderESDesc=Spanish display order
 ChequeReceiptsNumberingModule=Cheque Receipts Numbering module
-
 ##### Multicompany #####
 MultiCompanySetup=Multi-company module setup
 ##### Suppliers #####
@@ -1591,7 +1603,7 @@ HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Highlight color of the line when the mouse passes over (keep empty for no highlight)
 TextTitleColor=Color of page title
 LinkColor=Color of links
-PressF5AfterChangingThis=Press F5 on keyboard or clear your browser cache after changing this value to have it effective
+PressF5AfterChangingThis=Press CTRL+F5 on keyboard or clear your browser cache after changing this value to have it effective
 NotSupportedByAllThemes=Will works with core themes, may not be supported by external themes
 BackgroundColor=Background color
 TopMenuBackgroundColor=Background color for Top menu
@@ -1663,7 +1675,8 @@ ModuleEnabledAdminMustCheckRights=Module has been activated. Permissions for act
 UserHasNoPermissions=This user has no permission defined
 TypeCdr=Use "None" if the date of payment term is date of invoice plus a delta in days (delta is field "Nb of days")<br>Use "At end of month", if, after delta, the date must be increased to reach the end of month (+ an optional "Offset" in days)<br>Use "Current/Next" to have payment term date being the first Nth of the month (N is stored into field "Nb of days")
 BaseCurrency=Reference currency of the company (go into setup of company to change this)
-WarningInstallationMayBecomeNotCompliantWithLaw=You try to install the module <strong>%s</strong> that is an external module. Activate an external module only if it does not alterate negatively the behavior required by your country laws (%s). If the module bring a non legal feature, you are the only responsible for the use of a non-compliant software.   
+WarningNoteModuleInvoiceForFrenchLaw=This module %s is compliant with french laws (Loi Finance 2016). 
+WarningInstallationMayBecomeNotCompliantWithLaw=You try to install the module %s that is an external module. Activating an external module means you trust the editor of the module and you are sure that this module does not alterate negatively the behavior of your application and is compliant with laws of your country (%s). If the module bring a non legal feature, you become responsible for the use of a non legal software.   
 ##### Resource ####
 ResourceSetup=Configuration du module Resource 
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).

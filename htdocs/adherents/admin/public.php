@@ -29,6 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 $langs->load("members");
 $langs->load("admin");
@@ -49,12 +50,15 @@ if ($action == 'update')
 	$editamount=GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
 	$payonline=GETPOST('MEMBER_NEWFORM_PAYONLINE');
 	$email=GETPOST('MEMBER_PAYONLINE_SENDEMAIL');
+        $forcetype=GETPOST('MEMBER_NEWFORM_FORCETYPE');
 
     $res=dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC",$public,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT",$amount,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT",$editamount,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE",$payonline,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_PAYONLINE_SENDEMAIL",$email,'chaine',0,'',$conf->entity);
+    if ($forcetype < 0) $res=dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE",$conf->entity);
+    else                $res=dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE",$forcetype,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
 
@@ -146,20 +150,24 @@ $var=true;
 // Allow public form
 $var=! $var;
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bc[$var].'><td>';
+print '<tr class="oddeven"><td>';
 print $langs->trans("EnablePublicSubscriptionForm");
 print '</td><td align="right">';
 print $form->selectyesno("MEMBER_ENABLE_PUBLIC",(! empty($conf->global->MEMBER_ENABLE_PUBLIC)?$conf->global->MEMBER_ENABLE_PUBLIC:0),1);
 print "</td></tr>\n";
 
-// Type
-/*$var=! $var;
+// Force Type
+$var=! $var;
+$adht = new AdherentType($db);
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].' class="drag"><td>';
-print $langs->trans("EnablePublicSubscriptionForm");
+print $langs->trans("ForceMemberType");
 print '</td><td width="60" align="center">';
-print $form->selectyesno("forcedate",$conf->global->MEMBER_NEWFORM_FORCETYPE,1);
-print "</td></tr>\n"; */
+$listofval = array(-1 => $langs->trans("Undefined"));
+$listofval += $adht->liste_array();
+$forcetype = $conf->global->MEMBER_NEWFORM_FORCETYPE ?: -1;
+print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listetype)>1?1:0);
+print "</td></tr>\n";
 
 // Amount
 $var=! $var;

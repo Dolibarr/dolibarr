@@ -1255,10 +1255,6 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 
-	/*
-	 * Send mail
-	 */
-
 	// Actions to send emails
 	$actiontypecode='AC_COM';
 	$trigger_name='ORDER_SENTBYMAIL';
@@ -1769,7 +1765,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$res = $object->fetch_optionals($object->id, $extralabels);
 
 		$head = commande_prepare_head($object);
-		dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), 0, 'order');
+		dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order');
 
 		$formconfirm = '';
 
@@ -2589,7 +2585,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<a name="builddoc"></a>'; // ancre
 			// Documents
 			$comref = dol_sanitizeFileName($object->ref);
-			$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
 			$relativepath = $comref . '/' . $comref . '.pdf';
 			$filedir = $conf->commande->dir_output . '/' . $comref;
 			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
@@ -2651,6 +2646,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$file = $fileparams['fullname'];
 			}
 
+			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 			print '<div class="clearboth"></div>';
 			print '<br>';
 			print load_fiche_titre($langs->trans('SendOrderByMail'));

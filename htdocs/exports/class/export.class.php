@@ -591,7 +591,7 @@ class Export
 
 				while ($objp = $this->db->fetch_object($resql))
 				{
-					$var=!$var;
+					
 
 					// Process special operations
 					if (! empty($this->array_export_special[$indice]))

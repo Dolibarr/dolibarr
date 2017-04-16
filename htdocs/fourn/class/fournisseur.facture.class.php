@@ -849,14 +849,15 @@ class FactureFournisseur extends CommonInvoice
     /**
      *	Delete invoice from database
      *
-     *	@param     	int		$rowid      	Id of invoice to delete
+     *  @param      User	$user		    User object
+     *	@param	    int		$notrigger	    1=Does not execute triggers, 0= execute triggers
      *	@return		int						<0 if KO, >0 if OK
      */
-    public function delete($rowid)
+    public function delete(User $user, $notrigger=0)
     {
-        global $user,$langs,$conf;
+        global $langs,$conf;
 
-        if (! $rowid) $rowid=$this->id;
+        $rowid=$this->id;
 
         dol_syslog("FactureFournisseur::delete rowid=".$rowid, LOG_DEBUG);
 
@@ -865,40 +866,43 @@ class FactureFournisseur extends CommonInvoice
         $error=0;
         $this->db->begin();
 
-        $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
+        if (! $error && ! $notrigger)
         {
-            $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid;
+            // Call trigger
+            $result=$this->call_trigger('BILL_SUPPLIER_DELETE',$user);
+            if ($result < 0)
+            {
+                $this->db->rollback();
+                return -1;
+            }
+            // Fin appel triggers
+        }
+        
+        if (! $error)
+        {
+            $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-            $resql2 = $this->db->query($sql);
-            if (! $resql2) {
+            $resql = $this->db->query($sql);
+            if ($resql)
+            {
+                $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid;
+                dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+                $resql2 = $this->db->query($sql);
+                if (! $resql2) {
+                	$error++;
+                }
+            }
+            else {
             	$error++;
             }
         }
-        else {
-        	$error++;
-        }
-
+        
 		if (! $error)
 		{
 			// Delete linked object
 			$res = $this->deleteObjectLinked();
 			if ($res < 0) $error++;
 		}
-
-        if (! $error)
-        {
-            // Call trigger
-            $result=$this->call_trigger('BILL_SUPPLIER_DELETE',$user);
-            if ($result < 0)
-            {
-        		$this->db->rollback();
-        	    return -1;
-        	}
-        	// Fin appel triggers
-        }
 
         if (! $error)
         {
@@ -1787,7 +1791,7 @@ class FactureFournisseur extends CommonInvoice
 	        $response->warning_delay=$conf->facture->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SupplierBillsToPay");
 	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?filtre=fac.fk_statut:1,paye:0&mainmenu=accountancy&leftmenu=suppliers_bills';
-	        $response->img=img_object($langs->trans("Bills"),"bill");
+	        $response->img=img_object('',"bill");
 
             $facturestatic = new FactureFournisseur($this->db);
 
@@ -2452,13 +2456,11 @@ class SupplierInvoiceLine extends CommonObjectLine
 	/**
 	 * Deletes a line
 	 *
-	 * @param     bool|int    $notrigger    1=Does not execute triggers, 0= execute triggers
+	 * @param     bool|int   $notrigger     1=Does not execute triggers, 0= execute triggers
 	 * @return    int                       0 if KO, 1 if OK
 	 */
 	public function delete($notrigger = 0)
 	{
-		global $user;
-
 		dol_syslog(get_class($this)."::deleteline rowid=".$this->id, LOG_DEBUG);
 
 		$error = 0;

@@ -135,8 +135,8 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
-$var=!$var;
-print '<tr '.$bc[$var].'><td>';
+
+print '<tr class="oddeven"><td>';
 print $langs->trans("NotificationEMailFrom").'</td>';
 print '<td>';
 print '<input size="32" type="email" name="email_from" value="'.$conf->global->NOTIFICATION_EMAIL_FROM.'">';
@@ -165,14 +165,14 @@ print "</tr>\n";
 $notificationtrigger=new InterfaceNotification($db);
 $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>';
 
 $var=true;
 $i=0;
 foreach($listofnotifiedevents as $notifiedevent)
 {
-    $var=!$var;
+    
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
     if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
@@ -213,7 +213,7 @@ $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 $var=true;
 foreach($listofnotifiedevents as $notifiedevent)
 {
-    $var=!$var;
+    
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
     if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
@@ -222,7 +222,7 @@ foreach($listofnotifiedevents as $notifiedevent)
     elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
 	elseif ($notifiedevent['elementtype'] == 'ficheinter') $elementLabel = $langs->trans('Intervention');
 
-    print '<tr '.$bc[$var].'>';
+    print '<tr class="oddeven">';
     print '<td>'.$elementLabel.'</td>';
     print '<td>'.$notifiedevent['code'].'</td>';
     print '<td>'.$label.'</td>';

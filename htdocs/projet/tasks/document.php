@@ -218,22 +218,36 @@ if ($object->id > 0)
 	}
 
 	$head = task_prepare_head($object);
-	dol_fiche_head($head, 'task_document', $langs->trans("Task"), 0, 'projecttask');
-
-	$param=(GETPOST('withproject')?'&withproject=1':'');
-	$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
+	dol_fiche_head($head, 'task_document', $langs->trans("Task"), -1, 'projecttask');
 
 	// Files list constructor
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
 		$totalsize+=$file['size'];
 	}
+	
+	$param=(GETPOST('withproject')?'&withproject=1':'');
+	$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
+	if (! GETPOST('withproject') || empty($projectstatic->id))
+	{
+	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+	    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
+	}
+	else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
+	
+	$morehtmlref='';
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
+	
+	print '<div class="fichecenter">';
+	
+	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border" width="100%">';
 
 	// Ref
+	/*
 	print '<tr><td class="titlefield">';
 	print $langs->trans("Ref");
 	print '</td><td colspan="3">';
@@ -249,11 +263,12 @@ if ($object->id > 0)
 
 	// Label
 	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
-
+    */
+	
 	// Project
 	if (empty($withproject))
 	{
-		print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
+		print '<tr><td class="titlefield">'.$langs->trans("Project").'</td><td colspan="3">';
 		print $projectstatic->getNomUrl(1);
 		print '</td></tr>';
 
@@ -265,11 +280,13 @@ if ($object->id > 0)
 	}
 
 	// Files infos
-	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 
 	print "</table>\n";
 
+	print '</div>';
+	
 	dol_fiche_end();
 
 	print '<br>';

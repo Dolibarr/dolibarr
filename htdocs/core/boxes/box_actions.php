@@ -191,7 +191,7 @@ class box_actions extends ModeleBoxes
 						// on affiche que les évènement du jours ou passé
 						// qui ne sont pas à 100%
 						$actioncejour=true;
-						$var=!$var;
+						
 						// TR
 						$logo=$contents[$line][0]['logo'];
 						$label=$contents[$line][1]['text'];

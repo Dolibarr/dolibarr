@@ -236,8 +236,7 @@ if ($search_fk_user_creat) $sql.= natural_search("fk_user_creat",$search_fk_user
 if ($search_fk_user_modif) $sql.= natural_search("fk_user_modif",$search_fk_user_modif);
 if ($search_import_key) $sql.= natural_search("import_key",$search_import_key);
 
-
-if ($sall)          $sql.= natural_search(array_keys($fieldstosearchall), $sall);
+if ($sall) $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -342,6 +341,69 @@ if ($resql)
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
+    // Fields title search
+    print '<tr class="liste_titre_filter">';
+    if (! empty($arrayfields['t.entity']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_entity" value="'.$search_entity.'" size="8"></td>';
+    if (! empty($arrayfields['t.batch']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_batch" value="'.$search_batch.'" size="8"></td>';
+    if (! empty($arrayfields['t.fk_product']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_product" value="'.$search_product.'" size="8"></td>';
+    if (! empty($arrayfields['t.eatby']['checked'])) print '<td class="liste_titre"></td>';
+    if (! empty($arrayfields['t.sellby']['checked'])) print '<td class="liste_titre"></td>';
+    if (! empty($arrayfields['t.fk_user_creat']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_user_creat" value="'.$search_fk_user_creat.'" size="10"></td>';
+    if (! empty($arrayfields['t.fk_user_modif']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_user_modif" value="'.$search_fk_user_modif.'" size="10"></td>';
+    if (! empty($arrayfields['t.import_key']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_import_key" value="'.$search_import_key.'" size="10"></td>';
+    // Extra fields
+    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+    {
+        foreach($extrafields->attribute_label as $key => $val)
+        {
+            if (! empty($arrayfields["ef.".$key]['checked']))
+            {
+                $align=$extrafields->getAlignFlag($key);
+                $typeofextrafield=$extrafields->attribute_type[$key];
+                print '<td class="liste_titre'.($align?' '.$align:'').'">';
+                if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
+                {
+                    $crit=$val;
+                    $tmpkey=preg_replace('/search_options_/','',$key);
+                    $searchclass='';
+                    if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
+                    if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
+                    print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
+                }
+                print '</td>';
+            }
+        }
+    }
+    // Fields from hook
+    $parameters=array('arrayfields'=>$arrayfields);
+    $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+    if (! empty($arrayfields['t.datec']['checked']))
+    {
+        // Date creation
+        print '<td class="liste_titre">';
+        print '</td>';
+    }
+    if (! empty($arrayfields['t.tms']['checked']))
+    {
+        // Date modification
+        print '<td class="liste_titre">';
+        print '</td>';
+    }
+    /*if (! empty($arrayfields['u.statut']['checked']))
+     {
+     // Status
+     print '<td class="liste_titre" align="center">';
+     print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
+     print '</td>';
+     }*/
+    // Action column
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+    print $searchpitco;
+    print '</td>';
+    print '</tr>'."\n";
+    
     // Fields title
     print '<tr class="liste_titre">';
     if (! empty($arrayfields['t.entity']['checked']))        print_liste_field_titre($arrayfields['t.entity']['label'],$_SERVER['PHP_SELF'],'t.entity','',$param,'',$sortfield,$sortorder);
@@ -360,7 +422,7 @@ if ($resql)
            if (! empty($arrayfields["ef.".$key]['checked'])) 
            {
 				$align=$extrafields->getAlignFlag($key);
-				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+				print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
            }
 	   }
 	}
@@ -371,72 +433,9 @@ if ($resql)
 	if (! empty($arrayfields['t.datec']['checked']))  print_liste_field_titre($arrayfields['t.datec']['label'],$_SERVER["PHP_SELF"],"t.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['t.tms']['checked']))    print_liste_field_titre($arrayfields['t.tms']['label'],$_SERVER["PHP_SELF"],"t.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	//if (! empty($arrayfields['t.status']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"t.status","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
     print '</tr>'."\n";
 
-    // Fields title search
-	print '<tr class="liste_titre">';
-    if (! empty($arrayfields['t.entity']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_entity" value="'.$search_entity.'" size="8"></td>';
-    if (! empty($arrayfields['t.batch']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_batch" value="'.$search_batch.'" size="8"></td>';
-    if (! empty($arrayfields['t.fk_product']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_product" value="'.$search_product.'" size="8"></td>';
-    if (! empty($arrayfields['t.eatby']['checked'])) print '<td class="liste_titre"></td>';
-    if (! empty($arrayfields['t.sellby']['checked'])) print '<td class="liste_titre"></td>';
-    if (! empty($arrayfields['t.fk_user_creat']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_user_creat" value="'.$search_fk_user_creat.'" size="10"></td>';
-    if (! empty($arrayfields['t.fk_user_modif']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_user_modif" value="'.$search_fk_user_modif.'" size="10"></td>';
-    if (! empty($arrayfields['t.import_key']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_import_key" value="'.$search_import_key.'" size="10"></td>';
-	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-        foreach($extrafields->attribute_label as $key => $val) 
-        {
-            if (! empty($arrayfields["ef.".$key]['checked']))
-            {
-                $align=$extrafields->getAlignFlag($key);
-                $typeofextrafield=$extrafields->attribute_type[$key];
-                print '<td class="liste_titre'.($align?' '.$align:'').'">';
-            	if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
-				{
-				    $crit=$val;
-    				$tmpkey=preg_replace('/search_options_/','',$key);
-    				$searchclass='';
-    				if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-    				if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-    				print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-				}
-                print '</td>';
-            }
-        }
-	}
-    // Fields from hook
-	$parameters=array('arrayfields'=>$arrayfields);
-    $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-    if (! empty($arrayfields['t.datec']['checked']))
-    {
-        // Date creation
-        print '<td class="liste_titre">';
-        print '</td>';
-    }
-    if (! empty($arrayfields['t.tms']['checked']))
-    {
-        // Date modification
-        print '<td class="liste_titre">';
-        print '</td>';
-    }
-    /*if (! empty($arrayfields['u.statut']['checked']))
-    {
-        // Status
-        print '<td class="liste_titre" align="center">';
-        print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
-        print '</td>';
-    }*/
-    // Action column
-	print '<td class="liste_titre" align="right">';
-	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-    print $searchpitco;
-    print '</td>';
-	print '</tr>'."\n";
-        
 	$productlot = new Productlot($db);
 	
 	$i=0;
@@ -453,7 +452,7 @@ if ($resql)
             $productlot->batch = $obj->batch;
             
             // You can use here results
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
             if (! empty($arrayfields['t.entity']['checked'])) 
             {
                 print '<td>'.$obj->entity.'</td>';

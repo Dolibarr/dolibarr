@@ -1508,6 +1508,7 @@ class CommandeFournisseur extends CommonOrder
             $this->line->product_type=$product_type;
             $this->line->remise_percent=$remise_percent;
             $this->line->subprice=$pu_ht;
+            $this->line->rang=$this->rang;
             $this->line->info_bits=$info_bits;
             
             $this->line->vat_src_code=$vat_src_code;
@@ -1724,27 +1725,30 @@ class CommandeFournisseur extends CommonOrder
      *  Delete an order
      *
      *	@param	User	$user		Object user
+     *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return	int					<0 if KO, >0 if OK
      */
-    public function delete($user='')
+    public function delete(User $user, $notrigger=0)
     {
         global $langs,$conf;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $error = 0;
 
-        // Call trigger
-        $result=$this->call_trigger('ORDER_SUPPLIER_DELETE',$user);
-        if ($result < 0)
-        {
-        	$this->errors[]='ErrorWhenRunningTrigger';
-        	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
-        	return -1;
-        }
-        // End call triggers
-
-
         $this->db->begin();
+
+        if (empty($notrigger))
+        {
+            // Call trigger
+            $result=$this->call_trigger('ORDER_SUPPLIER_DELETE',$user);
+            if ($result < 0)
+            {
+            	$this->errors[]='ErrorWhenRunningTrigger';
+            	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+            	return -1;
+            }
+            // End call triggers
+        }
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande =". $this->id ;
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -1954,7 +1958,7 @@ class CommandeFournisseur extends CommonOrder
 		    		}
 
 		    	}
-	    		if (! $error && ! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS_NEED_APPROVE) && ($type == 'tot'))	// Accept to move to rception done, only if status of all line are ok (refuse denied)
+	    		if (! $error && ! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS_NEED_APPROVE) && ($type == 'tot'))	// Accept to move to reception done, only if status of all line are ok (refuse denied)
 	    		{
 	    			$dispatcheddenied=$this->getDispachedLines(2);
 	    			if (count($dispatchedlinearray) > 0)
@@ -1993,7 +1997,8 @@ class CommandeFournisseur extends CommonOrder
                     $result = 0;
                     $old_statut = $this->statut;
                     $this->statut = $statut;
-
+					$this->actionmsg2 = $comment;
+					
                     // Call trigger
                     $result=$this->call_trigger('ORDER_SUPPLIER_RECEIVE',$user);
                     if ($result < 0) $error++;
@@ -2624,7 +2629,7 @@ class CommandeFournisseur extends CommonOrder
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SuppliersOrdersToProcess");
 	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2,3&mainmenu=commercial&leftmenu=orders_suppliers';
-	        $response->img=img_object($langs->trans("Orders"),"order");
+	        $response->img=img_object('',"order");
 
             while ($obj=$this->db->fetch_object($resql))
             {
@@ -2816,13 +2821,14 @@ class CommandeFournisseur extends CommonOrder
      *
      * @param 		User 	$user                   User action
      * @param       int     $closeopenorder         Close if received
+     * @param		string	$comment				Comment
      * @return		int		                        <0 if KO, 0 if not applicable, >0 if OK
      */
-    public function calcAndSetStatusDispatch(User $user, $closeopenorder=1) 
+    public function calcAndSetStatusDispatch(User $user, $closeopenorder=1, $comment='') 
     {
-    	global $conf;
+    	global $conf, $langs;
 
-    	if (! empty($conf->commande->enabled) && ! empty($conf->fournisseur->enabled))
+    	if (! empty($conf->fournisseur->enabled))
     	{
     		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
@@ -2851,14 +2857,18 @@ class CommandeFournisseur extends CommonOrder
     				foreach($this->lines as $line) {
     					$qtywished[$line->fk_product]+=$line->qty;
     				}
+    				
+    				$date_liv = dol_now();
+    				
     				//Compare array
     				$diff_array=array_diff_assoc($qtydelivered,$qtywished);
-    				if (count($diff_array)==0) 
+			
+    				if (count($diff_array)==0) //No diff => mean everythings is received
     				{
-    					//No diff => mean everythings is received
     					if ($closeopenorder)
     					{
-        					$ret=$this->setStatus($user,5);
+        					//$ret=$this->setStatus($user,5);
+    						$ret = $this->Livraison($user, $date_liv, 'tot', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
         					if ($ret<0) {
         						return -1;
         					}
@@ -2867,7 +2877,8 @@ class CommandeFournisseur extends CommonOrder
     					else
     					{
     					    //Diff => received partially
-    					    $ret=$this->setStatus($user,4);
+    					    //$ret=$this->setStatus($user,4);
+    						$ret = $this->Livraison($user, $date_liv, 'par', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
     					    if ($ret<0) {
     					        return -1;
     					    }
@@ -2877,7 +2888,7 @@ class CommandeFournisseur extends CommonOrder
     				else 
     				{
     					//Diff => received partially
-    					$ret=$this->setStatus($user,4);
+    					$ret = $this->Livraison($user, $date_liv, 'par', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
     					if ($ret<0) {
     						return -1;
     					}

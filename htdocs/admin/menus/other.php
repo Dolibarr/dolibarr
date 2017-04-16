@@ -77,7 +77,7 @@ $head[$h][1] = $langs->trans("Miscellaneous");
 $head[$h][2] = 'misc';
 $h++;
 
-dol_fiche_head($head, 'misc', $langs->trans("Menus"));
+dol_fiche_head($head, 'misc', $langs->trans("Menus"), -1);
 
 
 // Other Options
@@ -90,8 +90,8 @@ print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '</tr>';
 
 // Hide unauthorized menu
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("HideUnauthorizedMenu").'</td>';
 print '<td align="center">';
 if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
