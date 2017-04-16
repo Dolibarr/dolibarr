@@ -534,10 +534,12 @@ class Translate
 	 */
 	private function getTradFromKey($key)
 	{
-		global $db;
+		global $db, $langs;
 
-		if (! is_string($key)) return 'ErrorBadValueForParamNotAString';	// Avoid multiple errors with code not using function correctly.
-
+        if (! is_string($key)) {
+            $key = (string) $key;   // Avoid multiple errors with code not using function correctly.
+            dol_syslog($_SERVER['PHP_SELF'] . ': ' . $langs->trans('ErrorBadValueForParamNotAString'));
+        }
 		$newstr=$key;
 	    if (preg_match('/^Civility([0-9A-Z]+)$/i',$key,$reg))
         {
