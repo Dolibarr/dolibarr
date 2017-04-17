@@ -346,7 +346,7 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	    }
 	}
 
-	return $out;
+	return htmlspecialchars($out);
 }
 
 
