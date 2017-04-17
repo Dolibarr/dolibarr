@@ -226,8 +226,8 @@ if ($resql)
 		{
 			$objp = $db->fetch_object($resql);
 
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			
+			print '<tr class="oddeven">';
 			// Ref
 			print '<td>';
 			$loan->fetch($objp->id);
@@ -250,7 +250,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	$var=!$var;
+	
 
 	print "</table>\n";
 	$db->free($resql);

@@ -1559,7 +1559,7 @@ class Societe extends CommonObject
         $note=trim($note);
         if (! $note)
         {
-            $this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Note"));
+            $this->error=$langs->trans("ErrorFieldRequired",$langs->trans("NoteReason"));
             return -2;
         }
 
@@ -1838,23 +1838,41 @@ class Societe extends CommonObject
 
         $name=$this->name?$this->name:$this->nom;
 
-		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
-		{
-			if (($this->client) && (! empty ( $this->code_client ))) {
-				$code = $this->code_client . ' - ';
-			}
-			if (($this->fournisseur) && (! empty ( $this->code_fournisseur ))) {
-				$code .= $this->code_fournisseur . ' - ';
-			}
-			$name =$code.' '.$name;
-		}
+	if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
+	{
+		if (($this->client) && (! empty ( $this->code_client ))
+			&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
+			|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
+			)
+		) 
+			$code = $this->code_client . ' - ';
 
-	    if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
+		if (($this->fournisseur) && (! empty ( $this->code_fournisseur ))
+			&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
+			|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
+			)
+		) 
+			$code .= $this->code_fournisseur . ' - ';
+
+		if ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1)
+			$name =$code.' '.$name;
+		else
+			$name =$code;
+	}
+
+	if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
 
         $result=''; $label='';
         $linkstart=''; $linkend='';
 
-        $label.= '<div width="100%">';
+        if (! empty($this->logo) && class_exists('Form'))
+        {
+            $label.= '<div class="photointooltip">';
+            $label.= Form::showphoto('societe', $this, 80, 0, 0, 'photowithmargin', 'mini');
+            $label.= '</div><div style="clear: both;"></div>';
+        }
+        
+        $label.= '<div class="centpercent">';
 
         if ($option == 'customer' || $option == 'compta' || $option == 'category' || $option == 'category_supplier')
         {
@@ -1891,7 +1909,7 @@ class Societe extends CommonObject
         if (empty($linkstart))
         {
             $label.= '<u>' . $langs->trans("ShowCompany") . '</u>';
-            $linkstart = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
+            $linkstart = '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$this->id;
         }
 
         if (! empty($this->name))
@@ -1908,12 +1926,6 @@ class Societe extends CommonObject
         if (! empty($conf->accounting->enabled) && $this->fournisseur)
             $label.= '<br><b>' . $langs->trans('SupplierAccountancyCode') . ':</b> '. $this->code_compta_fournisseur;
             
-        if (! empty($this->logo) && class_exists('Form'))
-        {
-            $label.= '</br><div class="photointooltip">';
-            $label.= Form::showphoto('societe', $this, 80, 0, 0, 'photowithmargin', 'mini');
-            $label.= '</div><div style="clear: both;"></div>';
-        }
         $label.= '</div>';
 
         // Add type of canvas

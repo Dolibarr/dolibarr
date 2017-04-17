@@ -262,7 +262,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         
-        if( $this->invoice->delete($id) < 0)
+        if( $this->invoice->delete(DolibarrApiAccess::$user) < 0)
         {
             throw new RestException(500);
         }

@@ -245,7 +245,7 @@ if ($id > 0 || ! empty($ref))
 		$res = $object->fetch_optionals($object->id, $extralabels);
 		
 		$head = commande_prepare_head($object);
-		dol_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"), 0, 'order');
+		dol_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"), -1, 'order');
 
 		
 		$formconfirm = '';
@@ -654,7 +654,7 @@ if ($id > 0 || ! empty($ref))
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				$var=!$var;
+				
 
 				// Show product and description
 				$type=isset($objp->type)?$objp->type:$objp->product_type;
@@ -664,7 +664,7 @@ if ($id > 0 || ! empty($ref))
 				if (! empty($objp->date_start)) $type=1;
 				if (! empty($objp->date_end)) $type=1;
 
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 
 				// Product label
 				if ($objp->fk_product > 0)
@@ -804,7 +804,7 @@ if ($id > 0 || ! empty($ref))
 							{
 								$img=img_warning($langs->trans("StockTooLow"));
 							}
-							print '<tr '.$bc[$var].'><td>&nbsp; &nbsp; &nbsp; -> <a href="'.DOL_URL_ROOT."/product/card.php?id=".$value['id'].'">'.$value['fullpath'].'</a> ('.$value['nb'].')</td>';
+							print '<tr class="oddeven"><td>&nbsp; &nbsp; &nbsp; -> <a href="'.DOL_URL_ROOT."/product/card.php?id=".$value['id'].'">'.$value['fullpath'].'</a> ('.$value['nb'].')</td>';
 							print '<td align="center"> '.$value['nb_total'].'</td>';
 							print '<td>&nbsp</td>';
 							print '<td>&nbsp</td>';

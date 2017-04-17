@@ -58,11 +58,27 @@ $taskstatic=new Task($db);
 $tasktmp=new Task($db);
 
 $title=$langs->trans("Activities");
-if ($mine) $title=$langs->trans("MyActivities");
+//if ($mine) $title=$langs->trans("MyActivities");
 
 llxHeader("",$title);
 
-print load_fiche_titre($title, '', 'title_project');
+
+// Title for combo list see all projects
+$titleall=$langs->trans("AllAllowedProjects");
+if (! empty($user->rights->projet->all->lire) && ! $socid) $titleall=$langs->trans("AllProjects");
+else $titleall=$langs->trans("AllAllowedProjects").'<br><br>';
+
+
+$morehtml='';
+$morehtml.='<form name="projectform">';
+$morehtml.='<SELECT name="mode">';
+$morehtml.='<option name="all" value="all"'.($mine?'':' selected').'>'.$titleall.'</option>';
+$morehtml.='<option name="mine" value="mine"'.($mine?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
+$morehtml.='</SELECT>';
+$morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'title_project.png', 0, $morehtml);
+//print load_fiche_titre($title, '', 'title_project');
 
 if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
 else
@@ -132,8 +148,8 @@ if ( $resql )
 
 	while ($row = $db->fetch_object($resql))
 	{
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
@@ -189,8 +205,8 @@ if ( $resql )
 
 	while ($row = $db->fetch_object($resql))
 	{
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
@@ -249,8 +265,8 @@ if ($db->type != 'pgsql')
     
     	while ($row = $db->fetch_object($resql))
     	{
-    		$var=!$var;
-    		print "<tr ".$bc[$var].">";
+    		
+    		print '<tr class="oddeven">';
     		print '<td>';
     		$projectstatic->id=$row->rowid;
     		$projectstatic->ref=$row->ref;
@@ -306,7 +322,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     
     	while ($row = $db->fetch_object($resql))
     	{
-    		print "<tr ".$bc[$var].">";
+    		print '<tr class="oddeven">';
     		print '<td>';
     		$projectstatic->id=$row->rowid;
     		$projectstatic->ref=$row->ref;
@@ -315,7 +331,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     		print '</td>';
     		print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
     		print "</tr>\n";
-    		$var=!$var;
+    		
     	}
     	$db->free($resql);
     }
@@ -357,7 +373,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 	{
 		while ($row = $db->fetch_object($resql))
 		{
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td>';
 			$projectstatic->id=$row->rowid;
 			$projectstatic->ref=$row->ref;
@@ -367,7 +383,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 			print '</td>';
 			print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
 			print "</tr>\n";
-			$var=!$var;
+			
 		}
 		$db->free($resql);
 	}
@@ -473,7 +489,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 		while ($i < $num && $i < $max)
 		{
 			$obj = $db->fetch_object($resql);
-			$var=!$var;
+			
 
 			$username='';
 			if ($obj->userid && $userstatic->id != $obj->userid)	// We have a user and it is not last loaded user
@@ -483,7 +499,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 			}
 			if ($userstatic->id) $username = $userstatic->getNomUrl(0,0);
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			//print '<td>'.$username.'</td>';
 			print '<td>';
 			$projectstatic->id=$obj->projectid;

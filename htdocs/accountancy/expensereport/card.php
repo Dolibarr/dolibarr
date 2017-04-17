@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
- * Copyright (C) 2013-2016	Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
@@ -76,7 +76,7 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 /*
  * View
  */
-llxHeader("", "FicheVentilation");
+llxHeader("", $langs->trans('FicheVentilation'));
 
 if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
@@ -89,7 +89,7 @@ $formventilation = new FormVentilation($db);
 
 if (! empty($id)) {
 	$sql = "SELECT er.ref, er.rowid as facid, erd.fk_c_type_fees, erd.comments, erd.rowid, erd.fk_code_ventilation,";
-	$sql .= " f.id as fees_id, f.label as fees_label,";
+	$sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label,";
 	$sql .= " aa.account_number, aa.label";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "expensereport_det as erd";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_type_fees as f ON f.id = erd.fk_c_type_fees";
@@ -132,7 +132,7 @@ if (! empty($id)) {
 			print '<td>' . stripslashes(nl2br($objp->comments)) . '</td></tr>';
 
 			print '<tr><td>' . $langs->trans("TypeFees") . '</td>';
-			print '<td>' . dol_trunc($objp->fees_label, 24) . '</td>';
+			print '<td>' . ($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code))) . '</td>';
 
 			print '<tr><td>' . $langs->trans("Account") . '</td><td>';
 			print $formventilation->select_account($objp->fk_code_ventilation, 'codeventil', 1);

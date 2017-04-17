@@ -130,6 +130,8 @@ if ($_POST) {
 	}
 }
 
+
+
 /*
  *	View
  */
@@ -140,37 +142,21 @@ if (! empty($id) || ! empty($ref)) {
 
 	llxHeader("", "", $langs->trans("CardProduct".$object->type));
 
-	if ($result) {
-		$head = product_prepare_head($object);
-		$titre = $langs->trans("CardProduct".$object->type);
-		$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
-
+	if ($result > 0)
+	{
+		$showbarcode=empty($conf->barcode->enabled)?0:1;
+		if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
+		 
+		$head=product_prepare_head($object);
+		$titre=$langs->trans("CardProduct".$object->type);
+		$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'combinations', $titre, 0, $picto);
-
-		print '<table class="border" width="100%">';
-
-		// Reference
-		print '<tr>';
-		print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($object, 'id', '', 0);
-		print '</td>';
-		print '</tr>';
-
-		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
-
-		// Status (to sell)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
-		print $object->getLibStatut(2, 0);
-		print '</td></tr>';
-
-		// Status (to buy)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
-		print $object->getLibStatut(2, 1);
-		print '</td></tr>';
-
-		print '</table>';
-
+		 
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
+		$object->next_prev_filter=" fk_product_type = ".$object->type;
+		 
+		dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
+		
 		dol_fiche_end();
 	}
 

@@ -26,7 +26,7 @@
  */
 
 /**
- *  \file       htdocs/societe/soc.php
+ *  \file       htdocs/societe/card.php
  *  \ingroup    societe
  *  \brief      Third party card page
  */
@@ -123,15 +123,14 @@ if (empty($reshook))
 		$soc_origin_id = GETPOST('soc_origin', 'int');
 		$soc_origin = new Societe($db);
 
-		if ($soc_origin_id < 1)
+		if ($soc_origin_id <= 0)
 		{
 			$langs->load('errors');
 			$langs->load('companies');
-			setEventMessages($langs->trans('ErrorProdIdIsMandatory', $langs->trans('MergeOriginThirdparty')), null, 'errors');
+			setEventMessages($langs->trans('ErrorThirdPartyIdIsMandatory', $langs->trans('MergeOriginThirdparty')), null, 'errors');
 		}
 		else
 		{
-
 			if (!$errors && $soc_origin->fetch($soc_origin_id) < 1)
 			{
 				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
@@ -140,8 +139,44 @@ if (empty($reshook))
 
 			if (!$errors)
 			{
+			    // TODO Move the merge function into class of object.
+			    
 				$db->begin();
 
+				// Recopy some data
+				$object->client = $object->client | $soc_origin->client;
+				$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
+				$listofproperties=array(
+				    'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
+				    'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
+				    'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
+				    'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
+				    'model_pdf', 'fk_projet'
+				);
+				foreach ($listofproperties as $property)
+				{
+				    if (empty($object->$property)) $object->$property = $soc_origin->$property;
+				}
+				
+				// Concat some data
+				$listofproperties=array(
+				    'note_public', 'note_private' 
+				);
+				foreach ($listofproperties as $property)
+				{
+				    $object->$property = dol_concatdesc($object->$property, $soc_origin->$property);
+				}
+				
+				// Merge extrafields
+				foreach ($soc_origin->array_options as $key => $val)
+				{
+				    if (empty($object->array_options[$key])) $object->array_options[$key] = $val;
+				}
+
+				// TODO Merge categories
+				$object->update($object->id, $user);
+				
+				// Move links 
 				$objects = array(
 					'Adherent' => '/adherents/class/adherent.class.php',
 					'Societe' => '/societe/class/societe.class.php',
@@ -159,6 +194,7 @@ if (empty($reshook))
 					'Fichinter' => '/fichinter/class/fichinter.class.php',
 					'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
 					'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
+					'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 					'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
 					'Livraison' => '/livraison/class/livraison.class.php',
 					'Product' => '/product/class/product.class.php',
@@ -451,6 +487,7 @@ if (empty($reshook))
                 if (empty($object->fournisseur)) $object->code_fournisseur='';
 
                 $result = $object->create($user);
+                
 				if ($result >= 0)
                 {
                     if ($object->particulier)
@@ -1506,7 +1543,7 @@ else
             if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
 
-            dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
+            dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
 
             print '<table class="border" width="100%">';
@@ -1514,13 +1551,13 @@ else
             // Ref/ID
 			if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
 			{
-		        print '<tr><td>'.$langs->trans("ID").'</td><td colspan="3">';
+		        print '<tr><td class="titlefieldcreate">'.$langs->trans("ID").'</td><td colspan="3">';
             	print $object->ref;
             	print '</td></tr>';
 			}
 
             // Name
-            print '<tr><td class="titlefield">'.fieldLabel('ThirdPartyName','name',1).'</td>';
+            print '<tr><td class="titlefieldcreate">'.fieldLabel('ThirdPartyName','name',1).'</td>';
 	        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
 
 	        // Alias names (commercial, trademark or alias names)
@@ -1633,7 +1670,7 @@ else
 
             // Zip / Town
             print '<tr><td>'.fieldLabel('Zip','zipcode').'</td><td>';
-            print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+            print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth50onsmartphone');
             print '</td><td>'.fieldLabel('Town','town').'</td><td>';
             print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
             print '</td></tr>';
@@ -1921,7 +1958,7 @@ else
 
         $head = societe_prepare_head($object);
 
-        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
+        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
         // Confirm delete third party
         if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)))
@@ -2244,7 +2281,7 @@ else
             print '<table width="100%" class="nobordernopadding"><tr><td>';
             print $langs->trans('IncotermLabel');
             print '<td><td align="right">';
-            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id.'&action=editincoterm">'.img_edit('',1).'</a>';
+            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$object->id.'&action=editincoterm">'.img_edit('',1).'</a>';
             else print '&nbsp;';
             print '</td></tr></table>';
             print '</td>';
@@ -2309,7 +2346,7 @@ else
         if (! empty($conf->adherent->enabled))
         {
             $langs->load("members");
-            print '<tr><td class="tdtop">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+            print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
             print '<td colspan="3">';
             $adh=new Adherent($db);
             $result=$adh->fetch('','',$object->id);
@@ -2320,7 +2357,7 @@ else
             }
             else
             {
-                print $langs->trans("ThirdpartyNotLinkedToMember");
+                print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
             }
             print '</td>';
             print "</tr>\n";

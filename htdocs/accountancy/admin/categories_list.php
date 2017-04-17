@@ -628,12 +628,6 @@ if ($id)
 			if ($fieldlist[$field]=='delay')           { $valuetoshow=$langs->trans("NoticePeriod"); }
 			if ($fieldlist[$field]=='newbymonth')      { $valuetoshow=$langs->trans("NewByMonth"); }
 				
-            if ($id == 2)	// Special cas for state page
-            {
-            	if ($fieldlist[$field]=='region_id') { $valuetoshow='&nbsp;'; $showfield=1; }
-	            if ($fieldlist[$field]=='region') { $valuetoshow=$langs->trans("Country").'/'.$langs->trans("Region"); $showfield=1; }
-            }
-
             if ($valuetoshow != '')
             {
                 print '<td align="'.$align.'">';
@@ -675,36 +669,15 @@ if ($id)
 
         if (empty($reshook))
         {
-        	if ($tabname[$id] == MAIN_DB_PREFIX.'c_email_templates' && $action == 'edit')
-        	{
-				fieldList($fieldlist,$obj,$tabname[$id],'hide');
-        	}
-        	else
-        	{
-        		fieldList($fieldlist,$obj,$tabname[$id],'add');
-        	}
+       		fieldList($fieldlist,$obj,$tabname[$id],'add');
         }
 
         print '<td colspan="4" align="right">';
-        if ($tabname[$id] != MAIN_DB_PREFIX.'c_email_templates' || $action != 'edit')
-        {
-        	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
-        }
+       	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
         print '</td>';
         print "</tr>";
 
-        if ($tabname[$id] == MAIN_DB_PREFIX.'c_email_templates')
-        {
-        	print '<tr><td colspan="8">* '.$langs->trans("AvailableVariables").": ";
-        	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-        	$formmail=new FormMail($db);
-        	$tmp=$formmail->getAvailableSubstitKey('form');
-        	print implode(', ', $tmp);
-        	print '</td></tr>';
-        }
-
         $colspan=count($fieldlist)+3;
-        if ($id == 4) $colspan++;
 
         if (! empty($alabelisused))  // If there is one label among fields, we show legend of *
         {
@@ -833,7 +806,7 @@ if ($id)
         print '</tr>';
 
         // Title line with search boxes
-        print '<tr class="liste_titre">';
+        print '<tr class="liste_titre_filter">';
         $filterfound=0;
         foreach ($fieldlist as $field => $value)
         {
@@ -858,25 +831,25 @@ if ($id)
         }
         if ($id == 4) print '<td></td>';
         print '<td class="liste_titre"></td>';
-    	print '<td class="liste_titre" colspan="3" align="center">';
+        print '<td class="liste_titre"></td>';
+        print '<td class="liste_titre"></td>';
+        print '<td class="liste_titre" align="center">';
     	if ($filterfound)
     	{
         	$searchpitco=$form->showFilterAndCheckAddButtons(0);
         	print $searchpitco;
     	}
     	print '</td>';
-        print '</tr>';
+    	print '</tr>';
             
         if ($num)
         {
             // Lines with values
             while ($i < $num)
             {
-                $var = ! $var;
-
                 $obj = $db->fetch_object($resql);
                 //print_r($obj);
-                print '<tr '.$bc[$var].' id="rowid-'.$obj->rowid.'">';
+                print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
                 if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
                 {
                     $tmpaction='edit';
@@ -887,7 +860,9 @@ if ($id)
                     // Show fields
                     if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
 
-                    print '<td colspan="3" align="center">';
+                    print '<td></td>';
+                    print '<td></td>';
+                    print '<td align="center">';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
                     print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
@@ -1175,7 +1150,7 @@ $db->close();
 function fieldList($fieldlist, $obj='', $tabname='', $context='')
 {
 	global $conf,$langs,$db;
-	global $form;
+	global $form, $mysoc;
 	global $region_id;
 	global $elementList,$sourceList,$localtax_typeList;
 	global $bc;
@@ -1197,7 +1172,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			}	// For state page, we do not show the country input (we link to region, not country)
 			print '<td>';
 			$fieldname='country';
-			print $form->select_country((! empty($obj->country_code)?$obj->country_code:(! empty($obj->country)?$obj->country:'')), $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
+			print $form->select_country((! empty($obj->country_code)?$obj->country_code:(! empty($obj->country)?$obj->country:$mysoc->country_code)), $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'country_id')

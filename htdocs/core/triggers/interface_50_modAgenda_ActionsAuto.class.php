@@ -658,6 +658,21 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid=0;
         }
+		elseif ($action == 'MEMBER_MODIFY')
+        {
+            $langs->load("agenda");
+            $langs->load("other");
+            $langs->load("members");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberModifiedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("MemberModifiedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
+            $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+		}
         elseif ($action == 'MEMBER_SUBSCRIPTION')
         {
             $langs->load("agenda");
@@ -721,21 +736,20 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
         	$object->sendtoid=0;
         }
-        elseif($action == 'PROJECT_CREATE') {
+        elseif($action == 'PROJECT_VALIDATE') {
             $langs->load("agenda");
             $langs->load("other");
             $langs->load("projects");
         
             $object->actiontypecode='AC_OTH_AUTO';
         
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectCreatedInDolibarr",$object->ref);
-            $object->actionmsg=$langs->transnoentities("ProjectCreatedInDolibarr",$object->ref);
-            $object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectValidatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("ProjectValidatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Project").': '.$object->ref;
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
         
             $object->sendtoid=0;
         }
-        
         elseif($action == 'PROJECT_MODIFY') {
             $langs->load("agenda");
             $langs->load("other");
@@ -864,6 +878,21 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->elementtype = $object->element;
 
 		$ret=$actioncomm->create($user);       // User creating action
+		
+		if ($ret > 0 && $conf->global->MAIN_COPY_FILE_IN_EVENT_AUTO)
+		{
+			if (is_array($object->attachedfiles) && array_key_exists('paths',$object->attachedfiles) && count($object->attachedfiles['paths'])>0) {
+				foreach($object->attachedfiles['paths'] as $key=>$filespath) {
+					$srcfile = $filespath;
+					$destdir = $conf->agenda->dir_output . '/' . $ret;
+					$destfile = $destdir . '/' . $object->attachedfiles['names'][$key];
+					if (dol_mkdir($destdir) >= 0) {
+						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+						dol_copy($srcfile, $destfile);
+					}
+				}
+			}
+		}
 		
 		unset($object->actionmsg); unset($object->actionmsg2); unset($object->actiontypecode);	// When several action are called on same object, we must be sure to not reuse value of first action.
 		

@@ -112,7 +112,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
+print '<th colspan="4">'.$langs->trans("Statistics").'</th>';
 print "</tr>\n";
 
 $listofstatus=array(0,1,-1,2);
@@ -141,8 +141,8 @@ $totalnb=0;
 $var=true;
 foreach ($listofstatus as $status)
 {
-    $var=!$var;
-    print "<tr ".$bc[$var].">";
+    
+    print '<tr class="oddeven">';
     print '<td><a href="list.php?statut='.$status.'">'.$donstatic->LibStatut($status,4).'</a></td>';
     print '<td align="right">'.(! empty($nb[$status])?$nb[$status]:'&nbsp;').'</td>';
     print '<td align="right">'.(! empty($nb[$status])?price($somme[$status],'MT'):'&nbsp;').'</td>';
@@ -182,7 +182,7 @@ if ($resql)
 {
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="5">'.$langs->trans("LastModifiedDonations",$max).'</td></tr>';
+    print '<th colspan="5">'.$langs->trans("LastModifiedDonations",$max).'</th></tr>';
 
     $num = $db->num_rows($resql);
     if ($num)
@@ -191,10 +191,10 @@ if ($resql)
         $var = True;
         while ($i < $num)
         {
-            $var=!$var;
+            
             $obj = $db->fetch_object($resql);
 
-            print "<tr ".$bc[$var].">";
+            print '<tr class="oddeven">';
 
             $donation_static->id=$obj->rowid;
             $donation_static->ref=$obj->ref?$obj->ref:$obj->rowid;

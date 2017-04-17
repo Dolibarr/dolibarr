@@ -163,7 +163,7 @@ class box_external_rss extends ModeleBoxes
             );
 
             $this->info_box_contents[$line][1] = array(
-                'td' => 'align="left"',
+                'td' => '',
                 'text' => $title,
                 'url' => $href,
                 'tooltip' => $tooltip,

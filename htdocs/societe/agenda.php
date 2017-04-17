@@ -58,7 +58,7 @@ if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield='a.datep, a.id';
+if (! $sortfield) $sortfield='a.datep,a.id';
 if (! $sortorder) $sortorder='DESC';
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -118,7 +118,7 @@ if ($socid > 0)
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"), -1, 'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 	
@@ -190,7 +190,7 @@ if ($socid > 0)
 		$filters=array();
         $filters['search_agenda_label']=$search_agenda_label;
 
-        // TODO Replace this with smae code then into listactions.php
+        // TODO Replace this with same code than into listactions.php
         show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
     }
 }

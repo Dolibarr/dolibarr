@@ -106,6 +106,7 @@ class Conf
 		$this->propal			= new stdClass();
 		$this->facture			= new stdClass();
 		$this->contrat			= new stdClass();
+		$this->usergroup		= new stdClass();
 		$this->adherent			= new stdClass();
 		$this->bank				= new stdClass();
 		$this->notification		= new stdClass();
@@ -127,11 +128,7 @@ class Conf
 
 		dol_syslog(get_class($this)."::setValues");
 
-		/*
-		 * Definition de toutes les constantes globales d'environnement
-		 * - En constante php (TODO a virer)
-		 * - En $this->global->key=value
-		 */
+		//Define all global constants into $this->global->key=value
 		$sql = "SELECT ".$db->decrypt('name')." as name,";
 		$sql.= " ".$db->decrypt('value')." as value, entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
@@ -157,7 +154,7 @@ class Conf
 				$value=$objp->value;
 				if ($key)
 				{
-					if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)
+					//if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)
 					$this->global->$key=$value;
 
 					if ($value && preg_match('/^MAIN_MODULE_/',$key))
@@ -206,7 +203,7 @@ class Conf
 		    $db->free($resql);
 		}
 
-        // Include other local consts.php files and fetch their values to the corresponding database constants
+        // Include other local consts.php files and fetch their values to the corresponding database constants.
         if (! empty($this->global->LOCAL_CONSTS_FILES)) {
             $filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
             foreach ($filesList as $file) {
@@ -323,18 +320,21 @@ class Conf
 		// For backward compatibility
 		$this->user->dir_output=$rootforuser."/users";
 		$this->user->dir_temp=$rootforuser."/users/temp";
+		
+		// UserGroup
+		$this->usergroup->dir_output=$rootforuser."/usergroups";
+		$this->usergroup->dir_temp=$rootforuser."/usergroups/temp";
 
 		// For propal storage
 		$this->propal->dir_output=$rootfordata."/propale";
 		$this->propal->dir_temp=$rootfordata."/propale/temp";
 
-		// Exception: Some dir are not the name of module. So we keep exception here
-		// for backward compatibility.
+		// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
 		// Sous module bons d'expedition
-		$this->expedition_bon->enabled= defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
+		$this->expedition_bon->enabled=$this->global->MAIN_SUBMODULE_EXPEDITION?$this->global->MAIN_SUBMODULE_EXPEDITION:0;
 		// Sous module bons de livraison
-		$this->livraison_bon->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
+		$this->livraison_bon->enabled=$this->global->MAIN_SUBMODULE_LIVRAISON?$this->global->MAIN_SUBMODULE_LIVRAISON:0;
 
 		// Module fournisseur
 		if (! empty($this->fournisseur))
@@ -385,7 +385,8 @@ class Conf
 		// Set some default values
 
 		$this->global->MAIN_ACTIVATE_HTML5=1;
-
+        $this->global->MAIN_MAIL_USE_MULTI_PART=1;
+        
 		// societe
 		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))       $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
 		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))       $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
@@ -593,8 +594,8 @@ class Conf
         }
 
 		// We init log handlers
-		if (defined('SYSLOG_HANDLERS')) {
-			$handlers = json_decode(constant('SYSLOG_HANDLERS'));
+		if (! empty($this->global->SYSLOG_HANDLERS)) {
+			$handlers = json_decode($this->global->SYSLOG_HANDLERS);
 		} else {
 			$handlers = array();
 		}
@@ -626,6 +627,7 @@ class Conf
 				$this->loghandlers[$handler] = $loghandlerinstance;
 			}
 		}
+		
 	}
 }
 

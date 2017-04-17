@@ -307,7 +307,7 @@ if (empty($reshook))
 			$object->phone       = trim($_POST["phone"]);
 			$object->phone_perso = trim($_POST["phone_perso"]);
 			$object->phone_mobile= trim($_POST["phone_mobile"]);
-			$object->email       = trim($_POST["email"]);
+			$object->email       = trim($_POST["member_email"]);
 			$object->skype       = trim($_POST["skype"]);
 			$object->birth       = $birthdate;
 
@@ -825,6 +825,16 @@ else
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" class="maxwidth200" value="'.(isset($_POST["member_login"])?GETPOST("member_login", 'alpha', 2):$object->login).'"></td></tr>';
 		}
 
+		// Password
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$generated_password=getRandomPassword(false);
+			print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td>';
+			print '<input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'">';
+			print '</td></tr>';
+		}
+		
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberType").'</td><td>';
 		$listetype=$adht->liste_array();
@@ -861,16 +871,6 @@ else
 
 		// EMail
 		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" size="40" value="'.(GETPOST('member_email','alpha')?GETPOST('member_email','alpha'):$object->email).'"></td></tr>';
-
-		// Password
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			$generated_password=getRandomPassword(false);
-			print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td>';
-			print '<input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'">';
-			print '</td></tr>';
-		}
 
 		// Address
 		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
@@ -1069,6 +1069,11 @@ else
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td colspan="2"><input type="text" name="login" class="maxwidth200" value="'.(isset($_POST["login"])?GETPOST("login",'alpha',2):$object->login).'"></td></tr>';
 		}
 
+	// Password
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+		{
+			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="maxwdith200" value="'.(isset($_POST["pass"])?GETPOST("pass",'',2):$object->pass).'"></td></tr>';
+		}
 		// Morphy
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Morale");
@@ -1122,13 +1127,7 @@ else
 		print '</td></tr>';
 
 		// EMail
-		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="email" size="40" value="'.(isset($_POST["email"])?GETPOST("email",'',2):$object->email).'"></td></tr>';
-
-		// Password
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-		{
-			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="maxwdith200" value="'.(isset($_POST["pass"])?GETPOST("pass",'',2):$object->pass).'"></td></tr>';
-		}
+		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" size="40" value="'.(isset($_POST["member_email"])?GETPOST("member_email",'',2):$object->email).'"></td></tr>';
 
 		// Address
 		print '<tr><td>'.$langs->trans("Address").'</td><td>';

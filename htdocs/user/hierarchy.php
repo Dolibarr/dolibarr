@@ -144,15 +144,8 @@ print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'"
 $param="search_statut=".$search_statut;
 
 print '<table class="liste nohover" width="100%">';
-print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("HierarchicView"));
-print '<td align="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a>';
-print ' | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div></td>';
-print_liste_field_titre($langs->trans("Status"),$_SERVER['PHP_SELF'],"",'',"",'align="right"');
-print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','','','','maxwidthsearch ');
-print '</tr>';
 
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 // Status
@@ -164,6 +157,14 @@ $searchpitco=$form->showFilterAndCheckAddButtons(0);
 print $searchpitco;
 print '</td>';
 print '</tr>';
+
+print '<tr class="liste_titre">';
+print_liste_field_titre($langs->trans("HierarchicView"));
+print_liste_field_titre('<div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>',$_SERVER['PHP_SELF'],"",'',"",'align="center"');
+print_liste_field_titre($langs->trans("Status"),$_SERVER['PHP_SELF'],"",'',"",'align="right"');
+print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','','','','maxwidthsearch ');
+print '</tr>';
+
 
 $nbofentries=(count($data) - 1);
 

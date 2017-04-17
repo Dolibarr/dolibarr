@@ -496,7 +496,7 @@ class Contrat extends CommonObject
 		$sql.= " ref_supplier, ref_customer,";
 		$sql.= " ref_ext,";
 		$sql.= " fk_user_mise_en_service, date_contrat as datecontrat,";
-		$sql.= " fk_user_author,";
+		$sql.= " fk_user_author, fin_validite, date_cloture,";
 		$sql.= " fk_projet,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi,";
 		$sql.= " note_private, note_public, model_pdf, extraparams";
@@ -527,6 +527,10 @@ class Contrat extends CommonObject
 				$this->date_contrat				= $this->db->jdate($result["datecontrat"]);
 				$this->date_creation				= $this->db->jdate($result["datecontrat"]);
 
+				$this->fin_validite				= $this->db->jdate($result["fin_validite"]);
+				$this->date_cloture				= $this->db->jdate($result["date_cloture"]);
+
+				
 				$this->user_author_id			= $result["fk_user_author"];
 
 				$this->commercial_signature_id	= $result["fk_commercial_signature"];
@@ -1761,7 +1765,7 @@ class Contrat extends CommonObject
 	/**
 	 *  Return label of a contract status
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
+	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services, 7=Same than 6 with fixed length
 	 *  @return string      		Label
 	 */
 	function getLibStatut($mode)
@@ -1773,7 +1777,7 @@ class Contrat extends CommonObject
 	 *  Renvoi label of a given contrat status
 	 *
 	 *  @param	int		$statut      	Status id
-	 *  @param  int		$mode          	0=Long label, 1=Short label, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
+	 *  @param  int		$mode          	0=Long label, 1=Short label, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services, 7=Same than 6 with fixed length
 	 *	@return string      			Label
 	 */
 	function LibStatut($statut,$mode)
@@ -1804,7 +1808,7 @@ class Contrat extends CommonObject
 			if ($statut == 1) { return img_picto($langs->trans('ContractStatusValidated'),'statut4'); }
 			if ($statut == 2) { return img_picto($langs->trans('ContractStatusClosed'),'statut6'); }
 		}
-		if ($mode == 4 || $mode == 6)
+		if ($mode == 4 || $mode == 6 || $mode == 7)
 		{
 			$line=new ContratLigne($this->db);
 			$text='';
@@ -1814,10 +1818,15 @@ class Contrat extends CommonObject
 				$text.=' '.$langs->trans("Services");
 				$text.=': &nbsp; &nbsp; ';
 			}
-			$text.=$this->nbofserviceswait.' '.$line->LibStatut(0,3).' &nbsp; ';
-			$text.=$this->nbofservicesopened.' '.$line->LibStatut(4,3,0).' &nbsp; ';
-			$text.=$this->nbofservicesexpired.' '.$line->LibStatut(4,3,1).' &nbsp; ';
-			$text.=$this->nbofservicesclosed.' '.$line->LibStatut(5,3);
+			$text.=($mode == 7?'<div class="inline-block">':'');
+			$text.=($mode != 7 || $this->nbofserviceswait > 0) ? $this->nbofserviceswait.' '.$line->LibStatut(0,3).(($this->nbofservicesopened || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
+			$text.=($mode == 7?'</div><div class="inline-block">':'');
+			$text.=($mode != 7 || $this->nbofservicesopened > 0) ? $this->nbofservicesopened.' '.$line->LibStatut(4,3,0).(($this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
+			$text.=($mode == 7?'</div><div class="inline-block">':'');
+			$text.=($mode != 7 || $this->nbofservicesexpired > 0) ? $this->nbofservicesexpired.' '.$line->LibStatut(4,3,1).(($this->nbofservicesclosed)?' &nbsp; ':'') : '';
+			$text.=($mode == 7?'</div><div class="inline-block">':'');
+			$text.=($mode != 7 || $this->nbofservicesclosed > 0) ? $this->nbofservicesclosed.' '.$line->LibStatut(5,3) : '';
+			$text.=($mode == 7?'</div>':'');
 			return $text;
 		}
 		if ($mode == 5)
@@ -2066,7 +2075,7 @@ class Contrat extends CommonObject
 			$response->warning_delay = $warning_delay/60/60/24;
 			$response->label = $label;
 			$response->url = $url;
-			$response->img = img_object($langs->trans("Contract"),"contract");
+			$response->img = img_object('',"contract");
 
 			while ($obj=$this->db->fetch_object($resql))
 			{
@@ -2102,7 +2111,7 @@ class Contrat extends CommonObject
 		$sql = "SELECT count(c.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		if (!$user->rights->contrat->lire && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;

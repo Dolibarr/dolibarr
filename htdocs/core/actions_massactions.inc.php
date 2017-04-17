@@ -209,7 +209,26 @@ if (! $error && $massaction == 'confirm_presend')
             if (count($listofqualifiedinvoice) > 0)
             {
                 $langs->load("commercial");
-                $from = $user->getFullName($langs) . ' <' . $user->email .'>';
+
+                $fromtype = GETPOST('fromtype');
+                if ($fromtype === 'user') {
+                    $from = $user->getFullName($langs) .' <'.$user->email.'>';
+                }
+                elseif ($fromtype === 'company') {
+                    $from = $conf->global->MAIN_INFO_SOCIETE_NOM .' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+                }
+                elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
+                    $tmp=explode(',', $user->email_aliases);
+                    $from = trim($tmp[($reg[1] - 1)]);
+                }
+                elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
+                    $tmp=explode(',', $conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+                    $from = trim($tmp[($reg[1] - 1)]);
+                }
+                else {
+                    $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+                }
+
                 $replyto = $from;
                 $subject = GETPOST('subject');
                 $message = GETPOST('message');
@@ -415,8 +434,11 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
     // Create output dir if not exists
     dol_mkdir($diroutputmassaction);
 
-    // Save merged file
+    // Defined name of merged file
     $filename=strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
+    $filename=preg_replace('/\s/','_',$filename);
+    
+    // Save merged file
     if ($filter=='paye:0')
     {
         if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
@@ -467,7 +489,8 @@ if (! $error && $massaction == 'delete' && $permtodelete)
         $result=$objecttmp->fetch($toselectid);
         if ($result > 0)
         {
-            $result = $objecttmp->delete($user);
+            if ($objecttmp->element == 'societe') $result = $objecttmp->delete($objecttmp->id, $user, 1);
+            else $result = $objecttmp->delete($user);
             if ($result <= 0)
             {
                 setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');

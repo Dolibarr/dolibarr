@@ -26,7 +26,7 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 if (! defined('NOREQUIREHOOK'))  define('NOREQUIREHOOK','1');
 
 require '../../main.inc.php';
@@ -70,5 +70,13 @@ if ($boxorder && $zone != '' &&  $userid > 0)
 	dol_syslog("AjaxBox boxorder=".$boxorder." zone=".$zone." userid=".$userid, LOG_DEBUG);
 
 	$result=InfoBox::saveboxorder($db,$zone,$boxorder,$userid);
+	if ($result > 0) 
+	{
+	    $langs->load("boxes");
+	    if (! GETPOST('closing'))
+	    {
+	       setEventMessages($langs->trans("BoxAdded"), null);
+	    }
+	}
 }
 

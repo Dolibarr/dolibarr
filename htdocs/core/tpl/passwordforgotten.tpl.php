@@ -32,7 +32,7 @@ print top_htmlhead('',$langs->trans('SendNewPassword'));
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
 
-<body class="bodylogin">
+<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
@@ -44,23 +44,18 @@ $(document).ready(function () {
 <?php } ?>
 
 
-<div align="center">
+<div class="login_center center">
 <div class="login_vertical_align">
-
 
 <form id="login" name="login" method="POST" action="<?php echo $php_self; ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="buildnewpassword">
 
-<table class="login_table_title center" summary="<?php echo dol_escape_htmltag($title); ?>">
-<tr class="vmenu"><td align="center"><?php echo $title; ?></td></tr>
-</table>
-<br>
+
 
 <div class="login_table">
 
 <div id="login_line1">
-
 
 <div id="login_left">
 
@@ -111,7 +106,7 @@ if (! empty($hookmanager->resArray['options'])) {
 	</span>
 	</td>
 	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
-	<td><a href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo $captcha_refresh; ?></a></td>
+	<td><a href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a></td>
 	</tr></table>
 
 	</td></tr>
@@ -128,8 +123,8 @@ if (! empty($hookmanager->resArray['options'])) {
 
 <div id="login_line2" style="clear: both">
 
-<!-- Button Send password -->
-<br><input id="password" type="submit" <?php echo $disabled; ?> class="button" name="password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
+<!-- Button "Regenerate and Send password" -->
+<br><input type="submit" <?php echo $disabled; ?> class="button" name="password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
 <div align="center" style="margin-top: 8px;">
@@ -146,6 +141,15 @@ if (! empty($hookmanager->resArray['options'])) {
 
 </div>
 
+</div>
+
+<!-- Title with version -->
+<div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
+<?php
+if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
+echo dol_escape_htmltag($title); 
+if ($disablenofollow) echo '</a>';
+?>
 </div>
 
 </form>

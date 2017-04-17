@@ -111,7 +111,7 @@ if (! empty($id))
 	$filter['t.rowid']=$id;
 }
 
-$result = $object->fetch_all('DESC','t.rowid', 0, 0, 1, $filter);
+$result = $object->fetch_all('DESC','t.rowid', 0, 0, 1, $filter, 0);
 if ($result<0)
 {
 	echo "Error: ".$cronjob->error;

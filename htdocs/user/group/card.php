@@ -28,6 +28,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if(! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class/actions_multicompany.class.php');
 
 // Defini si peux lire/modifier utilisateurs et permisssions
@@ -209,6 +210,11 @@ if ($action == 'update')
         setEventMessages($langs->trans('ErrorForbidden'), null, 'mesgs');
     }
 }
+					
+// Actions to build doc
+$upload_dir = $conf->usergroup->dir_output;
+$permissioncreate=$user->rights->user->user->creer;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
 
@@ -220,6 +226,8 @@ llxHeader('',$langs->trans("GroupCard"));
 
 $form = new Form($db);
 $fuserstatic = new User($db);
+$form = new Form($db);
+$formfile = new FormFile($db);
 
 if ($action == 'create')
 {
@@ -446,9 +454,9 @@ else
 
             	foreach($object->members as $useringroup)
             	{
-            		$var=!$var;
+            		
 
-            		print "<tr ".$bc[$var].">";
+            		print '<tr class="oddeven">';
             		print '<td>';
             		print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
             		if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"),'redstar');
@@ -495,6 +503,37 @@ else
             }
             print "</table>";
             print "<br>";
+			
+			/*
+	         * Documents generes
+	         */
+	        $filename = dol_sanitizeFileName($object->ref);
+	        $filedir = $conf->usergroup->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	        $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+	        $genallowed = $user->rights->user->user->creer;
+	        $delallowed = $user->rights->user->user->supprimer;
+	
+	        $var = true;
+	
+	        $somethingshown = $formfile->show_documents('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+	
+			// Linked object block
+			$somethingshown = $form->showLinkedObjectBlock($object);
+	
+			// Show links to link elements
+			$linktoelem = $form->showLinkToObjectBlock($object);
+			if ($linktoelem) print '<br>'.$linktoelem;
+	
+	
+	        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	
+			// List of actions on element
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, 'usergroup', $socid);
+	        
+	        
+	        print '</div></div></div>';
         }
 
         /*
@@ -551,7 +590,6 @@ else
 
             print '</form>';
         }
-
     }
 }
 

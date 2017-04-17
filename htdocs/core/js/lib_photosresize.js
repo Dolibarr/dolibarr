@@ -33,6 +33,7 @@ function updateCoords(c)
 	//alert(parseInt(jQuery("#ratioforcrop").val()));
 	ratio=1;
 	if (parseInt(jQuery("#ratioforcrop").val()) > 0) ratio = parseInt(jQuery("#ratioforcrop").val());
+	//console.log(ratio);
 	jQuery('#x').val(Math.ceil(c.x * ratio));
 	jQuery('#y').val(Math.ceil(c.y * ratio));
 	jQuery('#x2').val(Math.ceil(c.x2 * ratio));

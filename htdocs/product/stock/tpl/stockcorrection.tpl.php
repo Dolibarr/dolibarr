@@ -21,12 +21,14 @@
 
 <!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
 <?php
+
         $productref = '';
         if ($object->element == 'product') $productref = $object->ref;
 
         $langs->load("productbatch");
 
-		if (empty($id)) $id = $object->id;
+
+        if (empty($id)) $id = $object->id;
 
 		print '<script type="text/javascript" language="javascript">
 		jQuery(document).ready(function() {
@@ -46,6 +48,9 @@
 		print load_fiche_titre($langs->trans("StockCorrection"),'','title_generic.png');
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
+
+        dol_fiche_head();
+        
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="correct_stock">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -127,12 +132,14 @@
 
 		print '</table>';
 
+        dol_fiche_end();
+        
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans('Save')).'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 		print '</div>';
+		
 		print '</form>';
-
 ?>
 <!-- END PHP STOCKCORRECTION.TPL.PHP -->

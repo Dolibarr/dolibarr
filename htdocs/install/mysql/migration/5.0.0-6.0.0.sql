@@ -24,6 +24,9 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+ALTER TABLE llx_extrafields ADD COLUMN langs varchar(24);
+
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN fk_unit integer DEFAULT NULL;
 
 ALTER TABLE llx_ecm_files ADD COLUMN ref varchar(128) AFTER rowid;
 ALTER TABLE llx_ecm_files CHANGE COLUMN fullpath filepath varchar(255);
@@ -98,6 +101,12 @@ CREATE TABLE llx_product_attribute_combination
   entity INT DEFAULT 1 NOT NULL
 );
 
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (1,'VT', 'Journal des ventes', 1, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (2,'AC', 'Journal des achats', 2, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (3,'BQ', 'Journal de banque', 3, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (4,'OD', 'Journal des opérations diverses', 0, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (5,'AN', 'Journal des à-nouveaux', 9, 1);
+
 ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
 
 
@@ -113,4 +122,54 @@ UPDATE llx_const set value='moono-lisa' where value = 'moono' AND name = 'FCKEDI
 
 ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+
+ALTER TABLE llx_user ADD COLUMN model_pdf varchar(255);
+ALTER TABLE llx_usergroup ADD COLUMN model_pdf varchar(255);
+
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('PRODUCT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/products', 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('CONTRACT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/contracts', 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USERGROUP_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/usergroups', 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USER_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/users', 'chaine', 0, '');
+
+ALTER TABLE llx_chargesociales ADD COLUMN ref varchar(16);
+ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;
+
+ALTER TABLE llx_cronjob ADD COLUMN processing integer NOT NULL DEFAULT 0;
+
+
+create table llx_payment_various
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  tms                   timestamp,
+  datec                 datetime,
+  datep                 date,
+  datev                 date,
+  sens                  smallint DEFAULT 0 NOT NULL,
+  amount                double(24,8) DEFAULT 0 NOT NULL,
+  fk_typepayment        integer NOT NULL,
+  num_payment           varchar(50),
+  label                 varchar(255),
+  accountancy_code		varchar(32),
+  entity                integer DEFAULT 1 NOT NULL,
+  note                  text,
+  fk_bank               integer,
+  fk_user_author        integer,
+  fk_user_modif         integer
+)ENGINE=innodb;
+
+
+create table llx_default_values
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity          integer DEFAULT 1 NOT NULL,		-- multi company id
+  type			  varchar(10),                      -- 'createform', 'filters', 'sortorder'
+  user_id         integer DEFAULT 0 NOT NULL,       -- 0 or user id
+  page            varchar(255),                     -- relative url of page
+  param           varchar(255),                     -- parameter
+  value		      varchar(128)                      -- value
+)ENGINE=innodb;
+
+ALTER TABLE llx_default_values ADD UNIQUE INDEX uk_default_values(type, entity, user_id, page, param);
+
+
 

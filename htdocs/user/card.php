@@ -37,6 +37,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -590,6 +591,11 @@ if (empty($reshook)) {
             setEventMessages($ldap->error, $ldap->errors, 'errors');
         }
     }
+		
+    // Actions to build doc
+    $upload_dir = $conf->user->dir_output;
+    $permissioncreate=$user->rights->user->user->creer;
+    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
@@ -600,6 +606,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formother=new FormOther($db);
 $formcompany = new FormCompany($db);
+$formfile = new FormFile($db);
 
 llxHeader('',$langs->trans("UserCard"));
 
@@ -716,11 +723,10 @@ if (($action == 'create') || ($action == 'adduserldap'))
 
     print dol_set_focus('#lastname');
 
-    print '<table class="border" width="100%">';
-
-    print '<tr>';
+    print '<table class="border centpercent">';
 
     // Lastname
+    print '<tr>';
     print '<td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
     print '<td>';
     if (! empty($ldap_lastname))
@@ -1196,7 +1202,11 @@ else
 		else
 		{
 			$title = $langs->trans("User");
-			$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '';
+
+			if ($user->rights->user->user->lire || $user->admin) {
+				$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+			}
 		}
 
         $head = user_prepare_head($object);
@@ -1249,7 +1259,6 @@ else
 			dol_fiche_head($head, 'user', $title, 0, 'user');
 
             dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-
 
 	        print '<div class="fichecenter">';
 	        print '<div class="fichehalfleft">';
@@ -1711,9 +1720,9 @@ else
 
                     foreach($groupslist as $group)
                     {
-                        $var=!$var;
+                        
 
-                        print "<tr ".$bc[$var].">";
+                        print '<tr class="oddeven">';
                         print '<td>';
                         if ($caneditgroup)
                         {
@@ -2339,8 +2348,40 @@ else
             print '</form>';
         }
 
-		if (! empty($conf->ldap->enabled) && ! empty($object->ldap_sid)) $ldap->close;
+        if ($action != 'edit')
+        {
+            print '<div class="fichecenter"><div class="fichehalfleft">';
+            /*
+             * Documents generes
+            */
+            $filename = dol_sanitizeFileName($object->ref);
+            $filedir = $conf->user->dir_output . "/" . dol_sanitizeFileName($object->ref);
+            $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+            $genallowed = $user->rights->user->user->creer;
+            $delallowed = $user->rights->user->user->supprimer;
+    
+            $var = true;
+    
+            $somethingshown = $formfile->show_documents('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+    
+    		// Show links to link elements
+    		$linktoelem = $form->showLinkToObjectBlock($object, null, null);
+    		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+    
+            print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+    
+    		// List of actions on element
+    		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+    		$formactions = new FormActions($db);
+    		$somethingshown = $formactions->showactions($object, 'user', $socid);
+            
+            
+            print '</div></div></div>';
+        }
+        
+		if (! empty($conf->ldap->enabled) && ! empty($object->ldap_sid)) $ldap->close();
     }
+    
 }
 
 if (! empty($conf->api->enabled) && ! empty($conf->use_javascript_ajax))

@@ -61,7 +61,7 @@ apache_install() {
 	# Enable dolibarr conf
 	if which a2enconf >/dev/null 2>&1 ;then
 		# a2enconf exists for ubuntu only
-		echo "Enable link for Apache config file with a3enconf"
+		echo "Enable link for Apache config file with a2enconf"
 		a2enconf dolibarr
 	else 
 		if [ -d /etc/$webserver/conf.d ] && [ ! -e /etc/$webserver/conf.d/dolibarr.conf ]; then

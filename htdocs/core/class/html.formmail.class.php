@@ -527,26 +527,7 @@ class FormMail extends Form
         				{
         				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
         				}
-        				$out.= $form->multiselectarray("receiver", $tmparray, GETPOST("receiver"), null, null, null,null, "90%");
-        			}
-        			if (isset($this->withtosocid) && $this->withtosocid > 0) // deprecated. TODO Remove this. Instead, fill withto with array before calling method.
-        			{
-        			    dol_syslog("get_form was called with a deprecated way: ->withtosocid must not be defined, only ->withto", LOG_WARNING);
-        				$liste=array();
-        				$soc=new Societe($this->db);
-        				$soc->fetch($this->withtosocid);
-        				foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
-        				{
-        					$liste[$key]=$value;
-        				}
-        				if ($this->withtofree) $out.= " ".$langs->trans("or")." ";
-        			    // multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
-        				$tmparray = $liste;
-        				foreach($tmparray as $key => $val)
-        				{
-        				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
-        				}
-        				$out.= $form->multiselectarray("receiver", $liste, GETPOST("receiver"), null, null, null,null, "90%");
+        				$out.= $form->multiselectarray("receiver", $tmparray, GETPOST("receiver"), null, null, 'inline-block minwidth500', null, "");
         			}
         		}
         		$out.= "</td></tr>\n";
@@ -574,8 +555,7 @@ class FormMail extends Form
         				{
         				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
         				}
-        				//$out.= $form->selectarray("receivercc", $this->withtocc, GETPOST("receivercc"), 1, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
-        				$out.= $form->multiselectarray("receivercc", $tmparray, GETPOST("receivercc"), null, null, null,null, "90%");
+        				$out.= $form->multiselectarray("receivercc", $tmparray, GETPOST("receivercc"), null, null, 'inline-block minwidth500',null, "");
         			}
         		}
         		$out.= "</td></tr>\n";

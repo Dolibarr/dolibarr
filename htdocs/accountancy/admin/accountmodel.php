@@ -911,11 +911,9 @@ if ($id)
             // Lines with values
             while ($i < $num)
             {
-                $var = ! $var;
-
                 $obj = $db->fetch_object($resql);
                 //print_r($obj);
-                print '<tr '.$bc[$var].' id="rowid-'.$obj->rowid.'">';
+                print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
                 if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
                 {
                     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
@@ -1198,14 +1196,13 @@ else
         {
         	if ($showemptyline)
         	{
-        		$var=!$var;
-        		print '<tr '.$bc[$var].'><td width="30%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+        		print '<tr class="oddeven"><td width="30%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
         		$showemptyline=0;
         	}
 
-            $var=!$var;
+            
             $value=$tabname[$i];
-            print '<tr '.$bc[$var].'><td width="50%">';
+            print '<tr class="oddeven"><td width="50%">';
             if (! empty($tabcond[$i]))
             {
                 print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">'.$langs->trans($tablib[$i]).'</a>';

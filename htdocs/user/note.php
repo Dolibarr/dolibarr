@@ -88,9 +88,13 @@ if ($id)
 	$head = user_prepare_head($object);
 
 	$title = $langs->trans("User");
-	dol_fiche_head($head, 'note', $title, 0, 'user');
+	dol_fiche_head($head, 'note', $title, -1, 'user');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '';
+
+	if ($user->rights->user->user->lire || $user->admin) {
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	}
 	
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
     
@@ -99,6 +103,7 @@ if ($id)
     print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
+	print '<div class="fichecenter">';
     print '<table class="border" width="100%">';
 
     // Login
@@ -123,6 +128,7 @@ if ($id)
 	print "</td></tr>";
 
     print "</table>";
+    print '</div>';
 
 	dol_fiche_end();
 

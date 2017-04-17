@@ -1117,7 +1117,7 @@ if (empty($reshook))
 	    $action = '';
 	}
 
-	elseif ($action == 'classin')
+	elseif ($action == 'classin' && $user->rights->fournisseur->facture->creer)
 	{
 	    $object->fetch($id);
 	    $result=$object->setProject($projectid);
@@ -1839,17 +1839,14 @@ if ($action == 'create')
         echo '</td></tr>';
         print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
-        if ($mysoc->country_code=='ES')
+        if ($mysoc->localtax1_assuj=="1" || $object->total_localtax1 != 0) //Localtax1
         {
-            if ($mysoc->localtax1_assuj=="1" || $object->total_localtax1 != 0) //Localtax1
-            {
-                print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
-            }
+            print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
+        }
 
-            if ($mysoc->localtax2_assuj=="1" || $object->total_localtax2 != 0) //Localtax2
-            {
-                print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
-            }
+        if ($mysoc->localtax2_assuj=="1" || $object->total_localtax2 != 0) //Localtax2
+        {
+            print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
         }
         print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($objectsrc->total_ttc)."</td></tr>";
 
@@ -2053,7 +2050,7 @@ else
     	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
     	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
     	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+    	                $morehtmlref.=$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:-1), $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
     	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
     	                $morehtmlref.='</form>';
     	            } else {
@@ -2149,7 +2146,9 @@ else
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentConditions');
 		print '<td>';
-		if ($action != 'editconditions') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+		if ($action != 'editconditions' && $user->rights->fournisseur->facture->creer) {
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+		}
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editconditions')
@@ -2169,7 +2168,9 @@ else
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+		if ($action != 'editmode' && $user->rights->fournisseur->facture->creer) {
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+		}
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editmode')
@@ -2208,7 +2209,7 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print fieldLabel('CurrencyRate','multicurrency_tx');
 			print '</td>';
-			if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
+			if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
 				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
@@ -2219,7 +2220,7 @@ else
 				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 			} else {
 				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
-				if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code != $conf->currency) {
+				if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 					print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
 					print '</div>';
@@ -2383,8 +2384,8 @@ else
     	        while ($i < $num)
     	        {
     	            $objp = $db->fetch_object($result);
-    	            $var=!$var;
-    	            print '<tr '.$bc[$var].'><td>';
+    	            
+    	            print '<tr class="oddeven"><td>';
     	            $paymentstatic->id=$objp->rowid;
     	            $paymentstatic->datepaye=$db->jdate($objp->dp);
     	            $paymentstatic->ref=($objp->ref ? $objp->ref : $objp->rowid);;
@@ -2421,7 +2422,7 @@ else
     	    }
     	    else
     	    {
-    	        print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td></tr>';
+    	        print '<tr class="oddeven"><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td></tr>';
     	    }
 
 			/*
@@ -2454,6 +2455,7 @@ else
 				print $langs->trans('AlreadyPaid');
 			print ' :</td><td align="right"'.(($totalpaye > 0)?' class="amountalreadypaid"':'').'>' . price($totalpaye) . '</td><td>&nbsp;</td></tr>';
 
+            $resteapayer = $object->total_ttc - $totalpaye;
 			$resteapayeraffiche = $resteapayer;
 			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
@@ -2665,13 +2667,17 @@ else
 	 	 		// Reopen a standard paid invoice
 	            if (($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
 	            {
-	                if (! $facidnext && $object->close_code != 'replaced')	// Not replaced by another invoice
+	                if (! $facidnext && $object->close_code != 'replaced' && $user->rights->fournisseur->facture->creer)	// Not replaced by another invoice
 	                {
 	                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
 	                }
 	                else
 	                {
-	                    print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span></div>';
+	                	if ($user->rights->fournisseur->facture->creer) {
+	                        print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span></div>';
+		                } elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
+			                print '<div class="inline-block divButAction"><span class="butActionRefused">'.$langs->trans('ReOpen').'</span></div>';
+		                }
 	                }
 	            }
 

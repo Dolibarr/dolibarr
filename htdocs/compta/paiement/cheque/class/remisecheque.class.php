@@ -511,7 +511,7 @@ class RemiseCheque extends CommonObject
 			$response->warning_delay=$conf->bank->cheque->warning_delay/60/60/24;
 			$response->label=$langs->trans("BankChecksToReceipt");
 			$response->url=DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank';
-			$response->img=img_object($langs->trans("BankChecksToReceipt"),"payment");
+			$response->img=img_object('',"payment");
 
 			while ($obj=$this->db->fetch_object($resql))
 			{

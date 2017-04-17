@@ -149,7 +149,7 @@ function user_prepare_head($object)
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
         $upload_dir = $conf->user->dir_output . "/" . $object->id;
-        $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+        $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
         $nbLinks=Link::count($db, $object->element, $object->id);
         $head[$h][0] = DOL_URL_ROOT.'/user/document.php?userid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
@@ -237,6 +237,11 @@ function user_admin_prepare_head()
     $head[$h][0] = DOL_URL_ROOT.'/admin/user.php';
     $head[$h][1] = $langs->trans("Parameters");
     $head[$h][2] = 'card';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/admin/usergroup.php';
+    $head[$h][1] = $langs->trans("Group");
+    $head[$h][2] = 'usergroupcard';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/user/admin/user_extrafields.php';
@@ -329,25 +334,23 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     $thumbsbyrow=6;
     print '<table class="noborder" width="100%">';
 
-    $var=false;
-
     // Title
     if ($foruserprofile)
     {
-    	print '<tr class="liste_titre"><th width="25%">'.$langs->trans("Parameter").'</th><th width="25%">'.$langs->trans("DefaultValue").'</th>';
+    	print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("Parameter").'</th><th>'.$langs->trans("DefaultValue").'</th>';
     	print '<th colspan="2">&nbsp;</th>';
 	    print '</tr>';
 
-	    print '<tr '.$bc[$var].'>';
+	    print '<tr>';
 	    print '<td>'.$langs->trans("DefaultSkin").'</td>';
 	    print '<td>'.$conf->global->MAIN_THEME.'</td>';
-	    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' id="check_MAIN_THEME" name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+	    print '<td align="left" class="nowrap" width="20%"><input id="check_MAIN_THEME" name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
 	    print '<td>&nbsp;</td>';
 	    print '</tr>';
     }
     else
     {
-    	print '<tr class="liste_titre"><th width="35%">'.$langs->trans("DefaultSkin").'</th>';
+    	print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("DefaultSkin").'</th>';
     	print '<th align="right">';
     	$url='https://www.dolistore.com/lang-en/4-skins';
     	if (preg_match('/fr/i',$langs->defaultlang)) $url='https://www.dolistore.com/fr/4-themes';
@@ -357,7 +360,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	print '</a>';
     	print '</th></tr>';
 
-    	print '<tr '.$bc[$var].'>';
+    	print '<tr>';
     	print '<td>'.$langs->trans("ThemeDir").'</td>';
     	print '<td>';
     	foreach($dirthemes as $dirtheme)
@@ -368,8 +371,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	print '</tr>';
     }
 
-    //$var=!$var;
-    print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">';
+    print '<tr><td colspan="'.$colspan.'">';
 
     print '<table class="nobordernopadding" width="100%"><tr><td><div align="center">';
 
@@ -405,11 +407,11 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     					print '</a><br>';
     					if ($subdir == $selected_theme)
     					{
-    						print '<input '.($edit?'':'disabled').' type="radio" class="'.($var?'imp':'').'pair themethumbs" style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
+    						print '<input '.($edit?'':'disabled').' type="radio" class="themethumbs" style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
     					}
     					else
     					{
-    						print '<input '.($edit?'':'disabled').' type="radio" class="'.($var?'imp':'').'pair themethumbs" style="border: 0px;" name="main_theme" value="'.$subdir.'"> '.$subdir;
+    						print '<input '.($edit?'':'disabled').' type="radio" class="themethumbs" style="border: 0px;" name="main_theme" value="'.$subdir.'"> '.$subdir;
     					}
 						print '</div>';
 
@@ -427,8 +429,8 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	// BackgroundColor
     if ($foruserprofile)
 	{
-	    /*$var=!$var;
-	    print '<tr '.$bc[$var].'>';
+	    /*
+	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
         print '<td>'.($conf->global->THEME_ELDY_TOPMENU_BACK1?$conf->global->THEME_ELDY_TOPMENU_BACK1:$langs->trans("Default")).'</td>';
         print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TOPMENU_BACK1" id="check_THEME_ELDY_TOPMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
@@ -450,8 +452,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	}
 	else
 	{
-	    $var=!$var;
-	    print '<tr '.$bc[$var].'>';
+	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("BackgroundColor").'</td>';
 	    print '<td colspan="'.($colspan-1).'">';
 	    //var_dump($conf->global->THEME_ELDY_BACKBODY);
@@ -473,8 +474,8 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	// TopMenuBackgroundColor
     if ($foruserprofile)
 	{
-	    /*$var=!$var;
-	    print '<tr '.$bc[$var].'>';
+	    /*
+	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
         print '<td>'.($conf->global->THEME_ELDY_TOPMENU_BACK1?$conf->global->THEME_ELDY_TOPMENU_BACK1:$langs->trans("Default")).'</td>';
         print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TOPMENU_BACK1" id="check_THEME_ELDY_TOPMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
@@ -496,10 +497,10 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	}
 	else
 	{
-	    $default='515870';
-	    if ($conf->theme == 'md') $default='5A3278';
-	    $var=!$var;
-	    print '<tr '.$bc[$var].'>';
+	    $default='5a6482';
+	    if ($conf->theme == 'md') $default='5a3278';
+	    
+	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
 	    print '<td colspan="'.($colspan-1).'">';
 	    if ($edit)
@@ -520,8 +521,8 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	// TopMenuBackgroundColor
 	if ($foruserprofile)
 	{
-	    /*$var=!$var;
-	     print '<tr '.$bc[$var].'>';
+	    /*
+	     print '<tr class="oddeven">';
 	     print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
 	     print '<td>'.($conf->global->THEME_ELDY_TOPMENU_BACK1?$conf->global->THEME_ELDY_TOPMENU_BACK1:$langs->trans("Default")).'</td>';
 	     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TOPMENU_BACK1" id="check_THEME_ELDY_TOPMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
@@ -544,8 +545,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	else
 	{
 	    $default=$langs->trans('No');
-	    $var=!$var;
-	    print '<tr '.$bc[$var].'>';
+	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
 	    print '<td colspan="'.($colspan-1).'">';
 	    if ($edit)
@@ -572,8 +572,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	}
 	else
 	{	
-	    $var=!$var;
-	    print '<tr '.$bc[$var].'>';
+	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("BackgroundTableTitleColor").'</td>';
 	    print '<td colspan="'.($colspan-1).'">';
 	    if ($edit)
@@ -584,7 +583,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	   	{
 	   		print $formother->showColor($conf->global->THEME_ELDY_BACKTITLE1, $langs->trans("Default"));
 	   	}
-    	print ' &nbsp; ('.$langs->trans("Default").': <strong>e6e6e6</strong>) ';
+    	print ' &nbsp; ('.$langs->trans("Default").': <strong>f0f0f0</strong>) ';  // $colorbacktitle1 in CSS
     	print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 	    print '</td>';
 
@@ -599,8 +598,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	}
 	else
 	{
-	    $var=!$var;
-	    print '<tr '.$bc[$var].'>';
+	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("TextTitleColor").'</td>';
 	    print '<td colspan="'.($colspan-1).'">';
 	    if ($edit)
@@ -622,8 +620,8 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	// Text LinkColor
 	if ($foruserprofile)
 	{
-	    /*$var=!$var;
-	     print '<tr '.$bc[$var].'>';
+	    /*
+	     print '<tr class="oddeven">';
 	     print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
 	     print '<td>'.($conf->global->THEME_ELDY_TOPMENU_BACK1?$conf->global->THEME_ELDY_TOPMENU_BACK1:$langs->trans("Default")).'</td>';
 	     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TOPMENU_BACK1" id="check_THEME_ELDY_TOPMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
@@ -645,8 +643,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	}
 	else
 	{
-	    $var=!$var;
-	    print '<tr '.$bc[$var].'>';
+	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("LinkColor").'</td>';
 	    print '<td colspan="'.($colspan-1).'">';
 	    if ($edit)
@@ -665,11 +662,10 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	}
 		
 	// Use Hover
-	$var=!$var;
 	if ($foruserprofile)
 	{
 	    /* Must first change option to choose color of highlight instead of yes or no.
-	     print '<tr '.$bc[$var].'>';
+	     print '<tr class="oddeven">';
 	     print '<td>'.$langs->trans("HighlightLinesOnMouseHover").'</td>';
 	     print '<td><input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER" disabled="disabled" type="checkbox" '.($conf->global->THEME_ELDY_USE_HOVER?" checked":"").'></td>';
 	     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
@@ -681,7 +677,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	}
 	else
 	{
-	    print '<tr '.$bc[$var].'>';
+	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("HighlightLinesColor").'</td>';
 	    print '<td colspan="'.($colspan-1).'">';
 	    //print '<input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled').' type="checkbox" '.($hoverdisabled?"":" checked").'>';

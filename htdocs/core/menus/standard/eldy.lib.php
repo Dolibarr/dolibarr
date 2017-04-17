@@ -466,7 +466,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
 		if (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 		{
-			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_mini);
+			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('thumbs/'.$mysoc->logo_mini);
 		}
 		else
 		{
@@ -478,7 +478,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		print '<div class="menu_titre" id="menu_titre_logo"></div>';
 		print '<div class="menu_top" id="menu_top_logo"></div>';
 		print '<div class="menu_contenu" id="menu_contenu_logo">';
-		print '<div class="center"><img class="companylogo" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 80%"></div>'."\n";
+		print '<div class="center"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 80%"></div>'."\n";
 		print '</div>';
 		print '<div class="menu_end" id="menu_end_logo"></div>';
 		print '</div>'."\n";
@@ -494,6 +494,16 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
         print "<!-- End SearchForm -->\n";
 	}
 
+	if (is_array($moredata) && ! empty($moredata['bookmarks']))
+	{
+	    print "\n";
+	    print "<!-- Begin Bookmarks -->\n";
+	    print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
+	    print $moredata['bookmarks'];
+	    print '</div>'."\n";
+	    print "<!-- End Bookmarks -->\n";
+	}
+	
 	/**
 	 * We update newmenu with entries found into database
 	 * --------------------------------------------------
@@ -535,6 +545,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/admin/ihm.php?mainmenu=home", $langs->trans("GUISetup"),1);
 
 				$newmenu->add("/admin/translation.php?mainmenu=home", $langs->trans("Translation"),1);
+				$newmenu->add("/admin/defaultvalues.php?mainmenu=home", $langs->trans("DefaultValues"),1, $conf->global->MAIN_FEATURES_LEVEL);
 				$newmenu->add("/admin/boxes.php?mainmenu=home", $langs->trans("Boxes"),1);
 				$newmenu->add("/admin/delais.php?mainmenu=home",$langs->trans("MenuWarnings"),1);
 				$newmenu->add("/admin/security_other.php?mainmenu=home", $langs->trans("Security"),1);
@@ -611,8 +622,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 				if ($user->rights->societe->creer)
 				{
-					$newmenu->add("/societe/soc.php?action=create", $langs->trans("MenuNewThirdParty"),1);
-					if (! $conf->use_javascript_ajax) $newmenu->add("/societe/soc.php?action=create&amp;private=1",$langs->trans("MenuNewPrivateIndividual"),1);
+					$newmenu->add("/societe/card.php?action=create", $langs->trans("MenuNewThirdParty"),1);
+					if (! $conf->use_javascript_ajax) $newmenu->add("/societe/card.php?action=create&amp;private=1",$langs->trans("MenuNewPrivateIndividual"),1);
 				}
 			}
 
@@ -630,7 +641,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=2", $langs->trans("LastProspectContactInProcess"), 2, $user->rights->societe->lire);
 				if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=3", $langs->trans("LastProspectContactDone"), 2, $user->rights->societe->lire);
 				*/
-				$newmenu->add("/societe/soc.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 2, $user->rights->societe->creer);
+				$newmenu->add("/societe/card.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 2, $user->rights->societe->creer);
 				//$newmenu->add("/contact/list.php?leftmenu=customers&amp;type=p", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
 			}
 
@@ -640,7 +651,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$langs->load("commercial");
 				$newmenu->add("/societe/list.php?type=c&leftmenu=customers", $langs->trans("ListCustomersShort"), 1, $user->rights->societe->lire, '', $mainmenu, 'customers');
 
-				$newmenu->add("/societe/soc.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"), 2, $user->rights->societe->creer);
+				$newmenu->add("/societe/card.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"), 2, $user->rights->societe->creer);
 				//$newmenu->add("/contact/list.php?leftmenu=customers&amp;type=c", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
 			}
 
@@ -649,7 +660,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			{
 				$langs->load("suppliers");
 				$newmenu->add("/societe/list.php?type=f&leftmenu=suppliers", $langs->trans("ListSuppliersShort"), 1, $user->rights->fournisseur->lire, '', $mainmenu, 'suppliers');
-				$newmenu->add("/societe/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("MenuNewSupplier"), 2, $user->rights->societe->creer && $user->rights->fournisseur->lire);
+				$newmenu->add("/societe/card.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("MenuNewSupplier"), 2, $user->rights->societe->creer && $user->rights->fournisseur->lire);
 			}
 
 			// Contacts
@@ -790,7 +801,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			{
 				$langs->load("bills");
 				$newmenu->add("/compta/facture/list.php?leftmenu=customers_bills",$langs->trans("BillsCustomers"),0,$user->rights->facture->lire);
-				$newmenu->add("/compta/facture.php?action=create",$langs->trans("NewBill"),1,$user->rights->facture->creer);
+				$newmenu->add("/compta/facture/card.php?action=create",$langs->trans("NewBill"),1,$user->rights->facture->creer);
 				$newmenu->add("/compta/facture/list.php?leftmenu=customers_bills",$langs->trans("List"),1,$user->rights->facture->lire);
 
 				if ($usemenuhider || empty($leftmenu) || preg_match('/customers_bills/', $leftmenu))
@@ -992,6 +1003,44 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				{
 					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('',$langs->trans("Journalization"),1,$user->rights->accounting->comptarapport->lire);
 
+					// Multi journal
+					$sql = "SELECT rowid, code, label, nature";
+					$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
+					// $sql.= " WHERE entity = ".$conf->entity;
+					$sql.= " ORDER BY code";
+
+					$resql = $db->query($sql);
+					if ($resql)
+					{
+						$numr = $db->num_rows($resql);
+						$i = 0;
+
+						if ($numr > 0)
+						{
+    						while ($i < $numr)
+    						{
+    							$objp = $db->fetch_object($resql);
+    
+    							if ($objp->nature == 1) $nature="sells";
+    							if ($objp->nature == 2) $nature="purchases";
+    							if ($objp->nature == 3) $nature="bank";
+    							if ($objp->nature == 4) $nature="various";
+    							if ($objp->nature == 9) $nature="hasnew";
+    
+    							if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&code_journal='.$objp->code,dol_trunc($objp->label,25),2,$user->rights->accounting->comptarapport->lire);
+    							$i++;
+    						}
+						}
+						else
+						{
+						    // Should not happend. Entries are added
+						    $newmenu->add('',$langs->trans("NoJournalDefined"), 2, $user->rights->accounting->comptarapport->lire);
+						}
+					}
+					else dol_print_error($db);
+					$db->free($resql);
+
+					/*
 					$sql = "SELECT rowid, label, accountancy_journal";
 					$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 					$sql.= " WHERE entity = ".$conf->entity;
@@ -1019,6 +1068,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/journal/sellsjournal.php?mainmenu=accountancy&amp;leftmenu=accountancy_journal",$langs->trans("SellsJournal"),2,$user->rights->accounting->comptarapport->lire);
 					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/journal/purchasesjournal.php?mainmenu=accountancy&amp;leftmenu=accountancy_journal",$langs->trans("PurchasesJournal"),2,$user->rights->accounting->comptarapport->lire);
 					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/journal/expensereportsjournal.php?mainmenu=accountancy&amp;leftmenu=accountancy_journal",$langs->trans("ExpenseReportsJournal"),2,$user->rights->accounting->comptarapport->lire);
+					*/
 				}
 
 				// General Ledger
@@ -1043,7 +1093,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				// Fiscal year
 				if ($conf->global->MAIN_FEATURES_LEVEL > 0)     // Not yet used. In a future will lock some periods.
 				{
-				    if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("FiscalPeriod"),1,$user->rights->accounting->fiscalyear, '', $mainmenu, 'fiscalyear');
+				    if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy&leftmenu=accountancy_periods", $langs->trans("FiscalPeriod"),1,$user->rights->accounting->fiscalyear, '', $mainmenu, 'fiscalyear');
 				}
 			}
 
@@ -1107,10 +1157,11 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
             if (! empty($conf->categorie->enabled)) {
                 $langs->load("categories");
-                //$newmenu->add("/compta/bank/categ.php",$langs->trans("Rubriques"),1,$user->rights->banque->configurer);
                 $newmenu->add("/categories/index.php?type=5",$langs->trans("Rubriques"),0,$user->rights->categorie->creer, '', $mainmenu, 'tags');
                 $newmenu->add("/categories/card.php?action=create&amp;type=5",$langs->trans("NewCategory"),1,$user->rights->categorie->creer);
-            }
+                $newmenu->add("/compta/bank/categ.php",$langs->trans("RubriquesTransactions"),0,$user->rights->categorie->creer, '', $mainmenu, 'tags');
+                $newmenu->add("/compta/bank/categ.php",$langs->trans("NewCategory"),1,$user->rights->categorie->creer, '', $mainmenu, 'tags');
+	    }
 
 			// Prelevements
 			if (! empty($conf->prelevement->enabled))
@@ -1226,29 +1277,32 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$langs->load("projects");
 
 				// Project affected to user
-				$newmenu->add("/projet/index.php?leftmenu=myprojects&mode=mine", $langs->trans("MyProjects"), 0, $user->rights->projet->lire, '', $mainmenu, 'myprojects');
-				$newmenu->add("/projet/card.php?leftmenu=myprojects&action=create&mode=mine", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
-				$newmenu->add("/projet/list.php?leftmenu=myprojects&mode=mine&search_status=99", $langs->trans("List"), 1, $user->rights->projet->lire);
+				$newmenu->add("/projet/index.php?leftmenu=projects&search_project_user=".GETPOST('search_project_user'), $langs->trans("Projects"), 0, $user->rights->projet->lire, '', $mainmenu, 'projects');
+				$newmenu->add("/projet/card.php?leftmenu=projects&action=create&search_project_user=".GETPOST('search_project_user'), $langs->trans("NewProject"), 1, $user->rights->projet->creer);
+				$newmenu->add("/projet/list.php?leftmenu=projects&search_project_user=".GETPOST('search_project_user')."&search_status=99", $langs->trans("List"), 1, $user->rights->projet->lire);
 
 				// All project i have permission on
+				/*
 				$newmenu->add("/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire && $user->rights->projet->lire, '', $mainmenu, 'projects');
 				$newmenu->add("/projet/card.php?leftmenu=projects&action=create", $langs->trans("NewProject"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
 				$newmenu->add("/projet/list.php?leftmenu=projects&search_status=99", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
-				$newmenu->add("/projet/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
-
+                */
+				$newmenu->add("/projet/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->rights->projet->lire);
+				
 				if (empty($conf->global->PROJECT_HIDE_TASKS))
 				{
 					// Project affected to user
-					$newmenu->add("/projet/activity/index.php?leftmenu=mytasks&mode=mine", $langs->trans("MyActivities"), 0, $user->rights->projet->lire);
-					$newmenu->add("/projet/tasks.php?leftmenu=mytasks&action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
-					$newmenu->add("/projet/tasks/list.php?leftmenu=mytasks&mode=mine", $langs->trans("List"), 1, $user->rights->projet->lire);
-					$newmenu->add("/projet/activity/perweek.php?leftmenu=mytasks&mode=mine", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->lire);
+					$newmenu->add("/projet/activity/index.php?leftmenu=tasks&search_project_user=".GETPOST('search_project_user'), $langs->trans("Activities"), 0, $user->rights->projet->lire);
+					$newmenu->add("/projet/tasks.php?leftmenu=tasks&action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
+					$newmenu->add("/projet/tasks/list.php?leftmenu=tasks&search_project_user=".GETPOST('search_project_user'), $langs->trans("List"), 1, $user->rights->projet->lire);
+					$newmenu->add("/projet/activity/perweek.php?leftmenu=tasks&search_project_user=".GETPOST('search_project_user'), $langs->trans("NewTimeSpent"), 1, $user->rights->projet->lire);
 
 					// All project i have permission on
-					$newmenu->add("/projet/activity/index.php", $langs->trans("Activities"), 0, $user->rights->projet->lire && $user->rights->projet->lire);
+					/*$newmenu->add("/projet/activity/index.php", $langs->trans("Activities"), 0, $user->rights->projet->lire && $user->rights->projet->lire);
 					$newmenu->add("/projet/tasks.php?action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
 					$newmenu->add("/projet/tasks/list.php", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
 					$newmenu->add("/projet/activity/perweek.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer && $user->rights->projet->lire);
+					*/
 				}
 
 				// Categories
@@ -1422,7 +1476,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$newmenu->add('/compta/bank/card.php?id='.$objp->rowid,$objp->label,1,$user->rights->banque->lire);
 					if ($objp->rappro && $objp->courant != Account::TYPE_CASH && empty($objp->clos))  // If not cash account and not closed and can be reconciliate
 					{
-						$newmenu->add('/compta/bank/bankentries.php?id='.$objp->rowid,$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
+						$newmenu->add('/compta/bank/bankentries.php?action=reconcile&contextpage=banktransactionlist-'.$objp->rowid.'&account='.$objp->rowid.'&id='.$objp->rowid.'&search_conciliated=0',$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
 					}
 					$i++;
 				}
@@ -1588,16 +1642,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		}
 
 		if ($altok) print '<div class="blockvmenuend"></div>';
-	}
-
-	if (is_array($moredata) && ! empty($moredata['bookmarks']))
-	{
-	        print "\n";
-	        print "<!-- Begin Bookmarks -->\n";
-	        print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
-	        print $moredata['bookmarks'];
-	        print '</div>'."\n";
-	        print "<!-- End Bookmarks -->\n";
 	}
 
 	return count($menu_array);

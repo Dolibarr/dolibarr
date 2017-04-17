@@ -54,7 +54,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
-	<td class="linecoldescription"><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
+	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
 	<?php 
 	if (($line->info_bits & 2) == 2) {
 	?>

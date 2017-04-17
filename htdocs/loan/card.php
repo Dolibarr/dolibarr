@@ -98,13 +98,30 @@ if (empty($reshook))
     		$datestart	= dol_mktime(12, 0, 0, GETPOST('startmonth','int'), GETPOST('startday','int'), GETPOST('startyear','int'));
     		$dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
     		$capital 	= price2num(GETPOST('capital'));
-    
+            $rate       = GETPOST('rate');
+            
     		if (! $capital)
     		{
+    		    $error++; $action = 'create';
     			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
-    			$action = 'create';
     		}
-    		else
+    		if (! $datestart)
+    		{
+    		    $error++; $action = 'create';
+    		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateStart")), null, 'errors');
+    		}
+    		if (! $dateend)
+    		{
+    		    $error++; $action = 'create';
+    		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateEnd")), null, 'errors');
+    		}
+    		if ($rate == '')
+    		{
+    		    $error++; $action = 'create';
+    		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Rate")), null, 'errors');
+    		}
+    		
+    		if (! $error)
     		{
     			$object->label					= GETPOST('label');
     			$object->fk_bank				= GETPOST('accountid');
@@ -112,7 +129,7 @@ if (empty($reshook))
     			$object->datestart				= $datestart;
     			$object->dateend				= $dateend;
     			$object->nbterm					= GETPOST('nbterm');
-    			$object->rate					= GETPOST('rate');
+    			$object->rate					= $rate;
     			$object->note_private 			= GETPOST('note_private');
     			$object->note_public 			= GETPOST('note_public');
     			$object->fk_project 			= GETPOST('fk_project');
@@ -128,7 +145,9 @@ if (empty($reshook))
     			$id=$object->create($user);
     			if ($id <= 0)
     			{
+    			    $error++;
     				setEventMessages($object->error, $object->errors, 'errors');
+    				$action = 'create';
     			}
     		}
     	}
@@ -259,25 +278,25 @@ if ($action == 'create')
 	}
 
     // Capital
-    print '<tr><td class="fieldrequired">'.$langs->trans("LoanCapital").'</td><td><input name="capital" size="10" value="' . GETPOST("capital") . '"></td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("LoanCapital").'</td><td><input name="capital" size="10" value="' . dol_escape_htmltag(GETPOST("capital")) . '"></td></tr>';
 
 	// Date Start
 	print "<tr>";
-    print '<td>'.$langs->trans("DateStart").'</td><td>';
+    print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
     print $form->select_date($datestart?$datestart:-1,'start','','','','add',1,1,1);
     print '</td></tr>';
 
 	// Date End
 	print "<tr>";
-    print '<td>'.$langs->trans("DateEnd").'</td><td>';
+    print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
     print $form->select_date($dateend?$dateend:-1,'end','','','','add',1,1,1);
     print '</td></tr>';
 
 	// Number of terms
-	print '<tr><td>'.$langs->trans("Nbterms").'</td><td><input name="nbterm" size="5" value="' . GETPOST('nbterm') . '"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Nbterms").'</td><td><input name="nbterm" size="5" value="' . dol_escape_htmltag(GETPOST('nbterm')) . '"></td></tr>';
 
 	// Rate
-    print '<tr><td>'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . GETPOST("rate") . '"> %</td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . dol_escape_htmltag(GETPOST("rate")) . '"> %</td></tr>';
 
     // Project
     if (! empty($conf->projet->enabled))
@@ -296,8 +315,8 @@ if ($action == 'create')
     
     // Note Private
     print '<tr>';
-    print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
-    print '<td class="tdtop">';
+    print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
+    print '<td>';
 
     $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 160, 'dolibarr_notes', 'In', false, true, true, ROWS_6, '90%');
     print $doleditor->Create(1);
@@ -306,8 +325,8 @@ if ($action == 'create')
 
     // Note Public
     print '<tr>';
-    print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
-    print '<td class="tdtop">';
+    print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
+    print '<td>';
     $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 160, 'dolibarr_notes', 'In', false, true, true, ROWS_6, '90%');
     print $doleditor->Create(1);
     print '</td></tr>';
@@ -463,7 +482,7 @@ if ($id > 0)
 		}
 
     	// Date start
-		print "<tr><td>".$langs->trans("DateStart")."</td>";
+		print '<tr><td>'.$langs->trans("DateStart")."</td>";
 		print "<td>";
 		if ($action == 'edit')
 		{
@@ -476,7 +495,7 @@ if ($id > 0)
 		print "</td></tr>";
 
 		// Date end
-		print "<tr><td>".$langs->trans("DateEnd")."</td>";
+		print '<tr><td>'.$langs->trans("DateEnd")."</td>";
 		print "<td>";
 		if ($action == 'edit')
 		{
@@ -489,7 +508,7 @@ if ($id > 0)
 		print "</td></tr>";
 
 		// Nbterms
-		print '<tr><td">'.$langs->trans("Nbterms").'</td>';
+		print '<tr><td>'.$langs->trans("Nbterms").'</td>';
 		print '<td>';
 		if ($action == 'edit')
 		{
@@ -502,7 +521,7 @@ if ($id > 0)
 		print '</td></tr>';
 
 		// Rate
-		print '<tr><td">'.$langs->trans("Rate").'</td>';
+		print '<tr><td>'.$langs->trans("Rate").'</td>';
 		print '<td>';
 		if ($action == 'edit')
 		{
@@ -633,8 +652,8 @@ if ($id > 0)
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
 				print '<td><a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_payment."</td>\n";

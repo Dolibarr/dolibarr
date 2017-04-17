@@ -266,20 +266,20 @@ if ($resql)
 		print '</td>';
 		print "</tr>";
 
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print "<td width=\"100px\">".$langs->trans("Title")."</td>";
 		print "<td><input type=\"text\" class=\"flat\" name=\"external_rss_title_" . $idrss . "\" value=\"" . @constant("EXTERNAL_RSS_TITLE_" . $idrss) . "\" size=\"64\"></td>";
 		print "</tr>";
 
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("URL")."</td>";
 		print "<td><input type=\"text\" class=\"flat\" name=\"external_rss_urlrss_" . $idrss . "\" value=\"" . @constant("EXTERNAL_RSS_URLRSS_" . $idrss) . "\" size=\"64\"></td>";
 		print "</tr>";
 
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("Status")."</td>";
 		print "<td>";
 	    if ($result > 0 && empty($rss->error))
@@ -299,8 +299,8 @@ if ($resql)
 		// Logo
 	    if ($result > 0 && empty($rss->error))
 	    {
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			
+			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Logo")."</td>";
 			print '<td>';
 			$imageurl=$rssparser->getImageUrl();

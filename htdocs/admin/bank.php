@@ -199,7 +199,7 @@ while ($i < $nbofbank)
 {
 	$var = !$var;
 
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>'.$bankorder[$i][0]."</td><td>\n";
 	print $bankorder[$i][1];
 	print '</td>';

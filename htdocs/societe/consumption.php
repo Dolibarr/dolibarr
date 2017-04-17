@@ -112,7 +112,7 @@ if (empty($socid))
 }
 
 $head = societe_prepare_head($object);
-dol_fiche_head($head, 'consumption', $langs->trans("ThirdParty"),0,'company');
+dol_fiche_head($head, 'consumption', $langs->trans("ThirdParty"), -1, 'company');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 
@@ -407,8 +407,8 @@ if ($sql_select)
 
 		if (is_object($documentstaticline)) $documentstaticline->statut=$objp->status;
 
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print '<td class="nobordernopadding nowrap" width="100">';
 		print $documentstatic->getNomUrl(1);
 		print '</td>';

@@ -183,7 +183,7 @@ class InfoBox
      *  @param	string	$zone       	Name of area (0 for Homepage, ...)
      *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
      *  @param  int     $userid     	Id of user
-     *  @return int                   	<0 if KO, >= 0 if OK
+     *  @return int                   	<0 if KO, 0=Nothing done, > 0 if OK
      */
     static function saveboxorder($db, $zone,$boxorder,$userid=0)
     {

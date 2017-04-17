@@ -1509,7 +1509,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
     $sql.= " WHERE type = '".$type."'";
     $sql.= " AND entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
     $sql.= " ORDER BY description DESC";
-
+		
     dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql)
@@ -1530,7 +1530,6 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 
                 $const=$obj->description;
                 $dirtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
-
                 $listoffiles=array();
 
                 // Now we add models found in directories scanned

@@ -3,7 +3,8 @@
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2017 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -307,7 +308,7 @@ class Project extends CommonObject
                 	}
                 }
 
-                if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref != $this->ref))
+                if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref))
                 {
                 	// We remove directory
                 	if ($conf->projet->dir_output)
@@ -592,7 +593,8 @@ class Project extends CommonObject
 
         // Set fk_projet into elements to null
         $listoftables=array(
-        		'facture'=>'fk_projet','propal'=>'fk_projet','commande'=>'fk_projet','facture_fourn'=>'fk_projet','commande_fournisseur'=>'fk_projet',
+        		'facture'=>'fk_projet','propal'=>'fk_projet','commande'=>'fk_projet',
+                'facture_fourn'=>'fk_projet','commande_fournisseur'=>'fk_projet','supplier_proposal'=>'fk_projet',
         		'expensereport_det'=>'fk_projet','contrat'=>'fk_projet','fichinter'=>'fk_projet','don'=>'fk_projet'
         		);
         foreach($listoftables as $key => $value)
@@ -1346,7 +1348,7 @@ class Project extends CommonObject
 
 				if (dol_mkdir($clone_project_dir) >= 0)
 				{
-					$filearray=dol_dir_list($ori_project_dir,"files",0,'','(\.meta|_preview\.png)$','',SORT_ASC,1);
+					$filearray=dol_dir_list($ori_project_dir,"files",0,'','(\.meta|_preview.*\.png)$','',SORT_ASC,1);
 					foreach($filearray as $key => $file)
 					{
 						$rescopy = dol_copy($ori_project_dir . '/' . $file['name'], $clone_project_dir . '/' . $file['name'],0,1);
@@ -1692,8 +1694,8 @@ class Project extends CommonObject
             $response->warning_delay = $conf->projet->warning_delay/60/60/24;
             $response->label = $langs->trans("OpenedProjects");
             if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/list.php?search_status=1&mainmenu=project';
-            else $response->url = DOL_URL_ROOT.'/projet/list.php?mode=mine&search_status=1&mainmenu=project';
-            $response->img = img_object($langs->trans("Projects"),"project");
+            else $response->url = DOL_URL_ROOT.'/projet/list.php?search_project_user=-1&search_status=1&mainmenu=project';
+            $response->img = img_object('',"projectpub");
 
             // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
@@ -1744,16 +1746,19 @@ class Project extends CommonObject
 	 */
 	function load_state_board()
 	{
-	    global $conf;
+	    global $user;
 
 	    $this->nb=array();
 
-	    $sql = "SELECT count(u.rowid) as nb";
-	    $sql.= " FROM ".MAIN_DB_PREFIX."projet as u";
+	    $sql = "SELECT count(p.rowid) as nb";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	    $sql.= " WHERE";
-	    //$sql.= " WHERE u.fk_statut > 0";
-	    //$sql.= " AND employee != 0";
-	    $sql.= " u.entity IN (".getEntity('projet', 1).")";
+	    $sql.= " p.entity IN (".getEntity('projet', 1).")";
+		if (! $user->rights->projet->all->lire) 
+		{
+			$projectsListId = $this->getProjectsAuthorizedForUser($user,0,1);
+			$sql .= "AND p.rowid IN (".$projectsListId.")";
+		}
 
 	    $resql=$this->db->query($sql);
 	    if ($resql)

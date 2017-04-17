@@ -673,7 +673,8 @@ else
 
             print "</table><br>";
 
-
+			print '<hr style="margin-bottom: 20px">';
+			
             // Add personnal information
             print load_fiche_titre('<div class="comboperso">'.$langs->trans("PersonalInformations").'</div>','','');
 

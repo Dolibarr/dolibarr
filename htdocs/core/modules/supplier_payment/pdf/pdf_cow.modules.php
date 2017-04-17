@@ -530,9 +530,10 @@ class pdf_cow extends ModelePDFSuppliersPayments
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
 	 *   @param		int			$hidebottom		Hide bottom bar of array
+	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0, $currency='')
 	{
 		global $conf,$mysoc;
 
@@ -540,6 +541,7 @@ class pdf_cow extends ModelePDFSuppliersPayments
 		$hidebottom=0;
 		if ($hidetop) $hidetop=-1;
 
+		$currency = !empty($currency) ? $currency : $conf->currency;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
         // Amount in (at tab_top - 1)
@@ -550,7 +552,7 @@ class pdf_cow extends ModelePDFSuppliersPayments
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3) - 60, $tab_top-6);
 		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 		
-		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->currency));
+		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$currency));
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top);
 		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 

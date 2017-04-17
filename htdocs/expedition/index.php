@@ -53,7 +53,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    print '<tr '.$bc[$var].'><td>';
+    print '<tr class="oddeven"><td>';
     print $langs->trans("Shipment").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
     print "</table></form><br>\n";
 }
@@ -88,7 +88,7 @@ if ($resql)
 	{
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("SendingsToValidate").'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("SendingsToValidate").'</th></tr>';
 		$i = 0;
 		$var = True;
 		while ($i < $num)
@@ -99,7 +99,7 @@ if ($resql)
 			$shipment->ref=$obj->ref;
 			$shipment->ref_customer=$obj->ref_customer;
 				
-			$var=!$var;
+			
 			print "<tr ".$bc[$var].'><td class="nowrap">';
 			print $shipment->getNomUrl(1);
 			print "</td>";
@@ -141,7 +141,7 @@ if ($resql)
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OrdersToProcess").'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("OrdersToProcess").'</th></tr>';
 		$var = True;
 		while ($i < $num)
 		{
@@ -156,8 +156,8 @@ if ($resql)
 			$companystatic->name=$obj->name;
 			$companystatic->id=$obj->socid;
 			
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">';
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
@@ -203,7 +203,7 @@ if ( $resql )
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OrdersInProcess").'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("OrdersInProcess").'</th></tr>';
 		$var = True;
 		while ($i < $num)
 		{
@@ -218,7 +218,7 @@ if ( $resql )
             $companystatic->name=$obj->name;
 			$companystatic->id=$obj->socid;
 				
-			$var=!$var;
+			
 			print "<tr ".$bc[$var]."><td>";
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
@@ -264,7 +264,7 @@ if ($resql)
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("LastSendings",$num).'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("LastSendings",$num).'</th></tr>';
 		$var = True;
 		while ($i < $num)
 		{
@@ -274,8 +274,8 @@ if ($resql)
 			$shipment->ref=$obj->ref;
 			$shipment->ref_customer=$obj->ref_customer;
 				
-			$var=!$var;
-			print '<tr '.$bc[$var].'><td>';
+			
+			print '<tr class="oddeven"><td>';
 			print $shipment->getNomUrl(1);
 			print '</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';

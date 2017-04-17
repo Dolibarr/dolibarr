@@ -82,7 +82,7 @@ function project_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -150,8 +150,23 @@ function task_prepare_head($object)
 	$head[$h][2] = 'task_contact';
 	$h++;
 
+	// Is there timespent ?
+	$nbTimeSpent=0;
+	$sql = "SELECT t.rowid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
+	$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
+	$sql .= " AND t.fk_task =".$object->id;
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+	    $obj = $db->fetch_object($resql);
+	    if ($obj) $nbTimeSpent=1;
+	}
+	else dol_print_error($db);
+	
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
 	$head[$h][1] = $langs->trans("TimeSpent");
+	if ($nbTimeSpent > 0) $head[$h][1].= ' <span class="badge">...</span>';
 	$head[$h][2] = 'task_time';
 	$h++;
 
@@ -177,7 +192,7 @@ function task_prepare_head($object)
 	$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . '/' .dol_sanitizeFileName($object->ref);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$nbFiles = count(dol_dir_list($filesdir,'files',0,'','(\.meta|_preview\.png)$'));
+	$nbFiles = count(dol_dir_list($filesdir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
@@ -635,7 +650,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY))
 				{
 				    // Thirdparty
-				    print '<td class="nowrap">';
+				    print '<td class="tdoverflowmax100">';
 				    $thirdpartystatic->id=$lines[$i]->socid;
 				    $thirdpartystatic->name=$lines[$i]->thirdparty_name;
 				    print $thirdpartystatic->getNomUrl(1, 'project', 10);
@@ -839,10 +854,10 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY))
 				{
 				    // Thirdparty
-				    print '<td class="nowrap">';
+				    print '<td class="tdoverflowmax100">';
 				    $thirdpartystatic->id=$lines[$i]->thirdparty_id;
 				    $thirdpartystatic->name=$lines[$i]->thirdparty_name;
-				    print $thirdpartystatic->getNomUrl(1, 'project', 10);
+				    print $thirdpartystatic->getNomUrl(1, 'project');
 				    print '</td>';
 				}
 				
@@ -919,7 +934,6 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
                     $tableCell.='</td>';
                     print $tableCell;
 		        }
-		        dol_syslog("yyy");
 		        
 				print '<td align="right">';
 				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("YouAreNotContactOfProject"));
@@ -1135,8 +1149,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 			    $projectstatic->datee = $db->jdate($objp->datee);
 			    $projectstatic->dateo = $db->jdate($objp->dateo);
 			     
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
 				print '<td>';
 				print $projectstatic->getNomUrl(1);
 				if (! in_array('projectlabel', $hiddenfields)) print '<br>'.dol_trunc($objp->title,24);

@@ -116,8 +116,8 @@ class dolprintIPP
         {
 	        foreach ($jobs as $value)
 	        {
-	            $var=!$var;
-	            print "<tr ".$bc[$var].">";
+	            
+	            print '<tr class="oddeven">';
 	            print '<td>'.$value->job_id->_value0.'</td>';
 	            print '<td>'.$value->job_originating_user_name->_value0.'</td>';
 	            print '<td>'.$value->printer_uri->_value0.'</td>';

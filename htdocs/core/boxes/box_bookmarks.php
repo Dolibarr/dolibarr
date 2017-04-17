@@ -94,7 +94,7 @@ class box_bookmarks extends ModeleBoxes
                         'target' => $objp->target?'newtab':'',
                     );
                     $this->info_box_contents[$line][1] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $objp->title,
                         'url' => $objp->url,
                         'tooltip' => $objp->title,
@@ -117,7 +117,7 @@ class box_bookmarks extends ModeleBoxes
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );

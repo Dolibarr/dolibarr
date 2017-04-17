@@ -50,11 +50,11 @@ $var = true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 $var = ! $var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
 $var = ! $var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
 $var = ! $var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
+print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) {
     // Compare version with last install database version (upgrades never occured)
@@ -95,13 +95,13 @@ print '<!-- for a local check target=local&xmlshortfile=... -->'."\n";
 if (dol_is_file($xmlfile))
 {
     print '<input type="radio" name="target" value="local"'.((! GETPOST('target') || GETPOST('target') == 'local') ? 'checked="checked"':'').'"> '.$langs->trans("LocalSignature").' = ';
-    print '<input name="xmlshortfile" class="flat minwidth200" value="'.dol_escape_htmltag($xmlshortfile).'">';
+    print '<input name="xmlshortfile" class="flat minwidth400" value="'.dol_escape_htmltag($xmlshortfile).'">';
     print '<br>';
 }
 else
 {
     print '<input type="radio" name="target" value="local"> '.$langs->trans("LocalSignature").' = ';
-    print '<input name="xmlshortfile" class="flat minwidth200" value="'.dol_escape_htmltag($xmlshortfile).'">';
+    print '<input name="xmlshortfile" class="flat minwidth400" value="'.dol_escape_htmltag($xmlshortfile).'">';
     print ' <span class="warning">('.$langs->trans("AvailableOnlyOnPackagedVersions").')</span>';
     print '<br>';
 }
@@ -109,7 +109,7 @@ print '<!-- for a remote target=remote&xmlremote=... -->'."\n";
 if ($enableremotecheck)
 {
     print '<input type="radio" name="target" value="remote"'.(GETPOST('target') == 'remote' ? 'checked="checked"':'').'> '.$langs->trans("RemoteSignature").' = ';
-    print '<input name="xmlremote" class="flat quatrevingtpercent" value="'.dol_escape_htmltag($xmlremote).'"><br>';
+    print '<input name="xmlremote" class="flat minwidth400" value="'.dol_escape_htmltag($xmlremote).'"><br>';
 }
 else
 {

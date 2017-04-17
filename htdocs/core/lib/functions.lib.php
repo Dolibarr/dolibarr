@@ -129,7 +129,7 @@ function getEntity($element=false, $shared=0)
 	else
 	{
 		$out='';
-		$addzero = array('user', 'usergroup');
+		$addzero = array('user', 'usergroup', 'email_template', 'default_values');
 		if (in_array($element, $addzero)) $out.= '0,';
 		$out.= $conf->entity;
 		return $out;
@@ -248,7 +248,24 @@ function dol_shutdown()
  */
 function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 {
-	if (empty($method)) $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
+	if (empty($method))
+	{
+		$out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
+		
+		// Management of default values
+		if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+		{
+			$relativepathstring = preg_replace('/\.[a-z]+$/', '', $_SERVER["PHP_SELF"]);
+			if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+			$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+			$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+			$relativepathstring=dol_string_nospecial($relativepathstring, '-');
+			// $relativepathstring is now string that identify the page: '_societe_card', '_agenda_card', ...
+			$keyfordefaultvalue = 'MAIN_DEFAULT_FOR_'.$relativepathstring.'_'.$paramname;
+			global $conf;
+			if (isset($conf->global->$keyfordefaultvalue)) $out = $conf->global->$keyfordefaultvalue;
+		}
+	}
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
 	elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
@@ -257,6 +274,8 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 
 	if (! empty($check))
 	{
+	    // Replace vars like __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__
+	    // TODO Add more var like __PREVIOUSDAY__, __PREVIOUSMONTH__, __PREVIOUSYEAR__
 	    if (! is_array($out) && preg_match('/^__([a-z0-9]+)__$/i', $out, $reg))
 	    {
 	        if ($reg[1] == 'DAY')
@@ -278,6 +297,16 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	        {
 	            global $mysoc;
 	            $out = $mysoc->country_id;
+	        }
+	        elseif ($reg[1] == 'USERID')
+	        {
+	            global $user;
+	            $out = $user->id;
+	        }
+	        elseif ($reg[1] == 'ENTITYID')
+	        {
+	            global $conf;
+	            $out = $conf->entity;
 	        }
 	    }
 
@@ -780,7 +809,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
  *	@param	array	$links				Array of tabs. Currently initialized by calling a function xxx_admin_prepare_head
  *	@param	string	$active     		Active tab name (document', 'info', 'ldap', ....)
  *	@param  string	$title      		Title
- *	@param  int		$notab				0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
+ *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  * 	@return	void
@@ -796,7 +825,7 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  *	@param	array	$links				Array of tabs
  *	@param	string	$active     		Active tab name
  *	@param  string	$title      		Title
- *	@param  int		$notab				0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
+ *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  * 	@return	string
@@ -833,7 +862,7 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 	$limittoshow=(empty($conf->global->MAIN_MAXTABS_IN_CARD)?99:$conf->global->MAIN_MAXTABS_IN_CARD);
 	$displaytab=0;
 	$nbintab=0;
-    $popuptab=0;
+    $popuptab=0; $outmore='';
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
 		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2]))
@@ -926,7 +955,7 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 
 	$out.="</div>\n";
 
-	if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
+	if (! $notab || $notab == -1) $out.="\n".'<div class="tabBar'.($notab == -1 ? '' : ' tabBarWithBottom').'">'."\n";
 
 	$parameters=array('tabname' => $active, 'out' => $out);
 	$reshook=$hookmanager->executeHooks('printTabsHead',$parameters);	// This hook usage is called just before output the head of tabs. Take also a look at "completeTabsHead"
@@ -941,7 +970,7 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 /**
  *  Show tab footer of a card
  *
- *  @param	int		$notab       0=Add tab footer, 1=no tab footer
+ *  @param	int		$notab       -1 or 0=Add tab footer, 1=no tab footer
  *  @return	void
  */
 function dol_fiche_end($notab=0)
@@ -952,12 +981,12 @@ function dol_fiche_end($notab=0)
 /**
  *	Return tab footer of a card
  *
- *	@param  int		$notab		0=Add tab footer, 1=no tab footer
+ *	@param  int		$notab		-1 or 0=Add tab footer, 1=no tab footer
  *  @return	string
  */
 function dol_get_fiche_end($notab=0)
 {
-	if (! $notab) return "\n</div>\n";
+	if (! $notab || $notab == -1) return "\n</div>\n";
 	else return '';
 }
 
@@ -983,18 +1012,24 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 {
 	global $conf, $form, $user, $langs;
 
+	$error = 0;
+	
 	$maxvisiblephotos=1;
 	$showimage=1;
 	$showbarcode=empty($conf->barcode->enabled)?0:($object->barcode?1:0);
 	if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 	$modulepart='unknown';
 
-	if ($object->element == 'societe') $modulepart='societe';
-	if ($object->element == 'contact') $modulepart='contact';
-	if ($object->element == 'member')  $modulepart='memberphoto';
-	if ($object->element == 'user')    $modulepart='userphoto';
-	if ($object->element == 'product') $modulepart='product';
-
+	if ($object->element == 'societe')   $modulepart='societe';
+	if ($object->element == 'contact')   $modulepart='contact';
+	if ($object->element == 'member')    $modulepart='memberphoto';
+	if ($object->element == 'user')      $modulepart='userphoto';
+	if ($object->element == 'product')   $modulepart='product';
+	if ($object->element == 'propal')    $modulepart='propal';
+	if ($object->element == 'commande')  $modulepart='commande';
+	if ($object->element == 'facture')   $modulepart='facture';
+	if ($object->element == 'fichinter') $modulepart='ficheinter';
+	
 	if ($object->element == 'product')
 	{
 	    $width=80; $cssclass='photoref';
@@ -1010,7 +1045,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 			}
 			elseif ($conf->browser->layout != 'phone') {    // Show no photo link
 				$nophoto='/public/theme/common/nophoto.png';
-				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
 			}
         }
 	}
@@ -1020,7 +1055,57 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
         {
             if ($modulepart != 'unknown')
             {
-                $phototoshow = $form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos);
+                $phototoshow='';
+                
+                // Check if a preview file is available
+                if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter')) && class_exists("Imagick"))
+                {
+                    $objectref = dol_sanitizeFileName($object->ref);
+                    $dir_output = $conf->$modulepart->dir_output . "/";
+                    $filepath = $dir_output . $objectref . "/";
+                    $file = $filepath . $objectref . ".pdf";
+                    $relativepath = $objectref.'/'.$objectref.'.pdf';
+                    
+                    // Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
+                    $fileimage = $file.'_preview.png';              // If PDF has 1 page
+                    $fileimagebis = $file.'_preview-0.png';         // If PDF has more than one page
+                    $relativepathimage = $relativepath.'_preview.png';
+                    
+                    // Si fichier PDF existe
+                    if (file_exists($file))
+                    {
+                        $encfile = urlencode($file);
+                        // Conversion du PDF en image png si fichier png non existant
+                        if ( (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($file)))
+                          && (! file_exists($fileimagebis) || (filemtime($fileimagebis) < filemtime($file)))
+                           )
+                        {
+                            $ret = dol_convert_file($file, 'png', $fileimage);
+                            if ($ret < 0) $error++;
+                        }
+    
+                        // Si fichier png PDF d'1 page trouve
+                        if (file_exists($fileimage))
+                        {
+                            $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
+                            $phototoshow.= '<img height="70" class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+                            $phototoshow.= '</div></div>';
+                        }
+                        // Si fichier png PDF de plus d'1 page trouve
+                        elseif (file_exists($fileimagebis))
+                        {
+                            $preview = preg_replace('/\.png/','',$relativepathimage) . "-0.png";
+                            $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
+                            $phototoshow.= '<img height="70" class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
+                            $phototoshow.= '</div></div>';
+                        }
+                    }
+                }
+                else if (! $phototoshow)
+                {
+                    $phototoshow = $form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos);
+                }
+
                 if ($phototoshow)
                 {
                     $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
@@ -1028,28 +1113,38 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     $morehtmlleft.='</div>';
                 }
             }
-            elseif ($conf->browser->layout != 'phone')      // Show no photo link
+            
+            if (! $phototoshow && $conf->browser->layout != 'phone')      // Show No photo link (picto of pbject)
             {
                 $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
                 if ($object->element == 'action')
                 {
+                    $width=80;
                     $cssclass='photorefcenter';
                     $nophoto=img_picto('', 'title_agenda', '', false, 1);
-                    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.$nophoto.'"></div></div>';
+                    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
                 }
                 else
                 {
                     $width=14; $cssclass='photorefcenter';
-    				$nophoto=img_picto('', 'object_'.$object->picto, '', false, 1);
-    				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.$nophoto.'"></div></div>';
+                    $picto = $object->picto;
+                    if ($object->element == 'project' && ! $object->public) $picto = 'project'; // instead of projectpub
+    				$nophoto=img_picto('', 'object_'.$picto, '', false, 1);
+    				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
                 }
                 $morehtmlleft.='</div>';
             }
         }
 	}
+	
 	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
-	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-		$morehtmlstatus.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
+	
+	if ($object->element == 'societe')
+	{
+	    if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) 
+    	{
+	       	$morehtmlstatus.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
+    	}
 	}
 	elseif ($object->element == 'product')
 	{
@@ -1067,25 +1162,13 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
             $morehtmlstatus.=$object->getLibStatut(5,1);
         }
 	}
-	elseif ($object->element == 'facture' || $object->element == 'invoice' || $object->element == 'invoice_supplier')
+	elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan')))
 	{
 	    $tmptxt=$object->getLibStatut(6, $object->totalpaye);
 	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye);
 		$morehtmlstatus.=$tmptxt;
 	}
-	elseif ($object->element == 'chargesociales')
-	{
-	    $tmptxt=$object->getLibStatut(6, $object->totalpaye);
-	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye); 
-		$morehtmlstatus.=$tmptxt;
-	}
-	elseif ($object->element == 'loan')
-	{
-	    $tmptxt=$object->getLibStatut(6, $object->totalpaye);
-	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye); 
-		$morehtmlstatus.=$tmptxt;
-	}
-	elseif ($object->element == 'contrat') 
+	elseif ($object->element == 'contrat' || $object->element == 'contract') 
 	{
         if ($object->statut==0) $morehtmlstatus.=$object->getLibStatut(2);
         else $morehtmlstatus.=$object->getLibStatut(4);
@@ -1097,11 +1180,12 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
 	
-	if ($object->element == 'product' || $object->element == 'bank_account')
+	// Add label
+	if ($object->element == 'product' || $object->element == 'bank_account' || $object->element == 'project_task')
 	{
-		if(! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
+		if (! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
 	}
-
+	
 	if ($object->element != 'product' && $object->element != 'bookmark') 
 	{
     	$morehtmlref.='<div class="refidno">';
@@ -1548,6 +1632,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
  */
 function dol_now($mode='gmt')
 {
+    $ret='';
 	// Note that gmmktime and mktime return same value (GMT) when used without parameters
 	//if ($mode == 'gmt') $ret=gmmktime(); // Strict Standards: gmmktime(): You should be using the time() function instead
 	if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
@@ -1959,12 +2044,12 @@ function dol_print_address($address, $htmlid, $mode, $id, $noprint=0, $charfornl
             if ($showgmap)
             {
                 $url=dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id,1);
-                $out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+                $out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" class="valigntextbottom" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
             }
             if ($showomap)
             {
                 $url=dol_buildpath('/openstreetmap/maps.php?mode='.$mode.'&id='.$id,1);
-                $out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+                $out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" class="valigntextbottom" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
             }
         }
 	}
@@ -2296,14 +2381,14 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  *                                  			Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
  *                                  			Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
  *                                  			Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
- *	@param		string		$morealt			Add more attribute on img tag (For example 'style="float: right"')
+ *	@param		string		$moreatt			Add more attribute on img tag (For example 'style="float: right"')
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
  *	@param		int			$srconly			Return only content of the src attribute of img.
  *  @param		int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *  @return     string       				    Return img tag
  *  @see        #img_object, #img_picto_common
  */
-function img_picto($titlealt, $picto, $morealt = '', $pictoisfullpath = false, $srconly=0, $notitle=0)
+function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly=0, $notitle=0)
 {
 	global $conf;
 
@@ -2355,7 +2440,7 @@ function img_picto($titlealt, $picto, $morealt = '', $pictoisfullpath = false, $
 		if (preg_match('/:[^\s0-9]/',$titlealt)) $tmparray=explode(':',$titlealt);		// We explode if we have TextA:TextB. Not if we have TextA: TextB
 		$title=$tmparray[0];
 		$alt=empty($tmparray[1])?'':$tmparray[1];
-		return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($title).'"').($morealt?' '.$morealt:'').'>';	// Alt is used for accessibility, title for popup
+		return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:' class="inline-block valigntextbottom"').'>';	// Alt is used for accessibility, title for popup
 	}
 }
 
@@ -2365,16 +2450,16 @@ function img_picto($titlealt, $picto, $morealt = '', $pictoisfullpath = false, $
  *	@param	string	$titlealt			Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param	string	$picto				Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
  *										For external modules use imagename@mymodule to search into directory "img" of module.
- *	@param	string	$morealt			Add more attribute on img tag (ie: class="datecallink")
+ *	@param	string	$moreatt			Add more attribute on img tag (ie: class="datecallink")
  *	@param	int		$pictoisfullpath	If 1, image path is a full path
  *	@param	int		$srconly			Return only content of the src attribute of img.
  *  @param	int		$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *	@return	string						Return img tag
  *	@see	#img_picto, #img_picto_common
  */
-function img_object($titlealt, $picto, $morealt = '', $pictoisfullpath = false, $srconly=0, $notitle=0)
+function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly=0, $notitle=0)
 {
-	return img_picto($titlealt, 'object_'.$picto, $morealt, $pictoisfullpath, $srconly, $notitle);
+	return img_picto($titlealt, 'object_'.$picto, $moreatt, $pictoisfullpath, $srconly, $notitle);
 }
 
 /**
@@ -2382,12 +2467,12 @@ function img_object($titlealt, $picto, $morealt = '', $pictoisfullpath = false, 
  *
  *	@param      string		$titlealt         	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param      string		$picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
- *	@param		string		$morealt			Add more attribute on img tag
+ *	@param		string		$moreatt			Add more attribute on img tag
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
  *	@return     string      					Return img tag
  *  @see        #img_object, #img_picto
  */
-function img_weather($titlealt, $picto, $morealt = '', $pictoisfullpath = 0)
+function img_weather($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0)
 {
 	global $conf;
 
@@ -2395,7 +2480,7 @@ function img_weather($titlealt, $picto, $morealt = '', $pictoisfullpath = 0)
 
 	$path = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/weather/'.$picto;
 
-	return img_picto($titlealt, $path, $morealt, 1);
+	return img_picto($titlealt, $path, $moreatt, 1);
 }
 
 /**
@@ -2403,12 +2488,12 @@ function img_weather($titlealt, $picto, $morealt = '', $pictoisfullpath = 0)
  *
  *	@param      string		$titlealt         	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param      string		$picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
- *	@param		string		$morealt			Add more attribute on img tag
+ *	@param		string		$moreatt			Add more attribute on img tag
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
  *	@return     string      					Return img tag
  *  @see        #img_object, #img_picto
  */
-function img_picto_common($titlealt, $picto, $morealt = '', $pictoisfullpath = 0)
+function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0)
 {
 	global $conf;
 
@@ -2427,7 +2512,7 @@ function img_picto_common($titlealt, $picto, $morealt = '', $pictoisfullpath = 0
 		}
 	}
 
-	return img_picto($titlealt, $path, $morealt, 1);
+	return img_picto($titlealt, $path, $moreatt, 1);
 }
 
 /**
@@ -2510,7 +2595,7 @@ function img_edit_remove($titlealt = 'default', $other='')
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
  */
-function img_edit($titlealt = 'default', $float = 0, $other = '')
+function img_edit($titlealt = 'default', $float = 0, $other = 'class="pictoedit"')
 {
 	global $conf, $langs;
 
@@ -2533,9 +2618,9 @@ function img_view($titlealt = 'default', $float = 0, $other = '')
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('View');
 
-	$morealt = ($float ? 'style="float: right" ' : '').$other;
+	$moreatt = ($float ? 'style="float: right" ' : '').$other;
 
-	return img_picto($titlealt, 'view.png', $morealt);
+	return img_picto($titlealt, 'view.png', $moreatt);
 }
 
 /**
@@ -2545,7 +2630,7 @@ function img_view($titlealt = 'default', $float = 0, $other = '')
  *	@param  string	$other      Add more attributes on img
  *  @return string      		Retourne tag img
  */
-function img_delete($titlealt = 'default', $other = '')
+function img_delete($titlealt = 'default', $other = 'class="pictodelete"')
 {
 	global $conf, $langs;
 
@@ -2566,6 +2651,22 @@ function img_printer($titlealt = "default", $other='')
     global $conf,$langs;
     if ($titlealt=="default") $titlealt=$langs->trans("Print");
     return img_picto($titlealt,'printer.png',$other);
+}
+
+/**
+ *  Show delete logo
+ *
+ *  @param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param  string	$other      Add more attributes on img
+ *  @return string      		Retourne tag img
+ */
+function img_split($titlealt = 'default', $other = 'class="pictosplit"')
+{
+	global $conf, $langs;
+
+	if ($titlealt == 'default') $titlealt = $langs->trans('Split');
+
+	return img_picto($titlealt, 'split.png', $other);
 }
 
 /**
@@ -2607,16 +2708,17 @@ function img_info($titlealt = 'default')
  *	Show warning logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param	string	$morealt	Add more attribute on img tag (For example 'style="float: right"'). If 1
+ *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"'). If 1
  *	@return string      		Return img tag
  */
-function img_warning($titlealt = 'default', $morealt = '')
+function img_warning($titlealt = 'default', $moreatt = '')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
-	return img_picto($titlealt, 'warning.png', 'class="pictowarning valignmiddle"'.($morealt ? ($morealt == '1' ? ' style="float: right"' : ' '.$morealt): ''));
+	//return '<div class="imglatecoin">'.img_picto($titlealt, 'warning_white.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): '')).'</div>';
+	return img_picto($titlealt, 'warning.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): ''));
 }
 
 /**
@@ -2631,39 +2733,41 @@ function img_error($titlealt = 'default')
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Error');
 
-	return img_picto($titlealt, 'error.png');
+	return img_picto($titlealt, 'error.png', 'class="valigntextbottom"');
 }
 
 /**
  *	Show next logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
-*	@param	string	$morealt	Add more attribute on img tag (For example 'style="float: right"')
+*	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"')
   *	@return string      		Return img tag
  */
-function img_next($titlealt = 'default', $morealt='')
+function img_next($titlealt = 'default', $moreatt='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Next');
 
-	return img_picto($titlealt, 'next.png', $morealt);
+	//return img_picto($titlealt, 'next.png', $moreatt);
+	return '<span class="fa fa-chevron-right paddingright paddingleft" title="'.dol_escape_htmltag($titlealt).'"></span>';
 }
 
 /**
  *	Show previous logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param	string	$morealt	Add more attribute on img tag (For example 'style="float: right"')
+ *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_previous($titlealt = 'default', $morealt='')
+function img_previous($titlealt = 'default', $moreatt='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Previous');
 
-	return img_picto($titlealt, 'previous.png', $morealt);
+	//return img_picto($titlealt, 'previous.png', $moreatt);
+	return '<span class="fa fa-chevron-left paddingright paddingleft" title="'.dol_escape_htmltag($titlealt).'"></span>';
 }
 
 /**
@@ -2705,16 +2809,16 @@ function img_up($titlealt = 'default', $selected = 0, $moreclass='')
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$selected	Selected
- *	@param	string	$morealt	Add more attribute on img tag (For example 'style="float: right"')
+ *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_left($titlealt = 'default', $selected = 0, $morealt='')
+function img_left($titlealt = 'default', $selected = 0, $moreatt='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Left');
 
-	return img_picto($titlealt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'), $morealt);
+	return img_picto($titlealt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'), $moreatt);
 }
 
 /**
@@ -2722,16 +2826,16 @@ function img_left($titlealt = 'default', $selected = 0, $morealt='')
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$selected	Selected
- *	@param	string	$morealt	Add more attribute on img tag (For example 'style="float: right"')
+ *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_right($titlealt = 'default', $selected = 0, $morealt='')
+function img_right($titlealt = 'default', $selected = 0, $moreatt='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Right');
 
-	return img_picto($titlealt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'), $morealt);
+	return img_picto($titlealt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'), $moreatt);
 }
 
 /**
@@ -3023,13 +3127,13 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
 /**
  *	Get title line of an array
  *
- *	@param	string	$name        Label of field
+ *	@param	string	$name        Translation key of field
  *	@param	int		$thead		 0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
  *	@param	string	$file        Url used when we click on sort picto
  *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
  *	@param	string	$begin       ("" by defaut)
  *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
- *	@param  string	$moreattrib  Add more attributes on th ("" by defaut)
+ *	@param  string	$moreattrib  Add more attributes on th ("" by defaut). To add more css class, use param $prefix.
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
@@ -3037,7 +3141,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  */
 function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="", $prefix="")
 {
-	global $conf;
+	global $conf, $langs;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
 
 	$sortorder=strtoupper($sortorder);
@@ -3071,7 +3175,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		}
 	}
 
-	$out.=$name;
+	$out.=$langs->trans($name);
 
 	if (empty($thead) && $field)    // If this is a sort field
 	{
@@ -3263,20 +3367,20 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 			if ($cpt>=1)
 			{
-				$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a '.(($conf->dol_use_jmobile != 4)?'':'data-role="button" ').'href="'.$file.'?page=0'.$options.'">1</a></li>';
-				if ($cpt > 2) $pagelist.='<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="inactive"':'data-role="button"').'>...</span></li>';
-				else if ($cpt == 2) $pagelist.='<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a '.(($conf->dol_use_jmobile != 4)?'':'data-role="button" ').'href="'.$file.'?page=1'.$options.'">2</a></li>';
+				$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page=0'.$options.'">1</a></li>';
+				if ($cpt > 2) $pagelist.='<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="inactive"':'').'>...</span></li>';
+				else if ($cpt == 2) $pagelist.='<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page=1'.$options.'">2</a></li>';
 			}
 
 			do
 			{
 				if ($cpt==$page)
 				{
-					$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="active"':'data-role="button"').'>'.($page+1).'</span></li>';
+					$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="active"':'').'>'.($page+1).'</span></li>';
 				}
 				else
 				{
-					$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a '.(($conf->dol_use_jmobile != 4)?'':'data-role="button" ').'href="'.$file.'?page='.$cpt.$options.'">'.($cpt+1).'</a></li>';
+					$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page='.$cpt.$options.'">'.($cpt+1).'</a></li>';
 				}
 				$cpt++;
 			}
@@ -3284,14 +3388,14 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 			if ($cpt<$nbpages)
 			{
-				if ($cpt<$nbpages-2) $pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="inactive"':'data-role="button"').'>...</span></li>';
-				else if ($cpt == $nbpages-2) $pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a '.(($conf->dol_use_jmobile != 4)?'':'data-role="button" ').'href="'.$file.'?page='.($nbpages-2).$options.'">'.($nbpages - 1).'</a></li>';
-				$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a '.(($conf->dol_use_jmobile != 4)?'':'data-role="button" ').'href="'.$file.'?page='.($nbpages-1).$options.'">'.$nbpages.'</a></li>';
+				if ($cpt<$nbpages-2) $pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="inactive"':'').'>...</span></li>';
+				else if ($cpt == $nbpages-2) $pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page='.($nbpages-2).$options.'">'.($nbpages - 1).'</a></li>';
+				$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page='.($nbpages-1).$options.'">'.$nbpages.'</a></li>';
 			}
 		}
 		else
 		{
-			$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="active"':'data-role="button"').'>'.($page+1)."</li>";
+			$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="active"':'').'>'.($page+1)."</li>";
 		}
 	}
 	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $savlimit, $totalnboflines, $hideselectlimit);		// output the div and ul for previous/last completed with page numbers into $pagelist
@@ -3370,8 +3474,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
 	}
 	if ($page > 0)
 	{
-		if (($conf->dol_use_jmobile != 4)) print '<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>';
-		else print '<li><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a></li>';
+		print '<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
 	}
 	if ($betweenarrows)
 	{
@@ -3379,8 +3482,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
 	}
 	if ($nextpage > 0)
 	{
-		if (($conf->dol_use_jmobile != 4)) print '<li class="pagination"><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'">></a></li>';
-		else print '<li><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$file.'?page='.($page+1).$options.'">'.$langs->trans("Next").'</a></li>';
+		print '<li class="pagination"><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
 	}
 	if ($afterarrows)
 	{
@@ -3767,7 +3869,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller
    	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$thirdparty_seller->country_code."'";
    	$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
    	if ($vatratecode) $sql.= " AND t.code ='".$vatratecode."'";		// If we have the code, we use it in priority
-   	else $sql.= " AND t.recuperableonly ='".$npr."'";
+   	else $sql.= " AND t.recuperableonly ='".$vatnpr."'";
    	dol_syslog("get_localtax", LOG_DEBUG);
    	$resql=$db->query($sql);
 
@@ -3886,6 +3988,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local);
 
 	$vatratecleaned = $vatrate;
+	$vatratecode = '';
 	if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
 	{
 	    $vatratecleaned = $reg[1];
@@ -4284,7 +4387,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 function yn($yesno, $case=1, $color=0)
 {
 	global $langs;
-	$result='unknown';
+	$result='unknown'; $classname='';
 	if ($yesno == 1 || strtolower($yesno) == 'yes' || strtolower($yesno) == 'true') 	// A mettre avant test sur no a cause du == 0
 	{
 		$result=$langs->trans('yes');
@@ -5005,7 +5108,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 {
 	global $conf, $langs;
 
-	$ret='';
+	$ret=0; $return='';
 	$out='';
 	$divstart=$divend='';
 
@@ -5175,7 +5278,8 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensiti
 	$sizearray=count($array);
 	if (is_array($array) && $sizearray>0)
 	{
-		foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
+        $temp = array();
+        foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
 
 		if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
 		else
@@ -5537,11 +5641,11 @@ function printCommonFooter($zone='private')
     	
     	if (empty($conf->dol_use_jmobile))
     	{
-        	print '<!-- Set handler to switch left menu page -->'."\n";
+        	print '<!-- Set handler to switch left menu page (menuhider) -->'."\n";
         	print 'jQuery(".menuhider").click(function() {';
         	print '  console.log("We click on .menuhider");'."\n";
         	print "  $('.side-nav').toggle();";
-        	if ($conf->theme == 'md') print "  $('.login_block').toggle();";
+        	print "  $('.login_block').toggle();";
         	print '});'."\n";
     	}
     	
@@ -5635,6 +5739,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 {
 	if ($a = explode($delimiter, $string))
 	{
+	    $ka = array();
 		foreach ($a as $s) { // each part
 			if ($s) {
 				if ($pos = strpos($s, $kv)) { // key/value delimiter
@@ -5830,10 +5935,11 @@ function getImageFileNameForSize($file, $extName, $extImgTarget='')
  * Return URL we can use for advanced preview links
  *
  * @param   string    $modulepart     propal, facture, facture_fourn, ...
- * @param   string    $relativepath   Relative path of docs
- * @return  string                    Output string with HTML
+ * @param   string    $relativepath   Relative path of docs.
+ * @param	int		  $alldata		  Return array with all components (1 is recommended, then use a simple a href link with the class, target and mime attribute added. 'documentpreview' css class is handled by jquery code into main.inc.php)  
+ * @return  string|array              Output string with href link or array with all components of link
  */
-function getAdvancedPreviewUrl($modulepart, $relativepath)
+function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0)
 {
     global $conf, $langs;
 
@@ -5843,8 +5949,15 @@ function getAdvancedPreviewUrl($modulepart, $relativepath)
     //$mime_preview[]='vnd.oasis.opendocument.presentation';
     //$mime_preview[]='archive';
     $num_mime = array_search(dol_mimetype($relativepath, '', 1), $mime_preview);
+ 
+    if ($alldata == 1) 
+    {
+    	if ($num_mime !== false) return array('target'=>'_blank', 'css'=>'documentpreview', 'url'=>DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath), 'mime'=>dol_mimetype($relativepath), );
+    	else return array();
+    }
 
-    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;attachment=0&amp;file='.$relativepath).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js($langs->trans('Preview')).'\')';
+    // old behavior
+    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath)).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js($langs->trans('Preview')).'\')';
     else return '';
 }
 

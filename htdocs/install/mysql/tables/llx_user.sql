@@ -63,6 +63,7 @@ create table llx_user
   fk_user           integer,               -- Hierarchic parent
   note_public		text,
   note              text DEFAULT NULL,
+  model_pdf         varchar(255) DEFAULT NULL,
   datelastlogin     datetime,
   datepreviouslogin datetime,
   egroupware_id     integer,

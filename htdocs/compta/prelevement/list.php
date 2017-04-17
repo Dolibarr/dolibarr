@@ -165,7 +165,7 @@ if ($result)
     {
         $obj = $db->fetch_object($result);
 
-        $var=!$var;
+        
 
         print "<tr ".$bc[$var]."><td>";
 
@@ -183,9 +183,9 @@ if ($result)
 
         print '<a href="card.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
-        print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
+        print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">';
         print img_object($langs->trans("ShowBill"),"bill");
-          print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->facnumber."</a></td>\n";
+          print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->facnumber."</a></td>\n";
         print '</a></td>';
 
         print '<td><a href="card.php?id='.$obj->rowid.'">'.$obj->name."</a></td>\n";

@@ -528,7 +528,7 @@ if ($action == 'create' && $user->rights->projet->creer)
         	print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
         }
         else print $text;
-        print ' <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
         print '</td></tr>';
     }
 
@@ -595,6 +595,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     	// Categories
     	print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
     	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
+    	$arrayselected=GETPOST('categories', 'array');
     	print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
     	print "</td></tr>";
     }
@@ -891,13 +892,12 @@ elseif ($object->id > 0)
     
         // Date start - end
         print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-        print dol_print_date($object->date_start,'day');
-        $end=dol_print_date($object->date_end,'day');
-        if ($end) 
-        {
-            print ' - '.$end;
-            if ($object->hasDelay()) print img_warning($langs->trans('Late'));
-        }
+		$start = dol_print_date($object->date_start,'dayhour');
+		print ($start?$start:'?');
+		$end = dol_print_date($object->date_end,'dayhour');
+		print ' - ';
+		print ($end?$end:'?');
+		if ($object->hasDelay()) print img_warning("Late");
         print '</td></tr>';
     	     
         // Budget
@@ -1087,7 +1087,7 @@ elseif ($object->id > 0)
 	            if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
 	            {
 	                $langs->load("bills");
-	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
 	            }
 	            if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer)
 	            {

@@ -64,11 +64,14 @@ class modFacture extends DolibarrModules
 		$this->dirs = array("/facture/temp");
 
 		// Dependencies
-		$this->depends = array("modSociete");
+		$this->depends = array('always'=>"modSociete", 'FR'=>'modBlockedLog');
 		$this->requiredby = array("modComptabilite","modAccounting");
 		$this->conflictwith = array();
 		$this->langfiles = array("bills","companies","compta","products");
-
+		$this->warnings_activation = array('FR'=>'WarningNoteModuleInvoiceForFrenchLaw');                              // Warning to show when we activate module. array('always'='text') or array('FR'='text')
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array('FR'=>'WarningInstallationMayBecomeNotCompliantWithLaw');  // Warning to show when we activate an external module. array('always'='text') or array('FR'='text')
+		
 		// Config pages
 		$this->config_page_url = array("facture.php");
 
@@ -96,7 +99,8 @@ class modFacture extends DolibarrModules
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
-
+		
+		
 		// Boxes
 		//$this->boxes = array(0=>array(1=>'box_factures_imp.php'),1=>array(1=>'box_factures.php'));
 		$this->boxes = array(

@@ -72,26 +72,28 @@ if ($action == 'updateMask')
 	}
 }
 
-else if ($action == 'set_SHIPPING_FREE_TEXT')
+else if ($action == 'set_param')
 {
 	$freetext=GETPOST('SHIPPING_FREE_TEXT');	// No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "SHIPPING_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
-
-	if ($res > 0)
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	else
+	if ($res <= 0)
+	{
+		$error++;
 		setEventMessages($langs->trans("Error"), null, 'errors');
-}
-
-else if ($action == 'set_SHIPPING_DRAFT_WATERMARK')
-{
+	}
+	
 	$draft=GETPOST('SHIPPING_DRAFT_WATERMARK','alpha');
 	$res = dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
-
-	if ($res > 0)
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	else
+	if ($res <= 0)
+	{
+		$error++;
 		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+
+	if (! $error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
 }
 
 else if ($action == 'specimen')
@@ -222,11 +224,9 @@ print load_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
 print '<br>';
 $head = expedition_admin_prepare_head();
 
-dol_fiche_head($head, 'shipment', $langs->trans("Sendings"), 0, 'sending');
+dol_fiche_head($head, 'shipment', $langs->trans("Sendings"), -1, 'sending');
 
-/*
- * Expedition numbering model
- */
+// Shipment numbering model
 
 print load_fiche_titre($langs->trans("SendingsNumberingModules"));
 
@@ -235,8 +235,8 @@ print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="80">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -250,8 +250,6 @@ foreach ($dirmodels as $reldir)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-			$var=true;
-
 			while (($file = readdir($handle))!==false)
 			{
 				if (substr($file, 0, 15) == 'mod_expedition_' && substr($file, dol_strlen($file)-3, 3) == 'php')
@@ -268,8 +266,7 @@ foreach ($dirmodels as $reldir)
 						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-						$var=!$var;
-						print '<tr '.$bc[$var].'><td>'.$module->nom."</td>\n";
+						print '<tr><td>'.$module->nom."</td>\n";
 						print '<td>';
 						print $module->info();
 						print '</td>';
@@ -374,7 +371,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
@@ -412,8 +408,7 @@ foreach ($dirmodels as $reldir)
 
 	                        if ($modulequalified)
 	                        {
-	                            $var = !$var;
-	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print '<tr><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module,'info')) print $module->info($langs);
@@ -498,19 +493,16 @@ print '<br>';
  */
 print load_fiche_titre($langs->trans("OtherOptions"));
 
-$var=true;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_param">';
+
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>\n";
-print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
-print "<td>&nbsp;</td>\n";
 print "</tr>";
 
-$var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_SHIPPING_FREE_TEXT">';
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr><td>';
 print $langs->trans("FreeLegalTextOnShippings").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 $variablename='SHIPPING_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
@@ -523,25 +515,18 @@ else
     $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
     print $doleditor->Create();
 }
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
-print '</form>';
 
-$var=!$var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_SHIPPING_DRAFT_WATERMARK">';
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr><td>';
 print $langs->trans("WatermarkOnDraft").'<br>';
 print '<input size="50" class="flat" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.$conf->global->SHIPPING_DRAFT_WATERMARK.'">';
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
-print '</form>';
 
 print '</table>';
 
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+
+print '</form>';
 
 llxFooter();
 $db->close();

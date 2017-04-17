@@ -1321,7 +1321,17 @@ if ($action == 'create')
 			// Replicate extrafields
 			$objectsrc->fetch_optionals($originid);
 			$object->array_options = $objectsrc->array_options;
+			
+			if (!empty($conf->multicurrency->enabled))
+			{
+			    if (!empty($objectsrc->multicurrency_code)) $currency_code = $objectsrc->multicurrency_code;
+			    if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx;
+			}
 		}
+	}
+	else
+	{
+	    if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
 	}
 
 	$object = new Propal($db);
@@ -1500,14 +1510,13 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
-		$currency_code = (!empty($soc->multicurrency_code) ? $soc->multicurrency_code : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency));
 	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code', 0);
 		print '</td></tr>';
 	}
 
 	// Public note
 	print '<tr>';
-	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
+	print '<td class="tdtop">' . $langs->trans('NotePublic') . '</td>';
 	print '<td valign="top" colspan="2">';
 	$note_public = $object->getDefaultCreateValueFor('note_public', (is_object($objectsrc)?$objectsrc->note_public:null));
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
@@ -1517,7 +1526,7 @@ if ($action == 'create')
 	if (empty($user->societe_id))
 	{
 		print '<tr>';
-		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
+		print '<td class="tdtop">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td valign="top" colspan="2">';
         $note_private = $object->getDefaultCreateValueFor('note_private', ((! empty($origin) && ! empty($originid) && is_object($objectsrc))?$objectsrc->note_private:null));
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
@@ -1666,7 +1675,7 @@ if ($action == 'create')
 	$soc->fetch($object->socid);
 
 	$head = propal_prepare_head($object);
-	dol_fiche_head($head, 'comm', $langs->trans('Proposal'), 0, 'propal');
+	dol_fiche_head($head, 'comm', $langs->trans('Proposal'), -1, 'propal');
 
 	$formconfirm = '';
 
@@ -1795,42 +1804,7 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 
-    // Ref
-    /*
-	print '<tr><td>' . $langs->trans('Ref') . '</td><td colspan="5">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
-	print '</td></tr>';
-	*/
-
-	// Ref customer
-	/*
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-	print $langs->trans('RefCustomer') . '</td>';
-	if ($action != 'refclient' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=refclient&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
-	print '</td></tr></table>';
-	print '</td><td colspan="5">';
-	if ($user->rights->propal->creer && $action == 'refclient') {
-		print '<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
-		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-		print '<input type="hidden" name="action" value="set_ref_client">';
-		print '<input type="text" class="flat" size="20" name="ref_client" value="' . $object->ref_client . '">';
-		print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-		print '</form>';
-	} else {
-		print $object->ref_client;
-	}
-	print '</td>';
-	print '</tr>';
-    */
-
-	// Company
-	/*
-	print '<tr><td>' . $langs->trans('Company') . '</td><td colspan="5">' . $soc->getNomUrl(1) . '</td>';
-	print '</tr>';*/
-
-	// Lin for thirdparty discounts
+	// Link for thirdparty discounts
 	print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
 	if ($soc->remise_percent)
 		print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
@@ -2038,7 +2012,7 @@ if ($action == 'create')
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print fieldLabel('CurrencyRate','multicurrency_tx');
 		print '</td>';
-		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
+		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
@@ -2049,7 +2023,7 @@ if ($action == 'create')
 			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 		} else {
 			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
-			if ($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code != $conf->currency) {
+			if ($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 				print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
 				print '</div>';
@@ -2383,7 +2357,7 @@ if ($action == 'create')
 				{
 					if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/compta/facture.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddBill") . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/compta/facture/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddBill") . '</a></div>';
 					}
 
 					$arrayofinvoiceforpropal = $object->getInvoiceArrayList();
@@ -2414,7 +2388,6 @@ if ($action == 'create')
 
 		print '</div>';
 	}
-	print "<br>\n";
 
 	//Select mail models is same action as presend
 	if (GETPOST('modelselected')) $action = 'presend';

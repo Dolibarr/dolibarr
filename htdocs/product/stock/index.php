@@ -77,7 +77,7 @@ if ($result)
     $i = 0;
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Warehouses").'</td></tr>';
+    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Warehouses").'</th></tr>';
 
     if ($num)
     {
@@ -87,8 +87,8 @@ if ($result)
         while ($i < $num)
         {
             $objp = $db->fetch_object($result);
-            $var=!$var;
-            print "<tr ".$bc[$var].">";
+            
+            print '<tr class="oddeven">';
             print "<td><a href=\"card.php?id=$objp->rowid\">".img_object($langs->trans("ShowStock"),"stock")." ".$objp->label."</a></td>\n";
             print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
             print "</tr>\n";
@@ -132,16 +132,16 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
-	print '<td>'.$langs->trans("LastMovements",min($num,$max)).'</td>';
-	print '<td>'.$langs->trans("Product").'</td>';
+	print '<th>'.$langs->trans("LastMovements",min($num,$max)).'</th>';
+	print '<th>'.$langs->trans("Product").'</th>';
 	if (! empty($conf->productbatch->enabled))
 	{
-		print '<td>'.$langs->trans("Batch").'</td>';
-		print '<td>'.$langs->trans("EatByDate").'</td>';
-		print '<td>'.$langs->trans("SellByDate").'</td>';
+		print '<th>'.$langs->trans("Batch").'</th>';
+		print '<th>'.$langs->trans("EatByDate").'</th>';
+		print '<th>'.$langs->trans("SellByDate").'</th>';
 	}
-	print '<td>'.$langs->trans("Warehouse").'</td>';
-	print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/mouvement.php">'.$langs->trans("FullList").'</a></td>';
+	print '<th>'.$langs->trans("Warehouse").'</th>';
+	print '<th align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/mouvement.php">'.$langs->trans("FullList").'</a></th>';
 	print "</tr>\n";
 
 	$var=True;
@@ -149,8 +149,8 @@ if ($resql)
 	while ($i < min($num,$max))
 	{
 		$objp = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
 		print "<td><a href=\"../card.php?id=$objp->rowid\">";
 		print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;

@@ -135,7 +135,7 @@ class box_services_contracts extends ModeleBoxes
 					'asis' => 1
                     );
 
-					$this->info_box_contents[$i][] = array('td' => '',
+					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                     'text' => $thirdpartytmp->getNomUrl(1),
 					'asis' => 1
                     );
@@ -155,13 +155,13 @@ class box_services_contracts extends ModeleBoxes
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
+				$this->info_box_contents[0][0] = array(	'td' => '',
     	        										'maxlength'=>500,
 	            										'text' => ($db->error().' sql='.$sql));
 			}
 		}
 		else {
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
+			$this->info_box_contents[0][0] = array('td' => '',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
 		}
 

@@ -150,9 +150,9 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"),"contact");
 		print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.$obj->name.'</a></td>';
 		print "<td>$obj->firstname</TD>";

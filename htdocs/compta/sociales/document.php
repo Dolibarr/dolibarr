@@ -99,7 +99,7 @@ if ($object->id)
 
     $head=tax_prepare_head($object);
 
-    dol_fiche_head($head, 'documents',  $langs->trans("SocialContribution"), 0, 'bill');
+    dol_fiche_head($head, 'documents',  $langs->trans("SocialContribution"), -1, 'bill');
 
 	$morehtmlref='<div class="refidno">';
 	// Label of social contribution
@@ -117,7 +117,7 @@ if ($object->id)
 	print '<div class="underbanner clearboth"></div>';
 
     // Construit liste des fichiers
-    $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+    $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
     $totalsize=0;
     foreach($filearray as $key => $file)
     {

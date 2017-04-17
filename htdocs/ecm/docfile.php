@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +61,8 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
+$cancel=GETPOST('cancel');
+$action=GETPOST('action');
 $section=GETPOST("section");
 if (! $section)
 {
@@ -107,8 +109,23 @@ if (! empty($_GET["fileid"]))
  * Put here all code to do according to value of "action" parameter
  ********************************************************************/
 
+if ($action == 'cancel') 
+{
+    $action ='';
+    if ($backtourl) 
+    {
+        header("Location: ".$backtourl);
+        exit;
+    }
+    else
+    {
+        header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager&section='.$section);
+        exit;
+    }
+}
+
 // Rename file
-if (GETPOST('action') == 'update' && ! GETPOST('cancel'))
+if ($action == 'update')
 {
     $error=0;
 
@@ -131,7 +148,7 @@ if (GETPOST('action') == 'update' && ! GETPOST('cancel'))
         if (! $result)
         {
             $langs->load('errors');
-            $mesg='<div class="error">'.$langs->trans('ErrorFailToRenameFile',$oldfile,$newfile).'</div>';
+            setEventMessages($langs->trans('ErrorFailToRenameFile',$oldfile,$newfile), null, 'errors');
             $error++;
         }
     }
@@ -279,16 +296,14 @@ if ($_GET['action'] == 'delete_file')
 
 if ($_GET["action"] != 'edit')
 {
-
-	if ($mesg) { print $mesg."<br>"; }
-
-
 	// Actions buttons
 	print '<div class="tabsAction">';
 
     if ($user->rights->ecm->setup)
     {
         print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
+
+        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=cancel&section='.$section.'&urlfile='.urlencode($urlfile).'&backtourl='.urlencode($backtourl).'">'.$langs->trans('Cancel').'</a>';
     }
 /*
 	if ($user->rights->ecm->setup)

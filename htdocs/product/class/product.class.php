@@ -12,7 +12,7 @@
  * Copyright (C) 2014		Henry Florian			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
- * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016-2017	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Gustavo Novaro			
  *
  * This program is free software; you can redistribute it and/or modify
@@ -937,7 +937,7 @@ class Product extends CommonObject
                     // End call triggers
 				}
 
-				if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref != $this->ref))
+				if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref))
 				{
 					// We remove directory
 					if ($conf->product->dir_output)
@@ -1012,18 +1012,18 @@ class Product extends CommonObject
 	/**
 	 *  Delete a product from database (if not used)
 	 *
-	 *	@param      int		$id         Product id (usage of this is deprecated, delete should be called without parameters on a fetched object)
+	 *	@param      User	$user       Product id (usage of this is deprecated, delete should be called without parameters on a fetched object)
 	 *  @param      int     $notrigger  Do not execute trigger
 	 * 	@return		int					< 0 if KO, 0 = Not possible, > 0 if OK
 	 */
-	function delete($id=0, $notrigger=0)
+	function delete(User $user, $notrigger=0)
 	{
 		// Deprecation warning
 		if ($id > 0) {
 			dol_syslog(__METHOD__ . " with parameter is deprecated", LOG_WARNING);
 		}
 
-		global $conf,$user,$langs;
+		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$error=0;
@@ -3429,6 +3429,41 @@ class Product extends CommonObject
 		return $result;
 	}
 
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 * 	@param	    string		$modele			Force model to use ('' to not force)
+	 * 	@param		Translate	$outputlangs	Object langs to use for output
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 * 	@return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$user,$langs;
+
+		$langs->load("products");
+
+		// Positionne le modele sur le nom du modele a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->PRODUCT_ADDON_PDF))
+			{
+				$modele = $conf->global->PRODUCT_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'strato';
+			}
+		}
+
+		$modelpath = "core/modules/product/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
+
 	/**
 	 *	Return label of status of object
 	 *
@@ -3520,6 +3555,11 @@ class Product extends CommonObject
 			if ($status == 1) return img_picto($langs->trans('ProductStatusOnSell'),'statut4', 'class="pictostatus"').' '.($type==0 ? $langs->trans('ProductStatusOnSell'):$langs->trans('ProductStatusOnBuy'));
 		}
 		if ($mode == 5)
+		{
+			if ($status == 0) return ($type==0 ? $langs->trans('ProductStatusNotOnSellShort'):$langs->trans('ProductStatusNotOnBuyShort')).' '.img_picto(($type==0 ? $langs->trans('ProductStatusNotOnSell'):$langs->trans('ProductStatusNotOnBuy')), 'statut5', 'class="pictostatus"');
+			if ($status == 1) return ($type==0 ? $langs->trans('ProductStatusOnSellShort'):$langs->trans('ProductStatusOnBuyShort')).' '.img_picto(($type==0 ? $langs->trans('ProductStatusOnSell'):$langs->trans('ProductStatusOnBuy')),'statut4', 'class="pictostatus"');
+		}
+		if ($mode == 6)
 		{
 			if ($status == 0) return ($type==0 ? $langs->trans('ProductStatusNotOnSellShort'):$langs->trans('ProductStatusNotOnBuyShort')).' '.img_picto(($type==0 ? $langs->trans('ProductStatusNotOnSell'):$langs->trans('ProductStatusNotOnBuy')), 'statut5', 'class="pictostatus"');
 			if ($status == 1) return ($type==0 ? $langs->trans('ProductStatusOnSellShort'):$langs->trans('ProductStatusOnBuyShort')).' '.img_picto(($type==0 ? $langs->trans('ProductStatusOnSell'):$langs->trans('ProductStatusOnBuy')),'statut4', 'class="pictostatus"');
@@ -3944,11 +3984,11 @@ class Product extends CommonObject
 		$return ='<!-- Photo -->'."\n";
 		$nbphoto=0;
 
-		$filearray=dol_dir_list($dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		$filearray=dol_dir_list($dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		
 		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
 		{
-		    $filearrayold=dol_dir_list($dirold,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		    $filearrayold=dol_dir_list($dirold,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		    $filearray=array_merge($filearray, $filearrayold);
 		}
 
@@ -4323,6 +4363,7 @@ class Product extends CommonObject
         $now=dol_now();
 
         // Initialize parameters
+        $this->specimen=1;
         $this->id=0;
         $this->ref = 'PRODUCT_SPEC';
         $this->label = 'PRODUCT SPECIMEN';

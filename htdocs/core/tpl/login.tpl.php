@@ -45,7 +45,7 @@ print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disable
 ?>
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
 
-<body class="body bodylogin">
+<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
@@ -56,7 +56,7 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
-<div class="center">
+<div class="login_center center">
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
@@ -76,16 +76,6 @@ $(document).ready(function () {
 <input type="hidden" name="dol_no_mouse_hover" id="dol_no_mouse_hover" value="<?php echo $dol_no_mouse_hover; ?>" />
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
-<table class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
-<tr class="vmenu"><td class="center">
-<?php
-if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
-echo dol_escape_htmltag($title); 
-if ($disablenofollow) echo '</a>';
-?>
-</td></tr>
-</table>
-<br>
 
 <div class="login_table">
 
@@ -159,9 +149,6 @@ if (! empty($hookmanager->resArray['options'])) {
 </div> <!-- end div left -->
 
 
-
-
-
 </div>
 
 <div id="login_line2" style="clear: both">
@@ -226,6 +213,17 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 
 </div>
 
+
+<!-- Title with version -->
+<div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
+<?php
+if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
+echo dol_escape_htmltag($title); 
+if ($disablenofollow) echo '</a>';
+?>
+</div>
+
+
 </form>
 
 
@@ -239,6 +237,23 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 	</div></div>
 <?php
 }
+
+// Add commit strip
+if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+	if (substr($langs->defaultlang,0,2)=='fr') {
+		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/fr/feed/");
+	} else {
+		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/en/feed/");
+	}
+    if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200') 
+    {
+        $xml = simplexml_load_string($resgetcommitstrip['content']);
+        $little = $xml->channel->item[0]->children('content',true);
+        print $little->encoded;
+    }
+}
+
 ?>
 
 <?php if ($main_home)

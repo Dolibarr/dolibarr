@@ -405,7 +405,7 @@ $head[$h][2] = 'templates';
 $h++;
 
 
-dol_fiche_head($head, 'templates', '');
+dol_fiche_head($head, 'templates', '', -1);
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')

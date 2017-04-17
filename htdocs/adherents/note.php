@@ -69,7 +69,7 @@ if ($id)
 {
 	$head = member_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("Member"), 0, 'user');
+	dol_fiche_head($head, 'note', $langs->trans("Member"), -1, 'user');
 
 	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -109,7 +109,6 @@ if ($id)
     print "</table>";
 
     print '</div>';
-    print '<br>';
 
 
     $cssclass='titlefield';

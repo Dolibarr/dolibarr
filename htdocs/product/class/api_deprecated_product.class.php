@@ -339,7 +339,7 @@ class ProductApi extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         
-        return $this->product->delete($id);
+        return $this->product->delete(DolibarrApiAccess::$user);
     }
     
     /**

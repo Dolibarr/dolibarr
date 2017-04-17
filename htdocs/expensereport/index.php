@@ -112,7 +112,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
+print '<th colspan="4">'.$langs->trans("Statistics").'</th>';
 print "</tr>\n";
 
 $listoftype=$tripandexpense_static->listOfTypes();
@@ -174,11 +174,11 @@ if ($result)
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</td>';
-    print '<td align="right">'.$langs->trans("AmountHT").'</td>';
-    print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-    print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
-    print '<td>&nbsp;</td>';
+    print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</th>';
+    print '<th align="right">'.$langs->trans("AmountHT").'</th>';
+    print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
+    print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+    print '<th>&nbsp;</th>';
     print '</tr>';
     if ($num)
     {
@@ -197,7 +197,7 @@ if ($result)
             $userstatic->login=$obj->login;
             $userstatic->statut=$obj->statut;
             $userstatic->photo=$obj->photo;
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
             print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
             print '<td>'.$userstatic->getNomUrl(-1).'</td>';
             print '<td align="right">'.price($obj->total_ht).'</td>';
@@ -208,14 +208,14 @@ if ($result)
 			print $expensereportstatic->LibStatut($obj->fk_status,3);
             print '</td>';
             print '</tr>';
-            $var=!$var;
+            
             $i++;
         }
 
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
     print '</table><br>';
 }

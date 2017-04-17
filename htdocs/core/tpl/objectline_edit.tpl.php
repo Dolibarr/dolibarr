@@ -46,6 +46,7 @@ $colspan = 3;	// Col total ht + col edit + col delete
 if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
 if (in_array($object->element,array('propal','supplier_proposal','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 if (empty($user->rights->margins->creer)) $colspan++;
+if (!empty($conf->multicurrency->enabled)) $colspan+=2;
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->
@@ -114,23 +115,22 @@ $coldisplay=-1; // We remove first td
 	if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
 		print '<td align="right">' . $form->load_tva('tva_tx', $line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1) . '</td>';
 	} else {
-		print '<td align="right"><input size="1" type="text" class="flat" name="tva_tx" value="' . price($line->tva_tx) . '" readonly />%</td>';
+		print '<td align="right"><input size="1" type="text" class="flat right" name="tva_tx" value="' . price($line->tva_tx) . '" readonly />%</td>';
 	}
 
 	$coldisplay++;
-	print '<td align="right"><input type="text" class="flat" size="5" id="price_ht" name="price_ht" value="' . (isset($line->pu_ht)?price($line->pu_ht,0,'',0):price($line->subprice,0,'',0)) . '"';
+	print '<td align="right"><input type="text" class="flat right" size="5" id="price_ht" name="price_ht" value="' . (isset($line->pu_ht)?price($line->pu_ht,0,'',0):price($line->subprice,0,'',0)) . '"';
 	if ($this->situation_counter > 1) print ' readonly';
 	print '></td>';
 
 	if (!empty($conf->multicurrency->enabled)) {
-		$colspan++;
-		print '<td align="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.price($line->multicurrency_subprice).'" /></td>';
+		print '<td align="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.price($line->multicurrency_subprice).'" /></td>';
 	}
 
 	if ($inputalsopricewithtax)
 	{
 		$coldisplay++;
-		print '<td align="right"><input type="text" class="flat" size="5" id="price_ttc" name="price_ttc" value="'.(isset($line->pu_ttc)?price($line->pu_ttc,0,'',0):'').'"';
+		print '<td align="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(isset($line->pu_ttc)?price($line->pu_ttc,0,'',0):'').'"';
 		if ($this->situation_counter > 1) print ' readonly';
 		print '></td>';
 	}
@@ -141,7 +141,7 @@ $coldisplay=-1; // We remove first td
 		// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 		// must also not be output for most entities (proposal, intervention, ...)
 		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-		print '<input size="3" type="text" class="flat" name="qty" id="qty" value="' . $line->qty . '"';
+		print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="' . $line->qty . '"';
 		if ($this->situation_counter > 1) print ' readonly';
 		print '>';
 	} else { ?>
@@ -160,7 +160,7 @@ $coldisplay=-1; // We remove first td
 
 	<td align="right" class="nowrap"><?php $coldisplay++; ?>
 	<?php if (($line->info_bits & 2) != 2) {
-		print '<input size="1" type="text" class="flat" name="remise_percent" id="remise_percent" value="' . $line->remise_percent . '"';
+		print '<input size="1" type="text" class="flat right" name="remise_percent" id="remise_percent" value="' . $line->remise_percent . '"';
 		if ($this->situation_counter > 1) print ' readonly';
 		print '>%';
 	} else { ?>
@@ -170,7 +170,7 @@ $coldisplay=-1; // We remove first td
 	<?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td align="right" class="nowrap"><input type="text" size="1" value="' . $line->situation_percent . '" name="progress">%</td>';
+		print '<td align="right" class="nowrap"><input class="right" type="text" size="1" value="' . $line->situation_percent . '" name="progress">%</td>';
 	}
 	if (! empty($usemargins))
 	{
@@ -179,10 +179,10 @@ $coldisplay=-1; // We remove first td
 		<td align="right" class="margininfos"><?php $coldisplay++; ?>
 			<!-- For predef product -->
 			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
-			<select id="fournprice_predef" name="fournprice_predef" class="flat" data-role="none" style="display: none;"></select>
+			<select id="fournprice_predef" name="fournprice_predef" class="flat right" data-role="none" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
-			<input type="text" size="5" id="buying_price" name="buying_price" class="hideobject" value="<?php echo price($line->pa_ht,0,'',0); ?>">
+			<input class="flat right" type="text" size="5" id="buying_price" name="buying_price" class="hideobject" value="<?php echo price($line->pa_ht,0,'',0); ?>">
 		</td>
 		<?php } ?>
 	    <?php if ($user->rights->margins->creer) {
@@ -193,7 +193,7 @@ $coldisplay=-1; // We remove first td
 					if ($line->subprice < 0)
 						echo '<td align="right" class="nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
 					else
-						echo '<td align="right" class="nowrap margininfos"><input type="text" size="2" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
+						echo '<td align="right" class="nowrap margininfos"><input class="right" type="text" size="2" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
 					$coldisplay++;
 				  }
 				elseif (! empty($conf->global->DISPLAY_MARK_RATES))
@@ -203,7 +203,7 @@ $coldisplay=-1; // We remove first td
 					if ($line->subprice < 0)
 						echo '<td align="right" class="nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
 					else
-						echo '<td align="right" class="nowrap margininfos"><input type="text" size="2" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
+						echo '<td align="right" class="nowrap margininfos"><input class="right" type="text" size="2" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
 					$coldisplay++;
 				  }
 			  }
@@ -227,7 +227,7 @@ $coldisplay=-1; // We remove first td
 
 <?php if (! empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector)	 { ?>
 <tr id="service_duration_area" <?php echo $bc[$var]; ?>>
-	<td colspan="11"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
+	<td colspan="<?php echo 7+$colspan ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
 	$hourmin=(isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:'');
 	echo $form->select_date($line->date_start,'date_start',$hourmin,$hourmin,$line->date_start?0:1,"updateligne",1,0,1);

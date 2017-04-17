@@ -246,7 +246,7 @@ class Products extends DolibarrApi
         global $user;
         $user = DolibarrApiAccess::$user;
 
-        return $this->product->delete($id);
+        return $this->product->delete(DolibarrApiAccess::$user);
     }
     
     /**
@@ -264,7 +264,7 @@ class Products extends DolibarrApi
      */
     function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         $categories = new Categories();
-        return $categories->getListForItem('product', $sortfield, $sortorder, $limit, $page, $id);
+        return $categories->getListForItem($sortfield, $sortorder, $limit, $page, 'product', $id);
     }
 
     /**

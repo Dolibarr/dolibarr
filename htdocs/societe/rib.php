@@ -344,7 +344,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 // View
 if ($socid && $action != 'edit' && $action != "create")
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
 	// Confirm delete third party
     if ($action == 'delete')
@@ -359,14 +359,16 @@ if ($socid && $action != 'edit' && $action != "create")
 
     print load_fiche_titre($langs->trans("DefaultRIB"), '', '');
 
+    print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
+    
     print '<table class="border centpercent">';
 
     print '<tr><td class="titlefield">'.$langs->trans("LabelRIB").'</td>';
-    print '<td colspan="4">'.$account->label.'</td></tr>';
+    print '<td>'.$account->label.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BankName").'</td>';
-	print '<td colspan="4">'.$account->bank.'</td></tr>';
+	print '<td>'.$account->bank.'</td></tr>';
 
 	// Show fields of bank account
 	foreach($account->getFieldsToShow(1) as $val)
@@ -407,24 +409,24 @@ if ($socid && $action != 'edit' && $action != "create")
 		}
 
 		print '<tr><td>'.$langs->trans($val).'</td>';
-		print '<td colspan="4">'.$content.'</td>';
+		print '<td>'.$content.'</td>';
 		print '</tr>';
 	}
 
-	print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print $account->domiciliation;
 	print "</td></tr>\n";
 
-	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td><td>';
 	print $account->proprio;
 	print "</td></tr>\n";
 
-	print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 	print $account->owner_address;
 	print "</td></tr>\n";
 
 	print '</table>';
-
+    print '</div>';
 
 	print '<br>';
 	
@@ -458,7 +460,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
         foreach ($rib_list as $rib)
         {
-            print "<tr ".$bc[$var].">";
+            print '<tr class="oddeven">';
             // Label
             print '<td>'.$rib->label.'</td>';
             // Bank name
@@ -611,7 +613,7 @@ if ($socid && $action != 'edit' && $action != "create")
         {
         	$colspan=8;
         	if (! empty($conf->prelevement->enabled)) $colspan+=2;
-            print '<tr '.$bc[0].'><td colspan="'.$colspan.'" align="center">'.$langs->trans("NoBANRecord").'</td></tr>';
+            print '<tr '.$bc[0].'><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
         }
 
         print '</table>';
@@ -800,7 +802,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
     dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
-    print '<div class="fichecenter">';
+    print '<div class="nofichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
@@ -843,7 +845,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     }
 
     print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-    print '<textarea name="domiciliation" rows="'.ROWS_4.'" cols="40" maxlength="255">';
+    print '<textarea name="domiciliation" rows="'.ROWS_4.'" class="quatrevingtpercent" maxlength="255">';
     print GETPOST('domiciliation');
     print "</textarea></td></tr>";
 
@@ -852,7 +854,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     print "</td></tr>\n";
 
     print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
-    print '<textarea name="owner_address" rows="'.ROWS_4.'" cols="40" maxlength="255">';
+    print '<textarea name="owner_address" rows="'.ROWS_4.'" class="quatrevingtpercent" maxlength="255">';
     print GETPOST('owner_address');
     print "</textarea></td></tr>";
 
