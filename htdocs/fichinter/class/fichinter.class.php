@@ -54,6 +54,7 @@ class Fichinter extends CommonObject
 	var $datee;
 	var $datet;
 	var $datem;
+	var $datei;
 	var $duration;
 	var $statut;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
 	var $description;
@@ -329,6 +330,7 @@ class Fichinter extends CommonObject
 		$sql.= " f.datec, f.dateo, f.datee, f.datet,";
 		$sql.= " f.date_valid as datev,";
 		$sql.= " f.tms as datem,";
+		$sql.= " f.datei,";
 		$sql.= " f.duree, f.fk_projet, f.note_public, f.note_private, f.model_pdf, f.extraparams, fk_contrat";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		if ($ref) $sql.= " WHERE f.ref='".$this->db->escape($ref)."'";
@@ -354,6 +356,7 @@ class Fichinter extends CommonObject
 				$this->datet        = $this->db->jdate($obj->datet);
 				$this->datev        = $this->db->jdate($obj->datev);
 				$this->datem        = $this->db->jdate($obj->datem);
+				$this->datei        = $this->db->jdate($obj->datei);
 				$this->fk_project   = $obj->fk_projet;
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
