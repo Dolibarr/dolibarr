@@ -1025,11 +1025,15 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	if ($object->element == 'member')    $modulepart='memberphoto';
 	if ($object->element == 'user')      $modulepart='userphoto';
 	if ($object->element == 'product')   $modulepart='product';
-	if ($object->element == 'propal')    $modulepart='propal';
-	if ($object->element == 'commande')  $modulepart='commande';
-	if ($object->element == 'facture')   $modulepart='facture';
-	if ($object->element == 'fichinter') $modulepart='ficheinter';
-	
+	if (class_exists("Imagick"))
+	{
+		if ($object->element == 'propal')    $modulepart='propal';
+		if ($object->element == 'commande')  $modulepart='commande';
+		if ($object->element == 'facture')   $modulepart='facture';
+		if ($object->element == 'fichinter') $modulepart='ficheinter';
+		if ($object->element == 'contrat')   $modulepart='contract';
+	}
+
 	if ($object->element == 'product')
 	{
 	    $width=80; $cssclass='photoref';
@@ -1051,14 +1055,14 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	else
 	{
-        if ($showimage)
+		if ($showimage)
         {
-            if ($modulepart != 'unknown')
+        	if ($modulepart != 'unknown')
             {
                 $phototoshow='';
                 
                 // Check if a preview file is available
-                if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter')) && class_exists("Imagick"))
+                if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract')) && class_exists("Imagick"))
                 {
                     $objectref = dol_sanitizeFileName($object->ref);
                     $dir_output = $conf->$modulepart->dir_output . "/";
@@ -1083,7 +1087,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                             $ret = dol_convert_file($file, 'png', $fileimage);
                             if ($ret < 0) $error++;
                         }
-    
+
                         // Si fichier png PDF d'1 page trouve
                         if (file_exists($fileimage))
                         {
@@ -4865,45 +4869,77 @@ function dol_concatdesc($text1,$text2,$forxml=false)
 /**
  *  Make substition into a string replacing key with vals from $substitutionarray (oldval=>newval)
  *
- *  @param	string	$chaine      			Source string in which we must do substitution
- *  @param  array	$substitutionarray		Array with key->val to substitute
- * 	@return string  		    			Output string after subsitutions
+ *  @param	string		$text	      			Source string in which we must do substitution
+ *  @param  array		$substitutionarray		Array with key->val to substitute
+ *  @param	Translate	$outputlangs			Output language
+ * 	@return string  		    				Output string after substitutions
  *  @see	complete_substitutions_array
  */
-function make_substitutions($chaine,$substitutionarray)
+function make_substitutions($text, $substitutionarray, $outputlangs=null)
 {
-	global $conf;
+	global $conf, $langs;
 
 	if (! is_array($substitutionarray)) return 'ErrorBadParameterSubstitutionArrayWhenCalling_make_substitutions';
-
-	// Make substitition
+	
+	if (empty($outputlangs)) $outputlangs=$langs;
+	
+	// Make substitution for language keys
+	if (is_object($outputlangs))
+	{
+		while (preg_match('/__\((.*)\)__/', $text, $reg))
+		{
+			$msgishtml = 0;
+			if (dol_textishtml($text,1)) $msgishtml = 1;
+			$text = preg_replace('/__\('.preg_quote($reg[1]).'\)__/', $msgishtml?dol_htmlentitiesbr($outputlangs->transnoentitiesnoconv($reg[1])):$outputlangs->transnoentitiesnoconv($reg[1]), $text);	
+		}
+	}
+		
+	// Make substitition for array $substitutionarray
 	foreach ($substitutionarray as $key => $value)
 	{
 		if ($key == '__SIGNATURE__' && (! empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))) $value='';
-		$chaine=str_replace("$key","$value",$chaine);	// We must keep the " to work when value is 123.5 for example
+		$text=str_replace("$key","$value",$text);	// We must keep the " to work when value is 123.5 for example
 	}
 
-	return $chaine;
+	return $text;
 }
 
 /**
  *  Complete the $substitutionarray with more entries
  *
  *  @param  array		$substitutionarray		Array substitution old value => new value value
- *  @param  Translate	$outputlangs            If we want substitution from special constants, we provide a language
- *  @param  object		$object                 If we want substitution from special constants, we provide data in a source object
- *  @param  Mixed		$parameters       		Add more parameters (useful to pass product lines)
+ *  @param  Translate	$outputlangs            Output language
+ *  @param  Object		$object                 Source object
+ *  @param  mixed		$parameters       		Add more parameters (useful to pass product lines)
  *  @param  string      $callfunc               What is the name of the custom function that will be called? (default: completesubstitutionarray)
  *  @return	void
  *  @see 	make_substitutions
  */
-function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='',$parameters=null,$callfunc="completesubstitutionarray")
+function complete_substitutions_array(&$substitutionarray, $outputlangs, $object=null, $parameters=null, $callfunc="completesubstitutionarray")
 {
 	global $conf,$user;
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	// Check if there is external substitution to do asked by plugins
+	// Add a substitution key for each object property
+	if (is_object($object))
+	{
+		// TODO
+	}
+	
+	// Add a substitution key for each extrafields, using key __EXTRA_XXX__
+	if (is_object($object) && is_array($object->array_options))
+	{
+		foreach($object->array_options as $key => $val)
+		{
+			$keyshort=preg_replace('/^(options|extra)_/','',$key);
+			$substitutionarray['__EXTRA_'.$keyshort.'__']=$val;
+			// For backward compatibiliy
+			$substitutionarray['%EXTRA_'.$keyshort.'%']=$val;
+		}
+	}
+	
+	// Check if there is external substitution to do, requested by plugins
 	$dirsubstitutions=array_merge(array(),(array) $conf->modules_parts['substitutions']);
 
 	foreach($dirsubstitutions as $reldir)

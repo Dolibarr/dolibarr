@@ -209,6 +209,23 @@ class Adherent extends CommonObject
 
 		// Substitutions
 		$substitutionarray=array(
+				'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
+				'__ID__'=>$msgishtml?dol_htmlentitiesbr($this->id):$this->id,
+				'__CIVILITY__'=>$this->getCivilityLabel(),
+				'__FIRSTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
+				'__LASTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
+				'__FULLNAME__'=>$msgishtml?dol_htmlentitiesbr($this->getFullName($langs)):$this->getFullName($langs),
+				'__COMPANY__'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
+				'__ADDRESS__'=>$msgishtml?dol_htmlentitiesbr($this->address):$this->address,
+				'__ZIP__'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
+				'__TOWN_'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
+				'__COUNTRY__'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
+				'__EMAIL__'=>$msgishtml?dol_htmlentitiesbr($this->email):$this->email,
+				'__BIRTH__'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
+				'__PHOTO__'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
+				'__LOGIN__'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
+				'__PASSWORD__'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass,
+				// For backward compatibility
 				'%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
 				'%ID%'=>$msgishtml?dol_htmlentitiesbr($this->id):$this->id,
 				'%CIVILITY%'=>$this->getCivilityLabel(),
@@ -225,7 +242,6 @@ class Adherent extends CommonObject
 				'%PHOTO%'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
 				'%LOGIN%'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
 				'%PASSWORD%'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass,
-				// For backward compatibility
 				'%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
 				'%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
 				'%PRENOM%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
@@ -234,16 +250,10 @@ class Adherent extends CommonObject
 				'%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
 				'%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
 		);
-		// Add extrafields as substitution key %EXTRA_XXX%
-		foreach($this->array_options as $key => $val)
-		{
-			$keyshort=preg_replace('/^(options|extra)_/','',$key);
-			$substitutionarray['%EXTRA_'.$keyshort.'%']=$val;
-		}
 
-		complete_substitutions_array($substitutionarray, $langs);
+		complete_substitutions_array($substitutionarray, $langs, $this);
 
-		return make_substitutions($text,$substitutionarray);
+		return make_substitutions($text, $substitutionarray, $langs);
 	}
 
 

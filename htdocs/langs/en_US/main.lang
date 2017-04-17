@@ -153,6 +153,7 @@ Edit=Edit
 Validate=Validate
 ValidateAndApprove=Validate and Approve
 ToValidate=To validate
+NotValidated=Not validated
 Save=Save
 SaveAs=Save As
 TestConnection=Test connection

@@ -98,6 +98,13 @@ class modCommande extends DolibarrModules
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 
+		/*$r++;
+		$this->const[$r][0] = "COMMANDE_DRAFT_WATERMARK";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "__(Draft)__";
+		$this->const[$r][3] = 'Watermark to show on draft orders';
+		$this->const[$r][4] = 0;*/
+		
 		// Boxes
 		$this->boxes = array(
 			0=>array('file'=>'box_commandes.php','enabledbydefaulton'=>'Home'),
