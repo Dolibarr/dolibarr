@@ -202,6 +202,7 @@ class modCategorie extends DolibarrModules
 		$this->export_TypeFields_array[$r] = array (
 			'u.label' => "Text",
 			'u.description' => "Text",
+			'p.rowid' => 'List:socpeople:lastname',
 			'p.lastname' => 'Text',
 			'p.firstname' => 'Text'
 		);
