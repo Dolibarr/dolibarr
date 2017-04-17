@@ -1562,6 +1562,7 @@ foreach($mainmenuusedarray as $val)
 }	
 .login_vertical_align {
 	padding: 10px;
+	padding-bottom: 80px;
 }
 form#login {
 	padding-bottom: 30px;
@@ -1571,7 +1572,7 @@ form#login {
 .login_table_title {
 	max-width: 530px;
 	color: #aaa !important;
-	padding-top: 30px;
+	padding-bottom: 20px;
 	/* text-shadow: 1px 1px 1px #FFF; */
 }
 .login_table label {
