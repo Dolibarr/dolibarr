@@ -527,7 +527,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
                 $staticprod = new Product($db);
                 $staticprod->fetch($line->fk_product);
                 
-                print "<td>" . $staticprod->getNomUrl(1) . "</td>";
+                if (!empty($staticprod->label)) print "<td>" . $staticprod->getNomUrl(1) . " - ". $staticprod->label ."</td>";
+				else print "<td>" . $staticprod->getNomUrl(1) ."</td>";
                 print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
                 
                 print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";
