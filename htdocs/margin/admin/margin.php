@@ -145,11 +145,11 @@ if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')
 print '/> ';
 print $langs->trans('MargeType1');
 print '<br>';
-/*print $langs->trans('MargeNette');
+print $langs->trans('MargeNette');
 print ' <input type="radio" name="MARGIN_TYPE" value="2" ';
 if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '2')
 	print 'checked ';
-print '/>';*/
+print '/>';
 // TODO Check that PMP is available when stock module is not enabled. If not, make this choice greyed when stock module disabled.
 //if (! empty($conf->stock->enabled))
 //{
