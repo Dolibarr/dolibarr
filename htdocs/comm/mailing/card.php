@@ -787,8 +787,8 @@ else
 			if ($action == 'sendall')
 			{
                 // Define message to recommand from command line
-
-				$sendingmode=$conf->global->MAIN_MAIL_SENDMODE;
+				$sendingmode=$conf->global->EMAILING_MAIL_SENDMODE;
+				if (empty($sendingmode)) $sendingmode=$conf->global->MAIN_MAIL_SENDMODE;
 				if (empty($sendingmode)) $sendingmode='mail';	// If not defined, we use php mail function
 
 				// MAILING_NO_USING_PHPMAIL may be defined or not.
