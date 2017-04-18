@@ -31,6 +31,7 @@ Restler                3.0.0RC6      LGPL-3+                     Yes            
 TCPDF                  6.2.12        LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 Swift Mailer           5.4.2-DEV     MIT license                 Yes             Comprehensive mailing tools for PHP
+Stripe                 4.7.0         MIT licence                 Yes             Library for Stripe module
 
 JS libraries:
 jQuery                 1.11.3        MIT License                 Yes             JS library
