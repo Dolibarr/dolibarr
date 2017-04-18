@@ -2012,57 +2012,57 @@ class SupplierProposal extends CommonObject
      *      @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
      *      @return         int     		<0 if KO, >0 if OK
      */
-    function load_board($user,$mode)
-    {
-        global $conf, $user;
-
-        $now=dol_now();
-
-        $this->nbtodo=$this->nbtodolate=0;
-        $clause = " WHERE";
-
-        $sql = "SELECT p.rowid, p.ref, p.datec as datec";
-        $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
-        if (!$user->rights->societe->client->voir && !$user->societe_id)
-        {
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
-            $sql.= " WHERE sc.fk_user = " .$user->id;
-            $clause = " AND";
-        }
-        $sql.= $clause." p.entity = ".$conf->entity;
-        if ($mode == 'opened') $sql.= " AND p.fk_statut = 1";
-        if ($mode == 'signed') $sql.= " AND p.fk_statut = 2";
-        if ($user->societe_id) $sql.= " AND p.fk_soc = ".$user->societe_id;
-
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($mode == 'opened') $delay_warning=$conf->supplier_proposal->cloture->warning_delay;
-            if ($mode == 'signed') $delay_warning=$conf->supplier_proposal->facturation->warning_delay;
-
-            // This assignment in condition is not a bug. It allows walking the results.
-            while ($obj=$this->db->fetch_object($resql))
-            {
-                $this->nbtodo++;
-                if ($mode == 'opened')
-                {
-                    $datelimit = $this->db->jdate($obj->datefin);
-                    if ($datelimit < ($now - $delay_warning))
-                    {
-                        $this->nbtodolate++;
-                    }
-                }
-                // TODO Definir regle des propales a facturer en retard
-                // if ($mode == 'signed' && ! count($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
-            }
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            return -1;
-        }
-    }
+//    function load_board($user,$mode)
+//    {
+//        global $conf, $user;
+//
+//        $now=dol_now();
+//
+//        $this->nbtodo=$this->nbtodolate=0;
+//        $clause = " WHERE";
+//
+//        $sql = "SELECT p.rowid, p.ref, p.datec as datec";
+//        $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
+//        if (!$user->rights->societe->client->voir && !$user->societe_id)
+//        {
+//            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
+//            $sql.= " WHERE sc.fk_user = " .$user->id;
+//            $clause = " AND";
+//        }
+//        $sql.= $clause." p.entity = ".$conf->entity;
+//        if ($mode == 'opened') $sql.= " AND p.fk_statut = 1";
+//        if ($mode == 'signed') $sql.= " AND p.fk_statut = 2";
+//        if ($user->societe_id) $sql.= " AND p.fk_soc = ".$user->societe_id;
+//
+//        $resql=$this->db->query($sql);
+//        if ($resql)
+//        {
+//            if ($mode == 'opened') $delay_warning=$conf->supplier_proposal->cloture->warning_delay;
+//            if ($mode == 'signed') $delay_warning=$conf->supplier_proposal->facturation->warning_delay;
+//
+//            // This assignment in condition is not a bug. It allows walking the results.
+//            while ($obj=$this->db->fetch_object($resql))
+//            {
+//                $this->nbtodo++;
+//                if ($mode == 'opened')
+//                {
+//                    $datelimit = $this->db->jdate($obj->datefin);
+//                    if ($datelimit < ($now - $delay_warning))
+//                    {
+//                        $this->nbtodolate++;
+//                    }
+//                }
+//                // TODO Definir regle des propales a facturer en retard
+//                // if ($mode == 'signed' && ! count($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
+//            }
+//            return 1;
+//        }
+//        else
+//        {
+//            $this->error=$this->db->error();
+//            return -1;
+//        }
+//    }
 
 
     /**
