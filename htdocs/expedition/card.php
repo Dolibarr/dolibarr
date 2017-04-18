@@ -1246,8 +1246,11 @@ if ($action == 'create')
 						print '<td align="left">';
 						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
-    						if ($warehouseObject) 
+							$warehouse_selected_id = GETPOST('entrepot_id','int');							
+    						if ($warehouse_selected_id > 0) 
     						{
+    							$warehouseObject=new Entrepot($db);
+    							$warehouseObject->fetch($warehouse_selected_id);
     							print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->libelle);
     						}
     						else
