@@ -297,3 +297,5 @@ PropalMergePdfProductChooseFile=Select PDF files
 IncludingProductWithTag=Including product with tag
 DefaultPriceRealPriceMayDependOnCustomer=Default price, real price may depend on customer
 WarningSelectOneDocument=Please select at least one document
+DeleteProductBuyPrice=Delete buying price
+ConfirmDeleteProductBuyPrice=Are you sure you want to delete this buying price?
