@@ -122,8 +122,8 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
 
-        $var=!$var;
-        print "<tr ".$bc[$var].">";
+        
+        print '<tr class="oddeven">';
 
         // Id
         print '<td align="left">';

@@ -134,7 +134,7 @@ if ($result)
   while ($i < min($num,$limit))
   {
       $obj = $db->fetch_object($result);
-      $var=!$var;
+      
 
       print "<tr ".$bc[$var]."><td>";
 

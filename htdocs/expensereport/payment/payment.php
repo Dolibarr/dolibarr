@@ -273,9 +273,9 @@ if (GETPOST("action") == 'create')
 	{
 		$objp = $expensereport;
 
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 
 		print '<td align="right">'.price($objp->total_ttc)."</td>";
 

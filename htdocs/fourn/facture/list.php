@@ -2,13 +2,14 @@
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013	   Philippe Grand		<philippe.grand@atoo-net.com>
- * Copyright (C) 2013	   Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013	   Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015-2007 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015 	   Abbes Bahfir 	<bafbes@gmail.com>
- * Copyright (C) 2015-2016 Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2015-2007 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015 	   Abbes Bahfir         <bafbes@gmail.com>
+ * Copyright (C) 2015-2016 Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2017      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,6 +74,8 @@ $search_project=GETPOST('search_project','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_montant_vat=GETPOST('search_montant_vat','alpha');
+$search_montant_localtax1=GETPOST('search_montant_localtax1','alpha');
+$search_montant_localtax2=GETPOST('search_montant_localtax2','alpha');
 $search_montant_ttc=GETPOST('search_montant_ttc','alpha');
 $search_status=GETPOST('search_status','int');
 $search_paymentmode=GETPOST('search_paymentmode','int');
@@ -157,6 +160,8 @@ $arrayfields=array(
     'f.fk_mode_reglement'=>array('label'=>$langs->trans("PaymentMode"), 'checked'=>1),
     'f.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
     'f.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
+    'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax1_assuj=="1"),
+    'f.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax2_assuj=="1"),
     'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
     'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
@@ -203,6 +208,8 @@ if (empty($reshook))
         $search_amount_all_tax="";
         $search_montant_ht='';
         $search_montant_vat='';
+        $search_montant_localtax1='';
+        $search_montant_localtax2='';
         $search_montant_ttc='';
         $search_status='';
         $search_paymentmode='';
@@ -251,6 +258,7 @@ $sql = "SELECT";
 if ($search_all || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql.= " f.rowid as facid, f.ref, f.ref_supplier, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement,";
 $sql.= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.fk_statut as fk_statut, f.libelle as label, f.datec as date_creation, f.tms as date_update,";
+$sql.= " f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,";
 $sql.= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
@@ -304,6 +312,8 @@ if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdp
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_montant_ht != '') $sql.= natural_search('f.total_ht', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql.= natural_search('f.total_tva', $search_montant_vat, 1);
+if ($search_montant_localtax1 != '') $sql.= natural_search('f.localtax1', $search_montant_localtax1, 1);
+if ($search_montant_localtax2 != '') $sql.= natural_search('f.localtax2', $search_montant_localtax2, 1);
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
 if ($search_status != '' && $search_status >= 0) $sql.= " AND f.fk_statut = ".$db->escape($search_status);
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
@@ -412,6 +422,8 @@ if ($resql)
 	if ($search_company)      	$param.='&search_company='.urlencode($search_company);
     if ($search_montant_ht != '')  $param.='&search_montant_ht='.urlencode($search_montant_ht);
     if ($search_montant_vat != '')  $param.='&search_montant_vat='.urlencode($search_montant_vat);
+    if ($search_montant_localtax1 != '')  $param.='&search_montant_localtax1='.urlencode($search_montant_localtax1);
+    if ($search_montant_localtax2 != '')  $param.='&search_montant_localtax2='.urlencode($search_montant_localtax2);
     if ($search_montant_ttc != '') $param.='&search_montant_ttc='.urlencode($search_montant_ttc);
 	if ($search_amount_no_tax)	$param.='&search_amount_no_tax='.urlencode($search_amount_no_tax);
 	if ($search_amount_all_tax)	$param.='&search_amount_all_tax='.urlencode($search_amount_all_tax);
@@ -736,6 +748,20 @@ if ($resql)
 	    print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.$search_montant_vat.'">';
 	    print '</td>';
 	}
+	if (! empty($arrayfields['f.total_localtax1']['checked']))
+	{
+	    // Amount
+	    print '<td class="liste_titre" align="right">';
+	    print '<input class="flat" type="text" size="5" name="search_montant_localtax1" value="'.$search_montant_localtax1.'">';
+	    print '</td>';
+	}
+	if (! empty($arrayfields['f.total_localtax2']['checked']))
+	{
+	    // Amount
+ 	    print '<td class="liste_titre" align="right">';
+	    print '<input class="flat" type="text" size="5" name="search_montant_localtax2" value="'.$search_montant_localtax2.'">';
+	    print '</td>';
+	}
 	if (! empty($arrayfields['f.total_ttc']['checked']))
 	{
 	    // Amount
@@ -814,6 +840,8 @@ if ($resql)
 	if (! empty($arrayfields['f.fk_mode_reglement']['checked']))  print_liste_field_titre($arrayfields['f.fk_mode_reglement']['label'],$_SERVER["PHP_SELF"],"f.fk_mode_reglement","",$param,"",$sortfield,$sortorder);
 	if (! empty($arrayfields['f.total_ht']['checked']))           print_liste_field_titre($arrayfields['f.total_ht']['label'],$_SERVER['PHP_SELF'],'f.total','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.total_vat']['checked']))          print_liste_field_titre($arrayfields['f.total_vat']['label'],$_SERVER['PHP_SELF'],'f.tva','',$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['f.total_localtax1']['checked']))    print_liste_field_titre($arrayfields['f.total_localtax1']['label'],$_SERVER['PHP_SELF'],'f.localtax1','',$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['f.total_localtax2']['checked']))    print_liste_field_titre($arrayfields['f.total_localtax2']['label'],$_SERVER['PHP_SELF'],'f.localtax2','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.total_ttc']['checked']))          print_liste_field_titre($arrayfields['f.total_ttc']['label'],$_SERVER['PHP_SELF'],'f.total_ttc','',$param,'align="right"',$sortfield,$sortorder);
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -850,7 +878,7 @@ if ($resql)
 		while ($i < min($num,$limit))
 		{
 			$obj = $db->fetch_object($resql);
-			$var=!$var;
+			
 		
 			$datelimit=$db->jdate($obj->datelimite);
 			$facturestatic->id=$obj->facid;
@@ -859,7 +887,7 @@ if ($resql)
 			$facturestatic->date_echeance = $db->jdate($obj->datelimite);
 			$facturestatic->statut = $obj->fk_statut;
 	
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
     		if (! empty($arrayfields['f.ref']['checked']))
     		{
                 print '<td class="nowrap">';
@@ -1016,6 +1044,22 @@ if ($resql)
     		    if (! $i) $totalarray['totalvatfield']=$totalarray['nbfield'];
     		    $totalarray['totalvat'] += $obj->total_vat;
             }
+            // Amount LocalTax1
+            if (! empty($arrayfields['f.total_localtax1']['checked']))
+            {
+                print '<td align="right">'.price($obj->total_localtax1)."</td>\n";
+                if (! $i) $totalarray['nbfield']++;
+    		    if (! $i) $totalarray['totallocaltax1field']=$totalarray['nbfield'];
+    		    $totalarray['totallocaltax1'] += $obj->total_localtax1;
+            }
+            // Amount LocalTax2
+            if (! empty($arrayfields['f.total_localtax2']['checked']))
+            {
+                print '<td align="right">'.price($obj->total_localtax2)."</td>\n";
+                if (! $i) $totalarray['nbfield']++;
+    		    if (! $i) $totalarray['totallocaltax2field']=$totalarray['nbfield'];
+    		    $totalarray['totallocaltax2'] += $obj->total_localtax2;
+            }
             // Amount TTC
             if (! empty($arrayfields['f.total_ttc']['checked']))
             {
@@ -1109,6 +1153,8 @@ if ($resql)
 	    // Show total line
     	if (isset($totalarray['totalhtfield'])
  	   || isset($totalarray['totalvatfield'])
+ 	   || isset($totalarray['totallocaltax1field'])
+ 	   || isset($totalarray['totallocaltax2field'])
  	   || isset($totalarray['totalttcfield'])
  	   || isset($totalarray['totalamfield'])
  	   || isset($totalarray['totalrtpfield'])
@@ -1126,9 +1172,11 @@ if ($resql)
     	       }
     		   elseif ($totalarray['totalhtfield'] == $i)  print '<td align="right">'.price($totalarray['totalht']).'</td>';
     		   elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
+    		   elseif ($totalarray['totallocaltax1field'] == $i) print '<td align="right">'.price($totalarray['totallocaltax1']).'</td>'; 
+    		   elseif ($totalarray['totallocaltax2field'] == $i) print '<td align="right">'.price($totalarray['totallocaltax2']).'</td>';
     		   elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
     		   elseif ($totalarray['totalamfield'] == $i)  print '<td align="right">'.price($totalarray['totalam']).'</td>';
-			   elseif ($totalarray['totalrtpfield'] == $i)  print '<td align="right">'.price($totalarray['totalrtp']).'</td>';
+    		   elseif ($totalarray['totalrtpfield'] == $i)  print '<td align="right">'.price($totalarray['totalrtp']).'</td>';
     		   else print '<td></td>';
     		}
     		print '</tr>';

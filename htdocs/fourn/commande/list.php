@@ -1079,7 +1079,7 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
+		
 
         $objectstatic->id=$obj->rowid;
         $objectstatic->ref=$obj->ref;
@@ -1090,7 +1090,7 @@ if ($resql)
         $objectstatic->date_delivery = $db->jdate($obj->date_delivery);
         $objectstatic->statut = $obj->fk_statut;
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 
 		// Ref
         if (! empty($arrayfields['cf.ref']['checked']))

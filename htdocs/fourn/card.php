@@ -407,7 +407,7 @@ if ($object->id > 0)
 
 			while ($objp = $db->fetch_object($query)) {
 
-				$var=!$var;
+				
 
 				$productstatic->id = $objp->rowid;
 				$productstatic->ref = $objp->ref;
@@ -415,7 +415,7 @@ if ($object->id > 0)
 				$productstatic->type = $objp->fk_product_type;
 				$productstatic->entity = $objp->entity;
 
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 				print $productstatic->getNomUrl(1);
 				print '</td>';
@@ -483,9 +483,9 @@ if ($object->id > 0)
 	        while ($i < $num && $i <= $MAXLIST)
 	        {
 	            $obj = $db->fetch_object($resql);
-	            $var=!$var;
+	            
 	
-	            print "<tr ".$bc[$var].">";
+	            print '<tr class="oddeven">';
 	            print '<td class="nowrap">';
 	            $proposalstatic->id = $obj->rowid;
 	            $proposalstatic->ref = $obj->ref;
@@ -587,9 +587,9 @@ if ($object->id > 0)
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$obj = $db->fetch_object($resql);
-				$var=!$var;
+				
 
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
                 print '<td class="nowrap">';
                 $orderstatic->id = $obj->rowid;
                 $orderstatic->ref = $obj->ref;
@@ -660,8 +660,8 @@ if ($object->id > 0)
 			while ($i < min($num,$MAXLIST))
 			{
 				$obj = $db->fetch_object($resql);
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				
+				print '<tr class="oddeven">';
 				print '<td>';
 				print '<a href="facture/card.php?facid='.$obj->rowid.'">';
 				$facturestatic->id=$obj->rowid;

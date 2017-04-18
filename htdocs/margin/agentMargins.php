@@ -220,9 +220,9 @@ if ($result)
 				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
 
-			$var=!$var;
+			
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			if ($agentid > 0) {
 				$companystatic->id=$objp->socid;
 				$companystatic->name=$objp->name;

@@ -1324,7 +1324,7 @@ if ($id > 0)
 		print '<div class="assignedtouser">';
 		print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		print '</div>';
-		if (in_array($user->id,array_keys($listofuserid))) 
+		if ($object->datep != $object->datef && in_array($user->id,array_keys($listofuserid))) 
 		{
 			print '<div class="myavailability">';
 			print $langs->trans("MyAvailability").': '.(($object->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody

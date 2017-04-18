@@ -277,7 +277,7 @@ foreach ($data as $val)
 	{ // If we have empty year
 		$oldyear--;
 		
-		$var=!$var;
+		
 		print '<tr '.$bc[$var].' height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
 	
@@ -287,7 +287,7 @@ foreach ($data as $val)
 		print '</tr>';
 	}
 
-	$var=!$var;
+	
 	print '<tr '.$bc[$var].' height="24">';
 	print '<td align="center">';
 	if ($year) print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a>';

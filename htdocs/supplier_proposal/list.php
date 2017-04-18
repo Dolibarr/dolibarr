@@ -579,12 +579,12 @@ if ($result)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($result);
-		$var=!$var;
+		
 
 		$objectstatic->id=$obj->rowid;
 		$objectstatic->ref=$obj->ref;
 
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
@@ -671,14 +671,14 @@ if ($result)
 	if ($total>0)
 	{
 		if($num<$limit){
-			$var=!$var;
+			
 			print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHT").'</td>';
 			print '<td colspan="4" align="right">'.price($total).'</td><td colspan="3"></td>';
 			print '</tr>';
 		}
 		else
 		{
-			$var=!$var;
+			
 			print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHTforthispage").'</td>';
 			print '<td colspan="4" align="right">'.price($total).'</td><td colspan="3"></td>';
 			print '</tr>';

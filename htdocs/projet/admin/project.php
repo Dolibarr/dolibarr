@@ -337,8 +337,8 @@ print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
 
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("ManageOpportunitiesStatus").'</td>';
 print '<td width="60" align="right">';
 $arrval=array('0'=>$langs->trans("No"),
@@ -350,8 +350,8 @@ print '<input type="submit" class="button" name="modifyPROJECT_USE_OPPORTUNITIES
 print "</td>";
 print '</tr>';
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("ManageTasks").'</td>';
 print '<td width="60" align="right">';
 $arrval=array('0'=>$langs->trans("No"),
@@ -414,8 +414,8 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-						$var=!$var;
-						print '<tr '.$bc[$var].'><td>'.$module->name."</td><td>\n";
+						
+						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 						print $module->info();
 						print '</td>';
 
@@ -518,8 +518,8 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 
 						if ($module->isEnabled())
 						{
-							$var=!$var;
-							print '<tr '.$bc[$var].'><td>'.$module->name."</td><td>\n";
+							
+							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 							print $module->info();
 							print '</td>';
 
@@ -660,8 +660,8 @@ foreach ($dirmodels as $reldir)
 
 							if ($modulequalified)
 							{
-								$var=!$var;
-								print '<tr '.$bc[$var].'><td width="100">';
+								
+								print '<tr class="oddeven"><td width="100">';
 								print (empty($module->name)?$name:$module->name);
 								print "</td><td>\n";
 								if (method_exists($module,'info')) print $module->info($langs);
@@ -820,7 +820,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 								if ($modulequalified)
 								{
 									$var = !$var;
-									print '<tr '.$bc[$var].'><td width="100">';
+									print '<tr class="oddeven"><td width="100">';
 									print (empty($module->name)?$name:$module->name);
 									print "</td><td>\n";
 									if (method_exists($module,'info')) print $module->info($langs);
@@ -911,8 +911,8 @@ print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
 
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("UseSearchToSelectProject").'</td>';
 if (! $conf->use_javascript_ajax)
 {
@@ -935,8 +935,8 @@ else
 }
 print '</tr>';
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowToSelectProjectFromOtherCompany").'</td>';
 
 print '<td align="center" width="300">';

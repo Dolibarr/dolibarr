@@ -104,7 +104,7 @@ $var=true;
 
 foreach($cp->logs as $logs_CP)
 {
-   	$var=!$var;
+   	
 
    	$user_action = new User($db);
    	$user_action->fetch($logs_CP['fk_user_action']);
@@ -112,7 +112,7 @@ foreach($cp->logs as $logs_CP)
    	$user_update = new User($db);
    	$user_update->fetch($logs_CP['fk_user_update']);
 
-   	print '<tr '.$bc[$var].'>';
+   	print '<tr class="oddeven">';
    	print '<td>'.$logs_CP['rowid'].'</td>';
    	print '<td style="text-align: center;">'.$logs_CP['date_action'].'</td>';
    	print '<td>'.$user_action->getNomUrl(-1).'</td>';

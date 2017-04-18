@@ -288,8 +288,8 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-						$var=!$var;
-						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+						
+						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
 
@@ -427,7 +427,7 @@ foreach ($dirmodels as $reldir)
 	                        if ($modulequalified)
 	                        {
 	                            $var = !$var;
-	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module,'info')) print $module->info($langs);
@@ -527,7 +527,7 @@ $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_SUPPLIER_PROPOSAL_FREE_TEXT">';
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("FreeLegalTextOnSupplierProposal").' '.img_info($langs->trans("AddCRIfTooLong")).'</br>';
 $variablename='SUPPLIER_PROPOSAL_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
@@ -545,11 +545,11 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td></tr>\n";
 print '</form>';
 
-$var=!$var;
+
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_SUPPLIER_PROPOSAL_DRAFT_WATERMARK\">";
-print '<tr '.$bc[$var].'><td>';
+print '<tr class="oddeven"><td>';
 print $langs->trans("WatermarkOnDraftSupplierProposal").'</td><td>';
 print '<input size="50" class="flat" type="text" name="SUPPLIER_PROPOSAL_DRAFT_WATERMARK" value="'.$conf->global->SUPPLIER_PROPOSAL_DRAFT_WATERMARK.'">';
 print '</td><td align="right">';
@@ -559,8 +559,8 @@ print '</form>';
 
 if ($conf->banque->enabled)
 {
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    
+    print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp</td><td align="right">';
     if (! empty($conf->use_javascript_ajax))
     {
@@ -581,8 +581,8 @@ if ($conf->banque->enabled)
 }
 else
 {
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    
+    print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
 

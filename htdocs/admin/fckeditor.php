@@ -159,8 +159,8 @@ else
         // Si condition non remplie, on ne propose pas l'option
         if (! $conditions[$const]) continue;
 
-        $var=!$var;
-        print "<tr ".$bc[$var].">";
+        
+        print '<tr class="oddeven">';
         print '<td width="16">'.img_object("",$picto[$const]).'</td>';
         print '<td>'.$langs->trans($desc).'</td>';
         print '<td align="center" width="100">';

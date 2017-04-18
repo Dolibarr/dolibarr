@@ -248,7 +248,7 @@ if ($action == 'create')
 	$var=True;
 
 
-	print "<tr ".$bc[$var].">";
+	print '<tr class="oddeven">';
 
 	if ($loan->datestart > 0)
 	{

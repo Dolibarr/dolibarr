@@ -173,8 +173,8 @@ if (! empty($triggers))
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
 
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			
+			print '<tr class="oddeven">';
 			print '<td>'.$trigger['code'].'</td>';
 			print '<td>'.$trigger['label'].'</td>';
 			print '<td align="right" width="40">';

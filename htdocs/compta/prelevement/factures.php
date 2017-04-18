@@ -197,7 +197,7 @@ if ($result)
      	$thirdpartytmp->id = $obj->socid;
      	$thirdpartytmp->name = $obj->name;
      	
-      	print "<tr ".$bc[$var].">";
+      	print '<tr class="oddeven">';
       	
       	print "<td>";
       	print $invoicetmp->getNomUrl(1);
@@ -233,7 +233,7 @@ if ($result)
       	print "</tr>\n";
 
       	$total += $obj->total_ttc;
-      	$var=!$var;
+      	
       	$i++;
     }
 

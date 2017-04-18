@@ -278,7 +278,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                 {
                     if (isset($contents[$i]))
                     {
-                        $var=!$var;
+                        
 
                         // TR
                         if (isset($contents[$i][0]['tr'])) $out.= '<tr valign="top" '.$contents[$i][0]['tr'].'>';

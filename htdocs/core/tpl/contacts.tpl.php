@@ -72,7 +72,7 @@ if ($permission) {
 	$var=true;
 	if (empty($hideaddcontactforuser))
 	{
-		$var=!$var;
+		
 	?>
 	<form class="tagtr impair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
@@ -98,7 +98,7 @@ if ($permission) {
 
 	if (empty($hideaddcontactforthirdparty))
 	{
-		$var=!$var;
+		
 	?>
 
 	<form class="tagtr pair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">

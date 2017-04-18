@@ -207,8 +207,8 @@ class FormActions
         		$ref=$action->getNomUrl(1,-1);
         		$label=$action->getNomUrl(0,38);
                 
-        		$var=!$var;
-        		print '<tr '.$bc[$var].'>';
+        		
+        		print '<tr class="oddeven">';
 				print '<td>'.$ref.'</td>';
         		print '<td>'.$label.'</td>';
         		print '<td>'.$action->type.'</td>';

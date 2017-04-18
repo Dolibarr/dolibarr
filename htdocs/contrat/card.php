@@ -1507,7 +1507,7 @@ else
 
                 $objp = $db->fetch_object($result);
 
-                //$var=!$var;
+                //
 
                 if ($action != 'editline' || GETPOST('rowid') != $objp->rowid)
                 {

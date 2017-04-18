@@ -292,7 +292,7 @@ else
 		$var=true;
 		foreach ($cats as $cat)
 		{
-			$var=!$var;
+			
 			print "\t<tr ".$bc[$var].">\n";
 			print "\t\t".'<td class="nowrap">';
 			print "<a href='viewcat.php?id=".$cat->id."&amp;type=".$type."'>".$cat->label."</a>";
@@ -363,7 +363,7 @@ if ($object->type == Categorie::TYPE_PRODUCT)
 			$var=true;
 			foreach ($prods as $prod)
 			{
-				$var=!$var;
+				
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
 				print $prod->getNomUrl(1);
@@ -414,7 +414,7 @@ if ($object->type == Categorie::TYPE_SUPPLIER)
 			$var=true;
 			foreach ($socs as $soc)
 			{
-				$var=!$var;
+				
 				print "\t<tr ".$bc[$var].">\n";
 
 				print '<td class="nowrap" valign="top">';
@@ -470,7 +470,7 @@ if($object->type == Categorie::TYPE_CUSTOMER)
 				if ($user->societe_id > 0 && $soc->id != $user->societe_id)	continue; 	// External user always see only themself
 
 				$i++;
-				$var=!$var;
+				
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
 				print $soc->getNomUrl(1);
@@ -523,7 +523,7 @@ if ($object->type == Categorie::TYPE_MEMBER)
 			$var=true;
 			foreach ($prods as $key => $member)
 			{
-				$var=!$var;
+				
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
 				$member->ref=$member->login;
@@ -578,7 +578,7 @@ if($object->type == Categorie::TYPE_CONTACT)
 			foreach ($contacts as $key => $contact)
 			{
 				$i++;
-				$var=!$var;
+				
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
 				print $contact->getNomUrl(1,'category');
@@ -632,7 +632,7 @@ if ($object->type == Categorie::TYPE_ACCOUNT)
             $var=true;
             foreach ($accounts as $key => $account)
             {
-                $var=!$var;
+                
                 print "\t<tr ".$bc[$var].">\n";
                 print '<td class="nowrap" valign="top">';
                 print $account->getNomUrl(1,0);
@@ -687,7 +687,7 @@ if ($object->type == Categorie::TYPE_PROJECT)
 			$var=true;
 			foreach ($projects as $key => $project)
 			{
-				$var=!$var;
+				
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
 				print $project->getNomUrl(1,0);

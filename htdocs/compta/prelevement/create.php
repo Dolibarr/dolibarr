@@ -194,8 +194,8 @@ if ($resql)
         while ($i < $num && $i < 20)
         {
             $obj = $db->fetch_object($resql);
-            $var=!$var;
-            print '<tr '.$bc[$var].'>';
+            
+            print '<tr class="oddeven">';
             print '<td>';
             $invoicestatic->id=$obj->rowid;
             $invoicestatic->ref=$obj->facnumber;
@@ -268,9 +268,9 @@ if ($result)
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
-        $var=!$var;
+        
 
-        print "<tr ".$bc[$var].">";
+        print '<tr class="oddeven">';
 
         print "<td>";
         $bprev->id=$obj->rowid;

@@ -316,8 +316,8 @@ if ($result > 0)
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				
+				print '<tr class="oddeven">';
 				// Ref
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
 				print ($objp->ref?$objp->ref:$objp->rowid);
@@ -342,7 +342,7 @@ if ($result > 0)
 				$i++;
 			}
 		}
-		$var=!$var;
+		
 
 		print "</table>\n";
 		$db->free($resql);

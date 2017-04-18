@@ -50,11 +50,11 @@ $var = true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 $var = ! $var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
 $var = ! $var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
 $var = ! $var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
+print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) {
     // Compare version with last install database version (upgrades never occured)
