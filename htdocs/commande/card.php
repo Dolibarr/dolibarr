@@ -1255,10 +1255,6 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 
-	/*
-	 * Send mail
-	 */
-
 	// Actions to send emails
 	$actiontypecode='AC_COM';
 	$trigger_name='ORDER_SENTBYMAIL';
@@ -2589,7 +2585,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<a name="builddoc"></a>'; // ancre
 			// Documents
 			$comref = dol_sanitizeFileName($object->ref);
-			$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
 			$relativepath = $comref . '/' . $comref . '.pdf';
 			$filedir = $conf->commande->dir_output . '/' . $comref;
 			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;

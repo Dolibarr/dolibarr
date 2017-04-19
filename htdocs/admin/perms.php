@@ -186,7 +186,7 @@ if ($result)
             print "</tr>\n";
         }
 
-        $var=!$var;
+        
         print '<tr '. $bc[$var].'>';
 
         print '<td>'.img_object('',$picto).' '.$objMod->getName();

@@ -84,8 +84,8 @@ $var=true;
 $form = new Form($db);
 
 // Mail required for members
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ECMAutoTree").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 

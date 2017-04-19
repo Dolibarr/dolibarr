@@ -29,10 +29,10 @@
 /**
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
- *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
+ *	\brief      File that defines environment for Dolibarr GUI pages only (file not required by scripts)
  */
 
-//@ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
+//@ini_set('memory_limit', '128M');	// This may be useless if memory is hard limited by your PHP
 
 // For optional tuning. Enabled if environment variable MAIN_SHOW_TUNING_INFO is defined.
 $micro_start_time=0;
@@ -48,7 +48,7 @@ if (! empty($_SERVER['MAIN_SHOW_TUNING_INFO']))
 }
 
 // Removed magic_quotes
-if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
+if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP 5.0 and removed in PHP 5.5
 {
     if (get_magic_quotes_gpc())
     {
@@ -172,7 +172,7 @@ if (! empty($_SERVER['DOCUMENT_ROOT']) && substr($_SERVER['DOCUMENT_ROOT'], -6) 
 // Include the conf.php and functions.lib.php
 require_once 'filefunc.inc.php';
 
-// If there is a POST parameter to tell to save automatically some POST parameters into a cookies, we do it
+// If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it
 if (! empty($_POST["DOL_AUTOSET_COOKIE"]))
 {
 	$tmpautoset=explode(':',$_POST["DOL_AUTOSET_COOKIE"],2);
@@ -198,7 +198,7 @@ $sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
 session_name($sessionname);
 session_start();
-if (ini_get('register_globals'))    // To solve bug in using $_SESSION
+if (ini_get('register_globals'))    // Deprecated in 5.3 and removed in 5.4. To solve bug in using $_SESSION
 {
     foreach ($_SESSION as $key=>$value)
     {
@@ -206,8 +206,7 @@ if (ini_get('register_globals'))    // To solve bug in using $_SESSION
     }
 }
 
-// Init the 5 global objects
-// This include will make the new and set properties for: $conf, $db, $langs, $user, $mysoc objects
+// Init the 5 global objects, this include will make the new and set properties for: $conf, $db, $langs, $user, $mysoc
 require_once 'master.inc.php';
 
 // Activate end of page function
@@ -523,7 +522,7 @@ if (! defined('NOLOGIN'))
             exit;
         }
 
-        $resultFetchUser=$user->fetch('', $login, '', 1, ($entitytotest ? $entitytotest : -1));
+        $resultFetchUser=$user->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));
         if ($resultFetchUser <= 0)
         {
             dol_syslog('User not found, connexion refused');
@@ -580,7 +579,7 @@ if (! defined('NOLOGIN'))
         $entity=$_SESSION["dol_entity"];
         dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login." _SESSION['dol_entity']=".$entity, LOG_DEBUG);
 
-        $resultFetchUser=$user->fetch('',$login,'',1,($entity > 0 ? $entity : -1));
+        $resultFetchUser=$user->fetch('', $login, '', 1, ($entity > 0 ? $entity : -1));
         if ($resultFetchUser <= 0)
         {
             // Account has been removed after login
@@ -735,11 +734,11 @@ if (! defined('NOLOGIN'))
     }
 
     /*
-     * Overwrite configs global by personal configs
+     * Overwrite some configs globals (try to avoid this and have code to use instead $user->conf->xxx)
      */
 
     // Set liste_limit
-    if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT))	$conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT;		// Can be 0
+    if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT))	$conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT;	// Can be 0
     if (isset($user->conf->PRODUIT_LIMIT_SIZE))	$conf->product->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;	// Can be 0
 
     // Replace conf->css by personalized value if theme not forced
@@ -850,7 +849,7 @@ if (! defined('NOREQUIRETRAN'))
 $bc=array(0=>'class="impair"',1=>'class="pair"');
 $bcdd=array(0=>'class="drag drop oddeven"',1=>'class="drag drop oddeven"');
 $bcnd=array(0=>'class="nodrag nodrop nohover"',1=>'class="nodrag nodrop nohoverpair"');		// Used for tr to add new lines
-$bctag=array(0=>'class="tagtr"',1=>'class="pair tagtr"');
+$bctag=array(0=>'class="impair tagtr"',1=>'class="pair tagtr"');
 
 // Define messages variables
 $mesg=''; $warning=''; $error=0;
@@ -1899,7 +1898,7 @@ if (! function_exists("llxFooter"))
 
         if (! empty($delayedhtmlcontent)) print $delayedhtmlcontent;
 
-        // TODO Move this in lib_head.js
+        // TODO Move this in lib_head.js.php
 
         // Wrapper to show tooltips (html or onclick popup)
         if (! empty($conf->use_javascript_ajax) && empty($conf->dol_no_mouse_hover))
@@ -1922,7 +1921,7 @@ if (! function_exists("llxFooter"))
         }
         
         // Wrapper to manage document_preview
-        if (! empty($conf->use_javascript_ajax) && ! empty($conf->browser->layout != 'phone'))
+        if (! empty($conf->use_javascript_ajax) && ($conf->browser->layout != 'phone'))
         {
             print "\n<!-- JS CODE TO ENABLE document_preview -->\n";
             print '<script type="text/javascript">

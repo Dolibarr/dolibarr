@@ -76,7 +76,7 @@ print load_fiche_titre($langs->trans("PropalSetup"),$linkback,'title_setup');
 
 $head = propal_admin_prepare_head();
 
-dol_fiche_head($head, 'attributeslines', $langs->trans("Proposals"), 0, 'propal');
+dol_fiche_head($head, 'attributeslines', $langs->trans("Proposals"), -1, 'propal');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

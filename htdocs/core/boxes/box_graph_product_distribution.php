@@ -249,6 +249,8 @@ class box_graph_product_distribution extends ModeleBoxes
 
 		if (! empty($conf->commande->enabled) && ! empty($user->rights->commande->lire))
 		{
+			$langs->load("orders");
+			
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showordernb)
 			{

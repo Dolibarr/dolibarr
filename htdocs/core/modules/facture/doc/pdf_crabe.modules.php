@@ -1499,7 +1499,7 @@ class pdf_crabe extends ModelePDFFactures
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		// Show Draft Watermark
-		if($object->statut==0 && (! empty($conf->global->FACTURE_DRAFT_WATERMARK)) )
+		if($object->statut==Facture::STATUS_DRAFT && (! empty($conf->global->FACTURE_DRAFT_WATERMARK)) )
         {
 		      pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->FACTURE_DRAFT_WATERMARK);
         }
@@ -1553,7 +1553,13 @@ class pdf_crabe extends ModelePDFFactures
 		$posy+=5;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell($w, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
+		$textref=$outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref);
+		if ($object->statut == Facture::STATUS_DRAFT) 
+		{
+			$pdf->SetTextColor(128,0,0);
+			$textref.=' - '.$outputlangs->trans("NotValidated");
+		}
+		$pdf->MultiCell($w, 4, $textref, '', 'R');
 
 		$posy+=1;
 		$pdf->SetFont('','', $default_font_size - 2);

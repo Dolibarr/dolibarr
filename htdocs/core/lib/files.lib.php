@@ -1588,7 +1588,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	if (empty($refname)) $refname=basename(dirname($original_file)."/");
 
 	$relative_original_file = $original_file;
-	
+
 	// Wrapping for some images
 	if (($modulepart == 'mycompany' || $modulepart == 'companylogo') && !empty($conf->mycompany->dir_output))
 	{
@@ -1683,13 +1683,13 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		if ($fuser->rights->produit->lire || $fuser->rights->service->lire) $accessallowed=1;
 		$original_file=(!empty($conf->product->multidir_temp[$entity])?$conf->product->multidir_temp[$entity]:$conf->service->multidir_temp[$entity]).'/'.$original_file;
 	}
-	// Wrapping for products or services
+	// Wrapping for taxes
 	elseif ($modulepart == 'tax' && !empty($conf->tax->dir_output))
 	{
 		if ($fuser->rights->tax->charges->lire) $accessallowed=1;
 		$original_file=$conf->tax->dir_output.'/'.$original_file;
 	}
-	// Wrapping for products or services
+	// Wrapping for events
 	elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output))
 	{
 		if ($fuser->rights->agenda->myactions->read) $accessallowed=1;
@@ -1975,7 +1975,6 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		}
 		$original_file=$conf->expedition->dir_output."/sending/".$original_file;
 	}
-
 	// Wrapping pour les bons de livraison
 	else if ($modulepart == 'livraison' && !empty($conf->expedition->dir_output))
 	{

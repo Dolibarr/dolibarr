@@ -259,8 +259,8 @@ if ($id > 0 || ! empty($ref))
 
 						$companyname=$objp->company;
 
-						$var=!$var;
-						print "<tr ".$bc[$var].">";
+						
+						print '<tr class="oddeven">';
 
 						// Ref
 						print "<td>";

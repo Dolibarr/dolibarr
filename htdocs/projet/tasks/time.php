@@ -823,7 +823,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		$totalarray=array();
 		foreach ($tasks as $task_time)
 		{
-			$var=!$var;
+			
 			print '<tr class="oddeven">';
 
 			$date1=$db->jdate($task_time->task_date);

@@ -58,6 +58,7 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("Layout").' (phone/ta
 print '<tr class="oddeven"><td width="300">'.$langs->trans("IPAddress").'</td><td colspan="2">'.$_SERVER['REMOTE_ADDR'].'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("SessionName").'</td><td colspan="2">'.session_name().'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("SessionId").'</td><td colspan="2">'.session_id().'</td></tr>'."\n";
+
 print '<tr class="oddeven"><td width="300">'.$langs->trans("Screen").'</td><td colspan="2">';
 print $_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
 print '</td></tr>'."\n";

@@ -141,9 +141,9 @@ if ($savehandler == 'files')
 
 	foreach ($listofsessions as $key => $sessionentry)
 	{
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 
 		// Login
 		print '<td>'.$sessionentry['login'].'</td>';

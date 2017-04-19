@@ -151,9 +151,13 @@ print '<input type="hidden" name="id" value="'.$id.'">';
 
 $head=user_prepare_head($object);
 
-dol_fiche_head($head, 'extsites', $langs->trans("User"), 0, 'user');
+dol_fiche_head($head, 'extsites', $langs->trans("User"), -1, 'user');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '';
+
+if ($user->rights->user->user->lire || $user->admin) {
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+}
 
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
@@ -185,8 +189,8 @@ while ($i <= $MAXAGENDA)
 	$offsettz='AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key;
 	$color='AGENDA_EXT_COLOR_'.$id.'_'.$key;
 
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	
+	print '<tr class="oddeven">';
 	// Nb
 	print '<td class="maxwidth50onsmartphone">'.$langs->trans("AgendaExtNb",$key)."</td>";
 	// Name

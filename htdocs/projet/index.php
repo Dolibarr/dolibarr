@@ -185,8 +185,8 @@ if ( $resql )
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
 		if ($obj->socid)
 		{

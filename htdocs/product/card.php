@@ -140,32 +140,13 @@ if (empty($reshook))
     	exit;
     }
 
-    /*
-	 * Build doc
-	 */
-	else if ($action == 'builddoc' && $user->rights->produit->creer)
-	{
-		// Save last template used to generate document
-		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-		// Define output language
-		$outputlangs = $langs;
-		$newlang='';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-		if (! empty($newlang))
-		{
-			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		$ret = $object->fetch($id); // Reload to get new records
-		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-		if ($result <= 0)
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-	        $action='';
-		}
-	}
-	
+    // Actions to build doc
+    $upload_dir = $conf->produit->dir_output;
+    $permissioncreate = $user->rights->produit->creer;
+    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+    
+    include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+    
     // Barcode type
     if ($action ==	'setfk_barcode_type' && $createbarcode)
     {
@@ -197,20 +178,6 @@ if (empty($reshook))
 			setEventMessages($errors, null, 'errors');
 		}
     }
-	
-	// Remove file in doc form
-	if ($action == 'remove_file' && $user->rights->produit->creer) {
-		if ($object->id > 0) {
-			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-	
-			$langs->load("other");
-			$upload_dir = $conf->product->dir_output;
-			$file = $upload_dir . '/' . GETPOST('file');
-			$ret = dol_delete_file($file, 0, 0, 0, $object);
-			if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
-			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
-		}
-	}
 
     // Add a product or service
     if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
@@ -1841,51 +1808,48 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 if (empty($reshook))
 {
-	if ($action == '' || $action == 'view')
-	{
-	    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer ) || 
-	       ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))
-	    {
-	        if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer ) || 
+       ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))
+    {
+        if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 
-	        if (! isset($object->no_button_copy) || $object->no_button_copy <> 1)
-	        {
-	            if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
-	            {
-	                print '<div class="inline-block divButAction"><span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span></div>'."\n";
-	            }
-	            else
-				{
-	                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
-	            }
-	        }
-	    }
-	    $object_is_used = $object->isObjectUsed($object->id);
-
-	    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer)
-	    || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer))
-	    {
-	        if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
-	        {
-	            if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
-	            {
-	                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
-	            }
-	            else
-				{
-	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
-	            }
-	        }
-	        else
+        if (! isset($object->no_button_copy) || $object->no_button_copy <> 1)
+        {
+            if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
+            {
+                print '<div class="inline-block divButAction"><span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span></div>'."\n";
+            }
+            else
 			{
-	            print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
-	        }
-	    }
-	    else
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+            }
+        }
+    }
+    $object_is_used = $object->isObjectUsed($object->id);
+
+    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer)
+    || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer))
+    {
+        if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
+        {
+            if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
+            {
+                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+            }
+            else
+			{
+                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
+            }
+        }
+        else
 		{
-	        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
-	    }
-	}
+            print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
+        }
+    }
+    else
+	{
+        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
+    }
 }
 
 print "\n</div>\n";
@@ -1908,12 +1872,10 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
 
         $langs->load("propal");
 
-        $var=true;
         $otherprop = $propal->liste_array(2,1,0);
 
         if (is_array($otherprop) && count($otherprop))
         {
-        	$var=!$var;
         	$html .= '<tr><td style="width: 200px;">';
         	$html .= $langs->trans("AddToDraftProposals").'</td><td>';
         	$html .= $form->selectarray("propalid", $otherprop, 0, 1);
@@ -1935,11 +1897,9 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
 
         $langs->load("orders");
 
-        $var=true;
         $othercom = $commande->liste_array(2, 1, null);
         if (is_array($othercom) && count($othercom))
         {
-        	$var=!$var;
         	$html .= '<tr><td style="width: 200px;">';
         	$html .= $langs->trans("AddToDraftOrders").'</td><td>';
         	$html .= $form->selectarray("commandeid", $othercom, 0, 1);
@@ -1961,11 +1921,9 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
 
     	$langs->load("bills");
 
-    	$var=true;
     	$otherinvoice = $invoice->liste_array(2, 1, null);
     	if (is_array($otherinvoice) && count($otherinvoice))
     	{
-    		$var=!$var;
     		$html .= '<tr><td style="width: 200px;">';
     		$html .= $langs->trans("AddToDraftInvoices").'</td><td>';
     		$html .= $form->selectarray("factureid", $otherinvoice, 0, 1);
@@ -2021,14 +1979,14 @@ if ($action != 'edit' && $action != 'delete')
     print '<div class="fichecenter"><div class="fichehalfleft">';
     print '<a name="builddoc"></a>'; // ancre
 
-    $filedir=$upload_dir;
-
+    // Documents
+    $objectref = dol_sanitizeFileName($object->ref);
+    $relativepath = $comref . '/' . $objectref . '.pdf';
+    $filedir = $conf->produit->dir_output . '/' . $objectref;
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
     $genallowed=$user->rights->produit->creer;
     $delallowed=$user->rights->produit->supprimer;
 
-    $var=true;
-    
     print $formfile->showdocuments($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
     $somethingshown=$formfile->numoffiles;
     

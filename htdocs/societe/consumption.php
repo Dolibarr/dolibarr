@@ -407,8 +407,8 @@ if ($sql_select)
 
 		if (is_object($documentstaticline)) $documentstaticline->statut=$objp->status;
 
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print '<td class="nobordernopadding nowrap" width="100">';
 		print $documentstatic->getNomUrl(1);
 		print '</td>';

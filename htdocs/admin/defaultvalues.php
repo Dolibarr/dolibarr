@@ -37,7 +37,7 @@ if (!$user->admin) accessforbidden();
 $id=GETPOST('rowid','int');
 $action=GETPOST('action','alpha');
 
-$mode = GETPOST('mode')?GETPOST('mode'):'createform';
+$mode = GETPOST('mode')?GETPOST('mode'):'createform';   // 'createform', 'filters', 'sortorder'
 
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -47,12 +47,14 @@ if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield='lang,transkey';
+if (! $sortfield) $sortfield='page,param';
 if (! $sortorder) $sortorder='ASC';
 
 $defaulturl = GETPOST('defaulturl');
 $defaultkey = GETPOST('defaultkey','alpha');
 $defaultvalue = GETPOST('defaultvalue');
+
+$defaulturl=preg_replace('/^\//', '', $defaulturl);
 
 
 /*
@@ -69,7 +71,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $defaulturl='';
     $defaultkey='';
@@ -95,13 +97,13 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 	}
 	if (! $error)
 	{
-		//$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans(lang, transkey, transvalue) VALUES ('".$db->escape($langcode)."','".$db->escape($transkey)."','".$db->escape($transvalue)."')";
-		//$result = $db->query($sql);
-		
-	    // TODO Insert var
-	    
+	    $db->begin();
+	     
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."default_values(type, user_id, page, param, value, entity) VALUES ('".$db->escape($mode)."', 0, '".$db->escape($defaulturl)."','".$db->escape($defaultkey)."','".$db->escape($defaultvalue)."', ".$db->escape($conf->entity).")";
+		$result = $db->query($sql);
 		if ($result > 0)
 		{
+		    $db->commit();
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$action="";
 			$defaulturl='';
@@ -110,7 +112,8 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 		}
 		else
 		{
-			dol_print_error($db);
+	        $db->rollback();
+		    setEventMessages($db->lasterror(), null, 'errors');
 			$action='';
 		}
 	}
@@ -119,7 +122,7 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 // Delete line from delete picto
 if ($action == 'delete')
 {
-	//$sql = "DELETE FROM ".MAIN_DB_PREFIX."overwrite_trans WHERE rowid = ".$db->escape($id);
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."default_values WHERE rowid = ".$db->escape($id);
 	// Delete const
 	$result = $db->query($sql);
 	if ($result >= 0)
@@ -176,7 +179,7 @@ dol_fiche_head($head, $mode, '', -1, '');
 
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" id="action" name="action" value="">';
-print '<input type="hidden" id="mode" name="mode" value="'.$mode.'">';
+print '<input type="hidden" id="mode" name="mode" value="'.dol_escape_htmltag($mode).'">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -185,16 +188,29 @@ if ($mode == 'createform') $texthelp.=$langs->trans("PageUrlForDefaultValuesCrea
 else $texthelp.=$langs->trans("PageUrlForDefaultValuesList", 'societe/list.php');
 $texturl=$form->textwithpicto($langs->trans("Url"), $texthelp);
 print_liste_field_titre($texturl,$_SERVER["PHP_SELF"],'defaulturl','',$param,'',$sortfield,$sortorder);
+$texthelp=$langs->trans("TheKeyIsTheNameOfHtmlField");
+if ($mode != 'sortorder') $textkey=$form->textwithpicto($langs->trans("Key"), $texthelp);
+else $textkey=$form->textwithpicto($langs->trans("Key"), $texthelp);
+print_liste_field_titre($textkey,$_SERVER["PHP_SELF"],'defaultkey','',$param,'',$sortfield,$sortorder);
 if ($mode != 'sortorder')
 {
-    $texthelp=$langs->trans("TheKeyIsTheNameOfHtmlField");
-    $textkey=$form->textwithpicto($langs->trans("Key"), $texthelp);
-    print_liste_field_titre($textkey,$_SERVER["PHP_SELF"],'defaultkey','',$param,'',$sortfield,$sortorder);
+    $texthelp=$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+    // See list into GETPOST
+    $texthelp.='__USERID__<br>';
+    $texthelp.='__MYCOUNTRYID__<br>';
+    $texthelp.='__DAY__<br>';
+    $texthelp.='__MONTH__<br>';
+    $texthelp.='__YEAR__<br>';
+    if (! empty($conf->multicompany->enabled)) $texthelp.='__ENTITYID__<br>';
+    $textvalue=$form->textwithpicto($langs->trans("Value"), $texthelp);
 }
-$texthelp=$langs->trans("YouCanUseSubstitutionValue");
-$textvalue=$form->textwithpicto($langs->trans("Value"), $texthelp);
+else
+{
+    $texthelp='ASC or DESC';
+    $textvalue=$form->textwithpicto($langs->trans("SortOrder"), $texthelp);
+}
 print_liste_field_titre($textvalue, $_SERVER["PHP_SELF"], 'defaultvalue', '', $param, '', $sortfield, $sortorder);
-//if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],'entity,transkey','',$param,'',$sortfield,$sortorder);
+if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],'entity,page','',$param,'',$sortfield,$sortorder);
 print '<td align="center"></td>';
 print "</tr>\n";
 
@@ -206,17 +222,14 @@ print '<tr class="oddeven">';
 print '<td>';
 print '<input type="text" class="flat minwidth200 maxwidthonsmartphone" name="defaulturl" value="">';
 print '</td>'."\n";
-if ($mode != 'sortorder')
-{
-    print '<td>';
-    print '<input type="text" class="flat maxwidth100" name="defaultkey" value="">';
-    print '</td>';
-}
+print '<td>';
+print '<input type="text" class="flat maxwidth100" name="defaultkey" value="">';
+print '</td>';
 print '<td>';
 print '<input type="text" class="flat maxwidthonsmartphone" name="defaultvalue" value="">';
 print '</td>';
 // Limit to superadmin
-/*if (! empty($conf->multicompany->enabled) && !$user->entity)
+if (! empty($conf->multicompany->enabled) && !$user->entity)
 {
 	print '<td>';
 	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
@@ -224,28 +237,20 @@ print '</td>';
 	print '<td align="center">';
 }
 else
-{*/
+{
 	print '<td align="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
-//}
+}
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="add">';
 print "</td>\n";
 print '</tr>';
 
 
 // Show constants
-/*$sql = "SELECT";
-$sql.= " rowid";
-$sql.= ", lang";
-$sql.= ", transkey";
-$sql.= ", transvalue";
-$sql.= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
-$sql.= " WHERE 1 = 1";*/
-//$sql.= " AND entity IN (".$user->entity.",".$conf->entity.")";
-//if ((empty($user->entity) || $user->admin) && $debug) {} 										// to force for superadmin to debug
-//else if (! GETPOST('visible') || GETPOST('visible') != 'all') $sql.= " AND visible = 1";		// We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
-//if (GETPOST('name')) $sql.=natural_search("name", GETPOST('name'));
-//$sql.= " ORDER BY entity, name ASC";
+$sql = "SELECT rowid, entity, type, page, param, value";
+$sql.= " FROM ".MAIN_DB_PREFIX."default_values";
+$sql.= " WHERE type = '".$db->escape($mode)."'";
+$sql.= " AND entity IN (".$user->entity.",".$conf->entity.")";
 $sql.= $db->order($sortfield, $sortorder);
 
 dol_syslog("translation::select from table", LOG_DEBUG);
@@ -254,22 +259,18 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 	$i = 0;
-	$var=false;
 
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-		$var=!$var;
+		
 
 		print "\n";
 
 		print '<tr class="oddeven">';
 		
-		print '<td>'.$obj->lang.'</td>'."\n";
-        if ($mode != 'sortorder')
-        {
-	   	   print '<td>'.$obj->transkey.'</td>'."\n";
-        }
+		print '<td>'.$obj->page.'</td>'."\n";
+   	    print '<td>'.$obj->param.'</td>'."\n";
         
 		// Value
 		print '<td>';
@@ -278,17 +279,21 @@ if ($result)
 		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->transkey.'">';
 		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.dol_escape_htmltag($obj->transvalue).'">';
 		*/
-		print $obj->transvalue;
+		print $obj->value;
 		print '</td>';
 
 		print '<td align="center">';
-		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_delete().'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=delete'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_delete().'</a>';
 		print '</td>';
 		
 		print "</tr>\n";
 		print "\n";
 		$i++;
 	}
+}
+else
+{
+    dol_print_error($db);
 }
 
 

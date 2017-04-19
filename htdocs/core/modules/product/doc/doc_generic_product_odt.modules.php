@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/core/modules/product/doc/doc_generic_product_odt.modules.php
  *	\ingroup    societe
- *	\brief      File of class to build ODT documents for third parties
+ *	\brief      File of class to build ODT documents for products/services
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';

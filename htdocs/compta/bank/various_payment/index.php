@@ -193,8 +193,8 @@ if ($result)
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
-        $var=!$var;
-        print "<tr ".$bc[$var].">";
+        
+        print '<tr class="oddeven">';
 
         $variousstatic->id=$obj->rowid;
 		$variousstatic->ref=$obj->rowid;

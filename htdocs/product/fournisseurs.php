@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
 $langs->load("products");
 $langs->load("suppliers");
 $langs->load("bills");
-if (! empty($conf->margin->enabled)) $langs->load("margins");
+$langs->load("margins");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -621,9 +621,9 @@ if ($id > 0 || $ref)
 
 					foreach($product_fourn_list as $productfourn)
 					{
-						$var=!$var;
+						
 
-						print "<tr ".$bc[$var].">";
+						print '<tr class="oddeven">';
 
 						// Supplier
 						print '<td>'.$productfourn->getSocNomUrl(1,'supplier').'</td>';

@@ -163,7 +163,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		{
 			$obj = $db->fetch_object($resql);
 			$var = !$var;
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			// Ref payment
 			$payment_sc_static->id=$obj->pid;
 			$payment_sc_static->ref=$obj->pid;
@@ -259,8 +259,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 		        $total = $total + $obj->amount;
 
-		        $var=!$var;
-		        print "<tr ".$bc[$var].">";
+		        
+		        print '<tr class="oddeven">';
 		        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
 		        print "<td>".$obj->label."</td>\n";
@@ -361,8 +361,8 @@ while($j<$numlt)
 
 				$total = $total + $obj->amount;
 
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
 				print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
 				print "<td>".$obj->label."</td>\n";
@@ -443,8 +443,8 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
                 $total = $total + $obj->amount;
 
-                $var=!$var;
-                print "<tr ".$bc[$var].">";
+                
+                print '<tr class="oddeven">';
 
                 print '<td align="left">'.dol_print_date($db->jdate($obj->dateep),'day').'</td>'."\n";
 

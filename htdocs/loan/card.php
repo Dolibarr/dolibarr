@@ -278,7 +278,7 @@ if ($action == 'create')
 	}
 
     // Capital
-    print '<tr><td class="fieldrequired">'.$langs->trans("LoanCapital").'</td><td><input name="capital" size="10" value="' . GETPOST("capital") . '"></td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("LoanCapital").'</td><td><input name="capital" size="10" value="' . dol_escape_htmltag(GETPOST("capital")) . '"></td></tr>';
 
 	// Date Start
 	print "<tr>";
@@ -293,10 +293,10 @@ if ($action == 'create')
     print '</td></tr>';
 
 	// Number of terms
-	print '<tr><td class="fieldrequired">'.$langs->trans("Nbterms").'</td><td><input name="nbterm" size="5" value="' . GETPOST('nbterm') . '"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Nbterms").'</td><td><input name="nbterm" size="5" value="' . dol_escape_htmltag(GETPOST('nbterm')) . '"></td></tr>';
 
 	// Rate
-    print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . GETPOST("rate") . '"> %</td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . dol_escape_htmltag(GETPOST("rate")) . '"> %</td></tr>';
 
     // Project
     if (! empty($conf->projet->enabled))
@@ -652,8 +652,8 @@ if ($id > 0)
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
 				print '<td><a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_payment."</td>\n";

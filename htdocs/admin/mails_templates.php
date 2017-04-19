@@ -27,7 +27,7 @@
  */
 
 /**
- *	    \file       htdocs/admin/dict.php
+ *	    \file       htdocs/admin/mails_templates.php
  *		\ingroup    setup
  *		\brief      Page to administer data tables
  */
@@ -119,12 +119,14 @@ $formmail=new FormMail($db);
 if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
 {
     $tmp=$formmail->getAvailableSubstitKey('form');
+    $tmp['__(AnyTransKey)__']='__(AnyTransKey)__';
     $helpsubstit = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
     $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
 }
 else
 {
     $tmp=$formmail->getAvailableSubstitKey('formwithlines');
+    $tmp['__(AnyTransKey)__']='__(AnyTransKey)__';
     $helpsubstit = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
     $tmp=$formmail->getAvailableSubstitKey('formforlines');
     $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);

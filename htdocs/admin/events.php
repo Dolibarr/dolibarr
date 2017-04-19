@@ -99,8 +99,8 @@ foreach ($eventstolog as $key => $arr)
 {
 	if ($arr['id'])
 	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+		
+		print '<tr class="oddeven">';
 		print '<td>'.$arr['id'].'</td>';
 		print '<td>';
 		$key='MAIN_LOGEVENTS_'.$arr['id'];

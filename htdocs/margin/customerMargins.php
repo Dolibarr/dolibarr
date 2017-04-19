@@ -260,9 +260,9 @@ if ($result)
 				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
 
-			$var=!$var;
+			
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			if ($client) {
 		        print '<td>';
 				$invoicestatic->id=$objp->facid;
@@ -295,7 +295,7 @@ if ($result)
 	}
 
 	// affichage totaux marges
-	$var=!$var;
+	
 	$totalMargin = $cumul_vente - $cumul_achat;
 	/*if ($totalMargin < 0)
 	{

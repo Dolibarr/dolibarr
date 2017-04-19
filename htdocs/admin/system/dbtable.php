@@ -111,7 +111,6 @@ else
 			{
 				$row = $db->fetch_row($resql);
 				print '<tr class="oddeven">';
-
 				print "<td>$row[0]</td>";
 				print "<td>$row[1]</td>";
 				print "<td>$row[3]</td>";

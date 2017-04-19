@@ -59,8 +59,9 @@ ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_creat integer;
 ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_product_price_by_qty DROP COLUMN date_price;
 ALTER TABLE llx_product_price_by_qty ADD COLUMN tms timestamp;
-ALTER TABLE llx_product_price_by_qty ADD COLUMN import_key integer;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN import_key varchar(14);
 
+ALTER TABLE llx_user ADD COLUMN import_key varchar(14);
 
 
 CREATE TABLE llx_product_attribute
@@ -156,6 +157,20 @@ create table llx_payment_various
   fk_user_author        integer,
   fk_user_modif         integer
 )ENGINE=innodb;
+
+
+create table llx_default_values
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity          integer DEFAULT 1 NOT NULL,		-- multi company id
+  type			  varchar(10),                      -- 'createform', 'filters', 'sortorder'
+  user_id         integer DEFAULT 0 NOT NULL,       -- 0 or user id
+  page            varchar(255),                     -- relative url of page
+  param           varchar(255),                     -- parameter
+  value		      varchar(128)                      -- value
+)ENGINE=innodb;
+
+ALTER TABLE llx_default_values ADD UNIQUE INDEX uk_default_values(type, entity, user_id, page, param);
 
 
 
