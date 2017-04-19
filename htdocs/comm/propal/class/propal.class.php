@@ -3135,7 +3135,7 @@ class Propal extends CommonObject
             {
             	$prodid = mt_rand(1, $num_prods);
             	$line->fk_product=$prodids[$prodid];
-				$line->product_ref='SPECIMEN';
+		$line->product_ref='SPECIMEN';
             }
 
             $this->lines[$xnbp]=$line;
