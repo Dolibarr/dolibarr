@@ -154,7 +154,8 @@ class Ctyperesource
 	 * Load object in memory from the database
 	 *
 	 * @param int    $id  Id object
-	 * @param string $ref Ref
+	 * @param string $code code
+	 * @param string $label Label
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
