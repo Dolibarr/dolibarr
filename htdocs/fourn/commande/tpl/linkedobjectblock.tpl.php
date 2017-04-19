@@ -34,6 +34,7 @@ print load_fiche_titre($langs->trans('RelatedSupplierOrders'), '', '');
 <table class="noborder allwidth">
 <tr class="liste_titre">
 	<td><?php echo $langs->trans("Ref"); ?></td>
+	<td align="center"><?php echo $langs->trans("RefSupplier"); ?></td>
 	<td align="center"><?php echo $langs->trans("Date"); ?></td>
 	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
 	<td align="right"><?php echo $langs->trans("Status"); ?></td>
@@ -48,6 +49,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 ?>
 <tr <?php echo $bc[$var]; ?> >
 	<td><a href="<?php echo DOL_URL_ROOT.'/fourn/commande/card.php?id='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowOrder"),"order").' '.$objectlink->ref; ?></a></td>
+	<td align="center"><?php echo $objectlink->ref_supplier; ?></td>
 	<td align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
 	<td align="right"><?php
 		if ($user->rights->fournisseur->commande->lire) {
