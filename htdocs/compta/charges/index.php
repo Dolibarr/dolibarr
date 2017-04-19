@@ -454,7 +454,6 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
             print '<tr class="liste_titre">';
             print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"s.dateep","",$param,'width="140px"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"s.label","",$param,'',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"s.rowid","",$param,'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"s.datep","",$param,'align="center"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
@@ -473,8 +472,6 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
                 print "<td>".$obj->label."</td>\n";
 
-                print '<td align="right">'.($obj->salary?price($obj->salary):'')."</td>";
-
                 // Ref payment
                 $sal_static->id=$obj->rowid;
                 $sal_static->ref=$obj->rowid;
@@ -486,10 +483,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
                 $i++;
             }
-            print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
-            print '<td align="right"></td>';      // A total here has no sense
-            print '<td align="center">&nbsp;</td>';
-            print '<td align="center">&nbsp;</td>';
+            print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Total").'</td>';
             print '<td align="right">'.price($total)."</td>";
             print "</tr>";
 
