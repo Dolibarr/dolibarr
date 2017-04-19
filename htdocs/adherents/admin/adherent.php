@@ -128,12 +128,12 @@ print "</tr>\n";
 $var=true;
 
 // Login/Pass required for members
-$var=!$var;
+
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="ADHERENT_LOGIN_NOT_REQUIRED">';
-print '<tr '.$bc[$var].'><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
 print $form->selectyesno('constvalue',(! empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)?0:1),1);
 print '</td><td align="center" width="80">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
@@ -141,12 +141,12 @@ print "</td></tr>\n";
 print '</form>';
 
 // Mail required for members
-$var=!$var;
+
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="ADHERENT_MAIL_REQUIRED">';
-print '<tr '.$bc[$var].'><td>'.$langs->trans("AdherentMailRequired").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("AdherentMailRequired").'</td><td>';
 print $form->selectyesno('constvalue',(! empty($conf->global->ADHERENT_MAIL_REQUIRED)?$conf->global->ADHERENT_MAIL_REQUIRED:0),1);
 print '</td><td align="center" width="80">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
@@ -154,12 +154,12 @@ print "</td></tr>\n";
 print '</form>';
 
 // Send mail information is on by default
-$var=!$var;
+
 print '<form action="adherent.php" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="ADHERENT_DEFAULT_SENDINFOBYMAIL">';
-print '<tr '.$bc[$var].'><td>'.$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
 print $form->selectyesno('constvalue',(! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?$conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL:0),1);
 print '</td><td align="center" width="80">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
@@ -167,12 +167,12 @@ print "</td></tr>\n";
 print '</form>';
 
 // Insert subscription into bank account
-$var=!$var;
+
 print '<form action="adherent.php" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="ADHERENT_BANK_USE">';
-print '<tr '.$bc[$var].'><td>'.$langs->trans("MoreActionsOnSubscription").'</td>';
+print '<tr class="oddeven"><td>'.$langs->trans("MoreActionsOnSubscription").'</td>';
 $arraychoices=array('0'=>$langs->trans("None"));
 if (! empty($conf->banque->enabled)) $arraychoices['bankdirect']=$langs->trans("MoreActionBankDirect");
 if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $arraychoices['invoiceonly']=$langs->trans("MoreActionInvoiceOnly");
@@ -188,12 +188,12 @@ print '</form>';
 // Use vat for invoice creation
 if ($conf->facture->enabled)
 {
-	$var=!$var;
+	
 	print '<form action="adherent.php" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="constname" value="ADHERENT_VAT_FOR_SUBSCRIPTIONS">';
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
 	if (! empty($conf->banque->enabled))
 	{
 		print '<td>';
@@ -213,12 +213,12 @@ if ($conf->facture->enabled)
 
 	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	{
-		$var=!$var;
+		
 		print '<form action="adherent.php" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="constname" value="ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS">';
-		print '<tr '.$bc[$var].'><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
+		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
 		print '<td>';
 		$form->select_produits($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS, 'constvalue_ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS');
 		print '</td><td align="center" width="80">';

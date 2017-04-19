@@ -519,9 +519,9 @@ while ($i < min($num,$limit))
 	$contractstatic->id=$obj->cid;
 	$contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
 	
-	$var=!$var;
+	
 
-	print "<tr ".$bc[$var].">";
+	print '<tr class="oddeven">';
 	
 	// Ref
     if (! empty($arrayfields['c.ref']['checked'])) 

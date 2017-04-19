@@ -173,9 +173,9 @@ if ($action == 'edit')
     	{
     		foreach($delays as $delay)
     		{
-    			$var=!$var;
+    			
 				$value=(! empty($conf->global->{$delay['code']})?$conf->global->{$delay['code']}:0);
-    			print '<tr '.$bc[$var].'>';
+    			print '<tr class="oddeven">';
     			print '<td width="20px">'.img_object('',$delay['img']).'</td>';
     			print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td><td>';
     			print '<input size="5" name="'.$delay['code'].'" value="'.$value.'"> '.$langs->trans("days").'</td></tr>';
@@ -192,7 +192,7 @@ if ($action == 'edit')
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
 
 	$var=false;
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' .$form->selectyesno('MAIN_DISABLE_METEO',(empty($conf->global->MAIN_DISABLE_METEO)?0:1),1) . '</td></tr>';
 
 	print '</table>';
@@ -220,9 +220,9 @@ else
     	{
     		foreach($delays as $delay)
     		{
-    			$var=!$var;
+    			
 				$value=(! empty($conf->global->{$delay['code']})?$conf->global->{$delay['code']}:0);
-    			print '<tr '.$bc[$var].'>';
+    			print '<tr class="oddeven">';
     			print '<td width="20px">'.img_object('',$delay['img']).'</td>';
     			print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td>';
     			print '<td>'.$value.' '.$langs->trans("days").'</td></tr>';
@@ -239,7 +239,7 @@ else
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
 
 	$var=false;
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' . yn($conf->global->MAIN_DISABLE_METEO) . '</td></tr>';
 
 	print '</table>';

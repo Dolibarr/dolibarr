@@ -452,7 +452,7 @@ if ($resql)
             $productlot->batch = $obj->batch;
             
             // You can use here results
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
             if (! empty($arrayfields['t.entity']['checked'])) 
             {
                 print '<td>'.$obj->entity.'</td>';

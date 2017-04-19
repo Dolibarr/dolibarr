@@ -198,6 +198,7 @@ MultipriceRules=Price segment rules
 UseMultipriceRules=Use price segment rules (defined into product module setup) to autocalculate prices of all other segment according to first segment
 PercentVariationOver=%% variation over %s
 PercentDiscountOver=%% discount over %s
+KeepEmptyForAutoCalculation=Keep empty to have this calculated automatically from weight or volume of products
 ### composition fabrication
 Build=Produce
 ProductsMultiPrice=Products and prices for each price segment

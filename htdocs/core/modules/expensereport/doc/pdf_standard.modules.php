@@ -186,8 +186,6 @@ class pdf_standard extends ModeleExpenseReport
 				}
 			}
 
-			if (isset($object->lignes) && ! isset($object->lines)) $object->lines=$object->lignes;
-
 			if (file_exists($dir))
 			{
 				// Add pdfgeneration hook

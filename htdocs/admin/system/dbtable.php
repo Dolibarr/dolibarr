@@ -111,8 +111,8 @@ else
 			while ($i < $num)
 			{
 				$row = $db->fetch_row($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
 
 				print "<td>$row[0]</td>";
 				print "<td>$row[1]</td>";

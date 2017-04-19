@@ -561,8 +561,6 @@ class pdf_standard extends ModelePDFProduct
 			$this->error=$langs->trans("ErrorConstantNotDefined","PRODUCT_OUTPUTDIR");
 			return 0;
 		}
-
-		return -1;
 	}
 
 	

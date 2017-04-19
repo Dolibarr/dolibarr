@@ -148,7 +148,7 @@ print "</tr>\n";
 
 foreach ($list as $key)
 {
-	$var=!$var;
+	
 
 	print '<tr '.$bc[$var].' class="value">';
 

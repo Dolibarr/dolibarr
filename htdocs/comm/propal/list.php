@@ -747,7 +747,7 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
+		
 		
     	$objectstatic->id=$obj->rowid;
     	$objectstatic->ref=$obj->ref;

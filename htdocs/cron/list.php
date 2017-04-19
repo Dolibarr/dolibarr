@@ -349,7 +349,7 @@ if ($num > 0)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($result);
-		$var=!$var;
+		
 
 		if (! verifCond($obj->test)) continue;        // Discard line with test = false
 	    

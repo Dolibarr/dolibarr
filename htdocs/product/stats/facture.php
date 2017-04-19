@@ -234,9 +234,9 @@ if ($id > 0 || ! empty($ref))
                     while ($i < min($num,$conf->liste_limit))
 					{
                         $objp = $db->fetch_object($result);
-                        $var=!$var;
+                        
 
-                        print '<tr '.$bc[$var].'>';
+                        print '<tr class="oddeven">';
                         print '<td>';
                         $invoicestatic->id=$objp->facid;
                         $invoicestatic->ref=$objp->facnumber;

@@ -442,7 +442,7 @@ foreach ($accounts as $key=>$type)
 		$lastcurrencycode=$acc->currency_code;
 	}
 	
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 
     // Ref
     if (! empty($arrayfields['b.ref']['checked']))
@@ -576,7 +576,7 @@ foreach ($accounts as $key=>$type)
 	$i++;
 }
 
-if (! $found) print '<tr '.$bc[$var].'><td colspan="'.$totalarray['nbfield'].'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+if (! $found) print '<tr class="oddeven"><td colspan="'.$totalarray['nbfield'].'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 
 // Show total line
 if (isset($totalarray['totalbalancefield']) && $lastcurrencycode != 'various')	// If there is several currency, $lastcurrencycode is set to 'various' before

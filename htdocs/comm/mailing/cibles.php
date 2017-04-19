@@ -177,7 +177,7 @@ if ($object->fetch($id) >= 0)
 {
 	$head = emailing_prepare_head($object);
 
-	dol_fiche_head($head, 'targets', $langs->trans("Mailing"), 0, 'email');
+	dol_fiche_head($head, 'targets', $langs->trans("Mailing"), -1, 'email');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
@@ -186,16 +186,11 @@ if ($object->fetch($id) >= 0)
 	
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
 
-	
+	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 	
 	print '<table class="border" width="100%">';
-/*
-	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
-	print '<td colspan="3">';
-	print $form->showrefnav($object,'id', $linkback);
-	print '</td></tr>';
-*/
+
 	print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
@@ -204,11 +199,6 @@ if ($object->fetch($id) >= 0)
 	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto,0,0,0,0,1);
 	print '</td></tr>';
 
-	// Status
-/*	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4);
-	if ($object->statut == 2) print ' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.')';
-	print '</td></tr>';
-*/
 	// Nb of distinct emails
 	print '<tr><td>';
 	print $langs->trans("TotalNbOfDistinctRecipients");
@@ -229,7 +219,8 @@ if ($object->fetch($id) >= 0)
 
 	print "</div>";
 
-	$var=!$var;
+	dol_fiche_end();
+	
 
 	$allowaddtarget=($object->statut == 0);
 
@@ -256,8 +247,8 @@ if ($object->fetch($id) >= 0)
 		
 		clearstatcache();
 
-		$var=true;
-
+		$var = true;
+		
 		foreach ($modulesdir as $dir)
 		{
 		    $modulenames=array();
@@ -311,12 +302,12 @@ if ($object->fetch($id) >= 0)
 				if ($qualified)
 				{
 					$var = !$var;
-					//print '<tr '.$bc[$var].'>';
+					//print '<tr class="oddeven">';
 //					print '<div '.$bctag[$var].'>';
 
 					if ($allowaddtarget)
 					{
-						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+						print '<form aa '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					}
 					else
@@ -514,7 +505,6 @@ if ($object->fetch($id) >= 0)
 		print '</td>';
 		print '</tr>';
 
-		$var = true;
 		$i = 0;
 
 		if ($num)
@@ -523,9 +513,7 @@ if ($object->fetch($id) >= 0)
 			{
 				$obj = $db->fetch_object($resql);
 
-				$var=!$var;
-
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td>'.$obj->email.'</td>';
 				print '<td>'.$obj->lastname.'</td>';
 				print '<td>'.$obj->firstname.'</td>';
@@ -599,7 +587,7 @@ if ($object->fetch($id) >= 0)
 		{
 			if ($object->statut < 2) 
 			{
-			    print '<tr '.$bc[false].'><td colspan="8" class="opacitymedium">';
+			    print '<tr><td colspan="8" class="opacitymedium">';
     			print $langs->trans("NoTargetYet");
     			print '</td></tr>';
 			}

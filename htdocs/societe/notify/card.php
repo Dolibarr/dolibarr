@@ -251,7 +251,7 @@ if ($result > 0)
  			$label=($langs->trans("Notify_".$managedeventfornotification['code'])!="Notify_".$managedeventfornotification['code']?$langs->trans("Notify_".$managedeventfornotification['code']):$managedeventfornotification['label']);
             $actions[$managedeventfornotification['rowid']]=$label;
         }
-        print '<tr '.$bc[$var].'><td class="maxwidthonsmartphone">';
+        print '<tr class="oddeven"><td class="maxwidthonsmartphone">';
         print $form->selectarray("contactid", $listofemails, '', 0, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
         print '</td>';
         print '<td class="maxwidthonsmartphone">';
@@ -266,7 +266,7 @@ if ($result > 0)
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="4" class="opacitymedium">';
+        print '<tr class="oddeven"><td colspan="4" class="opacitymedium">';
         print $langs->trans("YouMustCreateContactFirst");
         print '</td></tr>';
     }
@@ -362,7 +362,7 @@ if ($result > 0)
     {
     	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
     	$var = ! $var;
-		print '<tr '.$bc[$var].'><td>';
+		print '<tr class="oddeven"><td>';
 		$listtmp=explode(',',$val);
 		$first=1;
 		foreach($listtmp as $keyemail => $valemail)
@@ -402,7 +402,7 @@ if ($result > 0)
     /*if ($user->admin)
     {
 	    $var = ! $var;
-		print '<tr '.$bc[$var].'><td colspan="4">';
+		print '<tr class="oddeven"><td colspan="4">';
 		print '+ <a href="'.DOL_URL_ROOT.'/admin/notification.php">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</a>';
 		print '</td></tr>';
     }*/

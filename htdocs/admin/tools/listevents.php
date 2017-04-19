@@ -261,9 +261,9 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-		$var=!$var;
+		
 
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 
 		// Date
 		print '<td align="left" class="nowrap">'.dol_print_date($db->jdate($obj->dateevent),'%Y-%m-%d %H:%M:%S').'</td>';

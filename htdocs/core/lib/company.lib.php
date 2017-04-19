@@ -576,7 +576,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
                     if ($user->rights->projet->lire && $userAccess > 0)
                     {
                         $var = !$var;
-                        print "<tr ".$bc[$var].">";
+                        print '<tr class="oddeven">';
 
                         // Ref
                         print '<td><a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$projecttmp->id.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
@@ -612,7 +612,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
             else
 			{
                 $var = false;
-            	print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            	print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
             }
             $db->free($result);
         }
@@ -893,7 +893,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 		{
 			$var = !$var;
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 
 			print '<td>';
 			$addressstatic->id = $address->id;
@@ -929,7 +929,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 	}
 	else
 	{
-		//print "<tr ".$bc[$var].">";
+		//print '<tr class="oddeven">';
 		//print '<td>'.$langs->trans("NoAddressYetDefined").'</td>';
 		//print "</tr>\n";
 	}
@@ -1245,7 +1245,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		
         foreach ($histo as $key=>$value)
         {
-            $var=!$var;
+            
 			$actionstatic->fetch($histo[$key]['id']);    // TODO Do we need this, we already have a lot of data of line into $histo
 
             $out.="<tr ".$bc[$var].">";
@@ -1454,7 +1454,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 			$obj = $db->fetch_object($result);
 			$var = !$var;
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 
 			print '<td>';
 			$socstatic->id = $obj->rowid;

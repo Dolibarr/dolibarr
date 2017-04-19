@@ -1200,7 +1200,7 @@ else
         		$showemptyline=0;
         	}
 
-            $var=!$var;
+            
             $value=$tabname[$i];
             print '<tr class="oddeven"><td width="50%">';
             if (! empty($tabcond[$i]))

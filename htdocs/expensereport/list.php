@@ -527,7 +527,7 @@ if ($resql)
 			$expensereportstatic->note_private=$obj->note_private;
 			$expensereportstatic->note_public=$obj->note_public;
 				
-			$var=!$var;
+			
 			print '<tr class="oddeven">';
 			// Ref
 			if (! empty($arrayfields['d.ref']['checked'])) {

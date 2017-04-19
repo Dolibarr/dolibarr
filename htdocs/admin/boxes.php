@@ -342,7 +342,7 @@ print "</tr>\n";
 $var=true;
 foreach($boxtoadd as $box)
 {
-    $var=!$var;
+    
 
     if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
     {
@@ -354,7 +354,7 @@ foreach($boxtoadd as $box)
     }
 
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
-    print '<tr '.$bc[$var].'>'."\n";
+    print '<tr class="oddeven">'."\n";
     print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
     if (! empty($box->class) && preg_match('/graph_/',$box->class)) print ' ('.$langs->trans("Graph").')';
     print '</td>'."\n";
@@ -421,7 +421,7 @@ foreach($boxactivated as $key => $box)
 	}
 
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
 	if (! empty($box->class) && preg_match('/graph_/',$box->class)) print ' ('.$langs->trans("Graph").')';
 	print '</td>';
@@ -468,7 +468,7 @@ print '<td class="liste_titre">'.$langs->trans("Parameter").'</td>';
 print '<td class="liste_titre">'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>';
 print $langs->trans("MaxNbOfLinesForBoxes");
 print '</td>'."\n";
@@ -479,8 +479,8 @@ print '</tr>';
 
 // Activate FileCache - Developement
 if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableFileCache").'</td><td>';
+    
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("EnableFileCache").'</td><td>';
     print $form->selectyesno('MAIN_ACTIVATE_FILECACHE',$conf->global->MAIN_ACTIVATE_FILECACHE,1);
     print '</td>';
     print '</tr>';

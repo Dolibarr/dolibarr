@@ -475,9 +475,9 @@ if ($resql)
     	$companystatic->ref=$obj->name;
     	$companystatic->name=$obj->name;
 		
-		$var=!$var;
+		
 
-    	print "<tr ".$bc[$var].">";
+    	print '<tr class="oddeven">';
     	 
 		// Ref
 		if (! empty($arrayfields['e.ref']['checked']))

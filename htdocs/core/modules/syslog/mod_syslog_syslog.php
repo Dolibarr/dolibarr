@@ -111,13 +111,9 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 
 		if (! empty($conf->global->MAIN_SYSLOG_DISABLE_SYSLOG)) return;	// Global option to disable output of this handler
 
-		if (defined("SYSLOG_FACILITY") && constant("SYSLOG_FACILITY"))
+		if (! empty($conf->global->SYSLOG_FACILITY))
 		{
-			if (constant(constant('SYSLOG_FACILITY')))
-			{
-				$facility = constant(constant("SYSLOG_FACILITY"));
-			}
-			else $facility = LOG_USER;
+			$facility = constant($conf->global->SYSLOG_FACILITY);
 		}
 		else $facility = LOG_USER;
 

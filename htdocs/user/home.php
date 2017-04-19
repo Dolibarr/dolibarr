@@ -124,9 +124,9 @@ if ($resql)
 	while ($i < $num && $i < $max)
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print '<td>';
         $fuserstatic->id = $obj->rowid;
         $fuserstatic->statut = $obj->statut;
@@ -237,9 +237,9 @@ if ($canreadperms)
 		while ($i < $num && (! $max || $i < $max))
 		{
 			$obj = $db->fetch_object($resql);
-			$var=!$var;
+			
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td><a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->name.'</a>';
 			if (! $obj->entity)
 			{

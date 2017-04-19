@@ -33,7 +33,7 @@ $var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
-    $var=!$var;
+    
     $trclass=($var?'pair':'impair');
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>

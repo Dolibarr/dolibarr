@@ -938,7 +938,8 @@ if ($action == 'create')
 		    '__INVOICE_YEAR__' =>  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($object->date,'%Y').')',
 		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'y'),'%Y').')'
 		);
-
+		$substitutionarray['__(TRANSKEY)__']=$langs->trans("TransKey");
+		
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach($substitutionarray as $key => $val)
 		{
@@ -996,7 +997,7 @@ if ($action == 'create')
 		// Bank account
 		if ($object->fk_account > 0)
 		{
-			print "<tr><td>".$langs->trans('BankAccount')."</td><td>";
+			print "<tr><td>".$langs->trans('RIB')."</td><td>";
 			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
 			print "</td></tr>";
 		}
@@ -1241,7 +1242,8 @@ else
 		    '__INVOICE_YEAR__' =>  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%Y').')',
 		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'),'%Y').')'
 		);
-
+		$substitutionarray['__(TRANSKEY)__']=$langs->trans("TransKey");
+		
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach($substitutionarray as $key => $val)
 		{
@@ -1266,9 +1268,11 @@ else
 		print '</tr>';
 
 		// Bank Account
+		$langs->load('banks');
+
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-		print $langs->trans('BankAccount');
+		print $langs->trans('RIB');
 		print '<td>';
 		if (($action != 'editbankaccount') && $user->rights->commande->creer && ! empty($object->brouillon))
 		    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';

@@ -131,8 +131,8 @@ $var=true;
 foreach ($data as $val)
 {
 	$year = $val['year'];
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	
+	print '<tr class="oddeven">';
 	print '<td>'.$memberstatic->getmorphylib($val['label']).'</td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="center">'.dol_print_date($val['lastdate'],'dayhour').'</td>';

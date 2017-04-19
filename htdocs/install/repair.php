@@ -74,9 +74,9 @@ print '<h3>'.$langs->trans("Repair").'</h3>';
 
 print 'Option restore_thirdparties_logos is '.(GETPOST('restore_thirdparties_logos')?GETPOST('restore_thirdparties_logos'):'0').'<br>'."\n";
 print 'Option clean_linked_elements is '.(GETPOST('clean_linked_elements')?GETPOST('clean_linked_elements'):'0').'<br>'."\n";
-print 'Option clean_orphelin_dir (1 or confirmed) is '.(GETPOST('clean_orphelin_dir')?GETPOST('clean_orphelin_dir'):'0').'<br>'."\n";
-print 'Option clean_product_stock_batch (1 or confirmed) is '.(GETPOST('clean_product_stock_batch')?GETPOST('clean_product_stock_batch'):'0').'<br>'."\n";
-print 'Option set_empty_time_spent_amount (1 or confirmed) is '.(GETPOST('set_empty_time_spent_amount')?GETPOST('set_empty_time_spent_amount'):'0').'<br>'."\n";
+print 'Option clean_orphelin_dir (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir')?GETPOST('clean_orphelin_dir'):'0').'<br>'."\n";
+print 'Option clean_product_stock_batch (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch')?GETPOST('clean_product_stock_batch'):'0').'<br>'."\n";
+print 'Option set_empty_time_spent_amount (0 or \'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount')?GETPOST('set_empty_time_spent_amount'):'0').'<br>'."\n";
 print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
@@ -547,14 +547,17 @@ if ($ok && GETPOST('clean_orphelin_dir'))
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('clean_product_stock_batch'))
 {
-    print '<tr><td colspan="2"><br>*** Clean table product_batch</td></tr>';
+    $methodtofix=GETPOST('methodtofix')?GETPOST('methodtofix'):'updatestock';
+    
+    print '<tr><td colspan="2"><br>*** Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
     
     $sql ="SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
-    $sql.=" FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product_batch as pb";
-    $sql.=" WHERE p.rowid = ps.fk_product AND ps.rowid = pb.fk_product_stock";
+    $sql.=" FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb ON ps.rowid = pb.fk_product_stock";
+    $sql.=" WHERE p.rowid = ps.fk_product";
     $sql.=" AND p.tobatch = 1";
     $sql.=" GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
-    $sql.=" HAVING reel != SUM(pb.qty)";
+    $sql.=" HAVING reel != SUM(pb.qty) or SUM(pb.qty) IS NULL";
+    print $sql;
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -566,13 +569,11 @@ if ($ok && GETPOST('clean_product_stock_batch'))
             while ($i < $num)
             {
                 $obj=$db->fetch_object($resql);
-                print '<tr><td>'.$obj->rowid.'-'.$obj->ref.'-'.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' != '.$obj->reelbatch;
+                print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehose '.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' (product_stock.reel) != '.($obj->reelbatch?$obj->reelbatch:'0').' (sum product_batch)';
                 
                 // Fix
                 if ($obj->reel != $obj->reelbatch)
                 {
-                    $methodtofix='updatestock';
-                    
                     if ($methodtofix == 'updatebatch')
                     {
                         // Method 1
@@ -594,7 +595,7 @@ if ($ok && GETPOST('clean_product_stock_batch'))
                     if ($methodtofix == 'updatestock')
                     {
                         // Method 2
-                        print ' -> Update qty of stock with qty = '.$obj->reelbatch.' for ps.rowid = '.$obj->psrowid;
+                        print ' -> Update qty of product_stock with qty = '.($obj->reelbatch?$obj->reelbatch:'0').' for ps.rowid = '.$obj->psrowid;
                         if (GETPOST('clean_product_stock_batch') == 'confirmed')
                         {
                             $error=0;
@@ -602,11 +603,11 @@ if ($ok && GETPOST('clean_product_stock_batch'))
                             $db->begin();
                             
                             $sql2 ="UPDATE ".MAIN_DB_PREFIX."product_stock";
-                            $sql2.=" SET reel = ".$obj->reelbatch." WHERE rowid = ".$obj->psrowid;
+                            $sql2.=" SET reel = ".($obj->reelbatch?$obj->reelbatch:'0')." WHERE rowid = ".$obj->psrowid;
                             $resql2=$db->query($sql2);
                             if ($resql2)
                             {
-                                // We update product stock, so we must update product.stock too.
+                                // We update product_stock, so we must field stock into product too.
                                 $sql3='UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid)';
                                 $resql3=$db->query($sql3);
                                 if (! $resql3) 
@@ -632,6 +633,10 @@ if ($ok && GETPOST('clean_product_stock_batch'))
                 $i++;
             }
         }
+        else
+        {
+            print '<tr><td colspan="2">Nothing to do</td></tr>';
+        }
     }
     else
     {
@@ -640,6 +645,34 @@ if ($ok && GETPOST('clean_product_stock_batch'))
 }
 
 
+// clean_linked_elements: Check and clean linked elements
+if ($ok && GETPOST('clean_product_stock_negative_if_batch'))
+{
+    print '<tr><td colspan="2"><br>Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
+
+    $sql ="SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
+    $sql.=" FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product_batch as pb";
+    $sql.=" WHERE p.rowid = ps.fk_product AND ps.rowid = pb.fk_product_stock";
+    $sql.=" AND p.tobatch = 1";
+    $sql.=" GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
+    $sql.=" HAVING reel != SUM(pb.qty)";
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+
+        if ($num)
+        {
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj=$db->fetch_object($resql);
+                print '<tr><td>'.$obj->rowid.'-'.$obj->ref.'-'.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' != '.$obj->reelbatch;
+
+            }
+        }
+    }
+}
 
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('set_empty_time_spent_amount'))
@@ -667,15 +700,18 @@ if ($ok && GETPOST('set_empty_time_spent_amount'))
 
                 $db->begin();
 
-                $sql2 ="UPDATE ".MAIN_DB_PREFIX."projet_task_time";
-                $sql2.=" SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".$obj->user_id;
-                $resql2=$db->query($sql2);
-                if (! $resql2)
+                if (GETPOST('set_empty_time_spent_amount') == 'confirmed')
                 {
-                    $error++;
-                    dol_print_error($db);
+                    $sql2 ="UPDATE ".MAIN_DB_PREFIX."projet_task_time";
+                    $sql2.=" SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".$obj->user_id;
+                    $resql2=$db->query($sql2);
+                    if (! $resql2)
+                    {
+                        $error++;
+                        dol_print_error($db);
+                    }
                 }
-
+                
                 if (!$error) $db->commit();
                 else $db->rollback();
 

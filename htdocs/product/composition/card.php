@@ -571,7 +571,7 @@ if ($id > 0 || ! empty($ref))
 								continue;
 							}
 						}
-						$var=!$var;
+						
 						print "\n<tr ".$bc[$var].">";
 						$productstatic->id=$objp->rowid;
 						$productstatic->ref=$objp->ref;
