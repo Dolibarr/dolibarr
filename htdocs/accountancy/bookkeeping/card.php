@@ -369,8 +369,7 @@ if ($action == 'create') {
 				print "</tr>\n";
 
 				foreach ($book->linesmvt as $line) {
-					$var = ! $var;
-					print '<tr ' . $bc[$var] . '>';
+					print '<tr class="oddeven">';
 
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
@@ -420,8 +419,7 @@ if ($action == 'create') {
 				}
 
 				if ($action == "" || $action == 'add') {
-					$var = ! $var;
-					print '<tr ' . $bc[$var] . '>';
+					print '<tr class="oddeven">';
 					print '<td>';
 					print $formventilation->select_account($account_number, 'account_number', 0, array (), 1, 1, '');
 					print '</td>';
