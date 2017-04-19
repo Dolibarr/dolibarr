@@ -100,10 +100,8 @@ else
 		if ($listname == 'listofvars') $listtouse=$listofvars;
 		if ($listname == 'listofstatus') $listtouse=$listofstatus;
 
-		$var=true;
 		foreach($listtouse as $param => $paramval)
 		{
-			
 			print '<tr class="oddeven">';
 			print '<td>';
 			print $param;
