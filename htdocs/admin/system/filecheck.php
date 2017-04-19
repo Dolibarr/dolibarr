@@ -46,14 +46,10 @@ print load_fiche_titre($langs->trans("FileCheckDolibarr"),'','title_setup');
 print $langs->trans("FileCheckDesc").'<br><br>';
 
 // Version
-$var = true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
-$var = ! $var;
 print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
-$var = ! $var;
 print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
-$var = ! $var;
 print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) {
@@ -172,7 +168,6 @@ if ($xml)
         $out.='<td align="center">' . $langs->trans("ExpectedValue") . '</td>';
         $out.='<td align="center">' . $langs->trans("Value") . '</td>';
         $out.='</tr>'."\n";
-        $var = true;
 
         $i = 0;
         foreach ($xml->dolibarr_constants[0]->constant as $constant)    // $constant is a simpleXMLElement
@@ -188,8 +183,7 @@ if ($xml)
             $checksumconcat[]=$valueforchecksum;
             
             $i++;
-            $var = !$var;
-            $out.='<tr ' . $bc[$var] . '>';
+            $out.='<tr class="oddeven">';
             $out.='<td>'.$i.'</td>' . "\n";
             $out.='<td>'.$constname.'</td>' . "\n";
             $out.='<td align="center">'.$constvalue.'</td>' . "\n";
@@ -199,7 +193,7 @@ if ($xml)
 
         if ($i==0)
         {
-            $out.='<tr ' . $bc[false] . '><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            $out.='<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out.='</table>';
         
@@ -239,7 +233,6 @@ if ($xml)
         $out.='<td>' . $langs->trans("Filename") . '</td>';
         $out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
         $out.='</tr>'."\n";
-        $var = true;
         $tmpfilelist = dol_sort_array($file_list['missing'], 'filename');
         if (is_array($tmpfilelist) && count($tmpfilelist))
         {
@@ -247,8 +240,7 @@ if ($xml)
 	        foreach ($tmpfilelist as $file)
 	        {
 	            $i++;
-	            $var = !$var;
-	            $out.='<tr ' . $bc[$var] . '>';
+	            $out.='<tr class="oddeven">';
 	            $out.='<td>'.$i.'</td>' . "\n";
 	            $out.='<td>'.$file['filename'].'</td>' . "\n";
 	            $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
@@ -257,7 +249,7 @@ if ($xml)
         }
         else 
         {
-            $out.='<tr ' . $bc[false] . '><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            $out.='<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }            
         $out.='</table>';
 
@@ -276,7 +268,6 @@ if ($xml)
         $out.='<td align="right">' . $langs->trans("Size") . '</td>';
         $out.='<td align="right">' . $langs->trans("DateModification") . '</td>';
         $out.='</tr>'."\n";
-        $var = true;
         $tmpfilelist2 = dol_sort_array($file_list['updated'], 'filename');
         if (is_array($tmpfilelist2) && count($tmpfilelist2))
         {
@@ -284,8 +275,7 @@ if ($xml)
 	        foreach ($tmpfilelist2 as $file)
 	        {
 	            $i++;
-	            $var = !$var;
-	            $out.='<tr ' . $bc[$var] . '>';
+	            $out.='<tr class="oddeven">';
 	            $out.='<td>'.$i.'</td>' . "\n";
 	            $out.='<td>'.$file['filename'].'</td>' . "\n";
 	            $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
@@ -307,7 +297,7 @@ if ($xml)
         }
         else 
         {
-            $out.='<tr ' . $bc[false] . '><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            $out.='<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out.='</table>';
         
@@ -326,7 +316,6 @@ if ($xml)
         $out.='<td align="right">' . $langs->trans("Size") . '</td>';
         $out.='<td align="right">' . $langs->trans("DateModification") . '</td>';
         $out.='</tr>'."\n";
-        $var = true;
         $tmpfilelist3 = dol_sort_array($file_list['added'], 'filename');
         if (is_array($tmpfilelist3) && count($tmpfilelist3))
         {
@@ -334,8 +323,7 @@ if ($xml)
             foreach ($tmpfilelist3 as $file)
             {
                 $i++;
-                $var = !$var;
-                $out.='<tr ' . $bc[$var] . '>';
+                $out.='<tr class="oddeven">';
                 $out.='<td>'.$i.'</td>' . "\n";
                 $out.='<td>'.$file['filename'].'</td>' . "\n";
                 $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
@@ -357,7 +345,7 @@ if ($xml)
         }
         else
         {
-            $out.='<tr ' . $bc[false] . '><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            $out.='<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out.='</table>';
         
