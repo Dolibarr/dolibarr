@@ -285,7 +285,7 @@ if (isset($objMod->langfiles) && is_array($objMod->langfiles))
 	}
 }
 
-$var=!$var;
+
 
 
 // Version (with picto warning or not)

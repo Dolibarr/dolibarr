@@ -1819,13 +1819,13 @@ class Contrat extends CommonObject
 				$text.=': &nbsp; &nbsp; ';
 			}
 			$text.=($mode == 7?'<div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofserviceswait > 0) ? $this->nbofserviceswait.' '.$line->LibStatut(0,3).' &nbsp; ' : '';
+			$text.=($mode != 7 || $this->nbofserviceswait > 0) ? $this->nbofserviceswait.' '.$line->LibStatut(0,3).(($this->nbofservicesopened || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
 			$text.=($mode == 7?'</div><div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofservicesopened > 0) ? $this->nbofservicesopened.' '.$line->LibStatut(4,3,0).' &nbsp; ' : '';
+			$text.=($mode != 7 || $this->nbofservicesopened > 0) ? $this->nbofservicesopened.' '.$line->LibStatut(4,3,0).(($this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
 			$text.=($mode == 7?'</div><div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofservicesexpired > 0) ? $this->nbofservicesexpired.' '.$line->LibStatut(4,3,1).' &nbsp; ' : '';
+			$text.=($mode != 7 || $this->nbofservicesexpired > 0) ? $this->nbofservicesexpired.' '.$line->LibStatut(4,3,1).(($this->nbofservicesclosed)?' &nbsp; ':'') : '';
 			$text.=($mode == 7?'</div><div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofservicesclosed > 0) ? $this->nbofservicesclosed.' '.$line->LibStatut(5,3).' &nbsp; ' : '';
+			$text.=($mode != 7 || $this->nbofservicesclosed > 0) ? $this->nbofservicesclosed.' '.$line->LibStatut(5,3) : '';
 			$text.=($mode == 7?'</div>':'');
 			return $text;
 		}

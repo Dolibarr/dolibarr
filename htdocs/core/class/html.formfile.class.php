@@ -670,7 +670,7 @@ class FormFile
         // Get list of files
         if (! empty($filedir))
         {
-            $file_list=dol_dir_list($filedir,'files',0,'','(\.meta|_preview\.png)$','date',SORT_DESC);
+            $file_list=dol_dir_list($filedir,'files',0,'','(\.meta|_preview.*.*\.png)$','date',SORT_DESC);
 
             $link_list = array();
             if (is_object($object))
@@ -775,9 +775,7 @@ class FormFile
                     
                 foreach($link_list as $file)
                 {
-                    $var=!$var;
-                    
-                    $out.= "<tr ".$bc[$var].">";
+                    $out.='<tr class="oddeven">';
                     $out.='<td colspan="'.$colspan.'" class="maxwidhtonsmartphone">';
                     $out.='<a data-ajax="false" href="' . $link->url . '" target="_blank">';
                     $out.=$file->label;
@@ -794,7 +792,7 @@ class FormFile
             
 		 	if (count($file_list) == 0 && count($link_list) == 0 && $headershown)
             {
-	        	$out.='<tr '.$bc[0].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	        	$out.='<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     	    }
 
         }
@@ -871,7 +869,7 @@ class FormFile
     			else $this->infofiles['extensions'][$ext]++;
 
     			// Preview
-    			if (! empty($conf->use_javascript_ajax) && ! empty($conf->browser->layout != 'phone'))
+    			if (! empty($conf->use_javascript_ajax) && ($conf->browser->layout != 'phone'))
     			{
                     $tmparray = getAdvancedPreviewUrl($modulepart, $relativepath, 1);
                     if ($tmparray && $tmparray['url']) $tmpout.= '<li><a href="'.$tmparray['url'].'"'.($tmparray['css']?' class="'.$tmparray['css'].'"':'').($tmparray['mime']?' mime="'.$tmparray['mime'].'"':'').($tmparray['target']?' target="'.$tmparray['target'].'"':'').'>'.img_picto('','detail').' '.$langs->trans("Preview").' '.$ext.'</a></li>';
@@ -1001,6 +999,7 @@ class FormFile
 			    print '<input type="hidden" name="id" value="'.$object->id.'">';
 			    print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
+			print '<div class="div-table-responsive-no-min">';
 			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborder':'liste').'">'."\n";
 			
 			print '<tr class="liste_titre nodrag nodrop">';
@@ -1104,7 +1103,7 @@ class FormFile
 						&& $file['name'] != '..'
 						&& ! preg_match('/\.meta$/i',$file['name']))
 				{
-					$var=!$var;
+					
 					
 					if ($filearray[$key]['rowid'] > 0) $lastrowid = $filearray[$key]['rowid'];
 					
@@ -1184,7 +1183,7 @@ class FormFile
         					if (in_array($modulepart, array('product','produit','service'))) $newmodulepart='produit|service';
     						
         					$disablecrop=1; 
-        					if (in_array($modulepart, array('product','produit','service','holiday','project'))) $disablecrop=0;
+        					if (in_array($modulepart, array('product','produit','service','expensereport','holiday','project','user'))) $disablecrop=0;
         					
     					    if (! $disablecrop && image_format_supported($file['name']) > 0)
     						{
@@ -1258,7 +1257,7 @@ class FormFile
 				print '</td></tr>';
 			}
 			print "</table>";
-			
+			print '</div>';
 			
 			if (! $editline && $nboflines > 1) { 
 				if (! empty($conf->use_javascript_ajax) && $permtoeditline) {
@@ -1448,9 +1447,9 @@ class FormFile
 
                 if (! $found > 0 || ! is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) continue;    // We do not show orphelins files
 
-                $var=!$var;
+                
                 print '<!-- Line list_of_autoecmfiles '.$key.' -->'."\n";
-                print '<tr '.$bc[$var].'>';
+                print '<tr class="oddeven">';
                 print '<td>';
                 if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) print $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]->getNomUrl(1,'document');
                 else print $langs->trans("ObjectDeleted",($id?$id:$ref));

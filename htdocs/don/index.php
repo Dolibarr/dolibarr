@@ -141,8 +141,8 @@ $totalnb=0;
 $var=true;
 foreach ($listofstatus as $status)
 {
-    $var=!$var;
-    print "<tr ".$bc[$var].">";
+    
+    print '<tr class="oddeven">';
     print '<td><a href="list.php?statut='.$status.'">'.$donstatic->LibStatut($status,4).'</a></td>';
     print '<td align="right">'.(! empty($nb[$status])?$nb[$status]:'&nbsp;').'</td>';
     print '<td align="right">'.(! empty($nb[$status])?price($somme[$status],'MT'):'&nbsp;').'</td>';
@@ -191,10 +191,10 @@ if ($resql)
         $var = True;
         while ($i < $num)
         {
-            $var=!$var;
+            
             $obj = $db->fetch_object($resql);
 
-            print "<tr ".$bc[$var].">";
+            print '<tr class="oddeven">';
 
             $donation_static->id=$obj->rowid;
             $donation_static->ref=$obj->ref?$obj->ref:$obj->rowid;

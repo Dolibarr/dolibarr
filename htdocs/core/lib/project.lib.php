@@ -82,7 +82,7 @@ function project_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -192,7 +192,7 @@ function task_prepare_head($object)
 	$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . '/' .dol_sanitizeFileName($object->ref);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$nbFiles = count(dol_dir_list($filesdir,'files',0,'','(\.meta|_preview\.png)$'));
+	$nbFiles = count(dol_dir_list($filesdir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
@@ -1149,8 +1149,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 			    $projectstatic->datee = $db->jdate($objp->datee);
 			    $projectstatic->dateo = $db->jdate($objp->dateo);
 			     
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
 				print '<td>';
 				print $projectstatic->getNomUrl(1);
 				if (! in_array('projectlabel', $hiddenfields)) print '<br>'.dol_trunc($objp->title,24);

@@ -56,7 +56,7 @@ if (in_array($object->element,array('propal', 'supplier_proposal','facture','fac
 $nolinesbefore=(count($this->lines) == 0 || $forcetoshowtitlelines);
 if ($nolinesbefore) {
 ?>
-<tr class="liste_titre<?php echo (($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add') ?> nodrag nodrop">
+<tr class="liste_titre<?php echo (($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add_') ?> nodrag nodrop">
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td class="linecolnum" align="center"></td>
 	<?php } ?>
@@ -114,7 +114,7 @@ if ($nolinesbefore) {
 <?php
 }
 ?>
-<tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add'; ?>">
+<tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_create'; ?>">
 <?php
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	$coldisplay=2;

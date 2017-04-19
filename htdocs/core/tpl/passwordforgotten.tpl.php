@@ -52,17 +52,24 @@ $(document).ready(function () {
 <input type="hidden" name="action" value="buildnewpassword">
 
 
+<!-- Title with version -->
+<div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
+<?php
+if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
+echo dol_escape_htmltag($title); 
+if ($disablenofollow) echo '</a>';
+?>
+</div>
+
+
 
 <div class="login_table">
 
 <div id="login_line1">
 
 <div id="login_left">
-
 <img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
-
 </div>
-
 
 <div id="login_right">
 
@@ -114,12 +121,10 @@ if (! empty($hookmanager->resArray['options'])) {
 
 </table>
 
-</div> <!-- end div left -->
+</div> <!-- end div login right -->
 
+</div> <!-- end div login_line1 -->
 
-
-
-</div>
 
 <div id="login_line2" style="clear: both">
 
@@ -141,15 +146,6 @@ if (! empty($hookmanager->resArray['options'])) {
 
 </div>
 
-</div>
-
-<!-- Title with version -->
-<div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
-<?php
-if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
-echo dol_escape_htmltag($title); 
-if ($disablenofollow) echo '</a>';
-?>
 </div>
 
 </form>

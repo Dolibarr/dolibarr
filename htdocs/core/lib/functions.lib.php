@@ -129,7 +129,7 @@ function getEntity($element=false, $shared=0)
 	else
 	{
 		$out='';
-		$addzero = array('user', 'usergroup');
+		$addzero = array('user', 'usergroup', 'email_template', 'default_values');
 		if (in_array($element, $addzero)) $out.= '0,';
 		$out.= $conf->entity;
 		return $out;
@@ -862,7 +862,7 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 	$limittoshow=(empty($conf->global->MAIN_MAXTABS_IN_CARD)?99:$conf->global->MAIN_MAXTABS_IN_CARD);
 	$displaytab=0;
 	$nbintab=0;
-    $popuptab=0;
+    $popuptab=0; $outmore='';
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
 		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2]))
@@ -1012,6 +1012,8 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 {
 	global $conf, $form, $user, $langs;
 
+	$error = 0;
+	
 	$maxvisiblephotos=1;
 	$showimage=1;
 	$showbarcode=empty($conf->barcode->enabled)?0:($object->barcode?1:0);
@@ -1023,11 +1025,15 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	if ($object->element == 'member')    $modulepart='memberphoto';
 	if ($object->element == 'user')      $modulepart='userphoto';
 	if ($object->element == 'product')   $modulepart='product';
-	if ($object->element == 'propal')    $modulepart='propal';
-	if ($object->element == 'commande')  $modulepart='commande';
-	if ($object->element == 'facture')   $modulepart='facture';
-	if ($object->element == 'fichinter') $modulepart='ficheinter';
-	
+	if (class_exists("Imagick"))
+	{
+		if ($object->element == 'propal')    $modulepart='propal';
+		if ($object->element == 'commande')  $modulepart='commande';
+		if ($object->element == 'facture')   $modulepart='facture';
+		if ($object->element == 'fichinter') $modulepart='ficheinter';
+		if ($object->element == 'contrat')   $modulepart='contract';
+	}
+
 	if ($object->element == 'product')
 	{
 	    $width=80; $cssclass='photoref';
@@ -1043,18 +1049,20 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 			}
 			elseif ($conf->browser->layout != 'phone') {    // Show no photo link
 				$nophoto='/public/theme/common/nophoto.png';
-				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
 			}
         }
 	}
 	else
 	{
-        if ($showimage)
+		if ($showimage)
         {
-            if ($modulepart != 'unknown')
+        	if ($modulepart != 'unknown')
             {
+                $phototoshow='';
+                
                 // Check if a preview file is available
-                if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter')) && class_exists("Imagick"))
+                if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract')) && class_exists("Imagick"))
                 {
                     $objectref = dol_sanitizeFileName($object->ref);
                     $dir_output = $conf->$modulepart->dir_output . "/";
@@ -1064,7 +1072,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     
                     // Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
                     $fileimage = $file.'_preview.png';              // If PDF has 1 page
-                    $fileimagebis = $file.'_preview-0.pdf.png';     // If PDF has more than one page
+                    $fileimagebis = $file.'_preview-0.png';         // If PDF has more than one page
                     $relativepathimage = $relativepath.'_preview.png';
                     
                     // Si fichier PDF existe
@@ -1072,12 +1080,14 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     {
                         $encfile = urlencode($file);
                         // Conversion du PDF en image png si fichier png non existant
-                        if ((! file_exists($fileimage) && ! file_exists($fileimagebis)) || (filemtime($fileimage) < filemtime($file)))
+                        if ( (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($file)))
+                          && (! file_exists($fileimagebis) || (filemtime($fileimagebis) < filemtime($file)))
+                           )
                         {
-                            $ret = dol_convert_file($file,'png',$fileimage);
+                            $ret = dol_convert_file($file, 'png', $fileimage);
                             if ($ret < 0) $error++;
                         }
-    
+
                         // Si fichier png PDF d'1 page trouve
                         if (file_exists($fileimage))
                         {
@@ -1088,13 +1098,10 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                         // Si fichier png PDF de plus d'1 page trouve
                         elseif (file_exists($fileimagebis))
                         {
-                            $preview = preg_replace('/\.png/','',$relativepath) . "-0.png";
-                            if (file_exists($dir_output.$preview))
-                            {
-                                $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
-                                $phototoshow.= '<img height="70" class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
-                                $phototoshow.= '</div></div>';
-                            }
+                            $preview = preg_replace('/\.png/','',$relativepathimage) . "-0.png";
+                            $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
+                            $phototoshow.= '<img height="70" class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
+                            $phototoshow.= '</div></div>';
                         }
                     }
                 }
@@ -1116,9 +1123,10 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                 $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
                 if ($object->element == 'action')
                 {
+                    $width=80;
                     $cssclass='photorefcenter';
                     $nophoto=img_picto('', 'title_agenda', '', false, 1);
-                    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.$nophoto.'"></div></div>';
+                    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
                 }
                 else
                 {
@@ -1126,7 +1134,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     $picto = $object->picto;
                     if ($object->element == 'project' && ! $object->public) $picto = 'project'; // instead of projectpub
     				$nophoto=img_picto('', 'object_'.$picto, '', false, 1);
-    				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.$nophoto.'"></div></div>';
+    				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
                 }
                 $morehtmlleft.='</div>';
             }
@@ -1158,22 +1166,10 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
             $morehtmlstatus.=$object->getLibStatut(5,1);
         }
 	}
-	elseif ($object->element == 'facture' || $object->element == 'invoice' || $object->element == 'invoice_supplier')
+	elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan')))
 	{
 	    $tmptxt=$object->getLibStatut(6, $object->totalpaye);
 	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye);
-		$morehtmlstatus.=$tmptxt;
-	}
-	elseif ($object->element == 'chargesociales')
-	{
-	    $tmptxt=$object->getLibStatut(6, $object->totalpaye);
-	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye); 
-		$morehtmlstatus.=$tmptxt;
-	}
-	elseif ($object->element == 'loan')
-	{
-	    $tmptxt=$object->getLibStatut(6, $object->totalpaye);
-	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye); 
 		$morehtmlstatus.=$tmptxt;
 	}
 	elseif ($object->element == 'contrat' || $object->element == 'contract') 
@@ -1640,6 +1636,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
  */
 function dol_now($mode='gmt')
 {
+    $ret='';
 	// Note that gmmktime and mktime return same value (GMT) when used without parameters
 	//if ($mode == 'gmt') $ret=gmmktime(); // Strict Standards: gmmktime(): You should be using the time() function instead
 	if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
@@ -2447,7 +2444,6 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		if (preg_match('/:[^\s0-9]/',$titlealt)) $tmparray=explode(':',$titlealt);		// We explode if we have TextA:TextB. Not if we have TextA: TextB
 		$title=$tmparray[0];
 		$alt=empty($tmparray[1])?'':$tmparray[1];
-		if ($picto == 'refresh') var_dump($moreatt);
 		return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:' class="inline-block valigntextbottom"').'>';	// Alt is used for accessibility, title for popup
 	}
 }
@@ -3877,7 +3873,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller
    	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$thirdparty_seller->country_code."'";
    	$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
    	if ($vatratecode) $sql.= " AND t.code ='".$vatratecode."'";		// If we have the code, we use it in priority
-   	else $sql.= " AND t.recuperableonly ='".$npr."'";
+   	else $sql.= " AND t.recuperableonly ='".$vatnpr."'";
    	dol_syslog("get_localtax", LOG_DEBUG);
    	$resql=$db->query($sql);
 
@@ -3996,6 +3992,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local);
 
 	$vatratecleaned = $vatrate;
+	$vatratecode = '';
 	if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
 	{
 	    $vatratecleaned = $reg[1];
@@ -4394,7 +4391,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 function yn($yesno, $case=1, $color=0)
 {
 	global $langs;
-	$result='unknown';
+	$result='unknown'; $classname='';
 	if ($yesno == 1 || strtolower($yesno) == 'yes' || strtolower($yesno) == 'true') 	// A mettre avant test sur no a cause du == 0
 	{
 		$result=$langs->trans('yes');
@@ -4872,45 +4869,77 @@ function dol_concatdesc($text1,$text2,$forxml=false)
 /**
  *  Make substition into a string replacing key with vals from $substitutionarray (oldval=>newval)
  *
- *  @param	string	$chaine      			Source string in which we must do substitution
- *  @param  array	$substitutionarray		Array with key->val to substitute
- * 	@return string  		    			Output string after subsitutions
+ *  @param	string		$text	      			Source string in which we must do substitution
+ *  @param  array		$substitutionarray		Array with key->val to substitute
+ *  @param	Translate	$outputlangs			Output language
+ * 	@return string  		    				Output string after substitutions
  *  @see	complete_substitutions_array
  */
-function make_substitutions($chaine,$substitutionarray)
+function make_substitutions($text, $substitutionarray, $outputlangs=null)
 {
-	global $conf;
+	global $conf, $langs;
 
 	if (! is_array($substitutionarray)) return 'ErrorBadParameterSubstitutionArrayWhenCalling_make_substitutions';
-
-	// Make substitition
+	
+	if (empty($outputlangs)) $outputlangs=$langs;
+	
+	// Make substitution for language keys
+	if (is_object($outputlangs))
+	{
+		while (preg_match('/__\((.*)\)__/', $text, $reg))
+		{
+			$msgishtml = 0;
+			if (dol_textishtml($text,1)) $msgishtml = 1;
+			$text = preg_replace('/__\('.preg_quote($reg[1]).'\)__/', $msgishtml?dol_htmlentitiesbr($outputlangs->transnoentitiesnoconv($reg[1])):$outputlangs->transnoentitiesnoconv($reg[1]), $text);	
+		}
+	}
+		
+	// Make substitition for array $substitutionarray
 	foreach ($substitutionarray as $key => $value)
 	{
 		if ($key == '__SIGNATURE__' && (! empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))) $value='';
-		$chaine=str_replace("$key","$value",$chaine);	// We must keep the " to work when value is 123.5 for example
+		$text=str_replace("$key","$value",$text);	// We must keep the " to work when value is 123.5 for example
 	}
 
-	return $chaine;
+	return $text;
 }
 
 /**
  *  Complete the $substitutionarray with more entries
  *
  *  @param  array		$substitutionarray		Array substitution old value => new value value
- *  @param  Translate	$outputlangs            If we want substitution from special constants, we provide a language
- *  @param  object		$object                 If we want substitution from special constants, we provide data in a source object
- *  @param  Mixed		$parameters       		Add more parameters (useful to pass product lines)
+ *  @param  Translate	$outputlangs            Output language
+ *  @param  Object		$object                 Source object
+ *  @param  mixed		$parameters       		Add more parameters (useful to pass product lines)
  *  @param  string      $callfunc               What is the name of the custom function that will be called? (default: completesubstitutionarray)
  *  @return	void
  *  @see 	make_substitutions
  */
-function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='',$parameters=null,$callfunc="completesubstitutionarray")
+function complete_substitutions_array(&$substitutionarray, $outputlangs, $object=null, $parameters=null, $callfunc="completesubstitutionarray")
 {
 	global $conf,$user;
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	// Check if there is external substitution to do asked by plugins
+	// Add a substitution key for each object property
+	if (is_object($object))
+	{
+		// TODO
+	}
+	
+	// Add a substitution key for each extrafields, using key __EXTRA_XXX__
+	if (is_object($object) && is_array($object->array_options))
+	{
+		foreach($object->array_options as $key => $val)
+		{
+			$keyshort=preg_replace('/^(options|extra)_/','',$key);
+			$substitutionarray['__EXTRA_'.$keyshort.'__']=$val;
+			// For backward compatibiliy
+			$substitutionarray['%EXTRA_'.$keyshort.'%']=$val;
+		}
+	}
+	
+	// Check if there is external substitution to do, requested by plugins
 	$dirsubstitutions=array_merge(array(),(array) $conf->modules_parts['substitutions']);
 
 	foreach($dirsubstitutions as $reldir)
@@ -5115,7 +5144,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 {
 	global $conf, $langs;
 
-	$ret='';
+	$ret=0; $return='';
 	$out='';
 	$divstart=$divend='';
 
@@ -5285,7 +5314,8 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensiti
 	$sizearray=count($array);
 	if (is_array($array) && $sizearray>0)
 	{
-		foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
+        $temp = array();
+        foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
 
 		if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
 		else
@@ -5745,6 +5775,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 {
 	if ($a = explode($delimiter, $string))
 	{
+	    $ka = array();
 		foreach ($a as $s) { // each part
 			if ($s) {
 				if ($pos = strpos($s, $kv)) { // key/value delimiter

@@ -1212,7 +1212,7 @@ function form_constantes($tableau,$strictw3c=0)
         if ($result)
         {
             $obj = $db->fetch_object($result);	// Take first result of select
-            $var=!$var;
+            
 
             // For avoid warning in strict mode
             if (empty($obj)) {
@@ -1221,7 +1221,7 @@ function form_constantes($tableau,$strictw3c=0)
 
             if (empty($strictw3c)) print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 
-            print "<tr ".$bc[$var].">";
+            print '<tr class="oddeven">';
 
             // Show constant
             print '<td>';

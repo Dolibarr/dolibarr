@@ -197,7 +197,7 @@ if ($result)
             $warehouse->lieu = $objp->lieu;
             $warehouse->fk_parent = $objp->fk_parent;
             
-            print "<tr ".$bc[$var].">";
+            print '<tr class="oddeven">';
             print '<td>' . $warehouse->getNomUrl(1) . '</td>';
             // Location
             print '<td>'.$objp->lieu.'</td>';
@@ -224,7 +224,7 @@ if ($result)
 
             print "</tr>\n";
 
-            $var=!$var;
+            
             $i++;
 		}
 

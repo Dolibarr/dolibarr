@@ -90,8 +90,8 @@ print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '</tr>';
 
 // Hide unauthorized menu
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("HideUnauthorizedMenu").'</td>';
 print '<td align="center">';
 if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))

@@ -584,7 +584,7 @@ if ($mode == 'common')
         	$oldfamily=$familykey;
         }
 
-        $var=!$var;
+        
 
         
         // Version (with picto warning or not)
@@ -781,7 +781,7 @@ if ($mode == 'marketplace')
     print '<td>'.$langs->trans("URL").'</td>';
     print '</tr>';
 
-    $var=!$var;
+    
     print "<tr ".$bc[$var].">\n";
     $url='https://www.dolistore.com';
     print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
@@ -789,7 +789,7 @@ if ($mode == 'marketplace')
     print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
     print '</tr>';
 
-    $var=!$var;
+    
     print "<tr ".$bc[$var].">\n";
     $url='https://partners.dolibarr.org';
     print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a></td>';

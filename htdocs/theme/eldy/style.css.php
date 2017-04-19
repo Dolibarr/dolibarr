@@ -78,7 +78,7 @@ $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
 // Colors
-$colorbackhmenu1='90,100,130';      // topmenu
+$colorbackhmenu1='80,90,120';      // topmenu
 $colorbackvmenu1='255,255,255';      // vmenu
 $colortopbordertitle1='120,120,120';    // top border of title
 $colorbacktitle1='240,240,240';      // title of tables,list
@@ -720,6 +720,9 @@ div.fiche>form>div.div-table-responsive {
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
 {
+    .width50  { width: 50px; }
+    .width100 { width: 100px; }
+    .width200 { width: 200px; }
     .minwidth100 { min-width: 100px; }
     .minwidth200 { min-width: 200px; }
     .minwidth300 { min-width: 300px; }
@@ -733,6 +736,9 @@ div.fiche>form>div.div-table-responsive {
     .minwidth400imp { min-width: 400px !important; }
     .minwidth500imp { min-width: 500px !important; }
 }
+.width50  { width: 50px; }
+.width100 { width: 100px; }
+.width200 { width: 200px; }
 .maxwidth25  { max-width: 25px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
@@ -1520,6 +1526,7 @@ foreach($mainmenuusedarray as $val)
 }
 .login_vertical_align {
 	padding: 10px;
+	padding-bottom: 80px;
 }
 form#login {
 	padding-bottom: 30px;
@@ -1529,7 +1536,7 @@ form#login {
 .login_table_title {
 	max-width: 530px;
 	color: #aaa !important;
-	padding-top: 30px;
+	padding-bottom: 20px;
 	/* text-shadow: 1px 1px 1px #FFF; */
 }
 .login_table label {
@@ -2205,7 +2212,7 @@ table.borderplus {
 	border: 1px solid #BBB;
 }
 .border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
-	height: 20px;
+	height: 22px;
 }
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
 	vertical-align: middle;
@@ -2280,6 +2287,12 @@ table.paddingtopbottomonly tr td {
 }
 tr.liste_titre_filter td.liste_titre {
     border-bottom: 1px solid #ddd;
+}
+.liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
+{
+    /*border-top-width: 1px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;*/
 }
 .liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
 {
@@ -2488,21 +2501,20 @@ div.pagination li.paginationafterarrows {
 
 
 /* Set the color for hover lines */
-.oddeven:hover, .odd:hover, .impair:hover, .even:hover, .pair:hover, .even:hover, .pair:hover,
-table.dataTable tr.even:hover, table.dataTable tr.odd:hover
+.oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
 {
 <?php if ($colorbacklinepairhover) { ?>
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;		/* Must be background to be stronger than background of odd or even */
 <?php } ?>
 }
 
-.oddeven, .odd, .impair, .nohover .odd:hover, .nohover .impair:hover, tr.odd td.nohover, tr.impair td.nohover
+.oddeven, .evenodd, .impair, .nohover .impair:hover, tr.impair td.nohover
 {
 	font-family: <?php print $fontlist ?>;
 	margin-bottom: 1px;
 	color: #202020;
 }
-.odd, .impair, .nohover .odd:hover, .nohover .impair:hover, tr.odd td.nohover, tr.impair td.nohover
+.impair, .nohover .impair:hover, tr.impair td.nohover
 {
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
@@ -2510,16 +2522,16 @@ table.dataTable tr.even:hover, table.dataTable tr.odd:hover
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
 
-.oddeven, .even, .pair, .nohover .even:hover, .nohover .pair:hover, tr.even td.nohover, tr.pair td.nohover {
+.oddeven, .evenodd, .pair, .nohover .pair:hover, tr.pair td.nohover {
 	font-family: <?php print $fontlist ?>;
 	margin-bottom: 1px;
 	color: #202020;
 }
-.even, .pair, .nohover .even:hover, .nohover .pair:hover, tr.even td.nohover, tr.pair td.nohover {
+.pair, .nohover .pair:hover, tr.pair td.nohover {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
 }
 
-table.dataTable tr.odd, table.dataTable tr.oddeven {
+table.dataTable tr.oddeven {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 }
 
@@ -2528,7 +2540,7 @@ td.oddeven, table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.imp
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
 }
-tr.nohoverpair td {
+td.evenodd, tr.nohoverpair td {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 }
@@ -2537,17 +2549,17 @@ tr.nohoverpair td {
 table.dataTable td {
     padding: 5px 2px 5px 3px !important;
 }
-tr.even td, tr.pair td, tr.odd td, tr.impair td, form.odd div.tagtd, form.impair div.tagtd, form.pair div.tagtd, div.impair div.tagtd, div.pair div.tagtd, div.liste_titre div.tagtd {
+tr.pair td, tr.impair td, form.impair div.tagtd, form.pair div.tagtd, div.impair div.tagtd, div.pair div.tagtd, div.liste_titre div.tagtd {
     padding: 7px 2px 7px 3px;
     border-bottom: 1px solid #ddd;
 }
 form.pair, form.impair {
 	font-weight: normal;
 }
-form.tagtr:last-of-type div.tagtd, tr.even:last-of-type td, tr.pair:last-of-type td, tr.odd:last-of-type td, tr.impair:last-of-type td {
+form.tagtr:last-of-type div.tagtd, tr.pair:last-of-type td, tr.impair:last-of-type td {
     border-bottom: 0px !important;
 }
-tr.even td .nobordernopadding tr td, tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td, tr.odd td .nobordernopadding tr td {
+tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
     border-bottom: 0px !important;
 }
 td.nobottom, td.nobottom {
@@ -2607,6 +2619,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
     font-family: <?php print $fontlist ?>;
     font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
     vertical-align: middle;
+    height: 24px;
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;

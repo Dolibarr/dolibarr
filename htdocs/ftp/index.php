@@ -554,7 +554,7 @@ else
 					$is_directory=ftp_isdir($conn_id, $newremotefileiso);
 				}
 
-				$var=!$var;
+				
 				print '<tr '.$bc[$var].' height="18">';
 				// Name
 				print '<td>';

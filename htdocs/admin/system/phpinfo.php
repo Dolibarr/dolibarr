@@ -82,8 +82,8 @@ foreach($phparray as $key => $value)
 	{
 		if (! is_array($keyvalue))
 		{
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			
+			print '<tr class="oddeven">';
 			print '<td>'.$keyparam.'</td>';
 			$valtoshow=$keyvalue;
 			if ($keyparam == 'X-ChromePhp-Data') $valtoshow=dol_trunc($keyvalue,80);
@@ -97,8 +97,8 @@ foreach($phparray as $key => $value)
 		}
 		else
 		{
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			
+			print '<tr class="oddeven">';
 			print '<td>'.$keyparam.'</td>';
 			$i=0;
 			foreach($keyvalue as $keyparam2 => $keyvalue2)

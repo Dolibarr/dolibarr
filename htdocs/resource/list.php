@@ -260,7 +260,7 @@ if ($ret)
 {
     foreach ($object->lines as $resource)
     {
-            $var=!$var;
+            
 
             $style='';
             if ($resource->id == GETPOST('lineid')) $style='style="background: orange;"';

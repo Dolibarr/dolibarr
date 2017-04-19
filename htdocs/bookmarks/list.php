@@ -27,32 +27,40 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 $langs->load("bookmarks");
 $langs->load("admin");
 
+$action=GETPOST('action','alpha');
+$massaction=GETPOST('massaction','alpha');
+$show_files=GETPOST('show_files','int');
+$confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
+
 // Security check
 if (! $user->rights->bookmark->lire) {
     restrictedArea($user, 'bookmarks');
 }
 $optioncss = GETPOST('optioncss','alpha');
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
-$offset = $conf->liste_limit * $page ;
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="position";
-$limit=$conf->liste_limit;
+if (! $sortfield) $sortfield='position';
+if (! $sortorder) $sortorder='ASC';
+
+$id = GETPOST("bid",'int');
 
 
 /*
  * Actions
  */
 
-if ($_GET["action"] == 'delete')
+if ($action == 'delete')
 {
     $bookmark=new Bookmark($db);
-    $res=$bookmark->remove($_GET["bid"]);
+    $res=$bookmark->remove($id);
     if ($res > 0)
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
@@ -100,7 +108,7 @@ if ($resql)
     print "<tr class=\"liste_titre\">";
     //print "<td>&nbsp;</td>";
     print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bid","", $param,'align="left"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Title"),'','');
+    print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"title","", $param,'align="left"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Link"),'','');
     print_liste_field_titre($langs->trans("Target"),'','','','','align="center"');
     print_liste_field_titre($langs->trans("Owner"),$_SERVER["PHP_SELF"],"u.lastname","", $param,'align="center"',$sortfield,$sortorder);
@@ -114,8 +122,8 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
 
-        $var=!$var;
-        print "<tr ".$bc[$var].">";
+        
+        print '<tr class="oddeven">';
 
         // Id
         print '<td align="left">';

@@ -1803,7 +1803,7 @@ else
 				    while ($i < $num)
 				    {
 				        $objp = $db->fetch_object($resql);
-				        $var=!$var;
+				        
 				        print "<tr ".$bc[$var]."><td>";
 				        print '<a href="'.DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 				        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
@@ -2141,7 +2141,7 @@ if ($action != 'create' && $action != 'edit')
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
 			// Validate
-			if (count($object->lines) > 0 || count($object->lignes) > 0)
+			if (count($object->lines) > 0)
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a></div>';
 			}

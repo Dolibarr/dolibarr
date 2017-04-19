@@ -180,8 +180,8 @@ $var=true;
 $form = new Form($db);
 
 // Mail required for members
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserMailRequired").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 
@@ -284,7 +284,7 @@ foreach ($dirmodels as $reldir)
 	                        if ($modulequalified)
 	                        {
 	                            $var = !$var;
-	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module,'info')) print $module->info($langs);

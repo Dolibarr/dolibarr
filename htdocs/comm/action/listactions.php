@@ -400,7 +400,7 @@ if ($resql)
         	continue;
         }
 
-		$var=!$var;
+		
 
 		$actionstatic->id=$obj->id;
 		$actionstatic->ref=$obj->id;
@@ -409,7 +409,7 @@ if ($resql)
 		$actionstatic->type_picto=$obj->type_picto;
 		$actionstatic->label=$obj->label;
 		
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 
 		// Action (type)
 		print '<td>';

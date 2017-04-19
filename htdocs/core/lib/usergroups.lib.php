@@ -149,7 +149,7 @@ function user_prepare_head($object)
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
         $upload_dir = $conf->user->dir_output . "/" . $object->id;
-        $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+        $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
         $nbLinks=Link::count($db, $object->element, $object->id);
         $head[$h][0] = DOL_URL_ROOT.'/user/document.php?userid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
@@ -499,7 +499,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	{
 	    $default='5a6482';
 	    if ($conf->theme == 'md') $default='5a3278';
-	    $var=!$var;
+	    
 	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
 	    print '<td colspan="'.($colspan-1).'">';

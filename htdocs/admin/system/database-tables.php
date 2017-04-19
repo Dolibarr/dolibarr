@@ -108,8 +108,8 @@ else
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
 
 				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
 				print '<td>'.$obj->Engine.'</td>';
@@ -163,8 +163,8 @@ else
 			while ($i < $num)
 			{
 				$row = $db->fetch_row($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
 				print '<td>'.$row[0].'</td>';
 				print '<td align="right">'.$row[1].'</td>';
 				print '<td align="right">'.$row[2].'</td>';
@@ -205,7 +205,7 @@ else
 					$count = '?';
 				}
 
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td>'.$row[0].'</td>';
 				print '<td>'.$count.'</td>';
 				print '</tr>';

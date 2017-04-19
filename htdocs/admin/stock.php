@@ -161,8 +161,8 @@ $var=true;
 
 $found=0;
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="60%">'.$langs->trans("DeStockOnBill").'</td>';
 print '<td width="160" align="right">';
 if (! empty($conf->facture->enabled))
@@ -181,8 +181,8 @@ else
 print "</td>\n</tr>\n";
 $found++;
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="60%">'.$langs->trans("DeStockOnValidateOrder").'</td>';
 print '<td width="160" align="right">';
 if (! empty($conf->commande->enabled))
@@ -203,8 +203,8 @@ $found++;
 
 //if (! empty($conf->expedition->enabled))
 //{
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="60%">'.$langs->trans("DeStockOnShipment").'</td>';
 print '<td width="160" align="right">';
 if (! empty($conf->expedition->enabled))
@@ -223,8 +223,8 @@ else
 print "</td>\n</tr>\n";
 $found++;
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="60%">'.$langs->trans("DeStockOnShipmentOnClosing").'</td>';
 print '<td width="160" align="right">';
 if (! empty($conf->expedition->enabled))
@@ -245,8 +245,8 @@ $found++;
 
 /*if (! $found)
 {
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	
+	print '<tr class="oddeven">';
 	print '<td colspan="2">'.$langs->trans("NoModuleToManageStockDecrease").'</td>';
 	print "</tr>\n";
 }*/
@@ -265,8 +265,8 @@ $var=true;
 
 $found=0;
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="60%">'.$langs->trans("ReStockOnBill").'</td>';
 print '<td width="160" align="right">';
 if (! empty($conf->fournisseur->enabled))
@@ -286,8 +286,8 @@ print "</td>\n</tr>\n";
 $found++;
 
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="60%">'.$langs->trans("ReStockOnValidateOrder").'</td>';
 print '<td width="160" align="right">';
 if (! empty($conf->fournisseur->enabled))
@@ -306,8 +306,8 @@ else
 print "</td>\n</tr>\n";
 $found++;
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="60%">'.$langs->trans("ReStockOnDispatchOrder").'</td>';
 print '<td width="160" align="right">';
 if (! empty($conf->fournisseur->enabled))
@@ -328,8 +328,8 @@ $found++;
 
 /*if (! $found)
 {
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	
+	print '<tr class="oddeven">';
 	print '<td colspan="2">'.$langs->trans("NoModuleToManageStockIncrease").'</td>';
 	print "</tr>\n";
 }*/
@@ -343,8 +343,8 @@ print "  <td>".$langs->trans("RuleForStockAvailability")."</td>\n";
 print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 print '</tr>'."\n";
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="60%">'.$langs->trans("WarehouseAllowNegativeTransfer").'</td>';
 print '<td width="160" align="right">';
 print "<form method=\"post\" action=\"stock.php\">";
@@ -359,7 +359,7 @@ print "</tr>\n";
 // Option to force stock to be enough before adding a line into document
 if($conf->invoice->enabled) {
 	$var = !$var;
-	print "<tr ".$bc[$var].">";
+	print '<tr class="oddeven">';
 	print '<td width="60%">'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
 	print '<td width="160" align="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
@@ -374,7 +374,7 @@ if($conf->invoice->enabled) {
 
 if($conf->order->enabled) {
 	$var = !$var;
-	print "<tr ".$bc[$var].">";
+	print '<tr class="oddeven">';
 	print '<td width="60%">'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
 	print '<td width="160" align="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
@@ -389,7 +389,7 @@ if($conf->order->enabled) {
 
 if($conf->expedition->enabled) {
 	$var = !$var;
-	print "<tr ".$bc[$var].">";
+	print '<tr class="oddeven">';
 	print '<td width="60%">'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
 	print '<td width="160" align="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
@@ -417,7 +417,7 @@ if ($virtualdiffersfromphysical)
 	print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 	print '</tr>'."\n";
 	$var = !$var;
-	print "<tr ".$bc[$var].">";
+	print '<tr class="oddeven">';
 	print '<td width="60%">'.$langs->trans("UseVirtualStockByDefault").'</td>';
 	print '<td width="160" align="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
@@ -441,8 +441,8 @@ print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 print '</tr>'."\n";
 
 if (! empty($conf->fournisseur->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
-    $var=!$var;
-    print "<tr ".$bc[$var].">";
+    
+    print '<tr class="oddeven">';
     print '<td width="60%">'.$langs->trans("UseDispatchStatus").'</td>';
     print '<td width="160" align="right">';
     print "<form method=\"post\" action=\"stock.php\">";
@@ -454,9 +454,9 @@ if (! empty($conf->fournisseur->enabled) && !empty($conf->global->STOCK_CALCULAT
     print "</td>\n</tr>\n";
 }
 
-$var=!$var;
 
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="60%">'.$langs->trans("UserWarehouseAutoCreate").'</td>';
 print '<td width="160" align="right">';
 print "<form method=\"post\" action=\"stock.php\">";
@@ -468,9 +468,9 @@ print '</form>';
 print "</td>\n";
 print "</tr>\n";
 
-$var=!$var;
 
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="60%">'.$langs->trans("AllowAddLimitStockByWarehouse").'</td>';
 
 print '<td width="160" align="right">';
@@ -489,9 +489,9 @@ print '<br>';
 If not used by a module, I still need to understand in which case user may need this now we can set rule on product page.
 if ($conf->global->PRODUIT_SOUSPRODUITS)
 {
-	$var=!$var;
+	
 
-	print "<tr ".$bc[$var].">";
+	print '<tr class="oddeven">';
 	print '<td width="60%">'.$langs->trans("IndependantSubProductStock").'</td>';
 
 	print '<td width="160" align="right">';

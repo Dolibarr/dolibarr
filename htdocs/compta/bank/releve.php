@@ -249,7 +249,7 @@ if ($action=="dl" && $numref > 0)
             
             /*if (! empty($upload_dir))
             {
-                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview\.png)$', '', SORT_ASC, 1);
+                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
 
                 if (is_array($files)) {
                     foreach ($files as $file) {

@@ -640,7 +640,7 @@ foreach ($listofreferent as $key => $value)
 			}
 
 			$var = ! $var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr class="oddeven">';
 			// Module
 			print '<td align="left">'.$langs->trans($newclassname).'</td>';
 			// Nb

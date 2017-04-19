@@ -447,8 +447,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    while ($i < $num)
 	                    {
 	                        $objp = $db->fetch_object($resql);
-	                        $var=!$var;
-	                        print '<tr '.$bc[$var].'>';
+	                        
+	                        print '<tr class="oddeven">';
 	                        
 	                        // Ref
 	                        print '<td>';
@@ -742,7 +742,7 @@ if (empty($action))
         while ($i < min($num,$limit))
         {
             $objp = $db->fetch_object($resql);
-            $var=!$var;
+            
             print '<tr class="oddeven">';
 
             // Ref payment
