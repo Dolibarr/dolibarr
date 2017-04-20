@@ -245,7 +245,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     
     clearstatcache();
     
-    $var=true;
     foreach ($dirmodels as $reldir)
     {
     	$dir = dol_buildpath($reldir."core/modules/action/doc/");
@@ -266,7 +265,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			$module = new $classname($db, new ActionComm($db));
             			
             			
-            			print "<tr ".$bc[$var].">\n";
+            			print '<tr class="oddeven">\n';
             			print "<td>";
             			print (empty($module->name)?$name:$module->name);
             			print "</td>\n";
