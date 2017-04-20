@@ -206,11 +206,9 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<th>&nbsp;</th>';
 		print "</tr>\n";
 
-		$var=True;
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
-			
 			print '<tr class="oddeven">';
 			print '<td><a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_escape_htmltag($objp->libelle).'</td>';
@@ -518,7 +516,6 @@ if ($rowid > 0)
 
 			print "</tr>\n";
 
-		    $var=True;
 		    while ($i < $num && $i < $conf->liste_limit)
 		    {
 		        $objp = $db->fetch_object($resql);
@@ -530,7 +527,6 @@ if ($rowid > 0)
 		        $adh->firstname=$objp->firstname;
 
 		        // Lastname
-		        
 		        print '<tr class="oddeven">';
 		        if ($objp->societe != '')
 		        {

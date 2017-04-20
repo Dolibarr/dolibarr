@@ -517,7 +517,6 @@ if (empty($action) || $action == 'view') {
 	print "<td align='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
-	$var = true;
 	$r = '';
 
 	$invoicestatic = new Facture($db);
@@ -532,7 +531,7 @@ if (empty($action) || $action == 'view') {
 
 		// Third party
 		foreach ( $tabttc[$key] as $k => $mt ) {
-			print "<tr " . $bc[$var] . ">";
+			print '<tr class="oddeven">';
 			print "<td><!-- Thirdparty --></td>";
 			print "<td>" . $date . "</td>";
 			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
@@ -562,7 +561,7 @@ if (empty($action) || $action == 'view') {
 			$accountingaccount->fetch(null, $k, true);
 
 			if ($mt) {
-				print "<tr " . $bc[$var] . ">";
+				print '<tr class="oddeven">';
 				print "<td><!-- Product --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
@@ -585,7 +584,7 @@ if (empty($action) || $action == 'view') {
 		// VAT
 		foreach ( $tabtva[$key] as $k => $mt ) {
 			if ($mt) {
-				print "<tr " . $bc[$var] . ">";
+				print '<tr class="oddeven">';
 				print "<td><!-- VAT --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
@@ -604,8 +603,6 @@ if (empty($action) || $action == 'view') {
 				print "</tr>";
 			}
 		}
-
-		$var = ! $var;
 	}
 
 	print "</table>";

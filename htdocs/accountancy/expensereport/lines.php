@@ -268,13 +268,12 @@ if ($result) {
 	$var = True;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
-		$var = ! $var;
 		$codeCompta = length_accountg($objp->account_number) . ' - ' . $objp->label;
 
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
 		
-		print '<tr '. $bc[$var].'>';
+		print '<tr class="oddeven">';
 
 		print '<td>' . $objp->rowid . '</td>';
 

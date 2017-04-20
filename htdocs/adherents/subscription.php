@@ -821,11 +821,9 @@ if ($rowid > 0)
             }
             print "</tr>\n";
 
-            $var=True;
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
-                
                 print '<tr class="oddeven">';
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;

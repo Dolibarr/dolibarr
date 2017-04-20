@@ -299,7 +299,6 @@ if ($result) {
 	$var = true;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
-		$var = ! $var;
 
 		$objp->aarowid_suggest = '';
 		$objp->aarowid_suggest = $objp->aarowid;
@@ -307,7 +306,7 @@ if ($result) {
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
 
-		print '<tr '. $bc[$var].'>';
+		print '<tr class="oddeven">';
 
 		// Line id
 		print '<td>' . $objp->rowid . '</td>';

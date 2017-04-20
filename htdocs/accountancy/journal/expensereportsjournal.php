@@ -449,7 +449,6 @@ if (empty($action) || $action == 'view') {
 	print "<td align='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
-	$var = true;
 	$r = '';
 
 	$expensereportstatic = new ExpenseReport($db);
@@ -468,7 +467,7 @@ if (empty($action) || $action == 'view') {
 			$accountingaccount->fetch(null, $k, true);
 
 			if ($mt) {
-				print "<tr " . $bc[$var] . " >";
+				print '<tr class="oddeven">';
 				print "<td><!-- Fees --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
@@ -494,7 +493,7 @@ if (empty($action) || $action == 'view') {
 		// VAT
 		foreach ( $tabtva[$key] as $k => $mt ) {
 			if ($mt) {
-				print "<tr " . $bc[$var] . " >";
+				print '<tr class="oddeven">';
 				print "<td><!-- VAT --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
@@ -512,7 +511,7 @@ if (empty($action) || $action == 'view') {
 				print "</tr>";
 			}
 		}
-		print "<tr " . $bc[$var] . ">";
+		print '<tr class="oddeven">';
 
 		// Third party
 		foreach ( $tabttc[$key] as $k => $mt ) {
@@ -534,8 +533,6 @@ if (empty($action) || $action == 'view') {
 			print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 		}
 		print "</tr>";
-
-		$var = ! $var;
 	}
 
 	print "</table>";

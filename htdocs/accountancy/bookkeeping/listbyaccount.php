@@ -265,7 +265,6 @@ $sous_total_credit = 0;
 $displayed_account_number = null;       // Start with undefined to be able to distinguish with empty 
 
 foreach ( $object->lines as $line ) {
-	$var = ! $var;
 
 	$total_debit += $line->debit;
 	$total_credit += $line->credit;
@@ -298,7 +297,7 @@ foreach ( $object->lines as $line ) {
         $sous_total_credit = 0;
     }
 
-	print '<tr '. $bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>&nbsp;</td>';
 	print '<td align="right">'.$line->piece_num.'</td>';
 	print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';

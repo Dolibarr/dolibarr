@@ -217,8 +217,7 @@ if ($resql) {
 
     while ( $row = $db->fetch_row($resql)) {
 
-        $var = ! $var;
-        print '<tr ' . $bc[$var] . '><td>' . length_accountg($row[0]) . '</td>';
+        print '<tr class="oddeven"><td>' . length_accountg($row[0]) . '</td>';
         print '<td align="left">' . $row[1] . '</td>';
         for($i = 2; $i <= 12; $i ++) {
             print '<td align="right">' . price($row[$i]) . '</td>';
@@ -271,8 +270,7 @@ if ($resql) {
 
     while ( $row = $db->fetch_row($resql)) {
 
-        $var = ! $var;
-        print '<tr ' . $bc[$var] . '><td>' . length_accountg($row[0]) . '</td>';
+        print '<tr class="oddeven"><td>' . length_accountg($row[0]) . '</td>';
         print '<td align="left">' . $row[1] . '</td>';
         for($i = 2; $i <= 12; $i ++) {
             print '<td align="right">' . price($row[$i]) . '</td>';
