@@ -1189,6 +1189,21 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		// If a predefined product and multilang and on other lang, we renamed label with label translated
 		if (! empty($conf->global->MAIN_MULTILANGS) && ($outputlangs->defaultlang != $langs->defaultlang))
 		{
+			$tmpdescrpod=$prodser->description;
+			// Add custom code and origin country into description
+			if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prodser->customcode) || ! empty($prodser->country_code)))
+			{
+				$tmptxt = '(';
+				if (! empty($prodser->customcode))
+					$tmptxt .= $langs->transnoentitiesnoconv("CustomCode") . ': ' . $prodser->customcode;
+				if (! empty($prodser->customcode) && ! empty($prodser->country_code))
+					$tmptxt .= ' - ';
+				if (! empty($prodser->country_code))
+					$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prodser->country_code, 0, $db, $langs, 0);
+				$tmptxt .= ')';
+				$tmpdescrpod = dol_concatdesc($tmpdescrpod, $tmptxt);
+			}
+
 			$translatealsoifmodified=(! empty($conf->global->MAIN_MULTILANG_TRANSLATE_EVEN_IF_MODIFIED));	// By default if value was modified manually, we keep it (no translation because we don't have it)
 
 			// TODO Instead of making a compare to see if param was modified, check that content contains reference translation. If yes, add the added part to the new translation
@@ -1203,10 +1218,10 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			// Set desc
 			// Manage HTML entities description test because $prodser->description is store with htmlentities but $desc no
 			$textwasmodified=false;
-			if (!empty($desc) && dol_textishtml($desc) && !empty($prodser->description) && dol_textishtml($prodser->description)) {
-				$textwasmodified=(strpos(dol_html_entity_decode($desc,ENT_QUOTES | ENT_HTML401),dol_html_entity_decode($prodser->description,ENT_QUOTES | ENT_HTML401))!==false);
+			if (!empty($desc) && dol_textishtml($desc) && !empty($tmpdescrpod) && dol_textishtml($tmpdescrpod)) {
+				$textwasmodified=(strpos(dol_html_entity_decode($desc,ENT_QUOTES | ENT_HTML401),dol_html_entity_decode($tmpdescrpod,ENT_QUOTES | ENT_HTML401))!==false);
 			} else {
-				$textwasmodified=($desc == $prodser->description);
+				$textwasmodified=($desc == $tmpdescrpod);
 			}
 			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && ($textwasmodified || $translatealsoifmodified))  $desc=$prodser->multilangs[$outputlangs->defaultlang]["description"];
 
