@@ -51,8 +51,9 @@ class FormMailing  extends Form
 			$options[''] = '';
 		}
 
-		$options = array_merge($options, $mailing->statut_dest);
-
+		$options = $mailing->statut_dest;
+		$options['-2'] = 'All';
+				
 		return Form::selectarray($htmlname, $options, $selectedid, 0, 0, 0, '', 1);
 	}
 }

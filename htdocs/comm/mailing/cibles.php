@@ -56,7 +56,7 @@ $action=GETPOST("action");
 $search_lastname=GETPOST("search_lastname");
 $search_firstname=GETPOST("search_firstname");
 $search_email=GETPOST("search_email");
-$search_dest_status=GETPOST('search_dest_status');
+$search_dest_status=GETPOST("search_dest_status");
 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs('/mailings');
@@ -161,6 +161,7 @@ if ($_POST["button_removefilter"])
 	$search_lastname='';
 	$search_firstname='';
 	$search_email='';
+	//if(!empty($search_dest_status) unset($search_dest_status);
 }
 
 
@@ -399,9 +400,12 @@ if ($object->fetch($id) >= 0)
 	if ($search_lastname)    $sql.= " AND mc.lastname    LIKE '%".$db->escape($search_lastname)."%'";
 	if ($search_firstname) $sql.= " AND mc.firstname LIKE '%".$db->escape($search_firstname)."%'";
 	if ($search_email)  $sql.= " AND mc.email  LIKE '%".$db->escape($search_email)."%'";
-	if (!empty($search_dest_status)) $sql.= " AND mc.statut=".$db->escape($search_dest_status)." ";
+	if($search_dest_status=="") $search_dest_status = "-2"; //default value (all)
+	if ($search_dest_status>-2) $sql.= " AND mc.statut=".$db->escape($search_dest_status)." ";
+	elseif ($search_dest_status==-1) $sql.= " AND mc.statut=".$db->escape($search_dest_status)." ";
+	
 	$sql .= $db->order($sortfield,$sortorder);
-
+	
 	// Count total nb of records
 	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -422,6 +426,7 @@ if ($object->fetch($id) >= 0)
 		if ($search_lastname)  $param.= "&amp;search_lastname=".urlencode($search_lastname);
 		if ($search_firstname) $param.= "&amp;search_firstname=".urlencode($search_firstname);
 		if ($search_email)     $param.= "&amp;search_email=".urlencode($search_email);
+		if ($search_dest_status) $param.= "&amp;search_dest_status=".urlencode($search_dest_status);
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
