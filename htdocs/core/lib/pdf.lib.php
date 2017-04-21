@@ -1814,7 +1814,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 			if($conf->global->SITUATION_DISPLAY_DIFF_ON_PDF)
 			{
 			 	$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-			 	$result = ($prev_progress - $object->lines[$i]->situation_percent) . '%';
+			 	$result = ( $object->lines[$i]->situation_percent - $prev_progress) . '%';
 			}
 			else
 				$result = $object->lines[$i]->situation_percent . '%';
