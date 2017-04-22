@@ -1,6 +1,6 @@
 <?php
-/* <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) <2016>  <jamelbaz@gmail.com>
+/* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+*  \file       stripe/config.php
+*  \ingroup    Stripe
+*  \brief      Page to move config in api
+*/
 
-// Load Dolibarr environment
-if (false === (@include '../main.inc.php')) {  // From htdocs directory
-	require '../../main.inc.php'; // From "custom" directory
-}
+require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 dol_include_once('/stripe/lib/stripe.lib.php');
-require_once('stripe/init.php');
+require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php');
 
-//use \Stripe\Stripe as Stripe;
+//use \includes\stripe as stripe;
 $stripe = array(
-  "secret_key"      => $conf->global->TEST_SECRET_KEY,
-  "publishable_key" => $conf->global->TEST_PUBLISHABLE_KEY
+  "secret_key"      => $conf->global->STRIPE_TEST_SECRET_KEY,
+  "publishable_key" => $conf->global->STRIPE_TEST_PUBLISHABLE_KEY
 );
 
-\Stripe\Stripe::setApiKey($stripe['secret_key']);
-?>
+\includes\stripe::setApiKey($stripe['secret_key']);

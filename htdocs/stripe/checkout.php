@@ -1,6 +1,6 @@
 <?php
-/* <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) <2016> SaaSprov.ma  <saasprov@gmail.com>
+/* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+require '../main.inc.php';
+ 
 // Load Dolibarr environment
-
-
-require_once('config.php');
-require_once('stripe/init.php');
+require_once DOL_DOCUMENT_ROOT.'/stripe/config.php');
+require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php');
 
 define("NOLOGIN",1);
 define("NOCSRFCHECK",1);
@@ -30,8 +29,8 @@ $langs->load("main");
 $langs->load("other");
 $langs->load("stripe");
 
-$SOURCE=GETPOST("source",'alpha');
-$ref=$REF=GETPOST('ref','alpha');
+$source=GETPOST("source",'alpha');
+$ref=GETPOST('ref','alpha');
 
 $form = new Form($db);
 
@@ -40,18 +39,18 @@ $form = new Form($db);
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader() {}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter() {}
 
 $invoice = null;
 
 // Payment on customer invoice
-if (GETPOST("source") == 'invoice')
+if ($source == 'invoice')
 {
 	$found=true;
 	$langs->load("bills");
