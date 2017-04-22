@@ -340,7 +340,7 @@ if ($step == 1 || ! $datatoimport)
 
     $head = import_prepare_head($param, 1);
 
-	dol_fiche_head($head, 'step1', $langs->trans("NewImport"));
+	dol_fiche_head($head, 'step1', $langs->trans("NewImport"), -1);
 
 
 	print $langs->trans("SelectImportDataSet").'<br>';
@@ -403,8 +403,10 @@ if ($step == 2 && $datatoimport)
 
     $head = import_prepare_head($param,2);
 
-	dol_fiche_head($head, 'step2', $langs->trans("NewImport"));
+	dol_fiche_head($head, 'step2', $langs->trans("NewImport"), -1);
 
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 
 	print '<table width="100%" class="border">';
 
@@ -426,6 +428,8 @@ if ($step == 2 && $datatoimport)
 
 	print '</table>';
 
+	print '</div><br>';
+	
 	dol_fiche_end();
 	
 
@@ -478,7 +482,7 @@ if ($step == 3 && $datatoimport)
 
     $head = import_prepare_head($param, 3);
 
-	dol_fiche_head($head, 'step3', $langs->trans("NewImport"));
+	dol_fiche_head($head, 'step3', $langs->trans("NewImport"), -1);
 
 	/*
 	 * Confirm delete file
@@ -489,6 +493,9 @@ if ($step == 3 && $datatoimport)
 
 	}
 
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	
 	print '<table width="100%" class="border">';
 
 	// Module
@@ -508,10 +515,14 @@ if ($step == 3 && $datatoimport)
 	print '</td></tr>';
 
 	print '</table>';
+	print '</div>';
 	
 	print '<br>';
 	
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b><hr>';
+	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
@@ -525,6 +536,7 @@ if ($step == 3 && $datatoimport)
 	print '</td></tr>';
 
 	print '</table>';
+	print '</div>';
 	
 	dol_fiche_end();
 
@@ -735,7 +747,10 @@ if ($step == 4 && $datatoimport)
 
     $head = import_prepare_head($param,4);
 
-	dol_fiche_head($head, 'step4', $langs->trans("NewImport"));
+	dol_fiche_head($head, 'step4', $langs->trans("NewImport"), -1);
+
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 
 	print '<table width="100%" class="border">';
 
@@ -756,10 +771,13 @@ if ($step == 4 && $datatoimport)
 	print '</td></tr>';
 
 	print '</table>';
-	
+	print '</div>';
+		
 	print '<br>';
 	
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b><hr>';
+	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
@@ -801,6 +819,7 @@ if ($step == 4 && $datatoimport)
 	print '</td></tr>';
 
 	print '</table>';
+	print '</div>';
 	
 	dol_fiche_end();
 	
@@ -1204,8 +1223,10 @@ if ($step == 5 && $datatoimport)
     print '<input type="hidden" name="step" value="5">';    // step 5
     print '<input type="hidden" name="action" value="launchsimu">';    // step 5
     
-	dol_fiche_head($head, 'step5', $langs->trans("NewImport"));
+	dol_fiche_head($head, 'step5', $langs->trans("NewImport"), -1);
 
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 
 	print '<table width="100%" class="border">';
 
@@ -1226,10 +1247,13 @@ if ($step == 5 && $datatoimport)
 	print '</td></tr>';
 
 	print '</table>';
-	
+	print '</div>';
+		
 	print '<br>';
 	
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b><hr>';
+	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
@@ -1276,7 +1300,6 @@ if ($step == 5 && $datatoimport)
 	{
 	    print '<input type="number" class="maxwidth50" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
 	    print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
-        print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
 	}
 	else
 	{
@@ -1288,20 +1311,27 @@ if ($step == 5 && $datatoimport)
 	{
 	    print '<input type="text" class="maxwidth50" name="endatlinenbbis" disabled="disabled" value="'.$endatlinenb.'">';
 	    print '<input type="hidden" name="endatlinenb" value="'.$endatlinenb.'">';
-        print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
 	}
 	else
 	{
 	    print '<input type="text" class="maxwidth50" name="endatlinenb" value="'.$endatlinenb.'">';
 	    print $form->textwithpicto("", $langs->trans("KeepEmptyToGoToEndOfFile"));
 	}
+    if ($action == 'launchsimu') print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
 	print '</td></tr>';
 
 	print '<tr><td>';
 	print $langs->trans("KeysToUseForUpdates");
 	print '</td><td>';
 	if($action=='launchsimu') {
-		print $form->multiselectarray('updatekeysbis', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '', 'disabled');
+		if (count($updatekeys))
+		{
+			print $form->multiselectarray('updatekeysbis', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '', 'disabled');
+		}
+		else
+		{
+			print '<span class="opacitymedium">'.$langs->trans("NoUpdateAttempt").'</span> &nbsp; -';
+		}
 		foreach($updatekeys as $val) {
 			print '<input type="hidden" name="updatekeys[]" value="'.$val.'">';
 		}
@@ -1323,15 +1353,19 @@ if ($step == 5 && $datatoimport)
 	print '</td></tr>';
 	
 	print '</table>';
-
+	print '</div>';
+	
 	print '<br>';
 
-	print '<b>'.$langs->trans("InformationOnTargetTables").'</b><hr>';
+	print '<b>'.$langs->trans("InformationOnTargetTables").'</b>';
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnTargetTables").'</b></td></tr>';
 
 	// Tables imported
-	print '<tr><td width="25%">';
+	print '<tr><td class="titlefield">';
 	print $langs->trans("TablesTarget");
 	print '</td><td>';
 	$listtables=array();
@@ -1391,7 +1425,8 @@ if ($step == 5 && $datatoimport)
 	print '</td></tr>';
 
 	print '</table>';
-
+	print '</div>';
+	
     dol_fiche_end();
 
 

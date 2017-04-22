@@ -125,10 +125,8 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '<td align="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
-$var=true;
 
 // Login/Pass required for members
-
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
@@ -141,7 +139,6 @@ print "</td></tr>\n";
 print '</form>';
 
 // Mail required for members
-
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
@@ -154,7 +151,6 @@ print "</td></tr>\n";
 print '</form>';
 
 // Send mail information is on by default
-
 print '<form action="adherent.php" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
@@ -167,7 +163,6 @@ print "</td></tr>\n";
 print '</form>';
 
 // Insert subscription into bank account
-
 print '<form action="adherent.php" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
@@ -188,7 +183,6 @@ print '</form>';
 // Use vat for invoice creation
 if ($conf->facture->enabled)
 {
-	
 	print '<form action="adherent.php" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -213,7 +207,6 @@ if ($conf->facture->enabled)
 
 	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	{
-		
 		print '<form action="adherent.php" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';

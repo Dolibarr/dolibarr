@@ -359,7 +359,6 @@ class Facture extends CommonInvoice
 			    '__INVOICE_NEXT_YEAR__' => dol_print_date(dol_time_plus_duree($this->date, 1, 'y'), '%Y'),
 			);
 			
-			$substitutionisok=true;
 			complete_substitutions_array($substitutionarray, $outputlangs);
 			
 			$this->note_public=make_substitutions($this->note_public,$substitutionarray);

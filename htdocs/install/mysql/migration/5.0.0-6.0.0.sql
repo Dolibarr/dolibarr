@@ -59,8 +59,9 @@ ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_creat integer;
 ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_product_price_by_qty DROP COLUMN date_price;
 ALTER TABLE llx_product_price_by_qty ADD COLUMN tms timestamp;
-ALTER TABLE llx_product_price_by_qty ADD COLUMN import_key integer;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN import_key varchar(14);
 
+ALTER TABLE llx_user ADD COLUMN import_key varchar(14);
 
 
 CREATE TABLE llx_product_attribute

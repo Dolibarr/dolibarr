@@ -313,7 +313,6 @@ if ($result) {
 	$var = true;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
-		$var = ! $var;
 
 		$objp->code_sell_l = '';
 		$objp->code_sell_p = '';
@@ -354,7 +353,7 @@ if ($result) {
 		// $objp->code_sell_p is now code of product/service
 		// $objp->code_sell_l is now default code of product/service
 					
-		print '<tr '. $bc[$var].'>';
+		print '<tr class="oddeven">';
 
 		// Line id
 		print '<td>' . $objp->rowid . '</td>';

@@ -57,6 +57,7 @@ $hookmanager->initHooks(array('mailingcard','globalcard'));
 
 // Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 $object->substitutionarray=FormMail::getAvailableSubstitKey('emailing');
+$object->substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
 
 $object->substitutionarrayfortest=array(
     '__ID__' => 'TESTIdRecord',
@@ -72,7 +73,7 @@ $object->substitutionarrayfortest=array(
 	'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:''),
     '__CHECK_READ__' => 'TagCheckMail',
 	'__UNSUBSCRIBE__' => 'TagUnsubscribe'
-	//,'__PERSONALIZED__' => 'TESTPersonalized'	// Not used yet
+		//,'__PERSONALIZED__' => 'TESTPersonalized'	// Not used yet
 );
 
 // List of sending methods
@@ -237,7 +238,7 @@ if (empty($reshook))
 							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
 							else $substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'contractline' . $obj->source_id, 2);
 						}
-						$substitutionisok=true;
+						//$substitutionisok=true;
 	                    complete_substitutions_array($substitutionarray, $langs);
 						$newsubject=make_substitutions($subject,$substitutionarray);
 						$newmessage=make_substitutions($message,$substitutionarray);
@@ -266,11 +267,11 @@ if (empty($reshook))
 						{
 							$res=0;
 						}
-						if (! $substitutionisok)
+						/*if (! $substitutionisok)
 						{
 							$mail->error='Some substitution failed';
 							$res=0;
-						}
+						}*/
 
 						// Send mail
 						if ($res)
@@ -754,8 +755,6 @@ else
 
 		$head = emailing_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("Mailing"), 0, 'email');
-
 		// Confirmation back to draft
 		if ($action == 'settodraft')
 		{
@@ -780,14 +779,16 @@ else
 
 		if ($action != 'edit')
 		{
+			dol_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
+
 			/*
 			 * Mailing en mode visu
 			 */
 			if ($action == 'sendall')
 			{
                 // Define message to recommand from command line
-
-				$sendingmode=$conf->global->MAIN_MAIL_SENDMODE;
+				$sendingmode=$conf->global->EMAILING_MAIL_SENDMODE;
+				if (empty($sendingmode)) $sendingmode=$conf->global->MAIN_MAIL_SENDMODE;
 				if (empty($sendingmode)) $sendingmode='mail';	// If not defined, we use php mail function
 
 				// MAILING_NO_USING_PHPMAIL may be defined or not.
@@ -842,7 +843,8 @@ else
 			if ($object->statut == 2) $morehtmlright.=' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
 			
 			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
-			
+
+			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 			
 			print '<table class="border" width="100%">';
@@ -903,8 +905,10 @@ else
 			print '</table>';
 
 			print "</div>";
+			
+			dol_fiche_end();
 
-
+			
 			// Clone confirmation
 			if ($action == 'clone')
 			{
@@ -1106,7 +1110,9 @@ else
 			/*
 			 * Mailing en mode edition
 			 */
-
+			
+			dol_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
+			
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
 			$morehtmlright='';
@@ -1114,6 +1120,7 @@ else
 			
 			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
 			
+			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border" width="100%">';
@@ -1131,9 +1138,6 @@ else
 			print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
 			// To
 			print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto,0,0,0,0,1).'</td></tr>';
-
-			// Status
-			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
 			// Nb of distinct emails
 			print '<tr><td>';
@@ -1160,6 +1164,7 @@ else
 			}
 
 			print '</table>';
+			print '</div>';
 
 			dol_fiche_end();
 
