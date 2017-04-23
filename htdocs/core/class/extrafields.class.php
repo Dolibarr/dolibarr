@@ -728,6 +728,10 @@ class ExtraFields
     		{
     		    $showsize='minwidth400imp';
     		}
+    		elseif ($type == 'boolean')
+    		{
+    		    $showsize='';
+    		}
     		else
     		{
     			if (round($size) < 12)
