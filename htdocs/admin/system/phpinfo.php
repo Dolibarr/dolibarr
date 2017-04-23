@@ -57,7 +57,7 @@ $var=false;
 
 // Recupere la version de PHP
 $phpversion=version_php();
-print "<tr ".$bc[$var].'><td  width="220px">'.$langs->trans("Version")."</td><td>".$phpversion."</td></tr>\n";
+print '<tr class="oddeven"><td  width="220px">'.$langs->trans("Version")."</td><td>".$phpversion."</td></tr>\n";
 
 print '</table>';
 print '<br>';
@@ -76,13 +76,11 @@ foreach($phparray as $key => $value)
 	print '<td colspan="2">'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
 
-	$var=true;
 	//var_dump($value);
 	foreach($value as $keyparam => $keyvalue)
 	{
 		if (! is_array($keyvalue))
 		{
-			
 			print '<tr class="oddeven">';
 			print '<td>'.$keyparam.'</td>';
 			$valtoshow=$keyvalue;
@@ -97,7 +95,6 @@ foreach($phparray as $key => $value)
 		}
 		else
 		{
-			
 			print '<tr class="oddeven">';
 			print '<td>'.$keyparam.'</td>';
 			$i=0;

@@ -127,11 +127,9 @@ if (! $foundphy) $data[]=array('label'=>'phy','nb'=>'0','lastdate'=>'');
 if (! $foundmor) $data[]=array('label'=>'mor','nb'=>'0','lastdate'=>'');
 
 $oldyear=0;
-$var=true;
 foreach ($data as $val)
 {
 	$year = $val['year'];
-	
 	print '<tr class="oddeven">';
 	print '<td>'.$memberstatic->getmorphylib($val['label']).'</td>';
 	print '<td align="right">'.$val['nb'].'</td>';
