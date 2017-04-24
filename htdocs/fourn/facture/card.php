@@ -1419,6 +1419,9 @@ if ($action == 'create')
             $objectsrc = new $classname($db);
             $objectsrc->fetch($originid);
             $objectsrc->fetch_thirdparty();
+			
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('fetchOriginFourn',$parameters,$objectsrc,$action); // Note that $action and $objectsrc may have been modified by some hooks
 
             $projectid			= (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
             //$ref_client			= (!empty($objectsrc->ref_client)?$object->ref_client:'');
