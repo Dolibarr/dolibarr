@@ -150,7 +150,6 @@ print $langs->trans("AgendaAutoActionDesc")."<br>\n";
 print $langs->trans("OnlyActiveElementsAreShown").'<br>';
 print "<br>\n";
 
-$var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("ActionsEvents").'</td>';
@@ -180,7 +179,7 @@ if (! empty($triggers))
 			print '<td align="right" width="40">';
 			$key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 			$value=$conf->global->$key;
-			print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked':'').'>';
+			print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked':'').'>';
 			print '</td></tr>'."\n";
 		}
 	}
