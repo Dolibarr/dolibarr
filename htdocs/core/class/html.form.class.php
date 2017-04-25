@@ -965,18 +965,23 @@ class Form
     		}
     		// mode 1
     		$urloption='htmlname='.$htmlname.'&outjson=1&filter='.$filter;
-    		print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+    		$out.=  ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+			$out.='<style type="text/css">
+					.ui-autocomplete {
+						z-index: 150;
+					}
+				</style>';
     		if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
     		else if ($hidelabel > 1) {
     			if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
     			else $placeholder=' title="'.$langs->trans("RefOrLabel").'"';
     			if ($hidelabel == 2) {
-    				print img_picto($langs->trans("Search"), 'search');
+    				$out.=img_picto($langs->trans("Search"), 'search');
     			}
     		}
-            print '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->THIRDPARTY_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
+            $out.=  '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->THIRDPARTY_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
     		if ($hidelabel == 3) {
-    			print img_picto($langs->trans("Search"), 'search');
+    			$out.=img_picto($langs->trans("Search"), 'search');
     		}
     	}
     	else
