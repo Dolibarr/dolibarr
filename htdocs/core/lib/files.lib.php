@@ -1385,7 +1385,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	$sqlprotectagainstexternals='';
 	$ret=array();
 
-	// find the subdirectory name as the reference
+    // Find the subdirectory name as the reference. For exemple original_file='10/myfile.pdf' -> refname='10'
 	if (empty($refname)) $refname=basename(dirname($original_file)."/");
 
 	$relative_original_file = $original_file;
@@ -1553,6 +1553,18 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		$original_file=$conf->fckeditor->dir_output.'/'.$original_file;
 	}
 
+	// Wrapping for users
+	else if ($modulepart == 'user' && !empty($conf->user->dir_output))
+	{
+        $canreaduser=(! empty($fuser->admin) || $fuser->rights->user->user->lire);
+        if ($user->id == (int) $refname) { $canreaduser=1; } // A user can always read its own card
+        if ($canreaduser || preg_match('/^specimen/i',$original_file))
+	    {
+	        $accessallowed=1;
+	    }
+	    $original_file=$conf->user->dir_output.'/'.$original_file;
+	}
+	
 	// Wrapping for third parties
 	else if (($modulepart == 'company' || $modulepart == 'societe') && !empty($conf->societe->dir_output))
 	{
