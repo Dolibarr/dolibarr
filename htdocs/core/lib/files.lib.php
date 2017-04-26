@@ -2148,7 +2148,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	}
 
 	// Wrapping pour les bons de livraison
-	else if ($modulepart == 'livraison' && !empty($conf->livraison->dir_output))
+	else if ($modulepart == 'livraison' && !empty($conf->expedition->dir_output))
 	{
 		if ($fuser->rights->expedition->livraison->lire || preg_match('/^specimen/i',$original_file))
 		{
