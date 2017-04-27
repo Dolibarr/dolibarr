@@ -285,7 +285,7 @@ if ($result) {
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td align="center" class="liste_titre">';
-	$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
 	print '</tr>';
@@ -303,7 +303,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("IntoAccount"), '', '', '', '', 'align="center"');
 	$checkpicto='';
 	if ($massactionbutton) $checkpicto=$form->showCheckAddButtons('checkforselect', 1);
-	print_liste_field_titre($checkpitco, '', '', '', '', 'align="center"');
+	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
 	print "</tr>\n";
 	
 	$facture_static = new Facture($db);
