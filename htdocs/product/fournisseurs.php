@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
 $langs->load("products");
 $langs->load("suppliers");
 $langs->load("bills");
-if (! empty($conf->margin->enabled)) $langs->load("margins");
+$langs->load("margins");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');

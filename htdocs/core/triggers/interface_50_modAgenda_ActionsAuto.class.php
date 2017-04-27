@@ -658,6 +658,21 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid=0;
         }
+		elseif ($action == 'MEMBER_MODIFY')
+        {
+            $langs->load("agenda");
+            $langs->load("other");
+            $langs->load("members");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberModifiedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("MemberModifiedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
+            $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+		}
         elseif ($action == 'MEMBER_SUBSCRIPTION')
         {
             $langs->load("agenda");
@@ -721,21 +736,20 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
         	$object->sendtoid=0;
         }
-        elseif($action == 'PROJECT_CREATE') {
+        elseif($action == 'PROJECT_VALIDATE') {
             $langs->load("agenda");
             $langs->load("other");
             $langs->load("projects");
         
             $object->actiontypecode='AC_OTH_AUTO';
         
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectCreatedInDolibarr",$object->ref);
-            $object->actionmsg=$langs->transnoentities("ProjectCreatedInDolibarr",$object->ref);
-            $object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectValidatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("ProjectValidatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Project").': '.$object->ref;
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
         
             $object->sendtoid=0;
         }
-        
         elseif($action == 'PROJECT_MODIFY') {
             $langs->load("agenda");
             $langs->load("other");

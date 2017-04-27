@@ -2,8 +2,28 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-
-
+***** ChangeLog for 5.0.1 compared to 5.0.0 *****
+FIX: #6503: SQL error in "Last pending payment invoices"
+FIX: #6505 Project elements page shows greyed-out links even if the option to show actions not available is disabled
+FIX: #6507: Statistics counter show wrong total Contract numbers when the user does not have full access
+FIX: #6533 #6590
+FIX: #6535
+FIX: bank account not visible on payment card
+FIX: colspan
+FIX: Data lost during merge of thirdparties
+FIX: Detection of color brightness
+FIX: Filter on date lost after submit on time spent page
+FIX: forgottent fk_unit field on llx_supplier_propaldet
+FIX: list of projects
+FIX: LOG_ERROR does not exists. Use LOG_ERR.
+FIX: Missing total on project overview.
+FIX: multicurrency management on supplier order/invoice
+FIX: Notification sending was broken.
+FIX: origin & origin id on supplier order line
+FIX: param php doc
+FIX: Picto of project on dol_banner and box
+FIX: Some errors when downloading files.
+ 
 ***** ChangeLog for 5.0.0 compared to 4.0.* *****
 For users:
 NEW: Add module mulicurrency.
@@ -155,6 +175,42 @@ Dolibarr better:
 Dolibarr 5.0 was frozen before PHP 7.1 was released. Unit tests are successful on PHP 7.1 but we don't have enough
 feedback to confirm all application is compatible. Current officiel supported PHP versions are PHP 5.3 to 7.0.
 
+
+***** ChangeLog for 4.0.5 to 4.0.4 *****
+FIX: #6234
+FIX: #6259
+FIX: #6330
+FIX: #6360
+FIX: #6411
+FIX: #6443
+FIX: #6444
+FIX: #6453
+FIX: #6503: SQL error in "Last pending payment invoices"
+FIX: #6505 Project elements page shows greyed-out links even if the option to show actions not available is disabled
+FIX: #6507: Statistics counter show wrong total Contract numbers when the user does not have full access
+FIX: #6533 #6590
+FIX: #6619 Template invoices list do not respect restricted thirdparty user rights
+FIX: #6621 Documents tab shows greyed out upload form even if the option to show actions not available is disabled
+FIX: add entity param to document link
+FIX: Can use quote into supplier ref on order line add
+FIX: Change the customer code only if error on duplicate
+FIX: Creation of credit note on invoice with deposit stole the discount.
+FIX: delete bank class lines when we delete bank_categ
+FIX: deletion of bank tag
+FIX: detail of deposit and credit not was not visible into final invoice
+FIX: Error management during bank account creation
+FIX: error management in bank account deletion.
+FIX: event status is not modified when assign an user
+FIX: forgotten fk_facture_fourn attribute on supplierinvoice line object
+FIX: If bank module on, field must be required to register payment of expense report.
+FIX: load multicurrency informations on supplier order and bill lines fetch
+FIX: Missing total on project overview.
+FIX: multicurrency_subprice
+FIX: param billed when we change page
+FIX: protection against infinite loop on hierarchy
+FIX: Supplier Order list filter by project
+FIX: the dolCopyDir fails if target dir does not exists.
+FIX: use param for http links
 
 ***** ChangeLog for 4.0.4 to 4.0.3 *****
 FIX: #6227 Document models table header "Unit" is shown in 2 lines in Spanish

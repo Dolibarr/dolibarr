@@ -390,7 +390,7 @@ class Account extends CommonObject
      *  @param	string		$label			Descripton
      *  @param	float		$amount			Amount
      *  @param	string		$num_chq		Numero cheque ou virement
-     *  @param	string		$categorie		Categorie optionnelle
+     *  @param	int  		$categorie		Category id (optionnal)
      *  @param	User		$user			User that create
      *  @param	string		$emetteur		Name of cheque writer
      *  @param	string		$banque			Bank of cheque writer
@@ -480,8 +480,8 @@ class Account extends CommonObject
 
 				$result = $this->db->query($sql);
 				if (!$result) {
+					$this->error = $this->db->lasterror();
 					$this->db->rollback();
-					$this->error = $this->db->error();
 					return -3;
 				}
 			}

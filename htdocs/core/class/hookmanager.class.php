@@ -126,7 +126,7 @@ class HookManager
         if (! is_array($this->hooks) || empty($this->hooks)) return '';
 
         $parameters['context']=join(':',$this->contextarray);
-        dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
+        //dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
 
         // Define type of hook ('output' or 'addreplace'. 'returnvalue' is deprecated because a 'addreplace' hook can also return resPrint and resArray).
         $hooktype='output';
@@ -200,6 +200,9 @@ class HookManager
 
                     // test to avoid running twice a hook, when a module implements several active contexts
                     if (in_array($module,$modulealreadyexecuted)) continue;
+                    
+                    dol_syslog(get_class($this).'::executeHooks a qualified hook was found for method='.$method.' module='.$module." action=".$action." context=".$context);
+                    
                     $modulealreadyexecuted[$module]=$module; // Use the $currentcontext in method to avoid running twice
 
                     // Clean class (an error may have been set from a previous call of another method for same module/hook)

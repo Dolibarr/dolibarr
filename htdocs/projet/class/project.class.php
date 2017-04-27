@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2017 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1737,16 +1737,19 @@ class Project extends CommonObject
 	 */
 	function load_state_board()
 	{
-	    global $conf;
+	    global $user;
 
 	    $this->nb=array();
 
-	    $sql = "SELECT count(u.rowid) as nb";
-	    $sql.= " FROM ".MAIN_DB_PREFIX."projet as u";
+	    $sql = "SELECT count(p.rowid) as nb";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	    $sql.= " WHERE";
-	    //$sql.= " WHERE u.fk_statut > 0";
-	    //$sql.= " AND employee != 0";
-	    $sql.= " u.entity IN (".getEntity('projet', 1).")";
+	    $sql.= " p.entity IN (".getEntity('projet', 1).")";
+		if (! $user->rights->projet->all->lire)
+		{
+			$projectsListId = $this->getProjectsAuthorizedForUser($user,0,1);
+			$sql .= "AND p.rowid IN (".$projectsListId.")";
+		}
 
 	    $resql=$this->db->query($sql);
 	    if ($resql)

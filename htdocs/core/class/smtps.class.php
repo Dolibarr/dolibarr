@@ -1283,15 +1283,23 @@ class SMTPs
 		// Make RFC821 Compliant, replace bare linefeeds
 		$strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent);
 
+		$strContentAltText = '';
+		if ($strType == 'html')
+		{
+			$strContentAltText = html_entity_decode(strip_tags($strContent));
+			$strContentAltText = rtrim(wordwrap($strContentAltText, 75, "\r\n"));
+		}
+		
 		// Make RFC2045 Compliant
 		//$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems ko if not used on a base64 content
 		$strContent = rtrim(wordwrap($strContent, 75, "\r\n"));   // TODO Using this method creates unexpected line break on text/plain content.
-
+		
 		$this->_msgContent[$strType] = array();
 
 		$this->_msgContent[$strType]['mimeType'] = $strMimeType;
 		$this->_msgContent[$strType]['data']     = $strContent;
-
+		$this->_msgContent[$strType]['dataText'] = $strContentAltText;
+		
 		if ( $this->getMD5flag() )
 		$this->_msgContent[$strType]['md5']      = dol_hash($strContent, 3);
 		//}
@@ -1304,6 +1312,8 @@ class SMTPs
 	 */
 	function getBodyContent()
 	{
+	    global $conf;
+	    
 		// Generate a new Boundary string
 		$this->_setBoundary();
 
@@ -1318,7 +1328,7 @@ class SMTPs
 		die ("Sorry, no content");
 
 		// If we have ONE, we can use the simple format
-		else if( $keyCount === 1 )
+		else if( $keyCount === 1 && empty($conf->global->MAIN_MAIL_USE_MULTI_PART))
 		{
 			$_msgData = $this->_msgContent;
 			$_msgData = $_msgData[$_types[0]];
@@ -1336,7 +1346,7 @@ class SMTPs
 		}
 
 		// If we have more than ONE, we use the multi-part format
-		else if( $keyCount > 1 )
+		else if( $keyCount >= 1 || ! empty($conf->global->MAIN_MAIL_USE_MULTI_PART))
 		{
 			// Since this is an actual multi-part message
 			// We need to define a content message Boundary
@@ -1351,13 +1361,17 @@ class SMTPs
 			$content .= "\r\n";
 
 			$content .= "--" . $this->_getBoundary('mixed') . "\r\n";
-
-			if (key_exists('image', $this->_msgContent))
+			
+			if (key_exists('image', $this->_msgContent))     // If inline image found
 			{
 				$content.= 'Content-Type: multipart/alternative; boundary="'.$this->_getBoundary('alternative').'"' . "\r\n";
 				$content .= "\r\n";
 				$content .= "--" . $this->_getBoundary('alternative') . "\r\n";
 			}
+
+			
+			// $this->_msgContent must be sorted with key 'text' or 'html' first then 'image' then 'attachment'
+
 
 			// Loop through message content array
 			foreach ($this->_msgContent as $type => $_content )
@@ -1409,13 +1423,24 @@ class SMTPs
 					if (key_exists('image', $this->_msgContent))
 					{
 						$content.= "Content-Type: text/plain; charset=" . $this->getCharSet() . "\r\n";
-						$content.= "\r\n" . strip_tags($_content['data']) . "\r\n"; // Add plain text message
+						$content.= "\r\n" . ($_content['dataText']?$_content['dataText']:strip_tags($_content['data'])) . "\r\n"; // Add plain text message
 						$content.= "--" . $this->_getBoundary('alternative') . "\r\n";
 						$content.= 'Content-Type: multipart/related; boundary="' . $this->_getBoundary('related') . '"' . "\r\n";
 						$content.= "\r\n";
 						$content.= "--" . $this->_getBoundary('related') . "\r\n";
 					}
-
+					
+					if (! key_exists('image', $this->_msgContent) && $_content['dataText'] && ! empty($conf->global->MAIN_MAIL_USE_MULTI_PART))  // Add plain text message part before html part
+					{
+					    $content.= 'Content-Type: multipart/alternative; boundary="'.$this->_getBoundary('alternative').'"' . "\r\n";
+    					$content .= "\r\n";
+	       				$content .= "--" . $this->_getBoundary('alternative') . "\r\n";
+					
+	       				$content.= "Content-Type: text/plain; charset=" . $this->getCharSet() . "\r\n";
+	       				$content.= "\r\n". $_content['dataText'] . "\r\n";
+	       				$content.= "--" . $this->_getBoundary('alternative') . "\r\n";
+					}	       				
+	       				
 					$content .= 'Content-Type: ' . $_content['mimeType'] . '; '
 					//                             . 'charset="' . $this->getCharSet() . '"';
 					. 'charset=' . $this->getCharSet() . '';
@@ -1431,7 +1456,14 @@ class SMTPs
 					if ( $this->getMD5flag() )
 					$content .= 'Content-MD5: ' . $_content['md5'] . "\r\n";
 
-					$content .= "\r\n"	. $_content['data'] . "\r\n\r\n";
+					$content .= "\r\n"	. $_content['data'] . "\r\n";
+
+					if (! key_exists('image', $this->_msgContent) && $_content['dataText'] && ! empty($conf->global->MAIN_MAIL_USE_MULTI_PART))  // Add plain text message part after html part
+					{
+					    $content.= "--" . $this->_getBoundary('alternative') . "--". "\r\n";
+					}
+					
+					$content .= "\r\n";
 				}
 			}
 

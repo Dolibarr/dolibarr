@@ -787,7 +787,7 @@ while ($i < min($num,$limit))
     print '<td align="right">';
     print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.img_object($langs->trans("AddAction"),"action").'</a>';
     print ' &nbsp; ';
-    print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
+    print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
     print img_picto($langs->trans("VCard"),'vcard.png').' ';
     print '</a></td>';
 

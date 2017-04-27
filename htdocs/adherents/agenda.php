@@ -141,7 +141,7 @@ if ($object->id > 0)
 
     if (! empty($conf->agenda->enabled))
     {
-        print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1">'.$langs->trans("AddAction").'</a></div>';
+        print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id.'">'.$langs->trans("AddAction").'</a></div>';
     }
 
     print '</div>';
@@ -167,10 +167,10 @@ if ($object->id > 0)
     print load_fiche_titre($langs->trans("ActionsOnMember"),$out,'');
 
     // List of todo actions
-    show_actions_todo($conf,$langs,$db,$object);
+    //show_actions_todo($conf,$langs,$db,$object);
 
     // List of done actions
-    show_actions_done($conf,$langs,$db,$object);
+    show_actions_done($conf,$langs,$db,$object,null,0,'','');
 }
 
 
