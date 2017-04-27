@@ -206,3 +206,4 @@ WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice
 WarningTooManyDataPleaseUseMoreFilters=Too many data (more than %s lines). Please use more filters or set the constant %s to a higher limit. 
 WarningSomeLinesWithNullHourlyRate=Some times were recorded by some users while their hourly rate was not defined. A value of 0 %s per hour was used but this may result in wrong valuation of time spent.
 WarningYourLoginWasModifiedPleaseLogin=Your login was modified. For security purpose you will have to login with your new login before next action.
+WarningAnEntryAlreadyExistForTransKey=An entry already exists for the translation key for this language
