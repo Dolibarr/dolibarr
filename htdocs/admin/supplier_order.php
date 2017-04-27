@@ -491,6 +491,7 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 $var=false;
+
 //if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 //{
 	print '<tr class="oddeven"><td>';
@@ -536,8 +537,14 @@ else
 }
 */
 
+$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
 print '<tr class="oddeven"><td colspan="2">';
-print $langs->trans("FreeLegalTextOnOrders").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
 $variablename='SUPPLIER_ORDER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
