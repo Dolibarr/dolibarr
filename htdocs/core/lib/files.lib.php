@@ -1557,7 +1557,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	else if ($modulepart == 'user' && !empty($conf->user->dir_output))
 	{
         $canreaduser=(! empty($fuser->admin) || $fuser->rights->user->user->lire);
-        if ($user->id == (int) $refname) { $canreaduser=1; } // A user can always read its own card
+        if ($fuser->id == (int) $refname) { $canreaduser=1; } // A user can always read its own card
         if ($canreaduser || preg_match('/^specimen/i',$original_file))
 	    {
 	        $accessallowed=1;
