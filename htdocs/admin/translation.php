@@ -75,7 +75,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $transkey='';
     $transvalue='';
@@ -116,7 +116,11 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 		}
 		else
 		{
-			dol_print_error($db);
+		    if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+		    {
+		        setEventMessages($langs->trans("WarningAnEntryAlreadyExistForTransKey"), null, 'warnings');
+		    }
+		    else dol_print_error($db);
 			$action='';
 		}
 	}
@@ -422,9 +426,17 @@ if ($mode == 'searchkey')
         print '<tr '.$bc[$var].'><td>'.$langcode.'</td><td>'.$key.'</td><td>';
         print dol_escape_htmltag($val);
         print '</td><td align="right">';
-        if ($val != $newlangfileonly->tab_translate[$key]) 
+        if (! empty($newlangfileonly->tab_translate[$key]))
         {
-            $htmltext = $langs->trans("OriginalValueWas", $newlangfileonly->tab_translate[$key]);
+            if ($val != $newlangfileonly->tab_translate[$key]) 
+            {
+                $htmltext = $langs->trans("OriginalValueWas", $newlangfileonly->tab_translate[$key]);
+                print $form->textwithpicto('', $htmltext, 1, 'info');
+            }
+        }
+        else
+        {
+            $htmltext = $langs->trans("TransKeyWithoutOriginalValue", $key);
             print $form->textwithpicto('', $htmltext, 1, 'warning');
         }
         /*if (! empty($conf->multicompany->enabled) && !$user->entity)
