@@ -253,17 +253,35 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 		$out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
 		
 		// Management of default values
-		if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+		if (! isset($_GET['sortfield']))	// If we did a click on a field so sort, we do no appl default values
 		{
-			$relativepathstring = preg_replace('/\.[a-z]+$/', '', $_SERVER["PHP_SELF"]);
-			if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
-			$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-			$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
-			$relativepathstring=dol_string_nospecial($relativepathstring, '-');
-			// $relativepathstring is now string that identify the page: '_societe_card', '_agenda_card', ...
-			$keyfordefaultvalue = 'MAIN_DEFAULT_FOR_'.$relativepathstring.'_'.$paramname;
-			global $conf;
-			if (isset($conf->global->$keyfordefaultvalue)) $out = $conf->global->$keyfordefaultvalue;
+			if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+			{
+				$relativepathstring = $_SERVER["PHP_SELF"];
+				if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+				global $user;
+				if (! empty($user->default_values))		// $user->default_values defined from menu default values, and values loaded not at first 
+				{
+					//var_dump($user->default_values[$relativepathstring]['createform']);
+					if (isset($user->default_values[$relativepathstring]['createform'][$paramname])) $out = $user->default_values[$relativepathstring]['createform'][$paramname];
+				}
+			}
+			// Management of default search_filters
+			elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+			{
+				$relativepathstring = $_SERVER["PHP_SELF"];
+				if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+				global $user;
+				if (! empty($user->default_values))		// $user->default_values defined from menu default values, and values loaded not at first 
+				{
+					//var_dump($user->default_values[$relativepathstring]);
+					if (isset($user->default_values[$relativepathstring]['filters'][$paramname])) $out = $user->default_values[$relativepathstring]['filters'][$paramname];
+				}
+			}
 		}
 	}
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
@@ -302,6 +320,11 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	        {
 	            global $user;
 	            $out = $user->id;
+	        }
+	    	elseif ($reg[1] == 'SUPERVISORID')
+	        {
+	            global $user;
+	            $out = $user->fk_user;
 	        }
 	        elseif ($reg[1] == 'ENTITYID')
 	        {

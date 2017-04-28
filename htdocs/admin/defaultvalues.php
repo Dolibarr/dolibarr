@@ -187,29 +187,30 @@ $texthelp=$langs->trans("PageUrlForDefaultValues");
 if ($mode == 'createform') $texthelp.=$langs->trans("PageUrlForDefaultValuesCreate", 'societe/card.php');
 else $texthelp.=$langs->trans("PageUrlForDefaultValuesList", 'societe/list.php');
 $texturl=$form->textwithpicto($langs->trans("Url"), $texthelp);
-print_liste_field_titre($texturl,$_SERVER["PHP_SELF"],'defaulturl','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre($texturl,$_SERVER["PHP_SELF"],'page,param','',$param,'',$sortfield,$sortorder);
 $texthelp=$langs->trans("TheKeyIsTheNameOfHtmlField");
 if ($mode != 'sortorder') $textkey=$form->textwithpicto($langs->trans("Key"), $texthelp);
 else $textkey=$form->textwithpicto($langs->trans("Key"), $texthelp);
-print_liste_field_titre($textkey,$_SERVER["PHP_SELF"],'defaultkey','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre($textkey,$_SERVER["PHP_SELF"],'param','',$param,'',$sortfield,$sortorder);
 if ($mode != 'sortorder')
 {
     $texthelp=$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
     // See list into GETPOST
     $texthelp.='__USERID__<br>';
+    $texthelp.='__SUPERVISORID__<br>';
     $texthelp.='__MYCOUNTRYID__<br>';
     $texthelp.='__DAY__<br>';
     $texthelp.='__MONTH__<br>';
     $texthelp.='__YEAR__<br>';
     if (! empty($conf->multicompany->enabled)) $texthelp.='__ENTITYID__<br>';
-    $textvalue=$form->textwithpicto($langs->trans("Value"), $texthelp);
+    $textvalue=$form->textwithpicto($langs->trans("Value"), $texthelp, 1, 'help', '', 0, 2, '');
 }
 else
 {
     $texthelp='ASC or DESC';
     $textvalue=$form->textwithpicto($langs->trans("SortOrder"), $texthelp);
 }
-print_liste_field_titre($textvalue, $_SERVER["PHP_SELF"], 'defaultvalue', '', $param, '', $sortfield, $sortorder);
+print_liste_field_titre($textvalue, $_SERVER["PHP_SELF"], 'value', '', $param, '', $sortfield, $sortorder);
 if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],'entity,page','',$param,'',$sortfield,$sortorder);
 print '<td align="center"></td>';
 print "</tr>\n";
