@@ -181,7 +181,7 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id           Id object
+	 * @param int    $id           Id object. If this is 0, the default page of website_id will be used, if not defined, the first one. found
 	 * @param string $website_id   Web site id
 	 * @param string $page         Page name
 	 *
@@ -205,13 +205,16 @@ class WebsitePage extends CommonObject
 		$sql .= " t.tms as date_modification";
 
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+		//$sql .= ' WHERE entity IN ('.getEntity('website', 1).')';       // entity is on website level
+		$sql .= ' WHERE 1 = 1';
 		if (null !== $website_id) {
-		    $sql .= ' WHERE t.fk_website = ' . '\'' . $website_id . '\'';
-		    $sql .= ' AND t.pageurl = ' . '\'' . $page . '\'';
+		    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
+		    if ($page) $sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
 		} else {
-			$sql .= ' WHERE t.rowid = ' . $id;
+			$sql .= ' AND t.rowid = ' . $id;
 		}
-
+        $sql .= $this->db->plimit(1);
+        
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numrows = $this->db->num_rows($resql);

@@ -438,16 +438,34 @@ if ($action == 'updatemeta')
 // Update page
 if ($action == 'updatecontent' || GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))
 {
-    $db->begin();
     $object->fetch(0, $website);
 
+    /*if (GETPOST('savevirtualhost') && $object->virtualhost != GETPOST('previewsite'))
+    {
+        $object->virtualhost = GETPOST('previewsite', 'alpha');
+        $object->update($user);
+    }*/
+    
     $objectpage->fk_website = $object->id;
 
-    $res = $objectpage->fetch($pageid, $object->fk_website);
+    if ($pageid > 0) 
+    {
+        $res = $objectpage->fetch($pageid);
+    }
+    else 
+    {
+        $res = $objectpage->fetch($object->fk_default_home);
+        if (! $res > 0)
+        {
+            $res = $objectpage->fetch(0, $object->fk_website);
+        }
+    }
     if ($res > 0)
     {
         if ($action == 'updatecontent')
         {
+            $db->begin();
+            
             $objectpage->content = GETPOST('PAGE_CONTENT');
     
             // Clean data. We remove all the head section.
@@ -632,7 +650,7 @@ if (count($object->records) > 0)
     // List of websites
     print '<div class="websiteselection">';
     $out='';
-    $out.='<select name="website" id="website">';
+    $out.='<select name="website" class="minwidth100" id="website">';
     if (empty($object->records)) $out.='<option value="-1">&nbsp;</option>';
     // Loop on each sites
     $i=0;
@@ -654,9 +672,9 @@ if (count($object->records) > 0)
 
     if ($website)
     {
-        $realurl=$urlwithroot.'/public/websites/index.php?website='.$website;
+        $virtualurl='';
         $dataroot=DOL_DATA_ROOT.'/websites/'.$website;
-        if (! empty($object->virtualhost)) $realurl=$object->virtualhost; 
+        if (! empty($object->virtualhost)) $virtualurl=$object->virtualhost;
     }
     
     if ($website && $action == 'preview')
@@ -680,20 +698,23 @@ if (count($object->records) > 0)
     if ($action == 'preview')
     {
         print '<div class="websiteinputurl">';
-        print '<input type="text" id="previewsiteurl" class="minwidth200imp" name="previewsite" value="'.$realurl.'">';
+        print '<input type="text" id="previewsiteurl" class="minwidth200imp" name="previewsite" placeholder="'.$langs->trans("http://myvirtualhost").'" value="'.$virtualurl.'">';
         //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
         $htmltext=$langs->trans("SetHereVirtualHost", $dataroot);
         print $form->textwithpicto('', $htmltext);
         print '</div>';
         
-        $urlext=$realurl;
-        $urlint=DOL_URL_ROOT.'/public/websites/index.php?website='.$website;
-        print '<a class="websitebuttonsitepreview" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer")).'">';
-        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $urlext), 1, 'preview_ext');
-        print '</a>';
+        $urlext=$virtualurl;
+        $urlint=$urlwithroot.'/public/websites/index.php?website='.$website;
+        //if (! empty($object->virtualhost))
+        //{
+            print '<a class="websitebuttonsitepreview" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
+            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:$langs->trans("VirtualHostUrlNotDefined")), 1, 'preview_ext');
+            print '</a>';
+        //}
         
-        print '<a class="websitebuttonsitepreview" id="previewsite" href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr")).'">';
-        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $urlint), 1, 'preview');
+        print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint)).'">';
+        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint, $dataroot), 1, 'preview');
         print '</a>';
     }
 
@@ -803,13 +824,22 @@ if (count($object->records) > 0)
             print $form->textwithpicto('', $htmltext);
             print '</div>';
             
-            $urlext=$realurl.'/'.$pagealias.'.php';
-            print '<a class="websitebuttonsitepreview" id="previewpageext" href="'.$urlext.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer")).'">';
-            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $urlext), 1, 'preview_ext');
-            print '</a>';
+            if (! empty($object->virtualhost))
+            {
+                $urlext=$virtualurl.'/'.$pagealias.'.php';
+                print '<a class="websitebuttonsitepreview" id="previewpageext" href="'.$urlext.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $urlext)).'">';
+                print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $urlext?$urlext:$langs->trans("VirtualHostUrlNotDefined")), 1, 'preview_ext');
+                print '</a>';
+            }
+            else
+            {
+                print '<a class="websitebuttonsitepreview" id="previewpageextnoclick" href="#">';
+                print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $urlext?$urlext:$langs->trans("VirtualHostUrlNotDefined")), 1, 'preview_ext');
+                print '</a>';
+            }
             
-            print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$website.'">';
-            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage), 1, 'preview'); 
+            print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage)).'">';
+            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage, $dataroot), 1, 'preview'); 
             print '</a>';       // View page in new Tab
             //print '<input type="submit" class="button" name="previewpage" target="tab'.$website.'"value="'.$langs->trans("ViewPageInNewTab").'">';
             
