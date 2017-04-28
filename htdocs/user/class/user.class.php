@@ -376,7 +376,7 @@ class User extends CommonObject
 			    {
 			        if (! empty($obj->page) && ! empty($obj->type) && ! empty($obj->param)) 
 			        {
-			            $user->default_values[$obj->page][$obj->type][$obj->param]=$obj->value;
+			            $this->default_values[$obj->page][$obj->type][$obj->param]=$obj->value;
 			        }
 			    }
 			    $this->db->free($resql);
@@ -387,7 +387,7 @@ class User extends CommonObject
 				return -3;
 			}
 		}
-
+		
 		return 1;
 	}
 
