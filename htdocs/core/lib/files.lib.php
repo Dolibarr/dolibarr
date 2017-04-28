@@ -2199,7 +2199,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	}
 
 	// Wrapping pour les dons
-	else if ($modulepart == 'donation' && !empty($conf->donation->dir_output))
+	else if ($modulepart == 'donation' && !empty($conf->don->dir_output))
 	{
 		if ($fuser->rights->don->lire || preg_match('/^specimen/i',$original_file))
 		{
