@@ -1853,7 +1853,7 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
 		if(!empty($hookmanager->resPrint)) $result.=$hookmanager->resPrint;
 	}
     if (empty($reshook))
-	{
+    {
 	    if ($object->lines[$i]->special_code == 3)
     	{
     		return $outputlangs->transnoentities("Option");
@@ -1861,9 +1861,16 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
         if (empty($hidedetails) || $hidedetails > 1)
         {
         	$total_ht = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
+        	if ($object->lines[$i]->situation_percent > 0 )
+        	{
+		 	$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+		 	$progress = ( $object->lines[$i]->situation_percent - $prev_progress) /100;
+		 	$result.=price($sign * ($total_ht/($object->lines[$i]->situation_percent/100)) * $progress, 0, $outputlangs);
+		}
+        	else
 			$result.=price($sign * $total_ht, 0, $outputlangs);
-        }
 	}
+    }
 	return $result;
 }
 
