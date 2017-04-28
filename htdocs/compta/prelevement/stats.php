@@ -120,7 +120,7 @@ if ($resql)
 		print round($row[0]/$total*100,2)." %";
 		print '</td></tr>';
 
-		$var=!$var;
+		
 		$i++;
 	}
 
@@ -218,7 +218,7 @@ if ($resql)
 
 		print '</td></tr>';
 
-		$var=!$var;
+		
 		$i++;
 	}
 

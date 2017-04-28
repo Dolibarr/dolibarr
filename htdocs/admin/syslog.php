@@ -204,8 +204,8 @@ foreach ($syslogModules as $moduleName)
 	//print $moduleName." = ".$moduleactive." - ".$module->getName()." ".($moduleactive == -1)."<br>\n";
 	if (($moduleactive == -1) && empty($conf->global->MAIN_FEATURES_LEVEL)) continue;		// Some modules are hidden if not activable and not into debug mode (end user must not see them)
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	
+	print '<tr class="oddeven">';
 	print '<td width="140">';
 	print '<input '.$bc[$var].' type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked' : '').($moduleactive <= 0 ? 'disabled' : '').'> ';
 	print $module->getName();
@@ -257,8 +257,8 @@ print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td
 print '<td align="right"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 $var=true;
-$var=!$var;
-print '<tr '.$bc[$var].'><td width="140">'.$langs->trans("SyslogLevel").'</td>';
+
+print '<tr class="oddeven"><td width="140">'.$langs->trans("SyslogLevel").'</td>';
 print '<td colspan="2"><select class="flat" name="level" '.$option.'>';
 print '<option value="'.LOG_EMERG.'" '.($conf->global->SYSLOG_LEVEL==LOG_EMERG?'SELECTED':'').'>LOG_EMERG ('.LOG_EMERG.')</option>';
 print '<option value="'.LOG_ALERT.'" '.($conf->global->SYSLOG_LEVEL==LOG_ALERT?'SELECTED':'').'>LOG_ALERT ('.LOG_ALERT.')</option>';

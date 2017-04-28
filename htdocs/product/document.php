@@ -188,17 +188,18 @@ if ($object->id)
 	$head=product_prepare_head($object);
 	$titre=$langs->trans("CardProduct".$object->type);
 	$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-	dol_fiche_head($head, 'documents', $titre, 0, $picto);
+	
+	dol_fiche_head($head, 'documents', $titre, -1, $picto);
 
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	
 	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
 	{
-		$filearrayold=dol_dir_list($upload_dirold,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		$filearrayold=dol_dir_list($upload_dirold,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$filearray=array_merge($filearray, $filearrayold);
 	}
 

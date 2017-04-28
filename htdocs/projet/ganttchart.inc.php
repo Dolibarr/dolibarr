@@ -167,8 +167,8 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
     $parent = $task["task_parent"];
     // Define percent
     $percent = $task['task_percent_complete']?$task['task_percent_complete']:0;
-    // Link
-    $link=DOL_URL_ROOT.'/projet/tasks/task.php?withproject=1&id='.$task["task_id"];
+    // Link (more information)
+    $link=DOL_URL_ROOT.'/projet/tasks/contact.php?withproject=1&id='.$task["task_id"];
 
     // Name
     $name=$task['task_name'];

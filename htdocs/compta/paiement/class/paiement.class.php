@@ -37,7 +37,8 @@ class Paiement extends CommonObject
 {
     public $element='payment';
     public $table_element='paiement';
-
+    public $picto = 'payment';
+    
 	var $facid;
 	var $datepaye;
 	/**
@@ -95,7 +96,7 @@ class Paiement extends CommonObject
 		if ($id > 0)
 			$sql.= ' AND p.rowid = '.$id;
 		else if ($ref)
-			$sql.= ' AND p.rowid = '.$ref;
+			$sql.= " AND p.ref = '".$ref."'";
 		else if ($fk_bank)
 			$sql.= ' AND p.fk_bank = '.$fk_bank;
 
@@ -964,26 +965,29 @@ class Paiement extends CommonObject
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			Sur quoi pointe le lien
+	 *  @param  string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0,$option='',$mode='withlistofinvoices')
 	{
 		global $langs;
 
 		$result='';
         $label = $langs->trans("ShowPayment").': '.$this->ref;
-	$arraybill = $this->getBillsArray();
-	if (count($arraybill) >0)
-	{
-		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		$facturestatic=new Facture($this->db);
-		foreach ($arraybill as $billid)
-		{
-			$facturestatic->fetch($billid);
-			$label .='<br> '.$facturestatic->getNomUrl(1).' '.$facturestatic->getLibStatut(2,1);
-		}
-	}
-
+        if ($mode == 'withlistofinvoices')
+        {
+            $arraybill = $this->getBillsArray();
+            if (count($arraybill) > 0)
+            {
+            	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+            	$facturestatic=new Facture($this->db);
+            	foreach ($arraybill as $billid)
+            	{
+            		$facturestatic->fetch($billid);
+            		$label .='<br> '.$facturestatic->getNomUrl(1).' '.$facturestatic->getLibStatut(2,1);
+            	}
+            }
+        }
         $link = '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
@@ -1016,7 +1020,7 @@ class Paiement extends CommonObject
 		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 
 		$langs->load('compta');
-		if ($mode == 0)
+		/*if ($mode == 0)
 		{
 			if ($status == 0) return $langs->trans('ToValidate');
 			if ($status == 1) return $langs->trans('Validated');
@@ -1046,7 +1050,12 @@ class Paiement extends CommonObject
 			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
 			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
 		}
-		return $langs->trans('Unknown');
+		if ($mode == 6)
+	    {
+	        if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+	        if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+	    }*/
+		return '';
 	}
 
 }

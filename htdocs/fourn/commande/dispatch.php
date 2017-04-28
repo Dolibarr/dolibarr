@@ -230,7 +230,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 	}
 
 	if (! $error) {
-		$result = $object->calcAndSetStatusDispatch($user, GETPOST('closeopenorder')?1:0);
+		$result = $object->calcAndSetStatusDispatch($user, GETPOST('closeopenorder')?1:0, GETPOST('comment'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$error ++;
@@ -340,26 +340,7 @@ if ($id > 0 || ! empty($ref)) {
 	print '<div class="underbanner clearboth"></div>';
 	
 	print '<table class="border" width="100%">';
-/*
-	// Ref
-	print '<tr><td class="titlefield">' . $langs->trans("Ref") . '</td>';
-	print '<td colspan="2">';
-	print $form->showrefnav($object, 'ref', '', 1, 'ref', 'ref');
-	print '</td>';
-	print '</tr>';
 
-	// Fournisseur
-	print '<tr><td>' . $langs->trans("Supplier") . "</td>";
-	print '<td colspan="2">' . $soc->getNomUrl(1, 'supplier') . '</td>';
-	print '</tr>';
-
-	// Statut
-	print '<tr>';
-	print '<td>' . $langs->trans("Status") . '</td>';
-	print '<td colspan="2">';
-	print $object->getLibStatut(4);
-	print "</td></tr>";
-*/
 	// Date
 	if ($object->methode_commande_id > 0) {
 		print '<tr><td class="titlefield">' . $langs->trans("Date") . '</td><td>';
@@ -585,7 +566,8 @@ if ($id > 0 || ! empty($ref)) {
 						} elseif (count($listwarehouses) == 1) {
 							print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix), "entrepot" . $suffix, '', 0, 0, $objp->fk_product);
 						} else {
-							print $langs->trans("NoWarehouseDefined");
+							$langs->load("errors");
+							print $langs->trans("ErrorNoWarehouseDefined");
 						}
 						print "</td>\n";
 
@@ -609,7 +591,7 @@ if ($id > 0 || ! empty($ref)) {
             
 			print '<br><div class="center">';
             print $langs->trans("Comment") . ' : ';
-			print '<input type="text" class="minwidth200" maxlength="128" name="comment" value="';
+			print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
 			print $_POST["comment"] ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $object->ref);
 			// print ' / '.$object->ref_supplier; // Not yet available
 			print '" class="flat"><br>';
@@ -662,7 +644,7 @@ if ($id > 0 || ! empty($ref)) {
 			print '<table class="noborder" width="100%">';
 
 			print '<tr class="liste_titre">';
-			print '<td>' . $langs->trans("Description") . '</td>';
+			print '<td>' . $langs->trans("Product") . '</td>';
 			if (! empty($conf->productbatch->enabled)) {
 				print '<td>' . $langs->trans("batch_number") . '</td>';
 				print '<td>' . $langs->trans("EatByDate") . '</td>';
@@ -705,7 +687,7 @@ if ($id > 0 || ! empty($ref)) {
 				print '</td>';
 
 				// Comment
-				print '<td>' . dol_trunc($objp->comment) . '</td>';
+				print '<td class="tdoverflowmax300">' . $objp->comment . '</td>';
 
 				// Status
 				if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {

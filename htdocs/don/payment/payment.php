@@ -257,9 +257,9 @@ if (GETPOST("action") == 'create')
 	{
 		$objp = $don;
 
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 
 		print '<td align="right">'.price($objp->amount)."</td>";
 

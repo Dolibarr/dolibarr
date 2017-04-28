@@ -103,8 +103,12 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 */
 	private function getFilename($suffixinfilename='')
 	{
-		$tmp=str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, SYSLOG_FILE);
-		return $suffixinfilename?preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp):$tmp;
+	    global $conf;
+
+	    if (empty($conf->global->SYSLOG_FILE)) $tmp=DOL_DATA_ROOT.'/dolibarr.log';
+	    else $tmp=str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $conf->global->SYSLOG_FILE);
+
+	    return $suffixinfilename?preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp):$tmp;
 	}
 
 	/**
@@ -122,12 +126,12 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 
 		$logfile = $this->getFilename($suffixinfilename);
 
-		if (defined("SYSLOG_FILE_NO_ERROR")) $filefd = @fopen($logfile, 'a+');
+		if (! empty($conf->global->SYSLOG_FILE_NO_ERROR)) $filefd = @fopen($logfile, 'a+');
 		else $filefd = fopen($logfile, 'a+');
 
 		if (! $filefd)
 		{
-			if (! defined("SYSLOG_FILE_NO_ERROR"))
+			if (empty($conf->global->SYSLOG_FILE_NO_ERROR))
 			{
 				// Do not break dolibarr usage if log fails
 				//throw new Exception('Failed to open log file '.basename($logfile));

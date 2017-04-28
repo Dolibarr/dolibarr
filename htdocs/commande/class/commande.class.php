@@ -464,6 +464,7 @@ class Commande extends CommonOrder
                     if ($this->lines[$i]->fk_product > 0)
                     {
                         $mouvP = new MouvementStock($this->db);
+                        $mouvP->origin = &$this;
                         // We increment stock of product (and sub-products)
                         $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
                         if ($result < 0) { $error++; $this->error=$mouvP->error; break; }
@@ -3541,25 +3542,26 @@ class Commande extends CommonOrder
             $line->qty=1;
             $line->subprice=100;
             $line->price=100;
-            $line->tva_tx=19.6;
+            $line->tva_tx=20;
             if ($xnbp == 2)
             {
                 $line->total_ht=50;
-                $line->total_ttc=59.8;
-                $line->total_tva=9.8;
+                $line->total_ttc=60;
+                $line->total_tva=10;
                 $line->remise_percent=50;
             }
             else
             {
                 $line->total_ht=100;
-                $line->total_ttc=119.6;
-                $line->total_tva=19.6;
+                $line->total_ttc=120;
+                $line->total_tva=20;
                 $line->remise_percent=0;
             }
             if ($num_prods > 0)
             {
             	$prodid = mt_rand(1, $num_prods);
             	$line->fk_product=$prodids[$prodid];
+				$line->product_ref='SPECIMEN';
             }
 
             $this->lines[$xnbp]=$line;

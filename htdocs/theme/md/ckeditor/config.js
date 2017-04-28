@@ -31,25 +31,25 @@ CKEDITOR.editorConfig = function( config )
 	    ['Templates','NewPage'],
 	    ['Save'],
 	    ['Source','Maximize','Preview'],
-	    ['Cut','Copy','Paste','PasteText','PasteFromWord','-','Print', 'SpellChecker', 'Scayt'],
+	    ['PasteText','PasteFromWord','-','Print', 'SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
 	    ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+	    ['CreateDiv','ShowBlocks'],
 	    ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'],
 	    ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
-	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote','CreateDiv'],
+	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
 	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['BidiLtr', 'BidiRtl'],
 	    ['Link','Unlink','Anchor'],
 	    ['Image','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe'],
 	    ['Styles','Format','Font','FontSize'],
-	    ['TextColor','BGColor'],
-	    ['Maximize', 'ShowBlocks']
+	    ['TextColor','BGColor']
 	];
 
 	// Used for mailing fields
 	config.toolbar_dolibarr_mailings = 
 	[
 	 	['Source','Maximize','Preview'],
-	 	['Cut','Copy','Paste','-','SpellChecker', 'Scayt'],
+	 	['SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
 	 	['Undo','Redo','-','Find','Replace'],
 	    ['Format','Font','FontSize'],
 	 	['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
@@ -62,7 +62,7 @@ CKEDITOR.editorConfig = function( config )
 	config.toolbar_dolibarr_notes =
 	[
 	 	['Source','Maximize'],
-	 	['Cut','Copy','Paste','-','SpellChecker', 'Scayt'],
+	 	['SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
 	 	['Undo','Redo','-','Find','Replace'],
 	    ['Format','Font','FontSize'],
 	 	['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
@@ -75,9 +75,9 @@ CKEDITOR.editorConfig = function( config )
 	config.toolbar_dolibarr_details =
 	[
 	 	['Source','Maximize'],
-	 	['Cut','Copy','Paste','-','SpellChecker', 'Scayt'],
+	 	['SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
 	    ['Format','Font','FontSize'],
-	    ['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
+	    ['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],		// ,'Subscript','Superscript' useless
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['Link','Unlink','SpecialChar']

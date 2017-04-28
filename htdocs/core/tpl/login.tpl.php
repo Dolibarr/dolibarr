@@ -45,7 +45,7 @@ print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disable
 ?>
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
 
-<body class="body bodylogin">
+<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
@@ -56,7 +56,7 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
-<div class="center">
+<div class="login_center center">
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
@@ -76,27 +76,26 @@ $(document).ready(function () {
 <input type="hidden" name="dol_no_mouse_hover" id="dol_no_mouse_hover" value="<?php echo $dol_no_mouse_hover; ?>" />
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
-<table class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
-<tr class="vmenu"><td class="center">
+
+
+<!-- Title with version -->
+<div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
 <?php
 if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
 echo dol_escape_htmltag($title); 
 if ($disablenofollow) echo '</a>';
 ?>
-</td></tr>
-</table>
-<br>
+</div>
+
+
 
 <div class="login_table">
 
 <div id="login_line1">
 
 <div id="login_left">
-
 <img alt="" src="<?php echo $urllogo; ?>" id="img_logo" />
-
 </div>
-
 
 
 <div id="login_right">
@@ -156,13 +155,10 @@ if (! empty($hookmanager->resArray['options'])) {
 <?php } ?>
 </table>
 
-</div> <!-- end div left -->
+</div> <!-- end div login-right -->
 
+</div> <!-- end div login-line1 -->
 
-
-
-
-</div>
 
 <div id="login_line2" style="clear: both">
 
@@ -222,9 +218,10 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 
 ?>
 
-</div>
+</div> <!-- end login line 2 -->
 
-</div>
+</div> <!-- end login table -->
+
 
 </form>
 

@@ -342,43 +342,13 @@ if ($resql)
 
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-
+	if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+	
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-	print "<tr class=\"liste_titre\">";
-	if (! empty($arrayfields['d.ref']['checked']))                  print_liste_field_titre($arrayfields['d.ref']['label'],$_SERVER["PHP_SELF"],"d.ref","",$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['user']['checked']))                   print_liste_field_titre($arrayfields['user']['label'],$_SERVER["PHP_SELF"],"u.lastname","",$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['d.date_debut']['checked']))           print_liste_field_titre($arrayfields['d.date_debut']['label'],$_SERVER["PHP_SELF"],"d.date_debut","",$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['d.date_fin']['checked']))             print_liste_field_titre($arrayfields['d.date_fin']['label'],$_SERVER["PHP_SELF"],"d.date_fin","",$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['d.date_valid']['checked']))           print_liste_field_titre($arrayfields['d.date_valid']['label'],$_SERVER["PHP_SELF"],"d.date_valid","",$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['d.date_approve']['checked']))         print_liste_field_titre($arrayfields['d.date_approve']['label'],$_SERVER["PHP_SELF"],"d.date_approve","",$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['d.total_ht']['checked']))             print_liste_field_titre($arrayfields['d.total_ht']['label'],$_SERVER["PHP_SELF"],"d.total_ht","",$param,'align="right"',$sortfield,$sortorder);
-	if (! empty($arrayfields['d.total_vat']['checked']))            print_liste_field_titre($arrayfields['d.total_vat']['label'],$_SERVER["PHP_SELF"],"d.total_tva","",$param,'align="right"',$sortfield,$sortorder);
-	if (! empty($arrayfields['d.total_ttc']['checked']))            print_liste_field_titre($arrayfields['d.total_ttc']['label'],$_SERVER["PHP_SELF"],"d.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
-	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-	   foreach($extrafields->attribute_label as $key => $val) 
-	   {
-           if (! empty($arrayfields["ef.".$key]['checked'])) 
-           {
-				$align=$extrafields->getAlignFlag($key);
-				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-           }
-	   }
-	}
-	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields);
-    $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-	if (! empty($arrayfields['d.datec']['checked']))     print_liste_field_titre($arrayfields['d.datec']['label'],$_SERVER["PHP_SELF"],"d.date_creation","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	if (! empty($arrayfields['d.tms']['checked']))       print_liste_field_titre($arrayfields['d.tms']['label'],$_SERVER["PHP_SELF"],"d.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	if (! empty($arrayfields['d.fk_statut']['checked'])) print_liste_field_titre($arrayfields['d.fk_statut']['label'],$_SERVER["PHP_SELF"],"d.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
-	print "</tr>\n";
-
+	
 	// Filters
-	print '<tr class="liste_titre">';
+	print '<tr class="liste_titre_filter">';
 	if (! empty($arrayfields['d.ref']['checked']))
 	{
     	print '<td class="liste_titre" align="left">';
@@ -491,13 +461,43 @@ if ($resql)
 	}
 	// Action column
 	print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+	$searchpitco=$form->showFilterButtons();
 	print $searchpitco;
 	print '</td>';
 
 	print "</tr>\n";
 
-	$var=true;
+	print '<tr class="liste_titre">';
+	if (! empty($arrayfields['d.ref']['checked']))                  print_liste_field_titre($arrayfields['d.ref']['label'],$_SERVER["PHP_SELF"],"d.ref","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['user']['checked']))                   print_liste_field_titre($arrayfields['user']['label'],$_SERVER["PHP_SELF"],"u.lastname","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['d.date_debut']['checked']))           print_liste_field_titre($arrayfields['d.date_debut']['label'],$_SERVER["PHP_SELF"],"d.date_debut","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['d.date_fin']['checked']))             print_liste_field_titre($arrayfields['d.date_fin']['label'],$_SERVER["PHP_SELF"],"d.date_fin","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['d.date_valid']['checked']))           print_liste_field_titre($arrayfields['d.date_valid']['label'],$_SERVER["PHP_SELF"],"d.date_valid","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['d.date_approve']['checked']))         print_liste_field_titre($arrayfields['d.date_approve']['label'],$_SERVER["PHP_SELF"],"d.date_approve","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['d.total_ht']['checked']))             print_liste_field_titre($arrayfields['d.total_ht']['label'],$_SERVER["PHP_SELF"],"d.total_ht","",$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['d.total_vat']['checked']))            print_liste_field_titre($arrayfields['d.total_vat']['label'],$_SERVER["PHP_SELF"],"d.total_tva","",$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['d.total_ttc']['checked']))            print_liste_field_titre($arrayfields['d.total_ttc']['label'],$_SERVER["PHP_SELF"],"d.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
+	// Extra fields
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	{
+	    foreach($extrafields->attribute_label as $key => $val)
+	    {
+	        if (! empty($arrayfields["ef.".$key]['checked']))
+	        {
+	            $align=$extrafields->getAlignFlag($key);
+	            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+	        }
+	    }
+	}
+	// Hook fields
+	$parameters=array('arrayfields'=>$arrayfields);
+	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (! empty($arrayfields['d.datec']['checked']))     print_liste_field_titre($arrayfields['d.datec']['label'],$_SERVER["PHP_SELF"],"d.date_creation","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['d.tms']['checked']))       print_liste_field_titre($arrayfields['d.tms']['label'],$_SERVER["PHP_SELF"],"d.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['d.fk_statut']['checked'])) print_liste_field_titre($arrayfields['d.fk_statut']['label'],$_SERVER["PHP_SELF"],"d.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+	print "</tr>\n";	
 
 	$total_total_ht = 0;
 	$total_total_ttc = 0;
@@ -527,8 +527,8 @@ if ($resql)
 			$expensereportstatic->note_private=$obj->note_private;
 			$expensereportstatic->note_public=$obj->note_public;
 				
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			
+			print '<tr class="oddeven">';
 			// Ref
 			if (! empty($arrayfields['d.ref']['checked'])) {
     			print '<td>';

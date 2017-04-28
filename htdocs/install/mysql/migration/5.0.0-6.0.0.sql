@@ -24,6 +24,9 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+ALTER TABLE llx_extrafields ADD COLUMN langs varchar(24);
+
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN fk_unit integer DEFAULT NULL;
 
 ALTER TABLE llx_ecm_files ADD COLUMN ref varchar(128) AFTER rowid;
 ALTER TABLE llx_ecm_files CHANGE COLUMN fullpath filepath varchar(255);
@@ -56,8 +59,9 @@ ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_creat integer;
 ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_product_price_by_qty DROP COLUMN date_price;
 ALTER TABLE llx_product_price_by_qty ADD COLUMN tms timestamp;
-ALTER TABLE llx_product_price_by_qty ADD COLUMN import_key integer;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN import_key varchar(14);
 
+ALTER TABLE llx_user ADD COLUMN import_key varchar(14);
 
 
 CREATE TABLE llx_product_attribute
@@ -98,6 +102,12 @@ CREATE TABLE llx_product_attribute_combination
   entity INT DEFAULT 1 NOT NULL
 );
 
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (1,'VT', 'Journal des ventes', 1, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (2,'AC', 'Journal des achats', 2, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (3,'BQ', 'Journal de banque', 3, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (4,'OD', 'Journal des opérations diverses', 0, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (5,'AN', 'Journal des à-nouveaux', 9, 1);
+
 ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
 
 
@@ -127,6 +137,9 @@ ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;
 
 ALTER TABLE llx_cronjob ADD COLUMN processing integer NOT NULL DEFAULT 0;
 
+ALTER TABLE llx_website ADD COLUMN fk_user_create integer;
+ALTER TABLE llx_website ADD COLUMN fk_user_modif integer;
+
 
 create table llx_payment_various
 (
@@ -147,6 +160,27 @@ create table llx_payment_various
   fk_user_author        integer,
   fk_user_modif         integer
 )ENGINE=innodb;
+
+
+create table llx_default_values
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity          integer DEFAULT 1 NOT NULL,		-- multi company id
+  type			  varchar(10),                      -- 'createform', 'filters', 'sortorder'
+  user_id         integer DEFAULT 0 NOT NULL,       -- 0 or user id
+  page            varchar(255),                     -- relative url of page
+  param           varchar(255),                     -- parameter
+  value		      varchar(128)                      -- value
+)ENGINE=innodb;
+
+ALTER TABLE llx_default_values ADD UNIQUE INDEX uk_default_values(type, entity, user_id, page, param);
+
+
+ALTER TABLE llx_supplier_proposaldet ADD INDEX idx_supplier_proposaldet_fk_supplier_proposal (fk_supplier_proposal);
+ALTER TABLE llx_supplier_proposaldet ADD INDEX idx_supplier_proposaldet_fk_product (fk_product);
+
+ALTER TABLE llx_supplier_proposaldet ADD CONSTRAINT fk_supplier_proposaldet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
+ALTER TABLE llx_supplier_proposaldet ADD CONSTRAINT fk_supplier_proposaldet_fk_supplier_proposal FOREIGN KEY (fk_supplier_proposal) REFERENCES llx_supplier_proposal (rowid);
 
 -- NEW inventory module
 CREATE TABLE llx_inventory 

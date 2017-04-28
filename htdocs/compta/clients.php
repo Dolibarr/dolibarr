@@ -178,9 +178,9 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print '<td>';
 		$thirdpartystatic->id=$obj->rowid;
 		$thirdpartystatic->name=$obj->name;

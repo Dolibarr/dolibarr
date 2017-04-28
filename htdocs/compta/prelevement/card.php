@@ -322,7 +322,7 @@ if ($id > 0)
 		{
 			$obj = $db->fetch_object($result);
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 
 			// Status of line
 			print "<td>";
@@ -354,7 +354,7 @@ if ($id > 0)
 			print '</td></tr>';
 
 			$total += $obj->amount;
-			$var=!$var;
+			
 			$i++;
 		}
 

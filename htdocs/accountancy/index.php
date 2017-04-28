@@ -129,15 +129,18 @@ if (! empty($conf->don->enabled))
     print "<br>\n";
     print "<br>\n";
 }*/
+
 $step++;
-$textlink='<strong>'.$langs->transnoentitiesnoconv("Home").'-'.$langs->transnoentitiesnoconv("MenuBankCash").'</strong>';
-print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBank", $step, $textlink);
+print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescProd", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("ProductsBinding").'</strong>');
 print "<br>\n";
 print "<br>\n";
 
 $step++;
-print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescProd", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("ProductsBinding").'</strong>')."<br>\n";
+$textlink='<strong>'.$langs->transnoentitiesnoconv("MenuBankCash").'</strong>';
+print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBank", $step, $textlink);
 print "<br>\n";
+print "<br>\n";
+
 
 print "<br>\n";
 print_fiche_titre($langs->trans("AccountancyAreaDescActionFreq"), '', 'object_calendarweek');

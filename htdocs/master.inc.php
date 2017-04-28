@@ -114,7 +114,7 @@ if (! defined('NOREQUIRESOC'))  require_once DOL_DOCUMENT_ROOT .'/societe/class/
  */
 if (! defined('NOREQUIRETRAN'))
 {
-	$langs = new Translate('',$conf);	// A mettre apres lecture de la conf
+	$langs = new Translate('',$conf);	// Must be after reading conf
 }
 
 /*
@@ -257,8 +257,4 @@ $hookmanager=new HookManager($db);
 
 
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
-
-
-// We force FPDF
-if (! empty($dolibarr_pdf_force_fpdf)) $conf->global->MAIN_USE_FPDF=$dolibarr_pdf_force_fpdf;
 

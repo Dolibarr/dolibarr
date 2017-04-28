@@ -118,7 +118,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ThirdParty").' &nbsp; ';
 		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
-		print $form->select_company($socid, 'socid', '', 1);
+		print $form->select_company($socid, 'socid', '', 'SelectThirdParty', 0, 0, null, 0);
 		print '</td></tr>';
 	}
 
@@ -135,7 +135,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '</td></tr>';
 	}
 
-	if ($canedit)
+	if ($canedit && ! preg_match('/listaction/', $_SERVER["PHP_SELF"]))
 	{
 		// Status
 		print '<tr>';
@@ -251,9 +251,9 @@ function show_array_actions_to_do($max=5)
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
-            $var=!$var;
+            
 
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
 
             $staticaction->type_code=$obj->code;
             $staticaction->label=($obj->label?$obj->label:$obj->type_label);
@@ -347,9 +347,9 @@ function show_array_last_actions_done($max=5)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			$var=!$var;
+			
 
-			print '<tr '.$bc[$var].'>';
+			print '<tr class="oddeven">';
 
 			$staticaction->type_code=$obj->code;
 			$staticaction->libelle=$obj->label;
@@ -472,7 +472,7 @@ function actions_prepare_head($object)
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->agenda->dir_output . "/" . $object->id;
-    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");

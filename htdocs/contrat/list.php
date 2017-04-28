@@ -534,7 +534,7 @@ if ($resql)
            if (! empty($arrayfields["ef.".$key]['checked'])) 
            {
 				$align=$extrafields->getAlignFlag($key);
-				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+				print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
            }
 	   }
 	}
@@ -551,7 +551,7 @@ if ($resql)
         print_liste_field_titre($staticcontratligne->LibStatut(4,3,1), '', '', '', '', 'width="16"');
         print_liste_field_titre($staticcontratligne->LibStatut(5,3), '', '', '', '', 'width="16"');
     }
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
 
     while ($i < min($num,$limit))
@@ -563,7 +563,7 @@ if ($resql)
         $contracttmp->ref_customer=$obj->ref_customer;
         $contracttmp->ref_supplier=$obj->ref_supplier;
         
-        print '<tr>';
+        print '<tr class="oddeven">';
         if (! empty($arrayfields['c.ref']['checked']))
         {
             print '<td class="nowrap">';

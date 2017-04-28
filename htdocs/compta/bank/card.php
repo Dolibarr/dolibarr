@@ -117,7 +117,7 @@ if ($action == 'add')
     
     if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number))
     {
-        setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountancyCode")), null, 'error');
+        setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountancyCode")), null, 'errors');
         $action='create';       // Force chargement page en mode creation
         $error++;
     }
@@ -713,7 +713,7 @@ else
 		    
 		    print '<table class="border centpercent">';
 
-			print '<tr class="liste_titre_add"><td class="titlefield">'.$langs->trans("BankName").'</td>';
+			print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("BankName").'</td>';
 			print '<td>'.$object->bank.'</td></tr>';
 
 			// Show fields of bank account
@@ -957,7 +957,7 @@ else
 		print '<br>';
 
 
-		print '<div class="underbanner clearboth"></div>';
+		//print '<div class="underbanner clearboth"></div>';
 		
 		print '<table class="border" width="100%">';
 		
@@ -991,7 +991,7 @@ else
 		{
 		    print '<br>';
 		    
-		    print '<div class="underbanner clearboth"></div>';
+		    //print '<div class="underbanner clearboth"></div>';
 		    
 			print '<table class="border" width="100%">';
 

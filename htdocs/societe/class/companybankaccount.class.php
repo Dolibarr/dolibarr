@@ -130,7 +130,9 @@ class CompanyBankAccount extends Account
      */
     function update(User $user = null, $notrigger = 0)
     {
-    	global $conf;
+	    global $conf;
+	    $error = 0;
+	   
 
         if (! $this->id)
         {
@@ -167,12 +169,33 @@ class CompanyBankAccount extends Account
         $result = $this->db->query($sql);
         if ($result)
         {
-            return 1;
+		
+		
+		if (! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('COMPANY_RIB_MODIFY',$user);
+			if ($result < 0) $error++;
+			// End call triggers
+			if(! $error )
+			{
+				return 1;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+		else
+		{
+			return 1;
+		}
+		
         }
         else
         {
             dol_print_error($this->db);
-            return 0;
+            return -1;
         }
     }
 
@@ -252,7 +275,7 @@ class CompanyBankAccount extends Account
         if (! $error && ! $notrigger)
         {
             // Call trigger
-            $result=$this->call_trigger('COMAPNY_RIB_DELETE',$user);
+            $result=$this->call_trigger('COMPANY_RIB_DELETE',$user);
             if ($result < 0) $error++;
             // End call triggers
         }

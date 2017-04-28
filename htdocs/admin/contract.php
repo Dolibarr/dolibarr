@@ -266,8 +266,8 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-						$var=!$var;
-						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+						
+						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
 
@@ -406,7 +406,7 @@ foreach ($dirmodels as $reldir)
 	                        if ($modulequalified)
 	                        {
 	                            $var = !$var;
-	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module,'info')) print $module->info($langs);
@@ -502,9 +502,15 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 $var=true;
 
+$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
 $var=! $var;
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnContracts").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnContracts"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
 $variablename='CONTRACT_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -519,9 +525,10 @@ else
 print '</td></tr>'."\n";
 
 //Use draft Watermark
-$var=!$var;
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("WatermarkOnDraftContractCards").'</td><td>';
+
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext);
+print '</td><td>';
 print '<input size="50" class="flat" type="text" name="CONTRACT_DRAFT_WATERMARK" value="'.$conf->global->CONTRACT_DRAFT_WATERMARK.'">';
 print '</td></tr>'."\n";
 

@@ -76,7 +76,7 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 /*
  * View
  */
-llxHeader("", $langs->trans(FicheVentilation));
+llxHeader("", $langs->trans('FicheVentilation'));
 
 if ($cancel == $langs->trans("Cancel")) {
 	$action = '';

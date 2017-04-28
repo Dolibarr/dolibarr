@@ -186,6 +186,25 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		global $conf;
 
+		// adding phone numbers if external
+		$phone_pro = '';
+		$phone_perso = '';
+		$phone_mobile = '';
+
+		$ct = new Contact($this->db);
+		if ($contact['source']=='external') {
+			$ct = new Contact($this->db);
+			$ct->fetch($contact['id']);
+			$phone_pro = $ct->phone_pro;
+			$phone_perso = $ct->phone_perso;
+			$phone_mobile = $ct->phone_mobile;
+		} elseif ($contact['source']=='internal') {
+			$ct = new User($this->db);
+			$ct->fetch($contact['id']);
+			$phone_pro = $ct->office_phone;
+			$phone_mobile = $ct->user_mobile;
+		}
+
 		return array(
 		'projcontacts_id'=>$contact['id'],
 		'projcontacts_rowid'=>$contact['rowid'],
@@ -194,7 +213,10 @@ class doc_generic_project_odt extends ModelePDFProjects
 		'projcontacts_firstname'=>$contact['firstname'],
 		'projcontacts_fullcivname'=>$contact['fullname'],
 		'projcontacts_socname'=>$contact['socname'],
-		'projcontacts_email'=>$contact['email']
+		'projcontacts_email'=>$contact['email'],
+		'projcontacts_phone_pro'=>$phone_pro,
+		'projcontacts_phone_perso'=>$phone_perso,
+		'projcontacts_phone_mobile'=>$phone_mobile
 		);
 	}
 
@@ -712,7 +734,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						$listtasksfiles = $listlines->__get('tasksfiles');
 
 						$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref).'/'.dol_sanitizeFileName($task->ref);
-						$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$','name',SORT_ASC,1);
+						$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$','name',SORT_ASC,1);
 
 
 						foreach ($filearray as $filedetail)
@@ -756,7 +778,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 					$listlines = $odfHandler->setSegment('projectfiles');
 
 					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
-					$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$','name',SORT_ASC,1);
+					$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$','name',SORT_ASC,1);
 
 					foreach ($filearray as $filedetail)
 					{

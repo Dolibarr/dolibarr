@@ -143,8 +143,8 @@ if ($result)
 	while ($i < $num && $i < $conf->liste_limit)
 	{
 		$objp = $db->fetch_object($result);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print '<td><a href="public_card.php?id='.$objp->rowid.'">'.dolGetFirstLastname($objp->firstname, $objp->lastname).'</a></td>'."\n";
 		print '<td>'.$objp->societe.'</td>'."\n";
 		print '<td>'.$objp->email.'</td>'."\n";

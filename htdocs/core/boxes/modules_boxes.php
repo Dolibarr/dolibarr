@@ -234,7 +234,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
             // Show box title
             if (! empty($head['text']) || ! empty($head['sublink']) || ! empty($head['subpicto']))
             {
-                $out.= '<tr class="box_titre">';
+                $out.= '<tr class="liste_titre box_titre">';
                 $out.= '<td';
                 if ($nbcol > 0) { $out.= ' colspan="'.$nbcol.'"'; }
                 $out.= '>';
@@ -247,25 +247,26 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                     $s=dol_trunc($head['text'],isset($head['limit'])?$head['limit']:$MAXLENGTHBOX);
                     $out.= $s;
                 }
-                $out.= ' ';
-
-                $sublink='';
-                if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
-                if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
-                if (! empty($head['sublink']))  $sublink.= '</a>';
+                $out.= '</td>';
+                
                 if (! empty($conf->use_javascript_ajax))
                 {
-                    $out.= '</td><td class="nocellnopadd boxclose nowrap">';
+                    $sublink='';
+                    if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
+                    if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
+                    if (! empty($head['sublink']))  $sublink.= '</a>';
+                    
+                    $out.= '<td class="nocellnopadd boxclose right nowraponall">';
                     $out.=$sublink;
                     // The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
-                    $out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="boxhandle hideonsmartphone" style="cursor:move;"');
-                    $out.= img_picto($langs->trans("CloseBox",$this->box_id),'close_title','class="boxclose" rel="x:y" style="cursor:pointer;" id="imgclose'.$this->box_id.'"');
+                    $out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="boxhandle hideonsmartphone cursormove"');
+                    $out.= img_picto($langs->trans("CloseBox",$this->box_id),'close_title','class="boxclose cursorpointer" rel="x:y" id="imgclose'.$this->box_id.'"');
                     $label=$head['text'];
                     if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
                     $out.= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
                     $out.= '</td></tr></table>';
                 }
-                $out.= '</td>';
+                
                 $out.= "</tr>\n";
             }
 
@@ -277,7 +278,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                 {
                     if (isset($contents[$i]))
                     {
-                        $var=!$var;
+                        
 
                         // TR
                         if (isset($contents[$i][0]['tr'])) $out.= '<tr valign="top" '.$contents[$i][0]['tr'].'>';

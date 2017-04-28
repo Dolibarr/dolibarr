@@ -42,50 +42,59 @@ abstract class CommonObject
      * @var DoliDb		Database handler (result of a new DoliDB)
      */
 	public $db;
-
 	/**
 	 * @var int The object identifier
 	 */
 	public $id;
-
     /**
      * @var string 		Error string
      * @deprecated		Use instead the array of error strings
      * @see             errors
      */
     public $error;
-
 	/**
      * @var string[]	Array of error strings
      */
     public $errors=array();
-
+	/**
+	 * @var string
+	 */
+	public $element;
+	/**
+	 * @var string
+	 */
+	public $table_element;
+	/**
+	 * @var
+	 */
+	public $table_element_line;
     /**
      * @var string		Key value used to track if data is coming from import wizard
      */
     public $import_key;
-
     /**
      * @var mixed		Contains data to manage extrafields
      */
     public $array_options=array();
-
     /**
      * @var int[]		Array of linked objects ids. Loaded by ->fetchObjectLinked
      */
     public $linkedObjectsIds;
-
     /**
      * @var mixed		Array of linked objects. Loaded by ->fetchObjectLinked
      */
     public $linkedObjects;
-
+    /**
+     * @var Object      To store a cloned copy of object before to edit it and keep track of old properties
+     */
+    public $oldcopy;
+   
     /**
      * @var string		Column name of the ref field.
      */
     protected $table_ref_field = '';
 
-
+    
 
     // Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
 
@@ -165,19 +174,6 @@ abstract class CommonObject
 	 * @var string An external reference for the object
 	 */
 	public $ref_ext;
-
-	/**
-	 * @var string
-	 */
-	public $element;
-	/**
-	 * @var string
-	 */
-	public $table_element;
-	/**
-	 * @var
-	 */
-	public $table_element_line;
 
 	/**
 	 * @var int The object's status
@@ -332,8 +328,10 @@ abstract class CommonObject
     public $firstname;
     public $civility_id;
 
+    
     // No constructor as it is an abstract class
 
+    
     /**
      * Check an object id/ref exists
      * If you don't need/want to instantiate object and just need to know if object exists, use this method instead of fetch
@@ -495,7 +493,7 @@ abstract class CommonObject
 			$out.=dol_print_phone($this->phone_pro,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
 		}
 		if (! empty($this->phone_mobile)) {
-			$out.=dol_print_phone($this->phone_mobile,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhoneMobile")); $outdone++;
+			$out.=dol_print_phone($this->phone_mobile,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','mobile',$langs->trans("PhoneMobile")); $outdone++;
 		}
 		if (! empty($this->phone_perso)) {
 			$out.=dol_print_phone($this->phone_perso,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePerso")); $outdone++;
@@ -507,7 +505,7 @@ abstract class CommonObject
 			$out.=dol_print_phone($this->office_phone,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
 		}
 		if (! empty($this->user_mobile)) {
-			$out.=dol_print_phone($this->user_mobile,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhoneMobile")); $outdone++;
+			$out.=dol_print_phone($this->user_mobile,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','mobile',$langs->trans("PhoneMobile")); $outdone++;
 		}
 		if (! empty($this->office_fax)) {
 			$out.=dol_print_phone($this->fax,$this->country_code,$contactid,$thirdpartyid,'AC_FAX','&nbsp;','fax',$langs->trans("Fax")); $outdone++;
@@ -781,7 +779,7 @@ abstract class CommonObject
         $tab=array();
 
         $sql = "SELECT ec.rowid, ec.statut as statuslink, ec.fk_socpeople as id, ec.fk_c_type_contact";    // This field contains id of llx_socpeople or id of llx_user
-        if ($source == 'internal') $sql.=", '-1' as socid, t.statut as statuscontact";
+        if ($source == 'internal') $sql.=", '-1' as socid, t.statut as statuscontact, t.login, t.photo";
         if ($source == 'external' || $source == 'thirdparty') $sql.=", t.fk_soc as socid, t.statut as statuscontact";
         $sql.= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
         $sql.= ", tc.source, tc.element, tc.code, tc.libelle";
@@ -815,7 +813,7 @@ abstract class CommonObject
                     $libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
                     $tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,
 					               'nom'=>$obj->lastname,      // For backward compatibility
-					               'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'email'=>$obj->email, 'statuscontact'=>$obj->statuscontact,
+					               'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'email'=>$obj->email, 'login'=>$obj->login, 'photo'=>$obj->photo, 'statuscontact'=>$obj->statuscontact,
 					               'rowid'=>$obj->rowid, 'code'=>$obj->code, 'libelle'=>$libelle_type, 'status'=>$obj->statuslink, 'fk_c_type_contact'=>$obj->fk_c_type_contact);
                 }
                 else
@@ -3164,8 +3162,16 @@ abstract class CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$res = $this->db->fetch_object($resql);
-			return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
+			$num = $this->db->num_rows($resql);
+			if ($num > 0)
+			{
+				$res = $this->db->fetch_object($resql);
+				return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
+			}
+			else
+			{
+				return '';
+			}
 		}
 		else
 		{
@@ -3422,7 +3428,7 @@ abstract class CommonObject
 			//Line extrafield
 			$line->fetch_optionals($line->id,$extralabelslines);
 
-			$var=!$var;
+			
 
 			//if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
             if (is_object($hookmanager))   // Old code is commented on preceding line.
@@ -3603,7 +3609,7 @@ abstract class CommonObject
 
         foreach ($this->lines as $line)
         {
-            $var=!$var;
+            
 
             if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
             {

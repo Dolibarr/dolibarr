@@ -77,7 +77,7 @@ if ($resql)
     {
       $num = $row[0];
     }
-  print "<tr ".$bc[$var].">";
+  print '<tr class="oddeven">';
   print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
   print '<td align="right">';
   print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
@@ -129,7 +129,7 @@ if ($resql)
 		$accountstatic->id=$objp->bid;
 		$accountstatic->label=$objp->label;
 
-		$var=!$var;
+		
 		print "<tr ".$bc[$var].">\n";
 
 		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';

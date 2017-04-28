@@ -146,8 +146,7 @@ if ($action == 'display' || $action == 'delete') {
 
 		if (is_array($accountingcategory->lines_display) && count($accountingcategory->lines_display) > 0) {
 			foreach ( $accountingcategory->lines_display as $cpt ) {
-				$var = ! $var;
-				print '<tr ' . $bc[$var] . '>';
+				print '<tr class="oddeven">';
 				print '<td>' . length_accountg($cpt->account_number) . '</td>';
 				print '<td>' . $cpt->label . '</td>';
 				print '<td align="right">';

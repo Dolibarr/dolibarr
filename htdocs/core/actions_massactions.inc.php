@@ -434,8 +434,11 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
     // Create output dir if not exists
     dol_mkdir($diroutputmassaction);
 
-    // Save merged file
+    // Defined name of merged file
     $filename=strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
+    $filename=preg_replace('/\s/','_',$filename);
+    
+    // Save merged file
     if ($filter=='paye:0')
     {
         if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
@@ -486,7 +489,8 @@ if (! $error && $massaction == 'delete' && $permtodelete)
         $result=$objecttmp->fetch($toselectid);
         if ($result > 0)
         {
-            $result = $objecttmp->delete($user);
+            if ($objecttmp->element == 'societe') $result = $objecttmp->delete($objecttmp->id, $user, 1);
+            else $result = $objecttmp->delete($user);
             if ($result <= 0)
             {
                 setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');

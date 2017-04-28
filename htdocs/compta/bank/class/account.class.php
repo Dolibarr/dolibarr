@@ -390,7 +390,7 @@ class Account extends CommonObject
      *  @param	string		$label			Descripton
      *  @param	float		$amount			Amount
      *  @param	string		$num_chq		Numero cheque ou virement
-     *  @param	string		$categorie		Categorie optionnelle
+     *  @param	int  		$categorie		Category id (optionnal)
      *  @param	User		$user			User that create
      *  @param	string		$emetteur		Name of cheque writer
      *  @param	string		$banque			Bank of cheque writer
@@ -480,8 +480,8 @@ class Account extends CommonObject
 
 				$result = $this->db->query($sql);
 				if (!$result) {
+					$this->error = $this->db->lasterror();
 					$this->db->rollback();
-					$this->error = $this->db->error();
 					return -3;
 				}
 			}
@@ -1243,9 +1243,10 @@ class Account extends CommonObject
      *
      *		@param	int		$withpicto		Include picto into link
      *      @param  string	$mode           ''=Link to card, 'transactions'=Link to transactions card
+     *      @param  string  $option         ''=Show ref, 'reflabel'=Show ref+label
      *		@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0, $mode='')
+    function getNomUrl($withpicto=0, $mode='', $option='')
     {
         global $conf, $langs;
 
@@ -1279,7 +1280,7 @@ class Account extends CommonObject
         }
 
         if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
-        $result.=$link.$this->ref.$linkend;
+        $result.=$link.$this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '').$linkend;
         return $result;
     }
 
@@ -1553,7 +1554,8 @@ class AccountLine extends CommonObject
     var $db;
     var $element='bank';
     var $table_element='bank';
-
+    var $picto = 'generic';
+    
     var $id;
     var $ref;
     var $datec;
@@ -2040,5 +2042,61 @@ class AccountLine extends CommonObject
         return $result;
     }
 
+    
+    /**
+     *    Return label of status (activity, closed)
+     *
+     *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+     *    @return   string        		Libelle
+     */
+    function getLibStatut($mode=0)
+    {
+        return $this->LibStatut($this->status,$mode);
+    }
+    
+    /**
+     *  Renvoi le libelle d'un statut donne
+     *
+     *  @param	int		$statut         Id statut
+     *  @param	int		$mode           0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return	string          		Libelle du statut
+     */
+    function LibStatut($statut,$mode=0)
+    {
+        global $langs;
+        //$langs->load('companies');
+        /*
+        if ($mode == 0)
+        {
+            if ($statut==0) return $langs->trans("ActivityCeased");
+            if ($statut==1) return $langs->trans("InActivity");
+        }
+        if ($mode == 1)
+        {
+            if ($statut==0) return $langs->trans("ActivityCeased");
+            if ($statut==1) return $langs->trans("InActivity");
+        }
+        if ($mode == 2)
+        {
+            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
+            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
+        }
+        if ($mode == 3)
+        {
+            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
+            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
+        }
+        if ($mode == 4)
+        {
+            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
+            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
+        }
+        if ($mode == 5)
+        {
+            if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
+            if ($statut==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
+        }*/
+    }
+    
 }
 

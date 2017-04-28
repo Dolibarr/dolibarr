@@ -494,14 +494,14 @@ if ($action == 'new')
 
 		foreach ($lines[$bid] as $lid => $value)
 		{
-			$var=!$var;
+			
 
 			$account_id = $bid;
 			if (! isset($accounts[$bid]))
 				$accounts[$bid]=0;
 			$accounts[$bid] += 1;
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td>'.dol_print_date($value["date"],'day').'</td>';
 			print '<td>'.$value["numero"]."</td>\n";
 			print '<td>'.$value["emetteur"]."</td>\n";
@@ -694,7 +694,7 @@ else
 				$accounts[$objp->bid]=0;
 			$accounts[$objp->bid] += 1;
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td align="center">'.$i.'</td>';
 			print '<td align="center">'.dol_print_date($db->jdate($objp->date),'day').'</td>';	// Date operation
 			print '<td align="center">'.($objp->num_chq?$objp->num_chq:'&nbsp;').'</td>';
@@ -742,7 +742,7 @@ else
 			}
 		    print '</td>';
 			print '</tr>';
-			$var=!$var;
+			
 			$i++;
 		}
 		print "</table>";

@@ -256,22 +256,7 @@ if ($result) {
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "fd.rowid", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"], "f.datef, f.facnumber, fd.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("ProductRef"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
-	//print_liste_field_titre($langs->trans("ProductLabel"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "fd.description", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "fd.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "fd.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Country"), $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("VATIntra"), $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre('', '', '', '', '', 'align="center"');
-	print "</tr>\n";
-
-	print '<tr class="liste_titre">';
+	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
 	print '<td class="liste_titre"></td>';
@@ -284,16 +269,30 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tavintra" value="' . dol_escape_htmltag($search_tavintra) . '"></td>';
 	print '<td class="liste_titre" align="center">';
-	$searchpitco=$form->showFilterAndCheckAddButtons(1);
-	print $searchpitco;
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
 	print "</td></tr>\n";
+	
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "fd.rowid", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"], "f.datef, f.facnumber, fd.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("ProductRef"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+	//print_liste_field_titre($langs->trans("ProductLabel"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "fd.description", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "fd.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "fd.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Country"), $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("VATIntra"), $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
+	$clickpicto=$form->showCheckAddButtons();
+	print_liste_field_titre($clickpicto, '', '', '', '', 'align="center"');
+	print "</tr>\n";
 
 	$facture_static = new Facture($db);
 	$product_static = new Product($db);
 
-	$var = True;
 	while ( $objp = $db->fetch_object($result) ) {
-		$var = ! $var;
 		$codecompta = length_accountg($objp->account_number) . ' - ' . $objp->label_compte;
 
 		$facture_static->ref = $objp->facnumber;
@@ -304,7 +303,7 @@ if ($result) {
 		$product_static->type = $objp->product_type;
 		$product_static->label = $objp->product_label;
 		
-		print '<tr '. $bc[$var].'>';
+		print '<tr class="oddeven">';
 
 		print '<td>' . $objp->rowid . '</td>';
 		
@@ -335,7 +334,7 @@ if ($result) {
 		print '</td>';
 		print '<td>' . $objp->country .'</td>';
 		print '<td>' . $objp->tva_intra . '</td>';
-		print '<td align="right"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->fdid . '"/></td>';
+		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->fdid . '"/></td>';
 
 		print "</tr>";
 		$i ++;

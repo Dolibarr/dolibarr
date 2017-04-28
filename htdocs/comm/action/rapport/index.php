@@ -135,8 +135,8 @@ if ($resql)
 
 		if ($obj)
 		{
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			
+			print '<tr class="oddeven">';
 
 			print "<td>".$obj->df."</td>\n";
 			print '<td align="center">'.$obj->cc.'</td>';

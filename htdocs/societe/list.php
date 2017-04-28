@@ -35,12 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
-$langs->load("companies");
-$langs->load("commercial");
-$langs->load("customers");
-$langs->load("suppliers");
-$langs->load("bills");
-$langs->load("compta");
+$langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "commercial"));
+
+$action=GETPOST('action','alpha');
+$massaction=GETPOST('massaction','alpha');
+$show_files=GETPOST('show_files','int');
+$confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -80,7 +81,8 @@ $search_stcomm=GETPOST('search_stcomm','int');
 $type=GETPOST('type');
 $optioncss=GETPOST('optioncss','alpha');
 $mode=GETPOST("mode");
-$action=GETPOST('action');
+
+$diroutputmassaction=$conf->societe->dir_output . '/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield=GETPOST("sortfield",'alpha');
@@ -88,7 +90,7 @@ $sortorder=GETPOST("sortorder",'alpha');
 $page=GETPOST("page",'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
-if (empty($page) || $page == -1) { $page = 0 ; }
+if (empty($page) || $page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -116,7 +118,9 @@ $fieldstosearchall = array(
 	's.nom'=>"ThirdPartyName",
 	's.name_alias'=>"AliasNameShort",
 	's.code_client'=>"CustomerCode",
-    "s.code_fournisseur"=>"SupplierCode",
+    's.code_fournisseur'=>"SupplierCode",
+	's.code_compta'=>"CustomerAccountancyCodeShort",
+	's.code_compta_fournisseur'=>"SupplierAccountancyCodeShort",
 	's.email'=>"EMail",
 	's.url'=>"URL",
     's.tva_intra'=>"VATIntra",
@@ -147,32 +151,32 @@ $checkedprofid6=0;
 $checkprospectlevel=(in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $checkstcomm=(in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $arrayfields=array(
-    's.nom'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
-    's.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
-    's.code_client'=>array('label'=>$langs->trans("CustomerCodeShort"), 'checked'=>$checkedcustomercode),
-    's.code_fournisseur'=>array('label'=>$langs->trans("SupplierCodeShort"), 'checked'=>$checkedsuppliercode, 'enabled'=>(! empty($conf->fournisseur->enabled))),
-    's.code_compta'=>array('label'=>$langs->trans("CustomerAccountancyCodeShort"), 'checked'=>$checkedcustomeraccountcode),
-    's.code_compta_fournisseur'=>array('label'=>$langs->trans("SupplierAccountancyCodeShort"), 'checked'=>$checkedsupplieraccountcode, 'enabled'=>(! empty($conf->fournisseur->enabled))),
-    's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
-    's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
-    'state.nom'=>array('label'=>$langs->trans("State"), 'checked'=>0),
-	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
-    's.email'=>array('label'=>$langs->trans("Email"), 'checked'=>0),
-    's.url'=>array('label'=>$langs->trans("Url"), 'checked'=>0),
-    's.phone'=>array('label'=>$langs->trans("Phone"), 'checked'=>1),
-    'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
-    's.siren'=>array('label'=>$langs->trans("ProfId1Short"), 'checked'=>$checkedprofid1),
-    's.siret'=>array('label'=>$langs->trans("ProfId2Short"), 'checked'=>$checkedprofid2),
-    's.ape'=>array('label'=>$langs->trans("ProfId3Short"), 'checked'=>$checkedprofid3),
-    's.idprof4'=>array('label'=>$langs->trans("ProfId4Short"), 'checked'=>$checkedprofid4),
-    's.idprof5'=>array('label'=>$langs->trans("ProfId5Short"), 'checked'=>$checkedprofid5),
-    's.idprof6'=>array('label'=>$langs->trans("ProfId6Short"), 'checked'=>$checkedprofid6),
+    's.nom'=>array('label'=>"Company", 'checked'=>1),
+    's.barcode'=>array('label'=>"Gencod", 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
+    's.code_client'=>array('label'=>"CustomerCodeShort", 'checked'=>$checkedcustomercode),
+    's.code_fournisseur'=>array('label'=>"SupplierCodeShort", 'checked'=>$checkedsuppliercode, 'enabled'=>(! empty($conf->fournisseur->enabled))),
+    's.code_compta'=>array('label'=>"CustomerAccountancyCodeShort", 'checked'=>$checkedcustomeraccountcode),
+    's.code_compta_fournisseur'=>array('label'=>"SupplierAccountancyCodeShort", 'checked'=>$checkedsupplieraccountcode, 'enabled'=>(! empty($conf->fournisseur->enabled))),
+    's.town'=>array('label'=>"Town", 'checked'=>1),
+    's.zip'=>array('label'=>"Zip", 'checked'=>1),
+    'state.nom'=>array('label'=>"State", 'checked'=>0),
+	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
+    's.email'=>array('label'=>"Email", 'checked'=>0),
+    's.url'=>array('label'=>"Url", 'checked'=>0),
+    's.phone'=>array('label'=>"Phone", 'checked'=>1),
+    'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers),
+    's.siren'=>array('label'=>"ProfId1Short", 'checked'=>$checkedprofid1),
+    's.siret'=>array('label'=>"ProfId2Short", 'checked'=>$checkedprofid2),
+    's.ape'=>array('label'=>"ProfId3Short", 'checked'=>$checkedprofid3),
+    's.idprof4'=>array('label'=>"ProfId4Short", 'checked'=>$checkedprofid4),
+    's.idprof5'=>array('label'=>"ProfId5Short", 'checked'=>$checkedprofid5),
+    's.idprof6'=>array('label'=>"ProfId6Short", 'checked'=>$checkedprofid6),
     'customerorsupplier'=>array('label'=>'Nature', 'checked'=>1),
-    's.fk_prospectlevel'=>array('label'=>$langs->trans("ProspectLevelShort"), 'checked'=>$checkprospectlevel),
-	's.fk_stcomm'=>array('label'=>$langs->trans("StatusProsp"), 'checked'=>$checkstcomm),
-    's.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-    's.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-    's.status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+    's.fk_prospectlevel'=>array('label'=>"ProspectLevelShort", 'checked'=>$checkprospectlevel),
+	's.fk_stcomm'=>array('label'=>"StatusProsp", 'checked'=>$checkstcomm),
+    's.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
+    's.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+    's.status'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -230,9 +234,18 @@ if (empty($reshook))
     	$search_stcomm='';
      	$search_level_from='';
      	$search_level_to='';
+     	$toselect='';
     	$search_array_options=array();
     }
 
+    // Mass actions
+    $objectclass='Societe';
+    $objectlabel='ThirdParty';
+    $permtoread = $user->rights->societe->lire;
+    $permtodelete = $user->rights->societe->supprimer;
+    $uploaddir = $conf->societe->dir_output;
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+    
     if ($action == 'setstcomm')
     {
         $object = new Client($db);
@@ -457,6 +470,8 @@ if (! $resql)
 
 $num = $db->num_rows($resql);
 
+$arrayofselected=is_array($toselect)?$toselect:array();
+
 if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && $action != 'list')
 {
     $obj = $db->fetch_object($resql);
@@ -513,6 +528,16 @@ if (GETPOST('delsoc'))
     setEventMessages($langs->trans("CompanyDeleted",GETPOST('delsoc')), null, 'mesgs');
 }
 
+// List of mass actions available
+$arrayofmassactions =  array(
+//    'presend'=>$langs->trans("SendByMail"),
+//    'builddoc'=>$langs->trans("PDFMerge"),
+);
+//if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
+if ($user->rights->societe->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+if ($massaction == 'presend') $arrayofmassactions=array();
+$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -520,7 +545,7 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
 
 $langs->load("other");
 $textprofid=array();
@@ -586,6 +611,7 @@ if (! empty($moreforfilter))
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 if (empty($arrayfields['customerorsupplier']['checked'])) print '<input type="hidden" name="type" value="'.$type.'">';
 
@@ -837,7 +863,7 @@ if (! empty($arrayfields['s.status']['checked']))
 }
 // Action column
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
+$searchpitco=$form->showFilterButtons();
 print $searchpitco;
 print '</td>';
 
@@ -870,14 +896,14 @@ if (! empty($arrayfields['s.fk_stcomm']['checked']))               print_liste_f
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val)
-   {
-       if (! empty($arrayfields["ef.".$key]['checked']))
-       {
-			$align=$extrafields->getAlignFlag($key);
-			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-       }
-   }
+    foreach($extrafields->attribute_label as $key => $val)
+    {
+        if (! empty($arrayfields["ef.".$key]['checked']))
+        {
+            $align=$extrafields->getAlignFlag($key);
+            print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+        }
+    }
 }
 // Hook fields
 $parameters=array('arrayfields'=>$arrayfields);
@@ -886,7 +912,7 @@ print $hookmanager->resPrint;
 if (! empty($arrayfields['s.datec']['checked']))  print_liste_field_titre($arrayfields['s.datec']['label'],$_SERVER["PHP_SELF"],"s.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.tms']['checked']))    print_liste_field_titre($arrayfields['s.tms']['label'],$_SERVER["PHP_SELF"],"s.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.status']['checked'])) print_liste_field_titre($arrayfields['s.status']['label'],$_SERVER["PHP_SELF"],"s.status","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
 
@@ -907,10 +933,10 @@ while ($i < min($num, $limit))
 	$companystatic->code_compta_client=$obj->code_compta;
 	$companystatic->code_compta_fournisseur=$obj->code_compta_fournisseur;
 
-    	$companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
-    	$companystatic->name_alias=$obj->name_alias;
+   	$companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
+   	$companystatic->name_alias=$obj->name_alias;
 
-	print "<tr>";
+	print '<tr class="oddeven">';
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td class="tdoverflowmax200">';
@@ -1100,9 +1126,18 @@ while ($i < min($num, $limit))
     {
         print '<td align="center" class="nowrap">'.$companystatic->getLibStatut(3).'</td>';
     }
-    // Action column
-    print '<td></td>';
 
+    // Action column
+    print '<td class="nowrap" align="center">';
+    if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+    {
+        $selected=0;
+		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+    }
+    print '</td>';
+    if (! $i) $totalarray['nbfield']++;
+    
 	print '</tr>'."\n";
 	$i++;
 }

@@ -631,7 +631,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
        if (! empty($arrayfields["ef.".$key]['checked']))
        {
 			$align=$extrafields->getAlignFlag($key);
-			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
        }
    }
 }
@@ -642,7 +642,7 @@ print $hookmanager->resPrint;
 if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['p.tms']['checked']))    print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"p.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['p.statut']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
 
@@ -651,7 +651,7 @@ while ($i < min($num,$limit))
 {
     $obj = $db->fetch_object($result);
 
-    print "<tr>";
+    print '<tr class="oddeven">';
 
 	$contactstatic->lastname=$obj->lastname;
 	$contactstatic->firstname='';
@@ -669,8 +669,8 @@ while ($i < min($num,$limit))
     if (! empty($arrayfields['p.lastname']['checked']))
     {
         print '<td valign="middle">';
-	  print $contactstatic->getNomUrl(1,'',0);
-	  print '</td>';
+        print $contactstatic->getNomUrl(1,'',0);
+        print '</td>';
     }
 	// Firstname
     if (! empty($arrayfields['p.firstname']['checked']))
@@ -784,12 +784,13 @@ while ($i < min($num,$limit))
         print '<td align="center">'.$contactstatic->getLibStatut(3).'</td>';
     }
     // Action column - Links Add action and Export vcard
-    print '<td align="right">';
-    print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.img_object($langs->trans("AddAction"),"action").'</a>';
+    print '<td class="center">';
+    /*print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.img_object($langs->trans("AddAction"),"action").'</a>';
     print ' &nbsp; ';
-    print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
+    print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
     print img_picto($langs->trans("VCard"),'vcard.png').' ';
-    print '</a></td>';
+    print '</a>'; */
+    print '</td>';
 
     print "</tr>\n";
     $i++;

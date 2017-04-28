@@ -112,7 +112,7 @@ class ExtraFields
 	 *
 	 *  @param	string	$attrname           Code of attribute
 	 *  @param  string	$label              label of attribute
-	 *  @param  int		$type               Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
+	 *  @param  int		$type               Type of attribute ('boolean', 'int', 'text', 'varchar', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
 	 *  @param  int		$pos                Position of attribute
 	 *  @param  string	$size               Size/length of attribute
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', ...)
@@ -164,7 +164,7 @@ class ExtraFields
 	 *  This is a private method. For public method, use addExtraField.
 	 *
 	 *	@param	string	$attrname			code of attribute
-	 *  @param	int		$type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
+	 *  @param	int		$type				Type of attribute ('boolean', 'int', 'text', 'varchar', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
 	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
@@ -641,7 +641,6 @@ class ExtraFields
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
 		$sql.= " ORDER BY pos";
 
-		dol_syslog(get_class($this)."::fetch_name_optionals_label", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -727,6 +726,10 @@ class ExtraFields
     		elseif ($type == 'url')
     		{
     		    $showsize='minwidth400imp';
+    		}
+    		elseif ($type == 'boolean')
+    		{
+    		    $showsize='';
     		}
     		else
     		{
@@ -993,23 +996,12 @@ class ExtraFields
 		}
 		elseif ($type == 'checkbox')
 		{
-			$out='';
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+			$form = new Form($db);
+			
 			$value_arr=explode(',',$value);
+			$out=$form->multiselectarray($keysuffix.'options_'.$key.$keyprefix, $param['options'], $value_arr, '', 0, '', 0, '100%');
 
-			foreach ($param['options'] as $keyopt=>$val )
-			{
-
-				$out.='<input class="flat" type="checkbox" name="'.$keysuffix.'options_'.$key.$keyprefix.'[]" '.($moreparam?$moreparam:'');
-				$out.=' value="'.$keyopt.'"';
-
-				if ((is_array($value_arr)) && in_array($keyopt,$value_arr)) {
-					$out.= 'checked';
-				}else {
-					$out.='';
-				}
-
-				$out.='/>'.$val.'<br>';
-			}
 		}
 		elseif ($type == 'radio')
 		{
@@ -1101,6 +1093,9 @@ class ExtraFields
 				if ($resql) {
 					$num = $this->db->num_rows($resql);
 					$i = 0;
+					
+					$data=array();
+					
 					while ( $i < $num ) {
 						$labeltoshow = '';
 						$obj = $this->db->fetch_object($resql);
@@ -1126,12 +1121,9 @@ class ExtraFields
 									$labeltoshow = dol_trunc($obj->$field_toshow, 18) . ' ';
 								}
 							}
-							$out .= '<input class="flat" type="checkbox" name="'.$keysuffix.'options_' . $key . $keyprefix . '[]" ' . ($moreparam ? $moreparam : '');
-							$out .= ' value="' . $obj->rowid . '"';
-
-							$out .= 'checked';
-
-							$out .= '/>' . $labeltoshow . '<br>';
+							
+							$data[$obj->rowid]=$labeltoshow;
+							
 						} else {
 							if (! $notrans) {
 								$translabel = $langs->trans($obj->{$InfoFieldList[1]});
@@ -1145,32 +1137,25 @@ class ExtraFields
 								$labeltoshow = '(not defined)';
 
 							if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
-								$out .= '<input class="flat" type="checkbox" name="'.$keysuffix.'options_' . $key . $keyprefix . '[]" ' . ($moreparam ? $moreparam : '');
-								$out .= ' value="' . $obj->rowid . '"';
-
-								$out .= 'checked';
-								$out .= '';
-
-								$out .= '/>' . $labeltoshow . '<br>';
+								$data[$obj->rowid]=$labeltoshow;
 							}
 
 							if (! empty($InfoFieldList[3])) {
 								$parent = $parentName . ':' . $obj->{$parentField};
 							}
 
-							$out .= '<input class="flat" type="checkbox" name="'.$keysuffix.'options_' . $key . $keyprefix . '[]" ' . ($moreparam ? $moreparam : '');
-							$out .= ' value="' . $obj->rowid . '"';
-
-							$out .= ((is_array($value_arr) && in_array($obj->rowid, $value_arr)) ? ' checked ' : '');
-							;
-							$out .= '';
-
-							$out .= '/>' . $labeltoshow . '<br>';
+							$data[$obj->rowid]=$labeltoshow;
 						}
-
+						
 						$i ++;
 					}
 					$this->db->free($resql);
+					
+					require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+					$form = new Form($db);
+					
+					$out=$form->multiselectarray($keysuffix.'options_'.$key.$keyprefix, $data, $value_arr, '', 0, '', 0, '100%');
+					
 				} else {
 					print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
 				}
@@ -1381,9 +1366,10 @@ class ExtraFields
 			if (is_array($value_arr))
 			{
 				foreach ($value_arr as $keyval=>$valueval) {
-					$value.=$params['options'][$valueval].'<br>';
+					$toprint[]='<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$params['options'][$valueval].'</li>';
 				}
 			}
+			$value='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 		}
 		elseif ($type == 'chkbxlst')
 		{
@@ -1418,7 +1404,7 @@ class ExtraFields
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$value = ''; // value was used, so now we reste it to use it to build final output
-
+				$toprint=array();
 				while ( $obj = $this->db->fetch_object($resql) ) {
 
 					// Several field into label (eq table:code|libelle:rowid)
@@ -1431,9 +1417,9 @@ class ExtraFields
 									$translabel = $langs->trans($obj->$field_toshow);
 								}
 								if ($translabel != $field_toshow) {
-									$value .= dol_trunc($translabel, 18) . '<BR>';
+									$toprint[]='<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.dol_trunc($translabel, 18).'</li>';
 								} else {
-									$value .= $obj->$field_toshow . '<BR>';
+									$toprint[]='<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$obj->$field_toshow.'</li>';
 								}
 							}
 						} else {
@@ -1442,15 +1428,18 @@ class ExtraFields
 								$translabel = $langs->trans($obj->{$InfoFieldList[1]});
 							}
 							if ($translabel != $obj->{$InfoFieldList[1]}) {
-								$value .= dol_trunc($translabel, 18) . '<BR>';
+								$toprint[]='<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.dol_trunc($translabel, 18).'</li>';
 							} else {
-								$value .= $obj->{$InfoFieldList[1]} . '<BR>';
+								$toprint[]='<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$obj->{$InfoFieldList[1]}.'</li>';
 							}
 						}
 					}
 				}
-			} else
+				$value='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
+				
+			} else {
 				dol_syslog(get_class($this) . '::showOutputField error ' . $this->db->lasterror(), LOG_WARNING);
+			}
 		}
 		elseif ($type == 'link')
 		{

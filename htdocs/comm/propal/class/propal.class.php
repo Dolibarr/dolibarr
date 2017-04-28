@@ -7,7 +7,7 @@
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2016 Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2017 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador          <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
@@ -3113,21 +3113,21 @@ class Propal extends CommonObject
             $line->qty=1;
             $line->subprice=100;
             $line->price=100;
-            $line->tva_tx=19.6;
+            $line->tva_tx=20;
             $line->localtax1_tx=0;
             $line->localtax2_tx=0;
             if ($xnbp == 2)
             {
                 $line->total_ht=50;
-                $line->total_ttc=59.8;
-                $line->total_tva=9.8;
+                $line->total_ttc=60;
+                $line->total_tva=10;
                 $line->remise_percent=50;
             }
             else
             {
                 $line->total_ht=100;
-                $line->total_ttc=119.6;
-                $line->total_tva=19.6;
+                $line->total_ttc=120;
+                $line->total_tva=20;
                 $line->remise_percent=00;
             }
 
@@ -3135,6 +3135,7 @@ class Propal extends CommonObject
             {
             	$prodid = mt_rand(1, $num_prods);
             	$line->fk_product=$prodids[$prodid];
+		$line->product_ref='SPECIMEN';
             }
 
             $this->lines[$xnbp]=$line;

@@ -556,7 +556,8 @@ if ($resql)
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	
+    if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+    
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -695,7 +696,7 @@ if ($resql)
 	}
 	// Action column
 	print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+	$searchpitco=$form->showFilterButtons();
 	print $searchpitco;
 	print '</td>';
 	
@@ -726,7 +727,7 @@ if ($resql)
            if (! empty($arrayfields["ef.".$key]['checked'])) 
            {
 				$align=$extrafields->getAlignFlag($key);
-				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+				print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
            }
 	   }
 	}
@@ -737,7 +738,7 @@ if ($resql)
 	if (! empty($arrayfields['p.datec']['checked']))     print_liste_field_titre($arrayfields['p.datec']['label'],$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['p.tms']['checked']))       print_liste_field_titre($arrayfields['p.tms']['label'],$_SERVER["PHP_SELF"],"p.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['p.fk_statut']['checked'])) print_liste_field_titre($arrayfields['p.fk_statut']['label'],$_SERVER["PHP_SELF"],"p.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print '</tr>'."\n";
 	
 	$now = dol_now();
@@ -746,12 +747,12 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
+		
 		
     	$objectstatic->id=$obj->rowid;
     	$objectstatic->ref=$obj->ref;
     		
-		print '<tr>';
+		print '<tr class="oddeven">';
 		
 		if (! empty($arrayfields['p.ref']['checked']))
 		{
@@ -779,7 +780,7 @@ if ($resql)
     			print '</td>';
     		}
     		// Other picto tool
-    		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+    		print '<td width="16" align="right" class="nobordernopadding">';
     		$filename=dol_sanitizeFileName($obj->ref);
     		$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
     		$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -807,7 +808,7 @@ if ($resql)
 		// Thirdparty
 		if (! empty($arrayfields['s.nom']['checked']))
 		{
-    		print '<td>';
+    		print '<td class="tdoverflowmax200">';
     		print $companystatic->getNomUrl(1,'customer');
     		print '</td>';
     		if (! $i) $totalarray['nbfield']++;

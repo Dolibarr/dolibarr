@@ -120,7 +120,7 @@ class FormActions
         {
         	//var_dump($selected);
         	if ($selected == 'done') $selected='100';
-            print '<select '.($canedit?'':'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat">';
+            print '<select '.($canedit?'':'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat maxwidth100">';
             if ($showempty) print '<option value=""'.($selected == ''?' selected':'').'></option>';
             foreach($listofstatus as $key => $val)
             {
@@ -207,8 +207,8 @@ class FormActions
         		$ref=$action->getNomUrl(1,-1);
         		$label=$action->getNomUrl(0,38);
                 
-        		$var=!$var;
-        		print '<tr '.$bc[$var].'>';
+        		
+        		print '<tr class="oddeven">';
 				print '<td>'.$ref.'</td>';
         		print '<td>'.$label.'</td>';
         		print '<td>'.$action->type.'</td>';

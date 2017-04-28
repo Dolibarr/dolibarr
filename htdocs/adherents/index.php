@@ -246,8 +246,7 @@ $var=true;
 krsort($Total);
 foreach ($Total as $key=>$value)
 {
-    $var=!$var;
-    print "<tr ".$bc[$var].">";
+    print '<tr class="oddeven">';
     print "<td><a href=\"./subscription/list.php?date_select=$key\">$key</a></td>";
     print "<td align=\"right\">".$Number[$key]."</td>";
     print "<td align=\"right\">".price($value)."</td>";
@@ -266,9 +265,6 @@ print "</table><br>\n";
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
-
-$var=true;
 
 /*
  * Last modified members
@@ -295,12 +291,10 @@ if ($resql)
 	if ($num)
 	{
 		$i = 0;
-		$var = True;
 		while ($i < $num)
 		{
-			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			$staticmember->id=$obj->rowid;
 			$staticmember->lastname=$obj->lastname;
 			$staticmember->firstname=$obj->firstname;
@@ -358,12 +352,10 @@ if ($resql)
 	if ($num)
 	{
 		$i = 0;
-		$var = True;
 		while ($i < $num)
 		{
-			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			$subscriptionstatic->id=$obj->cid;
 			$subscriptionstatic->ref=$obj->cid;
 			$staticmember->id=$obj->rowid;
@@ -407,8 +399,7 @@ print "</tr>\n";
 
 foreach ($AdherentType as $key => $adhtype)
 {
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	print '<tr class="oddeven">';
 	print '<td>'.$adhtype->getNomUrl(1, dol_size(32)).'</td>';
 	print '<td align="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0?$MemberToValidate[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->subscription,0,3).'</td>';
 	print '<td align="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0) > 0) ? $MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):'').' '.$staticmember->LibStatut(1,$adhtype->subscription,0,3).'</td>';
