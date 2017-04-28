@@ -246,16 +246,16 @@ function dol_shutdown()
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to custom
  *  @return string|string[]      Value found (string or array), or '' if check fails
  */
-function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
+function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 {
 	if (empty($method))
 	{
 		$out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
-		
+
 		// Management of default values
-		if (! isset($_GET['sortfield']))	// If we did a click on a field so sort, we do no appl default values
+		if (! isset($_GET['sortfield']))	// If we did a click on a field to sort, we do no apply default values
 		{
-			if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+		    if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 			{
 				$relativepathstring = $_SERVER["PHP_SELF"];
 				if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
@@ -268,18 +268,40 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 					if (isset($user->default_values[$relativepathstring]['createform'][$paramname])) $out = $user->default_values[$relativepathstring]['createform'][$paramname];
 				}
 			}
-			// Management of default search_filters
+			// Management of default search_filters and sort order
 			elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 			{
-				$relativepathstring = $_SERVER["PHP_SELF"];
+			    $relativepathstring = $_SERVER["PHP_SELF"];
 				if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
 				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
 				global $user;
 				if (! empty($user->default_values))		// $user->default_values defined from menu default values, and values loaded not at first 
 				{
-					//var_dump($user->default_values[$relativepathstring]);
-					if (isset($user->default_values[$relativepathstring]['filters'][$paramname])) $out = $user->default_values[$relativepathstring]['filters'][$paramname];
+				    //var_dump($user->default_values[$relativepathstring]);
+        			if ($paramname == 'sortfield')
+        			{
+        			    if (isset($user->default_values[$relativepathstring]['sortorder'])) 
+        			    {
+        			        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
+        			        {
+        			            if ($out) $out.=', ';
+        			            $out.=$key;
+        			        }
+        			    }
+        			}
+        			elseif ($paramname == 'sortorder')
+        			{
+        			    if (isset($user->default_values[$relativepathstring]['sortorder'])) 
+        			    {
+        			        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
+        			        {
+        			            if ($out) $out.=', ';
+        			            $out.=$val;
+        			        }
+        			    }
+        			}
+				    elseif (isset($user->default_values[$relativepathstring]['filters'][$paramname])) $out = $user->default_values[$relativepathstring]['filters'][$paramname];
 				}
 			}
 		}
@@ -3178,6 +3200,9 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	$tag='th';
 	if ($thead==2) $tag='div';
 
+	$tmpsortfield=explode(',',$sortfield);
+	$sortfield=trim($tmpsortfield[0]);
+	
 	// If field is used as sort criteria we use a specific class
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
 	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '. $moreattrib.'>';
@@ -3192,13 +3217,13 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 
 		if ($field != $sortfield)
 		{
-            if ($sortorder == 'DESC') $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
-            if ($sortorder == 'ASC' || ! $sortorder) $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
+            if (preg_match('/^DESC/', $sortorder)) $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
+            else $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
 		}
 		else
 		{
-            if ($sortorder == 'DESC' || ! $sortorder) $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
-            if ($sortorder == 'ASC') $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
+            if (preg_match('/^ASC/', $sortorder)) $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
+		    else $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
 		}
 	}
 
@@ -3227,12 +3252,12 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		}
 		else
 		{
-			if ($sortorder == 'DESC' ) {
+			if (preg_match('/^DESC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
 				$sortimg.= '<span class="nowrap">'.img_up("Z-A",0).'</span>';
 			}
-			if ($sortorder == 'ASC' ) {
+			if (preg_match('/^ASC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 				$sortimg.= '<span class="nowrap">'.img_down("A-Z",0).'</span>';

@@ -1306,10 +1306,10 @@ if ($id)
                     if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
 
                     print '<td colspan="3" align="center">';
+                    print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
                     print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
-                    print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
                 }
