@@ -27,6 +27,8 @@ CREATE TABLE llx_website_page
 	keywords      varchar(255),
 	content		  mediumtext,		-- text is not enough in size
     status        integer,
-    date_creation     datetime,
-	tms           timestamp
+    fk_user_create integer,
+    fk_user_modif  integer,
+    date_creation  datetime,
+	tms            timestamp
 ) ENGINE=innodb;

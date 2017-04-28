@@ -137,6 +137,9 @@ ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;
 
 ALTER TABLE llx_cronjob ADD COLUMN processing integer NOT NULL DEFAULT 0;
 
+ALTER TABLE llx_website ADD COLUMN fk_user_create integer;
+ALTER TABLE llx_website ADD COLUMN fk_user_modif integer;
+
 
 create table llx_payment_various
 (
