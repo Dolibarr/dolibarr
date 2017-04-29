@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/import/modules_import.php';
 /**
  *	Class to import Excel files
  */
-class Importxlsx extends ModeleImports
+class ImportXlsx extends ModeleImports
 {
     var $db;
     var $datatoimport;

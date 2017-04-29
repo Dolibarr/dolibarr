@@ -753,7 +753,6 @@ if ($object->id > 0)
 	
 	print '</div>';
 	
-	print '<br>';
 
 	if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
 	{

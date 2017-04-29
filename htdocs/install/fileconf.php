@@ -45,13 +45,13 @@ dolibarr_install_syslog("--- fileconf: entering fileconf.php page");
 // install.forced.php into directory htdocs/install (This is the case with some wizard
 // installer like DoliWamp, DoliMamp or DoliBuntu).
 // We first init "forced values" to nothing.
-if (! isset($force_install_noedit))			$force_install_noedit='';	// 1=To block var specific to distrib, 2 to block all technical parameters
+if (! isset($force_install_noedit))			    $force_install_noedit='';	// 1=To block vars specific to distrib, 2 to block all technical parameters
 if (! isset($force_install_type))				$force_install_type='';
 if (! isset($force_install_dbserver))			$force_install_dbserver='';
 if (! isset($force_install_port))				$force_install_port='';
 if (! isset($force_install_database))			$force_install_database='';
-if (! isset($force_install_prefix))			$force_install_prefix='';
-if (! isset($force_install_createdatabase))	$force_install_createdatabase='';
+if (! isset($force_install_prefix))			    $force_install_prefix='';
+if (! isset($force_install_createdatabase))	    $force_install_createdatabase='';
 if (! isset($force_install_databaselogin))		$force_install_databaselogin='';
 if (! isset($force_install_databasepass))		$force_install_databasepass='';
 if (! isset($force_install_databaserootlogin))	$force_install_databaserootlogin='';
@@ -324,7 +324,7 @@ if (! empty($force_install_message))
 		?>
 			<select id="db_type"
 			        name="db_type"
-				<?php if ($force_install_noedit && $force_install_type !== null) {
+				<?php if ($force_install_noedit == 2 && $force_install_type !== null) {
 					print ' disabled';
 				} ?>
 			>

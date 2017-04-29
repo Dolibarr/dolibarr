@@ -137,6 +137,9 @@ ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;
 
 ALTER TABLE llx_cronjob ADD COLUMN processing integer NOT NULL DEFAULT 0;
 
+ALTER TABLE llx_website ADD COLUMN fk_user_create integer;
+ALTER TABLE llx_website ADD COLUMN fk_user_modif integer;
+
 
 create table llx_payment_various
 (
@@ -173,4 +176,9 @@ create table llx_default_values
 ALTER TABLE llx_default_values ADD UNIQUE INDEX uk_default_values(type, entity, user_id, page, param);
 
 
+ALTER TABLE llx_supplier_proposaldet ADD INDEX idx_supplier_proposaldet_fk_supplier_proposal (fk_supplier_proposal);
+ALTER TABLE llx_supplier_proposaldet ADD INDEX idx_supplier_proposaldet_fk_product (fk_product);
+
+ALTER TABLE llx_supplier_proposaldet ADD CONSTRAINT fk_supplier_proposaldet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
+ALTER TABLE llx_supplier_proposaldet ADD CONSTRAINT fk_supplier_proposaldet_fk_supplier_proposal FOREIGN KEY (fk_supplier_proposal) REFERENCES llx_supplier_proposal (rowid);
 
