@@ -189,8 +189,8 @@ ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting accoun
 MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Transactions are written in the general ledger
-GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be recorded.
-NoNewRecordSaved=No new record saved
+GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be dispatched. If there is no other error message, this is probably because they were already dispatched.
+NoNewRecordSaved=No new record dispatched
 ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
 ChangeBinding=Change the binding
 
