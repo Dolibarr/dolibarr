@@ -182,3 +182,40 @@ ALTER TABLE llx_supplier_proposaldet ADD INDEX idx_supplier_proposaldet_fk_produ
 ALTER TABLE llx_supplier_proposaldet ADD CONSTRAINT fk_supplier_proposaldet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 ALTER TABLE llx_supplier_proposaldet ADD CONSTRAINT fk_supplier_proposaldet_fk_supplier_proposal FOREIGN KEY (fk_supplier_proposal) REFERENCES llx_supplier_proposal (rowid);
 
+-- NEW inventory module
+CREATE TABLE llx_inventory 
+( 
+rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+datec datetime DEFAULT NULL,
+tms timestamp, 
+fk_warehouse integer DEFAULT 0, 
+entity integer DEFAULT 0, 
+status integer DEFAULT 0, 
+title varchar(255) NOT NULL, 
+date_inventory datetime DEFAULT NULL
+) 
+ENGINE=InnoDB;
+
+CREATE TABLE llx_inventorydet 
+( 
+rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+datec datetime DEFAULT NULL,
+tms timestamp, 
+fk_inventory integer DEFAULT 0, 
+fk_warehouse integer DEFAULT 0,
+fk_product integer DEFAULT 0,  
+entity integer DEFAULT 0, 
+qty_view double DEFAULT 0, 
+qty_stock double DEFAULT 0, 
+qty_regulated double DEFAULT 0, 
+pmp double DEFAULT 0, 
+pa double DEFAULT 0, 
+new_pmp double DEFAULT 0
+) 
+ENGINE=InnoDB;
+
+ALTER TABLE llx_inventory ADD INDEX idx_inventory_tms (tms);
+ALTER TABLE llx_inventory ADD INDEX idx_inventory_datec (datec);
+ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_tms (tms);
+ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_datec (datec);
+ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_fk_inventory (fk_inventory);
