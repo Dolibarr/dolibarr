@@ -3570,14 +3570,14 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
 	    $morelabel=' ('.$reg[1].')';
 	    $rate=preg_replace('/\s*'.preg_quote($morelabel,'/').'/','',$rate);
 	}
-	if (preg_match('/\*/',$rate) || preg_match('/'.constant('MAIN_LABEL_MENTION_NPR').'/i',$rate))
+	if (preg_match('/\*/',$rate))
 	{
 		$rate=str_replace('*','',$rate);
 		$info_bits |= 1;
 	}
 
 	$ret=price($rate,0,'',0,0).($addpercent?'%':'');
-	if ($info_bits & 1) $ret.=' '.($usestarfornpr?'*':constant('MAIN_LABEL_MENTION_NPR'));
+	if ($info_bits & 1) $ret.=' *';
 	$ret.=$morelabel;
 	return $ret;
 }

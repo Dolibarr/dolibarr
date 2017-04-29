@@ -1865,7 +1865,7 @@ if (! function_exists("llxFooter"))
         dol_htmloutput_events();
 
         // Core error message
-        if (defined("MAIN_CORE_ERROR") && constant("MAIN_CORE_ERROR") == 1)
+        if (! empty($conf->global->MAIN_CORE_ERROR))
         {
             // Ajax version
             if ($conf->use_javascript_ajax)

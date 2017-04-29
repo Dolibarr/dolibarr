@@ -51,7 +51,8 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 */
 	public function isActive()
 	{
-		return 1;
+	    global $conf;
+		return empty($conf->global->SYSLOG_DISABLE_LOGHANDLER_FILE)?1:0;    // Set SYSLOG_DISABLE_LOGHANDLER_FILE to 1 to disable this loghandler
 	}
 
 	/**
