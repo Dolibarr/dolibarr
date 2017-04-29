@@ -20,7 +20,7 @@ define("NOLOGIN",1);
 define("NOCSRFCHECK",1);
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/stripe.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/public/stripe/config.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
 

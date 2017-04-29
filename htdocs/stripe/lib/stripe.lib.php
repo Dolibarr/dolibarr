@@ -21,7 +21,35 @@
  *  \brief			Library for common stripe functions
  */
 
+/**
+ *  Define head array for tabs of stripe tools setup pages
+ *
+ *  @return			Array of head
+ */
+function stripeadmin_prepare_head()
+{
+	global $langs, $conf;
 
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/stripe/admin/stripe.php";
+	$head[$h][1] = $langs->trans("Stripe");
+	$head[$h][2] = 'stripeaccount';
+	$h++;
+
+	$object=new stdClass();
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'stripeadmin');
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'stripeadmin','remove');
+
+    return $head;
+}
 
 /**
  * Show header
@@ -69,38 +97,6 @@ function llxFooterStripe()
 	print "</body>\n";
 	print "</html>\n";
 }
-
-/**
- *  Define head array for tabs of stripe tools setup pages
- *
- *  @return			Array of head
- */
-function stripeadmin_prepare_head()
-{
-	global $langs, $conf;
-
-	$h = 0;
-	$head = array();
-
-	$head[$h][0] = DOL_URL_ROOT."/stripe/admin/stripe.php";
-	$head[$h][1] = $langs->trans("Stripe");
-	$head[$h][2] = 'stripeaccount';
-	$h++;
-
-	$object=new stdClass();
-
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'stripeadmin');
-
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'stripeadmin','remove');
-
-    return $head;
-}
-
-
 
 /**
  * Return string with full Url
