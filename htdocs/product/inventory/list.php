@@ -16,27 +16,27 @@
  */
 
 /**
- *	\file       htdocs/inventory/inventory.php
+ *	\file       htdocs/inventory/list.php
  *	\ingroup    product
  *	\brief      File of class to manage inventory
  */
  
-require_once '../main.inc.php';
+require_once '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/listview.class.php';
-require_once DOL_DOCUMENT_ROOT.'/inventory/class/inventory.class.php';
-require_once DOL_DOCUMENT_ROOT.'/inventory/lib/inventory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 
 $langs->load("stock");
 $langs->load("inventory");
 
-if (empty($user->rights->inventory->read)) accessforbidden();
+if (empty($user->rights->stock->read)) accessforbidden();
 		
 llxHeader('',$langs->trans('inventoryListTitle'),'','');
 
@@ -91,7 +91,7 @@ echo $list->render(Inventory::getSQL('All'), array(
 ));
 
 
-/*if (!empty($user->rights->inventory->create))
+/*if (!empty($user->rights->stock->create))
 {
     print '<div class="tabsAction">';
     print '<a class="butAction" href="inventory.php?action=create">'.$langs->trans('inventoryCreate').'</a>';

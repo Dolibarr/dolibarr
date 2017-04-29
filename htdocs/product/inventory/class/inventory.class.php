@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/inventory/class/product.inventory.php
+ *	\file       htdocs/inventory/class/product.class.php
  *	\ingroup    product
  *	\brief      File of class to manage predefined products stock
  */
@@ -434,7 +434,7 @@ class Inventory extends CoreObject
      */
 	public function getNomUrl($withpicto = 1)
     {
-        return '<a href="'.dol_buildpath('/inventory/inventory.php?id='.$this->id, 1).'">'.($withpicto ? img_picto('','object_list.png','',0).' ' : '').$this->getTitle().'</a>';
+        return '<a href="'.DOL_URL_ROOT.'/product/inventory/card.php?id='.$this->id.'">'.($withpicto ? img_picto('','object_list.png','',0).' ' : '').$this->getTitle().'</a>';
 	}
 
     /**

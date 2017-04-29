@@ -16,27 +16,27 @@
  */
 
 /**
- *	\file       htdocs/inventory/inventory.php
+ *	\file       htdocs/inventory/card.php
  *	\ingroup    product
  *	\brief      File of class to manage inventory
  */
  
-require_once '../main.inc.php';
+require_once '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/listview.class.php';
-require_once DOL_DOCUMENT_ROOT.'/inventory/class/inventory.class.php';
-require_once DOL_DOCUMENT_ROOT.'/inventory/lib/inventory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 
 $langs->load('stock');
 $langs->load('inventory');
 
-if(empty($user->rights->inventory->read)) accessforbidden();
+if(empty($user->rights->stock->read)) accessforbidden();
 
 _action();
 
@@ -54,7 +54,7 @@ function _action()
 	
 	switch($action) {
 		case 'create':
-			if (empty($user->rights->inventory->create)) accessforbidden();
+			if (empty($user->rights->stock->create)) accessforbidden();
 			
 			$inventory = new Inventory($db);
 			
@@ -63,7 +63,7 @@ function _action()
 			break;
 		
 		case 'confirmCreate':
-			if (empty($user->rights->inventory->create)) accessforbidden();
+			if (empty($user->rights->stock->create)) accessforbidden();
 		
 			$inventory = new Inventory($db);
 			$inventory->setValues($_POST);
@@ -79,19 +79,19 @@ function _action()
             	$inventory->addProductsFor($fk_warehouse,$fk_category,$fk_supplier,$only_prods_in_stock);
             	$inventory->update($user);
             	
-            	header('Location: '.dol_buildpath('/inventory/inventory.php?id='.$inventory->id.'&action=edit', 1));
+            	header('Location: '.dol_buildpath('/product/inventory/card.php?id='.$inventory->id.'&action=edit', 1));
             	
             }
             else{
             	
             	setEventMessage($inventory->error,'errors');
-            	header('Location: '.dol_buildpath('/inventory/inventory.php?action=create', 1));
+            	header('Location: '.dol_buildpath('/product/inventory/card.php?action=create', 1));
             }
             
 			break;
 			
 		case 'edit':
-			if (!$user->rights->inventory->write) accessforbidden();
+			if (!$user->rights->stock->write) accessforbidden();
 			
 			
 			$inventory = new Inventory($db);
@@ -102,7 +102,7 @@ function _action()
 			break;
 			
 		case 'save':
-			if (!$user->rights->inventory->write) accessforbidden();
+			if (!$user->rights->stock->write) accessforbidden();
 			
 			
 			$id = GETPOST('id');
@@ -120,13 +120,13 @@ function _action()
 			else 
 			{
 				$inventory->udpate($user);
-				header('Location: '.dol_buildpath('inventory/inventory.php?id='.$inventory->getId().'&action=view', 1));
+				header('Location: '.dol_buildpath('/product/inventory/card.php?id='.$inventory->getId().'&action=view', 1));
 			}
 			
 			break;
 			
 		case 'confirm_regulate':
-			if (!$user->rights->inventory->write) accessforbidden();
+			if (!$user->rights->stock->write) accessforbidden();
 			$id = GETPOST('id');
 			
 			$inventory = new Inventory($db);
@@ -160,7 +160,7 @@ function _action()
 			break;
 			
 		case 'add_line':
-			if (!$user->rights->inventory->write) accessforbidden();
+			if (!$user->rights->stock->write) accessforbidden();
 			
 			$id = GETPOST('id');
 			$fk_warehouse = GETPOST('fk_warehouse');
@@ -212,7 +212,7 @@ function _action()
 			break;
 			
 		case 'confirm_delete_line':
-			if (!$user->rights->inventory->write) accessforbidden();
+			if (!$user->rights->stock->write) accessforbidden();
 			
 			
 			//Cette action devrais se faire uniquement si le status de l'inventaire est à 0 mais aucune vérif
@@ -230,7 +230,7 @@ function _action()
 			
 			break;
         case 'confirm_flush':
-            if (!$user->rights->inventory->create) accessforbidden();
+            if (!$user->rights->stock->create) accessforbidden();
             
             
             $id = GETPOST('id');
@@ -247,7 +247,7 @@ function _action()
             
             break;
 		case 'confirm_delete':
-			if (!$user->rights->inventory->create) accessforbidden();
+			if (!$user->rights->stock->create) accessforbidden();
             
 			
 			$id = GETPOST('id');
@@ -276,7 +276,7 @@ function _action()
 			break;
 			
 		default:
-			if (!$user->rights->inventory->write) accessforbidden();
+			if (!$user->rights->stock->write) accessforbidden();
 				
 			$id = GETPOST('id');
 				
@@ -395,13 +395,13 @@ function card(&$inventory, $action='edit')
 		
 	);
 	
-	$can_validate = !empty($user->rights->inventory->validate);
-	$view_url = dol_buildpath('/inventory/inventory.php', 1);
+	$can_validate = !empty($user->rights->stock->validate);
+	$view_url = dol_buildpath('/product/inventory/card.php', 1);
 	
 	$view = array(
 		'mode' => $action
-		,'url' => dol_buildpath('/inventory/inventory.php', 1)
-		,'can_validate' => (int) $user->rights->inventory->validate
+		,'url' => dol_buildpath('/product/inventory/card.php', 1)
+		,'can_validate' => (int) $user->rights->stock->validate
 		,'is_already_validate' => (int) $inventory->status
 		,'token'=>$_SESSION['newtoken']
 	);
@@ -446,10 +446,10 @@ function card_line(&$inventory, &$lines, $mode)
 			'qty_view' => ($Inventorydet->qty_view ? $Inventorydet->qty_view : 0),
 			'qty_stock' => $stock,
 			'qty_regulated' => ($Inventorydet->qty_regulated ? $Inventorydet->qty_regulated : 0),
-			'action' => ($user->rights->inventory->write && $mode=='edit' ? '<a href="'.dol_buildpath('inventory/inventory.php?id='.$inventory->id.'&action=delete_line&rowid='.$Inventorydet->id, 1).'">'.img_picto($langs->trans('inventoryDeleteLine'), 'delete').'</a>' : ''),
+			'action' => ($user->rights->stock->write && $mode=='edit' ? '<a href="'.dol_buildpath('/product/inventory/card.php?id='.$inventory->id.'&action=delete_line&rowid='.$Inventorydet->id, 1).'">'.img_picto($langs->trans('inventoryDeleteLine'), 'delete').'</a>' : ''),
 			'pmp_stock'=>round($pmp_actual,2),
             'pmp_actual'=> round($pmp * $Inventorydet->qty_view,2),
-			'pmp_new'=>(!empty($user->rights->inventory->changePMP) && $mode == 'edit' ? '<input type="text" name="new_pmp['.$k.']" value="'.$Inventorydet->new_pmp.'" size="8" style="text-align:right;" /> <a id="a_save_new_pmp_'.$k.'" href="javascript:save_pmp('.$k.')">'.img_picto($langs->trans('Save'), 'bt-save.png@inventory').'</a>' :  price($Inventorydet->new_pmp)),
+			'pmp_new'=>(!empty($user->rights->stock->changePMP) && $mode == 'edit' ? '<input type="text" name="new_pmp['.$k.']" value="'.$Inventorydet->new_pmp.'" size="8" style="text-align:right;" /> <a id="a_save_new_pmp_'.$k.'" href="javascript:save_pmp('.$k.')">'.img_picto($langs->trans('Save'), 'bt-save.png@inventory').'</a>' :  price($Inventorydet->new_pmp)),
             'pa_stock'=>round($last_pa * $stock,2),
             'pa_actual'=>round($last_pa * $Inventorydet->qty_view,2),
 			'current_pa_stock'=>round($current_pa * $stock,2),
@@ -551,7 +551,7 @@ function _footerList($view,$total_pmp,$total_pmp_actual,$total_pa,$total_pa_actu
             <th>&nbsp;</th>
             <th align="right"><?php echo price($total_pmp_actual) ?></th>
             <?php
-            if(!empty($user->rights->inventory->changePMP)) {
+            if(!empty($user->rights->stock->changePMP)) {
                	echo '<th>&nbsp;</th>';	
 			}
 			?>
@@ -626,7 +626,7 @@ function _headerList($view) {
 	    	    <th>&nbsp;</th>
 	    	    <th><?php echo $langs->trans('PMP'); ?></th>
 	    	    <?php
-	    	    if(!empty($user->rights->inventory->changePMP)) {
+	    	    if(!empty($user->rights->stock->changePMP)) {
 	    	    	echo '<th rel="newPMP">'.$langs->trans('ColumnNewPMP').'</th>';
 	    	    }
 	    	    ?>

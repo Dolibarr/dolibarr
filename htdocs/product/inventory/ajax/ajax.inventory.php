@@ -9,7 +9,7 @@
     switch ($put)
     {
         case 'qty':
-            if (empty($user->rights->inventory->write)) { echo -1; exit; }
+            if (empty($user->rights->stock->write)) { echo -1; exit; }
             
             $fk_det_inventory = GETPOST('fk_det_inventory');
             
@@ -29,7 +29,7 @@
             break;
 			
         case 'pmp':
-            if (!$user->rights->inventory->write || !$user->rights->inventory->changePMP) { echo -1; exit; }
+            if (!$user->rights->stock->write || !$user->rights->stock->changePMP) { echo -1; exit; }
             
             $fk_det_inventory = GETPOST('fk_det_inventory');
             

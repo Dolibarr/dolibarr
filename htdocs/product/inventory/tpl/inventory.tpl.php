@@ -136,7 +136,7 @@
                 <?php if ($can_validate == 1) { ?>
                     <td align="right"><?php echo price($row['pmp_actual']); ?></td>
                     <?php
-                    if(!empty($user->rights->inventory->changePMP)) {
+                    if(!empty($user->rights->stock->changePMP)) {
                     	echo '<td align="right">'.$row['pmp_new'].'</td>';	
 					}
                     ?>
@@ -169,7 +169,7 @@
 				<a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=exportCSV" class="butAction"><?php echo $langs->trans('ExportCSV') ?></a>
 				<a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=edit" class="butAction"><?php echo $langs->trans('Modify') ?></a>
 				<?php 
-				 if(!empty($user->rights->inventory->changePMP)) {
+				 if(!empty($user->rights->stock->changePMP)) {
 				 	echo '<a href="'.$view_url.'?id='.$inventory->id.'&action=changePMP" class="butAction">'.$langs->trans('ApplyPMP').'</a>';
 				 }
 				

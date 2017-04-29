@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/core/class/coreobject.inventory.php
+ *	\file       htdocs/core/class/coreobject.class.php
  *	\ingroup    core
  *	\brief      File of class to manage all object. Might be replace or merge into commonobject
  */
@@ -663,7 +663,7 @@ class CoreObject extends CommonObject
 			}
 			else
             {
-				$this->{$key} = @stripslashes($value);
+				$this->{$key} = $value;
 			}
 		}
 

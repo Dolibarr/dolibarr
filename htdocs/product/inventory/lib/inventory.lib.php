@@ -31,12 +31,12 @@ function inventoryAdminPrepareHead()
 {
     global $langs, $conf;
 
-    $langs->load("inventory@inventory");
+    $langs->load("inventory");
 
     $h = 0;
     $head = array();
 
-    $head[$h][0] = dol_buildpath("/admin/inventory.php", 1);
+    $head[$h][0] = DOL_URL_ROOT."/admin/inventory.php";
     $head[$h][1] = $langs->trans("Parameters");
     $head[$h][2] = 'settings';
     $h++;
@@ -60,7 +60,7 @@ function inventoryPrepareHead(&$inventory, $title='Inventory', $get='')
 	global $langs;
 	
 	return array(
-		array(dol_buildpath('/inventory/inventory.php?id='.$inventory->id.$get, 1), $langs->trans($title),'inventory')
+		array(dol_buildpath('/product/inventory/card.php?id='.$inventory->id.$get, 1), $langs->trans($title),'inventory')
 	);
 }
 
