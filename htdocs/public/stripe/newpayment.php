@@ -16,6 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+*  \file       htdocs/public/stripe/newpayment.php
+*  \ingroup    Stripe
+*  \brief      Page to do payment with Stripe
+*/
+
 define("NOLOGIN",1);
 define("NOCSRFCHECK",1);
 
@@ -25,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/public/stripe/config.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
 
 // Security check
-if (empty($conf->paypal->enabled)) accessforbidden('',0,0,1);
+if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
 
 $langs->load("main");
 $langs->load("other");
@@ -67,13 +73,13 @@ if (GETPOST("action") == 'charge')
   $token = GETPOST("stripeToken");
   $email = GETPOST("stripeEmail");
 
-  $customer = \Stripe\Customer::create(array(
+  $customer = \stripe\Customer::create(array(
       'email' => $email,
       'card'  => $token
   ));
 	
 	$ttc = round($ttc, 2);
-  $charge = \Stripe\Charge::create(array(
+  $charge = \stripe\Charge::create(array(
       'customer' => $customer->id,
       'amount'   => $ttc,
       'currency' => $conf->currency,
@@ -122,7 +128,7 @@ if (GETPOST("action") == 'charge')
                             </td>
                             
                             <td>
-                                Invoice #: <?php echo $invoice->ref; ?><br>
+                                <?php echo $langs->trans("Invoice") . ' : ' . $invoice->ref; ?><br>
                                 <?php echo $langs->trans('Date') . ' : ' . dol_print_date($invoice->date, 'day'); ?><br>
                                 <?php echo $langs->trans('DateMaxPayment') . ' : ' . dol_print_date($invoice->date_validation, 'day'); ?>
                             </td>

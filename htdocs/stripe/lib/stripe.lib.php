@@ -112,6 +112,7 @@ function showStripePaymentUrl($type,$ref)
 	$langs->load("paypal");
     $langs->load("paybox");
 	$langs->load("stripe");
+
     $servicename='Stripe';
     $out='<br><br>';
     $out.=img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment",$servicename).'<br>';
@@ -139,11 +140,6 @@ function getStripePaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
     if ($type == 'free')
     {
 	    $out=DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?amount='.($mode?'<font color="#666666">':'').$amount.($mode?'</font>':'').'&tag='.($mode?'<font color="#666666">':'').$freetag.($mode?'</font>':'');
-	    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
-	    {
-	    	if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
-	    	else $out.='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-	    }
     }
     if ($type == 'order')
     {
@@ -151,17 +147,6 @@ function getStripePaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
         if ($mode == 1) $out.='order_ref';
         if ($mode == 0) $out.=urlencode($ref);
 	    $out.=($mode?'</font>':'');
-        if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
-        {
-    	    if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
-            else
-            {
-                $out.='&securekey='.($mode?'<font color="#666666">':'');
-                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + order_ref)";
-                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $type . $ref, 2);
-                $out.=($mode?'</font>':'');
-            }
-        }
     }
     if ($type == 'invoice')
     {
@@ -169,17 +154,6 @@ function getStripePaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
         if ($mode == 1) $out.='invoice_ref';
         if ($mode == 0) $out.=urlencode($ref);
 	    $out.=($mode?'</font>':'');
-        if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
-        {
-    	    if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
-            else
-            {
-                $out.='&securekey='.($mode?'<font color="#666666">':'');
-                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + invoice_ref)";
-                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $type . $ref, 2);
-                $out.=($mode?'</font>':'');
-            }
-        }
     }
     if ($type == 'contractline')
     {
@@ -187,17 +161,6 @@ function getStripePaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
         if ($mode == 1) $out.='contractline_ref';
         if ($mode == 0) $out.=urlencode($ref);
 	    $out.=($mode?'</font>':'');
-        if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
-        {
-    	    if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
-            else
-            {
-                $out.='&securekey='.($mode?'<font color="#666666">':'');
-                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + contractline_ref)";
-                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $type . $ref, 2);
-                $out.=($mode?'</font>':'');
-            }
-        }
     }
     if ($type == 'membersubscription')
     {
@@ -205,17 +168,6 @@ function getStripePaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
         if ($mode == 1) $out.='member_ref';
         if ($mode == 0) $out.=urlencode($ref);
 	    $out.=($mode?'</font>':'');
-        if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
-        {
-    	    if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
-            else
-            {
-                $out.='&securekey='.($mode?'<font color="#666666">':'');
-                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + member_ref)";
-                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $type . $ref, 2);
-                $out.=($mode?'</font>':'');
-            }
-        }
     }
 
     // For multicompany
