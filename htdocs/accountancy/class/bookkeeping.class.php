@@ -169,7 +169,15 @@ class BookKeeping extends CommonObject
 		if (empty($this->numero_compte) || $this->numero_compte == '-1')
 		{
 		    $langs->load("errors");
-            $this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet);		    
+            if (in_array($this->doc_type, array('bank', 'expense_report')))
+            {
+		        $this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet,  $this->doc_type);
+            }
+            else
+            {
+                $this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForInvoiceLine', $this->fk_doc,  $this->doc_type);		    
+            }
+		    
 		    return -1;
 		}
 		
@@ -178,11 +186,12 @@ class BookKeeping extends CommonObject
 		
 		$this->piece_num = 0;
 		
-		// first check if line not yet in bookkeeping
+		// First check if line not yet already in bookkeeping
 		$sql = "SELECT count(*) as nb";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE doc_type = '" . $this->doc_type . "'";
-		$sql .= " AND fk_docdet = " . $this->fk_docdet;
+		$sql .= " AND fk_doc = " . $this->fk_doc;
+		$sql .= " AND fk_docdet = " . $this->fk_docdet;                   // This field can be 0 is record is for several lines 
 		$sql .= " AND numero_compte = '" . $this->numero_compte . "'";
 	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
 		
