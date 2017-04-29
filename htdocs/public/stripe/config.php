@@ -22,11 +22,11 @@
 *  \brief      Page to move config in api
 */
 
-require '../main.inc.php';
+require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-dol_include_once('/stripe/lib/stripe.lib.php');
-require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/stripe.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
 
 //use \includes\stripe as stripe;
 $stripe = array(

@@ -16,14 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require '../main.inc.php';
- 
-// Load Dolibarr environment
-require_once DOL_DOCUMENT_ROOT.'/stripe/config.php');
-require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php');
-
 define("NOLOGIN",1);
 define("NOCSRFCHECK",1);
+
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/stripe.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/public/stripe/config.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
+
+// Security check
+if (empty($conf->paypal->enabled)) accessforbidden('',0,0,1);
 
 $langs->load("main");
 $langs->load("other");
@@ -33,19 +35,6 @@ $source=GETPOST("source",'alpha');
 $ref=GETPOST('ref','alpha');
 
 $form = new Form($db);
-
-/**
- * Header empty
- *
- * @return	void
- */
-function llxHeader() {}
-/**
- * Footer empty
- *
- * @return	void
- */
-function llxFooter() {}
 
 $invoice = null;
 
@@ -68,8 +57,6 @@ if ($source == 'invoice')
 	{
 		$result=$invoice->fetch_thirdparty($invoice->socid);
 	}
-
-
 }
 
 $pay = false;
@@ -225,7 +212,7 @@ if (GETPOST("action") == 'charge')
 		<?php //var_dump($mysoc); ?>
 		
 		<span class="center">
-			<?php html_print_paypal_footer($mysoc,$langs); ?>
+			<?php html_print_stripe_footer($mysoc,$langs); ?>
 		</span>
 		
 		<?php //echo var_dump($mysoc); ?>

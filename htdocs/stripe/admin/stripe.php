@@ -23,7 +23,7 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/stripe.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -31,6 +31,8 @@ $servicename='Stripe';
 
 $langs->load("admin");
 $langs->load("other");
+$langs->load("paypal");
+$langs->load("paybox");
 $langs->load("stripe");
 
 if (!$user->admin)
@@ -43,7 +45,7 @@ if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
 
-    $result=dolibarr_set_const($db, "STRIPE_API_SANDBOX",GETPOST('STRIPE_API_SANDBOX','alpha'),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "STRIPE_TEST",GETPOST('STRIPE_TEST','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "STRIPE_TEST_SECRET_KEY",GETPOST('STRIPE_TEST_SECRET_KEY','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
@@ -118,8 +120,8 @@ print "</tr>\n";
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td class="fieldrequired">';
-print $langs->trans("STRIPE_API_SANDBOX").'</td><td>';
-print $form->selectyesno("STRIPE_API_SANDBOX",$conf->global->STRIPE_API_SANDBOX,1);
+print $langs->trans("STRIPE_TEST").'</td><td>';
+print $form->selectyesno("STRIPE_TEST",$conf->global->STRIPE_TEST,1);
 print '</td></tr>';
 
 $var=!$var;
@@ -150,7 +152,11 @@ print '<input size="32" type="text" name="STRIPE_LIVE_PUBLISHABLE_KEY" value="'.
 print '<br>'.$langs->trans("Example").': pk_live_xxxxxxxxxxxxxxxxxxxxxxxx';
 print '</td></tr>';
 
-$var=true;
+print '</table>';
+
+print '<br>';
+
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("UsageParameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -173,14 +179,14 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("MessageOK").'</td><td>';
-$doleditor=new DolEditor('STRIPE_MESSAGE_OK',$conf->global->STRIPE_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_2,60);
+$doleditor=new DolEditor('STRIPE_MESSAGE_OK',$conf->global->STRIPE_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
 $doleditor->Create();
 print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("MessageKO").'</td><td>';
-$doleditor=new DolEditor('STRIPE_MESSAGE_KO',$conf->global->STRIPE_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_2,60);
+$doleditor=new DolEditor('STRIPE_MESSAGE_KO',$conf->global->STRIPE_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
 $doleditor->Create();
 print '</td></tr>';
 
@@ -194,6 +200,7 @@ print '</form>';
 
 print '<br><br>';
 
+/*
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
 print '<b>'.DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?amount=<i>9.99</i>&tag=<i>your_free_tag</i></b>'."<br>\n";
@@ -220,6 +227,7 @@ if (! empty($conf->adherent->enabled))
 
 print "<br>";
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
+*/
 
 llxFooter();
 
