@@ -232,7 +232,7 @@ function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,
 
     $h=0;
     $head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
-    $head[$h][1] = $langs->trans("Journal");
+    $head[$h][1] = $langs->trans("Journalization");
     $head[$h][2] = 'journal';
 
     dol_fiche_head($head, 'journal');
