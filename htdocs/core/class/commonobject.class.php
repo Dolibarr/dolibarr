@@ -238,6 +238,7 @@ abstract class CommonObject
 
 	/**
 	 * @var int Delivery address ID
+	 * @deprecated
 	 * @see setDeliveryAddress()
 	 */
 	public $fk_delivery_address;
@@ -1623,7 +1624,8 @@ abstract class CommonObject
 
     /**
      *	Define delivery address
-     *
+     *  @deprecated
+     *  
      *	@param      int		$id		Address id
      *	@return     int				<0 si ko, >0 si ok
      */
@@ -3223,51 +3225,14 @@ abstract class CommonObject
 
     /**
      *  Return if a country is inside the EEC (European Economic Community)
-     *  TODO Add a field into dictionary
+     *  @deprecated
      *
      *  @return     boolean		true = country inside EEC, false = country outside EEC
      */
     function isInEEC()
     {
-        // List of all country codes that are in europe for european vat rules
-        // List found on http://ec.europa.eu/taxation_customs/common/faq/faq_1179_en.htm#9
-        $country_code_in_EEC=array(
-    			'AT',	// Austria
-    			'BE',	// Belgium
-    			'BG',	// Bulgaria
-    			'CY',	// Cyprus
-    			'CZ',	// Czech republic
-    			'DE',	// Germany
-    			'DK',	// Danemark
-    			'EE',	// Estonia
-    			'ES',	// Spain
-    			'FI',	// Finland
-    			'FR',	// France
-    			'GB',	// United Kingdom
-    			'GR',	// Greece
-    			'HR',   // Croatia
-                'NL',	// Holland
-    			'HU',	// Hungary
-    			'IE',	// Ireland
-    			'IM',	// Isle of Man - Included in UK
-    			'IT',	// Italy
-    			'LT',	// Lithuania
-    			'LU',	// Luxembourg
-    			'LV',	// Latvia
-    			'MC',	// Monaco - Included in France
-    			'MT',	// Malta
-                //'NO',	// Norway
-    			'PL',	// Poland
-    			'PT',	// Portugal
-    			'RO',	// Romania
-    			'SE',	// Sweden
-    			'SK',	// Slovakia
-    			'SI',	// Slovenia
-    			'UK',	// United Kingdom
-        //'CH',	// Switzerland - No. Swizerland in not in EEC
-        );
-        //print "dd".$this->country_code;
-        return in_array($this->country_code,$country_code_in_EEC);
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+        return isInEEC($this);
     }
 
 
@@ -3752,21 +3717,6 @@ abstract class CommonObject
             if ($res) break;
         }
     }
-
-
-	/**
-	 * Show the array with all margin infos
-	 *
-	 * @param 		bool	$force_price	Force price
-	 * @return		void
-	 * @deprecated	3.8 Load FormMargin class and make a direct call to displayMarginInfos
-	 */
-	function displayMarginInfos($force_price=false)
-	{
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
-		$formmargin=new FormMargin($this->db);
-		$formmargin->displayMarginInfos($this, $force_price);
-	}
 
 
 	/**
@@ -4710,5 +4660,62 @@ abstract class CommonObject
 			}
 		}
 		return $buyPrice;
+	}
+	
+	
+
+	/**
+	 * Create object into database
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 *
+	 * @return int <0 if KO, Id of created object if OK
+	 */
+	public function createCommon(User $user, $notrigger = false)
+	{
+	    
+	}
+	
+	
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param int    $id  Id object
+	 * @param string $ref Ref
+	 *
+	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetchCommon($id, $ref = null)
+	{
+	    
+	}
+	
+
+	/**
+	 * Update object into database
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 *
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function updateCommon(User $user, $notrigger = false)
+	{
+	    
+	}
+	
+	
+	/**
+	 * Delete object in database
+	 *
+	 * @param User $user      User that deletes
+	 * @param bool $notrigger false=launch triggers after, true=disable triggers
+	 *
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function deleteCommon(User $user, $notrigger = false)
+	{
+	    
 	}
 }

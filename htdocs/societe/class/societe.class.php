@@ -3327,18 +3327,6 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *  Set commnunication level
-	 *
-	 *  @param  User	$user		User making change
-	 *	@return	int					<0 if KO, >0 if OK
-     * @deprecated Use update function instead
-	 */
-	function set_commnucation_level($user)
-	{
-		return $this->update($this->id, $user);
-	}
-
-	/**
 	 *  Set outstanding value
 	 *
 	 *  @param  User	$user		User making change

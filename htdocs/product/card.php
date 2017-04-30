@@ -1801,59 +1801,60 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || ! empty($conf->
 /* Barre d'action                                                             */
 /*                                                                            */
 /* ************************************************************************** */
-
-print "\n".'<div class="tabsAction">'."\n";
-
-$parameters=array();
-$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-if (empty($reshook))
+if ($action != 'create' && $action != 'edit')
 {
-    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer ) || 
-       ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))
+    print "\n".'<div class="tabsAction">'."\n";
+    
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook))
     {
-        if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
-
-        if (! isset($object->no_button_copy) || $object->no_button_copy <> 1)
+        if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer ) || 
+           ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))
         {
-            if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
+            if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+    
+            if (! isset($object->no_button_copy) || $object->no_button_copy <> 1)
             {
-                print '<div class="inline-block divButAction"><span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span></div>'."\n";
-            }
-            else
-			{
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+                if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
+                {
+                    print '<div class="inline-block divButAction"><span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span></div>'."\n";
+                }
+                else
+    			{
+                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+                }
             }
         }
-    }
-    $object_is_used = $object->isObjectUsed($object->id);
-
-    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer)
-    || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer))
-    {
-        if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
+        $object_is_used = $object->isObjectUsed($object->id);
+    
+        if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer)
+        || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer))
         {
-            if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
+            if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
             {
-                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+                if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
+                {
+                    print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+                }
+                else
+    			{
+                    print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
+                }
             }
             else
-			{
-                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
+    		{
+                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
             }
         }
         else
-		{
-            print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
+    	{
+            print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
         }
     }
-    else
-	{
-        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
-    }
+    
+    print "\n</div>\n";
 }
-
-print "\n</div>\n";
-
 
 /*
  * All the "Add to" areas
@@ -1974,7 +1975,7 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
  * Documents generes
  */
 
-if ($action != 'edit' && $action != 'delete')
+if ($action != 'create' && $action != 'edit' && $action != 'delete')
 {
     print '<div class="fichecenter"><div class="fichehalfleft">';
     print '<a name="builddoc"></a>'; // ancre
