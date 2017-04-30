@@ -23,7 +23,7 @@
  
 require_once '../../main.inc.php';
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/listview.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/inventory/listview.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
