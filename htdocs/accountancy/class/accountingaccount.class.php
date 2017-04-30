@@ -364,28 +364,55 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Return clicable name (with picto eventually)
 	 *
-	 * @param int $withpicto 0=No picto, 1=Include picto into link, 2=Only picto
-	 * @return string Chaine avec URL
+	 * @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 * @param	int		$withlabel		0=No label, 1=Include label of account
+	 * @param	string  $moretitle		Add more text to title tooltip
+	 * @param	int  	$notooltip		1=Disable tooltip
+	 * @return	string	String with URL
 	 */
-	function getNomUrl($withpicto = 0) {
-		global $langs;
+	function getNomUrl($withpicto = 0, $withlabel = 0, $moretitle='',$notooltip=0)
+	{
+		global $langs, $conf, $user;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+		
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result = '';
 
-		$link = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/card.php?id=' . $this->id . '">';
-		$linkend = '</a>';
+		$url = DOL_URL_ROOT . '/accountancy/admin/card.php?id=' . $this->id;
 
 		$picto = 'billr';
+		$label='';
 
-		$label = $langs->trans("Show") . ': ' . $this->account_number . ' - ' . $this->label;
+		$label = '<u>' . $langs->trans("ShowAccountingAccount") . '</u>';
+		if (! empty($this->account_number))
+			$label .= '<br><b>'.$langs->trans('AccountAccounting') . ':</b> ' . length_accountg($this->account_number);
+		if (! empty($this->label))
+			$label .= '<br><b>'.$langs->trans('Label') . ':</b> ' . $this->label;
+		if ($moretitle) $label.=' - '.$moretitle;
 
-		if ($withpicto)
-			$result .= ($link . img_object($label, $picto) . $linkend);
-		if ($withpicto && $withpicto != 2)
-			$result .= ' ';
-		if ($withpicto != 2)
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-			$result .= $link . length_accountg($this->account_number) . ' - ' . $this->label . $linkend;
+		$linkclose='';
+		if (empty($notooltip))
+		{
+		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		    {
+		        $label=$langs->trans("ShowAccoutingAccount");
+		        $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+		    }
+		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+		    $linkclose.=' class="classfortooltip"';
+		}
+
+        $linkstart='<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
+		$linkend='</a>';
+
+		$label_link = length_accountg($this->account_number);
+		if ($withlabel) $label_link .= ' - ' . $this->label;
+
+		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
+		if ($withpicto && $withpicto != 2) $result .= ' ';
+		if ($withpicto != 2) $result.=$linkstart . $label_link . $linkend;
 		return $result;
 	}
 	
