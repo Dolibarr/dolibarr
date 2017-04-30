@@ -294,15 +294,27 @@ class Listview
      */
     public function render($sql, $TParam=array())
     {
+        global $conf;
+        
 		$TField=array();
 		
 		$this->init($TParam);
-		$THeader = $this->initHeader($TParam);
+
+        $THeader = $this->initHeader($TParam);
 		
 		$sql = $this->search($sql,$TParam);
-		$sql = $this->order_by($sql, $TParam);		
+		$sql.= $this->db->order($TParam['param']['sortfield'], $TParam['param']['sortorder']);
+
+		$nbtotalofrecords = '';
+		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+		{
+		    $result = $this->db->query($sql);
+		    $nbtotalofrecords = $this->db->num_rows($result);
+		}
+		$sql.= $this->db->plimit($TParam['param']['limit'] + 1, $TParam['param']['offset']);
 		
-		$this->parse_sql($THeader, $TField, $TParam, $sql);	
+		$this->parse_sql($THeader, $TField, $TParam, $sql);
+		
 		list($TTotal, $TTotalGroup)=$this->get_total($TField, $TParam);
 		
 		return $this->renderList($THeader, $TField, $TTotal, $TTotalGroup, $TParam);
@@ -468,6 +480,7 @@ class Listview
     /**
      * @return string
      */
+	/*
     private function getJS()
     {
 		$javaScript = '<script language="javascript">
@@ -479,7 +492,8 @@ class Listview
 
 		return $javaScript;
 	}
-
+    */
+	
     /**
      * @param $TParam
      * @param $TField
@@ -595,7 +609,7 @@ class Listview
 		$TExport = $this->setExport($TParam, $TField, $THeader);
 		$TField = $this->addTotalGroup($TField,$TTotalGroup);
 		
-		$out = $this->getJS();
+		//$out = $this->getJS();
 		
 		$dolibarr_decalage = $this->totalRow > $this->totalRowToShow ? 1 : 0;
 		ob_start();
@@ -605,6 +619,26 @@ class Listview
 	
 		$out.= '<table id="'.$this->id.'" class="liste" width="100%"><thead>';
 			
+    	if(count($TSearch)>0)
+		{
+			$out.='<tr class="liste_titre liste_titre_search barre-recherche">';
+			
+			foreach ($THeader as $field => $head)
+			{
+				if ($field === 'selectedfields')
+				{
+					$out.= '<td class="liste_titre" align="right">'.$this->form->showFilterAndCheckAddButtons(0).'</td>';
+				}
+				else
+				{
+					$moreattrib = 'style="width:'.$head['width'].';text-align:'.$head['text-align'].'"';
+					$out .= '<td class="liste_titre" '.$moreattrib.'>'.$TSearch[$field].'</td>';
+				}
+			}
+			
+			$out.='</tr>';
+		}
+				
 		$out.= '<tr class="liste_titre">';
 		foreach($THeader as $field => $head)
 		{
@@ -635,31 +669,11 @@ class Listview
 		//$out .= '<th aligne="right" class="maxwidthsearch liste_titre">--</th>';
 		$out .= '</tr>';
 		
-		if(count($TSearch)>0)
-		{
-			$out.='<tr class="liste_titre barre-recherche">';
-			
-			foreach ($THeader as $field => $head)
-			{
-				if ($field === 'selectedfields')
-				{
-					$out.= '<td class="liste_titre" align="right">'.$this->form->showFilterAndCheckAddButtons(0).'</td>';
-				}
-				else
-				{
-					$moreattrib = 'style="width:'.$head['width'].';text-align:'.$head['text-align'].'"';
-					$out .= '<td class="liste_titre" '.$moreattrib.'>'.$TSearch[$field].'</td>';
-				}
-			}
-			
-			$out.='</tr>';
-		}
-				
 		$out.='</thead><tbody>';
 		
 		if(empty($TField))
 		{
-			if (!empty($TParam['list']['messageNothing'])) $out .= '<tr class="pair" align="center"><td colspan="'.(count($TParam['title'])+1).'">'.$TParam['list']['messageNothing'].'</td></tr>';
+			if (!empty($TParam['list']['messageNothing'])) $out .= '<tr class="oddeven"><td colspan="'.(count($TParam['title'])+1).'"><span class="opacitymedium">'.$TParam['list']['messageNothing'].'</span></td></tr>';
 		}
 		else
         {
@@ -728,27 +742,6 @@ class Listview
 		$this->renderList($THeader, $TField, $TTotal, $TTotalGroup, $TParam);
 	}
 
-
-    /**
-     * @param $sql
-     * @param $TParam
-     * @return string
-     */
-    private function order_by($sql, &$TParam)
-    {
-		global $db;
-		
-		if (!empty($TParam['sortfield']))
-		{
-			if(strpos($sql,'LIMIT ') !== false) list($sql, $sqlLIMIT) = explode('LIMIT ', $sql);
-			
-			$sql .= $db->order($TParam['sortfield'], $TParam['sortorder']);
-			
-			if (!empty($sqlLIMIT)) $sql .= ' LIMIT '.$sqlLIMIT;
-		}
-		
-		return $sql;
-	}
 
     /**
      * @param $THeader

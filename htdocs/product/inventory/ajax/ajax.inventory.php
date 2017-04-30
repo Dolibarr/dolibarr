@@ -1,7 +1,7 @@
 <?php
 
-    require '../../main.inc.php';
-    require_once DOL_DOCUMENT_ROOT.'/inventory/class/inventory.class.php';
+    require '../../../main.inc.php';
+    require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
     
     $get = GETPOST('get');
     $put = GETPOST('put');

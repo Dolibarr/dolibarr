@@ -71,15 +71,15 @@
     }
 </script>
 
-<?php if ($inventory->status != 1) { ?>
+<?php if ($object->status != 1) { ?>
 	<strong><?php echo $langs->trans('AddInventoryProduct'); ?> : </strong>
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 		<input type="hidden" name="action" value="add_line" />
-		<input type="hidden" name="id" value="<?php echo $inventory->id; ?>" />
+		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 	
-		<?php echo inventorySelectProducts($inventory); ?>
+		<?php echo inventorySelectProducts($object); ?>
 		
-			<input class="butAction" type="submit" value="<?php echo $langs->trans('AddProduct'); ?>" />
+			<input class="button" type="submit" value="<?php echo $langs->trans('AddProduct'); ?>" />
 	</form>
 <?php } ?>
 
@@ -90,7 +90,7 @@
 	<?php } ?>
 	
 	<input type="hidden" name="action" value="save" />
-	<input type="hidden" name="id" value="<?php echo $inventory->id; ?>" />
+	<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 	
 	<table width="100%" class="border workstation">
 		<?php
@@ -163,43 +163,43 @@
 		?>
 	</table>
 	
-	<?php if ($inventory->status != 1) { ?>
+	<?php if ($object->status != 1) { ?>
 		<div class="tabsAction" style="height:30px;">
 			<?php if ($action!= 'edit') { ?>
-				<a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=exportCSV" class="butAction"><?php echo $langs->trans('ExportCSV') ?></a>
-				<a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=edit" class="butAction"><?php echo $langs->trans('Modify') ?></a>
+				<!-- <a href="<?php echo $view_url; ?>?id=<?php echo $object->id; ?>&action=exportCSV" class="butAction"><?php echo $langs->trans('ExportCSV') ?></a> -->
+				<a href="<?php echo $view_url; ?>?id=<?php echo $object->id; ?>&action=edit" class="butAction"><?php echo $langs->trans('Modify') ?></a>
 				<?php 
 				 if(!empty($user->rights->stock->changePMP)) {
-				 	echo '<a href="'.$view_url.'?id='.$inventory->id.'&action=changePMP" class="butAction">'.$langs->trans('ApplyPMP').'</a>';
+				 	echo '<a href="'.$view_url.'?id='.$object->id.'&action=changePMP" class="butAction">'.$langs->trans('ApplyPMP').'</a>';
 				 }
 				
 				if ($can_validate == 1) { ?>
-					<a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=regulate&token=" class="butAction"><?php echo $langs->trans('RegulateStock') ?></a>
+					<a href="<?php echo $view_url; ?>?id=<?php echo $object->id; ?>&action=regulate&token=" class="butAction"><?php echo $langs->trans('RegulateStock') ?></a>
 				<?php } ?>
 			<?php } ?>
 			<?php if ($action == 'edit') { ?>
-				<input name="back" type="button" class="butAction" value="<?php echo $langs->trans('ExitEditMode'); ?>" onclick="document.location='?id=<?php echo $inventory->id; ?>&action=view';" />
+				<input name="back" type="button" class="butAction" value="<?php echo $langs->trans('ExitEditMode'); ?>" onclick="document.location='?id=<?php echo $object->id; ?>&action=view';" />
 			<?php } ?>
 			<?php if ($can_validate == 1) { ?>
-                <a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=flush" class="butActionDelete"><?php  echo $langs->trans('Flush'); ?></a>
+                <a href="<?php echo $view_url; ?>?id=<?php echo $object->id; ?>&action=flush" class="butActionDelete"><?php  echo $langs->trans('Flush'); ?></a>
                 &nbsp;&nbsp;&nbsp;
-                <a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=delete" class="butActionDelete"><?php echo $langs->trans('Delete') ?></a>
+                <a href="<?php echo $view_url; ?>?id=<?php echo $object->id; ?>&action=delete" class="butActionDelete"><?php echo $langs->trans('Delete') ?></a>
         	<?php } ?>
 		</div>
 	<?php } ?>
-	<?php if ($inventory->status == 1) { ?>
+	<?php if ($object->status == 1) { ?>
 		<div class="tabsAction">
 			<?php if ($can_validate == 1) { ?>
 
-				<a href="<?php echo $view_url; ?>?id=<?php echo $inventory->id; ?>&action=exportCSV" class="butAction"><?php echo $langs->trans('ExportCSV') ?></a>
+				<!-- <a href="<?php echo $view_url; ?>?id=<?php echo $object->id; ?>&action=exportCSV" class="butAction"><?php echo $langs->trans('ExportCSV') ?></a> -->
 				<a href="#" title="<?php echo $langs->trans('InventoryAlreadyValidated'); ?>" class="butActionRefused"><?php echo $langs->trans('Delete') ?></a>
 				
 			<?php } ?>
 		</div>
 	<?php } ?>
 </form>
-<p>Date de création : <?php echo $inventory->getDate('datec') ?>
-<br />Dernière mise à jour : <?php echo $inventory->getDate('tms') ?></p>
+<p>Date de création : <?php echo $object->getDate('datec') ?>
+<br />Dernière mise à jour : <?php echo $object->getDate('tms') ?></p>
 	
 
 	

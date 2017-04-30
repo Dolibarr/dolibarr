@@ -36,8 +36,31 @@ require_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 $langs->load("stock");
 $langs->load("inventory");
 
-if (empty($user->rights->stock->read)) accessforbidden();
-		
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield="i.title";
+if (! $sortorder) $sortorder="ASC";
+
+if (empty($user->rights->stock->lire)) accessforbidden();
+
+
+/*
+ * Actions
+ */
+
+// None
+
+
+/*
+ * View
+ */
+
 llxHeader('',$langs->trans('inventoryListTitle'),'','');
 
 echo '<form name="formListInvetory" action="'.$_SERVER['PHP_SELF'].'" method="post" >';
@@ -48,8 +71,15 @@ $list = new ListView($db, 'listInventory');
 $THide = array('label','title');
 
 echo $list->render(Inventory::getSQL('All'), array(
-	'limit' => array(
-		'nbLine' => GETPOST('limit')
+    'param' => array(
+        'limit' => $limit,
+        'offset' => $offset,
+        'sortfield' => $sortfield,
+        'sortorder'=> $sortorder,
+        'page'=>$page
+    ),
+    'limit' => array(
+	    'nbLine' => $limit,
 	),
 	'allow-field-select' => true,
     'link'=>array(
@@ -65,14 +95,14 @@ echo $list->render(Inventory::getSQL('All'), array(
     'list'=>array(
         'title'=>$langs->trans('inventoryListTitle'),
         'messageNothing'=>$langs->trans('inventoryListEmpty'),
-		'image' => 'inventory.png@inventory'
+		'image' => 'title_products.png'
     ),
     'title'=>array(
         'rowid'=>$langs->trans('Title'),
 		'date_inventory'=>$langs->trans('InventoryDate'),
-        'datec'=>$langs->trans('DateCreation'),
         'fk_warehouse'=>$langs->trans('Warehouse'),
-        'tms'=>$langs->trans('DateUpdate'),
+        'datec'=>$langs->trans('DateCreation'),
+        'tms'=>$langs->trans('DateModification'),
         'status'=>$langs->trans('Status')
     ),
     'eval'=>array(

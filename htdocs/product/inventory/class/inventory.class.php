@@ -67,7 +67,7 @@ class Inventory extends CoreObject
      * Attribute object linked with database
      * @var array
      */
-	protected $__fields=array(
+	protected $fields=array(
 		'fk_warehouse'=>array('type'=>'integer','index'=>true)
 		,'entity'=>array('type'=>'integer','index'=>true)
 		,'status'=>array('type'=>'integer','index'=>true)
@@ -503,6 +503,7 @@ class Inventory extends CoreObject
 
     /**
      * Function to get the sql select of inventory
+     * 
      * @param   string  $type   'All' to get all data
      * @return  string
      */
@@ -516,7 +517,7 @@ class Inventory extends CoreObject
 			$sql = 'SELECT i.rowid,i.title, e.label, i.date_inventory, i.fk_warehouse, i.datec, i.tms, i.status';
             $sql.= ' FROM '.MAIN_DB_PREFIX.'inventory i';
             $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot e ON (e.rowid = i.fk_warehouse)';
-            $sql.= ' WHERE i.entity = '.(int) $conf->entity;
+            $sql.= ' WHERE i.entity IN ('.getEntity('inventory', 1).')';
 		}
 	
 		return $sql;	
@@ -541,7 +542,7 @@ class Inventorydet extends CoreObject
 	public $pa;
 	public $new_pmp;
 	
-	protected $__fields=array(
+	protected $fields=array(
 		'fk_inventory'=>array('type'=>'int')
 		,'fk_warehouse'=>array('type'=>'int')
 		,'fk_product'=>array('type'=>'int')

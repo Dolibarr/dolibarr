@@ -32,7 +32,7 @@ class CoreObject extends CommonObject
 	/**
 	 *  @var Array $_fields Fields to synchronize with Database
 	 */
-	protected $__fields=array();
+	protected $fields=array();
 
     /**
 	 *  Constructor
@@ -55,9 +55,9 @@ class CoreObject extends CommonObject
 		$this->datec = 0;
 		$this->tms = 0;
 		
-		if (!empty($this->__fields))
+		if (!empty($this->fields))
 		{
-			foreach ($this->__fields as $field=>$info)
+			foreach ($this->fields as $field=>$info)
 			{
 		        if ($this->is_date($info)) $this->{$field} = time();
 		        elseif ($this->is_array($info)) $this->{$field} = array();
@@ -87,9 +87,9 @@ class CoreObject extends CommonObject
      */
     private function checkFieldType($field, $type)
     {
-		if (isset($this->__fields[$field]) && method_exists($this, 'is_'.$type))
+		if (isset($this->fields[$field]) && method_exists($this, 'is_'.$type))
 		{
-			return $this->{'is_'.$type}($this->__fields[$field]);
+			return $this->{'is_'.$type}($this->fields[$field]);
 		}
 		else
         {
@@ -214,7 +214,7 @@ class CoreObject extends CommonObject
     private function set_save_query()
     {
 		$query=array();
-		foreach ($this->__fields as $field=>$info)
+		foreach ($this->fields as $field=>$info)
 		{
 			if($this->is_date($info))
 			{
@@ -260,7 +260,7 @@ class CoreObject extends CommonObject
      */
     private function get_field_list()
     {
-		$keys = array_keys($this->__fields);
+		$keys = array_keys($this->fields);
 	    return implode(',', $keys);
 	}
 
@@ -272,7 +272,7 @@ class CoreObject extends CommonObject
      */
     private function set_vars_by_db(&$obj)
     {
-		foreach ($this->__fields as $field => $info)
+		foreach ($this->fields as $field => $info)
 		{
 			if($this->is_date($info))
 			{
