@@ -51,7 +51,8 @@ abstract class CommonInvoice extends CommonObject
     const TYPE_DEPOSIT = 3;
 
     /**
-     * Proforma invoice
+     * Proforma invoice. 
+     * @deprectad Remove this. A "proforma invoice" is an order with a look of invoice, not an invoice !
      */
     const TYPE_PROFORMA = 4;
 
