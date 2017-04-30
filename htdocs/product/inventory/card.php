@@ -463,7 +463,8 @@ function card_line(&$inventory, &$lines, $mode)
 		if(!empty($TCacheEntrepot[$Inventorydet->fk_warehouse])) $e = $TCacheEntrepot[$Inventorydet->fk_warehouse];
 		elseif($e->fetch($Inventorydet->fk_warehouse) > 0) $TCacheEntrepot[$e->id] = $e;
 		
-		$qty = (float)GETPOST('qty_to_add')[$k];
+		$qtytoadd = GETPOST('qty_to_add', 'array');
+		$qty = (float) $qtytoadd[$k];
 		
 		$lines[]=array(
 			'produit' => $product->getNomUrl(1).'&nbsp;-&nbsp;'.$product->label,
