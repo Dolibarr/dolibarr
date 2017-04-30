@@ -1073,7 +1073,7 @@ if ($id)
         print '</tr>';
 
         // Line to enter new values
-        print '<tr class="oddeven nodrag nodrop nohover">';
+        print '<!-- line to add new entry --><tr class="oddeven nodrag nodrop nohover">';
 
         $obj = new stdClass();
         // If data was already input, we define them in obj to populate input fields.
@@ -1814,13 +1814,14 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			if ($fieldlist[$field]=='affect') $class='maxwidth50';
 			if ($fieldlist[$field]=='delay') $class='maxwidth50';
 			if ($fieldlist[$field]=='position') $class='maxwidth50';
-			if ($fieldlist[$field]=='libelle') $class='quatrevingtpercent';
+			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $class='quatrevingtpercent';
 			if ($fieldlist[$field]=='tracking') $class='quatrevingtpercent';
 			if ($fieldlist[$field]=='sortorder' || $fieldlist[$field]=='sens' || $fieldlist[$field]=='category_type') $class='maxwidth50';
 			print '<td class="'.$classtd.'">';
 			$transfound=0;
 			if (in_array($fieldlist[$field], array('label','libelle')))
 			{
+			    $transkey='';
 			    // Special case for labels
 			    if ($tabname == MAIN_DB_PREFIX.'c_civility') {
 			        $transkey="Civility".strtoupper($obj->code);
@@ -1829,7 +1830,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			        $langs->load("bills");
 			        $transkey="PaymentCondition".strtoupper($obj->code);
 			    }
-			    if ($langs->trans($transkey) != $transkey)
+			    if ($transkey && $langs->trans($transkey) != $transkey)
 			    {
 			        $transfound=1;
 			        print $form->textwithpicto($langs->trans($transkey), $langs->trans("GoIntoTranslationMenuToChangeThis"));
