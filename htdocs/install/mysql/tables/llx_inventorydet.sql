@@ -25,7 +25,7 @@ tms timestamp,
 fk_inventory integer DEFAULT 0, 
 fk_warehouse integer DEFAULT 0,
 fk_product integer DEFAULT 0,  
-entity integer DEFAULT 0, 
+batch varchar(30) DEFAULT NULL,		-- Lot or serial number
 qty_view double DEFAULT 0, 
 qty_stock double DEFAULT 0, 
 qty_regulated double DEFAULT 0, 

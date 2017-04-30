@@ -146,12 +146,13 @@ if (empty($reshook))
     		if ($object->errors)
     		{
     			setEventMessage($object->errors, 'errors');
-    			card( $object, 'edit');
+    			$action = 'edit';
     		}
     		else 
     		{
     			$object->udpate($user);
     			header('Location: '.dol_buildpath('/product/inventory/card.php?id='.$object->getId().'&action=view', 1));
+    			exit;
     		}
     		
     		break;
@@ -167,12 +168,10 @@ if (empty($reshook))
                 $object->status = 1;
                 $object->update($user);
                 
-                card( $object, 'view');
-                
-            
+                $action='view';
             }
             else {
-               card( $object, 'view');
+               $action='view';
             }
             
     		break;
@@ -186,7 +185,7 @@ if (empty($reshook))
     		
     		$object->changePMP($user);
     		
-    		card( $object, 'view');
+    		$action='view';
     		
     		break;
     		
@@ -238,7 +237,7 @@ if (empty($reshook))
     			$object->sortDet();
     		}
     		
-    		card( $object, 'edit');
+    		$action='edit';
     		
     		break;
     		
@@ -257,7 +256,7 @@ if (empty($reshook))
     		$object = new Inventory($db);
     		$object->fetch( $id);
     		
-    		card($object, 'edit');
+    		$action='edit';
     		
     		break;
         case 'confirm_flush':
@@ -273,14 +272,12 @@ if (empty($reshook))
             
             setEventMessage($langs->trans('InventoryFlushed'));
             
-            card( $object, 'edit');
-           
+            $action='edit';
             
             break;
     	case 'confirm_delete':
     		if (!$user->rights->stock->supprimer) accessforbidden();
             
-    		
     		$id = GETPOST('id');
     		
     		$object = new Inventory($db);
