@@ -64,7 +64,7 @@ $object = new AccountingJournal($db);
 if ($action == 'confirm_delete' && $confirm == "yes") {
 	$result = $object->delete($id);
 	if ($result >= 0) {
-		header("Location: journals.php");
+		header("Location: journals_list.php");
 		exit();
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -108,7 +108,7 @@ else if ($action == 'add') {
 			$action = 'create';
 		}
 	} else {
-		header("Location: ./journals.php");
+		header("Location: journals_list.php");
 		exit();
 	}
 } 
@@ -227,7 +227,9 @@ if ($action == 'create')
 
 			print '</table>';
 
-			print '<br><div class="center">';
+			dol_fiche_end();
+
+			print '<div class="center">';
 			print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 			print '<input type="submit" name="cancel" class="button" value="' . $langs->trans("Cancel") . '">';
@@ -248,7 +250,7 @@ if ($action == 'create')
 
 			print '<table class="border" width="100%">';
 
-			$linkback = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/journals.php">' . $langs->trans("BackToList") . '</a>';
+			$linkback = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/journals_list.php">' . $langs->trans("BackToList") . '</a>';
 
 			// Ref
 			print '<tr><td class="titlefield">' . $langs->trans("Code") . '</td><td width="50%">';
@@ -271,7 +273,7 @@ if ($action == 'create')
 
 			dol_fiche_end();
 
-			if (! empty($user->rights->accounting->fiscalyear))
+			if (! empty($user->rights->accounting->chartofaccount))
 			{
     			/*
     			 * Barre d'actions

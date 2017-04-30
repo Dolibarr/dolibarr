@@ -17,7 +17,7 @@
  */
 
 /**
- * \file		htdocs/accountancy/admin/journals.php
+ * \file		htdocs/accountancy/admin/journals_list.php
  * \ingroup		Advanced accountancy
  * \brief		Setup page to configure journals
  */
@@ -154,7 +154,7 @@ dol_fiche_end();
 
 // Buttons
 print '<div class="tabsAction">';
-if (! empty($user->rights->accounting->fiscalyear))
+if (! empty($user->rights->accounting->chartofaccount))
 {
     print '<a class="butAction" href="journals_card.php?action=create">' . $langs->trans("NewAccountingJournal") . '</a>';
 }
