@@ -4674,7 +4674,26 @@ abstract class CommonObject
 	 */
 	public function createCommon(User $user, $notrigger = false)
 	{
+	    foreach ($this->fields as $k => $v) {
 	    
+	        $keys[] = $k;
+	        $values[] = $this->quote($v);
+	         
+	    }
+	    
+	    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.$table.'
+					( '.implode( ",", $keys ).' )
+					VALUES ( '.implode( ",", $values ).' ) ';
+	    
+	    $res = $this->query($sql);
+	    if($res===false) {
+	    
+	        return false;
+	    }
+	    
+	    // TODO Add triggers
+	    	  
+	    return true;	    
 	}
 	
 	
@@ -4690,7 +4709,6 @@ abstract class CommonObject
 	{
 	    
 	}
-	
 
 	/**
 	 * Update object into database
@@ -4702,9 +4720,35 @@ abstract class CommonObject
 	 */
 	public function updateCommon(User $user, $notrigger = false)
 	{
+	    foreach ($this->fields as $k => $v) {
 	    
+	        if (is_array($key)){
+	            $i=array_search($k, $key);
+	            if ( $i !== false) {
+	                $where[] = $key[$i].'=' . $this->quote( $v ) ;
+	                continue;
+	            }
+	        } else {
+	            if ( $k == $key) {
+	                $where[] = $k.'=' .$this->quote( $v ) ;
+	                continue;
+	            }
+	        }
+	    
+	        $tmp[] = $k.'='.$this->quote($v);
+	    }
+	    $sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET '.implode( ',', $tmp ).' WHERE ' . implode(' AND ',$where) ;
+	    $res = $this->query( $sql );
+	    
+	    if($res===false) {
+	        //error
+	        return false;
+	    }
+	    
+	    // TODO Add triggers
+	    
+	    return true;	    
 	}
-	
 	
 	/**
 	 * Delete object in database
@@ -4718,4 +4762,20 @@ abstract class CommonObject
 	{
 	    
 	}
+
+	/**
+	 * Add quote to field value if necessary
+	 *
+	 * @param string|int	$value	value to protect
+	 * @return string|int
+	 */
+	function quote($value) {
+	
+	    if(is_null($value)) return 'NULL';
+	    else if(is_numeric($value)) return $value;
+	    else return "'".$this->escape( $value )."'";
+	
+	}
+	
 }
+

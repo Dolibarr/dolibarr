@@ -103,7 +103,7 @@ class Listview
 
     /**
      * @param string    $key    field name
-     * @param array     $TParam array of configuration
+     * @param string     $TParam array of configuration
      * @return array
      */
 	private function getSearchKey($key, &$TParam)
@@ -149,7 +149,7 @@ class Listview
 
 
     /**
-     * @param array     $TSQLMore   contain some additional sql instructions
+     * @param string     $TSQLMore   contain some additional sql instructions
      * @param string    $value      date with read format
      * @param string    $sKey       field name
      */
@@ -181,9 +181,9 @@ class Listview
 
 
     /**
-     * @param array     $TSQLMore   contain some additional sql instructions
+     * @param string     $TSQLMore   contain some additional sql instructions
      * @param string    $value      value to filter
-     * @param array     $TParam     array of configuration
+     * @param string     $TParam     array of configuration
      * @param string    $sKey       field name
      * @param string    $key        reference of sKey to find value into TParam
      * @return bool
@@ -222,7 +222,7 @@ class Listview
 
     /**
      * @param string    $sql    standard select sql
-     * @param array     $TParam array of configuration
+     * @param string     $TParam array of configuration
      * @return string
      */
     private function search($sql, &$TParam)
@@ -289,7 +289,7 @@ class Listview
 
     /**
      * @param string    $sql    standard select sql
-     * @param array     $TParam array of configuration
+     * @param string     $TParam array of configuration
      * @return string
      */
     public function render($sql, $TParam=array())
@@ -321,8 +321,8 @@ class Listview
 	}
 
     /**
-     * @param array     $THeader    the configuration of header
-     * @param array     $TParam     array of configuration
+     * @param string     $THeader    the configuration of header
+     * @param string     $TParam     array of configuration
      * @return array
      */
     private function setSearch(&$THeader, &$TParam)
@@ -427,8 +427,8 @@ class Listview
     /**
      * Function to analyse and calculate the total from a column
      *
-     * @param $TField
-     * @param $TParam
+     * @param string $TField    TField
+     * @param string $TParam    TParam
      * @return array
      */
     private function get_total(&$TField, &$TParam)
@@ -495,9 +495,9 @@ class Listview
     */
 	
     /**
-     * @param $TParam
-     * @param $TField
-     * @param $THeader
+     * @param string $TParam    TParam
+     * @param string $TField    TField
+     * @param string $THeader   THeader
      * @return array
      */
     private function setExport(&$TParam, $TField, $THeader)
@@ -535,8 +535,8 @@ class Listview
 	}
 
     /**
-     * @param $TField
-     * @param $TTotalGroup
+     * @param string $TField        TField
+     * @param string $TTotalGroup   TTotalGroup
      * @return array
      */
     private function addTotalGroup($TField, $TTotalGroup)
@@ -594,11 +594,11 @@ class Listview
 	}
 
     /**
-     * @param $THeader
-     * @param $TField
-     * @param $TTotal
-     * @param $TTotalGroup
-     * @param $TParam
+     * @param string $THeader   THeader
+     * @param string $TField    TField
+     * @param string $TTotal    TTotal
+     * @param string $TTotalGroup   TTotalGroup
+     * @param string $TParam        TParam
      * @return string
      */
     private function renderList(&$THeader, &$TField, &$TTotal, &$TTotalGroup, &$TParam)
@@ -723,9 +723,9 @@ class Listview
 	}
 
     /**
-     * @param $db
-     * @param $TField
-     * @param array $TParam
+     * @param string $db        Db
+     * @param string $TField    TField
+     * @param string $TParam    TParam
      */
     public function renderArray(&$db, $TField, $TParam=array())
     {
@@ -744,9 +744,9 @@ class Listview
 
 
     /**
-     * @param $THeader
-     * @param $TField
-     * @param $TParam
+     * @param string $THeader   THeader
+     * @param string $TField    TField
+     * @param string $TParam    TParam
      * @return bool
      */
     private function parse_array(&$THeader, &$TField, &$TParam)
@@ -853,8 +853,8 @@ class Listview
 	}
 
     /**
-     * @param $TParam
-     * @param $line_number
+     * @param string $TParam        TParam
+     * @param string $line_number   aaa
      * @return bool
      */
     private function in_view(&$TParam, $line_number)
@@ -874,9 +874,9 @@ class Listview
 	}
 
     /**
-     * @param $TField
-     * @param $TParam
-     * @param $currentLine
+     * @param string $TField        TField
+     * @param string $TParam        TParam
+     * @param string $currentLine   aaa
      */
     private function set_line(&$TField, &$TParam, $currentLine)
     {
@@ -910,7 +910,7 @@ class Listview
 
                     if(isset($TParam['eval'][$field]) && in_array($field,array_keys($row)))
                     {
-                        $strToEval = 'return '.strtr( $TParam['eval'][$field] ,  array_merge( $trans, array('@val@'=>$row[$field])  )).';';
+                        $strToEval = 'return '.strtr( $TParam['eval'][$field],  array_merge( $trans, array('@val@'=>$row[$field])  )).';';
                         $row[$field] = eval($strToEval);
                     }
 
@@ -932,7 +932,7 @@ class Listview
                         if($TParam['type'][$field]=='hour') { $row[$field] = date('H:i', strtotime($row[$field])); }
                         if($TParam['type'][$field]=='money') { $row[$field] = '<div align="right">'.price($row[$field],0,'',1,-1,2).'</div>'; }
                         if($TParam['type'][$field]=='number') { $row[$field] = '<div align="right">'.price($row[$field]).'</div>'; }
-                        if($TParam['type'][$field]=='integer') { $row[$field] = '<div align="right">'.(int)$row[$field].'</div>'; }
+                        if($TParam['type'][$field]=='integer') { $row[$field] = '<div align="right">'.((int) $row[$field]).'</div>'; }
                     }
 
                     if(isset($TParam['link'][$field]))
@@ -945,7 +945,7 @@ class Listview
                     {
                         if(isset($TParam['translate'][$field][''])) unset($TParam['translate'][$field]['']);
 
-                        $row[$field] = strtr( $row[$field] , $TParam['translate'][$field]);
+                        $row[$field] = strtr( $row[$field], $TParam['translate'][$field]);
                     }
                 }
             }
@@ -986,8 +986,8 @@ class Listview
 	}
 
     /**
-     * @param $sql
-     * @param $TParam
+     * @param string $sql       sql
+     * @param string $TParam    TParam
      * @return string
      */
     private function limitSQL($sql, &$TParam)
@@ -1001,10 +1001,10 @@ class Listview
 	}
 
     /**
-     * @param $THeader
-     * @param $TField
-     * @param $TParam
-     * @param $sql
+     * @param string $THeader   THeader
+     * @param string $TField    TField
+     * @param string $TParam    TParam
+     * @param string $sql       sql
      */
     private function parse_sql(&$THeader, &$TField, &$TParam, $sql)
     {

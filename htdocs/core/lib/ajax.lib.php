@@ -349,7 +349,7 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 
 
 /**
- * Make a input box content all selected
+ * Make content of an input box selected when we click into input field.
  * 
  * @param string	$htmlname	Id of html object 
  * @param int		$addlink	Add a link to after

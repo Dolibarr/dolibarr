@@ -611,7 +611,9 @@ if (empty($reshook))
 		{
 			$db->begin();
 
-			// Boucle sur chaque taux de tva
+			$amount_ht = $amount_tva = $amount_ttc = array();
+			
+			// Loop on each vat rate
 			$i = 0;
 			foreach ($object->lines as $line)
 			{
@@ -630,20 +632,19 @@ if (empty($reshook))
 				$discount->description = '(CREDIT_NOTE)';
 			elseif ($object->type == Facture::TYPE_DEPOSIT)
 				$discount->description = '(DEPOSIT)';
-			elseif ($object->type == Facture::TYPE_STANDARD)
+			elseif ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_SITUATION)
 				$discount->description = '(EXCESS RECEIVED)';
 			else {
 				setEventMessages($langs->trans('CantConvertToReducAnInvoiceOfThisType'), null, 'errors');
 			}
-			$discount->tva_tx = abs($object->total_ttc);
 			$discount->fk_soc = $object->socid;
 			$discount->fk_facture_source = $object->id;
 
 			$error = 0;
 			
-			if ($object->type == Facture::TYPE_STANDARD) {
-				
-				// If we're on a standard invoice, we have to get excess received to create it in TTC wuthout VAT
+			if ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_SITUATION) 
+			{
+				// If we're on a standard invoice, we have to get excess received to create a discount in TTC without VAT
 				
 				$sql = 'SELECT SUM(pf.amount) as total_paiements
 						FROM llx_c_paiement as c, llx_paiement_facture as pf, llx_paiement as p
@@ -663,8 +664,9 @@ if (empty($reshook))
 					$error++;
 				}
 				
-			} else {
-			
+			}
+			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
+			{
 				foreach ($amount_ht as $tva_tx => $xxx)
 				{
 					$discount->amount_ht = abs($amount_ht[$tva_tx]);
@@ -871,19 +873,6 @@ if (empty($reshook))
 	                    $object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'),$remain_to_pay,1,0,0,0,0,0,'','','TTC');
 	                }
 	            }
-
-				// Add predefined lines
-				/*
-	             TODO delete
-	             for($i = 1; $i <= $NBLINES; $i ++) {
-					if ($_POST['idprod' . $i]) {
-						$product = new Product($db);
-						$product->fetch($_POST['idprod' . $i]);
-						$startday = dol_mktime(12, 0, 0, $_POST['date_start' . $i . 'month'], $_POST['date_start' . $i . 'day'], $_POST['date_start' . $i . 'year']);
-						$endday = dol_mktime(12, 0, 0, $_POST['date_end' . $i . 'month'], $_POST['date_end' . $i . 'day'], $_POST['date_end' . $i . 'year']);
-						$result = $object->addline($product->description, $product->price, $_POST['qty' . $i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod' . $i], $_POST['remise_percent' . $i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
-					}
-				}*/
 			}
 		}
 
