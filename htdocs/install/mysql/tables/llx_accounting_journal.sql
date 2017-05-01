@@ -22,6 +22,6 @@ create table llx_accounting_journal
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   code       		varchar(32) NOT NULL,
   label             varchar(128) NOT NULL,
-  nature			smallint DEFAULT 0 NOT NULL,			-- type of journals (0:various operations / 1:sale / 2:purchase / 3:bank / 9: has-new)
+  nature			smallint DEFAULT 0 NOT NULL,			-- type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
   active            smallint DEFAULT 0
 )ENGINE=innodb;
