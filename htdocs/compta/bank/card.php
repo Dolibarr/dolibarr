@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2003		Jean-Louis Bergamo	<jlb@j1b.org>
- * Copyright (C) 2004-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2016       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 
 $langs->load("banks");
 $langs->load("bills");
@@ -664,7 +665,10 @@ else
 		print '<tr class="liste_titre_add"><td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		if (! empty($conf->accounting->enabled)) {
-		    print length_accountg($object->account_number).'</td></tr>';
+			$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch('',$object->account_number);
+
+			print $accountingaccount->getNomUrl(1,1,1,'',1);
 		} else {
 		    print $object->account_number;
 		}
@@ -683,12 +687,10 @@ else
 		
 		print '</table>';
 
-		
 		print '</div>';
 		print '<div class="fichehalfright">';
 		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
-
 
 		print '<table class="border centpercent">';
 		
@@ -703,8 +705,7 @@ else
 		print '<td>'.dol_htmlentitiesbr($object->comment).'</td></tr>';
 
 		print '</table>';
-		
-		
+
 		if ($object->type == Account::TYPE_SAVINGS || $object->type == Account::TYPE_CURRENT)
 		{
 		    print '<br>';
