@@ -366,11 +366,12 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 * @param	int		$withlabel		0=No label, 1=Include label of account
+	 * @param	int  	$nourl			1=Disable url
 	 * @param	string  $moretitle		Add more text to title tooltip
 	 * @param	int  	$notooltip		1=Disable tooltip
 	 * @return	string	String with URL
 	 */
-	function getNomUrl($withpicto = 0, $withlabel = 0, $moretitle='',$notooltip=0)
+	function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle='',$notooltip=0)
 	{
 		global $langs, $conf, $user;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -406,6 +407,13 @@ class AccountingAccount extends CommonObject
         $linkstart='<a href="'.$url.'"';
         $linkstart.=$linkclose.'>';
 		$linkend='</a>';
+
+		if ($nourl)
+		{
+			$linkstart = '';
+			$linkclose = '';
+			$linkend = '';			
+		}
 
 		$label_link = length_accountg($this->account_number);
 		if ($withlabel) $label_link .= ' - ' . $this->label;
