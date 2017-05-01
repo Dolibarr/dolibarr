@@ -668,7 +668,7 @@ else
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch('',$object->account_number);
 
-			print $accountingaccount->getNomUrl(1,1,1,'',1);
+			print $accountingaccount->getNomUrl(0,1,1,'',1);
 		} else {
 		    print $object->account_number;
 		}
