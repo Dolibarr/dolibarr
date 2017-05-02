@@ -101,7 +101,7 @@ ALTER TABLE llx_facturedet_rec ADD COLUMN vat_src_code varchar(10) DEFAULT '' AF
 ALTER TABLE llx_extrafields ADD COLUMN langs varchar(24);
 
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN fk_unit integer DEFAULT NULL;
-ALTER TABLE llx_projet_task_time ADD COLUMN status  enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL') DEFAULT 'DRAFT';
+ALTER TABLE llx_projet_task_time ADD COLUMN status  enum('PLANNED','DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL') DEFAULT 'DRAFT';
 
 ALTER TABLE llx_ecm_files ADD COLUMN ref varchar(128) AFTER rowid;
 ALTER TABLE llx_ecm_files CHANGE COLUMN fullpath filepath varchar(255);
