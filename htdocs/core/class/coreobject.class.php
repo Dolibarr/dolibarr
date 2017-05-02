@@ -59,10 +59,10 @@ class CoreObject extends CommonObject
 		{
 			foreach ($this->fields as $field=>$info)
 			{
-		        if ($this->is_date($info)) $this->{$field} = time();
-		        elseif ($this->is_array($info)) $this->{$field} = array();
-		        elseif ($this->is_int($info)) $this->{$field} = (int) 0;
-		        elseif ($this->is_float($info)) $this->{$field} = (double) 0;
+		        if ($this->isDate($info)) $this->{$field} = time();
+		        elseif ($this->isArray($info)) $this->{$field} = array();
+		        elseif ($this->isInt($info)) $this->{$field} = (int) 0;
+		        elseif ($this->isFloat($info)) $this->{$field} = (double) 0;
 				else $this->{$field} = '';
 		    }
 

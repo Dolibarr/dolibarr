@@ -4669,7 +4669,7 @@ abstract class CommonObject
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function is_date($info)
+	protected function isDate($info)
 	{
 		if(isset($info['type']) && $info['type']=='date') return true;
 		else return false;
@@ -4681,7 +4681,7 @@ abstract class CommonObject
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function is_array($info)
+	protected function isArray($info)
 	{
 		if(is_array($info))
 		{
@@ -4697,7 +4697,7 @@ abstract class CommonObject
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function is_null($info)
+	protected function isNull($info)
 	{
 		if(is_array($info))
 		{
@@ -4713,7 +4713,7 @@ abstract class CommonObject
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function is_int($info)
+	protected function isInt($info)
 	{
 		if(is_array($info))
 		{
@@ -4729,7 +4729,7 @@ abstract class CommonObject
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function is_float($info)
+	protected function isFloat($info)
 	{
 		if(is_array($info))
 		{
@@ -4745,7 +4745,7 @@ abstract class CommonObject
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function is_text($info)
+	protected function isText($info)
 	{
 		if(is_array($info))
 		{
@@ -4761,7 +4761,7 @@ abstract class CommonObject
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function is_index($info)
+	protected function isIndex($info)
 	{
 		if(is_array($info))
 		{
@@ -4781,7 +4781,7 @@ abstract class CommonObject
 		$query=array();
 		foreach ($this->fields as $field=>$info)
 		{
-			if($this->is_date($info))
+			if($this->isDate($info))
 			{
 				if(empty($this->{$field}))
 				{
@@ -4792,19 +4792,19 @@ abstract class CommonObject
 					$query[$field] = $this->db->idate($this->{$field});
 				}
 			}
-			else if($this->is_array($info))
+			else if($this->isArray($info))
 			{
 				$query[$field] = serialize($this->{$field});
 			}
-			else if($this->is_int($info))
+			else if($this->isInt($info))
 			{
 				$query[$field] = (int) price2num($this->{$field});
 			}
-			else if($this->is_float($info))
+			else if($this->isFloat($info))
 			{
 				$query[$field] = (double) price2num($this->{$field});
 			}
-			elseif($this->is_null($info))
+			elseif($this->isNull($info))
 			{
 				$query[$field] = (is_null($this->{$field}) || (empty($this->{$field}) && $this->{$field}!==0 && $this->{$field}!=='0') ? null : $this->{$field});
 			}
@@ -4860,26 +4860,26 @@ abstract class CommonObject
 	{
 		foreach ($this->fields as $field => $info)
 		{
-			if($this->is_date($info))
+			if($this->isDate($info))
 			{
 				if(empty($obj->{$field}) || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') $this->{$field} = 0;
 				else $this->{$field} = strtotime($obj->{$field});
 			}
-			elseif($this->is_array($info))
+			elseif($this->isArray($info))
 			{
 				$this->{$field} = @unserialize($obj->{$field});
 				// Hack for data not in UTF8
 				if($this->{$field } === FALSE) @unserialize(utf8_decode($obj->{$field}));
 			}
-			elseif($this->is_int($info))
+			elseif($this->isInt($info))
 			{
 				$this->{$field} = (int) $obj->{$field};
 			}
-			elseif($this->is_float($info))
+			elseif($this->isFloat($info))
 			{
 				$this->{$field} = (double) $obj->{$field};
 			}
-			elseif($this->is_null($info))
+			elseif($this->isNull($info))
 			{
 				$val = $obj->{$field};
 				// zero is not null
