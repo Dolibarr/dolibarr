@@ -117,37 +117,34 @@ class modStock extends DolibarrModules
 		$this->rights[4][4] = 'mouvement';
 		$this->rights[4][5] = 'creer';
 
+		if ($conf->global->MAIN_LEVEL_FEATURES >= 2) {
 		
-		$this->rights[$r][0] = 1006;
-		$this->rights[$r][1] = 'inventoryReadPermission';	// Permission label
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'read';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$r++;
+		$this->rights[5][0] = 1006;
+		$this->rights[5][1] = 'inventoryReadPermission';	// Permission label
+		$this->rights[5][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[5][4] = 'read';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		
-		$this->rights[$r][0] = 1007;
-		$this->rights[$r][1] = 'inventoryCreatePermission';	// Permission label
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'create';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$r++;
+		$this->rights[6][0] = 1007;
+		$this->rights[6][1] = 'inventoryCreatePermission';	// Permission label
+		$this->rights[6][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[6][4] = 'create';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		
-		$this->rights[$r][0] = 1008;
-		$this->rights[$r][1] = 'inventoryWritePermission';	// Permission label
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'write';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$r++;
+		$this->rights[7][0] = 1008;
+		$this->rights[7][1] = 'inventoryWritePermission';	// Permission label
+		$this->rights[7][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[7][4] = 'write';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		
-		$this->rights[$r][0] = 1009;
-		$this->rights[$r][1] = 'inventoryValidatePermission';	// Permission label
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'validate';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$r++;
+		$this->rights[7][0] = 1009;
+		$this->rights[7][1] = 'inventoryValidatePermission';	// Permission label
+		$this->rights[7][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[7][4] = 'validate';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		
-		$this->rights[$r][0] = 1010;
-		$this->rights[$r][1] = 'inventoryChangePMPPermission';	// Permission label
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'changePMP';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$r++;
+		$this->rights[7][0] = 1010;
+		$this->rights[7][1] = 'inventoryChangePMPPermission';	// Permission label
+		$this->rights[7][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[7][4] = 'changePMP';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		
+		}
 		
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
