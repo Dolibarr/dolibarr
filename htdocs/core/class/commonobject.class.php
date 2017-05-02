@@ -4958,7 +4958,7 @@ abstract class CommonObject
 		foreach ($fields as $k => $v) {
 			
 			if (is_array($key)){
-				$i=array_search($k , $key );
+				$i=array_search($k, $key);
 				if ( $i !== false) {
 					$where[] = $key[$i].'=' . $this->quote( $v ) ;
 					continue;
