@@ -50,7 +50,9 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	function __construct($db)
 	{
+		global $langs;
 		$this->db=$db;
+		$this->desc = $langs->trans($this->name);
 	}
 
 
