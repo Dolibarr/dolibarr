@@ -109,9 +109,9 @@ if (empty($reshook))
 	}
 	
 	// Action to add record
-	if ($action == 'add')
+	if ($action == 'add' && ! empty($user->rights->mymodule->create))
 	{
-		if (GETPOST('cancel'))
+		if ($cancel)
 		{
 			$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/list.php',1);
 			header("Location: ".$urltogo);
@@ -154,7 +154,7 @@ if (empty($reshook))
 	}
 
 	// Action to update record
-	if ($action == 'update')
+	if ($action == 'update' && ! empty($user->rights->mymodule->create))
 	{
 		$error=0;
 
@@ -189,7 +189,7 @@ if (empty($reshook))
 	}
 
 	// Action to delete
-	if ($action == 'confirm_delete')
+	if ($action == 'confirm_delete' && ! empty($user->rights->mymodule->delete))
 	{
 		$result=$object->delete($user);
 		if ($result > 0)
@@ -216,9 +216,9 @@ if (empty($reshook))
 * Put here all code to build page
 ****************************************************/
 
-llxHeader('','MyPageName','');
-
 $form=new Form($db);
+
+llxHeader('','MyPageName','');
 
 
 // Put here content of your page

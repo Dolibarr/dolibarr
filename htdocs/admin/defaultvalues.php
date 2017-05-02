@@ -56,6 +56,10 @@ $defaultvalue = GETPOST('defaultvalue');
 
 $defaulturl=preg_replace('/^\//', '', $defaulturl);
 
+$urlpage = GETPOST('urlpage');
+$key = GETPOST('key');
+$value = GETPOST('value');
+
 
 /*
  * Actions
@@ -81,25 +85,51 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 }
 
 
-if ($action == 'add' || (GETPOST('add') && $action != 'update'))
+if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('actionmodify'))
 {
 	$error=0;
 
-	if (empty($defaulturl))
+	if (($action == 'add' || (GETPOST('add') && $action != 'update')))
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Url")), null, 'errors');
-		$error++;
+    	if (empty($defaulturl))
+    	{
+    		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Url")), null, 'errors');
+    		$error++;
+    	}
+    	if (empty($defaultkey))
+    	{
+    		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Field")), null, 'errors');
+    		$error++;
+    	}
 	}
-	if (empty($defaultkey))
+	if (GETPOST('actionmodify'))
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Key")), null, 'errors');
-		$error++;
+	    if (empty($urlpage))
+	    {
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Url")), null, 'errors');
+	        $error++;
+	    }
+	    if (empty($key))
+	    {
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Field")), null, 'errors');
+	        $error++;
+	    }
 	}
+	
 	if (! $error)
 	{
 	    $db->begin();
-	     
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."default_values(type, user_id, page, param, value, entity) VALUES ('".$db->escape($mode)."', 0, '".$db->escape($defaulturl)."','".$db->escape($defaultkey)."','".$db->escape($defaultvalue)."', ".$db->escape($conf->entity).")";
+	    
+	    if ($action == 'add' || (GETPOST('add') && $action != 'update'))
+	    {
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."default_values(type, user_id, page, param, value, entity) VALUES ('".$db->escape($mode)."', 0, '".$db->escape($defaulturl)."','".$db->escape($defaultkey)."','".$db->escape($defaultvalue)."', ".$db->escape($conf->entity).")";
+	    }
+	    if (GETPOST('actionmodify'))
+	    {
+		    $sql = "UPDATE ".MAIN_DB_PREFIX."default_values SET page = '".$db->escape($urlpage)."', param = '".$db->escape($key)."', value = '".$db->escape($value)."'";
+		    $sql.= " WHERE rowid = ".$id;
+	    }
+		
 		$result = $db->query($sql);
 		if ($result > 0)
 		{
@@ -176,6 +206,10 @@ $head=defaultvalues_prepare_head();
     
 dol_fiche_head($head, $mode, '', -1, '');
 
+if ($mode == 'sortorder')
+{
+    print info_admin($langs->trans("WarningSettingSortOrder")).'<br>';
+}
 
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" id="action" name="action" value="">';
@@ -189,8 +223,15 @@ else $texthelp.=$langs->trans("PageUrlForDefaultValuesList", 'societe/list.php')
 $texturl=$form->textwithpicto($langs->trans("Url"), $texthelp);
 print_liste_field_titre($texturl,$_SERVER["PHP_SELF"],'page,param','',$param,'',$sortfield,$sortorder);
 $texthelp=$langs->trans("TheKeyIsTheNameOfHtmlField");
-if ($mode != 'sortorder') $textkey=$form->textwithpicto($langs->trans("Key"), $texthelp);
-else $textkey=$form->textwithpicto($langs->trans("Key"), $texthelp);
+if ($mode != 'sortorder') 
+{
+    $textkey=$form->textwithpicto($langs->trans("Field"), $texthelp);
+}
+else 
+{
+    $texthelp='field or alias.field';
+    $textkey=$form->textwithpicto($langs->trans("Field"), $texthelp);
+}
 print_liste_field_titre($textkey,$_SERVER["PHP_SELF"],'param','',$param,'',$sortfield,$sortorder);
 if ($mode != 'sortorder')
 {
@@ -270,9 +311,17 @@ if ($result)
 
 		print '<tr class="oddeven">';
 		
-		print '<td>'.$obj->page.'</td>'."\n";
-   	    print '<td>'.$obj->param.'</td>'."\n";
-        
+		print '<td>';
+		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print $obj->page;
+		else print '<input type="text" name="urlpage" value="'.dol_escape_htmltag($obj->page).'">';
+		print '</td>'."\n";
+   	    
+		// Key
+		print '<td>';
+		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print $obj->param;
+		else print '<input type="text" name="key" value="'.dol_escape_htmltag($obj->param).'">';
+		print '</td>'."\n";
+
 		// Value
 		print '<td>';
 		/*print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
@@ -280,11 +329,25 @@ if ($result)
 		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->transkey.'">';
 		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.dol_escape_htmltag($obj->transvalue).'">';
 		*/
-		print $obj->value;
+		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print $obj->value;
+		else print '<input type="text" name="value" value="'.dol_escape_htmltag($obj->value).'">';
 		print '</td>';
 
 		print '<td align="center">';
-		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=delete'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_delete().'</a>';
+		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid)
+		{
+    		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=edit'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_edit().'</a>';
+    		print ' &nbsp; ';
+    		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=delete'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_delete().'</a>';
+		}
+		else
+		{
+		    print '<input type="hidden" name="page" value="'.$page.'">';
+		    print '<input type="hidden" name="rowid" value="'.$id.'">';
+		    print '<div name="'.(! empty($obj->rowid)?$obj->rowid:'none').'"></div>';
+		    print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+		    print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+		}
 		print '</td>';
 		
 		print "</tr>\n";

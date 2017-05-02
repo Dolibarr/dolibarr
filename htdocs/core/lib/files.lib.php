@@ -1495,10 +1495,10 @@ function dol_uncompress($inputfile,$outputdir)
 {
     global $conf, $langs;
 
-    if (defined('ODTPHP_PATHTOPCLZIP'))
+    if (! empty($conf->global->ODTPHP_PATHTOPCLZIP))
     {
-    	dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".constant('ODTPHP_PATHTOPCLZIP').", so we use Pclzip to unzip into ".$outputdir);
-        include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
+    	dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".$conf->global->ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
+        include_once $conf->global->ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
         $archive = new PclZip($inputfile);
         $result=$archive->extract(PCLZIP_OPT_PATH, $outputdir);
         //var_dump($result);

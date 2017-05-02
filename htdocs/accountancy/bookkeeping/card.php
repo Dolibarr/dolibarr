@@ -305,6 +305,8 @@ if ($action == 'create') {
 
 		dol_fiche_head();
 		
+		print '<div class="fichecenter">';
+		
 		print '<table class="border" width="100%">';
 		print '<tr class="pair">';
 		print '<td class="titlefield">' . $langs->trans("NumMvts") . '</td>';
@@ -327,6 +329,8 @@ if ($action == 'create') {
 		print '<td>' . $book->doc_type . '</td>';
 		print '</tr>';
 		print '</table>';
+		
+		print '</div>';
 		
 		dol_fiche_end();
 
@@ -427,8 +431,8 @@ if ($action == 'create') {
 					print $formventilation->select_auxaccount($code_tiers, 'code_tiers', 1);
 					print '</td>';
 					print '<td><input type="text" size="15" name="label_compte" value="' . $label_compte . '"/></td>';
-					print '<td align="right"><input type="text" size="6" name="debit" value="' . price($debit) . '"/></td>';
-					print '<td align="right"><input type="text" size="6" name="credit" value="' . price($credit) . '"/></td>';
+					print '<td align="right"><input type="text" class="right maxwidth50" name="debit" value="' . price($debit) . '"/></td>';
+					print '<td align="right"><input type="text" class="right maxwidth50" name="credit" value="' . price($credit) . '"/></td>';
 					print '<td></td>';
 					print '<td></td>';
 					print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';

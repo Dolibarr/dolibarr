@@ -210,7 +210,7 @@ class Conf
                 $file=dol_sanitizeFileName($file);
                 include_once DOL_DOCUMENT_ROOT . "/".$file."/".$file."_consts.php";
                 foreach ($file2bddconsts as $key=>$value) {
-                    $this->global->$key=constant($value);
+                    $this->global->$key=$value;
                 }
             }
         }

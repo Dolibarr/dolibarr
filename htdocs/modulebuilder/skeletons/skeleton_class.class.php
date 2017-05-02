@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -20,10 +20,9 @@
  */
 
 /**
- * \file    dev/skeletons/skeleton_class.class.php
- * \ingroup mymodule othermodule1 othermodule2
- * \brief   This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *          Put some comments here
+ * \file        modulebuilder/skeletons/skeleton_class.class.php
+ * \ingroup     mymodule othermodule1 othermodule2
+ * \brief       This file is an example for a CRUD class file (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -34,26 +33,27 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 /**
  * Class Skeleton_Class
  *
- * Put here description of your class
- *
- * @see CommonObject
+ * Put here description of your class.
  */
 class Skeleton_Class extends CommonObject
 {
 	/**
-	 * @var string Id to identify managed objects
+	 * @var string Id to identify managed object
 	 */
 	public $element = 'skeleton';
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'skeleton';
-
-	/**
-	 * @var Skeleton_ClassLine[] Lines
-	 */
-	public $lines = array();
-
+    /**
+     * @var array Array with all fields and their property
+     */
+	public $picto = 'generic';
+    /**
+     * @var array Array with all fields and their property
+     */
+	public $fields;
+	
 	/**
 	 * @var mixed Sample property 1
 	 */
@@ -62,8 +62,21 @@ class Skeleton_Class extends CommonObject
 	 * @var mixed Sample property 2
 	 */
 	public $prop2;
+	
 	//...
-
+	
+	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	
+	public $table_element_line = 'skeletondet';
+    public $class_element_line = 'SkeletonLine';
+    public $fk_element = 'fk_skeleton';
+    /**
+	 * @var Skeleton_ClassLine[] Lines
+	 */
+	public $lines = array();
+	
+	
+	
 	/**
 	 * Constructor
 	 *
@@ -289,10 +302,10 @@ class Skeleton_Class extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		$error = 0;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
+		$error = 0;
+		
 		// Clean parameters
 		if (isset($this->prop1)) {
 			$this->prop1 = trim($this->prop1);

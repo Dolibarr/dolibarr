@@ -253,7 +253,7 @@ a.tab { font-weight: bold !important; }
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: normal; color: rgb(<?php print $colortextlink; ?>); text-decoration: none;  }
 a:hover { text-decoration: underline; color: rgb(<?php print $colortextlink; ?>); }
 a.commonlink { color: rgb(<?php print $colortextlink; ?>) !important; text-decoration: none; }
-
+th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decoration: underline; }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     background-color: #FFF;
 }
@@ -2494,6 +2494,10 @@ div.pagination li.pagination .active {
   text-decoration: underline;
   box-shadow: none;
 }
+.paginationafterarrows .nohover {
+  box-shadow: none !important;
+}
+
 div.pagination li.paginationafterarrows {
 	margin-left: 10px;
 }

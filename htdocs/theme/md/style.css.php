@@ -2564,6 +2564,9 @@ div.pagination li.pagination .active {
   text-decoration: underline;
   box-shadow: none;
 }
+.paginationafterarrows .nohover {
+  box-shadow: none !important;
+}
 div.pagination li.paginationafterarrows {
 	margin-left: 10px;
 }
