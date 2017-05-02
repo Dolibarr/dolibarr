@@ -229,9 +229,9 @@ fk_inventory integer DEFAULT 0,
 fk_warehouse integer DEFAULT 0,
 fk_product integer DEFAULT 0,  
 batch varchar(30) DEFAULT NULL,
-qty_view double DEFAULT 0, 
-qty_stock double DEFAULT 0, 
-qty_regulated double DEFAULT 0, 
+qty_view double DEFAULT NULL,
+qty_stock double DEFAULT NULL,
+qty_regulated double DEFAULT NULL,
 pmp double DEFAULT 0, 
 pa double DEFAULT 0, 
 new_pmp double DEFAULT 0
@@ -243,3 +243,8 @@ ALTER TABLE llx_inventory ADD INDEX idx_inventory_datec (datec);
 ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_tms (tms);
 ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_datec (datec);
 ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_fk_inventory (fk_inventory);
+
+insert into llx_c_tva(fk_pays,taux,code,recuperableonly,note,active)                                                   values (1, '8.5', '85', '0','VAT standard rate (DOM sauf Guyane et Saint-Martin)',0);
+insert into llx_c_tva(fk_pays,taux,code,recuperableonly,note,active)                                                   values (1, '8.5', '85NPR', '1','VAT standard rate (DOM sauf Guyane et Saint-Martin), non perçu par le vendeur mais récupérable par acheteur',0);
+insert into llx_c_tva(fk_pays,taux,code,recuperableonly,localtax1,localtax1_type,note,active)                          values (1, '8.5', '85NPROM', '1', 2, 3, 'VAT standard rate (DOM sauf Guyane et Saint-Martin), NPR, Octroi de Mer',0);
+insert into llx_c_tva(fk_pays,taux,code,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (1, '8.5', '85NPROMOMR', '1', 2, 3, 2.5, 3, 'VAT standard rate (DOM sauf Guyane et Saint-Martin), NPR, Octroi de Mer et Octroi de Mer Regional',0);
