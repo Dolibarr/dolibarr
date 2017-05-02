@@ -253,6 +253,8 @@ class Propal extends CommonObject
             $tva_tx = get_default_tva($mysoc,$this->thirdparty,$prod->id);
             $tva_npr = get_default_npr($mysoc,$this->thirdparty,$prod->id);
             if (empty($tva_tx)) $tva_npr=0;
+            $vat_src_code = '';     // May be defined into tva_tx
+            
             $localtax1_tx = get_localtax($tva_tx,1,$mysoc,$this->thirdparty,$tva_npr);
             $localtax2_tx = get_localtax($tva_tx,2,$mysoc,$this->thirdparty,$tva_npr);
 
@@ -273,6 +275,7 @@ class Propal extends CommonObject
             $line->qty=$qty;
             $line->subprice=$price;
             $line->remise_percent=$remise_percent;
+            $line->vat_src_code=$vat_src_code;
             $line->tva_tx=$tva_tx;
 	        $line->fk_unit=$prod->fk_unit;
 			if ($tva_npr) $line->info_bits = 1;
@@ -315,6 +318,7 @@ class Propal extends CommonObject
             $line->fk_propal=$this->id;
             $line->fk_remise_except=$remise->id;
             $line->desc=$remise->description;   	// Description ligne
+            $line->vat_src_code=$remise->vat_src_code;
             $line->tva_tx=$remise->tva_tx;
             $line->subprice=-$remise->amount_ht;
             $line->fk_product=0;					// Id produit predefined
@@ -698,7 +702,8 @@ class Propal extends CommonObject
             $this->line->label				= $label;
             $this->line->desc				= $desc;
             $this->line->qty				= $qty;
-            $this->line->product_type			= $type;
+            $this->line->product_type		= $type;
+            $this->line->vat_src_code		= $vat_src_code;
             $this->line->tva_tx				= $txtva;
             $this->line->localtax1_tx		= $txlocaltax1;
             $this->line->localtax2_tx		= $txlocaltax2;
@@ -708,7 +713,6 @@ class Propal extends CommonObject
             $this->line->subprice			= $pu_ht;
             $this->line->info_bits			= $info_bits;
 
-            $this->line->vat_src_code		= $vat_src_code;
             $this->line->total_ht			= $total_ht;
             $this->line->total_tva			= $total_tva;
             $this->line->total_localtax1	= $total_localtax1;
@@ -1368,7 +1372,7 @@ class Propal extends CommonObject
                 /*
                  * Lignes propales liees a un produit ou non
                  */
-                $sql = "SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
+                $sql = "SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
 				$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,";
 	            $sql.= " d.fk_unit,";
                 $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
@@ -1404,6 +1408,7 @@ class Propal extends CommonObject
                         $line->label            = $objp->custom_label;
                         $line->desc             = $objp->description;  // Description ligne
                         $line->qty              = $objp->qty;
+                        $line->vat_src_code     = $objp->vat_src_code;
                         $line->tva_tx           = $objp->tva_tx;
                         $line->localtax1_tx		= $objp->localtax1_tx;
                         $line->localtax2_tx		= $objp->localtax2_tx;
@@ -3591,7 +3596,7 @@ class PropaleLigne  extends CommonObjectLine
      */
 	function fetch($rowid)
 	{
-		$sql = 'SELECT pd.rowid, pd.fk_propal, pd.fk_parent_line, pd.fk_product, pd.label as custom_label, pd.description, pd.price, pd.qty, pd.tva_tx,';
+		$sql = 'SELECT pd.rowid, pd.fk_propal, pd.fk_parent_line, pd.fk_product, pd.label as custom_label, pd.description, pd.price, pd.qty, pd.vat_src_code, pd.tva_tx,';
 		$sql.= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice,';
 		$sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buy_price_ht as pa_ht, pd.special_code, pd.rang,';
 		$sql.= ' pd.fk_unit,';
@@ -3617,6 +3622,7 @@ class PropaleLigne  extends CommonObjectLine
 			$this->qty				= $objp->qty;
 			$this->price			= $objp->price;		// deprecated
 			$this->subprice			= $objp->subprice;
+			$this->vat_src_code		= $objp->vat_src_code;
 			$this->tva_tx			= $objp->tva_tx;
 			$this->remise			= $objp->remise;    // deprecated
 			$this->remise_percent	= $objp->remise_percent;
