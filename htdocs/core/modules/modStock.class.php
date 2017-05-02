@@ -117,90 +117,41 @@ class modStock extends DolibarrModules
 		$this->rights[4][4] = 'mouvement';
 		$this->rights[4][5] = 'creer';
 
-		/*
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		
+		$this->rights[$r][0] = 1006;
 		$this->rights[$r][1] = 'inventoryReadPermission';	// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'read';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 		
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][0] = 1007;
 		$this->rights[$r][1] = 'inventoryCreatePermission';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'create';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 		
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][0] = 1008;
 		$this->rights[$r][1] = 'inventoryWritePermission';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'write';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 		
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][0] = 1009;
 		$this->rights[$r][1] = 'inventoryValidatePermission';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'validate';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 		
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][0] = 1010;
 		$this->rights[$r][1] = 'inventoryChangePMPPermission';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'changePMP';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
-		*/
+		
 		
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
 		$r=0;
-		
-		/*
-		$this->menu[$r]=array(
-		    'fk_menu'=>'fk_mainmenu=products',			                // Put 0 if this is a top menu
-		    'type'=>'left',			                // This is a Top menu entry
-		    'titre'=>'Inventory',
-		    'mainmenu'=>'products',
-		    'leftmenu'=>'inventory_left',
-		    'url'=>'/inventory/list.php',
-		    'langs'=>'inventory',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		    'position'=>100+$r,
-		    'enabled'=>'$conf->inventory->enabled',	// Define condition to show or hide menu entry. Use '$conf->inventory->enabled' if entry must be visible if module is enabled.
-		    'perms'=>'$user->rights->inventory->read',			                // Use 'perms'=>'$user->rights->inventory->level1->level2' if you want your menu with a permission rules
-		    'target'=>'',
-		    'user'=>2
-		);				                // 0=Menu for internal users, 1=external users, 2=both
-		$r++;
-		
-		$this->menu[$r]=array(
-		    'fk_menu'=>'fk_mainmenu=products,fk_leftmenu=inventory_left',			                // Put 0 if this is a top menu
-		    'type'=>'left',			                // This is a Top menu entry
-		    'titre'=>'NewInventory',
-		    'mainmenu'=>'products',
-		    'leftmenu'=>'inventory_left_create',
-		    'url'=>'/inventory/inventory.php?action=create',
-		    'position'=>100+$r,
-		    'enabled'=>'$conf->inventory->enabled',	// Define condition to show or hide menu entry. Use '$conf->inventory->enabled' if entry must be visible if module is enabled.
-		    'perms'=>'$user->rights->inventory->create',			                // Use 'perms'=>'$user->rights->inventory->level1->level2' if you want your menu with a permission rules
-		    'target'=>'',
-		    'user'=>2
-		);				                // 0=Menu for internal users, 1=external users, 2=both
-		$r++;
-		
-		$this->menu[$r]=array(
-		    'fk_menu'=>'fk_mainmenu=products,fk_leftmenu=inventory_left',			                // Put 0 if this is a top menu
-		    'type'=>'left',			                // This is a Top menu entry
-		    'titre'=>'ListInventory',
-		    'mainmenu'=>'products',
-		    'leftmenu'=>'inventory_left_list',
-		    'url'=>'/inventory/list.php',
-		    'langs'=>'inventory',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		    'position'=>100+$r,
-		    'enabled'=>'$conf->inventory->enabled',	// Define condition to show or hide menu entry. Use '$conf->inventory->enabled' if entry must be visible if module is enabled.
-		    'perms'=>'$user->rights->inventory->read',			                // Use 'perms'=>'$user->rights->inventory->level1->level2' if you want your menu with a permission rules
-		    'target'=>'',
-		    'user'=>2
-		);				                // 0=Menu for internal users, 1=external users, 2=both
-		$r++;
-		*/
 		
 		// Menus
 		//-------
