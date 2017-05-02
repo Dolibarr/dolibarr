@@ -42,9 +42,21 @@ ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (filepath, filename, ent
 ALTER TABLE llx_ecm_files ADD INDEX idx_ecm_files_label (label);
 
 
+ALTER TABLE llx_holiday ADD COLUMN import_key				varchar(14);
+ALTER TABLE llx_holiday ADD COLUMN extraparams				varchar(255);	
+
+ALTER TABLE llx_expensereport ADD COLUMN import_key			varchar(14);
+ALTER TABLE llx_expensereport ADD COLUMN extraparams		varchar(255);	
+
+
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_CREATE','Product or service created','Executed when a product or sevice is created','product',30);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_MODIFY','Product or service modified','Executed when a product or sevice is modified','product',30);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_DELETE','Product or service deleted','Executed when a product or sevice is deleted','product',30);
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_CREATE','Expense report created','Executed when an expense report is created','expense_report',201);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_VALIDATE','Expense report validated','Executed when an expense report is validated','expense_report',202);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_APPROVE','Expense report approved','Executed when an expense report is approved','expense_report',203);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_PAYED','Expense report billed','Executed when an expense report is set as billed','expense_report',204);
 
 ALTER TABLE llx_c_email_templates ADD COLUMN content_lines text;
 
@@ -109,6 +121,16 @@ INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (5,'AN', 'Journal des à-nouveaux', 9, 1);
 
 ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
+
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_CREATE','Expense report created','Executed when an expense report is created','expensereport',201);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_VALIDATE','Expense report validated','Executed when an expense report is validated','expensereport',202);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_APPROVE','Expense report approved','Executed when an expense report is approved','expensereport',203);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_PAYED','Expense report billed','Executed when an expense report is set as billed','expensereport',204);
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_CREATE'  ,'Leave request created','Executed when a leave request is created','holiday',221);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_VALIDATE','Leave request validated','Executed when a leave request is validated','holiday',222);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_APPROVE' ,'Leave request approved','Executed when a leave request is approved','holiday',223);
 
 
 ALTER TABLE llx_societe_remise_except ADD COLUMN fk_invoice_supplier_line	integer;
