@@ -158,25 +158,25 @@ if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 
 // Set text color to black or white
 $tmppart=explode(',',$colorbackhmenu1);
-$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
+$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0)+(! empty($tmppart[3]) ? $tmppart[3] : 0);
 if ($tmpval <= 360) $colortextbackhmenu='FFFFFF';
 else $colortextbackhmenu='000000';
 
 $tmppart=explode(',',$colorbackvmenu1);
-$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
+$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0)+(! empty($tmppart[3]) ? $tmppart[3] : 0);
 if ($tmpval <= 360) { $colortextbackvmenu='FFFFFF'; }
 else { $colortextbackvmenu='000000'; }
 
 $tmppart=explode(',',$colorbacktitle1);
 if ($colortexttitle == '')
 {
-    $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
+    $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0)+(! empty($tmppart[3]) ? $tmppart[3] : 0);
     if ($tmpval <= 360) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
     else { $colortexttitle='000000'; $colorshadowtitle='FFFFFF'; }
 }
 
 $tmppart=explode(',',$colorbacktabcard1);
-$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
+$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0)+(! empty($tmppart[3]) ? $tmppart[3] : 0);
 if ($tmpval <= 340) { $colortextbacktab='FFFFFF'; }
 else { $colortextbacktab='111111'; }
 
