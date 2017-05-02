@@ -28,7 +28,7 @@ require '../main.inc.php';
 
 // Libraries
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT .'/inventory/lib/inventory.lib.php';
+require_once DOL_DOCUMENT_ROOT .'/product/inventory/lib/inventory.lib.php';
 
 // Translations
 $langs->load("stock");

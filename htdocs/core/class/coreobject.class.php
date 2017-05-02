@@ -473,10 +473,7 @@ class CoreObject extends CommonObject
         $error = 0;
         $this->db->begin();
 
-        $query = $this->set_save_query();
-        $query['rowid'] = $this->id;
-
-        $res = $this->db->update($this->table_element, $query, array('rowid'));
+        $res = $this->dbupdate();
         if ($res)
         {
             $result = $this->call_trigger(strtoupper($this->element). '_UPDATE', $user);
@@ -516,10 +513,7 @@ class CoreObject extends CommonObject
         $error = 0;
         $this->db->begin();
 
-		$query = $this->set_save_query();
-		$query['datec'] = date("Y-m-d H:i:s", dol_now());
-		
-		$res = $this->db->insert($this->table_element, $query);
+        $res = $this->dbinsert();
 		if($res)
 		{
 			$this->id = $this->db->last_insert_id($this->table_element);
@@ -565,7 +559,7 @@ class CoreObject extends CommonObject
 
         if (!$error)
         {
-            $this->db->delete($this->table_element, array('rowid' => $this->id), array('rowid'));
+            $this->dbdelete();
             if($this->withChild && !empty($this->childtables))
             {
                 foreach($this->childtables as &$childTable)
@@ -670,4 +664,107 @@ class CoreObject extends CommonObject
 		return 1;
 	}
 	
+	/*
+	 * Add quote to field value if necessary
+	 *
+	 * @param string|int	$value	value to protect
+	 * @return string|int
+	 */
+	public function quote($value) {
+		
+		if(is_null($value)) return 'NULL';
+		else if(is_numeric($value)) return $value;
+		else return "'".$this->db->escape( $value )."'";
+		
+	}
+	
+	/**
+	 *	Generate and execute Update SQL commande
+	 *
+	 * 	@param	string				$table		table to update
+	 *	@param	array				$values		array of values to update
+	 *	@param  int|string|array	$key		key of value to select row to update
+	 *	@return	bool|result						false or boolean
+	 */
+	private function dbupdate(){
+		
+		$fields = $this->set_save_query();
+		
+		foreach ($fields as $k => $v) {
+			
+			if (is_array($key)){
+				$i=array_search($k , $key );
+				if ( $i !== false) {
+					$where[] = $key[$i].'=' . $this->quote( $v ) ;
+					continue;
+				}
+			} else {
+				if ( $k == $key) {
+					$where[] = $k.'=' .$this->quote( $v ) ;
+					continue;
+				}
+			}
+			
+			$tmp[] = $k.'='.$this->quote($v);
+		}
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode( ',', $tmp ).' WHERE rowid='.$this->id ;
+		$res = $this->db->query( $sql );
+		
+		if($res===false) {
+			//error
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 *	Generate and execute Insert SQL commande
+	 *
+	 * 	@param	string				$table		table to update
+	 *	@param	array				$values		array of values to update
+	 *	@return	bool|result						false or boolean
+	 */
+	private function dbinsert(){
+		
+		$fields = array_merge(array('datec'=>$this->db->idate(dol_now())), $this->set_save_query());
+		
+		foreach ($fields as $k => $v) {
+			
+			$keys[] = $k;
+			$values[] = $this->quote($v);
+			
+		}
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'
+					( '.implode( ",", $keys ).' )
+					VALUES ( '.implode( ",", $values ).' ) ';
+		$res = $this->db->query( $sql );
+		if($res===false) {
+			
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 *	Generate and execute Delete SQL commande
+	 *
+	 * 	@param	string				$table		table for the delete
+	 *	@param	array				$values		array of values to delete
+	 *	@param  int|string|array	$key		key of value to select row to update
+	 *	@return	bool|result						false or boolean
+	 */
+	private function dbdelete(){
+		
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid='.$this->id;
+		
+		$res = $this->db->query( $sql );
+		if($res===false) {
+			return false;
+		}
+		
+		return true;
+		
+	}
 }

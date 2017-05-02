@@ -128,7 +128,6 @@ if (empty($reshook))
         	exit;
         }
         
-		break;
     }
     
     switch($action) {
