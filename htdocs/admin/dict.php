@@ -918,10 +918,19 @@ if (empty($id))
 print "<br>\n";
 
 
+$param = '&id='.$id;
+if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
+if ($search_code != '')     $param.= '&search_code='.urlencode($search_country_id);
+$paramwithsearch = $param;
+if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
+if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
+if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
+
+
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.urlencode($_GET["code"]).'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'rowid='.$rowid.'&code='.urlencode($_GET["code"]).$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
 }
 //var_dump($elementList);
 
@@ -1134,14 +1143,6 @@ if ($id)
         $num = $db->num_rows($resql);
         $i = 0;
 
-        $param = '&id='.$id;
-        if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
-        if ($search_code != '')     $param.= '&search_code='.urlencode($search_country_id);
-        $paramwithsearch = $param;
-        if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
-        if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
-        if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
-        
         // There is several pages
         if ($num > $listlimit)
         {
