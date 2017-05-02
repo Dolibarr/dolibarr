@@ -127,8 +127,6 @@ if (empty($reshook))
         	header('Location: '.dol_buildpath('/product/inventory/card.php?action=create', 1));
         	exit;
         }
-        
-		break;
     }
     
     switch($action) {
