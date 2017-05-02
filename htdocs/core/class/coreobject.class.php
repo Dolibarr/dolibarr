@@ -681,9 +681,6 @@ class CoreObject extends CommonObject
 	/**
 	 *	Generate and execute Update SQL commande
 	 *
-	 * 	@param	string				$table		table to update
-	 *	@param	array				$values		array of values to update
-	 *	@param  int|string|array	$key		key of value to select row to update
 	 *	@return	bool|result						false or boolean
 	 */
 	private function dbupdate(){
@@ -721,8 +718,6 @@ class CoreObject extends CommonObject
 	/**
 	 *	Generate and execute Insert SQL commande
 	 *
-	 * 	@param	string				$table		table to update
-	 *	@param	array				$values		array of values to update
 	 *	@return	bool|result						false or boolean
 	 */
 	private function dbinsert(){
@@ -750,9 +745,6 @@ class CoreObject extends CommonObject
 	/**
 	 *	Generate and execute Delete SQL commande
 	 *
-	 * 	@param	string				$table		table for the delete
-	 *	@param	array				$values		array of values to delete
-	 *	@param  int|string|array	$key		key of value to select row to update
 	 *	@return	bool|result						false or boolean
 	 */
 	private function dbdelete(){
