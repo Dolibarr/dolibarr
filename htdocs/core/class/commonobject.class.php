@@ -3698,7 +3698,7 @@ abstract class CommonObject
             $this->tpl['description'] = '&nbsp;';
         }
 
-        $this->tpl['vat_rate'] = vatrate($line->tva_tx, true);
+        $this->tpl['vat_rate'] = vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits);
         $this->tpl['price'] = price($line->subprice);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
         $this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';

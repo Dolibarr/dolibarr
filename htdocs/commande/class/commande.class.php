@@ -4120,6 +4120,7 @@ class OrderLine extends CommonOrderLine
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
 		$sql.= " description='".$this->db->escape($this->desc)."'";
 		$sql.= " , label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
+		$sql.= " , vat_src_code = '".(empty($this->vat_src_code)?'':$this->vat_src_code)."'";
 		$sql.= " , tva_tx=".price2num($this->tva_tx);
 		$sql.= " , localtax1_tx=".price2num($this->localtax1_tx);
 		$sql.= " , localtax2_tx=".price2num($this->localtax2_tx);
