@@ -332,14 +332,20 @@ if (empty($reshook))
 								else {
 								    $desc = dol_htmlentitiesbr($lines[$i]->desc);
 						        }
+
+								$txtva = $lines[$i]->vat_src_code ? $lines[$i]->tva_tx . ' (' .  $lines[$i]->vat_src_code . ')' : $lines[$i]->tva_tx;
+
+								// View third's localtaxes for now
+								$localtax1_tx = get_localtax($txtva, 1, $object->thirdparty);
+								$localtax2_tx = get_localtax($txtva, 2, $object->thirdparty);
 	
 			                    $result = $object->addline(
 					                $desc,
 					                $lines[$i]->subprice,
 					                $lines[$i]->qty,
-					                $lines[$i]->tva_tx,
-					                $lines[$i]->localtax1_tx,
-					                $lines[$i]->localtax2_tx,
+                                    $txtva,
+                                    $localtax1_tx,
+                                    $localtax2_tx,
 					                $lines[$i]->fk_product,
 					                $lines[$i]->remise_percent,
 					                $lines[$i]->date_start,
