@@ -646,7 +646,7 @@ class Contrat extends CommonObject
 				$line->fk_contrat		= $objp->fk_contrat;
 				$line->desc				= $objp->description;  // Description ligne
 				$line->qty				= $objp->qty;
-				$line->vat_src_code 	q= $objp->vat_src_code ;
+				$line->vat_src_code 	= $objp->vat_src_code ;
 				$line->tva_tx			= $objp->tva_tx;
 				$line->localtax1_tx		= $objp->localtax1_tx;
 				$line->localtax2_tx		= $objp->localtax2_tx;
