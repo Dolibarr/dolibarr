@@ -647,6 +647,7 @@ FreeLineOfType=Free entry of type
 CloneMainAttributes=Clone object with its main attributes
 PDFMerge=PDF Merge
 Merge=Merge
+DocumentModelStandardPDF=Standard PDF template
 PrintContentArea=Show page to print main content area
 MenuManager=Menu manager
 WarningYouAreInMaintenanceMode=Warning, you are in a maintenance mode, so only login <b>%s</b> is allowed to use application at the moment.
