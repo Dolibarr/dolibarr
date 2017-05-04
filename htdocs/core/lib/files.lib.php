@@ -1628,8 +1628,14 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	// Wrapping pour les apercu intervention
 	elseif (($modulepart == 'apercufichinter' || $modulepart == 'apercuficheinter') && !empty($conf->ficheinter->dir_output))
 	{
-		if ($fuser->rights->ficheinter->lire) $accessallowed=1;
-		$original_file=$conf->ficheinter->dir_output.'/'.$original_file;
+	    if ($fuser->rights->ficheinter->lire) $accessallowed=1;
+	    $original_file=$conf->ficheinter->dir_output.'/'.$original_file;
+	}
+	// Wrapping pour les apercu commande
+	elseif (($modulepart == 'apercusupplier_order' || $modulepart == 'apercusupplier_order') && !empty($conf->fournisseur->commande->dir_output))
+	{
+	    if ($fuser->rights->fournisseur->commande->lire) $accessallowed=1;
+	    $original_file=$conf->fournisseur->commande->dir_output.'/'.$original_file;
 	}
 	// Wrapping pour les images des stats propales
 	elseif ($modulepart == 'propalstats' && !empty($conf->propal->dir_temp))

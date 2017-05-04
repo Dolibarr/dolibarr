@@ -3002,6 +3002,9 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 	margin-bottom: 2px;
 	margin-top: 10px;
 }
+.photowithborder {
+	border: 1px solid #f0f0f0;
+}
 .photointooltip {
 	margin-top: 6px;
 	margin-bottom: 6px;
