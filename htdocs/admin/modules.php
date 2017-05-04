@@ -428,8 +428,6 @@ $h++;
 print "<br>\n";
 
 
-$var=true;
-
 if ($mode == 'common')
 {
     
@@ -782,7 +780,7 @@ if ($mode == 'marketplace')
     print '</tr>';
 
     
-    print "<tr ".$bc[$var].">\n";
+    print "<tr class=\"oddeven\">\n";
     $url='https://www.dolistore.com';
     print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
     print '<td>'.$langs->trans("DoliStoreDesc").'</td>';
@@ -790,7 +788,7 @@ if ($mode == 'marketplace')
     print '</tr>';
 
     
-    print "<tr ".$bc[$var].">\n";
+    print "<tr class=\"oddeven\">\n";
     $url='https://partners.dolibarr.org';
     print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a></td>';
     print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';

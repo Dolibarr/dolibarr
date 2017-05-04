@@ -367,7 +367,6 @@ foreach ($dirmodels as $reldir)
 
     if (is_dir($dir))
     {
-        $var=true;
 
         $handle=opendir($dir);
 
@@ -385,7 +384,7 @@ foreach ($dirmodels as $reldir)
 	                $module = new $classname($db, new PaiementFourn($db));
 
                     
-                    print "<tr ".$bc[$var].">\n";
+                    print "<tr class=\"oddeven\">\n";
                     print "<td>";
 	                print (empty($module->name)?$name:$module->name);
 	                print "</td>\n";

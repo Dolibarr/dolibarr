@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2015  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2017  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
@@ -659,11 +659,10 @@ if ($resql)
         // Lines with values
         while ($i < $num)
         {
-            $var = ! $var;
 
             $obj = $db->fetch_object($resql);
             //print_r($obj);
-            print '<tr '.$bc[$var].' id="rowid-'.$obj->rowid.'">';
+            print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
             if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
             {
                 $tmpaction='edit';
@@ -697,7 +696,7 @@ if ($resql)
                     // Show value for field
                     if ($showfield) {
                 
-                        print '</tr><tr '.$bc[$var].' nohover tr-'.$tmpfieldlist.'-'.$rowid.' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
+                        print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$rowid.' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
                         $okforextended = true;
                         if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
                             $okforextended = false;
@@ -789,7 +788,7 @@ if ($resql)
                     // Show value for field
                     if ($showfield) {
                         
-                        print '</tr><tr '.$bc[$var].' nohover tr-'.$tmpfieldlist.'-'.$i.' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
+                        print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$i.' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
                         $okforextended = true;
                         if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
                             $okforextended = false;
