@@ -1139,7 +1139,7 @@ class FormMail extends Form
 		complete_substitutions_array($tmparray, $langs, null, $parameters);
 		foreach($tmparray as $key => $val)
 		{
-		    $vars[]=$key;
+		    $vars[$key]=$key;
 		}
 		
 		return $vars;
