@@ -118,17 +118,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 $formmail=new FormMail($db);
 if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
 {
-    $tmp=$formmail->getAvailableSubstitKey('form');
+    $tmp=FormMail::getAvailableSubstitKey('formemail');
     $tmp['__(AnyTransKey)__']='__(AnyTransKey)__';
     $helpsubstit = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
     $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
 }
 else
 {
-    $tmp=$formmail->getAvailableSubstitKey('formwithlines');
+    $tmp=FormMail::getAvailableSubstitKey('formemailwithlines');
     $tmp['__(AnyTransKey)__']='__(AnyTransKey)__';
     $helpsubstit = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
-    $tmp=$formmail->getAvailableSubstitKey('formforlines');
+    $tmp=FormMail::getAvailableSubstitKey('formemailforlines');
     $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
 }
 
@@ -484,7 +484,11 @@ if ($action != 'edit')
         {
             print '<td align="'.$align.'">';
         	if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
-        	else if (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
+        	else if (! empty($tabhelp[$id][$value])) 
+        	{
+        	    if (in_array($value, array('topic'))) print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, $value);   // Tooltip on click
+        	    else print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2);                             // Tooltip on hover
+        	}
         	else print $valuetoshow;
             print '</td>';
          }
@@ -539,8 +543,8 @@ if ($action != 'edit')
     foreach ($fieldsforcontent as $tmpfieldlist)
     {
         print '<tr class="impair nodrag nodrop nohover"><td colspan="5">';
-        if ($tmpfieldlist == 'content') print '<strong>'.$form->textwithpicto($langs->trans("Content"),$tabhelp[$id][$tmpfieldlist]).'</strong><br>';
-        if ($tmpfieldlist == 'content_lines') print '<strong>'.$form->textwithpicto($langs->trans("ContentForLines"),$tabhelp[$id][$tmpfieldlist]).'</strong><br>';
+        if ($tmpfieldlist == 'content') print '<strong>'.$form->textwithpicto($langs->trans("Content"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong><br>';
+        if ($tmpfieldlist == 'content_lines') print '<strong>'.$form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong><br>';
     
         if ($context != 'hide')
         {
@@ -624,7 +628,11 @@ if ($resql)
         // Affiche nom du champ
         if ($showfield)
         {
-            if (! empty($tabhelp[$id][$value])) $valuetoshow = $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
+            if (! empty($tabhelp[$id][$value])) 
+            {
+                if (in_array($value, array('topic'))) $valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2);   // Tooltip on hover
+                else $valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2);                             // Tooltip on hover
+            }
             print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), $param, "align=".$align, $sortfield, $sortorder);
         }
     }

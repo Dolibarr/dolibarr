@@ -757,8 +757,7 @@ if ($id)
         {
         	print '<tr><td colspan="8">* '.$langs->trans("AvailableVariables").": ";
         	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-        	$formmail=new FormMail($db);
-        	$tmp=$formmail->getAvailableSubstitKey('form');
+        	$tmp=FormMail::getAvailableSubstitKey('formemail');
         	print implode(', ', $tmp);
         	print '</td></tr>';
         }
