@@ -3626,11 +3626,7 @@ class PropaleLigne  extends CommonObjectLine
 			$this->qty				= $objp->qty;
 			$this->price			= $objp->price;		// deprecated
 			$this->subprice			= $objp->subprice;
-<<<<<<< HEAD
-			$this->vat_src_code     = $objp->vat_src_code;
-=======
 			$this->vat_src_code		= $objp->vat_src_code;
->>>>>>> upstream/5.0
 			$this->tva_tx			= $objp->tva_tx;
 			$this->remise			= $objp->remise;    // deprecated
 			$this->remise_percent	= $objp->remise_percent;
