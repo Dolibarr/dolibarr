@@ -264,7 +264,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			require_once $dir.'/'.$file;
             			$module = new $classname($db, new ActionComm($db));           			
             			
-            			print '<tr class="oddeven">\n';
+            			print '<tr class="oddeven">'."\n";
             			print "<td>";
             			print (empty($module->name)?$name:$module->name);
             			print "</td>\n";
