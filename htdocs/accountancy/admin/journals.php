@@ -94,7 +94,7 @@ print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'titl
 
 $head = admin_accounting_prepare_head(null);
 
-dol_fiche_head($head, 'journal', $langs->trans("Configuration"), 0, 'cron');
+dol_fiche_head($head, 'journal', $langs->trans("Configuration"), -1, 'cron');
 
 $sql = "SELECT j.rowid, j.code, j.label, j.nature, j.active";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_journal as j";

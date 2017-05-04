@@ -1271,9 +1271,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             {
                 $enablebrowsernotif=false;
                 if (! empty($conf->agenda->enabled) && ! empty($conf->global->AGENDA_NOTIFICATION)) $enablebrowsernotif=true;
+                if ($conf->browser->layout == 'phone') $enablebrowsernotif=false;
                 if ($enablebrowsernotif)
                 {
-                    print '<!-- Includes JS of Dolibarr -->'."\n";
+                    print '<!-- Includes JS of Dolibarr (brwoser layout = '.$conf->browser->layout.')-->'."\n";
                     print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_notification.js.php?version='.urlencode(DOL_VERSION).($ext?'&amp;'.$ext:'').'"></script>'."\n";
                 }
             }
@@ -1865,7 +1866,7 @@ if (! function_exists("llxFooter"))
         dol_htmloutput_events();
 
         // Core error message
-        if (defined("MAIN_CORE_ERROR") && constant("MAIN_CORE_ERROR") == 1)
+        if (! empty($conf->global->MAIN_CORE_ERROR))
         {
             // Ajax version
             if ($conf->use_javascript_ajax)

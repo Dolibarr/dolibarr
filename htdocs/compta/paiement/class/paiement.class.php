@@ -255,7 +255,7 @@ class Paiement extends CommonObject
                                 {
                                     if (! empty($conf->prelevement->enabled))
                                     {
-                                        // TODO Check if this payment has a withdraw request
+                                        // FIXME Check if this invoice has a withdraw request
                                         // if not, $mustwait++;      // This will disable automatic close on invoice to allow to process
                                     }
                                 }
@@ -275,11 +275,61 @@ class Paiement extends CommonObject
                             else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
                             else
                             {
-                                $result=$invoice->set_paid($user,'','');
-                                if ($result<0)
+                                // If invoice is a down payment, we also convert down payment to discount
+                                if ($invoice->type == Facture::TYPE_DEPOSIT)
                                 {
-                                    $this->error=$invoice->error;
-                                    $error++;
+			                        $amount_ht = $amount_tva = $amount_ttc = array();
+			                         
+                                    // Loop on each vat rate
+                                    $i = 0;
+                                    foreach ($invoice->lines as $line)
+                                    {
+                                        if ($line->total_ht!=0)
+                                        { 	// no need to create discount if amount is null
+                                            $amount_ht[$line->tva_tx] += $line->total_ht;
+                                            $amount_tva[$line->tva_tx] += $line->total_tva;
+                                            $amount_ttc[$line->tva_tx] += $line->total_ttc;
+                                            $i ++;
+                                        }
+                                    }
+                                    
+                                    // Insert one discount by VAT rate category
+                                    $discount = new DiscountAbsolute($this->db);
+                                    $discount->description = '(DEPOSIT)';
+                                    $discount->fk_soc = $invoice->socid;
+                                    $discount->fk_facture_source = $invoice->id;
+                                
+                                    foreach ($amount_ht as $tva_tx => $xxx)
+                                    {
+                                        $discount->amount_ht = abs($amount_ht[$tva_tx]);
+                                        $discount->amount_tva = abs($amount_tva[$tva_tx]);
+                                        $discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+                                        $discount->tva_tx = abs($tva_tx);
+                            
+                                        $result = $discount->create($user);
+                                        if ($result < 0)
+                                        {
+                                            $error++;
+                                            break;
+                                        }
+                                    }
+                                    
+                                    if ($error)
+                                    {
+                                        setEventMessages($discount->error, $discount->errors, 'errors');
+                                        $error++;
+                                    }                                   
+                                }
+                                
+                                // Set invoice to paid
+                                if (! $error)
+                                {
+                                    $result=$invoice->set_paid($user,'','');
+                                    if ($result<0)
+                                    {
+                                        $this->error=$invoice->error;
+                                        $error++;
+                                    }
                                 }
                             }
 					    }

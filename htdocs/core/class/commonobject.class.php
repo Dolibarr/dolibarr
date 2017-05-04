@@ -11,6 +11,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
+ * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -238,6 +239,7 @@ abstract class CommonObject
 
 	/**
 	 * @var int Delivery address ID
+	 * @deprecated
 	 * @see setDeliveryAddress()
 	 */
 	public $fk_delivery_address;
@@ -1623,7 +1625,8 @@ abstract class CommonObject
 
     /**
      *	Define delivery address
-     *
+     *  @deprecated
+     *  
      *	@param      int		$id		Address id
      *	@return     int				<0 si ko, >0 si ok
      */
@@ -3223,51 +3226,14 @@ abstract class CommonObject
 
     /**
      *  Return if a country is inside the EEC (European Economic Community)
-     *  TODO Add a field into dictionary
+     *  @deprecated
      *
      *  @return     boolean		true = country inside EEC, false = country outside EEC
      */
     function isInEEC()
     {
-        // List of all country codes that are in europe for european vat rules
-        // List found on http://ec.europa.eu/taxation_customs/common/faq/faq_1179_en.htm#9
-        $country_code_in_EEC=array(
-    			'AT',	// Austria
-    			'BE',	// Belgium
-    			'BG',	// Bulgaria
-    			'CY',	// Cyprus
-    			'CZ',	// Czech republic
-    			'DE',	// Germany
-    			'DK',	// Danemark
-    			'EE',	// Estonia
-    			'ES',	// Spain
-    			'FI',	// Finland
-    			'FR',	// France
-    			'GB',	// United Kingdom
-    			'GR',	// Greece
-    			'HR',   // Croatia
-                'NL',	// Holland
-    			'HU',	// Hungary
-    			'IE',	// Ireland
-    			'IM',	// Isle of Man - Included in UK
-    			'IT',	// Italy
-    			'LT',	// Lithuania
-    			'LU',	// Luxembourg
-    			'LV',	// Latvia
-    			'MC',	// Monaco - Included in France
-    			'MT',	// Malta
-                //'NO',	// Norway
-    			'PL',	// Poland
-    			'PT',	// Portugal
-    			'RO',	// Romania
-    			'SE',	// Sweden
-    			'SK',	// Slovakia
-    			'SI',	// Slovenia
-    			'UK',	// United Kingdom
-        //'CH',	// Switzerland - No. Swizerland in not in EEC
-        );
-        //print "dd".$this->country_code;
-        return in_array($this->country_code,$country_code_in_EEC);
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+        return isInEEC($this);
     }
 
 
@@ -3752,21 +3718,6 @@ abstract class CommonObject
             if ($res) break;
         }
     }
-
-
-	/**
-	 * Show the array with all margin infos
-	 *
-	 * @param 		bool	$force_price	Force price
-	 * @return		void
-	 * @deprecated	3.8 Load FormMargin class and make a direct call to displayMarginInfos
-	 */
-	function displayMarginInfos($force_price=false)
-	{
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
-		$formmargin=new FormMargin($this->db);
-		$formmargin->displayMarginInfos($this, $force_price);
-	}
 
 
 	/**
@@ -4711,4 +4662,364 @@ abstract class CommonObject
 		}
 		return $buyPrice;
 	}
+	
+	/**
+	 * Function test if type is date
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return                  bool
+	 */
+	protected function isDate($info)
+	{
+		if(isset($info['type']) && $info['type']=='date') return true;
+		else return false;
+	}
+	
+	/**
+	 * Function test if type is array
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return                  bool
+	 */
+	protected function isArray($info)
+	{
+		if(is_array($info))
+		{
+			if(isset($info['type']) && $info['type']=='array') return true;
+			else return false;
+		}
+		else return false;
+	}
+	
+	/**
+	 * Function test if type is null
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return                  bool
+	 */
+	protected function isNull($info)
+	{
+		if(is_array($info))
+		{
+			if(isset($info['type']) && $info['type']=='null') return true;
+			else return false;
+		}
+		else return false;
+	}
+	
+	/**
+	 * Function test if type is integer
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return                  bool
+	 */
+	protected function isInt($info)
+	{
+		if(is_array($info))
+		{
+			if(isset($info['type']) && ($info['type']=='int' || $info['type']=='integer' )) return true;
+			else return false;
+		}
+		else return false;
+	}
+	
+	/**
+	 * Function test if type is float
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return                  bool
+	 */
+	protected function isFloat($info)
+	{
+		if(is_array($info))
+		{
+			if(isset($info['type']) && $info['type']=='float') return true;
+			else return false;
+		}
+		else return false;
+	}
+	
+	/**
+	 * Function test if type is text
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return                  bool
+	 */
+	protected function isText($info)
+	{
+		if(is_array($info))
+		{
+			if(isset($info['type']) && $info['type']=='text') return true;
+			else return false;
+		}
+		else return false;
+	}
+	
+	/**
+	 * Function test if is indexed
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return                  bool
+	 */
+	protected function isIndex($info)
+	{
+		if(is_array($info))
+		{
+			if(isset($info['index']) && $info['index']==true) return true;
+			else return false;
+		}
+		else return false;
+	}
+	
+	/**
+	 * Function to prepare the values to insert
+	 *
+	 * @return array
+	 */
+	private function set_save_query()
+	{
+		$query=array();
+		foreach ($this->fields as $field=>$info)
+		{
+			if($this->isDate($info))
+			{
+				if(empty($this->{$field}))
+				{
+					$query[$field] = NULL;
+				}
+				else
+				{
+					$query[$field] = $this->db->idate($this->{$field});
+				}
+			}
+			else if($this->isArray($info))
+			{
+				$query[$field] = serialize($this->{$field});
+			}
+			else if($this->isInt($info))
+			{
+				$query[$field] = (int) price2num($this->{$field});
+			}
+			else if($this->isFloat($info))
+			{
+				$query[$field] = (double) price2num($this->{$field});
+			}
+			elseif($this->isNull($info))
+			{
+				$query[$field] = (is_null($this->{$field}) || (empty($this->{$field}) && $this->{$field}!==0 && $this->{$field}!=='0') ? null : $this->{$field});
+			}
+			else
+			{
+				$query[$field] = $this->{$field};
+			}
+		}
+		
+		return $query;
+	}
+
+	/**
+	 * Create object into database
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 *
+	 * @return int <0 if KO, Id of created object if OK
+	 */
+	public function createCommon(User $user, $notrigger = false)
+	{
+	    
+	    $fields = array_merge(array('datec'=>$this->db->idate(dol_now())), $this->set_save_query());
+	    
+	    foreach ($fields as $k => $v) {
+	    	
+	    	$keys[] = $k;
+	    	$values[] = $this->quote($v);
+	    	
+	    }
+	    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'
+					( '.implode( ",", $keys ).' )
+					VALUES ( '.implode( ",", $values ).' ) ';
+	    $res = $this->db->query( $sql );
+	    if($res===false) {
+	    	
+	    	return false;
+	    }
+	    
+	    // TODO Add triggers
+	    
+	    return true;
+	    
+	}
+	
+	/**
+	 * Function to load data into current object this
+	 *
+	 * @param   stdClass    $obj    Contain data of object from database
+	 */
+	private function set_vars_by_db(&$obj)
+	{
+		foreach ($this->fields as $field => $info)
+		{
+			if($this->isDate($info))
+			{
+				if(empty($obj->{$field}) || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') $this->{$field} = 0;
+				else $this->{$field} = strtotime($obj->{$field});
+			}
+			elseif($this->isArray($info))
+			{
+				$this->{$field} = @unserialize($obj->{$field});
+				// Hack for data not in UTF8
+				if($this->{$field } === FALSE) @unserialize(utf8_decode($obj->{$field}));
+			}
+			elseif($this->isInt($info))
+			{
+				$this->{$field} = (int) $obj->{$field};
+			}
+			elseif($this->isFloat($info))
+			{
+				$this->{$field} = (double) $obj->{$field};
+			}
+			elseif($this->isNull($info))
+			{
+				$val = $obj->{$field};
+				// zero is not null
+				$this->{$field} = (is_null($val) || (empty($val) && $val!==0 && $val!=='0') ? null : $val);
+			}
+			else
+			{
+				$this->{$field} = $obj->{$field};
+			}
+			
+		}
+	}
+	
+	/**
+	 * Function to concat keys of fields
+	 *
+	 * @return string
+	 */
+	private function get_field_list()
+	{
+		$keys = array_keys($this->fields);
+		return implode(',', $keys);
+	}
+	
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param int    $id  Id object
+	 * @param string $ref Ref
+	 *
+	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetchCommon($id, $ref = null)
+	{
+	    
+		if (empty($id) && empty($ref)) return false;
+		
+		$sql = 'SELECT '.$this->get_field_list().', datec, tms';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
+		
+		if(!empty($id)) $sql.= ' WHERE rowid = '.$id;
+		else  $sql.= ' WHERE ref = \''.$this->quote($ref).'\'';
+		
+		$res = $this->db->query($sql);
+		if($obj = $this->db->fetch_object($res))
+		{
+			$this->id = $id;
+			$this->set_vars_by_db($obj);
+			
+			$this->datec = $this->db->idate($obj->datec);
+			$this->tms = $this->db->idate($obj->tms);
+			
+			return $this->id;
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
+		
+	}
+
+	/**
+	 * Update object into database
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 *
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function updateCommon(User $user, $notrigger = false)
+	{
+		$fields = $this->set_save_query();
+		
+		foreach ($fields as $k => $v) {
+			
+			if (is_array($key)){
+				$i=array_search($k, $key);
+				if ( $i !== false) {
+					$where[] = $key[$i].'=' . $this->quote( $v ) ;
+					continue;
+				}
+			} else {
+				if ( $k == $key) {
+					$where[] = $k.'=' .$this->quote( $v ) ;
+					continue;
+				}
+			}
+			
+			$tmp[] = $k.'='.$this->quote($v);
+		}
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode( ',', $tmp ).' WHERE rowid='.$this->id ;
+		$res = $this->db->query( $sql );
+		
+		if($res===false) {
+			//error
+			return false;
+		}
+		
+		// TODO Add triggers
+		
+		return true;
+	}
+	
+	/**
+	 * Delete object in database
+	 *
+	 * @param User $user      User that deletes
+	 * @param bool $notrigger false=launch triggers after, true=disable triggers
+	 *
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function deleteCommon(User $user, $notrigger = false)
+	{
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid='.$this->id;
+		
+		$res = $this->db->query( $sql );
+		if($res===false) {
+			return false;
+		}
+		
+		// TODO Add triggers
+		
+		return true;
+	}
+
+	/**
+	 * Add quote to field value if necessary
+	 *
+	 * @param string|int	$value	value to protect
+	 * @return string|int
+	 */
+	protected function quote($value) {
+	
+	    if(is_null($value)) return 'NULL';
+	    else if(is_numeric($value)) return $value;
+	    else return "'".$this->db->escape( $value )."'";
+	
+	}
+	
 }
+

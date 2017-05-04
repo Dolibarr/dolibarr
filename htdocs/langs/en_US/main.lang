@@ -647,6 +647,7 @@ FreeLineOfType=Free entry of type
 CloneMainAttributes=Clone object with its main attributes
 PDFMerge=PDF Merge
 Merge=Merge
+DocumentModelStandardPDF=Standard PDF template
 PrintContentArea=Show page to print main content area
 MenuManager=Menu manager
 WarningYouAreInMaintenanceMode=Warning, you are in a maintenance mode, so only login <b>%s</b> is allowed to use application at the moment.
@@ -766,6 +767,9 @@ Download=Download
 ActualizeCurrency=Update currency rate
 Fiscalyear=Fiscal year
 ModuleBuilder=Module Builder
+SetMultiCurrencyCode=Set currency
+BulkActions=Bulk actions
+ClickToShowHelp=Click to show tooltip help
 # Week day
 Monday=Monday
 Tuesday=Tuesday
@@ -823,5 +827,3 @@ SearchIntoContracts=Contracts
 SearchIntoCustomerShipments=Customer shipments
 SearchIntoExpenseReports=Expense reports
 SearchIntoLeaves=Leaves
-
-BulkActions=Bulk actions

@@ -181,7 +181,7 @@ if ($action == 'edit')
 
 if ($action == 'edit')
 {
-    dol_fiche_head($head, 'guisetup', $title, 0, 'user');
+    dol_fiche_head($head, 'guisetup', $title, -1, 'user');
 
 	$linkback = '';
 

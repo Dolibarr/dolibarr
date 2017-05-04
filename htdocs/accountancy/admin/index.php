@@ -171,7 +171,7 @@ print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="update">';
 
-dol_fiche_head($head, 'general', $langs->trans("Configuration"), 0, 'cron');
+dol_fiche_head($head, 'general', $langs->trans("Configuration"), -1, 'cron');
 
 
 // Default mode for calculating turnover (parameter ACCOUNTING_MODE)
@@ -299,7 +299,7 @@ print '<div class="center"><input type="submit" class="button" value="' . $langs
 print '<br>';
 print '<br>';
 
-print $langs->trans("AccountancySetupDoneFromAccountancyMenu", $langs->transnoentitiesnoconv("Home").'-'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy"));
+print '<div class="opacitymedium">'.$langs->trans("AccountancySetupDoneFromAccountancyMenu", $langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy")).'</div>';
 
 print '<br>';
 print '</form>';

@@ -757,8 +757,7 @@ if ($id)
         {
         	print '<tr><td colspan="8">* '.$langs->trans("AvailableVariables").": ";
         	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-        	$formmail=new FormMail($db);
-        	$tmp=$formmail->getAvailableSubstitKey('form');
+        	$tmp=FormMail::getAvailableSubstitKey('formemail');
         	print implode(', ', $tmp);
         	print '</td></tr>';
         }
@@ -901,8 +900,8 @@ if ($id)
         if ($id == 4) print '<td></td>';
         print '<td class="liste_titre"></td>';
     	print '<td class="liste_titre" colspan="2" align="right">';
-    	$searchpitco=$form->showFilterAndCheckAddButtons(0);
-    	print $searchpitco;
+    	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+    	print $searchpicto;
     	print '</td>';
         print '</tr>';
             
