@@ -2818,7 +2818,7 @@ class CommandeFournisseur extends CommonOrder
 
     
     /**
-     * Calc status regarding dispatch stock
+     * Calc status regarding to dispatched stock
      *
      * @param 		User 	$user                   User action
      * @param       int     $closeopenorder         Close if received
