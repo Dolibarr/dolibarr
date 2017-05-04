@@ -1133,6 +1133,9 @@ class FormMail extends Form
 				$vars['__SECUREKEYPAYPAL_MEMBER__']='';
 			}
 		}
+		
+		$vars=complete_substitutions_array($vars, $langs, null, null);
+		
 		return $vars;
 	}
 
