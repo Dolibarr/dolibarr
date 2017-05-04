@@ -2,14 +2,14 @@
 
     require '../../../main.inc.php';
     require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
-    
+  
     $get = GETPOST('get');
     $put = GETPOST('put');
     
     switch ($put)
     {
         case 'qty':
-            if (empty($user->rights->stock->write)) { echo -1; exit; }
+        	if (empty($user->rights->stock->creer)) { echo -1; exit; }
             
             $fk_det_inventory = GETPOST('fk_det_inventory');
             
@@ -17,7 +17,7 @@
             if( $det->fetch( $fk_det_inventory))
             {
                 $det->qty_view+=GETPOST('qty');
-                $det->update($user);
+                $res = $det->update($user);
                 
                 echo $det->qty_view;
             }
@@ -25,11 +25,11 @@
             {
                 echo -2;
             }            
-            
+           
             break;
 			
         case 'pmp':
-            if (!$user->rights->stock->write || !$user->rights->stock->changePMP) { echo -1; exit; }
+        	if (empty($user->rights->stock->creer) || empty($user->rights->stock->changePMP)) { echo -1; exit; }
             
             $fk_det_inventory = GETPOST('fk_det_inventory');
             
