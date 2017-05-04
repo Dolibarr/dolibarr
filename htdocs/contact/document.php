@@ -39,7 +39,7 @@ $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contact', $id, '','');
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
