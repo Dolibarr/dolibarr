@@ -4953,7 +4953,8 @@ function make_substitutions($text, $substitutionarray, $outputlangs=null)
 }
 
 /**
- *  Complete the $substitutionarray with more entries
+ *  Complete the $substitutionarray with more entries.
+ *  Can also add substitution keys coming from external module that had set the "substitutions=1" into module_part array. In this case, method completesubstitutionarray provided by module is called. 
  *
  *  @param  array		$substitutionarray		Array substitution old value => new value value
  *  @param  Translate	$outputlangs            Output language
