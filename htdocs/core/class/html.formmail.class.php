@@ -1059,18 +1059,18 @@ class FormMail extends Form
 	}
 	
 	/**
-	 * Set substit array from object
+	 * Get list of substition keys available.
 	 * 
-	 * @param	string	$mode		'form', 'formwithlines', 'formforlines' or 'emailing'
+	 * @param	string	$mode		'formemail', 'formemailwithlines', 'formemailforlines', 'emailing', ...
 	 * @return	void
 	 */
-	function getAvailableSubstitKey($mode='form')
+	static function getAvailableSubstitKey($mode='formemail')
 	{
-		global $conf;
+		global $conf, $langs;
 		
 		$vars=array();
 		
-		if ($mode == 'form' || $mode == 'formwithlines' || $mode == 'formforlines')
+		if ($mode == 'formemail' || $mode == 'formemailwithlines' || $mode == 'formemailforlines')
 		{
 			$vars=array(
 				'__REF__', 
@@ -1133,6 +1133,15 @@ class FormMail extends Form
 				$vars['__SECUREKEYPAYPAL_MEMBER__']='';
 			}
 		}
+		
+		$tmparray=array();
+		$parameters=array('mode'=>$mode);
+		complete_substitutions_array($tmparray, $langs, null, $parameters);
+		foreach($tmparray as $key => $val)
+		{
+		    $vars[$key]=$key;
+		}
+		
 		return $vars;
 	}
 

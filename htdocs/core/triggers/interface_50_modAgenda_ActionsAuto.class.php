@@ -48,7 +48,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 *      $object->actionmsg (note, long text)
 	 *      $object->actionmsg2 (label, short text)
 	 *      $object->sendtoid (id of contact or array of ids)
-	 *      $object->socid
+	 *      $object->socid (id of thirdparty)
 	 *      $object->fk_project
 	 *      $object->fk_element
 	 *      $object->elementtype
