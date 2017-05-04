@@ -260,12 +260,9 @@ class Proposals extends DolibarrApi
                         $request_data->localtax2_tx,
                         $request_data->fk_product,
                         $request_data->remise_percent,
-                        $request_data->info_bits,
-                        $request_data->fk_remise_except,
                         'HT',
                         0,
-                        $request_data->date_start,
-                        $request_data->date_end,
+                        $request_data->info_bits,
                         $request_data->product_type,
                         $request_data->rang,
                         $request_data->special_code,
@@ -273,10 +270,14 @@ class Proposals extends DolibarrApi
                         $request_data->fk_fournprice,
                         $request_data->pa_ht,
                         $request_data->label,
+                        $request_data->date_start,
+                        $request_data->date_end,
                         $request_data->array_options,
                         $request_data->fk_unit,
                         $this->element,
                         $request_data->id
+                        // not used anymore ?
+                        // $request_data->fk_remise_except
       );
 
       if ($updateRes > 0) {

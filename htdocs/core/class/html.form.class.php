@@ -492,10 +492,11 @@ class Form
      */
     function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 2, $tooltiptrigger='')
     {
-        global $conf;
+        global $conf, $langs;
 
         $alt = '';
-
+        if ($tooltiptrigger) $alt=$langs->trans("ClickToShowHelp");
+        
         //For backwards compatibility
         if ($type == '0') $type = 'info';
         elseif ($type == '1') $type = 'help';
