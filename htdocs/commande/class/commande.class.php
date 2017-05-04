@@ -1103,6 +1103,7 @@ class Commande extends CommonOrder
             $line->desc              = $object->lines[$i]->desc;
             $line->price             = $object->lines[$i]->price;
             $line->subprice          = $object->lines[$i]->subprice;
+            $line->vat_src_code      = $object->lines[$i]->vat_src_code;
             $line->tva_tx            = $object->lines[$i]->tva_tx;
             $line->localtax1_tx      = $object->lines[$i]->localtax1_tx;
             $line->localtax2_tx      = $object->lines[$i]->localtax2_tx;
@@ -1466,7 +1467,8 @@ class Commande extends CommonOrder
             $tva_tx = get_default_tva($mysoc,$this->thirdparty,$prod->id);
             $tva_npr = get_default_npr($mysoc,$this->thirdparty,$prod->id);
             if (empty($tva_tx)) $tva_npr=0;
-
+            $vat_src_code = '';     // May be defined into tva_tx
+            
             $localtax1_tx=get_localtax($tva_tx,1,$this->thirdparty,$mysoc,$tva_npr);
             $localtax2_tx=get_localtax($tva_tx,2,$this->thirdparty,$mysoc,$tva_npr);
 
@@ -1485,6 +1487,7 @@ class Commande extends CommonOrder
             $line->qty=$qty;
             $line->subprice=$price;
             $line->remise_percent=$remise_percent;
+            $line->vat_src_code=$vat_src_code;
             $line->tva_tx=$tva_tx;
             $line->localtax1_tx=$localtax1_tx;
             $line->localtax2_tx=$localtax2_tx;
@@ -1703,6 +1706,7 @@ class Commande extends CommonOrder
             $line->fk_commande=$this->id;
             $line->fk_remise_except=$remise->id;
             $line->desc=$remise->description;   	// Description ligne
+            $line->vat_src_code=$remise->vat_src_code;
             $line->tva_tx=$remise->tva_tx;
             $line->subprice=-$remise->amount_ht;
             $line->price=-$remise->amount_ht;
@@ -3811,6 +3815,7 @@ class OrderLine extends CommonOrderLine
             $this->qty              = $objp->qty;
             $this->price            = $objp->price;
             $this->subprice         = $objp->subprice;
+            $this->vat_src_code     = $objp->vat_src_code;
             $this->tva_tx           = $objp->tva_tx;
             $this->localtax1_tx		= $objp->localtax1_tx;
             $this->localtax2_tx		= $objp->localtax2_tx;
@@ -4122,7 +4127,7 @@ class OrderLine extends CommonOrderLine
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
 		$sql.= " description='".$this->db->escape($this->desc)."'";
 		$sql.= " , label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
-		$sql.= " , vat_src_code = '".(empty($this->vat_src_code)?'':$this->vat_src_code)."'";
+		$sql.= " , vat_src_code=".(! empty($this->vat_src_code)?"'".$this->db->escape($this->vat_src_code)."'":"''");
 		$sql.= " , tva_tx=".price2num($this->tva_tx);
 		$sql.= " , localtax1_tx=".price2num($this->localtax1_tx);
 		$sql.= " , localtax2_tx=".price2num($this->localtax2_tx);

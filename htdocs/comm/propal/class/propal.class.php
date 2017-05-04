@@ -253,6 +253,8 @@ class Propal extends CommonObject
             $tva_tx = get_default_tva($mysoc,$this->thirdparty,$prod->id);
             $tva_npr = get_default_npr($mysoc,$this->thirdparty,$prod->id);
             if (empty($tva_tx)) $tva_npr=0;
+            $vat_src_code = '';     // May be defined into tva_tx
+            
             $localtax1_tx = get_localtax($tva_tx,1,$mysoc,$this->thirdparty,$tva_npr);
             $localtax2_tx = get_localtax($tva_tx,2,$mysoc,$this->thirdparty,$tva_npr);
 
@@ -273,6 +275,7 @@ class Propal extends CommonObject
             $line->qty=$qty;
             $line->subprice=$price;
             $line->remise_percent=$remise_percent;
+            $line->vat_src_code=$vat_src_code;
             $line->tva_tx=$tva_tx;
 	        $line->fk_unit=$prod->fk_unit;
 			if ($tva_npr) $line->info_bits = 1;
@@ -315,6 +318,7 @@ class Propal extends CommonObject
             $line->fk_propal=$this->id;
             $line->fk_remise_except=$remise->id;
             $line->desc=$remise->description;   	// Description ligne
+            $line->vat_src_code=$remise->vat_src_code;
             $line->tva_tx=$remise->tva_tx;
             $line->subprice=-$remise->amount_ht;
             $line->fk_product=0;					// Id produit predefined
@@ -391,15 +395,16 @@ class Propal extends CommonObject
      * 		@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
      *      @param		string		$origin				'order', ...
      *      @param		int			$origin_id			Id of origin object
-     *    	@return    	int         	    			>0 if OK, <0 if KO
      * 		@param		double		$pu_ht_devise		Unit price in currency
+     * 		@param		int    		$fk_remise_except	Id discount if line is from a discount
+     *    	@return    	int         	    			>0 if OK, <0 if KO
      *    	@see       	add_product
      */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_options=0, $fk_unit=null, $origin='', $origin_id=0, $pu_ht_devise = 0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_options=0, $fk_unit=null, $origin='', $origin_id=0, $pu_ht_devise=0, $fk_remise_except=0)
     {
     	global $mysoc, $conf, $langs;
 
-        dol_syslog(get_class($this)."::addline propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
+        dol_syslog(get_class($this)."::addline propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type, fk_remise_except=".$fk_remise_except);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         // Clean parameters
@@ -515,6 +520,8 @@ class Propal extends CommonObject
 			$this->line->localtax1_type = $localtaxes_type[0];
 			$this->line->localtax2_type = $localtaxes_type[2];
             $this->line->fk_product=$fk_product;
+            $this->line->product_type=$type;
+            $this->line->fk_remise_except=$fk_remise_except;
             $this->line->remise_percent=$remise_percent;
             $this->line->subprice=$pu_ht;
             $this->line->rang=$rangtouse;
@@ -524,7 +531,6 @@ class Propal extends CommonObject
             $this->line->total_localtax1=$total_localtax1;
             $this->line->total_localtax2=$total_localtax2;
             $this->line->total_ttc=$total_ttc;
-            $this->line->product_type=$type;
             $this->line->special_code=$special_code;
             $this->line->fk_parent_line=$fk_parent_line;
             $this->line->fk_unit=$fk_unit;
@@ -698,7 +704,8 @@ class Propal extends CommonObject
             $this->line->label				= $label;
             $this->line->desc				= $desc;
             $this->line->qty				= $qty;
-            $this->line->product_type			= $type;
+            $this->line->product_type		= $type;
+            $this->line->vat_src_code		= $vat_src_code;
             $this->line->tva_tx				= $txtva;
             $this->line->localtax1_tx		= $txlocaltax1;
             $this->line->localtax2_tx		= $txlocaltax2;
@@ -708,7 +715,6 @@ class Propal extends CommonObject
             $this->line->subprice			= $pu_ht;
             $this->line->info_bits			= $info_bits;
 
-            $this->line->vat_src_code		= $vat_src_code;
             $this->line->total_ht			= $total_ht;
             $this->line->total_tva			= $total_tva;
             $this->line->total_localtax1	= $total_localtax1;
@@ -3620,7 +3626,11 @@ class PropaleLigne  extends CommonObjectLine
 			$this->qty				= $objp->qty;
 			$this->price			= $objp->price;		// deprecated
 			$this->subprice			= $objp->subprice;
+<<<<<<< HEAD
 			$this->vat_src_code     = $objp->vat_src_code;
+=======
+			$this->vat_src_code		= $objp->vat_src_code;
+>>>>>>> upstream/5.0
 			$this->tva_tx			= $objp->tva_tx;
 			$this->remise			= $objp->remise;    // deprecated
 			$this->remise_percent	= $objp->remise_percent;
