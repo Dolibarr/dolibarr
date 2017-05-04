@@ -1992,6 +1992,9 @@ div.tabBar {
 	padding-bottom: 12px;
 	border-bottom: 1px solid #aaa; 
 }
+div.tabBar div.titre {
+	padding-top: 10px;    
+}
 div.tabBarWithBottom {
 	padding-bottom: 18px;
 	border-bottom: 1px solid #aaa; 
@@ -2560,6 +2563,9 @@ div.pagination .disabled a:focus {
 div.pagination li.pagination .active {
   text-decoration: underline;
   box-shadow: none;
+}
+.paginationafterarrows .nohover {
+  box-shadow: none !important;
 }
 div.pagination li.paginationafterarrows {
 	margin-left: 10px;

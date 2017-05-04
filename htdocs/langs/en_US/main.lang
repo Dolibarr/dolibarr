@@ -766,6 +766,9 @@ Download=Download
 ActualizeCurrency=Update currency rate
 Fiscalyear=Fiscal year
 ModuleBuilder=Module Builder
+SetMultiCurrencyCode=Set currency
+BulkActions=Bulk actions
+ClickToShowHelp=Click to show tooltip help
 # Week day
 Monday=Monday
 Tuesday=Tuesday
@@ -823,5 +826,3 @@ SearchIntoContracts=Contracts
 SearchIntoCustomerShipments=Customer shipments
 SearchIntoExpenseReports=Expense reports
 SearchIntoLeaves=Leaves
-
-BulkActions=Bulk actions

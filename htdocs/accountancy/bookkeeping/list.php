@@ -360,7 +360,7 @@ if (count($filter)) $button.= $langs->trans("ExportFilteredList");
 else $button.= $langs->trans("ExportList");
 $button.= '</a>';
 
-$groupby = ' <a href="./listbyaccount.php">' . $langs->trans("GroupByAccountAccounting") . '</a>';
+$groupby = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php"">' . $langs->trans("GroupByAccountAccounting") . '</a>';
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, $groupby, '', $limit);
 
@@ -437,7 +437,7 @@ foreach ($object->lines as $line ) {
 
 	print '<td><a href="./card.php?piece_num=' . $line->piece_num . '">' . $line->piece_num . '</a></td>';
 	print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
-	print '<td>' . $line->doc_ref . '</td>';
+	print '<td class="nowrap">' . $line->doc_ref . '</td>';
 	print '<td>' . length_accountg($line->numero_compte) . '</td>';
 	print '<td>' . length_accounta($line->code_tiers) . '</td>';
 	print '<td>' . $line->label_compte . '</td>';

@@ -83,7 +83,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 $head=agenda_prepare_head();
 
-dol_fiche_head($head, 'xcal', $langs->trans("Agenda"), 0, 'action');
+dol_fiche_head($head, 'xcal', $langs->trans("Agenda"), -1, 'action');
 
 print $langs->trans("AgendaSetupOtherDesc")."<br>\n";
 print "<br>\n";

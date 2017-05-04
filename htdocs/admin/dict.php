@@ -660,7 +660,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	if ($_POST["accountancy_code"] <= 0) $_POST["accountancy_code"]='';	// If empty, we force to null
 	if ($_POST["accountancy_code_sell"] <= 0) $_POST["accountancy_code_sell"]='';	// If empty, we force to null
 	if ($_POST["accountancy_code_buy"] <= 0) $_POST["accountancy_code_buy"]='';	// If empty, we force to null
-
+    if ($id == 10 && isset($_POST["code"]))  // Spaces are not allowed into code 
+    {
+        $_POST["code"]=preg_replace('/\s/','',$_POST["code"]);
+    }
+    
     // Si verif ok et action add, on ajoute la ligne
     if ($ok && GETPOST('actionadd'))
     {
@@ -914,10 +918,19 @@ if (empty($id))
 print "<br>\n";
 
 
+$param = '&id='.$id;
+if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
+if ($search_code != '')     $param.= '&search_code='.urlencode($search_country_id);
+$paramwithsearch = $param;
+if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
+if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
+if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
+
+
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.urlencode($_GET["code"]).'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'rowid='.$rowid.'&code='.urlencode($_GET["code"]).$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
 }
 //var_dump($elementList);
 
@@ -1069,7 +1082,7 @@ if ($id)
         print '</tr>';
 
         // Line to enter new values
-        print '<tr class="oddeven nodrag nodrop nohover">';
+        print '<!-- line to add new entry --><tr class="oddeven nodrag nodrop nohover">';
 
         $obj = new stdClass();
         // If data was already input, we define them in obj to populate input fields.
@@ -1130,14 +1143,6 @@ if ($id)
         $num = $db->num_rows($resql);
         $i = 0;
 
-        $param = '&id='.$id;
-        if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
-        if ($search_code != '')     $param.= '&search_code='.urlencode($search_country_id);
-        $paramwithsearch = $param;
-        if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
-        if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
-        if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
-        
         // There is several pages
         if ($num > $listlimit)
         {
@@ -1302,10 +1307,10 @@ if ($id)
                     if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
 
                     print '<td colspan="3" align="center">';
+                    print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
                     print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
-                    print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
                 }
@@ -1810,13 +1815,14 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			if ($fieldlist[$field]=='affect') $class='maxwidth50';
 			if ($fieldlist[$field]=='delay') $class='maxwidth50';
 			if ($fieldlist[$field]=='position') $class='maxwidth50';
-			if ($fieldlist[$field]=='libelle') $class='quatrevingtpercent';
+			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $class='quatrevingtpercent';
 			if ($fieldlist[$field]=='tracking') $class='quatrevingtpercent';
 			if ($fieldlist[$field]=='sortorder' || $fieldlist[$field]=='sens' || $fieldlist[$field]=='category_type') $class='maxwidth50';
 			print '<td class="'.$classtd.'">';
 			$transfound=0;
 			if (in_array($fieldlist[$field], array('label','libelle')))
 			{
+			    $transkey='';
 			    // Special case for labels
 			    if ($tabname == MAIN_DB_PREFIX.'c_civility') {
 			        $transkey="Civility".strtoupper($obj->code);
@@ -1825,7 +1831,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			        $langs->load("bills");
 			        $transkey="PaymentCondition".strtoupper($obj->code);
 			    }
-			    if ($langs->trans($transkey) != $transkey)
+			    if ($transkey && $langs->trans($transkey) != $transkey)
 			    {
 			        $transfound=1;
 			        print $form->textwithpicto($langs->trans($transkey), $langs->trans("GoIntoTranslationMenuToChangeThis"));

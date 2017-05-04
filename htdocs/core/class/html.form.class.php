@@ -492,10 +492,11 @@ class Form
      */
     function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 2, $tooltiptrigger='')
     {
-        global $conf;
+        global $conf, $langs;
 
         $alt = '';
-
+        if ($tooltiptrigger) $alt=$langs->trans("ClickToShowHelp");
+        
         //For backwards compatibility
         if ($type == '0') $type = 'info';
         elseif ($type == '1') $type = 'help';
@@ -994,7 +995,7 @@ class Form
     				print img_picto($langs->trans("Search"), 'search');
     			}
     		}
-            print '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->THIRDPARTY_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
+            print '<input type="text" class="'.$morecss.'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->THIRDPARTY_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
     		if ($hidelabel == 3) {
     			print img_picto($langs->trans("Search"), 'search');
     		}
