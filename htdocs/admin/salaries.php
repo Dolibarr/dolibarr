@@ -99,7 +99,7 @@ foreach ($list as $key)
 {
 	
 
-	print '<tr '.$bc[$var].' class="value">';
+	print '<tr class="oddeven value">';
 
 	// Param
 	$label = $langs->trans($key);

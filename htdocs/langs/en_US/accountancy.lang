@@ -59,6 +59,7 @@ ChangeAndLoad=Change and load
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
 AccountAccountingShort=Account
+ShowAccoutingAccount=Show accounting account
 AccountAccountingSuggest=Accounting account suggested
 MenuDefaultAccounts=Default accounts
 MenuVatAccounts=Vat accounts
