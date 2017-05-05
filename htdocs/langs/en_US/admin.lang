@@ -1154,6 +1154,7 @@ WebCalUrlForVCalExport=An export link to <b>%s</b> format is available at follow
 BillsSetup=Invoices module setup
 BillsNumberingModule=Invoices and credit notes numbering model
 BillsPDFModules=Invoice documents models
+PaymentsPDFModules=Payment documents models
 CreditNote=Credit note
 CreditNotes=Credit notes
 ForceInvoiceDate=Force invoice date to validation date

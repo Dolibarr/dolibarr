@@ -1631,11 +1631,23 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	    if ($fuser->rights->ficheinter->lire) $accessallowed=1;
 	    $original_file=$conf->ficheinter->dir_output.'/'.$original_file;
 	}
-	// Wrapping pour les apercu commande
+	// Wrapping pour les apercu supplier proposal
+	elseif (($modulepart == 'apercusupplier_proposal' || $modulepart == 'apercusupplier_proposal') && !empty($conf->supplier_proposal->dir_output))
+	{
+	    if ($fuser->rights->supplier_proposal->lire) $accessallowed=1;
+	    $original_file=$conf->supplier_proposal->dir_output.'/'.$original_file;
+	}
+	// Wrapping pour les apercu supplier order
 	elseif (($modulepart == 'apercusupplier_order' || $modulepart == 'apercusupplier_order') && !empty($conf->fournisseur->commande->dir_output))
 	{
 	    if ($fuser->rights->fournisseur->commande->lire) $accessallowed=1;
 	    $original_file=$conf->fournisseur->commande->dir_output.'/'.$original_file;
+	}
+	// Wrapping pour les apercu supplier invoice
+	elseif (($modulepart == 'apercusupplier_invoice' || $modulepart == 'apercusupplier_invoice') && !empty($conf->fournisseur->facture->dir_output))
+	{
+	    if ($fuser->rights->fournisseur->facture->lire) $accessallowed=1;
+	    $original_file=$conf->fournisseur->facture->dir_output.'/'.$original_file;
 	}
 	// Wrapping pour les images des stats propales
 	elseif ($modulepart == 'propalstats' && !empty($conf->propal->dir_temp))

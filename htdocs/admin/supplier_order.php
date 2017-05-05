@@ -234,7 +234,7 @@ print "<br>";
 
 $head = supplierorder_admin_prepare_head();
 
-dol_fiche_head($head, 'order', $langs->trans("Suppliers"), 0, 'company');
+dol_fiche_head($head, 'order', $langs->trans("Suppliers"), -1, 'company');
 
 
 // Supplier order numbering module
