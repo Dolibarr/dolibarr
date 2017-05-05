@@ -368,8 +368,8 @@ abstract class CommonDocGenerator
 			{
 				$invoice_source->fetch($object->fk_facture_source);
 			}
-			$sumpayed = $object->getSommePaiement();
-			$alreadypayed=price($sumpayed,0,$outputlangs);
+			$remain_to_pay = $object->getRemainToPay();
+			$alreadypayed= $object->getSommePaiement() + $object->getSumDepositsUsed() + $object->getSumCreditNotesUsed();
 		}
 
 		$resarray=array(
@@ -414,9 +414,9 @@ abstract class CommonDocGenerator
 		$array_key.'_note'=>$object->note_public,			// For backward compatibility
 		// Payments
 		$array_key.'_already_payed_locale'=>price($alreadypayed, 0, $outputlangs),
-		$array_key.'_remain_to_pay_locale'=>price($object->total_ttc - $sumpayed, 0, $outputlangs),
+		$array_key.'_remain_to_pay_locale'=>price($remain_to_pay, 0, $outputlangs),
 		$array_key.'_already_payed'=>$alreadypayed,
-		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $sumpayed)
+		$array_key.'_remain_to_pay'=>price2num($remain_to_pay)
 		);
 
 		// Add vat by rates
