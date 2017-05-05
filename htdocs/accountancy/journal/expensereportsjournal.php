@@ -477,7 +477,7 @@ if (empty($action) || $action == 'view') {
 	/*
 	 * Show result array
 	 */
-	print '<br><br>';
+	print '<br>';
 
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";

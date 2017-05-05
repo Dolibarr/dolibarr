@@ -154,13 +154,13 @@ class SupplierProposal extends CommonObject
 	 */
 	const STATUS_SIGNED = 2;
 	/**
-	 * Not signed quote
+	 * Not signed quote, canceled
 	 */
 	const STATUS_NOTSIGNED = 3;
 	/**
-	 * Billed or processed quote
+	 * Billed or closed/processed quote
 	 */
-	const STATUS_BILLED = 4;	
+	const STATUS_CLOSE = 4;	
 	
 	
 	
@@ -1143,9 +1143,8 @@ class SupplierProposal extends CommonObject
                 $this->note                 = $obj->note_private; // TODO deprecated
                 $this->note_private         = $obj->note_private;
                 $this->note_public          = $obj->note_public;
-                $this->statut               = $obj->fk_statut;
+                $this->statut               = (int) $obj->fk_statut;
                 $this->statut_libelle       = $obj->statut_label;
-
                 $this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
                 $this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
                 $this->date_creation		= $this->db->jdate($obj->datec); //Creation date
@@ -2836,7 +2835,7 @@ class SupplierProposalLine  extends CommonObjectLine
         $sql.= " ".price2num($this->localtax2_tx).",";
 		$sql.= " '".$this->localtax1_type."',";
 		$sql.= " '".$this->localtax2_type."',";
-        $sql.= " ".($this->subprice?price2num($this->subprice):"null").",";
+        $sql.= " ".price2num($this->subprice).",";
         $sql.= " ".price2num($this->remise_percent).",";
         $sql.= " ".(isset($this->info_bits)?"'".$this->info_bits."'":"null").",";
         $sql.= " ".price2num($this->total_ht).",";

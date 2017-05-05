@@ -27,15 +27,11 @@
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
-delete from llx_accounting_account;
-delete from llx_accounting_system;
-delete from llx_accounting_journal;
-
-INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (1,'VT', 'Journal des ventes', 1, 1);
-INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (2,'AC', 'Journal des achats', 2, 1);
-INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (3,'BQ', 'Journal de banque', 3, 1);
-INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (4,'OD', 'Journal des opérations diverses', 0, 1);
-INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (5,'AN', 'Journal des à-nouveaux', 9, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('VT', 'Journal des ventes', 2, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AC', 'Journal des achats', 3, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('BQ', 'Journal de banque', 4, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('OD', 'Journal des opérations diverses', 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AN', 'Journal des à-nouveaux', 9, 1);
 --
 -- Descriptif des plans comptables FR PCG99-ABREGE
 --

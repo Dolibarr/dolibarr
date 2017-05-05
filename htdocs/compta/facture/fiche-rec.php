@@ -892,7 +892,6 @@ if ($action == 'create')
 
 	$object = new Facture($db);   // Source invoice
 	$product_static = new Product($db);
-	$formproject = new FormProjets($db);
 
 	if ($object->fetch($id, $ref) > 0)
 	{

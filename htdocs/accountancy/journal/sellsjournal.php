@@ -500,6 +500,7 @@ $form = new Form($db);
 }
 */
 
+
 if (empty($action) || $action == 'view') {
 
 	llxHeader('', $langs->trans("SellsJournal"));

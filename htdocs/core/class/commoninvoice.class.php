@@ -550,6 +550,12 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $fk_product;
 
 	/**
+	 * VAT code
+	 * @var string
+	 */
+	public $vat_src_code;
+
+	/**
 	 * VAT %
 	 * @var float
 	 */
