@@ -2855,7 +2855,7 @@ class SupplierProposalLine  extends CommonObjectLine
 		$sql.= ", ".$this->multicurrency_total_ht;
 		$sql.= ", ".$this->multicurrency_total_tva;
 		$sql.= ", ".$this->multicurrency_total_ttc;
-		$sql.= ", ".$this->fk_unit;
+        $sql.= ", fk_unit=".($this->fk_unit?$this->fk_unit:'null');
 		$sql.= ')';
 
         dol_syslog(get_class($this).'::insert', LOG_DEBUG);
@@ -3025,13 +3025,13 @@ class SupplierProposalLine  extends CommonObjectLine
         $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
         $sql.= " , ref_fourn=".(! empty($this->ref_fourn)?"'".$this->db->escape($this->ref_fourn)."'":"null");
-		
+        $sql.= " , fk_unit=".($this->fk_unit?$this->fk_unit:'null');
+        
 		// Multicurrency
 		$sql.= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
         $sql.= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
         $sql.= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
         $sql.= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
-        $sql.= " , fk_unit=".$this->fk_unit;
 		
 		$sql.= " WHERE rowid = ".$this->rowid;
 
