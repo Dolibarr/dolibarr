@@ -3040,12 +3040,12 @@ abstract class CommonObject
      */
     function getTotalWeightVolume()
     {
-        $weightUnit=0;
-        $volumeUnit=0;
-        $totalWeight = '';
-        $totalVolume = '';
-        $totalOrdered = '';     // defined for shipment only
-        $totalToShip = '';      // defined for shipment only
+        $totalWeight = 0;
+        $totalVolume = 0;
+	    // defined for shipment only
+        $totalOrdered = '';
+	    // defined for shipment only
+        $totalToShip = '';
 
         foreach ($this->lines as $line)
         {
@@ -3060,11 +3060,18 @@ abstract class CommonObject
                 $totalToShip+=$line->qty_shipped;   // defined for shipment only
             }
 
-            // Define qty, weight, volume, weight_units, volume_units
-            if ($this->element == 'shipping') $qty=$line->qty_shipped;     // for shipments
-            else $qty=$line->qty;
-            $weight=$line->weight;
-            $volume=$line->volume;
+	        // Define qty, weight, volume, weight_units, volume_units
+	        if ($this->element == 'shipping') {
+		        // for shipments
+		        $qty = $line->qty_shipped ? $line->qty_shipped : 0;
+	        }
+	        else {
+		        $qty = $line->qty ? $line->qty : 0;
+	        }
+
+            $weight = $line->weight ? $line->weight : 0;
+            $volume = $line->volume ? $line->volume : 0;
+
             $weight_units=$line->weight_units;
             $volume_units=$line->volume_units;
 
@@ -3566,7 +3573,7 @@ abstract class CommonObject
         print '<tr class="liste_titre">';
         print '<td>'.$langs->trans('Ref').'</td>';
         print '<td>'.$langs->trans('Description').'</td>';
-        print '<td align="right">'.$langs->trans('VAT').'</td>';
+        print '<td align="right">'.$langs->trans('VATRate').'</td>';
         print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 		if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('PriceUHTCurrency').'</td>';
         print '<td align="right">'.$langs->trans('Qty').'</td>';
@@ -3703,7 +3710,10 @@ abstract class CommonObject
             $this->tpl['description'] = '&nbsp;';
         }
 
+        // VAT Rate
         $this->tpl['vat_rate'] = vatrate($line->tva_tx, true);
+        if (! empty($line->vat_src_code) && ! preg_match('/\(/', $this->tpl['vat_rate'])) $this->tpl['vat_rate'].=' ('.$line->vat_src_code.')';
+
         $this->tpl['price'] = price($line->subprice);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
         $this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
