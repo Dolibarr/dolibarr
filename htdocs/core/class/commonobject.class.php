@@ -2963,20 +2963,20 @@ abstract class CommonObject
         foreach ($this->lines as $line)
         {
 
-            $totalOrdered+=$line->qty_asked ?: 0;    // defined for shipment only
-            $totalToShip+= $line->qty_shipped ?: 0;   // defined for shipment only
+            $totalOrdered+=($line->qty_asked ? $line->qty_asked : 0);    // defined for shipment only
+            $totalToShip+=($line->qty_shipped ? $line->qty_shipped : 0);   // defined for shipment only
 
 	        // Define qty, weight, volume, weight_units, volume_units
 	        if ($this->element == 'shipping') {
 		        // for shipments
-		        $qty = $line->qty_shipped ?: 0;
+		        $qty = $line->qty_shipped ? $line->qty_shipped : 0;
 	        }
 	        else {
-		        $qty = $line->qty ?: 0;
+		        $qty = $line->qty ? $line->qty : 0;
 	        }
 
-            $weight = $line->weight ?: 0;
-            $volume = $line->volume ?: 0;
+            $weight = $line->weight ? $line->weight : 0;
+            $volume = $line->volume ? $line->volume : 0;
 
             $weight_units=$line->weight_units;
             $volume_units=$line->volume_units;
