@@ -62,7 +62,7 @@ function printBookmarksList($aDb, $aLangs)
     */
 	$ret.= '<div class="menu_top"></div>'."\n";
 
-	$ret.= '<form id="actionbookmark" name="actionbookmark" method="POST" action="">';
+	$ret.= '<!-- form with GET method --><form id="actionbookmark" name="actionbookmark" method="GET" action="">';
 	$ret.= '<select name="bookmark" id="boxbookmark" class="flat boxcombo vmenusearchselectcombo">';
 	$ret.= '<option hidden value="listbookmarks" class="optiongrey" selected rel="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</option>';
     $ret.= '<option value="listbookmark" class="optionblue" rel="'.dol_escape_js(DOL_URL_ROOT.'/bookmarks/list.php').'">'.dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
