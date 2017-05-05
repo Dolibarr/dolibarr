@@ -1482,6 +1482,9 @@ class CommandeFournisseur extends CommonOrder
 			$localtax2_type=$localtaxes_type[2];
 
             $subprice = price2num($pu,'MU');
+            
+            $rangmax = $this->line_max();
+            $rang = $rangmax + 1;
 
             // Insert line
             $this->line=new CommandeFournisseurLigne($this->db);
