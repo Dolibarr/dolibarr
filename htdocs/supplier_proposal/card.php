@@ -1855,6 +1855,7 @@ if ($action == 'create')
 			$outputlangs = new Translate('', $conf);
 			$outputlangs->setDefaultLang($newlang);
 			$outputlangs->load('commercial');
+			$outputlangs->load('supplier_proposal');
 		}
 
 		// Build document if it not exists
