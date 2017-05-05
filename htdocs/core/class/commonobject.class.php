@@ -2790,6 +2790,8 @@ abstract class CommonObject
     {
     	global $user,$langs,$conf;
 
+    	$savElementId=$elementId;  // To be used later to know if we were using the method using the id of this or not.
+    	
         $elementId = (!empty($elementId)?$elementId:$this->id);
         $elementTable = (!empty($elementType)?$elementType:$this->table_element);
 
@@ -2813,11 +2815,13 @@ abstract class CommonObject
             $error = 0;
 
             $trigkey='';
-            if ($this->element == 'supplier_proposal' && $status == 2) $trigkey='SUPPLIER_PROPOSAL_CLOSE';
+            if ($this->element == 'supplier_proposal' && $status == 2) $trigkey='SUPPLIER_PROPOSAL_SIGN';   // 2 = SupplierProposal::STATUS_SIGNED. Can't use constant into this generic class
+            if ($this->element == 'supplier_proposal' && $status == 3) $trigkey='SUPPLIER_PROPOSAL_REFUSE'; // 3 = SupplierProposal::STATUS_REFUSED. Can't use constant into this generic class
+            if ($this->element == 'supplier_proposal' && $status == 4) $trigkey='SUPPLIER_PROPOSAL_CLOSE';  // 4 = SupplierProposal::STATUS_CLOSED. Can't use constant into this generic class
             if ($this->element == 'fichinter' && $status == 3) $trigkey='FICHINTER_CLASSIFY_DONE';
             if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFY_BILLED';
             if ($this->element == 'fichinter' && $status == 1) $trigkey='FICHINTER_CLASSIFY_UNBILLED';
-
+            
             if ($trigkey)
             {
                 // Appel des triggers
@@ -2833,12 +2837,14 @@ abstract class CommonObject
 			if (! $error)
 			{
 				$this->db->commit();
-        		if (empty($elementId))    // If the element we update was $this (so $elementId is null)
+				
+        		if (empty($savElementId))    // If the element we update was $this (so $elementId is null)
         		{
         		    $this->statut = $status;
         		    $this->status = $status;
         		}
-				return 1;
+
+                return 1;
 			}
 			else
 			{
