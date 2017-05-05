@@ -802,6 +802,8 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 {
 	global $conf, $langs, $hookmanager;
 
+	if ($notab == -1) $notab = 0;  // For better compatiblity with modules for 6.0
+	
 	$out="\n".'<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
 
 	// Show title
