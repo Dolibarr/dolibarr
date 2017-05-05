@@ -20,6 +20,7 @@
 create table llx_accounting_journal
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  entity            integer DEFAULT 1,
   code       		varchar(32) NOT NULL,
   label             varchar(128) NOT NULL,
   nature			smallint DEFAULT 0 NOT NULL,			-- type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)

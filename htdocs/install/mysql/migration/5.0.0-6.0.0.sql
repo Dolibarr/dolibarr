@@ -120,6 +120,8 @@ INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (4,'OD', 'Journal des opérations diverses', 0, 1);
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (5,'AN', 'Journal des à-nouveaux', 9, 1);
 
+ALTER TABLE llx_accounting_journal ADD COLUMN entity integer DEFAULT 1;
+
 ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
 
 

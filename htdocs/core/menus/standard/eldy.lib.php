@@ -1007,8 +1007,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					// Multi journal
 					$sql = "SELECT rowid, code, label, nature";
 					$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
-					// $sql.= " WHERE entity = ".$conf->entity;
-					$sql.= " ORDER BY code";
+					$sql.= " WHERE entity = ".$conf->entity;
+					$sql.= " ORDER BY nature";
 
 					$resql = $db->query($sql);
 					if ($resql)
@@ -1021,14 +1021,25 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
     						while ($i < $numr)
     						{
     							$objp = $db->fetch_object($resql);
-    
-    							if ($objp->nature == 1) $nature="sells";
-    							if ($objp->nature == 2) $nature="purchases";
-    							if ($objp->nature == 3) $nature="bank";
-    							if ($objp->nature == 4) $nature="various";
+
+    							$nature='';
+    							// Must match array $sourceList defined into journals_list.php 
+    							if ($objp->nature == 2) $nature="sells";
+    							if ($objp->nature == 3) $nature="purchases";
+    							if ($objp->nature == 4) $nature="bank";
+    							if ($objp->nature == 1) $nature="various";
     							if ($objp->nature == 9) $nature="hasnew";
-    
-    							if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&code_journal='.$objp->code,dol_trunc($objp->label,25),2,$user->rights->accounting->comptarapport->lire);
+    							
+    							// To enable when page exists
+    							if (empty($conf->global->MAIN_FEATURES_LEVEL))
+    							{
+    							    if ($nature == 'various' || $nature == 'hasnew') $nature='';	
+    							}
+    								
+    							if ($nature)
+    							{
+                                    if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&code_journal='.$objp->code,dol_trunc($objp->label,25),2,$user->rights->accounting->comptarapport->lire);
+    							}
     							$i++;
     						}
 						}
