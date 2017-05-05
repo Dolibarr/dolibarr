@@ -226,6 +226,7 @@ Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
 Modelcsv_quadratus=Export towards Quadratus QuadraCompta
 Modelcsv_ebp=Export towards EBP
 Modelcsv_cogilog=Export towards Cogilog
+Modelcsv_agiris=Export towards Agiris (Test)
 ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
