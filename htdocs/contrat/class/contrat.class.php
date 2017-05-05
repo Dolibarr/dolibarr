@@ -612,7 +612,7 @@ class Contrat extends CommonObject
 		
 		// Selectionne les lignes contrats liees a un produit
 		$sql = "SELECT p.label as product_label, p.description as product_desc, p.ref as product_ref,";
-		$sql.= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
+		$sql.= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
 		$sql.= " d.total_ht,";
 		$sql.= " d.total_tva,";
 		$sql.= " d.total_localtax1,";
@@ -646,9 +646,12 @@ class Contrat extends CommonObject
 				$line->fk_contrat		= $objp->fk_contrat;
 				$line->desc				= $objp->description;  // Description ligne
 				$line->qty				= $objp->qty;
+				$line->vat_src_code 	= $objp->vat_src_code ;
 				$line->tva_tx			= $objp->tva_tx;
 				$line->localtax1_tx		= $objp->localtax1_tx;
 				$line->localtax2_tx		= $objp->localtax2_tx;
+				$line->localtax1_type	= $objp->localtax1_type;
+				$line->localtax2_type	= $objp->localtax2_type;
 				$line->subprice			= $objp->subprice;
 				$line->statut			= $objp->statut;
 				$line->remise_percent	= $objp->remise_percent;
@@ -2715,6 +2718,7 @@ class ContratLigne extends CommonObjectLine
 		$this->statut=(int) $this->statut;
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
+		$this->vat_src_code=trim($this->vat_src_code);
 		$this->tva_tx=trim($this->tva_tx);
 		$this->localtax1_tx=trim($this->localtax1_tx);
 		$this->localtax2_tx=trim($this->localtax2_tx);
@@ -2786,6 +2790,7 @@ class ContratLigne extends CommonObjectLine
 		$sql.= " date_ouverture=".($this->date_ouverture!=''?"'".$this->db->idate($this->date_ouverture)."'":"null").",";
 		$sql.= " date_fin_validite=".($this->date_fin_validite!=''?"'".$this->db->idate($this->date_fin_validite)."'":"null").",";
 		$sql.= " date_cloture=".($this->date_cloture!=''?"'".$this->db->idate($this->date_cloture)."'":"null").",";
+		$sql.= " vat_src_code='".$this->vat_src_code."',";
 		$sql.= " tva_tx='".$this->tva_tx."',";
 		$sql.= " localtax1_tx='".$this->localtax1_tx."',";
 		$sql.= " localtax2_tx='".$this->localtax2_tx."',";
@@ -2914,6 +2919,7 @@ class ContratLigne extends CommonObjectLine
 		$sql.= ") VALUES ($this->fk_contrat, '', '" . $this->db->escape($this->description) . "',";
 		$sql.= ($this->fk_product>0 ? $this->fk_product : "null").",";
 		$sql.= " '".$this->qty."',";
+		$sql.= " '".$this->vat_src_code."',";
 		$sql.= " '".$this->tva_tx."',";
 		$sql.= " '".$this->localtax1_tx."',";
 		$sql.= " '".$this->localtax2_tx."',";
