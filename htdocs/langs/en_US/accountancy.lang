@@ -205,11 +205,11 @@ NewAccountingJournal=New accounting journal
 ShowAccoutingJournal=Show accounting journal
 Code=Code
 Nature=Nature
-AccountingJournalTypeVariousOperation=Various operation
-AccountingJournalTypeSale=Sale
-AccountingJournalTypePurchase=Purchase
-AccountingJournalTypeBank=Bank
-AccountingJournalTypeHasNew=Has-new
+AccountingJournalType1=Various operation
+AccountingJournalType2=Sales
+AccountingJournalType3=Purchases
+AccountingJournalType4=Bank
+AccountingJournalType9=Has-new
 ErrorAccountingJournalIsAlreadyUse=This journal is already use
 
 ## Export
