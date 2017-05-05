@@ -262,3 +262,4 @@ ALTER TABLE llx_product_price ALTER COLUMN date_price SET DEFAULT NULL;
 ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
 
+ALTER TABLE llx_events MODIFY COLUMN ip varchar(250);
