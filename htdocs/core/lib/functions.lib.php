@@ -257,8 +257,10 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	
 	if (empty($method) || $method == 3 || $method == 4)
 	{
+	    global $conf;
+	    
 	    // Management of default values
-	    if (! isset($_GET['sortfield']))	// If we did a click on a field to sort, we do no apply default values
+	    if (! isset($_GET['sortfield']) && empty($conf->global->MAIN_DISABLE_DEFAULT_VALUES))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_DISABLE_DEFAULT_VALUES is on
 	    {
 	        if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 	        {
