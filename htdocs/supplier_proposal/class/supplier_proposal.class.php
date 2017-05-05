@@ -154,7 +154,7 @@ class SupplierProposal extends CommonObject
 	 */
 	const STATUS_SIGNED = 2;
 	/**
-	 * Not signed quote
+	 * Not signed quote, canceled
 	 */
 	const STATUS_NOTSIGNED = 3;
 	/**
