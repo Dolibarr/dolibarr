@@ -248,70 +248,72 @@ function dol_shutdown()
  */
 function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 {
-	if (empty($method))
-	{
-		$out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
-
-		// Management of default values
-		if (! isset($_GET['sortfield']))	// If we did a click on a field to sort, we do no apply default values
-		{
-		    if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
-			{
-				$relativepathstring = $_SERVER["PHP_SELF"];
-				if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
-				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
-				global $user;
-				if (! empty($user->default_values))		// $user->default_values defined from menu default values, and values loaded not at first 
-				{
-					//var_dump($user->default_values[$relativepathstring]['createform']);
-					if (isset($user->default_values[$relativepathstring]['createform'][$paramname])) $out = $user->default_values[$relativepathstring]['createform'][$paramname];
-				}
-			}
-			// Management of default search_filters and sort order
-			elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
-			{
-			    $relativepathstring = $_SERVER["PHP_SELF"];
-				if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
-				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
-				global $user;
-				if (! empty($user->default_values))		// $user->default_values defined from menu default values, and values loaded not at first 
-				{
-				    //var_dump($user->default_values[$relativepathstring]);
-        			if ($paramname == 'sortfield')
-        			{
-        			    if (isset($user->default_values[$relativepathstring]['sortorder'])) 
-        			    {
-        			        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
-        			        {
-        			            if ($out) $out.=', ';
-        			            $out.=$key;
-        			        }
-        			    }
-        			}
-        			elseif ($paramname == 'sortorder')
-        			{
-        			    if (isset($user->default_values[$relativepathstring]['sortorder'])) 
-        			    {
-        			        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
-        			        {
-        			            if ($out) $out.=', ';
-        			            $out.=$val;
-        			        }
-        			    }
-        			}
-				    elseif (isset($user->default_values[$relativepathstring]['filters'][$paramname])) $out = $user->default_values[$relativepathstring]['filters'][$paramname];
-				}
-			}
-		}
-	}
+    if (empty($method)) $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
 	elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
 	elseif ($method==4) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:(isset($_COOKIE[$paramname])?$_COOKIE[$paramname]:''));
 	else return 'BadThirdParameterForGETPOST';
-
+	
+	if (empty($method) || $method == 3 || $method == 4)
+	{
+	    // Management of default values
+	    if (! isset($_GET['sortfield']))	// If we did a click on a field to sort, we do no apply default values
+	    {
+	        if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+	        {
+	            $relativepathstring = $_SERVER["PHP_SELF"];
+	            if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+	            $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+	            $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+	            global $user;
+	            if (! empty($user->default_values))		// $user->default_values defined from menu default values, and values loaded not at first
+	            {
+	                //var_dump($user->default_values[$relativepathstring]['createform']);
+	                if (isset($user->default_values[$relativepathstring]['createform'][$paramname])) $out = $user->default_values[$relativepathstring]['createform'][$paramname];
+	            }
+	        }
+	        // Management of default search_filters and sort order
+	        //elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+	        elseif (! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+	        {
+	            $relativepathstring = $_SERVER["PHP_SELF"];
+	            if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+	            $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+	            $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+	            global $user;
+	            if (! empty($user->default_values))		// $user->default_values defined from menu default values
+	            {
+	                //var_dump($user->default_values[$relativepathstring]);
+	                if ($paramname == 'sortfield')
+	                {
+	                    if (isset($user->default_values[$relativepathstring]['sortorder']))
+	                    {
+	                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
+	                        {
+	                            if ($out) $out.=', ';
+	                            $out.=dol_string_nospecial($key, '');
+	                        }
+	                    }
+	                }
+	                elseif ($paramname == 'sortorder')
+	                {
+	                    if (isset($user->default_values[$relativepathstring]['sortorder']))
+	                    {
+	                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
+	                        {
+	                            if ($out) $out.=', ';
+	                            $out.=dol_string_nospecial($val, '');
+	                        }
+	                    }
+	                }
+	                elseif (isset($user->default_values[$relativepathstring]['filters'][$paramname]))
+	                $out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '');
+	            }
+	        }
+	    }
+	}	
+	
 	if (! empty($check))
 	{
 	    // Replace vars like __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__
