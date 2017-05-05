@@ -1137,6 +1137,9 @@ table.noborder tr.liste_titre td {
 .pictoedit, .pictowarning, .pictodelete {
     vertical-align: text-bottom;
 }
+img.hideonsmartphone.pictoactionview {
+    vertical-align: bottom;
+}
 .colorthumb {
 	padding-left: 1px !important;
 	padding-right: 1px;
@@ -4680,7 +4683,7 @@ border-top-right-radius: 6px;
 	}
 	.mainmenuaspan {
     	/*display: none;*/
-  		font-size: 10px;
+  		font-size: 12px;
     }
     .topmenuimage {
     	background-size: 26px auto;
