@@ -158,9 +158,9 @@ class SupplierProposal extends CommonObject
 	 */
 	const STATUS_NOTSIGNED = 3;
 	/**
-	 * Billed or processed quote
+	 * Billed or closed/processed quote
 	 */
-	const STATUS_BILLED = 4;	
+	const STATUS_CLOSE = 4;	
 	
 	
 	
@@ -1143,9 +1143,8 @@ class SupplierProposal extends CommonObject
                 $this->note                 = $obj->note_private; // TODO deprecated
                 $this->note_private         = $obj->note_private;
                 $this->note_public          = $obj->note_public;
-                $this->statut               = $obj->fk_statut;
+                $this->statut               = (int) $obj->fk_statut;
                 $this->statut_libelle       = $obj->statut_label;
-
                 $this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
                 $this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
                 $this->date_creation		= $this->db->jdate($obj->datec); //Creation date

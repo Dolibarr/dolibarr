@@ -187,7 +187,7 @@ class Propal extends CommonObject
 	/**
 	 * Billed or processed quote
 	 */
-	const STATUS_BILLED = 4;
+	const STATUS_BILLED = 4;   // Todo rename into STATUS_CLOSE ?
 
     /**
      *	Constructor
@@ -1301,7 +1301,7 @@ class Propal extends CommonObject
                 $this->note                 = $obj->note_private; // TODO deprecated
                 $this->note_private         = $obj->note_private;
                 $this->note_public          = $obj->note_public;
-                $this->statut               = $obj->fk_statut;
+                $this->statut               = (int) $obj->fk_statut;
                 $this->statut_libelle       = $obj->statut_label;
 
                 $this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
