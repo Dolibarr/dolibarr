@@ -128,7 +128,9 @@ class FactureFournisseur extends CommonInvoice
     public $multicurrency_total_ht;
     public $multicurrency_total_tva;
     public $multicurrency_total_ttc;
-
+    //! id of source invoice if replacement invoice or credit note
+    public $fk_facture_source;
+    
     /**
      * Standard invoice
      */
@@ -263,6 +265,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", fk_multicurrency";
         $sql.= ", multicurrency_code";
         $sql.= ", multicurrency_tx";
+        $sql.= ", fk_facture_source";
         $sql.= ")";
         $sql.= " VALUES (";
 		$sql.= "'(PROV)'";
@@ -286,6 +289,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql.= ", ".(int) $this->fk_multicurrency;
 		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql.= ", ".(double) $this->multicurrency_tx;
+        $sql.= ", ".(isset($this->fk_facture_source)?$this->fk_facture_source:"NULL");
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
