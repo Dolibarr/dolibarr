@@ -1437,11 +1437,14 @@ class CommandeFournisseur extends CommonOrder
 			$localtax2_type=$localtaxes_type[2];
 
             $subprice = price2num($pu,'MU');
+            
+            $rangmax = $this->line_max();
+            $rang = $rangmax + 1;
 
             // TODO We should use here $this->line=new CommandeFournisseurLigne($this->db); and $this->line->insert(); to work like other object (proposal, order, invoice)
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
             $sql.= " (fk_commande, label, description, date_start, date_end,";
-            $sql.= " fk_product, product_type,";
+            $sql.= " fk_product, product_type, rang,";
             $sql.= " qty, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, ref,";
             $sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_unit,";
 			$sql.= " fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc";
@@ -1451,7 +1454,7 @@ class CommandeFournisseur extends CommonOrder
             $sql.= " ".($date_end?"'".$this->db->idate($date_end)."'":"null").",";
             if ($fk_product) { $sql.= $fk_product.","; }
             else { $sql.= "null,"; }
-            $sql.= "'".$product_type."',";
+            $sql.= "'".$product_type."', ".$rang.",";
             $sql.= "'".$qty."', ".$txtva.", ".$txlocaltax1.", ".$txlocaltax2;
 
            	$sql.= ", '".$localtax1_type."',";
