@@ -181,10 +181,12 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     							});
     						}
     						console.log("ajax_autocompleter new value selected, we trigger change on original component so field #search_'.$htmlname.'");
+							
     						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
 					}).data("ui-autocomplete")._renderItem = function( ul, item ) {
+						  
 						return $("<li>")
 						.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
 						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
