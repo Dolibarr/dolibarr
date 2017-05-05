@@ -126,10 +126,10 @@ complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
 	$sourceList = array(
-			'1' => $langs->trans('AccountingJournalType0'),
-			'2' => $langs->trans('AccountingJournalType1'),
-			'3' => $langs->trans('AccountingJournalType2'),
-			'4' => $langs->trans('AccountingJournalType3'),
+			'1' => $langs->trans('AccountingJournalType1'),
+			'2' => $langs->trans('AccountingJournalType2'),
+			'3' => $langs->trans('AccountingJournalType3'),
+			'4' => $langs->trans('AccountingJournalType4'),
 			'9' => $langs->trans('AccountingJournalType9')
 	);
 
@@ -212,10 +212,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $i=0;
         foreach ($listfieldinsert as $f => $value)
         {
-            if ($value == 'price' || preg_match('/^amount/i',$value) || $value == 'taux') {
-            	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
-            }
-            else if ($value == 'entity') {
+            if ($value == 'entity') {
             	$_POST[$listfieldvalue[$i]] = $conf->entity;
             }
             if ($i) $sql.=",";
@@ -465,7 +462,6 @@ if ($id)
              if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
         }
 
-        if ($id == 4) print '<td></td>';
         print '<td>';
         print '<input type="hidden" name="id" value="'.$id.'">';
         print '</td>';
@@ -475,7 +471,7 @@ if ($id)
         print '</tr>';
 
         // Line to enter new values
-        print "<tr ".$bcnd[$var].">";
+        print '<tr class="oddeven nodrag nodrap nohover">';
 
         $obj = new stdClass();
         // If data was already input, we define them in obj to populate input fields.
@@ -503,13 +499,7 @@ if ($id)
         print '</td>';
         print "</tr>";
 
-        $colspan=count($fieldlist)+3;
-
-        if (! empty($alabelisused))  // If there is one label among fields, we show legend of *
-        {
-        	print '<tr><td colspan="'.$colspan.'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
-        }
-        print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';	// Keep &nbsp; to have a line with enough height
+        print '<tr><td colspan="7">&nbsp;</td></tr>';	// Keep &nbsp; to have a line with enough height
     }
 
 
@@ -578,6 +568,9 @@ if ($id)
         print '<td class="liste_titre"></td>';
         print '<td class="liste_titre"></td>';
         print '<td class="liste_titre"></td>';
+        print '<td class="liste_titre"></td>';
+        print '<td class="liste_titre"></td>';
+        print '<td class="liste_titre"></td>';
         print '<td class="liste_titre" align="center">';
     	if ($filterfound)
     	{
@@ -605,14 +598,12 @@ if ($id)
                     // Show fields
                     if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
 
-                    print '<td></td>';
-                    print '<td></td>';
-                    print '<td align="center">';
+                    print '<td align="center" colspan="4">';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
                     print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
-                    print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+                    print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '</td>';
                 }
                 else
@@ -655,10 +646,7 @@ if ($id)
                     	else if ($obj->code == 'EF0')   { $iserasable = 0; $canbedisabled = 0; }
                     }
 
-                    if (isset($obj->type) && in_array($obj->type, array('system', 'systemauto'))) { $iserasable=0; }
-                    if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $canbedisabled=0; $canbedisabled = 0; }
                     $canbemodified=$iserasable;
-                    if ($obj->code == 'RECEP') $canbemodified=1;
 
                     $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&code='.(! empty($obj->code)?urlencode($obj->code):'');
                     if ($param) $url .= '&'.$param;
@@ -690,9 +678,12 @@ if ($id)
                     }
                     else print '<td>&nbsp;</td>';
 
+                    print '<td></td>';
+                                         
                     print '</td>';
-                    print "</tr>\n";
                 }
+                
+                print "</tr>\n";
                 $i++;
             }
         }

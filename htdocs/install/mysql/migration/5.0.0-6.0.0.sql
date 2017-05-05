@@ -251,3 +251,10 @@ insert into llx_c_tva(fk_pays,taux,code,recuperableonly,localtax1,localtax1_type
 
 ALTER TABLE llx_events MODIFY COLUMN ip varchar(250);
 
+UPDATE llx_accounting_journal SET nature = 1 where code = 'OD' and nature = 0;
+UPDATE llx_accounting_journal SET nature = 2 where code = 'VT' and nature = 1;
+UPDATE llx_accounting_journal SET nature = 3 where code = 'AC' and nature = 2;
+UPDATE llx_accounting_journal SET nature = 4 where (code = 'BK' or code = 'BQ') and nature = 3;
+
+
+
