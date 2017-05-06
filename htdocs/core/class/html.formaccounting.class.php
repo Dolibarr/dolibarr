@@ -25,11 +25,13 @@
 /**
  *	Class to manage generation of HTML components for accounting management
  */
-class FormAccounting
+class FormAccounting extends Form
 {
+
+    private $options_cache = array();
+
 	var $db;
 	var $error;
-
 
 	/**
 	* Constructor
@@ -39,6 +41,59 @@ class FormAccounting
 	public function __construct($db)
 	{
 	    $this->db = $db;
+	}
+
+	/**
+	 * Return list of journals with label by nature
+	 *
+	 * @param	string	$selectid	Preselected pcg_type
+	 * @param	string	$htmlname	Name of field in html form
+	 * @param	int		$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
+	 * @param	int		$showempty	Add an empty field
+	 * @param	array	$event		Event options
+	 * @param	string	$morecss	More css non HTML object
+	 * @param	string	$usecache	Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 *
+	 * @return	string				String with HTML select
+	 */
+	function select_journal($selectid, $htmlname = 'journal', $nature=0, $showempty = 0, $event = array(), $morecss='maxwidth300 maxwidthonsmartphone', $usecache='')
+	{
+		global $conf;
+
+		$sql = "SELECT rowid, code, label, nature, entity, active";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "accounting_journal";
+		$sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " AND active = 1";
+		if (empty($nature)) $sql.= " AND nature = ".$nature;
+		$sql.= " ORDER BY code";
+
+		dol_syslog(get_class($this) . "::select_journal", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+
+		if (!$resql) {
+			$this->error = "Error ".$this->db->lasterror();
+			dol_syslog(get_class($this)."::select_journal ".$this->error, LOG_ERR);
+			return -1;
+		}
+
+		$options = array();
+		$out = ajax_combobox($htmlname, $event);
+
+    	$selected = 0;
+    	while ($obj = $this->db->fetch_object($resql))
+    	{
+		    $label = $obj->code . ' - ' . $obj->label;
+		}
+    	$this->db->free($resql);
+
+    	if ($usecache)
+    	{
+            $this->options_cache[$usecache] = $options;
+    	}
+		
+		$out .= Form::selectarray($htmlname, $options, $selectid, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
+
+		return $out;
 	}
 
     /**
