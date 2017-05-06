@@ -248,70 +248,74 @@ function dol_shutdown()
  */
 function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 {
-	if (empty($method))
-	{
-		$out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
-
-		// Management of default values
-		if (! isset($_GET['sortfield']))	// If we did a click on a field to sort, we do no apply default values
-		{
-		    if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
-			{
-				$relativepathstring = $_SERVER["PHP_SELF"];
-				if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
-				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
-				global $user;
-				if (! empty($user->default_values))		// $user->default_values defined from menu default values, and values loaded not at first 
-				{
-					//var_dump($user->default_values[$relativepathstring]['createform']);
-					if (isset($user->default_values[$relativepathstring]['createform'][$paramname])) $out = $user->default_values[$relativepathstring]['createform'][$paramname];
-				}
-			}
-			// Management of default search_filters and sort order
-			elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
-			{
-			    $relativepathstring = $_SERVER["PHP_SELF"];
-				if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
-				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
-				global $user;
-				if (! empty($user->default_values))		// $user->default_values defined from menu default values, and values loaded not at first 
-				{
-				    //var_dump($user->default_values[$relativepathstring]);
-        			if ($paramname == 'sortfield')
-        			{
-        			    if (isset($user->default_values[$relativepathstring]['sortorder'])) 
-        			    {
-        			        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
-        			        {
-        			            if ($out) $out.=', ';
-        			            $out.=$key;
-        			        }
-        			    }
-        			}
-        			elseif ($paramname == 'sortorder')
-        			{
-        			    if (isset($user->default_values[$relativepathstring]['sortorder'])) 
-        			    {
-        			        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
-        			        {
-        			            if ($out) $out.=', ';
-        			            $out.=$val;
-        			        }
-        			    }
-        			}
-				    elseif (isset($user->default_values[$relativepathstring]['filters'][$paramname])) $out = $user->default_values[$relativepathstring]['filters'][$paramname];
-				}
-			}
-		}
-	}
+    if (empty($method)) $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
 	elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
 	elseif ($method==4) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:(isset($_COOKIE[$paramname])?$_COOKIE[$paramname]:''));
 	else return 'BadThirdParameterForGETPOST';
-
+	
+	if (empty($method) || $method == 3 || $method == 4)
+	{
+	    global $conf;
+	    
+	    // Management of default values
+	    if (! isset($_GET['sortfield']) && empty($conf->global->MAIN_DISABLE_DEFAULT_VALUES))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_DISABLE_DEFAULT_VALUES is on
+	    {
+	        if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+	        {
+	            $relativepathstring = $_SERVER["PHP_SELF"];
+	            if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+	            $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+	            $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+	            global $user;
+	            if (! empty($user->default_values))		// $user->default_values defined from menu default values, and values loaded not at first
+	            {
+	                //var_dump($user->default_values[$relativepathstring]['createform']);
+	                if (isset($user->default_values[$relativepathstring]['createform'][$paramname])) $out = $user->default_values[$relativepathstring]['createform'][$paramname];
+	            }
+	        }
+	        // Management of default search_filters and sort order
+	        //elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+	        elseif (! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+	        {
+	            $relativepathstring = $_SERVER["PHP_SELF"];
+	            if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+	            $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+	            $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+	            global $user;
+	            if (! empty($user->default_values))		// $user->default_values defined from menu default values
+	            {
+	                //var_dump($user->default_values[$relativepathstring]);
+	                if ($paramname == 'sortfield')
+	                {
+	                    if (isset($user->default_values[$relativepathstring]['sortorder']))
+	                    {
+	                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
+	                        {
+	                            if ($out) $out.=', ';
+	                            $out.=dol_string_nospecial($key, '');
+	                        }
+	                    }
+	                }
+	                elseif ($paramname == 'sortorder')
+	                {
+	                    if (isset($user->default_values[$relativepathstring]['sortorder']))
+	                    {
+	                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
+	                        {
+	                            if ($out) $out.=', ';
+	                            $out.=dol_string_nospecial($val, '');
+	                        }
+	                    }
+	                }
+	                elseif (isset($user->default_values[$relativepathstring]['filters'][$paramname]))
+	                $out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '');
+	            }
+	        }
+	    }
+	}	
+	
 	if (! empty($check))
 	{
 	    // Replace vars like __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__
@@ -1065,11 +1069,12 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 	$modulepart='unknown';
 
-	if ($object->element == 'societe')   $modulepart='societe';
-	if ($object->element == 'contact')   $modulepart='contact';
-	if ($object->element == 'member')    $modulepart='memberphoto';
-	if ($object->element == 'user')      $modulepart='userphoto';
-	if ($object->element == 'product')   $modulepart='product';
+	if ($object->element == 'societe')         $modulepart='societe';
+	if ($object->element == 'contact')         $modulepart='contact';
+	if ($object->element == 'member')          $modulepart='memberphoto';
+	if ($object->element == 'user')            $modulepart='userphoto';
+	if ($object->element == 'product')         $modulepart='product';
+
 	if (class_exists("Imagick"))
 	{
 		if ($object->element == 'propal')    $modulepart='propal';
@@ -1077,6 +1082,9 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		if ($object->element == 'facture')   $modulepart='facture';
 		if ($object->element == 'fichinter') $modulepart='ficheinter';
 		if ($object->element == 'contrat')   $modulepart='contract';
+	    if ($object->element == 'supplier_proposal') $modulepart='supplier_proposal';
+		if ($object->element == 'order_supplier')    $modulepart='supplier_order';
+	    if ($object->element == 'invoice_supplier')  $modulepart='supplier_invoice';
 	}
 
 	if ($object->element == 'product')
@@ -1102,19 +1110,26 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	{
 		if ($showimage)
         {
-        	if ($modulepart != 'unknown')
+            if ($modulepart != 'unknown')
             {
                 $phototoshow='';
-                
                 // Check if a preview file is available
-                if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract')) && class_exists("Imagick"))
+                if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract', 'supplier_order', 'supplier_proposal', 'supplier_invoice')) && class_exists("Imagick"))
                 {
                     $objectref = dol_sanitizeFileName($object->ref);
                     $dir_output = $conf->$modulepart->dir_output . "/";
-                    $filepath = $dir_output . $objectref . "/";
+                    if (in_array($modulepart, array('invoice_supplier', 'supplier_invoice')))
+                    {
+                        $subdir = get_exdir($object->id, 2, 0, 0, $object, $modulepart).$objectref;
+                    }
+                    else
+                    {
+                        $subdir = get_exdir($object->id, 0, 0, 0, $object, $modulepart).$objectref;
+                    }
+                    $filepath = $dir_output . $subdir . "/";
                     $file = $filepath . $objectref . ".pdf";
-                    $relativepath = $objectref.'/'.$objectref.'.pdf';
-                    
+                    $relativepath = $subdir.'/'.$objectref.'.pdf';
+
                     // Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
                     $fileimage = $file.'_preview.png';              // If PDF has 1 page
                     $fileimagebis = $file.'_preview-0.png';         // If PDF has more than one page
@@ -1137,7 +1152,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                         if (file_exists($fileimage))
                         {
                             $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
-                            $phototoshow.= '<img height="70" class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+                            $phototoshow.= '<img height="70" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
                             $phototoshow.= '</div></div>';
                         }
                         // Si fichier png PDF de plus d'1 page trouve
@@ -1145,7 +1160,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                         {
                             $preview = preg_replace('/\.png/','',$relativepathimage) . "-0.png";
                             $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
-                            $phototoshow.= '<img height="70" class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
+                            $phototoshow.= '<img height="70" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
                             $phototoshow.= '</div></div>';
                         }
                     }
@@ -1171,7 +1186,6 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     $width=80;
                     $cssclass='photorefcenter';
                     $nophoto=img_picto('', 'title_agenda', '', false, 1);
-                    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
                 }
                 else
                 {
@@ -1179,8 +1193,8 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     $picto = $object->picto;
                     if ($object->element == 'project' && ! $object->public) $picto = 'project'; // instead of projectpub
     				$nophoto=img_picto('', 'object_'.$picto, '', false, 1);
-    				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
                 }
+                $morehtmlleft.='<!-- No photo to show --><div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
                 $morehtmlleft.='</div>';
             }
         }
@@ -4466,7 +4480,8 @@ function yn($yesno, $case=1, $color=0)
 
 /**
  *	Return a path to have a directory according to object.
- *  New usage:       $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'modulepart')
+ *  New usage:       $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'modulepart')
+ *         or:       $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'modulepart')     if multidir_output not defined.
  *  Old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
  *
  *	@param	string	$num            Id of object (deprecated, $object will be used in future)
@@ -4487,7 +4502,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';
 	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
 	{
-		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided
+		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided.
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
 		else $num = preg_replace('/^.*\-/i','',$num);
 		$num = substr("000".$num, -$level);

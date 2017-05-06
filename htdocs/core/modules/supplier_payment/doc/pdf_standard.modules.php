@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 /**
  *	Class to generate the supplier invoices with the canelle model
  */
-class pdf_cow extends ModelePDFSuppliersPayments
+class pdf_standard extends ModelePDFSuppliersPayments
 {
     var $db;
     var $name;
@@ -70,8 +70,8 @@ class pdf_cow extends ModelePDFSuppliersPayments
 		$langs->load("bills");
 
 		$this->db = $db;
-		$this->name = "cow";
-		$this->description = $langs->trans('SuppliersPaymentModel');
+		$this->name = "standard";
+		$this->description = $langs->trans('DocumentModelStandardPDF');
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -85,10 +85,6 @@ class pdf_cow extends ModelePDFSuppliersPayments
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
 		$this->option_logo = 1;                    // Affiche logo
-		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1;                 // Affiche mode reglement
-		$this->option_condreg = 1;                 // Affiche conditions reglement
-		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
 
 		$this->franchise=!$mysoc->tva_assuj;

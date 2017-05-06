@@ -66,7 +66,7 @@ $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
 // Initialize technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('inventory'));
+$hookmanager->initHooks(array('inventorycard'));
 
 
 
@@ -84,7 +84,7 @@ if (empty($reshook))
     {
         if ($action != 'addlink')
         {
-            $urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/list.php',1);
+            $urltogo=$backtopage?$backtopage:dol_buildpath('/product/inventory/list.php',1);
             header("Location: ".$urltogo);
             exit;
         }
@@ -98,7 +98,7 @@ if (empty($reshook))
 	
 		if ($cancel)
 		{
-		    $urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/list.php',1);
+		    $urltogo=$backtopage?$backtopage:dol_buildpath('/product/inventory/list.php',1);
 		    header("Location: ".$urltogo);
 		    exit;
 		}

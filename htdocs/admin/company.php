@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2016	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -794,7 +794,6 @@ else
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
-	$var=true;
 
 	// Managing Director(s)
 	

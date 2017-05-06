@@ -89,7 +89,7 @@ llxHeader('', $title, $helpurl);
 if ($object->id > 0)
 {
 	$head = facturefourn_prepare_head($object);
-	dol_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), 0, 'bill');
+	dol_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, 'bill');
     
 	$totalpaye = $object->getSommePaiement();
 
@@ -230,6 +230,8 @@ if ($object->id > 0)
 
 	print '</table><br>';
 
+	print '<div class="underbanner clearboth"></div>';
+	
 	print '<table class="border" width="100%">';
 
 	// Nb of files

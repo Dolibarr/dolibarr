@@ -265,7 +265,7 @@ print load_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'title_setu
 
 $head=fichinter_admin_prepare_head();
 
-dol_fiche_head($head, 'ficheinter', $langs->trans("Interventions"), 0, 'intervention');
+dol_fiche_head($head, 'ficheinter', $langs->trans("Interventions"), -1, 'intervention');
 
 // Interventions numbering model
 
@@ -291,7 +291,6 @@ foreach ($dirmodels as $reldir)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-			$var=true;
 
 			while (($file = readdir($handle))!==false)
 			{

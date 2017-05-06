@@ -52,6 +52,7 @@ $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('usercard','globalcard'));
 
+
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/

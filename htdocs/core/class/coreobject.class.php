@@ -59,10 +59,10 @@ class CoreObject extends CommonObject
 		{
 			foreach ($this->fields as $field=>$info)
 			{
-		        if ($this->is_date($info)) $this->{$field} = time();
-		        elseif ($this->is_array($info)) $this->{$field} = array();
-		        elseif ($this->is_int($info)) $this->{$field} = (int) 0;
-		        elseif ($this->is_float($info)) $this->{$field} = (double) 0;
+		        if ($this->isDate($info)) $this->{$field} = time();
+		        elseif ($this->isArray($info)) $this->{$field} = array();
+		        elseif ($this->isInt($info)) $this->{$field} = (int) 0;
+		        elseif ($this->isFloat($info)) $this->{$field} = (double) 0;
 				else $this->{$field} = '';
 		    }
 
@@ -98,216 +98,6 @@ class CoreObject extends CommonObject
 	}
 
     /**
-     * Function test if type is date
-     *
-     * @param   array   $info   content informations of field
-     * @return                  bool
-     */
-    private function is_date($info)
-    {
-		if(isset($info['type']) && $info['type']=='date') return true;
-		else return false;
-	}
-
-    /**
-     * Function test if type is array
-     *
-     * @param   array   $info   content informations of field
-     * @return                  bool
-     */
-	private function is_array($info)
-    {
-	  	if(is_array($info))
-	  	{
-			if(isset($info['type']) && $info['type']=='array') return true;
-			else return false;
-		}
-		else return false;
-	}
-
-    /**
-     * Function test if type is null
-     *
-     * @param   array   $info   content informations of field
-     * @return                  bool
-     */
-	private function is_null($info)
-    {
-		if(is_array($info))
-		{
-			if(isset($info['type']) && $info['type']=='null') return true;
-			else return false;
-		}
-		else return false;
-	}
-
-    /**
-     * Function test if type is integer
-     *
-     * @param   array   $info   content informations of field
-     * @return                  bool
-     */
-	private function is_int($info)
-    {
-		if(is_array($info))
-		{
-			if(isset($info['type']) && ($info['type']=='int' || $info['type']=='integer' )) return true;
-			else return false;
-		}
-		else return false;
-	}
-
-    /**
-     * Function test if type is float
-     *
-     * @param   array   $info   content informations of field
-     * @return                  bool
-     */
-	private function is_float($info)
-    {
-		if(is_array($info))
-		{
-			if(isset($info['type']) && $info['type']=='float') return true;
-			else return false;
-		}
-		else return false;
-	}
-
-    /**
-     * Function test if type is text
-     *
-     * @param   array   $info   content informations of field
-     * @return                  bool
-     */
-	private function is_text($info)
-    {
-	  	if(is_array($info))
-	  	{
-			if(isset($info['type']) && $info['type']=='text') return true;
-			else return false;
-		}
-		else return false;
-	}
-
-    /**
-     * Function test if is indexed
-     *
-     * @param   array   $info   content informations of field
-     * @return                  bool
-     */
-	private function is_index($info)
-    {
-	  	if(is_array($info))
-	  	{
-			if(isset($info['index']) && $info['index']==true) return true;
-			else return false;
-		}
-		else return false;
-	}
-
-
-    /**
-     * Function to prepare the values to insert
-     *
-     * @return array
-     */
-    private function set_save_query()
-    {
-		$query=array();
-		foreach ($this->fields as $field=>$info)
-		{
-			if($this->is_date($info))
-			{
-				if(empty($this->{$field}))
-				{
-					$query[$field] = NULL;
-				}
-				else
-                {
-					$query[$field] = $this->db->idate($this->{$field});
-				}
-		  	}
-		  	else if($this->is_array($info))
-		  	{
-                $query[$field] = serialize($this->{$field});
-		  	}
-		  	else if($this->is_int($info))
-		  	{
-		    	$query[$field] = (int) price2num($this->{$field});
-		  	}
-		  	else if($this->is_float($info))
-		  	{
-		    	$query[$field] = (double) price2num($this->{$field});
-		  	}
-		  	elseif($this->is_null($info))
-            {
-		  		$query[$field] = (is_null($this->{$field}) || (empty($this->{$field}) && $this->{$field}!==0 && $this->{$field}!=='0') ? null : $this->{$field});
-		    }
-		    else
-            {
-		       $query[$field] = $this->{$field};
-		    }
-	    }
-	
-		return $query;
-	}
-
-
-    /**
-     * Function to concat keys of fields
-     *
-     * @return string
-     */
-    private function get_field_list()
-    {
-		$keys = array_keys($this->fields);
-	    return implode(',', $keys);
-	}
-
-
-    /**
-     * Function to load data into current object this
-     *
-     * @param   stdClass    $obj    Contain data of object from database
-     */
-    private function set_vars_by_db(&$obj)
-    {
-		foreach ($this->fields as $field => $info)
-		{
-			if($this->is_date($info))
-			{
-				if(empty($obj->{$field}) || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') $this->{$field} = 0;
-				else $this->{$field} = strtotime($obj->{$field});
-			}
-			elseif($this->is_array($info))
-            {
-				$this->{$field} = @unserialize($obj->{$field});
-				// Hack for data not in UTF8
-				if($this->{$field } === FALSE) @unserialize(utf8_decode($obj->{$field}));
-			}
-			elseif($this->is_int($info))
-            {
-				$this->{$field} = (int) $obj->{$field};
-			}
-			elseif($this->is_float($info))
-            {
-				$this->{$field} = (double) $obj->{$field};
-			}
-			elseif($this->is_null($info))
-            {
-				$val = $obj->{$field};
-				// zero is not null 
-				$this->{$field} = (is_null($val) || (empty($val) && $val!==0 && $val!=='0') ? null : $val);
-			}
-			else
-            {
-				$this->{$field} = $obj->{$field};
-			}
-
-		}
-	}
-
-    /**
      *	Get object and children from database
      *
      *	@param      int			$id       		Id of object to load
@@ -316,31 +106,14 @@ class CoreObject extends CommonObject
      */
 	public function fetch($id, $loadChild = true)
     {
-		if (empty($id)) return false;
-
-		$sql = 'SELECT '.$this->get_field_list().', datec, tms';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
-        $sql.= ' WHERE rowid = '.$id;
 		
-		$res = $this->db->query($sql);
-		if($obj = $this->db->fetch_object($res))
-		{
-            $this->id = $id;
-            $this->set_vars_by_db($obj);
-
-            $this->datec = $this->db->idate($obj->datec);
-            $this->tms = $this->db->idate($obj->tms);
-
-            if ($loadChild) $this->fetchChild();
-
-            return $this->id;
-		}
-		else
-        {
-            $this->error = $this->db->lasterror();
-            $this->errors[] = $this->error;
-            return -1;
-		}
+    	$res = $this->fetchCommon($id);
+    	if($res>0) {
+    		if ($loadChild) $this->fetchChild();
+    	}
+    	
+    	return $res;
+		
 	}
 
 
@@ -473,10 +246,7 @@ class CoreObject extends CommonObject
         $error = 0;
         $this->db->begin();
 
-        $query = $this->set_save_query();
-        $query['rowid'] = $this->id;
-
-        $res = $this->db->update($this->table_element, $query, array('rowid'));
+        $res = $this->updateCommon($user);
         if ($res)
         {
             $result = $this->call_trigger(strtoupper($this->element). '_UPDATE', $user);
@@ -516,10 +286,7 @@ class CoreObject extends CommonObject
         $error = 0;
         $this->db->begin();
 
-		$query = $this->set_save_query();
-		$query['datec'] = date("Y-m-d H:i:s", dol_now());
-		
-		$res = $this->db->insert($this->table_element, $query);
+        $res = $this->createCommon($user);
 		if($res)
 		{
 			$this->id = $this->db->last_insert_id($this->table_element);
@@ -565,7 +332,7 @@ class CoreObject extends CommonObject
 
         if (!$error)
         {
-            $this->db->delete($this->table_element, array('rowid' => $this->id), array('rowid'));
+            $this->deleteCommon($user);
             if($this->withChild && !empty($this->childtables))
             {
                 foreach($this->childtables as &$childTable)
@@ -669,5 +436,5 @@ class CoreObject extends CommonObject
 
 		return 1;
 	}
-	
+
 }

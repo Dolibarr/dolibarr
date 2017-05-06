@@ -155,25 +155,25 @@ if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 
 // Set text color to black or white
 $tmppart=explode(',',$colorbackhmenu1);
-$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : '')+(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '');
+$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) $colortextbackhmenu='FFFFFF';
 else $colortextbackhmenu='000000';
 
 $tmppart=explode(',',$colorbackvmenu1);
-$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : '')+(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '');
+$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) { $colortextbackvmenu='FFFFFF'; }
 else { $colortextbackvmenu='000000'; }
 
 $tmppart=explode(',',$colorbacktitle1);
 if ($colortexttitle == '')
 {
-    $tmpval=(! empty($tmppart[0]) ? $tmppart[0] : '')+(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '');
+    $tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
     if ($tmpval <= 460) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
     else { $colortexttitle='000000'; $colorshadowtitle='FFFFFF'; }
 }
 
 $tmppart=explode(',',$colorbacktabcard1);
-$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : '')+(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '');
+$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) { $colortextbacktab='FFFFFF'; }
 else { $colortextbacktab='111111'; }
 
@@ -935,7 +935,7 @@ div.blockvmenuend, div.blockvmenubookmarks {
 	padding-left: 0 !important;
 }
 div.vmenu, td.vmenu {
-	padding-right: 6px !important;
+	padding-right: 10px !important;
 }
 
 
@@ -989,6 +989,7 @@ div.fiche {
 	<?php if (! empty($conf->dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
 }
 div.fichecenter {
+	/* margin-top: 10px; */
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
 }
@@ -1737,7 +1738,7 @@ div.vmenu, td.vmenu {
 
 .vmenu {
     width: 190px;
-	margin-left: 4px;
+	margin-left: 6px;
 	<?php if (GETPOST("optioncss") == 'print') { ?>
     display: none;
 	<?php } ?>
@@ -1766,10 +1767,10 @@ a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { white-space: nowr
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
 font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; }
 a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; white-space: nowrap; }
-font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
+font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; text-decoration: none; }
 
@@ -1953,10 +1954,11 @@ img.toolbarbutton {
 /* ============================================================================== */
 div.tabs {
     text-align: <?php print $left; ?>;
-    margin-left: 6px !important;
-    margin-right: 6px !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
 	clear:both;
 	height:100%;
+	/* background-image: linear-gradient(to top,#f6f6f6 0,#fff 8px);  */	
 }
 div.tabsElem {
 	margin-top: 1px;
@@ -2018,7 +2020,7 @@ a.tabTitle {
 
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 8px 9px 8px;
+	padding: 12px 9px 12px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
@@ -2027,11 +2029,6 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-left: 1px solid transparent;
 	border-top: 1px solid transparent;
 	border-bottom: 0px !important;
-	/*
-	-moz-border-radius:4px 4px 0 0;
-    -webkit-border-radius: 4px 4px 0 0;
-	border-radius: 4px 4px 0 0;
-	*/
 
 	background-image: none !important;
 }
@@ -3002,6 +2999,9 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 	margin-bottom: 2px;
 	margin-top: 10px;
 }
+.photowithborder {
+	border: 1px solid #f0f0f0;
+}
 .photointooltip {
 	margin-top: 6px;
 	margin-bottom: 6px;
@@ -3033,9 +3033,12 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 
 div.titre {
 	font-family: <?php print $fontlist ?>;
-	font-weight: bold;
+	font-size: 14px;
+	/* font-weight: bold; */
 	color: rgb(<?php print $colortexttitlenotab; ?>);
 	text-decoration: none;
+	padding-top: 5px;
+    padding-bottom: 5px;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
 }
 

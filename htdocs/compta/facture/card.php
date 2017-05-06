@@ -1066,7 +1066,7 @@ if (empty($reshook))
 							{
 								if ($typeamount == 'amount')
 								{
-									$amountdeposit[] = $valuedeposit;
+									$amountdeposit[0] = $valuedeposit;
 								}
 								else
 								{
@@ -1084,9 +1084,11 @@ if (empty($reshook))
 										}
 
 										if ($totalamount != 0) {
-											$amountdeposit[$lines[$i]->tva] = ($totalamount * $valuedeposit) / 100;
+										    $tva_tx = $lines[$i]->tva_tx;
+										    if (! empty($lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
+											$amountdeposit[$tva_tx] = ($totalamount * $valuedeposit) / 100;
 										} else {
-											$amountdeposit[] = 0;
+											$amountdeposit[0] = 0;
 										}
 									} else {
 										setEventMessages($srcobject->error, $srcobject->errors, 'errors');
@@ -1211,11 +1213,15 @@ if (empty($reshook))
 											$array_options = $lines[$i]->array_options;
 										}
 
-										// View third's localtaxes for now
-										$localtax1_tx = get_localtax($lines[$i]->tva_tx, 1, $object->thirdparty);
-										$localtax2_tx = get_localtax($lines[$i]->tva_tx, 2, $object->thirdparty);
+										$tva_tx = $lines[$i]->tva_tx;
+										if (! empty($lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
+										
+										// View third's localtaxes for NOW and do not use value from origin.
+										// TODO Is this really what we want ? Yes if source if template invoice but what if proposal or order ?
+										$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
+										$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
 
-										$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $localtax1_tx, $localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->situation_percent, $lines[$i]->fk_prev_id, $lines[$i]->fk_unit);
+										$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $localtax1_tx, $localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->situation_percent, $lines[$i]->fk_prev_id, $lines[$i]->fk_unit);
 
 										if ($result > 0) {
 											$lineid = $result;
@@ -3623,8 +3629,7 @@ else if ($id > 0 || ! empty($ref))
             print '<tr class="liste_titre">';
             print '<td>' . $langs->trans('ListOfNextSituationInvoices') . '</td>';
             print '<td></td>';
-            if (! empty($conf->banque->enabled))
-                print '<td align="right"></td>';
+            if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
             print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
             print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
             print '<td width="18">&nbsp;</td>';
@@ -3640,8 +3645,7 @@ else if ($id > 0 || ! empty($ref))
                 print '<tr ' . $bc[$var] . '>';
                 print '<td>' . $next_invoice->getNomUrl(1) . '</td>';
                 print '<td></td>';
-                if (! empty($conf->banque->enabled))
-                    print '<td align="right"></td>';
+                if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
                 print '<td align="right">' . price($next_invoice->total_ht) . '</td>';
                 print '<td align="right">' . price($next_invoice->total_ttc) . '</td>';
                 print '<td align="right">' . $next_invoice->getLibStatut(3, $totalpaye) . '</td>';
@@ -3652,8 +3656,7 @@ else if ($id > 0 || ! empty($ref))
             
             print '<tr ' . $bc[$var] . '>';
             print '<td colspan="2" align="right"></td>';
-	    if (! empty($conf->banque->enabled))
-		print '<td align="right"></td>';
+		    if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
 
             print '<td align="right"><b>' . price($total_next_ht) . '</b></td>';
             print '<td align="right"><b>' . price($total_next_ttc) . '</b></td>';
