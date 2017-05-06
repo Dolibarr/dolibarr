@@ -170,8 +170,16 @@ class Segment implements IteratorAggregate, Countable
     {
         global $langs;
 
-        $patterns=array( '__CURRENTDAY__','__CURRENTDAYTEXT__','__CURRENTMONTHSHORT__','__CURRENTMONTH__','__CURRENTYEAR__' );
-        $values=array( date('j'), $langs->trans(date('l')), $langs->trans(date('M')), $langs->trans(date('F')), date('Y') );
+        $nextMonth = strtotime('+1 month');
+
+        $patterns=array( '/__CURRENTDAY__/u','/__CURRENTDAYTEXT__/u',
+                         '/__CURRENTMONTH__/u','/__CURRENTMONTHSHORT__/u','/__CURRENTMONTHLONG__/u',
+                         '/__NEXTMONTH__/u','/__NEXTMONTHSHORT__/u','/__NEXTMONTHLONG__/u',
+                         '/__CURRENTYEAR__/u','/__NEXTYEAR__/u' );
+        $values=array( date('j'), $langs->trans(date('l')), 
+                       $langs->trans(date('n')), $langs->trans(date('M')), $langs->trans(date('F')), 
+                       $langs->trans(date('n', $nextMonth)), $langs->trans(date('M', $nextMonth)), $langs->trans(date('F', $nextMonth)), 
+                       date('Y'), date('Y', strtotime('+1 year')) );
 
         $text=preg_replace($patterns, $values, $text);
 
