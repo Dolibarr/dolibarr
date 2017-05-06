@@ -2,6 +2,48 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 5.0.2 compared to 5.0.1 *****
+FIX: #6468 + Fix missing translation
+FIX: #6517 #6525 Autocompletion of thirdparty after n chars not implemented
+FIX: #6613 Default subject for Supplier proposal emails is filled with a non-existing key
+FIX: #6614
+FIX: #6619 Template invoices list do not respect restricted thirdparty user rights
+FIX: #6621 Documents tab shows greyed out upload form even if the option to show actions not available is disabled
+FIX: #6623 User card shows "Return to list" link even if the user has no rights to list users
+FIX: #6636 Complete fix
+FIX: #6669 User with no permission to edit customer invoices can see a edit button in project entry
+FIX: #6671 Cannot remove thirdparty type with "#" in its name
+FIX: #6673 Missing "nature" table header in thirdparty list
+FIX: #6675 Restricted user with no agenda permissions can see a button to create appointment in thirdparty contact list
+FIX: #6679 User with restricted supplier invoice permissions can edit project, payment conditions, payment mode
+FIX: #6680 User with restricted supplier invoice permissions sees "reopen" button even if he has no permission to do it
+FIX: #6718 Bug: Discount amount is not locally formatted in CommonObject View
+FIX: #6767 serious critical error, no login possible with postgresql and ipv6.
+FIX: #6795 #6796
+FIX: Add option MAIN_MAIL_USE_MULTI_PART to include text content into HTML email and add option MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS to restore the inline images feature.
+FIX: ajax autocomplete on clone
+FIX: A non admin user can not download files attached to user.
+FIX: Can't download delivery receipts (function dol_check_secure_access_document)
+FIX: complete hourly rate when not defined into table of time spent
+FIX: dont get empty "Incoterms : - " string if no incoterm
+FIX: dont lose supplier ref if no supplier price in database
+FIX: Enter a direct bank transaction
+FIX: extrafield css for boolean type
+FIX: forgotten parameter for right multicompany use
+FIX: Found duplicate line when it is not.
+FIX: global $dateSelector isn't the good one, then date selector on objectline_create tpl was hidden
+FIX: Journal code of bank must be visible of accountaing module on.
+FIX: length_accounta return variable name
+FIX: limit+1 dosn't show Total line
+FIX: No filter on company when showing the link to elements.
+FIX: overwrapping of weight/volume on rouget template
+FIX: Several bugs in accounting module.
+FIX: shared bank account with multicompany not visible in invoice setup
+FIX: spaces not allowed into vat code
+FIX: supplier default condition not retrieved on create
+FIX: supplier order line were always created with rang = 0
+
 ***** ChangeLog for 5.0.1 compared to 5.0.0 *****
 FIX: #6503: SQL error in "Last pending payment invoices"
 FIX: #6505 Project elements page shows greyed-out links even if the option to show actions not available is disabled
