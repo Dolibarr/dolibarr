@@ -85,27 +85,62 @@ class AccountingJournal extends CommonObject
 	/**
 	 * Return clicable name (with picto eventually)
 	 *
-	 * @param	int		$withpicto	0=No picto, 1=Include picto into link, 2=Only picto
-	 * @return	string				Chaine avec URL
+	 * @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 * @param	int		$withlabel		0=No label, 1=Include label of account
+	 * @param	int  	$nourl			1=Disable url
+	 * @param	string  $moretitle		Add more text to title tooltip
+	 * @param	int  	$notooltip		1=Disable tooltip
+	 * @return	string	String with URL
 	 */
-	function getNomUrl($withpicto = 0) {
-		global $langs;
+	function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle='',$notooltip=0)
+	{
+		global $langs, $conf, $user;
+
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result = '';
 
-		$link = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/journals_card.php?id=' . $this->id . '">';
-		$linkend = '</a>';
+		$url = DOL_URL_ROOT . '/accountancy/admin/journals_list.php';
 
 		$picto = 'billr';
+		$label='';
 
-		$label = $langs->trans("Show") . ': ' . $this->code . ' - ' . $this->label;
+		$label = '<u>' . $langs->trans("ShowAccountingJournal") . '</u>';
+		if (! empty($this->code))
+			$label .= '<br><b>'.$langs->trans('Code') . ':</b> ' . $this->code;
+		if (! empty($this->label))
+			$label .= '<br><b>'.$langs->trans('Label') . ':</b> ' . $this->label;
+		if ($moretitle) $label.=' - '.$moretitle;
 
-		if ($withpicto)
-			$result .= ($link . img_object($label, $picto) . $linkend);
-		if ($withpicto && $withpicto != 2)
-			$result .= ' ';
-		if ($withpicto != 2)
-			$result .= $link . $this->code . ' - ' . $this->label . $linkend;
+		$linkclose='';
+		if (empty($notooltip))
+		{
+		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		    {
+		        $label=$langs->trans("ShowAccoutingJournal");
+		        $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+		    }
+		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+		    $linkclose.=' class="classfortooltip"';
+		}
+
+        $linkstart='<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
+		$linkend='</a>';
+
+		if ($nourl)
+		{
+			$linkstart = '';
+			$linkclose = '';
+			$linkend = '';			
+		}
+
+		$label_link = $this->code;
+		if ($withlabel) $label_link .= ' - ' . $this->label;
+
+		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
+		if ($withpicto && $withpicto != 2) $result .= ' ';
+		if ($withpicto != 2) $result.=$linkstart . $label_link . $linkend;
 		return $result;
 	}
 	
