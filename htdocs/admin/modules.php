@@ -640,7 +640,8 @@ if ($mode == 'common')
         {
         	$disableSetup = 0;
 
-        	print '<td class="center valignmiddle" width="80px">';
+        	// Link enable/disabme
+        	print '<td class="center valignmiddle" width="60px">';
         	if (! empty($arrayofwarnings[$modName]))
 	        {
                 print '<!-- This module has a warning to show when we activate it (note: your country is '.$mysoc->country_code.') -->'."\n";
@@ -662,12 +663,12 @@ if ($mode == 'common')
         	}
         	print '</td>'."\n";
 
-        	// Config link
+        	// Link config
         	if (! empty($objMod->config_page_url) && !$disableSetup)
         	{
         		if (is_array($objMod->config_page_url))
         		{
-        			print '<td class="tdsetuppicto right" width="40px"">';
+        			print '<td class="tdsetuppicto right" width="60px">';
         			$i=0;
         			foreach ($objMod->config_page_url as $page)
         			{
@@ -693,22 +694,23 @@ if ($mode == 'common')
         		}
         		else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
         		{
-        			print '<td class="tdsetuppicto right valignmiddle" width="80px"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
+        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
         		}
         		else
         		{
-        			print '<td class="tdsetuppicto right valignmiddle" width="80px"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
+        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
         		}
         	}
         	else
         	{
-        		print '<td class="tdsetuppicto right valignmiddle" width="80px">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
+        		print '<td class="tdsetuppicto right valignmiddle" width="60px">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
         	}
 
         }
         else	// Module not yet activated
 		{
-        	print '<td class="center valignmiddle" width="80px">';
+		    // Link enable/disable
+        	print '<td class="center valignmiddle" width="60px">';
 		    if (! empty($objMod->always_enabled))
         	{
         		// Should never happened
@@ -754,7 +756,9 @@ if ($mode == 'common')
 	        	print "</a>\n";
         	}
         	print "</td>\n";
-        	print '<td class="tdsetuppicto right valignmiddle" width="80px">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
+        	
+        	// Link config
+        	print '<td class="tdsetuppicto right valignmiddle" width="60px">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
         }
 
         print "</tr>\n";

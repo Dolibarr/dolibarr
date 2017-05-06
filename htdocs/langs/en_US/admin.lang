@@ -431,6 +431,7 @@ TheKeyIsTheNameOfHtmlField=This is the name of the HTML field. This need to have
 PageUrlForDefaultValues=You must enter here the relative url of the page. If you include parameters in URL, the default values will be effective if all parameters are set to same value. Examples:
 PageUrlForDefaultValuesCreate=<br>For form to create a new thirdparty, it is <strong>%s</strong>
 PageUrlForDefaultValuesList=<br>For page that list thirdparties, it is <strong>%s</strong>
+EnableDefaultValues=Enable usage of personalized default values
 GoIntoTranslationMenuToChangeThis=A translation has been found for the key with this code, so to change this value, you must edit it fom Home-Setup-translation.
 WarningSettingSortOrder=Warning, setting a default sort order may result in a technical error when going on the list page if field is an unknown field. If you experience such an error, come back to this page to remove the default sort order and restore default behavior. 
 Field=Field

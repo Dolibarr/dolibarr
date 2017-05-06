@@ -149,6 +149,7 @@ if (! empty($conf->productbatch->enabled))
 //if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
 //{
 print info_admin($langs->trans("IfYouUsePointOfSaleCheckModule"));
+print '<br>';
 //}
 
 // Title rule for stock decrease
