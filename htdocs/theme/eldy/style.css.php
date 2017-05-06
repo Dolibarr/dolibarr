@@ -90,7 +90,7 @@ $colorbacklinepair1='248,248,248';    // line pair
 $colorbacklinepair2='248,248,248';    // line pair
 $colorbacklinepairhover='238,246,252';    // line pair
 $colorbackbody='255,255,255';
-$colortexttitlenotab='60,60,20';
+$colortexttitlenotab='100,60,20';
 $colortexttitle='0,0,0';
 $colortext='0,0,0';
 $colortextlink='0,0,120';
@@ -987,6 +987,9 @@ div.fiche {
 	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'16':'6')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
 	<?php if (! empty($conf->dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
+}
+div.fiche>table:first-child {
+	margin-bottom: 15px !important;
 }
 div.fichecenter {
 	/* margin-top: 10px; */
@@ -2018,6 +2021,9 @@ a.tabTitle {
     white-space: nowrap;
 }
 
+a.tabunactive {
+    color: rgb(<?php print $colortextlink; ?>) !important;
+}
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
 	padding: 12px 9px 12px;
@@ -3034,7 +3040,7 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 div.titre {
 	font-family: <?php print $fontlist ?>;
 	font-size: 14px;
-	/* font-weight: bold; */
+	font-weight: bold;
 	color: rgb(<?php print $colortexttitlenotab; ?>);
 	text-decoration: none;
 	padding-top: 5px;
