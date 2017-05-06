@@ -434,7 +434,7 @@ if ($virtualdiffersfromphysical)
 
 
 print '<br />';
-if ($conf->global->MAIN_LEVEL_FEATURES >= 2)
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
 	$var=false;
 	print '<table class="noborder" width="100%">';

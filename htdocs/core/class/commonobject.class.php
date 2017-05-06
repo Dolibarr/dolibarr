@@ -4938,25 +4938,33 @@ abstract class CommonObject
 		
 		if(!empty($id)) $sql.= ' WHERE rowid = '.$id;
 		else  $sql.= ' WHERE ref = \''.$this->quote($ref).'\'';
-		
+
 		$res = $this->db->query($sql);
-		if($obj = $this->db->fetch_object($res))
+		if ($res)
 		{
-			$this->id = $id;
-			$this->set_vars_by_db($obj);
-			
-			$this->datec = $this->db->idate($obj->datec);
-			$this->tms = $this->db->idate($obj->tms);
-			
-			return $this->id;
+    		if ($obj = $this->db->fetch_object($res))
+    		{
+    			$this->id = $id;
+    			$this->set_vars_by_db($obj);
+    			
+    			$this->datec = $this->db->idate($obj->datec);
+    			$this->tms = $this->db->idate($obj->tms);
+    			
+    			return $this->id;
+    		}
+    		else
+    		{
+    			$this->error = $this->db->lasterror();
+    			$this->errors[] = $this->error;
+    			return -1;
+    		}
 		}
 		else
 		{
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->error;
-			return -1;
+		    $this->error = $this->db->lasterror();
+		    $this->errors[] = $this->error;
+		    return -1;
 		}
-		
 	}
 
 	/**
