@@ -122,7 +122,8 @@ if ($action == 'delete')
 $form = new Form($db);
 
 $object = new User($db);
-$result=$object->fetch($id);
+$result=$object->fetch($id, '', '', 1);
+$object->getrights();
 
 $title=$langs->trans("ThirdParty").' - '.$langs->trans("Notification");
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Notification");

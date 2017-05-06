@@ -59,6 +59,11 @@ function user_prepare_head($object)
 	    $h++;
 	}
 
+    $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("UserGUISetup");
+    $head[$h][2] = 'guisetup';
+    $h++;
+
 	if ($canreadperms)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$object->id;
@@ -67,15 +72,27 @@ function user_prepare_head($object)
 		$h++;
 	}
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("UserGUISetup");
-    $head[$h][2] = 'guisetup';
-    $h++;
-
     if (! empty($conf->agenda->enabled))
     {
+        if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
+        $MAXAGENDA=$conf->global->AGENDA_EXT_NB;
+        
+        $i=1;
+        $nbagenda = 0;
+        while ($i <= $MAXAGENDA)
+        {
+            $key=$i;
+            $name='AGENDA_EXT_NAME_'.$object->id.'_'.$key;
+            $src='AGENDA_EXT_SRC_'.$object->id.'_'.$key;
+            $offsettz='AGENDA_EXT_OFFSETTZ_'.$object->id.'_'.$key;
+            $color='AGENDA_EXT_COLOR_'.$object->id.'_'.$key;
+            $i++;
+        
+            if (! empty($object->conf->$name)) $nbagenda++;
+        }
+        
 	    $head[$h][0] = DOL_URL_ROOT.'/user/agenda_extsites.php?id='.$object->id;
-	    $head[$h][1] = $langs->trans("ExtSites");
+	    $head[$h][1] = $langs->trans("ExtSites").($nbagenda ? ' <span class="badge">'.$nbagenda.'</span>' : '');
 	    $head[$h][2] = 'extsites';
 	    $h++;
     }

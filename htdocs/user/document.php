@@ -86,7 +86,7 @@ if (! $sortfield) $sortfield="name";
 $object = new User($db);
 if ($id > 0 || ! empty($ref))
 {
-	$result = $object->fetch($id, $ref);
+	$result = $object->fetch($id, $ref, '', 1);
 	$object->getrights();
 	$entitytouseforuserdir = $object->entity;
 	if (empty($entitytouseforuserdir)) $entitytouseforuserdir=1;
