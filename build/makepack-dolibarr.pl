@@ -509,7 +509,6 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/documents`;
 
 		# Removed known external modules to avoid any error when packaging from env where external modules are tested 
-	    #$ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \;`;	# For custom we want to keep dir
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/allscreens*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/ancotec*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/cabinetmed*`;
@@ -575,6 +574,10 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/tools`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/LICENSE.TXT`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/savant`;
+        
+        print "Remove subdir of custom dir\n";
+   	    print "find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\;\n";
+   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to keep dir
 	}
 
 	# Build package for each target
