@@ -29,6 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -88,7 +90,7 @@ $arrayfields=array(
     'b.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
     'b.number'=>array('label'=>$langs->trans("AccountIdShort"), 'checked'=>1),
     'b.account_number'=>array('label'=>$langs->trans("AccountAccounting"), 'checked'=>$conf->accountancy->enabled),
-    'b.accountancy_journal'=>array('label'=>$langs->trans("AccountancyJournal"), 'checked'=>$conf->accountancy->enabled),
+    'b.fk_accountancy_journal'=>array('label'=>$langs->trans("AccountancyJournal"), 'checked'=>$conf->accountancy->enabled),
     'toreconcile'=>array('label'=>$langs->trans("TransactionsToConciliate"), 'checked'=>1),
     'b.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     'b.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
@@ -141,7 +143,7 @@ $title=$langs->trans('BankAccounts');
 // Load array of financial accounts (opened by default)
 $accounts = array();
 
-$sql  = "SELECT rowid, label, courant, rappro, account_number, accountancy_journal, datec as date_creation, tms as date_update";
+$sql  = "SELECT rowid, label, courant, rappro, account_number, fk_accountancy_journal, datec as date_creation, tms as date_update";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
@@ -323,7 +325,7 @@ if (! empty($arrayfields['b.account_number']['checked']))
     print '</td>';
 }
 // Accountancy journal
-if (! empty($arrayfields['b.accountancy_journal']['checked']))
+if (! empty($arrayfields['b.fk_accountancy_journal']['checked']))
 {
     print '<td class="liste_titre">';
     print '</td>';
@@ -403,7 +405,7 @@ if (! empty($arrayfields['b.label']['checked']))          print_liste_field_titr
 if (! empty($arrayfields['accountype']['checked']))       print_liste_field_titre($arrayfields['accountype']['label'],$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['b.number']['checked']))         print_liste_field_titre($arrayfields['b.number']['label'],$_SERVER["PHP_SELF"],'b.number','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['b.account_number']['checked'])) print_liste_field_titre($arrayfields['b.account_number']['label'],$_SERVER["PHP_SELF"],'b.account_number','',$param,'',$sortfield,$sortorder);
-if (! empty($arrayfields['b.accountancy_journal']['checked'])) print_liste_field_titre($arrayfields['b.accountancy_journal']['label'],$_SERVER["PHP_SELF"],'b.accountancy_journal','',$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['b.fk_accountancy_journal']['checked'])) print_liste_field_titre($arrayfields['b.fk_accountancy_journal']['label'],$_SERVER["PHP_SELF"],'b.fk_accountancy_journal','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['toreconcile']['checked']))      print_liste_field_titre($arrayfields['toreconcile']['label'],$_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder);
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -488,16 +490,23 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['b.account_number']['checked']))
     {
         include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-        print '<td>'.length_accountg($acc->account_number).'</td>';
+
+		$accountingaccount = new AccountingAccount($db);
+		$accountingaccount->fetch('',$acc->account_number);
+
+		print '<td>'.length_accountg($accountingaccount->getNomUrl(0,1,1,'',1)).'</td>';
+
 	    if (! $i) $totalarray['nbfield']++;
     }
     
     // Accountancy journal
-    if (! empty($arrayfields['b.accountancy_journal']['checked']))
+    if (! empty($arrayfields['b.fk_accountancy_journal']['checked']))
     {
-        include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-        print '<td>'.length_accountg($acc->accountancy_journal).'</td>';
-	    if (! $i) $totalarray['nbfield']++;
+		$accountingjournal = new AccountingJournal($db);
+		$accountingjournal->fetch($acc->fk_accountancy_journal);
+
+		print '<td>'.$accountingjournal->getNomUrl(0,1,1,'',1).'</td>';
+		if (! $i) $totalarray['nbfield']++;
     }
     
     // Transactions to reconcile

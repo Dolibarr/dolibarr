@@ -160,7 +160,7 @@ class Account extends CommonObject
      * @var string
      */
     public $account_number;
-	public $accountancy_journal;
+	public $fk_accountancy_journal;
 
     /**
      * Currency code
@@ -545,7 +545,7 @@ class Account extends CommonObject
         $sql.= ", label";
         $sql.= ", entity";
         $sql.= ", account_number";
-		$sql.= ", accountancy_journal";
+		$sql.= ", fk_accountancy_journal";
 		$sql.= ", bank";
         $sql.= ", code_banque";
         $sql.= ", code_guichet";
@@ -569,7 +569,7 @@ class Account extends CommonObject
         $sql.= ", '".$this->db->escape($this->label)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", '".$this->db->escape($this->account_number)."'";
-		$sql.= ", '".$this->db->escape($this->accountancy_journal)."'";
+		$sql.= ", '".$this->db->escape($this->fk_accountancy_journal)."'";
 		$sql.= ", '".$this->db->escape($this->bank)."'";
         $sql.= ", '".$this->code_banque."'";
         $sql.= ", '".$this->code_guichet."'";
@@ -702,7 +702,7 @@ class Account extends CommonObject
         $sql.= ",rappro = ".$this->rappro;
         $sql.= ",url = ".($this->url?"'".$this->url."'":"null");
         $sql.= ",account_number = '".$this->account_number."'";
-		$sql.= ",accountancy_journal = '".$this->accountancy_journal."'";
+		$sql.= ",fk_accountancy_journal = '".$this->fk_accountancy_journal."'";
 
 		$sql.= ",bank  = '".$this->db->escape($this->bank)."'";
         $sql.= ",code_banque='".$this->code_banque."'";
@@ -847,7 +847,7 @@ class Account extends CommonObject
         $sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant, ba.clos, ba.rappro, ba.url,";
         $sql.= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
         $sql.= " ba.domiciliation, ba.proprio, ba.owner_address, ba.state_id, ba.fk_pays as country_id,";
-        $sql.= " ba.account_number, ba.accountancy_journal, ba.currency_code,";
+        $sql.= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
         $sql.= " ba.min_allowed, ba.min_desired, ba.comment,";
         $sql.= " ba.datec as date_creation, ba.tms as date_update,";
         $sql.= ' c.code as country_code, c.label as country,';
@@ -897,7 +897,7 @@ class Account extends CommonObject
                 $this->country       = $obj->country;
 
                 $this->account_number = $obj->account_number;
-				$this->accountancy_journal = $obj->accountancy_journal;
+				$this->fk_accountancy_journal = $obj->fk_accountancy_journal;
 
                 $this->currency_code  = $obj->currency_code;
                 $this->account_currency_code  = $obj->currency_code;
@@ -1259,7 +1259,7 @@ class Account extends CommonObject
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
             $langs->load("accountancy");
             $label .= '<br><b>' . $langs->trans('AccountAccounting') . ':</b> ' . length_accountg($this->account_number);
-            $label .= '<br><b>' . $langs->trans('AccountancyJournal') . ':</b> ' . $this->accountancy_journal;
+            $label .= '<br><b>' . $langs->trans('AccountancyJournal') . ':</b> ' . $this->fk_accountancy_journal;
         }
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 

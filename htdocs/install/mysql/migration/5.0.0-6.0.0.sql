@@ -260,7 +260,7 @@ UPDATE llx_accounting_journal SET nature = 4 where (code = 'BK' or code = 'BQ') 
 
 
 ALTER TABLE llx_bank_account CHANGE COLUMN accountancy_journal fk_accountancy_journal integer;
-ALTER TABLE llx_bank_account ADD CONSTRAINT bank_fk_accountancy_journal FOREIGN KEY (fk_accountancy_journal) REFERENCES llx_accounting_journal (rowid);
+--ALTER TABLE llx_bank_account ADD CONSTRAINT bank_fk_accountancy_journal FOREIGN KEY (fk_accountancy_journal) REFERENCES llx_accounting_journal (rowid);
 
 
 
