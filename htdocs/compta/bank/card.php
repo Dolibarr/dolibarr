@@ -36,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 
 $langs->load("banks");
@@ -278,6 +279,7 @@ $form = new Form($db);
 $formbank = new FormBank($db);
 $formcompany = new FormCompany($db);
 if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
+if (! empty($conf->accounting->enabled)) $formaccountancy2 = New FormAccounting($db);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
@@ -534,7 +536,9 @@ if ($action == 'create')
 	if (! empty($conf->accounting->enabled))
 	{
 		print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
-	    print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(GETPOST("accountancy_journal")?GETPOST('accountancy_journal', 'alpha'):$object->accountancy_journal).'"></td></tr>';
+	    print '<td>';
+		print $formaccountancy2->select_journal($object->accountancy_journal, 'accountancy_journal', 4, 1, '', 1, 1);
+		print '</td></tr>';
 	}
 
 	print '</table>';
@@ -980,8 +984,10 @@ else
 		// Accountancy journal
 		if (! empty($conf->accounting->enabled))
 		{
-		    print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
-		    print '<td><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?GETPOST("accountancy_journal"):$object->accountancy_journal).'"></td></tr>';
+			print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
+			print '<td>';
+			print $formaccountancy2->select_journal($object->accountancy_journal, 'accountancy_journal', 4, 1, '', 1, 1);
+			print '</td></tr>';
 		}
 		
 		print '</table>';

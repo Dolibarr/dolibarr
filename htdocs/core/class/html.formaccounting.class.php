@@ -60,37 +60,49 @@ class FormAccounting extends Form
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, code, label, nature, entity, active";
-		$sql.= " FROM " . MAIN_DB_PREFIX . "accounting_journal";
-		$sql.= " WHERE entity = ".$conf->entity;
-		$sql.= " AND active = 1";
-		if (empty($nature)) $sql.= " AND nature = ".$nature;
-		$sql.= " ORDER BY code";
+		$out = '';
 
-		dol_syslog(get_class($this) . "::select_journal", LOG_DEBUG);
-		$resql = $this->db->query($sql);
+    	$options = array();
+		if ($usecache && ! empty($this->options_cache[$usecache]))
+		{
+		    $options = $this->options_cache[$usecache];
+		    $selected=$selectid;
+		}
+		else
+		{
+			$sql = "SELECT rowid, code, label, nature, entity, active";
+			$sql.= " FROM " . MAIN_DB_PREFIX . "accounting_journal";
+			$sql.= " WHERE active = 1";
+			$sql.= " AND entity = ".$conf->entity;
+			//if ($nature && is_numeric($nature))   $sql .= " AND nature = ".$nature;
+			$sql.= " ORDER BY code";
 
-		if (!$resql) {
-			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::select_journal ".$this->error, LOG_ERR);
-			return -1;
+			dol_syslog(get_class($this) . "::select_journal", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+
+			if (!$resql) {
+				$this->error = "Error ".$this->db->lasterror();
+				dol_syslog(get_class($this)."::select_journal ".$this->error, LOG_ERR);
+				return -1;
+			}
+
+			$out = ajax_combobox($htmlname, $event);
+
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				$label = $obj->code . ' - ' . $obj->label;
+				$select_value_out = $obj->rowid;
+
+				$options[$select_value_out] = $label;
+			}
+			$this->db->free($resql);
+
+			if ($usecache)
+			{
+				$this->options_cache[$usecache] = $options;
+			}
 		}
 
-		$options = array();
-		$out = ajax_combobox($htmlname, $event);
-
-    	$selected = 0;
-    	while ($obj = $this->db->fetch_object($resql))
-    	{
-		    $label = $obj->code . ' - ' . $obj->label;
-		}
-    	$this->db->free($resql);
-
-    	if ($usecache)
-    	{
-            $this->options_cache[$usecache] = $options;
-    	}
-		
 		$out .= Form::selectarray($htmlname, $options, $selectid, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $out;

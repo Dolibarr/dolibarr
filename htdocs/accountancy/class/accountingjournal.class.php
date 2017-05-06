@@ -136,19 +136,19 @@ class AccountingJournal extends CommonObject
 	    if ($mode == 0)
 	    {
 	        $prefix='';
-			if ($nature == 9) return $langs->trans('AccountingJournalTypeHasNew');
-			if ($nature == 3) return $langs->trans('AccountingJournalTypeBank');
-			if ($nature == 2) return $langs->trans('AccountingJournalTypePurchase');
-	        if ($nature == 1) return $langs->trans('AccountingJournalTypeSale');
-	        if ($nature == 0) return $langs->trans('AccountingJournalTypeVariousOperation');
+			if ($nature == 9) return $langs->trans('AccountingJournalType9');
+			if ($nature == 4) return $langs->trans('AccountingJournalType4');
+			if ($nature == 3) return $langs->trans('AccountingJournalType3');
+	        if ($nature == 2) return $langs->trans('AccountingJournalType2');
+	        if ($nature == 1) return $langs->trans('AccountingJournalType1');
 	    }
 	    if ($mode == 1)
 	    {
-			if ($nature == 9) return $langs->trans('AccountingJournalTypeHasNew');
-			if ($nature == 3) return $langs->trans('AccountingJournalTypeBank');
-			if ($nature == 2) return $langs->trans('AccountingJournalTypePurchase');
-	        if ($nature == 1) return $langs->trans('AccountingJournalTypeSale');
-	        if ($nature == 0) return $langs->trans('AccountingJournalTypeVariousOperation');
+			if ($nature == 9) return $langs->trans('AccountingJournalType9');
+			if ($nature == 4) return $langs->trans('AccountingJournalType4');
+			if ($nature == 3) return $langs->trans('AccountingJournalType3');
+	        if ($nature == 2) return $langs->trans('AccountingJournalType2');
+	        if ($nature == 1) return $langs->trans('AccountingJournalType1');
 	    }
 	}
 }
