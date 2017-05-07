@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
- * Copyright (C) 2013-2015  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2013-2016  Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry	    <florian.henry@open-concept.pro>
  *
@@ -210,9 +210,9 @@ if ($action == 'writebookkeeping') {
         			$bookkeeping->doc_type = 'supplier_invoice';
         			$bookkeeping->fk_doc = $key;
         			$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
-        			$bookkeeping->code_tiers = $tabcompany[$key]['code_fournisseur'];
+        			$bookkeeping->code_tiers = $tabcompany[$key]['code_compta_fournisseur'];
         			$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("Code_tiers");
-        			$bookkeeping->numero_compte = $tabcompany[$key]['code_compta_fournisseur'];
+        			$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
         			$bookkeeping->montant = $mt;
         			$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
         			$bookkeeping->debit = ($mt <= 0) ? $mt : 0;
@@ -238,7 +238,7 @@ if ($action == 'writebookkeeping') {
     		    }
     		}
         }
-        
+
 		// Product / Service
         if (! $errorforline)
         {
@@ -627,9 +627,6 @@ if (empty($action) || $action == 'view') {
 			else print $accountoshow;
             print "</td>";
 			print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("Code_tiers") . "</td>";
-			// print "</td><td>" . $langs->trans("ThirdParty");
-			// print ' (' . $companystatic->getNomUrl(0, 'supplier', 16) . ')';
-			// print "</td>";
 			print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
 			print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 		    print "</tr>";
