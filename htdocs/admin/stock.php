@@ -149,6 +149,7 @@ if (! empty($conf->productbatch->enabled))
 //if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
 //{
 print info_admin($langs->trans("IfYouUsePointOfSaleCheckModule"));
+print '<br>';
 //}
 
 // Title rule for stock decrease
@@ -433,7 +434,7 @@ if ($virtualdiffersfromphysical)
 
 
 print '<br />';
-if ($conf->global->MAIN_LEVEL_FEATURES >= 2)
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
 	$var=false;
 	print '<table class="noborder" width="100%">';

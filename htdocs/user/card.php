@@ -1140,7 +1140,7 @@ else
 
     if ($id > 0)
     {
-        $object->fetch($id);
+        $object->fetch($id, '', '', 1);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
         $res=$object->fetch_optionals($object->id,$extralabels);
 		

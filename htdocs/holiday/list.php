@@ -202,7 +202,7 @@ $user_id = $user->id;
 if ($id > 0)
 {
 	// Charge utilisateur edite
-	$fuser->fetch($id);
+	$fuser->fetch($id, '', '', 1);
 	$fuser->getrights();
 	$user_id = $fuser->id;
 }

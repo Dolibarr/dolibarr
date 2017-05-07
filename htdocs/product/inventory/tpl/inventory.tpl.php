@@ -80,7 +80,7 @@
 		<?php echo inventorySelectProducts($object); ?>
 		
 			<input class="button" type="submit" value="<?php echo $langs->trans('AddProduct'); ?>" />
-	</form>
+	</form><br>
 <?php } ?>
 
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
@@ -92,7 +92,7 @@
 	<input type="hidden" name="action" value="save" />
 	<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 	
-	<table width="100%" class="border workstation">
+	<table width="100%" class="noborder workstation">
 		<?php
 		
 		_headerList($view); 

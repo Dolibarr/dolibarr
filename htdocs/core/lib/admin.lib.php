@@ -812,7 +812,7 @@ function activateModule($value,$withdeps=1)
         return $ret;
     }
 
-    $result=$objMod->init();
+    $result=$objMod->init();    // Enable module
     if ($result <= 0) 
     {
         $ret['errors'][]=$objMod->error;

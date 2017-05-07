@@ -69,6 +69,7 @@ class Inventory extends CoreObject
      */
 	protected $fields=array(
 		'fk_warehouse'=>array('type'=>'integer','index'=>true)
+	    ,'ref'=>array('type'=>'string','index'=>true)
 		,'entity'=>array('type'=>'integer','index'=>true)
 		,'status'=>array('type'=>'integer','index'=>true)
 		,'date_inventory'=>array('type'=>'date')
@@ -113,7 +114,8 @@ class Inventory extends CoreObject
         if(!$loadChild) $this->withChild = false;
         
 		$res = parent::fetch($id, $loadChild);
-		if($res > 0)
+
+		if ($res > 0)
 		{
 			$this->sortDet();
 			$this->amount = 0;

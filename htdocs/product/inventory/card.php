@@ -361,9 +361,9 @@ if ($action == 'create')
     dol_fiche_end();
     
     print '<div class="center">';
-    print '<input type="submit" class="button" value="'.$langs->trans('inventoryConfirmCreate').'" />';
+    print '<input type="submit" class="button" name="create" value="'.$langs->trans('inventoryConfirmCreate').'" />';
     print ' &nbsp; &nbsp; ';
-    print '<input type="submit" class="button" value="'.$langs->trans('inventoryConfirmCreate').'" />';
+    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'" />';
     print '</div>';
     
 	echo '</form>';
@@ -373,8 +373,14 @@ if ($action == 'create')
 if ($action == 'view' || $action == 'edit' ||  empty($action))
 {
     $object = new Inventory($db);
-    $object->fetch($id);
-
+    $result = $object->fetch($id);
+    if ($result < 0) dol_print_error($db, $object->error, $object->errors);
+    
+    $warehouse = new Entrepot($db);
+    $warehouse->fetch($object->fk_warehouse);
+    
+    
+    
 	if($action == 'changePMP')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ApplyNewPMP'), $langs->trans('ConfirmApplyNewPMP', $object->getTitle()), 'confirm_changePMP', array(),'no',1);
@@ -396,18 +402,17 @@ if ($action == 'view' || $action == 'edit' ||  empty($action))
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('RegulateStock'),$langs->trans('ConfirmRegulateStock',$object->getTitle()),'confirm_regulate',array(),'no',1);
 	}
 	
-	$warehouse = new Entrepot($db);
-	$warehouse->fetch($object->fk_warehouse);
-	
 	print dol_get_fiche_head(inventoryPrepareHead($object, $langs->trans('inventoryOfWarehouse', $warehouse->libelle), empty($action) ? '': '&action='.$action));
 	
 	$lines = array();
 	card_line($object, $lines, $action);
 	
-	print '<b>'.$langs->trans('inventoryOnDate')." ".$object->getDate('date_inventory').'</b><br><br>';
+	print $langs->trans('Ref')." ".$object->ref.'<br>';
+	print $langs->trans('Date')." ".$object->getDate('date_inventory').'<br><br>';
 	
 	$objectTPL = array(
-		'id'=> $object->id
+	    'id'=> $object->id
+	    ,'ref'=> $object->ref
 		,'date_cre' => $object->getDate('date_cre', 'd/m/Y')
 		,'date_maj' => $object->getDate('date_maj', 'd/m/Y H:i')
 		,'fk_warehouse' => $object->fk_warehouse
@@ -608,8 +613,8 @@ function _headerList($view)
 	
 	?>
 			<tr style="background-color:#dedede;">
-				<th align="left" width="20%">&nbsp;&nbsp;Produit</th>
-				<th align="center"><?php echo $langs->trans('Warehouse'); ?></th>
+				<th class="titlefield"><?php echo $langs->trans('Product'); ?></th>
+				<th><?php echo $langs->trans('Warehouse'); ?></th>
 				<?php if (! empty($conf->barcode->enabled)) { ?>
 					<th align="center"><?php echo $langs->trans('Barcode'); ?></th>
 				<?php } ?>
