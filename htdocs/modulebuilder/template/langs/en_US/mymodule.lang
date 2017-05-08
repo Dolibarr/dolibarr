@@ -1,0 +1,51 @@
+# <one line to give the program's name and a brief idea of what it does.>
+# Copyright (C) <year>  <name of author>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleXXXName'
+# (where XXX is value of numeric property 'numero' of module)
+Module500000Name = My module
+# Module description 'ModuleXXXDesc'
+# (where XXX is value of numeric property 'numero' of module)
+Module500000Desc = My module description
+
+#
+# Admin page
+#
+MyModuleSetup = My module setup
+Settings = Settings
+MyModuleSetupPage = My module setup page
+
+#
+# About page
+#
+About = About
+MyModuleAbout = About my module
+MyModuleAboutPage = My module about page
+
+#
+# Sample page
+#
+MyPageName = My page name
+
+#
+# Sample box
+#
+MyBox = My box
+MyBoxDescription = My box description

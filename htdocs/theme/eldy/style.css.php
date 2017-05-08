@@ -2914,7 +2914,10 @@ img.boxhandle, img.boxclose {
     vertical-align: middle;
 }
 
-
+.modulebuilderbox {
+	border: 1px solid #888;
+	padding: 16px;
+}
 
 
 /*

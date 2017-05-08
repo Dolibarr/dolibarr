@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,9 +29,43 @@ $langs->load("admin");
 $langs->load("modulebuilder");
 $langs->load("other");
 
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
+
 // Security check
 if (! $user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) accessforbidden('ModuleBuilderNotAllowed');
 
+$modulename=dol_sanitizeFileName(GETPOST('modulename','alpha'));
+
+// Dir for custom dirs
+$tmp=explode(',', $dolibarr_main_document_root_alt);
+$dircustom = $tmp[0];
+
+
+
+/*
+ * Actions
+ */
+
+if ($dircustom && $action == 'initmodule' && $modulename)
+{
+    $srcfile = DOL_DOCUMENT_ROOT.'/modulebuilder/skeletons';
+    $destfile = $dircustom.'/'.$modulename;
+    //$result = dolCopyDir($srcfile, $destfile, 0, 0);
+    
+    dol_mkdir($destfile);
+    
+    fopen($destfile, $mode)
+    
+    if ($result > 0)
+    {
+        setEventMessages('ModuleInitialized', null);
+    }
+    else
+    {
+        setEventMessages($langs->trans("ErrorFailedToCopyDir"), null, 'errors');
+    }
+}
 
 
 /*
@@ -48,14 +82,24 @@ $text=$langs->trans("ModuleBuilder");
 
 print load_fiche_titre($text, '', 'title_setup');
 
-$tmp=explode(',', $dolibarr_main_document_root_alt);
-$dircustom = $tmp[0];
-
 // Show description of content
-print $langs->trans("ModuleBuilderDesc", $dircustom).'<br><br>';
+print $langs->trans("ModuleBuilderDesc").'<br>';
+print $langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $dircustom).'<br>';
+print '<br>';
 
 
+// New module
+print '<div class="modulebuilderbox">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="initmodule">';
+print '<input type="text" name="modulename" value="" placeholder="'.dol_escape_htmltag($langs->trans("ModuleName")).'">';
+print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("CreateNewModule")).'">';
+print '</form>';
+print '<div>';
 
+
+$listofmodules=array();
 /*
 if (!empty($conf->modulebuilder->enabled) && $mainmenu == 'modulebuilder')	// Entry for Module builder
 {
@@ -73,7 +117,7 @@ if (!empty($conf->modulebuilder->enabled) && $mainmenu == 'modulebuilder')	// En
                     $fullname = $dircustom['fullname'];
                     if (dol_is_file($fullname.'/modulebuilder.txt'))
                     {
-                        print '<div class="boxstats">'.$module.'</div>';
+                        $listofmodules[$module]=$fullname;
                     }
                 }
             }
@@ -84,7 +128,11 @@ if (!empty($conf->modulebuilder->enabled) && $mainmenu == 'modulebuilder')	// En
         $newmenu->add('', 'NoGeneratedModuleFound', 0, 0);
     }*/
 
-
+foreach($listofmodules as $modules => $fullname)
+{
+    print '<div class="modulebuilderbox>'.$module.'</div>';
+}
+            
 
 llxFooter();
 
