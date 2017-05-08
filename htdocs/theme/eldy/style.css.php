@@ -90,10 +90,10 @@ $colorbacklinepair1='248,248,248';    // line pair
 $colorbacklinepair2='248,248,248';    // line pair
 $colorbacklinepairhover='238,246,252';    // line pair
 $colorbackbody='255,255,255';
-$colortexttitlenotab='60,60,20';
+$colortexttitlenotab='100,60,20';
 $colortexttitle='0,0,0';
 $colortext='0,0,0';
-$colortextlink='0,0,120';
+$colortextlink='0,0,100';
 $fontsize='13';
 $fontsizesmaller='12';
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
@@ -935,7 +935,7 @@ div.blockvmenuend, div.blockvmenubookmarks {
 	padding-left: 0 !important;
 }
 div.vmenu, td.vmenu {
-	padding-right: 6px !important;
+	padding-right: 10px !important;
 }
 
 
@@ -988,7 +988,11 @@ div.fiche {
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
 	<?php if (! empty($conf->dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
 }
+div.fiche>table:first-child {
+	margin-bottom: 15px !important;
+}
 div.fichecenter {
+	/* margin-top: 10px; */
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
 }
@@ -1737,7 +1741,7 @@ div.vmenu, td.vmenu {
 
 .vmenu {
     width: 190px;
-	margin-left: 4px;
+	margin-left: 6px;
 	<?php if (GETPOST("optioncss") == 'print') { ?>
     display: none;
 	<?php } ?>
@@ -1766,10 +1770,10 @@ a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { white-space: nowr
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
 font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; }
 a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; white-space: nowrap; }
-font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
+font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; text-decoration: none; }
 
@@ -1953,10 +1957,11 @@ img.toolbarbutton {
 /* ============================================================================== */
 div.tabs {
     text-align: <?php print $left; ?>;
-    margin-left: 6px !important;
-    margin-right: 6px !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
 	clear:both;
 	height:100%;
+	/* background-image: linear-gradient(to top,#f6f6f6 0,#fff 8px);  */	
 }
 div.tabsElem {
 	margin-top: 1px;
@@ -2016,9 +2021,12 @@ a.tabTitle {
     white-space: nowrap;
 }
 
+a.tabunactive {
+    color: rgb(<?php print $colortextlink; ?>) !important;
+}
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 8px 9px 8px;
+	padding: 12px 9px 12px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
@@ -2027,11 +2035,6 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-left: 1px solid transparent;
 	border-top: 1px solid transparent;
 	border-bottom: 0px !important;
-	/*
-	-moz-border-radius:4px 4px 0 0;
-    -webkit-border-radius: 4px 4px 0 0;
-	border-radius: 4px 4px 0 0;
-	*/
 
 	background-image: none !important;
 }
@@ -2945,15 +2948,15 @@ div.error {
 
 /* Info admin */
 div.info {
-  color: #303035;
+  color: #fff;
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #e0e0e0;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  background: #EaE4Ea;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  background: #806090;
+  /* text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5); */
 }
 
 div.warning a, div.info a, div.error a {
@@ -3036,9 +3039,12 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 
 div.titre {
 	font-family: <?php print $fontlist ?>;
+	font-size: 14px;
 	font-weight: bold;
 	color: rgb(<?php print $colortexttitlenotab; ?>);
 	text-decoration: none;
+	padding-top: 5px;
+    padding-bottom: 5px;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
 }
 

@@ -360,7 +360,7 @@ abstract class CommonDocGenerator
 	{
 		global $conf;
 
-		$sumpayed=''; $alreadypayed='';
+		$sumpayed=$sumdeposit=$sumcreditnote='';
 		if ($object->element == 'facture')
 		{
 			$invoice_source=new Facture($this->db);
@@ -369,7 +369,8 @@ abstract class CommonDocGenerator
 				$invoice_source->fetch($object->fk_facture_source);
 			}
 			$sumpayed = $object->getSommePaiement();
-			$alreadypayed=price($sumpayed,0,$outputlangs);
+			$sumdeposit = $object->getSumDepositsUsed();
+			$sumcreditnote = $object->getSumCreditNotesUsed();
 		}
 
 		$resarray=array(
@@ -412,11 +413,21 @@ abstract class CommonDocGenerator
 		$array_key.'_note_private'=>$object->note,
 		$array_key.'_note_public'=>$object->note_public,
 		$array_key.'_note'=>$object->note_public,			// For backward compatibility
+		
 		// Payments
-		$array_key.'_already_payed_locale'=>price($alreadypayed, 0, $outputlangs),
-		$array_key.'_remain_to_pay_locale'=>price($object->total_ttc - $sumpayed, 0, $outputlangs),
-		$array_key.'_already_payed'=>$alreadypayed,
-		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $sumpayed)
+		$array_key.'_already_payed_locale'=>price($sumpayed, 0, $outputlangs),
+		$array_key.'_already_payed'=>price2num($sumpayed),
+		$array_key.'_already_deposit_locale'=>price($sumdeposit, 0, $outputlangs),
+		$array_key.'_already_deposit'=>price2num($sumdeposit),
+		$array_key.'_already_creditnote_locale'=>price($sumcreditnote, 0, $outputlangs),
+		$array_key.'_already_creditnote'=>price2num($sumcreditnote),
+		
+		$array_key.'_already_payed_all_locale'=>price(price2num($sumpayed + $sumdeposit + $sumcreditnote, 'MT'), 0, $outputlangs),
+		$array_key.'already_payed_all'=> price2num(($sumpayed + $sumdeposit + $sumcreditnote), 'MT'),
+		    
+		// Remain to pay with all know infrmation (except open direct debit requests)
+		$array_key.'_remain_to_pay_locale'=>price(price2num($object->total_ttc - $sumpayed - $sumdeposit - $sumcreditnote, 'MT'), 0, $outputlangs),
+		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $sumpayed - $sumdeposit - $sumcreditnote, 'MT')
 		);
 
 		// Add vat by rates

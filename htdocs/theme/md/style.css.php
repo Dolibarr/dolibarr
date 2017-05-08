@@ -241,7 +241,7 @@ body {
 <?php } ?>
 	color: rgb(<?php echo $colortext; ?>);
 	font-size: <?php print $fontsize ?>px;
-	line-height: 130%;
+	line-height: 1.3;
 	font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
@@ -1136,6 +1136,9 @@ table.noborder tr.liste_titre td {
 }
 .pictoedit, .pictowarning, .pictodelete {
     vertical-align: text-bottom;
+}
+img.hideonsmartphone.pictoactionview {
+    vertical-align: bottom;
 }
 .colorthumb {
 	padding-left: 1px !important;
@@ -3146,9 +3149,12 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 
 div.titre {
 	font-family: <?php print $fontlist ?>;
-	font-weight: bold;
+	font-size: 14px;
+	/* font-weight: bold; */
 	color: rgb(<?php print $colortexttitlenotab; ?>);
 	text-decoration: none;
+	padding-top: 5px;
+    padding-bottom: 5px;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
 	<?php print (empty($conf->dol_optimize_smallscreen)?'':'margin-top: 4px;'); ?>
 }
@@ -4677,7 +4683,7 @@ border-top-right-radius: 6px;
 	}
 	.mainmenuaspan {
     	/*display: none;*/
-  		font-size: 10px;
+  		font-size: 12px;
     }
     .topmenuimage {
     	background-size: 26px auto;

@@ -197,12 +197,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (! GETPOST("username")) $focus_element='username';
 	else $focus_element='password';
 
-	$login_background=DOL_URL_ROOT.'/theme/login_background.png';
-	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
-	{
-		$login_background=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png';
-	}
-
 	$demologin='';
 	$demopassword='';
 	if (! empty($dolibarr_main_demo))

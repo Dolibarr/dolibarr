@@ -152,7 +152,7 @@ tag 729538 -moreinfo
 
 
 
-##### Testing a package into unstable env
+##### Testing a package into a chroot environment
 
 Check you have a mysql server available from another interface than "localhost".
 Set line in /etc/mysql/my.cnf if required and restart mysql
@@ -160,9 +160,11 @@ Set line in /etc/mysql/my.cnf if required and restart mysql
 [mysqld]
 bind-address           = *
 
-Create a chroot called "unstable-amd64-sbuild".
+Create a chroot called "jessie" or "unstable".
 Chroot env is stored into /srv/chroot directory.
 > sudo sbuild-createchroot --keyring=unstable /srv/chroot/unstable http://ftp.uk.debian.org/debian
+or
+> sudo sbuild-createchroot jessie /srv/chroot/jessie http://ftp.uk.debian.org/debian
 
 Pour lister les env chroot
 > schroot -l
@@ -170,8 +172,9 @@ or
 > ls /srv/chroot
 
 Puis pour se connecter et préparer l'environnement 
-> schroot -c name_of_chroot
+> schroot -c name_of_chroot  (exemple schroot -c unstable-amd64-sbuild)
 > cat /etc/debian_chroot       to check which debian branch we are into
+> apt-get install vi dialog
 > vi /usr/sbin/policy-rc.d     and replace return code 101 (not allowed) into 0 (ok)
 > apt-get update
 > apt-get upgrade
@@ -401,6 +404,7 @@ Note that package 3.5.7 contains not only fixed for bugs reported to debian. It 
 so it is a better solution to validate this maintenance release than applying a patch of the only CVE-2015-3935. 
 After discussion with ..., it appears that security holes are enough to request this unblock request."
 
+
 Use this to request an full update of a stable package
 
 reportbug -B debian --smtphost=smtp.gmail.com:587 --smtpuser=xxxx --smtppasswd=yyyy --tls
@@ -431,7 +435,7 @@ Use this to ask to apply patches on a stable version.
 
 reportbug -B debian --smtphost=smtp.gmail.com:587 --smtpuser=xxxx --smtppasswd=yyyy --tls
 Choose package "release.debian.org"
-Then usertag "jessie-pu"
+Then usertag "jessie-pu" (if tags is not available in list, choose another one, and change it later into email content text)
 Then name of package "dolibarr"
 Fill message, for example:
 "Please unblock package dolibarr

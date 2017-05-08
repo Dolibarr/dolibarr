@@ -202,7 +202,7 @@ $user_id = $user->id;
 if ($id > 0)
 {
 	// Charge utilisateur edite
-	$fuser->fetch($id);
+	$fuser->fetch($id, '', '', 1);
 	$fuser->getrights();
 	$user_id = $fuser->id;
 }
@@ -282,6 +282,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 
 if ($sall)
 {

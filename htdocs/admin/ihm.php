@@ -50,18 +50,6 @@ $action = GETPOST('action');
 
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
-// List of supported permanent search area
-$searchform=array();
-/* deprecated
-if (empty($conf->use_javascript_ajax))
-{
-    $searchform=array("MAIN_SEARCHFORM_SOCIETE", "MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE", "MAIN_SEARCHFORM_ADHERENT", "MAIN_SEARCHFORM_PROJECT", "MAIN_SEARCHFORM_EMPLOYEE");
-    $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_ADHERENT,$conf->global->MAIN_SEARCHFORM_PROJECT,$conf->global->MAIN_SEARCHFORM_EMPLOYEE);
-    $searchformtitle=array($langs->trans("Companies"), $langs->trans("Contacts"), $langs->trans("ProductsAndServices"), $langs->trans("Members"), $langs->trans("Projects"), $langs->trans("Users"));
-    $searchformmodule=array('Module1Name','Module1Name','Module50Name','Module310Name','Module400Name');
-}
-*/
-
 
 /*
  * Action
@@ -275,21 +263,6 @@ if ($action == 'edit')	// Edit
     show_theme(null,1);
     print '<br>';
 
-    // List of permanent supported search box
-    if (! empty($searchform))
-    {
-        print '<table summary="search" class="noborder" width="100%">';
-        print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("PermanentLeftSearchForm").'</td><td colspan="2">'.$langs->trans("Activated").'</td></tr>';
-        foreach ($searchform as $key => $value)
-        {
-            print '<tr><td class="titlefield">'.$searchformtitle[$key].'</td><td colspan="2">';
-            print $form->selectyesno($searchform[$key],$searchformconst[$key],1);
-            print '</td></tr>';
-        }
-        print '</table>';
-        print '<br>';
-    }
-    
     // Other
     print '<table summary="edit" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
@@ -475,23 +448,6 @@ else	// Show
     show_theme(null,0);
     print '<br>';
 
-
-    // List of search forms to show
-    if (! empty($searchform))
-    {
-        print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td><td>&nbsp;</td></tr>';
-        foreach ($searchform as $key => $value)
-        {
-            
-            print '<tr class="oddeven"><td class="titlefield">'.$searchformtitle[$key].'</td><td>'.yn($searchformconst[$key]).'</td>';
-    		print '<td align="left">';
-    		if (! empty($searchformmodule[$key])) print $langs->trans("IfModuleEnabled",$langs->transnoentitiesnoconv($searchformmodule[$key]));
-            print '</td></tr>';
-        }
-        print '</table>';
-        print '<br>';
-    }
 
     // Other
     print '<table class="noborder" width="100%">';

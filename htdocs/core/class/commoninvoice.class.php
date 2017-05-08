@@ -91,8 +91,8 @@ abstract class CommonInvoice extends CommonObject
 
 	
 	/**
-	 * 	Return remain amount to pay.
-	 *  Property ->id and ->total_ttc must be set.
+	 * 	Return remain amount to pay. Property ->id and ->total_ttc must be set.
+	 *  This does not include open direct debit requests.
 	 *
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *	@return		int						Remain of amount to pay

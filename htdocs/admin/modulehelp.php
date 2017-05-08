@@ -330,6 +330,24 @@ if ($mode == 'desc')
     else $text.=$langs->trans("Disabled");
     $text.='<br>';
 
+    $tmp = $objMod->getLastActivationInfo();
+    $authorid = $tmp['authorid'];
+    if ($authorid > 0)
+    {
+        $tmpuser = new User($db);
+        $tmpuser->fetch($authorid);
+        $text.='<strong>'.$langs->trans("LastActivationAuthor").':</strong> ';
+        $text.= $tmpuser->getNomUrl(1);
+        $text.='<br>';
+    }
+    $ip = $tmp['ip'];
+    if ($ip)
+    {
+        $text.='<strong>'.$langs->trans("LastActivationIP").':</strong> ';
+        $text.= $ip;
+        $text.='<br>';
+    }    
+    
     $moduledesclong=$objMod->getDescLong();
     if ($moduledesclong) $text.='<br><hr><div class="moduledesclong">'.$moduledesclong.'<div>';
 }

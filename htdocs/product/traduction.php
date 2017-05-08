@@ -277,16 +277,14 @@ if ($action == 'edit')
 }
 else if ($action != 'add')
 {
-    //if ($cnt_trans) print '<div class="underbanner clearboth"></div>';
-    
 	if (! empty($object->multilangs))
 	{
 		foreach ($object->multilangs as $key => $value)
 		{
 			$s=picto_from_langcode($key);
-			//print '<tr><td>';
 			print ($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
-			//print '</td><td></td></tr>';
+			
+			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border" width="100%">';
 			print '<tr><td class="titlefieldcreate">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
@@ -296,6 +294,7 @@ else if ($action != 'add')
                 print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
 			}
 			print '</table>';
+			print '</div>';
 		}
 	}
 	if (! $cnt_trans && $action != 'add') print '<div class="opacitymedium">'. $langs->trans('NoTranslation').'</div>';
