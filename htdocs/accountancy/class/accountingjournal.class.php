@@ -48,45 +48,60 @@ class AccountingJournal extends CommonObject
 	}
 	
 	/**
-	* Load an object from database
-	*
-	* @param	int		$id		Id of record to load
-	* @return	int				<0 if KO, >0 if OK
-	*/
-	function fetch($id)
+	 * Load an object from database
+	 *
+	 * @param	int		$rowid				Id of record to load
+	 * @param 	string 	$journal_code		Journal code
+	 * @return	int							<0 if KO, Id of record if OK and found
+	 */
+	function fetch($rowid = null, $journal_code = null)
 	{
-		$sql = "SELECT rowid, code, label, nature, active";
-		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
-		$sql.= " WHERE rowid = ".$id;
-
-		dol_syslog(get_class($this)."::fetch sql=" . $sql, LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ( $result )
+		if ($rowid || $journal_code)
 		{
-			$obj = $this->db->fetch_object($result);
+			$sql = "SELECT rowid, code, label, nature, active";
+			$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
+			$sql .= " WHERE";
+			if ($rowid) {
+				$sql .= " rowid = '" . $rowid . "'";
+			} elseif ($journal_code) {
+				$sql .= " code = '" . $journal_code . "'";
+			}
 
-			$this->id			= $obj->rowid;
+			dol_syslog(get_class($this)."::fetch sql=" . $sql, LOG_DEBUG);
+			$result = $this->db->query($sql);
+			if ($result)
+			{
+				$obj = $this->db->fetch_object($result);
 
-			$this->code			= $obj->code;
-			$this->ref			= $obj->code;
-			$this->label		= $obj->label;
-			$this->nature	    = $obj->nature;
-			$this->active		= $obj->active;
+				if ($obj) {
+					$this->id			= $obj->rowid;
+					$this->rowid		= $obj->rowid;
 
-			return 1;
+					$this->code			= $obj->code;
+					$this->ref			= $obj->code;
+					$this->label		= $obj->label;
+					$this->nature	    = $obj->nature;
+					$this->active		= $obj->active;
+
+					return $this->id;
+				} else {
+					return 0;
+				}
+			}
+			else
+			{
+				$this->error = "Error " . $this->db->lasterror();
+				$this->errors[] = "Error " . $this->db->lasterror();
+			}
 		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			return -1;
-		}
+		return -1;
 	}
 	
 	/**
 	 * Return clicable name (with picto eventually)
 	 *
 	 * @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 * @param	int		$withlabel		0=No label, 1=Include label of account
+	 * @param	int		$withlabel		0=No label, 1=Include label of journal
 	 * @param	int  	$nourl			1=Disable url
 	 * @param	string  $moretitle		Add more text to title tooltip
 	 * @param	int  	$notooltip		1=Disable tooltip
@@ -100,7 +115,7 @@ class AccountingJournal extends CommonObject
 
 		$result = '';
 
-		$url = DOL_URL_ROOT . '/accountancy/admin/journals_list.php';
+		$url = DOL_URL_ROOT . '/accountancy/admin/journals_list.php?id=35';
 
 		$picto = 'billr';
 		$label='';

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2016	  	Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
 // Langs
 $langs->load("accountancy");
@@ -443,7 +444,11 @@ foreach ($object->lines as $line ) {
 	print '<td>' . $line->label_compte . '</td>';
 	print '<td align="right">' . price($line->debit) . '</td>';
 	print '<td align="right">' . price($line->credit) . '</td>';
-	print '<td align="center">' . $line->code_journal . '</td>';
+
+	$accountingjournal = new AccountingJournal($db);
+	$accountingjournal->fetch('',$line->code_journal);
+	print '<td align="center">' . $accountingjournal->getNomUrl(0,0,0,'',0) . '</td>';
+
 	print '<td align="center">';
 	print '<a href="./card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>&nbsp;';
 	print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . '">' . img_delete() . '</a>';

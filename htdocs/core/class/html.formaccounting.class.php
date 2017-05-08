@@ -51,12 +51,14 @@ class FormAccounting extends Form
 	 * @param	int		$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
 	 * @param	int		$showempty	Add an empty field
 	 * @param	array	$event		Event options
+	 * @param	int		$select_in	0=selectid value is the journal rowid (default) or 1=selectid is journal code
+	 * @param	int		$select_out	Set value returned by select. 0=rowid (default), 1=code
 	 * @param	string	$morecss	More css non HTML object
 	 * @param	string	$usecache	Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 *
 	 * @return	string				String with HTML select
 	 */
-	function select_journal($selectid, $htmlname = 'journal', $nature=0, $showempty = 0, $event = array(), $morecss='maxwidth300 maxwidthonsmartphone', $usecache='')
+	function select_journal($selectid, $htmlname = 'journal', $nature=0, $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='')
 	{
 		global $conf;
 
@@ -88,10 +90,26 @@ class FormAccounting extends Form
 
 			$out = ajax_combobox($htmlname, $event);
 
+    		$selected = 0;
 			while ($obj = $this->db->fetch_object($resql))
 			{
 				$label = $obj->code . ' - ' . $obj->label;
+
+    			$select_value_in = $obj->rowid;
 				$select_value_out = $obj->rowid;
+
+				// Try to guess if we have found default value
+    			if ($select_in == 1) {
+    				$select_value_in = $obj->code;
+    			}
+    			if ($select_out == 1) {
+    				$select_value_out = $obj->code;
+    			}
+    			// Remember guy's we store in database llx_accounting_bookkeeping the code of accounting_journal and not the rowid
+    			if ($selectid != '' && $selectid == $select_value_in) {
+    			    //var_dump("Found ".$selectid." ".$select_value_in);
+    				$selected = $select_value_out;
+    			}
 
 				$options[$select_value_out] = $label;
 			}
@@ -103,7 +121,7 @@ class FormAccounting extends Form
 			}
 		}
 
-		$out .= Form::selectarray($htmlname, $options, $selectid, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		$out .= Form::selectarray($htmlname, $options, $select, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $out;
 	}
