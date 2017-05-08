@@ -49,11 +49,10 @@ $dircustom = $tmp[0];
 
 if ($dircustom && $action == 'initmodule' && $modulename)
 {
-    $srcfile = DOL_DOCUMENT_ROOT.'/modulebuilder/skeletons';
+    $srcfile = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
     $destfile = $dircustom.'/'.$modulename;
-    //$result = dolCopyDir($srcfile, $destfile, 0, 0);
-    
-    dol_mkdir($destfile);
+    $result = dolCopyDir($srcfile, $destfile, 0, 0);
+    //dol_mkdir($destfile);
     
     fopen($destfile, $mode)
     
