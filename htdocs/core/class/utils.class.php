@@ -94,7 +94,7 @@ class Utils
 			$filelog='';
 			if (! empty($conf->syslog->enabled))
 			{
-				$filelog=SYSLOG_FILE;
+				$filelog=$conf->global->SYSLOG_FILE;
 				$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
 			}
 
