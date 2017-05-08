@@ -29,9 +29,21 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
 
 //use \includes\stripe as stripe;
-$stripe = array(
-  "secret_key"      => $conf->global->STRIPE_TEST_SECRET_KEY,
-  "publishable_key" => $conf->global->STRIPE_TEST_PUBLISHABLE_KEY
-);
+$stripe = array();
+
+if(empty($conf->global->SKYPE_LIVE))
+{
+	$stripe = array(
+		"secret_key"      => $conf->global->STRIPE_TEST_SECRET_KEY,
+		"publishable_key" => $conf->global->STRIPE_TEST_PUBLISHABLE_KEY
+	);
+}
+else 
+{
+	$stripe = array(
+		"secret_key"      => $conf->global->STRIPE_LIVE_SECRET_KEY,
+		"publishable_key" => $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY
+	);	
+}
 
 \includes\stripe::setApiKey($stripe['secret_key']);

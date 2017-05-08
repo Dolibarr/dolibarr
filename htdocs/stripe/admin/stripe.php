@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2017		Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,7 +46,7 @@ if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
 
-    $result=dolibarr_set_const($db, "STRIPE_TEST",GETPOST('STRIPE_TEST','alpha'),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "STRIPE_LIVE",GETPOST('STRIPE_LIVE','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "STRIPE_TEST_SECRET_KEY",GETPOST('STRIPE_TEST_SECRET_KEY','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
@@ -76,6 +77,20 @@ if ($action == 'setvalue' && $user->admin)
     }
 }
 
+if ($action=="setlive")
+{
+	$liveenable = GETPOST('value','int');
+	$res = dolibarr_set_const($db, "STRIPE_LIVE", $liveenable,'yesno',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	if (! $error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
 
 /*
  *	View
@@ -119,9 +134,19 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td class="fieldrequired">';
-print $langs->trans("STRIPE_TEST").'</td><td>';
-print $form->selectyesno("STRIPE_TEST",$conf->global->STRIPE_TEST,1);
+print '<tr '.$bc[$var].'>';
+print '<td class="titlefield fieldrequired">';
+print $langs->trans("StripeLiveEnabled").'</td><td>';
+if (!empty($conf->global->STRIPE_LIVE))
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
+	print img_picto($langs->trans("Activated"),'switch_on');
+}
+else
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
+	print img_picto($langs->trans("Disabled"),'switch_off');
+}
 print '</td></tr>';
 
 $var=!$var;
