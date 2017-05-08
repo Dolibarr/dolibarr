@@ -4367,14 +4367,31 @@ class Product extends CommonObject
         $this->id=0;
         $this->ref = 'PRODUCT_SPEC';
         $this->label = 'PRODUCT SPECIMEN';
-        $this->description = 'PRODUCT SPECIMEN '.dol_print_date($now,'dayhourlog');
+        $this->description = 'This is description of this product specimen that was created the '.dol_print_date($now,'dayhourlog').'.';
         $this->specimen=1;
         $this->country_id=1;
         $this->tosell=1;
         $this->tobuy=1;
 		$this->tobatch=0;
         $this->note='This is a comment (private)';
+        $this->date_creation = $now;
+        $this->date_modification = $now;
+        
+        $this->weight = 4;
+        $this->weight_unit = 1;
 
+        $this->length = 5;
+        $this->length_unit = 1;
+        $this->width = 6;
+        $this->width_unit = 0;
+        $this->height = null;
+        $this->height_unit = null;
+        
+        $this->surface = 30;
+        $this->surface_unit = 0;
+        $this->volume = 300;
+        $this->volume_unit = 0;
+        
         $this->barcode=-1;	// Create barcode automatically
     }
 

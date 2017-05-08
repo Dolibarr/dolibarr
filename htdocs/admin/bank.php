@@ -273,7 +273,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var = true;
 foreach ($dirmodels as $reldir) 
 {
     foreach (array('', '/doc') as $valdir) {
@@ -305,8 +304,7 @@ foreach ($dirmodels as $reldir)
                                 $modulequalified = 0;
                             
                             if ($modulequalified) {
-                                $var = ! $var;
-                                print '<tr ' . $bc[$var] . '><td width="100">';
+                                print '<tr class="oddeven"><td width="100">';
                                 print(empty($module->name) ? $name : $module->name);
                                 print "</td><td>\n";
                                 if (method_exists($module, 'info'))

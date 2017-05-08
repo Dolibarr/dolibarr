@@ -159,25 +159,25 @@ if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
 
 // Set text color to black or white
 $tmppart=explode(',',$colorbackhmenu1);
-$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : '')+(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '');
+$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) $colortextbackhmenu='FFFFFF';
 else $colortextbackhmenu='000000';
 
 $tmppart=explode(',',$colorbackvmenu1);
-$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : '')+(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '');
+$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) { $colortextbackvmenu='FFFFFF'; }
 else { $colortextbackvmenu='000000'; }
 
 $tmppart=explode(',',$colorbacktitle1);
 if ($colortexttitle == '')
 {
-	$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : '')+(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '');
+	$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 	if ($tmpval <= 460) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
 	else { $colortexttitle='101010'; $colorshadowtitle='FFFFFF'; }
 }
 
 $tmppart=explode(',',$colorbacktabcard1);
-$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : '')+(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '');
+$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) { $colortextbacktab='FFFFFF'; }
 else { $colortextbacktab='111111'; }
 
@@ -241,7 +241,7 @@ body {
 <?php } ?>
 	color: rgb(<?php echo $colortext; ?>);
 	font-size: <?php print $fontsize ?>px;
-	line-height: 130%;
+	line-height: 1.3;
 	font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
@@ -1136,6 +1136,9 @@ table.noborder tr.liste_titre td {
 }
 .pictoedit, .pictowarning, .pictodelete {
     vertical-align: text-bottom;
+}
+img.hideonsmartphone.pictoactionview {
+    vertical-align: bottom;
 }
 .colorthumb {
 	padding-left: 1px !important;
@@ -2564,6 +2567,9 @@ div.pagination li.pagination .active {
   text-decoration: underline;
   box-shadow: none;
 }
+.paginationafterarrows .nohover {
+  box-shadow: none !important;
+}
 div.pagination li.paginationafterarrows {
 	margin-left: 10px;
 }
@@ -3112,10 +3118,8 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 	margin-bottom: 2px;
 	margin-top: 2px;
 }
-.photowithmargin {
-/*	-webkit-box-shadow: 0px 0px 3px #777;
-	-moz-box-shadow: 0px 0px 3px #777;
-	box-shadow: 0px 0px 3px #777;*/
+.photowithborder {
+	border: 1px solid #f0f0f0;
 }
 .photointoolitp {
 	margin-top: 8px;
@@ -3145,9 +3149,12 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 
 div.titre {
 	font-family: <?php print $fontlist ?>;
-	font-weight: bold;
+	font-size: 14px;
+	/* font-weight: bold; */
 	color: rgb(<?php print $colortexttitlenotab; ?>);
 	text-decoration: none;
+	padding-top: 5px;
+    padding-bottom: 5px;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
 	<?php print (empty($conf->dol_optimize_smallscreen)?'':'margin-top: 4px;'); ?>
 }
@@ -4676,7 +4683,7 @@ border-top-right-radius: 6px;
 	}
 	.mainmenuaspan {
     	/*display: none;*/
-  		font-size: 10px;
+  		font-size: 12px;
     }
     .topmenuimage {
     	background-size: 26px auto;

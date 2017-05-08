@@ -167,7 +167,7 @@ print load_fiche_titre($langs->trans("UsersSetup"),$linkback,'title_setup');
 
 $head=user_admin_prepare_head();
 
-dol_fiche_head($head,'card', $langs->trans("MenuUsersAndGroups"), 0, 'user');
+dol_fiche_head($head,'card', $langs->trans("MenuUsersAndGroups"), -1, 'user');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -205,7 +205,7 @@ print '</td></tr>';
 
 print '</table>';
 
-
+print '<br>';
 
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 

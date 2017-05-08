@@ -149,6 +149,7 @@ if (! empty($conf->productbatch->enabled))
 //if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
 //{
 print info_admin($langs->trans("IfYouUsePointOfSaleCheckModule"));
+print '<br>';
 //}
 
 // Title rule for stock decrease
@@ -432,6 +433,61 @@ if ($virtualdiffersfromphysical)
 }
 
 
+print '<br />';
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+{
+	$var=false;
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Inventory").'</td>'."\n";
+	print '<td align="center" width="20">&nbsp;</td>';
+	print '<td align="center" width="100">&nbsp;</td>'."\n";
+	
+	// Example with a yes / no select
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("INVENTORY_DISABLE_VIRTUAL").'</td>';
+	print '<td align="center" width="20">&nbsp;</td>';
+	print '<td align="right" width="300">';
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="set_INVENTORY_DISABLE_VIRTUAL">';
+	print $form->selectyesno("INVENTORY_DISABLE_VIRTUAL",$conf->global->INVENTORY_DISABLE_VIRTUAL,1);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '</form>';
+	print '</td></tr>';
+	
+	// Example with a yes / no select
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA").'</td>';
+	print '<td align="center" width="20">&nbsp;</td>';
+	print '<td align="right" width="300">';
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="set_INVENTORY_USE_MIN_PA_IF_NO_LAST_PA">';
+	print $form->selectyesno("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA",$conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA,1);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '</form>';
+	print '</td></tr>';
+	
+	// Example with a yes / no select
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT").'</td>';
+	print '<td align="center" width="20">&nbsp;</td>';
+	print '<td align="right" width="300">';
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="set_INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT">';
+	print $form->selectyesno("INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT",$conf->global->INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT,1);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '</form>';
+	print '</td></tr>';
+	
+	print '</table>';
+}
+
 $var=true;
 print '<table class="noborder" width="100%">';
 
@@ -507,6 +563,7 @@ if ($conf->global->PRODUIT_SOUSPRODUITS)
 */
 
 print '</table>';
+
 
 llxFooter();
 

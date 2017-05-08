@@ -47,6 +47,7 @@ class AccountancyExport
 	public static $EXPORT_TYPE_QUADRATUS = 6;
 	public static $EXPORT_TYPE_EBP = 7;
 	public static $EXPORT_TYPE_COGILOG = 8;
+	public static $EXPORT_TYPE_AGIRIS = 9;
 
 	/**
 	 *
@@ -96,6 +97,7 @@ class AccountancyExport
 				self::$EXPORT_TYPE_QUADRATUS => $langs->trans('Modelcsv_quadratus'),
 				self::$EXPORT_TYPE_EBP => $langs->trans('Modelcsv_ebp'),
 				self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
+				self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris')
 		);
 	}
 
@@ -144,6 +146,9 @@ class AccountancyExport
 				break;
 			case self::$EXPORT_TYPE_COGILOG :
 				$this->exportCogilog($TData);
+				break;
+			case self::$EXPORT_TYPE_AGIRIS :
+				$this->exportAgiris($TData);
 				break;
 			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
@@ -382,7 +387,7 @@ class AccountancyExport
 
 
 	/**
-	 * Export format : Normal
+	 * Export format : EBP
 	 *
 	 * @param array $objectLines data
 	 *
@@ -411,6 +416,47 @@ class AccountancyExport
 		}
 	}
 
+
+	/**
+	 * Export format : Agiris
+	 *
+	 * @param array $objectLines data
+	 *
+	 * @return void
+	 */
+	public function exportAgiris($objectLines) {
+
+		$this->separator = ';';
+
+		foreach ( $objectLines as $line ) {
+
+			$date = dol_print_date($line->doc_date, '%d%m%Y');
+
+			print $line->id . $this->separator;
+			print '"'.dol_trunc($line->piece_num,15,'right','UTF-8',1).'"'.$this->separator;
+			print $date . $this->separator;
+			print '"'.dol_trunc($line->piece_num,15,'right','UTF-8',1).'"'.$this->separator;
+			
+			if (empty($line->code_tiers)) {
+				print length_accountg($line->numero_compte) . $this->separator;
+			} else {
+				if (substr($line->numero_compte, 0, 1) == 'C' || substr($line->numero_compte, 0, 1) == '9') {
+					print '411' . substr(str_replace(" ", "", $line->code_tiers), 0, 5) . $this->separator;
+				}
+				if (substr($line->numero_compte, 0, 1) == 'F' || substr($line->numero_compte, 0, 1) == '0') {
+					print '401' . substr(str_replace(" ", "", $line->code_tiers), 0, 5) . $this->separator;
+				}
+			}
+			
+			print length_accounta($line->code_tiers) . $this->separator;
+			print price($line->debit) . $this->separator;
+			print price($line->credit) . $this->separator;
+			print price($line->montant).$this->separator;
+			print $line->sens.$this->separator;
+			print $line->code_journal . $this->separator;
+			print $this->end_line;
+		}
+	}
 
 
 	/**

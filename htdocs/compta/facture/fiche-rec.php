@@ -35,8 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-    require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+    //require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 
@@ -891,7 +892,6 @@ if ($action == 'create')
 
 	$object = new Facture($db);   // Source invoice
 	$product_static = new Product($db);
-	$formproject = new FormProjets($db);
 
 	if ($object->fetch($id, $ref) > 0)
 	{

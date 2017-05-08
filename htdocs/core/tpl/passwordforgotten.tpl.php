@@ -151,7 +151,7 @@ if (! empty($hookmanager->resArray['options'])) {
 </form>
 
 
-<div class="center login_main_home" style="max-width: 80%">
+<div class="center login_main_home" style="max-width: 70%">
 <?php if ($mode == 'dolibarr' || ! $disabled) { ?>
 	<font style="font-size: 12px;">
 	<?php echo $langs->trans('SendNewPasswordDesc'); ?>

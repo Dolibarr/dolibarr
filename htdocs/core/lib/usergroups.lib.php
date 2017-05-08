@@ -59,6 +59,11 @@ function user_prepare_head($object)
 	    $h++;
 	}
 
+    $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("UserGUISetup");
+    $head[$h][2] = 'guisetup';
+    $h++;
+
 	if ($canreadperms)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$object->id;
@@ -67,15 +72,27 @@ function user_prepare_head($object)
 		$h++;
 	}
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("UserGUISetup");
-    $head[$h][2] = 'guisetup';
-    $h++;
-
     if (! empty($conf->agenda->enabled))
     {
+        if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
+        $MAXAGENDA=$conf->global->AGENDA_EXT_NB;
+        
+        $i=1;
+        $nbagenda = 0;
+        while ($i <= $MAXAGENDA)
+        {
+            $key=$i;
+            $name='AGENDA_EXT_NAME_'.$object->id.'_'.$key;
+            $src='AGENDA_EXT_SRC_'.$object->id.'_'.$key;
+            $offsettz='AGENDA_EXT_OFFSETTZ_'.$object->id.'_'.$key;
+            $color='AGENDA_EXT_COLOR_'.$object->id.'_'.$key;
+            $i++;
+        
+            if (! empty($object->conf->$name)) $nbagenda++;
+        }
+        
 	    $head[$h][0] = DOL_URL_ROOT.'/user/agenda_extsites.php?id='.$object->id;
-	    $head[$h][1] = $langs->trans("ExtSites");
+	    $head[$h][1] = $langs->trans("ExtSites").($nbagenda ? ' <span class="badge">'.$nbagenda.'</span>' : '');
 	    $head[$h][2] = 'extsites';
 	    $h++;
     }
@@ -426,7 +443,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 
     print '</td></tr>';
 
-	// BackgroundColor
+	// Background color THEME_ELDY_BACKBODY
     if ($foruserprofile)
 	{
 	    /*
@@ -609,7 +626,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    {
 	        print $formother->showColor($conf->global->THEME_ELDY_TEXTTITLENOTAB, $langs->trans("Default"));
 	    }
-	    print ' &nbsp; ('.$langs->trans("Default").': <strong>3c3c14</strong>) ';
+	    print ' &nbsp; ('.$langs->trans("Default").': <strong><span style="color: #3c3c14">3c3c14</span></strong>) ';
     	print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 	    
 	    print '</td>';
@@ -654,9 +671,14 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    {
 	        $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTLINK,array()),'');
 	        if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
-	        else print $langs->trans("Default");
+	        else 
+	        {
+	            //print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$defaultcolor.'" value="'.$langs->trans("Default").'">';
+	            //print '<span style="color: #000078">'.$langs->trans("Default").'</span>';
+	            print $langs->trans("Default");
+	        }
 	    }
-	    print ' &nbsp; ('.$langs->trans("Default").': <strong>000078</strong>) ';
+	    print ' &nbsp; ('.$langs->trans("Default").': <strong><span style="color: #000078">000078</span></strong>) ';
     	print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 	    print '</td>';
 	}

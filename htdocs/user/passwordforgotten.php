@@ -191,15 +191,6 @@ $conf_css = $themepath."?lang=".$langs->defaultlang;
 $jquerytheme = 'smoothness';
 if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
 
-if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
-{
-    $login_background = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png';
-}
-else
-{
-    $login_background = DOL_URL_ROOT.'/theme/login_background.png';
-}
-
 if (! $username) $focus_element = 'username';
 else $focus_element = 'password';
 

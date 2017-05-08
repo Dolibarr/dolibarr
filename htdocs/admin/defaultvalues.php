@@ -37,7 +37,7 @@ if (!$user->admin) accessforbidden();
 $id=GETPOST('rowid','int');
 $action=GETPOST('action','alpha');
 
-$mode = GETPOST('mode')?GETPOST('mode'):'createform';   // 'createform', 'filters', 'sortorder'
+$mode = GETPOST('mode')?GETPOST('mode'):'createform';   // 'createform', 'filters', 'sortorder', 'focus'
 
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -84,6 +84,11 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $search_array_options=array();
 }
 
+if ($action == 'setMAIN_ENABLE_DEFAULT_VALUES')
+{
+    if (GETPOST('value')) dolibarr_set_const($db, 'MAIN_ENABLE_DEFAULT_VALUES', 1, 'chaine', 0, '', $conf->entity);
+    else dolibarr_set_const($db, 'MAIN_ENABLE_DEFAULT_VALUES', 0, 'chaine', 0, '', $conf->entity);
+}
 
 if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('actionmodify'))
 {
@@ -185,6 +190,23 @@ print load_fiche_titre($langs->trans("DefaultValues"),'','title_setup');
 print $langs->trans("DefaultValuesDesc")."<br>\n";
 print "<br>\n";
 
+print $langs->trans("EnableDefaultValues").' ';
+if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
+{
+    // Button off, click to enable
+    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&amp;value=1">';
+    print img_picto($langs->trans("Disabled"),'switch_off');
+    print '</a>';
+}
+else
+{
+    // Button on, click to disable
+    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&amp;value=0">';
+    print img_picto($langs->trans("Activated"),'switch_on');
+    print '</a>';
+}
+print "<br><br>\n";
+
 $param='&mode='.$mode;
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -210,6 +232,10 @@ if ($mode == 'sortorder')
 {
     print info_admin($langs->trans("WarningSettingSortOrder")).'<br>';
 }
+if ($mode == 'focus')
+{
+    print info_admin($langs->trans("FeatureNotYetAvailable")).'<br>';
+}
 
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" id="action" name="action" value="">';
@@ -217,11 +243,13 @@ print '<input type="hidden" id="mode" name="mode" value="'.dol_escape_htmltag($m
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
+// Page
 $texthelp=$langs->trans("PageUrlForDefaultValues");
 if ($mode == 'createform') $texthelp.=$langs->trans("PageUrlForDefaultValuesCreate", 'societe/card.php');
 else $texthelp.=$langs->trans("PageUrlForDefaultValuesList", 'societe/list.php');
 $texturl=$form->textwithpicto($langs->trans("Url"), $texthelp);
 print_liste_field_titre($texturl,$_SERVER["PHP_SELF"],'page,param','',$param,'',$sortfield,$sortorder);
+// Field
 $texthelp=$langs->trans("TheKeyIsTheNameOfHtmlField");
 if ($mode != 'sortorder') 
 {
@@ -233,26 +261,32 @@ else
     $textkey=$form->textwithpicto($langs->trans("Field"), $texthelp);
 }
 print_liste_field_titre($textkey,$_SERVER["PHP_SELF"],'param','',$param,'',$sortfield,$sortorder);
-if ($mode != 'sortorder')
+// Value
+if ($mode != 'focus')
 {
-    $texthelp=$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-    // See list into GETPOST
-    $texthelp.='__USERID__<br>';
-    $texthelp.='__SUPERVISORID__<br>';
-    $texthelp.='__MYCOUNTRYID__<br>';
-    $texthelp.='__DAY__<br>';
-    $texthelp.='__MONTH__<br>';
-    $texthelp.='__YEAR__<br>';
-    if (! empty($conf->multicompany->enabled)) $texthelp.='__ENTITYID__<br>';
-    $textvalue=$form->textwithpicto($langs->trans("Value"), $texthelp, 1, 'help', '', 0, 2, '');
+    if ($mode != 'sortorder')
+    {
+        $texthelp=$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+        // See list into GETPOST
+        $texthelp.='__USERID__<br>';
+        $texthelp.='__SUPERVISORID__<br>';
+        $texthelp.='__MYCOUNTRYID__<br>';
+        $texthelp.='__DAY__<br>';
+        $texthelp.='__MONTH__<br>';
+        $texthelp.='__YEAR__<br>';
+        if (! empty($conf->multicompany->enabled)) $texthelp.='__ENTITYID__<br>';
+        $textvalue=$form->textwithpicto($langs->trans("Value"), $texthelp, 1, 'help', '', 0, 2, '');
+    }
+    else
+    {
+        $texthelp='ASC or DESC';
+        $textvalue=$form->textwithpicto($langs->trans("SortOrder"), $texthelp);
+    }
+    print_liste_field_titre($textvalue, $_SERVER["PHP_SELF"], 'value', '', $param, '', $sortfield, $sortorder);
 }
-else
-{
-    $texthelp='ASC or DESC';
-    $textvalue=$form->textwithpicto($langs->trans("SortOrder"), $texthelp);
-}
-print_liste_field_titre($textvalue, $_SERVER["PHP_SELF"], 'value', '', $param, '', $sortfield, $sortorder);
+// Entity
 if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],'entity,page','',$param,'',$sortfield,$sortorder);
+// Actions
 print '<td align="center"></td>';
 print "</tr>\n";
 
@@ -261,15 +295,21 @@ print "</tr>\n";
 print "\n";
 
 print '<tr class="oddeven">';
+// Page
 print '<td>';
 print '<input type="text" class="flat minwidth200 maxwidthonsmartphone" name="defaulturl" value="">';
 print '</td>'."\n";
+// Field
 print '<td>';
 print '<input type="text" class="flat maxwidth100" name="defaultkey" value="">';
 print '</td>';
-print '<td>';
-print '<input type="text" class="flat maxwidthonsmartphone" name="defaultvalue" value="">';
-print '</td>';
+// Value
+if ($mode != 'focus')
+{
+    print '<td>';
+    print '<input type="text" class="flat maxwidthonsmartphone" name="defaultvalue" value="">';
+    print '</td>';
+}
 // Limit to superadmin
 if (! empty($conf->multicompany->enabled) && !$user->entity)
 {
@@ -311,28 +351,33 @@ if ($result)
 
 		print '<tr class="oddeven">';
 		
+		// Page
 		print '<td>';
 		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print $obj->page;
 		else print '<input type="text" name="urlpage" value="'.dol_escape_htmltag($obj->page).'">';
 		print '</td>'."\n";
    	    
-		// Key
+		// Field
 		print '<td>';
 		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print $obj->param;
 		else print '<input type="text" name="key" value="'.dol_escape_htmltag($obj->param).'">';
 		print '</td>'."\n";
 
 		// Value
-		print '<td>';
-		/*print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
-		print '<input type="hidden" name="const['.$i.'][lang]" value="'.$obj->lang.'">';
-		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->transkey.'">';
-		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.dol_escape_htmltag($obj->transvalue).'">';
-		*/
-		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print $obj->value;
-		else print '<input type="text" name="value" value="'.dol_escape_htmltag($obj->value).'">';
-		print '</td>';
-
+		if ($mode != 'focus')
+		{
+    		print '<td>';
+    		/*print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
+    		print '<input type="hidden" name="const['.$i.'][lang]" value="'.$obj->lang.'">';
+    		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->transkey.'">';
+    		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.dol_escape_htmltag($obj->transvalue).'">';
+    		*/
+    		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print $obj->value;
+    		else print '<input type="text" name="value" value="'.dol_escape_htmltag($obj->value).'">';
+    		print '</td>';
+		}
+		
+		// Actions
 		print '<td align="center">';
 		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid)
 		{
@@ -349,7 +394,7 @@ if ($result)
 		    print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 		}
 		print '</td>';
-		
+        
 		print "</tr>\n";
 		print "\n";
 		$i++;

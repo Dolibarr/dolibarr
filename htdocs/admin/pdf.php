@@ -42,15 +42,25 @@ $langs->load("members");
 if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
+$cancel = GETPOST('cancel','alpha');
+
 
 /*
  * Actions
  */
 
+if ($cancel) {
+    $action='';
+}
+
 if ($action == 'update')
 {
 	dolibarr_set_const($db, "MAIN_PDF_FORMAT",    $_POST["MAIN_PDF_FORMAT"],'chaine',0,'',$conf->entity);
-
+	
+	dolibarr_set_const($db, "MAIN_PDF_MARGIN_LEFT",    $_POST["MAIN_PDF_MARGIN_LEFT"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_MARGIN_RIGHT",   $_POST["MAIN_PDF_MARGIN_RIGHT"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_MARGIN_TOP",     $_POST["MAIN_PDF_MARGIN_TOP"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_MARGIN_BOTTOM",  $_POST["MAIN_PDF_MARGIN_BOTTOM"],'chaine',0,'',$conf->entity);
 
     dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS",    $_POST["MAIN_PROFID1_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_PROFID2_IN_ADDRESS",    $_POST["MAIN_PROFID2_IN_ADDRESS"],'chaine',0,'',$conf->entity);
@@ -133,7 +143,20 @@ if ($action == 'edit')	// Edit
     print $formadmin->select_paper_format($selected,'MAIN_PDF_FORMAT');
     print '</td></tr>';
 
-	print '</table>';
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_LEFT").'</td><td>';
+    print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_LEFT" value="'.(empty($conf->global->MAIN_PDF_MARGIN_LEFT)?10:$conf->global->MAIN_PDF_MARGIN_LEFT).'">';
+    print '</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_RIGHT").'</td><td>';
+    print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_RIGHT" value="'.(empty($conf->global->MAIN_PDF_MARGIN_RIGHT)?10:$conf->global->MAIN_PDF_MARGIN_RIGHT).'">';
+    print '</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_TOP").'</td><td>';
+    print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_TOP" value="'.(empty($conf->global->MAIN_PDF_MARGIN_TOP)?10:$conf->global->MAIN_PDF_MARGIN_TOP).'">';
+    print '</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_BOTTOM").'</td><td>';
+    print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_BOTTOM" value="'.(empty($conf->global->MAIN_PDF_MARGIN_BOTTOM)?10:$conf->global->MAIN_PDF_MARGIN_BOTTOM).'">';
+    print '</td></tr>';
+    
+    print '</table>';
 
 	print '<br>';
 
@@ -270,7 +293,9 @@ if ($action == 'edit')	// Edit
 	print '</table>';
 
     print '<br><div class="center">';
-    print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+    print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+    print ' &nbsp; ';
+    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
 
     print '</form>';
@@ -281,8 +306,9 @@ else	// Show
     $var=true;
 
     // Misc options
-    print load_fiche_titre($langs->trans("DictionaryPaperFormat"),'','').'<br>';
-	$var=true;
+    print load_fiche_titre($langs->trans("DictionaryPaperFormat"),'','');
+	
+    
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
@@ -314,11 +340,25 @@ else	// Show
     print $pdfformatlabel;
     print '</td></tr>';
 
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_LEFT").'</td><td>';
+    print empty($conf->global->MAIN_PDF_MARGIN_LEFT)?10:$conf->global->MAIN_PDF_MARGIN_LEFT;
+    print '</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_RIGHT").'</td><td>';
+    print empty($conf->global->MAIN_PDF_MARGIN_RIGHT)?10:$conf->global->MAIN_PDF_MARGIN_RIGHT;
+    print '</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_TOP").'</td><td>';
+    print empty($conf->global->MAIN_PDF_MARGIN_TOP)?10:$conf->global->MAIN_PDF_MARGIN_TOP;
+    print '</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_BOTTOM").'</td><td>';
+    print empty($conf->global->MAIN_PDF_MARGIN_BOTTOM)?10:$conf->global->MAIN_PDF_MARGIN_BOTTOM;
+    print '</td></tr>';
+    
+    
 	print '</table>';
 
 	print '<br>';
 
-	print load_fiche_titre($langs->trans("PDFAddressForging"),'','').'<br>';
+	print load_fiche_titre($langs->trans("PDFAddressForging"),'','');
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
@@ -405,7 +445,7 @@ else	// Show
     print '<br>';
 
     // Other
-    print load_fiche_titre($langs->trans("Other"),'','').'<br>';
+    print load_fiche_titre($langs->trans("Other"),'','');
 	$var=true;
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px" colspan="2">'.$langs->trans("Value").'</td></tr>';

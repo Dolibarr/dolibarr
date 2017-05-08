@@ -599,7 +599,14 @@ function pdf_getSubstitutionArray($outputlangs)
 	$substitutionarray=array(
 		'__MYCOMPANY_NAME__' => $mysoc->name,
 		'__MYCOMPANY_EMAIL__' => $mysoc->email,
-		'__USER_ID__' => $user->id,
+		'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
+		'__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
+		'__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
+		'__MYCOMPANY_PROFID4__' => $mysoc->idprof4,
+		'__MYCOMPANY_PROFID5__' => $mysoc->idprof5,
+		'__MYCOMPANY_PROFID6__' => $mysoc->idprof6,
+		'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
+	    '__USER_ID__' => $user->id,
 		'__USER_LOGIN__' => $user->login,
 		'__USER_LASTNAME__' => $user->lastname,
 		'__USER_FIRSTNAME__' => $user->firstname,
@@ -1808,8 +1815,17 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 	}
 	if (empty($reshook))
 	{
-        if ($object->lines[$i]->special_code == 3) return '';
-	    if (empty($hidedetails) || $hidedetails > 1) $result.=$object->lines[$i]->situation_percent . '%';
+        	if ($object->lines[$i]->special_code == 3) return '';
+		if (empty($hidedetails) || $hidedetails > 1)
+		{
+			if($conf->global->SITUATION_DISPLAY_DIFF_ON_PDF)
+			{
+			 	$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+			 	$result = ( $object->lines[$i]->situation_percent - $prev_progress) . '%';
+			}
+			else
+				$result = $object->lines[$i]->situation_percent . '%';
+	  	}
 	}
 	return $result;
 }
@@ -1844,7 +1860,7 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
 		if(!empty($hookmanager->resPrint)) $result.=$hookmanager->resPrint;
 	}
     if (empty($reshook))
-	{
+    {
 	    if ($object->lines[$i]->special_code == 3)
     	{
     		return $outputlangs->transnoentities("Option");
@@ -1852,9 +1868,16 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
         if (empty($hidedetails) || $hidedetails > 1)
         {
         	$total_ht = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
+        	if ($object->lines[$i]->situation_percent > 0 )
+        	{
+		 	$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+		 	$progress = ( $object->lines[$i]->situation_percent - $prev_progress) /100;
+		 	$result.=price($sign * ($total_ht/($object->lines[$i]->situation_percent/100)) * $progress, 0, $outputlangs);
+		}
+        	else
 			$result.=price($sign * $total_ht, 0, $outputlangs);
-        }
 	}
+    }
 	return $result;
 }
 
