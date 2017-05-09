@@ -2011,6 +2011,9 @@ div.tabsAction {
     padding: 0em 0em;
     text-align: right;
 }
+div.tabsActionNoBottom {
+    margin-bottom: 0px;
+}
 div.tabsAction > a {
 	margin-bottom: 16px !important;
 }
