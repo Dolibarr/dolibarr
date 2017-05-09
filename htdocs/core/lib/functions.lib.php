@@ -400,11 +400,11 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 
 
 /**
- *  Return a prefix to use for this Dolibarr instance for session or cookie names.
+ *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
  *  This prefix is unique for instance and avoid conflict between multi-instances,
- *  even when having two instances with one root dir or two instances in virtual servers
+ *  even when having two instances with one root dir or two instances in virtual servers.
  *
- *  @param  string  $mode       '' or 'email'              
+ *  @param  string  $mode       '' (prefix for session name) or 'email' (prefix for email id)              
  *  @return	string      		A calculated prefix
  */
 function dol_getprefix($mode='')

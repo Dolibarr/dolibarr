@@ -39,8 +39,7 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 
-//header("Content-type: text/html; charset=UTF-8");
-header("Content-type: text/html; charset=".$conf->file->character_set_client);
+top_httphead('text/html');
 
 $search = GETPOST("code", "alpha");
 

@@ -35,7 +35,8 @@ function llxHeaderPaypal($title, $head = "")
 	global $user, $conf, $langs;
 
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
+	header("X-Content-Type-Options: nosniff");
+	
 	$appli='Dolibarr';
 	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 

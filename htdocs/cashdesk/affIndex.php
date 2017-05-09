@@ -45,9 +45,6 @@ $langs->load("cashdesk");
 
 $form = new Form($db);
 
-//header("Content-type: text/html; charset=UTF-8");
-//header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
 $arrayofjs=array();
 $arrayofcss=array('/cashdesk/css/style.css');
 

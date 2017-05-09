@@ -197,6 +197,7 @@ $sessionname='DOLSESSID_'.$prefix;
 $sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
 session_name($sessionname);
+session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
 session_start();
 if (ini_get('register_globals'))    // Deprecated in 5.3 and removed in 5.4. To solve bug in using $_SESSION
 {
@@ -528,6 +529,7 @@ if (! defined('NOLOGIN'))
             dol_syslog('User not found, connexion refused');
             session_destroy();
             session_name($sessionname);
+            session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
             session_start();    // Fixing the bug of register_globals here is useless since session is empty
 
             if ($resultFetchUser == 0)
@@ -586,6 +588,7 @@ if (! defined('NOLOGIN'))
             dol_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
             session_destroy();
             session_name($sessionname);
+            session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
             session_start();    // Fixing the bug of register_globals here is useless since session is empty
 
             if ($resultFetchUser == 0)
@@ -967,19 +970,22 @@ if (! function_exists("llxHeader"))
 /**
  *  Show HTTP header
  *
+ *  @param  string  $contenttype    Content type. For example, 'text/html'
  *  @return	void
  */
-function top_httphead()
+function top_httphead($contenttype='text/html')
 {
     global $conf;
 
-    //header("Content-type: text/html; charset=UTF-8");
-    header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
+    if ($contenttype == 'text/html' ) header("Content-Type: text/html; charset=".$conf->file->character_set_client);
+    else header("Content-Type: ".$contenttype);
+    header("X-Content-Type-Options: nosniff");
+    header("X-Frame-Options: SAMEORIGIN");
+    
     // On the fly GZIP compression for all pages (if browser support it). Must set the bit 3 of constant to 1.
-    if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) {
+    /*if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) {
         ob_start("ob_gzhandler");
-    }
+    }*/
 }
 
 /**
