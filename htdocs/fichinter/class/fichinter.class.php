@@ -326,7 +326,7 @@ class Fichinter extends CommonObject
 	function fetch($rowid,$ref='')
 	{
 		$sql = "SELECT f.rowid, f.ref, f.description, f.fk_soc, f.fk_statut,";
-		$sql.= " f.datec, f.dateo, f.datee, f.datet,";
+		$sql.= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
 		$sql.= " f.date_valid as datev,";
 		$sql.= " f.tms as datem,";
 		$sql.= " f.duree, f.fk_projet, f.note_public, f.note_private, f.model_pdf, f.extraparams, fk_contrat";
