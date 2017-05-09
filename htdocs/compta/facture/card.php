@@ -3156,7 +3156,7 @@ else if ($id > 0 || ! empty($ref))
 	$addabsolutediscount = '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditGlobalDiscounts") . '</a>';
 	$addcreditnote = '<a href="' . DOL_URL_ROOT . '/compta/facture/card.php?action=create&socid=' . $soc->id . '&type=2&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("AddCreditNote") . '</a>';
 
-	print '<tr><td>' . $langs->trans('Discounts');
+	print '<!-- Discounts --><tr><td>' . $langs->trans('Discounts');
 	print '</td><td>';
 	if ($soc->remise_percent)
 		print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
@@ -3164,6 +3164,7 @@ else if ($id > 0 || ! empty($ref))
 		print $langs->trans("CompanyHasNoRelativeDiscount");
 		// print ' ('.$addrelativediscount.')';
 
+	// Is there commercial discount or down payment available ?
 	if ($absolute_discount > 0) {
 		print '. ';
 		if ($object->statut > 0 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
@@ -3195,21 +3196,21 @@ else if ($id > 0 || ! empty($ref))
 		} else
 			print '. ';
 	}
+	// Is there credit notes availables ?
 	if ($absolute_creditnote > 0)
 	{
 		// If validated, we show link "add credit note to payment"
-		if ($object->statut != 1 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
+		if ($object->statut != 1 || $object->type == Facture::TYPE_CREDIT_NOTE) {
 			if ($object->statut == 0 && $object->type != Facture::TYPE_DEPOSIT) {
 				$text = $langs->trans("CompanyHasCreditNote", price($absolute_creditnote), $langs->transnoentities("Currency" . $conf->currency));
 				print $form->textwithpicto($text, $langs->trans("CreditNoteDepositUse"));
 			} else {
 				print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote), $langs->transnoentities("Currency" . $conf->currency)) . '.';
 			}
-		} else {
-			// Remise dispo de type avoir
-			if (! $absolute_discount)
-				print '<br>';
-			// $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, $resteapayer
+		} else {  // We can add a credit note on a down payment or standard invoice or situation invoice
+			// There is credit notes discounts available
+			if (! $absolute_discount) print '<br>';
+			// $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, $resteapayer);
 			$more=' ('.$addcreditnote.')';
 			$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?facid=' . $object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, 0, $more); // We allow credit note even if amount is higher
 		}
