@@ -36,7 +36,7 @@ $langs->load('companies');
 
 $id=GETPOST('id','int');
 
-$search_all=GETPOST('search_all');
+$search_all=GETPOST('search_all', 'alphanohtml');
 $search_project=GETPOST('search_project');
 if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus'])) 
 {

@@ -62,7 +62,7 @@ $search_ref=GETPOST('search_ref')?GETPOST('search_ref','alpha'):GETPOST('search_
 $search_company=GETPOST('search_company','alpha');
 $search_desc=GETPOST('search_desc','alpha');
 $search_status=GETPOST('search_status');
-$sall=GETPOST('sall');
+$sall=GETPOST('sall', 'alphanohtml');
 $optioncss = GETPOST('optioncss','alpha');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array

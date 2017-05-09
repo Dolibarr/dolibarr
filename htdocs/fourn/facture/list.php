@@ -88,7 +88,7 @@ $toselect = GETPOST('toselect', 'array');
 $option = GETPOST('option');
 if ($option == 'late') $filter = 'paye:0';
 
-$search_all = GETPOST('sall');
+$search_all = GETPOST('sall', 'alphanohtml');
 $search_label = GETPOST("search_label","alpha");
 $search_company = GETPOST("search_company","alpha");
 $search_amount_no_tax = GETPOST("search_amount_no_tax","alpha");
