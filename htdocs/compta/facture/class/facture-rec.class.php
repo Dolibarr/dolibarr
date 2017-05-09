@@ -507,6 +507,8 @@ class FactureRec extends CommonInvoice
      *	@param    	double		$pu_ht              Prix unitaire HT (> 0 even for credit note)
      *	@param    	double		$qty             	Quantite
      *	@param    	double		$txtva           	Taux de tva force, sinon -1
+	 * 	@param		double		$txlocaltax1		Local tax 1 rate (deprecated)
+	 *  @param		double		$txlocaltax2		Local tax 2 rate (deprecated)
      *	@param    	int			$fk_product      	Id du produit/service predefini
      *	@param    	double		$remise_percent  	Pourcentage de remise de la ligne
      *	@param		string		$price_base_type	HT or TTC
@@ -659,6 +661,8 @@ class FactureRec extends CommonInvoice
 	 *	@param    	double		$pu_ht              Prix unitaire HT (> 0 even for credit note)
 	 *	@param    	double		$qty             	Quantite
 	 *	@param    	double		$txtva           	Taux de tva force, sinon -1
+	 * 	@param		double		$txlocaltax1		Local tax 1 rate (deprecated)
+	 *  @param		double		$txlocaltax2		Local tax 2 rate (deprecated)
 	 *	@param    	int			$fk_product      	Id du produit/service predefini
 	 *	@param    	double		$remise_percent  	Pourcentage de remise de la ligne
 	 *	@param		string		$price_base_type	HT or TTC
