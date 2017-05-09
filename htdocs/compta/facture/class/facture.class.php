@@ -951,6 +951,7 @@ class Facture extends CommonInvoice
 			$line->total_ht			= $object->lines[$i]->total_ht;
 			$line->total_tva		= $object->lines[$i]->total_tva;
 			$line->total_ttc		= $object->lines[$i]->total_ttc;
+			$line->vat_src_code  	= $object->lines[$i]->vat_src_code;
 			$line->tva_tx			= $object->lines[$i]->tva_tx;
 			$line->localtax1_tx		= $object->lines[$i]->localtax1_tx;
 			$line->localtax2_tx		= $object->lines[$i]->localtax2_tx;
@@ -1550,6 +1551,7 @@ class Facture extends CommonInvoice
 			$facligne->fk_facture=$this->id;
 			$facligne->fk_remise_except=$remise->id;
 			$facligne->desc=$remise->description;   	// Description ligne
+			$facligne->vat_src_code=$remise->vat_src_code;
 			$facligne->tva_tx=$remise->tva_tx;
 			$facligne->subprice=-$remise->amount_ht;
 			$facligne->fk_product=0;					// Id produit predefini
@@ -2398,7 +2400,7 @@ class Facture extends CommonInvoice
 	 * 		@param    	string		$desc            	Description of line
 	 * 		@param    	double		$pu_ht              Unit price without tax (> 0 even for credit note)
 	 * 		@param    	double		$qty             	Quantity
-	 * 		@param    	double		$txtva           	Force Vat rate, -1 for auto
+	 * 		@param    	double		$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
 	 * 		@param		double		$txlocaltax1		Local tax 1 rate (deprecated)
 	 *  	@param		double		$txlocaltax2		Local tax 2 rate (deprecated)
 	 *		@param    	int			$fk_product      	Id of predefined product/service
@@ -3511,10 +3513,11 @@ class Facture extends CommonInvoice
 
 
 	/**
-	 *	Create a withdrawal request for a standing order
+	 *	Create a withdrawal request for a standing order.
+	 *  Use the remain to pay excluding all existing open direct debit requests.
 	 *
-	 *	@param      User	$fuser       User asking standing order
-	 *  @param		float	$amount		Amount we request withdraw for
+	 *	@param      User	$fuser      User asking the direct debit transfer
+	 *  @param		float	$amount		Amount we request direct debit for
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
 	function demande_prelevement($fuser, $amount=0)
@@ -4225,7 +4228,7 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	function fetch($rowid)
 	{
-		$sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_parent_line, fd.fk_product, fd.product_type, fd.label as custom_label, fd.description, fd.price, fd.qty, fd.tva_tx,';
+		$sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_parent_line, fd.fk_product, fd.product_type, fd.label as custom_label, fd.description, fd.price, fd.qty, fd.vat_src_code, fd.tva_tx,';
 		$sql.= ' fd.localtax1_tx, fd. localtax2_tx, fd.remise, fd.remise_percent, fd.fk_remise_except, fd.subprice,';
 		$sql.= ' fd.date_start as date_start, fd.date_end as date_end, fd.fk_product_fournisseur_price as fk_fournprice, fd.buy_price_ht as pa_ht,';
 		$sql.= ' fd.info_bits, fd.special_code, fd.total_ht, fd.total_tva, fd.total_ttc, fd.total_localtax1, fd.total_localtax2, fd.rang,';
@@ -4253,6 +4256,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->desc					= $objp->description;
 			$this->qty					= $objp->qty;
 			$this->subprice				= $objp->subprice;
+			$this->vat_src_code  		= $objp->vat_src_code;
 			$this->tva_tx				= $objp->tva_tx;
 			$this->localtax1_tx			= $objp->localtax1_tx;
 			$this->localtax2_tx			= $objp->localtax2_tx;

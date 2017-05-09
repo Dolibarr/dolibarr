@@ -16,9 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+
 
 /**
  * API class for orders
@@ -275,9 +276,9 @@ class Proposals extends DolibarrApi
                         $request_data->array_options,
                         $request_data->fk_unit,
                         $this->element,
-                        $request_data->id
-                        // not used anymore ?
-                        // $request_data->fk_remise_except
+                        $request_data->id,
+                        $request_data->pu_ht_devise,
+                        $request_data->fk_remise_except
       );
 
       if ($updateRes > 0) {

@@ -70,7 +70,7 @@ print load_fiche_titre($langs->trans("CompanySetup"),$linkback,'title_setup');
 
 $head = societe_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes_contacts', $langs->trans("ThirdParties"), 0, 'company');
+dol_fiche_head($head, 'attributes_contacts', $langs->trans("ThirdParties"), -1, 'company');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

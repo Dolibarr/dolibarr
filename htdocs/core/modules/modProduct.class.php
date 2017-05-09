@@ -53,7 +53,7 @@ class modProduct extends DolibarrModules
 		$this->module_position = 20;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = "Gestion des produits";
+		$this->description = "Product management";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -83,7 +83,14 @@ class modProduct extends DolibarrModules
 		$this->const[$r][3] = 'Module to control product codes';
 		$this->const[$r][4] = 0;
 		$r++;
-
+		
+		/*$this->const[$r][0] = "PRODUCT_ADDON_PDF";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "standard";
+		$this->const[$r][3] = 'Default module for document generation';
+		$this->const[$r][4] = 0;
+		$r++;*/
+		
 		// Boxes
 		$this->boxes = array(
 			0=>array('file'=>'box_produits.php','enabledbydefaulton'=>'Home'),

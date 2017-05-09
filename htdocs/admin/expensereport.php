@@ -230,7 +230,7 @@ print load_fiche_titre($langs->trans("ExpenseReportsSetup"),$linkback,'title_set
 
 $head=expensereport_admin_prepare_head();
 
-dol_fiche_head($head, 'expensereport', $langs->trans("ExpenseReports"), 0, 'trip');
+dol_fiche_head($head, 'expensereport', $langs->trans("ExpenseReports"), -1, 'trip');
 
 // Interventions numbering model
 /*

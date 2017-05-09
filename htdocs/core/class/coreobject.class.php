@@ -106,14 +106,12 @@ class CoreObject extends CommonObject
      */
 	public function fetch($id, $loadChild = true)
     {
-		
     	$res = $this->fetchCommon($id);
     	if($res>0) {
     		if ($loadChild) $this->fetchChild();
     	}
     	
     	return $res;
-		
 	}
 
 

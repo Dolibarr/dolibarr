@@ -358,8 +358,8 @@ class Conf
     			$this->supplier_order->dir_temp=$rootfordata."/fournisseur/commande/temp";
     			$this->supplier_invoice=new stdClass();
     			$this->supplier_invoice->enabled=1;
-    			$this->supplier_order->dir_output=$rootfordata."/fournisseur/facture";
-    			$this->supplier_order->dir_temp=$rootfordata."/fournisseur/facture/temp";
+    			$this->supplier_invoice->dir_output=$rootfordata."/fournisseur/facture";
+    			$this->supplier_invoice->dir_temp=$rootfordata."/fournisseur/facture/temp";
 			}
 		}
 

@@ -441,7 +441,6 @@ if ($id)
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var=true;
         if ($num)
         {
             print '<br>';
@@ -499,7 +498,6 @@ if ($id)
             // Lines with values
             while ($i < $num)
             {
-                $var = ! $var;
 
                 $obj = $db->fetch_object($resql);
                 //print_r($obj);

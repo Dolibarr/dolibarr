@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,17 +29,51 @@ $langs->load("admin");
 $langs->load("modulebuilder");
 $langs->load("other");
 
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
+$module=GETPOST('module');
+$tab=GETPOST('tab');
+if (empty($module)) $module='initmodule';
+if (empty($tab)) $tab='description';
+
+
 // Security check
 if (! $user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) accessforbidden('ModuleBuilderNotAllowed');
 
+$modulename=dol_sanitizeFileName(GETPOST('modulename','alpha'));
+
+// Dir for custom dirs
+$tmp=explode(',', $dolibarr_main_document_root_alt);
+$dircustom = $tmp[0];
+
+$FILEFLAG='modulebuilder.txt';
+
+
+/*
+ * Actions
+ */
+
+if ($dircustom && $action == 'initmodule' && $modulename)
+{
+    $srcfile = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
+    $destfile = $dircustom.'/'.$modulename;
+    $result = dolCopyDir($srcfile, $destfile, 0, 0);
+    //dol_mkdir($destfile);
+    
+    if ($result > 0)
+    {
+        setEventMessages('ModuleInitialized', null);
+    }
+    else
+    {
+        setEventMessages($langs->trans("ErrorFailedToCopyDir"), null, 'errors');
+    }
+}
 
 
 /*
  * View
  */
-
-$socstatic=new Societe($db);
-
 
 llxHeader("",$langs->trans("ModuleBuilder"),"");
 
@@ -48,14 +82,7 @@ $text=$langs->trans("ModuleBuilder");
 
 print load_fiche_titre($text, '', 'title_setup');
 
-$tmp=explode(',', $dolibarr_main_document_root_alt);
-$dircustom = $tmp[0];
-
-// Show description of content
-print $langs->trans("ModuleBuilderDesc", $dircustom).'<br><br>';
-
-
-
+$listofmodules=array();
 /*
 if (!empty($conf->modulebuilder->enabled) && $mainmenu == 'modulebuilder')	// Entry for Module builder
 {
@@ -64,16 +91,16 @@ if (!empty($conf->modulebuilder->enabled) && $mainmenu == 'modulebuilder')	// En
     {
         foreach ($dolibarr_main_document_root_alt as $diralt)
         {*/
-            $dirsincustom=dol_dir_list($dircustom);
+            $dirsincustom=dol_dir_list($dircustom, 'directories');
             
             if (is_array($dirsincustom) && count($dirsincustom) > 0)
             {
-                foreach ($dirsincustom as $dircustom)
+                foreach ($dirsincustom as $dircustomcursor)
                 {
-                    $fullname = $dircustom['fullname'];
-                    if (dol_is_file($fullname.'/modulebuilder.txt'))
+                    $fullname = $dircustomcursor['fullname'];
+                    if (dol_is_file($fullname.'/'.$FILEFLAG))
                     {
-                        print '<div class="boxstats">'.$module.'</div>';
+                        $listofmodules[$dircustomcursor['name']]=$fullname;
                     }
                 }
             }
@@ -83,6 +110,123 @@ if (!empty($conf->modulebuilder->enabled) && $mainmenu == 'modulebuilder')	// En
     {
         $newmenu->add('', 'NoGeneratedModuleFound', 0, 0);
     }*/
+
+            
+// Show description of content
+print $langs->trans("ModuleBuilderDesc").'<br>';
+print $langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $dircustom).'<br>';
+print $langs->trans("ModuleBuilderDesc3", count($listofmodules), $FILEFLAG).'<br>';
+print '<br>';
+            
+            
+print '<br>';            
+
+$head = array();
+$h=0;
+
+$head[$h][0] = $_SERVER["PHP_SELF"].'?module=initmodule';
+$head[$h][1] = $langs->trans("NewModule");
+$head[$h][2] = 'initmodule';
+$h++;
+    
+foreach($listofmodules as $tmpmodule => $fullname)
+{
+    $head[$h][0] = $_SERVER["PHP_SELF"].'?module='.$tmpmodule;
+    $head[$h][1] = $tmpmodule;
+    $head[$h][2] = $tmpmodule;
+    $h++;
+}
+
+
+
+dol_fiche_head($head, $module, $langs->trans("Modules"), -1, 'generic');
+
+if ($module == 'initmodule')
+{
+    // New module
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="initmodule">';
+    print '<input type="hidden" name="module" value="initmodule">';
+    print '<input type="text" name="modulename" value="" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'">';
+    print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
+    print '</form>';
+}
+elseif (! empty($module))
+{
+    $error=0;
+    
+    // Load module
+    dol_include_once($module.'/core/modules/mod'.ucfirst($module).'.class.php');
+    $class='mod'.ucfirst($module);
+    if (class_exists($class))
+    {
+        try {
+            $moduleobj = new $class($db);
+        }
+        catch(Exception $e)
+        {
+            $error++;
+            print $e->getMessage();
+        }
+    }
+    else
+    {
+        $error++;
+        $langs->load("errors");
+        print img_warning('').' '.$langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module);
+    }
+    
+    // Button to delete module
+    
+    
+    // Tabs for module
+    if (! $error)
+    {
+        $head2 = array();
+        $h=0;
+        
+        foreach($listofmodules as $tmpmodule => $fullname)
+        {
+            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=description';
+            $head2[$h][1] = $langs->trans("Description");
+            $head2[$h][2] = 'description';
+            $h++;
+            
+            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects';
+            $head2[$h][1] = $langs->trans("Objects");
+            $head2[$h][2] = 'objects';
+            $h++;        
+        
+            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab='.$tmpmodule;
+            $head2[$h][1] = $langs->trans("Menus");
+            $head2[$h][2] = 'menus';
+            $h++;
+            
+            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab='.$tmpmodule;
+            $head2[$h][1] = $langs->trans("Permissions");
+            $head2[$h][2] = 'permissions';
+            $h++;        
+    
+            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab='.$tmpmodule;
+            $head2[$h][1] = $langs->trans("Triggers");
+            $head2[$h][2] = 'triggers';
+            $h++;        
+        }
+        
+        dol_fiche_head($head2, $tab, '', -1, '');
+        
+        print $moduleobj->getDescLong();
+    
+        
+        
+        
+        
+        dol_fiche_end();
+    }
+}
+
+dol_fiche_end();
 
 
 

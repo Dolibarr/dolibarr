@@ -65,7 +65,7 @@ if ($action == 'updateMask')
     }
 }else  if ($action == 'setmod')
 {
-    dolibarr_set_const($db, "SUPPLIER_PAYMENT_ADDON",$value,'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "SUPPLIER_PAYMENT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
 
 // define constants for models generator that need parameters
@@ -138,7 +138,7 @@ else if ($action == 'specimen')
 	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
-	    $file=dol_buildpath($reldir."core/modules/supplier_payment/pdf/pdf_".$modele.".modules.php",0);
+	    $file=dol_buildpath($reldir."core/modules/supplier_payment/doc/pdf_".$modele.".modules.php",0);
     	if (file_exists($file))
     	{
     		$filefound=1;
@@ -188,7 +188,7 @@ print load_fiche_titre($langs->trans("SupplierPaymentSetup"),$linkback,'title_se
 print "<br>";
 
 $head = supplierorder_admin_prepare_head();
-dol_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), 0, 'company');
+dol_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), -1, 'company');
 
 /*
  *  Numbering module
@@ -197,12 +197,6 @@ dol_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), 0, 'company
 if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) $conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
     
 print load_fiche_titre($langs->trans("PaymentsNumberingModule"), '', '');
-
-/*
- *  Document templates generators
- */
-print '<br>';
-print load_fiche_titre($langs->trans("BillsPDFModules"),'','');
 
 // Load array def with activated templates
 $def = array();
@@ -349,6 +343,12 @@ foreach ($dirmodels as $reldir)
 print '</table>';
 
 
+/*
+ *  Document templates generators
+ */
+print '<br>';
+print load_fiche_titre($langs->trans("PaymentsPDFModules"),'','');
+
 print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
@@ -363,11 +363,10 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/supplier_payment/pdf/");
+	$dir = dol_buildpath($reldir."core/modules/supplier_payment/doc/");
 
     if (is_dir($dir))
     {
-        $var=true;
 
         $handle=opendir($dir);
 
@@ -385,7 +384,7 @@ foreach ($dirmodels as $reldir)
 	                $module = new $classname($db, new PaiementFourn($db));
 
                     
-                    print "<tr ".$bc[$var].">\n";
+                    print "<tr class=\"oddeven\">\n";
                     print "<td>";
 	                print (empty($module->name)?$name:$module->name);
 	                print "</td>\n";
@@ -441,8 +440,6 @@ foreach ($dirmodels as $reldir)
                     $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
                     $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
                     $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-                    $htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
-                    $htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
                     print '<td align="center">';
                     print $form->textwithpicto('',$htmltooltip,1,0);
                     print '</td>';
@@ -459,7 +456,7 @@ foreach ($dirmodels as $reldir)
     }
 }
 
-print '</table><br>';
+print '</table>';
 
 dol_fiche_end();
 

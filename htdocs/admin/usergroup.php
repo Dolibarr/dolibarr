@@ -151,7 +151,7 @@ print load_fiche_titre($langs->trans("UsersSetup"),$linkback,'title_setup');
 
 $head=user_admin_prepare_head();
 
-dol_fiche_head($head,'usergroupcard', $langs->trans("MenuUsersAndGroups"), 0, 'user');
+dol_fiche_head($head,'usergroupcard', $langs->trans("MenuUsersAndGroups"), -1, 'user');
 
 
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);

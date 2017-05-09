@@ -79,10 +79,8 @@ if ($object->id > 0)
 	
 	$head = facturefourn_prepare_head($object);
 	$titre=$langs->trans('SupplierInvoice');
-	dol_fiche_head($head, 'note', $titre, 0, 'bill');
+	dol_fiche_head($head, 'note', $titre, -1, 'bill');
 
-
-	print '<table class="border" width="100%">';
 
 	// Supplier invoice card
     $linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -135,7 +133,9 @@ if ($object->id > 0)
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
-	// Type
+	print '<table class="border" width="100%">';
+
+    // Type
 	print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
 	print $object->getLibType();
 	if ($object->type == FactureFournisseur::TYPE_REPLACEMENT)
@@ -203,6 +203,7 @@ if ($object->id > 0)
 
 	print '<br>';
 
+    print '<div class="underbanner clearboth"></div>';
 	$cssclass="titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
