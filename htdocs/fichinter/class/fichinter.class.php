@@ -360,6 +360,8 @@ class Fichinter extends CommonObject
 				$this->modelpdf     = $obj->model_pdf;
 				$this->fk_contrat	= $obj->fk_contrat;
 
+				$this->user_creation= $obj->fk_user_author;
+				
 				$this->extraparams	= (array) json_decode($obj->extraparams, true);
 
 				if ($this->statut == 0) $this->brouillon = 1;
@@ -537,7 +539,30 @@ class Fichinter extends CommonObject
 		}
 	}
 
-
+	/**
+	 *	Returns amount based on user thm
+	 *
+	 *	@return     float amount
+	 */
+	function getAmount() {
+		global $db;
+		
+		$amount = 0;
+		
+		$this->author = new User($db);
+		$this->author->fetch($this->user_creation);
+		
+		$thm = $this->author->thm;
+		
+		foreach($this->lines as &$line) {
+			
+			$amount+=$line->qty * $thm;
+			
+		}
+		
+		return $amount;
+	}
+	
 	/**
 	 *	Returns the label status
 	 *
