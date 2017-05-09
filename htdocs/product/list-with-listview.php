@@ -438,7 +438,7 @@ else
 		if ($object->type != 1)
 		{
 			if ($object->seuil_stock_alerte != '' && $object->stock_theorique < (float) $object->seuil_stock_alerte) $out.= img_warning($langs->trans("StockTooLow")).' ';
-			$out.= $object->stock_theorique;
+			$out.= (double) $object->stock_theorique;
 		}
 
 		return $out;
@@ -460,7 +460,7 @@ else
 		if ($object->type != 1)
 		{
 			if ($object->seuil_stock_alerte != '' && $object->stock_reel< (float) $object->seuil_stock_alerte) $out.= img_warning($langs->trans("StockTooLow")).' ';
-			$out.= (double)$object->stock_reel;
+			$out.= (double) $object->stock_reel;
 		}
 		
 		return $out;
