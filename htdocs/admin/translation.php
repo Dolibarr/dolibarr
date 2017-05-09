@@ -79,6 +79,12 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $search_array_options=array();
 }
 
+if ($action == 'setMAIN_ENABLE_OVERWRITE_TRANSLATION')
+{
+    if (GETPOST('value')) dolibarr_set_const($db, 'MAIN_ENABLE_OVERWRITE_TRANSLATION', 1, 'chaine', 0, '', $conf->entity);
+    else dolibarr_set_const($db, 'MAIN_ENABLE_OVERWRITE_TRANSLATION', 0, 'chaine', 0, '', $conf->entity);
+}
+
 if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 {
 	$error=0;
@@ -168,6 +174,24 @@ $s=picto_from_langcode($current_language_code);
 print $langs->trans("CurrentUserLanguage").': <strong>'.$s.' '.$current_language_code.'</strong><br>';
 
 print '<br>';
+
+print $langs->trans("EnableOverwriteTranslation").' ';
+if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
+{
+    // Button off, click to enable
+    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&amp;value=1">';
+    print img_picto($langs->trans("Disabled"),'switch_off');
+    print '</a>';
+}
+else
+{
+    // Button on, click to disable
+    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&amp;value=0">';
+    print img_picto($langs->trans("Activated"),'switch_on');
+    print '</a>';
+}
+
+print '<br><br>';
 
 $param='&mode='.$mode;
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
