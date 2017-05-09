@@ -132,16 +132,20 @@ class UserBankAccount extends Account
      * 	Load record from database
      *
      *	@param	int		$id			Id of record
+     *	@param	string	$ref		Ref of record
+     *  @param  int     $userid     User id
      * 	@return	int					<0 if KO, >0 if OK
      */
-    function fetch($id)
+    function fetch($id, $ref='', $userid=0)
     {
-        if (empty($id)) return -1;
+        if (empty($id) && empty($ref) && empty($userid)) return -1;
 
         $sql = "SELECT rowid, fk_user, entity, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
         $sql.= " owner_address, label, datec, tms as datem";
         $sql.= " FROM ".MAIN_DB_PREFIX."user_rib";
-        $sql.= " WHERE rowid = ".$id;
+        if ($id) $sql.= " WHERE rowid = ".$id;
+        if ($ref) $sql.= " WHERE label = '".$this->db->escape($ref)."'";
+        if ($userid) $sql.= " WHERE fk_user = '".$userid."'";
 
         $resql = $this->db->query($sql);
         if ($resql)
