@@ -314,19 +314,17 @@ else
 
 		if ($action != 'edit')
 		{
-        	dol_fiche_head($head, 'group', $title, 0, 'group');
+        	dol_fiche_head($head, 'group', $title, -1, 'group');
 
-			print '<table class="border" width="100%">';
-
-			// Ref
-			print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
-			print '<td>';
-			print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
-			print '</td>';
-			print '</tr>';
+			dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+			
+			print '<div class="fichecenter">';
+			print '<div class="underbanner clearboth"></div>';
+			
+        	print '<table class="border" width="100%">';
 
 			// Name
-			print '<tr><td>'.$langs->trans("Name").'</td>';
+			print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
 			print '<td class="valeur">'.$object->name;
 			if (empty($object->entity))
 			{
@@ -357,7 +355,8 @@ else
             }
 
 			print "</table>\n";
-
+            print '</div>';
+            
 			dol_fiche_end();
 
 
@@ -377,11 +376,8 @@ else
 			}
 
 			print "</div>\n";
-			print "<br>\n";
 
-            /*
-             * Liste des utilisateurs dans le groupe
-             */
+            // List users in group
 
             print load_fiche_titre($langs->trans("ListOfUsersInGroup"),'','');
 
@@ -450,8 +446,6 @@ else
 
             if (! empty($object->members))
             {
-            	$var=True;
-
             	foreach($object->members as $useringroup)
             	{
             		
@@ -513,17 +507,11 @@ else
 	        $genallowed = $user->rights->user->user->creer;
 	        $delallowed = $user->rights->user->user->supprimer;
 	
-	        $var = true;
-	
 	        $somethingshown = $formfile->show_documents('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 	
-			// Linked object block
-			$somethingshown = $form->showLinkedObjectBlock($object);
-	
-			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object);
-			if ($linktoelem) print '<br>'.$linktoelem;
-	
+	        // Show links to link elements
+	        $linktoelem = $form->showLinkToObjectBlock($object, null, null);
+	        $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 	
 	        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 	

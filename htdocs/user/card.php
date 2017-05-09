@@ -1716,8 +1716,6 @@ else
                  */
                 if (! empty($groupslist))
                 {
-                    $var=true;
-
                     foreach($groupslist as $group)
                     {
                         
@@ -2359,8 +2357,6 @@ else
             $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
             $genallowed = $user->rights->user->user->creer;
             $delallowed = $user->rights->user->user->supprimer;
-    
-            $var = true;
     
             $somethingshown = $formfile->show_documents('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
     
