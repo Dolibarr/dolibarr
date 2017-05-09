@@ -308,9 +308,17 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	            if (! is_array($out) || empty($out)) $out=array();
 	            break;
 			case 'nohtml':
-				$out=dol_string_nohtmltag($out);
+			    $out=dol_string_nohtmltag($out);
 				break;
-	        case 'custom':
+			case 'alphanohtml':	// Recommended for search params
+	            $out=trim($out);
+	            // '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+	            // '../' is dangerous because it allows dir transversals
+	            if (preg_match('/"/',$out)) $out='';
+	            else if (preg_match('/\.\.\//',$out)) $out='';
+			    $out=dol_string_nohtmltag($out);
+				break;
+			case 'custom':
 	            if (empty($filter)) return 'BadFourthParameterForGETPOST';
 	            $out=filter_var($out, $filter, $options);
 	            break;
