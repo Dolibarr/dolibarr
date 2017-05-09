@@ -77,7 +77,7 @@ $viewstatut=GETPOST('viewstatut');
 $optioncss = GETPOST('optioncss','alpha');
 $object_statut=GETPOST('propal_statut');
 
-$sall=GETPOST("sall");
+$sall=GETPOST('sall', 'alphanohtml');
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 
 $day=GETPOST("day","int");

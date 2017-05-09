@@ -63,7 +63,7 @@ if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="d.date_debut";
 
 
-$sall         = GETPOST('sall');
+$sall         = GETPOST('sall', 'alphanohtml');
 $search_ref   = GETPOST('search_ref');
 $search_user  = GETPOST('search_user','int');
 $search_amount_ht = GETPOST('search_amount_ht','alpha');

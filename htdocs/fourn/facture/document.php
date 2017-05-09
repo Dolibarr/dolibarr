@@ -93,7 +93,7 @@ if ($object->id > 0)
     
 	$totalpaye = $object->getSommePaiement();
 
-    $linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+    $linkback = '<a href="' . DOL_URL_ROOT . '/fourn/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
     $morehtmlref='<div class="refidno">';
     // Ref supplier

@@ -40,7 +40,7 @@ $toselect = GETPOST('toselect', 'array');
 
 $id=GETPOST('id','int');
 
-$search_all=GETPOST('search_all');
+$search_all=GETPOST('search_all', 'alphanohtml');
 $search_categ=GETPOST("search_categ",'alpha');
 $search_project=GETPOST('search_project');
 if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus'])) 

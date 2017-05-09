@@ -298,16 +298,24 @@ if ((! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_V
 // Creation of a token against CSRF vulnerabilities
 if (! defined('NOTOKENRENEWAL'))
 {
-    $token = dol_hash(uniqid(mt_rand(),TRUE)); // Generates a hash of a random number
     // roulement des jetons car cree a chaque appel
     if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
+    
+    // Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = $_SESSION['newtoken']
+    $token = dol_hash(uniqid(mt_rand(),TRUE)); // Generates a hash of a random number
     $_SESSION['newtoken'] = $token;
 }
 if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))	// Check validity of token, only if option enabled (this option breaks some features sometimes)
 {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST')
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! GETPOST('token')) // Note, offender can still send request by GET
     {
-        if (GETPOST('token') != $_SESSION['token'])
+        print "Access refused by CSRF protection in main.inc.php. Token not provided.\n";
+        print "If you access your server behind a proxy using url rewriting, you might check that all HTTP header is propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file).\n";
+        die;
+    }
+    if ($_SERVER['REQUEST_METHOD'] === 'POST')  // This test must be after loading $_SESSION['token'].
+    {
+        if (GETPOST('token', 'alpha') != $_SESSION['token'])
         {
             dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action').", _POST['token']=".GETPOST('token').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
             //print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.

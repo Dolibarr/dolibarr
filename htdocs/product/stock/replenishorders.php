@@ -39,11 +39,11 @@ $langs->load("orders");
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service');
 
+$sall = GETPOST('search_all', 'alphanohtml');
 $sref = GETPOST('search_ref', 'alpha');
 $snom = GETPOST('search_nom', 'alpha');
 $suser = GETPOST('search_user', 'alpha');
 $sttc = GETPOST('search_ttc', 'alpha');
-$sall = GETPOST('search_all', 'alpha');
 $sdate = GETPOST('search_date', 'alpha');
 $page = GETPOST('page', 'int');
 $sproduct = GETPOST('sproduct', 'int');

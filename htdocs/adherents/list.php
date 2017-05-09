@@ -57,7 +57,7 @@ $type=GETPOST("type");
 $search_email=GETPOST("search_email");
 $search_categ = GETPOST("search_categ",'int');
 $catid        = GETPOST("catid",'int');
-$sall=GETPOST("sall");
+$sall=GETPOST('sall', 'alphanohtml');
 $optioncss = GETPOST('optioncss','alpha');
 
 if ($statut < -1) $statut = '';
