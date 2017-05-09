@@ -2965,7 +2965,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= ' cd.total_localtax1, cd.total_localtax2,';
         $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
         $sql.= ' cd.date_start, cd.date_end, cd.fk_unit,';
-		$sql.= ' cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc';
+	$sql.= ' cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
         $sql.= ' WHERE cd.rowid = '.$rowid;
@@ -2973,7 +2973,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
         if ($result)
         {
             $objp = $this->db->fetch_object($result);
-
             $this->rowid            = $objp->rowid;
             $this->id               = $objp->rowid;
             $this->fk_commande      = $objp->fk_commande;
@@ -3001,15 +3000,15 @@ class CommandeFournisseurLigne extends CommonOrderLine
             $this->product_libelle  = $objp->product_libelle;
             $this->product_desc     = $objp->product_desc;
 
-            $this->date_start       		= $this->db->jdate($objp->date_start);
-            $this->date_end         		= $this->db->jdate($objp->date_end);
-	        $this->fk_unit          		= $objp->fk_unit;
-			
-			$this->multicurrency_subprice	= $objp->multicurrency_subprice;
-			$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
-			$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
-			$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
-			
+            $this->date_start       = $this->db->jdate($objp->date_start);
+            $this->date_end         = $this->db->jdate($objp->date_end);
+        $this->fk_unit          = $objp->fk_unit;
+
+	$this->multicurrency_subprice	= $objp->multicurrency_subprice;
+	$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
+	$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
+	$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
+
             $this->db->free($result);
             return 1;
         }
