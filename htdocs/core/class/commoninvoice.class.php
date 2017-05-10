@@ -95,7 +95,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  This does not include open direct debit requests.
 	 *
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *	@return		int						Remain of amount to pay
+	 *	@return		double						Remain of amount to pay
 	 */
 	function getRemainToPay($multicurrency=0)
 	{
