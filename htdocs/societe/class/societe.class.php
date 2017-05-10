@@ -1838,29 +1838,29 @@ class Societe extends CommonObject
 
         $name=$this->name?$this->name:$this->nom;
 
-	if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
-	{
-		if (($this->client) && (! empty ( $this->code_client ))
-			&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
-			|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
-			)
-		) 
-			$code = $this->code_client . ' - ';
+    	if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
+    	{
+    		if (($this->client) && (! empty ( $this->code_client ))
+    			&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
+    			|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
+    			)
+    		) 
+    		$code = $this->code_client . ' - ';
 
-		if (($this->fournisseur) && (! empty ( $this->code_fournisseur ))
-			&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
-			|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
-			)
-		) 
-			$code .= $this->code_fournisseur . ' - ';
+    		if (($this->fournisseur) && (! empty ( $this->code_fournisseur ))
+    			&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
+    			|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
+    			)
+    		) 
+    		$code .= $this->code_fournisseur . ' - ';
+    
+    		if ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1)
+    			$name =$code.' '.$name;
+    		else
+    			$name =$code;
+    	}
 
-		if ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1)
-			$name =$code.' '.$name;
-		else
-			$name =$code;
-	}
-
-	if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
+    	if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
 
         $result=''; $label='';
         $linkstart=''; $linkend='';
@@ -1962,7 +1962,7 @@ class Societe extends CommonObject
             $linkend='';
         }
         
-        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
+        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$linkstart.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
 
