@@ -362,13 +362,6 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-	// Hide helpcenter link on login page
-	print '<tr><td class="titlefield">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
-	print $form->selectyesno('MAIN_HELPCENTER_DISABLELINK',isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0,1);
-	print '</td>';
-	print '<td width="20">&nbsp;</td>';
-	print '</tr>';
-	
 	// Message of the day on home page
     print '<tr><td class="titlefield">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
 
@@ -393,8 +386,14 @@ if ($action == 'edit')	// Edit
 	$doleditor->Create();
 	print '</td></tr>'."\n";
 	
-	// Background
+	// Hide helpcenter link on login page
+	print '<tr><td class="titlefield">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
+	print $form->selectyesno('MAIN_HELPCENTER_DISABLELINK',isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0,1);
+	print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
 	
+	// Background
 	print '<tr><td><label for="imagebackground">'.$langs->trans("BackgroundImageLogin").' (png,jpg)</label></td><td colspan="2">';
     print '<div class="centpercent inline-block">';
 	print '<input type="file" class="flat class=minwidth200" name="imagebackground" id="imagebackground">';
@@ -533,11 +532,6 @@ else	// Show
     print yn((isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0),1);
     print '</td></tr>';
 
-	// Link to help center
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelpCenter").'</td><td colspan="2">';
-    print yn((isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0),1);
-    print '</td></tr>';
-
     // Message of the day
     print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
     if (isset($conf->global->MAIN_MOTD)) print dol_htmlcleanlastbr($conf->global->MAIN_MOTD);
@@ -558,8 +552,12 @@ else	// Show
     else print '&nbsp;';
     print '</td></tr>'."\n";
     
+	// Link to help center
+    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelpCenter").'</td><td colspan="2">';
+    print yn((isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0),1);
+    print '</td></tr>';
+
     // Background login
-    
     print '<tr class="oddeven"><td>'.$langs->trans("BackgroundImageLogin").'</td><td colspan="2">';
     print '<div class="centpercent inline-block">';
     print $conf->global->MAIN_LOGIN_BACKGROUND;

@@ -28,7 +28,7 @@ namespace test\unit;
 
 /**
  * Class MyClassTest
- * @package test\unit
+ * @package Testmymodule
  */
 class MyClassTest extends \PHPUnit_Framework_TestCase
 {
@@ -93,10 +93,10 @@ class MyClassTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Unsuccessful test
 	 *
-	 * @param \Exception $e
-	 * @throws \Exception
+	 * @param  Exception $e    Exception
+	 * @throws Exception
 	 */
-	protected function onNotSuccessfulTest(\Exception $e)
+	protected function onNotSuccessfulTest(Exception $e)
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 		throw $e;

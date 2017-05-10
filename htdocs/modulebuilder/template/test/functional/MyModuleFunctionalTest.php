@@ -39,7 +39,7 @@ use PHPUnit_Extensions_Selenium2TestCase_WebDriverException;
  * @todo Windows support (IE, Google Chrome, Mozilla Firefox, Safari)
  * @todo OSX support (Safari, Google Chrome, Mozilla Firefox)
  *
- * @package test\functional
+ * @package Testmymodule
  */
 class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 {
@@ -82,8 +82,8 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	/**
 	 * Helper function to select links by href
 	 *
-	 * @param $value
-	 * @return mixed
+	 * @param  string  $value      Href
+	 * @return mixed               Helper string    
 	 */
 	protected function byHref($value)
 	{
@@ -261,9 +261,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		$this->authenticate();
 		return $this->assertContains(
 			'tick.png',
-			$this
-				->byXPath('//td[text()="interface_99_modMyModule_MyTrigger.class.php"]/following::img')
-				->attribute('src'),
+			$this->byXPath('//td[text()="interface_99_modMyModule_MyTrigger.class.php"]/following::img')->attribute('src'),
 			"Trigger enabled"
 		);
 	}

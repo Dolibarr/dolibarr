@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    js/myjs.js.php
+ * \file    js/mymodule.js.php
  * \ingroup mymodule
  * \brief   Example JavaScript.
  *
