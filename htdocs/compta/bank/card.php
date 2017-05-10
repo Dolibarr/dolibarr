@@ -36,7 +36,9 @@ require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
 $langs->load("banks");
 $langs->load("bills");
@@ -99,7 +101,7 @@ if ($action == 'add')
 
 	$account_number 		 = GETPOST('account_number','alpha');
 	if ($account_number <= 0) { $object->account_number = ''; } else { $object->account_number = $account_number; }
-	$object->accountancy_journal  = trim($_POST["accountancy_journal"]);
+	$object->fk_accountancy_journal  = trim($_POST["fk_accountancy_journal"]);
 
     $object->solde           = $_POST["solde"];
     $object->date_solde      = dol_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
@@ -197,7 +199,7 @@ if ($action == 'update')
 
 	$account_number 		 = GETPOST('account_number', 'int');
 	if ($account_number <= 0) { $object->account_number = ''; } else { $object->account_number = $account_number; }
-	$object->accountancy_journal = trim($_POST["accountancy_journal"]);
+	$object->fk_accountancy_journal = trim($_POST["fk_accountancy_journal"]);
 
     $object->currency_code   = trim($_POST["account_currency_code"]);
 
@@ -278,6 +280,7 @@ $form = new Form($db);
 $formbank = new FormBank($db);
 $formcompany = new FormCompany($db);
 if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
+if (! empty($conf->accounting->enabled)) $formaccountancy2 = New FormAccounting($db);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
@@ -534,7 +537,9 @@ if ($action == 'create')
 	if (! empty($conf->accounting->enabled))
 	{
 		print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
-	    print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(GETPOST("accountancy_journal")?GETPOST('accountancy_journal', 'alpha'):$object->accountancy_journal).'"></td></tr>';
+	    print '<td>';
+		print $formaccountancy2->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, '', 1, 1);
+		print '</td></tr>';
 	}
 
 	print '</table>';
@@ -677,7 +682,14 @@ else
 		if (! empty($conf->accounting->enabled))
 		{
 		    print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
-		    print '<td>'.$object->accountancy_journal.'</td></tr>';
+		    print '<td>';
+			
+			$accountingjournal = new AccountingJournal($db);
+			$accountingjournal->fetch($object->fk_accountancy_journal);
+
+			print $accountingjournal->getNomUrl(0,1,1,'',1);
+			
+			print '</td></tr>';
 		}
 		
 		// Other attributes
@@ -980,8 +992,10 @@ else
 		// Accountancy journal
 		if (! empty($conf->accounting->enabled))
 		{
-		    print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
-		    print '<td><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?GETPOST("accountancy_journal"):$object->accountancy_journal).'"></td></tr>';
+			print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
+			print '<td>';
+			print $formaccountancy2->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, '', 1, 1);
+			print '</td></tr>';
 		}
 		
 		print '</table>';

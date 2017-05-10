@@ -333,7 +333,8 @@ $listofreferent=array(
 	'class'=>'Fichinter',
 	'table'=>'fichinter',
 	'datefieldname'=>'date_valid',
-	'disableamount'=>1,
+	'disableamount'=>0,
+	'margin'=>'minus',	
     'urlnew'=>DOL_URL_ROOT.'/fichinter/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid,
     'lang'=>'interventions',
     'buttonnew'=>'AddIntervention',
@@ -559,6 +560,7 @@ foreach ($listofreferent as $key => $value)
 				if ($tablename != 'expensereport_det' && method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
 				if ($tablename == 'don' || $tablename == 'chargesociales') $total_ht_by_line=$element->amount;
 				elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
+				else if($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();				
 				elseif ($tablename == 'projet_task')
 				{
 					if ($idofelementuser)
@@ -583,6 +585,7 @@ foreach ($listofreferent as $key => $value)
 				if ($qualifiedfortotal) $total_ht = $total_ht + $total_ht_by_line;
 
 				if ($tablename == 'don' || $tablename == 'chargesociales') $total_ttc_by_line=$element->amount;
+				else if($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();								
 				elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 				elseif ($tablename == 'projet_task')
 				{
@@ -948,6 +951,7 @@ foreach ($listofreferent as $key => $value)
 				    $total_ht_by_line=null;
 				    $othermessage='';
 					if ($tablename == 'don' || $tablename == 'chargesociales') $total_ht_by_line=$element->amount;
+					else if($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();
 					elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
 					elseif (in_array($tablename, array('projet_task')))
 					{
@@ -988,6 +992,7 @@ foreach ($listofreferent as $key => $value)
 				{
 				    $total_ttc_by_line=null;
 					if ($tablename == 'don' || $tablename == 'chargesociales') $total_ttc_by_line=$element->amount;
+					else if($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();
 					elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 					elseif ($tablename == 'projet_task')
 					{
