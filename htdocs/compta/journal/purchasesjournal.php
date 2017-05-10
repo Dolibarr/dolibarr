@@ -184,7 +184,6 @@ print "<td>".$langs->trans("Account")."</td>";
 print "<td>".$langs->trans("Type")."</td><td align='right'>".$langs->trans("Debit")."</td><td align='right'>".$langs->trans("Credit")."</td>";
 print "</tr>\n";
 
-$var=false;
 
 $invoicestatic=new FactureFournisseur($db);
 $companystatic=new Fournisseur($db);
@@ -229,7 +228,7 @@ foreach ($tabfac as $key => $val)
 		{
 			if (isset($line['nomtcheck']) || $mt)
 			{
-				print "<tr ".$bc[$var]." >";
+				print '<tr class="oddeven">';
 				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
@@ -249,8 +248,6 @@ foreach ($tabfac as $key => $val)
 			}
 		}
 	}
-
-	$var = !$var;
 }
 
 print "</table>";
