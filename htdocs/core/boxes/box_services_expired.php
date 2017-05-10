@@ -104,7 +104,7 @@ class box_services_expired extends ModeleBoxes
     				'logo' => 'company',
     				'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
-    				$this->info_box_contents[$i][3] = array('td' => 'class="tdoverflow maxwidth100onsmartphone" align="left"',
+    				$this->info_box_contents[$i][3] = array('td' => 'class="tdoverflowmax200 maxwidth100onsmartphone" align="left"',
     				'text' => $objp->name,
     				'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
