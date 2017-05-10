@@ -126,7 +126,9 @@ class FormFile
             {
                 $out .= '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
             }
-            $out .= '<input class="flat minwidth400" type="file" name="userfile"';
+
+            $out .= '<input class="flat minwidth400" type="file"';
+            $out .= (empty($conf->global->MAIN_USE_MULTIPLE_FILEUPLOAD)?' name="userfile"':' name="userfile[]" multiple');
             $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
             $out .= '>';
             $out .= ' ';
