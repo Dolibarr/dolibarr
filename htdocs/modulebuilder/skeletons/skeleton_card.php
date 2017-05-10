@@ -84,11 +84,11 @@ $hookmanager->initHooks(array('skeleton'));
 
 
 
-/*******************************************************************
-* ACTIONS
-*
-* Put here all code to do according to value of "action" parameter
-********************************************************************/
+/*
+ * ACTIONS
+ *
+ * Put here all code to do according to value of "action" parameter
+ */
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -210,11 +210,11 @@ if (empty($reshook))
 
 
 
-/***************************************************
-* VIEW
-*
-* Put here all code to build page
-****************************************************/
+/*
+ * VIEW
+ *
+ * Put here all code to build page
+ */
 
 $form=new Form($db);
 

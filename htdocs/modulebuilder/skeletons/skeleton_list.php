@@ -137,11 +137,11 @@ if (($id > 0 || ! empty($ref)) && $action != 'add')
 
 
 
-/*******************************************************************
-* ACTIONS
-*
-* Put here all code to do according to value of "action" parameter
-********************************************************************/
+/*
+ * ACTIONS
+ *
+ * Put here all code to do according to value of "action" parameter
+ */
 
 if (GETPOST('cancel')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
@@ -177,11 +177,11 @@ if (empty($reshook))
 
 
 
-/***************************************************
-* VIEW
-*
-* Put here all code to build page
-****************************************************/
+/*
+ * VIEW
+ *
+ * Put here all code to build page
+ */
 
 $now=dol_now();
 
@@ -244,7 +244,6 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.=$db->order($sortfield,$sortorder);
-//$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 // Count total nb of records
 $nbtotalofrecords = '';
