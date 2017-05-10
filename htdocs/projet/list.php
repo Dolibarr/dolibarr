@@ -854,7 +854,7 @@ if (isset($totalarray['totaloppfield']) || isset($totalarray['totalbudgetfield']
         $i++;
         if ($i == 1)
         {
-            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
             else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
         }
         elseif ($totalarray['totaloppfield'] == $i) print '<td align="right">'.price($totalarray['totalopp']).'</td>';
