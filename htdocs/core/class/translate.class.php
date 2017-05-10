@@ -467,7 +467,7 @@ class Translate
 		if (! $found && ! empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
 		{
     		// Overwrite translation with database read
-            $sql="SELECT transkey, transvalue FROM ".MAIN_DB_PREFIX."overwrite_trans where lang='".$this->defaultlang."'";            
+            $sql="SELECT transkey, transvalue FROM ".MAIN_DB_PREFIX."overwrite_trans where lang='".$db->escape($this->defaultlang)."'";            
 		    $resql=$db->query($sql);
 		    
 		    if ($resql)
