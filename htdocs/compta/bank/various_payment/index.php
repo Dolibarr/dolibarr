@@ -89,7 +89,7 @@ $variousstatic = new PaymentVarious($db);
 $accountstatic = new Account($db);
 
 $sql = "SELECT v.rowid, v.amount, v.label, v.datep as datep, v.datev as datev, v.fk_typepayment as type, v.num_payment, v.fk_bank,";
-$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.accountancy_journal, ba.label as blabel,";
+$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_various as v";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON v.fk_typepayment = pst.id";
@@ -217,7 +217,7 @@ if ($result)
 	            $accountstatic->ref=$obj->bref;
 	            $accountstatic->number=$obj->bnumber;
 	            $accountstatic->accountancy_number=$obj->account_number;
-	            $accountstatic->accountancy_journal=$obj->accountancy_journal;
+	            $accountstatic->fk_accountancy_journal=$obj->fk_accountancy_journal;
 	            $accountstatic->label=$obj->blabel;
 	        	print $accountstatic->getNomUrl(1);
 	        }
