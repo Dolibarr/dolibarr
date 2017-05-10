@@ -680,7 +680,7 @@ class FormFile
 					$out.= ' target="_blank">';
 					$out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
 					$out.= '</a>'."\n";
-                    $out.= $this->showPreview($file,$modulepart,$relativepath);
+                    $out.= $this->showPreview($file,$modulepart,$relativepath,0,$param);
 					$out.= '</td>';
 
 					// Show file size
@@ -1498,16 +1498,17 @@ class FormFile
      * @param   string    $modulepart     propal, facture, facture_fourn, ...
      * @param   string    $relativepath   Relative path of docs
      * @param   string    $ruleforpicto   Rule for picto: 0=Preview picto, 1=Use picto of mime type of file)
+     * @param	string	  $param		  More param on http links
      * @return  string    $out            Output string with HTML
      */
-    public function showPreview($file, $modulepart, $relativepath, $ruleforpicto=0)
+    public function showPreview($file, $modulepart, $relativepath, $ruleforpicto=0, $param='')
     {
         global $langs, $conf;
 
         $out='';
         if ($conf->browser->layout != 'phone')
         {
-            $urladvancedpreview=getAdvancedPreviewUrl($modulepart, $relativepath);      // Return if a file is qualified for preview
+            $urladvancedpreview=getAdvancedPreviewUrl($modulepart, $relativepath, $param);      // Return if a file is qualified for preview
             if ($urladvancedpreview)
             {
                 $out.= '<a data-ajax="false" class="pictopreview" href="'.$urladvancedpreview.'">';

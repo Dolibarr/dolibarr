@@ -5839,9 +5839,10 @@ function getImageFileNameForSize($file, $extName, $extImgTarget='')
  *
  * @param   string    $modulepart     propal, facture, facture_fourn, ...
  * @param   string    $relativepath   Relative path of docs
+ * @param	string	  $param		  More param on http links
  * @return  string                    Output string with HTML
  */
-function getAdvancedPreviewUrl($modulepart, $relativepath)
+function getAdvancedPreviewUrl($modulepart, $relativepath, $param='')
 {
     global $conf;
     
@@ -5852,7 +5853,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath)
     //$mime_preview[]='archive';
     $num_mime = array_search(dol_mimetype($relativepath, '', 1), $mime_preview);
 
-    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;attachment=0&amp;file='.$relativepath).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js('Preview').'\')';
+    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;attachment=0&amp;file='.$relativepath.($param?'&amp;'.$param:'')).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js('Preview').'\')';
     else return '';
 }
 
