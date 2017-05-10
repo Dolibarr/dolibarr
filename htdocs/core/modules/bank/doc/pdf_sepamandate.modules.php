@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
- *	Classe permettant de generer les projets au modele Baleine
+ *	Classe permettant de generer les projets au modele SEPAMandate
  */
 
 class pdf_sepamandate extends ModeleBankAccountDoc
