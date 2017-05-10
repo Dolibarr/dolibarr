@@ -51,11 +51,10 @@ $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
 
+$sall=GETPOST('sall', 'alphanohtml');
 $sref=GETPOST("sref");
 $sbarcode=GETPOST("sbarcode");
 $snom=GETPOST("snom");
-$sall=GETPOST("sall");
-$type= (int) GETPOST("type","int");
 $search_sale = GETPOST("search_sale");
 $search_categ = GETPOST("search_categ",'int');
 $tosell = GETPOST("tosell", 'int');
@@ -66,6 +65,7 @@ $search_tobatch = GETPOST("search_tobatch",'int');
 $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell",'alpha');
 $search_accountancy_code_buy = GETPOST("search_accountancy_code_buy",'alpha');
 $optioncss = GETPOST('optioncss','alpha');
+$type= (int) GETPOST("type","int");
 
 //Show/hide child products. Hidden by default
 if (!$_POST) {

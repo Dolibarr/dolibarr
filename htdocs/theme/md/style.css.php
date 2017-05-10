@@ -46,7 +46,7 @@ if (empty($user->id) && ! empty($_SESSION['dol_login'])) $user->fetch('',$_SESSI
 
 
 // Define css type
-header('Content-type: text/css');
+top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
@@ -2010,6 +2010,9 @@ div.tabsAction {
     margin: 20px 0em 20px 0em;
     padding: 0em 0em;
     text-align: right;
+}
+div.tabsActionNoBottom {
+    margin-bottom: 0px;
 }
 div.tabsAction > a {
 	margin-bottom: 16px !important;

@@ -42,7 +42,7 @@ $ref = '';  // There is no ref for contacts
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid,'');
 
-$sall=GETPOST("sall");
+$sall=GETPOST('sall', 'alphanohtml');
 $search_firstlast_only=GETPOST("search_firstlast_only");
 $search_lastname=GETPOST("search_lastname");
 $search_firstname=GETPOST("search_firstname");

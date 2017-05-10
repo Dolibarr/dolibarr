@@ -43,7 +43,7 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.datedon";
 
 $statut=isset($_GET["statut"])?$_GET["statut"]:"-1";
-$search_all=GETPOST('sall','alpha');
+$search_all=GETPOST('sall', 'alphanohtml');
 $search_ref=GETPOST('search_ref','alpha');
 $search_company=GETPOST('search_company','alpha');
 $search_name=GETPOST('search_name','alpha');

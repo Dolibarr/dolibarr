@@ -39,7 +39,7 @@ $socid=0;
 if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 
-$sall=GETPOST('sall','alpha');
+$sall=GETPOST('sall', 'alphanohtml');
 $search_user=GETPOST('search_user','alpha');
 
 $userstatic=new User($db);

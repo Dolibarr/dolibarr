@@ -36,7 +36,8 @@ function llxHeaderPaybox($title, $head = "")
 	global $user, $conf, $langs;
 
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
+	header("X-Content-Type-Options: nosniff");
+	
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
 	print "\n";
@@ -171,7 +172,8 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     dol_syslog("PBX_TYPEPAIEMENT: $PBX_TYPEPAIEMENT", LOG_DEBUG);
 
     header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
+    header("X-Content-Type-Options: nosniff");
+    
     print '<html>'."\n";
     print '<head>'."\n";
     print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->file->character_set_client."\">\n";

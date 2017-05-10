@@ -191,13 +191,13 @@ else					// Open and return file
     // Les drois sont ok et fichier trouve
     if ($type)
     {
+        top_httphead($type);
         header('Content-Disposition: inline; filename="'.basename($original_file).'"');
-        header('Content-type: '.$type);
     }
     else
     {
+        top_httphead('image/png');
         header('Content-Disposition: inline; filename="'.basename($original_file).'"');
-        header('Content-type: image/png');
     }
 
     $original_file_osencoded=dol_osencode($original_file);

@@ -38,7 +38,9 @@ $langs->load("banks");
 $langs->load("bills");
 
 $id = GETPOST('id','int');
-$action = GETPOST("action");
+$bankid = GETPOST('bankid','int');
+$action = GETPOST("action",'alpha');
+$cancel = GETPOST('cancel','alpha');
 
 // Security check
 $socid=0;
@@ -54,16 +56,17 @@ if ($id > 0 || ! empty($ref))
 	$object->getrights();
 }
 
+
 /*
  *	Actions
  */
 
-if ($action == 'update' && ! $_POST["cancel"])
+if ($action == 'update' && ! $cancel)
 {
 	// Modification
 	$account = new UserBankAccount($db);
 
-    $account->fetch($id);
+    $account->fetch($bankid);
 
     $account->userid          = $object->id;
 
@@ -82,18 +85,20 @@ if ($action == 'update' && ! $_POST["cancel"])
 	$account->owner_address   = $_POST["owner_address"];
 
 	$result = $account->update($user);
-	if (! $result)
+
+    if (! $result)
 	{
 		setEventMessages($account->error, $account->errors, 'errors');
-		$_GET["action"]='edit';     // Force chargement page edition
+		$action='edit';     // Force chargement page edition
 	}
 	else
 	{
-		$url=DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
+		$url=DOL_URL_ROOT.'/user/bank.php?id='.$object->id.'&bankid='.$bankid;
         header('Location: '.$url);
         exit;
 	}
 }
+
 
 /*
  *	View
@@ -101,35 +106,41 @@ if ($action == 'update' && ! $_POST["cancel"])
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader(null, $langs->trans("BankAccounts"));
 
 $head = user_prepare_head($object);
 
 $account = new UserBankAccount($db);
-if (! $id)
-    $account->fetch(0,$object->id);
+if (! $bankid)
+{
+    $account->fetch(0, '', $id);
+}
 else
-    $account->fetch($id);
+{
+    $account->fetch($bankid);
+}
 if (empty($account->userid)) $account->userid=$object->id;
 
 
-if ($id && $action == 'edit' && $user->rights->user->user->creer)
+if ($bankid && $action == 'edit' && $user->rights->user->user->creer)
 {
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="id" value="'.GETPOST("id",'int').'">';
+    print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
-if ($id && $action == 'create' && $user->rights->user->user->creer)
+if ($bankid && $action == 'create' && $user->rights->user->user->creer)
 {
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
+    print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
 
 
 // View
-if ($id && $action != 'edit')
+if ($account->id && $action != 'edit')
 {
 	$title = $langs->trans("User");
 	dol_fiche_head($head, 'bank', $title, -1, 'user');
@@ -223,7 +234,7 @@ if ($id && $action != 'edit')
 
 	if ($user->rights->user->user->creer)
 	{
-		print '<a class="butAction" href="bank.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+		print '<a class="butAction" href="bank.php?id='.$object->id.'&bankid='.$account->id.'&action=edit">'.$langs->trans("Edit").'</a>';
 	}
 
 	print '</div>';
@@ -308,8 +319,6 @@ if ($id && $action == 'edit' && $user->rights->user->user->creer)
 	print '<input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
     print '</div>';
 }
-
-if ($id && $action == 'edit' && $user->rights->user->user->creer) print '</form>';
 
 if ($id && $action == 'edit' && $user->rights->user->user->creer) print '</form>';
     
