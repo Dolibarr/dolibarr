@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=This tools give you utilites to build or edit your own module.
-ModuleBuilderDesc2=Path were modules are generated/edited (first alternative directory defined into %s): <strong>%s</strong>. 
-ModuleBuilderDesc3=Modules found: <strong>%s</strong> (they are detected as editable when the file <strong>%s</strong> exists in root of module directory). 
+ModuleBuilderDesc2=Path were modules are generated/edited (first alternative directory defined into %s): <strong>%s</strong>
+ModuleBuilderDesc3=Generated/editable modules found: <strong>%s</strong> (they are detected as editable when the file <strong>%s</strong> exists in root of module directory). 
 NewModule=New module
 ModuleKey=Key for new module
 

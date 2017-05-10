@@ -82,9 +82,11 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter_x") || GETP
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('membertypecard','globalcard'));
 
+
 /*
  *	Actions
  */
+
 if ($action == 'add' && $user->rights->adherent->configurer)
 {
 	if (! $cancel)
@@ -308,12 +310,13 @@ if ($rowid > 0)
 
 		$head = member_type_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("MemberType"), 0, 'group');
+		dol_fiche_head($head, 'card', $langs->trans("MemberType"), -1, 'group');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/type.php">'.$langs->trans("BackToList").'</a>';
 
 		dol_banner_tab($object, 'rowid', $linkback);
 		
+		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 		
 		print '<table class="border" width="100%">';
@@ -342,7 +345,8 @@ if ($rowid > 0)
 		}
 
 		print '</table>';
-
+        print '</div>';
+        
 		dol_fiche_end();
 
 

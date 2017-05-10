@@ -172,9 +172,6 @@ if ($action == 'delete')
 
 
 
-
-
-
 /*
  * View
  */
@@ -323,7 +320,9 @@ else
 	print '<td align="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 }
-print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="add">';
+$disabled='';
+if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) $disabled=' disabled="disabled"';
+print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add">';
 print "</td>\n";
 print '</tr>';
 
