@@ -473,9 +473,9 @@ class Account extends CommonObject
 
 			if ($categorie>0) {
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
-				$sql .= "lineid, fk_categ;
+				$sql .= "lineid, fk_categ";
 				$sql .= ") VALUES (";
-				$sql .= " ".$accline->id.", ".$categorie;
+				$sql .= $accline->id.", ".$categorie;
 				$sql .= ")";
 
 				$result = $this->db->query($sql);
