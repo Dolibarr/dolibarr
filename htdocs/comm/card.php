@@ -788,8 +788,7 @@ if ($id > 0)
 
             while ($i < $num && $i < $MAXLIST) {
                 $objp = $db->fetch_object($resql);
-                $var = ! $var;
-                print "<tr " . $bc[$var] . ">";
+                print '<tr class="oddeven">';
                 print '<td class="nowrap">';
                 $sendingstatic->id = $objp->id;
                 $sendingstatic->ref = $objp->ref;
