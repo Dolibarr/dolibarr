@@ -128,7 +128,7 @@ class FormFile
             }
 
             $out .= '<input class="flat minwidth400" type="file"';
-            $out .= ((empty($conf->global->MAIN_USE_MULTIPLE_FILEUPLOAD) || $conf->browser->layout == 'phone')?' name="userfile"':' name="userfile[]" multiple');
+            $out .= ((! empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD) || $conf->browser->layout != 'classic')?' name="userfile"':' name="userfile[]" multiple');
             $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
             $out .= '>';
             $out .= ' ';
