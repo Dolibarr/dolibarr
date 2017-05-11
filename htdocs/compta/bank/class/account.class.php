@@ -471,9 +471,9 @@ class Account extends CommonObject
 
 		if ($accline->insert() > 0) {
 
-			if ($categorie>0) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
-				$sql .= "lineid, fk_categ;
+			if ($categorie) {
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_account (";
+				$sql .= "fk_account, fk_categorie";
 				$sql .= ") VALUES (";
 				$sql .= " ".$accline->id.", ".$categorie;
 				$sql .= ")";
