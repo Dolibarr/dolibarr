@@ -3805,14 +3805,14 @@ else if ($id > 0 || ! empty($ref))
 	{
 		if ($object->situation_cycle_ref && $object->statut == 0) {
 			print '<div class="div-table-responsive">';
-			print '<table id="tablelines" class="noborder noshadow" width="100%">';
 			
-			
-			print '<tr class="liste_titre nodrag nodrop">';
 			print '<form name="updatealllines" id="updatealllines" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '"#updatealllines" method="POST">';
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '" />';
 			print '<input type="hidden" name="action" value="updatealllines" />';
 			print '<input type="hidden" name="id" value="' . $object->id . '" />';
+			
+			print '<table id="tablelines" class="noborder noshadow" width="100%">';
+			print '<tr class="liste_titre nodrag nodrop">';
 			
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 				print '<td align="center" width="5">&nbsp;</td>';
@@ -3849,9 +3849,11 @@ else if ($id > 0 || ! empty($ref))
 			print '<td align="right" class="nowrap"><input type="text" size="1" value="" name="all_progress">%</td>';
 			print '<td colspan="4" align="right"><input class="button" type="submit" name="all_percent" value="Modifier" /></td>';
 			print '</tr>';
-			print '</form>';
 			
 			print '</table>';
+			
+			print '</form>';
+			
 			print '</div>';
 			
 		}
