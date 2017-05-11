@@ -59,14 +59,27 @@ if ($dircustom && $action == 'initmodule' && $modulename)
     $destfile = $dircustom.'/'.$modulename;
     $result = dolCopyDir($srcfile, $destfile, 0, 0);
     //dol_mkdir($destfile);
+    if ($result <= 0)
+    {
+        $error++;
+        setEventMessages($langs->trans("ErrorFailedToCopyDir"), null, 'errors');
+    }
+
+    // Edit PHP files
+    $listofphpfilestoedit = dol_dir_list($destfile, 'files', 1, '\.php$', 'fullname', SORT_ASC, 0, true);
+    foreach($listofphpfilestoedit as $phpfileval)
+    {
+        $arrayreplacement=array(
+            'mymodule'=>$modulename
+        );
+        $result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
+        var_dump($phpfileval);
+        var_dump($result);
+    }    
     
-    if ($result > 0)
+    if (! $error)
     {
         setEventMessages('ModuleInitialized', null);
-    }
-    else
-    {
-        setEventMessages($langs->trans("ErrorFailedToCopyDir"), null, 'errors');
     }
 }
 

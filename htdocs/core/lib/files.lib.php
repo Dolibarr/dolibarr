@@ -44,7 +44,8 @@ function dol_basename($pathfile)
  *  @param	string		$path        	Starting path from which to search. This is a full path.
  *  @param	string		$types        	Can be "directories", "files", or "all"
  *  @param	int			$recursive		Determines whether subdirectories are searched
- *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function. Filter is checked into basename only.
+ *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function, 
+ *                                      but must not contains the start and end '/'. Filter is checked into basename only.
  *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked into fullpath.
  *  @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
@@ -438,6 +439,70 @@ function dol_filemtime($pathoffile)
 {
 	$newpathoffile=dol_osencode($pathoffile);
 	return @filemtime($newpathoffile); // @Is to avoid errors if files does not exists
+}
+
+/**
+ * Make replacement of strings into a file.
+ *
+ * @param	string	$srcfile			Source file (can't be a directory)
+ * @param	array	$arrayreplacement	Array with strings to replace
+ * @param	string	$destfile			Destination file (can't be a directory). If empty, will be same than source file.
+ * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
+ * @see		dolCopyr
+ */
+function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0)
+{
+    global $conf;
+
+    dol_syslog("files.lib.php::dolReplaceInFile srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask);
+
+    if (empty($srcfile)) return -1;
+    if (empty($destfile)) $destfile=$srcfile;
+    
+    $destexists=dol_is_file($destfile);
+    if (($destfile != $srcfile) && $destexists) return 0;
+    
+    $tmpdestfile=$destfile.'.tmp';
+
+    $newpathofsrcfile=dol_osencode($srcfile);
+    $newpathoftmpdestfile=dol_osencode($tmpdestfile);
+    $newpathofdestfile=dol_osencode($destfile);
+    $newdirdestfile=dirname($newpathofdestfile);
+
+    if ($destexists && ! is_writable($newpathofdestfile))
+    {
+        dol_syslog("files.lib.php::dolReplaceInFile failed Permission denied to overwrite target file", LOG_WARNING);
+        return -1;
+    }
+    if (! is_writable($newdirdestfile))
+    {
+        dol_syslog("files.lib.php::dolReplaceInFile failed Permission denied to write into target directory ".$newdirdestfile, LOG_WARNING);
+        return -2;
+    }
+   
+    dol_delete_file($tmpdestfile);
+    
+    
+    
+    
+    // Rename
+    $result=dol_move($newpathoftmpdestfile, $newpathofdestfile, $newmask, (($destfile == $srcfile)?1:0));
+    if (! $result)
+    {
+        dol_syslog("files.lib.php::dolReplaceInFile failed to move tmp file to final dest", LOG_WARNING);
+        return -3;
+    }
+    if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+    if (empty($newmask))	// This should no happen
+    {
+        dol_syslog("Warning: dolReplaceInFile called with empty value for newmask and no default value defined", LOG_WARNING);
+        $newmask='0664';
+    }
+
+    @chmod($newpathofdestfile, octdec($newmask));
+
+    return 1;
 }
 
 /**
@@ -940,7 +1005,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 					// If error because of not exists, we must should return true and we should return false if this is a permission problem
 				}
 			}
-			else dol_syslog("No files to delete found", LOG_WARNING);
+			else dol_syslog("No files to delete found", LOG_DEBUG);
 		}
 		else
 		{
