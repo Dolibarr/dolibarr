@@ -551,13 +551,23 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
 						$dirmaskdec |= octdec('0200');  // Set w bit required to be able to create content for recursive subdirs files
                     	dol_mkdir($destfile."/".$file, '', decoct($dirmaskdec));
                     }
-                    $result=dolCopyDir($srcfile."/".$file, $destfile."/".$file, $newmask, $overwriteifexists);
+                    $tmpresult=dolCopyDir($srcfile."/".$file, $destfile."/".$file, $newmask, $overwriteifexists);
                 }
                 else
 				{
-                    $result=dol_copy($srcfile."/".$file, $destfile."/".$file, $newmask, $overwriteifexists);
+                    $tmpresult=dol_copy($srcfile."/".$file, $destfile."/".$file, $newmask, $overwriteifexists);
+                }
+                // Set result
+                if ($result > 0 && $tmpresult >= 0)
+                {
+                    // Do nothing, so we don't set result to 0 if tmpresult is 0 and result was success in a previous pass
+                }
+                else
+                {
+                    $result=$tmpresult;
                 }
                 if ($result < 0) break;
+                
             }
         }
         closedir($dir_handle);
