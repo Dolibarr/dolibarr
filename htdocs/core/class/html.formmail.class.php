@@ -828,7 +828,7 @@ class FormMail extends Form
 		if ($active >= 0) $sql.=" AND active = ".$active;
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
 		if (!empty($id)) $sql.= " AND rowid=".$id;
-		$sql.= $db->order("lang,label","ASC");
+		$sql.= $db->order("position,lang,label","ASC");
 		//print $sql;
 
 		$resql = $db->query($sql);
