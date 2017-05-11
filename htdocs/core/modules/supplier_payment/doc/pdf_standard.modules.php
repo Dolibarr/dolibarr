@@ -520,8 +520,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 *   Show table for lines
 	 *
 	 *   @param		PDF			$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		integer		$tab_top		Top position of table
+	 *   @param		integer		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
