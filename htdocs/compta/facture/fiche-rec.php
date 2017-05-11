@@ -1254,8 +1254,8 @@ else
 
 		// Note public
 		print '<tr><td>';
-		if (($action != 'editnote_public') && $user->rights->facture->creer && ! empty($object->brouillon))
-			print $form->editfieldkey($form->textwithpicto($langs->trans('NotePublic'), $htmltext), 'note_public', $object->note_public, $object, $user->rights->facture->creer);
+		if ($action != 'editnote_public')
+			print $form->editfieldkey($form->textwithpicto($langs->trans('NotePublic'), $htmltext), 'note_public', $object->note_public, $object, ($user->rights->facture->creer  && ! empty($object->brouillon)));
 		else
 			print $langs->trans('NotePublic');
 		print '</td><td colspan="5">';
