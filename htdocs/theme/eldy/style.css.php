@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
@@ -35,6 +35,28 @@ if (! defined('NOLOGIN'))         define('NOLOGIN',1);          // File must be 
 if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
+// Colors
+$colorbackhmenu1='80,90,120';      // topmenu
+$colorbackvmenu1='255,255,255';      // vmenu
+$colortopbordertitle1='120,120,120';    // top border of title
+$colorbacktitle1='230,230,230';      // title of tables,list
+$colorbacktabcard1='255,255,255';  // card
+$colorbacktabactive='234,234,234';
+$colorbacklineimpair1='255,255,255';    // line impair
+$colorbacklineimpair2='255,255,255';    // line impair
+$colorbacklinepair1='248,248,248';    // line pair
+$colorbacklinepair2='248,248,248';    // line pair
+$colorbacklinepairhover='238,246,252';    // line pair
+$colorbackbody='255,255,255';
+$colortexttitlenotab='100,60,20';
+$colortexttitle='0,0,0';
+$colortext='0,0,0';
+$colortextlink='0,0,100';
+$fontsize='13';
+$fontsizesmaller='12';
+
+if (defined('THEME_ONLY_CONSTANT')) return;
+    
 session_cache_limiter(FALSE);
 
 require_once '../../main.inc.php';
@@ -77,25 +99,6 @@ $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 //$user->conf->THEME_ELDY_ENABLE_PERSONALIZED=0;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
-// Colors
-$colorbackhmenu1='80,90,120';      // topmenu
-$colorbackvmenu1='255,255,255';      // vmenu
-$colortopbordertitle1='120,120,120';    // top border of title
-$colorbacktitle1='240,240,240';      // title of tables,list
-$colorbacktabcard1='255,255,255';  // card
-$colorbacktabactive='234,234,234';
-$colorbacklineimpair1='255,255,255';    // line impair
-$colorbacklineimpair2='255,255,255';    // line impair
-$colorbacklinepair1='248,248,248';    // line pair
-$colorbacklinepair2='248,248,248';    // line pair
-$colorbacklinepairhover='238,246,252';    // line pair
-$colorbackbody='255,255,255';
-$colortexttitlenotab='100,60,20';
-$colortexttitle='0,0,0';
-$colortext='0,0,0';
-$colortextlink='0,0,100';
-$fontsize='13';
-$fontsizesmaller='12';
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
 $borderwith=2;
 
@@ -113,17 +116,11 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 	$conf->global->THEME_ELDY_VERMENU_BACK1='255,255,255';    // vmenu
     $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
-    $conf->global->THEME_ELDY_LINEIMPAIR1='255,255,255';
-    $conf->global->THEME_ELDY_LINEIMPAIR2='255,255,255';
-    $conf->global->THEME_ELDY_LINEPAIR1='248,248,248';
-    $conf->global->THEME_ELDY_LINEPAIR2='248,248,248';
-    $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
     $conf->global->THEME_ELDY_TEXT='0,0,0';
     $conf->global->THEME_ELDY_FONT_SIZE1='13';
     $conf->global->THEME_ELDY_FONT_SIZE2='12';
 }
 
- 
 // Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
 $colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
 $colorbackvmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK1)?$colorbackvmenu1:$conf->global->THEME_ELDY_VERMENU_BACK1)   :(empty($user->conf->THEME_ELDY_VERMENU_BACK1)?$colorbackvmenu1:$user->conf->THEME_ELDY_VERMENU_BACK1);

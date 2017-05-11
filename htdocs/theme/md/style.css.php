@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
@@ -35,6 +35,28 @@ if (! defined('NOLOGIN'))         define('NOLOGIN',1);          // File must be 
 //if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  // We need top menu content
 if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
+
+// Colors
+$colorbackhmenu1='90,50,120';      // topmenu
+$colorbackvmenu1='255,255,255';      // vmenu
+$colortopbordertitle1='';           // top border of tables-lists title. not defined = default to colorbackhmenu1
+$colorbacktitle1='240,240,240';      // title of tables-lists
+$colorbacktabcard1='255,255,255';  // card
+$colorbacktabactive='234,234,234';
+$colorbacklineimpair1='255,255,255';    // line impair
+$colorbacklineimpair2='255,255,255';    // line impair
+$colorbacklinepair1='250,250,250';    // line pair
+$colorbacklinepair2='248,248,248';    // line pair
+$colorbacklinepairhover='244,244,244';    // line pair
+$colorbackbody='240,240,240';
+$colortexttitlenotab='90,90,90';
+$colortexttitle='20,20,20';
+$colortext='0,0,0';
+$colortextlink='0,0,120';
+$fontsize='13';
+$fontsizesmaller='11';
+
+if (defined('THEME_ONLY_CONSTANT')) return;
 
 session_cache_limiter(FALSE);
 
@@ -78,34 +100,14 @@ $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 //$user->conf->THEME_ELDY_ENABLE_PERSONALIZED=0;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
-// Colors
-$colorbackhmenu1='90,50,120';      // topmenu
-$colorbackvmenu1='255,255,255';      // vmenu
-$colortopbordertitle1='';           // top border of tables-lists title. not defined = default to colorbackhmenu1
-$colorbacktitle1='240,240,240';      // title of tables-lists
-$colorbacktabcard1='255,255,255';  // card
-$colorbacktabactive='234,234,234';
-$colorbacklineimpair1='255,255,255';    // line impair
-$colorbacklineimpair2='255,255,255';    // line impair
-$colorbacklinepair1='250,250,250';    // line pair
-$colorbacklinepair2='248,248,248';    // line pair
-$colorbacklinepairhover='244,244,244';    // line pair
-$colorbackbody='240,240,240';
-$colortexttitlenotab='90,90,90';
-$colortexttitle='20,20,20';
-$colortext='0,0,0';
-$colortextlink='0,0,120';
-$fontsize='13';
-$fontsizesmaller='11';
-$usegradient=0;
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
 $borderwith=2;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
-if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1='90,50,120';
+if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
 if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1=$colorbacktitle1;
-if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER=='238,246,252';
+if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER==$colorbacklinepairhover;
 if (! isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_TEXTTITLENOTAB=$colortexttitlenotab;
 if (! isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTLINK=$colortextlink;
 
@@ -116,12 +118,6 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 	$conf->global->THEME_ELDY_VERMENU_BACK1='255,255,255';    // vmenu
     $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
-    $conf->global->THEME_ELDY_LINEIMPAIR1='255,255,255';
-    $conf->global->THEME_ELDY_LINEIMPAIR2='255,255,255';
-    $conf->global->THEME_ELDY_LINEPAIR1='250,250,250';
-    $conf->global->THEME_ELDY_LINEPAIR2='248,248,248';
-    $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
-    $conf->global->THEME_ELDY_USE_HOVER='238,246,252';
     $conf->global->THEME_ELDY_TEXT='0,0,0';
     $conf->global->THEME_ELDY_FONT_SIZE1='13';
     $conf->global->THEME_ELDY_FONT_SIZE2='11';
@@ -139,7 +135,6 @@ $colorbacklineimpair1=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $colorbacklineimpair2=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEIMPAIR2)  ?$colorbacklineimpair2:$conf->global->THEME_ELDY_LINEIMPAIR2):(empty($user->conf->THEME_ELDY_LINEIMPAIR2)?$colorbacklineimpair2:$user->conf->THEME_ELDY_LINEIMPAIR2);
 $colorbacklinepair1  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIR1)    ?$colorbacklinepair1:$conf->global->THEME_ELDY_LINEPAIR1)    :(empty($user->conf->THEME_ELDY_LINEPAIR1)?$colorbacklinepair1:$user->conf->THEME_ELDY_LINEPAIR1);
 $colorbacklinepair2  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIR2)    ?$colorbacklinepair2:$conf->global->THEME_ELDY_LINEPAIR2)    :(empty($user->conf->THEME_ELDY_LINEPAIR2)?$colorbacklinepair2:$user->conf->THEME_ELDY_LINEPAIR2);
-$colorbacklinepairhover  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIRHOVER)    ?$colorbacklinepairhover:$conf->global->THEME_ELDY_LINEPAIRHOVER)    :(empty($user->conf->THEME_ELDY_LINEPAIRHOVER)?$colorbacklinepairhover:$user->conf->THEME_ELDY_LINEPAIRHOVER);
 $colorbackbody       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKBODY)     ?$colorbackbody:$conf->global->THEME_ELDY_BACKBODY)          :(empty($user->conf->THEME_ELDY_BACKBODY)?$colorbackbody:$user->conf->THEME_ELDY_BACKBODY);
 $colortexttitlenotab =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXTTITLENOTAB)?$colortexttitlenotab:$conf->global->THEME_ELDY_TEXTTITLENOTAB)             :(empty($user->conf->THEME_ELDY_TEXTTITLENOTAB)?$colortexttitlenotab:$user->conf->THEME_ELDY_TEXTTITLENOTAB);
 $colortexttitle      =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXTTITLE)    ?$colortext:$conf->global->THEME_ELDY_TEXTTITLE)             :(empty($user->conf->THEME_ELDY_TEXTTITLE)?$colortexttitle:$user->conf->THEME_ELDY_TEXTTITLE);
@@ -147,6 +142,7 @@ $colortext           =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $colortextlink       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXTLINK)     ?$colortext:$conf->global->THEME_ELDY_TEXTLINK)              :(empty($user->conf->THEME_ELDY_TEXTLINK)?$colortextlink:$user->conf->THEME_ELDY_TEXTLINK);
 $fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE1)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE1)             :(empty($user->conf->THEME_ELDY_FONT_SIZE1)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE1);
 $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
+
 // Hover color
 $colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_HOVER));
 if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
@@ -154,7 +150,7 @@ if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
     $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
 }
 
-if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
+//if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
 
 
 // Set text color to black or white
@@ -2709,15 +2705,7 @@ tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, tabl
 }
 div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
-	<?php if ($usegradient) { ?>
-	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	<?php } else { ?>
 	background: rgb(<?php echo $colorbacktitle1; ?>);
-	<?php } ?>
 	font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
 
     color: rgb(<?php echo $colortexttitle; ?>);
@@ -2974,15 +2962,7 @@ tr.box_titre {
 	color: #000 !important; */
 
 	/* TO MATCH ELDY */
-	<?php if ($usegradient) { ?>
-	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	<?php } else { ?>
 	background: rgb(<?php echo $colorbacktitle1; ?>);
-	<?php } ?>
 
     background-repeat: repeat-x;
     color: rgb(<?php echo $colortexttitle; ?>);

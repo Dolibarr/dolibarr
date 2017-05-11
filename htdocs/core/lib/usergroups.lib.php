@@ -443,6 +443,49 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 
     print '</td></tr>';
 
+    // TopMenuDisableImages
+    if ($foruserprofile)
+    {
+        /*
+         print '<tr class="oddeven">';
+         print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
+         print '<td>'.($conf->global->THEME_TOPMENU_DISABLE_IMAGE?$conf->global->THEME_TOPMENU_DISABLE_IMAGE:$langs->trans("Default")).'</td>';
+         print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_TOPMENU_DISABLE_IMAGE" id="check_THEME_TOPMENU_DISABLE_IMAGE" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
+         print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
+         print '> '.$langs->trans("UsePersonalValue").'</td>';
+         print '<td>';
+         if ($edit)
+         {
+         print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_TOPMENU_DISABLE_IMAGE,array()),''),'THEME_TOPMENU_DISABLE_IMAGE','formcolor',1).' ';
+         }
+         else
+         {
+         $color = colorArrayToHex(colorStringToArray($conf->global->THEME_TOPMENU_DISABLE_IMAGE,array()),'');
+         if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+         else print '';
+         }
+         if ($edit) print '<br>('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+         print '</td>';*/
+    }
+    else
+    {
+        $default=$langs->trans('No');
+        print '<tr class="oddeven">';
+        print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
+        print '<td colspan="'.($colspan-1).'">';
+        if ($edit)
+        {
+            print $form->selectyesno('THEME_TOPMENU_DISABLE_IMAGE', $conf->global->THEME_TOPMENU_DISABLE_IMAGE, 1);
+        }
+        else
+        {
+            print yn($conf->global->THEME_TOPMENU_DISABLE_IMAGE);
+        }
+        print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+        print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+        print '</td>';
+    }
+    
 	// Background color THEME_ELDY_BACKBODY
     if ($foruserprofile)
 	{
@@ -535,52 +578,6 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '</td>';
 	}
 	
-	// TopMenuBackgroundColor
-	if ($foruserprofile)
-	{
-	    /*
-	     print '<tr class="oddeven">';
-	     print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
-	     print '<td>'.($conf->global->THEME_ELDY_TOPMENU_BACK1?$conf->global->THEME_ELDY_TOPMENU_BACK1:$langs->trans("Default")).'</td>';
-	     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TOPMENU_BACK1" id="check_THEME_ELDY_TOPMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
-	     print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
-	     print '> '.$langs->trans("UsePersonalValue").'</td>';
-	     print '<td>';
-	     if ($edit)
-	     {
-	     print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),''),'THEME_ELDY_TOPMENU_BACK1','formcolor',1).' ';
-	     }
-	     else
-	     {
-	     $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),'');
-	     if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
-	     else print '';
-	     }
-	    	if ($edit) print '<br>('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
-	    	print '</td>';*/
-	}
-	else
-	{
-	    $default=$langs->trans('No');
-	    print '<tr class="oddeven">';
-	    print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
-	    print '<td colspan="'.($colspan-1).'">';
-	    if ($edit)
-	    {
-	        print $form->selectyesno('THEME_TOPMENU_DISABLE_IMAGE', $conf->global->THEME_TOPMENU_DISABLE_IMAGE, 1);
-	    }
-	    else
-	    {
-	        print yn($conf->global->THEME_TOPMENU_DISABLE_IMAGE);
-	    }
-	    print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
-    	print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-	    print '</td>';
-	}
-	
-	
-	
-	
 	// BackgroundTableTitleColor
 	if ($foruserprofile)
 	{
@@ -607,6 +604,62 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '</tr>';
 	}
 
+	// BackgroundTableLineOddColor
+	if ($foruserprofile)
+	{
+
+	}
+	else
+	{
+	    $default='ffffff';
+	    if ($conf->theme == 'md') $default='ffffff';
+	
+	    print '<tr class="oddeven">';
+	    print '<td>'.$langs->trans("BackgroundTableLineOddColor").'</td>';
+	    print '<td colspan="'.($colspan-1).'">';
+	    if ($edit)
+	    {
+	        print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEIMPAIR1,array()),''),'THEME_ELDY_LINEIMPAIR1','formcolor',1).' ';
+	    }
+	    else
+	    {
+	        $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEIMPAIR1,array()),'');
+	        if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+	        else print $langs->trans("Default");
+	    }
+	    print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+	    print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+	    print '</td>';
+	}
+	
+	// BackgroundTableLineEvenColor
+	if ($foruserprofile)
+	{
+	
+	}
+	else
+	{
+	    $default='f8f8f8';
+	    if ($conf->theme == 'md') $default='f8f8f8';
+	
+	    print '<tr class="oddeven">';
+	    print '<td>'.$langs->trans("BackgroundTableLineEvenColor").'</td>';
+	    print '<td colspan="'.($colspan-1).'">';
+	    if ($edit)
+	    {
+	        print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEPAIR1,array()),''),'THEME_ELDY_LINEPAIR1','formcolor',1).' ';
+	    }
+	    else
+	    {
+	        $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEPAIR1,array()),'');
+	        if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+	        else print $langs->trans("Default");
+	    }
+	    print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+	    print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+	    print '</td>';
+	}
+	
 	// TextTitleColor
 	if ($foruserprofile)
 	{
