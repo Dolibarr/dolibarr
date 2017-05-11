@@ -69,7 +69,7 @@ print "</tr>\n";
 
 $sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."paiement";
 $paiem = valeur($sql);
-print '<tr class="oddeven"><td>Somme des paiements (associes a une facture)</td><td align="right">".price($paiem)."</td></tr>';
+print "<tr class=\"oddeven\"><td>Somme des paiements (associes a une facture)</td><td align=\"right\">".price($paiem)."</td></tr>";
 
 
 $sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."bank WHERE amount > 0";
