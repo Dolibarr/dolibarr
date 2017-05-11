@@ -84,7 +84,7 @@ print "<tr class=\"oddeven\"><td>Somme des debits</td><td align=\"right\">".pric
 
 $sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."bank ";
 $solde = valeur($sql);
-print '<tr class="oddeven"><td>".$langs->trans("BankBalance")."</td><td align="right">".price($solde)."</td></tr>';
+print "<tr class=\"oddeven\"><td>".$langs->trans("BankBalance")."</td><td align=\"right\">".price($solde)."</td></tr>";
 
 
 print "</table>";
