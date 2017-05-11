@@ -74,7 +74,7 @@ print "<tr class=\"oddeven\"><td>Somme des paiements (associes a une facture)</t
 
 $sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."bank WHERE amount > 0";
 $credits = valeur($sql);
-print '<tr class="oddeven"><td>Somme des credits</td><td align="right">".price($credits)."</td></tr>';
+print "<tr class=\"oddeven\"><td>Somme des credits</td><td align=\"right\">".price($credits)."</td></tr>";
 
 
 $sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."bank WHERE amount < 0";
