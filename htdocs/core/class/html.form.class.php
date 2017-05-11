@@ -6041,7 +6041,7 @@ class Form
             {
                 if ($addlinktofullsize)
                 {
-                    $urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile);
+                    $urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile, 0, '&entity='.$entity);
                     if ($urladvanced) $ret.='<a href="'.$urladvanced.'">';
                     else $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
                 }
@@ -6052,7 +6052,7 @@ class Form
             {
                 if ($addlinktofullsize)
                 {
-                    $urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile);
+                    $urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile, 0, '&entity='.$entity);
                     if ($urladvanced) $ret.='<a href="'.$urladvanced.'">';
                     else $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
                 }

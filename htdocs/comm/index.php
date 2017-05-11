@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -479,7 +479,6 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 	$resql = $db->query($sql);
 	if ($resql)
 	{
-		$var=false;
 		$num = $db->num_rows($resql);
 		$i = 0;
 
@@ -544,7 +543,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 	$result = $db->query($sql);
 	if ($result)
 	{
-		$var=false;
 		$num = $db->num_rows($result);
 		$i = 0;
 
@@ -633,11 +631,10 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
 
 			$staticcontrat=new Contrat($db);
 
-			$var=false;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var]."><td><a href=\"../contrat/card.php?id=".$obj->contratid."\">".img_object($langs->trans("ShowContract","contract"), 'contract')." ".$obj->ref."</a></td>";
+				print '<tr class="oddeven"><td><a href=\"../contrat/card.php?id=".$obj->contratid."\">".img_object($langs->trans("ShowContract","contract"), "contract")." ".$obj->ref."</a></td>';
 				print '<td>';
                 $companystatic->id=$objp->rowid;
                 $companystatic->name=$objp->name;
@@ -686,8 +683,6 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		$i = 0;
 		if ($num > 0)
 		{
-			$var=true;
-
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></th></tr>';
 
@@ -785,8 +780,6 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		$i = 0;
 		if ($num > 0)
 		{
-			$var=true;
-
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><th class="liste_titre" colspan="5">'.$langs->trans("OrdersOpened").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></th></tr>';
 

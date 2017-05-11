@@ -24,6 +24,8 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+ALTER TABLE llx_facturedet_rec ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
+
 ALTER TABLE llx_extrafields ADD COLUMN langs varchar(24);
 
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN fk_unit integer DEFAULT NULL;
@@ -48,6 +50,7 @@ ALTER TABLE llx_holiday ADD COLUMN extraparams				varchar(255);
 ALTER TABLE llx_expensereport ADD COLUMN import_key			varchar(14);
 ALTER TABLE llx_expensereport ADD COLUMN extraparams		varchar(255);	
 
+ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);	
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_CREATE','Product or service created','Executed when a product or sevice is created','product',30);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_MODIFY','Product or service modified','Executed when a product or sevice is modified','product',30);
@@ -259,6 +262,13 @@ UPDATE llx_accounting_journal SET nature = 1 where code = 'OD' and nature = 0;
 UPDATE llx_accounting_journal SET nature = 2 where code = 'VT' and nature = 1;
 UPDATE llx_accounting_journal SET nature = 3 where code = 'AC' and nature = 2;
 UPDATE llx_accounting_journal SET nature = 4 where (code = 'BK' or code = 'BQ') and nature = 3;
+
+
+ALTER TABLE llx_bank_account CHANGE COLUMN accountancy_journal fk_accountancy_journal integer;
+--ALTER TABLE llx_bank_account ADD CONSTRAINT bank_fk_accountancy_journal FOREIGN KEY (fk_accountancy_journal) REFERENCES llx_accounting_journal (rowid);
+
+
+
 
 
 

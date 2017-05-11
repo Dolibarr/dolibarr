@@ -131,18 +131,15 @@ class doc_generic_project_odt extends ModelePDFProjects
 		);
 
 		// Retrieve extrafields
-		if (is_array($object->array_options) && count($object->array_options))
-		{
-			$extrafieldkey=$object->element;
+		$extrafieldkey=$object->element;
 
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
-			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
-			$object->fetch_optionals($object->id,$extralabels);
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
+		$object->fetch_optionals($object->id,$extralabels);
 
-			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
-		}
-
+		$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
+		
 		return $resarray;
 	}
 
@@ -185,39 +182,50 @@ class doc_generic_project_odt extends ModelePDFProjects
 	function get_substitutionarray_project_contacts($contact,$outputlangs)
 	{
 		global $conf;
+		$pc='projcontacts_'; // prefix to avoid typos
 
-		// adding phone numbers if external
-		$phone_pro = '';
-		$phone_perso = '';
-		$phone_mobile = '';
+		$ret = array(
+			$pc.'id'=>$contact['id'],
+			$pc.'rowid'=>$contact['rowid'],
+			$pc.'role'=>$contact['libelle'],
+			$pc.'lastname'=>$contact['lastname'],
+			$pc.'firstname'=>$contact['firstname'],
+			$pc.'civility'=>$contact['civility'],
+			$pc.'fullcivname'=>$contact['fullname'],
+			$pc.'socname'=>$contact['socname'],
+			$pc.'email'=>$contact['email']
+			);
 
-		$ct = new Contact($this->db);
 		if ($contact['source']=='external') {
+			$ret[$pc.'isInternal'] = ''; // not internal
+			
 			$ct = new Contact($this->db);
 			$ct->fetch($contact['id']);
-			$phone_pro = $ct->phone_pro;
-			$phone_perso = $ct->phone_perso;
-			$phone_mobile = $ct->phone_mobile;
+			$ret[$pc.'phone_pro'] = $ct->phone_pro;
+			$ret[$pc.'phone_perso'] = $ct->phone_perso;
+			$ret[$pc.'phone_mobile'] = $ct->phone_mobile;
+			
+			// fetch external user extrafields
+			require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+			$extrafields=new ExtraFields($this->db);
+			$extralabels=$extrafields->fetch_name_optionals_label($ct->table_element, true);
+			$extrafields_num = $ct->fetch_optionals($ct->id, $extralabels);
+			//dol_syslog(get_class($this)."::get_substitutionarray_project_contacts: ===== Number of Extrafields found: ".$extrafields_num, LOG_DEBUG);
+			foreach($ct->array_options as $efkey => $efval) {
+				dol_syslog(get_class($this)."::get_substitutionarray_project_contacts: +++++ Extrafield ".$efkey." => ".$efval, LOG_DEBUG);
+				$ret[$pc.$efkey] = $efval; // add nothing else because it already comes as 'options_XX'
+			}
 		} elseif ($contact['source']=='internal') {
+			$ret[$pc.'isInternal'] = '1'; // this is an internal user
+		
 			$ct = new User($this->db);
 			$ct->fetch($contact['id']);
-			$phone_pro = $ct->office_phone;
-			$phone_mobile = $ct->user_mobile;
+			$ret[$pc.'phone_pro'] = $ct->office_phone;
+			$ret[$pc.'phone_perso'] = '';
+			$ret[$pc.'phone_mobile'] = $ct->user_mobile;
+			// do internal users have extrafields ?
 		}
-
-		return array(
-		'projcontacts_id'=>$contact['id'],
-		'projcontacts_rowid'=>$contact['rowid'],
-		'projcontacts_role'=>$contact['libelle'],
-		'projcontacts_lastname'=>$contact['lastname'],
-		'projcontacts_firstname'=>$contact['firstname'],
-		'projcontacts_fullcivname'=>$contact['fullname'],
-		'projcontacts_socname'=>$contact['socname'],
-		'projcontacts_email'=>$contact['email'],
-		'projcontacts_phone_pro'=>$phone_pro,
-		'projcontacts_phone_perso'=>$phone_perso,
-		'projcontacts_phone_mobile'=>$phone_mobile
-		);
+		return $ret;
 	}
 
 	/**

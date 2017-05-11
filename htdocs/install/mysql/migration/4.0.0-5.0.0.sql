@@ -33,6 +33,8 @@ UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHE
 ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
 UPDATE llx_product_lot SET entity = 1 WHERE entity IS NULL;
 
+ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);	
+
 ALTER TABLE llx_societe ALTER COLUMN fk_stcomm SET DEFAULT 0;
 
 ALTER TABLE llx_c_actioncomm ADD COLUMN picto varchar(48);
@@ -162,6 +164,7 @@ ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
 
 
 ALTER TABLE llx_facturedet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
+ALTER TABLE llx_facturedet_rec ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_facture_fourn_det ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_commandedet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;

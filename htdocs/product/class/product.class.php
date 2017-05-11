@@ -4062,7 +4062,7 @@ class Product extends CommonObject
 						$relativefile=preg_replace('/^\//', '', $pdir.$photo);
 						if (empty($nolink)) 
 						{
-						    $urladvanced=getAdvancedPreviewUrl('product', $relativefile);
+						    $urladvanced=getAdvancedPreviewUrl('product', $relativefile, 0, 'entity='.$this->entity);
 						    if ($urladvanced) $return.='<a href="'.$urladvanced.'">';
 						    else $return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
 						}
