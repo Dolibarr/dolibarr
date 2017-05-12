@@ -143,7 +143,7 @@ class ProjectStats extends Stats
 		if (! empty($this->socid))
 			$sqlwhere[] = ' t.fk_soc=' . $this->socid;
 		if (! empty($this->year) && empty($this->yearmonth))
-			$sqlwhere[] = " date_format(t.datec,'%Y')='" . $this->year . "'";
+			$sqlwhere[] = " date_format(t.datec,'%Y')='" . $this->db->escape($this->year) . "'";
 		if (! empty($this->yearmonth))
 			$sqlwhere[] = " t.datec BETWEEN '" . $this->db->idate(dol_get_first_day($this->yearmonth)) . "' AND '" . $this->db->idate(dol_get_last_day($this->yearmonth)) . "'";
 

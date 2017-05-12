@@ -183,7 +183,7 @@ class ExpenseReport extends CommonObject
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
             $this->ref='(PROV'.$this->id.')';
 
-            $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET ref='".$this->ref."' WHERE rowid=".$this->id;
+            $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
             $resql=$this->db->query($sql);
             if (!$resql) $error++;
 
@@ -1078,7 +1078,7 @@ class ExpenseReport extends CommonObject
 			$this->db->begin();
 			
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->ref."', fk_statut = 2, fk_user_valid = ".$fuser->id.", date_valid='".$this->db->idate($now)."'";
+            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 2, fk_user_valid = ".$fuser->id.", date_valid='".$this->db->idate($now)."'";
             if ($update_number_int) {
                 $sql.= ", ref_number_int = ".$ref_number_int;
             }
@@ -1189,8 +1189,8 @@ class ExpenseReport extends CommonObject
 			$this->db->begin();
 			
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->ref."', fk_statut = 5, fk_user_approve = ".$fuser->id.",";
-            $sql.= " date_approve='".$this->date_approve."'";
+            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 5, fk_user_approve = ".$fuser->id.",";
+            $sql.= " date_approve='".$this->db->idate($this->date_approve)."'";
             $sql.= ' WHERE rowid = '.$this->id;
             if ($this->db->query($sql))
             {
@@ -1248,7 +1248,7 @@ class ExpenseReport extends CommonObject
         if ($this->fk_statut != 99)
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->ref."', fk_statut = 99, fk_user_refuse = ".$fuser->id.",";
+            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 99, fk_user_refuse = ".$fuser->id.",";
             $sql.= " date_refuse='".$this->db->idate($now)."',";
             $sql.= " detail_refuse='".$this->db->escape($details)."',";
             $sql.= " fk_user_approve = NULL";
@@ -1373,7 +1373,7 @@ class ExpenseReport extends CommonObject
 			
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET fk_statut = 4, fk_user_cancel = ".$fuser->id;
-            $sql.= ", date_cancel='".$this->date_cancel."'";
+            $sql.= ", date_cancel='".$this->db->idate($this->date_cancel)."'";
             $sql.= " ,detail_cancel='".$this->db->escape($detail)."'";
             $sql.= ' WHERE rowid = '.$this->id;
 
@@ -2154,8 +2154,8 @@ class ExpenseReportLine
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport_det SET";
         $sql.= " comments='".$this->db->escape($this->comments)."'";
-        $sql.= ",value_unit=".$this->value_unit."";
-        $sql.= ",qty=".$this->qty."";
+        $sql.= ",value_unit=".$this->value_unit;
+        $sql.= ",qty=".$this->qty;
         $sql.= ",date='".$this->db->idate($this->date)."'";
         $sql.= ",total_ht=".$this->total_ht."";
         $sql.= ",total_tva=".$this->total_tva."";

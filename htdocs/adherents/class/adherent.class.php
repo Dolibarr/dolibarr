@@ -345,7 +345,7 @@ class Adherent extends CommonObject
                 {
                     // Add link to user
                     $sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-                    $sql.= " fk_member = '".$this->id."'";
+                    $sql.= " fk_member = ".$this->id;
                     $sql.= " WHERE rowid = ".$this->user_id;
                     dol_syslog(get_class($this)."::create", LOG_DEBUG);
                     $resql = $this->db->query($sql);
@@ -1099,7 +1099,7 @@ class Adherent extends CommonObject
         elseif ($ref || $fk_soc) {
         	$sql.= " AND d.entity IN (".getEntity().")";
         	if ($ref) $sql.= " AND d.rowid='".$this->db->escape($ref)."'";
-        	elseif ($fk_soc) $sql.= " AND d.fk_soc='".$fk_soc."'";
+        	elseif ($fk_soc > 0) $sql.= " AND d.fk_soc=".$fk_soc;
         }
         elseif ($ref_ext)
         {

@@ -148,18 +148,19 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
         {
             if (preg_match('/\/htdocs\/includes\//', $file['fullname'])) continue;
             if (preg_match('/\/htdocs\/custom\//', $file['fullname'])) continue;
-            if (preg_match('/\/htdocs\/nltechno/', $file['fullname'])) continue;
             if (preg_match('/\/htdocs\/dolimed/', $file['fullname'])) continue;
+            if (preg_match('/\/htdocs\/nltechno/', $file['fullname'])) continue;
+            if (preg_match('/\/htdocs\/teclib/', $file['fullname'])) continue;
             
             print 'Check php file '.$file['fullname']."\n";
             $filecontent=file_get_contents($file['fullname']);
             
             $ok=true;
             $matches=array();
-            preg_match_all('/=\'".\$this->(..)/', $filecontent, $matches, PREG_SET_ORDER);
+            preg_match_all('/=\s*\'"\s*\.\s*\$this->(....)/', $filecontent, $matches, PREG_SET_ORDER);
             foreach($matches as $key => $val)
             {
-                if ($val[1] != 'db') 
+                if ($val[1] != 'db->' && $val[1] != 'esca') 
                 {
                     $ok=false;
                     break;
@@ -167,7 +168,7 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
                 //if ($reg[0] != 'db') $ok=false;
             }
             //print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-            $this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['fullname'].'. Bad.');
+            $this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['fullname'].' ('.$val[0].'). Bad.');
             //exit;
         }
 

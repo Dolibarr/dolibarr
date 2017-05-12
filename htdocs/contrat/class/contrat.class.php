@@ -2801,10 +2801,10 @@ class ContratLigne extends CommonObjectLine
 		$sql.= " tva_tx=".price2num($this->tva_tx).",";
 		$sql.= " localtax1_tx=".price2num($this->localtax1_tx).",";
 		$sql.= " localtax2_tx=".price2num($this->localtax2_tx).",";
-		$sql.= " qty='".$this->qty."',";
+		$sql.= " qty=".price2num($this->qty).",";
 		$sql.= " remise_percent=".price2num($this->remise_percent).",";
-		$sql.= " remise=".($this->remise?"'".$this->remise."'":"null").",";
-		$sql.= " fk_remise_except=".($this->fk_remise_except?"'".$this->fk_remise_except."'":"null").",";
+		$sql.= " remise=".($this->remise?price2num($this->remise):"null").",";
+		$sql.= " fk_remise_except=".($this->fk_remise_except > 0?$this->fk_remise_except:"null").",";
 		$sql.= " subprice=".($this->subprice != '' ? $this->subprice : "null").",";
 		$sql.= " price_ht=".($this->price_ht != '' ? $this->price_ht : "null").",";
 		$sql.= " total_ht=".$this->total_ht.",";
@@ -2818,8 +2818,8 @@ class ContratLigne extends CommonObjectLine
 		$sql.= " fk_user_author=".($this->fk_user_author >= 0?$this->fk_user_author:"NULL").",";
 		$sql.= " fk_user_ouverture=".($this->fk_user_ouverture > 0?$this->fk_user_ouverture:"NULL").",";
 		$sql.= " fk_user_cloture=".($this->fk_user_cloture > 0?$this->fk_user_cloture:"NULL").",";
-		$sql.= " commentaire='".$this->db->escape($this->commentaire)."'";
-		$sql.= ", fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql.= " commentaire='".$this->db->escape($this->commentaire)."',";
+		$sql.= " fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
 		$sql.= " WHERE rowid=".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

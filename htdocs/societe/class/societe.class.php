@@ -841,7 +841,7 @@ class Societe extends CommonObject
             $sql .= ",fk_effectif = ".(! empty($this->effectif_id)?"'".$this->db->escape($this->effectif_id)."'":"null");
             if (isset($this->stcomm_id))
             {
-                $sql .= ",fk_stcomm='".$this->stcomm_id."'";
+                $sql .= ",fk_stcomm=".($this->stcomm_id > 0 ? $this->stcomm_id : "null");
             }
             $sql .= ",fk_typent = ".(! empty($this->typent_id)?"'".$this->db->escape($this->typent_id)."'":"0");
 
@@ -859,7 +859,7 @@ class Societe extends CommonObject
             $sql .= ",default_lang = ".(! empty($this->default_lang)?"'".$this->db->escape($this->default_lang)."'":"null");
             $sql .= ",logo = ".(! empty($this->logo)?"'".$this->db->escape($this->logo)."'":"null");
             $sql .= ",outstanding_limit= ".($this->outstanding_limit!=''?$this->outstanding_limit:'null');
-            $sql .= ",fk_prospectlevel='".$this->fk_prospectlevel."'";
+            $sql .= ",fk_prospectlevel='".$this->db->escape($this->fk_prospectlevel)."'";
 
             $sql .= ",webservices_url = ".(! empty($this->webservices_url)?"'".$this->db->escape($this->webservices_url)."'":"null");
             $sql .= ",webservices_key = ".(! empty($this->webservices_key)?"'".$this->db->escape($this->webservices_key)."'":"null");
@@ -2080,7 +2080,7 @@ class Societe extends CommonObject
 
         $sql = "SELECT rowid, email, statut, phone_mobile, lastname, poste, firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
-        $sql.= " WHERE fk_soc = '".$this->id."'";
+        $sql.= " WHERE fk_soc = ".$this->id;
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -2140,7 +2140,7 @@ class Societe extends CommonObject
     {
         $contacts = array();
 
-        $sql = "SELECT rowid, lastname, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '".$this->id."'";
+        $sql = "SELECT rowid, lastname, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$this->id;
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -2173,7 +2173,7 @@ class Societe extends CommonObject
         require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
         $contacts = array();
 
-        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '".$this->id."'";
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$this->id;
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -3157,7 +3157,7 @@ class Societe extends CommonObject
     {
     	$sql  = "SELECT t.localtax1, t.localtax2";
     	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-    	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
+    	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
     	$sql .= " AND t.active = 1";
     	if (empty($localTaxNum))   $sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";
     	elseif ($localTaxNum == 1) $sql .= " AND t.localtax1_type <> '0'";
@@ -3181,7 +3181,7 @@ class Societe extends CommonObject
     {
         $sql  = "SELECT t.rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-        $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
+        $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
         $sql .= " AND t.active = 1 AND t.recuperableonly = 1";
 
         dol_syslog("useNPR", LOG_DEBUG);
@@ -3202,7 +3202,7 @@ class Societe extends CommonObject
     {
 		$sql  = "SELECT COUNT(*) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r, ".MAIN_DB_PREFIX."c_country as c";
-		$sql .= " WHERE r.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
+		$sql .= " WHERE r.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
 		$sql .= " AND r.active = 1";
 
 		dol_syslog("useRevenueStamp", LOG_DEBUG);

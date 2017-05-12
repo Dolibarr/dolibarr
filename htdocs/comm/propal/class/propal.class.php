@@ -1021,7 +1021,7 @@ class Propal extends CommonObject
                 {
                     $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
                     $sql.= " SET fk_delivery_address = ".$this->fk_delivery_address;
-                    $sql.= " WHERE ref = '".$this->ref."'";
+                    $sql.= " WHERE ref = '".$this->db->escape($this->ref)."'";
                     $sql.= " AND entity = ".$conf->entity;
 
                     $result=$this->db->query($sql);

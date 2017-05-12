@@ -189,9 +189,9 @@ class Categorie extends CommonObject
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		if ($id)
+		if ($id > 0)
 		{
-			$sql.= " WHERE rowid = '".$id."'";
+			$sql.= " WHERE rowid = ".$id;
 		}
 		else
 		{
@@ -399,7 +399,7 @@ class Categorie extends CommonObject
 		{
 			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');
 		}
-		$sql .= ", visible = '".$this->visible."'";
+		$sql .= ", visible = '".$this->db->escape($this->visible)."'";
 		$sql .= ", fk_parent = ".$this->fk_parent;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -1670,7 +1670,7 @@ class Categorie extends CommonObject
 	                $sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
 	                $sql2.= " SET label='".$this->db->escape($this->label)."',";
 	                $sql2.= " description='".$this->db->escape($this->description)."'";
-	                $sql2.= " WHERE fk_category=".$this->id." AND lang='".$key."'";
+	                $sql2.= " WHERE fk_category=".$this->id." AND lang='".$this->db->escape($key)."'";
 	            }
 	            else
 	            {
@@ -1692,7 +1692,7 @@ class Categorie extends CommonObject
 	                $sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
 	                $sql2.= " SET label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
 	                $sql2.= " description='".$this->db->escape($this->multilangs["$key"]["description"])."'";
-	                $sql2.= " WHERE fk_category=".$this->id." AND lang='".$key."'";
+	                $sql2.= " WHERE fk_category=".$this->id." AND lang='".$this->db->escape($key)."'";
 	            }
 	            else
 	            {

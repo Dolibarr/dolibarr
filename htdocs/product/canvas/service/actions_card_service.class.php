@@ -248,7 +248,7 @@ class ActionsCardService
 
 		$sql = "SELECT rowid, name, alias, title, align, sort, search, enabled, rang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
-		$sql.= " WHERE element = '".$this->fieldListName."'";
+		$sql.= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " ORDER BY rang ASC";
 

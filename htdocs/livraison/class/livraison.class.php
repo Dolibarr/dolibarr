@@ -263,7 +263,7 @@ class Livraison extends CommonObject
         $sql.= ', l.fk_incoterms, l.location_incoterms';
         $sql.= ", i.libelle as libelle_incoterms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->element."'";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON l.fk_incoterms = i.rowid';
 		$sql.= " WHERE l.rowid = ".$id;
 

@@ -701,8 +701,8 @@ class Account extends CommonObject
         $sql.= ",clos = ".$this->clos;
         $sql.= ",rappro = ".$this->rappro;
         $sql.= ",url = ".($this->url?"'".$this->url."'":"null");
-        $sql.= ",account_number = '".$this->account_number."'";
-		$sql.= ",fk_accountancy_journal = '".$this->fk_accountancy_journal."'";
+        $sql.= ",account_number = '".$this->db->escape($this->account_number)."'";
+		$sql.= ",fk_accountancy_journal = '".$this->db->escape($this->fk_accountancy_journal)."'";
 
 		$sql.= ",bank  = '".$this->db->escape($this->bank)."'";
         $sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
@@ -1858,7 +1858,7 @@ class AccountLine extends CommonObject
         
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
         $sql.= " rappro = 1";
-        $sql.= ", num_releve = '".$this->num_releve."'";
+        $sql.= ", num_releve = '".$this->db->escape($this->num_releve)."'";
         $sql.= ", fk_user_rappro = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
