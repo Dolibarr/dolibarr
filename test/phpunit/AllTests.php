@@ -106,7 +106,7 @@ class AllTests
         require_once dirname(__FILE__).'/CodingSqlTest.php';
         $suite->addTestSuite('CodingSqlTest');
         require_once dirname(__FILE__).'/CodingPhpTest.php';
-        $suite->addTestSuite('PhpTest');
+        $suite->addTestSuite('CodingPhpTest');
         
         require_once dirname(__FILE__).'/SecurityTest.php';
         $suite->addTestSuite('SecurityTest');
