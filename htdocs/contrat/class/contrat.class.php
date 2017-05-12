@@ -2606,9 +2606,9 @@ class ContratLigne extends CommonObjectLine
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
-		$sql.= " fk_contrat='".$this->fk_contrat."',";
+		$sql.= " fk_contrat=".$this->fk_contrat.",";
 		$sql.= " fk_product=".($this->fk_product?"'".$this->fk_product."'":'null').",";
-		$sql.= " statut='".$this->statut."',";
+		$sql.= " statut=".$this->statut.",";
 		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " description='".$this->db->escape($this->description)."',";
 		$sql.= " date_commande=".($this->date_commande!=''?"'".$this->db->idate($this->date_commande)."'":"null").",";
@@ -2616,23 +2616,23 @@ class ContratLigne extends CommonObjectLine
 		$sql.= " date_ouverture=".($this->date_ouverture!=''?"'".$this->db->idate($this->date_ouverture)."'":"null").",";
 		$sql.= " date_fin_validite=".($this->date_fin_validite!=''?"'".$this->db->idate($this->date_fin_validite)."'":"null").",";
 		$sql.= " date_cloture=".($this->date_cloture!=''?"'".$this->db->idate($this->date_cloture)."'":"null").",";
-		$sql.= " tva_tx='".$this->tva_tx."',";
-		$sql.= " localtax1_tx='".$this->localtax1_tx."',";
-		$sql.= " localtax2_tx='".$this->localtax2_tx."',";
-		$sql.= " qty='".$this->qty."',";
-		$sql.= " remise_percent='".$this->remise_percent."',";
+		$sql.= " tva_tx=".$this->tva_tx.",";
+		$sql.= " localtax1_tx=".$this->localtax1_tx.",";
+		$sql.= " localtax2_tx=".$this->localtax2_tx.",";
+		$sql.= " qty=".$this->qty.",";
+		$sql.= " remise_percent=".$this->remise_percent.",";
 		$sql.= " remise=".($this->remise?"'".$this->remise."'":"null").",";
 		$sql.= " fk_remise_except=".($this->fk_remise_except?"'".$this->fk_remise_except."'":"null").",";
 		$sql.= " subprice=".($this->subprice != '' ? $this->subprice : "null").",";
 		$sql.= " price_ht=".($this->price_ht != '' ? $this->price_ht : "null").",";
-		$sql.= " total_ht='".$this->total_ht."',";
-		$sql.= " total_tva='".$this->total_tva."',";
-		$sql.= " total_localtax1='".$this->total_localtax1."',";
-		$sql.= " total_localtax2='".$this->total_localtax2."',";
-		$sql.= " total_ttc='".$this->total_ttc."',";
+		$sql.= " total_ht=".$this->total_ht.",";
+		$sql.= " total_tva=".$this->total_tva.",";
+		$sql.= " total_localtax1=".$this->total_localtax1.",";
+		$sql.= " total_localtax2=".$this->total_localtax2.",";
+		$sql.= " total_ttc=".$this->total_ttc.",";
 		$sql.= " fk_product_fournisseur_price=".(!empty($this->fk_fournprice)?$this->fk_fournprice:"NULL").",";
 		$sql.= " buy_price_ht='".price2num($this->pa_ht)."',";
-		$sql.= " info_bits='".$this->info_bits."',";
+		$sql.= " info_bits='".$this->db->escape($this->info_bits)."',";
 		$sql.= " fk_user_author=".($this->fk_user_author >= 0?$this->fk_user_author:"NULL").",";
 		$sql.= " fk_user_ouverture=".($this->fk_user_ouverture > 0?$this->fk_user_ouverture:"NULL").",";
 		$sql.= " fk_user_cloture=".($this->fk_user_cloture > 0?$this->fk_user_cloture:"NULL").",";

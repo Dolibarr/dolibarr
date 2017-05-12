@@ -216,7 +216,7 @@ class ChargeSociales extends CommonObject
         // Delete payments
         if (! $error)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge where fk_charge='".$this->id."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge where fk_charge=".$this->id;
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
@@ -228,7 +228,7 @@ class ChargeSociales extends CommonObject
 
         if (! $error)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales where rowid='".$this->id."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales where rowid=".$this->id;
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)

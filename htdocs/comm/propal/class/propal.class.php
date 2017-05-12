@@ -911,7 +911,7 @@ class Propal extends CommonObject
             if ($this->id)
             {
                 $this->ref='(PROV'.$this->id.')';
-                $sql = 'UPDATE '.MAIN_DB_PREFIX."propal SET ref='".$this->ref."' WHERE rowid=".$this->id;
+                $sql = 'UPDATE '.MAIN_DB_PREFIX."propal SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
 
                 dol_syslog(get_class($this)."::create", LOG_DEBUG);
                 $resql=$this->db->query($sql);
@@ -3443,14 +3443,14 @@ class PropaleLigne  extends CommonObjectLine
         $sql.= " , tva_tx='".price2num($this->tva_tx)."'";
         $sql.= " , localtax1_tx=".price2num($this->localtax1_tx);
         $sql.= " , localtax2_tx=".price2num($this->localtax2_tx);
-		$sql.= " , localtax1_type='".$this->localtax1_type."'";
-		$sql.= " , localtax2_type='".$this->localtax2_type."'";
+		$sql.= " , localtax1_type='".$this->db->escape($this->localtax1_type)."'";
+		$sql.= " , localtax2_type='".$this->db->escape($this->localtax2_type)."'";
         $sql.= " , qty='".price2num($this->qty)."'";
         $sql.= " , subprice=".price2num($this->subprice)."";
         $sql.= " , remise_percent=".price2num($this->remise_percent)."";
         $sql.= " , price=".price2num($this->price)."";					// TODO A virer
         $sql.= " , remise=".price2num($this->remise)."";				// TODO A virer
-        $sql.= " , info_bits='".$this->info_bits."'";
+        $sql.= " , info_bits='".$this->db->escape($this->info_bits)."'";
         if (empty($this->skip_update_total))
         {
             $sql.= " , total_ht=".price2num($this->total_ht)."";
