@@ -487,7 +487,7 @@ class Expedition extends CommonObject
         $sql.= ', e.fk_incoterms, e.location_incoterms';
         $sql.= ', i.libelle as libelle_incoterms';
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->element."'";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
 		$sql.= " WHERE e.entity IN (".getEntity('expedition', 1).")";
 		if ($id)   	  $sql.= " AND e.rowid=".$id;
@@ -1753,10 +1753,10 @@ class Expedition extends CommonObject
         else
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode SET";
-            $sql.= " code='".$this->update['code']."'";
-            $sql.= ",libelle='".$this->update['libelle']."'";
-            $sql.= ",description='".$this->update['description']."'";
-            $sql.= ",tracking='".$this->update['tracking']."'";
+            $sql.= " code='".$this->db->escape($this->update['code'])."'";
+            $sql.= ",libelle='".$this->db->escape($this->update['libelle'])."'";
+            $sql.= ",description='".$this->db->escape($this->update['description'])."'";
+            $sql.= ",tracking='".$this->db->escape($this->update['tracking'])."'";
             $sql.= " WHERE rowid=".$id;
             $resql = $this->db->query($sql);
         }

@@ -100,11 +100,14 @@ class AllTests
         require_once dirname(__FILE__).'/XCalLibTest.php';
         $suite->addTestSuite('XCalLibTest');
 
+        // Rules into source files content
         require_once dirname(__FILE__).'/LangTest.php';
         $suite->addTestSuite('LangTest');
-        require_once dirname(__FILE__).'/SqlTest.php';
-        $suite->addTestSuite('SqlTest');
-
+        require_once dirname(__FILE__).'/CodingSqlTest.php';
+        $suite->addTestSuite('CodingSqlTest');
+        require_once dirname(__FILE__).'/CodingPhpTest.php';
+        $suite->addTestSuite('PhpTest');
+        
         require_once dirname(__FILE__).'/SecurityTest.php';
         $suite->addTestSuite('SecurityTest');
 

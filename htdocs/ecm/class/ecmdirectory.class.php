@@ -202,7 +202,7 @@ class EcmDirectory // extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
 		$sql.= " label='".$this->db->escape($this->label)."',";
-		$sql.= " fk_parent='".$this->fk_parent."',";
+		$sql.= " fk_parent='".$this->db->escape($this->fk_parent)."',";
 		$sql.= " description='".$this->db->escape($this->description)."'";
 		$sql.= " WHERE rowid=".$this->id;
 

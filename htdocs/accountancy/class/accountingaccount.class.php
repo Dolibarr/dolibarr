@@ -251,12 +251,12 @@ class AccountingAccount extends CommonObject
 		$sql .= " SET fk_pcg_version = " . ($this->fk_pcg_version ? "'" . $this->db->escape($this->fk_pcg_version) . "'" : "null");
 		$sql .= " , pcg_type = " . ($this->pcg_type ? "'" . $this->db->escape($this->pcg_type) . "'" : "null");
 		$sql .= " , pcg_subtype = " . ($this->pcg_subtype ? "'" . $this->db->escape($this->pcg_subtype) . "'" : "null");
-		$sql .= " , account_number = '" . $this->account_number . "'";
-		$sql .= " , account_parent = '" . $this->account_parent . "'";
+		$sql .= " , account_number = '" . $this->db->escape($this->account_number) . "'";
+		$sql .= " , account_parent = '" . $this->db->escape($this->account_parent) . "'";
 		$sql .= " , label = " . ($this->label ? "'" . $this->db->escape($this->label) . "'" : "null");
-		$sql .= " , fk_accounting_category = '" . $this->account_category . "'";
+		$sql .= " , fk_accounting_category = '" . $this->db->escape($this->account_category) . "'";
 		$sql .= " , fk_user_modif = " . $user->id;
-		$sql .= " , active = '" . $this->active . "'";
+		$sql .= " , active = " . $this->active;
 		$sql .= " WHERE rowid = " . $this->id;
 		
 		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);

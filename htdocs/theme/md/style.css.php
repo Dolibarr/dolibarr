@@ -154,16 +154,19 @@ if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 
 
 // Set text color to black or white
+$colorbackhmenu1=join(',',colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
 $tmppart=explode(',',$colorbackhmenu1);
 $tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) $colortextbackhmenu='FFFFFF';
 else $colortextbackhmenu='000000';
 
+$colorbackvmenu1=join(',',colorStringToArray($colorbackvmenu1));    // Normalize value to 'x,y,z'
 $tmppart=explode(',',$colorbackvmenu1);
 $tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) { $colortextbackvmenu='FFFFFF'; }
 else { $colortextbackvmenu='000000'; }
 
+$colorbacktitle1=join(',',colorStringToArray($colorbacktitle1));    // Normalize value to 'x,y,z'
 $tmppart=explode(',',$colorbacktitle1);
 if ($colortexttitle == '')
 {
@@ -172,6 +175,7 @@ if ($colortexttitle == '')
 	else { $colortexttitle='101010'; $colorshadowtitle='FFFFFF'; }
 }
 
+$colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));    // Normalize value to 'x,y,z'
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) { $colortextbacktab='FFFFFF'; }

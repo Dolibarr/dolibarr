@@ -779,7 +779,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         global $conf;
         
         $sql = "SELECT tms FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
+        $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
         $sql.= " AND entity IN (0, ".$conf->entity.")";
         
         dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
@@ -805,7 +805,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         global $conf;
         
         $sql = "SELECT tms, note FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
+        $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
         $sql.= " AND entity IN (0, ".$conf->entity.")";
         
         dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
@@ -841,7 +841,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         $entity = ((! empty($this->always_enabled) || ! empty($this->core_enabled)) ? 0 : $conf->entity);
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
+        $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
         $sql.= " AND entity IN (0, ".$entity.")";
 
         dol_syslog(get_class($this)."::_active", LOG_DEBUG);
@@ -879,7 +879,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         $entity = ((! empty($this->always_enabled) || ! empty($this->core_enabled)) ? 0 : $conf->entity);
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
+        $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
         $sql.= " AND entity IN (0, ".$entity.")";
 
         dol_syslog(get_class($this)."::_unactive", LOG_DEBUG);
@@ -1520,7 +1520,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         // Test if module is activated
         $sql_del = "SELECT ".$this->db->decrypt('value')." as value";
         $sql_del.= " FROM ".MAIN_DB_PREFIX."const";
-        $sql_del.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
+        $sql_del.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
         $sql_del.= " AND entity IN (0,".$entity.")";
 
         dol_syslog(get_class($this)."::insert_permissions", LOG_DEBUG);
@@ -1655,7 +1655,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         $err=0;
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def";
-        $sql.= " WHERE module = '".$this->rights_class."'";
+        $sql.= " WHERE module = '".$this->db->escape($this->rights_class)."'";
         $sql.= " AND entity = ".$conf->entity;
         dol_syslog(get_class($this)."::delete_permissions", LOG_DEBUG);
         if (! $this->db->query($sql))

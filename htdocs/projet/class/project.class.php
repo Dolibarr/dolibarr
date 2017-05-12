@@ -1113,7 +1113,7 @@ class Project extends CommonObject
         // Get id of types of contacts for projects (This list never contains a lot of elements)
         $listofprojectcontacttype=array();
         $sql2 = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
-        $sql2.= " WHERE ctc.element = '" . $this->element . "'";
+        $sql2.= " WHERE ctc.element = '" . $this->db->escape($this->element) . "'";
         $sql2.= " AND ctc.source = 'internal'";
         $resql = $this->db->query($sql2);
         if ($resql)

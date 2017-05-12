@@ -701,21 +701,21 @@ class Account extends CommonObject
         $sql.= ",clos = ".$this->clos;
         $sql.= ",rappro = ".$this->rappro;
         $sql.= ",url = ".($this->url?"'".$this->url."'":"null");
-        $sql.= ",account_number = '".$this->account_number."'";
-		$sql.= ",fk_accountancy_journal = '".$this->fk_accountancy_journal."'";
+        $sql.= ",account_number = '".$this->db->escape($this->account_number)."'";
+		$sql.= ",fk_accountancy_journal = '".$this->db->escape($this->fk_accountancy_journal)."'";
 
 		$sql.= ",bank  = '".$this->db->escape($this->bank)."'";
-        $sql.= ",code_banque='".$this->code_banque."'";
-        $sql.= ",code_guichet='".$this->code_guichet."'";
-        $sql.= ",number='".$this->number."'";
-        $sql.= ",cle_rib='".$this->cle_rib."'";
-        $sql.= ",bic='".$this->bic."'";
-        $sql.= ",iban_prefix = '".$this->iban."'";
+        $sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
+        $sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
+        $sql.= ",number='".$this->db->escape($this->number)."'";
+        $sql.= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
+        $sql.= ",bic='".$this->db->escape($this->bic)."'";
+        $sql.= ",iban_prefix = '".$this->db->escape($this->iban)."'";
         $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
         $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
         $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 
-        $sql.= ",currency_code = '".$this->currency_code."'";
+        $sql.= ",currency_code = '".$this->db->escape($this->currency_code)."'";
 
         $sql.= ",min_allowed = ".($this->min_allowed != '' ? price2num($this->min_allowed) : "null");
         $sql.= ",min_desired = ".($this->min_desired != '' ? price2num($this->min_desired) : "null");
@@ -797,12 +797,12 @@ class Account extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
         $sql.= " bank  = '".$this->db->escape($this->bank)."'";
-        $sql.= ",code_banque='".$this->code_banque."'";
-        $sql.= ",code_guichet='".$this->code_guichet."'";
-        $sql.= ",number='".$this->number."'";
-        $sql.= ",cle_rib='".$this->cle_rib."'";
-        $sql.= ",bic='".$this->bic."'";
-        $sql.= ",iban_prefix = '".$this->iban."'";
+        $sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
+        $sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
+        $sql.= ",number='".$this->db->escape($this->number)."'";
+        $sql.= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
+        $sql.= ",bic='".$this->db->escape($this->bic)."'";
+        $sql.= ",iban_prefix = '".$this->db->escape($this->iban)."'";
         $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
         $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
         $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
@@ -1858,7 +1858,7 @@ class AccountLine extends CommonObject
         
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
         $sql.= " rappro = 1";
-        $sql.= ", num_releve = '".$this->num_releve."'";
+        $sql.= ", num_releve = '".$this->db->escape($this->num_releve)."'";
         $sql.= ", fk_user_rappro = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 

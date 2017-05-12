@@ -300,7 +300,7 @@ class FactureFournisseur extends CommonInvoice
 
             // Update ref with new one
             $this->ref='(PROV'.$this->id.')';
-            $sql = 'UPDATE '.MAIN_DB_PREFIX."facture_fourn SET ref='".$this->ref."' WHERE rowid=".$this->id;
+            $sql = 'UPDATE '.MAIN_DB_PREFIX."facture_fourn SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
 
             dol_syslog(get_class($this)."::create", LOG_DEBUG);
             $resql=$this->db->query($sql);
@@ -2559,8 +2559,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql.= ", tva_tx = ".price2num($this->tva_tx);
 		$sql.= ", localtax1_tx = ".price2num($this->localtax1_tx);
 		$sql.= ", localtax2_tx = ".price2num($this->localtax2_tx);
-		$sql.= ", localtax1_type = '".$this->localtax1_type."'";
-		$sql.= ", localtax2_type = '".$this->localtax2_type."'";
+		$sql.= ", localtax1_type = '".$this->db->escape($this->localtax1_type)."'";
+		$sql.= ", localtax2_type = '".$this->db->escape($this->localtax2_type)."'";
 		$sql.= ", total_ht = ".price2num($this->total_ht);
 		$sql.= ", tva= ".price2num($this->total_tva);
 		$sql.= ", total_localtax1= ".price2num($this->total_localtax1);

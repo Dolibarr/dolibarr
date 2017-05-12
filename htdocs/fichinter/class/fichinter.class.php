@@ -212,7 +212,7 @@ class Fichinter extends CommonObject
 			if ($this->id)
 			{
 				$this->ref='(PROV'.$this->id.')';
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."fichinter SET ref='".$this->ref."' WHERE rowid=".$this->id;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."fichinter SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
 
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
@@ -1375,7 +1375,7 @@ class FichinterLigne extends CommonObjectLine
 		$sql.= " description='".$this->db->escape($this->desc)."'";
 		$sql.= ",date='".$this->db->idate($this->datei)."'";
 		$sql.= ",duree=".$this->duration;
-		$sql.= ",rang='".$this->rang."'";
+		$sql.= ",rang='".$this->db->escape($this->rang)."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
 		dol_syslog("FichinterLigne::update", LOG_DEBUG);

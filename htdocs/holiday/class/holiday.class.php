@@ -546,12 +546,12 @@ class Holiday extends CommonObject
         }
        	$sql.= " halfday = ".$this->halfday.",";
         if(!empty($this->statut) && is_numeric($this->statut)) {
-            $sql.= " statut = '".$this->statut."',";
+            $sql.= " statut = ".$this->statut.",";
         } else {
             $error++;
         }
         if(!empty($this->fk_validator)) {
-            $sql.= " fk_validator = '".$this->fk_validator."',";
+            $sql.= " fk_validator = '".$this->db->escape($this->fk_validator)."',";
         } else {
             $error++;
         }
@@ -561,7 +561,7 @@ class Holiday extends CommonObject
             $sql.= " date_valid = NULL,";
         }
         if(!empty($this->fk_user_valid)) {
-            $sql.= " fk_user_valid = '".$this->fk_user_valid."',";
+            $sql.= " fk_user_valid = '".$this->db->escape($this->fk_user_valid)."',";
         } else {
             $sql.= " fk_user_valid = NULL,";
         }
@@ -571,7 +571,7 @@ class Holiday extends CommonObject
             $sql.= " date_refuse = NULL,";
         }
         if(!empty($this->fk_user_refuse)) {
-            $sql.= " fk_user_refuse = '".$this->fk_user_refuse."',";
+            $sql.= " fk_user_refuse = '".$this->db->escape($this->fk_user_refuse)."',";
         } else {
             $sql.= " fk_user_refuse = NULL,";
         }
@@ -581,7 +581,7 @@ class Holiday extends CommonObject
             $sql.= " date_cancel = NULL,";
         }
         if(!empty($this->fk_user_cancel)) {
-            $sql.= " fk_user_cancel = '".$this->fk_user_cancel."',";
+            $sql.= " fk_user_cancel = '".$this->db->escape($this->fk_user_cancel)."',";
         } else {
             $sql.= " fk_user_cancel = NULL,";
         }
@@ -591,7 +591,7 @@ class Holiday extends CommonObject
             $sql.= " detail_refuse = NULL";
         }
 
-        $sql.= " WHERE rowid= '".$this->id."'";
+        $sql.= " WHERE rowid= ".$this->id;
 
         $this->db->begin();
 

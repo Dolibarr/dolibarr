@@ -494,7 +494,7 @@ class Product extends CommonObject
 			$sql = "SELECT count(*) as nb";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product";
 			$sql.= " WHERE entity IN (".getEntity('product', 1).")";
-			$sql.= " AND ref = '" .$this->ref."'";
+			$sql.= " AND ref = '" .$this->db->escape($this->ref)."'";
 
 			$result = $this->db->query($sql);
 			if ($result)
@@ -1212,14 +1212,14 @@ class Product extends CommonObject
 					$sql2.= " label='".$this->db->escape($this->label)."',";
 					$sql2.= " description='".$this->db->escape($this->description)."'";
 					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.= ", note='".$this->db->escape($this->note)."'";
-					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$key."'";
+					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$this->db->escape($key)."'";
 				}
 				else
 				{
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description";
 					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.=", note";
 					$sql2.= ")";
-					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->label)."',";
+					$sql2.= " VALUES(".$this->id.",'".$this->db->escape($key)."','". $this->db->escape($this->label)."',";
 					$sql2.= " '".$this->db->escape($this->description)."'";
 					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.= ", '".$this->db->escape($this->note)."'";
 					$sql2.= ")";
@@ -1247,14 +1247,14 @@ class Product extends CommonObject
 					$sql2.= " label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
 					$sql2.= " description='".$this->db->escape($this->multilangs["$key"]["description"])."'";
 					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.= ", note='".$this->db->escape($this->multilangs["$key"]["note"])."'";
-					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$key."'";
+					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$this->db->escape($key)."'";
 				}
 				else
 				{
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description";
 					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.=", note";
 					$sql2.= ")";
-					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->multilangs["$key"]["label"])."',";
+					$sql2.= " VALUES(".$this->id.",'".$this->db->escape($key)."','". $this->db->escape($this->multilangs["$key"]["label"])."',";
 					$sql2.= " '".$this->db->escape($this->multilangs["$key"]["description"])."'";
 					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.= ", '".$this->db->escape($this->note)."'";
 					$sql2.= ")";
@@ -1944,7 +1944,7 @@ class Product extends CommonObject
 						$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
 						$sql.= " WHERE entity IN (".getEntity('productprice', 1).")";
 						$sql.= " AND price_level=".$i;
-						$sql.= " AND fk_product = '".$this->id."'";
+						$sql.= " AND fk_product = ".$this->id;
 						$sql.= " ORDER BY date_price DESC, rowid DESC";
 						$sql.= " LIMIT 1";
 						$resql = $this->db->query($sql);
@@ -1969,7 +1969,7 @@ class Product extends CommonObject
 							{
 								$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise";
 								$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
-								$sql.= " WHERE fk_product_price = '".$this->prices_by_qty_id[$i]."'";
+								$sql.= " WHERE fk_product_price = ".$this->prices_by_qty_id[$i];
 								$sql.= " ORDER BY quantity ASC";
 								$resultat=array();
 								$resql = $this->db->query($sql);
@@ -2006,7 +2006,7 @@ class Product extends CommonObject
 					$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 					$sql.= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
-					$sql.= " WHERE fk_product = '".$this->id."'";
+					$sql.= " WHERE fk_product = ".$this->id;
 					$sql.= " ORDER BY date_price DESC, rowid DESC";
 					$sql.= " LIMIT 1";
 					$resql = $this->db->query($sql);
@@ -2022,7 +2022,7 @@ class Product extends CommonObject
 						{
 							$sql = "SELECT rowid,price, unitprice, quantity, remise_percent, remise";
 							$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
-							$sql.= " WHERE fk_product_price = '".$this->prices_by_qty_id[0]."'";
+							$sql.= " WHERE fk_product_price = ".$this->prices_by_qty_id[0];
 							$sql.= " ORDER BY quantity ASC";
 							$resultat=array();
 							$resql = $this->db->query($sql);

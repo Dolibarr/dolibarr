@@ -178,7 +178,7 @@ class RemiseCheque extends CommonObject
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 				$sql.= " SET ref='(PROV".$this->id.")'";
-				$sql.= " WHERE rowid='".$this->id."';";
+				$sql.= " WHERE rowid=".$this->id."";
 
 				dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -308,7 +308,7 @@ class RemiseCheque extends CommonObject
 			if ( $this->errno === 0) {
 			    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 			    $sql.= " SET fk_bordereau = 0";
-			    $sql.= " WHERE fk_bordereau = '".$this->id."'";
+			    $sql.= " WHERE fk_bordereau = ".$this->id;
 
 			    $resql = $this->db->query($sql);
 			    if (!$resql)
