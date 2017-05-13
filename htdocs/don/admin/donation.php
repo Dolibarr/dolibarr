@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013-2016  Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2017  Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
  *
@@ -250,14 +250,12 @@ clearstatcache();
 
 $handle=opendir($dir);
 
-$var=True;
 if (is_resource($handle))
 {
 	while (($file = readdir($handle))!==false)
 	{
 		if (preg_match('/\.modules\.php$/i',$file))
 		{
-			$var = !$var;
 			$name = substr($file, 0, dol_strlen($file) -12);
 			$classname = substr($file, 0, dol_strlen($file) -12);
 
@@ -353,13 +351,11 @@ print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
 print '<td></td>';
 print "</tr>\n";
-$var=true;
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_DONATION_ACCOUNTINGACCOUNT" />';
 
-$var=! $var;
 print '<tr class="oddeven">';
 
 print '<td>';
@@ -383,7 +379,6 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_DONATION_MESSAGE" />';
 
-$var=! $var;
 print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("FreeTextOnDonations").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
 print '<textarea name="DONATION_MESSAGE" class="flat" cols="80">'.$conf->global->DONATION_MESSAGE.'</textarea>';
@@ -406,9 +401,8 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 	print '<tr class="liste_titre">';
 	print '<td colspan="3">' . $langs->trans('Parameters') . '</td>';
 	print "</tr>\n";
-
 	
-	print "<tr " . $bc[$var] . ">";
+	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART200") . '</td>';
 	if (! empty($conf->global->DONATION_ART200)) {
 		print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setart200&value=0">';
@@ -420,9 +414,8 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 		print '</a></td>';
 	}
 	print '</tr>';
-
 	
-	print "<tr " . $bc[$var] . ">";
+	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART238") . '</td>';
 	if (! empty($conf->global->DONATION_ART238)) {
 		print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setart238&value=0">';
@@ -434,9 +427,8 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 		print '</a></td>';
 	}
 	print '</tr>';
-
 	
-	print "<tr " . $bc[$var] . ">";
+	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART885") . '</td>';
 	if (! empty($conf->global->DONATION_ART885)) {
 		print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setart885&value=0">';
