@@ -918,6 +918,7 @@ td.showDragHandle {
 	display: table-cell;
 	border-right: 1px solid #d0d0d0;
 	box-shadow: 3px 0 6px -2px #eee;
+	background: rgb(<?php echo $colorbackvmenu1; ?>);
 }
 div.blockvmenulogo
 {
