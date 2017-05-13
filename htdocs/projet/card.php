@@ -892,13 +892,12 @@ elseif ($object->id > 0)
     
         // Date start - end
         print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-        print dol_print_date($object->date_start,'day');
-        $end=dol_print_date($object->date_end,'day');
-        if ($end) 
-        {
-            print ' - '.$end;
-            if ($object->hasDelay()) print img_warning($langs->trans('Late'));
-        }
+		$start = dol_print_date($object->date_start,'dayhour');
+		print ($start?$start:'?');
+		$end = dol_print_date($object->date_end,'dayhour');
+		print ' - ';
+		print ($end?$end:'?');
+		if ($object->hasDelay()) print img_warning("Late");
         print '</td></tr>';
     	     
         // Budget

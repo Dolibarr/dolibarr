@@ -72,7 +72,7 @@ if ($permission) {
 	$var=true;
 	if (empty($hideaddcontactforuser))
 	{
-		$var=!$var;
+		
 	?>
 	<form class="tagtr impair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
@@ -98,7 +98,7 @@ if ($permission) {
 
 	if (empty($hideaddcontactforthirdparty))
 	{
-		$var=!$var;
+		
 	?>
 
 	<form class="tagtr pair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
@@ -196,7 +196,9 @@ if ($permission) {
 				$userstatic->id=$tab[$i]['id'];
 				$userstatic->lastname=$tab[$i]['lastname'];
 				$userstatic->firstname=$tab[$i]['firstname'];
-				echo $userstatic->getNomUrl(1);
+				$userstatic->photo=$tab[$i]['photo'];
+				$userstatic->login=$tab[$i]['login'];
+				echo $userstatic->getNomUrl(-1);
 			}
 			if ($tab[$i]['source']=='external')
 			{

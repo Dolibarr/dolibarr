@@ -212,7 +212,7 @@ class Fichinter extends CommonObject
 			if ($this->id)
 			{
 				$this->ref='(PROV'.$this->id.')';
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."fichinter SET ref='".$this->ref."' WHERE rowid=".$this->id;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."fichinter SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
 
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
@@ -326,7 +326,7 @@ class Fichinter extends CommonObject
 	function fetch($rowid,$ref='')
 	{
 		$sql = "SELECT f.rowid, f.ref, f.description, f.fk_soc, f.fk_statut,";
-		$sql.= " f.datec, f.dateo, f.datee, f.datet,";
+		$sql.= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
 		$sql.= " f.date_valid as datev,";
 		$sql.= " f.tms as datem,";
 		$sql.= " f.duree, f.fk_projet, f.note_public, f.note_private, f.model_pdf, f.extraparams, fk_contrat";
@@ -360,6 +360,8 @@ class Fichinter extends CommonObject
 				$this->modelpdf     = $obj->model_pdf;
 				$this->fk_contrat	= $obj->fk_contrat;
 
+				$this->user_creation= $obj->fk_user_author;
+				
 				$this->extraparams	= (array) json_decode($obj->extraparams, true);
 
 				if ($this->statut == 0) $this->brouillon = 1;
@@ -537,7 +539,30 @@ class Fichinter extends CommonObject
 		}
 	}
 
-
+	/**
+	 *	Returns amount based on user thm
+	 *
+	 *	@return     float amount
+	 */
+	function getAmount() {
+		global $db;
+		
+		$amount = 0;
+		
+		$this->author = new User($db);
+		$this->author->fetch($this->user_creation);
+		
+		$thm = $this->author->thm;
+		
+		foreach($this->lines as &$line) {
+			
+			$amount+=$line->qty * $thm;
+			
+		}
+		
+		return $amount;
+	}
+	
 	/**
 	 *	Returns the label status
 	 *
@@ -1350,7 +1375,7 @@ class FichinterLigne extends CommonObjectLine
 		$sql.= " description='".$this->db->escape($this->desc)."'";
 		$sql.= ",date='".$this->db->idate($this->datei)."'";
 		$sql.= ",duree=".$this->duration;
-		$sql.= ",rang='".$this->rang."'";
+		$sql.= ",rang='".$this->db->escape($this->rang)."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
 		dol_syslog("FichinterLigne::update", LOG_DEBUG);

@@ -327,7 +327,7 @@ class FormMail extends Form
         	{
 	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
         	    $out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
-	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
 	        	$out.= ' &nbsp; ';
 	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 	        	$out.= ' &nbsp; ';
@@ -341,7 +341,7 @@ class FormMail extends Form
         	{
 	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
         	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put disabled on option, it is already on select and it makes chrome crazy.
-        	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+        	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
         	    $out.= ' &nbsp; ';
         	    $out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
         	    $out.= ' &nbsp; ';
@@ -527,26 +527,7 @@ class FormMail extends Form
         				{
         				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
         				}
-        				$out.= $form->multiselectarray("receiver", $tmparray, GETPOST("receiver"), null, null, null,null, "90%");
-        			}
-        			if (isset($this->withtosocid) && $this->withtosocid > 0) // deprecated. TODO Remove this. Instead, fill withto with array before calling method.
-        			{
-        			    dol_syslog("get_form was called with a deprecated way: ->withtosocid must not be defined, only ->withto", LOG_WARNING);
-        				$liste=array();
-        				$soc=new Societe($this->db);
-        				$soc->fetch($this->withtosocid);
-        				foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
-        				{
-        					$liste[$key]=$value;
-        				}
-        				if ($this->withtofree) $out.= " ".$langs->trans("or")." ";
-        			    // multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
-        				$tmparray = $liste;
-        				foreach($tmparray as $key => $val)
-        				{
-        				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
-        				}
-        				$out.= $form->multiselectarray("receiver", $liste, GETPOST("receiver"), null, null, null,null, "90%");
+        				$out.= $form->multiselectarray("receiver", $tmparray, GETPOST("receiver"), null, null, 'inline-block minwidth500', null, "");
         			}
         		}
         		$out.= "</td></tr>\n";
@@ -574,8 +555,7 @@ class FormMail extends Form
         				{
         				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
         				}
-        				//$out.= $form->selectarray("receivercc", $this->withtocc, GETPOST("receivercc"), 1, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
-        				$out.= $form->multiselectarray("receivercc", $tmparray, GETPOST("receivercc"), null, null, null,null, "90%");
+        				$out.= $form->multiselectarray("receivercc", $tmparray, GETPOST("receivercc"), null, null, 'inline-block minwidth500',null, "");
         			}
         		}
         		$out.= "</td></tr>\n";
@@ -1079,18 +1059,18 @@ class FormMail extends Form
 	}
 	
 	/**
-	 * Set substit array from object
+	 * Get list of substition keys available.
 	 * 
-	 * @param	string	$mode		'form', 'formwithlines', 'formforlines' or 'emailing'
+	 * @param	string	$mode		'formemail', 'formemailwithlines', 'formemailforlines', 'emailing', ...
 	 * @return	void
 	 */
-	function getAvailableSubstitKey($mode='form')
+	static function getAvailableSubstitKey($mode='formemail')
 	{
-		global $conf;
+		global $conf, $langs;
 		
 		$vars=array();
 		
-		if ($mode == 'form' || $mode == 'formwithlines' || $mode == 'formforlines')
+		if ($mode == 'formemail' || $mode == 'formemailwithlines' || $mode == 'formemailforlines')
 		{
 			$vars=array(
 				'__REF__', 
@@ -1153,6 +1133,15 @@ class FormMail extends Form
 				$vars['__SECUREKEYPAYPAL_MEMBER__']='';
 			}
 		}
+		
+		$tmparray=array();
+		$parameters=array('mode'=>$mode);
+		complete_substitutions_array($tmparray, $langs, null, $parameters);
+		foreach($tmparray as $key => $val)
+		{
+		    $vars[$key]=$key;
+		}
+		
 		return $vars;
 	}
 

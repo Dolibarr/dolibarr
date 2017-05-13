@@ -1670,7 +1670,7 @@ else
 
             // Zip / Town
             print '<tr><td>'.fieldLabel('Zip','zipcode').'</td><td>';
-            print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+            print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth50onsmartphone');
             print '</td><td>'.fieldLabel('Town','town').'</td><td>';
             print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
             print '</td></tr>';
@@ -1743,7 +1743,7 @@ else
             //TODO: Place into a function to control showing by country or study better option
             if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
             {
-                print '<tr><td>'.fieldLabel($langs->transcountry("LocalTax1IsUsed",$mysoc->country_code),'localtax1assuj_value').'</td><td colspan="3">';
+                print '<tr><td>'.fieldLabel($langs->transcountry("LocalTax1IsUsed",$mysoc->country_code),'localtax1assuj_value').'</td><td>';
                 print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
                 if(! isOnlyOneLocalTax(1))
                 {
@@ -1752,7 +1752,7 @@ else
                     print '</span>';
                 }
             
-                print '</td><td>'.fieldLabel($langs->transcountry("LocalTax2IsUsed",$mysoc->country_code),'localtax2assuj_value').'</td><td colspan="3">';
+                print '</td><td>'.fieldLabel($langs->transcountry("LocalTax2IsUsed",$mysoc->country_code),'localtax2assuj_value').'</td><td>';
                 print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
                 if  (! isOnlyOneLocalTax(2))
                 {
@@ -2346,7 +2346,7 @@ else
         if (! empty($conf->adherent->enabled))
         {
             $langs->load("members");
-            print '<tr><td class="tdtop">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+            print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
             print '<td colspan="3">';
             $adh=new Adherent($db);
             $result=$adh->fetch('','',$object->id);
@@ -2357,7 +2357,7 @@ else
             }
             else
             {
-                print $langs->trans("ThirdpartyNotLinkedToMember");
+                print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
             }
             print '</td>';
             print "</tr>\n";

@@ -89,13 +89,13 @@ if ($rowid)
     $caneditfieldmember=$user->rights->adherent->creer;
 }
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('subscription'));
+
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
-
-
-
 
 /*
  * 	Actions
@@ -821,12 +821,10 @@ if ($rowid > 0)
             }
             print "</tr>\n";
 
-            $var=True;
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
-                $var=!$var;
-                print "<tr ".$bc[$var].">";
+                print '<tr class="oddeven">';
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';

@@ -96,7 +96,8 @@ function dol_convertToWord($num, $langs, $currency=false, $centimes=false)
     $max_length = $levels * 3;
     $num = substr('00' . $num, -$max_length);
     $num_levels = str_split($num, 3);
-    for ($i = 0; $i < count($num_levels); $i++) {
+    $nboflevels = count($num_levels);
+    for ($i = 0; $i < $nboflevels; $i++) {
         $levels--;
         $hundreds = (int) ($num_levels[$i] / 100);
         $hundreds = ($hundreds ? ' ' . $list1[$hundreds] . ' '.$langs->transnoentities('hundred') . ( $hundreds == 1 ? '' : 's' ) . ' ': '');

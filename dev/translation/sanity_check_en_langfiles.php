@@ -300,6 +300,8 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    if (preg_match('/^BoxTitleLatest/', $value)) $qualifiedforclean=0;
 	    // install.lang
 	    if (preg_match('/^KeepDefaultValues/', $value)) $qualifiedforclean=0;
+		// mail.lang
+	    if (preg_match('/MailingModuleDesc/i', $value)) $qualifiedforclean=0;
 	    // main.lang
 	    if (preg_match('/^Duration/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^FormatDate/', $value)) $qualifiedforclean=0;

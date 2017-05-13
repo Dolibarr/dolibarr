@@ -204,6 +204,7 @@ if ($result)
 	print '<br>';
 	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=".$id,$sortfield,$sortorder,'',$num,$num,'');
 
+	//var_dump($conf->global->MARGIN_TYPE);
 	if ($conf->global->MARGIN_TYPE == "1")
 	    $labelcostprice=$langs->trans('BuyingPrice');
 	else   // value is 'costprice' or 'pmp'
@@ -259,9 +260,9 @@ if ($result)
 				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
 
-			$var=!$var;
+			
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			if ($id > 0) {
 				print '<td>';
 				$invoicestatic->id=$objp->facid;
@@ -285,7 +286,7 @@ if ($result)
 				}
 				else
 				{
-				    print $langs->trans("NotPredefinedProducts");
+				    print img_object('', 'product').' '.$langs->trans("NotPredefinedProducts");
 				}
 				print "</td>\n";
 				//print "<td>".$product_static->getNomUrl(1)."</td>\n";
@@ -307,7 +308,7 @@ if ($result)
 	}
 
 	// affichage totaux marges
-	$var=!$var;
+	
 	$totalMargin = $cumul_vente - $cumul_achat;
 
 	$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';

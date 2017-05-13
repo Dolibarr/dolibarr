@@ -235,7 +235,7 @@ if ($result) {
     while ($i < $num)
     {
         $objp = $db->fetch_object($result);
-        $var=!$var;
+        
 
         print "<tr ".$bc[$var]."><td>&nbsp;</td>";
         print "<td>".$langs->trans("Bills").' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$objp->socid.'">'.$objp->name."</td>\n";
@@ -280,7 +280,7 @@ if ($modecompta != 'CREANCES-DETTES')
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
-                $var=!$var;
+                
 
                 print "<tr ".$bc[$var]."><td>&nbsp;</td>";
                 print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")." (".$langs->trans("PaymentsNotLinkedToInvoice").")\n";
@@ -304,7 +304,7 @@ if ($modecompta != 'CREANCES-DETTES')
 
 if ($total_ttc == 0)
 {
-    $var=!$var;
+    
     print "<tr ".$bc[$var]."><td>&nbsp;</td>";
     print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
     print '</tr>';
@@ -367,7 +367,7 @@ if ($result) {
         while ($i < $num)
         {
             $objp = $db->fetch_object($result);
-            $var=!$var;
+            
 
             print "<tr ".$bc[$var]."><td>&nbsp;</td>";
             print "<td>".$langs->trans("Bills")." <a href=\"".DOL_URL_ROOT."/fourn/facture/list.php?socid=".$objp->socid."\">".$objp->name."</a></td>\n";
@@ -387,7 +387,7 @@ if ($result) {
     }
     else
     {
-        $var=!$var;
+        
         print "<tr ".$bc[$var]."><td>&nbsp;</td>";
         print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';

@@ -140,7 +140,6 @@ if ($result)
 {
     $num	= $db->num_rows($result);
     $i		= 0;
-    $var	= True;
     $oldmod	= "";
 
     while ($i < $num)
@@ -186,9 +185,8 @@ if ($result)
             print "</tr>\n";
         }
 
-        $var=!$var;
-        print '<tr '. $bc[$var].'>';
-
+        
+        print '<tr class="oddeven">';
         print '<td>'.img_object('',$picto).' '.$objMod->getName();
         print '<a name="'.$objMod->getName().'">&nbsp;</a>';
 

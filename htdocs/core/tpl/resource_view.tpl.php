@@ -34,7 +34,7 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 
 	foreach ($linked_resources as $linked_resource)
 	{
-		$var=!$var;
+		
 		$object_resource = fetchObjectByElement($linked_resource['resource_id'],$linked_resource['resource_type']);
 		
 		//$element_id = $linked_resource['rowid'];
@@ -62,7 +62,7 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			if ($linked_resource['rowid'] == GETPOST('lineid'))
 				$style='style="background: orange;"';
 
-			print '<div class="tagtr '.($var==true?"pair":"impair").'" '.$style.'>';
+			print '<form class="tagtr '.($var==true?"pair":"impair").'" '.$style.'>';
 
 			print '<div class="tagtd">';
 			print $object_resource->getNomUrl(1);
@@ -90,19 +90,19 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			print '</a>';
 			print '</div>';
 
-			print '</div>';
+			print '</form>';
 		}
 	}
 
 }
 else {
-	print '<div class="tagtr '.($var==true?"pair":"impair").'">';
+	print '<form class="tagtr '.($var==true?"pair":"impair").'">';
 	print '<div class="tagtd opacitymedium">'.$langs->trans('NoResourceLinked').'</div>';
 	print '<div class="tagtd opacitymedium"></div>';
 	print '<div class="tagtd opacitymedium"></div>';
 	print '<div class="tagtd opacitymedium"></div>';
 	print '<div class="tagtd opacitymedium"></div>';
-	print '</div>';
+	print '</form>';
 }
 
 print '</div>';

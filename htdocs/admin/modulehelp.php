@@ -1,12 +1,5 @@
 <?php
-/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2003       Jean-Louis Bergamo      <jlb@j1b.org>
- * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
- * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -292,7 +285,7 @@ if (isset($objMod->langfiles) && is_array($objMod->langfiles))
 	}
 }
 
-$var=!$var;
+
 
 
 // Version (with picto warning or not)
@@ -337,12 +330,39 @@ if ($mode == 'desc')
     else $text.=$langs->trans("Disabled");
     $text.='<br>';
 
+    $tmp = $objMod->getLastActivationInfo();
+    $authorid = $tmp['authorid'];
+    if ($authorid > 0)
+    {
+        $tmpuser = new User($db);
+        $tmpuser->fetch($authorid);
+        $text.='<strong>'.$langs->trans("LastActivationAuthor").':</strong> ';
+        $text.= $tmpuser->getNomUrl(1);
+        $text.='<br>';
+    }
+    $ip = $tmp['ip'];
+    if ($ip)
+    {
+        $text.='<strong>'.$langs->trans("LastActivationIP").':</strong> ';
+        $text.= $ip;
+        $text.='<br>';
+    }    
+    
     $moduledesclong=$objMod->getDescLong();
     if ($moduledesclong) $text.='<br><hr><div class="moduledesclong">'.$moduledesclong.'<div>';
 }
 
 if ($mode == 'feature')
 {
+    $text.='<br><strong>'.$langs->trans("DependsOn").':</strong> ';
+    if (count($objMod->requiredby)) $text.=join(',', $objMod->depends);
+	else $text.=$langs->trans("None");
+    $text.='<br><strong>'.$langs->trans("RequiredBy").':</strong> ';
+	if (count($objMod->requiredby)) $text.=join(',', $objMod->requiredby);
+	else $text.=$langs->trans("None");
+	
+    $text.='<br><br><br>';
+    
     $text.='<strong>'.$langs->trans("AddRemoveTabs").':</strong> ';
     if (isset($objMod->tabs) && is_array($objMod->tabs) && count($objMod->tabs))
     {

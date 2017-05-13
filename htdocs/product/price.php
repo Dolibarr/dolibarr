@@ -654,7 +654,8 @@ llxHeader('', $title, $helpurl);
 $head = product_prepare_head($object);
 $titre = $langs->trans("CardProduct" . $object->type);
 $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
-dol_fiche_head($head, 'price', $titre, 0, $picto);
+
+dol_fiche_head($head, 'price', $titre, -1, $picto);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter=" fk_product_type = ".$object->type;
@@ -760,7 +761,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		{
 		    $var = ! $var;
 		    
-			print '<tr '.$bc[$var].'>';
+			print '<tr class="oddeven">';
 
 			// Label of price
 			print '<td>';
@@ -1242,7 +1243,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		{
 			$var = !$var;
 
-			print '<tr '.$bc[$var].'>';
+			print '<tr class="oddeven">';
 			print '<td>';
 			print $form->textwithpicto($langs->trans('SellingPrice') . ' ' . $i, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 			print '</td>';
@@ -1518,13 +1519,13 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<tr>';
 		print '<td class="fieldrequired">' . $langs->trans('ThirdParty') . '</td>';
 		print '<td>';
-		print $form->select_company('', 'socid', 's.client in (1,2,3) AND s.rowid NOT IN (SELECT fk_soc FROM ' . MAIN_DB_PREFIX . 'product_customer_price WHERE fk_product='.$object->id.')', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
+		print $form->select_company('', 'socid', 's.client in (1,2,3)', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
 		print '</td>';
 		print '</tr>';
 
 		// VAT
 		print '<tr><td class="fieldrequired">' . $langs->trans("VATRate") . '</td><td>';
-		print $form->load_tva("tva_tx", $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
+		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -1610,9 +1611,9 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		// VAT
 		print '<tr><td>' . $langs->trans("VATRate") . '</td><td colspan="2">';
-		print $form->load_tva("tva_tx", $prodcustprice->tva_tx, $mysoc, '', $object->id, $prodcustprice->recuperableonly, $object->type, false, 1);
+		print $form->load_tva("tva_tx", $prodcustprice->default_vat_code ? $prodcustprice->tva_tx.' ('.$prodcustprice->default_vat_code.')' : $prodcustprice->tva_tx, $mysoc, '', $object->id, $prodcustprice->recuperableonly, $object->type, false, 1);
 		print '</td></tr>';
-
+		
 		// Price base
 		print '<tr><td width="15%">';
 		print $langs->trans('PriceBase');
@@ -1723,7 +1724,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			foreach ($prodcustprice->lines as $line)
 			{
 				$var = ! $var;
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				// Date
 				$staticsoc = new Societe($db);
 				$staticsoc->fetch($line->fk_soc);
@@ -1731,8 +1732,10 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print "<td>" . $staticsoc->getNomUrl(1) . "</td>";
 				print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
 
+				$tva_tx = $line->default_vat_code ? $line->tva_tx.' ('.$line->default_vat_code.')' : $line->tva_tx;
+				
 				print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";
-				print '<td align="right">' . vatrate($line->tva_tx, true, $line->recuperableonly) . "</td>";
+				print '<td align="right">' . vatrate($tva_tx, true, $line->recuperableonly) . "</td>";
 				print '<td align="right">' . price($line->price) . "</td>";
 				print '<td align="right">' . price($line->price_ttc) . "</td>";
 				print '<td align="right">' . price($line->price_min) . '</td>';
@@ -1804,7 +1807,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		
 		
 		// Line for default price
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print "<td>" . $langs->trans("Default") . "</td>";
 		print "<td>" . "</td>";
 		
@@ -1839,16 +1842,18 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			{
 			    $var = ! $var;
 			    
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				// Date
 				$staticsoc = new Societe($db);
 				$staticsoc->fetch($line->fk_soc);
 
+				$tva_tx = $line->default_vat_code ? $line->tva_tx.' ('.$line->default_vat_code.')' : $line->tva_tx;
+				
 				print "<td>" . $staticsoc->getNomUrl(1) . "</td>";
 				print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
 
 				print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";
-				print '<td align="right">' . vatrate($line->tva_tx, true, $line->recuperableonly) . "</td>";
+				print '<td align="right">' . vatrate($tva_tx, true, $line->recuperableonly) . "</td>";
 				print '<td align="right">' . price($line->price) . "</td>";
 				print '<td align="right">' . price($line->price_ttc) . "</td>";
 				print '<td align="right">' . price($line->price_min) . '</td>';

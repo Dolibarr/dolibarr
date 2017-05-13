@@ -123,9 +123,9 @@ class AdherentType extends CommonObject
         $sql.= "SET ";
         $sql.= "statut = ".$this->statut.",";
         $sql.= "libelle = '".$this->db->escape($this->libelle) ."',";
-        $sql.= "subscription = '".$this->subscription."',";
+        $sql.= "subscription = '".$this->db->escape($this->subscription)."',";
         $sql.= "note = '".$this->db->escape($this->note)."',";
-        $sql.= "vote = '".$this->vote."',";
+        $sql.= "vote = '".$this->db->escape($this->vote)."',";
         $sql.= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
         $sql .= " WHERE rowid =".$this->id;
 

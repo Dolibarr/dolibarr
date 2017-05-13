@@ -30,7 +30,7 @@ require 'main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // If not defined, we select menu "home"
-$_GET['mainmenu']=GETPOST('mainmenu', 'alpha')?GETPOST('mainmenu', 'alpha'):'home';
+$_GET['mainmenu']=GETPOST('mainmenu', 'aZ09')?GETPOST('mainmenu', 'aZ09'):'home';
 $action=GETPOST('action');
 
 $hookmanager->initHooks(array('index'));
@@ -55,10 +55,10 @@ if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FO
 if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax disabled)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone=GETPOST('areacode');
-	$userid=GETPOST('userid');
-	$boxorder=GETPOST('boxorder');
-	$boxorder.=GETPOST('boxcombo');
+	$zone=GETPOST('areacode', 'aZ09');
+	$userid=GETPOST('userid', 'int');
+	$boxorder=GETPOST('boxorder', 'aZ09');
+	$boxorder.=GETPOST('boxcombo', 'aZ09');
 
 	$result=InfoBox::saveboxorder($db,$zone,$boxorder,$userid);
 	if ($result > 0) setEventMessages($langs->trans("BoxAdded"), null);
@@ -332,7 +332,7 @@ if (empty($user->societe_id))
 	                $board=$boardloaded[$classe];
 	            }
 
-	            $var=!$var;
+	            
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
 	            $text=$langs->trans($titres[$key]);
 	            $boxstat.='<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';
@@ -561,14 +561,15 @@ if (! empty($valid_dashboardlines))
         
         $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats130 boxstatsborder">';
         $boxwork .= '<div class="boxstatscontent">';
-        $boxwork .= $board->img.' '.$board->label.'<br>';
+        $boxwork .= '<span class="boxstatstext" title="'.dol_escape_htmltag($board->label).'">'.$board->img.' '.$board->label.'</span><br>';
         $boxwork .= '<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.$board->nbtodo.'</span></a>';
         $boxwork .= '</div>';
         if ($board->nbtodolate > 0)
         {
             $boxwork .= '<div class="dashboardlinelatecoin nowrap">';
             $boxwork .= '<a title="'.dol_escape_htmltag($textlate).'" class="valignmiddle dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'" href="'.((!$board->url_late) ? $board->url : $board->url_late ).'">';
-            $boxwork .= img_picto($textlate, "warning", 'class="valigntextbottom"').'';
+            //$boxwork .= img_picto($textlate, "warning_white", 'class="valigntextbottom"').'';
+            $boxwork .= img_picto($textlate, "warning_white", 'class="valigntextbottom"').'';
             $boxwork .= '<span class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'">';
             $boxwork .= $board->nbtodolate;
             $boxwork .= '</span>';
@@ -599,8 +600,6 @@ $boxwork.='</td></tr>';
 
 $boxwork.='</table>';   // End table array of working board
 $boxwork.='</div>';
-
-//print $boxwork;
 
 print '</div></div></div><div class="clearboth"></div>';
 

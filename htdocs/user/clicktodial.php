@@ -83,7 +83,8 @@ llxHeader("","ClickToDial");
 if ($id > 0)
 {
     $object = new User($db);
-    $object->fetch($id);
+    $object->fetch($id, '', '', 1);
+    $object->getrights();
     $object->fetch_clicktodial();
 
 
@@ -96,12 +97,17 @@ if ($id > 0)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
 	
-	dol_fiche_head($head, 'clicktodial', $title, 0, 'user');
+	dol_fiche_head($head, 'clicktodial', $title, -1, 'user');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '';
+
+	if ($user->rights->user->user->lire || $user->admin) {
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	}
 	
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 	
+    print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
     
     // Edit mode
@@ -193,6 +199,7 @@ if ($id > 0)
         print '</div>';
     }    
     
+    print '</div>';
     print '</form>';
     
     /*

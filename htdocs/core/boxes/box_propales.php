@@ -116,8 +116,8 @@ class box_propales extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
-                        'text' => $societestatic->getNomUrl(1,'',40),
+                        'td' => 'class="tdoverflowmax100"',
+                        'text' => $societestatic->getNomUrl(1),
                         'asis' => 1,
                     );
 

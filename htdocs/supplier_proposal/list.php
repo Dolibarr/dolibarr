@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@capnetworks.com>
@@ -66,7 +66,7 @@ $search_author=GETPOST('search_author','alpha');
 $search_status=GETPOST('viewstatut','alpha')?GETPOST('viewstatut','alpha'):GETPOST('search_status','int');
 $object_statut=$db->escape(GETPOST('supplier_proposal_statut'));
 
-$sall=GETPOST("sall");
+$sall=GETPOST('sall', 'alphanohtml');
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 $year=GETPOST("year");
 $month=GETPOST("month");
@@ -316,11 +316,11 @@ if ($result)
 	{
 	    $soc = new Societe($db);
 	    $soc->fetch($socid);
-	    $title = $langs->trans('ListOfProposals') . ' - '.$soc->name;
+	    $title = $langs->trans('ListOfSupplierProposals') . ' - '.$soc->name;
 	}
 	else
 	{
-	    $title = $langs->trans('ListOfProposals');
+	    $title = $langs->trans('ListOfSupplierProposals');
 	}
 	
 	$num = $db->num_rows($result);
@@ -509,23 +509,12 @@ if ($result)
 	
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
     
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
     
-	// Fields title
-    print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'sp.ref','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Supplier'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'sp.date_valid','',$param, 'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('SupplierProposalDate'),$_SERVER["PHP_SELF"],'sp.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'sp.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'sp.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('', $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
-	print "</tr>\n";
-
-	print '<tr class="liste_titre">';
+	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
@@ -564,12 +553,24 @@ if ($result)
 	print '</td>';
 	// Check boxes
 	print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+	$searchpitco=$form->showFilterButtons();
 	print $searchpitco;
 	print '</td>';
 
 	print "</tr>\n";
 
+	// Fields title
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'sp.ref','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Supplier'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'sp.date_valid','',$param, 'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('SupplierProposalDate'),$_SERVER["PHP_SELF"],'sp.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'sp.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'sp.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+	print "</tr>\n";
+	
 	$now = dol_now();
 	$var=true;
 	$total=0;
@@ -578,12 +579,12 @@ if ($result)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($result);
-		$var=!$var;
+		
 
 		$objectstatic->id=$obj->rowid;
 		$objectstatic->ref=$obj->ref;
 
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
@@ -670,14 +671,14 @@ if ($result)
 	if ($total>0)
 	{
 		if($num<$limit){
-			$var=!$var;
+			
 			print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHT").'</td>';
 			print '<td colspan="4" align="right">'.price($total).'</td><td colspan="3"></td>';
 			print '</tr>';
 		}
 		else
 		{
-			$var=!$var;
+			
 			print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHTforthispage").'</td>';
 			print '<td colspan="4" align="right">'.price($total).'</td><td colspan="3"></td>';
 			print '</tr>';
@@ -705,10 +706,10 @@ if ($result)
 	    $urlsource.=str_replace('&amp;','&',$param);
 	
 	    $filedir=$diroutputmassaction;
-	    $genallowed=$user->rights->propal->lire;
-	    $delallowed=$user->rights->propal->lire;
+	    $genallowed=$user->rights->supplier_proposal->lire;
+	    $delallowed=$user->rights->supplier_proposal->lire;
 	
-	    print $formfile->showdocuments('massfilesarea_proposals','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,'','');
+	    print $formfile->showdocuments('massfilesarea_supplier_proposal','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,'','');
 	}
 	else
 	{

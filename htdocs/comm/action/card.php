@@ -337,7 +337,7 @@ if ($action == 'add')
 				unset($_SESSION['assignedtouser']);
 
 				$moreparam='';
-				if ($user->id != $object->userownerid) $moreparam="usertodo=-1";	// We force to remove filter so created record is visible when going back to per user view.
+				if ($user->id != $object->userownerid) $moreparam="filtert=-1";	// We force to remove filter so created record is visible when going back to per user view.
 
 				$db->commit();
 				if (! empty($backtopage))
@@ -706,7 +706,7 @@ if ($action == 'create')
 		if (GETPOST('complete') == '0' || GETPOST("afaire") == 1) $percent='0';
 		else if (GETPOST('complete') == 100 || GETPOST("afaire") == 2) $percent=100;
 	}
-	$formactions->form_select_status_action('formaction',$percent,1,'complete');
+	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 	print '</td></tr>';
 
     // Location
@@ -752,6 +752,8 @@ if ($action == 'create')
 
 	print '</table>';
 	print '<br><br>';
+	
+	
 	print '<table class="border" width="100%">';
 
 	// Related company
@@ -1184,7 +1186,7 @@ if ($id > 0)
 	}
 	else
 	{
-		dol_fiche_head($head, 'card', $langs->trans("Action"),0,'action');
+		dol_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action');
 
 
 		// Clone event
@@ -1255,6 +1257,8 @@ if ($id > 0)
 		
 		dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref);
 		
+	    print '<div class="fichecenter">';
+	
 		print '<div class="underbanner clearboth"></div>';
 		
 		// Affichage fiche action en mode visu
@@ -1320,7 +1324,7 @@ if ($id > 0)
 		print '<div class="assignedtouser">';
 		print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		print '</div>';
-		if (in_array($user->id,array_keys($listofuserid))) 
+		if ($object->datep != $object->datef && in_array($user->id,array_keys($listofuserid))) 
 		{
 			print '<div class="myavailability">';
 			print $langs->trans("MyAvailability").': '.(($object->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
@@ -1345,6 +1349,7 @@ if ($id > 0)
 
 		print '<br>';
 
+		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border" width="100%">';
 
 		if ($conf->societe->enabled)
@@ -1380,21 +1385,6 @@ if ($id > 0)
 			}
 			print '</td></tr>';
 		}
-
-		// Project
-		/*
-		if (! empty($conf->projet->enabled))
-		{
-			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-			if ($object->fk_project)
-			{
-				$project=new Project($db);
-				$project->fetch($object->fk_project);
-				print $project->getNomUrl(1,'',1);
-			}
-			print '</td></tr>';
-		}
-        */
 		
 		// Priority
 		print '<tr><td class="nowrap" class="titlefield">'.$langs->trans("Priority").'</td><td colspan="3">';
@@ -1423,7 +1413,9 @@ if ($id > 0)
 		//Extra field
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			print '<br><br><table class="border" width="100%">';
+			print '<br><br>';
+		    print '<div class="underbanner clearboth"></div>';
+			print '<table class="border" width="100%">';
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				if (isset($_POST["options_" . $key])) {
@@ -1436,13 +1428,15 @@ if ($id > 0)
 				} else {
 					$value = $object->array_options["options_" . $key];
 				}
-				print '<tr><td width="30%">'.$label.'</td><td>';
+				print '<tr><td class="titlefield">'.$label.'</td><td>';
 				print $extrafields->showOutputField($key,$value);
 				print "</td></tr>\n";
 			}
 			print '</table>';
 		}
 
+		print '</div>';
+		
 		dol_fiche_end();
 	}
 
@@ -1497,7 +1491,7 @@ if ($id > 0)
 	{
 		if (empty($conf->global->AGENDA_DISABLE_BUILDDOC))
 		{
-			print '<div style="clear:both;">&nbsp;<br><br></div><div class="fichecenter"><div class="fichehalfleft">';
+			print '<div style="clear:both;"></div><div class="fichecenter"><div class="fichehalfleft">';
             print '<a name="builddoc"></a>'; // ancre
 
             /*
@@ -1518,8 +1512,6 @@ if ($id > 0)
 
 
 			print '</div></div></div>';
-
-            print '<div style="clear:both;">&nbsp;</div>';
 	    }
 	}
 }

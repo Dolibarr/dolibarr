@@ -39,6 +39,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Security check
 if (empty($conf->paypal->enabled)) accessforbidden('',0,0,1);
@@ -113,7 +114,11 @@ if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
 }
 
 
-llxHeaderPaypal($langs->trans("PaymentForm"));
+$head='';
+if (! empty($conf->global->PAYPAL_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYPAL_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+
+
+llxHeader($head, $langs->trans("PaymentForm"));
 
 
 // Show ko message
@@ -125,9 +130,9 @@ if (! empty($conf->global->PAYPAL_MESSAGE_KO)) print $conf->global->PAYPAL_MESSA
 print "\n</div>\n";
 
 
-html_print_paypal_footer($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs);
 
 
-llxFooterPaypal();
+llxFooter();
 
 $db->close();

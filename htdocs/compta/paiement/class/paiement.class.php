@@ -37,7 +37,8 @@ class Paiement extends CommonObject
 {
     public $element='payment';
     public $table_element='paiement';
-
+    public $picto = 'payment';
+    
 	var $facid;
 	var $datepaye;
 	/**
@@ -95,7 +96,7 @@ class Paiement extends CommonObject
 		if ($id > 0)
 			$sql.= ' AND p.rowid = '.$id;
 		else if ($ref)
-			$sql.= ' AND p.rowid = '.$ref;
+			$sql.= " AND p.ref = '".$ref."'";
 		else if ($fk_bank)
 			$sql.= ' AND p.fk_bank = '.$fk_bank;
 
@@ -254,7 +255,7 @@ class Paiement extends CommonObject
                                 {
                                     if (! empty($conf->prelevement->enabled))
                                     {
-                                        // TODO Check if this payment has a withdraw request
+                                        // FIXME Check if this invoice has a withdraw request
                                         // if not, $mustwait++;      // This will disable automatic close on invoice to allow to process
                                     }
                                 }
@@ -274,11 +275,61 @@ class Paiement extends CommonObject
                             else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
                             else
                             {
-                                $result=$invoice->set_paid($user,'','');
-                                if ($result<0)
+                                // If invoice is a down payment, we also convert down payment to discount
+                                if ($invoice->type == Facture::TYPE_DEPOSIT)
                                 {
-                                    $this->error=$invoice->error;
-                                    $error++;
+			                        $amount_ht = $amount_tva = $amount_ttc = array();
+			                         
+                                    // Loop on each vat rate
+                                    $i = 0;
+                                    foreach ($invoice->lines as $line)
+                                    {
+                                        if ($line->total_ht!=0)
+                                        { 	// no need to create discount if amount is null
+                                            $amount_ht[$line->tva_tx] += $line->total_ht;
+                                            $amount_tva[$line->tva_tx] += $line->total_tva;
+                                            $amount_ttc[$line->tva_tx] += $line->total_ttc;
+                                            $i ++;
+                                        }
+                                    }
+                                    
+                                    // Insert one discount by VAT rate category
+                                    $discount = new DiscountAbsolute($this->db);
+                                    $discount->description = '(DEPOSIT)';
+                                    $discount->fk_soc = $invoice->socid;
+                                    $discount->fk_facture_source = $invoice->id;
+                                
+                                    foreach ($amount_ht as $tva_tx => $xxx)
+                                    {
+                                        $discount->amount_ht = abs($amount_ht[$tva_tx]);
+                                        $discount->amount_tva = abs($amount_tva[$tva_tx]);
+                                        $discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+                                        $discount->tva_tx = abs($tva_tx);
+                            
+                                        $result = $discount->create($user);
+                                        if ($result < 0)
+                                        {
+                                            $error++;
+                                            break;
+                                        }
+                                    }
+                                    
+                                    if ($error)
+                                    {
+                                        setEventMessages($discount->error, $discount->errors, 'errors');
+                                        $error++;
+                                    }                                   
+                                }
+                                
+                                // Set invoice to paid
+                                if (! $error)
+                                {
+                                    $result=$invoice->set_paid($user,'','');
+                                    if ($result<0)
+                                    {
+                                        $this->error=$invoice->error;
+                                        $error++;
+                                    }
                                 }
                             }
 					    }
@@ -964,26 +1015,29 @@ class Paiement extends CommonObject
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			Sur quoi pointe le lien
+	 *  @param  string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0,$option='',$mode='withlistofinvoices')
 	{
 		global $langs;
 
 		$result='';
         $label = $langs->trans("ShowPayment").': '.$this->ref;
-	$arraybill = $this->getBillsArray();
-	if (count($arraybill) >0)
-	{
-		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		$facturestatic=new Facture($this->db);
-		foreach ($arraybill as $billid)
-		{
-			$facturestatic->fetch($billid);
-			$label .='<br> '.$facturestatic->getNomUrl(1).' '.$facturestatic->getLibStatut(2,1);
-		}
-	}
-
+        if ($mode == 'withlistofinvoices')
+        {
+            $arraybill = $this->getBillsArray();
+            if (count($arraybill) > 0)
+            {
+            	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+            	$facturestatic=new Facture($this->db);
+            	foreach ($arraybill as $billid)
+            	{
+            		$facturestatic->fetch($billid);
+            		$label .='<br> '.$facturestatic->getNomUrl(1).' '.$facturestatic->getLibStatut(2,1);
+            	}
+            }
+        }
         $link = '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
@@ -1016,7 +1070,7 @@ class Paiement extends CommonObject
 		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 
 		$langs->load('compta');
-		if ($mode == 0)
+		/*if ($mode == 0)
 		{
 			if ($status == 0) return $langs->trans('ToValidate');
 			if ($status == 1) return $langs->trans('Validated');
@@ -1046,7 +1100,12 @@ class Paiement extends CommonObject
 			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
 			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
 		}
-		return $langs->trans('Unknown');
+		if ($mode == 6)
+	    {
+	        if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+	        if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+	    }*/
+		return '';
 	}
 
 }

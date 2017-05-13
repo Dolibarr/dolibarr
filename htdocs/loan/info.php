@@ -53,7 +53,7 @@ $object->info($id);
 
 $head = loan_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("Loan"), 0, 'bill');
+dol_fiche_head($head, 'info', $langs->trans("Loan"), -1, 'bill');
 
 $morehtmlref='<div class="refidno">';
 // Ref loan

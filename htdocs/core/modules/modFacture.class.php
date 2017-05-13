@@ -64,11 +64,12 @@ class modFacture extends DolibarrModules
 		$this->dirs = array("/facture/temp");
 
 		// Dependencies
-		$this->depends = array('always'=>"modSociete", 'FR'=>'modBlockChainLog');
+		$this->depends = array('always'=>"modSociete", 'FR'=>'modBlockedLog');
 		$this->requiredby = array("modComptabilite","modAccounting");
 		$this->conflictwith = array();
 		$this->langfiles = array("bills","companies","compta","products");
-		$this->warnings_activation = array();                                                             // Warning to show when we activate module. array('always'='text') or array('FR'='text')
+		$this->warnings_activation = array('FR'=>'WarningNoteModuleInvoiceForFrenchLaw');                              // Warning to show when we activate module. array('always'='text') or array('FR'='text')
+		$this->warnings_activation = array();
 		$this->warnings_activation_ext = array('FR'=>'WarningInstallationMayBecomeNotCompliantWithLaw');  // Warning to show when we activate an external module. array('always'='text') or array('FR'='text')
 		
 		// Config pages
@@ -99,6 +100,13 @@ class modFacture extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 		
+		/*$this->const[$r][0] = "FACTURE_DRAFT_WATERMARK";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "__(Draft)__";
+		$this->const[$r][3] = 'Watermark to show on draft invoices';
+		$this->const[$r][4] = 0;
+		$r++;*/
+
 		
 		// Boxes
 		//$this->boxes = array(0=>array(1=>'box_factures_imp.php'),1=>array(1=>'box_factures.php'));
@@ -303,8 +311,8 @@ class modFacture extends DolibarrModules
 		}
 
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type = 'invoice' AND entity = ".$conf->entity,
-				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','invoice',".$conf->entity.")"
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'invoice' AND entity = ".$conf->entity,
+				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','invoice',".$conf->entity.")"
 		);
 
 		return $this->_init($sql,$options);

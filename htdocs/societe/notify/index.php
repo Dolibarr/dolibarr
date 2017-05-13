@@ -90,9 +90,9 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print "<td><a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
 		print "<td>".dolGetFirstLastname($obj->firstname, $obj->lastname)."</td>\n";
 		print "<td>".$obj->titre."</td>\n";

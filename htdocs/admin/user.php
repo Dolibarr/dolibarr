@@ -167,7 +167,7 @@ print load_fiche_titre($langs->trans("UsersSetup"),$linkback,'title_setup');
 
 $head=user_admin_prepare_head();
 
-dol_fiche_head($head,'card', $langs->trans("MenuUsersAndGroups"), 0, 'user');
+dol_fiche_head($head,'card', $langs->trans("MenuUsersAndGroups"), -1, 'user');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -180,8 +180,8 @@ $var=true;
 $form = new Form($db);
 
 // Mail required for members
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserMailRequired").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 
@@ -205,7 +205,7 @@ print '</td></tr>';
 
 print '</table>';
 
-
+print '<br>';
 
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
@@ -284,7 +284,7 @@ foreach ($dirmodels as $reldir)
 	                        if ($modulequalified)
 	                        {
 	                            $var = !$var;
-	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module,'info')) print $module->info($langs);

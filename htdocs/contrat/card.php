@@ -332,14 +332,20 @@ if (empty($reshook))
 								else {
 								    $desc = dol_htmlentitiesbr($lines[$i]->desc);
 						        }
+
+								$txtva = $lines[$i]->vat_src_code ? $lines[$i]->tva_tx . ' (' .  $lines[$i]->vat_src_code . ')' : $lines[$i]->tva_tx;
+
+								// View third's localtaxes for now
+								$localtax1_tx = get_localtax($txtva, 1, $object->thirdparty);
+								$localtax2_tx = get_localtax($txtva, 2, $object->thirdparty);
 	
 			                    $result = $object->addline(
 					                $desc,
 					                $lines[$i]->subprice,
 					                $lines[$i]->qty,
-					                $lines[$i]->tva_tx,
-					                $lines[$i]->localtax1_tx,
-					                $lines[$i]->localtax2_tx,
+                                    $txtva,
+                                    $localtax1_tx,
+                                    $localtax2_tx,
 					                $lines[$i]->fk_product,
 					                $lines[$i]->remise_percent,
 					                $lines[$i]->date_start,
@@ -1271,7 +1277,7 @@ else
 
         $hselected = 0;
 
-        dol_fiche_head($head, $hselected, $langs->trans("Contract"), 0, 'contract');
+        dol_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
 
 
         /*
@@ -1507,7 +1513,7 @@ else
 
                 $objp = $db->fetch_object($result);
 
-                //$var=!$var;
+                //
 
                 if ($action != 'editline' || GETPOST('rowid') != $objp->rowid)
                 {
@@ -1595,7 +1601,7 @@ else
 
                     print "</tr>\n";
 
-                    // Dates de en service prevues et effectives
+                    // Dates of service planed and real
                     if ($objp->subprice >= 0)
                     {
 	                    $colspan = 6;
@@ -1862,15 +1868,13 @@ else
                 print '</table>';
             }
 
+            // Form to activate line
             if ($user->rights->contrat->activer && $action == 'activateline' && $object->lines[$cursorline-1]->id == GETPOST('ligne'))
             {
-                /**
-                 * Activer la ligne de contrat
-                 */
                 print '<form name="active" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.GETPOST('ligne').'&amp;action=active" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-                print '<table class="noborder tableforservicepart2" width="100%">';
+                print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ?' boxtablenobottom':'').'" width="100%">';
 
                 // Definie date debut et fin par defaut
                 $dateactstart = $objp->date_debut;
@@ -1889,23 +1893,25 @@ else
                     }
                 }
 
-                print '<tr '.$bc[$var].'>';
+                print '<tr '.$bc[false].'>';
                 print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td class="nohover">';
                 print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
-
                 print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td class="nohover">';
                 print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
-
-                print '<td class="center nohover" rowspan="2" valign="middle" class="nohover">';
-                print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"><br>';
-                print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+                print '<td class="center nohover">';
                 print '</td>';
 
                 print '</tr>';
 
-                print '<tr '.$bc[$var].'><td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover" colspan="'.($conf->margin->enabled?4:3).'"><input size="80" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
+                print '<tr '.$bc[false].'>';
+                print '<td class="nohover">'.$langs->trans("Comment").'</td><td colspan="3" class="nohover" colspan="'.($conf->margin->enabled?4:3).'"><input size="80" type="text" name="comment" value="'.$_POST["comment"].'"></td>';
+                print '<td class="nohover right">';
+                print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"> &nbsp; ';
+                print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+                print '</td>';
+                print '</tr>';
 
                 print '</table>';
 
@@ -1915,13 +1921,13 @@ else
             if ($user->rights->contrat->activer && $action == 'unactivateline' && $object->lines[$cursorline-1]->id == GETPOST('ligne'))
             {
                 /**
-                 * Desactiver la ligne de contrat
+                 * Disable a contract line
                  */
                 print '<form name="closeline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline-1]->id.'&amp;action=closeline" method="post">';
 
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-                print '<table class="noborder tableforservicepart2" width="100%">';
+                print '<table class="noborder tableforservicepart2 boxtablenobottom" width="100%">';
 
                 // Definie date debut et fin par defaut
                 $dateactstart = $objp->date_debut_reelle;
@@ -1942,7 +1948,7 @@ else
                 $now=dol_now();
                 if ($dateactend > $now) $dateactend=$now;
 
-                print '<tr '.$bc[$var].'><td colspan="2" class="nohover">';
+                print '<tr '.$bc[false].'><td colspan="2" class="nohover">';
                 if ($objp->statut >= 4)
                 {
                     if ($objp->statut == 4)
@@ -1952,13 +1958,17 @@ else
                     }
                 }
                 print '</td>';
-
-                print '<td rowspan="2" class="center nohover">';
-                print '<input type="submit" class="button" name="close" value="'.$langs->trans("Unactivate").'"><br>';
-                print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+                print '<td class="center nohover">';
                 print '</td></tr>';
 
-                print '<tr '.$bc[$var].'><td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.GETPOST('comment').'"></td></tr>';
+                print '<tr '.$bc[false].'>';
+                print '<td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.GETPOST('comment').'"></td>';
+                print '<td class="nohover right">';
+                print '<input type="submit" class="button" name="close" value="'.$langs->trans("Unactivate").'"> &nbsp; ';
+                print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+                print '</td>';
+                print '</tr>';
+                
                 print '</table>';
 
                 print '</form>';

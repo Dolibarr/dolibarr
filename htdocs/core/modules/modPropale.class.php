@@ -100,7 +100,14 @@ class modPropale extends DolibarrModules
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/proposals";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
-
+		$r++;
+		
+		/*$this->const[$r][0] = "PROPALE_DRAFT_WATERMARK";
+		$this->const[$r][2] = "__(Draft)__";
+		$this->const[$r][3] = 'Watermark to show on draft proposals';
+		$this->const[$r][4] = 0;
+		$r++;*/
+				
 		// Boxes
 		$this->boxes = array(
            	0=>array('file'=>'box_graph_propales_permonth.php','enabledbydefaulton'=>'Home'),
@@ -241,8 +248,8 @@ class modPropale extends DolibarrModules
 		}
 
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type = 'propal' AND entity = ".$conf->entity,
-				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','propal',".$conf->entity.")",
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'propal' AND entity = ".$conf->entity,
+				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','propal',".$conf->entity.")",
 		);
 
 		return $this->_init($sql,$options);

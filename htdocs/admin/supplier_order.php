@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2015 Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2017 Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,7 +234,7 @@ print "<br>";
 
 $head = supplierorder_admin_prepare_head();
 
-dol_fiche_head($head, 'order', $langs->trans("Suppliers"), 0, 'company');
+dol_fiche_head($head, 'order', $langs->trans("Suppliers"), -1, 'company');
 
 
 // Supplier order numbering module
@@ -279,8 +279,8 @@ foreach ($dirmodels as $reldir)
                         if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
                         if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-                        $var=!$var;
-                        print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+                        
+                        print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
                         print $module->info();
                         print '</td>';
 
@@ -382,7 +382,6 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($dirmodels as $reldir)
 {
 	$dir = dol_buildpath($reldir."core/modules/supplier_order/pdf/");
@@ -402,8 +401,8 @@ foreach ($dirmodels as $reldir)
 	                require_once $dir.'/'.$file;
 	                $module = new $classname($db, new CommandeFournisseur($db));
 
-                    $var=!$var;
-                    print "<tr ".$bc[$var].">\n";
+                    
+                    print "<tr class=\"oddeven\">\n";
                     print "<td>";
 	                print (empty($module->name)?$name:$module->name);
 	                print "</td>\n";
@@ -491,9 +490,10 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 $var=false;
+
 //if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 //{
-	print '<tr '.$bc[$var].'><td>';
+	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("UseDoubleApproval"), $langs->trans("Use3StepsApproval"), 1, 'help').'<br>';
 	print $langs->trans("IfSetToYesDontForgetPermission");
 	print '</td><td>';
@@ -501,15 +501,15 @@ $var=false;
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</td></tr>\n";
-	$var=!$var;
+	
 //}
 
 // Ask for payment bank during supplier order
 /* Kept as hidden for the moment
 if ($conf->banque->enabled)
 {
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    
+    print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp</td><td align="center">';
     if (! empty($conf->use_javascript_ajax))
     {
@@ -530,14 +530,20 @@ if ($conf->banque->enabled)
 }
 else
 {
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    
+    print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
 */
 
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnOrders").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
+$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
 $variablename='SUPPLIER_ORDER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -571,7 +577,7 @@ print '<td align="center" width="60"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
 print '</td><td align="right">';
 print "</td></tr>\n";

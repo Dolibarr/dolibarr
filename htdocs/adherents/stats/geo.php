@@ -291,12 +291,10 @@ if ($mode)
     print '</tr>';
 
     $oldyear=0;
-    $var=true;
     foreach ($data as $val)
     {
         $year = $val['year'];
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
+        print '<tr class="oddeven">';
         print '<td>'.$val['label'].'</td>';
         if ($label2) print '<td align="center">'.$val['label2'].'</td>';
         print '<td align="right">'.$val['nb'].'</td>';

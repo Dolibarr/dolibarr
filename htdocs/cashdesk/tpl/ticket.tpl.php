@@ -20,7 +20,8 @@ include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->load("main");
 $langs->load('cashdesk');
-header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
+top_httphead('text/html');
 
 $facid=GETPOST('facid','int');
 $object=new Facture($db);
@@ -37,7 +38,7 @@ $object->fetch($facid);
 
 <div class="entete">
     <div class="logo">
-        <?php print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">'; ?>
+        <?php print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">'; ?>
     </div>
     <div class="infos">
         <p class="address"><?php echo $mysoc->name; ?><br>

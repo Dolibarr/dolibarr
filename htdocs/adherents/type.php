@@ -82,9 +82,11 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter_x") || GETP
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('membertypecard','globalcard'));
 
+
 /*
  *	Actions
  */
+
 if ($action == 'add' && $user->rights->adherent->configurer)
 {
 	if (! $cancel)
@@ -206,12 +208,10 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<th>&nbsp;</th>';
 		print "</tr>\n";
 
-		$var=True;
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td><a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_escape_htmltag($objp->libelle).'</td>';
 			print '<td align="center">'.yn($objp->subscription).'</td>';
@@ -310,12 +310,13 @@ if ($rowid > 0)
 
 		$head = member_type_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("MemberType"), 0, 'group');
+		dol_fiche_head($head, 'card', $langs->trans("MemberType"), -1, 'group');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/type.php">'.$langs->trans("BackToList").'</a>';
 
 		dol_banner_tab($object, 'rowid', $linkback);
 		
+		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 		
 		print '<table class="border" width="100%">';
@@ -344,7 +345,8 @@ if ($rowid > 0)
 		}
 
 		print '</table>';
-
+        print '</div>';
+        
 		dol_fiche_end();
 
 
@@ -518,7 +520,6 @@ if ($rowid > 0)
 
 			print "</tr>\n";
 
-		    $var=True;
 		    while ($i < $num && $i < $conf->liste_limit)
 		    {
 		        $objp = $db->fetch_object($resql);
@@ -530,8 +531,7 @@ if ($rowid > 0)
 		        $adh->firstname=$objp->firstname;
 
 		        // Lastname
-		        $var=!$var;
-		        print '<tr '.$bc[$var].'>';
+		        print '<tr class="oddeven">';
 		        if ($objp->societe != '')
 		        {
 		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,20).' / '.dol_trunc($objp->societe,12).'</a></td>'."\n";

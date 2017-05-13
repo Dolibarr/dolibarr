@@ -70,7 +70,7 @@ $projectid	= GETPOST('projectid','int');
 $origin		= GETPOST('origin', 'alpha');
 $originid	= GETPOST('originid', 'int');
 
-//PDF
+// PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ?  1 : 0));
 $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
@@ -1117,7 +1117,7 @@ if (empty($reshook))
 	    $action = '';
 	}
 
-	elseif ($action == 'classin')
+	elseif ($action == 'classin' && $user->rights->fournisseur->facture->creer)
 	{
 	    $object->fetch($id);
 	    $result=$object->setProject($projectid);
@@ -1194,32 +1194,11 @@ if (empty($reshook))
 	$trackid='sin'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-
-	// Build document
-	if ($action == 'builddoc')
-	{
-		// Save modele used
-	    $object->fetch($id);
-	    $object->fetch_thirdparty();
-
-		// Save last template used to generate document
-		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-	    $outputlangs = $langs;
-	    $newlang=GETPOST('lang_id','alpha');
-	    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-	    if (! empty($newlang))
-	    {
-	        $outputlangs = new Translate("",$conf);
-	        $outputlangs->setDefaultLang($newlang);
-	    }
-		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-	    if ($result	< 0)
-	    {
-			setEventMessages($object->error, $object->errors, 'errors');
-    	    $action='';
-	    }
-	}
+	// Actions to build doc
+	$upload_dir = $conf->fournisseur->facture->dir_output;
+	$permissioncreate = $user->rights->fournisseur->facture->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+	
 	// Make calculation according to calculationrule
 	if ($action == 'calculate')
 	{
@@ -1234,22 +1213,6 @@ if (empty($reshook))
 	        exit;
 	    }
 	}
-	// Delete file in doc form
-	if ($action == 'remove_file')
-	{
-	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	    if ($object->fetch($id))
-	    {
-	    	$object->fetch_thirdparty();
-	        $upload_dir =	$conf->fournisseur->facture->dir_output . "/";
-	        $file =	$upload_dir	. '/' .	GETPOST('file');
-	        $ret=dol_delete_file($file,0,0,0,$object);
-	        if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-	        else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-	    }
-	}
-
 	if ($action == 'update_extras')
 	{
 		// Fill array 'array_options' with data from add form
@@ -1924,7 +1887,7 @@ else
         $head = facturefourn_prepare_head($object);
         $titre=$langs->trans('SupplierInvoice');
 
-        dol_fiche_head($head, 'card', $titre, 0, 'bill');
+        dol_fiche_head($head, 'card', $titre, -1, 'bill');
 
         // Clone confirmation
         if ($action == 'clone')
@@ -2146,7 +2109,9 @@ else
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentConditions');
 		print '<td>';
-		if ($action != 'editconditions') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+		if ($action != 'editconditions' && $user->rights->fournisseur->facture->creer) {
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+		}
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editconditions')
@@ -2166,7 +2131,9 @@ else
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+		if ($action != 'editmode' && $user->rights->fournisseur->facture->creer) {
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+		}
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editmode')
@@ -2380,8 +2347,8 @@ else
     	        while ($i < $num)
     	        {
     	            $objp = $db->fetch_object($result);
-    	            $var=!$var;
-    	            print '<tr '.$bc[$var].'><td>';
+    	            
+    	            print '<tr class="oddeven"><td>';
     	            $paymentstatic->id=$objp->rowid;
     	            $paymentstatic->datepaye=$db->jdate($objp->dp);
     	            $paymentstatic->ref=($objp->ref ? $objp->ref : $objp->rowid);;
@@ -2418,7 +2385,7 @@ else
     	    }
     	    else
     	    {
-    	        print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td></tr>';
+    	        print '<tr class="oddeven"><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td></tr>';
     	    }
 
 			/*
@@ -2663,13 +2630,17 @@ else
 	 	 		// Reopen a standard paid invoice
 	            if (($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
 	            {
-	                if (! $facidnext && $object->close_code != 'replaced')	// Not replaced by another invoice
+	                if (! $facidnext && $object->close_code != 'replaced' && $user->rights->fournisseur->facture->creer)	// Not replaced by another invoice
 	                {
 	                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
 	                }
 	                else
 	                {
-	                    print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span></div>';
+	                	if ($user->rights->fournisseur->facture->creer) {
+	                        print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span></div>';
+		                } elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
+			                print '<div class="inline-block divButAction"><span class="butActionRefused">'.$langs->trans('ReOpen').'</span></div>';
+		                }
 	                }
 	            }
 
@@ -2784,8 +2755,8 @@ else
 	                 * Documents generes
 	                 */
 	                $ref=dol_sanitizeFileName($object->ref);
-	                $subdir = get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref;
-	                $filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref;
+	                $subdir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$ref;
+	                $filedir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
 	                $urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
 	                $genallowed=$user->rights->fournisseur->facture->creer;
 	                $delallowed=$user->rights->fournisseur->facture->supprimer;

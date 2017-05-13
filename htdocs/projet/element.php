@@ -183,9 +183,12 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 
 // Date start - end
 print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-print dol_print_date($object->date_start,'day');
-$end=dol_print_date($object->date_end,'day');
-if ($end) print ' - '.$end;
+$start = dol_print_date($object->date_start,'dayhour');
+print ($start?$start:'?');
+$end = dol_print_date($object->date_end,'dayhour');
+print ' - ';
+print ($end?$end:'?');
+if ($object->hasDelay()) print img_warning("Late");
 print '</td></tr>';
 
 // Budget
@@ -308,7 +311,7 @@ $listofreferent=array(
 	'margin'=>'minus',
 	'table'=>'facture_fourn',
 	'datefieldname'=>'datef',
-    'urlnew'=>DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$id.'&socid='.$socid,
+    'urlnew'=>DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$id,
     'lang'=>'suppliers',
     'buttonnew'=>'AddSupplierInvoice',
     'testnew'=>$user->rights->fournisseur->facture->creer,
@@ -330,7 +333,8 @@ $listofreferent=array(
 	'class'=>'Fichinter',
 	'table'=>'fichinter',
 	'datefieldname'=>'date_valid',
-	'disableamount'=>1,
+	'disableamount'=>0,
+	'margin'=>'minus',	
     'urlnew'=>DOL_URL_ROOT.'/fichinter/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid,
     'lang'=>'interventions',
     'buttonnew'=>'AddIntervention',
@@ -556,6 +560,7 @@ foreach ($listofreferent as $key => $value)
 				if ($tablename != 'expensereport_det' && method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
 				if ($tablename == 'don' || $tablename == 'chargesociales') $total_ht_by_line=$element->amount;
 				elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
+				else if($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();				
 				elseif ($tablename == 'projet_task')
 				{
 					if ($idofelementuser)
@@ -580,6 +585,7 @@ foreach ($listofreferent as $key => $value)
 				if ($qualifiedfortotal) $total_ht = $total_ht + $total_ht_by_line;
 
 				if ($tablename == 'don' || $tablename == 'chargesociales') $total_ttc_by_line=$element->amount;
+				else if($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();								
 				elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 				elseif ($tablename == 'projet_task')
 				{
@@ -637,7 +643,7 @@ foreach ($listofreferent as $key => $value)
 			}
 
 			$var = ! $var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr class="oddeven">';
 			// Module
 			print '<td align="left">'.$langs->trans($newclassname).'</td>';
 			// Nb
@@ -770,7 +776,6 @@ foreach ($listofreferent as $key => $value)
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
 		if (is_array($elementarray) && count($elementarray)>0)
 		{
-			$var=true;
 			$total_ht = 0;
 			$total_ttc = 0;
 
@@ -813,7 +818,6 @@ foreach ($listofreferent as $key => $value)
 				if ($breakline && $saved_third_id != $element->thirdparty->id)
 				{
 					print $breakline;
-					$var = true;
 
 					$saved_third_id = $element->thirdparty->id;
 					$breakline = '';
@@ -829,8 +833,7 @@ foreach ($listofreferent as $key => $value)
 					if (! empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
 				}
 
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				// Remove link
 				print '<td style="width: 24px">';
 				if ($tablename != 'projet_task' && $tablename != 'stock_mouvement')
@@ -909,7 +912,9 @@ foreach ($listofreferent as $key => $value)
 				else if (in_array($tablename, array('projet_task'))) 
 				{
 				    $tmpprojtime = $element->getSumOfAmount($elementuser, $dates, $datee);	// $element is a task. $elementuser may be empty
+                    print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$idofelement.'&withproject=1">';
 				    print convertSecondToTime($tmpprojtime['nbseconds'], 'allhourmin');
+                	print '</a>';
 				    $total_time_by_line = $tmpprojtime['nbseconds'];
 				}
 				else print dol_print_date($date,'day');
@@ -935,7 +940,7 @@ foreach ($listofreferent as $key => $value)
                 }
                 else if ($tablename == 'projet_task' && $key == 'project_task_time')	// if $key == 'project_task', we don't want details per user
                 {
-                	print $elementuser->getNomUrl(1);
+                    print $elementuser->getNomUrl(1);
                 }
 				print '</td>';
 
@@ -946,6 +951,7 @@ foreach ($listofreferent as $key => $value)
 				    $total_ht_by_line=null;
 				    $othermessage='';
 					if ($tablename == 'don' || $tablename == 'chargesociales') $total_ht_by_line=$element->amount;
+					else if($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();
 					elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
 					elseif (in_array($tablename, array('projet_task')))
 					{
@@ -986,6 +992,7 @@ foreach ($listofreferent as $key => $value)
 				{
 				    $total_ttc_by_line=null;
 					if ($tablename == 'don' || $tablename == 'chargesociales') $total_ttc_by_line=$element->amount;
+					else if($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();
 					elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 					elseif ($tablename == 'projet_task')
 					{

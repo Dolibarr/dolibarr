@@ -151,7 +151,7 @@ print load_fiche_titre($langs->trans("UsersSetup"),$linkback,'title_setup');
 
 $head=user_admin_prepare_head();
 
-dol_fiche_head($head,'usergroupcard', $langs->trans("MenuUsersAndGroups"), 0, 'user');
+dol_fiche_head($head,'usergroupcard', $langs->trans("MenuUsersAndGroups"), -1, 'user');
 
 
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
@@ -231,7 +231,7 @@ foreach ($dirmodels as $reldir)
 	                        if ($modulequalified)
 	                        {
 	                            $var = !$var;
-	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module,'info')) print $module->info($langs);

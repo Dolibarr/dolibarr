@@ -363,7 +363,7 @@ else
 		// Show first install line
 		$choice = '<tr class="listofchoices"><td class="listofchoices nowrap" align="center"><b>'.$langs->trans("FreshInstall").'</b>';
 		$choice .= '</td>';
-		$choice .= '<td class="listofchoices">';
+		$choice .= '<td class="listofchoices listofchoicesdesc">';
 		$choice .= $langs->trans("FreshInstallDesc");
 		if (empty($dolibarr_main_db_host))	// This means install process was not run
 		{
@@ -459,7 +459,7 @@ else
 
             $choice .= '<tr class="listofchoices '.($recommended_choice ? 'choiceselected' : '').'">';
             $choice .= '<td class="listofchoices nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.$newversionfrombis.' -> '.$newversionto.'</b></td>';
-            $choice .= '<td class="listofchoices">';
+            $choice .= '<td class="listofchoices listofchoicesdesc">';
             $choice .= $langs->trans("UpgradeDesc");
 
             if ($recommended_choice)

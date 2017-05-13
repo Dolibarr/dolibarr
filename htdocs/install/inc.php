@@ -384,7 +384,8 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$css
 
     // We force the content charset
     header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
+    header("X-Content-Type-Options: nosniff");
+    
     print '<!DOCTYPE HTML>'."\n";
     print '<html>'."\n";
     print '<head>'."\n";

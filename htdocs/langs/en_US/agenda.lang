@@ -48,6 +48,7 @@ InvoiceDeleteDolibarr=Invoice %s deleted
 InvoicePaidInDolibarr=Invoice %s changed to paid
 InvoiceCanceledInDolibarr=Invoice %s canceled
 MemberValidatedInDolibarr=Member %s validated
+MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Member %s deleted
 MemberSubscriptionAddedInDolibarr=Subscription for member %s added
@@ -75,6 +76,7 @@ ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
 ##### End agenda events #####
+AgendaModelModule=Document templates for event
 DateActionStart=Start date
 DateActionEnd=End date
 AgendaUrlOptions1=You can also add following parameters to filter output:

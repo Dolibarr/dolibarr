@@ -33,21 +33,22 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
 {
     global $langs, $conf;
 
-    // Define javascript type
-    header('Content-type: text/javascript; charset=UTF-8');
-
+    top_httphead('text/javascript; charset=UTF-8');
+    
     $nowtime = time();
     //$nowtimeprevious = floor($nowtime / 60) * 60;   // auto_check_events_not_before is rounded to previous minute
 
     // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when.
+    /* session already started into main
     session_cache_limiter(FALSE);
     header('Cache-Control: no-cache');
-    session_start();
+    session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
+    session_start();*/
     if (! isset($_SESSION['auto_check_events_not_before'])) 
     {
         print 'console.log("_SESSION[auto_check_events_not_before] is not set");'."\n";
         // Round to eliminate the seconds
-        $_SESSION['auto_check_events_not_before'] = $nowtime;   // auto_check_events_not_before is rounded to previous minute
+        $_SESSION['auto_check_events_not_before'] = $nowtime;
     }
     print 'var nowtime = ' . $nowtime . ';' . "\n";
     print 'var login = \'' . $_SESSION['dol_login'] . '\';' . "\n";
@@ -65,7 +66,7 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
    	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
     var time_first_execution = (time_auto_update - (nowtime - time_js_next_test)) * 1000;	//need milliseconds
     if (login != '') { 
-    	console.log("Launch browser notif check: setTimeout to wait time_first_execution="+time_first_execution+" before first check - nowtime = "+nowtime+" auto_check_events_not_before = "+auto_check_events_not_before+" time_js_next_test = "+time_js_next_test+" time_auto_update="+time_auto_update);
+    	console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" auto_check_events_not_before (val in session)= "+auto_check_events_not_before+" time_js_next_test (max now,auto_check_events_not_before) = "+time_js_next_test+" time_auto_update="+time_auto_update);
     	setTimeout(first_execution, time_first_execution); 
     } //first run auto check
 
@@ -79,17 +80,18 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
     function check_events() {
     	if (Notification.permission === "granted")
     	{
-    		console.log("Call check_events time_js_next_test="+time_js_next_test);
-            $.ajax("<?php print dol_buildpath('/core/ajax/check_notifications.php', 1); ?>", {
-                type: "post",   // Usually post o get
+    		console.log("Call check_events time_js_next_test = date we are looking for event after ="+time_js_next_test);
+            $.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php'; ?>", {
+                type: "post",   // Usually post or get
                 async: true,
                 data: {time: time_js_next_test},
                 success: function (result) {
                     var arr = JSON.parse(result);
                     if (arr.length > 0) {
+                    	var audio = null; 
                         <?php
                         if (! empty($conf->global->AGENDA_NOTIFICATION_SOUND)) {
-                            print 'var audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav'.'\');';
+                            print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav'.'\');';
                         }
                         ?>
     
@@ -136,6 +138,7 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
         }
 
         time_js_next_test += time_auto_update;
+		console.log('Updated time_js_next_test. New value is '+time_js_next_test);
     }
 <?php 
 }

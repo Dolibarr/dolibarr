@@ -474,9 +474,9 @@ else
 						}
 					}
 
-					$var=!$var;
+					
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
-					print "<tr ".$bc[$var].">";
+					print '<tr class="oddeven">';
 					print "<td>";
 					$productstatic->id=$objp->rowid;
                     $productstatic->ref = $objp->ref;

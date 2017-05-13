@@ -94,7 +94,7 @@ if ($id > 0 || ! empty($ref))
     $tab='gantt';
 
     $head=project_prepare_head($object);
-    dol_fiche_head($head, $tab, $langs->trans("Project"),0,($object->public?'projectpub':'project'));
+    dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
     $param=($mode=='mine'?'&mode=mine':'');
 
@@ -138,9 +138,12 @@ if ($id > 0 || ! empty($ref))
     
     // Date start - end
     print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-    print dol_print_date($object->date_start,'day');
-    $end=dol_print_date($object->date_end,'day');
-    if ($end) print ' - '.$end;
+	$start = dol_print_date($object->date_start,'dayhour');
+	print ($start?$start:'?');
+	$end = dol_print_date($object->date_end,'dayhour');
+	print ' - ';
+	print ($end?$end:'?');
+	if ($object->hasDelay()) print img_warning("Late");
     print '</td></tr>';
     
     // Budget
@@ -253,7 +256,7 @@ if (count($tasksarray)>0)
 		$tasks[$taskcursor]['task_percent_complete']=$val->progress;
 		//$tasks[$taskcursor]['task_name']=$task->getNomUrl(1);
 		//print dol_print_date($val->date_start).dol_print_date($val->date_end).'<br>'."\n";
-		$tasks[$taskcursor]['task_name']=$val->label;
+		$tasks[$taskcursor]['task_name']=$val->ref.' - '.$val->label;
 		$tasks[$taskcursor]['task_start_date']=$val->date_start;
 		$tasks[$taskcursor]['task_end_date']=$val->date_end;
 		$tasks[$taskcursor]['task_color']='b4d1ea';

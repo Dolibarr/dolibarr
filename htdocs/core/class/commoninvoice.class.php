@@ -51,7 +51,8 @@ abstract class CommonInvoice extends CommonObject
     const TYPE_DEPOSIT = 3;
 
     /**
-     * Proforma invoice
+     * Proforma invoice. 
+     * @deprectad Remove this. A "proforma invoice" is an order with a look of invoice, not an invoice !
      */
     const TYPE_PROFORMA = 4;
 
@@ -90,11 +91,11 @@ abstract class CommonInvoice extends CommonObject
 
 	
 	/**
-	 * 	Return remain amount to pay.
-	 *  Property ->id and ->total_ttc must be set.
+	 * 	Return remain amount to pay. Property ->id and ->total_ttc must be set.
+	 *  This does not include open direct debit requests.
 	 *
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *	@return		int						Remain of amount to pay
+	 *	@return		double						Remain of amount to pay
 	 */
 	function getRemainToPay($multicurrency=0)
 	{
@@ -307,7 +308,7 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *	@param    	int  	$paye          	Status field paye
 	 *	@param      int		$status        	Id status
-	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
+	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
 	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *	@param		int		$type			Type invoice
 	 *	@return     string        			Libelle du statut
@@ -408,9 +409,10 @@ abstract class CommonInvoice extends CommonObject
 				else return img_picto($langs->trans('BillStatusPaid'),'statut6').' '.$langs->trans('BillStatusPaid');
 			}
 		}
-		if ($mode == 5)
+		if ($mode == 5 || $mode == 6)
 		{
-			$prefix='Short';
+			$prefix='';
+			if ($mode == 5) $prefix='Short';
 			if (! $paye)
 			{
 				if ($status == 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusDraft').' </span>'.img_picto($langs->trans('BillStatusDraft'),'statut0');
@@ -546,6 +548,12 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var int
 	 */
 	public $fk_product;
+
+	/**
+	 * VAT code
+	 * @var string
+	 */
+	public $vat_src_code;
 
 	/**
 	 * VAT %

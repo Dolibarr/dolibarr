@@ -153,12 +153,12 @@ class Establishment extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."establishment";
-		$sql .= " SET name = '".$this->name."'";
-		$sql .= ", address = '".$this->address."'";
-		$sql .= ", zip = '".$this->zip."'";
-		$sql .= ", town = '".$this->town."'";
+		$sql .= " SET name = '".$this->db->escape($this->name)."'";
+		$sql .= ", address = '".$this->db->escape($this->address)."'";
+		$sql .= ", zip = '".$this->db->escape($this->zip)."'";
+		$sql .= ", town = '".$this->db->escape($this->town)."'";
 		$sql .= ", fk_country = ".($this->country_id > 0 ? $this->country_id : 'null');
-		$sql .= ", status = '".$this->status."'";
+		$sql .= ", status = '".$this->db->escape($this->status)."'";
 		$sql .= ", fk_user_mod = " . $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 

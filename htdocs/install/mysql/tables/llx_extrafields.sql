@@ -34,5 +34,6 @@ create table llx_extrafields
 	alwayseditable  integer DEFAULT 0,							-- 1 if field can be edited whatever is element status
 	param			text,										-- extra parameters to define possible values of field
 	list			integer DEFAULT 0,							-- list of values for field that are combo lists
+	langs			varchar(24),								-- example: fileofmymodule@mymodule
 	ishidden		integer DEFAULT 0							-- ??? example of use case ???
 )ENGINE=innodb;

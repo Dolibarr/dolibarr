@@ -32,23 +32,25 @@ ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account
 AccountancyArea=Accountancy area
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
 AccountancyAreaDescActionOnce=The following actions are usually executed one time only, or once per year...
-AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you the correct default accounting account when making thee journalization (writing record in Journals and General ledger)
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you the correct default accounting account when making the journalization (writing record in Journals and General ledger)
 AccountancyAreaDescActionFreq=The following actions are usually executed every month, week or day for very large companies...
+
+AccountancyAreaDescJournalSetup=STEP %s: Create or check content of your journal list from menu %s
 AccountancyAreaDescChartModel=STEP %s: Create a model of chart of account from menu %s
 AccountancyAreaDescChart=STEP %s: Create or check content of your chart of account from menu %s
-AccountancyAreaDescBank=STEP %s: Check the binding between bank accounts and accounting account is done. Complete missing bindings. For this, go on the card of each financial account. You can start from page %s.
-AccountancyAreaDescVat=STEP %s: Check the binding between vat rates and accounting account is done. Complete missing bindings. You can set accounting accounts to use for each VAT from page %s.    
-AccountancyAreaDescExpenseReport=STEP %s: Check the binding between type of expense report and accounting account is done. Complete missing bindings. You can set accounting accounts to use for each VAT from page %s.
-AccountancyAreaDescSal=STEP %s: Check the binding between salaries payment and accounting account is done. Complete missing bindings. For this you can use the menu entry %s.    
-AccountancyAreaDescContrib=STEP %s: Check the binding between special expences (miscellaneous taxes) and accounting account is done. Complete missing bindings. For this you can use the menu entry %s.    
-AccountancyAreaDescDonation=STEP %s: Check the binding between donation and accounting account is done. Complete missing bindings. You can set the account dedicated for that from the menu entry %s.
-AccountancyAreaDescMisc=STEP %s: Check the default binding between miscellaneous transaction lines and accounting account is done. Complete missing bindings. For this you can use the menu entry %s.
-AccountancyAreaDescProd=STEP %s: Check the binding between products/services and accounting account is done. Complete missing bindings. For this you can use the menu entry %s.
-AccountancyAreaDescLoan=STEP %s: Check the binding between loans payment and accounting account is done. Complete missing bindings. For this you can use the menu entry %s. 
 
-AccountancyAreaDescCustomer=STEP %s: Check the binding between existing customer invoice lines and accounting account is done, so application will be able to journalize transactions in General Ledger in one click. Complete missing bindings. For this you can use the menu entry %s.
-AccountancyAreaDescSupplier=STEP %s: Check the binding between existing supplier invoice lines and accounting account is done, so application will be able to journalize transactions in General Ledger in one click. Complete missing bindings. For this you can use the menu entry %s.
-AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the General Ledger. For this, go into each Journal, and click into button "Journalize transactions in General Ledger". 
+AccountancyAreaDescVat=STEP %s: Define accounting accounts for each VAT Rates. For this, use the menu entry %s.    
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of expense report. For this, use the menu entry %s.
+AccountancyAreaDescSal=STEP %s: Define default accounting accounts for payment of salaries. For this, use the menu entry %s.    
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expences (miscellaneous taxes). For this, use the menu entry %s.    
+AccountancyAreaDescDonation=STEP %s: Define default accounting accounts for donation. For this, use the menu entry %s.
+AccountancyAreaDescMisc=STEP %s: Define default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
+AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s. 
+AccountancyAreaDescBank=STEP %s: Define accounting accounts for each bank and financial accounts. For this, go on the card of each financial account. You can start from page %s.
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your products/services. For this, use the menu entry %s.
+
+AccountancyAreaDescBind=STEP %s: Check the binding between existing %s lines and accounting account is done, so application will be able to journalize transactions in General Ledger in one click. Complete missing bindings. For this, use the menu entry %s.
+AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the General Ledger. For this, go into menu <strong>%s</strong>, and click into button <strong>%s</strong>. 
 AccountancyAreaDescAnalyze=STEP %s: Add or edit existing transactions and generate reports and exports.
 
 AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't make modification in a future.
@@ -59,6 +61,8 @@ ChangeAndLoad=Change and load
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
 AccountAccountingShort=Account
+ShowAccountingAccount=Show accounting account
+ShowAccountingJournal=Show accounting journal
 AccountAccountingSuggest=Accounting account suggested
 MenuDefaultAccounts=Default accounts
 MenuVatAccounts=Vat accounts
@@ -189,8 +193,8 @@ ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting accoun
 MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Transactions are written in the general ledger
-GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be recorded.
-NoNewRecordSaved=No new record saved
+GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be dispatched. If there is no other error message, this is probably because they were already dispatched.
+NoNewRecordSaved=No new record dispatched
 ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
 ChangeBinding=Change the binding
 
@@ -198,6 +202,18 @@ ChangeBinding=Change the binding
 ApplyMassCategories=Apply mass categories
 AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
 CategoryDeleted=Category for the accounting account has been removed
+AccountingJournals=Accounting journals
+AccountingJournal=Accounting journal
+NewAccountingJournal=New accounting journal
+ShowAccoutingJournal=Show accounting journal
+Code=Code
+Nature=Nature
+AccountingJournalType1=Various operation
+AccountingJournalType2=Sales
+AccountingJournalType3=Purchases
+AccountingJournalType4=Bank
+AccountingJournalType9=Has-new
+ErrorAccountingJournalIsAlreadyUse=This journal is already use
 
 ## Export
 Exports=Exports
@@ -213,6 +229,7 @@ Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
 Modelcsv_quadratus=Export towards Quadratus QuadraCompta
 Modelcsv_ebp=Export towards EBP
 Modelcsv_cogilog=Export towards Cogilog
+Modelcsv_agiris=Export towards Agiris (Test)
 ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service

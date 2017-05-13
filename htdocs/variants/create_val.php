@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,83 +19,130 @@ require '../main.inc.php';
 require 'class/ProductAttribute.class.php';
 require 'class/ProductAttributeValue.class.php';
 
-$id = GETPOST('id');
-$ref = GETPOST('ref');
-$value = GETPOST('value');
+$id = GETPOST('id','int');
+$ref = GETPOST('ref','alpha');
+$value = GETPOST('value','alpha');
 
-$prodattr = new ProductAttribute($db);
-$prodattrval = new ProductAttributeValue($db);
+$action=GETPOST('action','alpha');
+$cancel=GETPOST('cancel','alpha');
+$backtopage=GETPOST('backtopage','alpha');
 
-if ($prodattr->fetch($id) < 1) {
+$object = new ProductAttribute($db);
+$objectval = new ProductAttributeValue($db);
+
+if ($object->fetch($id) < 1) {
 	dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 	exit();
 }
 
-if ($_POST) {
 
+/*
+ * Actions
+ */
+
+if ($cancel)
+{
+    $action='';
+    header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
+    exit();
+}
+
+// None
+
+
+
+/*
+ * View
+ */
+
+if ($action == 'add')
+{
 	if (empty($ref) || empty($value)) {
 		setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
 	} else {
 
-		$prodattrval->fk_product_attribute = $prodattr->id;
-		$prodattrval->ref = $ref;
-		$prodattrval->value = $value;
+		$objectval->fk_product_attribute = $object->id;
+		$objectval->ref = $ref;
+		$objectval->value = $value;
 
-		if ($prodattrval->create() > 0) {
+		if ($objectval->create() > 0) {
 			setEventMessage($langs->trans('RecordSaved'));
-			header('Location: '.dol_buildpath('/variants/card.php?id='.$prodattr->id, 2));
+			header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
 			exit();
 		} else {
 			setEventMessage($langs->trans('ErrorCreatingProductAttributeValue'), 'errors');
 		}
 	}
-
 }
 
 $langs->load('products');
 
-$title = $langs->trans('ProductAttributeName', dol_htmlentities($prodattr->label));
+$title = $langs->trans('ProductAttributeName', dol_htmlentities($object->label));
 
 llxHeader('', $title);
 
-print_fiche_titre($title);
+$h=0;
+$head[$h][0] = DOL_URL_ROOT.'/variants/card.php?id='.$object->id;
+$head[$h][1] = $langs->trans("Card");
+$head[$h][2] = 'variant';
+$h++;
 
-dol_fiche_head();
+dol_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
 
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
 ?>
 <table class="border" style="width: 100%">
 	<tr>
-		<td style="width: 15%" class="fieldrequired"><?php echo $langs->trans('Ref') ?></td>
-		<td><?php echo dol_htmlentities($prodattr->ref) ?>
+		<td class="titlefield fieldrequired"><?php echo $langs->trans('Ref') ?></td>
+		<td><?php echo dol_htmlentities($object->ref) ?>
 	</tr>
 	<tr>
-		<td style="width: 15%" class="fieldrequired"><?php echo $langs->trans('Label') ?></td>
-		<td><?php echo dol_htmlentities($prodattr->label) ?></td>
+		<td class="fieldrequired"><?php echo $langs->trans('Label') ?></td>
+		<td><?php echo dol_htmlentities($object->label) ?></td>
 	</tr>
 </table>
 
 <?php
+print '</div>';
 
 dol_fiche_end();
+
+print '<br>';
+
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="add">';
+print '<input type="hidden" name="id" value="'.$object->id.'">';
+print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 print_fiche_titre($langs->trans('NewProductAttributeValue'));
 
 dol_fiche_head();
+
 ?>
-<form method="post">
 	<table class="border" style="width: 100%">
 		<tr>
-			<td style="width: 15%" class="fieldrequired"><label for="ref"><?php echo $langs->trans('Ref') ?></label></td>
+			<td class="titlefield fieldrequired"><label for="ref"><?php echo $langs->trans('Ref') ?></label></td>
 			<td><input id="ref" type="text" name="ref" value="<?php echo $ref ?>"></td>
 		</tr>
 		<tr>
-			<td style="width: 15%" class="fieldrequired"><label for="value"><?php echo $langs->trans('Value') ?></label></td>
+			<td class="fieldrequired"><label for="value"><?php echo $langs->trans('Value') ?></label></td>
 			<td><input id="value" type="text" name="value" value="<?php echo $value ?>"></td>
 		</tr>
 	</table>
 <?php
+
 dol_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div></form>';
+print '<div class="center">';
+print '<input type="submit" class="button" name="create" value="'.$langs->trans("Create").'">';
+print ' &nbsp; ';
+print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+print '</div>';
+
+print '</form>';
 
 llxFooter();
+$db->close();

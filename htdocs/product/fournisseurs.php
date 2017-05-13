@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
 $langs->load("products");
 $langs->load("suppliers");
 $langs->load("bills");
-if (! empty($conf->margin->enabled)) $langs->load("margins");
+$langs->load("margins");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -305,10 +305,11 @@ if ($id > 0 || $ref)
 			$head=product_prepare_head($object);
 			$titre=$langs->trans("CardProduct".$object->type);
 			$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-			dol_fiche_head($head, 'suppliers', $titre, 0, $picto);
+			
+			dol_fiche_head($head, 'suppliers', $titre, -1, $picto);
 			
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-		$object->next_prev_filter=" fk_product_type = ".$object->type;		
+		    $object->next_prev_filter=" fk_product_type = ".$object->type;		
             dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
             
             print '<div class="fichecenter">';
@@ -620,9 +621,9 @@ if ($id > 0 || $ref)
 
 					foreach($product_fourn_list as $productfourn)
 					{
-						$var=!$var;
+						
 
-						print "<tr ".$bc[$var].">";
+						print '<tr class="oddeven">';
 
 						// Supplier
 						print '<td>'.$productfourn->getSocNomUrl(1,'supplier').'</td>';

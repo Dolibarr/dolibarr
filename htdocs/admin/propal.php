@@ -248,15 +248,14 @@ else if ($action == 'setmod')
 
 
 /*
- * Affiche page
+ * View
  */
+
+$form=new Form($db);
 
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
-
 llxHeader('',$langs->trans("PropalSetup"));
-
-$form=new Form($db);
 
 //if ($mesg) print $mesg;
 
@@ -265,7 +264,7 @@ print load_fiche_titre($langs->trans("PropalSetup"),$linkback,'title_setup');
 
 $head = propal_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Proposals"), 0, 'propal');
+dol_fiche_head($head, 'general', $langs->trans("Proposals"), -1, 'propal');
 
 /*
  *  Module numerotation
@@ -310,8 +309,8 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-						$var=!$var;
-						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+						
+						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
 
@@ -450,7 +449,7 @@ foreach ($dirmodels as $reldir)
 	                        if ($modulequalified)
 	                        {
 	                            $var = !$var;
-	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module,'info')) print $module->info($langs);
@@ -534,11 +533,10 @@ print '<br>';
 
 /*
  * Other options
- *
  */
+
 print load_fiche_titre($langs->trans("OtherOptions"),'','');
 
-$var=true;
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>\n";
@@ -546,11 +544,11 @@ print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
 print "<td>&nbsp;</td>\n";
 print "</tr>";
 
-$var=!$var;
+
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"setdefaultduration\">";
-print "<tr ".$bc[$var].">";
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultProposalDurationValidity").'</td>';
 print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".$conf->global->PROPALE_VALIDITY_DURATION."\"></td>";
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
@@ -562,7 +560,7 @@ $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setusecustomercontactasrecipient">';
-print '<tr '.$bc[$var].'><td>';
+print '<tr class="oddeven"><td>';
 print $langs->trans("UseCustomerContactAsPropalRecipientIfExist");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("value",$conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1);
@@ -572,12 +570,17 @@ print "</td></tr>\n";
 print '</form>';
 */
 
-$var=! $var;
+$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_PROPOSAL_FREE_TEXT">';
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnProposal").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnProposal"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
 $variablename='PROPOSAL_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -594,13 +597,14 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td></tr>\n";
 print '</form>';
 
-$var=!$var;
+
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_PROPALE_DRAFT_WATERMARK\">";
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("WatermarkOnDraftProposal").'</td><td>';
-print '<input size="50" class="flat" type="text" name="PROPALE_DRAFT_WATERMARK" value="'.$conf->global->PROPALE_DRAFT_WATERMARK.'">';
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("WatermarkOnDraftProposal"), $htmltext).'<br>';
+print '</td><td>';
+print '<input class="flat minwidth200" type="text" name="PROPALE_DRAFT_WATERMARK" value="'.$conf->global->PROPALE_DRAFT_WATERMARK.'">';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
@@ -609,8 +613,8 @@ print '</form>';
 /* Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
 if ($conf->banque->enabled)
 {
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    
+    print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp</td><td align="right">';
     if (! empty($conf->use_javascript_ajax))
     {
@@ -631,8 +635,8 @@ if ($conf->banque->enabled)
 }
 else
 {
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    
+    print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
 */
@@ -668,7 +672,7 @@ print '<td align="center" width="60"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
 print '</td><td align="right">';
 print "</td></tr>\n";

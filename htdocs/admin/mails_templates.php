@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2015  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2017  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
@@ -27,7 +27,7 @@
  */
 
 /**
- *	    \file       htdocs/admin/dict.php
+ *	    \file       htdocs/admin/mails_templates.php
  *		\ingroup    setup
  *		\brief      Page to administer data tables
  */
@@ -118,15 +118,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 $formmail=new FormMail($db);
 if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
 {
-    $tmp=$formmail->getAvailableSubstitKey('form');
+    $tmp=FormMail::getAvailableSubstitKey('formemail');
+    $tmp['__(AnyTransKey)__']='__(AnyTransKey)__';
     $helpsubstit = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
     $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
 }
 else
 {
-    $tmp=$formmail->getAvailableSubstitKey('formwithlines');
+    $tmp=FormMail::getAvailableSubstitKey('formemailwithlines');
+    $tmp['__(AnyTransKey)__']='__(AnyTransKey)__';
     $helpsubstit = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
-    $tmp=$formmail->getAvailableSubstitKey('formforlines');
+    $tmp=FormMail::getAvailableSubstitKey('formemailforlines');
     $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
 }
 
@@ -482,7 +484,11 @@ if ($action != 'edit')
         {
             print '<td align="'.$align.'">';
         	if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
-        	else if (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
+        	else if (! empty($tabhelp[$id][$value])) 
+        	{
+        	    if (in_array($value, array('topic'))) print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, $value);   // Tooltip on click
+        	    else print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2);                             // Tooltip on hover
+        	}
         	else print $valuetoshow;
             print '</td>';
          }
@@ -537,8 +543,8 @@ if ($action != 'edit')
     foreach ($fieldsforcontent as $tmpfieldlist)
     {
         print '<tr class="impair nodrag nodrop nohover"><td colspan="5">';
-        if ($tmpfieldlist == 'content') print '<strong>'.$form->textwithpicto($langs->trans("Content"),$tabhelp[$id][$tmpfieldlist]).'</strong><br>';
-        if ($tmpfieldlist == 'content_lines') print '<strong>'.$form->textwithpicto($langs->trans("ContentForLines"),$tabhelp[$id][$tmpfieldlist]).'</strong><br>';
+        if ($tmpfieldlist == 'content') print '<strong>'.$form->textwithpicto($langs->trans("Content"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong><br>';
+        if ($tmpfieldlist == 'content_lines') print '<strong>'.$form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong><br>';
     
         if ($context != 'hide')
         {
@@ -622,7 +628,11 @@ if ($resql)
         // Affiche nom du champ
         if ($showfield)
         {
-            if (! empty($tabhelp[$id][$value])) $valuetoshow = $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
+            if (! empty($tabhelp[$id][$value])) 
+            {
+                if (in_array($value, array('topic'))) $valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2);   // Tooltip on hover
+                else $valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2);                             // Tooltip on hover
+            }
             print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), $param, "align=".$align, $sortfield, $sortorder);
         }
     }
@@ -649,11 +659,10 @@ if ($resql)
         // Lines with values
         while ($i < $num)
         {
-            $var = ! $var;
 
             $obj = $db->fetch_object($resql);
             //print_r($obj);
-            print '<tr '.$bc[$var].' id="rowid-'.$obj->rowid.'">';
+            print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
             if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
             {
                 $tmpaction='edit';
@@ -687,7 +696,7 @@ if ($resql)
                     // Show value for field
                     if ($showfield) {
                 
-                        print '</tr><tr '.$bc[$var].' nohover tr-'.$tmpfieldlist.'-'.$rowid.' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
+                        print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$rowid.' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
                         $okforextended = true;
                         if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
                             $okforextended = false;
@@ -779,7 +788,7 @@ if ($resql)
                     // Show value for field
                     if ($showfield) {
                         
-                        print '</tr><tr '.$bc[$var].' nohover tr-'.$tmpfieldlist.'-'.$i.' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
+                        print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$i.' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
                         $okforextended = true;
                         if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
                             $okforextended = false;

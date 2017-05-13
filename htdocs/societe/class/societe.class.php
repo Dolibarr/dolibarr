@@ -841,7 +841,7 @@ class Societe extends CommonObject
             $sql .= ",fk_effectif = ".(! empty($this->effectif_id)?"'".$this->db->escape($this->effectif_id)."'":"null");
             if (isset($this->stcomm_id))
             {
-                $sql .= ",fk_stcomm='".$this->stcomm_id."'";
+                $sql .= ",fk_stcomm=".($this->stcomm_id > 0 ? $this->stcomm_id : "null");
             }
             $sql .= ",fk_typent = ".(! empty($this->typent_id)?"'".$this->db->escape($this->typent_id)."'":"0");
 
@@ -859,7 +859,7 @@ class Societe extends CommonObject
             $sql .= ",default_lang = ".(! empty($this->default_lang)?"'".$this->db->escape($this->default_lang)."'":"null");
             $sql .= ",logo = ".(! empty($this->logo)?"'".$this->db->escape($this->logo)."'":"null");
             $sql .= ",outstanding_limit= ".($this->outstanding_limit!=''?$this->outstanding_limit:'null');
-            $sql .= ",fk_prospectlevel='".$this->fk_prospectlevel."'";
+            $sql .= ",fk_prospectlevel='".$this->db->escape($this->fk_prospectlevel)."'";
 
             $sql .= ",webservices_url = ".(! empty($this->webservices_url)?"'".$this->db->escape($this->webservices_url)."'":"null");
             $sql .= ",webservices_key = ".(! empty($this->webservices_key)?"'".$this->db->escape($this->webservices_key)."'":"null");
@@ -1559,7 +1559,7 @@ class Societe extends CommonObject
         $note=trim($note);
         if (! $note)
         {
-            $this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Note"));
+            $this->error=$langs->trans("ErrorFieldRequired",$langs->trans("NoteReason"));
             return -2;
         }
 
@@ -1838,23 +1838,41 @@ class Societe extends CommonObject
 
         $name=$this->name?$this->name:$this->nom;
 
-		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
-		{
-			if (($this->client) && (! empty ( $this->code_client ))) {
-				$code = $this->code_client . ' - ';
-			}
-			if (($this->fournisseur) && (! empty ( $this->code_fournisseur ))) {
-				$code .= $this->code_fournisseur . ' - ';
-			}
-			$name =$code.' '.$name;
-		}
+    	if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
+    	{
+    		if (($this->client) && (! empty ( $this->code_client ))
+    			&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
+    			|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
+    			)
+    		) 
+    		$code = $this->code_client . ' - ';
 
-	    if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
+    		if (($this->fournisseur) && (! empty ( $this->code_fournisseur ))
+    			&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
+    			|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
+    			)
+    		) 
+    		$code .= $this->code_fournisseur . ' - ';
+    
+    		if ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1)
+    			$name =$code.' '.$name;
+    		else
+    			$name =$code;
+    	}
+
+    	if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
 
         $result=''; $label='';
         $linkstart=''; $linkend='';
 
-        $label.= '<div width="100%">';
+        if (! empty($this->logo) && class_exists('Form'))
+        {
+            $label.= '<div class="photointooltip">';
+            $label.= Form::showphoto('societe', $this, 80, 0, 0, 'photowithmargin', 'mini');
+            $label.= '</div><div style="clear: both;"></div>';
+        }
+        
+        $label.= '<div class="centpercent">';
 
         if ($option == 'customer' || $option == 'compta' || $option == 'category' || $option == 'category_supplier')
         {
@@ -1908,12 +1926,6 @@ class Societe extends CommonObject
         if (! empty($conf->accounting->enabled) && $this->fournisseur)
             $label.= '<br><b>' . $langs->trans('SupplierAccountancyCode') . ':</b> '. $this->code_compta_fournisseur;
             
-        if (! empty($this->logo) && class_exists('Form'))
-        {
-            $label.= '</br><div class="photointooltip">';
-            $label.= Form::showphoto('societe', $this, 80, 0, 0, 'photowithmargin', 'mini');
-            $label.= '</div><div style="clear: both;"></div>';
-        }
         $label.= '</div>';
 
         // Add type of canvas
@@ -1950,7 +1962,7 @@ class Societe extends CommonObject
             $linkend='';
         }
         
-        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
+        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$linkstart.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
 
@@ -2068,7 +2080,7 @@ class Societe extends CommonObject
 
         $sql = "SELECT rowid, email, statut, phone_mobile, lastname, poste, firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
-        $sql.= " WHERE fk_soc = '".$this->id."'";
+        $sql.= " WHERE fk_soc = ".$this->id;
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -2128,7 +2140,7 @@ class Societe extends CommonObject
     {
         $contacts = array();
 
-        $sql = "SELECT rowid, lastname, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '".$this->id."'";
+        $sql = "SELECT rowid, lastname, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$this->id;
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -2161,7 +2173,7 @@ class Societe extends CommonObject
         require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
         $contacts = array();
 
-        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '".$this->id."'";
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$this->id;
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -3145,7 +3157,7 @@ class Societe extends CommonObject
     {
     	$sql  = "SELECT t.localtax1, t.localtax2";
     	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-    	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
+    	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
     	$sql .= " AND t.active = 1";
     	if (empty($localTaxNum))   $sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";
     	elseif ($localTaxNum == 1) $sql .= " AND t.localtax1_type <> '0'";
@@ -3169,7 +3181,7 @@ class Societe extends CommonObject
     {
         $sql  = "SELECT t.rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-        $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
+        $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
         $sql .= " AND t.active = 1 AND t.recuperableonly = 1";
 
         dol_syslog("useNPR", LOG_DEBUG);
@@ -3190,7 +3202,7 @@ class Societe extends CommonObject
     {
 		$sql  = "SELECT COUNT(*) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r, ".MAIN_DB_PREFIX."c_country as c";
-		$sql .= " WHERE r.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
+		$sql .= " WHERE r.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
 		$sql .= " AND r.active = 1";
 
 		dol_syslog("useRevenueStamp", LOG_DEBUG);
@@ -3312,18 +3324,6 @@ class Societe extends CommonObject
 		}
 
 		return "Error, mode/status not found";
-	}
-
-	/**
-	 *  Set commnunication level
-	 *
-	 *  @param  User	$user		User making change
-	 *	@return	int					<0 if KO, >0 if OK
-     * @deprecated Use update function instead
-	 */
-	function set_commnucation_level($user)
-	{
-		return $this->update($this->id, $user);
 	}
 
 	/**

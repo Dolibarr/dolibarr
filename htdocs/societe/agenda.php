@@ -58,7 +58,7 @@ if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield='a.datep, a.id';
+if (! $sortfield) $sortfield='a.datep,a.id';
 if (! $sortorder) $sortorder='DESC';
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -83,7 +83,7 @@ if (empty($reshook))
     }
 
     // Purge search criteria
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
     {
         $actioncode='';
         $search_agenda_label='';
@@ -180,17 +180,11 @@ if ($socid > 0)
         
 		print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
 		
-        // List of todo actions
-        //show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);
-
-        // List of done actions
-        //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
-     
         // List of all actions
 		$filters=array();
         $filters['search_agenda_label']=$search_agenda_label;
 
-        // TODO Replace this with smae code then into listactions.php
+        // TODO Replace this with same code than into listactions.php
         show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
     }
 }

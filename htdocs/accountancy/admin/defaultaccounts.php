@@ -39,6 +39,7 @@ $langs->load("bills");
 $langs->load("admin");
 $langs->load("accountancy");
 $langs->load("salaries");
+$langs->load("loan");
 
 // Security check
 if (! empty($user->rights->accountancy->chartofaccount))
@@ -134,9 +135,8 @@ print '<input type="hidden" name="action" value="update">';
 print '<table class="noborder" width="100%">';
 
 foreach ( $list_account as $key ) {
-	$var = ! $var;
 	
-	print '<tr ' . $bc[$var] . ' class="value">';
+	print '<tr class="oddeven value">';
 	// Param
 	$label = $langs->trans($key);
 	print '<td>' . $label . '</td>';

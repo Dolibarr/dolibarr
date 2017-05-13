@@ -35,7 +35,7 @@ if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIREHOOK'))		define('NOREQUIREHOOK','1');	// Disable "main.inc.php" hooks
 // Some value of modulepart can be used to get resources that are public so no login are required.
-if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'companylogo') && ! defined("NOLOGIN")) define("NOLOGIN",'1');
+if ((isset($_GET["modulepart"]) && ($_GET["modulepart"] == 'mycompany' || $_GET["modulepart"] == 'companylogo')) && ! defined("NOLOGIN")) define("NOLOGIN",'1');
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias') && ! defined("NOLOGIN"))
 {
 	define("NOLOGIN",'1');
@@ -179,7 +179,7 @@ else					// Open and return file
     dol_syslog("viewimage.php return file $original_file content-type=$type");
 
     // This test is to avoid error images when image is not available (for example thumbs).
-    if (! dol_is_file($original_file))
+    if (! dol_is_file($original_file) && empty($_GET["noalt"]))
     {
         $original_file=DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
         /*$error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
@@ -191,13 +191,13 @@ else					// Open and return file
     // Les drois sont ok et fichier trouve
     if ($type)
     {
+        top_httphead($type);
         header('Content-Disposition: inline; filename="'.basename($original_file).'"');
-        header('Content-type: '.$type);
     }
     else
     {
+        top_httphead('image/png');
         header('Content-Disposition: inline; filename="'.basename($original_file).'"');
-        header('Content-type: image/png');
     }
 
     $original_file_osencoded=dol_osencode($original_file);

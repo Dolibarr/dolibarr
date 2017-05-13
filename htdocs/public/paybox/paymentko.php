@@ -35,6 +35,7 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Security check
 if (empty($conf->paybox->enabled)) accessforbidden('',0,0,1);
@@ -93,7 +94,11 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 }
 
 
-llxHeaderPayBox($langs->trans("PaymentForm"));
+$head='';
+if (! empty($conf->global->PAYBOX_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYBOX_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+
+
+llxHeader($head, $langs->trans("PaymentForm"));
 
 
 // Show message
@@ -107,9 +112,9 @@ if (! empty($conf->global->PAYBOX_MESSAGE_KO)) print $conf->global->PAYBOX_MESSA
 print "\n</div>\n";
 
 
-html_print_paybox_footer($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs);
 
 
-llxFooterPayBox();
+llxFooter();
 
 $db->close();
