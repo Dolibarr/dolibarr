@@ -50,6 +50,7 @@ $langs->load("paypal");
 $langs->load("stripe");
 
 
+$object = new stdClass();   // For triggers
 
 
 /*
@@ -69,6 +70,14 @@ dol_syslog("Callback url when a PayBox payment was canceled. query_string=".(emp
 $tracepost = "";
 foreach($_POST as $k => $v) $tracepost .= "{$k} - {$v}\n";
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paybox');
+
+
+// Appel des triggers
+include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+$interface=new Interfaces($db);
+$result=$interface->run_triggers('PAYBOX_PAYMENT_OK',$object,$user,$langs,$conf);
+if ($result < 0) { $error++; $errors=$interface->errors; }
+// Fin appel triggers
 
 
 // Send an email

@@ -16,6 +16,8 @@ Following changes may create regression for some external modules, but were nece
 * Removed CommonObject::displayMarginInfos (was deprecated in 3.8). Use same method into
   html.formmargin.class.php
 * Removed Societe::set_commnucation_level (was deprecated in 4.0). Was not used.
+* Removed the trigger file of PAYPAL module that stored data that was not used by Dolibarr. The trigger event still
+  exists, but if an external module need action on it, it must provides itself its trigger file.
 
 ***** ChangeLog for 5.0.2 compared to 5.0.1 *****
 FIX: #6468 + Fix missing translation

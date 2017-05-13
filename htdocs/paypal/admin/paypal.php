@@ -121,7 +121,6 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 
 // Account Parameters
-$var=true;
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("AccountParameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -160,7 +159,6 @@ print $form->selectarray("PAYPAL_SSLVERSION",array('1'=> $langs->trans('TLSv1'),
 print '</td></tr>';
 
 // Usage Parameters
-$var=true;
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("UsageParameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -220,7 +218,6 @@ print '<input size="32" type="email" name="PAYPAL_PAYONLINE_SENDEMAIL" value="'.
 print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
 print '</td></tr>';
 
-$var=true;
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("UrlGenerationParameters").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';

@@ -92,6 +92,9 @@ $FULLTAG=GETPOST('FULLTAG');
 if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
 
 
+$object = new stdClass();   // For triggers
+
+
 /*
  * Actions
  */
@@ -151,8 +154,6 @@ if ($PAYPALTOKEN)
         $ack = strtoupper($resArray["ACK"]);
         if($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
         {
-        	$object = new stdClass();
-
         	$object->source		= $source;
         	$object->ref		= $ref;
         	$object->payerID	= $payerID;
@@ -226,7 +227,14 @@ if ($PAYPALTOKEN)
         }
         else
 		{
-            //Display a user friendly Error on the page using any of the following error information returned by PayPal
+            // Appel des triggers
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+            $interface=new Interfaces($db);
+            $result=$interface->run_triggers('PAYPAL_PAYMENT_KO',$object,$user,$langs,$conf);
+            if ($result < 0) { $error++; $errors=$interface->errors; }
+            // Fin appel triggers
+            
+		    //Display a user friendly Error on the page using any of the following error information returned by PayPal
             $ErrorCode = urldecode($resArray["L_ERRORCODE0"]);
             $ErrorShortMsg = urldecode($resArray["L_SHORTMESSAGE0"]);
             $ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);

@@ -61,6 +61,9 @@ $FULLTAG=GETPOST('FULLTAG');
 if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
 
 
+$object = new stdClass();   // For triggers
+
+
 /*
  * Actions
  */
@@ -77,6 +80,14 @@ dol_syslog("Callback url when a PayPal payment was canceled. query_string=".(emp
 $tracepost = "";
 foreach($_POST as $k => $v) $tracepost .= "{$k} - {$v}\n";
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paypal');
+
+
+// Appel des triggers
+include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+$interface=new Interfaces($db);
+$result=$interface->run_triggers('PAYPAL_PAYMENT_KO',$object,$user,$langs,$conf);
+if ($result < 0) { $error++; $errors=$interface->errors; }
+// Fin appel triggers
 
 
 // Send an email

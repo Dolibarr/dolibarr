@@ -60,6 +60,9 @@ $FULLTAG=GETPOST('FULLTAG');
 if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
 
 
+$object = new stdClass();   // For triggers
+
+
 /*
  * Actions
  */
@@ -112,6 +115,7 @@ dol_syslog("Call newpaymentok with token=".$token." paymentType=".$paymentType."
 print $langs->trans("YourPaymentHasBeenRecorded")."<br><br>\n";
 
 if (! empty($conf->global->PAYBOX_MESSAGE_OK)) print $conf->global->PAYBOX_MESSAGE_OK;
+
 
 // Appel des triggers
 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';

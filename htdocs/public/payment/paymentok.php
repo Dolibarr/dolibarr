@@ -128,6 +128,9 @@ $PAYMENTSTATUS=$TRANSACTIONID=$TAXAMT=$NOTE='';
 $ErrorCode=$ErrorShortMsg=$ErrorLongMsg=$ErrorSeverityCode='';
 
 
+$object = new stdClass();   // For triggers
+
+
 
 
 /*
@@ -191,8 +194,6 @@ if (! empty($conf->paypal->enabled))
 	        $ack = strtoupper($resArray["ACK"]);
 	        if ($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
 	        {
-	        	$object = new stdClass();
-	
 	        	$object->source		= $source;
 	        	$object->ref		= $ref;
 	        	$object->payerID	= $payerID;
@@ -244,11 +245,16 @@ if ($ispaymentok)
     print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
     if (! empty($conf->global->PAYMENT_MESSAGE_OK)) print $conf->global->PAYMENT_MESSAGE_OK;
     
+    $sendemail = '';
+    if (! empty($conf->global->PAYMENTONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYMENTONLINE_SENDEMAIL;
+    // TODO Remove local option to keep only the generic one ?
+    if ($paymentmethod == 'paypal' && ! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
+    if ($paymentmethod == 'paybox' && ! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
     
 	// Send an email
-	if (! empty($conf->global->PAYMENTONLINE_SENDEMAIL))
+    if ($sendemail)
 	{
-		$sendto=$conf->global->PAYMENTONLINE_SENDEMAIL;
+		$sendto=$sendemail;
 		$from=$conf->global->MAILING_EMAIL_FROM;
 		// Define $urlwithroot
 		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -269,10 +275,11 @@ if ($ispaymentok)
 		}
 		else
 		{
-			$content.=$langs->transnoentitiesnoconv("NewPaypalPaymentReceived")."<br>\n";
+			$content.=$langs->transnoentitiesnoconv("NewOnlinePaymentReceived")."<br>\n";
 		}
 		$content.="<br>\n";
 		$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":<br>\n";
+		$content.=$langs->transnoentitiesnoconv("PaymentSystem").': '.$paymentmethod."<br>\n";
 		$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
 		$content.="tag=".$fulltag." token=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
 
@@ -310,11 +317,16 @@ else
      
     if ($mysoc->email) print "\nPlease, send a screenshot of this page to ".$mysoc->email."<br>\n";
     
+    $sendemail = '';
+    if (! empty($conf->global->PAYMENTONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYMENTONLINE_SENDEMAIL;
+    // TODO Remove local option to keep only the generic one ?
+    if ($paymentmethod == 'paypal' && ! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
+    if ($paymentmethod == 'paybox' && ! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
     
     // Send an email
-    if (! empty($conf->global->PAYMENTONLINE_SENDEMAIL))
+    if ($sendemail)
     {
-        $sendto=$conf->global->PAYMENTONLINE_SENDEMAIL;
+        $sendto=$sendemail;
         $from=$conf->global->MAILING_EMAIL_FROM;
         // Define $urlwithroot
         $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -327,6 +339,7 @@ else
         $content.=$langs->transnoentitiesnoconv("PaypalConfirmPaymentPageWasCalledButFailed")."\n";
         $content.="\n";
         $content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
+		$content.=$langs->transnoentitiesnoconv("PaymentSystem").': '.$paymentmethod."<br>\n";
         $content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
         $content.="tag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
          
