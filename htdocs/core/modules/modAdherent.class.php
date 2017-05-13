@@ -160,13 +160,6 @@ class modAdherent extends DolibarrModules
         $this->const[$r][4] = 0;
         $r++;
         
-        $this->const[$r][0] = "ADHERENT_BANK_USE_AUTO";
-        $this->const[$r][1] = "yesno";
-        $this->const[$r][2] = "";
-        $this->const[$r][3] = "Insertion automatique des cotisations dans le compte bancaire";
-        $this->const[$r][4] = 0;
-        $r++;
-        
         $this->const[$r][0] = "ADHERENT_BANK_ACCOUNT";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "";
