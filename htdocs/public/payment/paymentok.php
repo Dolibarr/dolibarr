@@ -37,14 +37,13 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+
 if (! empty($conf->paypal->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
-
-// Security check
-//if (empty($conf->paypal->enabled)) accessforbidden('',0,0,1);
 
 $langs->load("main");
 $langs->load("other");
@@ -84,16 +83,17 @@ if (! empty($conf->paypal->enabled))
 	    dol_print_error('',"Paypal setup param PAYPAL_API_SIGNATURE not defined");
 	    return -1;
 	}
+
+    $PAYPALTOKEN=GETPOST('TOKEN');
+    if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');
+    $PAYPALPAYERID=GETPOST('PAYERID');
+    if (empty($PAYPALPAYERID)) $PAYPALPAYERID=GETPOST('PayerID');
+    $PAYPALFULLTAG=GETPOST('FULLTAG');
+    if (empty($PAYPALFULLTAG)) $PAYPALFULLTAG=GETPOST('fulltag');
 }
 
 $source=GETPOST('source');
 $ref=GETPOST('ref');
-$PAYPALTOKEN=GETPOST('TOKEN');
-if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');
-$PAYPALPAYERID=GETPOST('PAYERID');
-if (empty($PAYPALPAYERID)) $PAYPALPAYERID=GETPOST('PayerID');
-$PAYPALFULLTAG=GETPOST('FULLTAG');
-if (empty($PAYPALFULLTAG)) $PAYPALFULLTAG=GETPOST('fulltag');
 
 $paymentmethod=array();
 if (! empty($conf->paypal->enabled)) $paymentmethod['paypal']='paypal';
@@ -102,6 +102,14 @@ if (! empty($conf->paybox->enabled)) $paymentmethod['paybox']='paybox';
 
 // Security check
 if (empty($paymentmethod)) accessforbidden('', 0, 0, 1);
+
+
+// If payment is ok
+$PAYMENTSTATUS=$TRANSACTIONID=$TAXAMT=$NOTE='';
+// If payment is ko
+$ErrorCode=$ErrorShortMsg=$ErrorLongMsg=$ErrorSeverityCode='';
+
+$ispaymentok = false;
 
 
 /*
@@ -123,12 +131,15 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 $head='';
 if (! empty($conf->global->PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
+
 llxHeader($head, $langs->trans("PaymentForm"));
+
 
 
 // Show message
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div id="dolpaymentdiv" align="center">'."\n";
+
 
 if (! empty($conf->paypal->enabled))
 {
@@ -147,7 +158,6 @@ if (! empty($conf->paypal->enabled))
 	
 		dol_syslog("Call paymentok with token=".$token." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_paypal');
 	
-	
 		// Validate record
 	    if (! empty($paymentType))
 	    {
@@ -159,7 +169,7 @@ if (! empty($conf->paypal->enabled))
 	        $resArray=confirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
 	
 	        $ack = strtoupper($resArray["ACK"]);
-	        if($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
+	        if ($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
 	        {
 	        	$object = new stdClass();
 	
@@ -175,132 +185,153 @@ if (! empty($conf->paypal->enabled))
 	            $TRANSACTIONID=urldecode($resArray["TRANSACTIONID"]);
 	            $TAXAMT=urldecode($resArray["TAXAMT"]);
 	            $NOTE=urldecode($resArray["NOTE"]);
-	
-	            print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
-	            print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
-	            if (! empty($conf->global->PAYPAL_MESSAGE_OK)) print $conf->global->PAYPAL_MESSAGE_OK;
-	
-	            // Appel des triggers
-	            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            $interface=new Interfaces($db);
-	            $result=$interface->run_triggers('PAYPAL_PAYMENT_OK',$object,$user,$langs,$conf);
-	            if ($result < 0) { $error++; $errors=$interface->errors; }
-	            // Fin appel triggers
-	
-	        	// Send an email
-				if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
-				{
-					$sendto=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
-					$from=$conf->global->MAILING_EMAIL_FROM;
-					// Define $urlwithroot
-					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-					$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-					//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-	
-					$urlback=$_SERVER["REQUEST_URI"];
-					$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPaypalPaymentReceived");
-					$tmptag=dolExplodeIntoArray($fulltag,'.','=');
-					$content="";
-					if (! empty($tmptag['MEM']))
-					{
-						$langs->load("members");
-						$url=$urlwithroot."/adherents/card_subscriptions.php?rowid=".$tmptag['MEM'];
-						$content.=$langs->trans("PaymentSubscription")."<br>\n";
-						$content.=$langs->trans("MemberId").': '.$tmptag['MEM']."<br>\n";
-						$content.=$langs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
-					}
-					else
-					{
-						$content.=$langs->transnoentitiesnoconv("NewPaypalPaymentReceived")."<br>\n";
-					}
-					$content.="<br>\n";
-					$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":<br>\n";
-					$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
-					$content.="tag=".$fulltag." token=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
-	
-					$ishtml=dol_textishtml($content);	// May contain urls
-	
-					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-					$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
-	
-					$result=$mailfile->sendfile();
-					if ($result)
-					{
-						dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
-					}
-					else
-					{
-						dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
-					}
-				}
+
+	            $ispaymentok=True;
 	        }
 	        else
-			{
+	        {
 	            //Display a user friendly Error on the page using any of the following error information returned by PayPal
 	            $ErrorCode = urldecode($resArray["L_ERRORCODE0"]);
 	            $ErrorShortMsg = urldecode($resArray["L_SHORTMESSAGE0"]);
 	            $ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);
 	            $ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
-	
-	            echo $langs->trans('DoExpressCheckoutPaymentAPICallFailed') . "<br>\n";
-	            echo $langs->trans('DetailedErrorMessage') . ": " . $ErrorLongMsg."<br>\n";
-	            echo $langs->trans('ShortErrorMessage') . ": " . $ErrorShortMsg."<br>\n";
-	            echo $langs->trans('ErrorCode') . ": " . $ErrorCode."<br>\n";
-	            echo $langs->trans('ErrorSeverityCode') . ": " . $ErrorSeverityCode."<br>\n";
-	
-	            if ($mysoc->email) echo "\nPlease, send a screenshot of this page to ".$mysoc->email."<br>\n";
-	
-	           	// Send an email
-				if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
-				{
-					$sendto=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
-					$from=$conf->global->MAILING_EMAIL_FROM;
-					// Define $urlwithroot
-					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-					$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-					//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-	
-					$urlback=$_SERVER["REQUEST_URI"];
-					$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("ValidationOfPaypalPaymentFailed");
-					$content="";
-					$content.=$langs->transnoentitiesnoconv("PaypalConfirmPaymentPageWasCalledButFailed")."\n";
-					$content.="\n";
-					$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
-					$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
-					$content.="tag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
-	
-					$ishtml=dol_textishtml($content);	// May contain urls
-	
-					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-					$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
-	
-					$result=$mailfile->sendfile();
-					if ($result)
-					{
-						dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
-					}
-					else
-					{
-						dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
-					}
-				}
 	        }
 	    }
 	    else
 	    {
 	        dol_print_error('','Session expired');
-	    }
+	    }	    
+	}
+	else
+	{
+	    dol_print_error('','$PAYPALTOKEN not defined');
+	}	
+}
+
+
+
+if ($ispaymentok)
+{
+    // Appel des triggers
+    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+    $interface=new Interfaces($db);
+    $result=$interface->run_triggers('PAYMENTONLINE_PAYMENT_OK',$object,$user,$langs,$conf);
+    if ($result < 0) { $error++; $errors=$interface->errors; }
+    // Fin appel triggers
+
+    
+    print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
+    print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
+    if (! empty($conf->global->PAYMENT_MESSAGE_OK)) print $conf->global->PAYMENT_MESSAGE_OK;
+    
+    
+	// Send an email
+	if (! empty($conf->global->PAYMENTONLINE_SENDEMAIL))
+	{
+		$sendto=$conf->global->PAYMENTONLINE_SENDEMAIL;
+		$from=$conf->global->MAILING_EMAIL_FROM;
+		// Define $urlwithroot
+		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+		$urlback=$_SERVER["REQUEST_URI"];
+		$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPaypalPaymentReceived");
+		$tmptag=dolExplodeIntoArray($fulltag,'.','=');
+		$content="";
+		if (! empty($tmptag['MEM']))
+		{
+			$langs->load("members");
+			$url=$urlwithroot."/adherents/card_subscriptions.php?rowid=".$tmptag['MEM'];
+			$content.=$langs->trans("PaymentSubscription")."<br>\n";
+			$content.=$langs->trans("MemberId").': '.$tmptag['MEM']."<br>\n";
+			$content.=$langs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
+		}
+		else
+		{
+			$content.=$langs->transnoentitiesnoconv("NewPaypalPaymentReceived")."<br>\n";
+		}
+		$content.="<br>\n";
+		$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":<br>\n";
+		$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
+		$content.="tag=".$fulltag." token=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
+
+		$ishtml=dol_textishtml($content);	// May contain urls
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
+
+		$result=$mailfile->sendfile();
+		if ($result)
+		{
+			dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
+		}
+		else
+		{
+			dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+		}
 	}
 }
 else
 {
-    // No TOKEN parameter in URL
-    dol_print_error('','No TOKEN parameter in URL');
+    // Appel des triggers
+    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+    $interface=new Interfaces($db);
+    $result=$interface->run_triggers('PAYMENTONLINE_PAYMENT_KO',$object,$user,$langs,$conf);
+    if ($result < 0) { $error++; $errors=$interface->errors; }
+    // Fin appel triggers
+    
+
+    print $langs->trans('DoExpressCheckoutPaymentAPICallFailed') . "<br>\n";
+    print $langs->trans('DetailedErrorMessage') . ": " . $ErrorLongMsg."<br>\n";
+    print $langs->trans('ShortErrorMessage') . ": " . $ErrorShortMsg."<br>\n";
+    print $langs->trans('ErrorCode') . ": " . $ErrorCode."<br>\n";
+    print $langs->trans('ErrorSeverityCode') . ": " . $ErrorSeverityCode."<br>\n";
+     
+    if ($mysoc->email) print "\nPlease, send a screenshot of this page to ".$mysoc->email."<br>\n";
+    
+    
+    // Send an email
+    if (! empty($conf->global->PAYMENTONLINE_SENDEMAIL))
+    {
+        $sendto=$conf->global->PAYMENTONLINE_SENDEMAIL;
+        $from=$conf->global->MAILING_EMAIL_FROM;
+        // Define $urlwithroot
+        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+        $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+        //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+         
+        $urlback=$_SERVER["REQUEST_URI"];
+        $topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("ValidationOfPaypalPaymentFailed");
+        $content="";
+        $content.=$langs->transnoentitiesnoconv("PaypalConfirmPaymentPageWasCalledButFailed")."\n";
+        $content.="\n";
+        $content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
+        $content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
+        $content.="tag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
+         
+        $ishtml=dol_textishtml($content);	// May contain urls
+         
+        require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+        $mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
+         
+        $result=$mailfile->sendfile();
+        if ($result)
+        {
+            dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
+        }
+        else
+        {
+            dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+        }
+    }
 }
+
 
 print "\n</div>\n";
 
-html_print_paypal_footer($mysoc,$langs);
+
+htmlPrintOnlinePaymentFooter($mysoc,$langs);
 
 
 llxFooter();

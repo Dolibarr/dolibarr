@@ -37,6 +37,8 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+
 if (! empty($conf->paypal->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
@@ -138,7 +140,7 @@ if (! empty($conf->global->PAYPAL_MESSAGE_KO)) print $conf->global->PAYPAL_MESSA
 print "\n</div>\n";
 
 
-html_print_paypal_footer($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs);
 
 
 llxFooter();
