@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -23,7 +23,6 @@
  *     	\file       htdocs/public/paypal/newpayment.php
  *		\ingroup    paypal
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
- *		\author	    Laurent Destailleur
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -353,7 +352,7 @@ $error=0;
 $var=false;
 
 // Free payment
-if (! GETPOST("source") && $valid)
+if (! GETPOST("source"))
 {
 	$found=true;
 	$tag=GETPOST("tag");
@@ -400,7 +399,7 @@ if (! GETPOST("source") && $valid)
 
 
 // Payment on customer order
-if (GETPOST("source") == 'order' && $valid)
+if (GETPOST("source") == 'order')
 {
 	$found=true;
 	$langs->load("orders");
@@ -507,7 +506,7 @@ if (GETPOST("source") == 'order' && $valid)
 
 
 // Payment on customer invoice
-if (GETPOST("source") == 'invoice' && $valid)
+if (GETPOST("source") == 'invoice')
 {
 	$found=true;
 	$langs->load("bills");
@@ -613,7 +612,7 @@ if (GETPOST("source") == 'invoice' && $valid)
 }
 
 // Payment on contract line
-if (GETPOST("source") == 'contractline' && $valid)
+if (GETPOST("source") == 'contractline')
 {
 	$found=true;
 	$langs->load("contracts");
@@ -808,7 +807,7 @@ if (GETPOST("source") == 'contractline' && $valid)
 }
 
 // Payment on member subscription
-if (GETPOST("source") == 'membersubscription' && $valid)
+if (GETPOST("source") == 'membersubscription')
 {
 	$found=true;
 	$langs->load("members");

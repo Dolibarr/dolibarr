@@ -188,8 +188,21 @@ if ($PAYPALTOKEN)
 				$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 				//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
+				// Define link to login card
+				$appli=constant('DOL_APPLICATION_TITLE');
+				if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+				{
+				    $appli=$conf->global->MAIN_APPLICATION_TITLE;
+				    if (preg_match('/\d\.\d/', $appli))
+				    {
+				        if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
+				    }
+				    else $appli.=" ".DOL_VERSION;
+				}
+				else $appli.=" ".DOL_VERSION;
+				
 				$urlback=$_SERVER["REQUEST_URI"];
-				$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPaypalPaymentReceived");
+				$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewPaypalPaymentReceived");
 				$tmptag=dolExplodeIntoArray($fulltag,'.','=');
 				$content="";
 				if (! empty($tmptag['MEM']))
@@ -258,8 +271,21 @@ if ($PAYPALTOKEN)
 				$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 				//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
+				// Define link to login card
+				$appli=constant('DOL_APPLICATION_TITLE');
+				if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+				{
+				    $appli=$conf->global->MAIN_APPLICATION_TITLE;
+				    if (preg_match('/\d\.\d/', $appli))
+				    {
+				        if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
+				    }
+				    else $appli.=" ".DOL_VERSION;
+				}
+				else $appli.=" ".DOL_VERSION;
+				
 				$urlback=$_SERVER["REQUEST_URI"];
-				$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("ValidationOfPaypalPaymentFailed");
+				$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("ValidationOfPaypalPaymentFailed");
 				$content="";
 				$content.=$langs->transnoentitiesnoconv("PaypalConfirmPaymentPageWasCalledButFailed")."\n";
 				$content.="\n";

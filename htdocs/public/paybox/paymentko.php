@@ -86,8 +86,21 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 	$sendto=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
 	$from=$conf->global->MAILING_EMAIL_FROM;
 
+	// Define link to login card
+	$appli=constant('DOL_APPLICATION_TITLE');
+	if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+	{
+	    $appli=$conf->global->MAIN_APPLICATION_TITLE;
+	    if (preg_match('/\d\.\d/', $appli))
+	    {
+	        if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
+	    }
+	    else $appli.=" ".DOL_VERSION;
+	}
+	else $appli.=" ".DOL_VERSION;
+	
 	$urlback=$_SERVER["REQUEST_URI"];
-	$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPayboxPaymentFailed");
+	$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewPayboxPaymentFailed");
 	$content=$langs->transnoentitiesnoconv("NewPayboxPaymentFailed")."\n".$fulltag;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	$mailfile = new CMailFile($topic, $sendto, $from, $content);

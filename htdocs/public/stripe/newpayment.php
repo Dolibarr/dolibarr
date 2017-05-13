@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
+ * Copyright (C) 2017       Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,7 @@ if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
 
 $langs->load("main");
 $langs->load("other");
+$langs->load("paybox");     // File with generic data
 $langs->load("stripe");
 
 $source=GETPOST("source",'alpha');
