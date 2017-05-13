@@ -3599,12 +3599,11 @@ else if ($id > 0 || ! empty($ref))
             print '</tr>';
             
             $total_prev_ht = $total_prev_ttc = 0;
-            $var = true;
             foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
                 $totalpaye = $prev_invoice->getSommePaiement();
                 $total_prev_ht += $prev_invoice->total_ht;
                 $total_prev_ttc += $prev_invoice->total_ttc;
-                print '<tr ' . $bc[$var] . '>';
+                print '<tr class="oddeven">';
                 print '<td>' . $prev_invoice->getNomUrl(1) . '</td>';
                 print '<td></td>';
                 if (! empty($conf->banque->enabled))
@@ -3614,10 +3613,9 @@ else if ($id > 0 || ! empty($ref))
                 print '<td align="right">' . $prev_invoice->getLibStatut(3, $totalpaye) . '</td>';
                 print '</tr>';
                 
-                $var = ! $var;
             }
             
-            print '<tr ' . $bc[$var] . '>';
+            print '<tr class="oddeven">';
             print '<td colspan="2" align="right"></td>';
             print '<td align="right"><b>' . price($total_prev_ht) . '</b></td>';
             print '<td align="right"><b>' . price($total_prev_ttc) . '</b></td>';
@@ -3638,12 +3636,11 @@ else if ($id > 0 || ! empty($ref))
             
             $total_next_ht = $total_next_ttc = 0;
             
-            $var = true;
             foreach ($object->tab_next_situation_invoice as $next_invoice) {
                 $totalpaye = $next_invoice->getSommePaiement();
                 $total_next_ht += $next_invoice->total_ht;
                 $total_next_ttc += $next_invoice->total_ttc;
-                print '<tr ' . $bc[$var] . '>';
+                print '<tr class="oddeven">';
                 print '<td>' . $next_invoice->getNomUrl(1) . '</td>';
                 print '<td></td>';
                 if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
@@ -3652,10 +3649,9 @@ else if ($id > 0 || ! empty($ref))
                 print '<td align="right">' . $next_invoice->getLibStatut(3, $totalpaye) . '</td>';
                 print '</tr>';
                 
-                $var = ! $var;
             }
             
-            print '<tr ' . $bc[$var] . '>';
+            print '<tr class="oddeven">';
             print '<td colspan="2" align="right"></td>';
 		    if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
 

@@ -159,15 +159,11 @@ if ($result)
     print '</td>';
     print '</tr>';
 
-    $var=True;
-
     while ($i < min($num,$limit))
     {
-        $obj = $db->fetch_object($result);
+        $obj = $db->fetch_object($result);    
 
-        
-
-        print "<tr ".$bc[$var]."><td>";
+        print '<tr class="oddeven"><td>';
 
         print $ligne->LibStatut($obj->statut_ligne,2);
         print "&nbsp;";
