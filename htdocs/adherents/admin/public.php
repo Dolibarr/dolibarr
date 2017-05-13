@@ -92,8 +92,9 @@ $head = member_admin_prepare_head();
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="update">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-dol_fiche_head($head, 'public', $langs->trans("Members"), 0, 'user');
+dol_fiche_head($head, 'public', $langs->trans("Members"), -1, 'user');
 
 if ($conf->use_javascript_ajax)
 {
@@ -147,7 +148,6 @@ print '<td align="right">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 // Allow public form
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="oddeven"><td>';
 print $langs->trans("EnablePublicSubscriptionForm");
 print '</td><td align="right">';
@@ -156,7 +156,6 @@ print "</td></tr>\n";
 
 // Force Type
 $adht = new AdherentType($db);
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="oddeven drag"><td>';
 print $langs->trans("ForceMemberType");
 print '</td><td width="60" align="center">';
@@ -167,7 +166,6 @@ print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, cou
 print "</td></tr>\n";
 
 // Amount
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="oddeven" id="tramount"><td>';
 print $langs->trans("DefaultAmount");
 print '</td><td align="right">';
@@ -175,7 +173,6 @@ print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT
 print "</td></tr>\n";
 
 // Can edit
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="oddeven" id="tredit"><td>';
 print $langs->trans("CanEditAmount");
 print '</td><td align="right">';

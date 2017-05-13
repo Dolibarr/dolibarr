@@ -1180,9 +1180,10 @@ function complete_elementList_with_modules(&$elementList)
  *
  *	@param	array	$tableau		Array of constants
  *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (no form into table), 2=No form nor button at all
+ *  @param  string  $helptext       Help
  *	@return	void
  */
-function form_constantes($tableau,$strictw3c=0)
+function form_constantes($tableau, $strictw3c=0, $helptext='')
 {
     global $db,$bc,$langs,$conf,$_Avery_Labels;
 
@@ -1193,7 +1194,10 @@ function form_constantes($tableau,$strictw3c=0)
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Description").'</td>';
-    print '<td>'.$langs->trans("Value").'*</td>';
+    print '<td>';
+    $text = $langs->trans("Value");
+    print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
+    print '</td>';
     if (empty($strictw3c)) print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
     print "</tr>\n";
     $var=true;
