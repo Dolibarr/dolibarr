@@ -669,7 +669,7 @@ if ($id)
 
         if (empty($reshook))
         {
-       		fieldList($fieldlist,$obj,$tabname[$id],'add');
+       		fieldListAccountingCategories($fieldlist,$obj,$tabname[$id],'add');
         }
 
         print '<td colspan="4" align="right">';
@@ -858,7 +858,7 @@ if ($id)
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
                     // Show fields
-                    if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
+                    if (empty($reshook)) fieldListAccountingCategories($fieldlist,$obj,$tabname[$id],'edit');
 
                     print '<td></td>';
                     print '<td></td>';
@@ -1147,7 +1147,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldList($fieldlist, $obj='', $tabname='', $context='')
+function fieldListAccountingCategories($fieldlist, $obj='', $tabname='', $context='')
 {
 	global $conf,$langs,$db;
 	global $form, $mysoc;

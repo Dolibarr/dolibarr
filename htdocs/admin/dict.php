@@ -1753,15 +1753,16 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 		    print '<td>';
 		    $transfound=0;
 	        // Special case for labels
-	        if ($tabname == MAIN_DB_PREFIX.'c_payment_term') {
+	        if ($tabname == MAIN_DB_PREFIX.'c_payment_term') 
+	        {
 	            $langs->load("bills");
 	            $transkey="PaymentCondition".strtoupper($obj->code);
+    	        if ($langs->trans($transkey) != $transkey)
+                {
+                    $transfound=1;
+                    print $form->textwithpicto($langs->trans($transkey), $langs->trans("GoIntoTranslationMenuToChangeThis"));
+                }
 	        }
-	        if ($langs->trans($transkey) != $transkey)
-            {
-                $transfound=1;
-                print $form->textwithpicto($langs->trans($transkey), $langs->trans("GoIntoTranslationMenuToChangeThis"));
-            }
 		    if (! $transfound)
 		    {
 		        print '<textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
