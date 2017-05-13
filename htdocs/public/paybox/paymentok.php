@@ -55,8 +55,8 @@ if (empty($PAYBOXTOKEN)) $PAYBOXTOKEN=GETPOST('token');
 $PAYBOXPAYERID=GETPOST('PAYERID');
 if (empty($PAYBOXPAYERID)) $PAYBOXPAYERID=GETPOST('PayerID');
 */
-$PAYBOXFULLTAG=GETPOST('FULLTAG');
-if (empty($PAYBOXFULLTAG)) $PAYBOXFULLTAG=GETPOST('fulltag');
+$FULLTAG=GETPOST('FULLTAG');
+if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
 
 
 /*
@@ -81,8 +81,10 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paybox');
 $head='';
 if (! empty($conf->global->PAYBOX_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYBOX_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
+$conf->dol_hide_topmenu=1;
+$conf->dol_hide_leftmenu=1;
 
-llxHeader($head, $langs->trans("PaymentForm"));
+llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
 
 // Show message
@@ -93,7 +95,7 @@ print '<div id="dolpaymentdiv" align="center">'."\n";
 /*
 $token              = $PAYBOXTOKEN;
 */
-$fulltag            = $PAYBOXFULLTAG;
+$fulltag            = $FULLTAG;
 /*$payerID            = $PAYBOXPAYERID;
 // Set by newpayment.php
 $paymentType        = $_SESSION['PaymentType'];
@@ -173,6 +175,6 @@ print "\n</div>\n";
 htmlPrintOnlinePaymentFooter($mysoc,$langs);
 
 
-llxFooter();
+llxFooter('', 'public');
 
 $db->close();

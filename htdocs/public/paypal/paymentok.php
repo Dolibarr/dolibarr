@@ -87,8 +87,8 @@ $PAYPALTOKEN=GETPOST('TOKEN');
 if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');
 $PAYPALPAYERID=GETPOST('PAYERID');
 if (empty($PAYPALPAYERID)) $PAYPALPAYERID=GETPOST('PayerID');
-$PAYPALFULLTAG=GETPOST('FULLTAG');
-if (empty($PAYPALFULLTAG)) $PAYPALFULLTAG=GETPOST('fulltag');
+$FULLTAG=GETPOST('FULLTAG');
+if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
 
 
 /*
@@ -111,8 +111,10 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paypal');
 $head='';
 if (! empty($conf->global->PAYPAL_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYPAL_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
+$conf->dol_hide_topmenu=1;
+$conf->dol_hide_leftmenu=1;
 
-llxHeader($head, $langs->trans("PaymentForm"));
+llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
 
 // Show message
@@ -123,7 +125,7 @@ if ($PAYPALTOKEN)
 {
     // Get on url call
     $token              = $PAYPALTOKEN;
-    $fulltag            = $PAYPALFULLTAG;
+    $fulltag            = $FULLTAG;
     $payerID            = $PAYPALPAYERID;
     // Set by newpayment.php
     $paymentType        = $_SESSION['PaymentType'];
@@ -289,6 +291,6 @@ print "\n</div>\n";
 htmlPrintOnlinePaymentFooter($mysoc,$langs);
 
 
-llxFooter();
+llxFooter('', 'public');
 
 $db->close();

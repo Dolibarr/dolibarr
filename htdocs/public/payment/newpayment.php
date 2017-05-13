@@ -16,7 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * For test: https://developer.paypal.com/
+ * For paypal test: https://developer.paypal.com/
+ * For paybox test: ???
  */
 
 /**
@@ -37,6 +38,7 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -49,6 +51,9 @@ $langs->load("dict");
 $langs->load("bills");
 $langs->load("companies");
 $langs->load("errors");
+$langs->load("paybox");     // File with generic data
+
+$action=GETPOST('action','alpha');
 
 // Input are:
 // type ('invoice','order','contractline'),
@@ -62,7 +67,7 @@ $amount=price2num(GETPOST("amount"));
 if (! GETPOST("currency",'alpha')) $currency=$conf->currency;
 else $currency=GETPOST("currency",'alpha');
 
-if (! GETPOST("action"))
+if (! $action)
 {
     if (! GETPOST("amount") && ! GETPOST("source"))
     {
@@ -81,10 +86,25 @@ if (! GETPOST("action"))
     }
 }
 
+
+$paymentmethod='';
+$validpaymentmethod=array();
+
+// Detect $paymentmethod
+foreach($_POST as $key => $val)
+{
+    if (preg_match('/^dopayment_(.*)$/', $key, $reg))
+    {
+        $paymentmethod=$reg[1];
+        break;
+    }
+}
+
+
 // Define $urlwithroot
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 //$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
+$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
 
 $urlok=$urlwithroot.'/public/payment/paymentok.php?';
 $urlko=$urlwithroot.'/public/payment/paymentko.php?';
@@ -95,6 +115,7 @@ $ref=$REF=GETPOST('ref','alpha');
 $TAG=GETPOST("tag",'alpha');
 $FULLTAG=GETPOST("fulltag",'alpha');		// fulltag is tag with more informations
 $SECUREKEY=GETPOST("securekey");	        // Secure key
+if ($paymentmethod) $FULLTAG.=($FULLTAG?'.':'').'PM='.$paymentmethod;
 
 if (! empty($SOURCE))
 {
@@ -129,9 +150,10 @@ if (! empty($entity))
 $urlok=preg_replace('/&$/','',$urlok);  // Remove last &
 $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
 
-$paymentmethod=array();
 
-// Check parameters
+
+// Find valid payment methods
+
 if (! empty($conf->paypal->enabled))
 {
 	$langs->load("paypal");
@@ -158,7 +180,7 @@ if (! empty($conf->paypal->enabled))
 	    dol_print_error('',"Paypal setup param PAYPAL_API_SIGNATURE not defined");
 	    return -1;
 	}
-	
+
 	// Check security token
 	$valid=true;
 	if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
@@ -173,28 +195,57 @@ if (! empty($conf->paypal->enabled))
 	        $token = $conf->global->PAYPAL_SECURITY_TOKEN;
 	    }
 		if ($SECUREKEY != $token) $valid=false;
-	
+		
 		if (! $valid)
 		{
 	    	print '<div class="error">Bad value for key.</div>';
 		    //print 'SECUREKEY='.$SECUREKEY.' token='.$token.' valid='.$valid;
 	    	exit;
 		}
-		else
-		{
-			$paymentmethod[]='paypal';
-		}
 	}
+	
+    $validpaymentmethod['paypal']='valid';
 }
+
 if (! empty($conf->paybox->enabled))
 {
 	$langs->load("paybox");
 	
+	// TODO
+	
+    $validpaymentmethod['paybox']='valid';
 }
+
 // TODO Add check of other payment mode
 
 
-if (empty($paymentmethod)) accessforbidden('', 0, 0, 1);
+// Check security token
+$valid=true;
+if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
+{
+    if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+    {
+        if ($SOURCE && $REF) $token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $SOURCE . $REF, 2);    // Use the source in the hash to avoid duplicates if the references are identical
+        else $token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+    }
+    else
+    {
+        $token = $conf->global->PAYMENT_SECURITY_TOKEN;
+    }
+    if ($SECUREKEY != $token) $valid=false;
+
+    if (! $valid)
+    {
+        print '<div class="error">Bad value for key.</div>';
+        //print 'SECUREKEY='.$SECUREKEY.' token='.$token.' valid='.$valid;
+        exit;
+    }
+}
+
+
+
+
+if (empty($validpaymentmethod)) accessforbidden('', 0, 0, 1);
 
 
 
@@ -202,13 +253,15 @@ if (empty($paymentmethod)) accessforbidden('', 0, 0, 1);
  * Actions
  */
 
-if (GETPOST("action") == 'dopayment')
+
+if ($action == 'dopayment')
 {
-	if (GETPOST('paymentmethod') == 'paypal')
+	if ($paymentmethod == 'paypal')
 	{ 
 		$PAYPAL_API_PRICE=price2num(GETPOST("newamount"),'MT');
 	    $PAYPAL_PAYMENT_TYPE='Sale';
 	
+	    $origfulltag=GETPOST("fulltag",'alpha');
 	    $shipToName=GETPOST("shipToName");
 	    $shipToStreet=GETPOST("shipToStreet");
 	    $shipToCity=GETPOST("shipToCity");
@@ -224,7 +277,7 @@ if (GETPOST("action") == 'dopayment')
 		if (empty($PAYPAL_API_PRICE) || ! is_numeric($PAYPAL_API_PRICE))   $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
 		//elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 		//elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
-		elseif (empty($FULLTAG))        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
+		elseif (! $origfulltag)        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
 	
 	    //var_dump($_POST);
 		if (empty($mesg))
@@ -275,7 +328,14 @@ if (GETPOST("action") == 'dopayment')
  * View
  */
 
-llxHeaderPaypal($langs->trans("PaymentForm"));
+$head='';
+if (! empty($conf->global->PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+
+$conf->dol_hide_topmenu=1;
+$conf->dol_hide_leftmenu=1;
+
+llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
+
 
 if (! empty($conf->paypal->enabled))
 {
@@ -302,12 +362,18 @@ print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";
 print '<!-- Form to send a payment -->'."\n";
+// Additionnal information for each payment system
 if (! empty($conf->paypal->enabled))
 {
 	print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";
 	print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY.' -->'."\n";
 	print '<!-- creditor = '.$creditor.' -->'."\n";
 }
+if (! empty($conf->paybox->enabled))
+{
+
+}
+// TODO Add others
 print '<!-- urlok = '.$urlok.' -->'."\n";
 print '<!-- urlko = '.$urlko.' -->'."\n";
 print "\n";
@@ -370,7 +436,7 @@ $error=0;
 $var=false;
 
 // Free payment
-if (! GETPOST("source") && $valid)
+if (! GETPOST("source"))
 {
 	$found=true;
 	$tag=GETPOST("tag");
@@ -417,7 +483,7 @@ if (! GETPOST("source") && $valid)
 
 
 // Payment on customer order
-if (GETPOST("source") == 'order' && $valid)
+if (GETPOST("source") == 'order')
 {
 	$found=true;
 	$langs->load("orders");
@@ -524,7 +590,7 @@ if (GETPOST("source") == 'order' && $valid)
 
 
 // Payment on customer invoice
-if (GETPOST("source") == 'invoice' && $valid)
+if (GETPOST("source") == 'invoice')
 {
 	$found=true;
 	$langs->load("bills");
@@ -630,7 +696,7 @@ if (GETPOST("source") == 'invoice' && $valid)
 }
 
 // Payment on contract line
-if (GETPOST("source") == 'contractline' && $valid)
+if (GETPOST("source") == 'contractline')
 {
 	$found=true;
 	$langs->load("contracts");
@@ -825,7 +891,7 @@ if (GETPOST("source") == 'contractline' && $valid)
 }
 
 // Payment on member subscription
-if (GETPOST("source") == 'membersubscription' && $valid)
+if (GETPOST("source") == 'membersubscription')
 {
 	$found=true;
 	$langs->load("members");
@@ -971,16 +1037,29 @@ print "\n";
 
 if ($found && ! $error)	// We are in a management option and no error
 {
-	if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
+    // Buttons for all payments registration methods
+    
+    if (! empty($conf->paypal->enabled))
+    {
+    	if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
+    
+    	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
+    	{
+    		print '<br><input class="button" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
+    	}
+    	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
+    	{
+    		print '<br><input class="button" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
+    	}
+    }
 
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
-	{
-		print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
-	}
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
-	{
-		print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PaypalDoPayment").'">';
-	}
+    if (! empty($conf->paypal->enabled))
+    {
+    
+        
+    }
+    
+    // TODO Other methods
 }
 else
 {
@@ -995,8 +1074,8 @@ print '</div>'."\n";
 print '<br>';
 
 
-html_print_paypal_footer($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs);
 
-llxFooterPaypal();
+llxFooter('', 'public');
 
 $db->close();

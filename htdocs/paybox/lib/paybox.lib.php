@@ -33,7 +33,7 @@
  * @param   string	$EMAIL		EMail
  * @param   string	$urlok		Url to go back if payment is OK
  * @param   string	$urlko		Url to go back if payment is KO
- * @param   string	$TAG		Tag
+ * @param   string	$TAG		Full tag
  * @return  int              	1 if OK, -1 if ERROR
  */
 function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)

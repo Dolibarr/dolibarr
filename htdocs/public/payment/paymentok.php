@@ -88,28 +88,46 @@ if (! empty($conf->paypal->enabled))
     if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');
     $PAYPALPAYERID=GETPOST('PAYERID');
     if (empty($PAYPALPAYERID)) $PAYPALPAYERID=GETPOST('PayerID');
-    $PAYPALFULLTAG=GETPOST('FULLTAG');
-    if (empty($PAYPALFULLTAG)) $PAYPALFULLTAG=GETPOST('fulltag');
+    $FULLTAG=GETPOST('FULLTAG');
+    if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
 }
 
 $source=GETPOST('source');
 $ref=GETPOST('ref');
 
-$paymentmethod=array();
-if (! empty($conf->paypal->enabled)) $paymentmethod['paypal']='paypal';
-if (! empty($conf->paybox->enabled)) $paymentmethod['paybox']='paybox';
 
+// Detect $paymentmethod
+$paymentmethod='';
+if (preg_match('/PM=([^\.]+)/', $FULLTAG, $reg))
+{
+    $paymentmethod=$reg[1];
+}
+if (empty($paymentmethod))
+{
+    dol_print_error(null, 'The back url does not contains a parameter fulltag that should help us to find the payment method used');
+    exit;
+}
+else
+{
+    dol_syslog("paymentmethod=".$paymentmethod);
+}
+
+
+$validpaymentmethod=array();
+if (! empty($conf->paypal->enabled)) $validpaymentmethod['paypal']='paypal';
+if (! empty($conf->paybox->enabled)) $validpaymentmethod['paybox']='paybox';
 
 // Security check
-if (empty($paymentmethod)) accessforbidden('', 0, 0, 1);
+if (empty($validpaymentmethod)) accessforbidden('', 0, 0, 1);
 
 
+$ispaymentok = false;
 // If payment is ok
 $PAYMENTSTATUS=$TRANSACTIONID=$TAXAMT=$NOTE='';
 // If payment is ko
 $ErrorCode=$ErrorShortMsg=$ErrorLongMsg=$ErrorSeverityCode='';
 
-$ispaymentok = false;
+
 
 
 /*
@@ -131,8 +149,10 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 $head='';
 if (! empty($conf->global->PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
+$conf->dol_hide_topmenu=1;
+$conf->dol_hide_leftmenu=1;
 
-llxHeader($head, $langs->trans("PaymentForm"));
+llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
 
 
@@ -147,7 +167,7 @@ if (! empty($conf->paypal->enabled))
 	{
 	    // Get on url call
 	    $token              = $PAYPALTOKEN;
-	    $fulltag            = $PAYPALFULLTAG;
+	    $fulltag            = $FULLTAG;
 	    $payerID            = $PAYPALPAYERID;
 	    // Set by newpayment.php
 	    $paymentType        = $_SESSION['PaymentType'];
@@ -334,6 +354,6 @@ print "\n</div>\n";
 htmlPrintOnlinePaymentFooter($mysoc,$langs);
 
 
-llxFooter();
+llxFooter('', 'public');
 
 $db->close();

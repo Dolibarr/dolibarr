@@ -950,20 +950,24 @@ if (! function_exists("llxHeader"))
      * @param 	array  	$arrayofjs			Array of complementary js files
      * @param 	array  	$arrayofcss			Array of complementary css files
      * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+     * @param   string  $morecssonbody      More CSS on body tag.
      * @return	void
      */
-	function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
+	function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='', $morecssonbody='')
 	{
 	    global $conf;
 
 	    // html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
+        print '<body id="mainbody"'.($morecssonbody?' class="'.$morecssonbody.'"':'').'>' . "\n";
+
 		// top menu and left menu area
 		if (empty($conf->dol_hide_topmenu))
 		{
 			top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring, $help_url);
 		}
+		
 		if (empty($conf->dol_hide_leftmenu))
 		{
 			left_menu('', $help_url, '', '', 1, $title, 1);
@@ -1219,19 +1223,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/editinplace.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             }
-            // jQuery File Upload
-            /*
-            if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) || (defined('REQUIRE_JQUERY_FILEUPLOAD') && constant('REQUIRE_JQUERY_FILEUPLOAD')))
-            {
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/template/tmpl.min'.$ext.'"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.iframe-transport'.$ext.'"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.fileupload'.$ext.'"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.fileupload-fp'.$ext.'"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.fileupload-ui'.$ext.'"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.fileupload-jui'.$ext.'"></script>'."\n";
-                print '<!-- The XDomainRequest Transport is included for cross-domain file deletion for IE8+ -->'."\n";
-                print '<!--[if gte IE 8]><script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/cors/jquery.xdr-transport'.$ext.'"></script><![endif]-->'."\n";
-            }*/
             // jQuery DataTables
             /* Removed a old hidden problematic feature never used in Dolibarr. If an external module need datatable, the module must provide all lib it needs and manage version problems with other dolibarr components
             if (! empty($conf->global->MAIN_USE_JQUERY_DATATABLES) || (defined('REQUIRE_JQUERY_DATATABLES') && constant('REQUIRE_JQUERY_DATATABLES')))
@@ -1377,9 +1368,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     $toprightmenu='';
 
     // For backward compatibility with old modules
-    if (empty($conf->headerdone)) top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
-
-    print '<body id="mainbody">' . "\n";
+    if (empty($conf->headerdone)) 
+    {
+        top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+        print '<body id="mainbody">';
+    }
 
     /*
      * Top menu
@@ -1762,6 +1755,7 @@ function main_area($title='')
     print "\n";
 
     print '<!-- Begin div class="fiche" -->'."\n".'<div class="fiche">'."\n";
+    
     if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode",$conf->global->MAIN_ONLY_LOGIN_ALLOWED));
 }
 
@@ -1899,7 +1893,8 @@ if (! function_exists("llxFooter"))
         }
 
         print "\n\n";
-        print '</div> <!-- End div class="fiche" -->'."\n";
+        
+        print '</div> <!-- End div class="fiche" -->'."\n"; // End div fiche
 
 		if (empty($conf->dol_hide_leftmenu)) print '</div> <!-- End div id-right -->'; // End div id-right
 

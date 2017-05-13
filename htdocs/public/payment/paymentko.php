@@ -57,16 +57,16 @@ $PAYPALTOKEN=GETPOST('TOKEN');
 if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');
 $PAYPALPAYERID=GETPOST('PAYERID');
 if (empty($PAYPALPAYERID)) $PAYPALPAYERID=GETPOST('PayerID');
-$PAYPALFULLTAG=GETPOST('FULLTAG');
-if (empty($PAYPALFULLTAG)) $PAYPALFULLTAG=GETPOST('fulltag');
+$FULLTAG=GETPOST('FULLTAG');
+if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
 
-$paymentmethod=array();
-if (! empty($conf->paypal->enabled)) $paymentmethod['paypal']='paypal';
-if (! empty($conf->paybox->enabled)) $paymentmethod['paybox']='paybox';
+$validpaymentmethod=array();
+if (! empty($conf->paypal->enabled)) $validpaymentmethod['paypal']='paypal';
+if (! empty($conf->paybox->enabled)) $validpaymentmethod['paybox']='paybox';
 
 
 // Security check
-if (empty($paymentmethod)) accessforbidden('', 0, 0, 1);
+if (empty($validpaymentmethod)) accessforbidden('', 0, 0, 1);
 
 
 /*
@@ -94,7 +94,7 @@ if (! empty($conf->paypal->enabled))
 	{
 	    // Get on url call
 	    $token              = $PAYPALTOKEN;
-	    $fulltag            = $PAYPALFULLTAG;
+	    $fulltag            = $FULLTAG;
 	    $payerID            = $PAYPALPAYERID;
 	    // Set by newpayment.php
 	    $paymentType        = $_SESSION['PaymentType'];
@@ -128,7 +128,10 @@ if (! empty($conf->paypal->enabled))
 $head='';
 if (! empty($conf->global->PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
-llxHeader($head, $langs->trans("PaymentForm"));
+$conf->dol_hide_topmenu=1;
+$conf->dol_hide_leftmenu=1;
+
+llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
 
 // Show ko message
@@ -143,6 +146,6 @@ print "\n</div>\n";
 htmlPrintOnlinePaymentFooter($mysoc,$langs);
 
 
-llxFooter();
+llxFooter('', 'public');
 
 $db->close();

@@ -191,7 +191,7 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
  * @param	string	$paymentType		Payment type
  * @param  	string	$returnURL			Url to use if payment is OK
  * @param   string	$cancelURL			Url to use if payment is KO
- * @param   string	$tag				Tag
+ * @param   string	$tag				Full tag
  * @return	void
  */
 function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$returnURL,$cancelURL,$tag)
@@ -306,7 +306,7 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
  * @param 	string 			$paymentType		Payment type
  * @param 	string 			$returnURL			Return Url
  * @param 	string 			$cancelURL			Cancel Url
- * @param 	string 			$tag				Tag
+ * @param 	string 			$tag				Full tag
  * @param 	string 			$solutionType		Type
  * @param 	string 			$landingPage		Landing page
  * @param	string			$shipToName			Ship to name
@@ -429,7 +429,7 @@ function getDetails($token)
  *	@param	string	$payerID			Payer ID
  *	@param	string	$ipaddress			IP Address
  *	@param	string	$FinalPaymentAmt	Amount
- *	@param	string	$tag				Tag
+ *	@param	string	$tag				Full tag
  *	@return	void
  */
 function confirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $tag)

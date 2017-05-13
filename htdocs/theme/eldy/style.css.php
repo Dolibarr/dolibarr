@@ -988,6 +988,9 @@ div.fiche {
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
 	<?php if (! empty($conf->dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
 }
+body.onlinepaymentbody div.fiche {	/* For online payment page */
+	margin: 40px !important;
+}
 div.fiche>table:first-child {
 	margin-bottom: 15px !important;
 }

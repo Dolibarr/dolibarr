@@ -97,8 +97,10 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 $head='';
 if (! empty($conf->global->PAYBOX_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYBOX_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
+$conf->dol_hide_topmenu=1;
+$conf->dol_hide_leftmenu=1;
 
-llxHeader($head, $langs->trans("PaymentForm"));
+llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
 
 // Show message
@@ -115,6 +117,6 @@ print "\n</div>\n";
 htmlPrintOnlinePaymentFooter($mysoc,$langs);
 
 
-llxFooter();
+llxFooter('', 'public');
 
 $db->close();

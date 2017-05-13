@@ -39,6 +39,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -51,7 +52,7 @@ $langs->load("dict");
 $langs->load("bills");
 $langs->load("companies");
 $langs->load("errors");
-$langs->load("paybox");
+$langs->load("paybox");     // File with generic data
 $langs->load("paypal");
 
 // Input are:
@@ -99,6 +100,7 @@ $ref=$REF=GETPOST('ref','alpha');
 $TAG=GETPOST("tag",'alpha');
 $FULLTAG=GETPOST("fulltag",'alpha');		// fulltag is tag with more informations
 $SECUREKEY=GETPOST("securekey");	        // Secure key
+$FULLTAG.=($FULLTAG?'.':'').'PM=paypal';
 
 if (! empty($SOURCE))
 {
@@ -188,6 +190,7 @@ if (GETPOST("action") == 'dopayment')
 	$PAYPAL_API_PRICE=price2num(GETPOST("newamount"),'MT');
     $PAYPAL_PAYMENT_TYPE='Sale';
 
+	$origfulltag=GETPOST("fulltag",'alpha');
     $shipToName=GETPOST("shipToName");
     $shipToStreet=GETPOST("shipToStreet");
     $shipToCity=GETPOST("shipToCity");
@@ -203,7 +206,7 @@ if (GETPOST("action") == 'dopayment')
 	if (empty($PAYPAL_API_PRICE) || ! is_numeric($PAYPAL_API_PRICE))   $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
 	//elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 	//elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
-	elseif (empty($FULLTAG))        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
+	elseif (! $origfulltag)        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
 
     //var_dump($_POST);
 	if (empty($mesg))
@@ -254,7 +257,13 @@ if (GETPOST("action") == 'dopayment')
  * View
  */
 
-llxHeaderPaypal($langs->trans("PaymentForm"));
+$head='';
+if (! empty($conf->global->PAYPAL_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYPAL_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+
+$conf->dol_hide_topmenu=1;
+$conf->dol_hide_leftmenu=1;
+
+llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
 if (! empty($PAYPAL_API_SANDBOX))
 {
@@ -968,8 +977,8 @@ print '</div>'."\n";
 print '<br>';
 
 
-html_print_paypal_footer($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs);
 
-llxFooterPaypal();
+llxFooter('', 'public');
 
 $db->close();
