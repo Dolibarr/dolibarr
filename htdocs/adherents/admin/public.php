@@ -179,7 +179,7 @@ print '</td><td align="right">';
 print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT",(! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)?$conf->global->MEMBER_NEWFORM_EDITAMOUNT:0),1);
 print "</td></tr>\n";
 
-if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
+if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled))
 {
 	// Jump to an online payment page
 	print '<tr class="oddeven" id="trpayment"><td>';
@@ -188,11 +188,12 @@ if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
 	$listofval=array();
 	if (! empty($conf->paybox->enabled)) $listofval['paybox']='Paybox';
 	if (! empty($conf->paypal->enabled)) $listofval['paypal']='PayPal';
+	if (! empty($conf->stripe->enabled)) $listofval['stripe']='Stripe';
 	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE",$listofval,(! empty($conf->global->MEMBER_NEWFORM_PAYONLINE)?$conf->global->MEMBER_NEWFORM_PAYONLINE:''),1);
 	print "</td></tr>\n";
 }
 
-if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
+if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled))
 {
     // Jump to an online payment page
     print '<tr class="oddeven" id="tremail"><td>';

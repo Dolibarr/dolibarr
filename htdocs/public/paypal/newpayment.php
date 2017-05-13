@@ -54,6 +54,7 @@ $langs->load("companies");
 $langs->load("errors");
 $langs->load("paybox");     // File with generic data
 $langs->load("paypal");
+$langs->load("stripe");
 
 // Input are:
 // type ('invoice','order','contractline'),
