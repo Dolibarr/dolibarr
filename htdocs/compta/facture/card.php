@@ -4236,6 +4236,12 @@ else if ($id > 0 || ! empty($ref))
 			print showPaypalPaymentUrl('invoice', $object->ref);
 		}
 
+		// Link for stripe payment
+		if (! empty($conf->stripe->enabled) && $object->statut != 0) {
+			include_once DOL_DOCUMENT_ROOT . '/stripe/lib/stripe.lib.php';
+			print showStripePaymentUrl('invoice', $object->ref);
+		}
+
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		// List of actions on element
