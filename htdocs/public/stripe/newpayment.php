@@ -98,7 +98,7 @@ $ref=$REF=GETPOST('ref','alpha');
 $TAG=GETPOST("tag",'alpha');
 $FULLTAG=GETPOST("fulltag",'alpha');		// fulltag is tag with more informations
 $SECUREKEY=GETPOST("securekey");	        // Secure key
-$FULLTAG.=($FULLTAG?'.':'').'PM=stripe';
+if (! preg_match('/'.preg_quote('PM=stripe','/').'/', $FULLTAG)) $FULLTAG.=($FULLTAG?'.':'').'PM=stripe';
 
 if (! empty($SOURCE))
 {
@@ -185,7 +185,7 @@ if (! empty($conf->global->STRIPE_SECURITY_TOKEN))
  * Actions
  */
 
-if ($action == 'dopayment')    // We click on button Create payment that lead on this page
+if ($action == 'dopayment')    // We click on button Create payment
 {
     if (GETPOST('newamount')) $amount = GETPOST('newamount');
     else 
@@ -197,25 +197,37 @@ if ($action == 'dopayment')    // We click on button Create payment that lead on
 
 if ($action == 'charge')
 {
-    dol_syslog("POST keys  : ".join(',', array_keys($_POST)));
-    dol_syslog("POST values: ".join(',', $_POST));
+    // Correct the amount according to unit of currency
+    // See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support
+    $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+    if (! in_array($currency, $arrayzerounitcurrency)) $amount=$amount * 100;
     
-    $token = GETPOST("stripeToken");
-    $email = GETPOST("stripeEmail");
+    dol_syslog("POST keys  : ".join(',', array_keys($_POST)), LOG_DEBUG, 0, '_stripe');
+    dol_syslog("POST values: ".join(',', $_POST), LOG_DEBUG, 0, '_stripe');
+    
+    $stripeToken = GETPOST("stripeToken",'alpha');
+    $email = GETPOST("stripeEmail",'alpha');
 
+    dol_syslog("stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
+    dol_syslog("stripeEmail = ".$stripeEmail, LOG_DEBUG, 0, '_stripe');
+    
+    $error = 0;
+    
     try {
+        dol_syslog("Create customer", LOG_DEBUG, 0, '_stripe');
         $customer = \Stripe\Customer::create(array(
             'email' => $email,
-            'card'  => $token
+            'card'  => $stripeToken
             // TODO
         ));
          
+        dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
         $charge = \Stripe\Charge::create(array(
             'customer' => $customer->id,
             'amount'   => price2num($amount, 'MU'),
-            'currency' => $conf->currency,
-            // TODO
-            'description' => 'Invoice payment N: '.$ref
+            'currency' => $currency,
+            'description' => 'Stripe payment: '.$FULLTAG,
+            'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars
         ));
     } catch(\Stripe\Error\Card $e) {
         // Since it's a decline, \Stripe\Error\Card will be caught
@@ -229,39 +241,73 @@ if ($action == 'charge')
         print('Param is:' . $err['param'] . "\n");
         print('Message is:' . $err['message'] . "\n");
     
+        $error++;
         setEventMessages($e->getMessage(), null, 'errors');
+        dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
         $action='';
     } catch (\Stripe\Error\RateLimit $e) {
         // Too many requests made to the API too quickly
+        $error++;
+        dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
         setEventMessages($e->getMessage(), null, 'errors');
         $action='';
     } catch (\Stripe\Error\InvalidRequest $e) {
         // Invalid parameters were supplied to Stripe's API
+        $error++;
+        dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
         setEventMessages($e->getMessage(), null, 'errors');
         $action='';
     } catch (\Stripe\Error\Authentication $e) {
         // Authentication with Stripe's API failed
         // (maybe you changed API keys recently)
+        $error++;
+        dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
         setEventMessages($e->getMessage(), null, 'errors');
         $action='';
     } catch (\Stripe\Error\ApiConnection $e) {
         // Network communication with Stripe failed
+        $error++;
+        dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
         setEventMessages($e->getMessage(), null, 'errors');
         $action='';
     } catch (\Stripe\Error\Base $e) {
         // Display a very generic error to the user, and maybe send
         // yourself an email
+        $error++;
+        dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
         setEventMessages($e->getMessage(), null, 'errors');
         $action='';
     } catch (Exception $e) {
         // Something else happened, completely unrelated to Stripe
+        $error++;
+        dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
         setEventMessages($e->getMessage(), null, 'errors');
         $action='';
     }
         
-    // TODO
-    dol_syslog("Action  Pay.");
+	$_SESSION["onlinetoken"] = $stripeToken;
+    $_SESSION["FinalPaymentAmt"] = $amount;
+    $_SESSION["currencyCodeType"] = $currency;
+    $_SESSION["paymentType"] = '';
+    $_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];  // Payer ip
+    $_SESSION['payerID'] = is_object($customer)?$customer->id:'';
+    $_SESSION['TRANSACTIONID'] = is_object($charge)?$charge->id:'';
     
+    dol_syslog("Action charge stripe result=".$error." ip=".$_SESSION['ipaddress'], LOG_DEBUG, 0, '_stripe');
+    dol_syslog("onlinetoken=".$_SESSION["onlinetoken"]." FinalPaymentAmt=".$_SESSION["FinalPaymentAmt"]." currencyCodeType=".$_SESSION["currencyCodeType"]." payerID=".$_SESSION['payerID']." TRANSACTIONID=".$_SESSION['TRANSACTIONID'], LOG_DEBUG, 0, '_stripe');
+    dol_syslog("FULLTAG=".$FULLTAG, LOG_DEBUG, 0, '_stripe');
+    dol_syslog("Now call the redirect to paymentok or paymentko", LOG_DEBUG, 0, '_stripe');
+    
+    if ($error)
+    {
+        header("Location: ".DOL_URL_ROOT.'/public/stripe/paymentko.php?FULLTAG='.urlencode($FULLTAG));
+        exit;
+    }
+    else
+    {
+        header("Location: ".DOL_URL_ROOT.'/public/stripe/paymentok.php?FULLTAG='.urlencode($FULLTAG));
+        exit;
+    }
     
 }
 
@@ -1046,11 +1092,16 @@ if (preg_match('/^dopayment/',$action))
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
     print '<input type="hidden" name="dopayment_stripe" value="1">'."\n";
     print '<input type="hidden" name="action" value="charge">'."\n";
-    print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n";
-    print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
+    print '<input type="hidden" name="tag" value="'.$TAG.'">'."\n";
+    print '<input type="hidden" name="source" value="'.$SOURCE.'">'."\n";
+    print '<input type="hidden" name="ref" value="'.$REF.'">'."\n";
+    print '<input type="hidden" name="fulltag" value="'.$FULLTAG.'">'."\n";
+    print '<input type="hidden" name="suffix" value="'.$suffix.'">'."\n";
     print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
     print '<input type="hidden" name="entity" value="'.$entity.'" />';
-        
+    print '<input type="hidden" name="amount" value="'.$amount.'">'."\n";
+    print '<input type="hidden" name="currency" value="'.$currency.'">'."\n";
+    
     print '
     <table id="dolpaymenttable" summary="Payment form" class="center">
     <tbody><tr><td class="textpublicpayment">

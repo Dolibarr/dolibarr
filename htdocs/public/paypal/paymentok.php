@@ -23,7 +23,6 @@
  *		\brief      File to show page after a successful payment
  *                  This page is called by paypal with url provided to payal completed with parameter TOKEN=xxx
  *                  This token can be used to get more informations.
- *		\author	    Laurent Destailleur
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -94,6 +93,8 @@ if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
 
 $object = new stdClass();   // For triggers
 
+$paymentmethod='paypal';
+
 
 /*
  * Actions
@@ -128,7 +129,7 @@ print '<div id="dolpaymentdiv" align="center">'."\n";
 if ($PAYPALTOKEN)
 {
     // Get on url call
-    $token              = $PAYPALTOKEN;
+    $onlinetoken        = $PAYPALTOKEN;
     $fulltag            = $FULLTAG;
     $payerID            = $PAYPALPAYERID;
     // Set by newpayment.php
@@ -138,18 +139,18 @@ if ($PAYPALTOKEN)
     // From env
     $ipaddress          = $_SESSION['ipaddress'];
 
-	dol_syslog("Call paymentok with token=".$token." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_paypal');
+	dol_syslog("Call paymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_paypal');
 
 
 	// Validate record
     if (! empty($paymentType))
     {
         dol_syslog("We call GetExpressCheckoutDetails", LOG_DEBUG, 0, '_paypal');
-        $resArray=getDetails($token);
+        $resArray=getDetails($onlinetoken);
         //var_dump($resarray);
 
-        dol_syslog("We call DoExpressCheckoutPayment token=".$token." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_paypal');
-        $resArray=confirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
+        dol_syslog("We call DoExpressCheckoutPayment token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_paypal');
+        $resArray=confirmPayment($onlinetoken, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
 
         $ack = strtoupper($resArray["ACK"]);
         if($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
@@ -202,7 +203,7 @@ if ($PAYPALTOKEN)
 				else $appli.=" ".DOL_VERSION;
 				
 				$urlback=$_SERVER["REQUEST_URI"];
-				$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewPaypalPaymentReceived");
+				$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentReceived");
 				$tmptag=dolExplodeIntoArray($fulltag,'.','=');
 				$content="";
 				if (! empty($tmptag['MEM']))
@@ -215,12 +216,13 @@ if ($PAYPALTOKEN)
 				}
 				else
 				{
-					$content.=$langs->transnoentitiesnoconv("NewPaypalPaymentReceived")."<br>\n";
+					$content.=$langs->transnoentitiesnoconv("NewOnlinePaymentReceived")."<br>\n";
 				}
 				$content.="<br>\n";
 				$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":<br>\n";
+                $content.=$langs->transnoentitiesnoconv("OnlinePaymentSystem").': '.$paymentmethod."<br>\n";
 				$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
-				$content.="tag=".$fulltag." token=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
+				$content.="tag=".$fulltag."\ntoken=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
 
 				$ishtml=dol_textishtml($content);	// May contain urls
 
@@ -285,13 +287,14 @@ if ($PAYPALTOKEN)
 				else $appli.=" ".DOL_VERSION;
 				
 				$urlback=$_SERVER["REQUEST_URI"];
-				$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("ValidationOfPaypalPaymentFailed");
+				$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("ValidationOfPaymentFailed");
 				$content="";
-				$content.=$langs->transnoentitiesnoconv("PaypalConfirmPaymentPageWasCalledButFailed")."\n";
+				$content.=$langs->transnoentitiesnoconv("PaymentSystemConfirmPaymentPageWasCalledButFailed")."\n";
 				$content.="\n";
 				$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
+                $content.=$langs->transnoentitiesnoconv("OnlinePaymentSystem").': '.$paymentmethod."\n";
 				$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
-				$content.="tag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
+				$content.="tag=".$fulltag."\ntoken=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
 
 				$ishtml=dol_textishtml($content);	// May contain urls
 

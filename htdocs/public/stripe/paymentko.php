@@ -1,8 +1,6 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
- *
+/* Copyright (C) 2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -18,11 +16,11 @@
  */
 
 /**
- *     	\file       htdocs/public/payment/paymentko.php
+ *     	\file       htdocs/public/stripe/paymentko.php
  *		\ingroup    core
  *		\brief      File to show page after a failed payment.
- *                  This page is called by payment system with url provided to it competed with parameter TOKEN=xxx
- *                  This token can be used to get more informations.
+ *                  This page is called by payment system with url provided to it competed with parameter FULLTAG=xxx
+ *                  More data like token are saved into session. This token can be used to get more informations.
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -38,12 +36,6 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
-if (! empty($conf->paypal->enabled))
-{
-	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
-}
-
 $langs->load("main");
 $langs->load("other");
 $langs->load("dict");
@@ -51,48 +43,17 @@ $langs->load("bills");
 $langs->load("companies");
 $langs->load("paybox");
 $langs->load("paypal");
-
-if (! empty($conf->paypal->enabled))
-{
-    $PAYPALTOKEN=GETPOST('TOKEN');
-    if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');
-    $PAYPALPAYERID=GETPOST('PAYERID');
-    if (empty($PAYPALPAYERID)) $PAYPALPAYERID=GETPOST('PayerID');
-}
-// TODO Other payment method
+$langs->load("stripe");
 
 $FULLTAG=GETPOST('FULLTAG');
 if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
 
-
-// Detect $paymentmethod
-$paymentmethod='';
-if (preg_match('/PM=([^\.]+)/', $FULLTAG, $reg))
-{
-    $paymentmethod=$reg[1];
-}
-if (empty($paymentmethod))
-{
-    dol_print_error(null, 'The back url does not contains a parameter fulltag that should help us to find the payment method used');
-    exit;
-}
-else
-{
-    dol_syslog("paymentmethod=".$paymentmethod);
-}
-
-
-$validpaymentmethod=array();
-if (! empty($conf->paypal->enabled)) $validpaymentmethod['paypal']='paypal';
-if (! empty($conf->paybox->enabled)) $validpaymentmethod['paybox']='paybox';
-if (! empty($conf->stripe->enabled)) $validpaymentmethod['stripe']='stripe';
-
-
 // Security check
-if (empty($validpaymentmethod)) accessforbidden('', 0, 0, 1);
-
+if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
 
 $object = new stdClass();   // For triggers
+
+$paymentmethod='stripe';
 
 
 /*
@@ -106,64 +67,39 @@ $object = new stdClass();   // For triggers
  * View
  */
 
-dol_syslog("Callback url when a PayPal payment was canceled. query_string=".(empty($_SERVER["QUERY_STRING"])?'':$_SERVER["QUERY_STRING"])." script_uri=".(empty($_SERVER["SCRIPT_URI"])?'':$_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_payment');
+dol_syslog("Callback url when a PayPal payment was canceled. query_string=".(empty($_SERVER["QUERY_STRING"])?'':$_SERVER["QUERY_STRING"])." script_uri=".(empty($_SERVER["SCRIPT_URI"])?'':$_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_stripe');
 
 $tracepost = "";
 foreach($_POST as $k => $v) $tracepost .= "{$k} - {$v}\n";
-dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
-
+dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_stripe');
 
 if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
 {
-    // Get on url call
     $fulltag            = $FULLTAG;
     $onlinetoken        = empty($PAYPALTOKEN)?$_SESSION['onlinetoken']:$PAYPALTOKEN;
     $payerID            = empty($PAYPALPAYERID)?$_SESSION['payerID']:$PAYPALPAYERID;
-    // Set by newpayment.php
-    $paymentType        = $_SESSION['PaymentType'];
     $currencyCodeType   = $_SESSION['currencyCodeType'];
-    $FinalPaymentAmt    = $_SESSION["Payment_Amount"];
-    // From env
+    $paymentType        = $_SESSION['paymentType'];
+    $FinalPaymentAmt    = $_SESSION['FinalPaymentAmt'];
     $ipaddress          = $_SESSION['ipaddress'];
-        
+    
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     $interface=new Interfaces($db);
-    $result=$interface->run_triggers('PAYMENTONLINE_PAYMENT_KO',$object,$user,$langs,$conf);
+    $result=$interface->run_triggers('STRIPE_PAYMENT_KO',$object,$user,$langs,$conf);
     if ($result < 0) { $error++; $errors=$interface->errors; }
     // Fin appel triggers
     
     // Send an email
     $sendemail = '';
-    if (! empty($conf->paypal->enabled))
-    {
-    	if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
-    	{
-            $sendemail = $conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
-    	}
-    }
-    // Send an email
-    if (! empty($conf->paybox->enabled))
-    {
-        if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
-        {
-            $sendemail = $conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
-        }
-    }
-    // Send an email
-    if (! empty($conf->stripe->enabled))
-    {
-        if (! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL))
-        {
-            $sendemail = $conf->global->STRIPE_PAYONLINE_SENDEMAIL;
-        }
-    }
+    if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))  $sendemail=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
     
     if ($sendemail)
     {
-        $from=$conf->global->MAILING_EMAIL_FROM;
-        $sendto=$sendemail;
-        
+        // Get on url call
+    	$sendto=$sendemail;
+    	$from=$conf->global->MAILING_EMAIL_FROM;
+    
     	// Define link to login card
     	$appli=constant('DOL_APPLICATION_TITLE');
     	if (! empty($conf->global->MAIN_APPLICATION_TITLE))
@@ -183,7 +119,7 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     	$content.=$langs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."\n";
     	$content.="\n";
     	$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
-    	$content.=$langs->transnoentitiesnoconv("OnlinePaymentSystem").': '.$paymentmethod."<br>\n";
+    	$content.=$langs->transnoentitiesnoconv("OnlinePaymentSystem").': '.$paymentmethod."\n";
     	$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
     	$content.="tag=".$fulltag."\ntoken=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
     	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -192,19 +128,19 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     	$result=$mailfile->sendfile();
     	if ($result)
     	{
-    		dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
+    		dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_stripe');
     	}
     	else
     	{
-    		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+    		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_stripe');
     	}
     }
-    
+
     unset($_SESSION['ipaddress']);
 }
 
 $head='';
-if (! empty($conf->global->PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (! empty($conf->global->STRIPE_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->STRIPE_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
 $conf->dol_hide_topmenu=1;
 $conf->dol_hide_leftmenu=1;
@@ -217,7 +153,7 @@ print '<span id="dolpaymentspan"></span>'."\n";
 print '<div id="dolpaymentdiv" align="center">'."\n";
 print $langs->trans("YourPaymentHasNotBeenRecorded")."<br><br>";
 
-if (! empty($conf->global->PAYMENT_MESSAGE_KO)) print $conf->global->PAYMENT_MESSAGE_KO;
+if (! empty($conf->global->STRIPE_MESSAGE_KO)) print $conf->global->STRIPE_MESSAGE_KO;
 print "\n</div>\n";
 
 

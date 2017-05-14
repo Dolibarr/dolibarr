@@ -65,7 +65,7 @@ class modStripe extends DolibarrModules
         $this->picto='stripe@stripe';
 
         // Data directories to create when module is enabled.
-        $this->dirs = array('/stripe/temp');
+        $this->dirs = array();
 
         // Config pages. Put here list of php page names stored in admmin directory used to setup module.
         $this->config_page_url = array("stripe.php@stripe");
