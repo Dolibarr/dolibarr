@@ -634,11 +634,11 @@ class FormMail extends Form
         		if ($this->withtopicreadonly)
         		{
         			$out.= $defaulttopic;
-        			$out.= '<input type="hidden" size="60" id="subject" name="subject" value="'.$defaulttopic.'" />';
+        			$out.= '<input type="hidden" class="quatrevingtpercent" id="subject" name="subject" value="'.$defaulttopic.'" />';
         		}
         		else
         		{
-        			$out.= '<input type="text" size="60" id="subject" name="subject" value="'. ((isset($_POST["subject"]) && ! $_POST['modelselected'])?$_POST["subject"]:($defaulttopic?$defaulttopic:'')) .'" />';
+        			$out.= '<input type="text" class="quatrevingtpercent" id="subject" name="subject" value="'. ((isset($_POST["subject"]) && ! $_POST['modelselected'])?$_POST["subject"]:($defaulttopic?$defaulttopic:'')) .'" />';
         		}
         		$out.= "</td></tr>\n";
         	}
