@@ -117,16 +117,32 @@ CREATE TABLE llx_product_attribute_combination
   entity INT DEFAULT 1 NOT NULL
 );
 
-INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (1,'VT', 'Journal des ventes', 1, 1);
-INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (2,'AC', 'Journal des achats', 2, 1);
-INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (3,'BQ', 'Journal de banque', 3, 1);
-INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (4,'OD', 'Journal des opérations diverses', 0, 1);
-INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (5,'AN', 'Journal des à-nouveaux', 9, 1);
 
-ALTER TABLE llx_accounting_journal ADD COLUMN entity integer DEFAULT 1;
+ALTER TABLE llx_bank_account drop foreign key bank_fk_accountancy_journal;
+
+-- Add journal entries
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (1,'VT', 'Sale journal', 2, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (2,'AC', 'Purchase journal', 3, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (3,'BQ', 'Bank journal', 4, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (4,'OD', 'Other journal', 1, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (5,'AN', 'Has new journal', 9, 1);
+-- Fix old entries
+UPDATE llx_accounting_journal SET nature = 1 where code = 'OD' and nature = 0;
+UPDATE llx_accounting_journal SET nature = 2 where code = 'VT' and nature = 1;
+UPDATE llx_accounting_journal SET nature = 3 where code = 'AC' and nature = 2;
+UPDATE llx_accounting_journal SET nature = 4 where (code = 'BK' or code = 'BQ') and nature = 3;
+
+UPDATE llx_bank_account as ba set accountancy_journal = 'BQ' where accountancy_journal = 'BK';
+UPDATE llx_bank_account as ba set accountancy_journal = 'OD' where accountancy_journal IS NULL;
+
+ALTER TABLE llx_bank_account ADD COLUMN fk_accountancy_journal integer;
+ALTER TABLE llx_bank_account ADD INDEX idx_fk_accountancy_journal (fk_accountancy_journal);
+
+UPDATE llx_bank_account as ba set fk_accountancy_journal = (SELECT rowid FROM llx_accounting_journal as aj where ba.accountancy_journal = aj.code) where accountancy_journal not in ('1', '2', '3', '4', '5', '6', '5', '8', '9', '10', '11', '12', '13', '14', '15');
+ALTER TABLE llx_bank_account ADD CONSTRAINT fk_bank_account_accountancy_journal FOREIGN KEY (fk_accountancy_journal) REFERENCES llx_accounting_journal (rowid);
+
 
 ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
-
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_CREATE','Expense report created','Executed when an expense report is created','expensereport',201);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_VALIDATE','Expense report validated','Executed when an expense report is validated','expensereport',202);
@@ -262,14 +278,6 @@ insert into llx_c_tva(fk_pays,taux,code,recuperableonly,localtax1,localtax1_type
 
 ALTER TABLE llx_events MODIFY COLUMN ip varchar(250);
 
-UPDATE llx_accounting_journal SET nature = 1 where code = 'OD' and nature = 0;
-UPDATE llx_accounting_journal SET nature = 2 where code = 'VT' and nature = 1;
-UPDATE llx_accounting_journal SET nature = 3 where code = 'AC' and nature = 2;
-UPDATE llx_accounting_journal SET nature = 4 where (code = 'BK' or code = 'BQ') and nature = 3;
-
-
-ALTER TABLE llx_bank_account CHANGE COLUMN accountancy_journal fk_accountancy_journal integer;
---ALTER TABLE llx_bank_account ADD CONSTRAINT bank_fk_accountancy_journal FOREIGN KEY (fk_accountancy_journal) REFERENCES llx_accounting_journal (rowid);
 
 
 

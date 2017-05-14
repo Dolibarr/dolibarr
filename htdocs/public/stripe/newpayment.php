@@ -537,14 +537,14 @@ if (GETPOST("source") == 'invoice')
     {
         $result=$invoice->fetch_thirdparty($invoice->socid);
     }
-    
+
     if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
     {
         $amount=price2num($invoice->total_ttc - $invoice->getSommePaiement());
         if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
         $amount=price2num($amount);
     }
-    
+
     $fulltag='INV='.$invoice->ref.'.CUS='.$invoice->thirdparty->id;
     //$fulltag.='.NAM='.strtr($invoice->thirdparty->name,"-"," ");
     if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
