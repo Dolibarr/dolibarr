@@ -249,8 +249,8 @@ if ($result)
 	print '</td>';
 
 	print '<td align="right" class="liste_titre">';
-	$searchpitco=$form->showFilterAndCheckAddButtons(0);
-	print $searchpitco;
+	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
 	print '</td>';
 
 	print "</tr>\n";

@@ -1264,8 +1264,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $out.='<td class="liste_titre"></td>';
         // Action column
         $out.='<td class="liste_titre" align="middle">';
-        $searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-        $out.=$searchpitco;
+        $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+        $out.=$searchpicto;
         $out.='</td>';
         $out.='</tr>';
         

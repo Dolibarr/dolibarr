@@ -797,8 +797,8 @@ if ($resql)
 	print '<td class="liste_titre" align="middle">';
 	print '</td>';
 	print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-	print $searchpitco;
+	$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+	print $searchpicto;
     print '</td>';
 	print "</tr>\n";
 

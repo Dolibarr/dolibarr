@@ -402,8 +402,8 @@ if ($resql)
 		print '</td>';
     }
 	print '<td class="liste_titre" align="right">';
-	$searchpitco=$form->showFilterButtons();
-	print $searchpitco;
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
 	print '</td>';
 	
     print "</tr>\n";

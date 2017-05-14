@@ -239,8 +239,8 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="right"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
 print '<td class="liste_titre" align="right" colspan="2">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
 print '</td>';
 
 print '<tr class="liste_titre">';

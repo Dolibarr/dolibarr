@@ -329,8 +329,8 @@ if ($result)
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="center" class="liste_titre">';
-	$searchpitco=$form->showFilterButtons();
-	print $searchpitco;
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
 	print '</td>';
 	print '</tr>';
 	
