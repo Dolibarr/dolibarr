@@ -59,6 +59,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
+if (! empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+}
 
 $langs->load('bills');
 $langs->load('companies');
@@ -3685,7 +3688,7 @@ else if ($id > 0 || ! empty($ref))
     $sql = 'SELECT p.datep as dp, p.ref, p.num_paiement, p.rowid, p.fk_bank,';
     $sql .= ' c.code as payment_code, c.libelle as payment_label,';
     $sql .= ' pf.amount,';
-    $sql .= ' ba.rowid as baid, ba.ref as baref, ba.label';
+    $sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
     $sql .= ' FROM ' . MAIN_DB_PREFIX . 'c_paiement as c, ' . MAIN_DB_PREFIX . 'paiement_facture as pf, ' . MAIN_DB_PREFIX . 'paiement as p';
     $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
     $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
@@ -3717,7 +3720,14 @@ else if ($id > 0 || ! empty($ref))
                     $bankaccountstatic->id = $objp->baid;
                     $bankaccountstatic->ref = $objp->baref;
                     $bankaccountstatic->label = $objp->baref;
-                    print '<td align="right">';
+					$bankaccountstatic->number = $objp->banumber;
+					$bankaccountstatic->account_number = $objp->account_number;
+
+					$accountingjournal = new AccountingJournal($db);
+					$accountingjournal->fetch($objp->fk_accountancy_journal);
+					$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+
+					print '<td align="right">';
                     if ($bankaccountstatic->id)
                         print $bankaccountstatic->getNomUrl(1, 'transactions');
                     print '</td>';
