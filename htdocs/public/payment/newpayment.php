@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,6 @@
  *     	\file       htdocs/public/payment/newpayment.php
  *		\ingroup    core
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
- *		\author	    Laurent Destailleur
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -43,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Security check
-//if (empty($conf->paypal->enabled)) accessforbidden('',0,0,1);
+// No check on module enabled. Done later according to $validpaymentmethod
 
 $langs->load("main");
 $langs->load("other");
@@ -115,7 +114,7 @@ $ref=$REF=GETPOST('ref','alpha');
 $TAG=GETPOST("tag",'alpha');
 $FULLTAG=GETPOST("fulltag",'alpha');		// fulltag is tag with more informations
 $SECUREKEY=GETPOST("securekey");	        // Secure key
-if ($paymentmethod) $FULLTAG.=($FULLTAG?'.':'').'PM='.$paymentmethod;
+if ($paymentmethod && ! preg_match('/'.preg_quote('PM='.$paymentmethod,'/').'/', $FULLTAG)) $FULLTAG.=($FULLTAG?'.':'').'PM='.$paymentmethod;
 
 if (! empty($SOURCE))
 {
@@ -502,10 +501,13 @@ if (GETPOST("source") == 'order')
 		$result=$order->fetch_thirdparty($order->socid);
 	}
 
-	$amount=$order->total_ttc;
-    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
-    $amount=price2num($amount);
-
+    if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
+    {
+    	$amount=$order->total_ttc;
+        if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+        $amount=price2num($amount);
+    }
+    
 	$fulltag='ORD='.$order->ref.'.CUS='.$order->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($order->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
@@ -609,10 +611,13 @@ if (GETPOST("source") == 'invoice')
 		$result=$invoice->fetch_thirdparty($invoice->socid);
 	}
 
-	$amount=price2num($invoice->total_ttc - $invoice->getSommePaiement());
-    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
-    $amount=price2num($amount);
-
+    if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
+    {
+    	$amount=price2num($invoice->total_ttc - $invoice->getSommePaiement());
+        if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+        $amount=price2num($amount);
+    }
+    
 	$fulltag='INV='.$invoice->ref.'.CUS='.$invoice->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($invoice->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
@@ -733,35 +738,38 @@ if (GETPOST("source") == 'contractline')
 		}
 	}
 
-	$amount=$contractline->total_ttc;
-	if ($contractline->fk_product)
-	{
-		$product=new Product($db);
-		$result=$product->fetch($contractline->fk_product);
-
-		// We define price for product (TODO Put this in a method in product class)
-		if (! empty($conf->global->PRODUIT_MULTIPRICES))
-		{
-			$pu_ht = $product->multiprices[$contract->thirdparty->price_level];
-			$pu_ttc = $product->multiprices_ttc[$contract->thirdparty->price_level];
-			$price_base_type = $product->multiprices_base_type[$contract->thirdparty->price_level];
-		}
-		else
-		{
-			$pu_ht = $product->price;
-			$pu_ttc = $product->price_ttc;
-			$price_base_type = $product->price_base_type;
-		}
-
-		$amount=$pu_ttc;
-		if (empty($amount))
-		{
-			dol_print_error('','ErrorNoPriceDefinedForThisProduct');
-			exit;
-		}
-	}
-    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
-    $amount=price2num($amount);
+    if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
+    {
+    	$amount=$contractline->total_ttc;
+    	if ($contractline->fk_product)
+    	{
+    		$product=new Product($db);
+    		$result=$product->fetch($contractline->fk_product);
+    
+    		// We define price for product (TODO Put this in a method in product class)
+    		if (! empty($conf->global->PRODUIT_MULTIPRICES))
+    		{
+    			$pu_ht = $product->multiprices[$contract->thirdparty->price_level];
+    			$pu_ttc = $product->multiprices_ttc[$contract->thirdparty->price_level];
+    			$price_base_type = $product->multiprices_base_type[$contract->thirdparty->price_level];
+    		}
+    		else
+    		{
+    			$pu_ht = $product->price;
+    			$pu_ttc = $product->price_ttc;
+    			$price_base_type = $product->price_base_type;
+    		}
+    
+    		$amount=$pu_ttc;
+    		if (empty($amount))
+    		{
+    			dol_print_error('','ErrorNoPriceDefinedForThisProduct');
+    			exit;
+    		}
+    	}
+        if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+        $amount=price2num($amount);
+    }
 
 	$fulltag='COL='.$contractline->ref.'.CON='.$contract->ref.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
 	//$fulltag.='.NAM='.strtr($contract->thirdparty->name,"-"," ");
@@ -911,10 +919,13 @@ if (GETPOST("source") == 'membersubscription')
 		$subscription=new Subscription($db);
 	}
 
-	$amount=$subscription->total_ttc;
-    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
-    $amount=price2num($amount);
-
+    if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
+    {
+    	$amount=$subscription->total_ttc;
+        if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+        $amount=price2num($amount);
+    }
+    
 	$fulltag='MEM='.$member->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
@@ -1035,35 +1046,42 @@ if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.
 print '</table>'."\n";
 print "\n";
 
-if ($found && ! $error)	// We are in a management option and no error
+if ($action != 'dopayment')
 {
-    // Buttons for all payments registration methods
-    
-    if (! empty($conf->paypal->enabled))
+    if ($found && ! $error)	// We are in a management option and no error
     {
-    	if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
-    
-    	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
-    	{
-    		print '<br><input class="button" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
-    	}
-    	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
-    	{
-    		print '<br><input class="button" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
-    	}
-    }
-
-    if (! empty($conf->paypal->enabled))
-    {
-    
+        // Buttons for all payments registration methods
         
-    }
+        if (! empty($conf->paypal->enabled))
+        {
+        	if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
+        
+        	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
+        	{
+        		print '<br><input class="button" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
+        	}
+        	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
+        	{
+        		print '<br><input class="button" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
+        	}
+        }
     
-    // TODO Other methods
+        if (! empty($conf->paybox->enabled))
+        {
+        
+            
+        }
+        
+        // TODO Other methods
+    }
+    else
+    {
+    	dol_print_error_email('ERRORNEWPAYMENTPAYPAL');
+    }
 }
 else
 {
-	dol_print_error_email('ERRORNEWPAYMENTPAYPAL');
+    // Print
 }
 
 print '</td></tr>'."\n";

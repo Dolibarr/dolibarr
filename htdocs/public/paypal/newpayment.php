@@ -265,7 +265,7 @@ $conf->dol_hide_leftmenu=1;
 
 llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
-if (! empty($PAYPAL_API_SANDBOX))
+if (! empty($conf->global->PAYPAL_API_SANDBOX))
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode'),'','warning');
 }
@@ -418,10 +418,13 @@ if (GETPOST("source") == 'order')
 		$result=$order->fetch_thirdparty($order->socid);
 	}
 
-	$amount=$order->total_ttc;
-    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
-    $amount=price2num($amount);
-
+    if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
+    {
+    	$amount=$order->total_ttc;
+        if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+        $amount=price2num($amount);
+    }
+    
 	$fulltag='ORD='.$order->ref.'.CUS='.$order->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($order->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
@@ -525,10 +528,13 @@ if (GETPOST("source") == 'invoice')
 		$result=$invoice->fetch_thirdparty($invoice->socid);
 	}
 
-	$amount=price2num($invoice->total_ttc - $invoice->getSommePaiement());
-    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
-    $amount=price2num($amount);
-
+    if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
+    {
+    	$amount=price2num($invoice->total_ttc - $invoice->getSommePaiement());
+        if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+        $amount=price2num($amount);
+    }
+    
 	$fulltag='INV='.$invoice->ref.'.CUS='.$invoice->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($invoice->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
@@ -649,35 +655,38 @@ if (GETPOST("source") == 'contractline')
 		}
 	}
 
-	$amount=$contractline->total_ttc;
-	if ($contractline->fk_product)
-	{
-		$product=new Product($db);
-		$result=$product->fetch($contractline->fk_product);
-
-		// We define price for product (TODO Put this in a method in product class)
-		if (! empty($conf->global->PRODUIT_MULTIPRICES))
-		{
-			$pu_ht = $product->multiprices[$contract->thirdparty->price_level];
-			$pu_ttc = $product->multiprices_ttc[$contract->thirdparty->price_level];
-			$price_base_type = $product->multiprices_base_type[$contract->thirdparty->price_level];
-		}
-		else
-		{
-			$pu_ht = $product->price;
-			$pu_ttc = $product->price_ttc;
-			$price_base_type = $product->price_base_type;
-		}
-
-		$amount=$pu_ttc;
-		if (empty($amount))
-		{
-			dol_print_error('','ErrorNoPriceDefinedForThisProduct');
-			exit;
-		}
-	}
-    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
-    $amount=price2num($amount);
+    if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
+    {
+    	$amount=$contractline->total_ttc;
+    	if ($contractline->fk_product)
+    	{
+    		$product=new Product($db);
+    		$result=$product->fetch($contractline->fk_product);
+    
+    		// We define price for product (TODO Put this in a method in product class)
+    		if (! empty($conf->global->PRODUIT_MULTIPRICES))
+    		{
+    			$pu_ht = $product->multiprices[$contract->thirdparty->price_level];
+    			$pu_ttc = $product->multiprices_ttc[$contract->thirdparty->price_level];
+    			$price_base_type = $product->multiprices_base_type[$contract->thirdparty->price_level];
+    		}
+    		else
+    		{
+    			$pu_ht = $product->price;
+    			$pu_ttc = $product->price_ttc;
+    			$price_base_type = $product->price_base_type;
+    		}
+    
+    		$amount=$pu_ttc;
+    		if (empty($amount))
+    		{
+    			dol_print_error('','ErrorNoPriceDefinedForThisProduct');
+    			exit;
+    		}
+    	}
+        if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+        $amount=price2num($amount);
+    }
 
 	$fulltag='COL='.$contractline->ref.'.CON='.$contract->ref.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
 	//$fulltag.='.NAM='.strtr($contract->thirdparty->name,"-"," ");
@@ -827,10 +836,13 @@ if (GETPOST("source") == 'membersubscription')
 		$subscription=new Subscription($db);
 	}
 
-	$amount=$subscription->total_ttc;
-    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
-    $amount=price2num($amount);
-
+    if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
+    {
+    	$amount=$subscription->total_ttc;
+        if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+        $amount=price2num($amount);
+    }
+    
 	$fulltag='MEM='.$member->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);

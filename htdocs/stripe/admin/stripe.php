@@ -47,21 +47,23 @@ if ($action == 'setvalue' && $user->admin)
 
     $result=dolibarr_set_const($db, "STRIPE_LIVE",GETPOST('STRIPE_LIVE','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "STRIPE_TEST_SECRET_KEY",GETPOST('STRIPE_TEST_SECRET_KEY','alpha'),'chaine',0,'',$conf->entity);
-	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "STRIPE_TEST_PUBLISHABLE_KEY",GETPOST('STRIPE_TEST_PUBLISHABLE_KEY','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "STRIPE_LIVE_SECRET_KEY",GETPOST('STRIPE_LIVE_SECRET_KEY','alpha'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "STRIPE_TEST_SECRET_KEY",GETPOST('STRIPE_TEST_SECRET_KEY','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "STRIPE_LIVE_PUBLISHABLE_KEY",GETPOST('STRIPE_LIVE_PUBLISHABLE_KEY','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "STRIPE_CREDITOR",GETPOST('STRIPE_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "STRIPE_LIVE_SECRET_KEY",GETPOST('STRIPE_LIVE_SECRET_KEY','alpha'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
+	$result=dolibarr_set_const($db, "STRIPE_CREDITOR",GETPOST('STRIPE_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "STRIPE_CSS_URL",GETPOST('STRIPE_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "STRIPE_MESSAGE_OK",GETPOST('STRIPE_MESSAGE_OK','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "STRIPE_MESSAGE_KO",GETPOST('STRIPE_MESSAGE_KO','alpha'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
+	$result=dolibarr_set_const($db, "STRIPE_PAYONLINE_SENDEMAIL",GETPOST('STRIPE_PAYONLINE_SENDEMAIL'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
 	
     if (! $error)
@@ -91,21 +93,22 @@ if ($action=="setlive")
 	}
 }
 
+
 /*
  *	View
  */
 
 $form=new Form($db);
 
-$SECRET_TEST_KEY="sk_test_xxxxxxxxxxxxxxxxxxxxxxxx"; // Stripe test secret key
-if (empty($conf->global->STRIPE_TEST_SECRET_KEY)) $conf->global->STRIPE_TEST_SECRET_KEY = $SECRET_TEST_KEY;
-$PUBLISHABLE_TEST_KEY="pk_test_xxxxxxxxxxxxxxxxxxxxxxxx"; // Stripe test publishable key
-if (empty($conf->global->STRIPE_TEST_PUBLISHABLE_KEY)) $conf->global->STRIPE_TEST_PUBLISHABLE_KEY = $PUBLISHABLE_TEST_KEY;
+//$SECRET_TEST_KEY="sk_test_xxxxxxxxxxxxxxxxxxxxxxxx"; // Stripe test secret key
+//if (empty($conf->global->STRIPE_TEST_SECRET_KEY)) $conf->global->STRIPE_TEST_SECRET_KEY = $SECRET_TEST_KEY;
+//$PUBLISHABLE_TEST_KEY="pk_test_xxxxxxxxxxxxxxxxxxxxxxxx"; // Stripe test publishable key
+//if (empty($conf->global->STRIPE_TEST_PUBLISHABLE_KEY)) $conf->global->STRIPE_TEST_PUBLISHABLE_KEY = $PUBLISHABLE_TEST_KEY;
 
-$SECRET_LIVE_KEY="sk_live_xxxxxxxxxxxxxxxxxxxxxxxx"; // Stripe live secret key
-if (empty($conf->global->STRIPE_LIVE_SECRET_KEY)) $conf->global->STRIPE_LIVE_SECRET_KEY = $SECRET_LIVE_KEY;
-$PUBLISHABLE_LIVE_KEY="pk_live_xxxxxxxxxxxxxxxxxxxxxxxx"; // Stripe live publishable key
-if (empty($conf->global->STRIPE_LIVE_PUBLISHABLE_KEY)) $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY = $PUBLISHABLE_LIVE_KEY;
+//$SECRET_LIVE_KEY="sk_live_xxxxxxxxxxxxxxxxxxxxxxxx"; // Stripe live secret key
+//if (empty($conf->global->STRIPE_LIVE_SECRET_KEY)) $conf->global->STRIPE_LIVE_SECRET_KEY = $SECRET_LIVE_KEY;
+//$PUBLISHABLE_LIVE_KEY="pk_live_xxxxxxxxxxxxxxxxxxxxxxxx"; // Stripe live publishable key
+//if (empty($conf->global->STRIPE_LIVE_PUBLISHABLE_KEY)) $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY = $PUBLISHABLE_LIVE_KEY;
 
 llxHeader('',$langs->trans("StripeSetup"));
 
@@ -146,27 +149,27 @@ else
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
-print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_TEST_SECRET_KEY").'</span></td><td>';
-print '<input size="32" type="text" name="STRIPE_TEST_SECRET_KEY" value="'.$conf->global->STRIPE_TEST_SECRET_KEY.'">';
-print '<br>'.$langs->trans("Example").': sk_test_xxxxxxxxxxxxxxxxxxxxxxxx';
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("STRIPE_TEST_PUBLISHABLE_KEY").'</span></td><td>';
-print '<input size="32" type="text" name="STRIPE_TEST_PUBLISHABLE_KEY" value="'.$conf->global->STRIPE_TEST_PUBLISHABLE_KEY.'">';
-print '<br>'.$langs->trans("Example").': pk_test_xxxxxxxxxxxxxxxxxxxxxxxx';
+print '<input class="minwidth300" type="text" name="STRIPE_TEST_PUBLISHABLE_KEY" value="'.$conf->global->STRIPE_TEST_PUBLISHABLE_KEY.'">';
+print ' &nbsp; '.$langs->trans("Example").': pk_test_xxxxxxxxxxxxxxxxxxxxxxxx';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
-print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_SECRET_KEY").'</span></td><td>';
-print '<input size="32" type="text" name="STRIPE_LIVE_SECRET_KEY" value="'.$conf->global->STRIPE_LIVE_SECRET_KEY.'">';
-print '<br>'.$langs->trans("Example").': sk_live_xxxxxxxxxxxxxxxxxxxxxxxx';
+print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_TEST_SECRET_KEY").'</span></td><td>';
+print '<input class="minwidth300" type="text" name="STRIPE_TEST_SECRET_KEY" value="'.$conf->global->STRIPE_TEST_SECRET_KEY.'">';
+print ' &nbsp; '.$langs->trans("Example").': sk_test_xxxxxxxxxxxxxxxxxxxxxxxx';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_PUBLISHABLE_KEY").'</span></td><td>';
-print '<input size="32" type="text" name="STRIPE_LIVE_PUBLISHABLE_KEY" value="'.$conf->global->STRIPE_LIVE_PUBLISHABLE_KEY.'">';
-print '<br>'.$langs->trans("Example").': pk_live_xxxxxxxxxxxxxxxxxxxxxxxx';
+print '<input class="minwidth300" type="text" name="STRIPE_LIVE_PUBLISHABLE_KEY" value="'.$conf->global->STRIPE_LIVE_PUBLISHABLE_KEY.'">';
+print ' &nbsp; '.$langs->trans("Example").': pk_live_xxxxxxxxxxxxxxxxxxxxxxxx';
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_SECRET_KEY").'</span></td><td>';
+print '<input class="minwidth300" type="text" name="STRIPE_LIVE_SECRET_KEY" value="'.$conf->global->STRIPE_LIVE_SECRET_KEY.'">';
+print ' &nbsp; '.$langs->trans("Example").': sk_live_xxxxxxxxxxxxxxxxxxxxxxxx';
 print '</td></tr>';
 
 print '</table>';
@@ -182,13 +185,13 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("VendorName").'</td><td>';
 print '<input size="64" type="text" name="STRIPE_CREDITOR" value="'.$conf->global->STRIPE_CREDITOR.'">';
-print '<br>'.$langs->trans("Example").': '.$mysoc->name;
+print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
 print '<input size="64" type="text" name="STRIPE_CSS_URL" value="'.$conf->global->STRIPE_CSS_URL.'">';
-print '<br>'.$langs->trans("Example").': http://mysite/mycss.css';
+print ' &nbsp; '.$langs->trans("Example").': http://mysite/mycss.css';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
@@ -201,6 +204,12 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("MessageKO").'</td><td>';
 $doleditor=new DolEditor('STRIPE_MESSAGE_KO',$conf->global->STRIPE_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
 $doleditor->Create();
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans("STRIPE_PAYONLINE_SENDEMAIL").'</td><td>';
+print '<input size="32" type="email" name="STRIPE_PAYONLINE_SENDEMAIL" value="'.$conf->global->STRIPE_PAYONLINE_SENDEMAIL.'">';
+print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
 print '</td></tr>';
 
 print '</table>';

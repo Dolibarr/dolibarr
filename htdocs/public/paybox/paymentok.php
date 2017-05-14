@@ -20,7 +20,6 @@
  *     	\file       htdocs/public/paybox/paymentok.php
  *		\ingroup    paybox
  *		\brief      File to show page after a successful payment
- *		\author	    Laurent Destailleur
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -62,6 +61,8 @@ if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
 
 $object = new stdClass();   // For triggers
 
+$paymentmethod='paybox';
+
 
 /*
  * Actions
@@ -97,7 +98,7 @@ print '<div id="dolpaymentdiv" align="center">'."\n";
 
 // Get on url call
 /*
-$token              = $PAYBOXTOKEN;
+$onlinetoken              = $PAYBOXTOKEN;
 */
 $fulltag            = $FULLTAG;
 /*$payerID            = $PAYBOXPAYERID;
@@ -108,7 +109,7 @@ $FinalPaymentAmt    = $_SESSION["Payment_Amount"];
 // From env
 $ipaddress          = $_SESSION['ipaddress'];
 
-dol_syslog("Call newpaymentok with token=".$token." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag);
+dol_syslog("Call newpaymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag);
 */
 
 
@@ -149,7 +150,7 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 	else $appli.=" ".DOL_VERSION;
 	
 	$urlback=$_SERVER["REQUEST_URI"];
-	$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewPayboxPaymentReceived");
+	$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentReceived");
 	$tmptag=dolExplodeIntoArray($fulltag,'.','=');
 	$content="";
 	if (! empty($tmptag['MEM']))
@@ -162,10 +163,11 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 	}
 	else
 	{
-		$content.=$langs->transnoentitiesnoconv("NewPayboxPaymentReceived")."<br>\n";
+		$content.=$langs->transnoentitiesnoconv("NewOnlinePaymentReceived")."<br>\n";
 	}
 	$content.="<br>\n";
 	$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":<br>\n";
+    $content.=$langs->transnoentitiesnoconv("OnlinePaymentSystem").': '.$paymentmethod."<br>\n";
 	$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
 	$content.="tag=".$fulltag."<br>\n";
 
