@@ -1259,7 +1259,7 @@ class Account extends CommonObject
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
             $langs->load("accountancy");
             $label .= '<br><b>' . $langs->trans('AccountAccounting') . ':</b> ' . length_accountg($this->account_number);
-            $label .= '<br><b>' . $langs->trans('AccountancyJournal') . ':</b> ' . $this->fk_accountancy_journal;
+            $label .= '<br><b>' . $langs->trans('AccountancyJournal') . ':</b> ' . $this->accountancy_journal;
         }
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 

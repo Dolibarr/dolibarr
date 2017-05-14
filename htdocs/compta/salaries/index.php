@@ -26,6 +26,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
 $langs->load("compta");
 $langs->load("salaries");
@@ -94,7 +95,7 @@ $accountstatic = new Account($db);
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc,";
 $sql.= " s.rowid, s.fk_user, s.amount, s.salary, s.label, s.datep as datep, s.datev as datev, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
-$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.accountancy_journal, ba.label as blabel,";
+$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id";
@@ -236,8 +237,16 @@ if ($result)
 	            $accountstatic->id=$obj->bid;
 	            $accountstatic->ref=$obj->bref;
 	            $accountstatic->number=$obj->bnumber;
-	            $accountstatic->accountancy_number=$obj->account_number;
-	            $accountstatic->accountancy_journal=$obj->accountancy_journal;
+				
+				if (! empty($conf->accounting->enabled))
+				{
+					$accountstatic->account_number=$obj->account_number;
+					
+					$accountingjournal = new AccountingJournal($db);
+					$accountingjournal->fetch($obj->fk_accountancy_journal);
+
+					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+				}
 	            $accountstatic->label=$obj->blabel;
 	        	print $accountstatic->getNomUrl(1);
 	        }
