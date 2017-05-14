@@ -16,7 +16,7 @@
  */
 
 /**
- *     	\file       htdocs/public/paybox/index.php
+ *     	\file       htdocs/public/stripe/index.php
  *		\ingroup    core
  *		\brief      A redirect page to an error
  *		\author	    Laurent Destailleur

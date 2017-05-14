@@ -17,21 +17,22 @@
  */
 
 /**
-*  \file       stripe/config.php
+*  \file       htdocs/public/stripe/config.php
 *  \ingroup    Stripe
 *  \brief      Page to move config in api
 */
-
-require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
 
+global $stripe;
+global $conf;
+
 //use \includes\stripe as stripe;
 $stripe = array();
 
-if(empty($conf->global->SKYPE_LIVE))
+if (empty($conf->global->SKYPE_LIVE))
 {
 	$stripe = array(
 		"secret_key"      => $conf->global->STRIPE_TEST_SECRET_KEY,
@@ -46,4 +47,7 @@ else
 	);	
 }
 
-\includes\stripe::setApiKey($stripe['secret_key']);
+require_once DOL_DOCUMENT_ROOT."/includes/stripe/lib/Stripe.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+
+\Stripe\Stripe::setApiKey($stripe['secret_key']);
