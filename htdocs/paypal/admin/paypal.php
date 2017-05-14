@@ -44,8 +44,6 @@ if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
 	
-    $result=dolibarr_set_const($db, "PAYPAL_API_SANDBOX",GETPOST('PAYPAL_API_SANDBOX','alpha'),'chaine',0,'',$conf->entity);
-    if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_API_USER",GETPOST('PAYPAL_API_USER','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_API_PASSWORD",GETPOST('PAYPAL_API_PASSWORD','alpha'),'chaine',0,'',$conf->entity);
@@ -82,6 +80,21 @@ if ($action == 'setvalue' && $user->admin)
   	{
   		$db->rollback();
 		dol_print_error($db);
+    }
+}
+
+if ($action=="setlive")
+{
+    $liveenable = GETPOST('value','int')?0:1;
+    $res = dolibarr_set_const($db, "PAYPAL_API_SANDBOX", $liveenable,'yesno',0,'',$conf->entity);
+    if (! $res > 0) $error++;
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -127,12 +140,20 @@ print '<td>'.$langs->trans("AccountParameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-
-print '<tr class="oddeven"><td class="fieldrequired">';
-print $langs->trans("PAYPAL_API_SANDBOX").'</td><td>';
-print $form->selectyesno("PAYPAL_API_SANDBOX",$conf->global->PAYPAL_API_SANDBOX,1);
+print '<tr class="oddeven">';
+print '<td class="titlefield fieldrequired">';
+print $langs->trans("PaypalLiveEnabled").'</td><td>';
+if (empty($conf->global->PAYPAL_API_SANDBOX))
+{
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
+    print img_picto($langs->trans("Activated"),'switch_on');
+}
+else
+{
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
+    print img_picto($langs->trans("Disabled"),'switch_off');
+}
 print '</td></tr>';
-
 
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_USER").'</td><td>';

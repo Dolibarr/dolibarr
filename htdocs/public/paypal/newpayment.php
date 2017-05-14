@@ -265,7 +265,7 @@ $conf->dol_hide_leftmenu=1;
 
 llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
-if (! empty($PAYPAL_API_SANDBOX))
+if (! empty($conf->global->PAYPAL_API_SANDBOX))
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode'),'','warning');
 }

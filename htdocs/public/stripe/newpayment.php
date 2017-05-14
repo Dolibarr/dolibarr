@@ -49,6 +49,7 @@ $langs->load("main");
 $langs->load("companies");
 $langs->load("other");
 $langs->load("paybox");     // File with generic data
+$langs->load("paypal");
 $langs->load("stripe");
 
 $action=GETPOST('action','alpha');
@@ -300,12 +301,12 @@ if ($action == 'charge')
     
     if ($error)
     {
-        header("Location: ".DOL_URL_ROOT.'/public/stripe/paymentko.php?FULLTAG='.urlencode($FULLTAG));
+        header("Location: ".$urlko);
         exit;
     }
     else
     {
-        header("Location: ".DOL_URL_ROOT.'/public/stripe/paymentok.php?FULLTAG='.urlencode($FULLTAG));
+        header("Location: ".$urlok);
         exit;
     }
     
@@ -324,7 +325,7 @@ $conf->dol_hide_leftmenu=1;
 
 llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
-if (! empty($STRIPE_API_SANDBOX))
+if (empty($conf->global->STRIPE_LIVE))
 {
     dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode'),'','warning');
 }
