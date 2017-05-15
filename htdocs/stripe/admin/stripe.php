@@ -227,9 +227,9 @@ $token='';
 
 
 // Url list
-print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
+print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br><br>';
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
-print '<strong>'.getStripePaymentUrl(1,'free')."</strong><br>\n";
+print '<strong>'.getStripePaymentUrl(1,'free')."</strong><br><br>\n";
 if (! empty($conf->commande->enabled))
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
@@ -250,6 +250,7 @@ if (! empty($conf->commande->enabled))
         }
         print '</form>';
 	}
+	print '<br>';
 }
 if (! empty($conf->facture->enabled))
 {
@@ -271,6 +272,7 @@ if (! empty($conf->facture->enabled))
         }
         print '</form>';
 	}
+	print '<br>';
 }
 if (! empty($conf->contrat->enabled))
 {
@@ -292,6 +294,7 @@ if (! empty($conf->contrat->enabled))
         }
         print '</form>';
 	}
+	print '<br>';
 }
 if (! empty($conf->adherent->enabled))
 {
@@ -313,9 +316,9 @@ if (! empty($conf->adherent->enabled))
         }
         print '</form>';
 	}
+	print '<br>';
 }
 
-print "<br>";
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
 if (! empty($conf->use_javascript_ajax))

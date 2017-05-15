@@ -175,7 +175,7 @@ print '<br>'.$langs->trans("Example").': ASsqXEmw4KzmX-CPChWSVDNCNfd.A3YNR7uz-Vn
 print '</td></tr>';
 
 
-print '<tr class="oddeven"><td class="fieldrequired">';
+print '<tr class="oddeven"><td>';
 print $langs->trans("PAYPAL_SSLVERSION").'</td><td>';
 print $form->selectarray("PAYPAL_SSLVERSION",array('1'=> $langs->trans('TLSv1'),'6'=> $langs->trans('TLSv1.2')),$conf->global->PAYPAL_SSLVERSION);
 print '</td></tr>';
@@ -187,7 +187,7 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 
-print '<tr class="oddeven"><td class="fieldrequired">';
+print '<tr class="oddeven"><td>';
 print $langs->trans("PAYPAL_API_INTEGRAL_OR_PAYPALONLY").'</td><td>';
 print $form->selectarray("PAYPAL_API_INTEGRAL_OR_PAYPALONLY",array('integral'=> $langs->trans('PaypalModeIntegral'),'paypalonly'=> $langs->trans('PaypalModeOnlyPaypal')),$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY);
 print '</td></tr>';
@@ -296,7 +296,7 @@ $token='';
 
 
 // Url list
-print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
+print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br><br>';
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
 print '<strong>'.getPaypalPaymentUrl(1,'free')."</strong><br><br>\n";
 if (! empty($conf->commande->enabled))
@@ -385,9 +385,9 @@ if (! empty($conf->adherent->enabled))
         }
         print '</form>';
 	}
+	print '<br>';
 }
 
-print "<br>";
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
 if (! empty($conf->use_javascript_ajax))

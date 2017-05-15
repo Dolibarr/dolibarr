@@ -212,7 +212,7 @@ print '</form>';
 
 print '<br><br>';
 
-print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
+print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br><br>';
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
 print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?amount=<i>9.99</i>&tag=<i>your_free_tag</i></b>'."<br>\n";
 if (! empty($conf->commande->enabled))
@@ -237,7 +237,6 @@ if (! empty($conf->adherent->enabled))
 	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=membersubscription&ref=<i>member_ref</i></b>'."<br>\n";
 }
 
-print "<br>";
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
 llxFooter();
