@@ -127,13 +127,11 @@ if ($prev_id)
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Status").'</td><td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
 
-		$var=false;
-
 		while ($i < $num)
 		{
 			$row = $db->fetch_row($resql);
 
-			print "<tr ".$bc[$var]."><td>";
+			print '<tr class="oddeven"><td>';
 
 			print $ligne->LibStatut($row[1],1);
 

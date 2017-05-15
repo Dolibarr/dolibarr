@@ -585,7 +585,7 @@ class Mailing extends CommonObject
 	 *  @param	strin	$desc			Desc error
 	 *  @return string        			Label
 	 */
-	static public function libStatutDest($statut,$mode=0,$desc='')
+	public static function libStatutDest($statut,$mode=0,$desc='')
 	{
 		global $langs;
 		$langs->load('mails');

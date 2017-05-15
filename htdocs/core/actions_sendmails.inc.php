@@ -116,6 +116,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		if (method_exists($object,"fetch_thirdparty") && $object->element != 'societe')
 		{
 			$result=$object->fetch_thirdparty();
+			if ($object->element == 'user' && $result == 0) $result=1;    // Even if not found, we consider ok
 			$thirdparty=$object->thirdparty;
 			$sendtosocid=$thirdparty->id;
 		}
@@ -187,7 +188,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				{
 					$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
 				}
-				else	// Id du contact
+				elseif ($val)	// Id du contact
 				{
 					$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
 					$sendtoid[] = $val;
@@ -217,7 +218,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				{
 					$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
 				}
-				else	// Id du contact
+				elseif ($val)	// Id du contact
 				{
 					$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
 					//$sendtoid[] = $val;  TODO Add also id of contact in CC ?

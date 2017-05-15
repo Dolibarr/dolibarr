@@ -289,8 +289,10 @@ print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $
 
 
 print $langs->trans('CronInfo').'<br>';
-print $stringcurrentdate.'<br>';
-if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS));
+
+$text =$langs->trans("HoursOnThisPageAreOnServerTZ").' '.$stringcurrentdate.'<br>';
+if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) $text.=$langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS);
+print info_admin($text);
 print '<br>';
 
 

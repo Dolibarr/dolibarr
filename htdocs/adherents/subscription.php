@@ -869,6 +869,13 @@ if ($rowid > 0)
             print showPaypalPaymentUrl('membersubscription',$object->ref);
         }
 
+        // Link for stripe payment
+        if (! empty($conf->stripe->enabled))
+        {
+            include_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
+            print showStripePaymentUrl('membersubscription',$object->ref);
+        }
+
     }
 
     /*

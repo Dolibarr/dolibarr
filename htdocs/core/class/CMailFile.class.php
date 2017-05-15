@@ -153,6 +153,11 @@ class CMailFile
 			$this->error='ErrorSubjectIsRequired';
 			return;
 		}
+		if (empty($msg))
+		{
+		    dol_syslog("CMailFile::CMailfile: Try to send an email with empty body");
+		    $msg='.';     // Avoid empty message (with empty message conten show a multipart structure)
+		}		
 
 		// Detect if message is HTML (use fast method)
 		if ($msgishtml == -1)

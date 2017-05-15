@@ -2875,11 +2875,6 @@ class Commande extends CommonOrder
                     $this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
                     dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
                     $this->db->rollback();
-                    unset($_POST['productid']);
-                    unset($_POST['tva_tx']);
-                    unset($_POST['price_ht']);
-                    unset($_POST['qty']);
-                    unset($_POST['buying_price']);
                     return self::STOCK_NOT_ENOUGH_FOR_ORDER;
                 }
             }

@@ -77,7 +77,6 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     // Search contract
     if (! empty($conf->contrat->enabled))
     {
-    	$var=false;
     	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     	print '<table class="noborder nohover" width="100%">';
@@ -181,7 +180,6 @@ else
 
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</th></tr>'."\n";
-$var=true;
 $listofstatus=array(0,4,4,5); $bool=false;
 foreach($listofstatus as $status)
 {
@@ -204,13 +202,11 @@ if (! empty($conf->use_javascript_ajax))
     dol_print_graph('stats',300,180,$data,1,'pie',1);
     print '</td></tr>';
 }
-$var=true;
 $listofstatus=array(0,4,4,5); $bool=false;
 foreach($listofstatus as $status)
 {
     if (empty($conf->use_javascript_ajax))
-    {
-        
+    {      
     	print '<tr class="oddeven">';
     	print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
     	print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
@@ -243,7 +239,6 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 
 	if ( $resql )
 	{
-		$var = false;
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
@@ -277,7 +272,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].' class><td colspan="3" class="opacitymedium">'.$langs->trans("NoContracts").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoContracts").'</td></tr>';
 		}
 		print "</table><br>";
 		$db->free($resql);
@@ -330,11 +325,9 @@ if ($result)
 	print '<th align="center" width="80" colspan="4">'.$langs->trans("Services").'</th>';
 	print "</tr>\n";
 
-	$var=True;
 	while ($i < $num)
 	{
-		$obj = $db->fetch_object($result);
-		
+		$obj = $db->fetch_object($result);		
 
 		print '<tr class="oddeven">';
 		print '<td width="110" class="nowrap">';
@@ -397,7 +390,6 @@ if ($resql)
 	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("LastModifiedServices",$max).'</th>';
 	print "</tr>\n";
 
-	$var=True;
 	while ($i < min($num,$max))
 	{
 		$obj = $db->fetch_object($resql);
@@ -478,7 +470,6 @@ if ($resql)
 	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("NotActivatedServices").' <a href="'.DOL_URL_ROOT.'/contrat/services.php?mode=0"><span class="badge">'.$num.'</span></a></th>';
 	print "</tr>\n";
 
-	$var=True;
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
@@ -559,7 +550,6 @@ if ($resql)
 	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("ListOfExpiredServices").' <a href="'.DOL_URL_ROOT.'/contrat/services.php?mode=4&amp;filter=expired"><span class="badge">'.$num.'</span></a></th>';
 	print "</tr>\n";
 
-	$var=True;
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
