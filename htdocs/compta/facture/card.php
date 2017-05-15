@@ -1084,9 +1084,9 @@ if (empty($reshook))
 										}
 
 										if ($totalamount != 0) {
-											$i = $i > 0 ? $i-1 : 0;
-										    $tva_tx = $lines[$i]->tva_tx;
-										    if (! empty($lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
+											if ($numlines > 0) $numlines = $numlines-1;
+										    $tva_tx = $lines[$numlines]->tva_tx;
+										    if (! empty($lines[$numlines]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$numlines]->vat_src_code.')';
 											$amountdeposit[$tva_tx] = ($totalamount * $valuedeposit) / 100;
 										} else {
 											$amountdeposit[0] = 0;
