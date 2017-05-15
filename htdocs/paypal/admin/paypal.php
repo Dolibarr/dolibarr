@@ -141,7 +141,7 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven">';
-print '<td class="titlefield fieldrequired">';
+print '<td class="titlefield">';
 print $langs->trans("PaypalLiveEnabled").'</td><td>';
 if (empty($conf->global->PAYPAL_API_SANDBOX))
 {

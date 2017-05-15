@@ -276,7 +276,7 @@ $paramcreditor='PAYPAL_CREDITOR_'.$suffix;
 if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
 else if (! empty($conf->global->PAYPAL_CREDITOR)) $creditor=$conf->global->PAYPAL_CREDITOR;
 
-print '<span id="dolpaymentspan"></span>'."\n";
+print '<span id="dopaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
@@ -969,12 +969,13 @@ if ($found && ! $error)	// We are in a management option and no error
 
 	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
 	{
-		print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
+		print '<br><input class="button" type="submit" id="dopayment" name="dopayment" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
 	}
 	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
 	{
-		print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PaypalDoPayment").'">';
+		print '<br><input class="button" type="submit" id="dopayment" name="dopayment" value="'.$langs->trans("PaypalDoPayment").'">';
 	}
+	print '<img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">';
 }
 else
 {
@@ -986,7 +987,20 @@ print '</td></tr>'."\n";
 print '</table>'."\n";
 print '</form>'."\n";
 print '</div>'."\n";
+
+
+print '<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	jQuery("#dopayment").click(function() {
+		jQuery("#dopayment").hide();
+        jQuery("#hourglasstopay").show();
+	});
+});
+</script>';
+
+
 print '<br>';
+
 
 
 htmlPrintOnlinePaymentFooter($mysoc,$langs);

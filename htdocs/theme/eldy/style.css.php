@@ -3264,16 +3264,12 @@ div.visible {
     display: block;
 }
 
-div.hidden {
+div.hidden, td.hidden, img.hidden {
     display: none;
 }
 
 tr.visible {
     display: block;
-}
-
-td.hidden {
-    display: none;
 }
 
 

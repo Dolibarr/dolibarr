@@ -134,7 +134,7 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven">';
-print '<td class="titlefield fieldrequired">';
+print '<td class="titlefield">';
 print $langs->trans("StripeLiveEnabled").'</td><td>';
 if (!empty($conf->global->STRIPE_LIVE))
 {
@@ -229,7 +229,7 @@ $token='';
 // Url list
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
-print '<strong>'.getStripePaymentUrl(1,'free')."</strong><br><br>\n";
+print '<strong>'.getStripePaymentUrl(1,'free')."</strong><br>\n";
 if (! empty($conf->commande->enabled))
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
@@ -250,7 +250,6 @@ if (! empty($conf->commande->enabled))
         }
         print '</form>';
 	}
-	print '<br>';
 }
 if (! empty($conf->facture->enabled))
 {
@@ -272,7 +271,6 @@ if (! empty($conf->facture->enabled))
         }
         print '</form>';
 	}
-	print '<br>';
 }
 if (! empty($conf->contrat->enabled))
 {
@@ -294,7 +292,6 @@ if (! empty($conf->contrat->enabled))
         }
         print '</form>';
 	}
-	print '<br>';
 }
 if (! empty($conf->adherent->enabled))
 {
