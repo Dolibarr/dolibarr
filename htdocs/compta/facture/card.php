@@ -3721,11 +3721,14 @@ else if ($id > 0 || ! empty($ref))
                     $bankaccountstatic->ref = $objp->baref;
                     $bankaccountstatic->label = $objp->baref;
 					$bankaccountstatic->number = $objp->banumber;
-					$bankaccountstatic->account_number = $objp->account_number;
 
-					$accountingjournal = new AccountingJournal($db);
-					$accountingjournal->fetch($objp->fk_accountancy_journal);
-					$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+					if (! empty($conf->accounting->enabled)) {
+						$bankaccountstatic->account_number = $objp->account_number;
+
+						$accountingjournal = new AccountingJournal($db);
+						$accountingjournal->fetch($objp->fk_accountancy_journal);
+						$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+					}
 
 					print '<td align="right">';
                     if ($bankaccountstatic->id)
