@@ -3811,7 +3811,7 @@ else if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="action" value="updatealllines" />';
 			print '<input type="hidden" name="id" value="' . $object->id . '" />';
 			
-			print '<table id="tablelines" class="noborder noshadow" width="100%">';
+			print '<table id="tablelines_all_progress" class="noborder noshadow" width="100%">';
 			print '<tr class="liste_titre nodrag nodrop">';
 			
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
