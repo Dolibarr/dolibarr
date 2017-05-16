@@ -194,6 +194,8 @@ class Conf
 							if (! isset($this->$modulename) || ! is_object($this->$modulename)) $this->$modulename=new stdClass();
 							$this->$modulename->enabled=true;
 							$this->modules[]=$modulename;              // Add this module in list of enabled modules
+							if (in_array($modulename,array('propal','fcicheinter')))
+								$this->modules_parts['substitutions'] = array_merge($this->modules_parts['substitutions'], array($modulename => '/core/substitutions/'));
 						}
 					}
 				}
