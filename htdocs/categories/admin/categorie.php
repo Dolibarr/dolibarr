@@ -32,7 +32,7 @@ accessforbidden();
 
 $langs->load("categories");
 
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 
 /*
  *	Actions

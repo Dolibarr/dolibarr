@@ -35,7 +35,7 @@ $langs->load("users");
 $langs->load('other');
 
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 $id=(GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('id','int'));
 $ref = GETPOST('ref', 'alpha');

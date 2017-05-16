@@ -307,7 +307,7 @@ if (! defined('NOTOKENRENEWAL'))
 }
 if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))	// Check validity of token, only if option enabled (this option breaks some features sometimes)
 {
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! GETPOST('token')) // Note, offender can still send request by GET
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! GETPOST('token','alpha')) // Note, offender can still send request by GET
     {
         print "Access refused by CSRF protection in main.inc.php. Token not provided.\n";
         print "If you access your server behind a proxy using url rewriting, you might check that all HTTP header is propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file).\n";
@@ -317,7 +317,7 @@ if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->g
     {
         if (GETPOST('token', 'alpha') != $_SESSION['token'])
         {
-            dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action').", _POST['token']=".GETPOST('token').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
+            dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action','aZ09').", _POST['token']=".GETPOST('token','alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
             //print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
             unset($_POST);
         }
@@ -325,7 +325,7 @@ if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->g
 }
 
 // Disable modules (this must be after session_start and after conf has been loaded)
-if (GETPOST('disablemodules'))  $_SESSION["disablemodules"]=GETPOST('disablemodules');
+if (GETPOST('disablemodules','alpha'))  $_SESSION["disablemodules"]=GETPOST('disablemodules','alpha');
 if (! empty($_SESSION["disablemodules"]))
 {
     $disabled_modules=explode(',',$_SESSION["disablemodules"]);
@@ -448,7 +448,7 @@ if (! defined('NOLOGIN'))
         }
 
         $usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : GETPOST("username","alpha",2));
-        $passwordtotest	= GETPOST('password','',2);
+        $passwordtotest	= GETPOST('password','none',2);
         $entitytotest	= (GETPOST('entity','int') ? GETPOST('entity','int') : (!empty($conf->entity) ? $conf->entity : 1));
 
         // Validation of login/pass/entity
@@ -463,7 +463,7 @@ if (! defined('NOLOGIN'))
         {
             include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
             $langs=new Translate("",$conf);
-    		$langcode=(GETPOST('lang')?GETPOST('lang','alpha',1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+    		$langcode=(GETPOST('lang','aZ09',1)?GETPOST('lang','aZ09',1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
         	$langs->setDefaultLang($langcode);
         }
 
@@ -575,9 +575,9 @@ if (! defined('NOLOGIN'))
 	        if ($reshook < 0) $error++;
 
 	        $paramsurl=array();
-	        if (GETPOST('textbrowser')) $paramsurl[]='textbrowser='.GETPOST('textbrowser','int');
-	        if (GETPOST('nojs')) $paramsurl[]='nojs='.GETPOST('nojs','int');
-	        if (GETPOST('lang')) $paramsurl[]='lang='.GETPOST('lang','alpha');
+	        if (GETPOST('textbrowser','int')) $paramsurl[]='textbrowser='.GETPOST('textbrowser','int');
+	        if (GETPOST('nojs','int'))        $paramsurl[]='nojs='.GETPOST('nojs','int');
+	        if (GETPOST('lang','aZ09'))       $paramsurl[]='lang='.GETPOST('lang','aZ09');
             header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl)?'?'.implode('&',$paramsurl):''));
             exit;
         }
@@ -635,9 +635,9 @@ if (! defined('NOLOGIN'))
 	        if ($reshook < 0) $error++;
 
 	        $paramsurl=array();
-	        if (GETPOST('textbrowser')) $paramsurl[]='textbrowser='.GETPOST('textbrowser','int');
-	        if (GETPOST('nojs')) $paramsurl[]='nojs='.GETPOST('nojs','int');
-	        if (GETPOST('lang')) $paramsurl[]='lang='.GETPOST('lang','alpha');
+	        if (GETPOST('textbrowser','int')) $paramsurl[]='textbrowser='.GETPOST('textbrowser','int');
+	        if (GETPOST('nojs','int'))        $paramsurl[]='nojs='.GETPOST('nojs','int');
+	        if (GETPOST('lang','aZ09'))       $paramsurl[]='lang='.GETPOST('lang','aZ09');
             header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl)?'?'.implode('&',$paramsurl):''));
             exit;
         }
@@ -761,7 +761,7 @@ if (! defined('NOLOGIN'))
 }
 
 // Case forcing style from url
-if (GETPOST('theme'))
+if (GETPOST('theme','alpha'))
 {
 	$conf->theme=GETPOST('theme','alpha',1);
 	$conf->css  = "/theme/".$conf->theme."/style.css.php";
@@ -769,7 +769,7 @@ if (GETPOST('theme'))
 
 
 // Set javascript option
-if (! GETPOST('nojs'))   // If javascript was not disabled on URL
+if (! GETPOST('nojs','int'))   // If javascript was not disabled on URL
 {
 	if (! empty($user->conf->MAIN_DISABLE_JAVASCRIPT))
 	{
@@ -778,17 +778,17 @@ if (! GETPOST('nojs'))   // If javascript was not disabled on URL
 }
 else $conf->use_javascript_ajax=0;
 // Set MAIN_OPTIMIZEFORTEXTBROWSER
-if (GETPOST('textbrowser') || (! empty($conf->browser->name) && $conf->browser->name == 'lynxlinks') || ! empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER))   // If we must enable text browser
+if (GETPOST('textbrowser','int') || (! empty($conf->browser->name) && $conf->browser->name == 'lynxlinks') || ! empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER))   // If we must enable text browser
 {
     $conf->global->MAIN_OPTIMIZEFORTEXTBROWSER=1;
 }
 
 // Set terminal output option according to conf->browser.
-if (GETPOST('dol_hide_leftmenu') || ! empty($_SESSION['dol_hide_leftmenu']))               $conf->dol_hide_leftmenu=1;
-if (GETPOST('dol_hide_topmenu') || ! empty($_SESSION['dol_hide_topmenu']))                 $conf->dol_hide_topmenu=1;
-if (GETPOST('dol_optimize_smallscreen') || ! empty($_SESSION['dol_optimize_smallscreen'])) $conf->dol_optimize_smallscreen=1;
-if (GETPOST('dol_no_mouse_hover') || ! empty($_SESSION['dol_no_mouse_hover']))             $conf->dol_no_mouse_hover=1;
-if (GETPOST('dol_use_jmobile') || ! empty($_SESSION['dol_use_jmobile']))                   $conf->dol_use_jmobile=1;
+if (GETPOST('dol_hide_leftmenu','int') || ! empty($_SESSION['dol_hide_leftmenu']))               $conf->dol_hide_leftmenu=1;
+if (GETPOST('dol_hide_topmenu','int') || ! empty($_SESSION['dol_hide_topmenu']))                 $conf->dol_hide_topmenu=1;
+if (GETPOST('dol_optimize_smallscreen','int') || ! empty($_SESSION['dol_optimize_smallscreen'])) $conf->dol_optimize_smallscreen=1;
+if (GETPOST('dol_no_mouse_hover','int') || ! empty($_SESSION['dol_no_mouse_hover']))             $conf->dol_no_mouse_hover=1;
+if (GETPOST('dol_use_jmobile','int') || ! empty($_SESSION['dol_use_jmobile']))                   $conf->dol_use_jmobile=1;
 if (! empty($conf->browser->layout) && $conf->browser->layout != 'classic') $conf->dol_no_mouse_hover=1;
 if ((! empty($conf->browser->layout) && $conf->browser->layout == 'phone')
 	|| (! empty($_SESSION['dol_screenwidth']) && $_SESSION['dol_screenwidth'] < 400)
@@ -809,7 +809,7 @@ if (! empty($conf->dol_use_jmobile) && in_array($conf->theme,array('bureau2crea'
 
 if (! defined('NOREQUIRETRAN'))
 {
-    if (! GETPOST('lang'))	// If language was not forced on URL
+    if (! GETPOST('lang','aZ09'))	// If language was not forced on URL
     {
         // If user has chosen its own language
         if (! empty($user->conf->MAIN_LANG_DEFAULT))
@@ -909,7 +909,7 @@ if (! defined('NOREQUIREMENU'))
 
 	// Load the menu manager (only if not already done)
 	$file_menu=$conf->standard_menu;
-	if (GETPOST('menu')) $file_menu=GETPOST('menu');     // example: menu=eldy_menu.php
+	if (GETPOST('menu','alpha')) $file_menu=GETPOST('menu','alpha');     // example: menu=eldy_menu.php
 	if (! class_exists('MenuManager'))
 	{
 		$menufound=0;
@@ -1034,7 +1034,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
     if (empty($disablehead))
     {
         print "<head>\n";
-		if (GETPOST('dol_basehref')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref')).'">'."\n";
+		if (GETPOST('dol_basehref','alpha')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref','alpha')).'">'."\n";
         // Displays meta
         print '<meta name="robots" content="noindex'.($disablenofollow?'':',nofollow').'">'."\n";      				// Do not index
         print '<meta name="viewport" content="width=device-width, initial-scale=1.0">';	// Scale for mobile device
@@ -1043,9 +1043,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
         if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
         print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";
-        //if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser')) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
-        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser')) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
-        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser')) print '<link rel="author" title="Dolibarr Development Team" href="https://www.dolibarr.org">'."\n";
+        //if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser','int')) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
+        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser','int')) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
+        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser','int')) print '<link rel="author" title="Dolibarr Development Team" href="https://www.dolibarr.org">'."\n";
 
         // Displays title
         $appli=constant('DOL_APPLICATION_TITLE');
@@ -1059,17 +1059,17 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         //$ext='';
         //if (! empty($conf->dol_use_jmobile)) $ext='version='.urlencode(DOL_VERSION);
         $ext='version='.urlencode(DOL_VERSION);
-        if (GETPOST('version')) $ext='version='.GETPOST('version','int');	// usefull to force no cache on css/js
-        if (GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) $ext.='&testmenuhider='.(GETPOST('testmenuhider')?GETPOST('testmenuhider','int'):$conf->global->MAIN_TESTMENUHIDER);
+        if (GETPOST('version','int')) $ext='version='.GETPOST('version','int');	// usefull to force no cache on css/js
+        if (GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) $ext.='&testmenuhider='.(GETPOST('testmenuhider','int')?GETPOST('testmenuhider','int'):$conf->global->MAIN_TESTMENUHIDER);
         
-        $themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss')?'&amp;optioncss='.GETPOST('optioncss','alpha',1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
+        $themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss','aZ09')?'&amp;optioncss='.GETPOST('optioncss','aZ09',1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
         $themeparam.=($ext?'&amp;'.$ext:'');
         if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
-        if (GETPOST('dol_hide_topmenu'))           { $themeparam.='&amp;dol_hide_topmenu='.GETPOST('dol_hide_topmenu','int'); }
-        if (GETPOST('dol_hide_leftmenu'))          { $themeparam.='&amp;dol_hide_leftmenu='.GETPOST('dol_hide_leftmenu','int'); }
-        if (GETPOST('dol_optimize_smallscreen'))   { $themeparam.='&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen','int'); }
-        if (GETPOST('dol_no_mouse_hover'))         { $themeparam.='&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover','int'); }
-        if (GETPOST('dol_use_jmobile'))            { $themeparam.='&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile','int'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile','int'); }
+        if (GETPOST('dol_hide_topmenu','int'))           { $themeparam.='&amp;dol_hide_topmenu='.GETPOST('dol_hide_topmenu','int'); }
+        if (GETPOST('dol_hide_leftmenu','int'))          { $themeparam.='&amp;dol_hide_leftmenu='.GETPOST('dol_hide_leftmenu','int'); }
+        if (GETPOST('dol_optimize_smallscreen','int'))   { $themeparam.='&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen','int'); }
+        if (GETPOST('dol_no_mouse_hover','int'))         { $themeparam.='&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover','int'); }
+        if (GETPOST('dol_use_jmobile','int'))            { $themeparam.='&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile','int'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile','int'); }
         
         if (! defined('DISABLE_JQUERY') && ! $disablejs && $conf->use_javascript_ajax)
         {

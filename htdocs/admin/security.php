@@ -27,7 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $langs->load("users");
 $langs->load("admin");

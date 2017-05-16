@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);
 
-$action =GETPOST('action');
+$action =GETPOST('action','aZ09');
 $bankaccountid=GETPOST('cashdeskbank');
 
 switch ($action)

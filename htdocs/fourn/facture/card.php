@@ -61,7 +61,7 @@ if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $id			= (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $socid		= GETPOST('socid', 'int');
-$action		= GETPOST("action");
+$action		= GETPOST('action','aZ09');
 $confirm	= GETPOST("confirm");
 $ref		= GETPOST('ref','alpha');
 $cancel		= GETPOST('cancel','alpha');

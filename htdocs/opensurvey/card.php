@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 if (!$user->rights->opensurvey->read) accessforbidden();
 
 // Initialisation des variables
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel');
 
 $numsondage = '';

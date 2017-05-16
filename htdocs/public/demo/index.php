@@ -202,7 +202,7 @@ asort($orders);
  * Actions
  */
 
-if (GETPOST("action") == 'gotodemo')
+if (GETPOST('action','aZ09') == 'gotodemo')
 {
 	//print 'ee'.GETPOST("demochoice");
 	$disablestring='';

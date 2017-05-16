@@ -97,12 +97,12 @@ if (! $versionfrom && ! $versionto)
 }
 
 
-pHeader('',"upgrade2",GETPOST('action'),'versionfrom='.$versionfrom.'&versionto='.$versionto);
+pHeader('',"upgrade2",GETPOST('action','aZ09'),'versionfrom='.$versionfrom.'&versionto='.$versionto);
 
 $actiondone=0;
 
 // Action to launch the migrate script
-if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
+if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09')))
 {
     $actiondone=1;
 

@@ -35,7 +35,7 @@ $langs->load('stocks');
 
 $id = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
 $ref = GETPOST('ref');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;

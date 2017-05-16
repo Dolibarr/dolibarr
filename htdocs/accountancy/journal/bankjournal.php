@@ -71,7 +71,7 @@ $date_startyear = GETPOST('date_startyear');
 $date_endmonth = GETPOST('date_endmonth');
 $date_endday = GETPOST('date_endday');
 $date_endyear = GETPOST('date_endyear');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 $now = dol_now();
 

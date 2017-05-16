@@ -155,7 +155,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$titletruedolibarrversion=constant('DOL_VERSION');	// $title used by login template after the @ to inform of true Dolibarr version
 
 	// Note: $conf->css looks like '/theme/eldy/style.css.php'
-	$conf->css = "/theme/".(GETPOST('theme')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
+	$conf->css = "/theme/".(GETPOST('theme','alpha')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
 	//$themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
 	$themepath=dol_buildpath($conf->css,1);
 	if (! empty($conf->modules_parts['theme']))		// Using this feature slow down application

@@ -240,7 +240,17 @@ function dol_shutdown()
  *  Return value of a param into GET or POST supervariable
  *
  *  @param	string	$paramname   Name of parameter to found
- *  @param	string	$check	     Type of check (''=no check, 'none'=no check, 'int'=check it's numeric, 'alpha'=check it's text and sign, 'aZ'=check it's a-z only, 'array'=check it's array, 'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string), 'day', 'month', 'year', 'custom'= custom filter specify $filter and $options)
+ *  @param	string	$check	     Type of check
+ *                                  ''=no check (deprecated)
+ *                                  'none'=no check (only for param that should have very rich content)
+ *                                  'int'=check it's numeric
+ *                                  'alpha'=check it's text and sign
+ *                                  'aZ'=check it's a-z only
+ *                                  'aZ09'=check it's simple alpha string (recommended for keys)
+ *                                  'array'=check it's array
+ *                                  'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
+ *                                  'nohtml', 'alphanohtml'=check there is no html content
+ *                                  'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'.
@@ -317,9 +327,14 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	    }
 	}	
 	
+	if (empty($check) && $conf->global->MAIN_FEATURES_LEVEL > 0)
+	{
+	   dol_syslog("A GETPOST is called with 1st param = ".$paramname." and 2nd param not defined, when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);    
+	}
+	
 	if (! empty($check))
 	{
-	    // Replace vars like __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__
+	    // Replace vars like __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__, ...
 	    if (! is_array($out))
 	    {
 	        $maxloop=20; $loopnb=0;    // Protection against infinite loop
@@ -358,8 +373,11 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	        }
 	    }
 
+	    // Check is done after replacement
 	    switch ($check)
 	    {
+	        case 'none':
+	            break;
 	        case 'int':
 	            if (! is_numeric($out)) { $out=''; }
 	            break;

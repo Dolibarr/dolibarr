@@ -43,7 +43,7 @@ if ($user->societe_id > 0) {
 	accessforbidden();
 }
 
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 $piece_num = GETPOST("piece_num");
 
 $mesg = '';

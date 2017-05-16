@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $langs->load('projects');
 $langs->load('users');
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $mode=GETPOST("mode");
 $id=GETPOST('id','int');
 $taskid=GETPOST('taskid');

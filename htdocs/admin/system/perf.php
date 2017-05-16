@@ -33,7 +33,7 @@ $langs->load("other");
 if (! $user->admin)
 	accessforbidden();
 
-if (GETPOST('action') == 'donothing')
+if (GETPOST('action','aZ09') == 'donothing')
 {
 	exit;
 }

@@ -45,7 +45,7 @@ $langs->load("trips");
 $langs->load("bills");
 $langs->load("mails");
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel');
 $confirm = GETPOST('confirm', 'alpha');
 

@@ -37,7 +37,7 @@ $langs->load("companies");
 // Security check
 $result=restrictedArea($user,'adherent');
 
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $filter=GETPOST("filter");
 $statut=GETPOST("statut");
 $search=GETPOST("search");

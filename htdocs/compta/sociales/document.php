@@ -40,7 +40,7 @@ $langs->load("compta");
 $langs->load("bills");
 
 $id = GETPOST('id','int');
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check

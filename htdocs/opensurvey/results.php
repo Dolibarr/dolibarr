@@ -35,7 +35,7 @@ if (!$user->rights->opensurvey->read) accessforbidden();
 
 
 // Init vars
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $numsondage= GETPOST("id");
 
 $object=new Opensurveysondage($db);

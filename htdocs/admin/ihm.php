@@ -45,7 +45,7 @@ $langs->load("agenda");
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");

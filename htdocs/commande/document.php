@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';
 $langs->load('companies');
 $langs->load('other');
 
-$action		= GETPOST('action');
+$action		= GETPOST('action','aZ09');
 $confirm	= GETPOST('confirm');
 $id			= GETPOST('id','int');
 $ref		= GETPOST('ref');

@@ -55,7 +55,7 @@ if ($year == 0) {
 }
 
 // Validate History
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 
 /*

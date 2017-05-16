@@ -77,7 +77,7 @@ $langs->load("website");
 
 if (! $user->admin) accessforbidden();
 
-if (! ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)))
+if (! ((GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)))
 {
     $conf->dol_hide_leftmenu = 1;   // Force hide of left menu.
 }

@@ -38,7 +38,7 @@ $langs->load("compta");
 $langs->load("bills");
 
 $id=GETPOST('id','int');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 

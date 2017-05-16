@@ -46,7 +46,7 @@ $langs->load("categories");
 $langs->load("companies");
 $langs->load("compta");
 
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
 // Security check

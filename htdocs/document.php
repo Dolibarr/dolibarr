@@ -61,7 +61,7 @@ $action=GETPOST('action','alpha');
 $original_file=GETPOST('file','alpha');	// Do not use urldecode here ($_GET are already decoded by PHP).
 $modulepart=GETPOST('modulepart','alpha');
 $urlsource=GETPOST('urlsource','alpha');
-$entity=GETPOST('entity')?GETPOST('entity','int'):$conf->entity;
+$entity=GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity;
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
@@ -95,7 +95,7 @@ else $type=dol_mimetype($original_file);
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
 $attachment = true;
 if (preg_match('/\.(html|htm)$/i',$original_file)) $attachment = false;
-if (isset($_GET["attachment"])) $attachment = GETPOST("attachment")?true:false;
+if (isset($_GET["attachment"])) $attachment = GETPOST("attachment",'alpha')?true:false;
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 
 // Security: Delete string ../ into $original_file

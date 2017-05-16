@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Security check
 if (! $user->rights->facture->lire) accessforbidden();
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $socid=0;
 if ($user->societe_id > 0)

@@ -34,7 +34,7 @@ $langs->load("companies");
 $langs->load("contact");
 
 $id = GETPOST('id','int');
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 $object = new Contact($db);

@@ -60,7 +60,7 @@ $id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
 if ($user->societe_id > 0) $id=$user->societe_id;
 $result = restrictedArea($user,'societe',$id,'&societe');
 
-$action		= GETPOST('action');
+$action		= GETPOST('action','aZ09');
 $mode		= GETPOST("mode");
 
 $sortfield = GETPOST("sortfield",'alpha');
