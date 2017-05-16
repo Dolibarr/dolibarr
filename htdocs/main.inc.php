@@ -646,6 +646,19 @@ if (! defined('NOLOGIN'))
 	       // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 	       $hookmanager->initHooks(array('main'));
 
+	       if (! empty($_GET['save_lastsearch_values']))    // Keep $_GET here
+	       {
+               $relativepathstring = preg_replace('/\?.*$/','',$_SERVER["HTTP_REFERER"]);
+	           if (constant('DOL_MAIN_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_MAIN_URL_ROOT'),'/').'/', '', $relativepathstring);
+	           $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+               $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+               if (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
+               {
+                   $_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
+                   unset($_SESSION['lastsearch_values_tmp_'.$relativepathstring]);
+               }
+	       }
+	       
 	       $action = '';
 	       $reshook = $hookmanager->executeHooks('updateSession', array(), $user, $action);
 	       if ($reshook < 0) {
@@ -653,7 +666,7 @@ if (! defined('NOLOGIN'))
 	       }
         }
     }
-
+    
     // Is it a new session that has started ?
     // If we are here, this means authentication was successfull.
     if (! isset($_SESSION["dol_login"]))
@@ -1858,7 +1871,7 @@ if (! function_exists("llxFooter"))
 {
     /**
      * Show HTML footer
-     * Close div /DIV data-role=page + /DIV class=fiche + /DIV /DIV main layout + /BODY + /HTML.
+     * Close div /DIV class=fiche + /DIV id-right + /DIV id-container + /BODY + /HTML.
      * If global var $delayedhtmlcontent was filled, we output it just before closing the body.
      *
      * @param	string	$comment    A text to add as HTML comment into HTML generated page
@@ -1867,11 +1880,29 @@ if (! function_exists("llxFooter"))
      */
     function llxFooter($comment='',$zone='private')
     {
-        global $conf, $langs;
+        global $conf, $langs, $user;
         global $delayedhtmlcontent;
 
         // Global html output events ($mesgs, $errors, $warnings)
         dol_htmloutput_events();
+
+        // Save $user->lastsearch_values if defined (define on list pages when a form field search_xxx exists)
+        if (is_object($user) && ! empty($user->lastsearch_values_tmp) && is_array($user->lastsearch_values_tmp))
+        {
+            // Clean data
+            foreach($user->lastsearch_values_tmp as $key => $val)
+            {
+                unset($_SESSION['lastsearch_values_tmp_'.$key]);
+                if (count($val))
+                {
+                    if (empty($val['sortfield'])) unset($val['sortfield']);
+                    if (empty($val['sortorder'])) unset($val['sortorder']);
+                    dol_syslog('Save lastsearch_values_tmp_'.$key.'='.json_encode($val, 0, 1));
+                    $_SESSION['lastsearch_values_tmp_'.$key]=json_encode($val);
+                    unset($_SESSION['lastsearch_values_'.$key]);
+                }
+            }
+        }
 
         // Core error message
         if (! empty($conf->global->MAIN_CORE_ERROR))
@@ -1943,7 +1974,7 @@ if (! function_exists("llxFooter"))
         			});
         		});
             </script>' . "\n";
-        }         
+        }
         
         // Wrapper to manage dropdown
         if ($conf->use_javascript_ajax)
