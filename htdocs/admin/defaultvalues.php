@@ -271,6 +271,12 @@ if ($mode != 'focus')
         $texthelp.='__DAY__<br>';
         $texthelp.='__MONTH__<br>';
         $texthelp.='__YEAR__<br>';
+        $texthelp.='__PREVIOUS_DAY__<br>';
+        $texthelp.='__PREVIOUS_MONTH__<br>';
+        $texthelp.='__PREVIOUS_YEAR__<br>';
+        $texthelp.='__NEXT_DAY__<br>';
+        $texthelp.='__NEXT_MONTH__<br>';
+        $texthelp.='__NEXT_YEAR__<br>';
         if (! empty($conf->multicompany->enabled)) $texthelp.='__ENTITYID__<br>';
         $textvalue=$form->textwithpicto($langs->trans("Value"), $texthelp, 1, 'help', '', 0, 2, '');
     }

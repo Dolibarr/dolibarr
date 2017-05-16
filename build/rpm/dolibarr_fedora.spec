@@ -18,8 +18,8 @@ License: GPLv3+
 #Packager: Laurent Destailleur (Eldy) <eldy@users.sourceforge.net>
 Vendor: Dolibarr dev team
 
-URL: http://www.dolibarr.org
-Source0: http://www.dolibarr.org/files/lastbuild/package_rpm_redhat-fedora/%{name}-%{version}.tgz
+URL: https://www.dolibarr.org
+Source0: https://www.dolibarr.org/files/lastbuild/package_rpm_redhat-fedora/%{name}-%{version}.tgz
 Patch0: %{name}-forrpm.patch
 BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
@@ -165,6 +165,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/bookmarks
 %_datadir/dolibarr/htdocs/cashdesk
 %_datadir/dolibarr/htdocs/categories
+%_datadir/dolibarr/htdocs/collab
 %_datadir/dolibarr/htdocs/comm
 %_datadir/dolibarr/htdocs/commande
 %_datadir/dolibarr/htdocs/compta

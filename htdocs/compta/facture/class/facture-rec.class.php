@@ -446,7 +446,7 @@ class FactureRec extends CommonInvoice
 		}
 		else
 		{
-			$this->error=$this->db-lasterror();
+			$this->error=$this->db->lasterror();
 			return -3;
 		}
 	}
@@ -849,6 +849,8 @@ class FactureRec extends CommonInvoice
 
 			    $facture = new Facture($db);
 				$facture->fac_rec = $facturerec->id;    // We will create $facture from this recurring invoice
+				$facture->fk_fac_rec_source = $facturerec->id;    // We will create $facture from this recurring invoice
+				
 			    $facture->type = self::TYPE_STANDARD;
 			    $facture->brouillon = 1;
 			    $facture->date = $facturerec->date_when;	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.

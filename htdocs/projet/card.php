@@ -142,9 +142,9 @@ if (empty($reshook))
 	        $db->begin();
 
 	        $object->ref             = GETPOST('ref','alpha');
-	        $object->title           = GETPOST('title'); // Do not use 'alpha' here, we want field as it is
+	        $object->title           = GETPOST('title','none'); // Do not use 'alpha' here, we want field as it is
 	        $object->socid           = GETPOST('socid','int');
-	        $object->description     = GETPOST('description'); // Do not use 'alpha' here, we want field as it is
+	        $object->description     = GETPOST('description','none'); // Do not use 'alpha' here, we want field as it is
 	        $object->public          = GETPOST('public','alpha');
 	        $object->opp_amount      = price2num(GETPOST('opp_amount'));
 	        $object->budget_amount   = price2num(GETPOST('budget_amount'));
@@ -243,9 +243,9 @@ if (empty($reshook))
 			$old_start_date = $object->date_start;
 
 	        $object->ref          = GETPOST('ref','alpha');
-	        $object->title        = GETPOST('title'); // Do not use 'alpha' here, we want field as it is
+	        $object->title        = GETPOST('title','none'); // Do not use 'alpha' here, we want field as it is
 	        $object->socid        = GETPOST('socid','int');
-	        $object->description  = GETPOST('description');	// Do not use 'alpha' here, we want field as it is
+	        $object->description  = GETPOST('description','none');	// Do not use 'alpha' here, we want field as it is
 	        $object->public       = GETPOST('public','alpha');
 	        $object->date_start   = empty($_POST["projectstart"])?'':$date_start;
 	        $object->date_end     = empty($_POST["projectend"])?'':$date_end;
@@ -509,7 +509,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '</td></tr>';
 
     // Label
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.GETPOST("title").'"></td></tr>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.GETPOST("title",'none').'"></td></tr>';
 
     // Thirdparty
     if ($conf->societe->enabled)
@@ -588,7 +588,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
     print '<td>';
-    print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.GETPOST("description").'</textarea>';
+    print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description",'none')).'</textarea>';
     print '</td></tr>';
 
     if ($conf->categorie->enabled) {
