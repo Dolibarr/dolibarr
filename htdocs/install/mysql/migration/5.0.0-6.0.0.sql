@@ -278,7 +278,7 @@ insert into llx_c_tva(fk_pays,taux,code,recuperableonly,localtax1,localtax1_type
 
 ALTER TABLE llx_events MODIFY COLUMN ip varchar(250);
 
-
+ALTER TABLE llx_facture ADD COLUMN fk_fac_rec_source integer;
 
 
 

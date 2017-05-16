@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 $langs->load('bills');
 $langs->load('compta');
 $langs->load('admin');
+$langs->load('other');
 
 // Security check
 $id=(GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int'));
@@ -940,7 +941,7 @@ if ($action == 'create')
 		    '__INVOICE_YEAR__' =>  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($object->date,'%Y').')',
 		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'y'),'%Y').')'
 		);
-		$substitutionarray['__(TRANSKEY)__']=$langs->trans("TransKey");
+		$substitutionarray['__(TransKey)__']=$langs->trans("TransKey");
 		
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach($substitutionarray as $key => $val)
@@ -1258,7 +1259,7 @@ else
 		    '__INVOICE_YEAR__' =>  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%Y').')',
 		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'),'%Y').')'
 		);
-		$substitutionarray['__(TRANSKEY)__']=$langs->trans("TransKey");
+		$substitutionarray['__(TransKey)__']=$langs->trans("TransKey");
 		
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach($substitutionarray as $key => $val)
