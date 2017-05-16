@@ -1774,7 +1774,7 @@ else
             }
         }
 
-        if (GETPOST('action') != 'presend' && GETPOST('action') != 'send')
+        if (GETPOST('action','aZ09') != 'presend' && GETPOST('action','aZ09') != 'send')
         {
             /*
              * List of groups of user

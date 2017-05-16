@@ -32,7 +32,7 @@ $langs->load("companies");
 $langs->load("ldap");
 $langs->load("admin");
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 // Security check
 $id = GETPOST('id', 'int');

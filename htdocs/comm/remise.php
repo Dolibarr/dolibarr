@@ -52,7 +52,7 @@ if (GETPOST('cancel') && ! empty($backtopage))
      exit;
 }
 
-if (GETPOST("action") == 'setremise')
+if (GETPOST('action','aZ09') == 'setremise')
 {
 	$object = new Societe($db);
 	$object->fetch($id);

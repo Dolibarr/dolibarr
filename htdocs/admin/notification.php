@@ -41,7 +41,7 @@ $langs->load("mails");
 if (!$user->admin)
   accessforbidden();
 
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 
 
 /*

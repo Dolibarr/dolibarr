@@ -44,7 +44,7 @@ $langs->load('bills');
 $langs->load('orders');
 $langs->load('commercial');
 
-$action	= GETPOST('action');
+$action	= GETPOST('action','aZ09');
 $cancelbutton = GETPOST('cancel');
 
 // Security check

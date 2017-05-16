@@ -37,7 +37,7 @@ $langs->load("admin");
 $langs->load("other");
 
 $id = GETPOST("id",'int');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 $actionid=GETPOST('actionid');
 
 // Security check

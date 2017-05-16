@@ -35,7 +35,7 @@ $langs->load("users");
 $langs->load("admin");
 $langs->load("other");
 
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 
 
 $securityevent=new Events($db);

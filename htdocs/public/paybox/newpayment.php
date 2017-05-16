@@ -63,7 +63,7 @@ $amount=price2num(GETPOST("amount"));
 if (! GETPOST("currency",'alpha')) $currency=$conf->currency;
 else $currency=GETPOST("currency",'alpha');
 
-if (! GETPOST("action"))
+if (! GETPOST('action','aZ09'))
 {
     if (! GETPOST("amount") && ! GETPOST("source"))
     {
@@ -129,7 +129,7 @@ $valid=true;
  * Actions
  */
 
-if (GETPOST("action") == 'dopayment')
+if (GETPOST('action','aZ09') == 'dopayment')
 {
     $PRICE=price2num(GETPOST("newamount"),'MT');
     $email=GETPOST("email");

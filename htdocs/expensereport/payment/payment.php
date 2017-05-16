@@ -31,7 +31,7 @@ $langs->load("bills");
 $langs->load("banks");
 
 $chid=GETPOST("id");
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $amounts = array();
 $accountid=GETPOST('accountid','int');
 
@@ -174,7 +174,7 @@ $form=new Form($db);
 
 
 // Form to create expense report payment
-if (GETPOST("action") == 'create')
+if (GETPOST('action','aZ09') == 'create')
 {
 	$expensereport = new ExpenseReport($db);
 	$expensereport->fetch($chid);

@@ -67,7 +67,7 @@ $amount=price2num(GETPOST("amount"));
 if (! GETPOST("currency",'alpha')) $currency=$conf->currency;
 else $currency=GETPOST("currency",'alpha');
 
-if (! GETPOST("action"))
+if (! GETPOST('action','aZ09'))
 {
     if (! GETPOST("amount") && ! GETPOST("source"))
     {
@@ -185,7 +185,7 @@ if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
  * Actions
  */
 
-if (GETPOST("action") == 'dopayment')
+if (GETPOST('action','aZ09') == 'dopayment')
 {
 	$PAYPAL_API_PRICE=price2num(GETPOST("newamount"),'MT');
     $PAYPAL_PAYMENT_TYPE='Sale';

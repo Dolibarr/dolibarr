@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php");
 // Security check
 if (!$user->rights->opensurvey->read) accessforbidden();
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $id=GETPOST('id','alpha');
 $numsondage= $id;
 $search_ref = GETPOST('search_ref', 'alpha');

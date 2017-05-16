@@ -38,7 +38,7 @@ $mainmenu=GETPOST('mainmenu', 'alpha');
 $leftmenu=GETPOST('leftmenu', 'alpha');
 $idmenu=GETPOST('idmenu', 'int');
 $theme=GETPOST('theme', 'alpha');
-$codelang=GETPOST('lang', 'alpha');
+$codelang=GETPOST('lang', 'aZ09');
 
 print "
 <html>

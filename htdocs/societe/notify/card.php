@@ -36,7 +36,7 @@ $langs->load("admin");
 $langs->load("other");
 
 $socid = GETPOST("socid",'int');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 $contactid=GETPOST('contactid');    // May be an int or 'thirdparty'
 $actionid=GETPOST('actionid');
 

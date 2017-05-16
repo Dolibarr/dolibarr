@@ -994,7 +994,7 @@ class FormFile
 			if (empty($url)) $url=$_SERVER["PHP_SELF"];
 			
 			print '<!-- html.formfile::list_of_documents -->'."\n";
-			if (GETPOST('action') == 'editfile' && $permtoeditline)
+			if (GETPOST('action','aZ09') == 'editfile' && $permtoeditline)
 			{
 			    print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param.'" method="POST">';
 			    print '<input type="hidden" name="action" value="renamefile">';
@@ -1131,7 +1131,7 @@ class FormFile
 					print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
 					if ($showrelpart == 1) print $relativepath;
 					//print dol_trunc($file['name'],$maxlength,'middle');
-					if (GETPOST('action') == 'editfile' && $file['name'] == basename(GETPOST('urlfile')))
+					if (GETPOST('action','aZ09') == 'editfile' && $file['name'] == basename(GETPOST('urlfile')))
 					{
 					    print '</a>';
 					    print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
@@ -1268,7 +1268,7 @@ class FormFile
 				}
 			}				
 			
-			if (GETPOST('action') == 'editfile' && $permtoeditline)
+			if (GETPOST('action','aZ09') == 'editfile' && $permtoeditline)
 			{
 			    print '</form>';
 			}

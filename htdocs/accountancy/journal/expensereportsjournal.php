@@ -58,7 +58,7 @@ $now = dol_now();
 if ($user->societe_id > 0)
 	accessforbidden();
 
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 
 /*

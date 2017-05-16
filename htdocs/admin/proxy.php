@@ -40,7 +40,7 @@ $upload_dir=$conf->admin->dir_temp;
  * Actions
  */
 
-if (GETPOST("action") == 'set_proxy')
+if (GETPOST('action','aZ09') == 'set_proxy')
 {
     if (GETPOST("MAIN_USE_CONNECT_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_CONNECT_TIMEOUT")))
     {

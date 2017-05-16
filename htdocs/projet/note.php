@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
 $langs->load('projects');
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $id = GETPOST('id','int');
 $ref= GETPOST('ref');
 

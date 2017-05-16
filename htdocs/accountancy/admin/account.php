@@ -37,7 +37,7 @@ $langs->load("accountancy");
 $langs->load("salaries");
 
 $mesg = '';
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 $cancel = GETPOST('cancel');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
