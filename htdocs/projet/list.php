@@ -86,12 +86,12 @@ $optioncss = GETPOST('optioncss','alpha');
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 if ($mine) { $search_project_user = $user->id; $mine=0; }
 
-$sday	= GETPOST('sday','int');
-$smonth	= GETPOST('smonth','int');
-$syear	= GETPOST('syear','int');
-$day	= GETPOST('day','int');
-$month	= GETPOST('month','int');
-$year	= GETPOST('year','int');
+$search_sday	= GETPOST('search_sday','int');
+$search_smonth	= GETPOST('search_smonth','int');
+$search_syear	= GETPOST('search_syear','int');
+$search_eday	= GETPOST('search_eday','int');
+$search_emonth	= GETPOST('search_emonth','int');
+$search_eyear	= GETPOST('search_eyear','int');
 
 if ($search_status == '') $search_status=-1;	// -1 or 1
 
@@ -175,12 +175,12 @@ if (empty($reshook))
     	$search_public="";
     	$search_sale="";
     	$search_project_user='';
-    	$sday="";
-    	$smonth="";
-    	$syear="";
-    	$day="";
-    	$month="";
-    	$year="";
+    	$search_sday="";
+    	$search_smonth="";
+    	$search_syear="";
+    	$search_eday="";
+    	$search_emonth="";
+    	$search_eyear="";
     	$toselect='';
     	$search_array_options=array();
     }
@@ -269,31 +269,31 @@ if ($search_label) $sql .= natural_search('p.title', $search_label);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_opp_amount) $sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
 if ($search_opp_percent) $sql .= natural_search('p.opp_percent', $search_opp_percent, 1);
-if ($smonth > 0)
+if ($search_smonth > 0)
 {
-    if ($syear > 0 && empty($sday))
-    	$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($syear,$smonth,false))."' AND '".$db->idate(dol_get_last_day($syear,$smonth,false))."'";
-    else if ($syear > 0 && ! empty($sday))
-    	$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
+    if ($search_syear > 0 && empty($search_sday))
+    	$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear,$search_smonth,false))."' AND '".$db->idate(dol_get_last_day($search_syear,$search_smonth,false))."'";
+    else if ($search_syear > 0 && ! empty($search_sday))
+    	$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_smonth, $search_sday, $search_syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_smonth, $search_sday, $search_syear))."'";
     else
-    	$sql.= " AND date_format(p.dateo, '%m') = '".$smonth."'";
+    	$sql.= " AND date_format(p.dateo, '%m') = '".$search_smonth."'";
 }
-else if ($syear > 0)
+else if ($search_syear > 0)
 {
-    $sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($syear,1,false))."' AND '".$db->idate(dol_get_last_day($syear,12,false))."'";
+    $sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear,1,false))."' AND '".$db->idate(dol_get_last_day($search_syear,12,false))."'";
 }
-if ($month > 0)
+if ($search_emonth > 0)
 {
-    if ($year > 0 && empty($day))
-    	$sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
-    else if ($year > 0 && ! empty($day))
-    	$sql.= " AND p.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+    if ($search_eyear > 0 && empty($search_eday))
+    	$sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear,$search_emonth,false))."' AND '".$db->idate(dol_get_last_day($search_eyear,$search_emonth,false))."'";
+    else if ($search_eyear > 0 && ! empty($search_eday))
+    	$sql.= " AND p.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_emonth, $search_eday, $search_eyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_emonth, $search_eday, $search_eyear))."'";
     else
-    	$sql.= " AND date_format(p.datee, '%m') = '".$month."'";
+    	$sql.= " AND date_format(p.datee, '%m') = '".$search_emonth."'";
 }
-else if ($year > 0)
+else if ($search_eyear > 0)
 {
-    $sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+    $sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_eyear,12,false))."'";
 }
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_status >= 0) 
@@ -371,12 +371,12 @@ llxHeader("", $title, $help_url);
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-if ($sday)              		$param.='&sday='.$day;
-if ($smonth)              		$param.='&smonth='.$smonth;
-if ($syear)               		$param.='&syear=' .$syear;
-if ($day)               		$param.='&day='.$day;
-if ($month)              		$param.='&month='.$month;
-if ($year)               		$param.='&year=' .$year;
+if ($search_sday)              		    $param.='&search_sday='.$search_sday;
+if ($search_smonth)              		$param.='&search_smonth='.$search_smonth;
+if ($search_syear)               		$param.='&search_syear=' .$search_syear;
+if ($search_eday)               		$param.='&search_eday='.$search_eday;
+if ($search_emonth)              		$param.='&search_emonth='.$search_emonth;
+if ($search_eyear)               		$param.='&search_eyear=' .$search_eyear;
 if ($socid)				        $param.='&socid='.$socid;
 if ($search_all != '') 			$param.='&search_all='.$search_all;
 if ($search_ref != '') 			$param.='&search_ref='.$search_ref;
@@ -510,18 +510,18 @@ if (! empty($arrayfields['commercial']['checked']))
 if (! empty($arrayfields['p.dateo']['checked']))
 {
 	print '<td class="liste_titre center">';
-	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="sday" value="'.$sday.'">';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="smonth" value="'.$smonth.'">';
-	$formother->select_year($syear?$syear:-1,'syear',1, 20, 5);
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_sday" value="'.$search_sday.'">';
+	print '<input class="flat" type="text" size="1" maxlength="2" name="search_smonth" value="'.$search_smonth.'">';
+	$formother->select_year($search_syear?$search_syear:-1,'search_syear',1, 20, 5);
 	print '</td>';
 }
 // End date
 if (! empty($arrayfields['p.datee']['checked']))
 {
 	print '<td class="liste_titre center">';
-	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-	$formother->select_year($year?$year:-1,'year',1, 20, 5);
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_eday" value="'.$search_eday.'">';
+	print '<input class="flat" type="text" size="1" maxlength="2" name="search_emonth" value="'.$search_emonth.'">';
+	$formother->select_year($search_eyear?$search_eyear:-1,'search_eyear',1, 20, 5);
 	print '</td>';
 }
 if (! empty($arrayfields['p.public']['checked']))
