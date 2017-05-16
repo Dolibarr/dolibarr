@@ -240,7 +240,7 @@ function dol_shutdown()
  *  Return value of a param into GET or POST supervariable
  *
  *  @param	string	$paramname   Name of parameter to found
- *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's text and sign, 'aZ'=check it's a-z only, 'array'=check it's array, 'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string), 'day', 'month', 'year', 'custom'= custom filter specify $filter and $options)
+ *  @param	string	$check	     Type of check (''=no check, 'none'=no check, 'int'=check it's numeric, 'alpha'=check it's text and sign, 'aZ'=check it's a-z only, 'array'=check it's array, 'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string), 'day', 'month', 'year', 'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'.
@@ -249,6 +249,8 @@ function dol_shutdown()
  */
 function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 {
+    global $mysoc,$user,$conf;
+    
     if (empty($method)) $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
@@ -258,8 +260,6 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	
 	if (empty($method) || $method == 3 || $method == 4)
 	{
-	    global $conf;
-	    
 	    // Management of default values
 	    if (! isset($_GET['sortfield']) && ! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_DISABLE_DEFAULT_VALUES is on
 	    {
@@ -320,43 +320,41 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	if (! empty($check))
 	{
 	    // Replace vars like __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__
-	    // TODO Add more var like __PREVIOUSDAY__, __PREVIOUSMONTH__, __PREVIOUSYEAR__
-	    if (! is_array($out) && preg_match('/^__([a-z0-9]+)__$/i', $out, $reg))
+	    if (! is_array($out))
 	    {
-	        if ($reg[1] == 'DAY')
+	        $maxloop=20; $loopnb=0;    // Protection against infinite loop
+	        while (preg_match('/__([A-Z0-9]+_?[A-Z0-9]+)__/i', $out, $reg) && ($loopnb < $maxloop))    // Detect '__ABCDEF__' as key 'ABCDEF' and '__ABC_DEF__' as key 'ABC_DEF'
 	        {
-    	        $tmp=dol_getdate(dol_now(), true);
-    	        $out = $tmp['mday'];
-	        }
-	        elseif ($reg[1] == 'MONTH')
-	        {
-    	        $tmp=dol_getdate(dol_now(), true);
-    	        $out = $tmp['mon'];
-	        }
-	        elseif ($reg[1] == 'YEAR')
-	        {
-	            $tmp=dol_getdate(dol_now(), true);
-	            $out = $tmp['year'];
-	        }
-	        elseif ($reg[1] == 'MYCOUNTRYID')
-	        {
-	            global $mysoc;
-	            $out = $mysoc->country_id;
-	        }
-	        elseif ($reg[1] == 'USERID')
-	        {
-	            global $user;
-	            $out = $user->id;
-	        }
-	    	elseif ($reg[1] == 'SUPERVISORID')
-	        {
-	            global $user;
-	            $out = $user->fk_user;
-	        }
-	        elseif ($reg[1] == 'ENTITYID')
-	        {
-	            global $conf;
-	            $out = $conf->entity;
+	            $loopnb++; $newout = '';
+
+    	        if ($reg[1] == 'DAY')       { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['mday']; }
+    	        elseif ($reg[1] == 'MONTH') { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['mon'];  }
+    	        elseif ($reg[1] == 'YEAR')  { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['year']; }
+    	    	elseif ($reg[1] == 'PREVIOUS_DAY')   { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; }
+    	        elseif ($reg[1] == 'PREVIOUS_MONTH') { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_prev_month($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
+    	        elseif ($reg[1] == 'PREVIOUS_YEAR')  { $tmp=dol_getdate(dol_now(), true); $newout = ($tmp['year'] - 1); }
+    	    	elseif ($reg[1] == 'NEXT_DAY')   { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; }
+    	        elseif ($reg[1] == 'NEXT_MONTH') { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_month($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
+    	        elseif ($reg[1] == 'NEXT_YEAR')  { $tmp=dol_getdate(dol_now(), true); $newout = ($tmp['year'] + 1); }
+    	        elseif ($reg[1] == 'MYCOUNTRYID')
+    	        {
+    	            $newout = $mysoc->country_id;
+    	        }
+    	        elseif ($reg[1] == 'USERID')
+    	        {
+    	            $newout = $user->id;
+    	        }
+    	    	elseif ($reg[1] == 'SUPERVISORID')
+    	        {
+    	            $newout = $user->fk_user;
+    	        }
+    	        elseif ($reg[1] == 'ENTITYID')
+    	        {
+    	            $newout = $conf->entity;
+    	        }
+    	        else $newout = '';     // Key not found, we replace with empty string
+    	        //var_dump('__'.$reg[1].'__ -> '.$newout);
+    	        $out = preg_replace('/__'.preg_quote($reg[1],'/').'__/', $newout, $out);
 	        }
 	    }
 
