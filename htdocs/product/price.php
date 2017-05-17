@@ -1080,6 +1080,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 	if (empty($conf->global->PRODUIT_MULTIPRICES))
 	{
+	    print '<!-- Edit price -->'."\n";
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="update_price">';
@@ -1184,7 +1185,8 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 	}
 	else
 	{
-		?>
+	    print '<!-- Edit price per level -->'."\n";
+	    ?>
 		<script>
 
 			var showHidePriceRules = function () {
@@ -1213,7 +1215,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="' . $object->id . '">';
 
-		dol_fiche_head('');
+		//dol_fiche_head('', '', '', -1);
 		
 		if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL)) {
 			print $langs->trans('UseMultipriceRules'). ' <input type="checkbox" id="usePriceRules" name="usePriceRules" '.($object->price_autogen ? 'checked' : '').'><br><br>';
@@ -1295,7 +1297,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		
 		print '</table>';
 		
-		dol_fiche_end();
+		//dol_fiche_end();
 		
 		print '<div style="text-align: center">';
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
