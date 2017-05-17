@@ -1755,7 +1755,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 	else if ($action != 'showlog_default_price' && $action != 'edit_price')
 	{
 		// List of all prices by customers
-
+        print '<!-- list of prices per customer -->'."\n";
+        
 		// Count total nb of records
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -1792,8 +1793,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		if (count($prodcustprice->lines) > 0 || $search_soc)
 		{
     		print '<tr class="liste_titre">';
-    		print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
-    		print '<td colspan="8">&nbsp;</td>';
+    		print '<td class="liste_titre"><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
+    		print '<td class="liste_titre" colspan="8">&nbsp;</td>';
     		// Print the search button
             print '<td class="liste_titre" align="right">';
             $searchpitco=$form->showFilterAndCheckAddButtons(0);
