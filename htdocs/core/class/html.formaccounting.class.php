@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016 		Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ class FormAccounting extends Form
 			}
 		}
 
-		$out .= Form::selectarray($htmlname, $options, $select, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $out;
 	}

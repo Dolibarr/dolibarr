@@ -276,8 +276,8 @@ if ($resql)
 	print '<td class="liste_titre" colspan="'.$colspan_warehouse.'">&nbsp;</td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre" align="right">';
-   	$searchpitco=$form->showFilterAndCheckAddButtons(0);
-   	print $searchpitco;
+   	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+   	print $searchpicto;
 	print '</td>';
 	print '</tr>';
 
