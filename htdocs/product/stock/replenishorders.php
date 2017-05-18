@@ -179,8 +179,8 @@ if ($resql)
          $form->select_date('', 'search_date', 0, 0, 1, '', 1, 0, 1, 0, '').
          '</td>'.
          '<td class="liste_titre" align="right">';
-         $searchpitco=$form->showFilterAndCheckAddButtons(0);
-         print $searchpitco;
+         $searchpicto=$form->showFilterAndCheckAddButtons(0);
+         print $searchpicto;
          '</td>'.
          '</tr>';
 

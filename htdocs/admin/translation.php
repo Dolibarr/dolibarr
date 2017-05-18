@@ -421,8 +421,8 @@ if ($mode == 'searchkey')
     print '</td>';    
     // Action column
     print '<td class="liste_titre nowrap" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-    print $searchpitco;
+    $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+    print $searchpicto;
     print '</td>';
     print '</tr>';
     

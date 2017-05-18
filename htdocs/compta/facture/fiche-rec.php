@@ -1770,8 +1770,8 @@ else
 			}
 			// Action column
 			print '<td class="liste_titre" align="middle">';
-			$searchpitco=$form->showFilterAndCheckAddButtons(0, 'checkforselect', 1);
-			print $searchpitco;
+			$searchpicto=$form->showFilterAndCheckAddButtons(0, 'checkforselect', 1);
+			print $searchpicto;
 			print '</td>';
 			print "</tr>\n";
 

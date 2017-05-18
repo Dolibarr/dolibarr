@@ -638,8 +638,8 @@ if (! empty($id) || ! empty($ref))
 				<td class="liste_titre"></td>
         		<?php 
         		print '<td class="liste_titre" align="middle">';
-        		$searchpitco=$form->showCheckAddButtons('checkforselect', 1);
-        		print $searchpitco;
+        		$searchpicto=$form->showCheckAddButtons('checkforselect', 1);
+        		print $searchpicto;
         		print '</td>';
                 ?>
 			</tr>

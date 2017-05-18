@@ -192,8 +192,8 @@ else {
     print $formventilation->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, '');
     print '</td>';
     print '<td align="right" class="liste_titre">';
-	$searchpitco=$form->showFilterAndCheckAddButtons(0);
-	print $searchpitco;
+	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
     print '</td>';
     
     print '</tr>';

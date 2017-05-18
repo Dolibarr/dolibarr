@@ -1800,8 +1800,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
     		print '<td class="liste_titre" colspan="8">&nbsp;</td>';
     		// Print the search button
             print '<td class="liste_titre" align="right">';
-            $searchpitco=$form->showFilterAndCheckAddButtons(0);
-            print $searchpitco;
+            $searchpicto=$form->showFilterAndCheckAddButtons(0);
+            print $searchpicto;
             print '</td>';
     		print '</tr>';
 		}

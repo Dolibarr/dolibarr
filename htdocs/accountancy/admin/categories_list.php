@@ -661,8 +661,8 @@ if ($id)
         print '<td class="liste_titre" align="center">';
     	if ($filterfound)
     	{
-        	$searchpitco=$form->showFilterAndCheckAddButtons(0);
-        	print $searchpitco;
+        	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+        	print $searchpicto;
     	}
     	print '</td>';
     	print '</tr>';
