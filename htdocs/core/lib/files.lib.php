@@ -1706,6 +1706,12 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	    if ($fuser->rights->ficheinter->lire) $accessallowed=1;
 	    $original_file=$conf->ficheinter->dir_output.'/'.$original_file;
 	}
+	// Wrapping pour les apercu conat
+	elseif (($modulepart == 'apercucontract') && !empty($conf->contrat->dir_output))
+	{
+	    if ($fuser->rights->contrat->lire) $accessallowed=1;
+	    $original_file=$conf->contrat->dir_output.'/'.$original_file;
+	}
 	// Wrapping pour les apercu supplier proposal
 	elseif (($modulepart == 'apercusupplier_proposal' || $modulepart == 'apercusupplier_proposal') && !empty($conf->supplier_proposal->dir_output))
 	{
