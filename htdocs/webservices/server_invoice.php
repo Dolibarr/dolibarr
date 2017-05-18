@@ -256,7 +256,7 @@ $server->register(
 		// Entry values
 		array('authentication'=>'tns:authentication','id_order'=>'xsd:string','ref_order'=>'xsd:string','ref_ext_order'=>'xsd:string','id_invoice'=>'xsd:string','ref_invoice'=>'xsd:string','ref_ext_invoice'=>'xsd:string'),
 		// Exit values
-		array('result'=>'tns:result','invoice'=>'tns:invoice'),
+		array('result'=>'tns:result','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),
 		$ns,
 		$ns.'#createInvoiceFromOrder',
 		$styledoc,
@@ -735,8 +735,7 @@ function createInvoiceFromOrder($authentication,$id_order='', $ref_order='', $re
 	}
 	else
 	{
-		$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''),'invoice'=>$newobject);
-		
+		$objectresp= array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref,'ref_ext'=>$newobject->ref_ext);
 	}
 	
 	return $objectresp;
