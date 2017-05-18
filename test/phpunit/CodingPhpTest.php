@@ -141,7 +141,7 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        include DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         $filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname');
 
         foreach($filesarray as $key => $file) 
