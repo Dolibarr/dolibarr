@@ -646,6 +646,7 @@ if (! defined('NOLOGIN'))
 	       // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 	       $hookmanager->initHooks(array('main'));
 
+	       // Code for search criteria persistence.
 	       if (! empty($_GET['save_lastsearch_values']))    // Keep $_GET here
 	       {
                $relativepathstring = preg_replace('/\?.*$/','',$_SERVER["HTTP_REFERER"]);
@@ -1886,6 +1887,7 @@ if (! function_exists("llxFooter"))
         // Global html output events ($mesgs, $errors, $warnings)
         dol_htmloutput_events();
 
+        // Code for search criteria persistence.
         // Save $user->lastsearch_values if defined (define on list pages when a form field search_xxx exists)
         if (is_object($user) && ! empty($user->lastsearch_values_tmp) && is_array($user->lastsearch_values_tmp))
         {
@@ -1897,7 +1899,7 @@ if (! function_exists("llxFooter"))
                 {
                     if (empty($val['sortfield'])) unset($val['sortfield']);
                     if (empty($val['sortorder'])) unset($val['sortorder']);
-                    dol_syslog('Save lastsearch_values_tmp_'.$key.'='.json_encode($val, 0, 1));
+                    dol_syslog('Save lastsearch_values_tmp_'.$key.'='.json_encode($val, 0, 1)." (systematic recording of last search criteria)");
                     $_SESSION['lastsearch_values_tmp_'.$key]=json_encode($val);
                     unset($_SESSION['lastsearch_values_'.$key]);
                 }

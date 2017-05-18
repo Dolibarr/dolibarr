@@ -264,6 +264,8 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 {
     global $mysoc,$user,$conf;
     
+    if (empty($paramname)) return 'BadFirstParameterForGETPOST';
+        
     if (empty($method)) $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
@@ -279,11 +281,11 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
     	$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
 	
 	    // Management of default values
-	    if (! isset($_GET['sortfield']) && ! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_DISABLE_DEFAULT_VALUES is on
+	    if (! isset($_GET['sortfield']) && ! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
 	    {
-	        if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+	        if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 	        {
-	            if (! empty($user->default_values))		// $user->default_values defined from menu default values, and values loaded not at first
+	            if (! empty($user->default_values))		// $user->default_values defined from menu default values
 	            {
 	                //var_dump($user->default_values[$relativepathstring]['createform']);
 	                if (isset($user->default_values[$relativepathstring]['createform'][$paramname])) $out = $user->default_values[$relativepathstring]['createform'][$paramname];
@@ -328,11 +330,34 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	            }
 	        }
 	    }
+	    
+	    // Retrieve values into restore_lastsearch_values
+	    if ($_GET['restore_lastsearch_values'])        // Keep $_GET here
+	    {
+	        if (! empty($_SESSION['lastsearch_values_'.$relativepathstring]))
+	        {
+	            $tmp=json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
+	            if (is_array($tmp))
+	            {
+    	            foreach($tmp as $key => $val)
+    	            {
+        	           if ($key == $paramname)
+        	           {
+    	                   $out=$val;
+    	                   break;
+        	           }
+    	            }
+	            }
+	        }
+	    }
+	    
 	}	
 	
 	if (empty($check) && ! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2)
 	{
 	   dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and 2nd param not defined, when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);    
+	   // Enable this line to know who call the GETPOST with empty $check parameter.
+	   //var_dump(debug_backtrace()[0]);
 	}
 	
 	if (! empty($check))
@@ -423,14 +448,23 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	    }
 	}
 
+    // Code for search criteria persistence.
 	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
 	if (empty($method) || $method == 3 || $method == 4)
 	{
 	    //if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder', 'sortfield", 'smonth', 'syear', 'month', 'year')))
 	    if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder','sortfield')))
 	    {
+	        //var_dump($user->default_values[$relativepathstring]);exit;
 	        //if ($paramname == 'sortorder') var_dump($paramname.' - '.$out);
-	        $user->lastsearch_values_tmp[$relativepathstring][$paramname]=$out;
+	        
+	        // We save search key only if:
+	        // - not empty, or
+	        // - if value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
+	        if (! empty($out) || ! empty($user->default_values[$relativepathstring][$paramname]))
+	        {
+                $user->lastsearch_values_tmp[$relativepathstring][$paramname]=$out;
+	        }
 	    }
 	}
 	

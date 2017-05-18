@@ -109,7 +109,7 @@ if ($object->id > 0)
 	
 	// Project card
 	
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	
 	$morehtmlref='<div class="refidno">';
 	// Title
