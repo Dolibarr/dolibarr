@@ -129,12 +129,13 @@ $server->register(
     'WS to create a new payment'
 );
 
+
 /**
  * Create a payment
  *
  * @param      array           $authentication         Array of authentication information
- * @param      Facture         $invoice                        Invoice
- * @return     array                                                   Array result
+ * @param      Object          $payment                Payment
+ * @return     array                                   Array result
  */
 function createPayment($authentication, $payment)
 {

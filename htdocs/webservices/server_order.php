@@ -793,6 +793,7 @@ function createOrder($authentication,$order)
  *
  * @param	array		$authentication		Array of authentication information
  * @param	int			$id					Id of order to validate
+ * @param	int			$id_warehouse		Id of warehouse to use for stock decrease
  * @return	array							Array result
  */
 function validOrder($authentication,$id='',$id_warehouse=0)
