@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -442,27 +442,31 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
 		
 		$morehtmlref='';
+		
+		// Project
+		if (empty($withproject))
+		{
+		    $morehtmlref.='<div class="refidno">';
+		    $morehtmlref.=$langs->trans("Project").': ';
+		    $morehtmlref.=$projectstatic->getNomUrl(1);
+		    $morehtmlref.='<br>';
+		
+		    // Third party
+		    $morehtmlref.=$langs->trans("ThirdParty").': ';
+		    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+		    $morehtmlref.='</div>';
+		}
+		
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 		
 		print '<div class="fichecenter">';
+		print '<div class="fichehalfleft">';
 		
         print '<div class="underbanner clearboth"></div>';
 		print '<table class="border" width="100%">';
 
-		// Ref
-		/*
-		print '<tr><td class="titlefield">';
-		print $langs->trans("Ref");
-		print '</td><td colspan="3">';
-		print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
-		print '</td></tr>';
-
-		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
-        */
-		
 		// Date start - Date end
-		print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td colspan="3">';
+		print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
 		$start = dol_print_date($object->date_start,'dayhour');
 		print ($start?$start:'?');
 		$end = dol_print_date($object->date_end,'dayhour');
@@ -472,17 +476,25 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '</td></tr>';
 
 		// Planned workload
-		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">';
+		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
 		print convertSecondToTime($object->planned_workload,'allhourmin');
 		print '</td></tr>';
 
+		print '</table>';
+		print '</div>';
+		
+		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border" width="100%">';
+		
 		// Progress declared
-		print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
+		print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td>';
 		print $object->progress.' %';
 		print '</td></tr>';
 
 		// Progress calculated
-		print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
+		print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td>';
 		if ($object->planned_workload)
 		{
 			$tmparray=$object->getSummaryOfTimeSpent();
@@ -492,23 +504,14 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		else print '';
 		print '</td></tr>';
 
-		// Project
-		if (empty($withproject))
-		{
-			print '<tr><td>'.$langs->trans("Project").'</td><td>';
-			print $projectstatic->getNomUrl(1);
-			print '</td></tr>';
-
-			// Third party
-			print '<td>'.$langs->trans("ThirdParty").'</td><td>';
-			if ($projectstatic->thirdparty->id) print $projectstatic->thirdparty->getNomUrl(1);
-			else print '&nbsp;';
-			print '</td></tr>';
-		}
-
 		print '</table>';
-        print '</div>';
+
+		print '</div>';
+		print '</div>';
         
+		print '</div>';
+		print '<div class="clearboth"></div>';
+		    
 		dol_fiche_end();
 
 

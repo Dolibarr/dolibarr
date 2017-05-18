@@ -123,7 +123,7 @@ $userstatic=new User($db);
 $userAccess = $object->restrictedProjectArea($user);
 
 $head=project_prepare_head($object);
-dol_fiche_head($head, 'element', $langs->trans("Project"),0,($object->public?'projectpub':'project'));
+dol_fiche_head($head, 'element', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
 
 // Project card
@@ -231,6 +231,7 @@ print '<div class="clearboth"></div>';
 
 dol_fiche_end();
 
+print '<br>';
 
 /*
  * Referers types

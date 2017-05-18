@@ -711,7 +711,7 @@ elseif ($object->id > 0)
     print '<input type="hidden" name="comefromclone" value="'.$comefromclone.'">';
 
     $head=project_prepare_head($object);
-    dol_fiche_head($head, 'project', $langs->trans("Project"),0,($object->public?'projectpub':'project'));
+    dol_fiche_head($head, 'project', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
     if ($action == 'edit' && $userWrite > 0)
     {

@@ -92,9 +92,12 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 {
 	$error=0;
 
-	$date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear'],'user');
-	$date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear'],'user');
-
+    // If we use user timezone, we must change also view/list to use user timezone everywhere
+    //$date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear'],'user');
+	//$date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear'],'user');
+	$date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
+	$date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
+	
 	if (! $cancel)
 	{
 		if (empty($taskref))
@@ -215,7 +218,7 @@ if ($id > 0 || ! empty($ref))
 	$tab=GETPOST('tab')?GETPOST('tab'):'tasks';
 
 	$head=project_prepare_head($object);
-	dol_fiche_head($head, $tab, $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
+	dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
 	$param='';
     if ($search_user_id > 0) $param.='&search_user_id='.dol_escape_htmltag($search_user_id);

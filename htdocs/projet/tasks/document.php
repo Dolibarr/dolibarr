@@ -239,45 +239,27 @@ if ($object->id > 0)
 	else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
 	
 	$morehtmlref='';
+	
+	// Project
+	if (empty($withproject))
+	{
+	    $morehtmlref.='<div class="refidno">';
+	    $morehtmlref.=$langs->trans("Project").': ';
+	    $morehtmlref.=$projectstatic->getNomUrl(1);
+	    $morehtmlref.='<br>';
+	
+	    // Third party
+	    $morehtmlref.=$langs->trans("ThirdParty").': ';
+	    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+	    $morehtmlref.='</div>';
+	}
+	
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 	
 	print '<div class="fichecenter">';
 	
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border" width="100%">';
-
-	// Ref
-	/*
-	print '<tr><td class="titlefield">';
-	print $langs->trans("Ref");
-	print '</td><td colspan="3">';
-	if (empty($withproject) || empty($projectstatic->id))
-	{
-		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
-		$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
-	}
-	else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-	print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
-	print '</td>';
-	print '</tr>';
-
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
-    */
-	
-	// Project
-	if (empty($withproject))
-	{
-		print '<tr><td class="titlefield">'.$langs->trans("Project").'</td><td colspan="3">';
-		print $projectstatic->getNomUrl(1);
-		print '</td></tr>';
-
-		// Third party
-		print '<td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
-		if ($projectstatic->thirdparty->id) print $projectstatic->thirdparty->getNomUrl(1);
-		else print '&nbsp;';
-		print '</td></tr>';
-	}
 
 	// Files infos
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
