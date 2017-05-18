@@ -391,14 +391,14 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print $form->select_date(($date_end?$date_end:-1),'datee',1,1,0,'',1,1,1);
 	print '</td></tr>';
 
-	// planned workload
+	// Planned workload
 	print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
 	print $form->select_duration('planned_workload', $planned_workload?$planned_workload : $object->planned_workload,0,'text');
 	print '</td></tr>';
 
 	// Progress
 	print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
-	print $formother->select_percent($progress,'progress');
+	print $formother->select_percent($progress,'progress',0,5,0,100,1);
 	print '</td></tr>';
 
 	// Description

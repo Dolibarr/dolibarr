@@ -391,12 +391,12 @@ if ($id > 0 || ! empty($ref))
 
 			// Planned workload
 			print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
-			print $form->select_duration('planned_workload',$object->planned_workload,0,'text');
+			print $form->select_duration('planned_workload', $object->planned_workload, 0, 'text');
 			print '</td></tr>';
 
 			// Progress declared
-			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
-			print $formother->select_percent($object->progress,'progress');
+			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td>';
+			print $formother->select_percent($object->progress,'progress',0,5,0,100,1);
 			print '</td></tr>';
 
 			// Description
