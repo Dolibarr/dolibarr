@@ -330,7 +330,7 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	    }
 	}	
 	
-	if (empty($check) && $conf->global->MAIN_FEATURES_LEVEL >= 2)
+	if (empty($check) && ! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2)
 	{
 	   dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and 2nd param not defined, when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);    
 	}
