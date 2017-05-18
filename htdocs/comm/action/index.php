@@ -6,6 +6,7 @@
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,6 +99,7 @@ else
     $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
+$hideautoactionstype=isset($_POST['hideautoactionstype'])||isset($_GET['hideautoactionstype'])?GETPOST("hideautoactionstype","int"):$conf->global->AGENDA_HIDE_AUTO_ACTIONS_TYPE;
 
 if ($status == ''   && ! isset($_GET['status']) && ! isset($_POST['status'])) $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 if (empty($action) && ! isset($_GET['action']) && ! isset($_POST['action'])) $action=(empty($conf->global->AGENDA_DEFAULT_VIEW)?'show_month':$conf->global->AGENDA_DEFAULT_VIEW);
@@ -292,6 +294,7 @@ if ($status == 'todo') $title=$langs->trans("ToDoActions");
 
 $param='';
 if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $param.="&actioncode=".$actioncode;
+if ($hideautoactionstype != $conf->global->AGENDA_HIDE_AUTO_ACTIONS_TYPE)   $param.="&hideautoactionstype=".$hideautoactionstype;
 if ($resourceid > 0)  $param.="&resourceid=".$resourceid;
 if ($status || isset($_GET['status']) || isset($_POST['status'])) $param.="&status=".$status;
 if ($filter)  $param.="&filter=".$filter;
@@ -350,7 +353,7 @@ $paramnoaction=preg_replace('/action=[a-z_]+/','',$param);
 $head = calendars_prepare_head($paramnoaction);
 
 dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,0,$filtert,0,$pid,$socid,$action,$listofextcals,$actioncode,$usergroup,'', $resourceid);
+print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,0,$filtert,0,$pid,$socid,$action,$listofextcals,$actioncode,$usergroup,'', $resourceid, $hideautoactionstype);
 dol_fiche_end();
 
 
@@ -479,6 +482,7 @@ if (! empty($actioncode))
         }
     }
 }
+if ($hideautoactionstype) $sql.= " AND ca.type != 'systemauto'";
 if ($resourceid > 0) $sql.=" AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".$db->escape($resourceid);
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
