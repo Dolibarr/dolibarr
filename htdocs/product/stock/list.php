@@ -149,18 +149,8 @@ if ($result)
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"], "e.label","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("LocationSummary"),$_SERVER["PHP_SELF"], "e.lieu","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PhysicalStock"), $_SERVER["PHP_SELF"], "stockqty",'',$param,'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("EstimatedStockValue"), $_SERVER["PHP_SELF"], "estimatedvalue",'',$param,'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("EstimatedStockValueSell"), $_SERVER["PHP_SELF"], "",'',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"], "e.statut",'',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder,'maxwidthsearch ');
-	print "</tr>\n";
-
 	// Lignes des champs de filtre
-	print '<tr class="liste_titre">';
+	print '<tr class="liste_titre_filter">';
 
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="search_ref" size="6" value="'.dol_escape_htmltag($search_ref).'">';
@@ -178,11 +168,21 @@ if ($result)
 	print '</td>';
 
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
+    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    print $searchpicto;
     print '</td>';
 
 	print '</tr>';
+    
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"], "e.label","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("LocationSummary"),$_SERVER["PHP_SELF"], "e.lieu","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("PhysicalStock"), $_SERVER["PHP_SELF"], "stockqty",'',$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("EstimatedStockValue"), $_SERVER["PHP_SELF"], "estimatedvalue",'',$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("EstimatedStockValueSell"), $_SERVER["PHP_SELF"], "",'',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"], "e.statut",'',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder,'maxwidthsearch ');
+	print "</tr>\n";
 
 	if ($num)
 	{
@@ -197,7 +197,7 @@ if ($result)
             $warehouse->lieu = $objp->lieu;
             $warehouse->fk_parent = $objp->fk_parent;
             
-            print "<tr ".$bc[$var].">";
+            print '<tr class="oddeven">';
             print '<td>' . $warehouse->getNomUrl(1) . '</td>';
             // Location
             print '<td>'.$objp->lieu.'</td>';
@@ -224,7 +224,7 @@ if ($result)
 
             print "</tr>\n";
 
-            $var=!$var;
+            
             $i++;
 		}
 

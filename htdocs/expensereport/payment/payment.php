@@ -31,7 +31,7 @@ $langs->load("bills");
 $langs->load("banks");
 
 $chid=GETPOST("id");
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $amounts = array();
 $accountid=GETPOST('accountid','int');
 
@@ -134,6 +134,18 @@ if ($action == 'add_payment')
                 }
             }
 
+            if (!$error) {
+                $payment->fetch($paymentid);
+                if ($expensereport->total_ttc - $payment->amount == 0) {
+                    $result = $expensereport->set_paid($expensereport->id, $user);
+                    if (!$result > 0) {
+                        $errmsg = $payment->error;
+                        $error++;
+                    }
+                }
+
+            }
+
     	    if (! $error)
             {
                 $db->commit();
@@ -162,7 +174,7 @@ $form=new Form($db);
 
 
 // Form to create expense report payment
-if (GETPOST("action") == 'create')
+if (GETPOST('action','aZ09') == 'create')
 {
 	$expensereport = new ExpenseReport($db);
 	$expensereport->fetch($chid);
@@ -261,9 +273,9 @@ if (GETPOST("action") == 'create')
 	{
 		$objp = $expensereport;
 
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 
 		print '<td align="right">'.price($objp->total_ttc)."</td>";
 

@@ -117,14 +117,14 @@ class box_project extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$i][1] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $objp->ref,
                         'tooltip' => $tooltip,
                         'url' => DOL_URL_ROOT."/projet/card.php?id=".$objp->rowid,
                     );
 
                     $this->info_box_contents[$i][2] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $objp->title,
                     );
 
@@ -145,7 +145,7 @@ class box_project extends ModeleBoxes
                                 'text' => round($objTask->totprogress/$objTask->nb, 0)."%",
                             );
 						else
-							$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => "N/A&nbsp;");
+							$this->info_box_contents[$i][4] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
 						$totalnbTask += $objTask->nb;
 					} else {
 						$this->info_box_contents[$i][3] = array('td' => 'class="right"', 'text' => round(0));

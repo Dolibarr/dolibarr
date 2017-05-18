@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016 		Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,13 @@
 /**
  *	Class to manage generation of HTML components for accounting management
  */
-class FormAccounting
+class FormAccounting extends Form
 {
+
+    private $options_cache = array();
+
 	var $db;
 	var $error;
-
 
 	/**
 	* Constructor
@@ -39,6 +41,89 @@ class FormAccounting
 	public function __construct($db)
 	{
 	    $this->db = $db;
+	}
+
+	/**
+	 * Return list of journals with label by nature
+	 *
+	 * @param	string	$selectid	Preselected pcg_type
+	 * @param	string	$htmlname	Name of field in html form
+	 * @param	int		$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
+	 * @param	int		$showempty	Add an empty field
+	 * @param	array	$event		Event options
+	 * @param	int		$select_in	0=selectid value is the journal rowid (default) or 1=selectid is journal code
+	 * @param	int		$select_out	Set value returned by select. 0=rowid (default), 1=code
+	 * @param	string	$morecss	More css non HTML object
+	 * @param	string	$usecache	Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 *
+	 * @return	string				String with HTML select
+	 */
+	function select_journal($selectid, $htmlname = 'journal', $nature=0, $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='')
+	{
+		global $conf;
+
+		$out = '';
+
+    	$options = array();
+		if ($usecache && ! empty($this->options_cache[$usecache]))
+		{
+		    $options = $this->options_cache[$usecache];
+		    $selected=$selectid;
+		}
+		else
+		{
+			$sql = "SELECT rowid, code, label, nature, entity, active";
+			$sql.= " FROM " . MAIN_DB_PREFIX . "accounting_journal";
+			$sql.= " WHERE active = 1";
+			$sql.= " AND entity = ".$conf->entity;
+			//if ($nature && is_numeric($nature))   $sql .= " AND nature = ".$nature;
+			$sql.= " ORDER BY code";
+
+			dol_syslog(get_class($this) . "::select_journal", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+
+			if (!$resql) {
+				$this->error = "Error ".$this->db->lasterror();
+				dol_syslog(get_class($this)."::select_journal ".$this->error, LOG_ERR);
+				return -1;
+			}
+
+			$out = ajax_combobox($htmlname, $event);
+
+    		$selected = 0;
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				$label = $obj->code . ' - ' . $obj->label;
+
+    			$select_value_in = $obj->rowid;
+				$select_value_out = $obj->rowid;
+
+				// Try to guess if we have found default value
+    			if ($select_in == 1) {
+    				$select_value_in = $obj->code;
+    			}
+    			if ($select_out == 1) {
+    				$select_value_out = $obj->code;
+    			}
+    			// Remember guy's we store in database llx_accounting_bookkeeping the code of accounting_journal and not the rowid
+    			if ($selectid != '' && $selectid == $select_value_in) {
+    			    //var_dump("Found ".$selectid." ".$select_value_in);
+    				$selected = $select_value_out;
+    			}
+
+				$options[$select_value_out] = $label;
+			}
+			$this->db->free($resql);
+
+			if ($usecache)
+			{
+				$this->options_cache[$usecache] = $options;
+			}
+		}
+
+		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
+
+		return $out;
 	}
 
     /**

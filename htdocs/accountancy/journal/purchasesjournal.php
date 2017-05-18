@@ -57,7 +57,7 @@ $now = dol_now();
 if ($user->societe_id > 0)
 	accessforbidden();
 
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 
 /*
@@ -364,7 +364,7 @@ $form = new Form($db);
 $companystatic = new Fournisseur($db);
 
 // Export
-if ($action == 'export_csv') {
+/*if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 	$journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
 
@@ -482,6 +482,7 @@ if ($action == 'export_csv') {
 		}
 	}
 }
+*/
 
 if (empty($action) || $action == 'view') {
 
@@ -502,7 +503,7 @@ if (empty($action) || $action == 'view') {
 
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 	
-	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
+	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
 
 	/*if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 && $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
 		print '<input type="button" class="butActionRefused" style="float: right;" value="' . $langs->trans("Export") . '" disabled="disabled" title="' . $langs->trans('ExportNotSupported') . '"/>';
@@ -541,7 +542,9 @@ if (empty($action) || $action == 'view') {
 	print "<td>" . $langs->trans("Date") . "</td>";
 	print "<td>" . $langs->trans("Piece") . ' (' . $langs->trans("InvoiceRef") . ")</td>";
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
-	print "<t><td>" . $langs->trans("Type") . "</td><td align='right'>" . $langs->trans("Debit") . "</td><td align='right'>" . $langs->trans("Credit") . "</td>";
+	print "<td>" . $langs->trans("Type") . "</td>";
+	print "<td align='right'>" . $langs->trans("Debit") . "</td>";
+	print "<td align='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
 	$r = '';
@@ -566,7 +569,7 @@ if (empty($action) || $action == 'view') {
 			$accountingaccount->fetch(null, $k, true);
 
 			if ($mt) {
-				print "<tr " . $bc[$var] . " >";
+				print '<tr class="oddeven">';
 				print "<td><!-- Product --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
@@ -590,7 +593,7 @@ if (empty($action) || $action == 'view') {
 		// VAT
 		foreach ( $tabtva[$key] as $k => $mt ) {
 			if ($mt) {
-				print "<tr " . $bc[$var] . " >";
+				print '<tr class="oddeven">';
 				print "<td><!-- VAT --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
@@ -611,7 +614,7 @@ if (empty($action) || $action == 'view') {
 
 		// Third party
 		foreach ( $tabttc[$key] as $k => $mt ) {
-		    print "<tr " . $bc[$var] . ">";
+		    print '<tr class="oddeven">';
 		    print "<td><!-- Thirdparty --></td>";
 		    print "<td>" . $date . "</td>";
 			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
@@ -633,8 +636,6 @@ if (empty($action) || $action == 'view') {
 			print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 		    print "</tr>";
 		}
-		
-		$var = ! $var;
 	}
 
 	print "</table>";

@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $langs->load('projects');
 $langs->load('users');
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $mode=GETPOST("mode");
 $id=GETPOST('id','int');
 $taskid=GETPOST('taskid');
@@ -334,14 +334,15 @@ print '<input type="hidden" name="month" value="'.$month.'">';
 print '<input type="hidden" name="year" value="'.$year.'">';
 
 $head=project_timesheet_prepare_head($mode);
-dol_fiche_head($head, 'inputperweek', '', 0, 'task');
+dol_fiche_head($head, 'inputperweek', '', -1, 'task');
 
 // Show description of content
+print '<div class="hideonsmartphone">';
 if ($mine) print $langs->trans("MyTasksDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
 else
 {
 	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
-	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopenedproject?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br>';
+	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
 }
 if ($mine)
 {
@@ -351,6 +352,7 @@ else
 {
 	print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
 }
+print '</div>';
 
 dol_fiche_end();
 
@@ -384,7 +386,7 @@ dol_fiche_end();
 //print '<input type="hidden" name="month" value="'.$month.'">';
 //print '<input type="hidden" name="day" value="'.$day.'">';
 
-print '<div class="floatright">'.$nav.'</div>';     // We move this before the assign to components so, the default submit button is not the assign to.
+print '<div class="floatright right">'.$nav.'</div>';     // We move this before the assign to components so, the default submit button is not the assign to.
 
 print '<div class="float valignmiddle">';
 print $langs->trans("AssignTaskToMe").'<br>';
@@ -399,6 +401,26 @@ print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
+
+print '<tr class="liste_titre_filter">';
+print '<td class="liste_titre"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
+print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
+print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
+if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+for($i=0;$i<7;$i++)
+{
+    print '<td class="liste_titre"></td>';
+}
+// Action column
+print '<td class="liste_titre nowrap" align="right">';
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
+print '</td>';
+print "</tr>\n";
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("RefTask").'</td>';
@@ -421,26 +443,6 @@ for($i=0;$i<7;$i++)
     print '<td width="6%" align="center" class="hide'.$i.'">'.dol_print_date($startday + ($i * 3600 * 24), '%a').'<br>'.dol_print_date($startday + ($i * 3600 * 24), 'dayreduceformat').'</td>';
 }
 print '<td></td>';
-print "</tr>\n";
-
-print '<tr class="liste_titre">';
-print '<td class="liste_titre"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
-print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
-print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
-if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-for($i=0;$i<7;$i++)
-{
-    print '<td class="liste_titre"></td>';
-}
-// Action column
-print '<td class="liste_titre nowrap" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
-print '</td>';
 print "</tr>\n";
 
 // By default, we can edit only tasks we are assigned to

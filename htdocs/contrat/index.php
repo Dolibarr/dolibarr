@@ -72,20 +72,23 @@ print load_fiche_titre($langs->trans("ContractsArea"),'','title_commercial.png')
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-// Search contract
-if (! empty($conf->contrat->enabled))
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-	print '<tr '.$bc[$var].'>';
-	print '<td class="nowrap">'.$langs->trans("Contract").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
-	print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "</table></form>\n";
-	print "<br>";
+    // Search contract
+    if (! empty($conf->contrat->enabled))
+    {
+    	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
+    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<table class="noborder nohover" width="100%">';
+    	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    	print '<tr class="oddeven">';
+    	print '<td class="nowrap">'.$langs->trans("Contract").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+    	print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    	print "</table></form>\n";
+    	print "<br>";
+    }
 }
+
 
 /*
  * Statistics
@@ -176,16 +179,15 @@ else
 
 
 print '<table class="noborder nohover" width="100%">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</td></tr>'."\n";
-$var=true;
+print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</th></tr>'."\n";
 $listofstatus=array(0,4,4,5); $bool=false;
 foreach($listofstatus as $status)
 {
     $dataseries[]=array('label'=>$staticcontratligne->LibStatut($status,1,($bool?1:0)),'data'=>(isset($nb[$status.$bool])?(int) $nb[$status.$bool]:0));
     if (empty($conf->use_javascript_ajax))
     {
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
+        
+        print '<tr class="oddeven">';
         print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
         print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
         print "</tr>\n";
@@ -200,14 +202,12 @@ if (! empty($conf->use_javascript_ajax))
     dol_print_graph('stats',300,180,$data,1,'pie',1);
     print '</td></tr>';
 }
-$var=true;
 $listofstatus=array(0,4,4,5); $bool=false;
 foreach($listofstatus as $status)
 {
     if (empty($conf->use_javascript_ajax))
-    {
-        $var=!$var;
-    	print '<tr '.$bc[$var].'>';
+    {      
+    	print '<tr class="oddeven">';
     	print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
     	print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
     	if ($status==4 && ! $bool) $bool=true;
@@ -239,22 +239,21 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 
 	if ( $resql )
 	{
-		$var = false;
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("DraftContracts").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("DraftContracts").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 		if ($num)
 		{
 			$companystatic=new Societe($db);
 
 			$i = 0;
 			//$tot_ttc = 0;
-			while ($i < $num && $i < 20)
+			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td class="nowrap">';
+				print '<tr class="oddeven"><td class="nowrap">';
 				$staticcontrat->ref=$obj->ref;
 				$staticcontrat->id=$obj->rowid;
 				print $staticcontrat->getNomUrl(1,'');
@@ -268,12 +267,12 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 				print '</tr>';
 				//$tot_ttc+=$obj->total_ttc;
 				$i++;
-				$var=!$var;
+				
 			}
 		}
 		else
 		{
-			print '<tr '.$bc[$var].' class><td colspan="3" class="opacitymedium">'.$langs->trans("NoContracts").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoContracts").'</td></tr>';
 		}
 		print "</table><br>";
 		$db->free($resql);
@@ -320,19 +319,17 @@ if ($result)
 
 	print '<table class="noborder" width="100%">';
 
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastContracts",5).'</td>';
-	print '<td align="center">'.$langs->trans("DateModification").'</td>';
-	//print '<td align="left">'.$langs->trans("Status").'</td>';
-	print '<td align="center" width="80" colspan="4">'.$langs->trans("Services").'</td>';
+	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastContracts",5).'</th>';
+	print '<th align="center">'.$langs->trans("DateModification").'</th>';
+	//print '<th align="left">'.$langs->trans("Status").'</th>';
+	print '<th align="center" width="80" colspan="4">'.$langs->trans("Services").'</th>';
 	print "</tr>\n";
 
-	$var=True;
 	while ($i < $num)
 	{
-		$obj = $db->fetch_object($result);
-		$var=!$var;
+		$obj = $db->fetch_object($result);		
 
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->cid);
 		$staticcontrat->id=$obj->cid;
@@ -390,15 +387,14 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 
-	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastModifiedServices",$max).'</td>';
+	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("LastModifiedServices",$max).'</th>';
 	print "</tr>\n";
 
-	$var=True;
 	while ($i < min($num,$max))
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+		
+		print '<tr class="oddeven">';
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
@@ -471,15 +467,14 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 
-	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("NotActivatedServices").' <a href="'.DOL_URL_ROOT.'/contrat/services.php?mode=0"><span class="badge">'.$num.'</span></a></td>';
+	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("NotActivatedServices").' <a href="'.DOL_URL_ROOT.'/contrat/services.php?mode=0"><span class="badge">'.$num.'</span></a></th>';
 	print "</tr>\n";
 
-	$var=True;
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+		
+		print '<tr class="oddeven">';
 
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
@@ -552,15 +547,14 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 
-	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ListOfExpiredServices").' <a href="'.DOL_URL_ROOT.'/contrat/services.php?mode=4&amp;filter=expired"><span class="badge">'.$num.'</span></a></td>';
+	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("ListOfExpiredServices").' <a href="'.DOL_URL_ROOT.'/contrat/services.php?mode=4&amp;filter=expired"><span class="badge">'.$num.'</span></a></th>';
 	print "</tr>\n";
 
-	$var=True;
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+		
+		print '<tr class="oddeven">';
 
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);

@@ -233,6 +233,22 @@ if ($result) {
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
+	print '<tr class="liste_titre_filter">';
+	print '<td class="liste_titre"></td>';
+	print '<td><input type="text" class="flat maxwidth50" name="search_expensereport" value="' . dol_escape_htmltag($search_expensereport) . '"></td>';
+	print '<td class="liste_titre" align="right"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="right flat maxwidth50" name="search_vat" size="1" placeholder="%" value="' . dol_escape_htmltag($search_vat) . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="right flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
+    print '<td class="liste_titre" align="right"></td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpicto=$form->showFilterButtons();
+    print $searchpicto;
+    print '</td>';
+	print "</tr>\n";
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("ExpenseReport"), $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
@@ -243,23 +259,8 @@ if ($result) {
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre('');
-	print_liste_field_titre('', '', '', '', '', 'align="center"');
-	print "</tr>\n";
-
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"></td>';
-	print '<td><input type="text" class="flat maxwidth50" name="search_expensereport" value="' . dol_escape_htmltag($search_expensereport) . '"></td>';
-	print '<td class="liste_titre" align="right"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
-    print '<td class="liste_titre" align="right"></td>';
-    print '<td class="liste_titre" align="right">';
-    $searchpicto=$form->showFilterAndCheckAddButtons(1);
-    print $searchpicto;
-    print '</td>';
+    $checkpicto=$form->showCheckAddButtons();
+	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
 	print "</tr>\n";
 
 	$expensereport_static = new ExpenseReport($db);
@@ -267,13 +268,12 @@ if ($result) {
 	$var = True;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
-		$var = ! $var;
 		$codeCompta = length_accountg($objp->account_number) . ' - ' . $objp->label;
 
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
 		
-		print '<tr '. $bc[$var].'>';
+		print '<tr class="oddeven">';
 
 		print '<td>' . $objp->rowid . '</td>';
 
@@ -300,7 +300,7 @@ if ($result) {
 		print img_edit();
 		print '</a></td>';
 		
-		print '<td align="right"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
+		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
 		
 		print "</tr>";
 		$i ++;

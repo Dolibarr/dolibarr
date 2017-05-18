@@ -39,7 +39,7 @@ $langs->load("salaries");
 $langs->load('hrm');
 
 $id=GETPOST("id",'int');
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 // Security check
 $socid = GETPOST("socid","int");
@@ -202,11 +202,7 @@ if ($id)
 	}
 }
 
-/* ************************************************************************** */
-/*                                                                            */
-/* create mode                                                                */
-/*                                                                            */
-/* ************************************************************************** */
+// Create
 if ($action == 'create')
 {
 	$year_current = strftime("%Y",dol_now());
@@ -332,19 +328,19 @@ if ($id)
 
 	$head=salaries_prepare_head($object);
 
-	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), 0, 'payment');
-
-	print '<table class="border" width="100%">';
+	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 	
-    print "<tr>";
-	print '<td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
-	print '</td></tr>';
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+    
+    print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+
+    print '<table class="border" width="100%">';
 
 	// Employee
-	print '<tr><td>'.$langs->trans("Employee").'</td><td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Employee").'</td><td>';
 	$usersal=new User($db);
 	$usersal->fetch($object->fk_user);
 	print $usersal->getNomUrl(1);
@@ -394,7 +390,9 @@ if ($id)
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
 	print '</table>';
-
+	
+	print '</div>';
+    
 	dol_fiche_end();
 
 	

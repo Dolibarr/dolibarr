@@ -170,8 +170,7 @@ foreach($configfileparameters as $key)
             continue;
         }
 
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		if ($newkey == 'separator')
 		{
 			print '<td colspan="3">&nbsp;</td>';
@@ -233,14 +232,12 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	$var=True;
 
 	while ($i < $num)
     {
     	$obj = $db->fetch_object($resql);
-    	$var=!$var;
 
-    	print '<tr '.$bc[$var].'>';
+    	print '<tr class="oddeven">';
     	print '<td>'.$obj->name.'</td>'."\n";
     	print '<td>'.$obj->value.'</td>'."\n";
     	if (empty($conf->multicompany->enabled) || !$user->entity) print '<td>'.$obj->entity.'</td>'."\n";	// If superadmin or multicompany disabled

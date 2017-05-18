@@ -112,8 +112,7 @@ if ($catname || $id > 0)
 	$var=true;
 	foreach ($cats as $cat)
 	{
-		$var = ! $var;
-		print "\t<tr ".$bc[$var].">\n";
+		print "\t".'<tr class="oddeven">'."\n";
 		print "\t\t<td>";
 		$categstatic->id=$cat->id;
 		$categstatic->ref=$cat->label;
@@ -125,7 +124,7 @@ if ($catname || $id > 0)
 		print '</span>';
 		print "</td>\n";
 		print "\t\t<td>";
-		print $cat->description;
+		print dolGetFirstLineOfText($cat->description);
 		print "</td>\n";
 		print "\t</tr>\n";
 	}
@@ -162,7 +161,7 @@ foreach($fulltree as $key => $val)
 	'rowid'=>$val['rowid'],
 	'fk_menu'=>$val['fk_parent'],
 	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories" '.($categstatic->color?' style="background: #'.$categstatic->color.';"':' style="background: #aaa"').'>'.$li.'</span></td>'.
-	'<td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
+	//'<td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
 	'<td align="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
 	'</tr></table>'
 	);
@@ -181,13 +180,13 @@ $nbofentries=(count($data) - 1);
 
 if ($nbofentries > 0)
 {
-	print '<tr '.$bc[0].'><td colspan="3">';
+	print '<tr class="pair"><td colspan="3">';
 	tree_recur($data,$data[0],0);
 	print '</td></tr>';
 }
 else
 {
-	print '<tr '.$bc[0].'>';
+	print '<tr class="pair">';
 	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';
 	print $langs->trans("NoCategoryYet");

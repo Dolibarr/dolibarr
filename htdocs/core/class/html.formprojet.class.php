@@ -60,9 +60,10 @@ class FormProjets
 	 *  @param  int     $nooutput       No print output. Return it only.
 	 *  @param  int     $forceaddid     Force to add project id in list, event if not qualified
 	 *  @param  string  $morecss        More css
+	 *	@param  int     $htmlid         Html id to use instead of htmlname
 	 *	@return string           		Return html content
 	 */
-	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '', $nooutput=0, $forceaddid=0, $morecss='')
+	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '', $nooutput=0, $forceaddid=0, $morecss='', $htmlid='')
 	{
 		global $langs,$conf,$form;
 
@@ -79,7 +80,7 @@ class FormProjets
 				$project->fetch($selected);
 				$selected_input_value=$project->ref;
 			}
-			$urloption='socid='.$socid.'&htmlname='.$htmlname;
+			$urloption='socid='.$socid.'&htmlname='.$htmlname.'&discardclosed='.$discard_closed;
 			$out.=ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/projet/ajax/projects.php', $urloption, $conf->global->PROJECT_USE_SEARCH_TO_SELECT, 0, array(
 //				'update' => array(
 //					'projectid' => 'id'
@@ -90,7 +91,7 @@ class FormProjets
 		}
 		else
 		{
-			$out.=$this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, $discard_closed, $forcefocus, $disabled, 0, $filterkey, 1);
+			$out.=$this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, $discard_closed, $forcefocus, $disabled, 0, $filterkey, 1, $forceaddid, $htmlid);
 			if ($discard_closed) 
 			{
 			    if (class_exists('Form'))
@@ -125,14 +126,17 @@ class FormProjets
 	 * @param  string  $filterkey          Key to filter
 	 * @param  int     $nooutput           No print output. Return it only.
 	 * @param  int     $forceaddid         Force to add project id in list, event if not qualified
+	 * @param  int     $htmlid             Html id to use instead of htmlname
 	 * @return int         			       Nb of project if OK, <0 if KO
 	 */
-	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode=0, $filterkey = '', $nooutput=0, $forceaddid=0)
+	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode=0, $filterkey = '', $nooutput=0, $forceaddid=0, $htmlid='')
 	{
 		global $user,$conf,$langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+		if (empty($htmlid)) $htmlid = $htmlname;
+		
 		$out='';
         $outarray=array();
         
@@ -146,10 +150,9 @@ class FormProjets
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
 		}
 
-
 		// Search all projects
-		$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
-		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
+		$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, s.nom as name, s.name_alias';
+		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p LEFT JOIN '.MAIN_DB_PREFIX .'societe as s ON s.rowid = p.fk_soc';
 		$sql.= " WHERE p.entity IN (".getEntity('project', 1).")";
 		if ($projectsListId !== false) $sql.= " AND p.rowid IN (".$projectsListId.")";
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
@@ -161,15 +164,9 @@ class FormProjets
 		        $sql.= " AND (p.fk_soc IN (".$socid.", ".$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.") OR p.fk_soc IS NULL)";
 		    }
 		}
-		if (!empty($filterkey)) {
-			$sql .= ' AND (';
-			$sql .= ' p.title LIKE "%'.$this->db->escape($filterkey).'%"';
-			$sql .= ' OR p.ref LIKE "%'.$this->db->escape($filterkey).'%"';
-			$sql .= ')';
-		}
+		if (!empty($filterkey)) $sql .= natural_search(array('p.title', 'p.ref'), $filterkey);
 		$sql.= " ORDER BY p.ref ASC";
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -180,14 +177,14 @@ class FormProjets
 			if (! empty($conf->use_javascript_ajax))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-	           	$comboenhancement = ajax_combobox($htmlname, array(), 0, $forcefocus);
+	           	$comboenhancement = ajax_combobox($htmlid, array(), 0, $forcefocus);
             	$out.=$comboenhancement;
             	$nodatarole=($comboenhancement?' data-role="none"':'');
             	$minmax='minwidth100 maxwidth300';
 			}
 
 			if (empty($option_only)) {
-				$out.= '<select class="flat'.($minmax?' '.$minmax:'').'"'.($disabled?' disabled="disabled"':'').' id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+				$out.= '<select class="flat'.($minmax?' '.$minmax:'').'"'.($disabled?' disabled="disabled"':'').' id="'.$htmlid.'" name="'.$htmlname.'"'.$nodatarole.'>';
 			}
 			if (!empty($show_empty)) {
 				$out.= '<option value="0">&nbsp;</option>';
@@ -215,8 +212,13 @@ class FormProjets
 						$labeltoshow=dol_trunc($obj->ref,18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
-						$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
-
+						$labeltoshow.=', '.dol_trunc($obj->title, $maxlength);
+						if ($obj->name) 
+						{
+						    $labeltoshow.=' - '.$obj->name;
+						    if ($obj->name_alias) $labeltoshow.=' ('.$obj->name_alias.')';
+						}
+						
 						$disabled=0;
 						if ($obj->fk_statut == 0)
 						{
@@ -355,7 +357,7 @@ class FormProjets
 			}
 
 			if (empty($option_only)) {
-				$out.= '<select class="flat'.($minmax?' '.$minmax:'').'"'.($disabled?' disabled="disabled"':'').' id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+				$out.= '<select class="valignmiddle flat'.($minmax?' '.$minmax:'').'"'.($disabled?' disabled="disabled"':'').' id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
 			}
 			if (!empty($show_empty)) {
 				$out.= '<option value="0">&nbsp;</option>';
@@ -467,13 +469,16 @@ class FormProjets
 		if ($table_element == 'projet_task') return '';		// Special cas of element we never link to a project (already always done)
 
 		$linkedtothirdparty=false;
-		if (! in_array($table_element, array('don','expensereport_det','expensereport'))) $linkedtothirdparty=true;
+		if (! in_array($table_element, array('don','expensereport_det','expensereport','loan','stock_mouvement','chargesociales'))) $linkedtothirdparty=true;
 
 		$sqlfilter='';
 		$projectkey="fk_projet";
 		//print $table_element;
 		switch ($table_element)
 		{
+			case "loan":
+				$sql = "SELECT t.rowid, t.label as ref";
+				break;
 			case "facture":
 				$sql = "SELECT t.rowid, t.facnumber as ref";
 				break;
@@ -503,6 +508,11 @@ class FormProjets
 			case "fichinter":
 			    $sql = "SELECT t.rowid, t.ref";
 			    break;
+			case 'stock_mouvement':
+				$sql = 'SELECT t.rowid, t.label as ref';
+				$projectkey='fk_origin';
+				break;
+			case "chargesociales":
 			default:
 				$sql = "SELECT t.rowid, t.ref";
 				break;
@@ -516,7 +526,7 @@ class FormProjets
 		    if (is_numeric($socid)) $sql.= " AND t.fk_soc=".$socid;
 		    else $sql.= " AND t.fk_soc IN (".$socid.")";
 		}
-		if (! in_array($table_element, array('expensereport_det'))) $sql.= ' AND t.entity IN ('.getEntity('project',1).')';
+		if (! in_array($table_element, array('expensereport_det','stock_mouvement'))) $sql.= ' AND t.entity IN ('.getEntity('project',1).')';
 		if ($linkedtothirdparty) $sql.=" AND s.rowid = t.fk_soc";
 		if ($sqlfilter) $sql.= " AND ".$sqlfilter;
 		$sql.= " ORDER BY ref DESC";

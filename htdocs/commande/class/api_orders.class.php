@@ -495,6 +495,21 @@ class Orders extends DolibarrApi
     }
 
     /**
+     * Clean sensible object datas
+     *
+     * @param   object  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object) {
+    
+        $object = parent::_cleanObjectDatas($object);
+    
+        unset($object->address);
+    
+        return $object;
+    }
+    
+    /**
      * Validate fields before create or update object
      *
      * @param   array           $data   Array with data to verify

@@ -371,7 +371,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
         if (! empty($arrayfields["ef.".$key]['checked']))
         {
             $align=$extrafields->getAlignFlag($key);
-            print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
         }
     }
 }
@@ -382,7 +382,7 @@ print $hookmanager->resPrint;
 if (! empty($arrayfields['cd.datec']['checked']))  print_liste_field_titre($arrayfields['cd.datec']['label'],$_SERVER["PHP_SELF"],"cd.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['cd.tms']['checked']))    print_liste_field_titre($arrayfields['cd.tms']['label'],$_SERVER["PHP_SELF"],"cd.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['status']['checked'])) print_liste_field_titre($arrayfields['status']['label'],$_SERVER["PHP_SELF"],"cd.statut,c.statut","",$param,'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
@@ -503,8 +503,8 @@ if (! empty($arrayfields['status']['checked']))
 }
 // Action column
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
 print '</td>';
 print "</tr>\n";
 
@@ -519,9 +519,9 @@ while ($i < min($num,$limit))
 	$contractstatic->id=$obj->cid;
 	$contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
 	
-	$var=!$var;
+	
 
-	print "<tr ".$bc[$var].">";
+	print '<tr class="oddeven">';
 	
 	// Ref
     if (! empty($arrayfields['c.ref']['checked'])) 

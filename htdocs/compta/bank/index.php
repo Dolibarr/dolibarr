@@ -29,6 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -88,7 +90,7 @@ $arrayfields=array(
     'b.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
     'b.number'=>array('label'=>$langs->trans("AccountIdShort"), 'checked'=>1),
     'b.account_number'=>array('label'=>$langs->trans("AccountAccounting"), 'checked'=>$conf->accountancy->enabled),
-    'b.accountancy_journal'=>array('label'=>$langs->trans("AccountancyJournal"), 'checked'=>$conf->accountancy->enabled),
+    'b.fk_accountancy_journal'=>array('label'=>$langs->trans("AccountancyJournal"), 'checked'=>$conf->accountancy->enabled),
     'toreconcile'=>array('label'=>$langs->trans("TransactionsToConciliate"), 'checked'=>1),
     'b.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     'b.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
@@ -141,7 +143,7 @@ $title=$langs->trans('BankAccounts');
 // Load array of financial accounts (opened by default)
 $accounts = array();
 
-$sql  = "SELECT rowid, label, courant, rappro, account_number, accountancy_journal, datec as date_creation, tms as date_update";
+$sql  = "SELECT rowid, label, courant, rappro, account_number, fk_accountancy_journal, datec as date_creation, tms as date_update";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
@@ -287,40 +289,8 @@ $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfiel
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-// Fields title
-print '<tr class="liste_titre">';
-if (! empty($arrayfields['b.ref']['checked']))            print_liste_field_titre($arrayfields['b.ref']['label'],$_SERVER["PHP_SELF"],'b.ref','',$param,'',$sortfield,$sortorder);
-if (! empty($arrayfields['b.label']['checked']))          print_liste_field_titre($arrayfields['b.label']['label'],$_SERVER["PHP_SELF"],'b.label','',$param,'',$sortfield,$sortorder);
-if (! empty($arrayfields['accountype']['checked']))       print_liste_field_titre($arrayfields['accountype']['label'],$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
-if (! empty($arrayfields['b.number']['checked']))         print_liste_field_titre($arrayfields['b.number']['label'],$_SERVER["PHP_SELF"],'b.number','',$param,'',$sortfield,$sortorder);
-if (! empty($arrayfields['b.account_number']['checked'])) print_liste_field_titre($arrayfields['b.account_number']['label'],$_SERVER["PHP_SELF"],'b.account_number','',$param,'',$sortfield,$sortorder);
-if (! empty($arrayfields['b.accountancy_journal']['checked'])) print_liste_field_titre($arrayfields['b.accountancy_journal']['label'],$_SERVER["PHP_SELF"],'b.accountancy_journal','',$param,'',$sortfield,$sortorder);
-if (! empty($arrayfields['toreconcile']['checked']))      print_liste_field_titre($arrayfields['toreconcile']['label'],$_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder);
-// Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-{
-   foreach($extrafields->attribute_label as $key => $val) 
-   {
-       if (! empty($arrayfields["ef.".$key]['checked'])) 
-       {
-			$align=$extrafields->getAlignFlag($key);
-			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-       }
-   }
-}
-// Hook fields
-$parameters=array('arrayfields'=>$arrayfields);
-$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
-if (! empty($arrayfields['b.datec']['checked']))          print_liste_field_titre($arrayfields['b.datec']['label'],$_SERVER["PHP_SELF"],"b.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['b.tms']['checked']))            print_liste_field_titre($arrayfields['b.tms']['label'],$_SERVER["PHP_SELF"],"b.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['b.clos']['checked']))           print_liste_field_titre($arrayfields['b.clos']['label'],$_SERVER["PHP_SELF"],'b.clos','',$param,'align="center"',$sortfield,$sortorder);
-if (! empty($arrayfields['balance']['checked']))          print_liste_field_titre($arrayfields['balance']['label'],$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
-print "</tr>\n";
+print '<tr class="liste_titre_filter">';
 
-
-print '<tr class="liste_titre">';
 // Ref
 if (! empty($arrayfields['b.ref']['checked']))
 {
@@ -355,7 +325,7 @@ if (! empty($arrayfields['b.account_number']['checked']))
     print '</td>';
 }
 // Accountancy journal
-if (! empty($arrayfields['b.accountancy_journal']['checked']))
+if (! empty($arrayfields['b.fk_accountancy_journal']['checked']))
 {
     print '<td class="liste_titre">';
     print '</td>';
@@ -423,11 +393,42 @@ if (! empty($arrayfields['balance']['checked']))
 }
 // Action column
 print '<td class="liste_titre" align="middle">';
-$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+print $searchpicto;
 print '</td>';
 print '</tr>';
 
+// Fields title
+print '<tr class="liste_titre">';
+if (! empty($arrayfields['b.ref']['checked']))            print_liste_field_titre($arrayfields['b.ref']['label'],$_SERVER["PHP_SELF"],'b.ref','',$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['b.label']['checked']))          print_liste_field_titre($arrayfields['b.label']['label'],$_SERVER["PHP_SELF"],'b.label','',$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['accountype']['checked']))       print_liste_field_titre($arrayfields['accountype']['label'],$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['b.number']['checked']))         print_liste_field_titre($arrayfields['b.number']['label'],$_SERVER["PHP_SELF"],'b.number','',$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['b.account_number']['checked'])) print_liste_field_titre($arrayfields['b.account_number']['label'],$_SERVER["PHP_SELF"],'b.account_number','',$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['b.fk_accountancy_journal']['checked'])) print_liste_field_titre($arrayfields['b.fk_accountancy_journal']['label'],$_SERVER["PHP_SELF"],'b.fk_accountancy_journal','',$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['toreconcile']['checked']))      print_liste_field_titre($arrayfields['toreconcile']['label'],$_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder);
+// Extra fields
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+{
+    foreach($extrafields->attribute_label as $key => $val)
+    {
+        if (! empty($arrayfields["ef.".$key]['checked']))
+        {
+            $align=$extrafields->getAlignFlag($key);
+            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+        }
+    }
+}
+// Hook fields
+$parameters=array('arrayfields'=>$arrayfields);
+$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+if (! empty($arrayfields['b.datec']['checked']))          print_liste_field_titre($arrayfields['b.datec']['label'],$_SERVER["PHP_SELF"],"b.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['b.tms']['checked']))            print_liste_field_titre($arrayfields['b.tms']['label'],$_SERVER["PHP_SELF"],"b.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['b.clos']['checked']))           print_liste_field_titre($arrayfields['b.clos']['label'],$_SERVER["PHP_SELF"],'b.clos','',$param,'align="center"',$sortfield,$sortorder);
+if (! empty($arrayfields['balance']['checked']))          print_liste_field_titre($arrayfields['balance']['label'],$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+print "</tr>\n";
 
 
 $total = array(); $found = 0; $i=0; $lastcurrencycode='';
@@ -453,7 +454,7 @@ foreach ($accounts as $key=>$type)
 		$lastcurrencycode=$acc->currency_code;
 	}
 	
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 
     // Ref
     if (! empty($arrayfields['b.ref']['checked']))
@@ -489,16 +490,23 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['b.account_number']['checked']))
     {
         include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-        print '<td>'.length_accountg($acc->account_number).'</td>';
+
+		$accountingaccount = new AccountingAccount($db);
+		$accountingaccount->fetch('',$acc->account_number);
+
+		print '<td>'.length_accountg($accountingaccount->getNomUrl(0,1,1,'',1)).'</td>';
+
 	    if (! $i) $totalarray['nbfield']++;
     }
     
     // Accountancy journal
-    if (! empty($arrayfields['b.accountancy_journal']['checked']))
+    if (! empty($arrayfields['b.fk_accountancy_journal']['checked']))
     {
-        include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-        print '<td>'.length_accountg($acc->accountancy_journal).'</td>';
-	    if (! $i) $totalarray['nbfield']++;
+		$accountingjournal = new AccountingJournal($db);
+		$accountingjournal->fetch($acc->fk_accountancy_journal);
+
+		print '<td>'.$accountingjournal->getNomUrl(0,1,1,'',1).'</td>';
+		if (! $i) $totalarray['nbfield']++;
     }
     
     // Transactions to reconcile
@@ -595,7 +603,7 @@ foreach ($accounts as $key=>$type)
 	$i++;
 }
 
-if (! $found) print '<tr '.$bc[$var].'><td colspan="'.$totalarray['nbfield'].'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+if (! $found) print '<tr class="oddeven"><td colspan="'.$totalarray['nbfield'].'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 
 // Show total line
 if (isset($totalarray['totalbalancefield']) && $lastcurrencycode != 'various')	// If there is several currency, $lastcurrencycode is set to 'various' before

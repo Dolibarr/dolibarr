@@ -114,7 +114,7 @@ if (! defined('NOREQUIRESOC'))  require_once DOL_DOCUMENT_ROOT .'/societe/class/
  */
 if (! defined('NOREQUIRETRAN'))
 {
-	$langs = new Translate('',$conf);	// A mettre apres lecture de la conf
+	$langs = new Translate('',$conf);	// Must be after reading conf
 }
 
 /*
@@ -246,7 +246,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 // Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
 if (! defined('NOREQUIRETRAN'))
 {
-    $langcode=(GETPOST('lang')?GETPOST('lang','alpha',1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+    $langcode=(GETPOST('lang','aZ09')?GETPOST('lang','aZ09',1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
 	$langs->setDefaultLang($langcode);
 }
 
@@ -257,8 +257,4 @@ $hookmanager=new HookManager($db);
 
 
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
-
-
-// We force FPDF
-if (! empty($dolibarr_pdf_force_fpdf)) $conf->global->MAIN_USE_FPDF=$dolibarr_pdf_force_fpdf;
 

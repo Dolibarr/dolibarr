@@ -39,7 +39,7 @@ $langs->load("bills");
 $id=GETPOST('id','int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 
 if ($id == "")
@@ -105,7 +105,7 @@ if ($object->id)
 	$head = categories_prepare_head($object,$type);
 
 
-	dol_fiche_head($head, 'photos', $title, 0, 'category');
+	dol_fiche_head($head, 'photos', $title, -1, 'category');
 	
 	$linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
 	
@@ -130,6 +130,7 @@ if ($object->id)
 
 	print '<br>';
 	
+	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border" width="100%">';
 
@@ -146,7 +147,8 @@ if ($object->id)
 	print '</td></tr>';
 
 	print "</table>\n";
-
+    print '</div>';
+    
 	print dol_fiche_end();
 
 
@@ -198,7 +200,7 @@ if ($object->id)
 		$dir = $upload_dir.'/'.$pdir;
 
 		print '<br>';
-		print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+		print '<table width="100%" valign="top" align="center">';
 
 		foreach ($object->liste_photos($dir) as $key => $obj)
 		{
@@ -255,14 +257,12 @@ if ($object->id)
 			$nbphoto++;
 		}
 
+		print '</table>';
+	
 		if ($nbphoto < 1)
 		{
-			print '<tr align=center valign=middle border=1><td class="photo">';
-			print "<br>".$langs->trans("NoPhotoYet")."<br><br>";
-			print '</td></tr>';
+			print '<div class="opacitymedium">'.$langs->trans("NoPhotoYet")."</div>";
 		}
-
-		print '</table>';
 	}
 }
 else

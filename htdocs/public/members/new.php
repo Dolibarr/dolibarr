@@ -27,7 +27,7 @@
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
  *  MEMBER_NEWFORM_EDITAMOUNT           Amount can be edited
- *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal of paybox
+ *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal, paybox or stripe
  *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
  *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once subscribe submitted
  *  MEMBER_NEWFORM_FORCETYPE            Force type of member
@@ -91,6 +91,7 @@ $extrafields = new ExtraFields($db);
 function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
     global $user, $conf, $langs, $mysoc;
+    
     top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
     print '<body id="mainbody" class="publicnewmemberform" style="margin-top: 10px;">';
 
@@ -99,11 +100,11 @@ function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayo
 
     if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
     {
-        $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
+        $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
     }
     elseif (! empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
     {
-        $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
+        $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode($mysoc->logo);
         $width=128;
     }
     elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
@@ -223,7 +224,7 @@ if ($action == 'add')
         // email a peu pres correct et le login n'existe pas
         $adh = new Adherent($db);
         $adh->statut      = -1;
-        $adh->public      = $_POST["public"];
+        $adh->public      = $public;
         $adh->firstname   = $_POST["firstname"];
         $adh->lastname    = $_POST["lastname"];
         $adh->civility_id = $_POST["civility_id"];
@@ -314,6 +315,18 @@ if ($action == 'add')
                     	$urlback.='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2);
                     }
                     
+                }
+				else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe')
+                {
+                    $urlback=DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
+                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                    if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
+					/*
+                    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+                    {
+                    	$urlback.='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2);
+                    }
+					*/
                 }
                 else
                 {
@@ -508,7 +521,7 @@ print '</td></tr>'."\n";
 // Photo
 print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" size="40" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
 // Public
-print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public" value="1" checked></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
 // Extrafields
 foreach($extrafields->attribute_label as $key=>$value)
 {
@@ -579,7 +592,7 @@ if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)
     {
         $amount=GETPOST('amount')?GETPOST('amount'):$conf->global->MEMBER_NEWFORM_AMOUNT;
     }
-    // $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal' or 'paybox'
+    // $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
     print '<tr><td>'.$langs->trans("Subscription").'</td><td class="nowrap">';
     if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT))
     {

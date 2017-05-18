@@ -120,19 +120,17 @@ print '<table class="liste" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Nature").'</td>';
 print '<td align="right">'.$langs->trans("NbOfMembers").'</td>';
-print '<td align="center">'.$langs->trans("LastMemberDate").'</td>';
+print '<td align="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
 print '</tr>';
 
 if (! $foundphy) $data[]=array('label'=>'phy','nb'=>'0','lastdate'=>'');
 if (! $foundmor) $data[]=array('label'=>'mor','nb'=>'0','lastdate'=>'');
 
 $oldyear=0;
-$var=true;
 foreach ($data as $val)
 {
 	$year = $val['year'];
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>'.$memberstatic->getmorphylib($val['label']).'</td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="center">'.dol_print_date($val['lastdate'],'dayhour').'</td>';

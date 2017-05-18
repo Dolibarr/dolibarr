@@ -350,7 +350,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 		if ($id > 0 && ! $error)
 		{
 			$db->commit();
-			header('Location: '.DOL_URL_ROOT.'/compta/facture.php?facid='.$id);
+			header('Location: '.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$id);
 			exit;
 		}
 		else
@@ -653,8 +653,8 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">';
 
 			$generic_commande->id=$objp->rowid;

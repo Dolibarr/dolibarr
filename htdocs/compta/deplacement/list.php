@@ -165,8 +165,8 @@ if ($resql)
     // print '<input class="flat" size="10" type="text" name="search_amount" value="'.$search_amount.'">';
     print '</td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
+    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    print $searchpicto;
     print '</td>';
     print "</tr>\n";
 
@@ -178,8 +178,8 @@ if ($resql)
         $soc = new Societe($db);
         if ($obj->socid) $soc->fetch($obj->socid);
 
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
+        
+        print '<tr class="oddeven">';
         // Id
         print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$obj->rowid.'</a></td>';
         // Type

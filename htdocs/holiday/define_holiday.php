@@ -36,7 +36,7 @@ if ($user->societe_id > 0) accessforbidden();
 // If the user does not have perm to read the page
 if(!$user->rights->holiday->read) accessforbidden();
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $holiday = new Holiday($db);
 
@@ -212,7 +212,7 @@ else
     
     foreach($listUsers as $users)
     {
-        $var=!$var;
+        
 
         // If user has not permission to edit/read all, we must see only subordinates
         if (empty($user->rights->holiday->read_all))  
@@ -220,7 +220,7 @@ else
             if (($users['rowid'] != $user->id) && (! in_array($users['rowid'], $userchilds))) continue;     // This user is not into hierarchy of current user, we hide it.
         }
         
-        print '<tr '.$bc[$var].'>';
+        print '<tr class="oddeven">';
         
         // User
         print '<td>';

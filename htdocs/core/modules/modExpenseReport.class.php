@@ -19,9 +19,6 @@
 /**
  * 		\defgroup   expensereport	Module expensereport
  *      \brief      Module to manage expense report. Replace old module Deplacement.
- */
-
-/**
  *      \file       htdocs/core/modules/modExpenseReport.class.php
  *      \ingroup    expensereport
  *      \brief      Description and activation file for module ExpenseReport

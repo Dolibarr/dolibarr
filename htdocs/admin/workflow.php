@@ -120,8 +120,7 @@ foreach($workflowcodes as $key => $params)
 		$oldfamily = $family;
    	}
 
-   	$var = !$var;
-   	print "<tr ".$bc[$var].">\n";
+   	print "<tr class=\"oddeven\">\n";
    	print "<td>".img_object('', $picto).$langs->trans('desc'.$key);
    	if (! empty($params['warning']))
    	{

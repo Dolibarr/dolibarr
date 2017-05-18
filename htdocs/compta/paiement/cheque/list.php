@@ -175,8 +175,8 @@ if ($resql)
 	print '</td>';
 	print '<td class="liste_titre"></td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
+    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    print $searchpicto;
     print '</td>';
     print "</tr>\n";
 
@@ -186,8 +186,8 @@ if ($resql)
     	while ($i < min($num,$limit))
     	{
     		$objp = $db->fetch_object($resql);
-    		$var=!$var;
-    		print "<tr ".$bc[$var].">";
+    		
+    		print '<tr class="oddeven">';
     
     		// Num ref cheque
     		print '<td>';
@@ -225,7 +225,7 @@ if ($resql)
     }
     else
     {
-   		print "<tr ".$bc[$var].">";
+   		print '<tr class="oddeven">';
    		print '<td colspan="7" class="opacitymedium">'.$langs->trans("None")."</td>";
    		print '</tr>';
     }

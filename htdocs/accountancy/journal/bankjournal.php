@@ -71,7 +71,7 @@ $date_startyear = GETPOST('date_startyear');
 $date_endmonth = GETPOST('date_endmonth');
 $date_endday = GETPOST('date_endday');
 $date_endyear = GETPOST('date_endyear');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 $now = dol_now();
 
@@ -525,6 +525,7 @@ if (! $error && $action == 'writebookkeeping') {
 }
 
 // Export
+/*
 if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
@@ -691,7 +692,7 @@ if ($action == 'export_csv') {
 		}
 	}
 }
-
+*/
 
 
 /*
@@ -715,7 +716,7 @@ if (empty($action) || $action == 'view') {
 
 	$varlink = 'id_account=' . $id_bank_account;
 	
-	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
+	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
 	/*if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 && $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
 		print '<input type="button" class="butActionRefused" style="float: right;" value="' . $langs->trans('Export') . '" disabled="disabled" title="' . $langs->trans('ExportNotSupported') . '"/>';
@@ -762,7 +763,6 @@ if (empty($action) || $action == 'view') {
 	print "<td align='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
-	$var = true;
 	$r = '';
 
 	foreach ( $tabpay as $key => $val ) {      // $key is rowid in llx_bank
@@ -839,7 +839,7 @@ if (empty($action) || $action == 'view') {
 		// Bank
 		foreach ( $tabbq[$key] as $k => $mt ) 
 		{
-		    print "<tr " . $bc[$var] . ">";
+		    print '<tr class="oddeven">';
 		    print "<td><!-- Bank bank.rowid=".$key."--></td>";
 		    print "<td>" . $date . "</td>";
 			print "<td>" . $ref . "</td>";
@@ -866,7 +866,7 @@ if (empty($action) || $action == 'view') {
 		if (is_array($tabtp[$key])) {
 			foreach ( $tabtp[$key] as $k => $mt ) {
 				if ($k != 'type') {
-					print "<tr " . $bc[$var] . ">";
+					print '<tr class="oddeven">';
 					print "<td><!-- Thirdparty bank.rowid=".$key." --></td>";
 					print "<td>" . $date . "</td>";
 					print "<td>" . $ref . "</td>";
@@ -887,7 +887,7 @@ if (empty($action) || $action == 'view') {
 			}
 		} else {
 			foreach ( $tabbq[$key] as $k => $mt ) {
-				print "<tr " . $bc[$var] . ">";
+				print '<tr class="oddeven">';
 				print "<td><!-- Wait bank.rowid=".$key." --></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $ref . "</td>";
@@ -905,7 +905,6 @@ if (empty($action) || $action == 'view') {
 				print "</tr>";
 			}
 		}
-		$var = ! $var;
 	}
 
 	print "</table>";

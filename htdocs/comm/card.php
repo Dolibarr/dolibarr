@@ -60,7 +60,7 @@ $id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
 if ($user->societe_id > 0) $id=$user->societe_id;
 $result = restrictedArea($user,'societe',$id,'&societe');
 
-$action		= GETPOST('action');
+$action		= GETPOST('action','aZ09');
 $mode		= GETPOST("mode");
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -460,7 +460,7 @@ if ($id > 0)
         }
         else
         {
-            print $langs->trans("ThirdpartyNotLinkedToMember");
+            print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
         }
         print '</td>';
         print "</tr>\n";
@@ -512,33 +512,92 @@ if ($id > 0)
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
+	$boxstat = '';
+	
 	// Nbre max d'elements des petites listes
 	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Lien recap
-	$outstandingBills = $object->get_OutstandingBill();
-	$warn = '';
-	if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingBills) 
+	$boxstat.='<div class="box">';
+	$boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom" width="100%">';
+	$boxstat.='<tr class="impair"><td colspan="2" class="tdboxstats nohover">';
+	
+	if ($conf->propal->enabled)
 	{
-		$warn = img_warning($langs->trans("OutstandingBillReached"));
+    	// Box proposals
+    	$tmp = $object->getOutstandingProposals();
+    	$outstandingOpened=$tmp['opened'];
+    	$outstandingTotal=$tmp['total_ht'];
+    	$outstandingTotalIncTax=$tmp['total_ttc'];
+	    $text=$langs->trans("OverAllProposals");
+    	$link='';
+    	$icon='bill';
+    	if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+    	$boxstat.='<div class="boxstats">';
+    	$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+    	$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+    	$boxstat.='</div>';
+    	if ($link) $boxstat.='</a>';
+	}
+
+	if ($conf->commande->enabled)
+	{
+	    // Box proposals
+	    $tmp = $object->getOutstandingOrders();
+	    $outstandingOpened=$tmp['opened'];
+	    $outstandingTotal=$tmp['total_ht'];
+	    $outstandingTotalIncTax=$tmp['total_ttc'];
+	    $text=$langs->trans("OverAllOrders");
+	    $link='';
+	    $icon='bill';
+	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+	    $boxstat.='<div class="boxstats">';
+	    $boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+	    $boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+	    $boxstat.='</div>';
+	    if ($link) $boxstat.='</a>';
 	}
 	
-	print '<table class="noborder" width="100%">';
-
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Summary").'</td>';
-	print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id.'">'.$langs->trans("ShowCustomerPreview").'</a></td>';
-	print '</tr>';
+	if ($conf->facture->enabled)
+	{
+    	$tmp = $object->getOutstandingBills();
+    	$outstandingOpened=$tmp['opened'];
+    	$outstandingTotal=$tmp['total_ht'];
+    	$outstandingTotalIncTax=$tmp['total_ttc'];
+	    
+    	$text=$langs->trans("OverAllInvoices");
+    	$link='';
+    	$icon='bill';
+    	if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+    	$boxstat.='<div class="boxstats">';
+    	$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+    	$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+    	$boxstat.='</div>';
+    	if ($link) $boxstat.='</a>';
+    	
+    	// Box outstanding bill
+    	$warn = '';
+    	if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpened)
+    	{
+    	    $warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
+    	}
+    	$text=$langs->trans("CurrentOutstandingBill");
+    	$link=DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
+    	$icon='bill';
+    	if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+    	$boxstat.='<div class="boxstats">';
+    	$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+    	$boxstat.='<span class="boxstatsindicator'.($outstandingOpened>0?' amountremaintopay':'').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
+    	$boxstat.='</div>';
+    	if ($link) $boxstat.='</a>';
+	}
 	
-	// Outstanding bill
-	print '<tr class="impair">';
-	print '<td>'.$langs->trans("CurrentOutstandingBill").'</td>';
-	print '<td>'.price($outstandingBills).$warn.'</td>';
-	print '</tr>';
+	$boxstat.='</td></tr>';
+	$boxstat.='</table>';
+	$boxstat.='</div>';
 	
-	print '</table>';
-	print '<br>';
-
+    print $boxstat;
+    
 	$now=dol_now();
 
 	/*
@@ -580,8 +639,8 @@ if ($id > 0)
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$objp = $db->fetch_object($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
                 print '<td class="nowrap">';
                 $propal_static->id = $objp->propalid;
                 $propal_static->ref = $objp->ref;
@@ -664,8 +723,8 @@ if ($id > 0)
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$objp = $db->fetch_object($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
                 print '<td class="nowrap">';
                 $commande_static->id = $objp->cid;
                 $commande_static->ref = $objp->ref;
@@ -729,8 +788,7 @@ if ($id > 0)
 
             while ($i < $num && $i < $MAXLIST) {
                 $objp = $db->fetch_object($resql);
-                $var = ! $var;
-                print "<tr " . $bc[$var] . ">";
+                print '<tr class="oddeven">';
                 print '<td class="nowrap">';
                 $sendingstatic->id = $objp->id;
                 $sendingstatic->ref = $objp->ref;
@@ -791,8 +849,8 @@ if ($id > 0)
 				$contrat=new Contrat($db);
 
 				$objp = $db->fetch_object($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 				$contrat->id=$objp->id;
 				$contrat->ref=$objp->ref?$objp->ref:$objp->id;
@@ -847,7 +905,7 @@ if ($id > 0)
 				print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/fichinter/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
-				$var=!$var;
+				
 			}
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
@@ -857,13 +915,13 @@ if ($id > 0)
 				$fichinter_static->id=$objp->id;
                 $fichinter_static->statut=$objp->fk_statut;
 
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a></td>'."\n";
                 //print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
 				print '<td align="right" style="min-width: 60px">'.convertSecondToTime($objp->duration).'</td>'."\n";
 				print '<td align="right" class="nowrap" style="min-width: 60px">'.$fichinter_static->getLibStatut(5).'</td>'."\n";
 				print '</tr>';
-				$var=!$var;
+				
 				$i++;
 			}
 			$db->free($resql);
@@ -919,8 +977,8 @@ if ($id > 0)
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$objp = $db->fetch_object($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 				$facturestatic->id = $objp->facid;
 				$facturestatic->ref = $objp->facnumber;
@@ -980,6 +1038,11 @@ if ($id > 0)
 
     if (empty($reshook))
     {
+        if ($object->status != 1)
+        {
+            print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("ThirdPartyIsClosed").'</a></div>';
+        }
+        
     	if (! empty($conf->propal->enabled) && $user->rights->propal->creer && $object->status==1)
     	{
     		$langs->load("propal");
@@ -1013,15 +1076,11 @@ if ($id > 0)
     			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a></div>';
     		}
     
-    		if (! empty($conf->facture->enabled))
+    		if (! empty($conf->facture->enabled) && $object->status==1)
     		{
     			if (empty($user->rights->facture->creer))
     			{
     			    print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
-    			}
-    			else if ($object->status != 1)
-    			{
-    			    print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
     			}
     			else
     			{
@@ -1037,7 +1096,8 @@ if ($id > 0)
     				    }
     				    else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
     				}
-    				if ($object->client != 0 && $object->client != 2) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
+
+    				if ($object->client != 0 && $object->client != 2) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
     				else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
     
     			}
@@ -1045,7 +1105,7 @@ if ($id > 0)
     	}
     
     	// Add action
-    	if (! empty($conf->agenda->enabled) && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+    	if (! empty($conf->agenda->enabled) && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB) && $object->status==1)
     	{
     		if ($user->rights->agenda->myactions->create)
     		{

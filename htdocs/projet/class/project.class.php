@@ -140,7 +140,13 @@ class Project extends CommonObject
             dol_syslog(get_class($this)."::create error -1 ref null", LOG_ERR);
             return -1;
         }
-
+        if (! empty($conf->global->PROJECT_THIRDPARTY_REQUIRED) && ! $this->socid > 0)
+        {
+            $this->error = 'ErrorFieldsRequired';
+            dol_syslog(get_class($this)."::create error -1 ref null", LOG_ERR);
+            return -1;
+        }
+        
         $this->db->begin();
 
         $sql = "INSERT INTO " . MAIN_DB_PREFIX . "projet (";
@@ -504,6 +510,10 @@ class Project extends CommonObject
 		{
 			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM " . MAIN_DB_PREFIX . "projet_task as pt, " . MAIN_DB_PREFIX . "projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet=" . $this->id;
 		}
+		elseif ($type == 'stock_mouvement')
+		{
+			$sql = 'SELECT ms.rowid, ms.fk_user_author as fk_user FROM ' . MAIN_DB_PREFIX . 'stock_mouvement as ms WHERE ms.origintype = "project" AND ms.fk_origin = ' . $this->id . ' AND ms.type_mouvement = 1';
+		}
         else
 		{
             $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE fk_projet=" . $this->id;
@@ -583,7 +593,8 @@ class Project extends CommonObject
 
         // Set fk_projet into elements to null
         $listoftables=array(
-        		'facture'=>'fk_projet','propal'=>'fk_projet','commande'=>'fk_projet','facture_fourn'=>'fk_projet','commande_fournisseur'=>'fk_projet',
+        		'facture'=>'fk_projet','propal'=>'fk_projet','commande'=>'fk_projet',
+                'facture_fourn'=>'fk_projet','commande_fournisseur'=>'fk_projet','supplier_proposal'=>'fk_projet',
         		'expensereport_det'=>'fk_projet','contrat'=>'fk_projet','fichinter'=>'fk_projet','don'=>'fk_projet'
         		);
         foreach($listoftables as $key => $value)
@@ -911,15 +922,16 @@ class Project extends CommonObject
     /**
      * 	Return clicable name (with picto eventually)
      *
-     * 	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     * 	@param	string	$option			Variant ('', 'nolink')
-     * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
-     *  @param	string	$moreinpopup	Text to add into popup
-     *  @param	string	$sep			Separator between ref and label if option addlabel is set
-     *  @param	int   	$notooltip		1=Disable tooltip
-     * 	@return	string					Chaine avec URL
+     * 	@param	int		$withpicto		          0=No picto, 1=Include picto into link, 2=Only picto
+     * 	@param	string	$option			          Variant ('', 'nolink')
+     * 	@param	int		$addlabel		          0=Default, 1=Add label into string, >1=Add first chars into string
+     *  @param	string	$moreinpopup	          Text to add into popup
+     *  @param	string	$sep			          Separator between ref and label if option addlabel is set
+     *  @param	int   	$notooltip		          1=Disable tooltip
+     *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     * 	@return	string					          String with URL
      */
-    function getNomUrl($withpicto=0, $option='', $addlabel=0, $moreinpopup='', $sep=' - ', $notooltip=0)
+    function getNomUrl($withpicto=0, $option='', $addlabel=0, $moreinpopup='', $sep=' - ', $notooltip=0, $save_lastsearch_value=-1)
     {
         global $conf, $langs, $user;
 
@@ -929,10 +941,8 @@ class Project extends CommonObject
         
         $label='';
         if ($option != 'nolink') $label = '<u>' . $langs->trans("ShowProject") . '</u>';
-        if (! empty($this->ref))
-            $label .= ($label?'<br>':'').'<b>' . $langs->trans('Ref') . ': </b>' . $this->ref;	// The space must be after the : to not being explode when showing the title in img_picto
-        if (! empty($this->title))
-            $label .= ($label?'<br>':'').'<b>' . $langs->trans('Label') . ': </b>' . $this->title;	// The space must be after the : to not being explode when showing the title in img_picto
+        $label .= ($label?'<br>':'').'<b>' . $langs->trans('Ref') . ': </b>' . $this->ref;	// The space must be after the : to not being explode when showing the title in img_picto
+        $label .= ($label?'<br>':'').'<b>' . $langs->trans('Label') . ': </b>' . $this->title;	// The space must be after the : to not being explode when showing the title in img_picto
         if (! empty($this->thirdparty_name))
             $label .= ($label?'<br>':'').'<b>' . $langs->trans('ThirdParty') . ': </b>' . $this->thirdparty_name;	// The space must be after the : to not being explode when showing the title in img_picto
         if (! empty($this->dateo))
@@ -954,6 +964,10 @@ class Project extends CommonObject
             {
                 $url = DOL_URL_ROOT . '/projet/card.php?id=' . $this->id;
             }
+            // Add param to save lastsearch_values or not
+            $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0); 
+            if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+            if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
         
         $linkclose='';
@@ -1102,7 +1116,7 @@ class Project extends CommonObject
         // Get id of types of contacts for projects (This list never contains a lot of elements)
         $listofprojectcontacttype=array();
         $sql2 = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
-        $sql2.= " WHERE ctc.element = '" . $this->element . "'";
+        $sql2.= " WHERE ctc.element = '" . $this->db->escape($this->element) . "'";
         $sql2.= " AND ctc.source = 'internal'";
         $resql = $this->db->query($sql2);
         if ($resql)
@@ -1337,7 +1351,7 @@ class Project extends CommonObject
 
 				if (dol_mkdir($clone_project_dir) >= 0)
 				{
-					$filearray=dol_dir_list($ori_project_dir,"files",0,'','(\.meta|_preview\.png)$','',SORT_ASC,1);
+					$filearray=dol_dir_list($ori_project_dir,"files",0,'','(\.meta|_preview.*\.png)$','',SORT_ASC,1);
 					foreach($filearray as $key => $file)
 					{
 						$rescopy = dol_copy($ori_project_dir . '/' . $file['name'], $clone_project_dir . '/' . $file['name'],0,1);
@@ -1579,16 +1593,14 @@ class Project extends CommonObject
 
 		$langs->load("projects");
 
-		// Positionne modele sur le nom du modele de projet a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->PROJECT_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'baleine';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->PROJECT_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_ADDON_PDF;
-			}
-			else
-			{
-				$modele='baleine';
 			}
 		}
 
@@ -1685,8 +1697,8 @@ class Project extends CommonObject
             $response->warning_delay = $conf->projet->warning_delay/60/60/24;
             $response->label = $langs->trans("OpenedProjects");
             if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/list.php?search_status=1&mainmenu=project';
-            else $response->url = DOL_URL_ROOT.'/projet/list.php?mode=mine&search_status=1&mainmenu=project';
-            $response->img = img_object($langs->trans("Projects"),"project");
+            else $response->url = DOL_URL_ROOT.'/projet/list.php?search_project_user=-1&search_status=1&mainmenu=project';
+            $response->img = img_object('',"projectpub");
 
             // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))

@@ -279,54 +279,42 @@ if ($id > 0 || ! empty($ref))
 		//$arrayofuseridoftask=$object->getListContactId('internal');
 
 		$head = task_prepare_head($object);
-		dol_fiche_head($head, 'task_contact', $langs->trans("Task"), 0, 'projecttask');
+		dol_fiche_head($head, 'task_contact', $langs->trans("Task"), -1, 'projecttask');
 
-
-		/*
-		 *   Projet synthese pour rappel
-		 */
-		print '<table class="border" width="100%">';
 
 		$param=(GETPOST('withproject')?'&withproject=1':'');
 		$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
-
-		// Ref
-		print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td><td colspan="3">';
+		
 		if (! GETPOST('withproject') || empty($projectstatic->id))
 		{
 		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
 		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-		print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
-		print '</td></tr>';
-
-		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
-
+		
+		$morehtmlref='';
+		
 		// Project
 		if (empty($withproject))
 		{
-    		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-    		print $projectstatic->getNomUrl(1);
-    		print '</td></tr>';
-
-    		// Customer
-    		print "<tr><td>".$langs->trans("ThirdParty")."</td>";
-    		print '<td colspan="3">';
-    		if ($projectstatic->thirdparty->id > 0) print $projectstatic->thirdparty->getNomUrl(1);
-    		else print '&nbsp;';
-    		print '</td></tr>';
+		    $morehtmlref.='<div class="refidno">';
+		    $morehtmlref.=$langs->trans("Project").': ';
+		    $morehtmlref.=$projectstatic->getNomUrl(1);
+		    $morehtmlref.='<br>';
+		
+		    // Third party
+		    $morehtmlref.=$langs->trans("ThirdParty").': ';
+		    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+		    $morehtmlref.='</div>';
 		}
-
-		print "</table>";
+		
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param, 0, '', '', 1);
 
 		dol_fiche_end();
 
 		/*
 		 * Lignes de contacts
 		 */
-		print '<br>';
 /*
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
@@ -363,7 +351,7 @@ if ($id > 0 || ! empty($ref))
 			if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 			// Ligne ajout pour contact interne
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 
 			print '<td class="nowrap">';
 			print img_object('','user').' '.$langs->trans("Users");
@@ -397,8 +385,8 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
 
 				print '<td class="nowrap">';
 				print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
@@ -481,7 +469,9 @@ if ($id > 0 || ! empty($ref))
                     $userstatic->id=$tab[$i]['id'];
                     $userstatic->lastname=$tab[$i]['lastname'];
                     $userstatic->firstname=$tab[$i]['firstname'];
-                    print $userstatic->getNomUrl(1);
+    				$userstatic->photo=$tab[$i]['photo'];
+    				$userstatic->login=$tab[$i]['login'];
+                    print $userstatic->getNomUrl(-1);
                 }
                 if ($tab[$i]['source']=='external')
                 {

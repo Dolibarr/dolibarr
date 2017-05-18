@@ -139,7 +139,7 @@ class box_produits extends ModeleBoxes
 	                    }
 	               	}
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => $price,
                     );
 
@@ -149,7 +149,7 @@ class box_produits extends ModeleBoxes
                     );
 
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => dol_print_date($datem,'day'),
                     );
 

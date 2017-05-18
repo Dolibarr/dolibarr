@@ -211,9 +211,9 @@ if ($id > 0 || ! empty($ref))
 					while ($i < $num && $i < $conf->liste_limit)
 					{
 						$objp = $db->fetch_object($result);
-						$var=!$var;
+						
 
-						print '<tr '.$bc[$var].'>';
+						print '<tr class="oddeven">';
 	 					print '<td>';
 	                    $orderstatic->id=$objp->commandeid;
 	                    $orderstatic->ref=$objp->ref;

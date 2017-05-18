@@ -52,7 +52,7 @@ if (! empty($conf->productbatch->enabled))
 $id = GETPOST("id", 'int');
 $ref = GETPOST('ref');
 $lineid = GETPOST('lineid', 'int');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 if ($user->societe_id)
 	$socid = $user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
@@ -467,16 +467,14 @@ if ($id > 0 || ! empty($ref)) {
 					if ($remaintodispatch || empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED)) {
 						$nbproduct++;
 
-						$var = ! $var;
-
 						// To show detail cref and description value, we must make calculation by cref
 						// print ($objp->cref?' ('.$objp->cref.')':'');
 						// if ($objp->description) print '<br>'.nl2br($objp->description);
 						$suffix = '_0_' . $i;
 
 						print "\n";
-						print '<!-- Line ' . $suffix . ' -->' . "\n";
-						print "<tr " . $bc[$var] . ">";
+						print '<!-- Line to dispatch ' . $suffix . ' -->' . "\n";
+						print '<tr class="oddeven">';
 
 						$linktoprod = '<a href="' . DOL_URL_ROOT . '/product/fournisseurs.php?id=' . $objp->fk_product . '">' . img_object($langs->trans("ShowProduct"), 'product') . ' ' . $objp->ref . '</a>';
 						$linktoprod .= ' - ' . $objp->label . "\n";
@@ -500,7 +498,7 @@ if ($id > 0 || ! empty($ref)) {
 							print "</td>";
 						}
 
-						$var = ! $var;
+						// Define unit price for PMP calculation
 						$up_ht_disc = $objp->subprice;
 						if (! empty($objp->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP))
 							$up_ht_disc = price2num($up_ht_disc * (100 - $objp->remise_percent) / 100, 'MU');
@@ -517,11 +515,21 @@ if ($id > 0 || ! empty($ref)) {
 							print '<td></td>'; // Warehouse column
 							print '</tr>';
 
-							print '<tr ' . $bc[$var] . ' name="' . $type . $suffix . '">';
+							print '<tr class="oddeven" name="' . $type . $suffix . '">';
 							print '<td>';
 							print '<input name="fk_commandefourndet' . $suffix . '" type="hidden" value="' . $objp->rowid . '">';
 							print '<input name="product_batch' . $suffix . '" type="hidden" value="' . $objp->fk_product . '">';
-							print '<input name="pu' . $suffix . '" type="hidden" value="' . $up_ht_disc . '"><!-- This is a up including discount -->';
+							
+							print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
+							if (! empty($conf->global->SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT)) // Not tested !
+							{
+							    print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu' . $suffix . '" type="text" value="' . price2num($up_ht_disc, 'MU') . '">';
+							}
+							else
+							{
+							    print '<input class="maxwidth75" name="pu' . $suffix . '" type="hidden" value="' . price2num($up_ht_disc, 'MU') . '">';
+							}
+
 							// hidden fields for js function
 							print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $objp->qty . '">';
 							print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . ( float ) $products_dispatched[$objp->rowid] . '">';
@@ -544,11 +552,22 @@ if ($id > 0 || ! empty($ref)) {
 							print '<td align="right">' . img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"') . '</td>'; // Dispatch column
 							print '<td></td>';
 							print '</tr>';
-							print '<tr ' . $bc[$var] . ' name="' . $type . $suffix . '">';
+
+							print '<tr class="oddeven" name="' . $type . $suffix . '">';
 							print '<td colspan="6">';
 							print '<input name="fk_commandefourndet' . $suffix . '" type="hidden" value="' . $objp->rowid . '">';
 							print '<input name="product' . $suffix . '" type="hidden" value="' . $objp->fk_product . '">';
-							print '<input name="pu' . $suffix . '" type="hidden" value="' . $up_ht_disc . '"><!-- This is a up including discount -->';
+							
+							print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
+							if (! empty($conf->global->SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT)) // Not tested !
+							{
+							    print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu' . $suffix . '" type="text" value="' . price2num($up_ht_disc, 'MU') . '">';
+							}
+							else
+							{
+							    print '<input class="maxwidth75" name="pu' . $suffix . '" type="hidden" value="' . price2num($up_ht_disc, 'MU') . '">';
+							}
+							
 							// hidden fields for js function
 							print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $objp->qty . '">';
 							print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . ( float ) $products_dispatched[$objp->rowid] . '">';

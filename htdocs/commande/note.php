@@ -75,7 +75,7 @@ if ($id > 0 || ! empty($ref))
 	
 	$head = commande_prepare_head($object);
 	
-	dol_fiche_head($head, 'note', $langs->trans("CustomerOrder"), 0, 'order');
+	dol_fiche_head($head, 'note', $langs->trans("CustomerOrder"), -1, 'order');
 
 	// Order card
 	

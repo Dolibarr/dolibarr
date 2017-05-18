@@ -101,10 +101,10 @@ if ((! $versionfrom || preg_match('/version/', $versionfrom)) && (! $versionto |
 	exit;
 }
 
-pHeader('','step5',GETPOST("action")?GETPOST("action"):'upgrade','versionfrom='.$versionfrom.'&versionto='.$versionto);
+pHeader('','step5',GETPOST('action','aZ09')?GETPOST('action','aZ09'):'upgrade','versionfrom='.$versionfrom.'&versionto='.$versionto);
 
 
-if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
+if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09')))
 {
     print '<h3>'.$langs->trans('DataMigration').'</h3>';
 
@@ -424,6 +424,21 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
                 'MAIN_MODULE_CRON'=>'newboxdefonly',
                 'MAIN_MODULE_FACTURE'=>'newboxdefonly',
                 'MAIN_MODULE_PRINTING'=>'newboxdefonly',
+            );
+            migrate_reload_modules($db,$langs,$conf,$listofmodule);
+        
+            // Reload menus (this must be always and only into last targeted version)
+            migrate_reload_menu($db,$langs,$conf,$versionto);
+        }
+        
+        // Scripts for last version
+        $afterversionarray=explode('.','5.0.9');
+        $beforeversionarray=explode('.','6.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+            // Reload modules (this must be always and only into last targeted version)
+            $listofmodule=array(
+                'MAIN_MODULE_USER'=>'newboxdefonly',
             );
             migrate_reload_modules($db,$langs,$conf,$listofmodule);
         
@@ -1276,7 +1291,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
                             print '<tr><td>fk_paiementfourn</td><td>fk_facturefourn</td><td>'.$langs->trans('Amount').'</td><td>&nbsp;</td></tr>';
                         }
 
-                        print '<tr '.$bc[$var].'>';
+                        print '<tr class="oddeven">';
                         print '<td>'.$select_obj->rowid.'</td><td>'.$select_obj->fk_facture_fourn.'</td><td>'.$select_obj->amount.'</td>';
 
                         $insert_sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn SET ';

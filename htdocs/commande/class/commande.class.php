@@ -116,7 +116,6 @@ class Commande extends CommonOrder
 
     public $demand_reason_id;   // Source reason. Why we receive order (after a phone campaign, ...)
     public $demand_reason_code;
-    public $address;
     public $date;				// Date commande
 	/**
 	 * @deprecated
@@ -707,9 +706,12 @@ class Commande extends CommonOrder
 
         // Clean parameters
         $this->brouillon = 1;		// set command as draft
-
+		
+		// $date_commande is deprecated
+        $date = ($this->date_commande ? $this->date_commande : $this->date);
+		
 		// Multicurrency (test on $this->multicurrency_tx because we sould take the default rate only if not using origin rate)
-		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $date);
 		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		if (empty($this->fk_multicurrency))
 		{
@@ -747,9 +749,6 @@ class Commande extends CommonOrder
             dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             return -1;
         }
-
-        // $date_commande is deprecated
-        $date = ($this->date_commande ? $this->date_commande : $this->date);
 
         $now=dol_now();
 
@@ -2875,11 +2874,6 @@ class Commande extends CommonOrder
                     $this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
                     dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
                     $this->db->rollback();
-                    unset($_POST['productid']);
-                    unset($_POST['tva_tx']);
-                    unset($_POST['price_ht']);
-                    unset($_POST['qty']);
-                    unset($_POST['buying_price']);
                     return self::STOCK_NOT_ENOUGH_FOR_ORDER;
                 }
             }
@@ -3111,6 +3105,8 @@ class Commande extends CommonOrder
 
         $error = 0;
 
+        dol_syslog(get_class($this) . "::delete ".$this->id, LOG_DEBUG);
+        
         $this->db->begin();
 
         if (! $error && ! $notrigger)
@@ -3126,7 +3122,6 @@ class Commande extends CommonOrder
         {
         	// Delete order details
         	$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = ".$this->id;
-        	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         	if (! $this->db->query($sql) )
         	{
         		$error++;
@@ -3135,7 +3130,6 @@ class Commande extends CommonOrder
 
         	// Delete order
         	$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;
-        	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         	if (! $this->db->query($sql) )
         	{
         		$error++;
@@ -3193,7 +3187,6 @@ class Commande extends CommonOrder
 
         if (! $error)
         {
-        	dol_syslog(get_class($this)."::delete $this->id by $user->id", LOG_DEBUG);
         	$this->db->commit();
         	return 1;
         }
@@ -3201,7 +3194,6 @@ class Commande extends CommonOrder
         {
 	        foreach($this->errors as $errmsg)
 	        {
-		        dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 		        $this->error.=($this->error?', '.$errmsg:$errmsg);
 	        }
 	        $this->db->rollback();
@@ -3242,7 +3234,7 @@ class Commande extends CommonOrder
 	        $response->warning_delay=$conf->commande->client->warning_delay/60/60/24;
 	        $response->label=$langs->trans("OrdersToProcess");
 	        $response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3&mainmenu=commercial&leftmenu=orders';
-	        $response->img=img_object($langs->trans("Orders"),"order");
+	        $response->img=img_object('',"order");
 
             $generic_commande = new Commande($this->db);
 
@@ -3552,25 +3544,26 @@ class Commande extends CommonOrder
             $line->qty=1;
             $line->subprice=100;
             $line->price=100;
-            $line->tva_tx=19.6;
+            $line->tva_tx=20;
             if ($xnbp == 2)
             {
                 $line->total_ht=50;
-                $line->total_ttc=59.8;
-                $line->total_tva=9.8;
+                $line->total_ttc=60;
+                $line->total_tva=10;
                 $line->remise_percent=50;
             }
             else
             {
                 $line->total_ht=100;
-                $line->total_ttc=119.6;
-                $line->total_tva=19.6;
+                $line->total_ttc=120;
+                $line->total_tva=20;
                 $line->remise_percent=0;
             }
             if ($num_prods > 0)
             {
             	$prodid = mt_rand(1, $num_prods);
             	$line->fk_product=$prodids[$prodid];
+				$line->product_ref='SPECIMEN';
             }
 
             $this->lines[$xnbp]=$line;
@@ -3651,16 +3644,14 @@ class Commande extends CommonOrder
 
 		$langs->load("orders");
 
-		// Positionne le modele sur le nom du modele a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->COMMANDE_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'einstein';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->COMMANDE_ADDON_PDF)) {
 				$modele = $conf->global->COMMANDE_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'einstein';
 			}
 		}
 

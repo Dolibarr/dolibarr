@@ -110,7 +110,7 @@ if ($object->id > 0)
 		// Tabs for project
 		$tab='tasks';
 		$head=project_prepare_head($projectstatic);
-		dol_fiche_head($head, $tab, $langs->trans("Project"),0,($projectstatic->public?'projectpub':'project'));
+		dol_fiche_head($head, $tab, $langs->trans("Project"), 0, ($projectstatic->public?'projectpub':'project'));
 
 		$param=($mode=='mine'?'&mode=mine':'');
 		// Project card
@@ -197,49 +197,47 @@ if ($object->id > 0)
 	}
 
 	$head = task_prepare_head($object);
-	dol_fiche_head($head, 'task_notes', $langs->trans('Task'), 0, 'projecttask');
+	dol_fiche_head($head, 'task_notes', $langs->trans('Task'), -1, 'projecttask');
 
-	print '<table class="border" width="100%">';
-
+	
 	$param=(GETPOST('withproject')?'&withproject=1':'');
 	$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
-
-	// Ref
-	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
-	if (empty($withproject) || empty($projectstatic->id))
+	
+	if (! GETPOST('withproject') || empty($projectstatic->id))
 	{
 	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
 	    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 	}
 	else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-	print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
-	print '</td></tr>';
-
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
-
+	
+	$morehtmlref='';
+	
 	// Project
 	if (empty($withproject))
 	{
-		print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-		print $projectstatic->getNomUrl(1);
-		print '</td></tr>';
-
-		// Third party
-		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-		if ($projectstatic->thirdparty->id > 0) print $projectstatic->thirdparty->getNomUrl(1);
-		else print'&nbsp;';
-		print '</td></tr>';
+	    $morehtmlref.='<div class="refidno">';
+	    $morehtmlref.=$langs->trans("Project").': ';
+	    $morehtmlref.=$projectstatic->getNomUrl(1);
+	    $morehtmlref.='<br>';
+	
+	    // Third party
+	    $morehtmlref.=$langs->trans("ThirdParty").': ';
+	    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+	    $morehtmlref.='</div>';
 	}
-
-	print "</table>";
-
-	print '<br>';
+	
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
+	
+	print '<div class="fichecenter">';
+	
+    print '<div class="underbanner clearboth"></div>';
 
 	$cssclass='titlefield';
     $moreparam=$param;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
+	print '</div>';
+	
 	dol_fiche_end();
 }
 

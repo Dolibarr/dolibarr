@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->load('projects');
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $mode=GETPOST("mode");
 $id=GETPOST('id','int');
 $taskid=GETPOST('taskid');
@@ -323,7 +323,7 @@ $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,$day,$y
 $nav.='<a class="inline-block valignmiddle" href="?year='.$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
 $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
 $nav.='<br>'.$form->select_date(-1,'',0,0,2,"addtime",1,0,1).' ';
-$nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
+$nav.=' <input type="submit" name="submitdateselect" class="button valignmiddle" value="'.$langs->trans("Refresh").'">';
 
 $picto='calendarweek';
 
@@ -338,14 +338,15 @@ print '<input type="hidden" name="addtimemonth" value="'.$tmp['mon'].'">';
 print '<input type="hidden" name="addtimeday" value="'.$tmp['mday'].'">';
 
 $head=project_timesheet_prepare_head($mode);
-dol_fiche_head($head, 'inputperday', '', 0, 'task');
+dol_fiche_head($head, 'inputperday', '', -1, 'task');
 
 // Show description of content
+print '<div class="hideonsmartphone">';
 if ($mine) print $langs->trans("MyTasksDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
 else
 {
 	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
-	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopenedproject?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br>';
+	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
 }
 if ($mine)
 {
@@ -355,6 +356,7 @@ else
 {
 	print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
 }
+print '</div>';
 
 dol_fiche_end();
 
@@ -389,7 +391,7 @@ dol_fiche_end();
 //print '<input type="hidden" name="month" value="'.$month.'">';
 //print '<input type="hidden" name="day" value="'.$day.'">';
 
-print '<div class="floatright">'.$nav.'</div>';     // We move this before the assign to components so, the default submit button is not the assign to.
+print '<div class="floatright right">'.$nav.'</div>';     // We move this before the assign to components so, the default submit button is not the assign to.
 
 print '<div class="float valignmiddle">';
 print $langs->trans("AssignTaskToMe").'<br>';
@@ -404,6 +406,25 @@ print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
+
+print '<tr class="liste_titre_filter">';
+print '<td class="liste_titre"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
+print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
+print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
+if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+// Action column
+print '<td class="liste_titre nowrap" align="right">';
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
+print '</td>';
+print "</tr>\n";
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("RefTask").'</td>';
@@ -421,25 +442,6 @@ else print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpentByUs
 print '<td align="center">'.$langs->trans("HourStart").'</td>';
 print '<td align="center" colspan="2">'.$langs->trans("Duration").'</td>';
 print '<td align="right">'.$langs->trans("Note").'</td>';
-print "</tr>\n";
-
-print '<tr class="liste_titre">';
-print '<td class="liste_titre"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
-print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
-print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
-if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-// Action column
-print '<td class="liste_titre nowrap" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
-print '</td>';
 print "</tr>\n";
 
 

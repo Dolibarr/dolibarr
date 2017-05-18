@@ -249,8 +249,8 @@ if ($result)
 	print '</td>';
 
 	print '<td align="right" class="liste_titre">';
-	$searchpitco=$form->showFilterAndCheckAddButtons(0);
-	print $searchpitco;
+	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
 	print '</td>';
 
 	print "</tr>\n";
@@ -261,9 +261,9 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-		$var=!$var;
+		
 
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 
 		// Date
 		print '<td align="left" class="nowrap">'.dol_print_date($db->jdate($obj->dateevent),'%Y-%m-%d %H:%M:%S').'</td>';

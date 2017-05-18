@@ -273,6 +273,23 @@ class Users extends DolibarrApi
 	}
 
 	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   object  $object    Object to clean
+	 * @return    array    Array of cleaned object properties
+	 */
+	function _cleanObjectDatas($object) {
+	
+	    $object = parent::_cleanObjectDatas($object);
+	
+	    unset($object->default_values);
+	    unset($object->lastsearch_values);
+	    unset($object->lastsearch_values_tmp);
+	     
+	    return $object;
+	}	
+	
+	/**
 	 * Validate fields before create or update object
      * 
 	 * @param   array|null     $data   Data to validate

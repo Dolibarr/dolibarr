@@ -154,20 +154,16 @@ if ($result)
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
+    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    print $searchpicto;
     print '</td>';
     print '</tr>';
 
-    $var=True;
-
     while ($i < min($num,$limit))
     {
-        $obj = $db->fetch_object($result);
+        $obj = $db->fetch_object($result);    
 
-        $var=!$var;
-
-        print "<tr ".$bc[$var]."><td>";
+        print '<tr class="oddeven"><td>';
 
         print $ligne->LibStatut($obj->statut_ligne,2);
         print "&nbsp;";
@@ -183,9 +179,9 @@ if ($result)
 
         print '<a href="card.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
-        print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
+        print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">';
         print img_object($langs->trans("ShowBill"),"bill");
-          print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->facnumber."</a></td>\n";
+          print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->facnumber."</a></td>\n";
         print '</a></td>';
 
         print '<td><a href="card.php?id='.$obj->rowid.'">'.$obj->name."</a></td>\n";

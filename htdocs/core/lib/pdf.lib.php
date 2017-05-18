@@ -586,6 +586,36 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 	}
 }
 
+
+/**
+ *   	Return array of possible substitutions
+ *
+ *		@param	Translate	$outputlangs	Output language
+ *      @return	array						Array of substitutions
+ */
+function pdf_getSubstitutionArray($outputlangs)
+{
+	global $conf, $mysoc, $user;
+	$substitutionarray=array(
+		'__MYCOMPANY_NAME__' => $mysoc->name,
+		'__MYCOMPANY_EMAIL__' => $mysoc->email,
+		'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
+		'__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
+		'__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
+		'__MYCOMPANY_PROFID4__' => $mysoc->idprof4,
+		'__MYCOMPANY_PROFID5__' => $mysoc->idprof5,
+		'__MYCOMPANY_PROFID6__' => $mysoc->idprof6,
+		'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
+	    '__USER_ID__' => $user->id,
+		'__USER_LOGIN__' => $user->login,
+		'__USER_LASTNAME__' => $user->lastname,
+		'__USER_FIRSTNAME__' => $user->firstname,
+		'__USER_FULLNAME__' => $user->getFullName($outputlangs)
+	);
+	return $substitutionarray;
+}
+
+
 /**
  *      Add a draft watermark on PDF files
  *
@@ -599,12 +629,20 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
  */
 function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 {
+	global $langs, $mysoc, $user;
+	
 	// Print Draft Watermark
 	if ($unit=='pt') $k=1;
 	elseif ($unit=='mm') $k=72/25.4;
 	elseif ($unit=='cm') $k=72/2.54;
 	elseif ($unit=='in') $k=72;
 
+	// Make substitution
+	$substitutionarray=pdf_getSubstitutionArray($outputlangs);
+	complete_substitutions_array($substitutionarray,$outputlangs,$object);
+	$text=make_substitutions($text,$substitutionarray,$outputlangs);
+	$text=$outputlangs->convToOutputCharset($text);
+	
 	$savx=$pdf->getX(); $savy=$pdf->getY();
 
 	$watermark_angle=atan($h/$w)/2;
@@ -819,7 +857,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
  */
 function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_basse,$marge_gauche,$page_hauteur,$object,$showdetails=0,$hidefreetext=0)
 {
-	global $conf,$user;
+	global $conf,$user,$mysoc;
 
 	$outputlangs->load("dict");
 	$line='';
@@ -829,16 +867,15 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	// Line of free text
 	if (empty($hidefreetext) && ! empty($conf->global->$paramfreetext))
 	{
-		// Make substitution
-		$substitutionarray=array(
-			'__FROM_NAME__' => $fromcompany->name,
-			'__FROM_EMAIL__' => $fromcompany->email,
-			'__TOTAL_TTC__' => $object->total_ttc,
-			'__TOTAL_HT__' => $object->total_ht,
-			'__TOTAL_VAT__' => $object->total_vat
-		);
+		$substitutionarray=pdf_getSubstitutionArray($outputlangs);
+		// More substitution keys
+		$substitutionarray['__FROM_NAME__']=$fromcompany->name;
+		$substitutionarray['__FROM_EMAIL__']=$fromcompany->email;
+		$substitutionarray['__TOTAL_TTC__']=$object->total_ttc;
+		$substitutionarray['__TOTAL_HT__']=$object->total_ht;
+		$substitutionarray['__TOTAL_VAT__']=$object->total_vat;
 		complete_substitutions_array($substitutionarray,$outputlangs,$object);
-		$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
+		$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray,$outputlangs);
 		$line.=$outputlangs->convToOutputCharset($newfreetext);
 	}
 
@@ -1211,6 +1248,12 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			// Add date of deposit
 			if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec,'day','',$outputlangs).')';
 		}
+		if ($desc == '(EXCESS RECEIVED)' && $object->lines[$i]->fk_remise_except)
+		{
+			$discount=new DiscountAbsolute($db);
+			$discount->fetch($object->lines[$i]->fk_remise_except);
+			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromExcessReceived",$discount->ref_facture_source);
+		}
 		else
 		{
 			if ($idprod)
@@ -1248,11 +1291,15 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			{
 				if ($issupplierline) 
 				{
-				    //$ref_prodserv = $prodser->ref.($ref_supplier ? ' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')' : '');   // Show local ref and supplier ref
-				    if (! empty($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES)) $ref_prodserv =$ref_supplier;
-    			    else $ref_prodserv = $prodser->ref.($ref_supplier ? ' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')' : '');   // Show local ref and supplier ref
+					if ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1)
+						$ref_prodserv = $ref_supplier;
+					elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2)
+						$ref_prodserv = $ref_supplier. ' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';  
+					else 
+						$ref_prodserv = $prodser->ref.' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')';
 				}
-				else $ref_prodserv = $prodser->ref; // Show local ref only
+				else 
+					$ref_prodserv = $prodser->ref; // Show local ref only
 
 				if (! empty($libelleproduitservice)) $ref_prodserv .= " - ";
 			}
@@ -1768,8 +1815,17 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 	}
 	if (empty($reshook))
 	{
-        if ($object->lines[$i]->special_code == 3) return '';
-	    if (empty($hidedetails) || $hidedetails > 1) $result.=$object->lines[$i]->situation_percent . '%';
+        	if ($object->lines[$i]->special_code == 3) return '';
+		if (empty($hidedetails) || $hidedetails > 1)
+		{
+			if($conf->global->SITUATION_DISPLAY_DIFF_ON_PDF)
+			{
+			 	$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+			 	$result = ( $object->lines[$i]->situation_percent - $prev_progress) . '%';
+			}
+			else
+				$result = $object->lines[$i]->situation_percent . '%';
+	  	}
 	}
 	return $result;
 }
@@ -1804,7 +1860,7 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
 		if(!empty($hookmanager->resPrint)) $result.=$hookmanager->resPrint;
 	}
     if (empty($reshook))
-	{
+    {
 	    if ($object->lines[$i]->special_code == 3)
     	{
     		return $outputlangs->transnoentities("Option");
@@ -1812,9 +1868,16 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
         if (empty($hidedetails) || $hidedetails > 1)
         {
         	$total_ht = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
+        	if ($object->lines[$i]->situation_percent > 0 )
+        	{
+		 	$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+		 	$progress = ( $object->lines[$i]->situation_percent - $prev_progress) /100;
+		 	$result.=price($sign * ($total_ht/($object->lines[$i]->situation_percent/100)) * $progress, 0, $outputlangs);
+		}
+        	else
 			$result.=price($sign * $total_ht, 0, $outputlangs);
-        }
 	}
+    }
 	return $result;
 }
 

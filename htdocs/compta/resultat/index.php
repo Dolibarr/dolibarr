@@ -671,8 +671,8 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 {
 	$mois_modulo = $mois;
 	if($mois>12) {$mois_modulo = $mois-12;}
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	
+	print '<tr class="oddeven">';
 	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois_modulo,1,$annee),"%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
@@ -704,7 +704,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 }
 
 // Total
-$var=!$var;
+
 $nbcols=0;
 print '<tr class="liste_total impair"><td>'.$langs->trans("TotalTTC").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -721,7 +721,7 @@ print '<td colspan="'.$nbcols.'">&nbsp;</td>';
 print "</tr>\n";
 
 // Balance
-$var=!$var;
+
 print '<tr class="liste_total"><td>'.$langs->trans("AccountingResult").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {

@@ -654,10 +654,11 @@ llxHeader('', $title, $helpurl);
 $head = product_prepare_head($object);
 $titre = $langs->trans("CardProduct" . $object->type);
 $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
-dol_fiche_head($head, 'price', $titre, 0, $picto);
+
+dol_fiche_head($head, 'price', $titre, -1, $picto);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-
+$object->next_prev_filter=" fk_product_type = ".$object->type;
 dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
 
 
@@ -760,7 +761,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		{
 		    $var = ! $var;
 		    
-			print '<tr '.$bc[$var].'>';
+			print '<tr class="oddeven">';
 
 			// Label of price
 			print '<td>';
@@ -1079,6 +1080,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 	if (empty($conf->global->PRODUIT_MULTIPRICES))
 	{
+	    print '<!-- Edit price -->'."\n";
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="update_price">';
@@ -1183,7 +1185,8 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 	}
 	else
 	{
-		?>
+	    print '<!-- Edit price per level -->'."\n";
+	    ?>
 		<script>
 
 			var showHidePriceRules = function () {
@@ -1212,7 +1215,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="' . $object->id . '">';
 
-		dol_fiche_head('');
+		//dol_fiche_head('', '', '', -1);
 		
 		if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL)) {
 			print $langs->trans('UseMultipriceRules'). ' <input type="checkbox" id="usePriceRules" name="usePriceRules" '.($object->price_autogen ? 'checked' : '').'><br><br>';
@@ -1242,7 +1245,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		{
 			$var = !$var;
 
-			print '<tr '.$bc[$var].'>';
+			print '<tr class="oddeven">';
 			print '<td>';
 			print $form->textwithpicto($langs->trans('SellingPrice') . ' ' . $i, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 			print '</td>';
@@ -1294,7 +1297,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		
 		print '</table>';
 		
-		dol_fiche_end();
+		//dol_fiche_end();
 		
 		print '<div style="text-align: center">';
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
@@ -1723,7 +1726,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			foreach ($prodcustprice->lines as $line)
 			{
 				$var = ! $var;
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				// Date
 				$staticsoc = new Societe($db);
 				$staticsoc->fetch($line->fk_soc);
@@ -1797,8 +1800,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
     		print '<td class="liste_titre" colspan="8">&nbsp;</td>';
     		// Print the search button
             print '<td class="liste_titre" align="right">';
-            $searchpitco=$form->showFilterAndCheckAddButtons(0);
-            print $searchpitco;
+            $searchpicto=$form->showFilterAndCheckAddButtons(0);
+            print $searchpicto;
             print '</td>';
     		print '</tr>';
 		}
@@ -1807,7 +1810,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		
 		
 		// Line for default price
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print "<td>" . $langs->trans("Default") . "</td>";
 		print "<td>" . "</td>";
 		
@@ -1842,7 +1845,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			{
 			    $var = ! $var;
 			    
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				// Date
 				$staticsoc = new Societe($db);
 				$staticsoc->fetch($line->fk_soc);

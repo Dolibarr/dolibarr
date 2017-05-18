@@ -37,21 +37,22 @@ class UserGroup extends CommonObject
 	public $element='usergroup';
 	public $table_element='usergroup';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
-	var $entity;		// Entity of group
+    public $picto='group';
+	public $entity;		// Entity of group
+	
 	/**
 	 * @deprecated
 	 * @see name
 	 */
-	var $nom;			// Name of group
-	var $globalgroup;	// Global group
-	var $datec;			// Creation date of group
-	var $datem;			// Modification date of group
-	var $members=array();	// Array of users
+	public $nom;			// Name of group
+	public $globalgroup;	// Global group
+	public $datec;			// Creation date of group
+	public $datem;			// Modification date of group
+	public $members=array();	// Array of users
 
 	private $_tab_loaded=array();		// Array of cache of already loaded permissions
 
-	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
+	public $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
 
 	/**
@@ -644,22 +645,14 @@ class UserGroup extends CommonObject
 			$action='create';
 
 			// Actions on extra fields (by external module or standard code)
-            // TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('groupdao'));
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
 			if (! $error && ! $notrigger)
 			{
@@ -715,22 +708,14 @@ class UserGroup extends CommonObject
 			$action='update';
 
 			// Actions on extra fields (by external module or standard code)
-            // TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('groupdao'));
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
 			if (! $error && ! $notrigger)
 			{
@@ -760,6 +745,31 @@ class UserGroup extends CommonObject
 	}
 
 
+	/**
+	 *  Return label of status of user (active, inactive)
+	 *
+	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return	string 			       Label of status
+	 */
+	function getLibStatut($mode=0)
+	{
+	    return $this->LibStatut(0,$mode);
+	}
+	
+	/**
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int		$statut        	Id statut
+	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string 			       	Label of status
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+	    global $langs;
+	    $langs->load('users');
+	    return '';
+	}
+	    
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -834,6 +844,40 @@ class UserGroup extends CommonObject
 		$this->datec=time();
 		$this->datem=time();
 		$this->members=array($user->id);	// Members of this group is just me
+	}
+	
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 * 	@param	    string		$modele			Force model to use ('' to not force)
+	 * 	@param		Translate	$outputlangs	Object langs to use for output
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 * 	@return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$user,$langs;
+
+		$langs->load("user");
+
+		// Positionne le modele sur le nom du modele a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->USERGROUP_ADDON_PDF))
+			{
+				$modele = $conf->global->USERGROUP_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'grass';
+			}
+		}
+
+		$modelpath = "core/modules/usergroup/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 }
 

@@ -32,7 +32,7 @@ $langs->load("admin");
 $langs->load("users");
 $langs->load("other");
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 if (!$user->admin) accessforbidden();
 
@@ -118,7 +118,7 @@ $db->commit();
 
 $head=security_prepare_head();
 
-dol_fiche_head($head, 'default', $langs->trans("Security"));
+dol_fiche_head($head, 'default', $langs->trans("Security"), -1);
 
 
 // Show warning about external users
@@ -140,7 +140,6 @@ if ($result)
 {
     $num	= $db->num_rows($result);
     $i		= 0;
-    $var	= True;
     $oldmod	= "";
 
     while ($i < $num)
@@ -186,9 +185,8 @@ if ($result)
             print "</tr>\n";
         }
 
-        $var=!$var;
-        print '<tr '. $bc[$var].'>';
-
+        
+        print '<tr class="oddeven">';
         print '<td>'.img_object('',$picto).' '.$objMod->getName();
         print '<a name="'.$objMod->getName().'">&nbsp;</a>';
 

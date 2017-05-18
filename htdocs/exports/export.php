@@ -147,7 +147,7 @@ $usefilters=1;
  * Actions
  */
 
-if ($action=='selectfield')
+if ($action=='selectfield')     // Selection of field at step 2
 {
 	$fieldsarray=$objexport->array_export_fields[0];
 	$fieldsentitiesarray=$objexport->array_export_entities[0];
@@ -168,12 +168,28 @@ if ($action=='selectfield')
         $warnings=array();
 
         $array_selected[$field]=count($array_selected)+1;    // We tag the key $field as "selected"
-        // We check if there is a dependency
+        // We check if there is a dependency to activate 
+        /*var_dump($field);
+        var_dump($fieldsentitiesarray[$field]);
+        var_dump($fieldsdependenciesarray);*/
+        $listofdependencies=array();
         if (! empty($fieldsentitiesarray[$field]) && ! empty($fieldsdependenciesarray[$fieldsentitiesarray[$field]]))
         {
+            // We found a dependency on the type of field
             $tmp=$fieldsdependenciesarray[$fieldsentitiesarray[$field]]; // $fieldsdependenciesarray=array('element'=>'fd.rowid') or array('element'=>array('fd.rowid','ab.rowid'))
             if (is_array($tmp)) $listofdependencies=$tmp;
             else $listofdependencies=array($tmp);
+        }
+        else if (! empty($field) && ! empty($fieldsdependenciesarray[$field]))
+        {
+            // We found a dependency on a dedicated field
+            $tmp=$fieldsdependenciesarray[$field]; // $fieldsdependenciesarray=array('fd.fieldx'=>'fd.rowid') or array('fd.fieldx'=>array('fd.rowid','ab.rowid'))
+            if (is_array($tmp)) $listofdependencies=$tmp;
+            else $listofdependencies=array($tmp);
+        }
+        
+        if (count($listofdependencies))
+        {
             foreach($listofdependencies as $fieldid)
             {
                 if (empty($array_selected[$fieldid]))
@@ -423,7 +439,7 @@ if ($step == 1 || ! $datatoexport)
     $h++;
     */
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
+    dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -1);
 
 
     print '<table class="notopnoleftnoright" width="100%">';
@@ -494,19 +510,21 @@ if ($step == 2 && $datatoexport)
     $hselected=$h;
     $h++;
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
+    dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -1);
 
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
     print '<table width="100%" class="border">';
 
     // Module
-    print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
+    print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
     print '<td>';
     //print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
     print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
     // Lot de donnees a exporter
-    print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
+    print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
 	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
     $label=$objexport->array_export_label[0];
@@ -516,6 +534,10 @@ if ($step == 2 && $datatoexport)
     print '</td></tr>';
 
     print '</table>';
+    print '</div>';
+    
+    dol_fiche_end();
+    
     print '<br>';
 
     // Combo list of export models
@@ -527,6 +549,7 @@ if ($step == 2 && $datatoexport)
     print '<table><tr><td colspan="2">';
     print $langs->trans("SelectExportFields").' ';
     $htmlother->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1);
+    print ' ';
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
     print '</td></tr></table>';
     print '</form>';
@@ -562,8 +585,8 @@ if ($step == 2 && $datatoexport)
 
     foreach($fieldsarray as $code=>$label)
     {
-        $var=!$var;
-        print "<tr ".$bc[$var].">";
+        
+        print '<tr class="oddeven">';
 
         $i++;
 
@@ -586,7 +609,14 @@ if ($step == 2 && $datatoexport)
         $text=$langs->trans($label);
         $tablename=getablenamefromfield($code,$sqlmaxforexport);
         $htmltext ='<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
-        $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
+        if (! empty($objexport->array_export_special[0][$code]))
+        {
+            $htmltext.='<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
+        }
+        else
+        {
+            $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
+        }
 		if (! empty($objexport->array_export_examplevalues[0][$code]))
 		{
 		    $htmltext.=$langs->trans("SourceExample").': <b>'.$objexport->array_export_examplevalues[0][$code].'</b><br>';
@@ -619,13 +649,11 @@ if ($step == 2 && $datatoexport)
 
     print '</table>';
 
-    print '</div>';
-
+    
     /*
      * Barre d'action
-     *
      */
-    print '<div class="tabsAction">';
+    print '<div class="tabsAction tabsActionNoBottom">';
 
     if (count($array_selected))
 	{
@@ -677,19 +705,21 @@ if ($step == 3 && $datatoexport)
 	$hselected=$h;
 	$h++;
 
-	dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
+	dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -1);
 
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
 	print '<table width="100%" class="border">';
 
 	// Module
-	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	//print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
 	print $objexport->array_export_module[0]->getName();
 	print '</td></tr>';
 
 	// Lot de donnees a exporter
-	print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
+	print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
 	print '<td>';
 	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
 	$label=$objexport->array_export_label[0];
@@ -699,7 +729,7 @@ if ($step == 3 && $datatoexport)
 	print '</td></tr>';
 
 	// Nbre champs exportes
-	print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
+	print '<tr><td>'.$langs->trans("ExportedFields").'</td>';
 	$list='';
 	foreach($array_selected as $code=>$value)
 	{
@@ -709,6 +739,8 @@ if ($step == 3 && $datatoexport)
 	print '<td>'.$list.'</td></tr>';
 
 	print '</table>';
+	print '</div>';
+	
 	print '<br>';
 
 	// Combo list of export models
@@ -740,8 +772,8 @@ if ($step == 3 && $datatoexport)
 	// on boucle sur les champs
 	foreach($fieldsarray as $code => $label)
 	{
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 
 		$i++;
 		$entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
@@ -802,7 +834,7 @@ if ($step == 3 && $datatoexport)
 	/*
 	 * Barre d'action
 	 */
-	print '<div class="tabsAction">';
+	print '<div class="tabsAction tabsActionNoBottom">';
 	// il n'est pas obligatoire de filtrer les champs
 	print '<a class="butAction" href="javascript:FilterField.submit();">'.$langs->trans("NextStep").'</a>';
 	print '</div>';
@@ -850,19 +882,21 @@ if ($step == 4 && $datatoexport)
     $hselected=$h;
     $h++;
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
+    dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -1);
 
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
     print '<table width="100%" class="border">';
 
     // Module
-    print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
+    print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
     print '<td>';
     //print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
     print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
     // Lot de donnees a exporter
-    print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
+    print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
 	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
     print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
@@ -870,7 +904,7 @@ if ($step == 4 && $datatoexport)
     print '</td></tr>';
 
     // List of exported fields
-    print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
+    print '<tr><td>'.$langs->trans("ExportedFields").'</td>';
     $list='';
     foreach($array_selected as $code=>$value)
     {
@@ -902,6 +936,8 @@ if ($step == 4 && $datatoexport)
     }
 
     print '</table>';
+    print '</div>';
+    
     print '<br>';
 
     // Select request if all fields are selected
@@ -921,8 +957,8 @@ if ($step == 4 && $datatoexport)
     $var=true;
     foreach($array_selected as $code=>$value)
     {
-        $var=!$var;
-        print "<tr ".$bc[$var].">";
+        
+        print '<tr class="oddeven">';
 
         $entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
         $entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
@@ -1002,7 +1038,7 @@ if ($step == 4 && $datatoexport)
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 		$var=false;
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 		print '<td><input name="export_name" size="32" value=""></td><td align="right">';
         print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
         print '</td></tr>';
@@ -1020,9 +1056,9 @@ if ($step == 4 && $datatoexport)
 			$var=false;
 			while ($i < $num)
 			{
-				$var=!$var;
+				
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td>';
+				print '<tr class="oddeven"><td>';
 				print $obj->label;
 				print '</td><td align="right">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=deleteprof&id='.$obj->rowid.'">';
@@ -1086,7 +1122,7 @@ if ($step == 5 && $datatoexport)
     $hselected=$h;
     $h++;
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
+    dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -1);
 
     /*
      * Confirmation suppression fichier
@@ -1097,17 +1133,20 @@ if ($step == 5 && $datatoexport)
 
     }
 
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
+    
     print '<table width="100%" class="border">';
 
     // Module
-    print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
+    print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
     print '<td>';
     //print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
     print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
     // Lot de donnees a exporter
-    print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
+    print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
 	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
     print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
@@ -1115,7 +1154,7 @@ if ($step == 5 && $datatoexport)
     print '</td></tr>';
 
     // List of exported fields
-    print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
+    print '<tr><td>'.$langs->trans("ExportedFields").'</td>';
     $list='';
     foreach($array_selected as $code=>$label)
     {
@@ -1127,7 +1166,7 @@ if ($step == 5 && $datatoexport)
     // List of filtered fiels
     if (isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0]))
     {
-    	print '<tr><td width="25%">'.$langs->trans("FilteredFields").'</td>';
+    	print '<tr><td>'.$langs->trans("FilteredFields").'</td>';
     	$list='';
     	if (! empty($array_filtervalue))
     	{
@@ -1146,6 +1185,8 @@ if ($step == 5 && $datatoexport)
     }
 
     print '</table>';
+    print '</div>';
+    
     print '<br>';
 
     print $langs->trans("NowClickToGenerateToBuildExportFile").'<br>';
@@ -1169,8 +1210,8 @@ if ($step == 5 && $datatoexport)
     		unset($liste[$key]);
     	}
 
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
+        
+        print '<tr class="oddeven">';
         print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).'</td>';
 	    $text=$objmodelexport->getDriverDescForKey($key);
 	    $label=$listeall[$key];
@@ -1205,8 +1246,6 @@ if ($step == 5 && $datatoexport)
     
     print '</div></div></div>';
 }
-
-print '<br>';
 
 llxFooter();
 

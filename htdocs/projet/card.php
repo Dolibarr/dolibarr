@@ -142,9 +142,9 @@ if (empty($reshook))
 	        $db->begin();
 
 	        $object->ref             = GETPOST('ref','alpha');
-	        $object->title           = GETPOST('title'); // Do not use 'alpha' here, we want field as it is
+	        $object->title           = GETPOST('title','none'); // Do not use 'alpha' here, we want field as it is
 	        $object->socid           = GETPOST('socid','int');
-	        $object->description     = GETPOST('description'); // Do not use 'alpha' here, we want field as it is
+	        $object->description     = GETPOST('description','none'); // Do not use 'alpha' here, we want field as it is
 	        $object->public          = GETPOST('public','alpha');
 	        $object->opp_amount      = price2num(GETPOST('opp_amount'));
 	        $object->budget_amount   = price2num(GETPOST('budget_amount'));
@@ -243,9 +243,9 @@ if (empty($reshook))
 			$old_start_date = $object->date_start;
 
 	        $object->ref          = GETPOST('ref','alpha');
-	        $object->title        = GETPOST('title'); // Do not use 'alpha' here, we want field as it is
+	        $object->title        = GETPOST('title','none'); // Do not use 'alpha' here, we want field as it is
 	        $object->socid        = GETPOST('socid','int');
-	        $object->description  = GETPOST('description');	// Do not use 'alpha' here, we want field as it is
+	        $object->description  = GETPOST('description','none');	// Do not use 'alpha' here, we want field as it is
 	        $object->public       = GETPOST('public','alpha');
 	        $object->date_start   = empty($_POST["projectstart"])?'':$date_start;
 	        $object->date_end     = empty($_POST["projectend"])?'':$date_end;
@@ -509,12 +509,16 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '</td></tr>';
 
     // Label
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.GETPOST("title").'"></td></tr>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.GETPOST("title",'none').'"></td></tr>';
 
     // Thirdparty
     if ($conf->societe->enabled)
     {
-        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td class="maxwidthonsmartphone">';
+        print '<tr><td>';
+        print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED)?'':'<span class="fieldrequired">');
+        print $langs->trans("ThirdParty");
+        print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED)?'':'</span>');
+        print '</td><td class="maxwidthonsmartphone">';
         $filteronlist='';
         if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
        	$text=$form->select_thirdparty_list(GETPOST('socid','int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), '', 0, 0, 'minwidth300');
@@ -524,7 +528,7 @@ if ($action == 'create' && $user->rights->projet->creer)
         	print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
         }
         else print $text;
-        print ' <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
         print '</td></tr>';
     }
 
@@ -584,7 +588,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
     print '<td>';
-    print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.GETPOST("description").'</textarea>';
+    print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description",'none')).'</textarea>';
     print '</td></tr>';
 
     if ($conf->categorie->enabled) {
@@ -707,7 +711,7 @@ elseif ($object->id > 0)
     print '<input type="hidden" name="comefromclone" value="'.$comefromclone.'">';
 
     $head=project_prepare_head($object);
-    dol_fiche_head($head, 'project', $langs->trans("Project"),0,($object->public?'projectpub':'project'));
+    dol_fiche_head($head, 'project', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
     if ($action == 'edit' && $userWrite > 0)
     {
@@ -727,7 +731,11 @@ elseif ($object->id > 0)
         // Thirdparty
         if ($conf->societe->enabled)
         {
-            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+            print '<tr><td>';
+            print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED)?'':'<span class="fieldrequired">');
+            print $langs->trans("ThirdParty");
+            print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED)?'':'</span>');
+            print '</td><td>';
     	    $filteronlist='';
     	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
             $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 'None', 1, 0, array(), '', 0, 0, 'minwidth300');
@@ -884,13 +892,12 @@ elseif ($object->id > 0)
     
         // Date start - end
         print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-        print dol_print_date($object->date_start,'day');
-        $end=dol_print_date($object->date_end,'day');
-        if ($end) 
-        {
-            print ' - '.$end;
-            if ($object->hasDelay()) print img_warning($langs->trans('Late'));
-        }
+		$start = dol_print_date($object->date_start,'dayhour');
+		print ($start?$start:'?');
+		$end = dol_print_date($object->date_end,'dayhour');
+		print ' - ';
+		print ($end?$end:'?');
+		if ($object->hasDelay()) print img_warning("Late");
         print '</td></tr>';
     	     
         // Budget
@@ -1080,7 +1087,7 @@ elseif ($object->id > 0)
 	            if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
 	            {
 	                $langs->load("bills");
-	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
 	            }
 	            if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer)
 	            {

@@ -225,29 +225,8 @@ if ($resql)
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-    print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"p.rowid","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
-    if (! empty($conf->banque->enabled))
-    {
-    	print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
-    }
-    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"p.amount","",$param,'align="right"',$sortfield,$sortorder);
-    //print_liste_field_titre($langs->trans("Invoices"),"","","",$param,'align="left"',$sortfield,$sortorder);
-
-	$parameters=array();
-    $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-
-    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
-	print "</tr>\n";
-
     // Lines for filters fields
-    print '<tr class="liste_titre">';
+    print '<tr class="liste_titre_filter">';
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
@@ -275,8 +254,8 @@ if ($resql)
     print '<input class="flat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
 	print '</td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
+    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    print $searchpicto;
     print '</td>';
     if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
     {
@@ -285,12 +264,32 @@ if ($resql)
     }
     print "</tr>\n";
 
-    $var=true;
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"p.rowid","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
+    if (! empty($conf->banque->enabled))
+    {
+        print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+    }
+    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"p.amount","",$param,'align="right"',$sortfield,$sortorder);
+    //print_liste_field_titre($langs->trans("Invoices"),"","","",$param,'align="left"',$sortfield,$sortorder);
+    
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+    
+    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+    print "</tr>\n";
+    
     while ($i < min($num,$limit))
     {
         $objp = $db->fetch_object($resql);
-        $var=!$var;
-        print "<tr ".$bc[$var].">";
+
+        print '<tr class="oddeven">';
 
         print '<td>';
         $paymentstatic->id=$objp->rowid;

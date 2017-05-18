@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2016	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2011		Regis Houssin           <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2011-2017  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry	    <jfefe@aternatik.fr>
  * Copyright (C) 2016		Charlie Benke		    <charlie@patas-monkey.com>
  *
@@ -196,7 +196,7 @@ print "<br>\n";
 
 $head=agenda_prepare_head();
 
-dol_fiche_head($head, 'other', $langs->trans("Agenda"), 0, 'action');
+dol_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
 
 
 /*
@@ -245,7 +245,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     
     clearstatcache();
     
-    $var=true;
     foreach ($dirmodels as $reldir)
     {
     	$dir = dol_buildpath($reldir."core/modules/action/doc/");
@@ -263,10 +262,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			$classname = substr($file, 0, dol_strlen($file) -12);
             			
             			require_once $dir.'/'.$file;
-            			$module = new $classname($db, new ActionComm($db));
+            			$module = new $classname($db, new ActionComm($db));           			
             			
-            			$var=!$var;
-            			print "<tr ".$bc[$var].">\n";
+            			print '<tr class="oddeven">'."\n";
             			print "<td>";
             			print (empty($module->name)?$name:$module->name);
             			print "</td>\n";
@@ -338,8 +336,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     print '</table><br>';
 }
 
-$var=true;
-
 print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
 print '<input type="hidden" name="action" value="set">';
 
@@ -351,8 +347,8 @@ print '<td align="right">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>'."\n";
 
 // Manual or automatic
-$var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
+
+print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
@@ -369,9 +365,9 @@ print '</td></tr>'."\n";
 
 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {
-    $var=!$var;
+    
     print '<!-- AGENDA_USE_EVENT_TYPE_DEFAULT -->';
-    print '<tr '.$bc[$var].'>'."\n";
+    print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";
     print '<td align="center">&nbsp;</td>'."\n";
     print '<td align="right" class="nowrap">'."\n";
@@ -380,8 +376,7 @@ if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 }
 
 // AGENDA_DEFAULT_FILTER_TYPE
-$var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
+print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_TYPE").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right" class="nowrap">'."\n";
@@ -389,8 +384,7 @@ $formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AG
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_STATUS
-$var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
+print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_STATUS").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
@@ -398,14 +392,44 @@ $formactions->form_select_status_action('agenda', $conf->global->AGENDA_DEFAULT_
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_VIEW
-$var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
+print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
 $tmplist=array('show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_list'=>$langs->trans("ViewList"), 'show_peruser'=>$langs->trans("ViewPerUser"));
 print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
 print '</td></tr>'."\n";
+
+// AGENDA NOTIFICATION
+if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+{
+    
+    print '<tr class="oddeven">'."\n";
+    print '<td>'.$langs->trans('AGENDA_NOTIFICATION').'</td>'."\n";
+    print '<td align="center">&nbsp;</td>'."\n";
+    print '<td align="right">'."\n";
+    
+    if (empty($conf->global->AGENDA_NOTIFICATION)) {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_NOTIFICATION">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
+        print '</td></tr>'."\n";
+    } else {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_NOTIFICATION">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
+        print '</td></tr>'."\n";
+    	
+        print '<tr class="oddeven">'."\n";
+        print '<td>'.$langs->trans('AGENDA_NOTIFICATION_SOUND').'</td>'."\n";
+        print '<td align="center">&nbsp;</td>'."\n";
+        print '<td align="right">'."\n";
+    
+        if (empty($conf->global->AGENDA_NOTIFICATION_SOUND)) {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_NOTIFICATION_SOUND">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
+        } else {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_NOTIFICATION_SOUND">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
+        }
+    
+        print '</td></tr>'."\n";
+    }
+}
 
 print '</table>';
 
@@ -414,7 +438,6 @@ dol_fiche_end();
 print '<div class="center"><input class="button" type="submit" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
 
 print '</form>';
-
 
 print "<br>";
 

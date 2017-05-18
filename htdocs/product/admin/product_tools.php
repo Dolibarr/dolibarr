@@ -274,16 +274,16 @@ else
 	print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 	print '</tr>'."\n";
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>'."\n";
+	
+	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("OldVATRates").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
 	print $form->load_tva('oldvatrate', $oldvatrate, $mysoc);
 	print '</td>'."\n";
 	print '</tr>'."\n";
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>'."\n";
+	
+	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("NewVATRates").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
 	print $form->load_tva('newvatrate', $newvatrate, $mysoc);
@@ -291,8 +291,8 @@ else
 	print '</tr>'."\n";
 
 	/*
-	$var=!$var;
-	print '<tr '.$bc[$var].'>'."\n";
+	
+	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("PriceBaseTypeToChange").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
 	print $form->selectPriceBaseType($price_base_type);

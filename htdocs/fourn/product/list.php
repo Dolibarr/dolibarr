@@ -208,8 +208,8 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 
 		print '<td>';
 		$productstatic->id=$objp->rowid;

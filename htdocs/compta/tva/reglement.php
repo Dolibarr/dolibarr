@@ -157,19 +157,10 @@ if ($result)
 	
 	print_barre_liste($langs->trans("VATPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines, 'title_accountancy', 0, '', '', $limit);
 	
+	print '<div class="div-table-responsive">';
 	print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"t.rowid","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"t.label","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateValue"),$_SERVER["PHP_SELF"],"dv","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
-    if (! empty($conf->banque->enabled)) print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"t.amount","",$param,'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
-	print "</tr>\n";
 
-	print '<tr class="liste_titre">';
+	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input type="text" class="flat" size="4" name="search_ref" value="'.$search_ref.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.$search_label.'"></td>';
 	print '<td class="liste_titre"></td>';
@@ -191,15 +182,25 @@ if ($result)
     }
 	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
+    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    print $searchpicto;
     print '</td>';
 	print "</tr>\n";
 
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"t.rowid","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"t.label","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateValue"),$_SERVER["PHP_SELF"],"dv","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
+	if (! empty($conf->banque->enabled)) print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"t.amount","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+	print "</tr>\n";
+	
 	while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
-        $var=!$var;
 
 		if ($obj->payment_code <> '')
 		{
@@ -210,7 +211,7 @@ if ($result)
 			$type = '<td>&nbsp;</td>';
 		}
 
-        print "<tr ".$bc[$var].">";
+        print '<tr class="oddeven">';
 
 		$tva_static->id=$obj->rowid;
 		$tva_static->ref=$obj->rowid;
@@ -254,7 +255,8 @@ if ($result)
 	print "<td>&nbsp;</td></tr>";
 
     print "</table>";
-
+    print '</div>';
+    
 	print '</form>';
 
     $db->free($result);

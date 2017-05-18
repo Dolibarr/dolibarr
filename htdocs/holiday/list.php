@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2013-2016 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2017 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016 Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -82,7 +82,7 @@ $fieldstosearchall = array(
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
 	$search_ref="";
 	$month_create="";
@@ -202,7 +202,7 @@ $user_id = $user->id;
 if ($id > 0)
 {
 	// Charge utilisateur edite
-	$fuser->fetch($id);
+	$fuser->fetch($id, '', '', 1);
 	$fuser->getrights();
 	$user_id = $fuser->id;
 }
@@ -282,6 +282,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 
 if ($sall)
 {
@@ -292,21 +293,8 @@ if ($sall)
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",'','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateCreateCP"),$_SERVER["PHP_SELF"],"cp.date_create","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"cp.fk_user","",'','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("ValidatorCP"),$_SERVER["PHP_SELF"],"cp.fk_validator","",'','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','','','align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",'','align="right"',$sortfield,$sortorder);
-print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
-print "</tr>\n";
-
 // FILTRES
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre" align="left">';
 print '<input class="flat" size="4" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 print '</td>';
@@ -385,12 +373,24 @@ print '</td>';
 
 // ACTION
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
 print '</td>';
 
 print "</tr>\n";
 
+print '<tr class="liste_titre">';
+print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",'','',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("DateCreateCP"),$_SERVER["PHP_SELF"],"cp.date_create","",'','align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"cp.fk_user","",'','',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("ValidatorCP"),$_SERVER["PHP_SELF"],"cp.fk_validator","",'','',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','','','align="right"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",'','align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",'','align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",'','align="right"',$sortfield,$sortorder);
+print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+print "</tr>\n";
 
 // Lines
 if (! empty($holiday->holiday))
@@ -400,8 +400,6 @@ if (! empty($holiday->holiday))
 
 	foreach($holiday->holiday as $infos_CP)
 	{
-		$var=!$var;
-
 		// Utilisateur
 		$userstatic->id=$infos_CP['fk_user'];
 		$userstatic->lastname=$infos_CP['user_lastname'];
@@ -420,7 +418,7 @@ if (! empty($holiday->holiday))
 		
 		$date = $infos_CP['date_create'];
 
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 		print '<td>';
 		$holidaystatic->id=$infos_CP['rowid'];
 		$holidaystatic->ref=$infos_CP['rowid'];

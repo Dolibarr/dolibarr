@@ -27,7 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $langs->load("companies");
 $langs->load("products");
@@ -155,7 +155,7 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 
-dol_fiche_head($head, 'handler', $langs->trans("Menus"));
+dol_fiche_head($head, 'handler', $langs->trans("Menus"), -1);
 
 print $langs->trans("MenusDesc")."<br>\n";
 print "<br>\n";
@@ -179,8 +179,8 @@ if ($action == 'edit')
 	print '</tr>';
 
 	// Menu top
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuManager").'</td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuManager").'</td>';
 	print '<td>';
 	$formadmin->select_menu(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED, 'MAIN_MENU_STANDARD', $dirstandard, empty($conf->global->MAIN_MENU_STANDARD_FORCED)?'':' disabled');
 	print '</td>';
@@ -190,8 +190,8 @@ if ($action == 'edit')
 	print '</tr>';
 
 	// Menu smartphone
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
 	print '<td>';
 	$formadmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard,$dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled');
 	print '</td>';
@@ -217,8 +217,8 @@ else
 	print '</td>';
 	print '</tr>';
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuManager").'</td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuManager").'</td>';
 	print '<td>';
 	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED));
 	print $filelib;
@@ -229,8 +229,8 @@ else
 	print '</td>';
 	print '</tr>';
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
 	print '<td>';
 	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED));

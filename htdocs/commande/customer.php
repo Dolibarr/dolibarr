@@ -30,7 +30,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 // Secrutiy check
 if ($user->societe_id > 0)
@@ -155,9 +155,9 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print '<td>';
 
         $result='';

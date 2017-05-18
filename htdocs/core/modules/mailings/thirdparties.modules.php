@@ -23,7 +23,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_thirdparties extends MailingTargets
 {
-	var $name='ContactsCategories';
+	var $name='ThirdPartiesByCategories';
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
 	var $desc="Third parties (by categories)";
 	var $require_admin=0;
@@ -241,7 +241,7 @@ class mailing_thirdparties extends MailingTargets
 	 */
 	function url($id)
 	{
-		return '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$id.'">'.img_object('',"company").'</a>';
+		return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$id.'">'.img_object('',"company").'</a>';
 	}
 
 }

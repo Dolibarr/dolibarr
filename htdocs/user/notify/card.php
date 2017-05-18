@@ -37,22 +37,23 @@ $langs->load("admin");
 $langs->load("other");
 
 $id = GETPOST("id",'int');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 $actionid=GETPOST('actionid');
 
 // Security check
 if ($user->societe_id) $id=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield=GETPOST("sortfield",'alpha');
+$sortorder=GETPOST("sortorder",'alpha');
+$page=GETPOST("page",'int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="n.daten";
+if (empty($page) || $page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 $now=dol_now();
 
@@ -121,7 +122,8 @@ if ($action == 'delete')
 $form = new Form($db);
 
 $object = new User($db);
-$result=$object->fetch($id);
+$result=$object->fetch($id, '', '', 1);
+$object->getrights();
 
 $title=$langs->trans("ThirdParty").' - '.$langs->trans("Notification");
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Notification");
@@ -135,36 +137,45 @@ if ($result > 0)
 
     $head = user_prepare_head($object);
 
-    dol_fiche_head($head, 'notify', $langs->trans("User"),0,'user');
+    dol_fiche_head($head, 'notify', $langs->trans("User"), -1, 'user');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
     
-    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', '', '', 0, '', '', 0, '');
+        
+    print '<div class="fichecenter">';
     
-    /*print '<table class="border"width="100%">';
-
-    // Ref
-    print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border centpercent">';
+    
+    // Login
+    print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
+    if (! empty($object->ldap_sid) && $object->statut==0)
+    {
+        print '<td class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
+    }
+    else
+    {
+        print '<td>'.$object->login.'</td>';
+    }
+    print '</tr>'."\n";
+            
+    /*print '<tr><td class="titlefield">'.$langs->trans("NbOfActiveNotifications").'</td>';   // Notification for this thirdparty
     print '<td colspan="3">';
-    print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
-    print '</td>';
-    print '</tr>'."\n";
-
-    print '<tr><td>'.$langs->trans("Lastname").'</td>';
-    print '<td colspan="2">'.$object->lastname.'</td>';
-
-    // Firstname
-    print '<tr><td>'.$langs->trans("Firstname").'</td>';
-    print '<td colspan="2">'.$object->firstname.'</td>';
-    print '</tr>'."\n";
-
-    // EMail
-    print '<tr><td>'.$langs->trans("EMail").'</td>';
-    print '<td colspan="2">'.dol_print_email($object->email,0,0,1).'</td>';
-    print "</tr>\n";
-
-    print '</table>';*/
-
+    $nbofrecipientemails=0;
+    $notify=new Notify($db);
+    $tmparray = $notify->getNotificationsArray('', 0, null, $object->id, array('user'));
+    foreach($tmparray as $tmpkey => $tmpval)
+    {
+        $nbofrecipientemails++;
+    }
+    print $nbofrecipientemails;
+    print '</td></tr>';*/
+    
+    print '</table>';
+    
+    print '</div>';
+    
     dol_fiche_end();
 
     print "\n";
@@ -211,7 +222,7 @@ if ($result > 0)
  			$label=($langs->trans("Notify_".$notifiedevent['code'])!="Notify_".$notifiedevent['code']?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label']);
             $actions[$notifiedevent['rowid']]=$label;
         }
-        print '<tr '.$bc[$var].'><td>';
+        print '<tr class="oddeven"><td>';
         print $object->getNomUrl(1);
         if (isValidEmail($object->email))
         {
@@ -235,7 +246,7 @@ if ($result > 0)
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="4">';
+        print '<tr class="oddeven"><td colspan="4">';
         print $langs->trans("YouMustAssignUserMailFirst");
         print '</td></tr>';
     }
@@ -297,7 +308,7 @@ if ($result > 0)
             $userstatic->id=$obj->userid;
             $userstatic->lastname=$obj->lastname;
             $userstatic->firstname=$obj->firstname;
-            print '<tr '.$bc[$var].'><td>'.$userstatic->getNomUrl(1);
+            print '<tr class="oddeven"><td>'.$userstatic->getNomUrl(1);
             if ($obj->type == 'email')
             {
                 if (isValidEmail($obj->email))
@@ -333,7 +344,7 @@ if ($result > 0)
     {
     	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
     	$var = ! $var;
-		print '<tr '.$bc[$var].'><td>';
+		print '<tr class="oddeven"><td>';
 		$listtmp=explode(',',$val);
 		$first=1;
 		foreach($listtmp as $keyemail => $valemail)
@@ -369,13 +380,13 @@ if ($result > 0)
 		print '<td align="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
 		print '</tr>';
     }*/
-    if ($user->admin)
+    /*if ($user->admin)
     {
 	    $var = ! $var;
-		print '<tr '.$bc[$var].'><td colspan="4">';
+		print '<tr class="oddeven"><td colspan="4">';
 		print '+ <a href="'.DOL_URL_ROOT.'/admin/notification.php">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</a>';
 		print '</td></tr>';
-    }
+    }*/
 
     print '</table>';
     
@@ -388,11 +399,21 @@ if ($result > 0)
     $sql.= " c.rowid as id, c.lastname, c.firstname, c.email as contactemail,";
     $sql.= " a.code, a.label";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
-    $sql.= " ".MAIN_DB_PREFIX."notify as n ";
+    $sql.= " ".MAIN_DB_PREFIX."notify as n";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as c ON n.fk_user = c.rowid";
     $sql.= " WHERE a.rowid = n.fk_action";
     $sql.= " AND n.fk_user = ".$object->id;
     $sql.= $db->order($sortfield, $sortorder);
+    
+    // Count total nb of records
+    $nbtotalofrecords = '';
+    if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+    {
+        $result = $db->query($sql);
+        $nbtotalofrecords = $db->num_rows($result);
+    }
+    
+    $sql.= $db->plimit($limit+1, $offset);
     
     $resql=$db->query($sql);
     if ($resql)
@@ -404,10 +425,21 @@ if ($result > 0)
         dol_print_error($db);
     }
     
+    $param='&id='.$object->id;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    
+    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="id" value="'.$object->id.'">';
+    
     // List of notifications done
-    print_fiche_titre($langs->trans("ListOfNotificationsDone").' ('.$num.')','','');
-    $var=true;
-
+    print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
+    
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
@@ -426,11 +458,9 @@ if ($result > 0)
 
         while ($i < $num)
         {
-            $var = !$var;
-
             $obj = $db->fetch_object($resql);
 
-            print '<tr '.$bc[$var].'><td>';
+            print '<tr class="oddeven"><td>';
             if ($obj->id > 0)
             {
 	            $userstatic->id=$obj->id;
@@ -470,6 +500,8 @@ if ($result > 0)
     }
 
     print '</table>';
+    
+    print '</form>';
 }
 else dol_print_error('','RecordNotFound');
 

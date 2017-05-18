@@ -1,0 +1,14 @@
+
+
+Term Dolibarr		SAP					Odoo							...
+----------------------------------------------------------------------------
+Thirdparty			Contact partner		Partner/Contact (company)
+Contact/address		Contact person		Partner/Contact (individual)
+
+Financial			??					Invoicing
+
+Income / Expense	??					Profit / Loss
+Balance									Net profit
+
+
+

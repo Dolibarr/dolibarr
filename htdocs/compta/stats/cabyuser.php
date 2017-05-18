@@ -352,8 +352,8 @@ if (count($amount)) {
     $i = 0;
     
     foreach($arrayforsort as $key => $value) {
-        $var=!$var;
-        print "<tr ".$bc[$var].">";
+        
+        print '<tr class="oddeven">';
 
         // Third party
         $fullname=$name[$key];

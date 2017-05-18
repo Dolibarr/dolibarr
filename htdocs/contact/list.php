@@ -486,45 +486,8 @@ $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfiel
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-// Ligne des titres
-print '<tr class="liste_titre">';
-if (! empty($arrayfields['p.lastname']['checked']))            print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.lastname", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.firstname']['checked']))            print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"p.firstname", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.zip']['checked']))            print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"p.zip", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.town']['checked']))            print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"p.town", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.poste']['checked']))            print_liste_field_titre($langs->trans("PostOrFunction"),$_SERVER["PHP_SELF"],"p.poste", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.phone']['checked']))            print_liste_field_titre($langs->trans("Phone"),$_SERVER["PHP_SELF"],"p.phone", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.phone_perso']['checked']))            print_liste_field_titre($langs->trans("PhonePerso"),$_SERVER["PHP_SELF"],"p.phone_perso", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.phone_mobile']['checked']))            print_liste_field_titre($langs->trans("PhoneMobile"),$_SERVER["PHP_SELF"],"p.phone_mobile", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.fax']['checked']))            print_liste_field_titre($langs->trans("Fax"),$_SERVER["PHP_SELF"],"p.fax", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.email']['checked']))            print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"p.email", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.skype']['checked']))            print_liste_field_titre($langs->trans("Skype"),$_SERVER["PHP_SELF"],"p.skype", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.thirdparty']['checked']))            print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.priv']['checked']))            print_liste_field_titre($langs->trans("ContactVisibility"),$_SERVER["PHP_SELF"],"p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
-// Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-{
-   foreach($extrafields->attribute_label as $key => $val)
-   {
-       if (! empty($arrayfields["ef.".$key]['checked']))
-       {
-			$align=$extrafields->getAlignFlag($key);
-			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-       }
-   }
-}
-// Hook fields
-$parameters=array('arrayfields'=>$arrayfields);
-$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
-if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['p.tms']['checked']))    print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"p.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['p.statut']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
-print "</tr>\n";
-
 // Lines for filter fields
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre_filter">';
 if (! empty($arrayfields['p.lastname']['checked']))
 {
     print '<td class="liste_titre">';
@@ -645,20 +608,57 @@ print '</td>';
 
 print '</tr>';
 
-$var=True;
+// Ligne des titres
+print '<tr class="liste_titre">';
+if (! empty($arrayfields['p.lastname']['checked']))            print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.lastname", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.firstname']['checked']))            print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"p.firstname", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.zip']['checked']))            print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"p.zip", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.town']['checked']))            print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"p.town", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.poste']['checked']))            print_liste_field_titre($langs->trans("PostOrFunction"),$_SERVER["PHP_SELF"],"p.poste", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.phone']['checked']))            print_liste_field_titre($langs->trans("Phone"),$_SERVER["PHP_SELF"],"p.phone", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.phone_perso']['checked']))            print_liste_field_titre($langs->trans("PhonePerso"),$_SERVER["PHP_SELF"],"p.phone_perso", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.phone_mobile']['checked']))            print_liste_field_titre($langs->trans("PhoneMobile"),$_SERVER["PHP_SELF"],"p.phone_mobile", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.fax']['checked']))            print_liste_field_titre($langs->trans("Fax"),$_SERVER["PHP_SELF"],"p.fax", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.email']['checked']))            print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"p.email", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.skype']['checked']))            print_liste_field_titre($langs->trans("Skype"),$_SERVER["PHP_SELF"],"p.skype", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.thirdparty']['checked']))            print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.priv']['checked']))            print_liste_field_titre($langs->trans("ContactVisibility"),$_SERVER["PHP_SELF"],"p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
+// Extra fields
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+{
+   foreach($extrafields->attribute_label as $key => $val)
+   {
+       if (! empty($arrayfields["ef.".$key]['checked']))
+       {
+			$align=$extrafields->getAlignFlag($key);
+			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+       }
+   }
+}
+// Hook fields
+$parameters=array('arrayfields'=>$arrayfields);
+$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['p.tms']['checked']))    print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"p.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['p.statut']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+print "</tr>\n";
+
+
 $i = 0;
 while ($i < min($num,$limit))
 {
     $obj = $db->fetch_object($result);
 
-	$var=!$var;
-    print "<tr ".$bc[$var].">";
+    print '<tr class="oddeven">';
 
 	$contactstatic->lastname=$obj->lastname;
 	$contactstatic->firstname='';
 	$contactstatic->id=$obj->cidp;
 	$contactstatic->statut=$obj->statut;
 	$contactstatic->poste=$obj->poste;
+	$contactstatic->email=$obj->email;
 	$contactstatic->phone_pro=$obj->phone_pro;
 	$contactstatic->phone_perso=$obj->phone_perso;
 	$contactstatic->phone_mobile=$obj->phone_mobile;
@@ -669,8 +669,8 @@ while ($i < min($num,$limit))
     if (! empty($arrayfields['p.lastname']['checked']))
     {
         print '<td valign="middle">';
-	  print $contactstatic->getNomUrl(1,'',0);
-	  print '</td>';
+        print $contactstatic->getNomUrl(1,'',0);
+        print '</td>';
     }
 	// Firstname
     if (! empty($arrayfields['p.firstname']['checked']))
@@ -784,12 +784,13 @@ while ($i < min($num,$limit))
         print '<td align="center">'.$contactstatic->getLibStatut(3).'</td>';
     }
     // Action column - Links Add action and Export vcard
-    print '<td align="right">';
-    print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.img_object($langs->trans("AddAction"),"action").'</a>';
+    print '<td class="center">';
+    /*print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.img_object($langs->trans("AddAction"),"action").'</a>';
     print ' &nbsp; ';
     print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
     print img_picto($langs->trans("VCard"),'vcard.png').' ';
-    print '</a></td>';
+    print '</a>'; */
+    print '</td>';
 
     print "</tr>\n";
     $i++;

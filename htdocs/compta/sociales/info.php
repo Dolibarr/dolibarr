@@ -30,7 +30,7 @@ $langs->load("compta");
 $langs->load("bills");
 
 $id=GETPOST('id','int');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -62,7 +62,7 @@ $object->info($id);
 
 $head = tax_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("SocialContribution"), 0, 'bill');
+dol_fiche_head($head, 'info', $langs->trans("SocialContribution"), -1, 'bill');
 
 $morehtmlref='<div class="refidno">';
 // Label of social contribution

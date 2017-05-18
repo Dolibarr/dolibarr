@@ -35,7 +35,7 @@ $langs->load("bills");
 $langs->load("loan");
 
 $id = GETPOST('id','int');
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
@@ -85,7 +85,7 @@ if ($object->id)
 
     $head = loan_prepare_head($object);
 
-    dol_fiche_head($head, 'documents',  $langs->trans("Loan"), 0, 'bill');
+    dol_fiche_head($head, 'documents',  $langs->trans("Loan"), -1, 'bill');
 
 	$morehtmlref='<div class="refidno">';
 	// Ref loan
@@ -104,7 +104,7 @@ if ($object->id)
 
 
     // Construit liste des fichiers
-    $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+    $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
     $totalsize=0;
     foreach($filearray as $key => $file)
     {
