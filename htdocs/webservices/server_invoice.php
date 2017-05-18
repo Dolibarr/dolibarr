@@ -254,7 +254,7 @@ $server->register(
 $server->register(
 		'createInvoiceFromOrder',
 		// Entry values
-		array('authentication'=>'tns:authentication','invoice'=>'tns:invoice'),
+		array('authentication'=>'tns:authentication','id_order'=>'xsd:string','ref_order'=>'xsd:string','ref_ext_order'=>'xsd:string','id_invoice'=>'xsd:string','ref_invoice'=>'xsd:string','ref_ext_invoice'=>'xsd:string'),
 		// Exit values
 		array('result'=>'tns:result','invoice'=>'tns:invoice'),
 		$ns,
