@@ -43,7 +43,7 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref=GETPOST('project_ref','alpha');
-$planned_workload=((GETPOST('planned_workloadhour')!='' && GETPOST('planned_workloadmin')!='')?GETPOST('planned_workloadhour')*3600+GETPOST('planned_workloadmin')*60:'');
+$planned_workload=((GETPOST('planned_workloadhour','int')!='' || GETPOST('planned_workloadmin','int')!='') ? (GETPOST('planned_workloadhour','int')>0?GETPOST('planned_workloadhour','int')*3600:0) + (GETPOST('planned_workloadmin','int')>0?GETPOST('planned_workloadmin','int')*60:0) : '');
 
 // Security check
 $socid=0;
