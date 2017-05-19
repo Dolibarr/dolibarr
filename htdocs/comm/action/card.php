@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
@@ -1396,7 +1396,11 @@ if ($id > 0)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			print '<td colspan="3">'.dolGetElementUrl($object->fk_element,$object->elementtype,1).'</td></tr>';
+			$link=dolGetElementUrl($object->fk_element,$object->elementtype,1);
+			print '<td colspan="3">';
+			if (empty($link)) print '<span class="opacitymedium">'.$langs->trans("ObjectDeleted").'</span>';
+			else print $link;
+			print '</td></tr>';
 		}
 
 		// Description
