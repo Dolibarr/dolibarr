@@ -120,6 +120,16 @@ if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
 {
     $tmp=FormMail::getAvailableSubstitKey('formemail');
     $tmp['__(AnyTransKey)__']='__(AnyTransKey)__';
+    
+    $parameters=array('elementSubtitutionList'=>$tmp);
+    // Note that $action and $object may have been modified by some hooks
+    $reshook=$hookmanager->executeHooks('emailElementlistSubstitution',$parameters);
+    if ($reshook == 0) {
+    	foreach ($hookmanager->resArray as $item => $value) {
+    		$tmp[$item] = $value;
+    	}
+    }
+    
     $helpsubstit = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
     $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
 }
@@ -127,6 +137,16 @@ else
 {
     $tmp=FormMail::getAvailableSubstitKey('formemailwithlines');
     $tmp['__(AnyTransKey)__']='__(AnyTransKey)__';
+    
+    $parameters=array('elementSubtitutionList'=>$tmp);
+    // Note that $action and $object may have been modified by some hooks
+    $reshook=$hookmanager->executeHooks('emailElementlistSubstitution',$parameters);
+    if ($reshook == 0) {
+    	foreach ($hookmanager->resArray as $item => $value) {
+    		$tmp[$item] = $value;
+    	}
+    }
+    
     $helpsubstit = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
     $tmp=FormMail::getAvailableSubstitKey('formemailforlines');
     $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
