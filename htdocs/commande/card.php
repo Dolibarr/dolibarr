@@ -1259,7 +1259,6 @@ if (empty($reshook))
 
 
 	// Actions to send emails
-	$actiontypecode='AC_COM';
 	$trigger_name='ORDER_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromorder';

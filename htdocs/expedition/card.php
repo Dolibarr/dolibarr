@@ -595,7 +595,6 @@ if (empty($reshook))
 
 	// Actions to send emails
 	if (empty($id)) $id=$facid;
-	$actiontypecode='AC_SHIP';
 	$trigger_name='SHIPPING_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromshipment';

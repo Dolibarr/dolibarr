@@ -1911,7 +1911,6 @@ if (empty($reshook))
 
 	// Actions to send emails
 	if (empty($id)) $id=$facid;
-	$actiontypecode='AC_FAC';
 	$trigger_name='BILL_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfrominvoice';

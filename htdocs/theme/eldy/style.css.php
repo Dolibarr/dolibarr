@@ -1101,6 +1101,7 @@ div.nopadding {
 	padding-top: 1px;
 	padding-bottom: 1px;
 	width: 44px;
+	text-align:center;
 }
 div.attacharea {
 	padding-top: 18px;

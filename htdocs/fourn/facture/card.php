@@ -1188,7 +1188,6 @@ if (empty($reshook))
 	 */
 
 	// Actions to send emails
-	$actiontypecode='AC_SUP_INV';
 	$trigger_name='BILL_SUPPLIER_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromsupplierinvoice';

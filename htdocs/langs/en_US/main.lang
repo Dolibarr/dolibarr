@@ -771,6 +771,7 @@ ModuleBuilder=Module Builder
 SetMultiCurrencyCode=Set currency
 BulkActions=Bulk actions
 ClickToShowHelp=Click to show tooltip help
+HR=HR
 # Week day
 Monday=Monday
 Tuesday=Tuesday

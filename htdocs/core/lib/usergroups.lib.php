@@ -145,7 +145,7 @@ function user_prepare_head($object)
     {
 		// Bank
     	$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
-    	$head[$h][1] = $langs->trans("BankAccounts");
+    	$head[$h][1] = $langs->trans("HR");
     	$head[$h][2] = 'bank';
     	$h++;
 	}

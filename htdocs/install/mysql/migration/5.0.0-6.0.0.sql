@@ -296,7 +296,6 @@ ALTER TABLE llx_events MODIFY COLUMN ip varchar(250);
 
 ALTER TABLE llx_facture ADD COLUMN fk_fac_rec_source integer;
 
-
-
+DELETE from llx_c_actioncomm where code in ('AC_PROP','AC_COM','AC_FAC','AC_SHIP','AC_SUP_ORD','AC_SUP_INV') AND id NOT IN (SELECT DISTINCT fk_action FROM llx_actioncomm);
 
 

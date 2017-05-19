@@ -466,7 +466,6 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$actiontypecode='AC_ASKPRICE';
 	$trigger_name='SUPPLIER_PROPOSAL_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromsupplierproposal';

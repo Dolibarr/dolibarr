@@ -1145,6 +1145,7 @@ img.hideonsmartphone.pictoactionview {
 	padding-top: 1px;
 	padding-bottom: 1px;
 	width: 44px;
+	text-align:center;
 }
 div.attacharea {
 	padding-top: 18px;
@@ -3054,7 +3055,7 @@ div.info {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  background: #EaE4Ea;
+  background: #868;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 

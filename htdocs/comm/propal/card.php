@@ -644,7 +644,7 @@ if (empty($reshook))
 	 */
 
 	// Actions to send emails
-	$actiontypecode='AC_PROP';
+    $actiontypecode='AC_OTH_AUTO';
 	$trigger_name='PROPAL_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromproposal';
