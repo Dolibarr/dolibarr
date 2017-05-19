@@ -120,7 +120,7 @@ if ($result)
 			print '<td align="left">'.$obj->town.'</td>';
 
             print '<td align="right">';
-			print $establishmentstatic->getLibStatus(5);
+			print $establishmentstatic->getLibStatut(5);
 			print '</td>';
             print "</tr>\n";
 

@@ -33,8 +33,10 @@ class Establishment extends CommonObject
 	public $table_element_line = '';
 	public $fk_element = 'fk_establishment';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
-	public $id;
+    public $picto='building';
+    
+    public $id;
+    public $ref;
 	public $rowid;
 
 	public $name;
@@ -160,7 +162,7 @@ class Establishment extends CommonObject
 		$sql .= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql .= ", town = '".$this->db->escape($this->town)."'";
 		$sql .= ", fk_country = ".($this->country_id > 0 ? $this->country_id : 'null');
-		$sql .= ", status = '".$this->db->escape($this->status)."'";
+		$sql .= ", status = ".$this->db->escape($this->status);
 		$sql .= ", fk_user_mod = " . $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -197,6 +199,7 @@ class Establishment extends CommonObject
 			$obj = $this->db->fetch_object($result);
 
 			$this->id			= $obj->rowid;
+			$this->ref			= $obj->rowid;
 			$this->name			= $obj->name;
 			$this->address		= $obj->address;
 			$this->zip			= $obj->zip;
@@ -249,9 +252,9 @@ class Establishment extends CommonObject
 	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * @return  string   		   	Label
 	 */
-	function getLibStatus($mode=0)
+	function getLibStatut($mode=0)
 	{
-		return $this->LibStatus($this->status,$mode);
+		return $this->LibStatut($this->status,$mode);
 	}
 
 	/**
@@ -261,7 +264,7 @@ class Establishment extends CommonObject
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @return string      		Label
 	 */
-	function LibStatus($status,$mode=0)
+	function LibStatut($status,$mode=0)
 	{
 		global $langs;
 
@@ -383,4 +386,16 @@ class Establishment extends CommonObject
 
         return '';
     }
+    
+    /**
+     * Initialise object with example values
+     * Id must be 0 if object instance is a specimen
+     *
+     * @return void
+     */
+    public function initAsSpecimen()
+    {
+        $this->id = 0;
+        $this->ref = 'DEAAA';
+    }    
 }
