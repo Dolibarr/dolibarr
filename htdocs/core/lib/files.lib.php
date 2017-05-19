@@ -899,7 +899,18 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		{
 			if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name_osencoded, octdec($conf->global->MAIN_UMASK));
 			dol_syslog("Files.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
-			return 1;	// Success
+
+			$reshook=$hookmanager->executeHooks('moveUploadedFileDone', $parameters, $object);
+			if ($reshook < 0)	// At least one blocking error returned by one hook
+			{
+				$errmsg = join(',', $hookmanager->errors);
+				if (empty($errmsg)) $errmsg = 'ErrorReturnedBySomeHooks';	// Should not occurs. Added if hook is bugged and does not set ->errors when there is error.
+				return $errmsg;
+			}elseif (empty($reshook))
+			{
+				return 1;// Success
+			}
+
 		}
 		else
 		{
