@@ -82,6 +82,7 @@ ListPredefinedInvoicesAssociatedProject=List of customer template invoices assoc
 ListSupplierOrdersAssociatedProject=List of supplier orders associated with the project
 ListSupplierInvoicesAssociatedProject=List of supplier invoices associated with the project
 ListContractAssociatedProject=List of contracts associated with the project
+ListShippingAssociatedProject=List of shippings associated with the project
 ListFichinterAssociatedProject=List of interventions associated with the project
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
 ListDonationsAssociatedProject=List of donations associated with the project
