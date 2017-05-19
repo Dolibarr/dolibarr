@@ -43,6 +43,7 @@ if (! empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn
 if (! empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 if (! empty($conf->contrat->enabled))		require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 if (! empty($conf->ficheinter->enabled))	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+if (! empty($conf->expedition->enabled))    require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 if (! empty($conf->deplacement->enabled))	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 if (! empty($conf->expensereport->enabled))	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 if (! empty($conf->agenda->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -341,6 +342,17 @@ $listofreferent=array(
     'buttonnew'=>'AddIntervention',
     'testnew'=>$user->rights->ficheinter->creer,
     'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire),
+'shipping'=>array(
+    'name'=>"Shippings",
+	'title'=>"ListShippingAssociatedProject",
+	'class'=>'Expedition',
+	'table'=>'expedition',
+	'datefieldname'=>'date_valid',
+	'urlnew'=>DOL_URL_ROOT.'/expedition/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid,
+	'lang'=>'sendings',
+	'buttonnew'=>'CreateShipment',
+	'testnew'=>0,
+	'test'=>$conf->expedition->enabled && $user->rights->expedition->lire),
 'trip'=>array(
 	'name'=>"TripsAndExpenses",
 	'title'=>"ListExpenseReportsAssociatedProject",

@@ -211,6 +211,7 @@ class Expedition extends CommonObject
 		$sql.= ", date_expedition";
 		$sql.= ", date_delivery";
 		$sql.= ", fk_soc";
+		$sql.= ", fk_projet";
 		$sql.= ", fk_address";
 		$sql.= ", fk_shipping_method";
 		$sql.= ", tracking_number";
@@ -234,6 +235,7 @@ class Expedition extends CommonObject
 		$sql.= ", ".($this->date_expedition>0?"'".$this->db->idate($this->date_expedition)."'":"null");
 		$sql.= ", ".($this->date_delivery>0?"'".$this->db->idate($this->date_delivery)."'":"null");
 		$sql.= ", ".$this->socid;
+		$sql.= ", ".$this->fk_project;
 		$sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:"null");
 		$sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:"null");
 		$sql.= ", '".$this->db->escape($this->tracking_number)."'";
