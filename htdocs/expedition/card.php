@@ -191,7 +191,7 @@ if (empty($reshook))
 	    $object->note				= GETPOST('note','alpha');
 	    $object->origin				= $origin;
 	    $object->origin_id			= $origin_id;
-        $object->fk_project         = GETPOST('projectid');
+            $object->fk_project         = GETPOST('projectid');
 	    $object->weight				= GETPOST('weight','int')==''?"NULL":GETPOST('weight','int');
 	    $object->sizeH				= GETPOST('sizeH','int')==''?"NULL":GETPOST('sizeH','int');
 	    $object->sizeW				= GETPOST('sizeW','int')==''?"NULL":GETPOST('sizeW','int');
