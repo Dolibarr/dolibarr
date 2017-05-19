@@ -1600,6 +1600,7 @@ MinimumNoticePeriod=Période de préavis minimum (Votre demande de congé doit �
 NbAddedAutomatically=Nombre de jours ajoutés aux compteurs des utilisateurs (automatiquement) chaque mois
 EnterAnyCode=Ce champ contient une référence pour identifier le champ. Entrez une valeur de votre choix, mais sans caractères spéciaux.
 UnicodeCurrency=Saisissez ici entre accolades, la liste du numéro des octets qui représentent le symbole de la monnaie. Pour exemple: pour $, entrez [36] - pour le Real Brésilien R$ [82,36] - pour l'euro €, entrez [8364]
+ColorFormat=La couleur RVB est au format HEX, ex: FF0000
 PositionIntoComboList=Position de la ligne dans des listes déroulantes
 SellTaxRate=Taux de TVA
 RecuperableOnly=Oui pour une TVA "Perçue Non Récupérable" dédiée à certains pays comme la France. Gardez la valeur à "Non" dans tous les autres cas.
