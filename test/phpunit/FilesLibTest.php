@@ -418,4 +418,25 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1,count($founddirs));
     }
 
+
+    /**
+     * testDolCheckSecureAccessDocument
+     *
+     * @return void
+     */
+    public function testDolCheckSecureAccessDocument()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+    
+        //$dummyuser=new User($db);
+        //$result=restrictedArea($dummyuser,'societe');
+    
+        //$result=dol_check_secure_access_document($user,'societe');
+        //$this->assertEquals(1,$result);
+    }    
+    
 }

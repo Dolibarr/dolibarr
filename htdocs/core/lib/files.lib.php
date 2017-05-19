@@ -1642,9 +1642,11 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta
  * @param	string	$entity				Restrict onto entity
  * @param  	User	$fuser				User object (forced)
  * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided)
+ * @param   string  $more               Check permission for 'read' or 'write'               
  * @return	mixed						Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
+ * @see restrictedArea
  */
-function dol_check_secure_access_document($modulepart,$original_file,$entity,$fuser='',$refname='')
+function dol_check_secure_access_document($modulepart,$original_file,$entity,$fuser='',$refname='',$mode='read')
 {
 	global $user, $conf, $db;
 	global $dolibarr_main_data_root;
@@ -2246,6 +2248,12 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
     // If modulepart=module				Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart
     else
 	{
+	    $lire='lire'; $read='read'; $download='download';
+	    if ($mode == 'write')
+	    {
+	        $lire='creer'; $read='write'; $download='upload';
+	    }
+	    
 	    if (preg_match('/^specimen/i',$original_file))	$accessallowed=1;    // If link to a file called specimen. Test must be done before changing $original_file int full path. 
 	    if ($fuser->admin) $accessallowed=1;    // If user is admin
 
@@ -2257,7 +2265,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 				dol_print_error('','Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
-		    if ($fuser->rights->{$reg[1]}->lire || $fuser->rights->{$reg[1]}->read || ($fuser->rights->{$reg[1]}->download)) $accessallowed=1;
+		    if ($fuser->rights->{$reg[1]}->{$lire} || $fuser->rights->{$reg[1]}->{$read} || ($fuser->rights->{$reg[1]}->{$download})) $accessallowed=1;
 			$original_file=$conf->{$reg[1]}->dir_temp.'/'.$fuser->id.'/'.$original_file;
 		}
 		else if (preg_match('/^([a-z]+)_temp$/i',$modulepart,$reg))
@@ -2267,7 +2275,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 				dol_print_error('','Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
-		    if ($fuser->rights->{$reg[1]}->lire || $fuser->rights->{$reg[1]}->read || ($fuser->rights->{$reg[1]}->download)) $accessallowed=1;
+		    if ($fuser->rights->{$reg[1]}->{$lire} || $fuser->rights->{$reg[1]}->{$read} || ($fuser->rights->{$reg[1]}->{$download})) $accessallowed=1;
 			$original_file=$conf->{$reg[1]}->dir_temp.'/'.$original_file;
 		}
 		else if (preg_match('/^([a-z]+)_user$/i',$modulepart,$reg))
@@ -2277,7 +2285,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 				dol_print_error('','Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
-		    if ($fuser->rights->{$reg[1]}->lire || $fuser->rights->{$reg[1]}->read || ($fuser->rights->{$reg[1]}->download)) $accessallowed=1;
+		    if ($fuser->rights->{$reg[1]}->{$lire} || $fuser->rights->{$reg[1]}->{$read} || ($fuser->rights->{$reg[1]}->{$download})) $accessallowed=1;
 			$original_file=$conf->{$reg[1]}->dir_output.'/'.$fuser->id.'/'.$original_file;
 		}
 		else
@@ -2297,7 +2305,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			}
 			else
 			{
-				if ($fuser->rights->$modulepart->lire || $fuser->rights->$modulepart->read) $accessallowed=1;
+				if ($fuser->rights->$modulepart->{$lire} || $fuser->rights->$modulepart->{$read}) $accessallowed=1;
 				$original_file=$conf->$modulepart->dir_output.'/'.$original_file;
 			}
 		}
@@ -2307,7 +2315,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		if (! empty($conf->global->$subPermCategoryConstName))
 		{
 			$subPermCategory = $conf->global->$subPermCategoryConstName;
-			if (! empty($subPermCategory) && (($fuser->rights->$modulepart->$subPermCategory->lire) || ($fuser->rights->$modulepart->$subPermCategory->read) || ($fuser->rights->$modulepart->$subPermCategory->download)))
+			if (! empty($subPermCategory) && (($fuser->rights->$modulepart->$subPermCategory->{$lire}) || ($fuser->rights->$modulepart->$subPermCategory->{$read}) || ($fuser->rights->$modulepart->$subPermCategory->{$download})))
 			{
 				$accessallowed=1;
 			}
