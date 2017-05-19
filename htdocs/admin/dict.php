@@ -1228,6 +1228,7 @@ if ($id)
             if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
             if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
             if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
+            if ($fieldlist[$field]=='position')        { $align='right'; }
             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
             {
                 //if ($id != 25) $valuetoshow=$form->textwithtooltip($langs->trans("Label"), $langs->trans("LabelUsedByDefault"),2,1,img_help(1,''));
@@ -1494,6 +1495,7 @@ if ($id)
                             $class='tddict';
                             if ($fieldlist[$field] == 'tracking') $class.=' tdoverflowauto';
                             if ($fieldlist[$field] == 'code') $class.=' width100';
+                            if ($fieldlist[$field] == 'position') $class.=' right';
                             // Show value for field
 							if ($showfield) print '<!-- '.$fieldlist[$field].' --><td align="'.$align.'" class="'.$class.'">'.$valuetoshow.'</td>';
                         }
