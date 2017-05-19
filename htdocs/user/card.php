@@ -1028,6 +1028,8 @@ if (($action == 'create') || ($action == 'adduserldap'))
         print '</td></tr>';
     }
     
+    // TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
+    
     // Hierarchy
     print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
     print '<td>';
@@ -1264,7 +1266,7 @@ else
          */
         if ($action != 'edit')
         {
-			dol_fiche_head($head, 'user', $title, 0, 'user');
+			dol_fiche_head($head, 'user', $title, -1, 'user');
 
             dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
@@ -1386,8 +1388,8 @@ else
                 print '<td>'.$object->accountancy_code.'</td></tr>';
             }
             
-            // TODO Move this into RH Tab (visible if RH module on)
-            
+            // TODO Move this into tab RH, visible when salarie or RH is visible (HierarchicalResponsible must be on both tab)
+
             // Hierarchy
             print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
             print '<td>';
@@ -2278,6 +2280,8 @@ else
                 print '</td>';
                 print "</tr>";
             }
+            
+            // TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
             
             // Hierarchy
             print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';

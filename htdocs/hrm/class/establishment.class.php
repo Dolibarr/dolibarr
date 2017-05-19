@@ -96,6 +96,7 @@ class Establishment extends CommonObject
 		$sql.= ", entity";
 		$sql.= ", datec";
 		$sql.= ", fk_user_author";
+		$sql.= ", fk_user_mod";
 		$sql.= ") VALUES (";
 		$sql.= " '".$this->db->escape($this->name)."'";
 		$sql.= ", '".$this->db->escape($this->address)."'";
@@ -105,6 +106,7 @@ class Establishment extends CommonObject
 		$sql.= ", ".$this->status;
 		$sql.= ", ".$conf->entity;
 		$sql.= ", '".$this->db->idate($now)."'";
+		$sql.= ", ". $user->id;
 		$sql.= ", ". $user->id;
 		$sql.= ")";
 
