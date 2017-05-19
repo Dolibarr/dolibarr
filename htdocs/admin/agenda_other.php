@@ -432,29 +432,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
     }
 }
 
-// AGENDA_SHOW_LINKED_OBJECT
-$var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
-print '<td>'.$langs->trans("AGENDA_SHOW_LINKED_OBJECT").'</td>'."\n";
-print '<td align="center">&nbsp;</td>'."\n";
-print '<td align="right">'."\n";
-if (! empty($conf->use_javascript_ajax))
-{
-    print ajax_constantonoff('AGENDA_SHOW_LINKED_OBJECT');
-}
-else
-{
-    if (empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))
-    {
-        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_SHOW_LINKED_OBJECT">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-    }
-    else
-    {
-        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_SHOW_LINKED_OBJECT">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-    }
-}
-print '</td></tr>'."\n";
-
 print '</table>';
 
 dol_fiche_end();
