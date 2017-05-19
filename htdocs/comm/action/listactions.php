@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +57,7 @@ else
     $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
+$hideautoactionstype=isset($_POST['hideautoactionstype'])||isset($_GET['hideautoactionstype'])?GETPOST("hideautoactionstype","int"):$conf->global->AGENDA_HIDE_AUTO_ACTIONS_TYPE;
 $search_title=GETPOST('search_title','alpha');
 
 $dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth'), GETPOST('dateselectday'), GETPOST('dateselectyear'));
@@ -166,6 +168,7 @@ $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($actioncode != '') $param.="&actioncode=".$actioncode;
+if ($hideautoactionstype != $conf->global->AGENDA_HIDE_AUTO_ACTIONS_TYPE)   $param.="&hideautoactionstype=".$hideautoactionstype;
 if ($resourceid > 0) $param.="&resourceid=".$resourceid;
 if ($status || isset($_GET['status']) || isset($_POST['status'])) $param.="&status=".$status;
 if ($filter) $param.="&filter=".$filter;
@@ -219,6 +222,7 @@ if (! empty($actioncode))
         }
     }
 }
+if ($hideautoactionstype) $sql.= " AND c.type != 'systemauto'";
 if ($resourceid > 0) $sql.=" AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".$db->escape($resourceid);
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
@@ -280,7 +284,7 @@ if ($resql)
 	$head = calendars_prepare_head($param);
 
     dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-    print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,0,$filtert,0,$pid,$socid,$action,-1,$actioncode,$usergroup,'',$resourceid);
+    print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,0,$filtert,0,$pid,$socid,$action,-1,$actioncode,$usergroup,'',$resourceid,$hideautoactionstype);
     dol_fiche_end();
 
     // Add link to show birthdays
@@ -326,6 +330,7 @@ if ($resql)
     $nav='';
     if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     if ($actioncode) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
+    if ($hideautoactionstype) $nav.='<input type="hidden" name="hideautoactionstype" value="'.$hideautoactionstype.'">';
     if ($resourceid) $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
     if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
     if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';

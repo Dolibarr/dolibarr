@@ -4,6 +4,7 @@
  * Copyright (C) 2011-2017  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry	    <jfefe@aternatik.fr>
  * Copyright (C) 2016		Charlie Benke		    <charlie@patas-monkey.com>
+ * Copyright (C) 2017       Open-DSI                <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -430,6 +431,29 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
         print '</td></tr>'."\n";
     }
 }
+
+// AGENDA_HIDE_AUTO_ACTIONS_TYPE
+$var=!$var;
+print '<tr '.$bc[$var].'>'."\n";
+print '<td>'.$langs->trans("AGENDA_HIDE_AUTO_ACTIONS_TYPE").'</td>'."\n";
+print '<td align="center">&nbsp;</td>'."\n";
+print '<td align="right">'."\n";
+if (! empty($conf->use_javascript_ajax))
+{
+    print ajax_constantonoff('AGENDA_HIDE_AUTO_ACTIONS_TYPE');
+}
+else
+{
+    if (empty($conf->global->AGENDA_HIDE_AUTO_ACTIONS_TYPE))
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_HIDE_AUTO_ACTIONS_TYPE">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+    }
+    else
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_HIDE_AUTO_ACTIONS_TYPE">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+    }
+}
+print '</td></tr>'."\n";
 
 print '</table>';
 

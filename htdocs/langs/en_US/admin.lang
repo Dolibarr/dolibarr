@@ -1512,6 +1512,7 @@ AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into searc
 AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 AGENDA_NOTIFICATION=Enable event notification on user browsers when event date is reached (each user is able to refuse this from the browser confirmation question)
 AGENDA_NOTIFICATION_SOUND=Enable sound notification
+AGENDA_HIDE_AUTO_ACTIONS_TYPE=Hide by default automatic events
 ##### Clicktodial #####
 ClickToDialSetup=Click To Dial module setup
 ClickToDialUrlDesc=Url called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).

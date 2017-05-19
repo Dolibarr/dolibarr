@@ -14,6 +14,7 @@ EventsNb=Nombre d'événements
 ListOfActions=Liste des événements
 Location=Lieu
 ToUserOfGroup=à tout utilisateur du groupe
+HideAutoActionsType=Cacher les événements automatiques
 EventOnFullDay=Événement sur la(les) journée(s)
 MenuToDoActions=Événements incomplets
 MenuDoneActions=Événements terminés

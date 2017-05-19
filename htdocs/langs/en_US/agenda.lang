@@ -14,6 +14,7 @@ EventsNb=Number of events
 ListOfActions=List of events
 Location=Location
 ToUserOfGroup=To any user in group
+HideAutoActionsType=Hide automatic events
 EventOnFullDay=Event on all day(s)
 MenuToDoActions=All incomplete events
 MenuDoneActions=All terminated events
