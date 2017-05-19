@@ -431,7 +431,7 @@ $tabhelp[2]  = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[3]  = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[4]  = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[5]  = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[6]  = array('code'=>$langs->trans("EnterAnyCode"), 'position'=>$langs->trans("PositionIntoComboList"));
+$tabhelp[6]  = array('code'=>$langs->trans("EnterAnyCode"), 'color'=>$langs->trans("ColorFormat"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[7]  = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[8]  = array('code'=>$langs->trans("EnterAnyCode"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[9]  = array('code'=>$langs->trans("EnterAnyCode"), 'unicode'=>$langs->trans("UnicodeCurrency"));
@@ -581,6 +581,12 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     $listfieldmodify=explode(',',$tabfieldinsert[$id]);
     $listfieldvalue=explode(',',$tabfieldvalue[$id]);
 
+    if (GETPOST('actionmodify') && $tabname[$id] == MAIN_DB_PREFIX . "c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
+        $listfield=explode(',','color,position');
+        $listfieldmodify=explode(',','color,position');
+        $listfieldvalue=explode(',','color,position');
+    }
+
     // Check that all fields are filled
     $ok=1;
     foreach ($listfield as $f => $value)
@@ -619,7 +625,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         }
     }
     // Other checks
-    if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
+    if (GETPOST('actionadd') && $tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
         $ok=0;
         setEventMessages($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'), null, 'errors');
     }
@@ -1104,7 +1110,7 @@ if ($id)
 
         if (empty($reshook))
         {
-       		fieldList($fieldlist,$obj,$tabname[$id],'add');
+       		fieldList($fieldlist,$langs,$obj,$tabname[$id],'add');
         }
 
         if ($id == 4) print '<td></td>';
@@ -1304,7 +1310,13 @@ if ($id)
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
                     // Show fields
-                    if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
+                    if (empty($reshook)) {
+                        $fieldl = $fieldlist;
+                        if ($tabname[$id] == MAIN_DB_PREFIX . "c_actioncomm" && in_array($obj->type, array('system', 'systemauto'))) {
+                            $fieldl=array(array('code'),array('libelle'),array('type'),'color','position');
+                        }
+                        fieldList($fieldl, $langs, $obj, $tabname[$id], 'edit');
+                    }
 
                     print '<td colspan="3" align="center">';
                     print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
@@ -1512,6 +1524,7 @@ if ($id)
                     if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $canbedisabled=0; $canbedisabled = 0; }
                     $canbemodified=$iserasable;
                     if ($obj->code == 'RECEP') $canbemodified=1;
+                    if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm") $canbemodified=1;
 
                     // Url 
                     $rowidcol=$tabrowid[$id];
@@ -1643,15 +1656,16 @@ $db->close();
 /**
  *	Show fields in insert/edit mode
  *
- * 	@param		array	$fieldlist		Array of fields
- * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
- *  @param		string	$tabname		Name of SQL table
- *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ * 	@param		array		$fieldlist		Array of fields
+ * 	@param		Translate	$langs			Translate class
+ * 	@param		Object		$obj			If we show a particular record, obj is filled with record fields
+ *  @param		string		$tabname		Name of SQL table
+ *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldList($fieldlist, $obj='', $tabname='', $context='')
+function fieldList($fieldlist, $langs, $obj='', $tabname='', $context='')
 {
-	global $conf,$langs,$db;
+	global $conf,$db;
 	global $form;
 	global $region_id;
 	global $elementList,$sourceList,$localtax_typeList;
@@ -1809,6 +1823,14 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			}
 			print '</td>';
 		}
+        elseif (is_array($fieldlist[$field]))
+        {
+            $hidden = (! empty($obj->{$fieldlist[$field][0]})?$obj->{$fieldlist[$field][0]}:'');
+            print '<td>';
+            print '<input type="hidden" name="'.$fieldlist[$field][0].'" value="'.$hidden.'">';
+            print $langs->trans($hidden);
+            print '</td>';
+        }
 		else
 		{
 			$classtd=''; $class='';
