@@ -56,23 +56,23 @@ class Documents extends DolibarrApi
      * @param   string  $module_part    Module part for file
      * @param   string  $filename       File name
      *
-     * @return array
+     * @return  array                   Array with data of file
      * @throws RestException
      */
-     /*
-     public function get($module_part, $filename) {
-
-     }*/
+     public function index($module_part, $filename) {
+            return array('note'=>'FeatureNotYetAvailable');
+     }
 
 
     /**
      * Push a file. 
-     * Test sample: { "filename": "mynewfile.txt", "modulepart": "facture", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "" }
+     * Test sample 1: { "filename": "mynewfile.txt", "modulepart": "facture", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "" }.
+     * Test sample 2: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "" }.
      *
      * @param   string  $filename           Name of file to create ('FA1705-0123')
-     * @param   string  $modulepart         Module part ('facture', ...)
+     * @param   string  $modulepart         Name of module or area concerned by file upload ('facture', ...)
      * @param   string  $ref                Reference of object (This will define subdir automatically and store submited file into it)
-     * @param   string  $subdir             Subdirectory (Only if refname not provided)
+     * @param   string  $subdir             Subdirectory (Only if ref not provided)
      * @param   string  $filecontent        File content (string with file content. An empty file will be created if this parameter is not provided)
      * @param   string  $fileencoding       File encoding (''=no encoding, 'base64'=Base 64)
      * @return  bool     				    State of copy
@@ -108,49 +108,37 @@ class Documents extends DolibarrApi
     		    $modulepart='facture';
     		    $object=new Facture($db);
     		    $result = $object->fetch('', $ref);
-    		    if (! ($result > 0))
-    		    {
-    		        throw new RestException(500, 'The object '.$modulepart." with ref '".$ref."' was not found.");
-    		    }
-    		    if (! empty($entity))
-    		    {
-    		        $tmpreldir = get_exdir(0, 0, 0, 0, $object, $modulepart);
-                    $upload_dir = $conf->{$modulepart}->multidir_output[$entity].'/'.$tmpreldir.$object->ref;
-    		    }
-    		    else
-    		    {
-    		        $tmpreldir = get_exdir(0, 0, 0, 0, $object, $modulepart);
-    		        $upload_dir = $conf->{$modulepart}->dir_output.'/'.$tmpreldir.$object->ref;
-    		    }
     		}
+    		
+    		if (! ($object->id > 0))
+    		{
+   		        throw new RestException(500, 'The object '.$modulepart." with ref '".$ref."' was not found.");
+    		}
+
+    		$tmp = dol_check_secure_access_document($modulepart, $tmpreldir.$object->ref, $entity, DolibarrApiAccess::$user, $ref, 'write');
+    		$upload_dir = $tmp['original_file'];
     		
     		if (empty($upload_dir) || $upload_dir == '/')
     		{
-    		    throw new RestException(500, 'This value of modulepart does not support yet usage of refname. Check modulepart parameter or try to use subdir parameter instead of ref.');
+    		    throw new RestException(500, 'This value of modulepart does not support yet usage of ref. Check modulepart parameter or try to use subdir parameter instead of ref.');
     		}
 		}
 		else
 		{
 		    if ($modulepart == 'invoice') $modulepart ='facture';
-		    if (empty($conf->{$modulepart}->dir_output))
-		    {
-		        throw new RestException(500, 'This value of modulepart is not supported with refname not defined.');
-		    }
-		    $upload_dir = $conf->{$modulepart}->multidir_output[$entity];
+		    
+		    $tmp = dol_check_secure_access_document($modulepart, $subdir, $entity, DolibarrApiAccess::$user, '', 'write');
+    		$upload_dir = $tmp['original_file'];
 
 		    if (empty($upload_dir) || $upload_dir == '/')
-		    {
-		        throw new RestException(500, 'This value of modulepart is not yet supported.');
-		    }
+    		{
+    		    throw new RestException(500, 'This value of modulepart does not support yet usage of ref. Check modulepart parameter or try to use subdir parameter instead of ref.');
+    		}
 		}
+		
+		
 		$upload_dir = dol_sanitizePathName($upload_dir);
 		
-        // Security:
-        // TODO Use dol_check_secure_access_document
-
-        // Check mandatory fields
-        //$result = $this->_validate_file($request_data);
-
         $destfile = $upload_dir . '/' . $original_file;
 
         if (!dol_is_dir($upload_dir)) {
