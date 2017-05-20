@@ -28,6 +28,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
 if (empty($user->id)) {
     echo "Load permissions for admin user nb 1\n";
@@ -141,40 +142,50 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
 
         $url = $this->api_url.'/documents/?api_key='.$this->api_key;
 
-        $fileName = 'img250x20.png';
-        $filePath = dirname(__FILE__).'/'.$fileName;
-        $mimetype = dol_mimetype($filePath);
-
         echo __METHOD__.' Request POST url='.$url."\n";
 
-        // Send to existant directory
+        
+        // Send to non existant directory
+        
+        dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit');
+        
+        //$data = '{ "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "" }';
         $data = array(
-          'modulepart' => 'facture',
-          'file' => 'eeeeeee',
-          'refname' => 'AV1303-0003',
-          'name' => $fileName, // Name for destination
-          'mime' => $mimetype );
-
+            'filename'=>"mynewfile.txt",
+            'modulepart'=>"medias",
+            'ref'=>"",
+            'subdir'=>"tmpphpunit/tmpphpunit2",
+            'filecontent'=>"content text",
+            'fileencoding'=>""
+        );
+        
         $result = getURLContent($url, 'POST', $data, 1);
-
         echo __METHOD__.' Result for sending document: '.var_export($result, true)."\n";
         echo __METHOD__.' curl_error_no: '.$result['curl_error_no']."\n";
-        $this->assertEquals($result['curl_error_no'], '');
-        $this->assertEquals($result['content'], 'true');
+        $object = json_decode($result['content'], true);
+        $this->assertNotNull($object, 'Parsing of json result must no be null');
+        $this->assertEquals('401', $object['error']['code']);
 
-        // Send to unexistant directory
+        
+        // Send to existant directory
+        
+        dol_mkdir(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit2');
+        
         $data = array(
-          'modulepart' => 'facture',
-          'file' => $cfile,
-          'name' => 'AV1303-0003STSEIUDEISRESIJLEU/'.$fileName, // Name for destination
-          'type' => $mimetype, );
+            'filename'=>"mynewfilethatwillfails.txt",
+            'modulepart'=>"medias",
+            'ref'=>"",
+            'subdir'=>"tmpphpunit/tmpphpunit2",
+            'filecontent'=>"content text",
+            'fileencoding'=>""
+        );
 
         $result2 = getURLContent($url, 'POST', $data, 1);
         echo __METHOD__.' Result for sending document: '.var_export($result2, true)."\n";
-        echo __METHOD__.' curl_error_no: '.$result['curl_error_no']."\n";
-
-        $object = json_decode($result2['content'], true);
-        $this->assertNotNull($object, 'Parsing of json result must no be null');
-        $this->assertEquals('401', $object['error']['code']);
+        echo __METHOD__.' curl_error_no: '.$result2['curl_error_no']."\n";
+        $object2 = json_decode($result2['content'], true);
+        $this->assertNotNull($object2, 'Parsing of json result must no be null');
+        $this->assertEquals($result2['curl_error_no'], '');
+        $this->assertEquals($result2['content'], 'true');
     }
 }

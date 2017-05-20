@@ -36,9 +36,8 @@ class Documents extends DolibarrApi
      * @var array   $DOCUMENT_FIELDS     Mandatory fields, checked when create and update object
      */
     static $DOCUMENT_FIELDS = array(
-        'name',
         'modulepart',
-        'file'
+        'filename'
     );
 
     /**
