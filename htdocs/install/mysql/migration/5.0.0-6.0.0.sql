@@ -24,6 +24,19 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
+create table llx_notify_def_object
+(
+  id				integer AUTO_INCREMENT PRIMARY KEY,
+  entity			integer DEFAULT 1 NOT NULL,		-- multi company id
+  objet_type		varchar(16),					-- 'actioncomm'
+  objet_id			integer NOT NULL,				-- id of parent key
+  type_notif		varchar(16) DEFAULT 'browser',	-- 'browser', 'email', 'sms', 'webservice', ...
+  date_notif		datetime,						-- date notification
+  user_id			integer,						-- notification is for this user
+  moreparam			varchar(255)
+)ENGINE=innodb;
+
 ALTER TABLE llx_facturedet_rec ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 
 ALTER TABLE llx_extrafields ADD COLUMN langs varchar(24);
