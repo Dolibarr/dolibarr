@@ -460,21 +460,18 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
         $user->rights->facture->creer = 0;
         $filename='FA010101/FA010101.pdf';    // Filename relative to module part
         $result=dol_check_secure_access_document('facture', $filename, 0, '', '', 'write');
-        var_dump($result);
         $this->assertEquals(0,$result['accessallowed']);
         
         $user->rights->facture->lire = 1;
         $user->rights->facture->creer = 1;
         $filename='FA010101/FA010101.pdf';    // Filename relative to module part
         $result=dol_check_secure_access_document('facture', $filename, 0, '', '', 'write');
-        var_dump($result);
         $this->assertEquals(1,$result['accessallowed']);
     
         $user->rights->facture->lire = 1;
         $user->rights->facture->creer = 0;
         $filename='FA010101/FA010101.pdf';    // Filename relative to module part
         $result=dol_check_secure_access_document('facture', $filename, 0, '', '', 'write');
-        var_dump($result);
         $this->assertEquals(0,$result['accessallowed']);
     }    
 
