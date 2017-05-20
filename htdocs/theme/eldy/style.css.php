@@ -273,7 +273,7 @@ input[type=submit] {
 }
 input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	<?php if (empty($conf->global->THEME_ELDY_SHOW_BORDER_INPUT)) 
-		print "border: none;" 
+	print "border: none;" 
 	?>
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
@@ -281,7 +281,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-family: <?php print $fontlist ?>;
     outline: none;
     margin: 0px 0px 0px 0px;
-    border-bottom: solid 1px rgba(0,0,0,.2);
+    border-bottom: solid 1px rgba(0,0,0,.4);
 }
 
 input {
@@ -459,6 +459,9 @@ hr { border: 0; border-top: 1px solid #ccc; }
 form {
     padding:0px;
     margin:0px;
+}
+form#addproduct {
+    padding-top: 6px;
 }
 div.float
 {
@@ -2238,12 +2241,12 @@ div .tdtop {
 }
 
 table.border td, div.border div div.tagtd {
-	padding: 3px 2px 3px 2px;
+	padding: 5px 2px 5px 2px;
 	border-collapse: collapse;
 }
 div.tabBar .fichecenter table.border>tbody>tr>td, div.tabBar .fichecenter div.border div div.tagtd, div.tabBar div.border div div.tagtd
 {
-	padding-top: 4px;
+	padding-top: 5px;
 	border-bottom: 1px solid #E0E0E0;
 }
 
@@ -2708,9 +2711,6 @@ tr.liste_sub_total, tr.liste_sub_total td {
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
 	padding-left: 2px;
-}
-.margintable td {
-	border: 0px !important;
 }
 
 /* Disable shadows */

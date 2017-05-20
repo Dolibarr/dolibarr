@@ -780,11 +780,26 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     	$masktype_value='';
     }
 
+    // Personalized field {XXX-1} à {XXX-9}
+    $maskperso=array();
+    $maskpersonew=array();
+    $tmpmask=$mask;
+    while (preg_match('/\{([A-Z]+)\-([1-9])\}/i',$tmpmask,$regKey))
+    {
+        $maskperso[$regKey[1]]='\{'.$regKey[1]+'\-'.$regKey[2].'\}';
+        $maskpersonew[$regKey[1]]=str_pad('', '_', $regKey[2], STR_PAD_RIGHT);
+        $tmpmask=preg_replace('/\{'.$regKey[1].'\-'.$regKey[2].'\}/i', $maskpersonew, $tmpmask);
+    }
+    
     $maskwithonlyymcode=$mask;
     $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$maskcounter,$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{dd\}/i','dd',$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{(c+)(0*)\}/i',$maskrefclient,$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{(t+)\}/i',$masktype_value,$maskwithonlyymcode);
+    foreach($maskperso as $key => $val)
+    {
+        $maskwithonlyymcode=preg_replace('/'.$val.'/i', $maskpersonew[$key], $maskwithonlyymcode);
+    }
     $maskwithnocode=$maskwithonlyymcode;
     $maskwithnocode=preg_replace('/\{yyyy\}/i','yyyy',$maskwithnocode);
     $maskwithnocode=preg_replace('/\{yy\}/i','yy',$maskwithnocode);

@@ -2801,9 +2801,6 @@ tr.liste_sub_total, tr.liste_sub_total td {
 {
 	padding-left: 2px;
 }
-.margintable td {
-	border: 0px !important;
-}
 
 /* Disable shadows */
 .noshadow {
