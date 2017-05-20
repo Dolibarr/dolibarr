@@ -280,8 +280,24 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
     	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
     	$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
 	
-	    // Management of default values
-	    if (! isset($_GET['sortfield']) && ! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
+    	// Retrieve values if restore_lastsearch_values is set and there is saved values
+    	if ($_GET['restore_lastsearch_values'] && ! empty($_SESSION['lastsearch_values_'.$relativepathstring]))        // Keep $_GET here
+    	{
+	        $tmp=json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
+	        if (is_array($tmp))
+	        {
+	            foreach($tmp as $key => $val)
+	            {
+	                if ($key == $paramname)
+	                {
+	                    $out=$val;
+	                    break;
+	                }
+	            }
+	        }
+    	}
+	    // Else, retreive default values if we are not doing a sort
+	    elseif (! isset($_GET['sortfield']) && ! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
 	    {
 	        if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 	        {
@@ -327,26 +343,6 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	                    $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
 	                    $out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '', $forbidden_chars_to_replace);
 	                }
-	            }
-	        }
-	    }
-	    
-	    // Retrieve values into restore_lastsearch_values
-	    if ($_GET['restore_lastsearch_values'])        // Keep $_GET here
-	    {
-	        if (! empty($_SESSION['lastsearch_values_'.$relativepathstring]))
-	        {
-	            $tmp=json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
-	            if (is_array($tmp))
-	            {
-    	            foreach($tmp as $key => $val)
-    	            {
-        	           if ($key == $paramname)
-        	           {
-    	                   $out=$val;
-    	                   break;
-        	           }
-    	            }
 	            }
 	        }
 	    }
@@ -455,13 +451,14 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	    //if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder', 'sortfield", 'smonth', 'syear', 'month', 'year')))
 	    if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder','sortfield')))
 	    {
-	        //var_dump($user->default_values[$relativepathstring]);exit;
-	        //if ($paramname == 'sortorder') var_dump($paramname.' - '.$out);
-	        
+	        //var_dump($paramname.' - '.$out.' '.$user->default_values[$relativepathstring]['filters'][$paramname]);
+
 	        // We save search key only if:
 	        // - not empty, or
 	        // - if value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
-	        if (! empty($out) || ! empty($user->default_values[$relativepathstring][$paramname]))
+	        
+	        //if (! empty($out) || ! empty($user->default_values[$relativepathstring]['filters'][$paramname]))
+	        if (! empty($out))
 	        {
                 $user->lastsearch_values_tmp[$relativepathstring][$paramname]=$out;
 	        }

@@ -47,6 +47,8 @@ ALTER TABLE llx_ecm_files ADD INDEX idx_ecm_files_label (label);
 ALTER TABLE llx_holiday ADD COLUMN import_key				varchar(14);
 ALTER TABLE llx_holiday ADD COLUMN extraparams				varchar(255);	
 
+ALTER TABLE llx_expedition ADD COLUMN fk_projet integer DEFAULT NULL after fk_soc;
+
 ALTER TABLE llx_expensereport ADD COLUMN import_key			varchar(14);
 ALTER TABLE llx_expensereport ADD COLUMN extraparams		varchar(255);	
 
@@ -308,7 +310,6 @@ ALTER TABLE llx_events MODIFY COLUMN ip varchar(250);
 
 ALTER TABLE llx_facture ADD COLUMN fk_fac_rec_source integer;
 
-
-
+DELETE from llx_c_actioncomm where code in ('AC_PROP','AC_COM','AC_FAC','AC_SHIP','AC_SUP_ORD','AC_SUP_INV') AND id NOT IN (SELECT DISTINCT fk_action FROM llx_actioncomm);
 
 

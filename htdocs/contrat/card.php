@@ -953,7 +953,6 @@ if (empty($reshook))
 	 */
 
 	// Actions to send emails
-	$actiontypecode='AC_CONT';
 	$trigger_name='CONTRACT_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromcontract';

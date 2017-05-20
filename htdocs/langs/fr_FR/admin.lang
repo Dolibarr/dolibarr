@@ -1479,6 +1479,7 @@ AGENDA_DEFAULT_FILTER_STATUS=Régler automatiquement le statut d'événement dan
 AGENDA_DEFAULT_VIEW=Quel onglet voulez-vous voir ouvrir par défaut quand on choisit le menu Agenda
 AGENDA_NOTIFICATION=Activer les notifications d'événements dans le navigateur utilisateur quand la date de l'événement est atteinte (Chaque utilisateur peut refuser ceci au moment de la question de confirmation posée par le navigateur).
 AGENDA_NOTIFICATION_SOUND=Activer les notifications sonores.
+AGENDA_SHOW_LINKED_OBJECT=Afficher l'objet lié dans la vue agenda
 ##### Clicktodial #####
 ClickToDialSetup=Configuration du module Click To Dial
 ClickToDialUrlDesc=URL appelée lors d'un clic sur le pictogramme téléphone. Dans l'URL, vous pouvez utiliser les balises<br><b>__PHONETO__</b> qui sera remplacée par le téléphone de l'appelé<br><b>__PHONEFROM__</b> qui sera remplacée par le téléphone de l'appelant (le votre, défini sur votre fiche utilisateur)<br><b>__LOGIN__</b> qui sera remplacée par votre identifiant clicktodial (défini sur votre fiche utilisateur)<br><b>__PASS__</b> qui sera remplacée par votre mot de passe clicktodial (défini sur votre fiche utilisateur).
@@ -1600,6 +1601,7 @@ MinimumNoticePeriod=Période de préavis minimum (Votre demande de congé doit �
 NbAddedAutomatically=Nombre de jours ajoutés aux compteurs des utilisateurs (automatiquement) chaque mois
 EnterAnyCode=Ce champ contient une référence pour identifier le champ. Entrez une valeur de votre choix, mais sans caractères spéciaux.
 UnicodeCurrency=Saisissez ici entre accolades, la liste du numéro des octets qui représentent le symbole de la monnaie. Pour exemple: pour $, entrez [36] - pour le Real Brésilien R$ [82,36] - pour l'euro €, entrez [8364]
+ColorFormat=La couleur RVB est au format HEX, ex: FF0000
 PositionIntoComboList=Position de la ligne dans des listes déroulantes
 SellTaxRate=Taux de TVA
 RecuperableOnly=Oui pour une TVA "Perçue Non Récupérable" dédiée à certains pays comme la France. Gardez la valeur à "Non" dans tous les autres cas.

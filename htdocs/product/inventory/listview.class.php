@@ -39,6 +39,8 @@ class Listview
 		$this->form = null;
 		$this->totalRowToShow=0;
 		$this->totalRow=0;
+		
+		$this->TField=array();
 	}
 
     /**
@@ -70,14 +72,15 @@ class Listview
 			,'head_search'=>''
 			,'export'=>array()
 			,'view_type'=>''
+			,'massactions'=>array()
 		),$TParam['list']);
 		
 		if (empty($TParam['limit'])) $TParam['limit'] = array();
 		
 		$page = GETPOST('page');
-		if (!empty($page)) $TParam['limit']['page'] = $page+1; // TODO dolibarr start page at 0 instead 1
+		if (!empty($page)) $TParam['limit']['page'] = $page;
 		
-		$TParam['limit'] = array_merge(array('page'=>1, 'nbLine' => $conf->liste_limit, 'global'=>0), $TParam['limit']);
+		$TParam['limit'] = array_merge(array('page'=>0, 'nbLine' => $conf->liste_limit, 'global'=>0), $TParam['limit']);
 		
 		if (GETPOST('sortfield'))
 		{
@@ -137,17 +140,6 @@ class Listview
 		
 		return $TKey;
 	}
-
-    /**
-     * @param timestamp    $date   date to convert
-     * @return int|string   Date TMS or ''
-     */
-    private function dateToSQLDate($date)
-    {
-		return $this->db->idate($date);
-	}
-
-
     /**
      * @param string     $TSQLMore   contain some additional sql instructions
      * @param string    $value      date with read format
@@ -160,13 +152,11 @@ class Listview
 			$TSQLDate=array();
 			if(!empty($value['start']))
 			{
-//				$valueDeb = $this->dateToSQLDate($value['start'].' 00:00:00');
 				$TSQLDate[]=$sKey." >= '".$value['start']."'" ;
 			}
 
 			if(!empty($value['end']))
 			{
-//				$valueFin = $this->dateToSQLDate($value['end'].' 23:59:59');
 				$TSQLDate[]=$sKey." <= '".$value['end']."'" ;
 			}
 
@@ -174,7 +164,6 @@ class Listview
 		}
 		else
 		{
-//			$value = $this->dateToSQLDate($value);
 			$TSQLMore[]=$sKey." LIKE '".$value."%'" ;
 		}
 	}
@@ -227,9 +216,7 @@ class Listview
      */
     private function search($sql, &$TParam)
     {
-		$ListPOST = GETPOST('Listview');
-		
-		if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter.x") && !GETPOST("button_removefilter"))
+		if (empty($TParam['no-auto-sql-search']) && !GETPOST("button_removefilter_x") && !GETPOST("button_removefilter.x") && !GETPOST("button_removefilter"))
 		{
 			foreach ($TParam['search'] as $field => $info)
 			{
@@ -237,12 +224,14 @@ class Listview
 				$TSQLMore = array();
 				$allow_is_null = $this->getSearchNull($field,$TParam);
 				
+				$fieldname = !empty($info['fieldname']) ? $info['fieldname'] : 'Listview_'.$this->id.'_search_'.$field;
+				
 				foreach ($TsKey as $i => &$sKey)
 				{
-					$value = '';
-					if (isset($ListPOST[$this->id]['search'][$field])) $value = $ListPOST[$this->id]['search'][$field];
+					$value = GETPOST($fieldname);
+					$value_null = GETPOST('Listview_'.$this->id.'_search_on_null_'.$field);
 					
-					if ($allow_is_null && !empty($ListPOST[$this->id]['search_on_null'][$field]))
+					if ($allow_is_null && !empty($value_null))
 					{
 						$TSQLMore[] = $sKey.' IS NULL ';
 						$value = '';
@@ -250,7 +239,7 @@ class Listview
 					
 					if (isset($TParam['type'][$field]) && ($TParam['type'][$field]==='date' || $TParam['type'][$field]==='datetime'))
 					{
-						$k = 'Listview_'.$this->id.'_search_'.$field;
+						$k = $fieldname;
 						if ($info['search_type'] === 'calendars')
 						{
 							$value = array();
@@ -296,25 +285,22 @@ class Listview
     {
         global $conf;
         
-		$TField=array();
+        $TField= & $this->TField;
 		
 		$this->init($TParam);
 
         $THeader = $this->initHeader($TParam);
 		
 		$sql = $this->search($sql,$TParam);
-		$sql.= $this->db->order($TParam['param']['sortfield'], $TParam['param']['sortorder']);
-
-		$nbtotalofrecords = '';
+		$sql.= $this->db->order($TParam['sortfield'], $TParam['sortorder']);
+	
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		{
 		    $result = $this->db->query($sql);
-		    $nbtotalofrecords = $this->db->num_rows($result);
+		    $this->totalRow = $this->db->num_rows($result);
 		}
-		$sql.= $this->db->plimit($TParam['param']['limit'] + 1, $TParam['param']['offset']);
 		
 		$this->parse_sql($THeader, $TField, $TParam, $sql);
-		
 		list($TTotal, $TTotalGroup)=$this->get_total($TField, $TParam);
 		
 		return $this->renderList($THeader, $TField, $TTotal, $TTotalGroup, $TParam);
@@ -335,44 +321,42 @@ class Listview
 		
 		$nb_search_in_bar = 0;
 		
-		if(!empty($TParam['search']))
+		foreach($THeader as $key => $libelle)
 		{
-			foreach($THeader as $key => $libelle)
-			{
-				if(empty($TSearch[$key]))$TSearch[$key]='';
-			}
-		}	
+			if(empty($TSearch[$key]))$TSearch[$key]='';
+		}
 		
-		$ListPOST = GETPOST('Listview');
 		$removeFilter = (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter"));
 		foreach($TParam['search'] as $key => $param_search)
 		{
-			$value = isset($ListPOST[$this->id]['search'][$key]) ? $ListPOST[$this->id]['search'][$key] : '';
 			if ($removeFilter) $value = '';
 			
 			$typeRecherche = (is_array($param_search) && isset($param_search['search_type'])) ? $param_search['search_type'] : $param_search;  
 			
+			$fieldname = !empty($param_search['fieldname']) ? $param_search['fieldname'] : 'Listview_'.$this->id.'_search_'.$key;
+			$value = $removeFilter ? '' : GETPOST($fieldname);
+			
 			if(is_array($typeRecherche))
 			{
-				$fsearch=$form->selectarray('Listview['.$this->id.'][search]['.$key.']', $typeRecherche,$value,1);
+				$fsearch=$form->selectarray($fieldname, $typeRecherche,$value,1);
 			}
 			else if($typeRecherche==='calendar')
 			{
-				if (!$removeFilter) $value = GETPOST('Listview_'.$this->id.'_search_'.$key) ? mktime(0,0,0, (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'month'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'day'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'year') ) : '';
+				if (!$removeFilter) $value = GETPOST($fieldname) ? mktime(0,0,0, (int) GETPOST($fieldname.'month'), (int) GETPOST($fieldname.$key.'day'), (int) GETPOST($fieldname.'year') ) : '';
 				
-				$fsearch = $form->select_date($value, 'Listview_'.$this->id.'_search_'.$key,0, 0, 1, "", 1, 0, 1);
+				$fsearch = $form->select_date($value, $fieldname,0, 0, 1, "", 1, 0, 1);
 			}
 			else if($typeRecherche==='calendars')
 			{
 				$value_start = $value_end = '';
 				if (!$removeFilter)
 				{
-					$value_start = GETPOST('Listview_'.$this->id.'_search_'.$key.'_start') ? mktime(0,0,0, (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_startmonth'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_startday'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_startyear') ) : '';
-					$value_end = GETPOST('Listview_'.$this->id.'_search_'.$key.'_end') ? mktime(0,0,0, (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_endmonth'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_endday'), (int) GETPOST('Listview_'.$this->id.'_search_'.$key.'_endyear') ) : '';
+					$value_start = GETPOST($fieldname.'_start') ? mktime(0,0,0, (int) GETPOST($fieldname.'_startmonth'), (int) GETPOST($fieldname.'_startday'), (int) GETPOST($fieldname.'_startyear') ) : '';
+					$value_end = GETPOST($fieldname.'_end') ? mktime(0,0,0, (int) GETPOST($fieldname.'_endmonth'), (int) GETPOST($fieldname.'_endday'), (int) GETPOST($fieldname.'_endyear') ) : '';
 				}
 			
-				$fsearch = $form->select_date($value_start, 'Listview_'.$this->id.'_search_'.$key.'_start',0, 0, 1, "", 1, 0, 1)
-						 . $form->select_date($value_end, 'Listview_'.$this->id.'_search_'.$key.'_end',0, 0, 1, "", 1, 0, 1);
+				$fsearch = $form->select_date($value_start,$fieldname.'_start',0, 0, 1, "", 1, 0, 1)
+				. $form->select_date($value_end, $fieldname.'_end',0, 0, 1, "", 1, 0, 1);
 				
 			}
 			else if(is_string($typeRecherche))
@@ -381,13 +365,13 @@ class Listview
 			}
 			else
             {
-				$fsearch='<input type="text" name="Listview['.$this->id.'][search]['.$key.']" id="Listview['.$this->id.'][search]['.$key.']" value="'.$value.'" size="15" />';
+            	$fsearch='<input type="text" name="'.$fieldname.'" id="'.$fieldname.'" value="'.$value.'" size="10" />';
 			}
 
 			if(!empty($param_search['allow_is_null']))
 			{
-				$valueNull = isset($ListPOST[$this->id]['search_on_null'][$key]) ? 1 : 0;
-				$fsearch.=' '.$form->checkbox1('', 'Listview['.$this->id.'][search_on_null]['.$key.']',1, $valueNull,' onclick=" if($(this).is(\':checked\')){ $(this).prev().val(\'\'); }" ').img_help(1, $langs->trans('SearchOnNUllValue'));
+				$valueNull = GETPOST($fieldname.'search_on_null_'.$key) ? 1 : 0;
+				$fsearch.=' '.$form->checkbox1('', $fieldname.'search_on_null_'.$key,1, $valueNull,' onclick=" if($(this).is(\':checked\')){ $(this).prev().val(\'\'); }" ').img_help(1, $langs->trans('SearchOnNUllValue'));
 			}
 
 			if(!empty($THeader[$key]))
@@ -395,20 +379,10 @@ class Listview
 				$TSearch[$key] = $fsearch;
 				$nb_search_in_bar++;
 			}
-			else
-            {
-				$label = !empty($TParam['title'][$key]) ? $TParam['title'][$key] : $key ;
-				$TParam['list']['head_search'].= '<th>'.$label.'</th>';
-//				$TParam['list']['head_search'].='<div><span style="min-width:200px;display:inline-block;">'.$label.'</span> '.$fsearch.'</div>';	
-			}
 		}
 		
 		$search_button = ' <a href="#" onclick="Listview_submitSearch(this);" class="list-search-link">'.img_search().'</a>';
-
-		if(!empty($TParam['list']['head_search']))
-		{
-			$TParam['list']['head_search']='<div style="float:right;">'.$search_button.'</div>'.$TParam['list']['head_search'];
-		}
+		$search_button .= ' <a href="#" onclick="Listview_clearSearch(this);" class="list-search-link">'.img_searchclear().'</a>';
 		
 		if($nb_search_in_bar>0)
 		{
@@ -603,7 +577,7 @@ class Listview
      */
     private function renderList(&$THeader, &$TField, &$TTotal, &$TTotalGroup, &$TParam)
     {
-		global $bc;
+		global $bc,$form;
 		
 		$TSearch = $this->setSearch($THeader, $TParam);
 		$TExport = $this->setExport($TParam, $TField, $THeader);
@@ -611,13 +585,24 @@ class Listview
 		
 		//$out = $this->getJS();
 		
+		$massactionbutton= empty($TParam['list']['massactions']) ? '' : $form->selectMassAction('', $TParam['list']['massactions']);
+		
 		$dolibarr_decalage = $this->totalRow > $this->totalRowToShow ? 1 : 0;
 		ob_start();
-		print_barre_liste($TParam['list']['title'], $TParam['limit']['page']-1, $_SERVER["PHP_SELF"], '&'.$TParam['list']['param_url'], $TParam['sortfield'], $TParam['sortorder'], '', $this->totalRowToShow+$dolibarr_decalage, $this->totalRow, $TParam['list']['image'], 0, '', '', $TParam['limit']['nbLine']);
+		print_barre_liste($TParam['list']['title'], $TParam['limit']['page'], $_SERVER["PHP_SELF"], '&'.$TParam['list']['param_url'], $TParam['sortfield'], $TParam['sortorder'], $massactionbutton, $this->totalRowToShow+$dolibarr_decalage, $this->totalRow, $TParam['list']['image'], 0, '', '', $TParam['limit']['nbLine']);
 		$out .= ob_get_clean();
 		
+		$classliste='liste';
+		if(!empty($TParam['head_search'])) {
+			$out.='<div class="liste_titre liste_titre_bydiv centpercent">';
+			$out.=$TParam['head_search'];
+			$out.='</div>';
+			
+			$classliste.=' listwithfilterbefore';
+		}
 	
-		$out.= '<table id="'.$this->id.'" class="liste" width="100%"><thead>';
+		$out.= '<div class="div-table-responsive">';
+		$out.= '<table id="'.$this->id.'" class="'.$classliste.'" width="100%"><thead>';
 			
     	if(count($TSearch)>0)
 		{
@@ -627,12 +612,12 @@ class Listview
 			{
 				if ($field === 'selectedfields')
 				{
-					$out.= '<td class="liste_titre" align="right">'.$this->form->showFilterAndCheckAddButtons(0).'</td>';
+					$out.= '<th class="liste_titre" align="right">'.$this->form->showFilterAndCheckAddButtons(0).'</th>';
 				}
 				else
 				{
 					$moreattrib = 'style="width:'.$head['width'].';text-align:'.$head['text-align'].'"';
-					$out .= '<td class="liste_titre" '.$moreattrib.'>'.$TSearch[$field].'</td>';
+					$out .= '<th class="liste_titre" '.$moreattrib.'>'.$TSearch[$field].'</th>';
 				}
 			}
 			
@@ -646,10 +631,17 @@ class Listview
 			$search = '';
 			$prefix = '';
 
+			$label = $head['label'];
+			
 			if ($field === 'selectedfields')
 			{
 				$moreattrib = 'align="right" ';
 				$prefix = 'maxwidthsearch ';
+
+				if(!empty($TParam['list']['massactions'])) {
+					$label.=$form->showCheckAddButtons('checkforselect', 1);
+				}
+				
 			}
 
 			if (empty($head['width'])) $head['width'] = 'auto';
@@ -662,10 +654,10 @@ class Listview
 				else $search = $field;
 			}
 
-			$out .= getTitleFieldOfList($head['label'], 0, $_SERVER["PHP_SELF"], $search, '', $moreparam, $moreattrib, $TParam['sortfield'], $TParam['sortorder'], $prefix);
+			$out .= getTitleFieldOfList($label, 0, $_SERVER["PHP_SELF"], $search, '', $moreparam, $moreattrib, $TParam['sortfield'], $TParam['sortorder'], $prefix);
 			$out .= $head['more'];
 		}
-		
+
 		//$out .= '<th aligne="right" class="maxwidthsearch liste_titre">--</th>';
 		$out .= '</tr>';
 		
@@ -673,23 +665,34 @@ class Listview
 		
 		if(empty($TField))
 		{
-			if (!empty($TParam['list']['messageNothing'])) $out .= '<tr class="oddeven"><td colspan="'.(count($TParam['title'])+1).'"><span class="opacitymedium">'.$TParam['list']['messageNothing'].'</span></td></tr>';
+			if (!empty($TParam['list']['messageNothing'])) $out .= '<tr class="oddeven"><td colspan="'.(count($THeader)+1).'"><span class="opacitymedium">'.$TParam['list']['messageNothing'].'</span></td></tr>';
 		}
 		else
         {
-			$var=true;
 			$line_number = 0;
 			foreach($TField as $fields)
 			{
 				if($this->in_view($TParam, $line_number))
 				{
-					$var=!$var;
-					$out.='<tr '.$bc[$var].'> <!-- '.$field.' -->';
+					$out.='<tr class="oddeven"> <!-- '.$field.' -->';
 
 					foreach ($THeader as $field => $head)
 					{
+						$value_aff =(isset($fields[$field]) ? $fields[$field] : '&nbsp;');
+						
+						if ($field === 'selectedfields')
+						{
+							$head['text-align']='center';
+							if(!empty($TParam['list']['massactions'])) {
+								$arrayofselected=array(); // TODO get in param
+								$selected=0;
+								if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+								$value_aff.='<input id="cb'.$fields['rowid'].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$fields['rowid'].'"'.($selected?' checked="checked"':'').'>';
+							}
+						}
+						
 						$moreattrib = 'style="width:'.$head['width'].';text-align:'.$head['text-align'].'"';
-						$out.='<td class="'.$field.'" '.$moreattrib.'>'.$fields[$field].'</td>';
+						$out.='<td class="'.$field.'" '.$moreattrib.'>'.$value_aff.'</td>';
 					}
 
 					$out.='</tr>';
@@ -718,6 +721,7 @@ class Listview
 		}
 
 		$out .= '</table>';
+		$out .= '</div>';
 		
 		return $out;
 	}
@@ -760,7 +764,7 @@ class Listview
 		
 		foreach($TField as $row)
 		{
-			$this->set_line($TField, $TParam, $row);
+			$this->set_line($THeader, $TField, $TParam, $row);
 		}
 	}
 
@@ -778,7 +782,7 @@ class Listview
 		}
 		
 		$contextpage=md5($_SERVER['PHP_SELF']);
-		if(!empty($TParam['allow-field-select']))
+		if(!empty($TParam['allow-fields-select']))
 		{
 			$selectedfields = GETPOST('Listview'.$this->id.'_selectedfields');
 			
@@ -839,17 +843,24 @@ class Listview
 					'order'=>(in_array($field, $TParam['orderby']['noOrder']) ? 0 : 1),
 					'width'=>(!empty($TParam['size']['width'][$field]) ? $TParam['size']['width'][$field] : 'auto'),
 					'text-align'=>(!empty($TParam['position']['text-align'][$field]) ? $TParam['position']['text-align'][$field] : 'auto'),
+					'rank'=>(!empty($TParam['position']['rank'][$field]) ? $TParam['position']['rank'][$field] : 0),
 					'more'=>''
 				);
 			}
 		}
 		
-		if(!empty($selectedfields))
-		{
-			$THeader['selectedfields']['label']='<div style="float:right">'.$selectedfields.'</div>';
-		}
+		uasort($THeader,array('Listview','sortHeaderRank'));
+		
+		$THeader['selectedfields']['label']=$selectedfields;
 		
 		return $THeader;
+	}
+	
+	public function sortHeaderRank(&$a, &$b) {
+		if($a['rank']>$b['rank']) return 1;
+		else if($a['rank']<$b['rank']) return -1;
+		else return 0;
+		
 	}
 
     /**
@@ -874,11 +885,14 @@ class Listview
 	}
 
     /**
-     * @param string $TField        TField
-     * @param string $TParam        TParam
-     * @param string $currentLine   aaa
+     * Apply function to result and set fields array
+     * 
+     * @param string $THeader       array of headers
+     * @param string $TField        array of fields
+     * @param string $TParam        array of parameters
+     * @param string $currentLine   object containing current sql result
      */
-    private function set_line(&$TField, &$TParam, $currentLine)
+    private function set_line(&$THeader, &$TField, &$TParam, $currentLine)
     {
         global $conf;
 
@@ -887,16 +901,21 @@ class Listview
         if($this->in_view($TParam,$line_number))
         {
 			$this->totalRowToShow++;
-            $row=array(); $trans = array();
-            foreach($currentLine as $field=>$value)
+            $row=array(); 
+            $trans = array();
+            foreach($currentLine as $kF=>$vF)$trans['@'.$kF.'@'] = addslashes($vF);
+            
+            foreach($THeader as $field=>$dummy)
             {
+            	$value = isset($currentLine->{$field}) ? $currentLine->{$field}: '';
+            	
                 if(is_object($value))
                 {
                     if(get_class($value)=='stdClass') {$value=print_r($value, true);}
                     else $value=(string) $value;
                 }
 
-                $trans['@'.$field.'@'] = $value;
+                $trans['@'.$field.'@'] = addslashes($value);
 
                 if(!empty($TParam['math'][$field]))
                 {
@@ -910,17 +929,19 @@ class Listview
 
                     if(isset($TParam['eval'][$field]) && in_array($field,array_keys($row)))
                     {
-                        $strToEval = 'return '.strtr( $TParam['eval'][$field],  array_merge( $trans, array('@val@'=>$row[$field])  )).';';
+                        $strToEval = 'return '.strtr( $TParam['eval'][$field],  array_merge( $trans, array('@val@'=>addslashes( $row[$field] ))  )).';';
                         $row[$field] = eval($strToEval);
+                        
                     }
 
                     if(isset($TParam['type'][$field]) && !isset($TParam['eval'][$field]))
                     {
                         if($TParam['type'][$field]=='date' || $TParam['type'][$field]=='datetime' )
                         {
+                        
                             if($row[$field] != '0000-00-00 00:00:00' && $row[$field] != '1000-01-01 00:00:00' && $row[$field] != '0000-00-00' && !empty($row[$field]))
                             {
-                                if($TParam['type'][$field]=='datetime')$row[$field] = dol_print_date(strtotime($row[$field]),'dayhoursec');
+                                if($TParam['type'][$field]=='datetime')$row[$field] = dol_print_date(strtotime($row[$field]),'dayhour');
                                 else $row[$field] = dol_print_date(strtotime($row[$field]),'day');
                             }
                             else
@@ -996,6 +1017,8 @@ class Listview
 		{
 			$sql.=' LIMIT '.(int) $TParam['limit']['global'];
 		}
+		else if(!empty($TParam['limit'])) $sql.= $this->db->plimit($TParam['limit']['nbLine']+1, $TParam['limit']['page'] * $TParam['limit']['nbLine']);
+		
 		
 		return $sql;
 	}
@@ -1008,7 +1031,7 @@ class Listview
      */
     private function parse_sql(&$THeader, &$TField, &$TParam, $sql)
     {
-		$this->sql = $this->limitSQL($sql, $TParam);
+    	$this->sql = $this->limitSQL($sql, $TParam);
 		
 		$this->TTotalTmp=array();
 		$this->THideFlip = array_flip($TParam['hide']);
@@ -1016,12 +1039,13 @@ class Listview
 		$res = $this->db->query($this->sql);
 		if($res!==false)
 		{
-			$this->totalRow = $this->db->num_rows($res);
 			dol_syslog(get_class($this)."::parse_sql id=".$this->id." sql=".$this->sql, LOG_DEBUG);
+			
+			if(empty($this->totalRow))$this->totalRow = $this->db->num_rows($res);
 			
 			while($currentLine = $this->db->fetch_object($res))
             {
-				$this->set_line($TField, $TParam, $currentLine);
+				$this->set_line($THeader, $TField, $TParam, $currentLine);
 			}
 		}
 		else
@@ -1029,4 +1053,23 @@ class Listview
 			dol_syslog(get_class($this)."::parse_sql id=".$this->id." sql=".$this->sql, LOG_ERR);
 		}
 	}	
+	
+	static function getCachedOjbect($class_name, $fk_object) {
+		global $db, $TCacheListObject;
+		
+		if(!class_exists($class_name)) return false;
+		
+		if(empty($TCacheListObject)) $TCacheListObject = array();
+		if(empty($TCacheListObject[$class_name])) $TCacheListObject[$class_name]  =array();
+		
+		if(empty($TCacheListObject[$class_name][$fk_object])) {
+			$TCacheListObject[$class_name][$fk_object]= new $class_name($db);
+			if( $TCacheListObject[$class_name][$fk_object]->fetch($fk_object)<0) {
+				return false;
+			}
+		}
+		
+		return $TCacheListObject[$class_name][$fk_object];
+	}
+	
 }

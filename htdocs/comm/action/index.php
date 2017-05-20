@@ -6,6 +6,7 @@
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -157,7 +158,6 @@ if ($action =='delete_action')
     $event->fetch($actionid);
     $result=$event->delete();
 }
-
 
 
 /*
@@ -446,6 +446,7 @@ $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql.= ' a.fk_soc, a.fk_contact,';
+$sql.= ' a.fk_element, a.elementtype,';
 $sql.= ' ca.code as type_code, ca.libelle as type_label, ca.color as type_color';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
@@ -570,6 +571,8 @@ if ($resql)
         $event->fulldayevent=$obj->fulldayevent;
         $event->location=$obj->location;
         $event->transparency=$obj->transparency;
+        $event->fk_element=$obj->fk_element;
+        $event->elementtype=$obj->elementtype;
 
         $event->societe->id=$obj->fk_soc;
         $event->contact->id=$obj->fk_contact;
@@ -1477,6 +1480,12 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             else $contact=$cachecontacts[$event->contact->id];
                             if ($linerelatedto) $linerelatedto.=' / ';
                             if (! empty($contact->id)) $linerelatedto.=$contact->getNomUrl(1,'',0);
+                        }
+                        if (! empty($event->fk_element) && $event->fk_element > 0 && ! empty($event->elementtype) && ! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))
+                        {
+                            include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+                            if ($linerelatedto) $linerelatedto.=' / ';
+                            $linerelatedto.=dolGetElementUrl($event->fk_element,$event->elementtype,1);
                         }
                         if ($linerelatedto) print '<br>'.$linerelatedto;
                     }

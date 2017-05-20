@@ -141,16 +141,17 @@ function user_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'user');
 
-	if (! empty($conf->hrm->enabled) && $user->rights->hrm->employee->read)
+    if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
+       || (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
     {
 		// Bank
     	$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
-    	$head[$h][1] = $langs->trans("BankAccounts");
+    	$head[$h][1] = $langs->trans("HRAndBank");
     	$head[$h][2] = 'bank';
     	$h++;
 	}
 
-    //Info on users is visible only by internal user
+    // Such info on users is visible only by internal user
     if (empty($user->societe_id))
     {
 		// Notes
