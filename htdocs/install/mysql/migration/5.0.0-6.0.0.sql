@@ -156,6 +156,18 @@ ALTER TABLE llx_bank_account ADD INDEX idx_fk_accountancy_journal (fk_accountanc
 UPDATE llx_bank_account as ba set fk_accountancy_journal = (SELECT rowid FROM llx_accounting_journal as aj where ba.accountancy_journal = aj.code) where accountancy_journal not in ('1', '2', '3', '4', '5', '6', '5', '8', '9', '10', '11', '12', '13', '14', '15');
 ALTER TABLE llx_bank_account ADD CONSTRAINT fk_bank_account_accountancy_journal FOREIGN KEY (fk_accountancy_journal) REFERENCES llx_accounting_journal (rowid);
 
+--Update general ledger for FEC format & harmonization
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_tiers varchar(32);
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN label_compte varchar(255);
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_journal varchar(32);
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN thirdparty_label varchar(255) AFTER code_tiers;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN label_operation varchar(255) AFTER label_compte;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN multicurrency_amount double AFTER sens;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN multicurrency_code varchar(255) AFTER multicurrency_amount;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN lettering_code varchar(255) AFTER multicurrency_code;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_lettering datetime AFTER lettering_code;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN journal_label varchar(255) AFTER code_journal;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_validated datetime AFTER validated;
 
 ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
 

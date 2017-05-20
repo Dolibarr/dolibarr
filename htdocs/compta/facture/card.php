@@ -1087,8 +1087,9 @@ if (empty($reshook))
 										}
 
 										if ($totalamount != 0) {
-										    $tva_tx = $lines[$i]->tva_tx;
-										    if (! empty($lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
+											if ($numlines > 0) $numlines = $numlines-1;
+										    $tva_tx = $lines[$numlines]->tva_tx;
+										    if (! empty($lines[$numlines]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$numlines]->vat_src_code.')';
 											$amountdeposit[$tva_tx] = ($totalamount * $valuedeposit) / 100;
 										} else {
 											$amountdeposit[0] = 0;
@@ -1137,7 +1138,7 @@ if (empty($reshook))
 							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA) && $diff != 0)
 							{
 								$object->fetch_lines();
-								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx);
+								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
 								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
 							}
 							
