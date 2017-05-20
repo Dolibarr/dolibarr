@@ -1100,7 +1100,7 @@ if ($id)
         $reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
         $error=$hookmanager->error; $errors=$hookmanager->errors;
 
-        if ($id == 3) unset($fieldlist[2]); // Remove field ??? if dictionnary Regions
+        if ($id == 3) unset($fieldlist[2]); // Remove field ??? if dictionary Regions
 
         if (empty($reshook))
         {
@@ -1555,7 +1555,7 @@ if ($id)
                     {
                         print '<td align="center">';
                         if ($user->admin) print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
-                        //else print '<a href="#">'.img_delete().'</a>';    // Some dictionnary can be edited by other profile than admin
+                        //else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
                         print '</td>';
                     }
                     else print '<td>&nbsp;</td>';

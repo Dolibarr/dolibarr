@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
  * @access protected
  * @class DolibarrApiAccess {@requires user,external}
  */
-class DictionnaryTowns extends DolibarrApi
+class DictionaryTowns extends DolibarrApi
 {
     /**
      * Constructor
@@ -88,7 +88,8 @@ class DictionnaryTowns extends DolibarrApi
 
         if ($result) {
             $num = $this->db->num_rows($result);
-            for ($i = 0; $i < min($num, ($limit <= 0 ? $num : $limit)); $i++) {
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
                 $list[] = $this->db->fetch_object($result);
             }
         } else {

@@ -131,11 +131,11 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testRestReceiveDocument.
+     * testPushDocument.
      *
      * @return int
      */
-    public function testRestReceiveDocument()
+    public function testPushDocument()
     {
         global $conf,$user,$langs,$db;
 
@@ -143,20 +143,17 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
 
         $fileName = 'img250x20.png';
         $filePath = dirname(__FILE__).'/'.$fileName;
-        $mimetype = mime_content_type($filePath);
-      // Init Curl file object
-      // See https://wiki.php.net/rfc/curl-file-upload
-      $cfile = curl_file_create($filePath, $mimetype);
+        $mimetype = dol_mimetype($filePath);
 
         echo __METHOD__.' Request POST url='.$url."\n";
 
-      // Send to existant directory
-      $data = array(
+        // Send to existant directory
+        $data = array(
           'modulepart' => 'facture',
-          'file' => $cfile,
+          'file' => 'eeeeeee',
           'refname' => 'AV1303-0003',
           'name' => $fileName, // Name for destination
-          'type' => $mimetype, );
+          'mime' => $mimetype );
 
         $result = getURLContent($url, 'POST', $data, 1);
 
@@ -165,8 +162,8 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($result['curl_error_no'], '');
         $this->assertEquals($result['content'], 'true');
 
-      // Send to unexistant directory
-      $data = array(
+        // Send to unexistant directory
+        $data = array(
           'modulepart' => 'facture',
           'file' => $cfile,
           'name' => 'AV1303-0003STSEIUDEISRESIJLEU/'.$fileName, // Name for destination

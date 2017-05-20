@@ -58,23 +58,33 @@ class Documents extends DolibarrApi
      *
      * @return array
      * @throws RestException
-     *
      */
+     /*
      public function get($module_part, $filename) {
 
-     }
+     }*/
 
 
     /**
-     * Receive file
+     * Push a file. 
+     * Test sample: { "filename": "mynewfile.txt", "modulepart": "facture", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "" }
      *
-     * @param   array   $request_data   Request datas
-     *
-     * @return  bool     State of copy
+     * @param   string  $filename           Name of file to create ('FA1705-0123')
+     * @param   string  $modulepart         Module part ('facture', ...)
+     * @param   string  $ref                Reference of object (This will define subdir automatically and store submited file into it)
+     * @param   string  $subdir             Subdirectory (Only if refname not provided)
+     * @param   string  $filecontent        File content (string with file content. An empty file will be created if this parameter is not provided)
+     * @param   string  $fileencoding       File encoding (''=no encoding, 'base64'=Base 64)
+     * @return  bool     				    State of copy
      * @throws RestException
      */
-    public function post($request_data) {
-        global $conf;
+    public function post($filename, $modulepart, $ref='', $subdir='', $filecontent='', $fileencoding='') {
+        global $db, $conf;
+        
+        /*var_dump($modulepart);
+        var_dump($filename);
+        var_dump($filecontent);
+        exit;*/
         
         require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -82,46 +92,89 @@ class Documents extends DolibarrApi
             throw new RestException(401);
         }
 
-        // Suppression de la chaine de caractere ../ dans $original_file
-		$original_file = str_replace("../","/", $request_data['name']);
-        $refname = str_replace("../","/", $request_data['refname']);
+        $newfilecontent = '';
+        if (empty($fileencoding)) $newfilecontent = $filecontent;
+        if ($fileencoding == 'base64') $newfilecontent = base64_decode($filecontent);
 
-		// find the subdirectory name as the reference
-		if (empty($request_data['refname'])) $refname=basename(dirname($original_file)."/");
+		$original_file = dol_sanitizeFileName($filename);
 
+		// Define $uploadir
+		$object = null;
+		$entity = $user->entity;
+		if ($ref)
+		{
+    		if ($modulepart == 'facture' || $modulepart == 'invoice')
+    		{
+    		    $modulepart='facture';
+    		    $object=new Facture($db);
+    		    $result = $object->fetch('', $ref);
+    		    if (! ($result > 0))
+    		    {
+    		        throw new RestException(500, 'The object '.$modulepart." with ref '".$ref."' was not found.");
+    		    }
+    		    if (! empty($entity))
+    		    {
+    		        $tmpreldir = get_exdir(0, 0, 0, 0, $object, $modulepart);
+                    $upload_dir = $conf->{$modulepart}->multidir_output[$entity].'/'.$tmpreldir.$object->ref;
+    		    }
+    		    else
+    		    {
+    		        $tmpreldir = get_exdir(0, 0, 0, 0, $object, $modulepart);
+    		        $upload_dir = $conf->{$modulepart}->dir_output.'/'.$tmpreldir.$object->ref;
+    		    }
+    		}
+    		
+    		if (empty($upload_dir) || $upload_dir == '/')
+    		{
+    		    throw new RestException(500, 'This value of modulepart does not support yet usage of refname. Check modulepart parameter or try to use subdir parameter instead of ref.');
+    		}
+		}
+		else
+		{
+		    if ($modulepart == 'invoice') $modulepart ='facture';
+		    if (empty($conf->{$modulepart}->dir_output))
+		    {
+		        throw new RestException(500, 'This value of modulepart is not supported with refname not defined.');
+		    }
+		    $upload_dir = $conf->{$modulepart}->multidir_output[$entity];
+
+		    if (empty($upload_dir) || $upload_dir == '/')
+		    {
+		        throw new RestException(500, 'This value of modulepart is not yet supported.');
+		    }
+		}
+		$upload_dir = dol_sanitizePathName($upload_dir);
+		
         // Security:
-		// On interdit les remontees de repertoire ainsi que les pipe dans
-		// les noms de fichiers.
-		if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
-		{
-            throw new RestException(401,'Refused to deliver file '.$original_file);
-		}
-        if (preg_match('/\.\./',$refname) || preg_match('/[<>|]/',$refname))
-		{
-            throw new RestException(401,'Refused to deliver file '.$refname);
-		}
-
-        $modulepart = $request_data['modulepart'];
+        // TODO Use dol_check_secure_access_document
 
         // Check mandatory fields
-        $result = $this->_validate_file($request_data);
+        //$result = $this->_validate_file($request_data);
 
-        $upload_dir = DOL_DATA_ROOT . '/' .$modulepart.'/'.dol_sanitizeFileName($refname);
-        $destfile = $upload_dir . $original_file;
+        $destfile = $upload_dir . '/' . $original_file;
 
-        if (!is_dir($upload_dir)) {
+        if (!dol_is_dir($upload_dir)) {
             throw new RestException(401,'Directory not exists : '.$upload_dir);
         }
 
-        $file = $_FILES['file'];
-        $srcfile = $file['tmp_name'];
-        $res = dol_move($srcfile, $destfile, 0, 1);
-
-        if (!$res) {
-            throw new RestException(500);
+        if (dol_is_file($destfile))
+        {
+            throw new RestException(500, "File with name '".$original_file."' already exists.");
         }
-
-        return $res;
+        
+        $fhandle = fopen($destfile, 'w');
+        if ($fhandle)
+        {
+            $nbofbyteswrote = fwrite($fhandle, $newfilecontent);
+            fclose($fhandle);
+            @chmod($destfile, octdec($conf->global->MAIN_UMASK));
+        }
+        else
+        {
+            throw new RestException(500, 'Failed to open file for write');
+        }
+        
+        return true;
     }
 
     /**
