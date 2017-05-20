@@ -91,7 +91,10 @@ class DolibarrApi
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
 
-        unset($object->lignes); // should be ->lines
+        unset($object->lines); // should be ->lines
+        
+        unset($object->fields);
+        
         unset($object->oldline);
 
         unset($object->error);
@@ -171,7 +174,7 @@ class DolibarrApi
 	 * @throws RestException
 	 */
 	static function _checkAccessToResource($resource, $resource_id=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid') {
-
+        
 		// Features/modules to check
 		$featuresarray = array($resource);
 		if (preg_match('/&/', $resource)) {
@@ -186,7 +189,7 @@ class DolibarrApi
 			$feature2 = explode("|", $feature2);
 		}
 
-		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray,$resource_id,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
+		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray, $resource_id, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
 	}
 
 	/**

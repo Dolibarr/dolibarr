@@ -203,9 +203,8 @@ class Tasks extends DolibarrApi
           }
           $this->project->lines = $lines;
         }*/
-        if ($this->task->create(DolibarrApiAccess::$user) <= 0) {
-            $errormsg = $this->task->error;
-            throw new RestException(500, $errormsg ? $errormsg : "Error while creating task");
+        if ($this->task->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating task", array_merge(array($this->task->error), $this->task->errors));
         }
 
         return $this->task->id;

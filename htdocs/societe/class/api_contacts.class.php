@@ -192,7 +192,10 @@ class Contacts extends DolibarrApi
 		{
 			$this->contact->$field = $value;
 		}
-		return $this->contact->create(DolibarrApiAccess::$user);
+		if ($this->contact->create(DolibarrApiAccess::$user) < 0) {
+		    throw new RestException(500, "Error creating contact", array_merge(array($this->contact->error), $this->contact->errors));
+		}
+		return $this->contact->id;
 	}
 
 	/**
@@ -315,7 +318,7 @@ class Contacts extends DolibarrApi
      */
     function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         $categories = new Categories();
-        return $categories->getListForItem('contact', $sortfield, $sortorder, $limit, $page, $id);
+        return $categories->getListForItem($sortfield, $sortorder, $limit, $page, 'contact', $id);
     }
 
 	/**

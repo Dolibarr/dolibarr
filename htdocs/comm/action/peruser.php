@@ -38,8 +38,8 @@ if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class
 
 if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
 
-$filter=GETPOST("filter",'',3);
-$filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filtert","int",3);
+$filter = GETPOST("filter",'',3);
+$filtert = GETPOST("filtert","int",3);
 $usergroup = GETPOST("usergroup","int",3);
 //if (! ($usergroup > 0) && ! ($filtert > 0)) $filtert = $user->id;
 //$showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
@@ -242,17 +242,17 @@ $max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));
 
 $tmpday = $first_day;
 
-$nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a>\n";
+$nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\"><i class=\"fa fa-chevron-left\" title=\"".dol_escape_htmltag($langs->trans("Previous"))."\"></i></a> &nbsp; \n";
 $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("Week")." ".$week;
 $nav.=" </span>\n";
-$nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"), 'class="valignbottom"')."</a>\n";
+$nav.=" &nbsp; <a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\"><i class=\"fa fa-chevron-right\" title=\"".dol_escape_htmltag($langs->trans("Next"))."\"></i></a>\n";
 $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
 $picto='calendarweek';
 
 $nav.=' &nbsp; <form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
 $nav.='<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 $nav.='<input type="hidden" name="action" value="' . $action . '">';
-$nav.='<input type="hidden" name="usertodo" value="' . $filtert . '">';
+$nav.='<input type="hidden" name="filtert" value="' . $filtert . '">';
 $nav.='<input type="hidden" name="usergroup" value="' . $usergroup . '">';
 $nav.='<input type="hidden" name="actioncode" value="' . $actioncode . '">';
 $nav.='<input type="hidden" name="resourceid" value="' . $resourceid . '">';
@@ -663,7 +663,6 @@ else
 	if ($usergroup > 0)	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
 	$sql.= " WHERE u.statut = 1 AND u.entity IN (".getEntity('user',1).")";
 	if ($usergroup > 0)	$sql.= " AND ug.fk_usergroup = ".$usergroup;
-	//if (GETPOST("usertodo","int",3) > 0) $sql.=" AND u.rowid = ".GETPOST("usertodo","int",3);
 	//print $sql;
 	$resql=$db->query($sql);
 	if ($resql)
@@ -816,7 +815,7 @@ jQuery(document).ready(function() {
 		else if (ids.indexOf(",") > -1)	/* There is several events */
 		{
 			/* alert(\'several events\'); */
-			url = "'.DOL_URL_ROOT.'/comm/action/listactions.php?usertodo="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+day;
+			url = "'.DOL_URL_ROOT.'/comm/action/listactions.php?filtert="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+day;
 			window.location.href = url;
 		}
 		else	/* One event */

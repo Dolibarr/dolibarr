@@ -6,6 +6,7 @@
  * Copyright (C) 2012      	Christophe Battarel <christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cedric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,23 +41,47 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_einstein extends ModelePDFCommandes
 {
-    var $db;
-    var $name;
-    var $description;
-    var $type;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+	
+	/**
+     * @var string model name
+     */
+    public $name;
+	
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+	
+	/**
+     * @var string document type
+     */
+    public $type;
+	
+	/**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+     */
+	public $phpmin = array(5, 2); 
+	
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
 
-    var $phpmin = array(4,3,0); // Minimum version of PHP required by module
-    var $version = 'dolibarr';
+    public $page_largeur;
+    public $page_hauteur;
+    public $format;
+	public $marge_gauche;
+	public $marge_droite;
+	public $marge_haute;
+	public $marge_basse;
 
-    var $page_largeur;
-    var $page_hauteur;
-    var $format;
-	var $marge_gauche;
-	var	$marge_droite;
-	var	$marge_haute;
-	var	$marge_basse;
-
-    var $emetteur;	// Objet societe qui emet
+    public $emetteur;	// Objet societe qui emet
 
 
 	/**
@@ -64,7 +89,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -110,8 +135,8 @@ class pdf_einstein extends ModelePDFCommandes
 		{
 			$this->posxtva=99;
 			$this->posxup=114;
-			$this->posxqty=133;
-			$this->posxunit=150;
+			$this->posxqty=130;
+			$this->posxunit=147;
 		}
 		else
 		{
@@ -129,6 +154,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$this->posxtva-=20;
 			$this->posxup-=20;
 			$this->posxqty-=20;
+			$this->posxunit-=20;
 			$this->posxdiscount-=20;
 			$this->postotalht-=20;
 		}
@@ -482,7 +508,7 @@ class pdf_einstein extends ModelePDFCommandes
 						$this->localtax2[$localtax2_type][$localtax2_rate]+=$localtax2ligne;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
-					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]='';
+					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]=0;
 					$this->tva[$vatrate] += $tvaligne;
 
 					// Add line
@@ -1260,10 +1286,12 @@ class pdf_einstein extends ModelePDFCommandes
 		    $arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
 		    if (count($arrayidcontact) > 0)
 		    {
-		        $usertmp=new User($this->db);
+                $usertmp=new User($this->db);
 		        $usertmp->fetch($arrayidcontact[0]);
+                $posy+=4;
+                $pdf->SetXY($posx,$posy);
 		        $pdf->SetTextColor(0,0,60);
-		        $pdf->MultiCell(190, 3, $langs->trans("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
+		        $pdf->MultiCell(100, 3, $langs->trans("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
 		    }
 		}
 		

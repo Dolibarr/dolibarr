@@ -35,7 +35,7 @@ $langs->load("accountancy");
 $langs->load("compta");
 
 $mesg = '';
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 $cat_id = GETPOST('account_category');
 $selectcpt = GETPOST('cpt_bk');
 $id = GETPOST('id', 'int');
@@ -43,7 +43,7 @@ $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel');
 
 // Filter
-$year = $_GET["year"];
+$year = GETPOST('year','int');
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
 	$year_start = $year_current;
@@ -64,9 +64,11 @@ if (! $user->rights->accounting->comptarapport->lire)
 
 $AccCat = new AccountancyCategory($db);
 
+
 /*
  * View
  */
+
 llxheader('', $langs->trans('ReportInOut'));
 
 $formaccounting = new FormAccounting($db);
@@ -125,7 +127,6 @@ if (!empty($cats))
 		$position = -1;
 		$code = -1;
 		foreach($cpts as $i => $cpt){
-			$var = ! $var;
 
 			$position = $cpt['position'];
 			$code = $cpt['code'];
@@ -147,7 +148,7 @@ if (!empty($cats))
 			}
 			$sommes[$code]['NP'] += $resultNP;
 			$sommes[$code]['N'] += $resultN;
-			print '<tr'. $bc[$var].'>';
+			print '<tr class="oddeven">';
 			print '<td>' . $cpt['account_number'] . '</td>';
 			print '<td>' . $cpt['name_cpt'] . '</td>';
 			print '<td>' . price($resultNP)  . '</td>';

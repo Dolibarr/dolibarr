@@ -196,9 +196,8 @@ class Projects extends DolibarrApi
           }
           $this->project->lines = $lines;
         }*/
-        if ($this->project->create(DolibarrApiAccess::$user) <= 0) {
-            $errormsg = $this->project->error;
-            throw new RestException(500, $errormsg ? $errormsg : "Error while creating project");
+        if ($this->project->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating project", array_merge(array($this->project->error), $this->project->errors));
         }
 
         return $this->project->id;

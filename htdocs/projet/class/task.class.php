@@ -100,7 +100,7 @@ class Task extends CommonObject
         // Clean parameters
         $this->label = trim($this->label);
         $this->description = trim($this->description);
-
+        
         // Check parameters
         // Put here code to add control on parameters values
 
@@ -127,8 +127,8 @@ class Task extends CommonObject
         $sql.= ", ".$user->id;
         $sql.= ", ".($this->date_start!=''?"'".$this->db->idate($this->date_start)."'":'null');
         $sql.= ", ".($this->date_end!=''?"'".$this->db->idate($this->date_end)."'":'null');
-        $sql.= ", ".($this->planned_workload!=''?$this->planned_workload:0);
-        $sql.= ", ".($this->progress!=''?$this->progress:0);
+        $sql.= ", ".(($this->planned_workload!='' && $this->planned_workload >= 0)?$this->planned_workload:'null');
+        $sql.= ", ".(($this->progress!='' && $this->progress >= 0)?$this->progress:'null');
         $sql.= ")";
 
         $this->db->begin();
@@ -300,7 +300,7 @@ class Task extends CommonObject
         $sql.= " planned_workload=".((isset($this->planned_workload) && $this->planned_workload != '')?$this->planned_workload:"null").",";
         $sql.= " dateo=".($this->date_start!=''?"'".$this->db->idate($this->date_start)."'":'null').",";
         $sql.= " datee=".($this->date_end!=''?"'".$this->db->idate($this->date_end)."'":'null').",";
-        $sql.= " progress=".$this->progress.",";
+        $sql.= " progress=".(($this->progress!='' && $this->progress >= 0)?$this->progress:'null').",";
         $sql.= " rang=".((!empty($this->rang))?$this->rang:"0");
         $sql.= " WHERE rowid=".$this->id;
 
@@ -516,6 +516,40 @@ class Task extends CommonObject
         $sql.= " WHERE fk_task_parent=".$this->id;
 
         dol_syslog(get_class($this)."::hasChildren", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        else
+        {
+            $obj=$this->db->fetch_object($resql);
+            if ($obj) $ret=$obj->nb;
+            $this->db->free($resql);
+        }
+
+        if (! $error)
+        {
+            return $ret;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+    
+	/**
+     *	Return nb of time spent
+     *
+     *	@return	int		<0 if KO, 0 if no children, >0 if OK
+     */
+    function hasTimeSpent()
+    {
+    	$error=0;
+        $ret=0;
+
+        $sql = "SELECT COUNT(*) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time";
+        $sql.= " WHERE fk_task=".$this->id;
+
+        dol_syslog(get_class($this)."::hasTimeSpent", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
         else
@@ -1039,12 +1073,12 @@ class Task extends CommonObject
     }
 
     /**
-     *  Calculate value of time consumed using the thm (hourly amount value of work for user entering time)
+     *  Calculate quantity and value of time consumed using the thm (hourly amount value of work for user entering time)
      *
      *	@param		User		$fuser		Filter on a dedicated user
      *  @param		string		$dates		Start date (ex 00:00:00)
      *  @param		string		$datee		End date (ex 23:59:59)
-     *  @return 	array	        		Array of info for task array('amount')
+     *  @return 	array	        		Array of info for task array('amount','nbseconds','nblinesnull')
      */
     function getSumOfAmount($fuser='', $dates='', $datee='')
     {
@@ -1055,6 +1089,7 @@ class Task extends CommonObject
         $result=array();
 
         $sql = "SELECT";
+        $sql.= " SUM(t.task_duration) as nbseconds,";
         $sql.= " SUM(t.task_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", 0, "t.thm").") as amount, SUM(".$this->db->ifsql("t.thm IS NULL", 1, 0).") as nblinesnull";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
         $sql.= " WHERE t.fk_task = ".$id;
@@ -1081,6 +1116,7 @@ class Task extends CommonObject
             $obj = $this->db->fetch_object($resql);
 
             $result['amount'] = $obj->amount;
+            $result['nbseconds'] = $obj->nbseconds;
             $result['nblinesnull'] = $obj->nblinesnull;
 
             $this->db->free($resql);
@@ -1445,7 +1481,7 @@ class Task extends CommonObject
 				$clone_task_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($clone_project_ref). "/" . dol_sanitizeFileName($clone_task_ref);
 				$ori_task_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($ori_project_ref). "/" . dol_sanitizeFileName($fromid);
 
-				$filearray=dol_dir_list($ori_task_dir,"files",0,'','(\.meta|_preview\.png)$','',SORT_ASC,1);
+				$filearray=dol_dir_list($ori_task_dir,"files",0,'','(\.meta|_preview.*\.png)$','',SORT_ASC,1);
 				foreach($filearray as $key => $file)
 				{
 					if (!file_exists($clone_task_dir))
@@ -1599,6 +1635,17 @@ class Task extends CommonObject
 			if ($statut==4) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
 			if ($statut==5) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut5');
 		}
+		if ($mode == 6)
+		{
+			/*if ($statut==0) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
+			if ($statut==2) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
+			if ($statut==3) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+			if ($statut==4) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			if ($statut==5) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut5');*/
+		    //return $this->progress.' %';
+		    return '&nbsp;';
+		}
 	}
 
 	/**
@@ -1617,16 +1664,14 @@ class Task extends CommonObject
 
 		$langs->load("projects");
 
-		// Positionne modele sur le nom du modele de projet a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->PROJECT_TASK_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'nodefault';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;
-			}
-			else
-			{
-				$modele='nodefault';
 			}
 		}
 
@@ -1679,7 +1724,7 @@ class Task extends CommonObject
 	        $response->label = $langs->trans("OpenedTasks");
 	        if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
 	        else $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mode=mine&amp;mainmenu=project';
-	        $response->img = img_object($langs->trans("Tasks"),"task");
+	        $response->img = img_object('',"task");
 	
 	        // This assignment in condition is not a bug. It allows walking the results.
 	        while ($obj=$this->db->fetch_object($resql))

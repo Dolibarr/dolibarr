@@ -496,17 +496,16 @@ class Societe extends CommonObject
                 }
                 else
                 {
-                    dol_syslog(get_class($this)."::Create echec update ".$this->error, LOG_ERR);
+                    dol_syslog(get_class($this)."::Create echec update ".$this->error." ".join(',',$this->errors), LOG_ERR);
                     $this->db->rollback();
-                    return -3;
+                    return -4;
                 }
             }
             else
             {
-                if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+                if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                 {
-
-                    $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->name);
+                    $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->name);    // duplicate on a field (code or profid or ...)
                     $result=-1;
                 }
                 else
@@ -520,7 +519,7 @@ class Societe extends CommonObject
 
         }
         else
-       {
+        {
             $this->db->rollback();
             dol_syslog(get_class($this)."::Create fails verify ".join(',',$this->errors), LOG_WARNING);
             return -3;
@@ -842,7 +841,7 @@ class Societe extends CommonObject
             $sql .= ",fk_effectif = ".(! empty($this->effectif_id)?"'".$this->db->escape($this->effectif_id)."'":"null");
             if (isset($this->stcomm_id))
             {
-                $sql .= ",fk_stcomm='".$this->stcomm_id."'";
+                $sql .= ",fk_stcomm=".($this->stcomm_id > 0 ? $this->stcomm_id : "null");
             }
             $sql .= ",fk_typent = ".(! empty($this->typent_id)?"'".$this->db->escape($this->typent_id)."'":"0");
 
@@ -860,7 +859,7 @@ class Societe extends CommonObject
             $sql .= ",default_lang = ".(! empty($this->default_lang)?"'".$this->db->escape($this->default_lang)."'":"null");
             $sql .= ",logo = ".(! empty($this->logo)?"'".$this->db->escape($this->logo)."'":"null");
             $sql .= ",outstanding_limit= ".($this->outstanding_limit!=''?$this->outstanding_limit:'null');
-            $sql .= ",fk_prospectlevel='".$this->fk_prospectlevel."'";
+            $sql .= ",fk_prospectlevel='".$this->db->escape($this->fk_prospectlevel)."'";
 
             $sql .= ",webservices_url = ".(! empty($this->webservices_url)?"'".$this->db->escape($this->webservices_url)."'":"null");
             $sql .= ",webservices_key = ".(! empty($this->webservices_key)?"'".$this->db->escape($this->webservices_key)."'":"null");
@@ -1560,7 +1559,7 @@ class Societe extends CommonObject
         $note=trim($note);
         if (! $note)
         {
-            $this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Note"));
+            $this->error=$langs->trans("ErrorFieldRequired",$langs->trans("NoteReason"));
             return -2;
         }
 
@@ -1825,13 +1824,14 @@ class Societe extends CommonObject
     /**
      *    	Return a link on thirdparty (with picto)
      *
-     *		@param	int		$withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
-     *		@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier', 'project')
-     *		@param	int		$maxlen			Max length of name
-     *      @param	int  	$notooltip		1=Disable tooltip
-     *		@return	string					String with URL
+     *		@param	int		$withpicto		          Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
+     *		@param	string	$option			          Target of link ('', 'customer', 'prospect', 'supplier', 'project')
+     *		@param	int		$maxlen			          Max length of name
+     *      @param	int  	$notooltip		          1=Disable tooltip
+     *      @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *		@return	string					          String with URL
      */
-    function getNomUrl($withpicto=0, $option='', $maxlen=0, $notooltip=0)
+    function getNomUrl($withpicto=0, $option='', $maxlen=0, $notooltip=0, $save_lastsearch_value=-1)
     {
         global $conf, $langs, $hookmanager;
 
@@ -1839,23 +1839,41 @@ class Societe extends CommonObject
 
         $name=$this->name?$this->name:$this->nom;
 
-		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
-		{
-			if (($this->client) && (! empty ( $this->code_client ))) {
-				$code = $this->code_client . ' - ';
-			}
-			if (($this->fournisseur) && (! empty ( $this->code_fournisseur ))) {
-				$code .= $this->code_fournisseur . ' - ';
-			}
-			$name =$code.' '.$name;
-		}
+    	if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
+    	{
+    		if (($this->client) && (! empty ( $this->code_client ))
+    			&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
+    			|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
+    			)
+    		) 
+    		$code = $this->code_client . ' - ';
 
-	    if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
+    		if (($this->fournisseur) && (! empty ( $this->code_fournisseur ))
+    			&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
+    			|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
+    			)
+    		) 
+    		$code .= $this->code_fournisseur . ' - ';
+    
+    		if ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1)
+    			$name =$code.' '.$name;
+    		else
+    			$name =$code;
+    	}
+
+    	if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
 
         $result=''; $label='';
         $linkstart=''; $linkend='';
 
-        $label.= '<div width="100%">';
+        if (! empty($this->logo) && class_exists('Form'))
+        {
+            $label.= '<div class="photointooltip">';
+            $label.= Form::showphoto('societe', $this, 80, 0, 0, 'photowithmargin', 'mini');
+            $label.= '</div><div style="clear: both;"></div>';
+        }
+        
+        $label.= '<div class="centpercent">';
 
         if ($option == 'customer' || $option == 'compta' || $option == 'category' || $option == 'category_supplier')
         {
@@ -1892,7 +1910,7 @@ class Societe extends CommonObject
         if (empty($linkstart))
         {
             $label.= '<u>' . $langs->trans("ShowCompany") . '</u>';
-            $linkstart = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
+            $linkstart = '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$this->id;
         }
 
         if (! empty($this->name))
@@ -1909,17 +1927,15 @@ class Societe extends CommonObject
         if (! empty($conf->accounting->enabled) && $this->fournisseur)
             $label.= '<br><b>' . $langs->trans('SupplierAccountancyCode') . ':</b> '. $this->code_compta_fournisseur;
             
-        if (! empty($this->logo))
-        {
-            $label.= '</br><div class="photointooltip">';
-            //if (! is_object($form)) $form = new Form($db);
-            $label.= Form::showphoto('societe', $this, 80, 0, 0, 'photowithmargin', 'mini');
-            $label.= '</div><div style="clear: both;"></div>';
-        }
         $label.= '</div>';
 
         // Add type of canvas
-        $linkstart.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
+        $linkstart.=(!empty($this->canvas)?'&canvas='.$this->canvas:'');
+        // Add param to save lastsearch_values or not
+        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0); 
+        if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        if ($add_save_lastsearch_values) $linkstart.='&save_lastsearch_values=1';
+        $linkstart.='"';
 
         $linkclose='';
         if (empty($notooltip))
@@ -1945,7 +1961,14 @@ class Societe extends CommonObject
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
+        global $user;
+        if (! $user->rights->societe->client->voir && $user->societe_id > 0 && $this->id != $user->societe_id)
+        {
+            $linkstart='';
+            $linkend='';
+        }
+        
+        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$linkstart.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
 
@@ -2023,6 +2046,7 @@ class Societe extends CommonObject
             if (empty($this->name)) $this->name=$this->nom;
             $contact_emails['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
         }
+        //var_dump($contact_emails)
         return $contact_emails;
     }
 
@@ -2062,7 +2086,7 @@ class Societe extends CommonObject
 
         $sql = "SELECT rowid, email, statut, phone_mobile, lastname, poste, firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
-        $sql.= " WHERE fk_soc = '".$this->id."'";
+        $sql.= " WHERE fk_soc = ".$this->id;
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -2122,7 +2146,7 @@ class Societe extends CommonObject
     {
         $contacts = array();
 
-        $sql = "SELECT rowid, lastname, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '".$this->id."'";
+        $sql = "SELECT rowid, lastname, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$this->id;
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -2155,7 +2179,7 @@ class Societe extends CommonObject
         require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
         $contacts = array();
 
-        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '".$this->id."'";
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$this->id;
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -3139,7 +3163,7 @@ class Societe extends CommonObject
     {
     	$sql  = "SELECT t.localtax1, t.localtax2";
     	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-    	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
+    	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
     	$sql .= " AND t.active = 1";
     	if (empty($localTaxNum))   $sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";
     	elseif ($localTaxNum == 1) $sql .= " AND t.localtax1_type <> '0'";
@@ -3163,7 +3187,7 @@ class Societe extends CommonObject
     {
         $sql  = "SELECT t.rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-        $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
+        $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
         $sql .= " AND t.active = 1 AND t.recuperableonly = 1";
 
         dol_syslog("useNPR", LOG_DEBUG);
@@ -3184,7 +3208,7 @@ class Societe extends CommonObject
     {
 		$sql  = "SELECT COUNT(*) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r, ".MAIN_DB_PREFIX."c_country as c";
-		$sql .= " WHERE r.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
+		$sql .= " WHERE r.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
 		$sql .= " AND r.active = 1";
 
 		dol_syslog("useRevenueStamp", LOG_DEBUG);
@@ -3309,18 +3333,6 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *  Set commnunication level
-	 *
-	 *  @param  User	$user		User making change
-	 *	@return	int					<0 if KO, >0 if OK
-     * @deprecated Use update function instead
-	 */
-	function set_commnucation_level($user)
-	{
-		return $this->update($this->id, $user);
-	}
-
-	/**
 	 *  Set outstanding value
 	 *
 	 *  @param  User	$user		User making change
@@ -3332,49 +3344,187 @@ class Societe extends CommonObject
         return $this->update($this->id, $user);
 	}
 
-    /**
-     *  Return amount of bill not paid
-     *
-     *  @return		int				Amount in debt for thirdparty
-     */
-    function get_OutstandingBill()
-    {
-		/* Accurate value of remain to pay is to sum remaintopay for each invoice
-		$paiement = $invoice->getSommePaiement();
-		$creditnotes=$invoice->getSumCreditNotesUsed();
-		$deposits=$invoice->getSumDepositsUsed();
-		$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-		$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
-		*/
-		$sql  = "SELECT rowid, total_ttc FROM ".MAIN_DB_PREFIX."facture as f";
-		$sql .= " WHERE fk_soc = ". $this->id;
-		$sql .= " AND paye = 0";
-		$sql .= " AND fk_statut <> 0";	// Not a draft
-		//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
-		$sql .= " AND fk_statut <> 3";		// Not abandonned
-		$sql .= " AND fk_statut <> 2";		// Not clasified as paid
+	/**
+	 *  Return amount of order not paid and total
+	 *
+	 *  @param     string      $mode    'customer' or 'supplier'
+	 *  @return    array				array('opened'=>Amount, 'total'=>Total amount)
+	 */
+	function getOutstandingProposals($mode='customer')
+	{
+	    $table='propal';
+	    if ($mode == 'supplier') $table = 'supplier_proposal';
+	    
+	    $sql  = "SELECT rowid, total_ht, total as total_ttc, fk_statut FROM ".MAIN_DB_PREFIX.$table." as f";
+	    $sql .= " WHERE fk_soc = ". $this->id;
 
-		dol_syslog("get_OutstandingBill", LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$outstandingBill = 0;
-			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			$facturestatic=new Facture($this->db);
-			while($obj=$this->db->fetch_object($resql)) {
-				$facturestatic->id=$obj->rowid;
-				$paiement = $facturestatic->getSommePaiement();
-				$creditnotes = $facturestatic->getSumCreditNotesUsed();
-				$deposits = $facturestatic->getSumDepositsUsed();
-
-				$outstandingBill+= $obj->total_ttc - $paiement - $creditnotes - $deposits;
-   			}
-   			return $outstandingBill;
-		}
-		else
-			return 0;
+	    dol_syslog("getOutstandingProposals", LOG_DEBUG);
+	    $resql=$this->db->query($sql);
+	    if ($resql)
+	    {
+	        $outstandingOpened = 0;
+	        $outstandingTotal = 0;
+	        $outstandingTotalIncTax = 0;
+	        while($obj=$this->db->fetch_object($resql)) {
+	            $outstandingTotal+= $obj->total_ht;
+	            $outstandingTotalIncTax+= $obj->total_ttc;
+	            if ($obj->fk_statut != 0)    // Not a draft
+	            {
+	                $outstandingOpened+=$obj->total_ttc;
+	            }
+	        }
+	        return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+	    }
+	    else
+	        return array();
 	}
+	
+	/**
+	 *  Return amount of order not paid and total
+	 *
+	 *  @param     string      $mode    'customer' or 'supplier'
+	 *  @return		array				array('opened'=>Amount, 'total'=>Total amount)
+	 */
+	function getOutstandingOrders($mode='customer')
+	{
+	    $table='commande';
+	    if ($mode == 'supplier') $table = 'commande_fournisseur';
+	     
+	    $sql  = "SELECT rowid, total_ht, total_ttc, fk_statut FROM ".MAIN_DB_PREFIX.$table." as f";
+	    $sql .= " WHERE fk_soc = ". $this->id;
 
+	    dol_syslog("getOutstandingOrders", LOG_DEBUG);
+	    $resql=$this->db->query($sql);
+	    if ($resql)
+	    {
+	        $outstandingOpened = 0;
+	        $outstandingTotal = 0;
+	        $outstandingTotalIncTax = 0;
+	        while($obj=$this->db->fetch_object($resql)) {
+	            $outstandingTotal+= $obj->total_ht;
+	            $outstandingTotalIncTax+= $obj->total_ttc;
+	            if ($obj->fk_statut != 0)    // Not a draft
+	            {
+	                $outstandingOpened+=$obj->total_ttc;
+	            }
+	        }
+	        return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+	    }
+	    else
+	        return array();
+	}
+	
+	/**
+	 *  Return amount of bill not paid and total
+	 *
+	 *  @param     string      $mode    'customer' or 'supplier'
+	 *  @return		array				array('opened'=>Amount, 'total'=>Total amount)
+	 */
+	function getOutstandingBills($mode='customer')
+	{
+	    $table='facture';
+	    if ($mode == 'supplier') $table = 'facture_fourn';
+	     
+	    /* Accurate value of remain to pay is to sum remaintopay for each invoice
+	     $paiement = $invoice->getSommePaiement();
+	     $creditnotes=$invoice->getSumCreditNotesUsed();
+	     $deposits=$invoice->getSumDepositsUsed();
+	     $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+	     $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+	     */
+	    if ($mode == 'supplier') $sql  = "SELECT rowid, total_ht as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
+	    else $sql  = "SELECT rowid, total as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
+	    $sql .= " WHERE fk_soc = ". $this->id;
+
+	    dol_syslog("getOutstandingBills", LOG_DEBUG);
+	    $resql=$this->db->query($sql);
+	    if ($resql)
+	    {
+	        $outstandingOpened = 0;
+	        $outstandingTotal = 0;
+	        $outstandingTotalIncTax = 0;
+	        if ($mode == 'supplier')
+	        {
+	            require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+	            $tmpobject=new FactureFournisseur($this->db);
+	        }
+	        else
+	        {
+	           require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	           $tmpobject=new Facture($this->db);
+	        }
+	        while($obj=$this->db->fetch_object($resql)) {
+	            $tmpobject->id=$obj->rowid;
+	            if ($obj->fk_statut != 0                                           // Not a draft
+	                && ! ($obj->fk_statut == 3 && $obj->close_code == 'replaced')  // Not a replaced invoice
+	                )                                                      
+	            {
+	                $outstandingTotal+= $obj->total_ht;
+	                $outstandingTotalIncTax+= $obj->total_ttc;
+	            }
+	            if ($obj->paye == 0
+	                && $obj->fk_statut != 0    // Not a draft
+	                && $obj->fk_statut != 3	   // Not abandonned
+	                && $obj->fk_statut != 2)   // Not classified as paid
+    	            //$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
+	            {
+    	            $paiement = $tmpobject->getSommePaiement();
+    	            $creditnotes = $tmpobject->getSumCreditNotesUsed();
+    	            $deposits = $tmpobject->getSumDepositsUsed();
+	                $outstandingOpened+=$obj->total_ttc - $paiement - $creditnotes - $deposits;
+	            }
+	        }
+	        return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+	    }
+	    else 
+	    {
+	        return array();
+	    }
+	}
+	
+	/**
+	 *  Return amount of bill not paid
+	 *
+	 *  @return		int				Amount in debt for thirdparty
+	 *  @deprecated
+	 */
+	function get_OutstandingBill()
+	{
+	    /* Accurate value of remain to pay is to sum remaintopay for each invoice
+	     $paiement = $invoice->getSommePaiement();
+	     $creditnotes=$invoice->getSumCreditNotesUsed();
+	     $deposits=$invoice->getSumDepositsUsed();
+	     $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+	     $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+	     */
+	    $sql  = "SELECT rowid, total_ttc FROM ".MAIN_DB_PREFIX."facture as f";
+	    $sql .= " WHERE fk_soc = ". $this->id;
+	    $sql .= " AND paye = 0";
+	    $sql .= " AND fk_statut <> 0";	// Not a draft
+	    //$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
+	    $sql .= " AND fk_statut <> 3";		// Not abandonned
+	    $sql .= " AND fk_statut <> 2";		// Not clasified as paid
+	
+	    dol_syslog("get_OutstandingBill", LOG_DEBUG);
+	    $resql=$this->db->query($sql);
+	    if ($resql)
+	    {
+	        $outstandingAmount = 0;
+	        require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	        $tmpobject=new Facture($this->db);
+	        while($obj=$this->db->fetch_object($resql)) {
+	            $tmpobject->id=$obj->rowid;
+	            $paiement = $tmpobject->getSommePaiement();
+	            $creditnotes = $tmpobject->getSumCreditNotesUsed();
+	            $deposits = $tmpobject->getSumDepositsUsed();
+	            $outstandingAmount+= $obj->total_ttc - $paiement - $creditnotes - $deposits;
+	        }
+	        return $outstandingAmount;
+	    }
+	    else
+	        return 0;
+	}
+	
 	/**
 	 * Return label of status customer is prospect/customer
 	 *
@@ -3466,7 +3616,9 @@ class Societe extends CommonObject
 	 */
 	public function setCategories($categories, $type)
 	{
-		// Decode type
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+	    
+	    // Decode type
 		if ($type == 'customer') {
 			$type_id = Categorie::TYPE_CUSTOMER;
 			$type_text = 'customer';
@@ -3484,7 +3636,6 @@ class Societe extends CommonObject
 		}
 
 		// Get current categories
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$c = new Categorie($this->db);
 		$existing = $c->containing($this->id, $type_id, 'id');
 

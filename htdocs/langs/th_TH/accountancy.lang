@@ -194,6 +194,8 @@ ChangeBinding=Change the binding
 
 ## Admin
 ApplyMassCategories=Apply mass categories
+AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
+CategoryDeleted=Category for the accounting account has been removed
 
 ## Export
 Exports=การส่งออก
@@ -209,6 +211,7 @@ Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
 Modelcsv_quadratus=Export towards Quadratus QuadraCompta
 Modelcsv_ebp=Export towards EBP
 Modelcsv_cogilog=Export towards Cogilog
+ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy

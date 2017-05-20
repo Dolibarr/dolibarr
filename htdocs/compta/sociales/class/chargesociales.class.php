@@ -2,6 +2,7 @@
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2017      Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +53,7 @@ class ChargeSociales extends CommonObject
     var $date_modification;
     var $date_validation;
     var $fk_account;
+	var $fk_project;
 
 
     /**
@@ -75,7 +77,7 @@ class ChargeSociales extends CommonObject
     function fetch($id, $ref='')
     {
         $sql = "SELECT cs.rowid, cs.date_ech";
-        $sql.= ", cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, cs.periode, cs.import_key";
+        $sql.= ", cs.libelle as lib, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode, cs.import_key";
         $sql.= ", cs.fk_account, cs.fk_mode_reglement";
         $sql.= ", c.libelle";
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
@@ -93,20 +95,21 @@ class ChargeSociales extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id             = $obj->rowid;
-                $this->ref            = $obj->rowid;
-                $this->date_ech       = $this->db->jdate($obj->date_ech);
-                $this->lib            = $obj->lib;
-                $this->type           = $obj->fk_type;
-                $this->type_libelle   = $obj->libelle;
-                $this->fk_account = $obj->fk_account;
-                $this->mode_reglement_id = $obj->fk_mode_reglement;
-                $this->mode_reglement_code = $obj->mode_reglement_code;
-                $this->mode_reglement = $obj->mode_reglement_libelle;
-                $this->amount         = $obj->amount;
-                $this->paye           = $obj->paye;
-                $this->periode        = $this->db->jdate($obj->periode);
-                $this->import_key     = $this->import_key;
+                $this->id					= $obj->rowid;
+                $this->ref					= $obj->rowid;
+                $this->date_ech				= $this->db->jdate($obj->date_ech);
+                $this->lib					= $obj->lib;
+                $this->type					= $obj->fk_type;
+                $this->type_libelle			= $obj->libelle;
+                $this->fk_account			= $obj->fk_account;
+                $this->mode_reglement_id	= $obj->fk_mode_reglement;
+                $this->mode_reglement_code	= $obj->mode_reglement_code;
+                $this->mode_reglement		= $obj->mode_reglement_libelle;
+                $this->amount				= $obj->amount;
+				$this->fk_project			= $obj->fk_project;
+                $this->paye					= $obj->paye;
+                $this->periode				= $this->db->jdate($obj->periode);
+                $this->import_key			= $this->import_key;
                 
                 $this->db->free($resql);
 
@@ -166,13 +169,15 @@ class ChargeSociales extends CommonObject
 
         $this->db->begin();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, entity, fk_user_author, date_creation)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, fk_projet, entity, fk_user_author, date_creation)";
         $sql.= " VALUES (".$this->type;
         $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"NULL");
         $sql.= ", '".$this->db->escape($this->lib)."'";
-        $sql.= ", '".$this->db->idate($this->date_ech)."','".$this->db->idate($this->periode)."'";
+        $sql.= ", '".$this->db->idate($this->date_ech)."'";
+		$sql.= ", '".$this->db->idate($this->periode)."'";
         $sql.= ", '".price2num($newamount)."'";
+		$sql.= ", ".($this->fk_project>0?$this->fk_project:'NULL');
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$user->id;
         $sql.= ", '".$this->db->idate($now)."'";
@@ -232,7 +237,7 @@ class ChargeSociales extends CommonObject
         // Delete payments
         if (! $error)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge WHERE fk_charge='".$this->id."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge WHERE fk_charge=".$this->id;
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
@@ -244,7 +249,7 @@ class ChargeSociales extends CommonObject
 
         if (! $error)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales WHERE rowid='".$this->id."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales WHERE rowid=".$this->id;
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
@@ -283,6 +288,7 @@ class ChargeSociales extends CommonObject
         $sql.= ", date_ech='".$this->db->idate($this->date_ech)."'";
         $sql.= ", periode='".$this->db->idate($this->periode)."'";
         $sql.= ", amount='".price2num($this->amount,'MT')."'";
+		$sql.= ", fk_projet='".$this->db->escape($this->fk_project)."'";
         $sql.= ", fk_user_modif=".$user->id;
         $sql.= " WHERE rowid=".$this->id;
 
@@ -302,7 +308,7 @@ class ChargeSociales extends CommonObject
     }
 
     /**
-     * Enter description here ...
+     * Calculate amount remaining to pay by year
      *
      * @param	int		$year		Year
      * @return	number
@@ -510,7 +516,7 @@ class ChargeSociales extends CommonObject
     function info($id)
     {
         $sql = "SELECT e.rowid, e.tms as datem, e.date_creation as datec, e.date_valid as datev, e.import_key,";
-        $sql.= " fk_user_author, fk_user_modif, fk_user_valid";
+        $sql.= " e.fk_user_author, e.fk_user_modif, e.fk_user_valid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as e";
         $sql.= " WHERE e.rowid = ".$id;
 
@@ -543,7 +549,7 @@ class ChargeSociales extends CommonObject
                 }
 
                 $this->date_creation     = $this->db->jdate($obj->datec);
-                if (! empty($obj->fk_user_modif))	$this->date_modification = $this->db->jdate($obj->datem);
+                $this->date_modification = $this->db->jdate($obj->datem);
                 $this->date_validation   = $this->db->jdate($obj->datev);
                 $this->import_key        = $obj->import_key;
             }

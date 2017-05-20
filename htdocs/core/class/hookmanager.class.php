@@ -116,9 +116,9 @@ class HookManager
      * 	    @param		array	$parameters		Array of parameters
      * 		@param		Object	$object			Object to use hooks on
      * 	    @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
-     * 		@return		mixed					For 'addreplace hooks (doActions,formObjectOptions,pdf_xxx,...):  					Return 0 if we want to keep standard actions, >0 if we want to stop standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results and set into ->resArray.
-     * 											For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results and set into ->resArray.
-     *                                          All types can also return some values into an array ->results.
+     * 		@return		mixed					For 'addreplace' hooks (doActions,formObjectOptions,pdf_xxx,...):  					Return 0 if we want to keep standard actions, >0 if we want to stop standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+     * 											For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+     *                                          All types can also return some values into an array ->results that will be finaly merged into this->resArray for caller.
      * 											$this->error or this->errors are also defined by class called by this function if error.
      */
 	function executeHooks($method, $parameters=false, &$object='', &$action='')
@@ -126,7 +126,7 @@ class HookManager
         if (! is_array($this->hooks) || empty($this->hooks)) return '';
 
         $parameters['context']=join(':',$this->contextarray);
-        dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
+        //dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
 
         // Define type of hook ('output' or 'addreplace'. 'returnvalue' is deprecated because a 'addreplace' hook can also return resPrint and resArray).
         $hooktype='output';
@@ -142,8 +142,10 @@ class HookManager
 				'formObjectOptions',
 				'formattachOptions',
 				'formBuilddocLineOptions',
+			    'formatNotificationMessage',
 			    'getFormMail',
 			    'getIdProfUrl',
+			    'getDirList',
 				'moveUploadedFile',
 			    'pdf_build_address',
 				'pdf_writelinedesc',
@@ -172,11 +174,11 @@ class HookManager
                 'printObjectSubLine',
 				'createDictionaryFieldList',
 				'editDictionaryFieldlist',
-				'getFormMail'
+				'getFormMail',
+			    'showLinkToObjectBlock'
 				)
 			)) $hooktype='addreplace';
-        // Deprecated hook types ('returnvalue')
-        //if (preg_match('/^pdf_/',$method) && $method != 'pdf_writelinedesc') $hooktype='returnvalue';		// pdf_xxx except pdf_writelinedesc are 'returnvalue' hooks. When there is 2 hooks of this type, only last one win. TODO Move them into 'output' or 'addreplace' hooks.
+
         if ($method == 'insertExtraFields')
         {
         	$hooktype='returnvalue';	// deprecated. TODO Remove all code with "executeHooks('insertExtraFields'" as soon as there is a trigger available.
@@ -200,6 +202,9 @@ class HookManager
 
                     // test to avoid running twice a hook, when a module implements several active contexts
                     if (in_array($module,$modulealreadyexecuted)) continue;
+                    
+                    dol_syslog(get_class($this).'::executeHooks a qualified hook was found for method='.$method.' module='.$module." action=".$action." context=".$context);
+                    
                     $modulealreadyexecuted[$module]=$module; // Use the $currentcontext in method to avoid running twice
 
                     // Clean class (an error may have been set from a previous call of another method for same module/hook)
@@ -230,15 +235,15 @@ class HookManager
                     	if (is_array($parameters) && ! empty($parameters['special_code']) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) continue;
 
                     	//dol_syslog("Call method ".$method." of class ".get_class($actionclassinstance).", module=".$module.", hooktype=".$hooktype, LOG_DEBUG);
-                    	$result = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
+                    	$resaction = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
 
                     	if (! empty($actionclassinstance->results) && is_array($actionclassinstance->results)) $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
                     	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
                     	// TODO dead code to remove (do not enable this, but fix hook instead): result must not be a string. we must use $actionclassinstance->resprints to return a string
-                    	if (! is_array($result) && ! is_numeric($result))
+                    	if (! is_array($resaction) && ! is_numeric($resaction))
                     	{
                     		dol_syslog('Error: Bug into hook '.$method.' of module class '.get_class($actionclassinstance).'. Method must not return a string but an int (0=OK, 1=Replace, -1=KO) and set string into ->resprints', LOG_ERR);
-                    		if (empty($actionclassinstance->resprints)) { $this->resPrint.=$result; $result=0; }
+                    		if (empty($actionclassinstance->resprints)) { $this->resPrint.=$resaction; $resaction=0; }
                     	}
                     }
 

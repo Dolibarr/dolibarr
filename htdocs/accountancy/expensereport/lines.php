@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>  
  * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
@@ -148,7 +148,7 @@ print '<script type="text/javascript">
 $sql = "SELECT er.ref, er.rowid as erid,";
 $sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht, erd.fk_code_ventilation, erd.tva_tx, erd.date,";
 $sql .= " aa.label, aa.account_number,";
-$sql .= " f.id as fees_id, f.label as fees_label";
+$sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as er";
 $sql .= " , " . MAIN_DB_PREFIX . "accounting_account as aa";
 $sql .= " , " . MAIN_DB_PREFIX . "expensereport_det as erd";
@@ -178,7 +178,7 @@ $sql .= " AND er.entity IN (" . getEntity("expensereport", 0) . ")";  // We don'
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -233,6 +233,22 @@ if ($result) {
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
+	print '<tr class="liste_titre_filter">';
+	print '<td class="liste_titre"></td>';
+	print '<td><input type="text" class="flat maxwidth50" name="search_expensereport" value="' . dol_escape_htmltag($search_expensereport) . '"></td>';
+	print '<td class="liste_titre" align="right"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="right flat maxwidth50" name="search_vat" size="1" placeholder="%" value="' . dol_escape_htmltag($search_vat) . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="right flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
+    print '<td class="liste_titre" align="right"></td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpicto=$form->showFilterButtons();
+    print $searchpicto;
+    print '</td>';
+	print "</tr>\n";
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("ExpenseReport"), $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
@@ -243,23 +259,8 @@ if ($result) {
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre('');
-	print_liste_field_titre('', '', '', '', '', 'align="center"');
-	print "</tr>\n";
-
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"></td>';
-	print '<td><input type="text" class="flat maxwidth50" name="search_expensereport" value="' . dol_escape_htmltag($search_expensereport) . '"></td>';
-	print '<td class="liste_titre" align="right"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
-    print '<td class="liste_titre" align="right"></td>';
-    print '<td class="liste_titre" align="right">';
-    $searchpicto=$form->showFilterAndCheckAddButtons(1);
-    print $searchpicto;
-    print '</td>';
+    $checkpicto=$form->showCheckAddButtons();
+	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
 	print "</tr>\n";
 
 	$expensereport_static = new ExpenseReport($db);
@@ -267,13 +268,12 @@ if ($result) {
 	$var = True;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
-		$var = ! $var;
 		$codeCompta = length_accountg($objp->account_number) . ' - ' . $objp->label;
 
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
 		
-		print '<tr '. $bc[$var].'>';
+		print '<tr class="oddeven">';
 
 		print '<td>' . $objp->rowid . '</td>';
 
@@ -282,7 +282,7 @@ if ($result) {
 
 		print '<td align="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
 		
-		print '<td class="tdoverflow">' . $objp->fees_label . '</td>';
+		print '<td class="tdoverflow">' . ($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code))) . '</td>';
 
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments));
@@ -300,7 +300,7 @@ if ($result) {
 		print img_edit();
 		print '</a></td>';
 		
-		print '<td align="right"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
+		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
 		
 		print "</tr>";
 		$i ++;

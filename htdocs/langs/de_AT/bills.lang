@@ -1,8 +1,4 @@
 # Dolibarr language file - Source file is en_US - bills
-BillsCustomersUnpaid=Unbezahlte Kundenrechnungen
-BillsCustomersUnpaidForCompany=Unbezahlte Kundenrechnungen für %s
-BillsSuppliersUnpaid=Unbezahlte Lieferantenrechnungen
-BillsSuppliersUnpaidForCompany=Unbezahlte Liferantenrechnung für %s
 DisabledBecauseNotErasable=Deaktiviert, weil es nicht gelöscht werden kann
 InvoiceStandardDesc=Dies ist die übliche Rechnungsart.
 InvoiceDeposit=Anzahlung
@@ -14,10 +10,10 @@ InvoiceProFormaDesc=<b>Proformarechnung</b> entspricht dem Wert der echten Rechn
 InvoiceReplacementDesc=<b>Ersatzrechnung</b> wird verwendet um eine Rechnung, die niemals bezahlt wurde, zu stornieren.<br><br>Beachte: Nur Rechnungen ohne Bezahlung können storniert werden. Wenn die stornierte Rechnung noch nicht geschlossen is, wird sie automatisch geschlossen und als 'storniert' markiert.
 ConsumedBy=Consumed von
 CardBill=Rechnungskarte
+ConfirmDeletePayment=Are you sure you want to delete this payment ?
+ValidateBill=Validate Rechnung
 NewRelativeDiscount=Neue relative Rabatt
-DescTaxAndDividendsArea=Dieser Bereich stellt eine Übersicht über alle Zahlungen, die für die Steuer-oder Sozialabgaben. Nur Datensätze mit der Bezahlung während der festgesetzten Jahr hier.
 RelatedBill=Verwandte Rechnung
-PaymentConditionRECEP=Prompt nach Rechnungserhalt
 IBANNumber=IBAN
 BICNumber=BIC/SWIFT
 LawApplicationPart2=Die Ware bleibt Eigentum der

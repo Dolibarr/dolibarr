@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $langs->load("banks");
 $langs->load("categories");
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width',768);
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',200);
+$WIDTH=DolGraph::getDefaultGraphSizeForStats('width',380);      // Large for one graph in a smarpthone.
+$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',160);
 
 $id=GETPOST('account')?GETPOST('account','alpha'):GETPOST('id');
 $ref=GETPOST('ref');
@@ -144,10 +144,10 @@ else
 
 // Onglets
 $head=bank_prepare_head($object);
-dol_fiche_head($head,'annual',$langs->trans("FinancialAccount"),0,'account');
+dol_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), -1, 'account');
 
 $title=$langs->trans("FinancialAccount")." : ".$object->label;
-$link=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start-1)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
+$link=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start-1)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start+1)."'>".img_next('', 'class="valignbottom"')."</a>":"");
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
@@ -188,7 +188,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="center" width="20%" colspan="2">'.$annee.'</td>';
+	print '<td align="center" width="20%" colspan="2" class="liste_titre borderrightlight">'.$annee.'</td>';
 }
 print '</tr>';
 
@@ -196,15 +196,15 @@ print '<tr class="liste_titre">';
 print '<td class="liste_titre">&nbsp;</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td>';
+	print '<td class="liste_titre" align="center">'.$langs->trans("Debit").'</td><td class="liste_titre" align="center">'.$langs->trans("Credit").'</td>';
 }
 print '</tr>';
 
 $var=true;
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	
+	print '<tr class="oddeven">';
 	print "<td>".dol_print_date(dol_mktime(1,1,1,$mois,1,2000),"%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
@@ -218,7 +218,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 		}
 		print "</td>";
 
-		print '<td align="right" width="10%">&nbsp;';
+		print '<td align="right" class="borderrightlight" width="10%">&nbsp;';
 		if ($encaiss[$case]>0)
 		{
 			print price($encaiss[$case]);
@@ -493,7 +493,7 @@ else
 }
 
 
-print "\n</div>\n";
+print "\n</div><br>\n";
 
 llxFooter();
 $db->close();

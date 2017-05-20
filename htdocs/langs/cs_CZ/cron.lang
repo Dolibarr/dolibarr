@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Read Scheduled job
-Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
+Permission23101 = Čtení naplánovaných úloh
+Permission23102 = Vytvoření/aktualizace naplánované úlohy
+Permission23103 = Smazat naplánovanou úlohu
+Permission23104 = Provést naplánovanou úlohu
 # Admin
 CronSetup= Nastavení naplánovaných úloh
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs
@@ -17,14 +17,14 @@ CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronLastOutput=Výstup poslední úlohy
-CronLastResult=Výstup posledního kódu
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Příkaz
 CronList=Naplánované úlohy
 CronDelete=Smazat naplánované úlohy
-CronConfirmDelete=Jste si jisti, že chcete odstranit tyto naplánované úlohy?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Jste si jisti, že chcete provést tyto naplánované úlohy nyní?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Plánovací modul úloh umožňují provádět úlohy, které byly plánované
 CronTask=Práce
 CronNone=Nikdo
@@ -39,7 +39,7 @@ CronMethod=Metoda
 CronModule=Modul
 CronNoJobs=Žádné registrované úkoly
 CronPriority=Priorita
-CronLabel=Label
+CronLabel=Štítek
 CronNbRun=Nb. zahájit
 CronMaxRun=Max nb. launch
 CronEach=Každý
@@ -65,7 +65,7 @@ CronMethodHelp=Objekt způsob startu. <BR> Např načíst metody objektu .../htd
 CronArgsHelp=Metoda argumenty. <BR> Např načíst metody objektu výrobku .../htdocs/product/class/product.class.php, hodnota paramteru může být <i>0, ProductRef</i>
 CronCommandHelp=Spustit příkazový řádek. 
 CronCreateJob=Vytvořit novou naplánovanou úlohu
-CronFrom=From
+CronFrom=Z
 # Info
 # Common
 CronType=Typ úlohy
@@ -73,7 +73,7 @@ CronType_method=Volání metody třídy Dolibarr
 CronType_command=Shell příkaz
 CronCannotLoadClass=Nelze načíst třídu nebo objekt %s %s
 UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
-JobDisabled=Job disabled
+JobDisabled=Úloha vypnuta
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of active jobs, your jobs may be delayed to a maximum of %s hours before being run.

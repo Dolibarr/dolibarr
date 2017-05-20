@@ -38,7 +38,7 @@ $langs->load("stocks");
 $langs->load("companies");
 $langs->load("categories");
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel');
 $confirm=GETPOST('confirm');
 
@@ -474,9 +474,9 @@ else
 						}
 					}
 
-					$var=!$var;
+					
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
-					print "<tr ".$bc[$var].">";
+					print '<tr class="oddeven">';
 					print "<td>";
 					$productstatic->id=$objp->rowid;
                     $productstatic->ref = $objp->ref;

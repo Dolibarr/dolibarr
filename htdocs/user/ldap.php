@@ -42,7 +42,7 @@ if ($user->id == $id) $feature2=''; // A user can always read its own card
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 $object = new User($db);
-$object->fetch($id);
+$object->fetch($id, '', '', 1);
 $object->getrights();
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -96,7 +96,11 @@ $head = user_prepare_head($object);
 $title = $langs->trans("User");
 dol_fiche_head($head, 'ldap', $title, 0, 'user');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '';
+
+if ($user->rights->user->user->lire || $user->admin) {
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+}
 
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 

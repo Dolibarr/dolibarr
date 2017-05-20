@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,13 +95,13 @@ if (empty($reshook))
     	if (! GETPOST('label'))
     	{
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
-    		$action='update';
+    		$action='edit';
     		$error++;
     	}
     	if (! GETPOST('bank'))
     	{
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankName")), null, 'errors');
-    		$action='update';
+    		$action='edit';
     		$error++;
     	}
     	if ($account->needIBAN() == 1)
@@ -108,13 +109,13 @@ if (empty($reshook))
     		if (! GETPOST('iban'))
     		{
     			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
-    			$action='update';
+    			$action='edit';
     			$error++;
     		}
     		if (! GETPOST('bic'))
     		{
     			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
-    			$action='update';
+    			$action='edit';
     			$error++;
     		}
     	}
@@ -293,13 +294,13 @@ if (empty($reshook))
         $action = 'builddoc';
         $moreparams = array(
             'use_companybankid'=>GETPOST('companybankid'),
-            'force_dir_output'=>$conf->societe->dir_output.'/'.dol_sanitizeFileName($object->id)
+            'force_dir_output'=>$conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->id)
         );
         $_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid'));
         $_POST['model'] =  GETPOST('modelrib'.GETPOST('companybankid'));
     }
     $id = $socid;
-    $upload_dir = $conf->societe->dir_output;
+    $upload_dir = $conf->societe->multidir_output[$object->entity];
     $permissioncreate=$user->rights->societe->creer;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -330,7 +331,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
     print '<form action="rib.php?socid='.$object->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+    print '<input type="hidden" name="id" value="'.GETPOST("id","int").'">';
 }
 if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
@@ -343,7 +344,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 // View
 if ($socid && $action != 'edit' && $action != "create")
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
 	// Confirm delete third party
     if ($action == 'delete')
@@ -358,14 +359,16 @@ if ($socid && $action != 'edit' && $action != "create")
 
     print load_fiche_titre($langs->trans("DefaultRIB"), '', '');
 
+    print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
+    
     print '<table class="border centpercent">';
 
     print '<tr><td class="titlefield">'.$langs->trans("LabelRIB").'</td>';
-    print '<td colspan="4">'.$account->label.'</td></tr>';
+    print '<td>'.$account->label.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BankName").'</td>';
-	print '<td colspan="4">'.$account->bank.'</td></tr>';
+	print '<td>'.$account->bank.'</td></tr>';
 
 	// Show fields of bank account
 	foreach($account->getFieldsToShow(1) as $val)
@@ -376,7 +379,7 @@ if ($socid && $action != 'edit' && $action != "create")
 			$content = $account->code_guichet;
 		} elseif ($val == 'BankAccountNumber') {
 			$content = $account->number;
-			if (! empty($account->label)) {
+			if (! empty($account->label) && $account->number) {
 			    if (! checkBanForAccount($account)) {
 			        $content.= ' '.img_picto($langs->trans("ValueIsNotValid"),'warning');
 			    } else {
@@ -406,24 +409,24 @@ if ($socid && $action != 'edit' && $action != "create")
 		}
 
 		print '<tr><td>'.$langs->trans($val).'</td>';
-		print '<td colspan="4">'.$content.'</td>';
+		print '<td>'.$content.'</td>';
 		print '</tr>';
 	}
 
-	print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print $account->domiciliation;
 	print "</td></tr>\n";
 
-	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td><td>';
 	print $account->proprio;
 	print "</td></tr>\n";
 
-	print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 	print $account->owner_address;
 	print "</td></tr>\n";
 
 	print '</table>';
-
+    print '</div>';
 
 	print '<br>';
 	
@@ -457,7 +460,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
         foreach ($rib_list as $rib)
         {
-            print "<tr ".$bc[$var].">";
+            print '<tr class="oddeven">';
             // Label
             print '<td>'.$rib->label.'</td>';
             // Bank name
@@ -482,7 +485,7 @@ if ($socid && $action != 'edit' && $action != "create")
                     $string .= $rib->iban.' ';*/
                 }
             }
-        	if (! empty($rib->label)) {
+        	if (! empty($rib->label) && $rib->number) {
 			    if (! checkBanForAccount($rib)) {
 			        $string.= ' '.img_picto($langs->trans("ValueIsNotValid"),'warning');
 			    } else {
@@ -610,7 +613,7 @@ if ($socid && $action != 'edit' && $action != "create")
         {
         	$colspan=8;
         	if (! empty($conf->prelevement->enabled)) $colspan+=2;
-            print '<tr '.$bc[0].'><td colspan="'.$colspan.'" align="center">'.$langs->trans("NoBANRecord").'</td></tr>';
+            print '<tr '.$bc[0].'><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
         }
 
         print '</table>';
@@ -655,7 +658,7 @@ if ($socid && $action != 'edit' && $action != "create")
     
         $var=true;
     
-        print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang);
+        print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
     
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
     
@@ -700,7 +703,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 	print '<table class="border centpercent">';
 
     print '<tr><td class="titlefield fieldrequired">'.$langs->trans("LabelRIB").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
+    print '<td><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
 
     print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
     print '<td><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
@@ -742,17 +745,17 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 		print '</tr>';
 	}
 
-    print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
+    print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
     print '<textarea name="domiciliation" rows="4" cols="40" maxlength="255">';
     print $account->domiciliation;
     print "</textarea></td></tr>";
 
     print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
+    print '<td><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
     print "</td></tr>\n";
 
-    print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
-    print "<textarea name=\"owner_address\" rows=\"4\" cols=\"40\" maxlength=\"255\">";
+    print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
+    print '<textarea name="owner_address" rows="'.ROWS_4.'" cols="40" maxlength="255">';
     print $account->owner_address;
     print "</textarea></td></tr>";
 
@@ -768,13 +771,14 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
     	// RUM
     	print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
-	    print '<td colspan="4"><input size="30" type="text" name="rum" value="'.dol_escape_htmltag($account->rum).'"></td></tr>';
-
-	    // FRSTRECUR
-	    print '<tr><td>'.$langs->trans("WithdrawMode").'</td>';
-	    print '<td colspan="4"><input size="30" type="text" name="frstrecur" value="'.dol_escape_htmltag(GETPOST('frstrecur')?GETPOST('frstrecur'):$account->frstrecur).'"></td></tr>';
-
-	    print '</table>';
+    	print '<td><input size="30" type="text" name="rum" value="'.dol_escape_htmltag($account->rum).'"></td></tr>';
+    
+    	print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
+    	$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
+    	print $form->selectarray("frstrecur", $tblArraychoice, dol_escape_htmltag(GETPOST('frstrecur')?GETPOST('frstrecur'):$account->frstrecur), 0);
+    	print '</td></tr>';
+    
+    	print '</table>';
     }
 
     print '</div>';
@@ -798,64 +802,59 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
     dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
-    print '<div class="fichecenter">';
+    print '<div class="nofichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
     print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LabelRIB").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="label" value="'.GETPOST('label').'"></td></tr>';
+    print '<td><input size="30" type="text" name="label" value="'.GETPOST('label').'"></td></tr>';
 
     print '<tr><td class="fieldrequired">'.$langs->trans("Bank").'</td>';
     print '<td><input size="30" type="text" name="bank" value="'.GETPOST('bank').'"></td></tr>';
 
-    // BBAN
-    if ($account->useDetailedBBAN() == 1)
-    {
-        print '<tr><td>'.$langs->trans("BankCode").'</td>';
-        print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.GETPOST('code_banque').'"></td>';
-        print '</tr>';
+    // Show fields of bank account
+    foreach ($account->getFieldsToShow(1) as $val) {
 
-        print '<tr><td>'.$langs->trans("DeskCode").'</td>';
-        print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.GETPOST('code_guichet').'"></td>';
+        $require=false;
+        if ($val == 'BankCode') {
+            $name = 'code_banque';
+            $size = 8;
+        } elseif ($val == 'DeskCode') {
+            $name = 'code_guichet';
+            $size = 8;
+        } elseif ($val == 'BankAccountNumber') {
+            $name = 'number';
+            $size = 18;
+        } elseif ($val == 'BankAccountNumberKey') {
+            $name = 'cle_rib';
+            $size = 3;
+        } elseif ($val == 'IBAN') {
+            $name = 'iban';
+            $size = 30;
+            if ($account->needIBAN()) $require=true;
+        } elseif ($val == 'BIC') {
+            $name = 'bic';
+            $size = 12;
+            if ($account->needIBAN()) $require=true;
+        }
+
+        print '<tr><td'.($require?' class="fieldrequired" ':'').'>'.$langs->trans($val).'</td>';
+        print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.GETPOST($name).'"></td>';
         print '</tr>';
     }
-    if ($account->useDetailedBBAN() == 2)
-    {
-        print '<tr><td>'.$langs->trans("BankCode").'</td>';
-        print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.GETPOST('code_banque').'"></td>';
-        print '</tr>';
-    }
 
-    print '<td>'.$langs->trans("BankAccountNumber").'</td>';
-    print '<td><input size="15" type="text" class="flat" name="number" value="'.GETPOST('number').'"></td>';
-    print '</tr>';
-
-    if ($account->useDetailedBBAN() == 1)
-    {
-        print '<td>'.$langs->trans("BankAccountNumberKey").'</td>';
-        print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.GETPOST('value').'"></td>';
-        print '</tr>';
-    }
-
-    // IBAN
-    print '<tr><td'.($account->needIBAN()?' class="fieldrequired" ':'').'>'.$langs->trans("IBAN").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="iban" value="'.GETPOST('iban').'"></td></tr>';
-
-    print '<tr><td'.($account->needIBAN()?' class="fieldrequired" ':'').'>'.$langs->trans("BIC").'</td>';
-    print '<td colspan="4"><input size="12" type="text" name="bic" value="'.GETPOST('bic').'"></td></tr>';
-
-    print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
-    print '<textarea name="domiciliation" rows="4" cols="40" maxlength="255">';
+    print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
+    print '<textarea name="domiciliation" rows="'.ROWS_4.'" class="quatrevingtpercent" maxlength="255">';
     print GETPOST('domiciliation');
     print "</textarea></td></tr>";
 
     print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.GETPOST('proprio').'"></td></tr>';
+    print '<td><input size="30" type="text" name="proprio" value="'.GETPOST('proprio').'"></td></tr>';
     print "</td></tr>\n";
 
-    print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
-    print '<textarea name="owner_address" rows="4" cols="40" maxlength="255">';
+    print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
+    print '<textarea name="owner_address" rows="'.ROWS_4.'" class="quatrevingtpercent" maxlength="255">';
     print GETPOST('owner_address');
     print "</textarea></td></tr>";
 
@@ -863,19 +862,20 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
     if ($conf->prelevement->enabled)
     {
-		print '<br>';
+    	print '<br>';
 
     	print '<table class="border" width="100%">';
 
     	// RUM
     	print '<tr><td class="titlefieldcreate">'.$langs->trans("RUM").'</td>';
-	    print '<td>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
+    	print '<td>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
+    
+    	print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
+    	$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
+    	print $form->selectarray("frstrecur", $tblArraychoice, (isset($_POST['frstrecur'])?GETPOST('frstrecur'):'FRST'), 0);
+    	print '</td></tr>';
 
-	    // FRSTRECUR
-	    print '<tr><td>'.$langs->trans("WithdrawMode").'</td>';
-	    print '<td><input size="30" type="text" name="frstrecur" value="'.(isset($_POST['frstrecur'])?GETPOST('frstrecur'):'FRST').'"></td></tr>';
-
-	    print '</table>';
+    	print '</table>';
     }
 
     print '</div>';

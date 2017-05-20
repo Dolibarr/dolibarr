@@ -43,9 +43,9 @@ $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fieldid);
 
-$account=$_GET["account"];
+$account=GETPOST("account");
 $mode='standard';
-if (isset($_GET["mode"]) && $_GET["mode"] == 'showalltime') $mode='showalltime';
+if (GETPOST("mode") == 'showalltime') $mode='showalltime';
 $error=0;
 
 
@@ -63,18 +63,18 @@ $datetime = dol_now();
 $year = dol_print_date($datetime, "%Y");
 $month = dol_print_date($datetime, "%m");
 $day = dol_print_date($datetime, "%d");
-if (! empty($_GET["year"]))  $year=sprintf("%04d",$_GET["year"]);
-if (! empty($_GET["month"])) $month=sprintf("%02d",$_GET["month"]);
+if (GETPOST("year"))  $year=sprintf("%04d",GETPOST("year"));
+if (GETPOST("month")) $month=sprintf("%02d",GETPOST("month"));
 
 
 $object = new Account($db);
 if ($_GET["account"] && ! preg_match('/,/',$_GET["account"]))	// if for a particular account and not a list
 {
-	$result=$object->fetch($_GET["account"]);
+	$result=$object->fetch(GETPOST("account", "int"));
 }
 if ($_GET["ref"])
 {
-	$result=$object->fetch(0,$_GET["ref"]);
+	$result=$object->fetch(0, GETPOST("ref"));
 	$account=$object->id;
 }
 
@@ -823,13 +823,13 @@ print '<br><br></td></tr>';
 // Graphs
 if ($mode == 'standard')
 {
-	$prevyear=$year;$nextyear=$year;
+	$prevyear=$year; $nextyear=$year;
 	$prevmonth=$month-1;$nextmonth=$month+1;
 	if ($prevmonth < 1)  { $prevmonth=12; $prevyear--; }
 	if ($nextmonth > 12) { $nextmonth=1; $nextyear++; }
 
 	// For month
-	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".$prevyear."&month=".$prevmonth."'>".img_previous()."</a> ".$langs->trans("Month")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".$nextyear."&month=".$nextmonth."'>".img_next()."</a>";
+	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".$prevyear."&month=".$prevmonth."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Month")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".$nextyear."&month=".$nextmonth."'>".img_next('', 'class="valignbottom"')."</a>";
 	print '<tr><td align="right">'.$link.'</td></tr>';
 
 	print '<tr><td align="center">';
@@ -843,7 +843,7 @@ if ($mode == 'standard')
 
 	// For year
 	$prevyear=$year-1;$nextyear=$year+1;
-	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".($prevyear)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".($nextyear)."'>".img_next()."</a>";
+	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
 	print '<tr><td align="right">'.$link.'</td></tr>';
 
 	print '<tr><td align="center">';

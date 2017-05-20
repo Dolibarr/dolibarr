@@ -39,7 +39,7 @@ $userid=GETPOST('userid','int');
 $socid = GETPOST('socid','int');
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->global->ACCOUNTING_MODE;
-if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
+if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta",'alpha');
 
 // Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;
@@ -197,13 +197,13 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 print '</tr>';
 
-print '<tr class="liste_titre"><td>'.$langs->trans("Month").'</td>';
+print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.$langs->trans("AmountHT").'</td>';
-	print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-	print '<td align="right" class="borderrightlight">'.$langs->trans("Delta").'</td>';
-	if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
+	if ($modecompta == 'CREANCES-DETTES') print '<td class="liste_titre" align="right">'.$langs->trans("AmountHT").'</td>';
+	print '<td class="liste_titre" align="right">'.$langs->trans("AmountTTC").'</td>';
+	print '<td class="liste_titre" align="right" class="borderrightlight">'.$langs->trans("Delta").'</td>';
+	if ($annee != $year_end) print '<td class="liste_titre" width="15">&nbsp;</td>';
 }
 print '</tr>';
 
@@ -222,8 +222,8 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 {
 	$mois_modulo = $mois;// ajout
 	if($mois>12){$mois_modulo = $mois-12;} // ajout
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	
+	print '<tr class="oddeven">';
 
 	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois_modulo,1,2000),"%B")."</td>";
 	for ($annee = $year_start -1 ; $annee <= $year_end ; $annee++)	// We start one year before to have data to be able to make delta
@@ -312,8 +312,8 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 /*
  for ($mois = 1 ; $mois < 13 ; $mois++)
  {
- $var=!$var;
- print "<tr ".$bc[$var].">";
+ 
+ print '<tr class="oddeven">';
 
  print "<td>".dol_print_date(dol_mktime(12,0,0,$mois,1,2000),"%B")."</td>";
  for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -480,7 +480,7 @@ print '</div>';
  $totalam_Rac +=  $obj->am;
  $i++;
  }
- $var=!$var;
+ 
  print "<tr ".$bc[$var]."><td align=\"right\" colspan=\"5\"><i>Facture a encaisser : </i></td><td align=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja r�gl� des factures partiellement r�gl�es</td></tr>";
  }
  $db->free($resql);
@@ -530,7 +530,7 @@ print '</div>';
  $total_pr +=  $obj->total_ttc-$obj->tot_fttc;
  $i++;
  }
- $var=!$var;
+ 
  print "<tr ".$bc[$var]."><td align=\"right\" colspan=\"5\"><i>Signe et non facture:</i></td><td align=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- bug ici, ca devrait exclure le deja facture</td></tr>";
  }
  $db->free($resql);

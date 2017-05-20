@@ -36,7 +36,8 @@ class Holiday extends CommonObject
 	public $table_element='holiday';
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+    public $picto = 'holiday';
+    
 	/**
 	 * @deprecated
 	 * @see id
@@ -126,7 +127,8 @@ class Holiday extends CommonObject
         // Check parameters
         if (empty($this->fk_user) || ! is_numeric($this->fk_user) || $this->fk_user < 0) { $this->error="ErrorBadParameter"; return -1; }
         if (empty($this->fk_validator) || ! is_numeric($this->fk_validator) || $this->fk_validator < 0)  { $this->error="ErrorBadParameter"; return -1; }
-
+        if (empty($this->fk_type) || ! is_numeric($this->fk_type) || $this->fk_type < 0) { $this->error="ErrorBadParameter"; return -1; }
+        
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
         $sql.= "fk_user,";
@@ -149,7 +151,7 @@ class Holiday extends CommonObject
         $sql.= " ".$this->halfday.",";
         $sql.= " '1',";
         $sql.= " '".$this->fk_validator."',";
-        $sql.= " '".$this->fk_type."',";
+        $sql.= " ".$this->fk_type.",";
         $sql.= " ".$user->id.",";
         $sql.= " ".$conf->entity;
         $sql.= ")";
@@ -280,7 +282,7 @@ class Holiday extends CommonObject
 
         $sql = "SELECT";
         $sql.= " cp.rowid,";
-
+        
         $sql.= " cp.fk_user,";
         $sql.= " cp.date_create,";
         $sql.= " cp.description,";
@@ -544,12 +546,12 @@ class Holiday extends CommonObject
         }
        	$sql.= " halfday = ".$this->halfday.",";
         if(!empty($this->statut) && is_numeric($this->statut)) {
-            $sql.= " statut = '".$this->statut."',";
+            $sql.= " statut = ".$this->statut.",";
         } else {
             $error++;
         }
         if(!empty($this->fk_validator)) {
-            $sql.= " fk_validator = '".$this->fk_validator."',";
+            $sql.= " fk_validator = '".$this->db->escape($this->fk_validator)."',";
         } else {
             $error++;
         }
@@ -559,7 +561,7 @@ class Holiday extends CommonObject
             $sql.= " date_valid = NULL,";
         }
         if(!empty($this->fk_user_valid)) {
-            $sql.= " fk_user_valid = '".$this->fk_user_valid."',";
+            $sql.= " fk_user_valid = '".$this->db->escape($this->fk_user_valid)."',";
         } else {
             $sql.= " fk_user_valid = NULL,";
         }
@@ -569,7 +571,7 @@ class Holiday extends CommonObject
             $sql.= " date_refuse = NULL,";
         }
         if(!empty($this->fk_user_refuse)) {
-            $sql.= " fk_user_refuse = '".$this->fk_user_refuse."',";
+            $sql.= " fk_user_refuse = '".$this->db->escape($this->fk_user_refuse)."',";
         } else {
             $sql.= " fk_user_refuse = NULL,";
         }
@@ -579,7 +581,7 @@ class Holiday extends CommonObject
             $sql.= " date_cancel = NULL,";
         }
         if(!empty($this->fk_user_cancel)) {
-            $sql.= " fk_user_cancel = '".$this->fk_user_cancel."',";
+            $sql.= " fk_user_cancel = '".$this->db->escape($this->fk_user_cancel)."',";
         } else {
             $sql.= " fk_user_cancel = NULL,";
         }
@@ -589,7 +591,7 @@ class Holiday extends CommonObject
             $sql.= " detail_refuse = NULL";
         }
 
-        $sql.= " WHERE rowid= '".$this->id."'";
+        $sql.= " WHERE rowid= ".$this->id;
 
         $this->db->begin();
 
@@ -785,7 +787,17 @@ class Holiday extends CommonObject
 			if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
 			if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
-
+		if ($mode == 6)
+		{
+		    $pictoapproved='statut6';
+		    if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
+		    if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
+		    if ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
+		    if ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+		    if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
+		    if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
+		}
+		
 		return $statut;
     }
 
@@ -857,7 +869,7 @@ class Holiday extends CommonObject
     {
         $sql = "SELECT value";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday_config";
-        $sql.= " WHERE name = '".$name."'";
+        $sql.= " WHERE name = '".$this->db->escape($name)."'";
 
         dol_syslog(get_class($this).'::getConfCP name='.$name.' createifnotfound='.$createifnotfound, LOG_DEBUG);
         $result = $this->db->query($sql);
@@ -871,7 +883,7 @@ class Holiday extends CommonObject
                 if ($createifnotfound)
                 {
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_config(name, value)";
-                    $sql.= " VALUES('".$name."', '".$createifnotfound."')";
+                    $sql.= " VALUES('".$this->db->escape($name)."', '".$this->db->escape($createifnotfound)."')";
                     $result = $this->db->query($sql);
                     if ($result) 
                     {
@@ -936,7 +948,7 @@ class Holiday extends CommonObject
 	            $nbUser = count($users);
 
                 $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
-                $sql.= " value = '".$newdateforlastupdate."'";
+                $sql.= " value = '".$this->db->escape($newdateforlastupdate)."'";
                 $sql.= " WHERE name = 'lastUpdate'";
                 $result = $this->db->query($sql);
 
@@ -1623,6 +1635,7 @@ class Holiday extends CommonObject
     	$this->date_fin=dol_now()+(24*3600);
     	$this->fk_validator=1;
     	$this->halfday=0;
+    	$this->fk_type=1;
     }
 
 }

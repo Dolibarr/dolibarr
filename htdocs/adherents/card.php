@@ -307,7 +307,7 @@ if (empty($reshook))
 			$object->phone       = trim($_POST["phone"]);
 			$object->phone_perso = trim($_POST["phone_perso"]);
 			$object->phone_mobile= trim($_POST["phone_mobile"]);
-			$object->email       = trim($_POST["email"]);
+			$object->email       = trim($_POST["member_email"]);
 			$object->skype       = trim($_POST["skype"]);
 			$object->birth       = $birthdate;
 
@@ -822,9 +822,19 @@ else
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
-			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" size="40" value="'.(isset($_POST["member_login"])?$_POST["member_login"]:$object->login).'"></td></tr>';
+			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" class="maxwidth200" value="'.(isset($_POST["member_login"])?GETPOST("member_login", 'alpha', 2):$object->login).'"></td></tr>';
 		}
 
+		// Password
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$generated_password=getRandomPassword(false);
+			print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td>';
+			print '<input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'">';
+			print '</td></tr>';
+		}
+		
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberType").'</td><td>';
 		$listetype=$adht->liste_array();
@@ -862,18 +872,8 @@ else
 		// EMail
 		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" size="40" value="'.(GETPOST('member_email','alpha')?GETPOST('member_email','alpha'):$object->email).'"></td></tr>';
 
-		// Password
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			$generated_password=getRandomPassword(false);
-			print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td>';
-			print '<input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'">';
-			print '</td></tr>';
-		}
-
 		// Address
-		print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
+		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
 		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOST('address','alpha')?GETPOST('address','alpha'):$object->address).'</textarea>';
 		print '</td></tr>';
 
@@ -1066,9 +1066,14 @@ else
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
-			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td colspan="2"><input type="text" name="login" size="30" value="'.(isset($_POST["login"])?$_POST["login"]:$object->login).'"></td></tr>';
+			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td colspan="2"><input type="text" name="login" class="maxwidth200" value="'.(isset($_POST["login"])?GETPOST("login",'alpha',2):$object->login).'"></td></tr>';
 		}
 
+	// Password
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+		{
+			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="maxwdith200" value="'.(isset($_POST["pass"])?GETPOST("pass",'',2):$object->pass).'"></td></tr>';
+		}
 		// Morphy
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Morale");
@@ -1090,7 +1095,7 @@ else
 		print "</td></tr>";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.(isset($_POST["societe"])?$_POST["societe"]:$object->societe).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.(isset($_POST["societe"])?GETPOST("societe",'',2):$object->societe).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -1099,11 +1104,11 @@ else
 		print '</tr>';
 
 		// Lastname
-		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" size="40" value="'.(isset($_POST["lastname"])?$_POST["lastname"]:$object->lastname).'"></td>';
+		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" size="40" value="'.(isset($_POST["lastname"])?GETPOST("lastname",'',2):$object->lastname).'"></td>';
 		print '</tr>';
 
 		// Firstname
-		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td>';
+		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.(isset($_POST["firstname"])?GETPOST("firstname",'',3):$object->firstname).'"></td>';
 		print '</tr>';
 
 		// Photo
@@ -1122,24 +1127,18 @@ else
 		print '</td></tr>';
 
 		// EMail
-		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="email" size="40" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td></tr>';
-
-		// Password
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-		{
-			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" size="30" value="'.(isset($_POST["pass"])?$_POST["pass"]:$object->pass).'"></td></tr>';
-		}
+		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" size="40" value="'.(isset($_POST["member_email"])?GETPOST("member_email",'',2):$object->email).'"></td></tr>';
 
 		// Address
 		print '<tr><td>'.$langs->trans("Address").'</td><td>';
-		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea>';
+		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(isset($_POST["address"])?GETPOST("address",'',2):$object->address).'</textarea>';
 		print '</td></tr>';
 
 		// Zip / Town
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-		print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6);
+		print $formcompany->select_ziptown((isset($_POST["zipcode"])?GETPOST("zipcode",'',2):$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6);
 		print ' ';
-		print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','state_id'));
+		print $formcompany->select_ziptown((isset($_POST["town"])?GETPOST("town",'',2):$object->town),'town',array('zipcode','selectcountry_id','state_id'));
 		print '</td></tr>';
 
 		// Country
@@ -1153,23 +1152,23 @@ else
 		if (empty($conf->global->MEMBER_DISABLE_STATE))
 		{
 			print '<tr><td>'.$langs->trans('State').'</td><td>';
-			print $formcompany->select_state($object->state_id,isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id);
+			print $formcompany->select_state($object->state_id,isset($_POST["country_id"])?GETPOST("country_id"):$object->country_id);
 			print '</td></tr>';
 		}
 
 		// Pro phone
-		print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(isset($_POST["phone"])?$_POST["phone"]:$object->phone).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(isset($_POST["phone"])?GETPOST("phone"):$object->phone).'"></td></tr>';
 
 		// Personal phone
-		print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.(isset($_POST["phone_perso"])?$_POST["phone_perso"]:$object->phone_perso).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.(isset($_POST["phone_perso"])?GETPOST("phone_perso"):$object->phone_perso).'"></td></tr>';
 
 		// Mobile phone
-		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$object->phone_mobile).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?GETPOST("phone_mobile"):$object->phone_mobile).'"></td></tr>';
 
 	    // Skype
 	    if (! empty($conf->skype->enabled))
 	    {
-			    print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="skype" size="40" value="'.(isset($_POST["skype"])?$_POST["skype"]:$object->skype).'"></td></tr>';
+			    print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="skype" size="40" value="'.(isset($_POST["skype"])?GETPOST("skype"):$object->skype).'"></td></tr>';
 	    }
 
 		// Birthday
@@ -1179,7 +1178,7 @@ else
 
 		// Public profil
 		print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-		print $form->selectyesno("public",(isset($_POST["public"])?$_POST["public"]:$object->public),1);
+		print $form->selectyesno("public",(isset($_POST["public"])?GETPOST("public",'',2):$object->public),1);
 		print "</td></tr>\n";
 
 		// Categories

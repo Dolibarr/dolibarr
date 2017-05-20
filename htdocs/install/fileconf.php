@@ -45,13 +45,13 @@ dolibarr_install_syslog("--- fileconf: entering fileconf.php page");
 // install.forced.php into directory htdocs/install (This is the case with some wizard
 // installer like DoliWamp, DoliMamp or DoliBuntu).
 // We first init "forced values" to nothing.
-if (! isset($force_install_noedit))			$force_install_noedit='';	// 1=To block var specific to distrib, 2 to block all technical parameters
+if (! isset($force_install_noedit))			    $force_install_noedit='';	// 1=To block vars specific to distrib, 2 to block all technical parameters
 if (! isset($force_install_type))				$force_install_type='';
 if (! isset($force_install_dbserver))			$force_install_dbserver='';
 if (! isset($force_install_port))				$force_install_port='';
 if (! isset($force_install_database))			$force_install_database='';
-if (! isset($force_install_prefix))			$force_install_prefix='';
-if (! isset($force_install_createdatabase))	$force_install_createdatabase='';
+if (! isset($force_install_prefix))			    $force_install_prefix='';
+if (! isset($force_install_createdatabase))	    $force_install_createdatabase='';
 if (! isset($force_install_databaselogin))		$force_install_databaselogin='';
 if (! isset($force_install_databasepass))		$force_install_databasepass='';
 if (! isset($force_install_databaserootlogin))	$force_install_databaserootlogin='';
@@ -72,7 +72,7 @@ if (@file_exists($forcedfile)) {
 
 session_start();	// To be able to keep info into session (used for not loosing pass during navigation. pass must not transit throug parmaeters)
 
-pHeader($langs->trans("ConfigurationFile"),"step1","set","",(empty($force_dolibarr_js_JQUERY)?'':$force_dolibarr_js_JQUERY.'/'));
+pHeader($langs->trans("ConfigurationFile"), "step1", "set", "", (empty($force_dolibarr_js_JQUERY)?'':$force_dolibarr_js_JQUERY.'/'), 'main-inside-bis');
 
 // Test if we can run a first install process
 if (! is_writable($conffile))
@@ -117,7 +117,7 @@ if (! empty($force_install_message))
 	<!-- Documents root $dolibarr_main_document_root -->
 	<tr>
 	<?php
-	print '<td valign="top" class="label"><b>';
+	print '<td class="tdtop label"><b>';
 	print $langs->trans("WebPagesDirectory");
 	print "</b></td>";
 
@@ -127,7 +127,7 @@ if (! empty($force_install_message))
 	?>
 		<td class="label" valign="top">
 			<input type="text"
-			       size="60"
+			       class="minwidth300"
 			       value="<?php print $dolibarr_main_document_root ?>"
 			       name="main_dir"
 				<?php if (!empty($force_install_noedit)) {
@@ -148,7 +148,7 @@ if (! empty($force_install_message))
 
 	<!-- Documents URL $dolibarr_main_data_root -->
 	<tr>
-		<td valign="top" class="label"><b> <?php print $langs->trans("DocumentsDirectory"); ?></b>
+		<td class="tdtop label"><b> <?php print $langs->trans("DocumentsDirectory"); ?></b>
 		</td>
 		<?php
 		$dolibarr_main_data_root = @$force_install_main_data_root;
@@ -158,7 +158,7 @@ if (! empty($force_install_message))
 		?>
 		<td class="label" valign="top">
 			<input type="text"
-			       size="60"
+			       class="minwidth300"
 			       value="<?php print $dolibarr_main_data_root ?>"
 			       name="main_data_dir"
 				<?php if (!empty($force_install_noedit)) {
@@ -185,11 +185,11 @@ if (! empty($force_install_message))
 	}
 	?>
 	<tr>
-		<td valign="top" class="label"><b> <?php echo $langs->trans("URLRoot"); ?></b>
+		<td class="tdtop label"><b> <?php echo $langs->trans("URLRoot"); ?></b>
 		</td>
-		<td valign="top" class="label">
+		<td class="tdtop label">
 			<input type="text"
-			       size="60"
+			       class="minwidth300"
 			       name="main_url"
 			       value="<?php print $dolibarr_main_url_root; ?> "
 				<?php if (!empty($force_install_noedit)) {
@@ -209,7 +209,7 @@ if (! empty($force_install_message))
 	if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if the installation process is "https://"
 	    ?>
 	<tr>
-		<td valign="top" class="label"><?php echo $langs->trans("ForceHttps"); ?></td>
+		<td class="tdtop label"><?php echo $langs->trans("ForceHttps"); ?></td>
 		<td class="label" valign="top">
 			<input type="checkbox"
 			       name="main_force_https"
@@ -261,7 +261,7 @@ if (! empty($force_install_message))
 	?>
 	<tr>
 		<!-- Driver type -->
-		<td valign="top" class="label"><b> <?php echo $langs->trans("DriverType"); ?>
+		<td class="tdtop label"><b> <?php echo $langs->trans("DriverType"); ?>
 		</b></td>
 
 		<td class="label">
@@ -324,7 +324,7 @@ if (! empty($force_install_message))
 		?>
 			<select id="db_type"
 			        name="db_type"
-				<?php if ($force_install_noedit && $force_install_type !== null) {
+				<?php if ($force_install_noedit == 2 && $force_install_type !== null) {
 					print ' disabled';
 				} ?>
 			>
@@ -337,9 +337,9 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td valign="top" class="label"><b> <?php echo $langs->trans("Server"); ?>
+		<td class="tdtop label"><b> <?php echo $langs->trans("DatabaseServer"); ?>
 		</b></td>
-		<td valign="top" class="label">
+		<td class="tdtop label">
 			<input type="text"
 			       name="db_host"
 			       value="<?php print (!empty($force_install_dbserver) ? $force_install_dbserver : (!empty($dolibarr_main_db_host) ? $dolibarr_main_db_host : 'localhost')); ?>"
@@ -354,8 +354,8 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td valign="top" class="label"><?php echo $langs->trans("Port"); ?></td>
-		<td valign="top" class="label">
+		<td class="tdtop label"><?php echo $langs->trans("Port"); ?></td>
+		<td class="tdtop label">
 			<input type="text"
 			       name="db_port"
 			       id="db_port"

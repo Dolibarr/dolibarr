@@ -6,7 +6,7 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2006		Auguria SARL			<info@auguria.org>
  * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013-2014	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2013-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012-2013	Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2011-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
@@ -140,32 +140,13 @@ if (empty($reshook))
     	exit;
     }
 
-    /*
-	 * Build doc
-	 */
-	else if ($action == 'builddoc' && $user->rights->produit->creer)
-	{
-		// Save last template used to generate document
-		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang='';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-		if (! empty($newlang))
-		{
-			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		$result=product_create($db, $object, GETPOST('model','alpha'), $outputlangs);
-		if ($result <= 0)
-		{
-			dol_print_error($db,$result);
-			exit;
-		}
-	}
-	
+    // Actions to build doc
+    $upload_dir = $conf->produit->dir_output;
+    $permissioncreate = $user->rights->produit->creer;
+    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+    
+    include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+    
     // Barcode type
     if ($action ==	'setfk_barcode_type' && $createbarcode)
     {
@@ -283,7 +264,9 @@ if (empty($reshook))
             $object->weight_units       	 = GETPOST('weight_units');
             $object->length             	 = GETPOST('size');
             $object->length_units       	 = GETPOST('size_units');
-            $object->surface            	 = GETPOST('surface');
+            $object->width               	 = GETPOST('sizewidth');
+            $object->height             	 = GETPOST('sizeheight');
+	        $object->surface            	 = GETPOST('surface');
             $object->surface_units      	 = GETPOST('surface_units');
             $object->volume             	 = GETPOST('volume');
             $object->volume_units       	 = GETPOST('volume_units');
@@ -380,6 +363,9 @@ if (empty($reshook))
                 $object->weight_units           = GETPOST('weight_units');
                 $object->length                 = GETPOST('size');
                 $object->length_units           = GETPOST('size_units');
+                $object->width               	 = GETPOST('sizewidth');
+                $object->height             	 = GETPOST('sizeheight');
+
                 $object->surface                = GETPOST('surface');
                 $object->surface_units          = GETPOST('surface_units');
                 $object->volume                 = GETPOST('volume');
@@ -543,7 +529,7 @@ if (empty($reshook))
     {
         if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer))
         {
-            $result = $object->delete($object->id);
+            $result = $object->delete(DolibarrApiAccess::$user);
         }
 
         if ($result > 0)
@@ -641,13 +627,16 @@ if (empty($reshook))
                 }
             }
 
+			$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
+			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+            
             // On reevalue prix selon taux tva car taux tva transaction peut etre different
             // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-            if ($tva_tx != $object->tva_tx) {
+            if ($tmpvat != $tmpprodvat) {
                 if ($price_base_type != 'HT') {
-                    $pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU');
+                    $pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
                 } else {
-                    $pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
+                    $pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
                 }
             }
             
@@ -782,7 +771,7 @@ if (empty($reshook))
                 );
 
                 if ($result > 0) {
-                    header("Location: " . DOL_URL_ROOT . "/compta/facture.php?facid=" . $facture->id);
+                    header("Location: " . DOL_URL_ROOT . "/compta/facture/card.php?facid=" . $facture->id);
                     exit;
                 }
             }
@@ -1010,10 +999,12 @@ else
             print $formproduct->select_measuring_units("weight_units","weight");
             print '</td></tr>';
             // Length
-            if (empty($conf->global->PRODUCT_DISABLE_LENGTH))
+            if (empty($conf->global->PRODUCT_DISABLE_SIZE))
             {
-                print '<tr><td>'.$langs->trans("Length").'</td><td colspan="3">';
-                print '<input name="size" size="4" value="'.GETPOST('size').'">';
+                print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="3">';
+                print '<input name="size" size="4" value="'.GETPOST('size').'"> x ';
+                print '<input name="sizewidth" size="4" value="'.GETPOST('sizewidth').'"> x ';
+                print '<input name="sizeheight" size="4" value="'.GETPOST('sizeheight').'">';
                 print $formproduct->select_measuring_units("size_units","size");
                 print '</td></tr>';
             }
@@ -1149,7 +1140,7 @@ else
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="' . $langs->trans("Create") . '">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+        print ' &nbsp; &nbsp; ';
 		print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
@@ -1324,13 +1315,15 @@ else
                 print '<input name="weight" size="5" value="'.$object->weight.'"> ';
                 print $formproduct->select_measuring_units("weight_units", "weight", $object->weight_units);
                 print '</td></tr>';
-                if (empty($conf->global->PRODUCT_DISABLE_LENGTH))
+                if (empty($conf->global->PRODUCT_DISABLE_SIZE))
                 {
-                    // Length
-                    print '<tr><td>'.$langs->trans("Length").'</td><td colspan="3">';
-                    print '<input name="size" size="5" value="'.$object->length.'"> ';
-                    print $formproduct->select_measuring_units("size_units", "size", $object->length_units);
-                    print '</td></tr>';
+        			// Length
+        			print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="3">';
+        			print '<input name="size" size="5" value="'.$object->length.'">x';
+        			print '<input name="sizewidth" size="5" value="'.$object->width.'">x';
+        			print '<input name="sizeheight" size="5" value="'.$object->height.'"> ';
+        			print $formproduct->select_measuring_units("size_units", "size", $object->length_units);
+        			print '</td></tr>';
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
                 {
@@ -1340,11 +1333,14 @@ else
                     print $formproduct->select_measuring_units("surface_units", "surface", $object->surface_units);
                     print '</td></tr>';
                 }
-                // Volume
-                print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
-                print '<input name="volume" size="5" value="'.$object->volume.'"> ';
-                print $formproduct->select_measuring_units("volume_units", "volume", $object->volume_units);
-                print '</td></tr>';
+                if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
+                {
+                    // Volume
+                    print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
+                    print '<input name="volume" size="5" value="'.$object->volume.'"> ';
+                    print $formproduct->select_measuring_units("volume_units", "volume", $object->volume_units);
+                    print '</td></tr>';
+                }
             }
         	// Units
 	        if($conf->global->PRODUCT_USE_UNITS)
@@ -1591,6 +1587,22 @@ else
 			print dol_print_url($object->url);
             print '</td></tr>';
 
+            //Parent product.
+            if (!empty($conf->variants->enabled) && $object->isProduct()) {
+
+                $combination = new ProductCombination($db);
+
+                if ($combination->fetchByFkProductChild($object->id) > 0) {
+                    $prodstatic = new Product($db);
+                    $prodstatic->fetch($combination->fk_product_parent);
+
+                    // Parent product
+                    print '<tr><td>'.$langs->trans("ParentProduct").'</td><td colspan="2">';
+                    print $prodstatic->getNomUrl(1);
+                    print '</td></tr>';
+                }
+            }
+
             print '</table>';
             print '</div>';
             print '<div class="fichehalfright"><div class="ficheaddleft">';
@@ -1635,13 +1647,16 @@ else
                     print '&nbsp;';
                 }
                 print "</td></tr>\n";
-                if (empty($conf->global->PRODUCT_DISABLE_LENGTH))
+                if (empty($conf->global->PRODUCT_DISABLE_SIZE))
                 {
                     // Length
-                    print '<tr><td>'.$langs->trans("Length").'</td><td colspan="2">';
-                    if ($object->length != '')
+                    print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="2">';
+                    if ($object->length != '' || $object->width != '' || $object->height != '')
                     {
-                        print $object->length." ".measuring_units_string($object->length_units,"size");
+                        print $object->length;
+                        if ($object->width) print " x ".$object->width;
+                        if ($object->height) print " x ".$object->height;
+                        print ' '.measuring_units_string($object->length_units,"size");
                     }
                     else
                     {
@@ -1663,17 +1678,20 @@ else
                     }
                     print "</td></tr>\n";
                 }
-                // Volume
-                print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
-                if ($object->volume != '')
+                if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
                 {
-                    print $object->volume." ".measuring_units_string($object->volume_units,"volume");
+                    // Volume
+                    print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
+                    if ($object->volume != '')
+                    {
+                        print $object->volume." ".measuring_units_string($object->volume_units,"volume");
+                    }
+                    else
+                    {
+                        print '&nbsp;';
+                    }
+                    print "</td></tr>\n";
                 }
-                else
-                {
-                    print '&nbsp;';
-                }
-                print "</td></tr>\n";
             }
 
 			// Unit
@@ -1783,62 +1801,60 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || ! empty($conf->
 /* Barre d'action                                                             */
 /*                                                                            */
 /* ************************************************************************** */
-
-print "\n".'<div class="tabsAction">'."\n";
-
-$parameters=array();
-$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-if (empty($reshook))
+if ($action != 'create' && $action != 'edit')
 {
-	if ($action == '' || $action == 'view')
-	{
-	    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer ) || 
-	       ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))
-	    {
-	        if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
-
-	        if (! isset($object->no_button_copy) || $object->no_button_copy <> 1)
-	        {
-	            if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
-	            {
-	                print '<div class="inline-block divButAction"><span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span></div>'."\n";
-	            }
-	            else
-				{
-	                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
-	            }
-	        }
-	    }
-	    $object_is_used = $object->isObjectUsed($object->id);
-
-	    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer)
-	    || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer))
-	    {
-	        if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
-	        {
-	            if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
-	            {
-	                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
-	            }
-	            else
-				{
-	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
-	            }
-	        }
-	        else
-			{
-	            print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
-	        }
-	    }
-	    else
-		{
-	        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
-	    }
-	}
+    print "\n".'<div class="tabsAction">'."\n";
+    
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook))
+    {
+        if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer ) || 
+           ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))
+        {
+            if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+    
+            if (! isset($object->no_button_copy) || $object->no_button_copy <> 1)
+            {
+                if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
+                {
+                    print '<div class="inline-block divButAction"><span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span></div>'."\n";
+                }
+                else
+    			{
+                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+                }
+            }
+        }
+        $object_is_used = $object->isObjectUsed($object->id);
+    
+        if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer)
+        || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer))
+        {
+            if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
+            {
+                if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
+                {
+                    print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+                }
+                else
+    			{
+                    print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
+                }
+            }
+            else
+    		{
+                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
+            }
+        }
+        else
+    	{
+            print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
+        }
+    }
+    
+    print "\n</div>\n";
 }
-
-print "\n</div>\n";
-
 
 /*
  * All the "Add to" areas
@@ -1857,12 +1873,10 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
 
         $langs->load("propal");
 
-        $var=true;
         $otherprop = $propal->liste_array(2,1,0);
 
         if (is_array($otherprop) && count($otherprop))
         {
-        	$var=!$var;
         	$html .= '<tr><td style="width: 200px;">';
         	$html .= $langs->trans("AddToDraftProposals").'</td><td>';
         	$html .= $form->selectarray("propalid", $otherprop, 0, 1);
@@ -1884,11 +1898,9 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
 
         $langs->load("orders");
 
-        $var=true;
         $othercom = $commande->liste_array(2, 1, null);
         if (is_array($othercom) && count($othercom))
         {
-        	$var=!$var;
         	$html .= '<tr><td style="width: 200px;">';
         	$html .= $langs->trans("AddToDraftOrders").'</td><td>';
         	$html .= $form->selectarray("commandeid", $othercom, 0, 1);
@@ -1910,11 +1922,9 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
 
     	$langs->load("bills");
 
-    	$var=true;
     	$otherinvoice = $invoice->liste_array(2, 1, null);
     	if (is_array($otherinvoice) && count($otherinvoice))
     	{
-    		$var=!$var;
     		$html .= '<tr><td style="width: 200px;">';
     		$html .= $langs->trans("AddToDraftInvoices").'</td><td>';
     		$html .= $form->selectarray("factureid", $otherinvoice, 0, 1);
@@ -1964,19 +1974,20 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
 /*
  * Documents generes
  */
-if ($action == '' || $action == 'view')
+
+if ($action != 'create' && $action != 'edit' && $action != 'delete')
 {
     print '<div class="fichecenter"><div class="fichehalfleft">';
     print '<a name="builddoc"></a>'; // ancre
 
-    $filedir=$upload_dir;
-
+    // Documents
+    $objectref = dol_sanitizeFileName($object->ref);
+    $relativepath = $comref . '/' . $objectref . '.pdf';
+    $filedir = $conf->produit->dir_output . '/' . $objectref;
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
     $genallowed=$user->rights->produit->creer;
     $delallowed=$user->rights->produit->supprimer;
 
-    $var=true;
-    
     print $formfile->showdocuments($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
     $somethingshown=$formfile->numoffiles;
     

@@ -158,7 +158,7 @@ if (! empty($search_code_journal)) {
  * Mode List
  */
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0);
 	if ($nbtotalofrecords < 0) {
@@ -267,9 +267,8 @@ print "</tr>\n";
 $var = True;
 
 foreach ( $object->lines as $line ) {
-	$var = ! $var;
 
-	print '<tr '. $bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>' . $line->piece_num . '</td>' . "\n";
 	print '<td>' . $line->doc_type . '</td>' . "\n";
 	print '<td align="center">' . dol_print_date($line->doc_date) . '</td>';

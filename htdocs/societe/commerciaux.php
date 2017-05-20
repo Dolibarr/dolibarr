@@ -112,7 +112,7 @@ if (! empty($socid))
 
 	$head=societe_prepare_head2($object);
 
-	dol_fiche_head($head, 'salesrepresentative', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'salesrepresentative', $langs->trans("ThirdParty"), -1, 'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 	
@@ -267,7 +267,7 @@ if (! empty($socid))
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				$var=!$var;
+				
 				print "<tr ".$bc[$var]."><td>";
 				$tmpuser->id=$obj->rowid;
 				$tmpuser->firstname=$obj->firstname;

@@ -41,11 +41,12 @@ if (! isset($argv[1]) || ! $argv[1]) {
 	exit(-1);
 }
 $id=$argv[1];
-if (! isset($argv[2]) || !empty($argv[2])) $login = $argv[2];
+if (isset($argv[2]) || !empty($argv[2])) $login = $argv[2];
 else $login = '';
 
 require_once ($path."../../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
+require_once (DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php");
 
 
 // Global variables
@@ -61,13 +62,17 @@ $error=0;
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
+if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1')
+{
+    
+}
+
 $user = new User($db);
 // for signature, we use user send as parameter
 if (! empty($login)) $user->fetch('',$login);
 
-// We get list of emailing to process
-$sql = "SELECT m.rowid, m.titre, m.sujet, m.body,";
-$sql.= " m.email_from, m.email_replyto, m.email_errorsto";
+// We get list of emailing id to process
+$sql = "SELECT m.rowid";
 $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql.= " WHERE m.statut IN (1,2)";
 if ($id != 'all')
@@ -91,12 +96,15 @@ if ($resql)
 			dol_syslog("Process mailing with id ".$obj->rowid);
 			print "Process mailing with id ".$obj->rowid."\n";
 
-			$id       = $obj->rowid;
-			$subject  = $obj->sujet;
-			$message  = $obj->body;
-			$from     = $obj->email_from;
-			$replyto  = $obj->email_replyto;
-			$errorsto = $obj->email_errorsto;
+			$emailing = new Mailing($db);
+			$emailing->fetch($obj->rowid);
+			
+			$id       = $emailing->id;
+			$subject  = $emailing->sujet;
+			$message  = $emailing->body;
+			$from     = $emailing->email_from;
+			$replyto  = $emailing->email_replyto;
+			$errorsto = $emailing->email_errorsto;
 			// Le message est-il en html
 			$msgishtml=-1;  // Unknown by default
 			if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
@@ -108,7 +116,11 @@ if ($resql)
 			$sql2 = "SELECT mc.rowid, mc.lastname as lastname, mc.firstname as firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
 			$sql2.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 			$sql2.= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
-
+		    if ($conf->global->MAILING_LIMIT_SENDBYCLI > 0)
+		    {
+		        $sql2.= " LIMIT ".$conf->global->MAILING_LIMIT_SENDBYCLI;
+		    }
+				
 			$resql2=$db->query($sql2);
 			if ($resql2)
 			{
@@ -180,6 +192,7 @@ if ($resql)
 						$substitutionisok=true;
 
 						// Fabrication du mail
+						$trackid='emailing-'.$obj2->source_type.$obj2->source_id;
 						$mail = new CMailFile(
 						    $newsubject,
 						    $sendto,
@@ -192,7 +205,11 @@ if ($resql)
 						    '',
 						    0,
 						    $msgishtml,
-						    $errorsto
+						    $errorsto,
+						    '',
+						    $trackid,
+						    '',
+						    'emailing'
 						);
 
 						if ($mail->error)
@@ -218,6 +235,24 @@ if ($resql)
 
 							dol_syslog("ok for emailing id ".$id." #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
+							// Note: If emailing is 100 000 targets, 100 000 entries are added, so we don't enter events for each target here
+							// We must union table llx_mailing_taget for event tab OR enter 1 event with a special table link (id of email in event)
+							// Run trigger
+							/*
+							if ($obj2->source_type == 'contact')
+							{
+							    $emailing->sendtoid = $obj2->source_id;
+							}
+							if ($obj2->source_type == 'thirdparty')
+							{
+							    $emailing->socid = $obj2->source_id;
+							}
+                            // Call trigger
+                            $result=$emailing->call_trigger('EMAILING_SENTBYMAIL',$user);
+                            if ($result < 0) $error++;
+                            // End call triggers
+						    */
+							
 							$sqlok ="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 							$sqlok.=" SET statut=1, date_envoi='".$db->idate($now)."' WHERE rowid=".$obj2->rowid;
 							$resqlok=$db->query($sqlok);

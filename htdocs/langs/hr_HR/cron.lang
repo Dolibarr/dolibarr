@@ -17,14 +17,14 @@ CronMethodDoesNotExists=Klasa %s ne sadrži niti jednu %s metodu
 # Menu
 EnabledAndDisabled=Omogući i onemogući
 # Page list
-CronLastOutput=Zadnji put pokrenuti izlaz
-CronLastResult=Zadnji kod rezultata
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Komanda
 CronList=Planirani poslovi
 CronDelete=Obriši planirane zadatke
-CronConfirmDelete=Jeste li sigurni da želite izbrisati ove planirane poslove?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Pokreni planirani posao
-CronConfirmExecute=Jeste li sigurni da želite pokrenuti ove planirane poslove sada ?
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Modul planiranih poslova omogućuje izvrsavanje poslova koji su planirani
 CronTask=Posao
 CronNone=Nijedan

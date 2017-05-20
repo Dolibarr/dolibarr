@@ -342,7 +342,7 @@ print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="addline">';
 
 
-print '<div class="div-table-responsive">';
+print '<div class="div-table-responsive-no-max">';
 print '<table class="liste" width="100%">';
 //print '<div class="tagtable centpercent">';
 
@@ -361,7 +361,7 @@ print getTitleFieldOfList('',0);
 print '</tr>';
 
 
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 // Product
 print '<td class="titlefield">';
 $filtertype=0;
@@ -374,7 +374,8 @@ else
 {
 	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
 }
-print $form->select_produits($id_product, 'productid', $filtertype, $limit, 0, 1, 2, '', 0, array(), 0, '1', 0, 'minwidth300imp maxwidth400', 1);
+
+print $form->select_produits($id_product, 'productid', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth300imp maxwidth400', 1);
 print '</td>';
 // Batch number
 if ($conf->productbatch->enabled)
@@ -401,13 +402,13 @@ print '</tr>';
 
 foreach($listofdata as $key => $val)
 {
-	$var=!$var;
+	
 
 	$productstatic->fetch($val['id_product']);
 	$warehousestatics->fetch($val['id_sw']);
 	$warehousestatict->fetch($val['id_tw']);
 
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>';
 	print $productstatic->getNomUrl(1).' - '.$productstatic->label;
 	print '</td>';

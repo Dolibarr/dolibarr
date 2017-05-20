@@ -86,7 +86,7 @@ if ($filtre) {
 $sql.= " GROUP BY l.rowid, l.label, l.capital, l.datestart, l.dateend";
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -124,6 +124,19 @@ if ($resql)
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
+	// Filters lines
+	print '<tr class="liste_titre_filter">';
+	print '<td class="liste_titre"><input class="flat" size="4" type="text" name="search_ref" value="'.$search_ref.'"></td>';
+	print '<td class="liste_titre"><input class="flat" size="12" type="text" name="search_label" value="'.$search_label.'"></td>';
+	print '<td class="liste_titre" align="right" ><input class="flat" size="8" type="text" name="search_amount" value="'.$search_amount.'"></td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre"></td>';
+	print '<td align="right" class="liste_titre">';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '</td>';
+	print '</tr>';
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"l.rowid","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"l.label","",$param,'align="left"',$sortfield,$sortorder);
@@ -131,21 +144,8 @@ if ($resql)
 	print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"l.datestart","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"l.paid","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
-    print "</tr>\n";
-
-	// Filters lines
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"><input class="flat" size="4" type="text" name="search_ref" value="'.$search_ref.'"></td>';
-	print '<td class="liste_titre"><input class="flat" size="12" type="text" name="search_label" value="'.$search_label.'"></td>';
-	print '<td class="liste_titre" align="right" ><input class="flat" size="8" type="text" name="search_amount" value="'.$search_amount.'"></td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td></td>';
-	print '<td align="right" class="liste_titre">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '</td>';
-	print '</tr>';
-
+	print "</tr>\n";
+	
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
@@ -154,10 +154,10 @@ if ($resql)
         $loan_static->label = $obj->label;
 
 		$var = !$var;
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 
 		// Ref
-		print '<td>'.$loan_static->getLinkUrl(1, 42).'</td>';
+		print '<td>'.$loan_static->getNomUrl(1, 42).'</td>';
 
 		// Label
 		print '<td>'.dol_trunc($obj->label,42).'</td>';

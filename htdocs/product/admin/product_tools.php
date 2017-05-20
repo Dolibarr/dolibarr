@@ -42,8 +42,6 @@ $oldvatrate=GETPOST('oldvatrate');
 $newvatrate=GETPOST('newvatrate');
 //$price_base_type=GETPOST('price_base_type');
 
-$objectstatic = new Product($db);
-$objectstatic2 = new ProductFournisseur($db);
 
 
 /*
@@ -87,6 +85,7 @@ if ($action == 'convert')
 				{
 					$obj = $db->fetch_object($resql);
 
+					$objectstatic = new Product($db);          // Object init must be into loop to avoid to get value of previous step
 					$ret=$objectstatic->fetch($obj->rowid);
 					if ($ret > 0)
 					{
@@ -150,7 +149,8 @@ if ($action == 'convert')
 						if ($ret < 0 || $retm < 0) $error++;
 						else $nbrecordsmodified++;
 					}
-
+                    unset($objectstatic);
+                    
 					$i++;
 				}
 			}
@@ -176,6 +176,7 @@ if ($action == 'convert')
 			{
 				$obj = $db->fetch_object($resql);
 
+                $objectstatic2 = new ProductFournisseur($db);          // Object init must be into loop to avoid to get value of previous step
 				$ret=$objectstatic2->fetch_product_fournisseur_price($obj->rowid);
 				if ($ret > 0)
 				{
@@ -207,6 +208,8 @@ if ($action == 'convert')
 					if ($ret < 0 || $retm < 0) $error++;
 					else $nbrecordsmodified++;
 				}
+				unset($objectstatic2);
+				
 				$i++;
 			}
 		}
@@ -242,7 +245,7 @@ if ($action == 'convert')
 
 $form=new Form($db);
 
-$title = $langs->trans('ModulesSystemTools');
+$title = $langs->trans('ProductVatMassChange');
 
 llxHeader('',$title);
 
@@ -271,16 +274,16 @@ else
 	print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 	print '</tr>'."\n";
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>'."\n";
+	
+	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("OldVATRates").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
 	print $form->load_tva('oldvatrate', $oldvatrate, $mysoc);
 	print '</td>'."\n";
 	print '</tr>'."\n";
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>'."\n";
+	
+	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("NewVATRates").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
 	print $form->load_tva('newvatrate', $newvatrate, $mysoc);
@@ -288,8 +291,8 @@ else
 	print '</tr>'."\n";
 
 	/*
-	$var=!$var;
-	print '<tr '.$bc[$var].'>'."\n";
+	
+	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("PriceBaseTypeToChange").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
 	print $form->selectPriceBaseType($price_base_type);

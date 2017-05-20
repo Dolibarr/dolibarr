@@ -253,58 +253,56 @@ if ($mode == 'supplier') $type='supplier_order_stats';
 
 complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
-dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
+dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-//if (empty($socid))
-//{
-	// Show filter box
-	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="mode" value="'.$mode.'">';
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
-	// Company
-	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
-	if ($mode == 'customer') $filter='s.client in (1,2,3)';
-	if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
-	print '</td></tr>';
-	// User
-	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
-	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-	// Status
-	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
-	if ($mode == 'customer')
-	{
-	    $liststatus=array(
-	        Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraft"),
-	        Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
-	        Commande::STATUS_ACCEPTED=>$langs->trans("StatusOrderSent"),
-	        Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
-	        Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceled")
-	    );
-	    print $form->selectarray('object_status', $liststatus, GETPOST('object_status'), -4);
-	}
-	if ($mode == 'supplier')
-	{
-	    $formorder->selectSupplierOrderStatus((strstr($object_status, ',')?-1:$object_status), 0, 'object_status');
-	}
-	print '</td></tr>';
-	// Year
-	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
-	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
-	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
-	arsort($arrayyears);
-	print $form->selectarray('year',$arrayyears,$year,0);
-	print '</td></tr>';
-	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
-	print '</table>';
-	print '</form>';
-	print '<br><br>';
-//}
+// Show filter box
+print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+// Company
+print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
+if ($mode == 'customer') $filter='s.client in (1,2,3)';
+if ($mode == 'supplier') $filter='s.fournisseur = 1';
+print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
+print '</td></tr>';
+// User
+print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
+print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+// Status
+print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
+if ($mode == 'customer')
+{
+    $liststatus=array(
+        Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraft"),
+        Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
+        Commande::STATUS_ACCEPTED=>$langs->trans("StatusOrderSent"),
+        Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
+        Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceled")
+    );
+    print $form->selectarray('object_status', $liststatus, GETPOST('object_status'), -4);
+}
+if ($mode == 'supplier')
+{
+    $formorder->selectSupplierOrderStatus((strstr($object_status, ',')?-1:$object_status), 0, 'object_status');
+}
+print '</td></tr>';
+// Year
+print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
+if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
+if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
+arsort($arrayyears);
+print $form->selectarray('year',$arrayyears,$year,0);
+print '</td></tr>';
+print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+print '</table>';
+print '</form>';
+print '<br><br>';
+
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
@@ -318,17 +316,15 @@ print '<td align="right">%</td>';
 print '</tr>';
 
 $oldyear=0;
-$var=true;
 foreach ($data as $val)
 {
 	$year = $val['year'];
 	while (! empty($year) && $oldyear > $year+1)
 	{ // If we have empty year
 		$oldyear--;
-		$var=!$var;
-		print '<tr '.$bc[$var].' height="24">';
+		
+		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
-
 		print '<td align="right">0</td>';
 		print '<td align="right"></td>';
 		print '<td align="right">0</td>';
@@ -338,8 +334,8 @@ foreach ($data as $val)
 		print '</tr>';
 	}
 
-	$var=!$var;
-	print '<tr '.$bc[$var].' height="24">';
+	
+	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';

@@ -177,9 +177,9 @@ if ($id > 0 || ! empty($ref))
 				while ($i < $num && $i < $conf->liste_limit)
 				{
 					$objp = $db->fetch_object($result);
-					$var=!$var;
+					
 
-					print "<tr ".$bc[$var].">";
+					print '<tr class="oddeven">';
 					print '<td><a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowContract"),"contract").' ';
 					print $objp->rowid;
 					print "</a></td>\n";

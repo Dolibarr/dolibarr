@@ -2,7 +2,7 @@
 Shortname=Kód
 WebsiteSetupDesc=Create here as much entry as number of different websites you need. Then go into menu Websites to edit them.
 DeleteWebsite=A honlap törlése
-ConfirmDeleteWebsite=Biztos benne, hogy le akarja törölni a honlapot? A z összes oldal és tartalom el fog veszni!
+ConfirmDeleteWebsite=Biztos benne, hogy le akarja törölni a honlapot? Az összes oldal és tartalom el fog veszni!
 WEBSITE_PAGENAME=Page name/alias
 WEBSITE_CSS_URL=URL of external CSS file
 WEBSITE_CSS_INLINE=CSS content

@@ -37,8 +37,8 @@ $langs->load('banks');
 $langs->load('companies');
 
 // Security check
-$id=GETPOST("id");
-$action=GETPOST("action");
+$id=GETPOST("id",'int');
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 if ($user->societe_id) $socid=$user->societe_id;
 // TODO ajouter regle pour restreindre acces paiement
@@ -126,12 +126,12 @@ $form = new Form($db);
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$_GET["id"];
+$head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$id;
 $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;
 
-/*$head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/info.php?id='.$_GET["id"];
+/*$head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/info.php?id='.$id;
 $head[$h][1] = $langs->trans("Info");
 $h++;
 */
@@ -239,8 +239,8 @@ if ($resql)
 		{
 			$objp = $db->fetch_object($resql);
 
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			
+			print '<tr class="oddeven">';
 			// Ref
 			print '<td>';
 			$socialcontrib->fetch($objp->scid);
@@ -268,7 +268,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	$var=!$var;
+	
 
 	print "</table>\n";
 	$db->free($resql);

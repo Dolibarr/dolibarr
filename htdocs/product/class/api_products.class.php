@@ -182,9 +182,8 @@ class Products extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->product->$field = $value;
         }
-        $result = $this->product->create(DolibarrApiAccess::$user);
-        if($result < 0) {
-            throw new RestException(503,'Error when creating product : '.$this->product->error);
+        if ($this->product->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating product", array_merge(array($this->product->error), $this->product->errors));
         }
         
         return $this->product->id;
@@ -247,7 +246,7 @@ class Products extends DolibarrApi
         global $user;
         $user = DolibarrApiAccess::$user;
 
-        return $this->product->delete($id);
+        return $this->product->delete(DolibarrApiAccess::$user);
     }
     
     /**
@@ -265,7 +264,7 @@ class Products extends DolibarrApi
      */
     function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         $categories = new Categories();
-        return $categories->getListForItem('product', $sortfield, $sortorder, $limit, $page, $id);
+        return $categories->getListForItem($sortfield, $sortorder, $limit, $page, 'product', $id);
     }
 
     /**

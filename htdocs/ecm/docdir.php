@@ -117,8 +117,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 		else
 		{
 			$langs->load("errors");
-			setEventMessages($langs->trans($ecmdir->error), null, 'errors');
-			setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
+			setEventMessages($langs->trans($ecmdir->error), $ecmdir->errors, 'errors');
 			$action = 'create';
 		}
 	}
@@ -167,15 +166,13 @@ if ($action == 'create')
 	print '</td></tr>'."\n";
 
 	// Description
-	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	print '<textarea name="desc" rows="4" cols="90">';
 	print $ecmdir->description;
 	print '</textarea>';
 	print '</td></tr>'."\n";
 
-	print '</td></tr>'."\n";
-
-	print '</table><br>';
+	print '</table>';
 
 	dol_fiche_end();
 

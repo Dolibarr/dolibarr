@@ -107,13 +107,14 @@ else if ($action == 'deletecontact' && $user->rights->commande->creer)
 		dol_print_error($db);
 	}
 }
-
+/*
 else if ($action == 'setaddress' && $user->rights->commande->creer)
 {
 	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
-}
+}*/
+
 
 /*
  * View
@@ -143,7 +144,7 @@ if ($id > 0 || ! empty($ref))
 	    $object->fetch_thirdparty();
 	    
 		$head = commande_prepare_head($object);
-		dol_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), 0, 'order');
+		dol_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), -1, 'order');
 
 		
 		// Order card

@@ -456,10 +456,10 @@ print '<td class="liste_titre" align="left">';
 print $form->select_country($search_country, 'search_country');
 //print '<input class="flat" size="6" type="text" name="search_country" value="'.$search_country.'">';
 print '</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
-print '<td>&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
 print '</tr>';
 
 $var=true;
@@ -517,8 +517,8 @@ if (count($amount)) {
 	}
 
 	foreach($arrayforsort as $key=>$value) {
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 
 		// Third party
 		$fullname=$name[$key];

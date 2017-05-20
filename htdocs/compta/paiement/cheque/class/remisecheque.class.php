@@ -35,7 +35,8 @@ class RemiseCheque extends CommonObject
 {
 	public $element='chequereceipt';
 	public $table_element='bordereau_cheque';
-
+	public $picto = 'payment';
+	
 	var $num;
 	var $intitule;
 	//! Numero d'erreur Plage 1024-1279
@@ -177,7 +178,7 @@ class RemiseCheque extends CommonObject
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 				$sql.= " SET ref='(PROV".$this->id.")'";
-				$sql.= " WHERE rowid='".$this->id."';";
+				$sql.= " WHERE rowid=".$this->id."";
 
 				dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -307,7 +308,7 @@ class RemiseCheque extends CommonObject
 			if ( $this->errno === 0) {
 			    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 			    $sql.= " SET fk_bordereau = 0";
-			    $sql.= " WHERE fk_bordereau = '".$this->id."'";
+			    $sql.= " WHERE fk_bordereau = ".$this->id;
 
 			    $resql = $this->db->query($sql);
 			    if (!$resql)
@@ -510,7 +511,7 @@ class RemiseCheque extends CommonObject
 			$response->warning_delay=$conf->bank->cheque->warning_delay/60/60/24;
 			$response->label=$langs->trans("BankChecksToReceipt");
 			$response->url=DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank';
-			$response->img=img_object($langs->trans("BankChecksToReceipt"),"payment");
+			$response->img=img_object('',"payment");
 
 			while ($obj=$this->db->fetch_object($resql))
 			{
@@ -977,7 +978,7 @@ class RemiseCheque extends CommonObject
 	 *  Return label of a status
 	 *
 	 *  @param	int		$status     Statut
-	 *	@param  int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @return string      		Libelle du statut
 	 */
 	function LibStatut($status,$mode=0)
@@ -1010,6 +1011,11 @@ class RemiseCheque extends CommonObject
 			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
 		}
 		if ($mode == 5)
+		{
+			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut0');
+			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+		}
+		if ($mode == 6)
 		{
 			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut0');
 			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');

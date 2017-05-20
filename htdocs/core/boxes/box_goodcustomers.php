@@ -114,18 +114,18 @@ class box_goodcustomers extends ModeleBoxes
 					$nbimpaye = $objp->nbfact - $objp->nbfactpaye;
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'align="left"',
+					    'td' => '',
 					    'text' => $thirdpartystatic->getNomUrl(1),
 					    'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'align="right"',
+					    'td' => 'class="right"',
 					    'text' => dol_print_date($datem, "day")
 					);
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'align="right"',
+					    'td' => 'class="right"',
 					    'text' => $nbfact.( $nbimpaye != 0 ? ' ('.$nbimpaye.')':'')
 					);
 
@@ -142,7 +142,7 @@ class box_goodcustomers extends ModeleBoxes
 				$db->free($result);
 			}
 			else {
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
+				$this->info_box_contents[0][0] = array(	'td' => '',
     	        										'maxlength'=>500,
 	            										'text' => ($db->error().' sql='.$sql));
 			}

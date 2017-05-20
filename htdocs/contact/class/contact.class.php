@@ -41,61 +41,61 @@ class Contact extends CommonObject
 	public $table_element='socpeople';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $civility_id;      // In fact we store civility_code
-	var $civility_code;
-	var $address;
-	var $zip;
-	var $town;
+	public $civility_id;      // In fact we store civility_code
+	public $civility_code;
+	public $address;
+	public $zip;
+	public $town;
 
 	/**
 	 * @deprecated
 	 * @see state_id
 	 */
-	var $fk_departement;
+	public $fk_departement;
 	/**
 	 * @deprecated
 	 * @see state_code
 	 */
-	var $departement_code;
+	public $departement_code;
 	/**
 	 * @deprecated
 	 * @see state
 	 */
-	var $departement;
-	var $state_id;	        	// Id of department
-	var $state_code;		    // Code of department
-	var $state;			        // Label of department
+	public $departement;
+	public $state_id;	        	// Id of department
+	public $state_code;		    // Code of department
+	public $state;			        // Label of department
 
-    var $poste;                 // Position
+    	public $poste;                 // Position
 
-	var $socid;					// fk_soc
-	var $statut;				// 0=inactif, 1=actif
+	public $socid;					// fk_soc
+	public $statut;				// 0=inactif, 1=actif
 
-	var $code;
-	var $email;
-	var $skype;
-    var $photo;
-    var $jabberid;
-	var $phone_pro;
-	var $phone_perso;
-	var $phone_mobile;
-    var $fax;
+	public $code;
+	public $email;
+	public $skype;
+	public $photo;
+    	public $jabberid;
+	public $phone_pro;
+	public $phone_perso;
+	public $phone_mobile;
+    	public $fax;
 
-    var $priv;
+    	public $priv;
 
-	var $birthday;
-	var $default_lang;
-    var $no_email;				// 1=Don't send e-mail to this contact, 0=do
+	public $birthday;
+	public $default_lang;
+    	public $no_email;				// 1=Don't send e-mail to this contact, 0=do
 
-	var $ref_facturation;       // Nb de reference facture pour lequel il est contact
-	var $ref_contrat;           // Nb de reference contrat pour lequel il est contact
-	var $ref_commande;          // Nb de reference commande pour lequel il est contact
-	var $ref_propal;            // Nb de reference propal pour lequel il est contact
+	public $ref_facturation;       // Reference number of invoice for which it is contact
+	public $ref_contrat;           // Nb de reference contrat pour lequel il est contact
+	public $ref_commande;          // Nb de reference commande pour lequel il est contact
+	public $ref_propal;            // Nb de reference propal pour lequel il est contact
 
-	var $user_id;
-	var $user_login;
+	public $user_id;
+	public $user_login;
 
-	var $oldcopy;				// To contains a clone of this when we need to save old properties of object
+	public $oldcopy;				// To contains a clone of this when we need to save old properties of object
 
 
 	/**
@@ -125,12 +125,13 @@ class Contact extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
-		    $sql.= " OUTER JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
-		    $sql.= " OUTER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-			$sql.= " WHERE sc.fk_user = " .$user->id;
+		    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+		    $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
 		$sql.= ' '.$clause.' sp.entity IN ('.getEntity($this->element, 1).')';
+		$sql.= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat=".$user->id."))";
         if ($user->societe_id > 0) $sql.=" AND sp.fk_soc = ".$user->societe_id;
         
 		$resql=$this->db->query($sql);
@@ -316,7 +317,7 @@ class Contact extends CommonObject
 		$sql .= ", phone_perso = ".(isset($this->phone_perso)?"'".$this->db->escape($this->phone_perso)."'":"null");
 		$sql .= ", phone_mobile = ".(isset($this->phone_mobile)?"'".$this->db->escape($this->phone_mobile)."'":"null");
 		$sql .= ", jabberid = ".(isset($this->jabberid)?"'".$this->db->escape($this->jabberid)."'":"null");
-		$sql .= ", priv = '".$this->priv."'";
+		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
 		$sql .= ", statut = ".$this->statut;
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"NULL");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->default_lang."'":"NULL");

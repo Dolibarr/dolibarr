@@ -52,6 +52,7 @@ $toselect = GETPOST('toselect', 'array');
 $mesCasesCochees = GETPOST('toselect', 'array');
 
 // Search Getpost
+$search_lineid = GETPOST('search_lineid', 'int');
 $search_invoice = GETPOST('search_invoice', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
@@ -100,6 +101,7 @@ if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction !=
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
+    $search_lineid = '';
 	$search_ref = '';
 	$search_invoice = '';
 	$search_label = '';
@@ -177,7 +179,7 @@ llxHeader('', $langs->trans("Ventilation"));
 
 // Customer Invoice lines
 $sql = "SELECT f.facnumber, f.rowid as facid, f.datef, f.type as ftype,";
-$sql .= " l.fk_product, l.description, l.total_ht, l.rowid, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line,";
+$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod,";
 $sql .= " aa.rowid as aarowid";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
@@ -189,6 +191,9 @@ $sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 $sql .= " AND product_type <= 2";
 $sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_sell ='')";
 // Add search filter like
+if ($search_lineid) {
+    $sql .= natural_search("l.rowid", $search_lineid, 1);
+}
 if (strlen(trim($search_invoice))) {
     $sql .= natural_search("f.facnumber",$search_invoice);
 }
@@ -210,12 +215,17 @@ if (strlen(trim($search_account))) {
 if (strlen(trim($search_vat))) {
     $sql .= natural_search("l.tva_tx",$search_vat,1);
 }
+if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_SITUATION . ")";
+} else {
+	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_STANDARD . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_DEPOSIT . "," . Facture::TYPE_SITUATION . ")";
+}
 $sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")";    // We don't share object for accountancy
 
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -266,6 +276,25 @@ if ($result) {
 	
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+	// We add search filter
+	print '<tr class="liste_titre_filter">';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_lineid" value="' . dol_escape_htmltag($search_lineid) . '""></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
+	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidthonsmartphone" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50 right" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td align="center" class="liste_titre">';
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+	print '</tr>';
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
@@ -277,27 +306,11 @@ if ($result) {
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("AccountAccountingSuggest"), '', '', '', '', 'align="center"');
 	print_liste_field_titre($langs->trans("IntoAccount"), '', '', '', '', 'align="center"');
-	print_liste_field_titre('', '', '', '', '', 'align="center"');
+	$checkpicto='';
+	if ($massactionbutton) $checkpicto=$form->showCheckAddButtons('checkforselect', 1);
+	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
 	print "</tr>\n";
-
-	// We add search filter
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
-	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidthonsmartphone" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_vat" size="1" value="' . dol_escape_htmltag($search_vat) . '">%</td>';
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"></td>';
-	print '<td align="right" class="liste_titre">';
-	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-	print $searchpitco;
-	print '</td>';
-	print '</tr>';
-
+	
 	$facture_static = new Facture($db);
 	$product_static = new Product($db);
 	$form = new Form($db);
@@ -305,7 +318,6 @@ if ($result) {
 	$var = true;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
-		$var = ! $var;
 
 		$objp->code_sell_l = '';
 		$objp->code_sell_p = '';
@@ -346,7 +358,7 @@ if ($result) {
 		// $objp->code_sell_p is now code of product/service
 		// $objp->code_sell_l is now default code of product/service
 					
-		print '<tr '. $bc[$var].'>';
+		print '<tr class="oddeven">';
 
 		// Line id
 		print '<td>' . $objp->rowid . '</td>';
@@ -395,7 +407,7 @@ if ($result) {
 		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 		
-		print '<td align="right">';
+		print '<td align="center">';
 		print '<input type="checkbox" class="flat checkforselect" name="toselect[]"  value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
 		print '</td>';
 		print '</tr>';

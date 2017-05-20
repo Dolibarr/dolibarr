@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
 $langs->load("products");
 $langs->load("suppliers");
 $langs->load("bills");
-if (! empty($conf->margin->enabled)) $langs->load("margins");
+$langs->load("margins");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -76,8 +76,6 @@ if ($id > 0 || $ref)
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-
-$reputations=array('-1'=>'', 'FAVORITE'=>$langs->trans('Favorite'),'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
 
 if (! $sortfield) $sortfield="s.nom";
 if (! $sortorder) $sortorder="ASC";
@@ -307,10 +305,11 @@ if ($id > 0 || $ref)
 			$head=product_prepare_head($object);
 			$titre=$langs->trans("CardProduct".$object->type);
 			$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-			dol_fiche_head($head, 'suppliers', $titre, 0, $picto);
+			
+			dol_fiche_head($head, 'suppliers', $titre, -1, $picto);
 			
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-				
+		    $object->next_prev_filter=" fk_product_type = ".$object->type;		
             dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
             
             print '<div class="fichecenter">';
@@ -396,7 +395,7 @@ if ($id > 0 || $ref)
 					{
 						if (empty($form->result))
 						{
-							print ' - <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$action).'">'.$langs->trans("CreateDolibarrThirdPartySupplier").'</a>';
+							print ' - <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$action).'">'.$langs->trans("CreateDolibarrThirdPartySupplier").'</a>';
 						}
 					}
 				}
@@ -527,7 +526,7 @@ if ($id > 0 || $ref)
 
 				// Reputation
 				print '<tr><td>'.$langs->trans("SupplierReputation").'</td><td>';
-				echo $form->selectarray('supplier_reputation', $reputations, $supplier_reputation?$supplier_reputation:$object->supplier_reputation);
+				echo $form->selectarray('supplier_reputation', $object->reputations, $supplier_reputation?$supplier_reputation:$object->supplier_reputation);
 				print '</td></tr>';
 
 				// Option to define a transport cost on supplier price
@@ -586,6 +585,11 @@ if ($id > 0 || $ref)
 
 			if ($user->rights->fournisseur->lire)
 			{
+				$product_fourn = new ProductFournisseur($db);
+				$product_fourn_list = $product_fourn->list_product_fournisseur_price($object->id, $sortfield, $sortorder);
+				$nbtotalofrecords = count($product_fourn_list);
+			    print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($product_fourn_list), $nbtotalofrecords, 'title_accountancy.png');
+			     
 				// Suppliers list title
 			    print '<div class="div-table-responsive">';
 			    print '<table class="noborder" width="100%">';
@@ -613,18 +617,15 @@ if ($id > 0 || $ref)
 				print_liste_field_titre('');
 				print "</tr>\n";
 
-				$product_fourn = new ProductFournisseur($db);
-				$product_fourn_list = $product_fourn->list_product_fournisseur_price($object->id, $sortfield, $sortorder);
-
 				if (is_array($product_fourn_list))
 				{
 					$var=true;
 
 					foreach($product_fourn_list as $productfourn)
 					{
-						$var=!$var;
+						
 
-						print "<tr ".$bc[$var].">";
+						print '<tr class="oddeven">';
 
 						// Supplier
 						print '<td>'.$productfourn->getSocNomUrl(1,'supplier').'</td>';
@@ -673,12 +674,13 @@ if ($id > 0 || $ref)
 
 						// Reputation
 						print '<td align="center">';
-						if (!empty($productfourn->supplier_reputation) && !empty($reputations[$productfourn->supplier_reputation])) {
-							print $reputations[$productfourn->supplier_reputation];	
+						if (!empty($productfourn->supplier_reputation) && !empty($object->reputations[$productfourn->supplier_reputation])) {
+							print $object->reputations[$productfourn->supplier_reputation];	
 						}  
 						print'</td>';
 
 						// Charges ????
+						/*
 						if ($conf->global->PRODUCT_CHARGES)
 						{
 							if (! empty($conf->margin->enabled))
@@ -687,7 +689,7 @@ if ($id > 0 || $ref)
 								print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
 								print '</td>';
 							}
-						}
+						}*/
 
 						if (is_object($hookmanager))
 						{
@@ -700,6 +702,7 @@ if ($id > 0 || $ref)
 						if ($user->rights->produit->creer || $user->rights->service->creer)
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
+							print ' &nbsp; ';
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=ask_remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"),'disable.png').'</a>';
 						}
 

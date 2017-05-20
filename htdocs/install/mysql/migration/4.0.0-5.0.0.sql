@@ -8,6 +8,7 @@
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
 -- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
+-- To set a DEFAULT value:  ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT (0|NULL|...);
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
 -- To drop an index:        -- VMYSQL4.0 DROP INDEX nomindex on llx_table
 -- To drop an index:        -- VPGSQL8.0 DROP INDEX nomindex
@@ -19,10 +20,10 @@
 -- To set a field as NULL:                     -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
 -- To set a field as NOT NULL:                 -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NOT NULL;
 -- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
--- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- Note: fields with type BLOB/TEXT can't have default value.
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
+
 
 -- after changing const name, please insure that old constant was rename
 UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHERE name = __ENCRYPT('MAIN_THIRPARTY_CREATION_INDIVIDUAL')__;  -- under 3.9.0
@@ -31,6 +32,10 @@ UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHE
 -- VPGSQL8.2 ALTER TABLE llx_product_lot ALTER COLUMN entity SET DEFAULT 1;
 ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
 UPDATE llx_product_lot SET entity = 1 WHERE entity IS NULL;
+
+ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);	
+
+ALTER TABLE llx_societe ALTER COLUMN fk_stcomm SET DEFAULT 0;
 
 ALTER TABLE llx_c_actioncomm ADD COLUMN picto varchar(48);
 
@@ -159,11 +164,14 @@ ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
 
 
 ALTER TABLE llx_facturedet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
+ALTER TABLE llx_facturedet_rec ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_facture_fourn_det ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_commandedet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_propaldet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN fk_unit integer DEFAULT NULL;
+ALTER TABLE llx_contratdet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 
 ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
 
@@ -180,8 +188,9 @@ create table llx_resource_extrafields
 
 ALTER TABLE llx_resource_extrafields ADD INDEX idx_resource_extrafields (fk_object);
 
-INSERT INTO llx_const (name, value, type, note, visible) values (__ENCRYPT('MAIN_SIZE_SHORTLIST_LIMIT')__,__ENCRYPT('3')__,'chaine','Max length for small lists (tabs)',0);
+INSERT INTO llx_const (name, value, type, note, visible, entity) values (__ENCRYPT('MAIN_SIZE_SHORTLIST_LIMIT')__, __ENCRYPT('3')__, 'chaine', 'Max length for small lists (tabs)', 0, 0);
 
+INSERT INTO llx_const (name, value, type, note, visible, entity) values (__ENCRYPT('EXPEDITION_ADDON_NUMBER')__, __ENCRYPT('mod_expedition_safor')__, 'chaine','Name for numbering manager for shipments',0,1);
 
 ALTER TABLE llx_bank_account ADD COLUMN note_public     		text;
 ALTER TABLE llx_bank_account ADD COLUMN model_pdf       		varchar(255);
@@ -228,6 +237,7 @@ ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_user_valid (fk_user
 ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_user_approve (fk_user_approve);
 ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_refuse (fk_user_approve);
 
+DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
 
 -- Sequence to removed duplicated values of llx_links. Use serveral times if you still have duplicate.
 drop table tmp_links_double;
@@ -246,3 +256,17 @@ ALTER TABLE llx_projet_task ADD UNIQUE INDEX uk_projet_task_ref (ref, entity);
 
 ALTER TABLE llx_contrat ADD COLUMN fk_user_modif integer;
 
+
+UPDATE llx_accounting_account set account_parent = 0 where account_parent = '';
+
+-- VMYSQL4.3 ALTER TABLE llx_product_price MODIFY COLUMN date_price DATETIME NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product_price ALTER COLUMN date_price DROP NOT NULL;
+ALTER TABLE llx_product_price ALTER COLUMN date_price SET DEFAULT NULL;
+ 
+ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+ALTER TABLE llx_product_customer_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+
+
+ALTER TABLE llx_events MODIFY COLUMN ip varchar(250);

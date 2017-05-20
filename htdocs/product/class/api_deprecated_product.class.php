@@ -126,7 +126,7 @@ class ProductApi extends DolibarrApi
         // Show product on buy
         if ($to_buy) $sql.= " AND p.to_buy = ".$db->escape($to_buy);
 
-        $nbtotalofrecords = -1;
+        $nbtotalofrecords = '';
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -212,7 +212,7 @@ class ProductApi extends DolibarrApi
         // Show product on buy
         if ($to_buy) $sql.= " AND p.to_buy = ".$db->escape($to_buy);
 
-        $nbtotalofrecords = -1;
+        $nbtotalofrecords = '';
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -275,7 +275,7 @@ class ProductApi extends DolibarrApi
         }
         $result = $this->product->create(DolibarrApiAccess::$user);
         if($result < 0) {
-            throw new RestException(503,'Error when creating product : '.$this->product->error);
+            throw new RestException(500,'Error when creating product : '.$this->product->error);
         }
         
         return $this->product->id;
@@ -339,7 +339,7 @@ class ProductApi extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         
-        return $this->product->delete($id);
+        return $this->product->delete(DolibarrApiAccess::$user);
     }
     
     /**

@@ -736,11 +736,11 @@ if ($id)
         {
         	if ($tabname[$id] == MAIN_DB_PREFIX.'c_email_templates' && $action == 'edit')
         	{
-				fieldList($fieldlist,$obj,$tabname[$id],'hide');
+				fieldListAccountModel($fieldlist,$obj,$tabname[$id],'hide');
         	}
         	else
         	{
-        		fieldList($fieldlist,$obj,$tabname[$id],'add');
+        		fieldListAccountModel($fieldlist,$obj,$tabname[$id],'add');
         	}
         }
 
@@ -757,8 +757,7 @@ if ($id)
         {
         	print '<tr><td colspan="8">* '.$langs->trans("AvailableVariables").": ";
         	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-        	$formmail=new FormMail($db);
-        	$tmp=$formmail->getAvailableSubstitKey('form');
+        	$tmp=FormMail::getAvailableSubstitKey('formemail');
         	print implode(', ', $tmp);
         	print '</td></tr>';
         }
@@ -888,21 +887,21 @@ if ($id)
             {
                 if ($value == 'country')
                 {
-                    print '<td>';
+                    print '<td class="liste_titre">';
                     print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth200 maxwidthonsmartphone');
                     print '</td>';
                 }
                 else
                 {
-                    print '<td></td>';
+                    print '<td class="liste_titre"></td>';
                 }
             }
         }
         if ($id == 4) print '<td></td>';
-        print '<td></td>';
+        print '<td class="liste_titre"></td>';
     	print '<td class="liste_titre" colspan="2" align="right">';
-    	$searchpitco=$form->showFilterAndCheckAddButtons(0);
-    	print $searchpitco;
+    	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+    	print $searchpicto;
     	print '</td>';
         print '</tr>';
             
@@ -911,11 +910,9 @@ if ($id)
             // Lines with values
             while ($i < $num)
             {
-                $var = ! $var;
-
                 $obj = $db->fetch_object($resql);
                 //print_r($obj);
-                print '<tr '.$bc[$var].' id="rowid-'.$obj->rowid.'">';
+                print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
                 if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
                 {
                     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
@@ -928,7 +925,7 @@ if ($id)
                     $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
-                    if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
+                    if (empty($reshook)) fieldListAccountModel($fieldlist,$obj,$tabname[$id],'edit');
 
                     print '<td colspan="3" align="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
                     print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
@@ -1198,14 +1195,13 @@ else
         {
         	if ($showemptyline)
         	{
-        		$var=!$var;
-        		print '<tr '.$bc[$var].'><td width="30%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+        		print '<tr class="oddeven"><td width="30%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
         		$showemptyline=0;
         	}
 
-            $var=!$var;
+            
             $value=$tabname[$i];
-            print '<tr '.$bc[$var].'><td width="50%">';
+            print '<tr class="oddeven"><td width="50%">';
             if (! empty($tabcond[$i]))
             {
                 print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">'.$langs->trans($tablib[$i]).'</a>';
@@ -1252,7 +1248,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldList($fieldlist, $obj='', $tabname='', $context='')
+function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 {
 	global $conf,$langs,$db;
 	global $form;

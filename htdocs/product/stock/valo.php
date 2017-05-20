@@ -33,7 +33,7 @@ $result=restrictedArea($user,'stock');
 
 $sref=GETPOST("sref");
 $snom=GETPOST("snom");
-$sall=GETPOST("sall");
+$sall=GETPOST('sall', 'alphanohtml');
 
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
@@ -102,7 +102,7 @@ if ($result)
         while ($i < min($num,$limit))
         {
             $objp = $db->fetch_object($result);
-            print "<tr ".$bc[$var].">";
+            print '<tr class="oddeven">';
             print '<td><a href="card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->ref.'</a></td>';
             print '<td>'.$objp->lieu.'</td>';
             // PMP value
@@ -120,7 +120,7 @@ if ($result)
             print "</tr>\n";
             $total += price2num($objp->estimatedvalue,'MU');
             $totalsell += price2num($objp->sellvalue,'MU');
-            $var=!$var;
+            
             $i++;
         }
 

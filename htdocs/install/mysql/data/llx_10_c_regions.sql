@@ -324,3 +324,6 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) va
 
 -- Regions Panama (id country=178)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  178, 17801, '', 0, 'Panama', 1);
+
+-- Regions Panama (id country=227)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  227, 22701, '', 0, 'United Arab Emirates', 1);

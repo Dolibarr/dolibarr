@@ -19,7 +19,7 @@ use Cwd;
 # Change this to defined target for option 98 and 99
 $PROJECT="dolibarr";
 $PUBLISHSTABLE="eldy,dolibarr\@frs.sourceforge.net:/home/frs/project/dolibarr";
-$PUBLISHBETARC="ldestailleur\@asso.dolibarr.org:/home/dolibarr/dolibarr.org/httpdocs/files";
+$PUBLISHBETARC="ldestailleur\@vmprod.dolibarr.org:/home/dolibarr/dolibarr.org/httpdocs/files";
 
 
 #@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
@@ -509,7 +509,6 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/documents`;
 
 		# Removed known external modules to avoid any error when packaging from env where external modules are tested 
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom/*`;	# For custom we want to keep dir
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/allscreens*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/ancotec*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/cabinetmed*`;
@@ -532,8 +531,6 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/oblyon*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/allscreen*`;
 		# Removed other test files
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/eldy/*.new`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/public/api/explorer`;				# This is a dev tool
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/public/test`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
@@ -547,13 +544,12 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/ckeditor/samples`;		# Keep this removal in case we embed libraries
         #$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/_source`;		# _source must be kept into tarball
    	    
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/datatables/extensions/TableTools/swf`;	# Source of this flash is not available
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/datatables/extras/TableTools/swf`;	    # Source of this flash is not available
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/multiselect/MIT-LICENSE.txt`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/select2/release.sh`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/mike42/escpos-php/doc`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/mike42/escpos-php/example`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/mike42/escpos-php/test`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/mobiledetect/mobiledetectlib/.gitmodules`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/lib/Mail`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/samples`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/php-iban/docs`;
@@ -566,14 +562,19 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/license.md`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/freefont-*`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/ae_fonts_*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/utils`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/LICENSE.TXT`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/dejavu-fonts-ttf-*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/freefont-*`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/ae_fonts_*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/utils`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/tools`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/LICENSE.TXT`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/savant`;
+        
+        print "Remove subdir of custom dir\n";
+   	    print "find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\;\n";
+   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to keep dir
 	}
 
 	# Build package for each target
@@ -892,9 +893,6 @@ if ($nboftargetok) {
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/mike42/escpos-php/LICENSE.md`;
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/mobiledetect/mobiledetectlib/LICENSE.txt`;
 			
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/tecnickcom/tcpdf/fonts/dejavu-fonts-ttf-2.34/LICENSE`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/tecnickcom/tcpdf/fonts/freefont-20120503/COPYING`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/tecnickcom/tcpdf/fonts/ae_fonts_2.0/COPYING`;
 			# Removed files we don't need
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source`;
 			

@@ -379,7 +379,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             }
             print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
             print '<tr><td>'.$langs->trans('Comments').'</td>';
-            print '<td valign="top">';
+            print '<td class="tdtop">';
             print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
             print '</table>';
             dol_fiche_end();
@@ -422,7 +422,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '	</script>'."\n";
 						}
 
-                        print '<div class="div-table-responsive">';
+                        print '<div class="div-table-responsive-no-min">';
                         print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 						print '<tr class="liste_titre">';
@@ -447,8 +447,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    while ($i < $num)
 	                    {
 	                        $objp = $db->fetch_object($resql);
-	                        $var=!$var;
-	                        print '<tr '.$bc[$var].'>';
+	                        
+	                        print '<tr class="oddeven">';
 	                        
 	                        // Ref
 	                        print '<td>';
@@ -615,19 +615,16 @@ if (empty($action))
     if (!$user->rights->societe->client->voir) $sql .= ' sc.fk_soc, sc.fk_user,';
     $sql.= ' SUM(f.amount)';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
-    if (!$user->rights->societe->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
+    if (!$user->rights->societe->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE f.entity = ".$conf->entity;
     if (!$user->rights->societe->client->voir) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    if ($socid)
-    {
-        $sql .= ' AND f.fk_soc = '.$socid;
-    }
+    if ($socid > 0) $sql .= ' AND f.fk_soc = '.$socid;
     // Search criteria
     if ($search_ref)       		    $sql .= natural_search('p.rowid', $search_ref);
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
@@ -639,7 +636,7 @@ if (empty($action))
     if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= $db->order($sortfield,$sortorder);
     
-    $nbtotalofrecords = -1;
+    $nbtotalofrecords = '';
     if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     {
         $result = $db->query($sql);
@@ -703,20 +700,8 @@ if (empty($action))
         print '<div class="div-table-responsive">';
         print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-        print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans('RefPayment'),$_SERVER["PHP_SELF"],'p.rowid','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'dp','',$param,'align="center"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('ThirdParty'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Type'),$_SERVER["PHP_SELF"],'c.libelle','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Account'),$_SERVER["PHP_SELF"],'ba.label','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Amount'),$_SERVER["PHP_SELF"],'p.amount','',$param,'align="right"',$sortfield,$sortorder);
-        //print_liste_field_titre($langs->trans('Invoice'),$_SERVER["PHP_SELF"],'ref_supplier','',$param,'',$sortfield,$sortorder);
-		print_liste_field_titre('');
-		print "</tr>\n";
-
         // Lines for filters fields
-        print '<tr class="liste_titre">';
+        print '<tr class="liste_titre_filter">';
         print '<td  class="liste_titre" align="left">';
         print '<input class="flat" type="text" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
         print '</td>';
@@ -737,16 +722,28 @@ if (empty($action))
         print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
         print '</td>';
         print '<td class="liste_titre" align="right">';
-        $searchpitco=$form->showFilterAndCheckAddButtons(0);
-        print $searchpitco;
+        $searchpicto=$form->showFilterAndCheckAddButtons(0);
+        print $searchpicto;
         print '</td>';
         print "</tr>\n";
 
+        print '<tr class="liste_titre">';
+        print_liste_field_titre($langs->trans('RefPayment'),$_SERVER["PHP_SELF"],'p.rowid','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'dp','',$param,'align="center"',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('ThirdParty'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Type'),$_SERVER["PHP_SELF"],'c.libelle','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Account'),$_SERVER["PHP_SELF"],'ba.label','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Amount'),$_SERVER["PHP_SELF"],'p.amount','',$param,'align="right"',$sortfield,$sortorder);
+        //print_liste_field_titre($langs->trans('Invoice'),$_SERVER["PHP_SELF"],'ref_supplier','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre('');
+        print "</tr>\n";
+        
         while ($i < min($num,$limit))
         {
             $objp = $db->fetch_object($resql);
-            $var=!$var;
-            print '<tr '.$bc[$var].'>';
+            
+            print '<tr class="oddeven">';
 
             // Ref payment
             print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->pid.'</a></td>';
@@ -756,7 +753,7 @@ if (empty($action))
 
             // Thirdparty
             print '<td>';
-            if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->name,32).'</a>';
+            if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->name,32).'</a>';
             else print '&nbsp;';
             print '</td>';
 

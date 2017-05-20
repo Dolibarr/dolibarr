@@ -97,12 +97,12 @@ if ($id > 0 || ! empty($ref))
 		$upload_dir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 		$head = facture_prepare_head($object);
-		dol_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), 0, 'bill');
+		dol_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, 'bill');
 
     	$totalpaye = $object->getSommePaiement();
 		
 		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{

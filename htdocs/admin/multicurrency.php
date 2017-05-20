@@ -131,7 +131,7 @@ elseif ($action == 'synchronize')
 	}
 	else
 	{
-		setEventMessages($langs->trans('multicurrency_syncronize_error', $reponse->error->info), null, 'errors');
+		setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
 	}
 }
 
@@ -183,23 +183,22 @@ print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 
-/* TODO uncomment when the functionality will integrated
-$var=!$var;
-print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useRateOnInvoiceDate").'</td>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useRateOnDocumentDate").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="400">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_MULTICURRENCY_USE_RATE_ON_INVOICE_DATE">';
-print $form->selectyesno("MULTICURRENCY_USE_RATE_ON_INVOICE_DATE",$conf->global->MULTICURRENCY_USE_RATE_ON_INVOICE_DATE,1);
+print '<input type="hidden" name="action" value="set_MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE">';
+print $form->selectyesno("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE",$conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE,1);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
-*/
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useOriginTx").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="400">';
@@ -212,8 +211,8 @@ print '</form>';
 print '</td></tr>';
 
 /* TODO uncomment when the functionality will integrated
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_buyPriceInCurrency").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="400">';
@@ -227,8 +226,8 @@ print '</td></tr>';
 */
 
 /* TODO uncomment when the functionality will integrated 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_modifyRateApplication").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="400">';
@@ -261,8 +260,8 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '</td></tr>';
 	
 	
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	
+	print '<tr class="oddeven">';
 	print '<td><a target="_blank" href="https://currencylayer.com">'.$langs->transnoentitiesnoconv("multicurrency_appId").'</a></td>';
 	print '<td align="center" width="20">&nbsp;</td>';
 	print '<td align="right" width="400">';
@@ -274,8 +273,8 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '</form>';
 	print '</td></tr>';
 	
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->transnoentitiesnoconv("multicurrency_appCurrencySource").'</td>';
 	print '<td align="center" width="20">&nbsp;</td>';
 	print '<td align="right" width="400">';
@@ -287,8 +286,8 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '</form>';
 	print '</td></tr>';
 	
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->transnoentitiesnoconv("multicurrency_alternateCurrencySource").'</td>';
 	print '<td align="center" width="20">&nbsp;</td>';
 	print '<td align="right" width="400">';
@@ -312,8 +311,8 @@ print '<td>'.$form->textwithpicto($langs->trans("CurrenciesUsed"), $langs->trans
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Rate").'</td>'."\n";
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="add_currency">';
@@ -324,8 +323,8 @@ print '<input type="text" name="rate" value="" size="13" placeholder="'.$langs->
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 print '</td></form></tr>';
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$conf->currency.$form->textwithpicto(' ', $langs->trans("BaseCurrency")).'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">1';
@@ -335,8 +334,8 @@ foreach ($TCurrency as &$currency)
 {
 	if($currency->code == $conf->currency) continue;
 	
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	
+	print '<tr class="oddeven">';
 	print '<td>'.$currency->code.' - '.$currency->name.'</td>';
 	print '<td align="center" width="20">&nbsp;</td>';
 	print '<td align="right" width="400">';

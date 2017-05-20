@@ -2,8 +2,86 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 6.0.0 compared to 5.0.* *****
 
+WARNING: 
 
+Following changes may create regression for some external modules, but were necessary to make Dolibarr better:
+* The hook getNodeList has been replaced by a normalized 'addreplace' hook getDirList.
+* The trigger USER_SETINGROUP and USER_REMOVEFROMGROUP has been replaced with trigger USER_MODIFY.
+* The page societe/soc.php was renamed into societe/card.php to match page naming conventions.
+* The page compta/facture.php was renamed into compta/facture/card.php to match page naming conventions.
+* The signature of method ->delete() of class Product and PriceExpression was changed from 
+  ->delete($id, notrigger) to ->delete(User, notrigger) to match standard dev rules.
+* Removed CommonObject::displayMarginInfos (was deprecated in 3.8). Use same method into
+  html.formmargin.class.php
+* Removed Societe::set_commnucation_level (was deprecated in 4.0). Was not used.
+* Removed the trigger file of PAYPAL module that stored data that was not used by Dolibarr. The trigger event still
+  exists, but if an external module need action on it, it must provides itself its trigger file.
+
+***** ChangeLog for 5.0.2 compared to 5.0.1 *****
+FIX: #6468 + Fix missing translation
+FIX: #6517 #6525 Autocompletion of thirdparty after n chars not implemented
+FIX: #6613 Default subject for Supplier proposal emails is filled with a non-existing key
+FIX: #6614
+FIX: #6619 Template invoices list do not respect restricted thirdparty user rights
+FIX: #6621 Documents tab shows greyed out upload form even if the option to show actions not available is disabled
+FIX: #6623 User card shows "Return to list" link even if the user has no rights to list users
+FIX: #6636 Complete fix
+FIX: #6669 User with no permission to edit customer invoices can see a edit button in project entry
+FIX: #6671 Cannot remove thirdparty type with "#" in its name
+FIX: #6673 Missing "nature" table header in thirdparty list
+FIX: #6675 Restricted user with no agenda permissions can see a button to create appointment in thirdparty contact list
+FIX: #6679 User with restricted supplier invoice permissions can edit project, payment conditions, payment mode
+FIX: #6680 User with restricted supplier invoice permissions sees "reopen" button even if he has no permission to do it
+FIX: #6718 Bug: Discount amount is not locally formatted in CommonObject View
+FIX: #6767 serious critical error, no login possible with postgresql and ipv6.
+FIX: #6795 #6796
+FIX: Add option MAIN_MAIL_USE_MULTI_PART to include text content into HTML email and add option MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS to restore the inline images feature.
+FIX: ajax autocomplete on clone
+FIX: A non admin user can not download files attached to user.
+FIX: Can't download delivery receipts (function dol_check_secure_access_document)
+FIX: complete hourly rate when not defined into table of time spent
+FIX: dont get empty "Incoterms : - " string if no incoterm
+FIX: dont lose supplier ref if no supplier price in database
+FIX: Enter a direct bank transaction
+FIX: extrafield css for boolean type
+FIX: forgotten parameter for right multicompany use
+FIX: Found duplicate line when it is not.
+FIX: global $dateSelector isn't the good one, then date selector on objectline_create tpl was hidden
+FIX: Journal code of bank must be visible of accountaing module on.
+FIX: length_accounta return variable name
+FIX: limit+1 dosn't show Total line
+FIX: No filter on company when showing the link to elements.
+FIX: overwrapping of weight/volume on rouget template
+FIX: Several bugs in accounting module.
+FIX: shared bank account with multicompany not visible in invoice setup
+FIX: spaces not allowed into vat code
+FIX: supplier default condition not retrieved on create
+FIX: supplier order line were always created with rang = 0
+
+***** ChangeLog for 5.0.1 compared to 5.0.0 *****
+FIX: #6503: SQL error in "Last pending payment invoices"
+FIX: #6505 Project elements page shows greyed-out links even if the option to show actions not available is disabled
+FIX: #6507: Statistics counter show wrong total Contract numbers when the user does not have full access
+FIX: #6533 #6590
+FIX: #6535
+FIX: bank account not visible on payment card
+FIX: colspan
+FIX: Data lost during merge of thirdparties
+FIX: Detection of color brightness
+FIX: Filter on date lost after submit on time spent page
+FIX: forgottent fk_unit field on llx_supplier_propaldet
+FIX: list of projects
+FIX: LOG_ERROR does not exists. Use LOG_ERR.
+FIX: Missing total on project overview.
+FIX: multicurrency management on supplier order/invoice
+FIX: Notification sending was broken.
+FIX: origin & origin id on supplier order line
+FIX: param php doc
+FIX: Picto of project on dol_banner and box
+FIX: Some errors when downloading files.
+ 
 ***** ChangeLog for 5.0.0 compared to 4.0.* *****
 For users:
 NEW: Add module mulicurrency.
@@ -150,7 +228,112 @@ Dolibarr better:
 - A new paramater sqlfilters was introduced to allow filter on any fields int the REST API. Few old parameters,
   no more required, were also removed. Use this new one if you were using one of them.
 - The trigger that activate or close a contract line is run on a contract line, not on contract.
+- Method commande->set_availability(user, availability_id) removed from commande class, use method commande->availability(availability_id, notrigger).
 
+Dolibarr 5.0 was frozen before PHP 7.1 was released. Unit tests are successful on PHP 7.1 but we don't have enough
+feedback to confirm all application is compatible. Current officiel supported PHP versions are PHP 5.3 to 7.0.
+
+
+***** ChangeLog for 4.0.5 to 4.0.4 *****
+FIX: #6234
+FIX: #6259
+FIX: #6330
+FIX: #6360
+FIX: #6411
+FIX: #6443
+FIX: #6444
+FIX: #6453
+FIX: #6503: SQL error in "Last pending payment invoices"
+FIX: #6505 Project elements page shows greyed-out links even if the option to show actions not available is disabled
+FIX: #6507: Statistics counter show wrong total Contract numbers when the user does not have full access
+FIX: #6533 #6590
+FIX: #6619 Template invoices list do not respect restricted thirdparty user rights
+FIX: #6621 Documents tab shows greyed out upload form even if the option to show actions not available is disabled
+FIX: add entity param to document link
+FIX: Can use quote into supplier ref on order line add
+FIX: Change the customer code only if error on duplicate
+FIX: Creation of credit note on invoice with deposit stole the discount.
+FIX: delete bank class lines when we delete bank_categ
+FIX: deletion of bank tag
+FIX: detail of deposit and credit not was not visible into final invoice
+FIX: Error management during bank account creation
+FIX: error management in bank account deletion.
+FIX: event status is not modified when assign an user
+FIX: forgotten fk_facture_fourn attribute on supplierinvoice line object
+FIX: If bank module on, field must be required to register payment of expense report.
+FIX: load multicurrency informations on supplier order and bill lines fetch
+FIX: Missing total on project overview.
+FIX: multicurrency_subprice
+FIX: param billed when we change page
+FIX: protection against infinite loop on hierarchy
+FIX: Supplier Order list filter by project
+FIX: the dolCopyDir fails if target dir does not exists.
+FIX: use param for http links
+
+***** ChangeLog for 4.0.4 to 4.0.3 *****
+FIX: #6227 Document models table header "Unit" is shown in 2 lines in Spanish
+FIX: #6230
+FIX: #6237
+FIX: #6245 Thirdparty link in supplier invoices list, links to "comm/card" instead of "fourn/card" page
+FIX: #6253 Supplier invoice list filter does not respect "thirdparty" filter
+FIX: #6277
+FIX: project list and ajax completion return wrong list.
+FIX: bug margin calculation by user with multicompany
+FIX: Can make a stock transfert on product not on sale/purchase.
+FIX: extrafield input for varchar was not working with special char within (ie double quotes)
+FIX: javascript error
+FIX: link for not found photo when using gravatar. Must use external url.
+FIX: Protection so even if link is output for external user, links is disabled.
+FIX: repair tool was ko to restore extrafields with type select.
+FIX: Security access problem with external users on projects/tasks
+FIX: We must not drop extrafield column if there is still record on other entities.
+FIX: regression with sedning email when introducing security options to restrict nb of email sending.
+t 
+***** ChangeLog for 4.0.3 to 4.0.2 *****
+FIX: #5853 $conf->global->$calc==0 || $conf->global->$calc==1
+FIX: #5958 no discount on supplier command made by replenishment
+FIX: #5966 Bug: getNomUrl tooltips show Proposal info even if user has no rights to read them
+FIX: #5972 #5734
+FIX: #6007
+FIX: #6010
+FIX: #6029
+FIX: #6043 - Payment mode not visible on supplier invoice list
+FIX: #6051
+FIX: #6062
+FIX: #6088
+FIX: A draft can be deleted by a user with create permission.
+FIX: bad permission to see contract on home page
+FIX: bad permission to see contract statistics
+FIX: Bcc must not appears to recipient when using SMTPs lib
+FIX: Consistent description for add or edit product
+FIX: delete contract extrafields on contract deletion
+FIX: Deposits and credit notes weren't added in the received and pending columns
+FIX: export extrafields must not include separe type
+FIX: Export of opportunity status must be code, not id.
+FIX: False positive on services not activated
+FIX: Filter was wrong or lost during navigation
+FIX: HT and TTC price should always be displayed together
+FIX: if a supplier price reference is changed after creating an order, we can't clone order.
+FIX: in export. Error when using a separate extrafields.
+FIX: Introduce hidden option MAIL_PREFIX_FOR_EMAIL_ID to solve pb of tracking email.
+FIX: javascript error when using on mobile/smartphone
+FIX: javascript xss injection and a translation
+FIX: Label of project is in field title not label.
+FIX: List of people able to validate an expense report was not complete.
+FIX: Missing field
+FIX: Module gravatar was not triggered on thirdparty and contact card
+FIX: Must use external link into a forged email content.
+FIX: Pb in management of date end of projects
+FIX: Regression when deleting product
+FIX: rendering of output of estimated amount on project overview page.
+FIX: Sanitize title of ajax_dialog
+FIX: Security to restrict email sending was not efficient
+FIX: Setting supplier as client when accept a supplier proposal
+FIX: Some statistics not compatible with multicompany module.
+FIX: the time spent on project was not visible in its overwiew
+FIX: Update intervention lline crash with PgSQL
+FIX: wrong test on dict.php
+FIX: wrong var name
 
 ***** ChangeLog for 4.0.2 compared to 4.0.1 *****
 FIX: #5340
@@ -355,6 +538,115 @@ Dolibarr better:
 So if you included it into your module, change your code like this to be compatible with all version:
   $res=@include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
   if (! $res) include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+
+
+
+***** ChangeLog for 3.9.4 compared to 3.9.3 *****
+FIX: #2853
+FIX: #3128
+FIX: #4447
+FIX: #5128 if create method return duplicated code error not use GETPOST in order to get a new code
+FIX: #5340
+FIX: #5473
+FIX: #5474 Country_id of "Don" object is still empty
+FIX: #5534
+FIX: #5535 bad dependency.
+FIX: #5537 AJAX project search does not work properly
+FIX: #5540 getFormMail is not registered as addReplace hook
+FIX: #5544 Disabled Contact still appear in lists to send emails
+FIX: #5549 getNomUrl tooltips show Order info even if user has no rights to read them
+FIX: #5568
+FIX: #5594
+FIX: #5629 PgSQL Interger string stylish error
+FIX: #5651
+FIX: #5660
+FIX: #5853 $conf->global->$calc==0 || $conf->global->$calc==1
+FIX: #5907
+FIX: #5966 Bug: getNomUrl tooltips show Proposal info even if user has no rights to read them
+FIX: #6051
+FIX: #6088
+FIX: Can correct stock of lot using eatby or sell by date
+FIX: Can make a movement on "out of sell" products
+FIX: cannot update bank account on invoice if module order not activated
+FIX: Can't create withdrawal document
+FIX: delete contract extrafields on contract deletion
+FIX: Direction of movement lost if an error occurs
+FIX: Error when CATEGORIE_RECURSIV_ADD is enabled and new category is daughter of an already linked to object
+FIX: export extrafields must not include separe type
+FIX: External user must not be able to edit its discounts
+FIX: Failed to export contact categories with contact extra fields
+FIX: header title in commercial area
+FIX: HT and TTC price should always be displayed together
+FIX: incoterms
+FIX: incoterms do not output into crabe invoice PDF
+FIX: in PgSQL no quote "word style" is permitted around column name
+FIX: Introduce hidden option MAIL_PREFIX_FOR_EMAIL_ID to solve pb of tracking email.
+FIX: margin tab on customer card must filter on current entity invoices
+FIX: missing column into SQL on thridparty list
+FIX: only show projects of related third if external user
+FIX: PgSQL Module Ressource list crash #5637
+FIX: php Strict
+FIX: Regression when deleting product
+FIX: Security to restrict email sending was not efficient
+FIX: tag for date rfc in odt substitution
+FIX: Update intervention lline crash with PgSQL
+FIX: update limit stock on product stock
+FIX: vat dictionary should allow enter and edit multiple values for localtaxes, separated by: (ex -19:-15)
+FIX: wrong test on dict.php
+
+
+***** ChangeLog for 3.9.4 compared to 3.9.3 *****
+FIX: #2853
+FIX: #3128
+FIX: #4447
+FIX: #5128 if create method return duplicated code error not use GETPOST in order to get a new code
+FIX: #5340
+FIX: #5473
+FIX: #5474 Country_id of "Don" object is still empty
+FIX: #5534
+FIX: #5535 bad dependency.
+FIX: #5537 AJAX project search does not work properly
+FIX: #5540 getFormMail is not registered as addReplace hook
+FIX: #5544 Disabled Contact still appear in lists to send emails
+FIX: #5549 getNomUrl tooltips show Order info even if user has no rights to read them
+FIX: #5568
+FIX: #5594
+FIX: #5629 PgSQL Interger string stylish error
+FIX: #5651
+FIX: #5660
+FIX: #5853 $conf->global->$calc==0 || $conf->global->$calc==1
+FIX: #5907
+FIX: #5966 Bug: getNomUrl tooltips show Proposal info even if user has no rights to read them
+FIX: #6051
+FIX: #6088
+FIX: Can correct stock of lot using eatby or sell by date
+FIX: Can make a movement on "out of sell" products
+FIX: cannot update bank account on invoice if module order not activated
+FIX: Can't create withdrawal document
+FIX: delete contract extrafields on contract deletion
+FIX: Direction of movement lost if an error occurs
+FIX: Error when CATEGORIE_RECURSIV_ADD is enabled and new category is daughter of an already linked to object
+FIX: export extrafields must not include separe type
+FIX: External user must not be able to edit its discounts
+FIX: Failed to export contact categories with contact extra fields
+FIX: header title in commercial area
+FIX: HT and TTC price should always be displayed together
+FIX: incoterms
+FIX: incoterms do not output into crabe invoice PDF
+FIX: in PgSQL no quote "word style" is permitted around column name
+FIX: Introduce hidden option MAIL_PREFIX_FOR_EMAIL_ID to solve pb of tracking email.
+FIX: margin tab on customer card must filter on current entity invoices
+FIX: missing column into SQL on thridparty list
+FIX: only show projects of related third if external user
+FIX: PgSQL Module Ressource list crash #5637
+FIX: php Strict
+FIX: Regression when deleting product
+FIX: Security to restrict email sending was not efficient
+FIX: tag for date rfc in odt substitution
+FIX: Update intervention lline crash with PgSQL
+FIX: update limit stock on product stock
+FIX: vat dictionary should allow enter and edit multiple values for localtaxes, separated by: (ex -19:-15)
+FIX: wrong test on dict.php
 
 
 ***** ChangeLog for 3.9.3 compared to 3.9.2 *****

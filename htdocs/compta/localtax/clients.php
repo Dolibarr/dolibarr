@@ -106,7 +106,7 @@ $fsearch.='  <input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
 $calc=$conf->global->MAIN_INFO_LOCALTAX_CALC.$local;
 // Affiche en-tete du rapport
-if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice for goods and services
+if ($calc==0 || $calc==1)	// Calculate on invoice for goods and services
 {
     $nom=$langs->transcountry($local==1?"LT1ReportByCustomersInInputOutputMode":"LT2ReportByCustomersInInputOutputMode",$mysoc->country_code);
     $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT".$local."Rec");
@@ -124,7 +124,7 @@ if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice 
 	$productsup=$langs->trans("Description");
 	$amountsup=$langs->trans("AmountHT");
 }
-if ($conf->global->$calc==2) 	// Invoice for goods, payment for services
+if ($calc==2) 	// Invoice for goods, payment for services
 {
     $nom=$langs->transcountry($local==1?"LT1ReportByCustomersInInputOutputMode":"LT2ReportByCustomersInInputOutputMode",$mysoc->country_code);
     $calcmode=$langs->trans("CalcModeLT2Debt");
@@ -149,7 +149,7 @@ $vatcust=$langs->transcountry($local==1?"LT1":"LT2",$mysoc->country_code);
 $vatsup=$langs->transcountry($local==1?"LT1":"LT2",$mysoc->country_code);
 
 // IRPF that the customer has retained me
-if($conf->global->$calc ==0 || $conf->global->$calc == 2)
+if($calc ==0 || $calc == 2)
 {
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
@@ -183,7 +183,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 2)
 		{
 			if(($min == 0 or ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) !=0)
 			{
-				$var=!$var;
+				
 				$intra = str_replace($find,$replace,$coll->tva_intra);
 				if(empty($intra))
 				{
@@ -196,7 +196,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 2)
 						$intra = '';
 					}
 				}
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$i."</td>";
 				$company_static->id=$coll->socid;
 				$company_static->name=$coll->name;
@@ -232,7 +232,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 2)
 }
 
 // IRPF I retained my supplier
-if($conf->global->$calc ==0 || $conf->global->$calc == 1){
+if($calc ==0 || $calc == 1){
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
 	print '<td align="left">'.$langs->trans("Num")."</td>";
@@ -258,7 +258,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 1){
 		{
 			if(($min == 0 or ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) != 0)
 			{
-				$var=!$var;
+				
 				$intra = str_replace($find,$replace,$coll->tva_intra);
 				if(empty($intra))
 				{
@@ -271,7 +271,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 1){
 						$intra = '';
 					}
 				}
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$i."</td>";
 				$company_static->id=$coll->socid;
 				$company_static->name=$coll->name;
@@ -309,7 +309,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 1){
 	}
 }
 
-if($conf->global->$calc ==0){
+if($calc ==0){
 	// Total to pay
 	print '<br><br>';
 	print '<table class="noborder" width="100%">';

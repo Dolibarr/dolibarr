@@ -76,8 +76,9 @@ BoxTitleLastLeaveRequests=Ultime %s richieste di assenza modificate
 HolidaysMonthlyUpdate=Aggiornamento mensile
 ManualUpdate=Aggiornamento manuale
 HolidaysCancelation=Cancellazione ferie
-EmployeeLastname=Cognome dipendente
-EmployeeFirstname=Nome dipendente
+EmployeeLastname=Employee last name
+EmployeeFirstname=Employee first name
+TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
 
 ## Configuration du Module ##
 LastUpdateCP=Ultimo aggiornamento automatico dell'assegnazione ferie

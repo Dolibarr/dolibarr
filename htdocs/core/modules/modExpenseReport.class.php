@@ -19,9 +19,6 @@
 /**
  * 		\defgroup   expensereport	Module expensereport
  *      \brief      Module to manage expense report. Replace old module Deplacement.
- */
-
-/**
  *      \file       htdocs/core/modules/modExpenseReport.class.php
  *      \ingroup    expensereport
  *      \brief      Description and activation file for module ExpenseReport
@@ -86,6 +83,20 @@ class modExpenseReport extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		$this->const[$r][0] = "MAIN_DELAY_EXPENSEREPORTS";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "15";
+		$this->const[$r][3] = 'Tolerance delay (in days) before alert for expense reports to approve';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "MAIN_DELAY_EXPENSEREPORTS_TO_PAY";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "15";
+		$this->const[$r][3] = 'Tolerance delay (in days) before alert for expense reports to pay';
+		$this->const[$r][4] = 0;
+		$r++;
+
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 
@@ -97,54 +108,62 @@ class modExpenseReport extends DolibarrModules
 		$this->rights = array();		// Permission array used by this module
 		$this->rights_class = 'expensereport';
 
-		$this->rights[1][0] = 771;
-		$this->rights[1][1] = 'Read expense reports (yours and your subordinates)';
-		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 0;
-		$this->rights[1][4] = 'lire';
-
-		$this->rights[3][0] = 772;
-		$this->rights[3][1] = 'Create/modify expense reports';
-		$this->rights[3][2] = 'w';
-		$this->rights[3][3] = 0;
-		$this->rights[3][4] = 'creer';
-
-		$this->rights[4][0] = 773;
-		$this->rights[4][1] = 'Delete expense reports';
-		$this->rights[4][2] = 'd';
-		$this->rights[4][3] = 0;
-		$this->rights[4][4] = 'supprimer';
-
-		$this->rights[6][0] = 775;
-		$this->rights[6][1] = 'Approve expense reports';
-		$this->rights[6][2] = 'w';
-		$this->rights[6][3] = 0;
-		$this->rights[6][4] = 'approve';
-
-		$this->rights[7][0] = 776;
-		$this->rights[7][1] = 'Pay expense reports';
-		$this->rights[7][2] = 'w';
-		$this->rights[7][3] = 0;
-		$this->rights[7][4] = 'to_paid';
-
-		$this->rights[2][0] = 777;
-		$this->rights[2][1] = 'Read expense reports of everybody';
-		$this->rights[2][2] = 'r';
-		$this->rights[2][3] = 1;
-		$this->rights[2][4] = 'readall';
-
-		$this->rights[2][0] = 778;
-		$this->rights[2][1] = 'Create expense reports for everybody';
-		$this->rights[2][2] = 'w';
-		$this->rights[2][3] = 0;
-		$this->rights[2][4] = 'writeall_advance';
-
-		$this->rights[5][0] = 779;
-		$this->rights[5][1] = 'Export expense reports';
-		$this->rights[5][2] = 'r';
-		$this->rights[5][3] = 0;
-		$this->rights[5][4] = 'export';
-
+		$this->rights[$r][0] = 771;
+		$this->rights[$r][1] = 'Read expense reports (yours and your subordinates)';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'lire';
+		$r++;
+		
+		$this->rights[$r][0] = 772;
+		$this->rights[$r][1] = 'Create/modify expense reports';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'creer';
+		$r++;
+		
+		$this->rights[$r][0] = 773;
+		$this->rights[$r][1] = 'Delete expense reports';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'supprimer';
+		$r++;
+		
+		$this->rights[$r][0] = 775;
+		$this->rights[$r][1] = 'Approve expense reports';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'approve';
+		$r++;
+		
+		$this->rights[$r][0] = 776;
+		$this->rights[$r][1] = 'Pay expense reports';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'to_paid';
+		$r++;
+		
+		$this->rights[$r][0] = 777;
+		$this->rights[$r][1] = 'Read expense reports of everybody';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'readall';
+		$r++;
+		
+		$this->rights[$r][0] = 778;
+		$this->rights[$r][1] = 'Create expense reports for everybody';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'writeall_advance';
+		$r++;
+		
+		$this->rights[$r][0] = 779;
+		$this->rights[$r][1] = 'Export expense reports';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'export';
+		$r++;
+		
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.

@@ -160,7 +160,7 @@ class BankAccounts extends DolibarrApi
         $account->courant = $account->type;
 
         if ($account->create(DolibarrApiAccess::$user) < 0) {
-            throw new RestException(503, 'Error when creating account: ' . $account->error);
+            throw new RestException(500, 'Error creating bank account', array_merge(array($account->error), $account->errors));
         }
         return $account->id;
     }

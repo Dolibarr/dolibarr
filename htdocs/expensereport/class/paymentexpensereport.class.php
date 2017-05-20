@@ -524,13 +524,14 @@ class PaymentExpenseReport extends CommonObject
                     {
                     	if ($mode == 'payment_expensereport')
                         {
-                            $euser = new User($this->db);
-                            $euser->fetch($key);
+                        	$er = new ExpenseReport($this->db);
+                            $er->fetch($key);
+                            $er->fetch_user($er->fk_user_author);
                             $result=$acc->add_url_line(
                                 $bank_line_id,
-                                $euser->id,
+                                $er->user->id,
                                 DOL_URL_ROOT.'/user/card.php?id=',
-                                $euser->getFullName($langs),
+                                $er->user->getFullName($langs),
                                 'user'
                             );
                             if ($result <= 0) 

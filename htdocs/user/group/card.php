@@ -28,6 +28,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if(! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class/actions_multicompany.class.php');
 
 // Defini si peux lire/modifier utilisateurs et permisssions
@@ -140,7 +141,7 @@ if ($action == 'adduser' || $action =='removeuser')
 {
     if ($caneditperms)
     {
-        if ($userid)
+        if ($userid > 0)
         {
             $object->fetch($id);
 			$object->oldcopy = clone $object;
@@ -209,6 +210,11 @@ if ($action == 'update')
         setEventMessages($langs->trans('ErrorForbidden'), null, 'mesgs');
     }
 }
+					
+// Actions to build doc
+$upload_dir = $conf->usergroup->dir_output;
+$permissioncreate=$user->rights->user->user->creer;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
 
@@ -220,6 +226,8 @@ llxHeader('',$langs->trans("GroupCard"));
 
 $form = new Form($db);
 $fuserstatic = new User($db);
+$form = new Form($db);
+$formfile = new FormFile($db);
 
 if ($action == 'create')
 {
@@ -244,7 +252,7 @@ if ($action == 'create')
 	{
 		if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
-			print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
+			print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 			print "<td>".$mc->select_entities($conf->entity);
 			print "</td></tr>\n";
 		}
@@ -306,20 +314,18 @@ else
 
 		if ($action != 'edit')
 		{
-        	dol_fiche_head($head, 'group', $title, 0, 'group');
+        	dol_fiche_head($head, 'group', $title, -1, 'group');
 
-			print '<table class="border" width="100%">';
-
-			// Ref
-			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-			print '<td colspan="2">';
-			print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
-			print '</td>';
-			print '</tr>';
+			dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+			
+			print '<div class="fichecenter">';
+			print '<div class="underbanner clearboth"></div>';
+			
+        	print '<table class="border" width="100%">';
 
 			// Name
-			print '<tr><td width="25%">'.$langs->trans("Name").'</td>';
-			print '<td width="75%" class="valeur">'.$object->name;
+			print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
+			print '<td class="valeur">'.$object->name;
 			if (empty($object->entity))
 			{
 				print img_picto($langs->trans("GlobalGroup"),'redstar');
@@ -330,13 +336,13 @@ else
 			if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
 			{
 				$mc->getInfo($object->entity);
-				print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
-				print '<td width="75%" class="valeur">'.$mc->label;
+				print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
+				print '<td class="valeur">'.$mc->label;
 				print "</td></tr>\n";
 			}
 
 			// Note
-			print '<tr><td width="25%" class="tdtop">'.$langs->trans("Description").'</td>';
+			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 			print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'&nbsp;</td>';
 			print "</tr>\n";
 
@@ -349,7 +355,8 @@ else
             }
 
 			print "</table>\n";
-
+            print '</div>';
+            
 			dol_fiche_end();
 
 
@@ -369,11 +376,8 @@ else
 			}
 
 			print "</div>\n";
-			print "<br>\n";
 
-            /*
-             * Liste des utilisateurs dans le groupe
-             */
+            // List users in group
 
             print load_fiche_titre($langs->trans("ListOfUsersInGroup"),'','');
 
@@ -397,8 +401,8 @@ else
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                 print '<input type="hidden" name="action" value="adduser">';
                 print '<table class="noborder" width="100%">'."\n";
-                print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
-                print '<td>';
+                print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
+                print '<td class="liste_titre">';
                 print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', $object->entity, 0, 0, '', 0, '', 'maxwidth300');
                 print ' &nbsp; ';
                 // Multicompany
@@ -406,7 +410,7 @@ else
                 {
                     if ($conf->entity == 1 && $conf->multicompany->transverse_mode)
                     {
-                        print '</td><td valign="top">'.$langs->trans("Entity").'</td>';
+                        print '</td><td class="tdtop">'.$langs->trans("Entity").'</td>';
                         print "<td>".$mc->select_entities($conf->entity);
                     }
                     else
@@ -442,13 +446,11 @@ else
 
             if (! empty($object->members))
             {
-            	$var=True;
-
             	foreach($object->members as $useringroup)
             	{
-            		$var=!$var;
+            		
 
-            		print "<tr ".$bc[$var].">";
+            		print '<tr class="oddeven">';
             		print '<td>';
             		print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
             		if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"),'redstar');
@@ -491,10 +493,35 @@ else
             }
             else
             {
-                print '<tr><td colspan=2 class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+                print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
             }
             print "</table>";
             print "<br>";
+			
+			/*
+	         * Documents generes
+	         */
+	        $filename = dol_sanitizeFileName($object->ref);
+	        $filedir = $conf->usergroup->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	        $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+	        $genallowed = $user->rights->user->user->creer;
+	        $delallowed = $user->rights->user->user->supprimer;
+	
+	        $somethingshown = $formfile->show_documents('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+	
+	        // Show links to link elements
+	        $linktoelem = $form->showLinkToObjectBlock($object, null, null);
+	        $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+	
+	        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	
+			// List of actions on element
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, 'usergroup', $socid);
+	        
+	        
+	        print '</div></div></div>';
         }
 
         /*
@@ -509,8 +536,8 @@ else
             dol_fiche_head($head, 'group', $title, 0, 'group');
 
             print '<table class="border" width="100%">';
-            print '<tr><td width="25%" valign="top" class="fieldrequired">'.$langs->trans("Name").'</td>';
-            print '<td width="75%" class="valeur"><input size="15" type="text" name="group" value="'.$object->name.'">';
+            print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Name").'</td>';
+            print '<td class="valeur"><input size="15" type="text" name="group" value="'.$object->name.'">';
             print "</td></tr>\n";
 
             // Multicompany
@@ -518,7 +545,7 @@ else
             {
                 if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
                 {
-                    print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
+                    print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
                     print "<td>".$mc->select_entities($object->entity);
                     print "</td></tr>\n";
                 }
@@ -528,7 +555,7 @@ else
             	}
             }
 
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Description").'</td>';
+            print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
             print '<td class="valeur">';
             require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
             $doleditor=new DolEditor('note',$object->note,'',240,'dolibarr_notes','',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,'90%');
@@ -536,7 +563,7 @@ else
             print '</td>';
             print "</tr>\n";
         	// Other attributes
-            $parameters=array('colspan' => ' colspan="2"');
+            $parameters=array();
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
@@ -551,7 +578,6 @@ else
 
             print '</form>';
         }
-
     }
 }
 

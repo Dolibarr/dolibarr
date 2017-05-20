@@ -6,6 +6,7 @@
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2016      Florian Henry         <florian.henry@atm-consulting.fr>
+ * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under the	terms of the GNU General Public	License	as published by
@@ -51,7 +52,7 @@ if (! empty($conf->productbatch->enabled))
 $id = GETPOST("id", 'int');
 $ref = GETPOST('ref');
 $lineid = GETPOST('lineid', 'int');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 if ($user->societe_id)
 	$socid = $user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
@@ -229,7 +230,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 	}
 
 	if (! $error) {
-		$result = $object->calcAndSetStatusDispatch($user, GETPOST('closeopenorder')?1:0);
+		$result = $object->calcAndSetStatusDispatch($user, GETPOST('closeopenorder')?1:0, GETPOST('comment'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$error ++;
@@ -339,26 +340,7 @@ if ($id > 0 || ! empty($ref)) {
 	print '<div class="underbanner clearboth"></div>';
 	
 	print '<table class="border" width="100%">';
-/*
-	// Ref
-	print '<tr><td class="titlefield">' . $langs->trans("Ref") . '</td>';
-	print '<td colspan="2">';
-	print $form->showrefnav($object, 'ref', '', 1, 'ref', 'ref');
-	print '</td>';
-	print '</tr>';
 
-	// Fournisseur
-	print '<tr><td>' . $langs->trans("Supplier") . "</td>";
-	print '<td colspan="2">' . $soc->getNomUrl(1, 'supplier') . '</td>';
-	print '</tr>';
-
-	// Statut
-	print '<tr>';
-	print '<td>' . $langs->trans("Status") . '</td>';
-	print '<td colspan="2">';
-	print $object->getLibStatut(4);
-	print "</td></tr>";
-*/
 	// Date
 	if ($object->methode_commande_id > 0) {
 		print '<tr><td class="titlefield">' . $langs->trans("Date") . '</td><td>';
@@ -368,7 +350,7 @@ if ($id > 0 || ! empty($ref)) {
 		print "</td></tr>";
 
 		if ($object->methode_commande) {
-			print '<tr><td>' . $langs->trans("Method") . '</td><td>' . $object->methode_commande . '</td></tr>';
+			print '<tr><td>' . $langs->trans("Method") . '</td><td>' . $object->getInputMethod() . '</td></tr>';
 		}
 	}
 
@@ -485,16 +467,14 @@ if ($id > 0 || ! empty($ref)) {
 					if ($remaintodispatch || empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED)) {
 						$nbproduct++;
 
-						$var = ! $var;
-
 						// To show detail cref and description value, we must make calculation by cref
 						// print ($objp->cref?' ('.$objp->cref.')':'');
 						// if ($objp->description) print '<br>'.nl2br($objp->description);
 						$suffix = '_0_' . $i;
 
 						print "\n";
-						print '<!-- Line ' . $suffix . ' -->' . "\n";
-						print "<tr " . $bc[$var] . ">";
+						print '<!-- Line to dispatch ' . $suffix . ' -->' . "\n";
+						print '<tr class="oddeven">';
 
 						$linktoprod = '<a href="' . DOL_URL_ROOT . '/product/fournisseurs.php?id=' . $objp->fk_product . '">' . img_object($langs->trans("ShowProduct"), 'product') . ' ' . $objp->ref . '</a>';
 						$linktoprod .= ' - ' . $objp->label . "\n";
@@ -518,7 +498,7 @@ if ($id > 0 || ! empty($ref)) {
 							print "</td>";
 						}
 
-						$var = ! $var;
+						// Define unit price for PMP calculation
 						$up_ht_disc = $objp->subprice;
 						if (! empty($objp->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP))
 							$up_ht_disc = price2num($up_ht_disc * (100 - $objp->remise_percent) / 100, 'MU');
@@ -535,11 +515,21 @@ if ($id > 0 || ! empty($ref)) {
 							print '<td></td>'; // Warehouse column
 							print '</tr>';
 
-							print '<tr ' . $bc[$var] . ' name="' . $type . $suffix . '">';
+							print '<tr class="oddeven" name="' . $type . $suffix . '">';
 							print '<td>';
 							print '<input name="fk_commandefourndet' . $suffix . '" type="hidden" value="' . $objp->rowid . '">';
 							print '<input name="product_batch' . $suffix . '" type="hidden" value="' . $objp->fk_product . '">';
-							print '<input name="pu' . $suffix . '" type="hidden" value="' . $up_ht_disc . '"><!-- This is a up including discount -->';
+							
+							print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
+							if (! empty($conf->global->SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT)) // Not tested !
+							{
+							    print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu' . $suffix . '" type="text" value="' . price2num($up_ht_disc, 'MU') . '">';
+							}
+							else
+							{
+							    print '<input class="maxwidth75" name="pu' . $suffix . '" type="hidden" value="' . price2num($up_ht_disc, 'MU') . '">';
+							}
+
 							// hidden fields for js function
 							print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $objp->qty . '">';
 							print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . ( float ) $products_dispatched[$objp->rowid] . '">';
@@ -562,11 +552,22 @@ if ($id > 0 || ! empty($ref)) {
 							print '<td align="right">' . img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"') . '</td>'; // Dispatch column
 							print '<td></td>';
 							print '</tr>';
-							print '<tr ' . $bc[$var] . ' name="' . $type . $suffix . '">';
+
+							print '<tr class="oddeven" name="' . $type . $suffix . '">';
 							print '<td colspan="6">';
 							print '<input name="fk_commandefourndet' . $suffix . '" type="hidden" value="' . $objp->rowid . '">';
 							print '<input name="product' . $suffix . '" type="hidden" value="' . $objp->fk_product . '">';
-							print '<input name="pu' . $suffix . '" type="hidden" value="' . $up_ht_disc . '"><!-- This is a up including discount -->';
+							
+							print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
+							if (! empty($conf->global->SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT)) // Not tested !
+							{
+							    print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu' . $suffix . '" type="text" value="' . price2num($up_ht_disc, 'MU') . '">';
+							}
+							else
+							{
+							    print '<input class="maxwidth75" name="pu' . $suffix . '" type="hidden" value="' . price2num($up_ht_disc, 'MU') . '">';
+							}
+							
 							// hidden fields for js function
 							print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $objp->qty . '">';
 							print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . ( float ) $products_dispatched[$objp->rowid] . '">';
@@ -584,7 +585,8 @@ if ($id > 0 || ! empty($ref)) {
 						} elseif (count($listwarehouses) == 1) {
 							print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix), "entrepot" . $suffix, '', 0, 0, $objp->fk_product);
 						} else {
-							print $langs->trans("NoWarehouseDefined");
+							$langs->load("errors");
+							print $langs->trans("ErrorNoWarehouseDefined");
 						}
 						print "</td>\n";
 
@@ -608,7 +610,7 @@ if ($id > 0 || ! empty($ref)) {
             
 			print '<br><div class="center">';
             print $langs->trans("Comment") . ' : ';
-			print '<input type="text" class="minwidth200" maxlength="128" name="comment" value="';
+			print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
 			print $_POST["comment"] ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $object->ref);
 			// print ' / '.$object->ref_supplier; // Not yet available
 			print '" class="flat"><br>';
@@ -625,9 +627,9 @@ if ($id > 0 || ! empty($ref)) {
 		// Message if nothing to dispatch
 		if (! $nbproduct) {
 			if (empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED))
-				print $langs->trans("NoPredefinedProductToDispatch");		// No predefined line at all
+				print '<div class="opacitymedium">'.$langs->trans("NoPredefinedProductToDispatch").'</div>';		// No predefined line at all
 			else 
-				print $langs->trans("NoMorePredefinedProductToDispatch");	// No predefined line that remain to be dispatched.
+				print '<div class="opacitymedium">'.$langs->trans("NoMorePredefinedProductToDispatch").'</div>';	// No predefined line that remain to be dispatched.
 		}
 
 		print '</form>';
@@ -661,7 +663,7 @@ if ($id > 0 || ! empty($ref)) {
 			print '<table class="noborder" width="100%">';
 
 			print '<tr class="liste_titre">';
-			print '<td>' . $langs->trans("Description") . '</td>';
+			print '<td>' . $langs->trans("Product") . '</td>';
 			if (! empty($conf->productbatch->enabled)) {
 				print '<td>' . $langs->trans("batch_number") . '</td>';
 				print '<td>' . $langs->trans("EatByDate") . '</td>';
@@ -704,7 +706,7 @@ if ($id > 0 || ! empty($ref)) {
 				print '</td>';
 
 				// Comment
-				print '<td>' . dol_trunc($objp->comment) . '</td>';
+				print '<td class="tdoverflowmax300">' . $objp->comment . '</td>';
 
 				// Status
 				if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {

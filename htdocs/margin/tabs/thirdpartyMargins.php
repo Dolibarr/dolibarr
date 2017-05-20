@@ -89,7 +89,7 @@ if ($socid > 0)
 
     $head = societe_prepare_head($object);
 
-    dol_fiche_head($head, 'margin', $langs->trans("ThirdParty"),0,'company');
+    dol_fiche_head($head, 'margin', $langs->trans("ThirdParty"), -1, 'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
     
@@ -206,9 +206,9 @@ if ($socid > 0)
     			$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
     			$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
 
-    			$var=!$var;
+    			
 
-    			print "<tr ".$bc[$var].">";
+    			print '<tr class="oddeven">';
     			print '<td>';
     			$invoicestatic->id=$objp->facid;
     			$invoicestatic->ref=$objp->facnumber;
@@ -232,7 +232,7 @@ if ($socid > 0)
     	}
 
     	// affichage totaux marges
-    	$var=!$var;
+    	
     	$totalMargin = $cumul_vente - $cumul_achat;
     	if ($totalMargin < 0)
     	{

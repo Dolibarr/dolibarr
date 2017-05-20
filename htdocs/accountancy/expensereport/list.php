@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
@@ -175,7 +175,7 @@ llxHeader('', $langs->trans("ExpenseReportsVentilation"));
 // Expense report lines
 $sql = "SELECT er.ref, er.rowid as erid, er.date_debut,";
 $sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht as price, erd.fk_code_ventilation, erd.tva_tx as tva_tx_line, erd.date,";
-$sql .= " f.id as fees_id, f.label as fees_label, f.accountancy_code as code_buy,";
+$sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label, f.accountancy_code as code_buy,";
 $sql .= " aa.rowid as aarowid";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as er";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "expensereport_det as erd ON er.rowid = erd.fk_expensereport";
@@ -208,7 +208,7 @@ $sql .= " AND er.entity IN (" . getEntity("expensereport", 0) . ")";  // We don'
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = -1;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -259,6 +259,24 @@ if ($result) {
 
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+	// We add search filter
+	print '<tr class="liste_titre_filter">';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_expensereport" value="' . dol_escape_htmltag($search_expensereport) . '"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidthonsmartphone" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="right flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td align="center" class="liste_titre">';
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+	print '</tr>';
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("ExpenseReport"), $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
@@ -269,53 +287,38 @@ if ($result) {
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("AccountAccountingSuggest"), '', '', '', '', 'align="center"');
 	print_liste_field_titre($langs->trans("IntoAccount"), '', '', '', '', 'align="center"');
-	print_liste_field_titre('', '', '', '', '', 'align="center"');
+	$checkpicto='';
+	if ($massactionbutton) $checkpicto=$form->showCheckAddButtons('checkforselect', 1);
+	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
 	print "</tr>\n";
-
-	// We add search filter
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_expensereport" value="' . dol_escape_htmltag($search_expensereport) . '"></td>';
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidthonsmartphone" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_vat" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"></td>';
-	print '<td align="right" class="liste_titre">';
-	$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-	print $searchpicto;
-	print '</td>';
-	print '</tr>';
-
+	
+	
 	$expensereport_static = new ExpenseReport($db);
 	$form = new Form($db);
 
 	$var = true;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
-		$var = ! $var;
 
 		$objp->aarowid_suggest = '';
 		$objp->aarowid_suggest = $objp->aarowid;
 
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
-		
-		print '<tr '. $bc[$var].'>';
+
+		print '<tr class="oddeven">';
 
 		// Line id
 		print '<td>' . $objp->rowid . '</td>';
 
-		print '<td align="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
-		
 		// Ref Expense report
 		print '<td>' . $expensereport_static->getNomUrl(1) . '</td>';
 
+		print '<td align="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
+
 		// Fees label
 		print '<td>';
-		print $objp->fees_label;
+		print ($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code)));
 		print '</td>';
 
 		// Fees description -- Can be null
@@ -344,7 +347,7 @@ if ($result) {
 		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
-		print '<td align="right">';
+		print '<td align="center">';
 		print '<input type="checkbox" class="flat checkforselect" name="toselect[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
 		print '</td>';
 

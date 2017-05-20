@@ -49,7 +49,7 @@ $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel');
 $amount=GETPOST('amount');
 $donation_date=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-$projectid=GETPOST('projectid')?GETPOST('projectid','int'):GETPOST("fk_projet",'int');
+$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
     
 $object = new Don($db);
 $extrafields = new ExtraFields($db);
@@ -109,7 +109,7 @@ if ($action == 'update')
         $object->email       = GETPOST("email");
 		$object->date        = $donation_date;
 		$object->public      = GETPOST("public");
-		$object->fk_projet   = GETPOST("fk_projet");
+		$object->fk_project  = GETPOST("fk_project");
 		$object->note_private= GETPOST("note_private");
 		$object->note_public = GETPOST("note_public");
 
@@ -164,7 +164,7 @@ if ($action == 'add')
 		$object->note_private= GETPOST("note_private");
 		$object->note_public = GETPOST("note_public");
 		$object->public      = GETPOST("public");
-		$object->fk_projet   = GETPOST("fk_projet");
+		$object->fk_project  = GETPOST("fk_project");
 
 		// Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -229,6 +229,11 @@ if ($action == 'set_paid')
     else {
 	    setEventMessages($object->error, $object->errors, 'errors');
     }
+}
+else if ($action == 'classin' && $user->rights->don->creer)
+{
+	$object->fetch($id);
+	$object->setProject($projectid);
 }
 // Remove file in doc form
 if ($action == 'remove_file')
@@ -361,7 +366,7 @@ if ($action == 'create')
 	if (! empty($conf->projet->enabled))
     {
         print "<tr><td>".$langs->trans("Project")."</td><td>";
-        $formproject->select_projects(-1, $projectid,'fk_projet', 0, 0, 1, 1);
+        $formproject->select_projects(-1, $projectid,'fk_project', 0, 0, 1, 1);
 		print "</td></tr>\n";
     }
 
@@ -486,7 +491,7 @@ if (! empty($id) && $action == 'edit')
 
         $langs->load('projects');
         print '<tr><td>'.$langs->trans('Project').'</td><td>';
-		$formproject->select_projects(-1, $object->fk_projet,'fk_projet', 0, 0, 1, 1);
+		$formproject->select_projects(-1, $object->fk_project,'fk_project', 0, 0, 1, 1);
         print '</td></tr>';
     }
 
@@ -694,12 +699,11 @@ if (! empty($id) && $action != 'edit')
    		print '<td align="right">'.$langs->trans("Amount").'</td>';
    		print '</tr>';
 
-		$var=True;
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
-			$var=!$var;
-			print "<tr ".$bc[$var]."><td>";
+			
+			print '<tr class="oddeven"><td>';
 			print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 		    $labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->paiement_type;
@@ -803,8 +807,6 @@ if (! empty($id) && $action != 'edit')
 	$urlsource	=	$_SERVER['PHP_SELF'].'?rowid='.$object->id;
 	$genallowed	=	($object->statut == 2 && ($object->paid == 0 || $user->admin) && $user->rights->don->creer);
 	$delallowed	=	$user->rights->don->supprimer;
-
-	$var=true;
 
 	print $formfile->showdocuments('donation',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 

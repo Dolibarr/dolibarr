@@ -91,17 +91,16 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	// Onglets
 	$head=bank_prepare_head($object);
-	dol_fiche_head($head,'cash',$langs->trans("FinancialAccount"),0,'account');
-
-	print '<table class="border" width="100%">';
+	dol_fiche_head($head, 'cash', $langs->trans("FinancialAccount"), -1, 'account');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 	dol_fiche_end();
 	
-
+    print '<br>';
+    
 	$solde = $object->solde(0);
 
 	// Show next coming entries
@@ -121,13 +120,13 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$var=true;
 
 	// Current balance
-	$var=!$var;
+	
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
 	print '<td align="right" class="nowrap">'.price($solde).'</td>';
 	print '</tr>';
 
-	$var=!$var;
+	
 	print '<tr class="liste_titre">';
 	print '<td align="left" colspan="5">'.$langs->trans("RemainderToPay").'</td>';
 	print '<td align="right" class="nowrap">&nbsp;</td>';
@@ -294,10 +293,10 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			// We discard lines with a remainder to pay to 0
 			if (price2num($total_ttc) != 0)
 			{
-                $var=!$var;
+                
 
     			// Show line
-    			print "<tr ".$bc[$var].">";
+    			print '<tr class="oddeven">';
     			print '<td>';
     			if ($obj->dlr) print dol_print_date($db->jdate($obj->dlr),"day");
     			else print $langs->trans("NotDefined");
@@ -319,7 +318,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	}
 
 	// Solde actuel
-	$var=!$var;
+	
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("FutureBalance").' ('.$object->currency_code.')</td>';
 	print '<td align="right" class="nowrap">'.price($solde, 0, $langs, 0, 0, -1, $object->currency_code).'</td>';

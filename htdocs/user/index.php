@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
@@ -50,7 +50,7 @@ $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -103,14 +103,14 @@ $arrayfields=array(
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
+   foreach($extrafields->attribute_label as $key => $val)
    {
        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
    }
 }
 
 // Init search fields
-$sall=GETPOST('sall','alpha');
+$sall=GETPOST('sall', 'alphanohtml');
 $search_user=GETPOST('search_user','alpha');
 $search_login=GETPOST('search_login','alpha');
 $search_lastname=GETPOST('search_lastname','alpha');
@@ -146,7 +146,7 @@ if (empty($reshook))
 {
     // Selection of new fields
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-    
+
     // Purge search criteria
     if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
     {
@@ -174,6 +174,7 @@ if (empty($reshook))
  * View
  */
 
+$user2=new User($db);
 
 $buttonviewhierarchy='<form action="'.DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : '').'" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("HierarchicView")).'"></form>';
 
@@ -224,7 +225,7 @@ foreach ($search_array_options as $key => $val)
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
     if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -285,7 +286,7 @@ foreach ($search_array_options as $key => $val)
     $crit=$val;
     $tmpkey=preg_replace('/search_options_/','',$key);
     if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-} 	
+}
 
 $text = $langs->trans("ListOfUsers");
 
@@ -315,43 +316,8 @@ $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfiel
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-print '<tr class="liste_titre">';
-if (! empty($arrayfields['u.login']['checked']))          print_liste_field_titre($langs->trans("Login"),$_SERVER['PHP_SELF'],"u.login",$param,"","",$sortfield,$sortorder);
-if (! empty($arrayfields['u.lastname']['checked']))       print_liste_field_titre($langs->trans("Lastname"),$_SERVER['PHP_SELF'],"u.lastname",$param,"","",$sortfield,$sortorder);
-if (! empty($arrayfields['u.firstname']['checked']))      print_liste_field_titre($langs->trans("FirstName"),$_SERVER['PHP_SELF'],"u.firstname",$param,"","",$sortfield,$sortorder);
-if (! empty($arrayfields['u.gender']['checked']))         print_liste_field_titre($langs->trans("Gender"),$_SERVER['PHP_SELF'],"u.gender",$param,"","",$sortfield,$sortorder);
-if (! empty($arrayfields['u.employee']['checked']))       print_liste_field_titre($langs->trans("Employee"),$_SERVER['PHP_SELF'],"u.employee",$param,"","",$sortfield,$sortorder);
-if (! empty($arrayfields['u.accountancy_code']['checked'])) print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER['PHP_SELF'],"u.accountancy_code",$param,"","",$sortfield,$sortorder);
-if (! empty($arrayfields['u.email']['checked']))          print_liste_field_titre($langs->trans("EMail"),$_SERVER['PHP_SELF'],"u.email",$param,"","",$sortfield,$sortorder);
-if (! empty($arrayfields['u.fk_soc']['checked']))         print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"u.fk_soc",$param,"","",$sortfield,$sortorder);
-if (! empty($arrayfields['u.entity']['checked']))         print_liste_field_titre($langs->trans("Entity"),$_SERVER['PHP_SELF'],"u.entity",$param,"","",$sortfield,$sortorder);
-if (! empty($arrayfields['u.fk_user']['checked']))        print_liste_field_titre($langs->trans("HierarchicalResponsible"),$_SERVER['PHP_SELF'],"u.fk_user",$param,"","",$sortfield,$sortorder);
-if (! empty($arrayfields['u.datelastlogin']['checked']))  print_liste_field_titre($langs->trans("LastConnexion"),$_SERVER['PHP_SELF'],"u.datelastlogin",$param,"",'align="center"',$sortfield,$sortorder);
-if (! empty($arrayfields['u.datepreviouslogin']['checked'])) print_liste_field_titre($langs->trans("PreviousConnexion"),$_SERVER['PHP_SELF'],"u.datepreviouslogin",$param,"",'align="center"',$sortfield,$sortorder);
-// Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-{
-   foreach($extrafields->attribute_label as $key => $val) 
-   {
-       if (! empty($arrayfields["ef.".$key]['checked'])) 
-       {
-			$align=$extrafields->getAlignFlag($key);
-			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-       }
-   }
-}
-// Hook fields
-$parameters=array('arrayfields'=>$arrayfields);
-$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
-if (! empty($arrayfields['u.datec']['checked']))  print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"u.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['u.tms']['checked']))    print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"u.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['u.statut']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"u.statut","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
-print "</tr>\n";
-
 // Search bar
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre_filter">';
 if (! empty($arrayfields['u.login']['checked']))
 {
     print '<td class="liste_titre"><input type="text" name="search_login" size="6" value="'.$search_login.'"></td>';
@@ -368,7 +334,7 @@ if (! empty($arrayfields['u.gender']['checked']))
 {
     print '<td class="liste_titre">';
     $arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
-    print $form->selectarray('search_gender', $arraygender, $search_gender, 1);        
+    print $form->selectarray('search_gender', $arraygender, $search_gender, 1);
     print '</td>';
 }
 if (! empty($arrayfields['u.employee']['checked']))
@@ -408,9 +374,9 @@ if (! empty($arrayfields['u.datepreviouslogin']['checked']))
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
+   foreach($extrafields->attribute_label as $key => $val)
    {
-		if (! empty($arrayfields["ef.".$key]['checked'])) 
+		if (! empty($arrayfields["ef.".$key]['checked']))
 		{
             $align=$extrafields->getAlignFlag($key);
             $typeofextrafield=$extrafields->attribute_type[$key];
@@ -453,20 +419,54 @@ if (! empty($arrayfields['u.statut']['checked']))
 }
 // Action column
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
 print '</td>';
 
 print "</tr>\n";
 
-$user2=new User($db);
 
-$var=True;
+print '<tr class="liste_titre">';
+if (! empty($arrayfields['u.login']['checked']))          print_liste_field_titre($langs->trans("Login"),$_SERVER['PHP_SELF'],"u.login",$param,"","",$sortfield,$sortorder);
+if (! empty($arrayfields['u.lastname']['checked']))       print_liste_field_titre($langs->trans("Lastname"),$_SERVER['PHP_SELF'],"u.lastname",$param,"","",$sortfield,$sortorder);
+if (! empty($arrayfields['u.firstname']['checked']))      print_liste_field_titre($langs->trans("FirstName"),$_SERVER['PHP_SELF'],"u.firstname",$param,"","",$sortfield,$sortorder);
+if (! empty($arrayfields['u.gender']['checked']))         print_liste_field_titre($langs->trans("Gender"),$_SERVER['PHP_SELF'],"u.gender",$param,"","",$sortfield,$sortorder);
+if (! empty($arrayfields['u.employee']['checked']))       print_liste_field_titre($langs->trans("Employee"),$_SERVER['PHP_SELF'],"u.employee",$param,"","",$sortfield,$sortorder);
+if (! empty($arrayfields['u.accountancy_code']['checked'])) print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER['PHP_SELF'],"u.accountancy_code",$param,"","",$sortfield,$sortorder);
+if (! empty($arrayfields['u.email']['checked']))          print_liste_field_titre($langs->trans("EMail"),$_SERVER['PHP_SELF'],"u.email",$param,"","",$sortfield,$sortorder);
+if (! empty($arrayfields['u.fk_soc']['checked']))         print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"u.fk_soc",$param,"","",$sortfield,$sortorder);
+if (! empty($arrayfields['u.entity']['checked']))         print_liste_field_titre($langs->trans("Entity"),$_SERVER['PHP_SELF'],"u.entity",$param,"","",$sortfield,$sortorder);
+if (! empty($arrayfields['u.fk_user']['checked']))        print_liste_field_titre($langs->trans("HierarchicalResponsible"),$_SERVER['PHP_SELF'],"u.fk_user",$param,"","",$sortfield,$sortorder);
+if (! empty($arrayfields['u.datelastlogin']['checked']))  print_liste_field_titre($langs->trans("LastConnexion"),$_SERVER['PHP_SELF'],"u.datelastlogin",$param,"",'align="center"',$sortfield,$sortorder);
+if (! empty($arrayfields['u.datepreviouslogin']['checked'])) print_liste_field_titre($langs->trans("PreviousConnexion"),$_SERVER['PHP_SELF'],"u.datepreviouslogin",$param,"",'align="center"',$sortfield,$sortorder);
+// Extra fields
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+{
+    foreach($extrafields->attribute_label as $key => $val)
+    {
+        if (! empty($arrayfields["ef.".$key]['checked']))
+        {
+            $align=$extrafields->getAlignFlag($key);
+            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+        }
+    }
+}
+// Hook fields
+$parameters=array('arrayfields'=>$arrayfields);
+$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+if (! empty($arrayfields['u.datec']['checked']))  print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"u.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['u.tms']['checked']))    print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"u.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['u.statut']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"u.statut","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+print "</tr>\n";
+
+
+
 $i = 0;
 while ($i < min($num,$limit))
 {
     $obj = $db->fetch_object($result);
-    $var=!$var;
 
 	$userstatic->id=$obj->rowid;
 	$userstatic->ref=$obj->label;
@@ -479,21 +479,21 @@ while ($i < min($num,$limit))
 	$userstatic->lastname=$obj->lastname;
 	$userstatic->employee=$obj->employee;
 	$userstatic->photo=$obj->photo;
-    
+
 	$li=$userstatic->getNomUrl(-1,'',0,0,24,1,'login');
 
-    print "<tr ".$bc[$var].">";
+    print "<tr>";
     if (! empty($arrayfields['u.login']['checked']))
 	{
 	    print '<td>';
 		print $li;
         if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
         {
-          	print img_picto($langs->trans("SuperAdministrator"),'redstar');
+          	print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
         }
         else if ($obj->admin)
         {
-        	print img_picto($langs->trans("Administrator"),'star');
+        	print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
         }
         print '</td>';
 	}
@@ -584,16 +584,16 @@ while ($i < min($num,$limit))
 	        print $user2->getNomUrl(-1,'',0,0,24,0,'');
             if (! empty($conf->multicompany->enabled) && $obj->admin2 && ! $obj->entity2)
             {
-              	print img_picto($langs->trans("SuperAdministrator"),'redstar');
+              	print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
             }
             else if ($obj->admin2)
             {
-            	print img_picto($langs->trans("Administrator"),'star');
+            	print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
             }
         }
         print '</td>';
-	}		
-    
+	}
+
     // Date last login
     if (! empty($arrayfields['u.datelastlogin']['checked']))
 	{
@@ -604,13 +604,13 @@ while ($i < min($num,$limit))
 	{
         print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datepreviouslogin),"dayhour").'</td>';
 	}
-    
+
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_label as $key => $val) 
+	   foreach($extrafields->attribute_label as $key => $val)
 	   {
-			if (! empty($arrayfields["ef.".$key]['checked'])) 
+			if (! empty($arrayfields["ef.".$key]['checked']))
 			{
 				print '<td';
 				$align=$extrafields->getAlignFlag($key);

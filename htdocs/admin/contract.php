@@ -216,11 +216,9 @@ $form=new Form($db);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ContractsSetup"),$linkback,'title_setup');
 
-print "<br>";
-
 $head=contract_admin_prepare_head();
 
-dol_fiche_head($head, 'contract', $langs->trans("Contracts"), 0, 'contract');
+dol_fiche_head($head, 'contract', $langs->trans("Contracts"), -1, 'contract');
 
 /*
  * Contracts Numbering model
@@ -266,8 +264,8 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-						$var=!$var;
-						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+						
+						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
 
@@ -406,7 +404,7 @@ foreach ($dirmodels as $reldir)
 	                        if ($modulequalified)
 	                        {
 	                            $var = !$var;
-	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module,'info')) print $module->info($langs);
@@ -502,9 +500,17 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 $var=true;
 
+$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
 $var=! $var;
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnContracts").' ('.$langs->trans("AddCRIfTooLong").')<br>';
+print '<tr class="oddeven"><td colspan="2">';
+//print $form->textwithpicto($langs->trans("FreeLegalTextOnContracts"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'tooltiphelp');
+print $form->textwithpicto($langs->trans("FreeLegalTextOnContracts"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2);
+print '<br>';
 $variablename='CONTRACT_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -519,9 +525,11 @@ else
 print '</td></tr>'."\n";
 
 //Use draft Watermark
-$var=!$var;
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("WatermarkOnDraftContractCards").'<br>';
+
+print '<tr class="oddeven"><td>';
+//print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext, 1, 'help', '', 0, 2, 'tooltiphelp');
+print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext, 1, 'help', '', 0, 2);
+print '</td><td>';
 print '<input size="50" class="flat" type="text" name="CONTRACT_DRAFT_WATERMARK" value="'.$conf->global->CONTRACT_DRAFT_WATERMARK.'">';
 print '</td></tr>'."\n";
 

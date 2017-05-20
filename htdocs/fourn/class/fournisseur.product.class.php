@@ -70,7 +70,8 @@ class ProductFournisseur extends Product
     var $fourn_unitcharges;       // old version used a buggy system to calculate margin of a charge field on supplier price. Now margin is on pmp, best supplier price or cost price.
 
     var $fk_supplier_price_expression;
-
+    var $supplier_reputation;     // reputation of supplier
+    var $reputations=array();     // list of available supplier reputations 
 
     /**
 	 *	Constructor
@@ -79,7 +80,11 @@ class ProductFournisseur extends Product
      */
     function __construct($db)
     {
+        global $langs;
+        
         $this->db = $db;
+        $langs->load("suppliers");
+        $this->reputations= array('-1'=>'', 'FAVORITE'=>$langs->trans('Favorite'),'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
     }
 
 
@@ -224,12 +229,12 @@ class ProductFournisseur extends Product
 			$sql.= " remise_percent = ".$remise_percent.",";
 			$sql.= " remise = ".$remise.",";
 			$sql.= " unitprice = ".$unitBuyPrice.",";
-			$sql.= " unitcharges = ".$unitCharges.",";
+			$sql.= " unitcharges = ".$unitCharges.",";   // deprecated
 			$sql.= " tva_tx = ".$tva_tx.",";
 			$sql.= " fk_availability = ".$availability.",";
 			$sql.= " entity = ".$conf->entity.",";
 			$sql.= " info_bits = ".$newnpr.",";
-			$sql.= " charges = ".$charges.",";
+			$sql.= " charges = ".$charges.",";           // deprecated
 			$sql.= " delivery_time_days = ".($delivery_time_days != '' ? $delivery_time_days : 'null').",";
 			$sql.= " supplier_reputation = ".(empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'");			
 			$sql.= " WHERE rowid = ".$this->product_fourn_price_id;

@@ -2,9 +2,10 @@
 /* Copyright (C) 2008-2011  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012  Regis Houssin               <regis.houssin@capnetworks.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2016  Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1056,13 +1057,13 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 		{
 	        $numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date)+$yearoffset, $numFinal);
         	$numFinal = preg_replace('/\{yy\}/i',  date("y",$date)+$yearoffset, $numFinal);
-        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),2,1)+$yearoffset, $numFinal);
+        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),1,1)+$yearoffset, $numFinal);
 		}
 		else	// we want yyyy to be current year
 		{
         	$numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date), $numFinal);
         	$numFinal = preg_replace('/\{yy\}/i',  date("y",$date), $numFinal);
-        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),2,1), $numFinal);
+        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),1,1), $numFinal);
 		}
         $numFinal = preg_replace('/\{mm\}/i',  date("m",$date), $numFinal);
         $numFinal = preg_replace('/\{dd\}/i',  date("d",$date), $numFinal);
@@ -1160,7 +1161,7 @@ function check_value($mask,$value)
 
     // If an offset is asked
     if (! empty($reg[2]) && preg_match('/^\+/',$reg[2])) $maskoffset=preg_replace('/^\+/','',$reg[2]);
-    if (! empty($reg[3]) && preg_match('^\+',$reg[3])) $maskoffset=preg_replace('/^\+/','',$reg[3]);
+    if (! empty($reg[3]) && preg_match('/^\+/',$reg[3])) $maskoffset=preg_replace('/^\+/','',$reg[3]);
 
     // Define $sqlwhere
 
@@ -1439,7 +1440,7 @@ function dol_print_reduction($reduction,$langs)
     }
     else
     {
-        $string = $reduction.'%';
+        $string = price($reduction).'%';
     }
 
     return $string;
@@ -1509,7 +1510,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
     $sql.= " WHERE type = '".$type."'";
     $sql.= " AND entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
     $sql.= " ORDER BY description DESC";
-
+		
     dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql)
@@ -1529,9 +1530,10 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
                 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
                 $const=$obj->description;
-                $dirtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
+                //irtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
+                $dirtoscan= preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
 
-                $listoffiles=array();
+		$listoffiles=array();
 
                 // Now we add models found in directories scanned
                 $listofdir=explode(',',$dirtoscan);
@@ -1923,10 +1925,6 @@ function getElementProperties($element_type)
         $subelement = $regs[2];
     }
 
-    $classfile = strtolower($subelement);
-    $classname = ucfirst($subelement);
-    $classpath = $module.'/class';
-
     // For compat
     if($element_type == "action") {
         $classpath = 'comm/action/class';
@@ -1991,8 +1989,22 @@ function getElementProperties($element_type)
         $module='propal';
         $subelement='propaleligne';
     }
-    $classfile = strtolower($subelement);
-    $classname = ucfirst($subelement);
+    if ($element_type == 'order_supplier')  {
+        $classpath = 'fourn/class';
+        $module='fournisseur';
+        $subelement='commandefournisseur';
+        $classfile='fournisseur.commande';
+    }
+    if ($element_type == 'invoice_supplier')  {
+        $classpath = 'fourn/class';
+        $module='fournisseur';
+        $subelement='facturefournisseur';
+        $classfile='fournisseur.facture';
+    }
+
+    if (!isset($classfile)) $classfile = strtolower($subelement);
+    if (!isset($classname)) $classname = ucfirst($subelement);
+    if (!isset($classpath)) $classpath = $module.'/class';
 
     $element_properties = array(
         'module' => $module,
@@ -2007,13 +2019,14 @@ function getElementProperties($element_type)
 
 /**
  * Fetch an object from its id and element_type
- * Inclusion classes is automatic
+ * Inclusion of classes is automatic
  *
  * @param	int     	$element_id 	Element id
  * @param	string  	$element_type 	Element type
+ * @param	ref     	$element_ref 	Element ref (Use this if element_id but not both)
  * @return 	int|object 					object || 0 || -1 if error
  */
-function fetchObjectByElement($element_id, $element_type)
+function fetchObjectByElement($element_id, $element_type, $element_ref='')
 {
     global $conf;
 	global $db,$conf;
@@ -2023,11 +2036,11 @@ function fetchObjectByElement($element_id, $element_type)
     {
         dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 
-		$objectstat = new $element_prop['classname']($db);
-		$ret = $objectstat->fetch($element_id);
+		$objecttmp = new $element_prop['classname']($db);
+		$ret = $objecttmp->fetch($element_id, $element_ref);
 		if ($ret >= 0)
 		{
-			return $objectstat;
+			return $objecttmp;
 		}
 	}
 	return 0;
@@ -2073,4 +2086,31 @@ function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
 	return array(hexdec($reg[1]),hexdec($reg[2]),hexdec($reg[3]));
 }
 
+/**
+ * Applies the Cartesian product algorithm to an array
+ * Source: http://stackoverflow.com/a/15973172
+ *
+ * @param array $input Array of products
+ * @return array Array of combinations
+ */
+function cartesianArray(array $input) {
+    // filter out empty values
+    $input = array_filter($input);
 
+    $result = array(array());
+
+    foreach ($input as $key => $values) {
+        $append = array();
+
+        foreach($result as $product) {
+            foreach($values as $item) {
+                $product[$key] = $item;
+                $append[] = $product;
+            }
+        }
+
+        $result = $append;
+    }
+
+    return $result;
+}

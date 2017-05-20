@@ -379,7 +379,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		);
 
 		// Count total nb of records
-		$nbtotalofrecords = -1;
+		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 			$nbtotalofrecords = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		}
@@ -469,7 +469,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	    
 	    
         // Count total nb of records
-        $nbtotalofrecords = -1;
+        $nbtotalofrecords = '';
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $nbtotalofrecords = $prodcustprice->fetch_all('', '', 0, 0, $filter);
@@ -510,8 +510,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
             print '<td colspan="8">&nbsp;</td>';
             // Print the search button
             print '<td class="liste_titre" align="right">';
-            $searchpitco=$form->showFilterAndCheckAddButtons(0);
-            print $searchpitco;
+            $searchpicto=$form->showFilterAndCheckAddButtons(0);
+            print $searchpicto;
             print '</td>';
             print '</tr>';
         }

@@ -230,7 +230,7 @@ print load_fiche_titre($langs->trans("ExpenseReportsSetup"),$linkback,'title_set
 
 $head=expensereport_admin_prepare_head();
 
-dol_fiche_head($head, 'expensereport', $langs->trans("ExpenseReports"), 0, 'trip');
+dol_fiche_head($head, 'expensereport', $langs->trans("ExpenseReports"), -1, 'trip');
 
 // Interventions numbering model
 /*
@@ -275,8 +275,8 @@ foreach ($dirmodels as $reldir)
 						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-						$var=!$var;
-						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+						
+						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
 
@@ -398,7 +398,7 @@ foreach ($dirmodels as $reldir)
 
 		    		if (file_exists($dir.'/'.$file))
 		    		{
-		    			$var=!$var;
+		    			
 
 		    			$name = substr($file, 4, dol_strlen($file) -16);
 		    			$classname = substr($file, 0, dol_strlen($file) -12);
@@ -412,7 +412,7 @@ foreach ($dirmodels as $reldir)
 
 		    			if ($modulequalified)
 		    			{
-		    				print '<tr '.$bc[$var].'><td width="100">';
+		    				print '<tr class="oddeven"><td width="100">';
 		    				print (empty($module->name)?$name:$module->name);
 		    				print "</td><td>\n";
 		    				if (method_exists($module,'info')) print $module->info($langs);
@@ -505,9 +505,15 @@ print '<td align="center" width="60"></td>';
 print "</tr>\n";
 $var=true;
 
+$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
 $var=! $var;
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnExpenseReports").' ('.$langs->trans("AddCRIfTooLong").')<br>';
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnExpenseReports"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
 $variablename='EXPENSEREPORT_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -522,9 +528,9 @@ else
 print '</td></tr>'."\n";
 
 //Use draft Watermark
-$var=!$var;
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("WatermarkOnDraftOrders").'<br>';
+
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("WatermarkOnDraftExpenseReports"), $htmltext).'<br>';
 print '<input size="50" class="flat" type="text" name="EXPENSEREPORT_DRAFT_WATERMARK" value="'.$conf->global->EXPENSEREPORT_DRAFT_WATERMARK.'">';
 print '</td></tr>'."\n";
 

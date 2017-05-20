@@ -810,7 +810,7 @@ class DoliDBMysqli extends DoliDB
     /**
 	 * 	Create a user and privileges to connect to database (even if database does not exists yet)
 	 *
-	 *	@param	string	$dolibarr_main_db_host 		Ip serveur
+	 *	@param	string	$dolibarr_main_db_host 		Ip server or '%'
 	 *	@param	string	$dolibarr_main_db_user 		Nom user a creer
 	 *	@param	string	$dolibarr_main_db_pass 		Mot de passe user a creer
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted

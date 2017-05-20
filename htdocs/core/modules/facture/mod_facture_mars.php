@@ -37,6 +37,18 @@ class mod_facture_mars extends ModeleNumRefFactures
 	var $prefixcreditnote='AV';
 	var $error='';
 
+	
+	/**
+	 * Constructor
+	 */
+	function __construct()
+	{
+		if (! empty($conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX))
+		{
+			$this->prefixinvoice = $conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX;
+		}
+	}
+	
 	/**
 	 *  Renvoi la description du modele de numerotation
 	 *

@@ -34,6 +34,8 @@ if ( $_SESSION['uid'] <= 0 )
 	exit;
 }
 
+$langs->load("companies");
+$langs->load("compta");
 $langs->load("cashdesk");
 
 
@@ -41,8 +43,7 @@ $langs->load("cashdesk");
  * View
  */
 
-//header("Content-type: text/html; charset=UTF-8");
-//header("Content-type: text/html; charset=".$conf->file->character_set_client);
+$form = new Form($db);
 
 $arrayofjs=array();
 $arrayofcss=array('/cashdesk/css/style.css');

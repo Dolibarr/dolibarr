@@ -41,7 +41,7 @@ if (GETPOST('actioncode','array'))
 }
 else
 {
-    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
@@ -58,7 +58,7 @@ if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield='a.datep, a.id';
+if (! $sortfield) $sortfield='a.datep,a.id';
 if (! $sortorder) $sortorder='DESC';
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -73,11 +73,21 @@ $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-// Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (empty($reshook))
 {
-    $actioncode='';
-    $search_agenda_label='';
+    // Cancel
+    if (GETPOST("cancel") && ! empty($backtopage))
+    {
+        header("Location: ".$backtopage);
+        exit;
+    }
+
+    // Purge search criteria
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+    {
+        $actioncode='';
+        $search_agenda_label='';
+    }
 }
 
 
@@ -90,7 +100,7 @@ $contactstatic = new Contact($db);
 
 $form = new Form($db);
 
-if ($socid)
+if ($socid > 0)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -108,7 +118,7 @@ if ($socid)
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"), -1, 'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 	
@@ -170,17 +180,11 @@ if ($socid)
         
 		print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
 		
-        // List of todo actions
-        //show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);
-
-        // List of done actions
-        //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
-     
         // List of all actions
 		$filters=array();
         $filters['search_agenda_label']=$search_agenda_label;
 
-        // TODO Replace this with smae code then into listactions.php
+        // TODO Replace this with same code than into listactions.php
         show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
     }
 }

@@ -203,9 +203,8 @@ class SupplierInvoices extends DolibarrApi
             $this->invoice->lines = $lines;
         }*/
         
-        if ($this->invoice->create(DolibarrApiAccess::$user) <= 0) {
-            $errormsg = $this->invoice->error;
-            throw new RestException(500, $errormsg ? $errormsg : "Error while creating order");
+        if ($this->invoice->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating order", array_merge(array($this->invoice->error), $this->invoice->errors));
         }
         return $this->invoice->id;
     }
@@ -263,7 +262,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         
-        if( $this->invoice->delete($id) < 0)
+        if( $this->invoice->delete(DolibarrApiAccess::$user) < 0)
         {
             throw new RestException(500);
         }

@@ -31,10 +31,15 @@ if (! $res) die("Include of main fails");
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+if (! empty($conf->projet->enabled)) {
+    require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+}
 
 // Load traductions files requiredby by page
 $langs->load("resource");
 $langs->load("other");
+$langs->load("interventions");
 
 /*
 $sortorder                      = GETPOST('sortorder','alpha');
@@ -51,13 +56,13 @@ $hookmanager->initHooks(array('element_resource'));
 $object->available_resources = array('dolresource');
 
 // Get parameters
-$id                     = GETPOST('id','int');
-$ref                    = GETPOST('ref','alpha');
+$id                     = GETPOST('id','int');                          // resource id
+$element_id             = GETPOST('element_id','int');                  // element_id
+$element_ref            = GETPOST('ref','alpha');                       // element ref
+$element                = GETPOST('element','alpha');                   // element_type
 $action                 = GETPOST('action','alpha');
 $mode                   = GETPOST('mode','alpha');
 $lineid                 = GETPOST('lineid','int');
-$element                = GETPOST('element','alpha');                   // element_type
-$element_id             = GETPOST('element_id','int');
 $resource_id            = GETPOST('fk_resource','int');
 $resource_type          = GETPOST('resource_type','alpha');
 $busy                   = GETPOST('busy','int');
@@ -66,7 +71,7 @@ $cancel                 = GETPOST('cancel','alpha');
 $confirm                = GETPOST('confirm','alpha');
 $socid                  = GETPOST('socid','int');
 
-if ($socid > 0)
+if ($socid > 0) // Special for thirdparty
 {
     $element_id = $socid;
     $element = 'societe';
@@ -183,17 +188,17 @@ else
 
 
 	// Specific to agenda module
-	if ($element_id && $element == 'action')
+	if (($element_id || $element_ref) && $element == 'action')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
-		$act = fetchObjectByElement($element_id,$element);
+		$act = fetchObjectByElement($element_id,$element, $element_ref);
 		if (is_object($act))
 		{
 
 			$head=actions_prepare_head($act);
 
-			dol_fiche_head($head, 'resources', $langs->trans("Action"),0,'action');
+			dol_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
 			$linkback =img_picto($langs->trans("BackToList"),'object_list','class="hideonsmartphone pictoactionview"');
 			$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php">'.$langs->trans("BackToList").'</a>';
@@ -212,16 +217,34 @@ else
 
 			$linkback.=$out;
 
-			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '', "&element=".$element);
+			$morehtmlref='<div class="refidno">';
+			// Thirdparty
+			//$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+			// Project
+			if (! empty($conf->projet->enabled))
+			{
+			    $langs->load("projects");
+			    //$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+			    $morehtmlref.=$langs->trans('Project') . ': ';
+		        if (! empty($act->fk_project)) {
+		            $proj = new Project($db);
+		            $proj->fetch($act->fk_project);
+		            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $act->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+		            $morehtmlref.=$proj->ref;
+		            $morehtmlref.='</a>';
+		            if ($proj->title) $morehtmlref.=' - '.$proj->title;
+		        } else {
+		            $morehtmlref.='';
+		        }
+			}
+			$morehtmlref.='</div>';
+			
+			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref, '&element='.$element, 0, '', '');
 
+			print '<div class="fichecenter">';
+				
 			print '<div class="underbanner clearboth"></div>';
-
-			// Ref
-			/*print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-			print $form->showrefnav($act, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
-			print '</td></tr>';*/
-
-			// Affichage fiche action en mode visu
+				
 			print '<table class="border" width="100%">';
 
 			// Type
@@ -247,11 +270,6 @@ else
 			else print dol_print_date($act->datef,'day');
 			if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
 			print '</td></tr>';
-
-			// Status
-			/*print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="2">';
-			print $act->getLibStatut(4);
-			print '</td></tr>';*/
 
 			// Location
 			if (empty($conf->global->AGENDA_DISABLE_LOCATION))
@@ -296,14 +314,16 @@ else
 
 			print '</table>';
 
+			print '</div>';
+			
 			dol_fiche_end();
 		}
 	}
 
     // Specific to thirdparty module
-	if ($element_id && $element == 'societe')
+	if (($element_id || $element_ref) && $element == 'societe')
 	{
-		$socstatic = fetchObjectByElement($element_id, $element);
+		$socstatic = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($socstatic)) {
 
 			$savobject = $object;
@@ -312,9 +332,9 @@ else
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 			$head = societe_prepare_head($socstatic);
 
-			dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"), 0, 'company');
+			dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"), -1, 'company');
 
-			dol_banner_tab($socstatic, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
+			dol_banner_tab($socstatic, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom', '', '&element='.$element);
 
 			print '<div class="fichecenter">';
 
@@ -337,18 +357,18 @@ else
 	}
 
 	// Specific to fichinter module
-	if ($element_id && $element == 'fichinter')
+	if (($element_id || $element_ref) && $element == 'fichinter')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 
         $fichinter = new Fichinter($db);
-        $fichinter->fetch($element_id);
+        $fichinter->fetch($element_id, $element_ref);
         $fichinter->fetch_thirdparty();
         
 		if (is_object($fichinter)) 
 		{
 			$head=fichinter_prepare_head($fichinter);
-			dol_fiche_head($head, 'resource', $langs->trans("InterventionCard"),0,'intervention');
+			dol_fiche_head($head, 'resource', $langs->trans("InterventionCard"), -1, 'intervention');
 
 			// Intervention card
 			$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -395,7 +415,7 @@ else
 			}
 			$morehtmlref.='</div>';
 			
-			dol_banner_tab($fichinter, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+			dol_banner_tab($fichinter, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '&element='.$element, 0, '', '', 1);
 			
 			dol_fiche_end();
 		}
@@ -403,7 +423,7 @@ else
 
 
 	// hook for other elements linked
-	$parameters=array('element'=>$element, 'element_id'=>$element_id );
+	$parameters=array('element'=>$element, 'element_id'=>$element_id, 'element_ref'=>$element_ref);
 	$reshook=$hookmanager->executeHooks('printElementTab',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 

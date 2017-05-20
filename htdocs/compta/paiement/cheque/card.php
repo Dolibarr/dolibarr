@@ -334,7 +334,7 @@ else
 	//  $head[$h][1] = $langs->trans("Info");
 	//  $h++;
 
-	dol_fiche_head($head, $hselected, $langs->trans("Cheques"),0,'payment');
+	dol_fiche_head($head, $hselected, $langs->trans("Cheques"), -1, 'payment');
 
 	/*
 	 * Confirmation de la suppression du bordereau
@@ -471,10 +471,12 @@ if ($action == 'new')
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="hidden" name="accountid" value="'.$bid.'">';
 
-		print '<table class="noborder" width="100%">';
+		$moreforfilter='';
+        print '<div class="div-table-responsive-no-min">';
+        print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+		
 		print '<tr class="liste_titre">';
-		print '<td style="min-width: 120px">'.$langs->trans("DateChequeReceived").' ';
-		print "</td>\n";
+		print '<td style="min-width: 120px">'.$langs->trans("DateChequeReceived").'</td>'."\n";
 		print '<td style="min-width: 120px">'.$langs->trans("ChequeNumber")."</td>\n";
 		print '<td style="min-width: 200px">'.$langs->trans("CheckTransmitter")."</td>\n";
 		print '<td style="min-width: 200px">'.$langs->trans("Bank")."</td>\n";
@@ -484,62 +486,61 @@ if ($action == 'new')
 		print '<td align="center" width="100px">'.$langs->trans("Select")."<br>";
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
 		print '</td>';
-
 		print "</tr>\n";
 
-		$var=true;
-
-		foreach ($lines[$bid] as $lid => $value)
+		if (count($lines[$bid]))
 		{
-			$var=!$var;
+    		foreach ($lines[$bid] as $lid => $value)
+    		{
+    			$account_id = $bid;
+    			if (! isset($accounts[$bid]))
+    				$accounts[$bid]=0;
+    			$accounts[$bid] += 1;
 
-			$account_id = $bid;
-			if (! isset($accounts[$bid]))
-				$accounts[$bid]=0;
-			$accounts[$bid] += 1;
+    			print '<tr class="oddeven">';
+    			print '<td>'.dol_print_date($value["date"],'day').'</td>';
+    			print '<td>'.$value["numero"]."</td>\n";
+    			print '<td>'.$value["emetteur"]."</td>\n";
+    			print '<td>'.$value["banque"]."</td>\n";
+    			print '<td align="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
 
-			print "<tr ".$bc[$var].">";
-			print '<td>'.dol_print_date($value["date"],'day').'</td>';
-			print '<td>'.$value["numero"]."</td>\n";
-			print '<td>'.$value["emetteur"]."</td>\n";
-			print '<td>'.$value["banque"]."</td>\n";
-			print '<td align="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
-
-			// Link to payment
-			print '<td align="center">';
-			$paymentstatic->id=$value["paymentid"];
-			$paymentstatic->ref=$value["paymentid"];
-			if ($paymentstatic->id)
-			{
-				print $paymentstatic->getNomUrl(1);
-			}
-			else
-			{
-				print '&nbsp;';
-			}
-			print '</td>';
-			// Link to bank transaction
-			print '<td align="center">';
-			$accountlinestatic->rowid=$value["id"];
-			if ($accountlinestatic->rowid)
-			{
-				print $accountlinestatic->getNomUrl(1);
-			}
-			else
-			{
-				print '&nbsp;';
-			}
-			print '</td>';
-
-			print '<td align="center">';
-			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
-			print '</td>' ;
-			print '</tr>';
-
-			$i++;
+    			// Link to payment
+    			print '<td align="center">';
+    			$paymentstatic->id=$value["paymentid"];
+    			$paymentstatic->ref=$value["paymentid"];
+    			if ($paymentstatic->id)
+    			{
+    				print $paymentstatic->getNomUrl(1);
+    			}
+    			else
+    			{
+    				print '&nbsp;';
+    			}
+    			print '</td>';
+    			// Link to bank transaction
+    			print '<td align="center">';
+    			$accountlinestatic->rowid=$value["id"];
+    			if ($accountlinestatic->rowid)
+    			{
+    				print $accountlinestatic->getNomUrl(1);
+    			}
+    			else
+    			{
+    				print '&nbsp;';
+    			}
+    			print '</td>';
+    
+    			print '<td align="center">';
+    			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
+    			print '</td>' ;
+    			print '</tr>';
+    
+    			$i++;
+    		}
 		}
 		print "</table>";
-
+        print '</div>';
+        
 		print '<div class="tabsAction">';
 		if ($user->rights->banque->cheque)
 		{
@@ -556,41 +557,24 @@ if ($action == 'new')
 }
 else
 {
-	$linkback='<a href="'.$_SERVER["PHP_SELF"].'?leftmenu=customers_bills_checks&action=new">'.$langs->trans("BackToList").'</a>';
 	$paymentstatic=new Paiement($db);
 	$accountlinestatic=new AccountLine($db);
 	$accountstatic=new Account($db);
+	$accountstatic->fetch($object->account_id);
 
-	$accountstatic->id=$object->account_id;
-	$accountstatic->label=$object->account_label;
+	$linkback='<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/list.php">'.$langs->trans("BackToList").'</a>';
+	
+	$morehtmlref='';
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	
+	
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
+	
 	print '<table class="border" width="100%">';
+
 	print '<tr><td class="titlefield">';
-
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('Ref');
-	print '</td>';
-	if ($action != 'editref') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editref&amp;id='.$object->id.'">'.img_edit($langs->trans('SetRef'),1).'</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="2">';
-	if ($action == 'editref')
-	{
-		print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="setref">';
-		print '<input type="text" name="ref" value="'.$object->ref.'">';
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-		print '</form>';
-	}
-	else
-	{
-	    print $form->showrefnav($object,'ref',$linkback, 1, 'ref');
-	}
-
-	print '</td>';
-	print '</tr>';
-
-	print '<tr><td>';
 
     print '<table class="nobordernopadding" width="100%"><tr><td>';
     print $langs->trans('Date');
@@ -656,13 +640,15 @@ else
 	print price($object->amount);
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans('Status').'</td><td colspan="2">';
+	/*print '<tr><td>'.$langs->trans('Status').'</td><td colspan="2">';
 	print $object->getLibStatut(4);
-	print '</td></tr>';
+	print '</td></tr>';*/
 
 	print '</table><br>';
 
+	print '</div>';
 
+	
 	// List of cheques
 	$sql = "SELECT b.rowid, b.amount, b.num_chq, b.emetteur,";
 	$sql.= " b.dateo as date, b.datec as datec, b.banque,";
@@ -680,6 +666,7 @@ else
 	{
 		$num = $db->num_rows($resql);
 
+	    print '<div class="div-table-responsive">';
 		print '<table class="noborder" width="100%">';
 
 		$param="&amp;id=".$object->id;
@@ -696,66 +683,77 @@ else
 		print_liste_field_titre('');
 		print "</tr>\n";
 		$i=1;
-		$var=false;
-		while ($objp = $db->fetch_object($resql))
-		{
-			$account_id = $objp->bid;
-			if (! isset($accounts[$objp->bid]))
-				$accounts[$objp->bid]=0;
-			$accounts[$objp->bid] += 1;
 
-			print "<tr ".$bc[$var].">";
-			print '<td align="center">'.$i.'</td>';
-			print '<td align="center">'.dol_print_date($db->jdate($objp->date),'day').'</td>';	// Date operation
-			print '<td align="center">'.($objp->num_chq?$objp->num_chq:'&nbsp;').'</td>';
-			print '<td>'.dol_trunc($objp->emetteur,24).'</td>';
-			print '<td>'.dol_trunc($objp->banque,24).'</td>';
-			print '<td align="right">'.price($objp->amount).'</td>';
-			// Link to payment
-			print '<td align="center">';
-			$paymentstatic->id=$objp->pid;
-			$paymentstatic->ref=$objp->pid;
-			if ($paymentstatic->id)
-			{
-				print $paymentstatic->getNomUrl(1);
-			}
-			else
-			{
-				print '&nbsp;';
-			}
-			print '</td>';
-			// Link to bank transaction
-			print '<td align="center">';
-			$accountlinestatic->rowid=$objp->rowid;
-			if ($accountlinestatic->rowid)
-			{
-				print $accountlinestatic->getNomUrl(1);
-			}
-			else
-			{
-				print '&nbsp;';
-			}
-			print '</td>';
-			// Action button
-			print '<td align="right">';
-			if ($object->statut == 0)
-			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a>';
-			}
-   			if ($object->statut == 1 && $objp->statut != 2)
-   			{
-   				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reject_check&amp;lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"),'disable').'</a>';
-   			}
-			if ($objp->statut == 2) 
-			{
-				print ' &nbsp; '.img_picto($langs->trans('CheckRejected'),'statut8').'</a>';
-			}
-		    print '</td>';
-			print '</tr>';
-			$var=!$var;
-			$i++;
-		}
+        if ($num > 0)
+        {
+    		while ($objp = $db->fetch_object($resql))
+    		{
+    			$account_id = $objp->bid;
+    			if (! isset($accounts[$objp->bid]))
+    				$accounts[$objp->bid]=0;
+    			$accounts[$objp->bid] += 1;
+    
+    			print '<tr class="oddeven">';
+    			print '<td align="center">'.$i.'</td>';
+    			print '<td align="center">'.dol_print_date($db->jdate($objp->date),'day').'</td>';	// Date operation
+    			print '<td align="center">'.($objp->num_chq?$objp->num_chq:'&nbsp;').'</td>';
+    			print '<td>'.dol_trunc($objp->emetteur,24).'</td>';
+    			print '<td>'.dol_trunc($objp->banque,24).'</td>';
+    			print '<td align="right">'.price($objp->amount).'</td>';
+    			// Link to payment
+    			print '<td align="center">';
+    			$paymentstatic->id=$objp->pid;
+    			$paymentstatic->ref=$objp->pid;
+    			if ($paymentstatic->id)
+    			{
+    				print $paymentstatic->getNomUrl(1);
+    			}
+    			else
+    			{
+    				print '&nbsp;';
+    			}
+    			print '</td>';
+    			// Link to bank transaction
+    			print '<td align="center">';
+    			$accountlinestatic->rowid=$objp->rowid;
+    			if ($accountlinestatic->rowid)
+    			{
+    				print $accountlinestatic->getNomUrl(1);
+    			}
+    			else
+    			{
+    				print '&nbsp;';
+    			}
+    			print '</td>';
+    			// Action button
+    			print '<td align="right">';
+    			if ($object->statut == 0)
+    			{
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a>';
+    			}
+       			if ($object->statut == 1 && $objp->statut != 2)
+       			{
+       				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reject_check&amp;lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"),'disable').'</a>';
+       			}
+    			if ($objp->statut == 2) 
+    			{
+    				print ' &nbsp; '.img_picto($langs->trans('CheckRejected'),'statut8').'</a>';
+    			}
+    		    print '</td>';
+    			print '</tr>';
+    			
+    			$i++;
+    		}
+        }
+        else
+        {
+            print '<td colspan="8" class="opacitymedium">';
+            print $langs->trans("None");
+            print '</td>';
+        }
+                
 		print "</table>";
+		print "</div>";
 	}
 	else
 	{

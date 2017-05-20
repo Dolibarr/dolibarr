@@ -192,7 +192,10 @@ class Thirdparties extends DolibarrApi
       foreach($request_data as $field => $value) {
           $this->company->$field = $value;
       }
-      return $this->company->create(DolibarrApiAccess::$user);
+      if ($this->company->create(DolibarrApiAccess::$user) < 0)
+          throw new RestException(500, 'Error creating thirdparty', array_merge(array($this->company->error), $this->company->errors));
+      
+      return $this->company->id;
     }
 
     /**
@@ -264,7 +267,7 @@ class Thirdparties extends DolibarrApi
      */
     function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         $categories = new Categories();
-        return $categories->getListForItem('customer', $sortfield, $sortorder, $limit, $page, $id);
+        return $categories->getListForItem($sortfield, $sortorder, $limit, $page, 'customer', $id);
     }
 
     /**

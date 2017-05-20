@@ -195,7 +195,7 @@ interface Database
 	 * Execute a SQL request and return the resultset
 	 *
 	 * @param   string $query SQL query string
-	 * @param   int $usesavepoint 0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
+	 * @param   int $usesavepoint 0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
 	 *                                    Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
 	 * @param   string $type Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @return  resource                Resultset of answer

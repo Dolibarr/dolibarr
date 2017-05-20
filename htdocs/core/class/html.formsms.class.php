@@ -255,7 +255,7 @@ function limitChars(textarea, limit, infodiv)
             }
             else
             {
-                print "<input size=\"16\" id=\"sendto\" name=\"sendto\" value=\"".(! is_array($this->withto) && $this->withto != '1'? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto):"+")."\">";
+                print "<input size=\"16\" id=\"sendto\" name=\"sendto\" value=\"".dol_escape_htmltag(! is_array($this->withto) && $this->withto != '1'? (isset($_REQUEST["sendto"])?GETPOST("sendto"):$this->withto):"+")."\">";
                 if (! empty($this->withtosocid) && $this->withtosocid > 0)
                 {
                     $liste=array();
@@ -290,11 +290,11 @@ function limitChars(textarea, limit, infodiv)
             if ($this->withbodyreadonly)
             {
                 print nl2br($defaultmessage);
-                print '<input type="hidden" name="message" value="'.$defaultmessage.'">';
+                print '<input type="hidden" name="message" value="'.dol_escape_htmltag($defaultmessage).'">';
             }
             else
             {
-                print '<textarea cols="40" name="message" id="message" rows="4" onkeyup="limitChars(this, 160, \'charlimitinfospan\')">'.$defaultmessage.'</textarea>';
+                print '<textarea class="quatrevingtpercent" name="message" id="message" rows="'.ROWS_4.'" onkeyup="limitChars(this, 160, \'charlimitinfospan\')">'.$defaultmessage.'</textarea>';
                 print '<div id="charlimitinfo">'.$langs->trans("SmsInfoCharRemain").': <span id="charlimitinfospan">'.(160-dol_strlen($defaultmessage)).'</span></div></td>';
             }
             print "</td></tr>\n";

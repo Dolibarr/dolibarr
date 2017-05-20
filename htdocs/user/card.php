@@ -37,6 +37,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -318,178 +319,175 @@ if (empty($reshook)) {
 				$error ++;
 			}
 
-			if (!$error) {
+			if (!$error) 
+			{
 				$object->fetch($id);
 
 				$object->oldcopy = clone $object;
 
-				if (!$error) {
-					$db->begin();
+				$db->begin();
 
-					$object->oldcopy =  clone $object;
+				$object->lastname = GETPOST("lastname", 'alpha');
+				$object->firstname = GETPOST("firstname", 'alpha');
+				$object->login = GETPOST("login", 'alpha');
+				$object->gender = GETPOST("gender", 'alpha');
+				$object->pass = GETPOST("password");
+				$object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
+				if (! empty($user->admin)) $object->admin = GETPOST("admin"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
+				$object->address = GETPOST('address', 'alpha');
+				$object->zip = GETPOST('zipcode', 'alpha');
+				$object->town = GETPOST('town', 'alpha');
+				$object->country_id = GETPOST('country_id', 'int');
+				$object->state_id = GETPOST('state_id', 'int');
+				$object->office_phone = GETPOST("office_phone", 'alpha');
+				$object->office_fax = GETPOST("office_fax", 'alpha');
+				$object->user_mobile = GETPOST("user_mobile");
+				$object->skype = GETPOST("skype", 'alpha');
+				$object->email = GETPOST("email", 'alpha');
+				$object->job = GETPOST("job", 'alpha');
+				$object->signature = GETPOST("signature");
+				$object->accountancy_code = GETPOST("accountancy_code");
+				$object->openid = GETPOST("openid");
+				$object->fk_user = GETPOST("fk_user") > 0 ? GETPOST("fk_user") : 0;
+				$object->employee = GETPOST('employee');
 
-					$object->lastname = GETPOST("lastname", 'alpha');
-					$object->firstname = GETPOST("firstname", 'alpha');
-					$object->login = GETPOST("login", 'alpha');
-					$object->gender = GETPOST("gender", 'alpha');
-					$object->pass = GETPOST("password");
-					$object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
-					if (! empty($user->admin)) $object->admin = GETPOST("admin"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
-					$object->address = GETPOST('address', 'alpha');
-					$object->zip = GETPOST('zipcode', 'alpha');
-					$object->town = GETPOST('town', 'alpha');
-					$object->country_id = GETPOST('country_id', 'int');
-					$object->state_id = GETPOST('state_id', 'int');
-					$object->office_phone = GETPOST("office_phone", 'alpha');
-					$object->office_fax = GETPOST("office_fax", 'alpha');
-					$object->user_mobile = GETPOST("user_mobile");
-					$object->skype = GETPOST("skype", 'alpha');
-					$object->email = GETPOST("email", 'alpha');
-					$object->job = GETPOST("job", 'alpha');
-					$object->signature = GETPOST("signature");
-					$object->accountancy_code = GETPOST("accountancy_code");
-					$object->openid = GETPOST("openid");
-					$object->fk_user = GETPOST("fk_user") > 0 ? GETPOST("fk_user") : 0;
-					$object->employee = GETPOST('employee');
+				$object->thm = GETPOST("thm") != '' ? GETPOST("thm") : '';
+				$object->tjm = GETPOST("tjm") != '' ? GETPOST("tjm") : '';
+				$object->salary = GETPOST("salary") != '' ? GETPOST("salary") : '';
+				$object->salaryextra = GETPOST("salaryextra") != '' ? GETPOST("salaryextra") : '';
+				$object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
 
-					$object->thm = GETPOST("thm") != '' ? GETPOST("thm") : '';
-					$object->tjm = GETPOST("tjm") != '' ? GETPOST("tjm") : '';
-					$object->salary = GETPOST("salary") != '' ? GETPOST("salary") : '';
-					$object->salaryextra = GETPOST("salaryextra") != '' ? GETPOST("salaryextra") : '';
-					$object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
+				$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
+				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
+				$object->dateemployment = $dateemployment;
 
-					$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
-					$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
-					$object->dateemployment = $dateemployment;
-
-					if (! empty($conf->multicompany->enabled))
+				if (! empty($conf->multicompany->enabled))
+				{
+					if (! empty($_POST["superadmin"]))
 					{
-						if (! empty($_POST["superadmin"]))
-						{
-							$object->entity = 0;
-						}
-						else if ($conf->multicompany->transverse_mode)
-						{
-							$object->entity = 1; // all users in master entity
-						}
-						else
-						{
-							$object->entity = (! GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
-						}
+						$object->entity = 0;
+					}
+					else if ($conf->multicompany->transverse_mode)
+					{
+						$object->entity = 1; // all users in master entity
 					}
 					else
 					{
 						$object->entity = (! GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
 					}
+				}
+				else
+				{
+					$object->entity = (! GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
+				}
 
-					// Fill array 'array_options' with data from add form
-					$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+				// Fill array 'array_options' with data from add form
+				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+				if ($ret < 0) {
+					$error ++;
+				}
+
+				if (GETPOST('deletephoto')) {
+					$object->photo = '';
+				}
+				if (!empty($_FILES['photo']['name'])) {
+					$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+				}
+
+				if (!$error) {
+					$ret = $object->update($user);
 					if ($ret < 0) {
-						$error ++;
-					}
-
-					if (GETPOST('deletephoto')) {
-						$object->photo = '';
-					}
-					if (!empty($_FILES['photo']['name'])) {
-						$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
-					}
-
-					if (!$error) {
-						$ret = $object->update($user);
-						if ($ret < 0) {
-							$error++;
-							if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-								$langs->load("errors");
-								setEventMessages($langs->trans("ErrorLoginAlreadyExists", $object->login), null, 'errors');
-							}
-							else
-							{
-								setEventMessages($object->error, $object->errors, 'errors');
-							}
-						}
-					}
-
-					if (!$error && isset($_POST['contactid'])) {
-						$contactid = GETPOST('contactid', 'int');
-
-						if ($contactid > 0) {
-							$contact = new Contact($db);
-							$contact->fetch($contactid);
-
-							$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-							$sql .= " SET fk_socpeople=".$db->escape($contactid);
-							if (!empty($contact->socid)) {
-								$sql .= ", fk_soc=".$db->escape($contact->socid);
-							}
-							$sql .= " WHERE rowid=".$object->id;
-						} else {
-							$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-							$sql .= " SET fk_socpeople=NULL, fk_soc=NULL";
-							$sql .= " WHERE rowid=".$object->id;
-						}
-						dol_syslog("usercard::update", LOG_DEBUG);
-						$resql = $db->query($sql);
-						if (!$resql) {
-							$error ++;
-							setEventMessages($db->lasterror(), null, 'errors');
-						}
-					}
-
-					if (!$error && !count($object->errors)) {
-						if (GETPOST('deletephoto') && $object->photo) {
-							$fileimg = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user').'/logos/'.$object->photo;
-							$dirthumbs = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user').'/logos/thumbs';
-							dol_delete_file($fileimg);
-							dol_delete_dir_recursive($dirthumbs);
-						}
-
-						if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name'])) {
-							$dir = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user');
-
-							dol_mkdir($dir);
-
-							if (@is_dir($dir)) {
-								$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
-								$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']);
-
-								if (!$result > 0) {
-									setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
-								} else {
-            					    // Create thumbs
-            					    $object->addThumbs($newfile);					    
-								}
-							} else {
-								$error ++;
-								$langs->load("errors");
-								setEventMessages($langs->trans("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
-							}
-						}
-					}
-					
-                	if (! $error && ! count($object->errors))
-                	{
-                		// Then we add the associated categories
-                		$categories = GETPOST( 'usercats', 'array' );
-                		$object->setCategories($categories);
-                	}
-
-					if (!$error && !count($object->errors)) {
-						setEventMessages($langs->trans("UserModified"), null, 'mesgs');
-						$db->commit();
-						
-						$login = $_SESSION["dol_login"];
-						if ($login && $login == $object->oldcopy->login && $object->oldcopy->login != $object->login)    // Current user has changed its login
-						{
-							$error++;
+						$error++;
+						if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 							$langs->load("errors");
-							setEventMessages($langs->transnoentitiesnoconv("WarningYourLoginWasModifiedPleaseLogin"), null, 'warnings');
+							setEventMessages($langs->trans("ErrorLoginAlreadyExists", $object->login), null, 'errors');
+						}
+						else
+						{
+							setEventMessages($object->error, $object->errors, 'errors');
 						}
 					}
-					else {
-					    $db->rollback();
+				}
+
+				if (!$error && isset($_POST['contactid'])) {
+					$contactid = GETPOST('contactid', 'int');
+
+					if ($contactid > 0) {
+						$contact = new Contact($db);
+						$contact->fetch($contactid);
+
+						$sql = "UPDATE ".MAIN_DB_PREFIX."user";
+						$sql .= " SET fk_socpeople=".$db->escape($contactid);
+						if (!empty($contact->socid)) {
+							$sql .= ", fk_soc=".$db->escape($contact->socid);
+						}
+						$sql .= " WHERE rowid=".$object->id;
+					} else {
+						$sql = "UPDATE ".MAIN_DB_PREFIX."user";
+						$sql .= " SET fk_socpeople=NULL, fk_soc=NULL";
+						$sql .= " WHERE rowid=".$object->id;
 					}
-                }
+					dol_syslog("usercard::update", LOG_DEBUG);
+					$resql = $db->query($sql);
+					if (!$resql) {
+						$error ++;
+						setEventMessages($db->lasterror(), null, 'errors');
+					}
+				}
+
+				if (!$error && !count($object->errors)) {
+					if (GETPOST('deletephoto') && $object->photo) {
+						$fileimg = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user').'/logos/'.$object->photo;
+						$dirthumbs = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user').'/logos/thumbs';
+						dol_delete_file($fileimg);
+						dol_delete_dir_recursive($dirthumbs);
+					}
+
+					if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name'])) {
+						$dir = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user');
+
+						dol_mkdir($dir);
+
+						if (@is_dir($dir)) {
+							$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
+							$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']);
+
+							if (!$result > 0) {
+								setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+							} else {
+        					    // Create thumbs
+        					    $object->addThumbs($newfile);					    
+							}
+						} else {
+							$error ++;
+							$langs->load("errors");
+							setEventMessages($langs->trans("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
+						}
+					}
+				}
+				
+            	if (! $error && ! count($object->errors))
+            	{
+            		// Then we add the associated categories
+            		$categories = GETPOST( 'usercats', 'array' );
+            		$object->setCategories($categories);
+            	}
+
+				if (!$error && !count($object->errors)) {
+					setEventMessages($langs->trans("UserModified"), null, 'mesgs');
+					$db->commit();
+					
+					$login = $_SESSION["dol_login"];
+					if ($login && $login == $object->oldcopy->login && $object->oldcopy->login != $object->login)    // Current user has changed its login
+					{
+						$error++;
+						$langs->load("errors");
+						setEventMessages($langs->transnoentitiesnoconv("WarningYourLoginWasModifiedPleaseLogin"), null, 'warnings');
+					}
+				}
+				else {
+				    $db->rollback();
+				}
             }
         }
 		else
@@ -593,6 +591,18 @@ if (empty($reshook)) {
             setEventMessages($ldap->error, $ldap->errors, 'errors');
         }
     }
+		
+    // Actions to send emails
+    $trigger_name='USER_SENTBYMAIL';
+    $paramname='id';    // Name of param key to open the card
+    $mode='emailfromuser';
+    $trackid='use'.$object->id;
+    include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+    
+    // Actions to build doc
+    $upload_dir = $conf->user->dir_output;
+    $permissioncreate=$user->rights->user->user->creer;
+    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
@@ -603,6 +613,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formother=new FormOther($db);
 $formcompany = new FormCompany($db);
+$formfile = new FormFile($db);
 
 llxHeader('',$langs->trans("UserCard"));
 
@@ -719,11 +730,10 @@ if (($action == 'create') || ($action == 'adduserldap'))
 
     print dol_set_focus('#lastname');
 
-    print '<table class="border" width="100%">';
-
-    print '<tr>';
+    print '<table class="border centpercent">';
 
     // Lastname
+    print '<tr>';
     print '<td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
     print '<td>';
     if (! empty($ldap_lastname))
@@ -752,9 +762,10 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
 	// Employee
+    $defaultemployee=1;
     print '<tr>';
-    print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-    print $form->selectyesno("employee",(GETPOST('employee')?GETPOST('employee'):0),1);
+    print '<td>'.$langs->trans('Employee').'</td><td>';
+    print $form->selectyesno("employee",(GETPOST('employee')!=''?GETPOST('employee'):$defaultemployee),1);
     print '</td></tr>';
 
     // Position/Job
@@ -993,14 +1004,6 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     print '</td></tr>';
 
-    // Signature
-    print '<tr><td class="tdtop">'.$langs->trans("Signature").'</td>';
-    print '<td>';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('signature',GETPOST('signature'),'',138,'dolibarr_mailings','In',true,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,'90%');
-    print $doleditor->Create(1);
-    print '</td></tr>';
-
     // Multicompany
     if (! empty($conf->multicompany->enabled))
     {
@@ -1016,6 +1019,17 @@ if (($action == 'create') || ($action == 'adduserldap'))
         }
     }
 
+    // Accountancy code
+    if ($conf->accounting->enabled)
+    {
+        print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
+        print '<td>';
+        print '<input size="30" type="text" name="accountancy_code" value="'.GETPOST('accountancy_code').'">';
+        print '</td></tr>';
+    }
+    
+    // TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
+    
     // Hierarchy
     print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
     print '<td>';
@@ -1023,7 +1037,8 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td>';
     print "</tr>\n";
 
-	if ($conf->salaries->enabled && ! empty($user->rights->salaries->read))
+    if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
+       || (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
 	{
 		$langs->load("salaries");
 
@@ -1069,15 +1084,6 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	print '</td>';
     print "</tr>\n";
 
-	// Accountancy code
-	if ($conf->accounting->enabled)
-	{
-		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
-		print '<td>';
-		print '<input size="30" type="text" name="accountancy_code" value="'.GETPOST('accountancy_code').'">';
-		print '</td></tr>';
-	}
-
 	// User color
 	if (! empty($conf->agenda->enabled))
 	{
@@ -1090,12 +1096,20 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	// Categories
 	if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) 
 	{
-		print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories( Categorie::TYPE_USER, null, 'parent', null, null, 1 );
-		print $form->multiselectarray( 'usercats', $cate_arbo, GETPOST( 'usercats', 'array' ), null, null, null,
+		print '<tr><td>' . fieldLabel('Categories', 'usercats') . '</td><td colspan="3">';
+		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
+		print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null,
 			null, '90%' );
 		print "</td></tr>";
 	}
+
+    // Other attributes
+    $parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook) && ! empty($extrafields->attribute_label))
+    {
+    	print $object->showOptionals($extrafields,'edit');
+    }
 	
     // Note
     print '<tr><td class="tdtop">';
@@ -1106,15 +1120,15 @@ if (($action == 'create') || ($action == 'adduserldap'))
     $doleditor->Create();
     print "</td></tr>\n";
 
-    // Other attributes
-    $parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
-    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-    if (empty($reshook) && ! empty($extrafields->attribute_label))
-    {
-    	print $object->showOptionals($extrafields,'edit');
-    }
-
- 	print "</table>\n";
+    // Signature
+    print '<tr><td class="tdtop">'.$langs->trans("Signature").'</td>';
+    print '<td>';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor('signature',GETPOST('signature'),'',138,'dolibarr_mailings','In',true,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,'90%');
+    print $doleditor->Create(1);
+    print '</td></tr>';
+    
+    print "</table>\n";
 
  	dol_fiche_end();
 
@@ -1136,7 +1150,7 @@ else
 
     if ($id > 0)
     {
-        $object->fetch($id);
+        $object->fetch($id, '', '', 1);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
         $res=$object->fetch_optionals($object->id,$extralabels);
 		
@@ -1198,7 +1212,11 @@ else
 		else
 		{
 			$title = $langs->trans("User");
-			$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '';
+
+			if ($user->rights->user->user->lire || $user->admin) {
+				$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+			}
 		}
 
         $head = user_prepare_head($object);
@@ -1248,10 +1266,9 @@ else
          */
         if ($action != 'edit')
         {
-			dol_fiche_head($head, 'user', $title, 0, 'user');
+			dol_fiche_head($head, 'user', $title, -1, 'user');
 
             dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-
 
 	        print '<div class="fichecenter">';
 	        print '<div class="fichehalfleft">';
@@ -1364,10 +1381,14 @@ else
             	print '</td></tr>'."\n";
             }
 
-            // Signature
-            print '<tr><td class="tdtop">'.$langs->trans('Signature').'</td><td>';
-            print dol_htmlentitiesbr($object->signature);
-            print "</td></tr>\n";
+            // Accountancy code
+            if ($conf->accounting->enabled)
+            {
+                print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
+                print '<td>'.$object->accountancy_code.'</td></tr>';
+            }
+            
+            // TODO Move this into tab RH, visible when salarie or RH is visible (HierarchicalResponsible must be on both tab)
 
             // Hierarchy
             print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
@@ -1381,7 +1402,8 @@ else
             print '</td>';
             print "</tr>\n";
 
-            if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
+            if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
+                || (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
             {
             	$langs->load("salaries");
 
@@ -1420,13 +1442,6 @@ else
 		    print '</td>';
 		    print "</tr>\n";
 
-			// Accountancy code
-			if ($conf->accounting->enabled)
-			{
-				print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
-				print '<td>'.$object->accountancy_code.'</td>';
-			}
-
 		    // Date employment
 		    print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 		    print '<td>';
@@ -1434,7 +1449,7 @@ else
 		    print '</td>';
 		    print "</tr>\n";
 
-			print '</table>';
+		    print '</table>';
 
 	        print '</div>';
 	        print '<div class="fichehalfright"><div class="ficheaddleft">';
@@ -1552,7 +1567,12 @@ else
                 print '</tr>'."\n";
             }
 
-			print "</table>\n";
+            // Signature
+            print '<tr><td class="tdtop">'.$langs->trans('Signature').'</td><td>';
+            print dol_htmlentitiesbr($object->signature);
+            print "</td></tr>\n";
+
+            print "</table>\n";
 			print '</div>';
 
         	print '</div></div>';
@@ -1568,6 +1588,17 @@ else
 
             print '<div class="tabsAction">';
 
+            if (! empty($object->email))
+            {
+                $langs->load("mails");
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init#presend">'.$langs->trans('SendMail').'</a></div>';
+            }
+            else
+            {
+                $langs->load("mails");
+                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
+            }
+            
             if ($caneditfield && (empty($conf->multicompany->enabled) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
             {
                 if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
@@ -1640,138 +1671,246 @@ else
 
 
 
-            /*
-             * List of groups of user
-             */
-
-            if ($canreadgroup)
+            //Select mail models is same action as presend
+            if (GETPOST('modelselected')) {
+                $action = 'presend';
+            }
+            if ($action == 'presend')
             {
-                print load_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
-
-                // On selectionne les groupes auquel fait parti le user
-                $exclude = array();
-
-                $usergroup=new UserGroup($db);
-                $groupslist = $usergroup->listGroupsForUser($object->id);
-
-                if (! empty($groupslist))
+                /*
+                 * Affiche formulaire mail
+                 */
+            
+                // By default if $action=='presend'
+                $titreform='SendMail';
+                $topicmail='';
+                $action='send';
+                $modelmail='user';
+            
+                print '<div id="presend"></div>';
+                print load_fiche_titre($langs->trans($titreform));
+            
+                dol_fiche_head();
+            
+                // Define output language
+                $outputlangs = $langs;
+                $newlang = '';
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+                    $newlang = $_REQUEST['lang_id'];
+                
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+                    $newlang = $object->default_lang;
+            
+                // Cree l'objet formulaire mail
+                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+                $formmail = new FormMail($db);
+                $formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
+                $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+    
+                if($formmail->fromtype === 'user'){
+                    $formmail->fromid = $user->id;
+    
+                }
+                $formmail->trackid='thi'.$object->id;
+                if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
                 {
-                    if (! (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)))
+                    include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+                    $formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'thi'.$object->id);
+                }
+                $formmail->withfrom=1;
+                $formmail->withtopic=1;
+                $formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$object->email;
+                $formmail->withtofree=1;
+                $formmail->withtocc=1;
+                $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+                $formmail->withfile=2;
+                $formmail->withbody=1;
+                $formmail->withdeliveryreceipt=1;
+                $formmail->withcancel=1;
+                // Tableau des substitutions
+                //$formmail->setSubstitFromObject($object);
+                $formmail->substit['__LASTNAME__']=$object->lastname;
+                $formmail->substit['__FIRSTNAME__']=$object->firstname;
+                $formmail->substit['__SIGNATURE__']=$user->signature;
+                $formmail->substit['__PERSONALIZED__']='';
+    
+                //Find the good contact adress
+                /*
+                $custcontact='';
+                $contactarr=array();
+                $contactarr=$object->liste_contact(-1,'external');
+    
+                if (is_array($contactarr) && count($contactarr)>0)
+                {
+                foreach($contactarr as $contact)
+                {
+                if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
+    
+                require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+    
+                $contactstatic=new Contact($db);
+                $contactstatic->fetch($contact['id']);
+                $custcontact=$contactstatic->getFullName($langs,1);
+                }
+                }
+    
+                if (!empty($custcontact)) {
+                $formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+                }
+                }*/
+    
+    
+                // Tableau des parametres complementaires du post
+                $formmail->param['action']=$action;
+                $formmail->param['models']=$modelmail;
+                $formmail->param['models_id']=GETPOST('modelmailselected','int');
+                $formmail->param['socid']=$object->id;
+                $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
+    
+                // Init list of files
+                if (GETPOST("mode")=='init')
+                {
+                    $formmail->clear_attached_files();
+                    $formmail->add_attached_files($file,basename($file),dol_mimetype($file));
+                }
+                print $formmail->get_form();
+    
+                dol_fiche_end();
+            }
+
+            if (GETPOST('action','aZ09') != 'presend' && GETPOST('action','aZ09') != 'send')
+            {
+                /*
+                 * List of groups of user
+                 */
+    
+                if ($canreadgroup)
+                {
+                    print load_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
+    
+                    // On selectionne les groupes auquel fait parti le user
+                    $exclude = array();
+    
+                    $usergroup=new UserGroup($db);
+                    $groupslist = $usergroup->listGroupsForUser($object->id);
+    
+                    if (! empty($groupslist))
                     {
-                        foreach($groupslist as $groupforuser)
+                        if (! (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)))
                         {
-                            $exclude[]=$groupforuser->id;
+                            foreach($groupslist as $groupforuser)
+                            {
+                                $exclude[]=$groupforuser->id;
+                            }
                         }
                     }
-                }
-
-                if ($caneditgroup)
-                {
-                    print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">'."\n";
-                    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
-                    print '<input type="hidden" name="action" value="addgroup" />';
-                }
-                
-                print '<table class="noborder" width="100%">'."\n";
-                print '<tr class="liste_titre"><th class="liste_titre" width="25%">'.$langs->trans("Groups").'</th>'."\n";
-                if(! empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
-                {
-                    print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
-                }
-                print '<th align="right">';
-                if ($caneditgroup)
-                {
-                    print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
-                    print ' &nbsp; ';
-                    // Multicompany
-                    if (! empty($conf->multicompany->enabled))
+    
+                    if ($caneditgroup)
                     {
-                        if ($conf->entity == 1 && $conf->multicompany->transverse_mode)
+                        print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">'."\n";
+                        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+                        print '<input type="hidden" name="action" value="addgroup" />';
+                    }
+                    
+                    print '<table class="noborder" width="100%">'."\n";
+                    print '<tr class="liste_titre"><th class="liste_titre" width="25%">'.$langs->trans("Groups").'</th>'."\n";
+                    if(! empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                    {
+                        print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
+                    }
+                    print '<th align="right">';
+                    if ($caneditgroup)
+                    {
+                        print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
+                        print ' &nbsp; ';
+                        // Multicompany
+                        if (! empty($conf->multicompany->enabled))
                         {
-                            print '</td><td>'.$langs->trans("Entity").'</td>';
-                            print "<td>".$mc->select_entities($conf->entity);
+                            if ($conf->entity == 1 && $conf->multicompany->transverse_mode)
+                            {
+                                print '</td><td>'.$langs->trans("Entity").'</td>';
+                                print "<td>".$mc->select_entities($conf->entity);
+                            }
+                            else
+                            {
+                                print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+                            }
                         }
                         else
                         {
-                            print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+                        	print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+                        }
+                        print '<input type="submit" class="button" value="'.$langs->trans("Add").'" />';
+                    }
+                    print '</th></tr>'."\n";
+    
+                    /*
+                     * Groups assigned to user
+                     */
+                    if (! empty($groupslist))
+                    {
+                        foreach($groupslist as $group)
+                        {
+                            
+    
+                            print '<tr class="oddeven">';
+                            print '<td>';
+                            if ($caneditgroup)
+                            {
+                                print '<a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$group->name.'</a>';
+                            }
+                            else
+                            {
+                                print img_object($langs->trans("ShowGroup"),"group").' '.$group->name;
+                            }
+                            print '</td>';
+                            if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                            {
+                            	print '<td class="valeur">';
+                            	if (! empty($group->usergroup_entity))
+                            	{
+                            		$nb=0;
+                            		foreach($group->usergroup_entity as $group_entity)
+                            		{
+                            			$mc->getInfo($group_entity);
+                            			print ($nb > 0 ? ', ' : '').$mc->label;
+                            			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removegroup&amp;group='.$group->id.'&amp;entity='.$group_entity.'">';
+                            			print img_delete($langs->trans("RemoveFromGroup"));
+                            			print '</a>';
+                            			$nb++;
+                            		}
+                            	}
+                            }
+                            print '<td align="right">';
+                            if ($caneditgroup && empty($conf->multicompany->transverse_mode))
+                            {
+                                print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removegroup&amp;group='.$group->id.'">';
+                                print img_delete($langs->trans("RemoveFromGroup"));
+                                print '</a>';
+                            }
+                            else
+                            {
+                                print "&nbsp;";
+                            }
+                            print "</td></tr>\n";
                         }
                     }
                     else
                     {
-                    	print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+                        print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
                     }
-                    print '<input type="submit" class="button" value="'.$langs->trans("Add").'" />';
-                }
-                print '</th></tr>'."\n";
-
-                /*
-                 * Groups assigned to user
-                 */
-                if (! empty($groupslist))
-                {
-                    $var=true;
-
-                    foreach($groupslist as $group)
+    
+                    print "</table>";
+                    
+                    if ($caneditgroup)
                     {
-                        $var=!$var;
-
-                        print "<tr ".$bc[$var].">";
-                        print '<td>';
-                        if ($caneditgroup)
-                        {
-                            print '<a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$group->name.'</a>';
-                        }
-                        else
-                        {
-                            print img_object($langs->trans("ShowGroup"),"group").' '.$group->name;
-                        }
-                        print '</td>';
-                        if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
-                        {
-                        	print '<td class="valeur">';
-                        	if (! empty($group->usergroup_entity))
-                        	{
-                        		$nb=0;
-                        		foreach($group->usergroup_entity as $group_entity)
-                        		{
-                        			$mc->getInfo($group_entity);
-                        			print ($nb > 0 ? ', ' : '').$mc->label;
-                        			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removegroup&amp;group='.$group->id.'&amp;entity='.$group_entity.'">';
-                        			print img_delete($langs->trans("RemoveFromGroup"));
-                        			print '</a>';
-                        			$nb++;
-                        		}
-                        	}
-                        }
-                        print '<td align="right">';
-                        if ($caneditgroup && empty($conf->multicompany->transverse_mode))
-                        {
-                            print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removegroup&amp;group='.$group->id.'">';
-                            print img_delete($langs->trans("RemoveFromGroup"));
-                            print '</a>';
-                        }
-                        else
-                        {
-                            print "&nbsp;";
-                        }
-                        print "</td></tr>\n";
+                        print '</form>';
                     }
+                    print "<br>";
                 }
-                else
-                {
-                    print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-                }
-
-                print "</table>";
-                
-                if ($caneditgroup)
-                {
-                    print '</form>';
-                }
-                print "<br>";
             }
         }
-
+        
         /*
          * Fiche en mode edition
          */
@@ -1825,14 +1964,6 @@ else
                 print $object->firstname;
             }
             print '</td></tr>';
-
-            // Photo
-            print '<tr>';
-            print '<td>'.$langs->trans("Photo").'</td>';
-            print '<td>';
-            print $form->showphoto('userphoto',$object,60,0,$caneditfield,'photowithmargin','small');
-            print '</td>';
-            print '</tr>';
 
             // Employee
             print '<tr>';
@@ -1899,10 +2030,11 @@ else
             print "</td></tr>\n";
 
             // API key
-            if(! empty($conf->api->enabled) && $user->admin) {
+            if(! empty($conf->api->enabled) && $user->admin) 
+            {
                 print '<tr><td>'.$langs->trans("ApiKey").'</td>';
                 print '<td>';
-                print '<input class="minwidth100" maxsize="32" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
+                print '<input class="minwidth300" maxsize="32" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
                 if (! empty($conf->use_javascript_ajax))
                     print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
                 print '</td></tr>';
@@ -2113,21 +2245,6 @@ else
             }
             print '</td></tr>';
 
-            // Signature
-            print "<tr>".'<td class="tdtop">'.$langs->trans("Signature").'</td>';
-            print '<td>';
-            if ($caneditfield)
-            {
-	            require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	            $doleditor=new DolEditor('signature',$object->signature,'',138,'dolibarr_mailings','In',false,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,'90%');
-	            print $doleditor->Create(1);
-            }
-            else
-			{
-          		print dol_htmlentitiesbr($object->signature);
-            }
-            print '</td></tr>';
-
             // OpenID url
             if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
             {
@@ -2138,13 +2255,34 @@ else
                     print '<input class="minwidth100" type="url" name="openid" class="flat" value="'.$object->openid.'">';
                 }
                 else
-              {
+                {
                     print '<input type="hidden" name="openid" value="'.$object->openid.'">';
                     print $object->openid;
                 }
                 print '</td></tr>';
             }
 
+            // Accountancy code
+            if ($conf->accounting->enabled)
+            {
+                print "<tr>";
+                print '<td>'.$langs->trans("AccountancyCode").'</td>';
+                print '<td>';
+                if ($caneditfield)
+                {
+                				print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
+                }
+                else
+                {
+                				print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
+                				print $object->accountancy_code;
+                }
+                print '</td>';
+                print "</tr>";
+            }
+            
+            // TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
+            
             // Hierarchy
             print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
             print '<td>';
@@ -2162,7 +2300,8 @@ else
             print '</td>';
             print "</tr>\n";
 
-            if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
+            if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
+               || (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
             {
             	$langs->load("salaries");
 
@@ -2208,48 +2347,37 @@ else
 			print '</td>';
 		    print "</tr>\n";
 
-		    // Accountancy code
-			if ($conf->accounting->enabled)
+    		// User color
+    		if (! empty($conf->agenda->enabled))
+    	    {
+    			print '<tr><td>'.$langs->trans("ColorUser").'</td>';
+    			print '<td>';
+    			print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
+    			print '</td></tr>';
+    		}
+    
+    		// Photo
+    		print '<tr>';
+    		print '<td>'.$langs->trans("Photo").'</td>';
+    		print '<td>';
+    		print $form->showphoto('userphoto',$object,60,0,$caneditfield,'photowithmargin','small');
+    		print '</td>';
+    		print '</tr>';
+    		
+    		// Categories
+    		if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) 
     		{
-			print "<tr>";
-			print '<td>'.$langs->trans("AccountancyCode").'</td>';
-			print '<td>';
-			if ($caneditfield)
-			{
-				print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
-			}
-			else
-			{
-				print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
-				print $object->accountancy_code;
-			}
-			print '</td>';
-			print "</tr>";
-		}
-
-		// User color
-		if (! empty($conf->agenda->enabled))
-	    {
-			print '<tr><td>'.$langs->trans("ColorUser").'</td>';
-			print '<td>';
-			print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
-			print '</td></tr>';
-		}
-
-		// Categories
-		if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) 
-		{
-			print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td>';
-			print '<td>';
-			$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
-			$c = new Categorie( $db );
-			$cats = $c->containing($object->id, Categorie::TYPE_USER);
-			foreach ($cats as $cat) {
-				$arrayselected[] = $cat->id;
-			}
-			print $form->multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
-			print "</td></tr>";
-		}
+    			print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td>';
+    			print '<td>';
+    			$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
+    			$c = new Categorie( $db );
+    			$cats = $c->containing($object->id, Categorie::TYPE_USER);
+    			foreach ($cats as $cat) {
+    				$arrayselected[] = $cat->id;
+    			}
+    			print $form->multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+    			print "</td></tr>";
+    		}
 
             // Status
             print '<tr><td>'.$langs->trans("Status").'</td>';
@@ -2328,6 +2456,21 @@ else
             	print $object->showOptionals($extrafields,'edit');
             }
 
+            // Signature
+            print "<tr>".'<td class="tdtop">'.$langs->trans("Signature").'</td>';
+            print '<td>';
+            if ($caneditfield)
+            {
+                require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+                $doleditor=new DolEditor('signature',$object->signature,'',138,'dolibarr_mailings','In',false,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,'90%');
+                print $doleditor->Create(1);
+            }
+            else
+            {
+                print dol_htmlentitiesbr($object->signature);
+            }
+            print '</td></tr>';
+            
             print '</table>';
 
             dol_fiche_end();
@@ -2341,8 +2484,38 @@ else
             print '</form>';
         }
 
-		if (! empty($conf->ldap->enabled) && ! empty($object->ldap_sid)) $ldap->close;
+        if ($action != 'edit')
+        {
+            print '<div class="fichecenter"><div class="fichehalfleft">';
+            /*
+             * Documents generes
+            */
+            $filename = dol_sanitizeFileName($object->ref);
+            $filedir = $conf->user->dir_output . "/" . dol_sanitizeFileName($object->ref);
+            $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+            $genallowed = $user->rights->user->user->creer;
+            $delallowed = $user->rights->user->user->supprimer;
+    
+            $somethingshown = $formfile->show_documents('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+    
+    		// Show links to link elements
+    		$linktoelem = $form->showLinkToObjectBlock($object, null, null);
+    		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+    
+            print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+    
+    		// List of actions on element
+    		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+    		$formactions = new FormActions($db);
+    		$somethingshown = $formactions->showactions($object, 'user', $socid);
+            
+            
+            print '</div></div></div>';
+        }
+        
+		if (! empty($conf->ldap->enabled) && ! empty($object->ldap_sid)) $ldap->close();
     }
+    
 }
 
 if (! empty($conf->api->enabled) && ! empty($conf->use_javascript_ajax))

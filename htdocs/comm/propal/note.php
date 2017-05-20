@@ -74,7 +74,7 @@ if ($id > 0 || ! empty($ref))
 		if ($object->fetch_thirdparty() > 0)
 		{
 		    $head = propal_prepare_head($object);
-			dol_fiche_head($head, 'note', $langs->trans('Proposal'), 0, 'propal');
+			dol_fiche_head($head, 'note', $langs->trans('Proposal'), -1, 'propal');
 
 			$cssclass='titlefield';
 			//if ($action == 'editnote_public') $cssclass='titlefieldcreate';
@@ -132,9 +132,9 @@ if ($id > 0 || ! empty($ref))
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 			
+			$cssclass="titlefield";
 			include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-			print '</div>';
 			print '</div>';
 			
 			dol_fiche_end();

@@ -34,7 +34,7 @@ $langs->load("companies");
 $langs->load("contact");
 
 $id = GETPOST('id','int');
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 $object = new Contact($db);
@@ -100,7 +100,7 @@ if ($object->id)
 
 
     // Construit liste des fichiers
-    $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+    $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
     $totalsize=0;
     foreach($filearray as $key => $file)
     {
@@ -109,7 +109,19 @@ if ($object->id)
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
     
-    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+    $morehtmlref='<div class="refidno">';
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+    {
+        $objsoc=new Societe($db);
+        $objsoc->fetch($object->socid);
+        // Thirdparty
+        $morehtmlref.=$langs->trans('ThirdParty') . ' : ';
+        if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1);
+        else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
+    }
+    $morehtmlref.='</div>';
+    
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
         
     print '<div class="fichecenter">';
     
@@ -117,6 +129,7 @@ if ($object->id)
     print '<table class="border centpercent">';
 
     // Company
+    /*
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     {
     	if ($object->socid > 0)
@@ -133,7 +146,7 @@ if ($object->id)
     		print $langs->trans("ContactNotLinkedToCompany");
     		print '</td></tr>';
     	}
-    }
+    }*/
     
     // Civility
     print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';

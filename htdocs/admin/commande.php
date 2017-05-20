@@ -284,7 +284,7 @@ print load_fiche_titre($langs->trans("OrdersSetup"),$linkback,'title_setup');
 
 $head = order_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Orders"), 0, 'order');
+dol_fiche_head($head, 'general', $langs->trans("Orders"), -1, 'order');
 
 /*
  * Orders Numbering model
@@ -330,8 +330,8 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-						$var=!$var;
-						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+						
+						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
 
@@ -471,7 +471,7 @@ foreach ($dirmodels as $reldir)
 	                        if ($modulequalified)
 	                        {
 	                            $var = !$var;
-	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module,'info')) print $module->info($langs);
@@ -565,12 +565,18 @@ print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 $var=true;
 
+$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_ORDER_FREE_TEXT">';
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnOrders").' ('.$langs->trans("AddCRIfTooLong").')<br>';
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
 $variablename='ORDER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -588,13 +594,14 @@ print "</td></tr>\n";
 print '</form>';
 
 //Use draft Watermark
-$var=!$var;
+
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_COMMANDE_DRAFT_WATERMARK\">";
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("WatermarkOnDraftOrders").'<br>';
-print '<input size="50" class="flat" type="text" name="COMMANDE_DRAFT_WATERMARK" value="'.$conf->global->COMMANDE_DRAFT_WATERMARK.'">';
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("WatermarkOnDraftOrders"), $htmltext);
+print '</td><td>';
+print '<input class="flat minwidth200" type="text" name="COMMANDE_DRAFT_WATERMARK" value="'.$conf->global->COMMANDE_DRAFT_WATERMARK.'">';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
@@ -603,8 +610,8 @@ print '</form>';
 // Shippable Icon in List
 /* Kept as hidden feature for the moment, result seems bugged. 
 Whet is definition of "shippable" according to all different STOCK_CALCULATE_... options ?
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ShippableOrderIconInList").'</td>';
 print '<td>&nbsp</td>';
 print '<td align="center">';
@@ -623,8 +630,8 @@ print '</tr>';
 // Ask for payment bank during order
 if ($conf->banque->enabled)
 {
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    
+    print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp</td><td align="center">';
     if (! empty($conf->use_javascript_ajax))
     {
@@ -645,16 +652,16 @@ if ($conf->banque->enabled)
 }
 else
 {
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    
+    print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
 
 // Ask for warehouse during order
 if ($conf->stock->enabled)
 {
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    
+    print '<tr class="oddeven"><td>';
     print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp</td><td align="center">';
     if (! empty($conf->use_javascript_ajax))
     {
@@ -675,8 +682,8 @@ if ($conf->stock->enabled)
 }
 else
 {
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    
+    print '<tr class="oddeven"><td>';
     print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
 */
@@ -697,7 +704,7 @@ print '<td align="center" width="60"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
 print '</td><td align="right">';
 print "</td></tr>\n";

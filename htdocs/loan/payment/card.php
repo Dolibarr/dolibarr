@@ -32,8 +32,8 @@ $langs->load('companies');
 $langs->load('loan');
 
 // Security check
-$id=GETPOST("id");
-$action=GETPOST("action");
+$id=GETPOST("id",'int');
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 if ($user->societe_id) $socid=$user->societe_id;
 // TODO ajouter regle pour restreindre acces paiement
@@ -120,7 +120,7 @@ $form = new Form($db);
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/loan/payment/card.php?id='.$_GET["id"];
+$head[$h][0] = DOL_URL_ROOT.'/loan/payment/card.php?id='.$id;
 $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;
@@ -226,12 +226,12 @@ if ($resql)
 		{
 			$objp = $db->fetch_object($resql);
 
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			
+			print '<tr class="oddeven">';
 			// Ref
 			print '<td>';
 			$loan->fetch($objp->id);
-			print $loan->getLinkUrl(1);
+			print $loan->getNomUrl(1);
 			print "</td>\n";
 			// Label
 			print '<td>'.$objp->label.'</td>';
@@ -250,7 +250,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	$var=!$var;
+	
 
 	print "</table>\n";
 	$db->free($resql);

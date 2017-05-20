@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
@@ -39,6 +39,7 @@ $langs->load("bills");
 $langs->load("admin");
 $langs->load("accountancy");
 $langs->load("salaries");
+$langs->load("loan");
 
 // Security check
 if (! empty($user->rights->accountancy->chartofaccount))
@@ -62,7 +63,10 @@ $list_account = array (
 		'ACCOUNTING_VAT_PAY_ACCOUNT',
 		'ACCOUNTING_ACCOUNT_SUSPENSE',
 		'ACCOUNTING_ACCOUNT_TRANSFER_CASH',
-		'DONATION_ACCOUNTINGACCOUNT'
+		'DONATION_ACCOUNTINGACCOUNT',
+		'LOAN_ACCOUNTING_ACCOUNT_CAPITAL',
+		'LOAN_ACCOUNTING_ACCOUNT_INTEREST',
+		'LOAN_ACCOUNTING_ACCOUNT_INSURANCE'
 );
 
 
@@ -131,9 +135,8 @@ print '<input type="hidden" name="action" value="update">';
 print '<table class="noborder" width="100%">';
 
 foreach ( $list_account as $key ) {
-	$var = ! $var;
 	
-	print '<tr ' . $bc[$var] . ' class="value">';
+	print '<tr class="oddeven value">';
 	// Param
 	$label = $langs->trans($key);
 	print '<td>' . $label . '</td>';

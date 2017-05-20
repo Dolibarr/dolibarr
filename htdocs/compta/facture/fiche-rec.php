@@ -35,13 +35,16 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-    require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+    //require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 
 $langs->load('bills');
 $langs->load('compta');
 $langs->load('admin');
+$langs->load('other');
 
 // Security check
 $id=(GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int'));
@@ -109,6 +112,7 @@ $arrayfields=array(
     'f.tva'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>1),
     'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>1),
     'f.frequency'=>array('label'=>$langs->trans("RecurringInvoiceTemplate"), 'checked'=>1),
+    'f.nb_gen_done'=>array('label'=>$langs->trans("NbGeneration"), 'checked'=>1),
     'f.date_last_gen'=>array('label'=>$langs->trans("DateLastGeneration"), 'checked'=>1),
     'f.date_when'=>array('label'=>$langs->trans("NextDateToExecution"), 'checked'=>1),
     'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
@@ -456,7 +460,7 @@ if (empty($reshook))
 
     	// Ecrase $pu par celui du produit
     	// Ecrase $desc par celui du produit
-    	// Ecrase $txtva par celui du produit
+    	// Ecrase $tva_tx par celui du produit
     	// Ecrase $base_price_type par celui du produit
     	// Replaces $fk_unit with the product's
     	if (! empty($idprod))
@@ -511,23 +515,26 @@ if (empty($reshook))
     			}
     		}
 
-    		// if price ht was forced (ie: from gui when calculated by margin rate and cost price)
+			$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
+			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+			
+    		// if price ht was forced (ie: from gui when calculated by margin rate and cost price). TODO Why this ?
     		if (! empty($price_ht))
     		{
     			$pu_ht = price2num($price_ht, 'MU');
-    			$pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
+    			$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
     		}
     		// On reevalue prix selon taux tva car taux tva transaction peut etre different
     		// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-    		elseif ($tva_tx != $prod->tva_tx)
+    		elseif ($tmpvat != $tmpprodvat)
     		{
     			if ($price_base_type != 'HT')
     			{
-    			    $pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU');
+    			    $pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
     			}
     			else
     			{
-    			    $pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
+    			    $pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
     			}
     		}
 
@@ -609,7 +616,7 @@ if (empty($reshook))
     	else
     	{
     		// Insert line
-    		$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit);
+    		$result = $object->addline($desc, $pu_ht, $qty, $tva_tx,$localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit);
 
     		if ($result > 0)
     		{
@@ -781,7 +788,9 @@ if (empty($reshook))
     			$description,
     			$pu_ht,
     			$qty,
-                    	$vat_rate,
+			    $vat_rate,
+			    $localtax1_rate,
+			    $localtax1_rate,
     			GETPOST('productid'),
     			GETPOST('remise_percent'),
     			'HT',
@@ -886,7 +895,6 @@ if ($action == 'create')
 
 	$object = new Facture($db);   // Source invoice
 	$product_static = new Product($db);
-	$formproject = new FormProjets($db);
 
 	if ($object->fetch($id, $ref) > 0)
 	{
@@ -933,7 +941,8 @@ if ($action == 'create')
 		    '__INVOICE_YEAR__' =>  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($object->date,'%Y').')',
 		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'y'),'%Y').')'
 		);
-
+		$substitutionarray['__(TransKey)__']=$langs->trans("TransKey");
+		
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach($substitutionarray as $key => $val)
 		{
@@ -944,7 +953,7 @@ if ($action == 'create')
 		// Public note
 		print '<tr>';
 		print '<td class="border tdtop">';
-		print $form->textwithpicto($langs->trans('NotePublic'), $htmltext);
+		print $form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic');
 		print '</td>';
 		print '<td valign="top" colspan="2">';
 		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
@@ -955,7 +964,7 @@ if ($action == 'create')
 		{
 		    print '<tr>';
 		    print '<td class="border tdtop">';
-		    print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext);
+		    print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext, 1, 'help', '', 0, 2, 'noteprivate');
 		    print '</td>';
 		    print '<td valign="top" colspan="2">';
 		    $doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
@@ -983,7 +992,7 @@ if ($action == 'create')
 			$projectid = GETPOST('projectid')?GETPOST('projectid'):$object->fk_project;
 			$langs->load('projects');
 			print '<tr><td>' . $langs->trans('Project') . '</td><td>';
-			$numprojet = $formproject->select_projects($socid, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, $forceaddid=0, $morecss='');
+			$numprojet = $formproject->select_projects($object->thirdparty->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, '');
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $object->thirdparty->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$object->thirdparty->id.(!empty($id)?'&id='.$id:'')).'">' . $langs->trans("AddProject") . '</a>';
 			print '</td></tr>';
 		}
@@ -991,7 +1000,7 @@ if ($action == 'create')
 		// Bank account
 		if ($object->fk_account > 0)
 		{
-			print "<tr><td>".$langs->trans('BankAccount')."</td><td>";
+			print "<tr><td>".$langs->trans('RIB')."</td><td>";
 			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
 			print "</td></tr>";
 		}
@@ -1106,13 +1115,9 @@ else
 		$author = new User($db);
 		$author->fetch($object->user_author);
 
-		$head=array();
-		$h=0;
-		$head[$h][0] = $_SERVER["PHP_SELF"].'?id='.$object->id;
-		$head[$h][1] = $langs->trans("CardBill");
-		$head[$h][2] = 'card';
+		$head=invoice_rec_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("RepeatableInvoice"),0,'bill');	// Add a div
+		dol_fiche_head($head, 'card', $langs->trans("RepeatableInvoice"), -1, 'bill');	// Add a div
 
 		// Recurring invoice content
 
@@ -1178,8 +1183,22 @@ else
 
 		print '<tr><td>'.$langs->trans("AmountVAT").'</td><td colspan="3">'.price($object->total_tva,'',$langs,1,-1,-1,$conf->currency).'</td>';
 		print '</tr>';
+
+		// Amount Local Taxes
+		if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) 	// Localtax1
+		{
+			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
+			print '<td class="nowrap">' . price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		}
+		if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) 	// Localtax2
+		{
+			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
+			print '<td class=nowrap">' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		}
+
 		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td colspan="3">'.price($object->total_ttc,'',$langs,1,-1,-1,$conf->currency).'</td>';
 		print '</tr>';
+
 
 		// Payment term
 		print '<tr><td>';
@@ -1240,7 +1259,8 @@ else
 		    '__INVOICE_YEAR__' =>  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%Y').')',
 		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'),'%Y').')'
 		);
-
+		$substitutionarray['__(TransKey)__']=$langs->trans("TransKey");
+		
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach($substitutionarray as $key => $val)
 		{
@@ -1250,7 +1270,7 @@ else
 
 		// Note public
 		print '<tr><td>';
-		print $form->editfieldkey($form->textwithpicto($langs->trans('NotePublic'), $htmltext), 'note_public', $object->note_public, $object, $user->rights->facture->creer);
+		print $form->editfieldkey($form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic'), 'note_public', $object->note_public, $object, $user->rights->facture->creer);
 		print '</td><td colspan="5">';
 		print $form->editfieldval($langs->trans("NotePublic"), 'note_public', $object->note_public, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':60');
 		print '</td>';
@@ -1258,16 +1278,18 @@ else
 
 		// Note private
 		print '<tr><td>';
-		print $form->editfieldkey($form->textwithpicto($langs->trans("NotePrivate"), $htmltext), 'note_private', $object->note_private, $object, $user->rights->facture->creer);
+		print $form->editfieldkey($form->textwithpicto($langs->trans("NotePrivate"), $htmltext, 1, 'help', '', 0, 2, 'noteprivate'), 'note_private', $object->note_private, $object, $user->rights->facture->creer);
 		print '</td><td colspan="5">';
 		print $form->editfieldval($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':60');
 		print '</td>';
 		print '</tr>';
 
 		// Bank Account
+		$langs->load('banks');
+
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-		print $langs->trans('BankAccount');
+		print $langs->trans('RIB');
 		print '<td>';
 		if (($action != 'editbankaccount') && $user->rights->commande->creer && ! empty($object->brouillon))
 		    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
@@ -1291,16 +1313,17 @@ else
     	print '<div class="ficheaddleft">';
     	print '<div class="underbanner clearboth"></div>';
 
-    	print '<table class="border centpercent">';
 
 		/*
 		 * Recurrence
 		 */
 		$title = $langs->trans("Recurrence");
-		print load_fiche_titre($title, '', 'calendar');
+		//print load_fiche_titre($title, '', 'calendar');
 
 		print '<table class="border" width="100%">';
 
+		print '<tr><td colspan="2"><span class="fa fa-calendar"></span> '.$title.'</td></tr>';
+		
 		// if "frequency" is empty or = 0, the reccurence is disabled
 		print '<tr><td style="width: 50%">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1492,7 +1515,7 @@ else
 				{
 					if (empty($object->frequency) || $object->date_when <= $today)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$object->thirdparty->id.'&amp;fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$object->thirdparty->id.'&amp;fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
 					}
 					else
 					{
@@ -1535,10 +1558,16 @@ else
 		 *  List mode
 		 */
 		$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency,";
-		$sql.= " f.date_last_gen, f.date_when";
+		$sql.= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
+		if (! $user->rights->societe->client->voir && ! $socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql.= " WHERE f.fk_soc = s.rowid";
 		$sql.= " AND f.entity = ".$conf->entity;
+		if (! $user->rights->societe->client->voir && ! $socid) {
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		}
 		if ($search_ref) $sql .= natural_search('f.titre', $search_ref);
 		if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 		if ($search_frequency) $sql .= natural_search('f.frequency', $search_frequency);
@@ -1575,7 +1604,7 @@ else
 		    $sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($year_date_when,1,false))."' AND '".$db->idate(dol_get_last_day($year_date_when,12,false))."'";
 		}
 
-		$nbtotalofrecords = -1;
+		$nbtotalofrecords = '';
         	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         	{
         		$result = $db->query($sql);
@@ -1634,59 +1663,52 @@ else
 			print '<div class="div-table-responsive">';
             print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans("Ref"),$_SERVER['PHP_SELF'],"f.titre","",$param,"",$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER['PHP_SELF'],"s.nom","",$param,"",$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("AmountHT"),$_SERVER['PHP_SELF'],"f.total","",$param,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("AmountVAT"),$_SERVER['PHP_SELF'],"f.tva","",$param,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER['PHP_SELF'],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("RecurringInvoiceTemplate"),$_SERVER['PHP_SELF'],"f.frequency","",$param,'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("DateLastGeneration"),$_SERVER['PHP_SELF'],"f.date_last_gen","",$param,'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("NextDateToExecution"),$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre('');		// Field may contains ling text
-			print "</tr>\n";
-
-
 			// Filters lines
-			print '<tr class="liste_titre">';
+			print '<tr class="liste_titre_filter">';
 			// Ref
 			if (! empty($arrayfields['f.titre']['checked']))
 			{
 			    print '<td class="liste_titre" align="left">';
-			    print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
+			    print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 			    print '</td>';
 			}
 			// Thirpdarty
 			if (! empty($arrayfields['s.nom']['checked']))
 			{
-			    print '<td class="liste_titre" align="left"><input class="flat" type="text" size="8" name="search_societe" value="'.$search_societe.'"></td>';
+			    print '<td class="liste_titre" align="left"><input class="flat" type="text" size="8" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 			}
 			if (! empty($arrayfields['f.total']['checked']))
 			{
 			    // Amount
 			    print '<td class="liste_titre" align="right">';
-			    print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.$search_montant_ht.'">';
+			    print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 			    print '</td>';
 			}
 			if (! empty($arrayfields['f.tva']['checked']))
 			{
 			    // Amount
 			    print '<td class="liste_titre" align="right">';
-			    print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.$search_montant_vat.'">';
+			    print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
 			    print '</td>';
 			}
 			if (! empty($arrayfields['f.total_ttc']['checked']))
 			{
 			    // Amount
 			    print '<td class="liste_titre" align="right">';
-			    print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
+			    print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 			    print '</td>';
 			}
 			if (! empty($arrayfields['f.frequency']['checked']))
 			{
-			    // Amount
+			    // Recurring or not
 			    print '<td class="liste_titre" align="center">';
 			    print $form->selectyesno('search_frequency', $search_frequency, 1, false, 1);
+			    print '</td>';
+			}
+			if (! empty($arrayfields['f.nb_gen_done']['checked']))
+			{
+			    // Nb generation
+			    print '<td class="liste_titre" align="center">';
 			    print '</td>';
 			}
 			// Date invoice
@@ -1748,33 +1770,52 @@ else
 			}
 			// Action column
 			print '<td class="liste_titre" align="middle">';
-			$searchpitco=$form->showFilterAndCheckAddButtons(0, 'checkforselect', 1);
-			print $searchpitco;
+			$searchpicto=$form->showFilterAndCheckAddButtons(0, 'checkforselect', 1);
+			print $searchpicto;
 			print '</td>';
 			print "</tr>\n";
 
-
+			print '<tr class="liste_titre">';
+			print_liste_field_titre($langs->trans("Ref"),$_SERVER['PHP_SELF'],"f.titre","",$param,"",$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER['PHP_SELF'],"s.nom","",$param,"",$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("AmountHT"),$_SERVER['PHP_SELF'],"f.total","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("AmountVAT"),$_SERVER['PHP_SELF'],"f.tva","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER['PHP_SELF'],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("RecurringInvoiceTemplate"),$_SERVER['PHP_SELF'],"f.frequency","",$param,'align="center"',$sortfield,$sortorder);
+			if (! empty($arrayfields['f.nb_gen_done']['checked']))
+			{
+    			print_liste_field_titre($langs->trans("NbOfGenerationDone"),$_SERVER['PHP_SELF'],"f.nb_gen_done","",$param,'align="center"',$sortfield,$sortorder);
+			}
+			print_liste_field_titre($langs->trans("DateLastGeneration"),$_SERVER['PHP_SELF'],"f.date_last_gen","",$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("NextDateToExecution"),$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre('');		// Field may contains ling text
+			print "</tr>\n";
+			
+			
 			if ($num > 0)
 			{
 				$var=true;
 				while ($i < min($num,$limit))
 				{
 					$objp = $db->fetch_object($resql);
-					$var=!$var;
 
-					print "<tr ".$bc[$var].">";
+					print '<tr class="oddeven">';
 
 					print '<td><a href="'.$_SERVER['PHP_SELF'].'?id='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
 					print "</a></td>\n";
 
 					$companystatic->id=$objp->socid;
 					$companystatic->name=$objp->name;
-					print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
+					print '<td class="tdoverflowmax200">'.$companystatic->getNomUrl(1,'customer').'</td>';
 
 					print '<td align="right">'.price($objp->total).'</td>'."\n";
 					print '<td align="right">'.price($objp->total_vat).'</td>'."\n";
 					print '<td align="right">'.price($objp->total_ttc).'</td>'."\n";
 					print '<td align="center">'.yn($objp->frequency?1:0).'</td>';
+					if (! empty($arrayfields['f.nb_gen_done']['checked']))
+					{
+					    print '<td align="center">'.($objp->frequency ? $objp->nb_gen_done.($objp->nb_gen_max>0?' / '. $objp->nb_gen_max:'') : '').'</td>';
+					}
 					print '<td align="center">'.($objp->frequency ? dol_print_date($objp->date_last_gen,'day') : '').'</td>';
 					print '<td align="center">'.($objp->frequency ? dol_print_date($objp->date_when,'day') : '').'</td>';
 
@@ -1783,7 +1824,7 @@ else
 					{
 				        if (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today)
 				        {
-                            print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
+                            print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
                             print $langs->trans("CreateBill").'</a>';
 				        }
 				        else

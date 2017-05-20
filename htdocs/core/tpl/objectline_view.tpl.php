@@ -36,7 +36,7 @@
  * $type, $text, $description, $line
  */
 
-global $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins, $outputalsopricetotalwithtax;
+global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 $usemargins=0;
 if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
@@ -46,7 +46,7 @@ if (empty($forceall)) $forceall=0;
 if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
-if (empty($usemargins)) $usemargins=0;
+
 ?>
 <?php $coldisplay=0; ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
@@ -54,7 +54,7 @@ if (empty($usemargins)) $usemargins=0;
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
-	<td class="linecoldescription"><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
+	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
 	<?php 
 	if (($line->info_bits & 2) == 2) {
 	?>
@@ -63,6 +63,7 @@ if (empty($usemargins)) $usemargins=0;
 		$txt='';
 		print img_object($langs->trans("ShowReduc"),'reduc').' ';
 		if ($line->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
+		elseif ($line->description == '(EXCESS RECEIVED)') $txt=$langs->trans("ExcessReceived");
 		//else $txt=$langs->trans("Discount");
 		print $txt;
 		?>
@@ -70,19 +71,26 @@ if (empty($usemargins)) $usemargins=0;
 		<?php
 		if ($line->description)
 		{
-			if ($line->description == '(CREDIT_NOTE)' && $objp->fk_remise_except > 0)
+			if ($line->description == '(CREDIT_NOTE)' && $line->fk_remise_except > 0)
 			{
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
 				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
 			}
-			elseif ($line->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
+			elseif ($line->description == '(DEPOSIT)' && $line->fk_remise_except > 0)
 			{
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
 				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
 				// Add date of deposit
-				if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
+				if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) 
+				    echo ' ('.dol_print_date($discount->datec).')';
+			}
+			elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0)
+			{
+				$discount=new DiscountAbsolute($this->db);
+				$discount->fetch($line->fk_remise_except);
+				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
 			}
 			else
 			{
@@ -133,7 +141,7 @@ if (empty($usemargins)) $usemargins=0;
 	<?php } 
 	// VAT Rate
 	?>
-	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''),'%',$line->info_bits); ?></td>
+	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits); ?></td>
 
 	<td align="right" class="linecoluht nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
 	
@@ -186,7 +194,10 @@ if (empty($usemargins)) $usemargins=0;
   	{
 		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
   		?>
+  		
+  	<?php if (!empty($user->rights->margins->creer)) { ?>
   	<td align="right" class="linecolmargin1 nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
+  	<?php } ?>
   	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) { ?>
   	  <td align="right" class="linecolmargin2 nowrap margininfos"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
   	<?php }

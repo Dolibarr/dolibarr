@@ -23,12 +23,12 @@ include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
-if (!empty($_SESSION["CASHDESK_ID_THIRDPARTY"]))
+/*if (!empty($_SESSION["CASHDESK_ID_THIRDPARTY"]))
 {
 	$company=new Societe($db);
 	$company->fetch($_SESSION["CASHDESK_ID_THIRDPARTY"]);
 	$companyLink = $company->getNomUrl(1);
-}
+}*/
 if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"]))
 {
 	$bankcash=new Account($db);
@@ -59,6 +59,7 @@ if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && ! empty($conf->stock->enabled)
 $langs->load("cashdesk");
 $langs->load("main");
 
+print "\n".'<!-- menu.tpl.php -->'."\n";
 print '<div class="menu_bloc">';
 print '<ul class="menu">';
 // Link to new sell
@@ -68,7 +69,13 @@ print '<li class="menu_choix2"><a href=".." target="backoffice"><span class="hid
 // Disconnect
 print '<li class="menu_choix0">'.$langs->trans("User").': '.$_SESSION['firstname'].' '.$_SESSION['lastname'];
 print ' <a href="deconnexion.php">'.img_picto($langs->trans('Logout'), 'logout.png').'</a><br>';
-print $langs->trans("CashDeskThirdParty").': '.$companyLink.'<br>';
+print '<form id="frmThirdparty" class="formulaire1 inline-block" method="post" action="facturation_verif.php?action=change_thirdparty">';
+print $langs->trans("CashDeskThirdParty").': ';
+print $form->select_company($_SESSION["CASHDESK_ID_THIRDPARTY"], 'CASHDESK_ID_THIRDPARTY', 's.client IN (1,3)', '', 0, 0, null, 0, 'valignmiddle inline-block');
+print '<input class="button bouton_change_thirdparty inline-block valignmiddle" type="submit" id="bouton_change_thirdparty" value="'.$langs->trans("Modify").'">';
+//print $companyLink;
+print '<br>';
+print '</form>';
 /*print $langs->trans("CashDeskBankCash").': '.$bankcashLink.'<br>';
 print $langs->trans("CashDeskBankCB").': '.$bankcbLink.'<br>';
 print $langs->trans("CashDeskBankCheque").': '.$bankchequeLink.'<br>';*/
@@ -78,3 +85,4 @@ if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && ! empty($conf->stock->enabled)
 }
 print '</li></ul>';
 print '</div>';
+print "\n".'<!-- menu.tpl.php end -->'."\n";

@@ -53,7 +53,7 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 
 	if (empty($noout)) print_start_menu_array_auguria();
 
-	$usemenuhider = (GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER));
+	$usemenuhider = (GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER));
 	
 	// Show/Hide vertical menu
 	if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
@@ -103,6 +103,14 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 			$url=preg_replace('/__USERID__/',$user->id,$url);
 			$shorturl=preg_replace('/__USERID__/',$user->id,$shorturl);
 
+			// TODO Find a generic solution
+			if (preg_match('/search_project_user=__search_project_user__/', $shorturl))
+			{
+			    $search_project_user = GETPOST('search_project_user','int');
+			    if ($search_project_user) $shorturl=preg_replace('/search_project_user=__search_project_user__/', 'search_project_user='.$search_project_user, $shorturl);
+			    else $shorturl=preg_replace('/search_project_user=__search_project_user__/', '', $shorturl);
+			}
+			
 			// Define the class (top menu selected or not)
 			if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
 			else if (! empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname='class="tmenusel"';
@@ -248,7 +256,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 	$mainmenu=($forcemainmenu?$forcemainmenu:$_SESSION["mainmenu"]);
 	$leftmenu=($forceleftmenu?'':(empty($_SESSION["leftmenu"])?'none':$_SESSION["leftmenu"]));
 
-	$usemenuhider = (GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER));
+	$usemenuhider = (GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER));
 	global $usemenuhider;
 	
 	// Show logo company
@@ -257,7 +265,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
 		if (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 		{
-			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_mini);
+			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('thumbs/'.$mysoc->logo_mini);
 		}
 		else
 		{
@@ -269,7 +277,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		print '<div class="menu_titre" id="menu_titre_logo"></div>';
 		print '<div class="menu_top" id="menu_top_logo"></div>';
 		print '<div class="menu_contenu" id="menu_contenu_logo">';
-		print '<div class="center"><img title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 80%"></div>'."\n";
+		print '<div class="center"><img title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 70%"></div>'."\n";
 		print '</div>';
 		print '<div class="menu_end" id="menu_end_logo"></div>';
 		print '</div>'."\n";
@@ -323,7 +331,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 
 	if (! empty($conf->accounting->enabled) && !empty($user->rights->accounting->mouvements->lire) && $mainmenu == 'accountancy') 	// Entry in accountancy journal for each bank account
 	{
-		$newmenu->add('',$langs->trans("Journaux"),0,$user->rights->accounting->comptarapport->lire,'','accountancy','accounting');
+		$newmenu->add('',$langs->trans("Journalization"),0,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy');
 
 		$sql = "SELECT rowid, label, accountancy_journal";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
@@ -341,7 +349,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 			while ($i < $numr)
 			{
 				$objp = $db->fetch_object($resql);
-				$newmenu->add('/accountancy/journal/bankjournal.php?id_account='.$objp->rowid,$langs->trans("Journal").' - '.$objp->label,1,$user->rights->accounting->comptarapport->lire,'','accountancy','accounting');
+				$newmenu->add('/accountancy/journal/bankjournal.php?id_account='.$objp->rowid, $langs->trans("Journal").' - '.$objp->label, 1, $user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
 				$i++;
 			}
 		}
@@ -349,9 +357,9 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		$db->free($resql);
 
 		// Add other journal
-		$newmenu->add("/accountancy/journal/sellsjournal.php?leftmenu=journal",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire);
-		$newmenu->add("/accountancy/journal/purchasesjournal.php?leftmenu=journal",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire);
-		$newmenu->add("/accountancy/journal/expensereportsjournal.php?leftmenu=journal",$langs->trans("ExpenseReportsJournal"),1,$user->rights->accounting->comptarapport->lire);
+		$newmenu->add("/accountancy/journal/sellsjournal.php?leftmenu=journal",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
+		$newmenu->add("/accountancy/journal/purchasesjournal.php?leftmenu=journal",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
+		$newmenu->add("/accountancy/journal/expensereportsjournal.php?leftmenu=journal",$langs->trans("ExpenseReportsJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
 	}
 
 	if ($conf->ftp->enabled && $mainmenu == 'ftp')	// Entry for FTP
