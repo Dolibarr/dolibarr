@@ -536,7 +536,7 @@ if ($resql)
     $param='&socid='.$socid;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($sall)				 $param.='&sall='.$sall;
+	if ($sall)				 $param.='&sall='.urlencode($sall);
     if ($day)                $param.='&day='.urlencode($day);
     if ($month)              $param.='&month='.urlencode($month);
     if ($year)               $param.='&year=' .urlencode($year);
@@ -760,14 +760,14 @@ if ($resql)
     // Filters lines
     print '<tr class="liste_titre_filter">';
 	// Ref
-	if (! empty($arrayfields['f.facnumber']['checked'])) 
+	if (! empty($arrayfields['f.facnumber']['checked']))
 	{
         print '<td class="liste_titre" align="left">';
         print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
         print '</td>';
 	}
 	// Ref customer
-	if (! empty($arrayfields['f.ref_client']['checked'])) 
+	if (! empty($arrayfields['f.ref_client']['checked']))
 	{
     	print '<td class="liste_titre">';
     	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.dol_escape_htmltag($search_refcustomer).'">';
@@ -805,6 +805,11 @@ if ($resql)
         $formother->select_year($year_lim?$year_lim:-1,'year_lim',1, 20, 5);
     	print '<br><input type="checkbox" name="option" value="late"'.($option == 'late'?' checked':'').'> '.$langs->trans("Late");
         print '</td>';
+	}
+	// Project
+	if (! empty($arrayfields['p.ref']['checked']))
+	{
+	    print '<td class="liste_titre" align="left"><input class="flat" type="text" size="6" name="search_project" value="'.$search_project.'"></td>';
 	}
 	// Thirpdarty
 	if (! empty($arrayfields['s.nom']['checked'])) 
@@ -1016,7 +1021,7 @@ if ($resql)
     
                 print '<td class="nobordernopadding nowrap">';
                 print $facturestatic->getNomUrl(1,'',200,0,'',0,1);
-                print $obj->increment;
+                print empty($obj->increment)?'':' ('.$obj->increment.')';
                 print '</td>';
     
                 print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
@@ -1071,6 +1076,20 @@ if ($resql)
     		    if (! $i) $totalarray['nbfield']++;
     		}
 
+            // Project
+    		if (! empty($arrayfields['p.ref']['checked']))
+    		{
+    		    print '<td class="nowrap">';
+    		    if ($obj->project_id > 0)
+    		    {
+	    		    $projectstatic->id=$obj->project_id;
+    			    $projectstatic->ref=$obj->project_ref;
+    			    print $projectstatic->getNomUrl(1);
+    		    }
+    		    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+    		}
+    		
     		// Third party
     		if (! empty($arrayfields['s.nom']['checked']))
     		{
@@ -1295,15 +1314,13 @@ if ($resql)
 	print $hookmanager->resPrint;
     
 	print "</table>\n";
-    print "</div>";
+    print '</div>';
     
     print "</form>\n";
     
     if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
     {
-        /*
-         * Show list of available documents
-         */
+        // Show list of available documents
         $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
         $urlsource.=str_replace('&amp;','&',$param);
         
