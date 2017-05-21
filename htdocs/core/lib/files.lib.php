@@ -1572,8 +1572,6 @@ function dol_convert_file($fileinput,$ext='png',$fileoutput='')
  */
 function dol_compress_file($inputfile, $outputfile, $mode="gz")
 {
-    global $conf;
-    
     $foundhandler=0;
 
     try
@@ -1627,7 +1625,7 @@ function dol_compress_file($inputfile, $outputfile, $mode="gz")
  */
 function dol_uncompress($inputfile,$outputdir)
 {
-    global $conf, $langs;
+    global $langs;
 
     if (defined('ODTPHP_PATHTOPCLZIP'))
     {
