@@ -848,8 +848,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         $resql=$this->db->query($sql);
         if (! $resql) $err++;
 
-        $note=json_encode(array('authorid'=>$user->id, 'ip'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])));
-        
+        $note=json_encode(array('authorid'=>(is_object($user)?$user->id:0), 'ip'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])));
+
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name, value, visible, entity, note) VALUES";
         $sql.= " (".$this->db->encrypt($this->const_name,1);
         $sql.= ", ".$this->db->encrypt('1',1);
