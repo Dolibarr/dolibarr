@@ -698,6 +698,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     $sortfield = GETPOST("sortfield",'alpha');
     $sortorder = GETPOST("sortorder",'alpha');
+    $page = GETPOST('page','int');
     $search_status		= GETPOST("search_status",'int');
     if ($search_status=='') $search_status=1; // always display activ customer first
     $search_name = GETPOST("search_name",'alpha');
@@ -733,7 +734,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<input type="hidden" name="socid" value="'.$object->id.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-
+    print '<input type="hidden" name="page" value="'.$page.'">';
+    
     print "\n".'<table class="noborder" width="100%">'."\n";
 
     $param="socid=".$object->id;

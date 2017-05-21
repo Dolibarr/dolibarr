@@ -707,7 +707,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		else print '<input type="hidden" name="action" value="list">';
 	    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-		
+	    print '<input type="hidden" name="page" value="'.$page.'">';
+	     
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="projectid" value="'.$projectidforalltimes.'">';
 		print '<input type="hidden" name="withproject" value="'.$withproject.'">';

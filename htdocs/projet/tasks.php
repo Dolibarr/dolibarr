@@ -468,6 +468,7 @@ else if ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	
 	$title=$langs->trans("ListOfTasks");

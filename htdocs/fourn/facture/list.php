@@ -453,6 +453,7 @@ if ($resql)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';

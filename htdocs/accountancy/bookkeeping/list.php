@@ -355,6 +355,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 
 $button = '<a class="butAction" name="button_export_csv" href="'.$_SERVER["PHP_SELF"].'?action=export_csv'.($param?'&'.$param:'').'">';
 if (count($filter)) $button.= $langs->trans("ExportFilteredList");

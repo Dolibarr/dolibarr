@@ -324,6 +324,7 @@ if ($resql)
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
     $nav='';
     if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

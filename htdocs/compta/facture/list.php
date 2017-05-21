@@ -433,7 +433,7 @@ if ($search_status != '' && $search_status >= 0)
     if ($search_status == '2') $sql.=" AND f.fk_statut = 2";  // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
     if ($search_status == '3') $sql.=" AND f.fk_statut = 3";  // abandonned
 }
-if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
+if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode;
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
@@ -454,7 +454,7 @@ if ($month_lim > 0)
 	else if ($year_lim > 0 && ! empty($day_lim))
 		$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_lim, $day_lim, $year_lim))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month_lim, $day_lim, $year_lim))."'";
 	else
-		$sql.= " AND date_format(f.date_lim_reglement, '%m') = '".$month_lim."'";
+		$sql.= " AND date_format(f.date_lim_reglement, '%m') = '".$db->escape($month_lim)."'";
 }
 else if ($year_lim > 0)
 {
@@ -600,6 +600,7 @@ if ($resql)
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);

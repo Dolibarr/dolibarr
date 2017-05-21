@@ -141,7 +141,8 @@ if ($result)
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-
+    print '<input type="hidden" name="page" value="'.$page.'">';
+    
 	print_barre_liste($langs->trans("VariousPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 	
     print '<div class="div-table-responsive">';

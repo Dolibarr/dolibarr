@@ -429,6 +429,7 @@ else
 		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+        print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="type" value="'.$type.'">';
 
 	    print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_products.png', 0, '', '', $limit);

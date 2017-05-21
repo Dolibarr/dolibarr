@@ -578,6 +578,7 @@ if ($resql)
 	print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
 	print '<input type="hidden" name="ref" value="'.$ref.'">';
 	if (GETPOST('bid')) print '<input type="hidden" name="bid" value="'.GETPOST("bid").'">';

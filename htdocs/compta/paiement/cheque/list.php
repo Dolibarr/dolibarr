@@ -138,6 +138,7 @@ if ($resql)
 	print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
 	
 	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_bank.png', '', '', $limit);
 	

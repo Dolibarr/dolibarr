@@ -428,6 +428,7 @@ if ($object->fetch($id) >= 0)
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+        print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 		$cleartext='';
@@ -443,6 +444,7 @@ if ($object->fetch($id) >= 0)
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+        print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="limit" value="'.$limit.'">';
 		
