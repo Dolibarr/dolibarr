@@ -657,6 +657,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
  * @param   string	$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
  * @param   integer	$newmask            Mask in octal string for new file (0 by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
+ * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
  * @return  boolean 		            True if OK, false if KO
  * @see dol_move_uploaded_file
  */
@@ -1698,7 +1699,7 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta
  * @param	string	$entity				Restrict onto entity (0=no restriction)
  * @param  	User	$fuser				User object (forced)
  * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided)
- * @param   string  $more               Check permission for 'read' or 'write'               
+ * @param   string  $mode               Check permission for 'read' or 'write'               
  * @return	mixed						Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
  * @see restrictedArea
  */
