@@ -158,6 +158,10 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject2, 'last');
 		print __METHOD__." result=".$result."\n";
+
+		$out=file_get_contents(DOL_DATA_ROOT.'/dolibarr.log');
+		print $out;
+		
 		$this->assertEquals('1915-0001', $result, "Test to get last value with param 'last'");
 		$result=$numbering->getNextValue($mysoc, $localobject2);
 		$result2=$localobject2->create($user,1);
