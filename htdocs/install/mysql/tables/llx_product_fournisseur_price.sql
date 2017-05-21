@@ -3,6 +3,7 @@
 -- Copyright (C) 2009-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
 -- Copyright (C) 2009-2013	Regis Houssin			<regis.houssin@capnetworks.com>
 -- Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
+-- Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,33 +22,34 @@
 
 create table llx_product_fournisseur_price
 (
-  rowid					integer AUTO_INCREMENT PRIMARY KEY,
-  entity				integer DEFAULT 1 NOT NULL,	   -- multi company id
-  datec					datetime,
-  tms					timestamp,
-  fk_product			integer,
-  fk_soc				integer,
-  ref_fourn				varchar(30),
-  fk_availability		integer,	   
-  price					double(24,8) DEFAULT 0,
-  quantity				double,
-  remise_percent		double NOT NULL DEFAULT 0,
-  remise				double NOT NULL DEFAULT 0,
-  unitprice				double(24,8) DEFAULT 0,
-  charges				double(24,8) DEFAULT 0,		-- to store transport cost. Constant PRODUCT_CHARGES must be set to see it.
-  unitcharges			double(24,8) DEFAULT 0,		-- deprecated
-  default_vat_code	    varchar(10),
-  tva_tx				double(6,3) NOT NULL,
-  info_bits				integer NOT NULL DEFAULT 0,
-  fk_user				integer,
-  fk_supplier_price_expression	integer,            -- Link to the rule for dynamic price calculation
-  import_key			varchar(14),                -- Import key
-  delivery_time_days    integer,
-  supplier_reputation varchar(10),
-  
-  fk_multicurrency		integer,
-  multicurrency_code	varchar(255),
-  multicurrency_tx			double(24,8) DEFAULT 1,
-  multicurrency_price	double(24,8) DEFAULT NULL,
-  multicurrency_price_ttc	double(24,8) DEFAULT NULL
+  rowid							integer AUTO_INCREMENT PRIMARY KEY,
+  entity						integer DEFAULT 1 NOT NULL,		-- multi company id
+  datec							datetime,
+  tms							timestamp,
+  fk_product					integer,
+  fk_soc						integer,
+  ref_fourn						varchar(30),
+  fk_availability				integer,   
+  price							double(24,8) DEFAULT 0,
+  quantity						double,
+  remise_percent				double NOT NULL DEFAULT 0,
+  remise						double NOT NULL DEFAULT 0,
+  unitprice						double(24,8) DEFAULT 0,
+  charges						double(24,8) DEFAULT 0,			-- to store transport cost. Constant PRODUCT_CHARGES must be set to see it.
+  unitcharges					double(24,8) DEFAULT 0,			-- deprecated
+  default_vat_code				varchar(10),
+  tva_tx						double(6,3) NOT NULL,
+  vat_deductibility_rate		double NOT NULL DEFAULT 100,
+  info_bits						integer NOT NULL DEFAULT 0,
+  fk_user						integer,
+  fk_supplier_price_expression	integer,						-- Link to the rule for dynamic price calculation
+  import_key					varchar(14),					-- Import key
+  delivery_time_days			integer,
+  supplier_reputation			varchar(10),
+
+  fk_multicurrency				integer,
+  multicurrency_code			varchar(255),
+  multicurrency_tx				double(24,8) DEFAULT 1,
+  multicurrency_price			double(24,8) DEFAULT NULL,
+  multicurrency_price_ttc		double(24,8) DEFAULT NULL
 )ENGINE=innodb;

@@ -120,6 +120,7 @@ ProductSpecial=Special
 QtyMin=Minimum Qty
 PriceQtyMin=Price for this min. qty (w/o discount)
 VATRateForSupplierProduct=VAT Rate (for this supplier/product)
+VATDeductibilityRate=VAT deductbility rate
 DiscountQtyMin=Default discount for qty
 NoPriceDefinedForThisSupplier=No price/qty defined for this supplier/product
 NoSupplierPriceDefinedForThisProduct=No supplier price/qty defined for this product

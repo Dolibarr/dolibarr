@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -139,6 +139,7 @@ if (empty($reshook))
 		$npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
 		$tva_tx = str_replace('*','', GETPOST('tva_tx','alpha'));
 		$tva_tx = price2num($tva_tx);
+		$vat_deductibility_rate=price2num(GETPOST('vat_deductibility_rate','alpha'));
 		$price_expression = GETPOST('eid', 'int') ? GETPOST('eid', 'int') : ''; // Discard expression if not in expression mode
 		$delivery_time_days = GETPOST('delivery_time_days', 'int') ? GETPOST('delivery_time_days', 'int') : '';
 		$supplier_reputation = GETPOST('supplier_reputation');
@@ -217,7 +218,7 @@ if (empty($reshook))
 				if (isset($_POST['ref_fourn_price_id']))
 					$object->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
 
-				$ret=$object->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation);
+				$ret=$object->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $vat_deductibility_rate, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation);
 				if ($ret < 0)
 				{
 
@@ -269,7 +270,7 @@ if (empty($reshook))
 
 
 /*
- * view
+ * View
  */
 
 $title = $langs->trans('ProductServiceCard');
@@ -329,7 +330,6 @@ if ($id > 0 || $ref)
             print '</td></tr>';
 
 			// Cost price. Can be used for margin module for option "calculate margin on explicit cost price
-            // Accountancy sell code
             print '<tr><td>';
 			$textdesc =$langs->trans("CostPriceDescription");
 			$textdesc.="<br>".$langs->trans("CostPriceUsage");
@@ -505,6 +505,12 @@ if ($id > 0 || $ref)
 					</script>';
 				}
 
+				// VAT deductibility rate
+				print '<tr><td>'.$langs->trans("VATDeductibilityRate").'</td>';
+				print '<td><input class="flat" name="vat_deductibility_rate" size="4" value="'.(GETPOST('vat_deductibility_rate')?vatrate(GETPOST('vat_deductibility_rate')):(isset($object->fourn_vat_deductibility)?vatrate($object->fourn_vat_deductibility):'100')).'"> %';
+				print '</td>';
+				print '</tr>';
+
 				// Price qty min
 				print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
 				print '<td><input class="flat" name="price" size="8" value="'.(GETPOST('price')?price(GETPOST('price')):(isset($object->fourn_price)?price($object->fourn_price):'')).'">';
@@ -588,11 +594,11 @@ if ($id > 0 || $ref)
 				$product_fourn = new ProductFournisseur($db);
 				$product_fourn_list = $product_fourn->list_product_fournisseur_price($object->id, $sortfield, $sortorder);
 				$nbtotalofrecords = count($product_fourn_list);
-			    print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($product_fourn_list), $nbtotalofrecords, 'title_accountancy.png');
-			     
+				print_barre_liste($langs->trans("SupplierPrices"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', count($product_fourn_list), $nbtotalofrecords, 'title_accountancy.png');
+
 				// Suppliers list title
-			    print '<div class="div-table-responsive">';
-			    print '<table class="noborder" width="100%">';
+				print '<div class="div-table-responsive">';
+				print '<table class="noborder" width="100%">';
 				if ($object->isProduct()) $nblignefour=4;
 				else $nblignefour=4;
 
@@ -603,12 +609,13 @@ if ($id > 0 || $ref)
 				if (!empty($conf->global->FOURN_PRODUCT_AVAILABILITY)) print_liste_field_titre($langs->trans("Availability"),$_SERVER["PHP_SELF"],"pfp.fk_availability","",$param,"",$sortfield,$sortorder);
 				print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"],"pfp.quantity","",$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre($langs->trans("VATRate"),$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
+				print_liste_field_titre($langs->trans("VATDeductibilityRate"),$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre($langs->trans("PriceQtyMinHT"),$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre($langs->trans("DiscountQtyMin"),$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre($langs->trans("NbDaysToDelivery"),$_SERVER["PHP_SELF"],"pfp.delivery_time_days","",$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre($langs->trans("ReputationForThisProduct"),$_SERVER["PHP_SELF"],"pfp.supplier_reputation","",$param,'align="center"',$sortfield,$sortorder);
-				
+
 				// Charges ????
 				if ($conf->global->PRODUCT_CHARGES)
 				{
@@ -623,13 +630,11 @@ if ($id > 0 || $ref)
 
 					foreach($product_fourn_list as $productfourn)
 					{
-						
-
 						print '<tr class="oddeven">';
 
 						// Supplier
 						print '<td>'.$productfourn->getSocNomUrl(1,'supplier').'</td>';
-						
+
 						// Supplier
 						print '<td align="left">'.$productfourn->fourn_ref.'</td>';
 
@@ -649,6 +654,11 @@ if ($id > 0 || $ref)
 						// VAT rate
 						print '<td align="right">';
 						print vatrate($productfourn->fourn_tva_tx,true);
+						print '</td>';
+
+						// VAT deductibility rate
+						print '<td align="right">';
+						print price2num($productfourn->fourn_vat_deductibility).'%';
 						print '</td>';
 
 						// Price for the quantity

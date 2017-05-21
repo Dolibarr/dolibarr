@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2014	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2015		Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2016		Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2014	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2016		Charlie Benke			<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -173,23 +173,24 @@ class ProductFournisseur extends Product
     /**
      *    Modify the purchase price for a supplier
      *
-     *    @param  	int			$qty				Min quantity for which price is valid
-     *    @param  	float		$buyprice			Purchase price for the quantity min
-     *    @param  	User		$user				Object user user made changes
-     *    @param  	string		$price_base_type	HT or TTC
-     *    @param  	Societe		$fourn				Supplier
-     *    @param  	int			$availability		Product availability
-     *    @param	string		$ref_fourn			Supplier ref
-     *    @param	float		$tva_tx				VAT rate
-     *    @param  	string		$charges			costs affering to product
-	 *    @param  	float		$remise_percent		Discount  regarding qty (percent)
-	 *    @param  	float		$remise				Discount  regarding qty (amount)
-	 *    @param  	int			$newnpr				Set NPR or not
-	 *    @param	int			$delivery_time_days	Delay in days for delivery (max). May be '' if not defined.
-	 * 	  @param    string      $supplier_reputation Reputation with this product to the defined supplier (empty, FAVORITE, DONOTORDER)
-     *    @return	int								<0 if KO, >=0 if OK
+     *    @param  	int			$qty					Min quantity for which price is valid
+     *    @param  	float		$buyprice				Purchase price for the quantity min
+     *    @param  	User		$user					Object user user made changes
+     *    @param  	string		$price_base_type		HT or TTC
+     *    @param  	Societe		$fourn					Supplier
+     *    @param  	int			$availability			Product availability
+     *    @param	string		$ref_fourn				Supplier ref
+     *    @param	float		$tva_tx					VAT rate
+     *    @param	float		$vat_deductibility_rate	VAT deductibility rate
+     *    @param  	string		$charges				costs affering to product
+	 *    @param  	float		$remise_percent			Discount  regarding qty (percent)
+	 *    @param  	float		$remise					Discount  regarding qty (amount)
+	 *    @param  	int			$newnpr					Set NPR or not
+	 *    @param	int			$delivery_time_days		Delay in days for delivery (max). May be '' if not defined.
+	 * 	  @param    string      $supplier_reputation 	Reputation with this product to the defined supplier (empty, FAVORITE, DONOTORDER)
+     *    @return	int									<0 if KO, >=0 if OK
      */
-    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0, $supplier_reputation='')
+    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $vat_deductibility_rate, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0, $supplier_reputation='')
     {
         global $conf, $langs;
         //global $mysoc;
@@ -200,6 +201,7 @@ class ProductFournisseur extends Product
         if (empty($charges)) $charges=0;
         if (empty($availability)) $availability=0;
         if (empty($remise_percent)) $remise_percent=0;
+		if (empty($vat_deductibility_rate)) $vat_deductibility_rate=100;
 	    if (empty($supplier_reputation) || $supplier_reputation == -1) $supplier_reputation='';
         if ($delivery_time_days != '' && ! is_numeric($delivery_time_days)) $delivery_time_days = '';
         if ($price_base_type == 'TTC')
@@ -231,6 +233,7 @@ class ProductFournisseur extends Product
 			$sql.= " unitprice = ".$unitBuyPrice.",";
 			$sql.= " unitcharges = ".$unitCharges.",";   // deprecated
 			$sql.= " tva_tx = ".$tva_tx.",";
+			$sql.= " vat_deductibility_rate = ".$vat_deductibility_rate.",";
 			$sql.= " fk_availability = ".$availability.",";
 			$sql.= " entity = ".$conf->entity.",";
 			$sql.= " info_bits = ".$newnpr.",";
@@ -279,7 +282,7 @@ class ProductFournisseur extends Product
             if ($resql) {
                 // Add price for this quantity to supplier
                 $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price(";
-                $sql .= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, unitcharges, fk_availability, info_bits, entity, delivery_time_days,supplier_reputation)";
+                $sql .= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, vat_deductibility_rate, charges, unitcharges, fk_availability, info_bits, entity, delivery_time_days,supplier_reputation)";
                 $sql .= " values('" . $this->db->idate($now) . "',";
                 $sql .= " " . $this->id . ",";
                 $sql .= " " . $fourn->id . ",";
@@ -291,6 +294,7 @@ class ProductFournisseur extends Product
                 $sql .= " " . $remise . ",";
                 $sql .= " " . $unitBuyPrice . ",";
                 $sql .= " " . $tva_tx . ",";
+				$sql .= " " . $vat_deductibility_rate . ",";
                 $sql .= " " . $charges . ",";
                 $sql .= " " . $unitCharges . ",";
                 $sql .= " " . $availability . ",";
@@ -364,7 +368,7 @@ class ProductFournisseur extends Product
     function fetch_product_fournisseur_price($rowid, $ignore_expression = 0)
     {
         global $conf;
-        $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability,";
+        $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.vat_deductibility_rate, pfp.fk_availability,";
         $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.unitcharges, pfp.fk_supplier_price_expression, pfp.delivery_time_days,"; // , pfp.recuperableonly as fourn_tva_npr";  FIXME this field not exist in llx_product_fournisseur_price
         $sql.=" pfp.supplier_reputation";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
@@ -392,6 +396,7 @@ class ProductFournisseur extends Product
             	$this->fourn_unitprice          = $obj->unitprice;
             	$this->fourn_unitcharges        = $obj->unitcharges;	// deprecated
             	$this->fourn_tva_tx				= $obj->tva_tx;
+            	$this->fourn_vat_deductibility	= $obj->vat_deductibility_rate;
             	//$this->fourn_tva_npr			= $obj->fourn_tva_npr; // TODO this field not exist in llx_product_fournisseur_price. We should add it ?
             	$this->fk_availability			= $obj->fk_availability;
 				$this->delivery_time_days		= $obj->delivery_time_days;
@@ -445,7 +450,7 @@ class ProductFournisseur extends Product
 
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
         $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
-        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.unitcharges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation";
+        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.vat_deductibility_rate, pfp.fk_availability, pfp.charges, pfp.unitcharges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE pfp.entity IN (".getEntity('productprice', 1).")";
@@ -478,6 +483,7 @@ class ProductFournisseur extends Product
 				$prodfourn->fourn_charges           = $record["charges"];		// deprecated
 				$prodfourn->fourn_unitcharges       = $record["unitcharges"];	// deprecated
                 $prodfourn->fourn_tva_tx			= $record["tva_tx"];
+                $prodfourn->fourn_vat_deductibility	= $record["vat_deductibility_rate"];
                 $prodfourn->fourn_id				= $record["fourn_id"];
                 $prodfourn->fourn_name				= $record["supplier_name"];
                 $prodfourn->fk_availability			= $record["fk_availability"];
@@ -545,6 +551,7 @@ class ProductFournisseur extends Product
         $this->fourn_price            = '';
         $this->fourn_qty              = '';
         $this->fourn_remise_percent   = '';
+        $this->fourn_vat_deductibility = '';
         $this->fourn_remise           = '';
         $this->fourn_unitprice        = '';
         $this->fourn_id               = '';
@@ -554,7 +561,7 @@ class ProductFournisseur extends Product
 
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
         $sql.= " pfp.rowid as product_fourn_price_id, pfp.ref_fourn,";
-        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.charges, pfp.unitcharges, ";
+        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.vat_deductibility_rate, pfp.charges, pfp.unitcharges, ";
         $sql.= " pfp.remise, pfp.remise_percent, pfp.fk_supplier_price_expression, pfp.delivery_time_days";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
@@ -624,6 +631,7 @@ class ProductFournisseur extends Product
                         $this->fourn_charges            = $record["charges"];		// deprecated
                         $this->fourn_unitcharges        = $record["unitcharges"];	// deprecated
                         $this->fourn_tva_tx             = $record["tva_tx"];
+                        $this->fourn_vat_deductibility  = $record["vat_deductibility_rate"];
                         $this->fourn_id                 = $record["fourn_id"];
                         $this->fourn_name               = $record["supplier_name"];
 						$this->delivery_time_days		= $record["delivery_time_days"];
