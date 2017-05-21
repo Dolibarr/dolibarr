@@ -144,30 +144,35 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1915);	// we use year 1915 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
-		$result2=$localobject->create($user,1);
-		$result3=$localobject->validate($user, $result);		// create invoice by forcing ref
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('1915-0001', $result, 'Test for {yyyy}-{0000}, 1st invoice');				// counter must start to 1
+		$result2=$localobject->create($user,1);
+		print __METHOD__." result2=".$result."\n";
+		$result3=$localobject->validate($user, $result);		// create invoice by forcing ref
+		print __METHOD__." result3=".$result."\n";
+		$this->assertEquals(1, $result3, 'Test validation of invoice with forced ref is ok');	// counter must start to 1
 		$result=$localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
-		$this->assertEquals(1, $result, 'Test for is_erasable, 1st invoice');						   // Can be deleted
+		$this->assertEquals(1, $result, 'Test for is_erasable, 1st invoice');						    // Can be deleted
 
+		$out=file_get_contents(DOL_DATA_ROOT.'/dolibarr.log');
+		print $out;
+		
 		$localobject2=new Facture($this->savdb);
 		$localobject2->initAsSpecimen();
 		$localobject2->date=dol_mktime(12, 0, 0, 1, 1, 1916);	// we use following year for second invoice (there is no reset into mask)
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject2, 'last');
 		print __METHOD__." result=".$result."\n";
-
-		$out=file_get_contents(DOL_DATA_ROOT.'/dolibarr.log');
-		print $out;
-		
 		$this->assertEquals('1915-0001', $result, "Test to get last value with param 'last'");
 		$result=$numbering->getNextValue($mysoc, $localobject2);
-		$result2=$localobject2->create($user,1);
-		$result3=$localobject2->validate($user, $result);		// create invoice by forcing ref
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('1916-0002', $result);				// counter must be now 2 (not reseted)
+		$result2=$localobject2->create($user,1);
+		print __METHOD__." result2=".$result."\n";
+		$result3=$localobject2->validate($user, $result);		// create invoice by forcing ref
+		print __METHOD__." result3=".$result."\n";
+		$this->assertEquals(1, $result3, 'Test validation of invoice with forced ref is ok');	// counter must start to 1
 		$result=$localobject2->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
 		$this->assertEquals(1, $result);						// Can be deleted
