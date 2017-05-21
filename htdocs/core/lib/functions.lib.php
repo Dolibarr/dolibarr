@@ -615,19 +615,20 @@ function dol_buildpath($path, $type=0)
 }
 
 /**
- *	Create a clone of instance of object (new instance with same properties)
- * 	This function works for both PHP4 and PHP5
+ *	Create a clone of instance of object (new instance with same value for properties)
+ *  Property that are reference are also new object (true clone)
  *
  * 	@param	object	$object		Object to clone
  *	@return object				Object clone
- *  @deprecated Dolibarr no longer supports PHP4, use PHP5 native clone construct
  *  @see https://php.net/manual/language.oop5.cloning.php
  */
 function dol_clone($object)
 {
-	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
+	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
 
-	$myclone = clone $object;
+	//$myclone = clone $object;                    // PHP clone is a shallow copy only, not a real clone, so properties of references will keep references (refer to the same target/variable
+	$myclone=unserialize(serialize($object));
+	    
 	return $myclone;
 }
 
@@ -2469,7 +2470,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 	if ($trunc == 'right')
 	{
 		$newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-		if (dol_strlen($newstring,$stringencoding) > ($size+($nodot?0:1)))
+        if (dol_strlen($newstring,$stringencoding) > ($size+($nodot?0:1)))
 		return dol_substr($newstring,0,$size,$stringencoding).($nodot?'':'...');
 		else
 		return $string;
