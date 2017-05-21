@@ -1572,6 +1572,8 @@ function dol_convert_file($fileinput,$ext='png',$fileoutput='')
  */
 function dol_compress_file($inputfile, $outputfile, $mode="gz")
 {
+    global $conf;
+    
     $foundhandler=0;
 
     try
@@ -1627,10 +1629,10 @@ function dol_uncompress($inputfile,$outputdir)
 {
     global $conf, $langs;
 
-    if (! empty($conf->global->ODTPHP_PATHTOPCLZIP))
+    if (defined('ODTPHP_PATHTOPCLZIP'))
     {
-    	dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".$conf->global->ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
-        include_once $conf->global->ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
+    	dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
+        include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
         $archive = new PclZip($inputfile);
         $result=$archive->extract(PCLZIP_OPT_PATH, $outputdir);
         //var_dump($result);
