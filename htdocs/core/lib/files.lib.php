@@ -648,15 +648,19 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
 
 /**
  * Move a file into another name.
- * This function differs from dol_move_uploaded_file, because it can be called in any context.
+ * Note: 
+ *  - This function differs from dol_move_uploaded_file, because it can be called in any context.
+ *  - Database of files is updated.
+ *  - Test on antivirus is done only if param testvirus is provided and an antivirus was set. 
  *
  * @param	string  $srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
  * @param   string	$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
  * @param   integer	$newmask            Mask in octal string for new file (0 by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @return  boolean 		            True if OK, false if KO
+ * @see dol_move_uploaded_file
  */
-function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
+function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1, $testvirus=0)
 {
     global $user, $db, $conf;
     $result=false;
@@ -675,6 +679,18 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
     {
         $newpathofsrcfile=dol_osencode($srcfile);
         $newpathofdestfile=dol_osencode($destfile);
+
+        // Check virus
+        $testvirusarray=array();
+        if ($testvirus)
+        {
+            $testvirusarray=dolCheckVirus($newpathofsrcfile);
+            if (count($testvirusarray)) 
+            {
+                dol_syslog("files.lib.php::dol_move canceled because a virus was found into source file. we ignore the move request.", LOG_WARNING);
+                return false;
+            }
+        }
 
         $result=@rename($newpathofsrcfile, $newpathofdestfile); // To see errors, remove @
         if (! $result)
@@ -703,9 +719,17 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 
                 dol_syslog("Try to rename also entries in database for full relative path before = ".$rel_filetorenamebefore." after = ".$rel_filetorenameafter, LOG_DEBUG);
                 include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+                
+                $ecmfiletarget=new EcmFiles($db);
+                $resultecmtarget = $ecmfiletarget->fetch(0, '', $rel_filetorenameafter);
+                if ($resultecmtarget > 0)   // An entry for target name already exists for target, we delete it, a new one will be created.
+                {
+                    $ecmfiletarget->delete($user);
+                }
+                
                 $ecmfile=new EcmFiles($db);
-                $result = $ecmfile->fetch(0, '', $rel_filetorenamebefore);
-                if ($result > 0)   // If found
+                $resultecm = $ecmfile->fetch(0, '', $rel_filetorenamebefore);
+                if ($resultecm > 0)   // If an entry was found for src file, we use it to move entry
                 {
                     $filename = basename($rel_filetorenameafter);
                     $rel_dir = dirname($rel_filetorenameafter);
@@ -714,9 +738,9 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
                     
                     $ecmfile->filepath = $rel_dir;
                     $ecmfile->filename = $filename;
-                    $result = $ecmfile->update($user);
+                    $resultecm = $ecmfile->update($user);
                 }
-                elseif ($result == 0)   // If not found
+                elseif ($resultecm == 0)   // If no entry were found for src files, create/update target file
                 {
                     $filename = basename($rel_filetorenameafter);
                     $rel_dir = dirname($rel_filetorenameafter);
@@ -730,16 +754,19 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
                     $ecmfile->gen_or_uploaded = 'unknown';
                     $ecmfile->description = '';    // indexed content
                     $ecmfile->keyword = '';        // keyword content
-                    $result = $ecmfile->create($user);
-                    if ($result < 0)
+                    $resultecm = $ecmfile->create($user);
+                    if ($resultecm < 0)
                     {
                         setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
-                    }                    
+                    }
                 }
-                elseif ($result < 0)
+                elseif ($resultecm < 0)
                 {
                     setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
                 }
+                
+                if ($resultecm > 0) $result=true;
+                else $result = false;
             }        
         }
         
@@ -769,10 +796,41 @@ function dol_unescapefile($filename)
 	return trim(basename($filename), ".\x00..\x20");
 }
 
+
+/**
+ * Check virus into a file
+ * 
+ * @param   string      $src_file       Source file to check
+ * @return  array                       Array of errors or empty array if not virus found
+ */
+function dolCheckVirus($src_file)
+{
+    global $conf;
+    
+    if (! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
+    {
+        if (! class_exists('AntiVir')) {
+            require_once DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
+        }
+        $antivir=new AntiVir($db);
+        $result = $antivir->dol_avscan_file($src_file);
+        if ($result < 0)	// If virus or error, we stop here
+        {
+            $reterrors=$antivir->errors;
+            return $reterrors;
+        }
+    }
+    return array();
+}
+
+
 /**
  *	Make control on an uploaded file from an GUI page and move it to final destination.
  * 	If there is errors (virus found, antivir in error, bad filename), file is not moved.
- *  Note: This function can be used only into a HTML page context. Use dol_move if you are outside.
+ *  Note: 
+ *  - This function can be used only into a HTML page context. Use dol_move if you are outside.
+ *  - Database of files is not updated.
+ *  - Test on antivirus is always done (if antivirus set).
  *
  *	@param	string	$src_file			Source full path filename ($_FILES['field']['tmp_name'])
  *	@param	string	$dest_file			Target full path filename  ($_FILES['field']['name'])
@@ -794,80 +852,78 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 
 	if (empty($nohook))
 	{
-		// If an upload error has been reported
-		if ($uploaderrorcode)
-		{
-			switch($uploaderrorcode)
-			{
-				case UPLOAD_ERR_INI_SIZE:	// 1
-					return 'ErrorFileSizeTooLarge';
-					break;
-				case UPLOAD_ERR_FORM_SIZE:	// 2
-					return 'ErrorFileSizeTooLarge';
-					break;
-				case UPLOAD_ERR_PARTIAL:	// 3
-					return 'ErrorPartialFile';
-					break;
-				case UPLOAD_ERR_NO_TMP_DIR:	//
-					return 'ErrorNoTmpDir';
-					break;
-				case UPLOAD_ERR_CANT_WRITE:
-					return 'ErrorFailedToWriteInDir';
-					break;
-				case UPLOAD_ERR_EXTENSION:
-					return 'ErrorUploadBlockedByAddon';
-					break;
-				default:
-					break;
-			}
-		}
-
-		// If we need to make a virus scan
-		if (empty($disablevirusscan) && file_exists($src_file) && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
-		{
-			if (! class_exists('AntiVir')) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
-			}
-			$antivir=new AntiVir($db);
-			$result = $antivir->dol_avscan_file($src_file);
-			if ($result < 0)	// If virus or error, we stop here
-			{
-				$reterrors=$antivir->errors;
-				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: result='.$result.' errors='.join(',',$antivir->errors), LOG_WARNING);
-				return 'ErrorFileIsInfectedWithAVirus: '.join(',',$reterrors);
-			}
-		}
-
-		// Security:
-		// Disallow file with some extensions. We renamed them.
-		// Car si on a mis le rep documents dans un rep de la racine web (pas bien), cela permet d'executer du code a la demande.
-		if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
-		{
-			$file_name.= '.noexe';
-		}
-
-		// Security:
-		// We refuse cache files/dirs, upload using .. and pipes into filenames.
-		if (preg_match('/^\./',$src_file) || preg_match('/\.\./',$src_file) || preg_match('/[<>|]/',$src_file))
-		{
-			dol_syslog("Refused to deliver file ".$src_file, LOG_WARNING);
-			return -1;
-		}
-
-		// Security:
-		// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans les noms de fichiers.
-		if (preg_match('/^\./',$dest_file) || preg_match('/\.\./',$dest_file) || preg_match('/[<>|]/',$dest_file))
-		{
-			dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
-			return -2;
-		}
-
 		$reshook=$hookmanager->initHooks(array('fileslib'));
 
 		$parameters=array('dest_file' => $dest_file, 'src_file' => $src_file, 'file_name' => $file_name, 'varfiles' => $varfiles, 'allowoverwrite' => $allowoverwrite);
 		$reshook=$hookmanager->executeHooks('moveUploadedFile', $parameters, $object);
 	}
-
+    
+	if (empty($reshook))
+	{
+    	// If an upload error has been reported
+    	if ($uploaderrorcode)
+    	{
+    	    switch($uploaderrorcode)
+    	    {
+    	        case UPLOAD_ERR_INI_SIZE:	// 1
+    	            return 'ErrorFileSizeTooLarge';
+    	            break;
+    	        case UPLOAD_ERR_FORM_SIZE:	// 2
+    	            return 'ErrorFileSizeTooLarge';
+    	            break;
+    	        case UPLOAD_ERR_PARTIAL:	// 3
+    	            return 'ErrorPartialFile';
+    	            break;
+    	        case UPLOAD_ERR_NO_TMP_DIR:	//
+    	            return 'ErrorNoTmpDir';
+    	            break;
+    	        case UPLOAD_ERR_CANT_WRITE:
+    	            return 'ErrorFailedToWriteInDir';
+    	            break;
+    	        case UPLOAD_ERR_EXTENSION:
+    	            return 'ErrorUploadBlockedByAddon';
+    	            break;
+    	        default:
+    	            break;
+    	    }
+    	}
+    	
+    	// If we need to make a virus scan
+    	if (empty($disablevirusscan) && file_exists($src_file))
+    	{
+    	    $checkvirusarray=dolCheckVirus($src_file);
+    	    if (count($checkvirusarray))
+    	    {
+    	       dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: result='.$result.' errors='.join(',',$checkvirusarray), LOG_WARNING);
+    	       return 'ErrorFileIsInfectedWithAVirus: '.join(',',$checkvirusarray);
+    	    }
+    	}
+    	
+    	// Security:
+    	// Disallow file with some extensions. We renamed them.
+    	// Car si on a mis le rep documents dans un rep de la racine web (pas bien), cela permet d'executer du code a la demande.
+    	if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
+    	{
+    	    $file_name.= '.noexe';
+    	}
+    	
+    	// Security:
+    	// We refuse cache files/dirs, upload using .. and pipes into filenames.
+    	if (preg_match('/^\./',$src_file) || preg_match('/\.\./',$src_file) || preg_match('/[<>|]/',$src_file))
+    	{
+    	    dol_syslog("Refused to deliver file ".$src_file, LOG_WARNING);
+    	    return -1;
+    	}
+    	
+    	// Security:
+    	// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans les noms de fichiers.
+    	if (preg_match('/^\./',$dest_file) || preg_match('/\.\./',$dest_file) || preg_match('/[<>|]/',$dest_file))
+    	{
+    	    dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
+    	    return -2;
+    	}
+	}
+	
 	if ($reshook < 0)	// At least one blocking error returned by one hook
 	{
 		$errmsg = join(',', $hookmanager->errors);
