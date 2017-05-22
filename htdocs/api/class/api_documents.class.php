@@ -36,8 +36,7 @@ class Documents extends DolibarrApi
      * @var array   $DOCUMENT_FIELDS     Mandatory fields, checked when create and update object
      */
     static $DOCUMENT_FIELDS = array(
-        'modulepart',
-        'filename'
+        'modulepart'
     );
 
     /**
@@ -49,23 +48,36 @@ class Documents extends DolibarrApi
         $this->db = $db;
     }
 
-
+    
     /**
-     * Return a document
+     * Return list of documents.
      *
-     * @param   string  $module_part    Module part for file
-     * @param   string  $filename       File name
-     * 
-     * @url	GET {module_part}/{filename}
-     * 
-     * @return  array                   Array with data of file
+     * @param   string  $module_part    Name of module or area concerned by file download ('facture', ...)
+     * @param   string  $ref            Reference of object (This will define subdir automatically)
+     * @param   string  $subdir         Subdirectory (Only if ref not provided)
+     * @return  array                   List of documents
+     *
      * @throws RestException
      */
-    public function get($module_part, $filename) {
+    public function index($module_part, $ref='', $subdir='') {
         return array('note'=>'FeatureNotYetAvailable');
     }
-     
-     
+    
+    
+    /**
+     * Return a document.
+     *
+     * @param   int         $id          ID of document
+     * @return  array                    Array with data of file
+     *
+     * @throws RestException
+     */
+    /*
+    public function get($id) {
+        return array('note'=>'xxx');
+    }*/
+    
+    
     /**
      * Push a file. 
      * Test sample 1: { "filename": "mynewfile.txt", "modulepart": "facture", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
