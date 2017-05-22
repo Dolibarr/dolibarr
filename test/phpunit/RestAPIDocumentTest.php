@@ -172,7 +172,7 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
         dol_mkdir(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit2');
         
         $data = array(
-            'filename'=>"mynewfilethatwillfails.txt",
+            'filename'=>"mynewfile.txt",
             'modulepart'=>"medias",
             'ref'=>"",
             'subdir'=>"tmpphpunit/tmpphpunit2",

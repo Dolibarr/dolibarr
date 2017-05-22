@@ -65,8 +65,8 @@ class Documents extends DolibarrApi
 
     /**
      * Push a file. 
-     * Test sample 1: { "filename": "mynewfile.txt", "modulepart": "facture", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "" }.
-     * Test sample 2: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "" }.
+     * Test sample 1: { "filename": "mynewfile.txt", "modulepart": "facture", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
+     * Test sample 2: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
      *
      * @param   string  $filename           Name of file to create ('FA1705-0123')
      * @param   string  $modulepart         Name of module or area concerned by file upload ('facture', ...)
@@ -74,10 +74,12 @@ class Documents extends DolibarrApi
      * @param   string  $subdir             Subdirectory (Only if ref not provided)
      * @param   string  $filecontent        File content (string with file content. An empty file will be created if this parameter is not provided)
      * @param   string  $fileencoding       File encoding (''=no encoding, 'base64'=Base 64)
+     * @param   int 	$overwriteifexists  Overwrite file if exists (1 by default)
      * @return  bool     				    State of copy
      * @throws RestException
      */
-    public function post($filename, $modulepart, $ref='', $subdir='', $filecontent='', $fileencoding='') {
+    public function post($filename, $modulepart, $ref='', $subdir='', $filecontent='', $fileencoding='', $overwriteifexists=0)
+    {
         global $db, $conf;
         
         /*var_dump($modulepart);
@@ -138,30 +140,34 @@ class Documents extends DolibarrApi
 		
 		$upload_dir = dol_sanitizePathName($upload_dir);
 		
-        $destfile = $upload_dir . '/' . $original_file;
-
+		$destfile = $upload_dir . '/' . $original_file;
+		$destfiletmp = DOL_DATA_ROOT.'/admin/temp/' . $original_file;
+		dol_delete_file($destfiletmp);
+		
         if (!dol_is_dir($upload_dir)) {
             throw new RestException(401,'Directory not exists : '.$upload_dir);
         }
 
-        if (dol_is_file($destfile))
+        if (! $overwriteifexists && dol_is_file($destfile))
         {
             throw new RestException(500, "File with name '".$original_file."' already exists.");
         }
         
-        $fhandle = fopen($destfile, 'w');
+        $fhandle = @fopen($destfiletmp, 'w');
         if ($fhandle)
         {
             $nbofbyteswrote = fwrite($fhandle, $newfilecontent);
             fclose($fhandle);
-            @chmod($destfile, octdec($conf->global->MAIN_UMASK));
+            @chmod($destfiletmp, octdec($conf->global->MAIN_UMASK));
         }
         else
         {
-            throw new RestException(500, 'Failed to open file for write');
+            throw new RestException(500, "Failed to open file '".$destfiletmp."' for write");
         }
         
-        return true;
+        $result = dol_move($destfiletmp, $destfile, 0, $overwriteifexists, 1);
+        
+        return $result;
     }
 
     /**
