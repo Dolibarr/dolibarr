@@ -49,20 +49,23 @@ class Documents extends DolibarrApi
         $this->db = $db;
     }
 
+
     /**
      * Return a document
      *
      * @param   string  $module_part    Module part for file
      * @param   string  $filename       File name
-     *
+     * 
+     * @url	GET {module_part}/{filename}
+     * 
      * @return  array                   Array with data of file
      * @throws RestException
      */
-     public function index($module_part, $filename) {
-            return array('note'=>'FeatureNotYetAvailable');
-     }
-
-
+    public function get($module_part, $filename) {
+        return array('note'=>'FeatureNotYetAvailable');
+    }
+     
+     
     /**
      * Push a file. 
      * Test sample 1: { "filename": "mynewfile.txt", "modulepart": "facture", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
