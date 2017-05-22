@@ -525,83 +525,101 @@ if (! $error && $action == 'writebookkeeping') {
 }
 
 // Export
-/*
-if ($action == 'export_csv') {
-	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_JOURNAL))
+{
+	if ($action == 'export_csv') {
+		$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
-	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
+		include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
-	$companystatic = new Client($db);
-	$userstatic = new User($db);
+		$companystatic = new Client($db);
+		$userstatic = new User($db);
 
-	// Model Cegid Expert Export
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2)
-	{
-		$sep = ";";
+		// Model Cegid Expert Export
+		if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2)
+		{
+			$sep = ";";
 
-		foreach ( $tabpay as $key => $val ) {
-			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
+			foreach ( $tabpay as $key => $val ) {
+				$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
 
-			$reflabel = $val["ref"];
-			if ($reflabel == '(SupplierInvoicePayment)') {
-				$reflabel = $langs->trans('Supplier');
-			}
-			if ($reflabel == '(CustomerInvoicePayment)') {
-				$reflabel = $langs->trans('Customer');
-			}
-			if ($reflabel == '(SocialContributionPayment)') {
-				$reflabel = $langs->trans('SocialContribution');
-			}
-			if ($reflabel == '(DonationPayment)') {
-				$reflabel = $langs->trans('Donation');
-			}
-			if ($reflabel == '(SubscriptionPayment)') {
-				$reflabel = $langs->trans('Subscription');
-			}
-			if ($reflabel == '(ExpenseReportPayment)') {
-				$reflabel = $langs->trans('Employee');
-			}
-			
-			$companystatic->id = $tabcompany[$key]['id'];
-			$companystatic->name = $tabcompany[$key]['name'];
-
-			$userstatic->id = $tabuser[$key]['id'];
-			$userstatic->lastname = $tabuser[$key]['lastname'];
-			$userstatic->firstname = $tabuser[$key]['firstname'];
-
-			// Bank
-			foreach ( $tabbq[$key] as $k => $mt ) {
-				print $date . $sep;
-				print $journal . $sep;
-				print length_accountg(html_entity_decode($k)) . $sep;
-				print $sep;
-				print ($mt < 0 ? 'C' : 'D') . $sep;
-				print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-				if ($companystatic->name == '') {
-					print $langs->trans('Bank')." - ". utf8_decode($val["ref"]) . $sep;
-				} else {
-					print $langs->trans("Bank") .' - '.utf8_decode($companystatic->name) . $sep;
+				$reflabel = $val["ref"];
+				if ($reflabel == '(SupplierInvoicePayment)') {
+					$reflabel = $langs->trans('Supplier');
 				}
-				print utf8_decode($reflabel) . $sep;
-				print "\n";
-			}
+				if ($reflabel == '(CustomerInvoicePayment)') {
+					$reflabel = $langs->trans('Customer');
+				}
+				if ($reflabel == '(SocialContributionPayment)') {
+					$reflabel = $langs->trans('SocialContribution');
+				}
+				if ($reflabel == '(DonationPayment)') {
+					$reflabel = $langs->trans('Donation');
+				}
+				if ($reflabel == '(SubscriptionPayment)') {
+					$reflabel = $langs->trans('Subscription');
+				}
+				if ($reflabel == '(ExpenseReportPayment)') {
+					$reflabel = $langs->trans('Employee');
+				}
+				
+				$companystatic->id = $tabcompany[$key]['id'];
+				$companystatic->name = $tabcompany[$key]['name'];
 
-			// Third party
-			if (is_array($tabtp[$key])) {
-				foreach ( $tabtp[$key] as $k => $mt ) {
-					if ($mt) {
+				$userstatic->id = $tabuser[$key]['id'];
+				$userstatic->lastname = $tabuser[$key]['lastname'];
+				$userstatic->firstname = $tabuser[$key]['firstname'];
+
+				// Bank
+				foreach ( $tabbq[$key] as $k => $mt ) {
+					print $date . $sep;
+					print $journal . $sep;
+					print length_accountg(html_entity_decode($k)) . $sep;
+					print $sep;
+					print ($mt < 0 ? 'C' : 'D') . $sep;
+					print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
+					if ($companystatic->name == '') {
+						print $langs->trans('Bank')." - ". utf8_decode($val["ref"]) . $sep;
+					} else {
+						print $langs->trans("Bank") .' - '.utf8_decode($companystatic->name) . $sep;
+					}
+					print utf8_decode($reflabel) . $sep;
+					print "\n";
+				}
+
+				// Third party
+				if (is_array($tabtp[$key])) {
+					foreach ( $tabtp[$key] as $k => $mt ) {
+						if ($mt) {
+							print $date . $sep;
+							print $journal . $sep;
+							if ($tabtype[$key] == 'payment') {
+								print length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . $sep;
+								print length_accounta(html_entity_decode($k)) . $sep;
+							} else if ($tabtype[$key] == 'payment_supplier') {
+								print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . $sep;
+								print length_accounta(html_entity_decode($k)) . $sep;
+							} else {
+								print length_accountg(html_entity_decode($k)) . $sep;
+								print $sep;
+							}
+							print ($mt < 0 ? 'D' : 'C') . $sep;
+							print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
+							if ($companystatic->name == '') {
+								print $langs->trans('ThirdParty')." - ". utf8_decode($val["ref"]) . $sep;
+							} else {
+								print $langs->trans('ThirdParty')." - ". utf8_decode($companystatic->name) . $sep;
+							}
+							print utf8_decode($reflabel) . $sep;
+							print "\n";
+						}
+					}
+				} else {
+					foreach ( $tabbq[$key] as $k => $mt ) {
 						print $date . $sep;
 						print $journal . $sep;
-						if ($tabtype[$key] == 'payment') {
-							print length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . $sep;
-							print length_accounta(html_entity_decode($k)) . $sep;
-						} else if ($tabtype[$key] == 'payment_supplier') {
-							print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . $sep;
-							print length_accounta(html_entity_decode($k)) . $sep;
-						} else {
-							print length_accountg(html_entity_decode($k)) . $sep;
-							print $sep;
-						}
+						print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . $sep;
+						print $sep;
 						print ($mt < 0 ? 'D' : 'C') . $sep;
 						print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
 						if ($companystatic->name == '') {
@@ -613,87 +631,69 @@ if ($action == 'export_csv') {
 						print "\n";
 					}
 				}
-			} else {
+			}
+		} else {
+			// Model Classic Export
+			foreach ( $tabpay as $key => $val ) {
+				$date = dol_print_date($db->jdate($val["date"]), 'day');
+
+				$companystatic->id = $tabcompany[$key]['id'];
+				$companystatic->name = $tabcompany[$key]['name'];
+
+				// Bank
 				foreach ( $tabbq[$key] as $k => $mt ) {
-					print $date . $sep;
-					print $journal . $sep;
-					print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . $sep;
-					print $sep;
-					print ($mt < 0 ? 'D' : 'C') . $sep;
-					print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
+					print '"' . $journal . '"' . $sep;
+					print '"' . $date . '"' . $sep;
+					print '"' . $val["type_payment"] . '"' . $sep;
+					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
 					if ($companystatic->name == '') {
-						print $langs->trans('ThirdParty')." - ". utf8_decode($val["ref"]) . $sep;
+						print '"' . $langs->trans('Bank') . " - " . utf8_decode($val["ref"]) . '"' . $sep;
 					} else {
-						print $langs->trans('ThirdParty')." - ". utf8_decode($companystatic->name) . $sep;
+						print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
 					}
-					print utf8_decode($reflabel) . $sep;
+					print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
+					print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
 					print "\n";
 				}
-			}
-		}
-	} else {
-		// Model Classic Export
-		foreach ( $tabpay as $key => $val ) {
-			$date = dol_print_date($db->jdate($val["date"]), 'day');
 
-			$companystatic->id = $tabcompany[$key]['id'];
-			$companystatic->name = $tabcompany[$key]['name'];
-
-			// Bank
-			foreach ( $tabbq[$key] as $k => $mt ) {
-				print '"' . $journal . '"' . $sep;
-				print '"' . $date . '"' . $sep;
-				print '"' . $val["type_payment"] . '"' . $sep;
-				print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-				if ($companystatic->name == '') {
-					print '"' . $langs->trans('Bank') . " - " . utf8_decode($val["ref"]) . '"' . $sep;
+				// Third party
+				if (is_array($tabtp[$key])) {
+					foreach ( $tabtp[$key] as $k => $mt ) {
+						if ($mt) {
+							print '"' . $journal . '"' . $sep;
+							print '"' . $date . '"' . $sep;
+							print '"' . $val["type_payment"] . '"' . $sep;
+							print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+							if ($companystatic->name == '') {
+								print '"' . $langs->trans('ThirdParty') . " - " . utf8_decode($val["ref"]) . '"' . $sep;
+							} else {
+								print '"' . $langs->trans('ThirdParty') . " - " . utf8_decode($companystatic->name) . '"' . $sep;
+							}
+							print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
+							print '"' . ($mt >= 0 ? price($mt) : '') . '"';
+							print "\n";
+						}
+					}
 				} else {
-					print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
-				}
-				print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
-				print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
-				print "\n";
-			}
-
-			// Third party
-			if (is_array($tabtp[$key])) {
-				foreach ( $tabtp[$key] as $k => $mt ) {
-					if ($mt) {
+					foreach ( $tabbq[$key] as $k => $mt ) {
 						print '"' . $journal . '"' . $sep;
 						print '"' . $date . '"' . $sep;
-						print '"' . $val["type_payment"] . '"' . $sep;
-						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+						print '"' . $val["ref"] . '"' . $sep;
+						print '"' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . '"' . $sep;
 						if ($companystatic->name == '') {
-							print '"' . $langs->trans('ThirdParty') . " - " . utf8_decode($val["ref"]) . '"' . $sep;
+							print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($val["ref"]) . '"' . $sep;
 						} else {
-							print '"' . $langs->trans('ThirdParty') . " - " . utf8_decode($companystatic->name) . '"' . $sep;
+							print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
 						}
 						print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 						print '"' . ($mt >= 0 ? price($mt) : '') . '"';
 						print "\n";
 					}
 				}
-			} else {
-				foreach ( $tabbq[$key] as $k => $mt ) {
-					print '"' . $journal . '"' . $sep;
-					print '"' . $date . '"' . $sep;
-					print '"' . $val["ref"] . '"' . $sep;
-					print '"' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . '"' . $sep;
-					if ($companystatic->name == '') {
-						print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($val["ref"]) . '"' . $sep;
-					} else {
-						print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
-					}
-					print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
-					print '"' . ($mt >= 0 ? price($mt) : '') . '"';
-					print "\n";
-				}
 			}
 		}
 	}
 }
-*/
-
 
 /*
  * View
@@ -718,11 +718,14 @@ if (empty($action) || $action == 'view') {
 	
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
-	/*if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 && $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
-		print '<input type="button" class="butActionRefused" style="float: right;" value="' . $langs->trans('Export') . '" disabled="disabled" title="' . $langs->trans('ExportNotSupported') . '"/>';
-	} else {
-		print '<input type="button" class="butAction" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
-	}*/
+	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_JOURNAL))
+	{
+		if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 && $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
+			print '<input type="button" class="butActionRefused" style="float: right;" value="' . $langs->trans('Export') . '" disabled="disabled" title="' . $langs->trans('ExportNotSupported') . '"/>';
+		} else {
+			print '<input type="button" class="butAction" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
+		}
+	}
 
     print '<div class="tabsAction">';
 	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';

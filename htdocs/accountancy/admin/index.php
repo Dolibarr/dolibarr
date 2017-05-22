@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
+/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014 Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2014-2015 Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,6 +153,18 @@ if ($action == 'setdisabledirectinput') {
 		}
 }
 
+if ($action == 'setenableexportjournal') {
+	$setenableexportjournal = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_EXPORT_JOURNAL", $setenableexportjournal, 'yesno', 0, '', $conf->entity);
+	if (! $res > 0)
+		$error ++;
+		if (! $error) {
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'mesgs');
+		}
+}
+
 /*
  * View
  */
@@ -248,6 +260,19 @@ if (! empty($user->admin))
 		print '</a></td>';
 	} else {
 		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+	print '</tr>';
+
+	print '<tr class="oddeven">';
+	print '<td>' . $langs->trans("ACCOUNTING_ENABLE_EXPORT_JOURNAL") . '</td>';
+	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_JOURNAL)) {
+		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenableexportjournal&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenableexportjournal&value=1">';
 		print img_picto($langs->trans("Disabled"), 'switch_off');
 		print '</a></td>';
 	}

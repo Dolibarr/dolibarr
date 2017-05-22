@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
- * Copyright (C) 2013-2016	Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
  *
@@ -326,114 +326,116 @@ $form = new Form($db);
 $userstatic = new User($db);
 
 // Export
-/*if ($action == 'export_csv') {
-	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	$journal = $conf->global->ACCOUNTING_EXPENSEREPORT_JOURNAL;
+if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_JOURNAL))
+{
+	if ($action == 'export_csv') {
+		$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+		$journal = $conf->global->ACCOUNTING_EXPENSEREPORT_JOURNAL;
 
-	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
+		include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
-	// Model Cegid Expert Export
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) {
-		$sep = ";";
+		// Model Cegid Expert Export
+		if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) {
+			$sep = ";";
 
-		foreach ( $taber as $key => $val ) {
-			$date = dol_print_date($val["date"], '%d%m%Y');
+			foreach ( $taber as $key => $val ) {
+				$date = dol_print_date($val["date"], '%d%m%Y');
 
-			// Fees
-			foreach ( $tabht[$key] as $k => $mt ) {
+				// Fees
+				foreach ( $tabht[$key] as $k => $mt ) {
+					$userstatic->id = $tabuser[$key]['id'];
+					$userstatic->name = $tabuser[$key]['name'];
+					$userstatic->client = $tabuser[$key]['code_client'];
+
+					if ($mt) {
+						print $date . $sep;
+						print $journal . $sep;
+						print length_accountg(html_entity_decode($k)) . $sep;
+						print $sep;
+						print ($mt < 0 ? 'C' : 'D') . $sep;
+						print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
+						print dol_trunc($val["comments"], 32) . $sep;
+						print $val["ref"];
+						print "\n";
+					}
+				}
+
+				// VAT
+				foreach ( $tabtva[$key] as $k => $mt ) {
+					if ($mt) {
+						print $date . $sep;
+						print $journal . $sep;
+						print length_accountg(html_entity_decode($k)) . $sep;
+						print $sep;
+						print ($mt < 0 ? 'C' : 'D') . $sep;
+						print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
+						print $langs->trans("VAT") . $sep;
+						print $val["ref"];
+						print "\n";
+					}
+				}
+
+				foreach ( $tabttc[$key] as $k => $mt ) {
+					print $date . $sep;
+					print $journal . $sep;
+					print length_accountg($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) . $sep;
+					print length_accounta(html_entity_decode($k)) . $sep;
+					print ($mt < 0 ? 'D' : 'C') . $sep;
+					print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
+					print $userstatic->name . $sep;
+					print $val["ref"];
+					print "\n";
+				}
+			}
+		} elseif ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 1) {
+			// Model Classic Export
+			foreach ( $taber as $key => $val ) {
+				$date = dol_print_date($val["date"], 'day');
+
 				$userstatic->id = $tabuser[$key]['id'];
 				$userstatic->name = $tabuser[$key]['name'];
-				$userstatic->client = $tabuser[$key]['code_client'];
 
-				if ($mt) {
-					print $date . $sep;
-					print $journal . $sep;
-					print length_accountg(html_entity_decode($k)) . $sep;
-					print $sep;
-					print ($mt < 0 ? 'C' : 'D') . $sep;
-					print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-					print dol_trunc($val["comments"], 32) . $sep;
-					print $val["ref"];
-					print "\n";
+				// Fees
+				foreach ( $tabht[$key] as $k => $mt ) {
+					$accountingaccount = new AccountingAccount($db);
+					$accountingaccount->fetch(null, $k, true);
+					if ($mt) {
+						print '"' . $date . '"' . $sep;
+						print '"' . $val["ref"] . '"' . $sep;
+						print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+						print '"' . dol_trunc($accountingaccount->label, 32) . '"' . $sep;
+						print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
+						print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
+						print "\n";
+					}
 				}
-			}
-
-			// VAT
-			foreach ( $tabtva[$key] as $k => $mt ) {
-				if ($mt) {
-					print $date . $sep;
-					print $journal . $sep;
-					print length_accountg(html_entity_decode($k)) . $sep;
-					print $sep;
-					print ($mt < 0 ? 'C' : 'D') . $sep;
-					print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-					print $langs->trans("VAT") . $sep;
-					print $val["ref"];
-					print "\n";
+				// VAT
+				foreach ( $tabtva[$key] as $k => $mt ) {
+					if ($mt) {
+						print '"' . $date . '"' . $sep;
+						print '"' . $val["ref"] . '"' . $sep;
+						print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+						print '"' . dol_trunc($langs->trans("VAT")) . '"' . $sep;
+						print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
+						print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
+						print "\n";
+					}
 				}
-			}
 
-			foreach ( $tabttc[$key] as $k => $mt ) {
-				print $date . $sep;
-				print $journal . $sep;
-				print length_accountg($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) . $sep;
-				print length_accounta(html_entity_decode($k)) . $sep;
-				print ($mt < 0 ? 'D' : 'C') . $sep;
-				print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-				print $userstatic->name . $sep;
-				print $val["ref"];
+				// Third party
+				foreach ( $tabttc[$key] as $k => $mt ) {
+					print '"' . $date . '"' . $sep;
+					print '"' . $val["ref"] . '"' . $sep;
+					print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+					print '"' . dol_trunc($userstatic->name) . '"' . $sep;
+					print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
+					print '"' . ($mt >= 0 ? price($mt) : '') . '"';
+				}
 				print "\n";
 			}
 		}
-	} elseif ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 1) {
-		// Model Classic Export
-		foreach ( $taber as $key => $val ) {
-			$date = dol_print_date($val["date"], 'day');
-
-			$userstatic->id = $tabuser[$key]['id'];
-			$userstatic->name = $tabuser[$key]['name'];
-
-			// Fees
-			foreach ( $tabht[$key] as $k => $mt ) {
-				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch(null, $k, true);
-				if ($mt) {
-					print '"' . $date . '"' . $sep;
-					print '"' . $val["ref"] . '"' . $sep;
-					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-					print '"' . dol_trunc($accountingaccount->label, 32) . '"' . $sep;
-					print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
-					print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
-					print "\n";
-				}
-			}
-			// VAT
-			foreach ( $tabtva[$key] as $k => $mt ) {
-				if ($mt) {
-					print '"' . $date . '"' . $sep;
-					print '"' . $val["ref"] . '"' . $sep;
-					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-					print '"' . dol_trunc($langs->trans("VAT")) . '"' . $sep;
-					print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
-					print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
-					print "\n";
-				}
-			}
-
-			// Third party
-			foreach ( $tabttc[$key] as $k => $mt ) {
-				print '"' . $date . '"' . $sep;
-				print '"' . $val["ref"] . '"' . $sep;
-				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-				print '"' . dol_trunc($userstatic->name) . '"' . $sep;
-				print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
-				print '"' . ($mt >= 0 ? price($mt) : '') . '"';
-			}
-			print "\n";
-		}
 	}
 }
-*/
 
 if (empty($action) || $action == 'view') {
 
@@ -450,16 +452,19 @@ if (empty($action) || $action == 'view') {
 
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
 
-	/*if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 && $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
-		print '<input type="button" class="butActionRefused" style="float: right;" value="' . $langs->trans("Export") . '" disabled="disabled" title="' . $langs->trans('ExportNotSupported') . '"/>';
-	} else {
-		print '<input type="button" class="butAction" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
-	}*/
+	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_JOURNAL))
+	{
+		if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 && $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
+			print '<input type="button" class="butActionRefused" style="float: right;" value="' . $langs->trans("Export") . '" disabled="disabled" title="' . $langs->trans('ExportNotSupported') . '"/>';
+		} else {
+			print '<input type="button" class="butAction" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
+		}
+	}
 
     print '<div class="tabsAction">';
 	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
     print '</div>';
-    
+
 	print '
 	<script type="text/javascript">
 		function launch_export() {
