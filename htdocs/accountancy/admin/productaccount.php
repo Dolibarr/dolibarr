@@ -279,6 +279,7 @@ if ($result)
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
     
     print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
 	print '<br>';
@@ -329,8 +330,8 @@ if ($result)
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="center" class="liste_titre">';
-	$searchpitco=$form->showFilterButtons();
-	print $searchpitco;
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
 	print '</td>';
 	print '</tr>';
 	

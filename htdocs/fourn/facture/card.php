@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2015	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016  Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2016-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ if (!empty($conf->projet->enabled)) {
 if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
 
 $langs->load('bills');
@@ -1187,7 +1188,6 @@ if (empty($reshook))
 	 */
 
 	// Actions to send emails
-	$actiontypecode='AC_SUP_INV';
 	$trigger_name='BILL_SUPPLIER_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromsupplierinvoice';
@@ -2317,7 +2317,7 @@ else
     	$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement, p.rowid, p.fk_bank,';
     	$sql.= ' c.id as paiement_type,';
     	$sql.= ' pf.amount,';
-    	$sql.= ' ba.rowid as baid, ba.ref as baref, ba.label';
+    	$sql.= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
     	$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
     	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
     	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
@@ -2365,6 +2365,16 @@ else
     	                $bankaccountstatic->id=$objp->baid;
     	                $bankaccountstatic->ref=$objp->baref;
     	                $bankaccountstatic->label=$objp->baref;
+						$bankaccountstatic->number = $objp->banumber;
+
+						if (! empty($conf->accounting->enabled)) {
+							$bankaccountstatic->account_number = $objp->account_number;
+
+							$accountingjournal = new AccountingJournal($db);
+							$accountingjournal->fetch($objp->fk_accountancy_journal);
+							$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+						}
+
     	                print '<td align="right">';
     	                if ($objp->baid > 0) print $bankaccountstatic->getNomUrl(1,'transactions');
     	                print '</td>';

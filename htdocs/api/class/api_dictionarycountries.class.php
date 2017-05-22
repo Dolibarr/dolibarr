@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
  * @access protected
  * @class DolibarrApiAccess {@requires user,external}
  */
-class DictionnaryCountries extends DolibarrApi
+class DictionaryCountries extends DolibarrApi
 {
     private $translations = null;
 
@@ -93,7 +93,8 @@ class DictionnaryCountries extends DolibarrApi
 
         if ($result) {
             $num = $this->db->num_rows($result);
-            for ($i = 0; $i < min($num, ($limit <= 0 ? $num : $limit)); $i++) {
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
                 $obj = $this->db->fetch_object($result);
                 $country = new Ccountry($this->db);
                 if ($country->fetch($obj->rowid) > 0) {

@@ -429,6 +429,7 @@ else
 		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+        print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="type" value="'.$type.'">';
 
 	    print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_products.png', 0, '', '', $limit);
@@ -611,8 +612,8 @@ else
 	            print '</td>';
     		}
             print '<td class="liste_titre" align="middle">';
-	        $searchpitco=$form->showFilterButtons();
-            print $searchpitco;
+	        $searchpicto=$form->showFilterButtons();
+            print $searchpicto;
             print '</td>';
 
     		print '</tr>';
@@ -803,7 +804,7 @@ else
    					print '<td align="right">';
     				if ($obj->fk_product_type != 1)
     				{
-   						if ($obj->seuil_stock_alerte != '' && $product_static->stock_reel < (float) $obj->seuil_stock_alerte) print img_warning($langs->trans("StockTooLow")).' ';
+   						if ($obj->seuil_stock_alerte != '' && $product_static->stock_reel < (float) $obj->seuil_stock_alerte) print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
       					print $product_static->stock_reel;
     				}
     				print '</td>';
@@ -814,7 +815,7 @@ else
    					print '<td align="right">';
     				if ($obj->fk_product_type != 1)
     				{
-   						if ($obj->seuil_stock_alerte != '' && $product_static->stock_theorique < (float) $obj->seuil_stock_alerte) print img_warning($langs->trans("StockTooLow")).' ';
+   						if ($obj->seuil_stock_alerte != '' && $product_static->stock_theorique < (float) $obj->seuil_stock_alerte) print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
       					print $product_static->stock_theorique;
     				}
     				print '</td>';

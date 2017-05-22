@@ -24,7 +24,7 @@
 /**
  *	    \file       htdocs/user/bank.php
  *      \ingroup    HRM
- *		\brief      BAN tab for users
+ *		\brief      Tab for HRM
  */
 
 require '../main.inc.php';
@@ -47,7 +47,7 @@ $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 if ($user->id == $id) $feature2=''; // A user can always read its own card
-$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
+$result = restrictedArea($user, 'salaries|hrm', $id, 'user&user', $feature2);
 
 $object = new User($db);
 if ($id > 0 || ! empty($ref))
@@ -156,13 +156,26 @@ if ($account->id && $action != 'edit')
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
+    
+    print '<table class="border centpercent">';
+    
+    print '<tr><td class="titlefield">'.$langs->trans("xxx").'</td>';
+    print '<td></td></tr>';
+    
+    print '</table>';
+    
+    print '</br>';
+    
+    print load_fiche_titre($langs->trans("BAN"));
+    
+    print '<div class="underbanner clearboth"></div>';
     print '<table class="border centpercent">';
 
     print '<tr><td class="titlefield">'.$langs->trans("LabelRIB").'</td>';
-    print '<td colspan="4">'.$account->label.'</td></tr>';
+    print '<td>'.$account->label.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BankName").'</td>';
-	print '<td colspan="4">'.$account->bank.'</td></tr>';
+	print '<td>'.$account->bank.'</td></tr>';
 
 	// Show fields of bank account
 	foreach ($account->getFieldsToShow() as $val) {
@@ -182,7 +195,7 @@ if ($account->id && $action != 'edit')
 	}
 
 	print '<tr><td class="tdtop">'.$langs->trans("IBAN").'</td>';
-	print '<td colspan="4">'.$account->iban . '&nbsp;';
+	print '<td>'.$account->iban . '&nbsp;';
     if (! empty($account->iban)) {
         if (! checkIbanForAccount($account)) {
             print img_picto($langs->trans("IbanNotValid"),'warning');
@@ -193,7 +206,7 @@ if ($account->id && $action != 'edit')
     print '</td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("BIC").'</td>';
-	print '<td colspan="4">'.$account->bic.'&nbsp;';
+	print '<td>'.$account->bic.'&nbsp;';
     if (! empty($account->bic)) {
         if (! checkSwiftForAccount($account)) {
             print img_picto($langs->trans("SwiftNotValid"),'warning');
@@ -203,15 +216,15 @@ if ($account->id && $action != 'edit')
     }
     print '</td></tr>';
 
-	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
+	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print $account->domiciliation;
 	print "</td></tr>\n";
 
-	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwner").'</td><td colspan="4">';
+	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwner").'</td><td>';
 	print $account->proprio;
 	print "</td></tr>\n";
 
-	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
+	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 	print $account->owner_address;
 	print "</td></tr>\n";
 

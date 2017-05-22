@@ -585,6 +585,11 @@ if ($id > 0 || $ref)
 
 			if ($user->rights->fournisseur->lire)
 			{
+				$product_fourn = new ProductFournisseur($db);
+				$product_fourn_list = $product_fourn->list_product_fournisseur_price($object->id, $sortfield, $sortorder);
+				$nbtotalofrecords = count($product_fourn_list);
+			    print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($product_fourn_list), $nbtotalofrecords, 'title_accountancy.png');
+			     
 				// Suppliers list title
 			    print '<div class="div-table-responsive">';
 			    print '<table class="noborder" width="100%">';
@@ -611,9 +616,6 @@ if ($id > 0 || $ref)
 				}
 				print_liste_field_titre('');
 				print "</tr>\n";
-
-				$product_fourn = new ProductFournisseur($db);
-				$product_fourn_list = $product_fourn->list_product_fournisseur_price($object->id, $sortfield, $sortorder);
 
 				if (is_array($product_fourn_list))
 				{
@@ -678,6 +680,7 @@ if ($id > 0 || $ref)
 						print'</td>';
 
 						// Charges ????
+						/*
 						if ($conf->global->PRODUCT_CHARGES)
 						{
 							if (! empty($conf->margin->enabled))
@@ -686,7 +689,7 @@ if ($id > 0 || $ref)
 								print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
 								print '</td>';
 							}
-						}
+						}*/
 
 						if (is_object($hookmanager))
 						{

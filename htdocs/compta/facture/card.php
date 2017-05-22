@@ -59,6 +59,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
+if (! empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+}
 
 $langs->load('bills');
 $langs->load('companies');
@@ -1084,8 +1087,9 @@ if (empty($reshook))
 										}
 
 										if ($totalamount != 0) {
-										    $tva_tx = $lines[$i]->tva_tx;
-										    if (! empty($lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
+											if ($numlines > 0) $numlines = $numlines-1;
+										    $tva_tx = $lines[$numlines]->tva_tx;
+										    if (! empty($lines[$numlines]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$numlines]->vat_src_code.')';
 											$amountdeposit[$tva_tx] = ($totalamount * $valuedeposit) / 100;
 										} else {
 											$amountdeposit[0] = 0;
@@ -1134,7 +1138,7 @@ if (empty($reshook))
 							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA) && $diff != 0)
 							{
 								$object->fetch_lines();
-								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx);
+								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
 								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
 							}
 							
@@ -1908,7 +1912,6 @@ if (empty($reshook))
 
 	// Actions to send emails
 	if (empty($id)) $id=$facid;
-	$actiontypecode='AC_FAC';
 	$trigger_name='BILL_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfrominvoice';
@@ -3685,7 +3688,7 @@ else if ($id > 0 || ! empty($ref))
     $sql = 'SELECT p.datep as dp, p.ref, p.num_paiement, p.rowid, p.fk_bank,';
     $sql .= ' c.code as payment_code, c.libelle as payment_label,';
     $sql .= ' pf.amount,';
-    $sql .= ' ba.rowid as baid, ba.ref as baref, ba.label';
+    $sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
     $sql .= ' FROM ' . MAIN_DB_PREFIX . 'c_paiement as c, ' . MAIN_DB_PREFIX . 'paiement_facture as pf, ' . MAIN_DB_PREFIX . 'paiement as p';
     $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
     $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
@@ -3717,7 +3720,17 @@ else if ($id > 0 || ! empty($ref))
                     $bankaccountstatic->id = $objp->baid;
                     $bankaccountstatic->ref = $objp->baref;
                     $bankaccountstatic->label = $objp->baref;
-                    print '<td align="right">';
+					$bankaccountstatic->number = $objp->banumber;
+
+					if (! empty($conf->accounting->enabled)) {
+						$bankaccountstatic->account_number = $objp->account_number;
+
+						$accountingjournal = new AccountingJournal($db);
+						$accountingjournal->fetch($objp->fk_accountancy_journal);
+						$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+					}
+
+					print '<td align="right">';
                     if ($bankaccountstatic->id)
                         print $bankaccountstatic->getNomUrl(1, 'transactions');
                     print '</td>';
@@ -3890,29 +3903,20 @@ else if ($id > 0 || ! empty($ref))
 	// Lines
 	$result = $object->getLinesArray();
 
-	print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">
-	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
-	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateligne') . '">
-	<input type="hidden" name="mode" value="">
-	<input type="hidden" name="id" value="' . $object->id . '">
-	';
-
-	if (! empty($conf->use_javascript_ajax) && $object->statut == 0) {
-		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
-	}
-
-    print '<div class="div-table-responsive">';
-	print '<table id="tablelines" class="noborder noshadow" width="100%">';
-
 	// Show global modifiers
 	if (! empty($conf->global->INVOICE_USE_SITUATION))
 	{
 		if ($object->situation_cycle_ref && $object->statut == 0) {
-			print '<tr class="liste_titre nodrag nodrop">';
+			print '<div class="div-table-responsive">';
+			
 			print '<form name="updatealllines" id="updatealllines" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '"#updatealllines" method="POST">';
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '" />';
 			print '<input type="hidden" name="action" value="updatealllines" />';
 			print '<input type="hidden" name="id" value="' . $object->id . '" />';
+			
+			print '<table id="tablelines" class="noborder noshadow" width="100%">';
+		    
+			print '<tr class="liste_titre nodrag nodrop">';
 
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 				print '<td align="center" width="5">&nbsp;</td>';
@@ -3949,10 +3953,29 @@ else if ($id > 0 || ! empty($ref))
 			print '<td align="right" class="nowrap"><input type="text" size="1" value="" name="all_progress">%</td>';
 			print '<td colspan="4" align="right"><input class="button" type="submit" name="all_percent" value="Modifier" /></td>';
 			print '</tr>';
+			
+			print '</table>';
+			
 			print '</form>';
+			
+			print '</div>';
 		}
 	}
 
+	print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">
+	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
+	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateligne') . '">
+	<input type="hidden" name="mode" value="">
+	<input type="hidden" name="id" value="' . $object->id . '">
+	';
+	
+	if (! empty($conf->use_javascript_ajax) && $object->statut == 0) {
+	    include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
+	}
+	
+	print '<div class="div-table-responsive">';
+	print '<table id="tablelines" class="noborder noshadow" width="100%">';
+	
 	// Show object lines
 	if (! empty($object->lines))
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);

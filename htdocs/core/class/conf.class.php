@@ -580,6 +580,12 @@ class Conf
 
 		if (empty($this->global->MAIN_SIZE_SHORTLIST_LIMIT)) $this->global->MAIN_SIZE_SHORTLIST_LIMIT=3;
 
+		// Save inconsistent option
+		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && $conf->global->AGENDA_DEFAULT_FILTER_TYPE == 'AC_NON_AUTO')
+		{
+		    $conf->global->AGENDA_DEFAULT_FILTER_TYPE='0';    // 'AC_NON_AUTO' does not exists when AGENDA_DEFAULT_FILTER_TYPE is not on.
+		}
+		    
 		// For backward compatibility
 		if (isset($this->product))   $this->produit=$this->product;
 		if (isset($this->facture))   $this->invoice=$this->facture;

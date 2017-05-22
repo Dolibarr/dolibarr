@@ -105,7 +105,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  * 	@param	string	$element	Current element 
  *                              'societe', 'socpeople', 'actioncomm', 'agenda', 'resource', 
  *                              'product', 'productprice', 'stock',
- *                              'propal', 'facture', 'facture_fourn',
+ *                              'propal', 'supplier_proposal', 'facture', 'facture_fourn',
  *                              'categorie', 'bank_account', 'bank_account', 'adherent', 'user',  
  *                              'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
  *                              'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
@@ -237,8 +237,10 @@ function dol_shutdown()
 
 
 /**
- *  Return value of a param into GET or POST supervariable
- *
+ *  Return value of a param into GET or POST supervariable.
+ *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
+ *  Note: The property $user->default_values is loaded by the main when loading the user.
+ *  
  *  @param	string	$paramname   Name of parameter to found
  *  @param	string	$check	     Type of check
  *                                  ''=no check (deprecated)
@@ -255,12 +257,15 @@ function dol_shutdown()
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'.
  *  @return string|string[]      Value found (string or array), or '' if check fails
+ *  
  *  @TODO Set default value for check to alpha. Check all WYSIWYG edition (email and description...) is still ok with rich text.
  */
 function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 {
     global $mysoc,$user,$conf;
     
+    if (empty($paramname)) return 'BadFirstParameterForGETPOST';
+        
     if (empty($method)) $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
@@ -270,17 +275,33 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	
 	if (empty($method) || $method == 3 || $method == 4)
 	{
-	    // Management of default values
-	    if (! isset($_GET['sortfield']) && ! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_DISABLE_DEFAULT_VALUES is on
-	    {
-	        if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+    	$relativepathstring = $_SERVER["PHP_SELF"];
+    	if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+    	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+    	$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+	
+    	// Retrieve values if restore_lastsearch_values is set and there is saved values
+    	if (! empty($_GET['restore_lastsearch_values']) && ! empty($_SESSION['lastsearch_values_'.$relativepathstring]))        // Keep $_GET here
+    	{
+	        $tmp=json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
+	        if (is_array($tmp))
 	        {
-	            $relativepathstring = $_SERVER["PHP_SELF"];
-	            if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
-	            $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-	            $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
-	            global $user;
-	            if (! empty($user->default_values))		// $user->default_values defined from menu default values, and values loaded not at first
+	            foreach($tmp as $key => $val)
+	            {
+	                if ($key == $paramname)
+	                {
+	                    $out=$val;
+	                    break;
+	                }
+	            }
+	        }
+    	}
+	    // Else, retreive default values if we are not doing a sort
+	    elseif (! isset($_GET['sortfield']) && ! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
+	    {
+	        if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+	        {
+	            if (! empty($user->default_values))		// $user->default_values defined from menu default values
 	            {
 	                //var_dump($user->default_values[$relativepathstring]['createform']);
 	                if (isset($user->default_values[$relativepathstring]['createform'][$paramname])) $out = $user->default_values[$relativepathstring]['createform'][$paramname];
@@ -290,46 +311,49 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	        //elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 	        elseif (! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 	        {
-	            $relativepathstring = $_SERVER["PHP_SELF"];
-	            if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
-	            $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-	            $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
-	            global $user;
 	            if (! empty($user->default_values))		// $user->default_values defined from menu default values
 	            {
 	                //var_dump($user->default_values[$relativepathstring]);
 	                if ($paramname == 'sortfield')
 	                {
-	                    if (isset($user->default_values[$relativepathstring]['sortorder']))
+	                    if (isset($user->default_values[$relativepathstring]['sortorder']))    // We will use the key of $user->default_values[path][sortorder]
 	                    {
+	                        $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
 	                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
 	                        {
 	                            if ($out) $out.=', ';
-	                            $out.=dol_string_nospecial($key, '');
+	                            $out.=dol_string_nospecial($key, '', $forbidden_chars_to_replace);
 	                        }
 	                    }
 	                }
 	                elseif ($paramname == 'sortorder')
 	                {
-	                    if (isset($user->default_values[$relativepathstring]['sortorder']))
+	                    if (isset($user->default_values[$relativepathstring]['sortorder']))    // We will use the val of $user->default_values[path][sortorder]
 	                    {
+	                        $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
 	                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
 	                        {
 	                            if ($out) $out.=', ';
-	                            $out.=dol_string_nospecial($val, '');
+	                            $out.=dol_string_nospecial($val, '', $forbidden_chars_to_replace);
 	                        }
 	                    }
 	                }
 	                elseif (isset($user->default_values[$relativepathstring]['filters'][$paramname]))
-	                $out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '');
+	                {
+	                    $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+	                    $out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '', $forbidden_chars_to_replace);
+	                }
 	            }
 	        }
 	    }
+	    
 	}	
 	
-	if (empty($check) && $conf->global->MAIN_FEATURES_LEVEL > 0)
+	if (empty($check) && ! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2)
 	{
-	   dol_syslog("A GETPOST is called with 1st param = ".$paramname." and 2nd param not defined, when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);    
+	   dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and 2nd param not defined, when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);    
+	   // Enable this line to know who call the GETPOST with empty $check parameter.
+	   //var_dump(debug_backtrace()[0]);
 	}
 	
 	if (! empty($check))
@@ -338,7 +362,7 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	    if (! is_array($out))
 	    {
 	        $maxloop=20; $loopnb=0;    // Protection against infinite loop
-	        while (preg_match('/__([A-Z0-9]+_?[A-Z0-9]+)__/i', $out, $reg) && ($loopnb < $maxloop))    // Detect '__ABCDEF__' as key 'ABCDEF' and '__ABC_DEF__' as key 'ABC_DEF'
+	        while (preg_match('/__([A-Z0-9]+_?[A-Z0-9]+)__/i', $out, $reg) && ($loopnb < $maxloop))    // Detect '__ABCDEF__' as key 'ABCDEF' and '__ABC_DEF__' as key 'ABC_DEF'. Detection is also correct when 2 vars are side by side.
 	        {
 	            $loopnb++; $newout = '';
 
@@ -420,6 +444,27 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	    }
 	}
 
+    // Code for search criteria persistence.
+	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
+	if (empty($method) || $method == 3 || $method == 4)
+	{
+	    //if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder', 'sortfield", 'smonth', 'syear', 'month', 'year')))
+	    if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder','sortfield')))
+	    {
+	        //var_dump($paramname.' - '.$out.' '.$user->default_values[$relativepathstring]['filters'][$paramname]);
+
+	        // We save search key only if:
+	        // - not empty, or
+	        // - if value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
+	        
+	        //if (! empty($out) || ! empty($user->default_values[$relativepathstring]['filters'][$paramname]))
+	        if (! empty($out))
+	        {
+                $user->lastsearch_values_tmp[$relativepathstring][$paramname]=$out;
+	        }
+	    }
+	}
+	
 	return $out;
 }
 
@@ -570,19 +615,20 @@ function dol_buildpath($path, $type=0)
 }
 
 /**
- *	Create a clone of instance of object (new instance with same properties)
- * 	This function works for both PHP4 and PHP5
+ *	Create a clone of instance of object (new instance with same value for properties)
+ *  Property that are reference are also new object (true clone)
  *
  * 	@param	object	$object		Object to clone
  *	@return object				Object clone
- *  @deprecated Dolibarr no longer supports PHP4, use PHP5 native clone construct
  *  @see https://php.net/manual/language.oop5.cloning.php
  */
 function dol_clone($object)
 {
-	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
+	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
 
-	$myclone = clone $object;
+	//$myclone = clone $object;                    // PHP clone is a shallow copy only, not a real clone, so properties of references will keep references (refer to the same target/variable
+	$myclone=unserialize(serialize($object));
+	    
 	return $myclone;
 }
 
@@ -2424,7 +2470,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 	if ($trunc == 'right')
 	{
 		$newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-		if (dol_strlen($newstring,$stringencoding) > ($size+($nodot?0:1)))
+        if (dol_strlen($newstring,$stringencoding) > ($size+($nodot?0:1)))
 		return dol_substr($newstring,0,$size,$stringencoding).($nodot?'':'...');
 		else
 		return $string;
@@ -2689,7 +2735,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = 'class="pictoedit"
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Modify');
 
-	return img_picto($titlealt, 'edit.png', ($float ? 'style="float: '.($langs->tab_translate["DIRECTION"] == 'rtl'?'left':'right').'"' : $other));
+	return img_picto($titlealt, 'edit.png', ($float ? 'style="float: '.($langs->tab_translate["DIRECTION"] == 'rtl'?'left':'right').'"' : "") . ($other?' '.$other:''));
 }
 
 /**
@@ -3048,8 +3094,8 @@ function info_admin($text, $infoonimgalt = 0, $nodiv=0, $admin='1')
 	{
 		return img_picto($text, 'info', 'class="hideonsmartphone"');
 	}
-
-	return ($nodiv?'':'<div class="'.(empty($admin)?'':($admin=='1'?'info':$admin)).' hideonsmartphone">').img_picto($admin?$langs->trans('InfoAdmin'):$langs->trans('Note'), ($nodiv?'info':'info_black'), 'class="hideonsmartphone"').' '.$text.($nodiv?'':'</div>');
+	
+	return ($nodiv?'':'<div class="'.(empty($admin)?'':($admin=='1'?'info':$admin)).' hideonsmartphone">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin?$langs->trans('InfoAdmin'):$langs->trans('Note')).'"></span> '.$text.($nodiv?'':'</div>');
 }
 
 
@@ -3223,8 +3269,8 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	@param	string	$begin       ("" by defaut)
  *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
  *	@param  string	$moreattrib  Add more attributes on th ("" by defaut). To add more css class, use param $prefix.
- *	@param  string	$sortfield   Current field used to sort
- *	@param  string	$sortorder   Current sort order
+ *	@param  string	$sortfield   Current field used to sort (Ex: 'd.datep,d.id')
+ *	@param  string	$sortorder   Current sort order (Ex: 'asc,desc')
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
  *	@return	string
  */
@@ -3241,11 +3287,15 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	if ($thead==2) $tag='div';
 
 	$tmpsortfield=explode(',',$sortfield);
-	$sortfield=trim($tmpsortfield[0]);
+	$sortfield1=trim($tmpsortfield[0]);    // If $sortfield is 'd.datep,d.id', it becomes 'd.datep'
+	$tmpfield=explode(',',$field);
+	$field1=trim($tmpfield[0]);            // If $field is 'd.datep,d.id', it becomes 'd.datep'
+
+	//var_dump('field='.$field.' field1='.$field1.' sortfield='.$sortfield.' sortfield1='.$sortfield1);
 	
-	// If field is used as sort criteria we use a specific class
+	// If field is used as sort criteria we use a specific css class liste_titre_sel
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
-	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '. $moreattrib.'>';
+	if ($field1 && ($sortfield1 == $field1 || $sortfield1 == preg_replace("/^[^\.]+\./","",$field1))) $out.= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '. $moreattrib.'>';
 	else $out.= '<'.$tag.' class="'.$prefix.'liste_titre" '. $moreattrib.'>';
 
 	if (empty($thead) && $field)    // If this is a sort field
@@ -3255,15 +3305,15 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		$options=preg_replace('/&+/i','&',$options);
 		if (! preg_match('/^&/',$options)) $options='&'.$options;
 
-		if ($field != $sortfield)
+		if ($field1 != $sortfield1) // We are on another field
 		{
             if (preg_match('/^DESC/', $sortorder)) $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
             else $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
 		}
-		else
+		else                      // We are of first sorting criteria
 		{
-            if (preg_match('/^ASC/', $sortorder)) $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
-		    else $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
+            if (preg_match('/^ASC/', $sortorder)) $out.= '<a href="'.$file.'?sortfield='.$sortfield.'&sortorder=desc&begin='.$begin.$options.'">';
+		    else $out.= '<a href="'.$file.'?sortfield='.$sortfield.'&sortorder=asc&begin='.$begin.$options.'">';
 		}
 	}
 
@@ -3285,7 +3335,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		//$sortimg.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
 		//$sortimg.= '<span class="nowrap">';
 
-		if (! $sortorder || $field != $sortfield)
+		if (! $sortorder || $field1 != $sortfield1)
 		{
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
@@ -4506,8 +4556,8 @@ function yn($yesno, $case=1, $color=0)
 
 /**
  *	Return a path to have a directory according to object.
- *  New usage:       $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'modulepart')
- *         or:       $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'modulepart')     if multidir_output not defined.
+ *  New usage:       $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart)
+ *         or:       $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, $modulepart)     if multidir_output not defined.
  *  Old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
  *
  *	@param	string	$num            Id of object (deprecated, $object will be used in future)

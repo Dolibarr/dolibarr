@@ -229,12 +229,12 @@ class ProductFournisseur extends Product
 			$sql.= " remise_percent = ".$remise_percent.",";
 			$sql.= " remise = ".$remise.",";
 			$sql.= " unitprice = ".$unitBuyPrice.",";
-			$sql.= " unitcharges = ".$unitCharges.",";
+			$sql.= " unitcharges = ".$unitCharges.",";   // deprecated
 			$sql.= " tva_tx = ".$tva_tx.",";
 			$sql.= " fk_availability = ".$availability.",";
 			$sql.= " entity = ".$conf->entity.",";
 			$sql.= " info_bits = ".$newnpr.",";
-			$sql.= " charges = ".$charges.",";
+			$sql.= " charges = ".$charges.",";           // deprecated
 			$sql.= " delivery_time_days = ".($delivery_time_days != '' ? $delivery_time_days : 'null').",";
 			$sql.= " supplier_reputation = ".(empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'");			
 			$sql.= " WHERE rowid = ".$this->product_fourn_price_id;

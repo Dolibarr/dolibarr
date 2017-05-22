@@ -698,6 +698,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     $sortfield = GETPOST("sortfield",'alpha');
     $sortorder = GETPOST("sortorder",'alpha');
+    $page = GETPOST('page','int');
     $search_status		= GETPOST("search_status",'int');
     if ($search_status=='') $search_status=1; // always display activ customer first
     $search_name = GETPOST("search_name",'alpha');
@@ -733,7 +734,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<input type="hidden" name="socid" value="'.$object->id.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-
+    print '<input type="hidden" name="page" value="'.$page.'">';
+    
     print "\n".'<table class="noborder" width="100%">'."\n";
 
     $param="socid=".$object->id;
@@ -1264,8 +1266,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $out.='<td class="liste_titre"></td>';
         // Action column
         $out.='<td class="liste_titre" align="middle">';
-        $searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-        $out.=$searchpitco;
+        $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+        $out.=$searchpicto;
         $out.='</td>';
         $out.='</tr>';
         

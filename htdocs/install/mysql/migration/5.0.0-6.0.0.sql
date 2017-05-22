@@ -24,6 +24,19 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
+create table llx_notify_def_object
+(
+  id				integer AUTO_INCREMENT PRIMARY KEY,
+  entity			integer DEFAULT 1 NOT NULL,		-- multi company id
+  objet_type		varchar(16),					-- 'actioncomm'
+  objet_id			integer NOT NULL,				-- id of parent key
+  type_notif		varchar(16) DEFAULT 'browser',	-- 'browser', 'email', 'sms', 'webservice', ...
+  date_notif		datetime,						-- date notification
+  user_id			integer,						-- notification is for this user
+  moreparam			varchar(255)
+)ENGINE=innodb;
+
 ALTER TABLE llx_facturedet_rec ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 
 ALTER TABLE llx_extrafields ADD COLUMN langs varchar(24);
@@ -46,6 +59,8 @@ ALTER TABLE llx_ecm_files ADD INDEX idx_ecm_files_label (label);
 
 ALTER TABLE llx_holiday ADD COLUMN import_key				varchar(14);
 ALTER TABLE llx_holiday ADD COLUMN extraparams				varchar(255);	
+
+ALTER TABLE llx_expedition ADD COLUMN fk_projet integer DEFAULT NULL after fk_soc;
 
 ALTER TABLE llx_expensereport ADD COLUMN import_key			varchar(14);
 ALTER TABLE llx_expensereport ADD COLUMN extraparams		varchar(255);	
@@ -141,6 +156,18 @@ ALTER TABLE llx_bank_account ADD INDEX idx_fk_accountancy_journal (fk_accountanc
 UPDATE llx_bank_account as ba set fk_accountancy_journal = (SELECT rowid FROM llx_accounting_journal as aj where ba.accountancy_journal = aj.code) where accountancy_journal not in ('1', '2', '3', '4', '5', '6', '5', '8', '9', '10', '11', '12', '13', '14', '15');
 ALTER TABLE llx_bank_account ADD CONSTRAINT fk_bank_account_accountancy_journal FOREIGN KEY (fk_accountancy_journal) REFERENCES llx_accounting_journal (rowid);
 
+--Update general ledger for FEC format & harmonization
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_tiers varchar(32);
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN label_compte varchar(255);
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_journal varchar(32);
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN thirdparty_label varchar(255) AFTER code_tiers;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN label_operation varchar(255) AFTER label_compte;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN multicurrency_amount double AFTER sens;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN multicurrency_code varchar(255) AFTER multicurrency_amount;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN lettering_code varchar(255) AFTER multicurrency_code;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_lettering datetime AFTER lettering_code;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN journal_label varchar(255) AFTER code_journal;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_validated datetime AFTER validated;
 
 ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
 
@@ -188,6 +215,22 @@ ALTER TABLE llx_cronjob ADD COLUMN processing integer NOT NULL DEFAULT 0;
 
 ALTER TABLE llx_website ADD COLUMN fk_user_create integer;
 ALTER TABLE llx_website ADD COLUMN fk_user_modif integer;
+
+-- Add missing fields making not possible to enter reference price of products into another currency
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN multicurrency_tx			double(24,8) DEFAULT 1;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN multicurrency_price_ttc	double(24,8) DEFAULT NULL;
+
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_multicurrency		 integer;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN multicurrency_code		 varchar(255);
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN multicurrency_tx	     double(24,8) DEFAULT 1;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN multicurrency_price	 double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
+
+ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN fk_multicurrency		 integer;
+ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_code		 varchar(255);
+ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_tx	     double(24,8) DEFAULT 1;
+ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price	 double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
 
 
 create table llx_payment_various
@@ -280,7 +323,6 @@ ALTER TABLE llx_events MODIFY COLUMN ip varchar(250);
 
 ALTER TABLE llx_facture ADD COLUMN fk_fac_rec_source integer;
 
-
-
+DELETE from llx_c_actioncomm where code in ('AC_PROP','AC_COM','AC_FAC','AC_SHIP','AC_SUP_ORD','AC_SUP_INV') AND id NOT IN (SELECT DISTINCT fk_action FROM llx_actioncomm);
 
 

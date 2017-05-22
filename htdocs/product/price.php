@@ -1080,6 +1080,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 	if (empty($conf->global->PRODUIT_MULTIPRICES))
 	{
+	    print '<!-- Edit price -->'."\n";
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="update_price">';
@@ -1184,7 +1185,8 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 	}
 	else
 	{
-		?>
+	    print '<!-- Edit price per level -->'."\n";
+	    ?>
 		<script>
 
 			var showHidePriceRules = function () {
@@ -1213,7 +1215,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="' . $object->id . '">';
 
-		dol_fiche_head('');
+		//dol_fiche_head('', '', '', -1);
 		
 		if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL)) {
 			print $langs->trans('UseMultipriceRules'). ' <input type="checkbox" id="usePriceRules" name="usePriceRules" '.($object->price_autogen ? 'checked' : '').'><br><br>';
@@ -1295,7 +1297,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		
 		print '</table>';
 		
-		dol_fiche_end();
+		//dol_fiche_end();
 		
 		print '<div style="text-align: center">';
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
@@ -1756,7 +1758,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 	else if ($action != 'showlog_default_price' && $action != 'edit_price')
 	{
 		// List of all prices by customers
-
+        print '<!-- list of prices per customer -->'."\n";
+        
 		// Count total nb of records
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -1793,12 +1796,12 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		if (count($prodcustprice->lines) > 0 || $search_soc)
 		{
     		print '<tr class="liste_titre">';
-    		print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
-    		print '<td colspan="8">&nbsp;</td>';
+    		print '<td class="liste_titre"><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
+    		print '<td class="liste_titre" colspan="8">&nbsp;</td>';
     		// Print the search button
             print '<td class="liste_titre" align="right">';
-            $searchpitco=$form->showFilterAndCheckAddButtons(0);
-            print $searchpitco;
+            $searchpicto=$form->showFilterAndCheckAddButtons(0);
+            print $searchpicto;
             print '</td>';
     		print '</tr>';
 		}

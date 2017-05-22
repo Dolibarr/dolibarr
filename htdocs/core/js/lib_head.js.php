@@ -982,7 +982,7 @@ function newpopup(url,title) {
 function document_preview(file, type, title)
 {
 	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png"];
-	console.log("document_preview A click was done. file="+file+", type="+type);
+	console.log("document_preview A click was done. file="+file+", type="+type+", title="+title);
 	
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		var width='85%';
@@ -1018,8 +1018,8 @@ function document_preview(file, type, title)
 
 	}
 	function show_preview(){
-
-		var newElem = '<object data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'"></object>';
+		/* console.log("file="+file+" type="+type+" width="+width+" height="+height); */
+		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
 
 		$("#dialogforpopup").html(newElem);
 		$("#dialogforpopup").dialog({

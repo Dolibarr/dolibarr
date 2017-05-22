@@ -103,6 +103,14 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 			$url=preg_replace('/__USERID__/',$user->id,$url);
 			$shorturl=preg_replace('/__USERID__/',$user->id,$shorturl);
 
+			// TODO Find a generic solution
+			if (preg_match('/search_project_user=__search_project_user__/', $shorturl))
+			{
+			    $search_project_user = GETPOST('search_project_user','int');
+			    if ($search_project_user) $shorturl=preg_replace('/search_project_user=__search_project_user__/', 'search_project_user='.$search_project_user, $shorturl);
+			    else $shorturl=preg_replace('/search_project_user=__search_project_user__/', '', $shorturl);
+			}
+			
 			// Define the class (top menu selected or not)
 			if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
 			else if (! empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname='class="tmenusel"';

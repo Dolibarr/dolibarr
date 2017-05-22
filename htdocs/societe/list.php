@@ -493,6 +493,9 @@ if ($search_sale > 0)	$param.='&amp;search_sale='.urlencode($search_sale);
 if ($search_nom != '') $param.= "&amp;search_nom=".urlencode($search_nom);
 if ($search_town != '') $param.= "&amp;search_town=".urlencode($search_town);
 if ($search_zip != '') $param.= "&amp;search_zip=".urlencode($search_zip);
+if ($search_phone != '') $param.= "&amp;search_phone=".urlencode($search_phone);
+if ($search_email != '') $param.= "&amp;search_email=".urlencode($search_email);
+if ($search_url != '') $param.= "&amp;search_url=".urlencode($search_url);
 if ($search_state != '') $param.= "&amp;search_state=".urlencode($search_state);
 if ($search_country != '') $param.= "&amp;search_country=".urlencode($search_country);
 if ($search_customer_code != '') $param.= "&amp;search_customer_code=".urlencode($search_customer_code);
@@ -544,6 +547,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
 
@@ -863,8 +867,8 @@ if (! empty($arrayfields['s.status']['checked']))
 }
 // Action column
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterButtons();
-print $searchpitco;
+$searchpicto=$form->showFilterButtons();
+print $searchpicto;
 print '</td>';
 
 print "</tr>\n";

@@ -569,7 +569,7 @@ class Account extends CommonObject
         $sql.= ", '".$this->db->escape($this->label)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", '".$this->db->escape($this->account_number)."'";
-		$sql.= ", '".$this->db->escape($this->fk_accountancy_journal)."'";
+		$sql.= ", ".($this->fk_accountancy_journal > 0 ? $this->db->escape($this->fk_accountancy_journal) : "null");
 		$sql.= ", '".$this->db->escape($this->bank)."'";
         $sql.= ", '".$this->code_banque."'";
         $sql.= ", '".$this->code_guichet."'";
@@ -702,8 +702,7 @@ class Account extends CommonObject
         $sql.= ",rappro = ".$this->rappro;
         $sql.= ",url = ".($this->url?"'".$this->url."'":"null");
         $sql.= ",account_number = '".$this->db->escape($this->account_number)."'";
-		$sql.= ",fk_accountancy_journal = '".$this->db->escape($this->fk_accountancy_journal)."'";
-
+		$sql.= ",fk_accountancy_journal = ".($this->fk_accountancy_journal > 0 ? $this->db->escape($this->fk_accountancy_journal) : "null");
 		$sql.= ",bank  = '".$this->db->escape($this->bank)."'";
         $sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
         $sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
@@ -1259,7 +1258,7 @@ class Account extends CommonObject
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
             $langs->load("accountancy");
             $label .= '<br><b>' . $langs->trans('AccountAccounting') . ':</b> ' . length_accountg($this->account_number);
-            $label .= '<br><b>' . $langs->trans('AccountancyJournal') . ':</b> ' . $this->fk_accountancy_journal;
+            $label .= '<br><b>' . $langs->trans('AccountancyJournal') . ':</b> ' . $this->accountancy_journal;
         }
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 

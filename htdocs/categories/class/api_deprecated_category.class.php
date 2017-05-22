@@ -147,7 +147,8 @@ class CategoryApi extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);
@@ -228,7 +229,8 @@ class CategoryApi extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);

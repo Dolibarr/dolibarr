@@ -679,7 +679,8 @@ if (empty($action))
         print '<input type="hidden" name="action" value="list">';
         print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
         print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-
+        print '<input type="hidden" name="page" value="'.$page.'">';
+        
         $moreforfilter='';
         
         $parameters=array();
@@ -722,8 +723,8 @@ if (empty($action))
         print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
         print '</td>';
         print '<td class="liste_titre" align="right">';
-        $searchpitco=$form->showFilterAndCheckAddButtons(0);
-        print $searchpitco;
+        $searchpicto=$form->showFilterAndCheckAddButtons(0);
+        print $searchpicto;
         print '</td>';
         print "</tr>\n";
 

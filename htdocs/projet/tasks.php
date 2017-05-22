@@ -92,9 +92,12 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 {
 	$error=0;
 
-	$date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear'],'user');
-	$date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear'],'user');
-
+    // If we use user timezone, we must change also view/list to use user timezone everywhere
+    //$date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear'],'user');
+	//$date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear'],'user');
+	$date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
+	$date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
+	
 	if (! $cancel)
 	{
 		if (empty($taskref))
@@ -215,14 +218,14 @@ if ($id > 0 || ! empty($ref))
 	$tab=GETPOST('tab')?GETPOST('tab'):'tasks';
 
 	$head=project_prepare_head($object);
-	dol_fiche_head($head, $tab, $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
+	dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
 	$param='';
     if ($search_user_id > 0) $param.='&search_user_id='.dol_escape_htmltag($search_user_id);
 
     // Project card
     
-    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
     
     $morehtmlref='<div class="refidno">';
     // Title
@@ -391,14 +394,14 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print $form->select_date(($date_end?$date_end:-1),'datee',1,1,0,'',1,1,1);
 	print '</td></tr>';
 
-	// planned workload
+	// Planned workload
 	print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
 	print $form->select_duration('planned_workload', $planned_workload?$planned_workload : $object->planned_workload,0,'text');
 	print '</td></tr>';
 
 	// Progress
 	print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
-	print $formother->select_percent($progress,'progress');
+	print $formother->select_percent($progress,'progress',0,5,0,100,1);
 	print '</td></tr>';
 
 	// Description
@@ -465,6 +468,7 @@ else if ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	
 	$title=$langs->trans("ListOfTasks");
@@ -501,8 +505,8 @@ else if ($id > 0 || ! empty($ref))
 
         // Action column
         print '<td class="liste_titre" align="right">';
-        $searchpitco=$form->showFilterButtons();
-        print $searchpitco;
+        $searchpicto=$form->showFilterButtons();
+        print $searchpicto;
         print '</td>';
 	}
 	

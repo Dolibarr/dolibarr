@@ -66,15 +66,17 @@ if (preg_match('/api\/index\.php\/explorer/', $_SERVER["PHP_SELF"]) && ! empty($
 }
 
 
-
 $api = new DolibarrApi($db);
 
 // Enable the Restler API Explorer.
 // See https://github.com/Luracast/Restler-API-Explorer for more info.
 $api->r->addAPIClass('Luracast\\Restler\\Explorer');
 
-$api->r->setSupportedFormats('JsonFormat', 'XmlFormat');
+$api->r->setSupportedFormats('JsonFormat', 'XmlFormat', 'UploadFormat');
 $api->r->addAuthenticationClass('DolibarrApiAccess','');
+
+// Define accepted mime types
+UploadFormat::$allowedMimeTypes = array('image/jpeg', 'image/png', 'text/plain', 'application/octet-stream');
 
 $listofapis = array();
 
@@ -96,7 +98,7 @@ foreach ($modulesdir as $dir)
                 $module = strtolower($reg[1]);
                 $moduledirforclass = $module;
                 $moduleforperm = $module;
-                
+
                 if ($module == 'propale') {
                     $moduledirforclass = 'comm/propal';
                     $moduleforperm='propal';
@@ -129,7 +131,7 @@ foreach ($modulesdir as $dir)
                     $moduledirforclass = 'fourn';
                 }
                 //dol_syslog("Found module file ".$file." - module=".$module." - moduledirforclass=".$moduledirforclass);
-                
+
                 // Defined if module is enabled
                 $enabled=true;
                 if (empty($conf->$moduleforperm->enabled)) $enabled=false;
@@ -152,7 +154,7 @@ foreach ($modulesdir as $dir)
                         while (($file_searched = readdir($handle_part))!==false)
                         {
                             if ($file_searched == 'api_access.class.php') continue;
-                            
+
                             // Support of the deprecated API.
                             if (is_readable($dir_part.$file_searched) && preg_match("/^api_deprecated_(.*)\.class\.php$/i",$file_searched,$reg))
                             {

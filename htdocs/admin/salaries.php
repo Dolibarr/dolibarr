@@ -85,7 +85,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 
-dol_fiche_head();
+//dol_fiche_head(null, '', '', -1);
 
 /*
  *  Params
@@ -122,7 +122,7 @@ print '</tr>';
 
 print "</table>\n";
 
-dol_fiche_end();
+//dol_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 

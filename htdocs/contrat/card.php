@@ -953,7 +953,6 @@ if (empty($reshook))
 	 */
 
 	// Actions to send emails
-	$actiontypecode='AC_CONT';
 	$trigger_name='CONTRACT_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromcontract';
@@ -1056,12 +1055,7 @@ if ($result > 0)
 	$modCodeContract = new $module();
 }
 
-
-/*********************************************************************
- *
- * Mode creation
- *
- *********************************************************************/
+// Create
 if ($action == 'create')
 {
 	print load_fiche_titre($langs->trans('AddContract'),'','title_commercial.png');
@@ -1158,7 +1152,7 @@ if ($action == 'create')
 	else
 	{
 		print '<td>';
-		print $form->select_company('','socid','','SelectThirdParty',1);
+		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
 		print '</td>';
 	}
 	print '</tr>'."\n";
