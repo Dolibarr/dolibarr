@@ -98,8 +98,8 @@ class BankAccounts extends DolibarrApi
 
         if ($result) {
             $num = $this->db->num_rows($result);
-            $minnum = min($num, ($limit <= 0 ? $num : $limit));
-            for ($i = 0; $i < $minnum; $i++) {
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
                 $obj = $this->db->fetch_object($result);
                 $account = new Account($this->db);
                 if ($account->fetch($obj->rowid) > 0) {
