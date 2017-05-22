@@ -431,10 +431,17 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
         $user=$this->savuser;
         $langs=$this->savlangs;
         $db=$this->savdb;
-    
+        
+        
         //$dummyuser=new User($db);
         //$result=restrictedArea($dummyuser,'societe');
 
+        // We save user properties
+        $savpermlire = $user->rights->facture->lire;
+        $savpermcreer = $user->rights->facture->creer;
+        
+        
+		// Check access to SPECIMEN
         $user->rights->facture->lire = 0;
         $user->rights->facture->creer = 0;
         $filename='SPECIMEN.pdf';             // Filename relative to module part
@@ -473,6 +480,11 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
         $filename='FA010101/FA010101.pdf';    // Filename relative to module part
         $result=dol_check_secure_access_document('facture', $filename, 0, '', '', 'write');
         $this->assertEquals(0,$result['accessallowed']);
+        
+        
+        // We restore user properties
+        $user->rights->facture->lire = $savpermlire;
+        $user->rights->facture->creer = $savpermcreer;
     }    
 
 }
