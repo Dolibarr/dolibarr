@@ -187,6 +187,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
    }
 }
 
+$object = new Societe($db);
+
 
 /*
  * Actions
@@ -196,7 +198,7 @@ if (GETPOST('cancel')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -204,7 +206,7 @@ if (empty($reshook))
     // Selection of new fields
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    // Do we click on purge search criteria ?
+    // Did we click on purge search criteria ?
     if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
     {
         $search_nom='';
@@ -603,7 +605,7 @@ if ($user->rights->societe->client->voir || $socid)
 	$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user, 0, 1, 'maxwidth300');
 	$moreforfilter.='</div>';
 }
-if (! empty($moreforfilter))
+if ($moreforfilter)
 {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
@@ -905,7 +907,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
         if (! empty($arrayfields["ef.".$key]['checked']))
         {
             $align=$extrafields->getAlignFlag($key);
-            print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
         }
     }
 }
