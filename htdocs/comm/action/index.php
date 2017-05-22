@@ -50,7 +50,7 @@ $usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
 // If not choice done on calendar owner (like on left menu link "Agenda"), we filter on user.
-if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
+if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS) && ! $user->rights->agenda->allactions->create)
 {
 	$filtert=$user->id;
 }
