@@ -193,7 +193,7 @@ llxHeader('', $title, $helpurl);
 $head=product_prepare_head($object);
 $titre=$langs->trans("CardProduct".$object->type);
 $picto=($object->type==Product::TYPE_SERVICE?'service':'product');
-dol_fiche_head($head, 'subproduct', $titre, 0, $picto);
+dol_fiche_head($head, 'subproduct', $titre, -1, $picto);
 
 
 if ($id > 0 || ! empty($ref))
@@ -209,48 +209,47 @@ if ($id > 0 || ! empty($ref))
 		
         if ($object->type!=Product::TYPE_SERVICE || empty($conf->global->PRODUIT_MULTIPRICES))
         {
+            print '<div class="fichecenter">';
     	    print '<div class="underbanner clearboth"></div>';	
             print '<table class="border tableforfield" width="100%">';
-        }
         
-		// Nature
-		if ($object->type!=Product::TYPE_SERVICE)
-		{
-			print '<tr><td>'.$langs->trans("Nature").'</td><td>';
-			print $object->getLibFinished();
-			print '</td></tr>';
-		}
+    		// Nature
+    		if ($object->type!=Product::TYPE_SERVICE)
+    		{
+    			print '<tr><td>'.$langs->trans("Nature").'</td><td>';
+    			print $object->getLibFinished();
+    			print '</td></tr>';
+    		}
+    
+    		if (empty($conf->global->PRODUIT_MULTIPRICES))
+    		{
+    		    // Price
+    			print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
+    			if ($object->price_base_type == 'TTC')
+    			{
+    				print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
+    			}
+    			else
+    			{
+    				print price($object->price).' '.$langs->trans($object->price_base_type?$object->price_base_type:'HT');
+    			}
+    			print '</td></tr>';
+    
+    			// Price minimum
+    			print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
+    			if ($object->price_base_type == 'TTC')
+    			{
+    				print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
+    			}
+    			else
+    			{
+    				print price($object->price_min).' '.$langs->trans($object->price_base_type?$object->price_base_type:'HT');
+    			}
+    			print '</td></tr>';
+    		}
 
-		if (empty($conf->global->PRODUIT_MULTIPRICES))
-		{
-		    // Price
-			print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
-			if ($object->price_base_type == 'TTC')
-			{
-				print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
-			}
-			else
-			{
-				print price($object->price).' '.$langs->trans($object->price_base_type?$object->price_base_type:'HT');
-			}
-			print '</td></tr>';
-
-			// Price minimum
-			print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
-			if ($object->price_base_type == 'TTC')
-			{
-				print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
-			}
-			else
-			{
-				print price($object->price_min).' '.$langs->trans($object->price_base_type?$object->price_base_type:'HT');
-			}
-			print '</td></tr>';
-		}
-
-        if ($object->type!=Product::TYPE_SERVICE || empty($conf->global->PRODUIT_MULTIPRICES))
-        {
-		  print '</table>';
+            print '</table>';
+            print '</div>';
         }
 
 		dol_fiche_end();
@@ -271,7 +270,7 @@ if ($id > 0 || ! empty($ref))
 
 		//if (count($prodsfather) > 0)
 		//{
-			print load_fiche_titre($langs->trans("ProductParentList"),'','').'<br>';
+			print load_fiche_titre($langs->trans("ProductParentList"),'','');
 			print '<table class="centpercent noborder">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans('ParentProducts').'</td>';
@@ -320,7 +319,7 @@ if ($id > 0 || ! empty($ref))
 		//if (count($prods_arbo) > 0)
 		//{
 			$atleastonenotdefined=0;
-			print load_fiche_titre($langs->trans("ProductAssociationList"),'','').'<br>';
+			print load_fiche_titre($langs->trans("ProductAssociationList"),'','');
 
 			print '<form name="formComposedProduct" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 			print '<input type="hidden" name="action" value="save_composed_product" />';
