@@ -4,7 +4,7 @@
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013 		Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

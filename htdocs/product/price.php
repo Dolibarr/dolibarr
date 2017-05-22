@@ -8,7 +8,7 @@
  * Copyright (C) 2014-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014-2015 	Philippe Grand 		    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *

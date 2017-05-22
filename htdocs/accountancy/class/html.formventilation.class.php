@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016 Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
