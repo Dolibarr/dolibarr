@@ -792,11 +792,12 @@ class Categorie extends CommonObject
 	/**
 	 * Return list of fetched instance of elements having this category
 	 *
-	 * @param   string $type Type of category ('customer', 'supplier', 'contact', 'product', 'member')
-	 *
-	 * @return  mixed        -1 if KO, array of instance of object if OK
+	 * @param   string     $type       Type of category ('customer', 'supplier', 'contact', 'product', 'member')
+	 * @param   int        $onlyids    Return only ids of objects (consume less memory)
+	 * @return  mixed                  -1 if KO, array of instance of object if OK
+	 * @see containsObject
 	 */
-	function getObjectsInCateg($type)
+	function getObjectsInCateg($type, $onlyids=0)
 	{
 		$objs = array();
 
@@ -813,10 +814,18 @@ class Categorie extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			while ($rec = $this->db->fetch_array($resql)) {
-				$obj = new $this->MAP_OBJ_CLASS[$type]( $this->db );
-				$obj->fetch( $rec['fk_' . $this->MAP_CAT_FK[$type]]);
-				$objs[] = $obj;
+			while ($rec = $this->db->fetch_array($resql)) 
+			{
+			    if ($onlyids)
+			    {
+			        $objs[] = $rec['fk_' . $this->MAP_CAT_FK[$type]];
+			    }
+			    else
+			    {
+				    $obj = new $this->MAP_OBJ_CLASS[$type]( $this->db );
+				    $obj->fetch( $rec['fk_' . $this->MAP_CAT_FK[$type]]);
+				    $objs[] = $obj;
+			    }
 			}
 			return $objs;
 		}
@@ -834,6 +843,7 @@ class Categorie extends CommonObject
 	 * @param   int    $object_id id of the object to search
 	 *
 	 * @return  int                        number of occurrences
+	 * @see getObjectsInCateg
 	 */
 	function containsObject($type, $object_id )
 	{
