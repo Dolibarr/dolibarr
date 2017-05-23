@@ -289,7 +289,7 @@ class AgendaEvents extends DolibarrApi
     function _validate($data)
     {
         $event = array();
-        foreach (Events::$FIELDS as $field) {
+        foreach (AgendaEvents::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $event[$field] = $data[$field];
