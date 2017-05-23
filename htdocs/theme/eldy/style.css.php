@@ -698,7 +698,7 @@ div.fiche>form>div.div-table-responsive {
     justify-content: flex-start;
 }
 .thumbstat {
-	flex: 1 1 114px;
+	flex: 1 1 116px;
 }
 .thumbstat150 {
 	flex: 1 1 170px;
