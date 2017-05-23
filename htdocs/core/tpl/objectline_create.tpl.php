@@ -671,6 +671,19 @@ jQuery(document).ready(function() {
 	<?php if (GETPOST('prod_entry_mode') == 'predef') { // When we submit with a predef product and it fails we must start with predef ?>
 		setforpredef();
 	<?php } ?>
+	
+	<?php if (!empty($conf->multicurrency->enabled)) { ?>
+		$("#multicurrency_price_ht").change(function() {
+			var new_value = price2numjs($(this).val()) / <?php echo !empty($object->multicurrency_tx) ? $object->multicurrency_tx : 1; ?>; 
+			$("#price_ht").val(new_value);
+		});
+		
+		$("#price_ht").change(function() {
+			var new_value = price2numjs($(this).val()) * <?php echo !empty($object->multicurrency_tx) ? $object->multicurrency_tx : 1; ?>;
+			$("#multicurrency_price_ht").val(new_value);
+		});
+
+	<?php } ?>
 
 });
 
@@ -684,12 +697,14 @@ function setforfree() {
 	jQuery("#prod_entry_mode_free").prop('checked',true);
 	jQuery("#prod_entry_mode_predef").prop('checked',false);
 	jQuery("#price_ht").show();
+	jQuery("#multicurrency_price_ht").show();
 	jQuery("#price_ttc").show();	// May no exists
 	jQuery("#tva_tx").show();
 	jQuery("#buying_price").val('').show();
 	jQuery("#fournprice_predef").hide();
 	jQuery("#title_vat").show();
 	jQuery("#title_up_ht").show();
+	jQuery("#title_up_ht_currency").show();
 	jQuery("#title_up_ttc").show();
 	jQuery("#np_marginRate").show();	// May no exists
 	jQuery("#np_markRate").show();	// May no exists
@@ -703,12 +718,14 @@ function setforpredef() {
 	jQuery("#prod_entry_mode_free").prop('checked',false);
 	jQuery("#prod_entry_mode_predef").prop('checked',true);
 	jQuery("#price_ht").hide();
+	jQuery("#multicurrency_price_ht").hide();
 	jQuery("#price_ttc").hide();	// May no exists
 	jQuery("#tva_tx").hide();
 	jQuery("#buying_price").show();
 	//jQuery("#fournprice_predef").show(); // management somewhere else
 	jQuery("#title_vat").hide();
 	jQuery("#title_up_ht").hide();
+	jQuery("#title_up_ht_currency").hide();
 	jQuery("#title_up_ttc").hide();
 	jQuery("#np_marginRate").hide();	// May no exists
 	jQuery("#np_markRate").hide();	// May no exists

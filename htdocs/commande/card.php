@@ -787,8 +787,14 @@ if (empty($reshook))
 				$type = $prod->type;
 				$fk_unit = $prod->fk_unit;
 			} else {
-				$pu_ht = price2num($price_ht, 'MU');
-				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
+				if (!empty($conf->multicurrency->enabled)) { // we have to preserve all precision for the conversion as editline
+					$pu_ht = price2num($price_ht);
+					$pu_ttc = price2num(GETPOST('price_ttc'));
+				}
+				else{
+					$pu_ht = price2num($price_ht, 'MU');
+					$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
+				}
 				$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
 				$tva_tx = str_replace('*', '', $tva_tx);
 				$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
@@ -1628,7 +1634,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<tr>';
 		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
-	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
+	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code',1);
 		print '</td></tr>';
 	}
 

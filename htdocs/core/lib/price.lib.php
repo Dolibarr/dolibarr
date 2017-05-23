@@ -227,7 +227,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result2bis= price2num($tot_avec_remise * (1 + ( $txtva / 100)) + $localtaxes[1], 'MT');	// Si TVA consideree normale (non NPR)
 		$result[1] = price2num($result2bis - ($result[0] + $localtaxes[1]), 'MT');	// Total VAT = TTC - (HT + localtax)
 
-		$result[3] = price2num($pu, 'MU');
+		if (!empty($conf->multicurrency->enabled)) {
+			$result[3] = price2num($pu);// we have to preserve all precision for the conversion 
+		}
+		else{
+			$result[3] = price2num($pu, 'MU');	
+		}	
+		
 		$result[5] = price2num($pu * (1 + ( (($info_bits & 1)?0:$txtva) / 100)) + $localtaxes[2], 'MU');	// Selon TVA NPR ou non
 		$result5bis= price2num($pu * (1 + ($txtva / 100)) + $localtaxes[2], 'MU');	// Si TVA consideree normale (non NPR)
 		$result[4] = price2num($result5bis - ($result[3] + $localtaxes[2]), 'MU');
@@ -329,6 +335,8 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 	
 	// Multicurrency
+	if(empty($multicurrency_tx)) $multicurrency_tx = 1;
+	
 	$result[16] = price2num($result[0] * $multicurrency_tx, 'MT');
 	$result[17] = price2num($result[1] * $multicurrency_tx, 'MT');
 	$result[18] = price2num($result[2] * $multicurrency_tx, 'MT');
