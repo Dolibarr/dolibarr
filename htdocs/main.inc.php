@@ -1935,7 +1935,6 @@ if (! function_exists("llxFooter"))
         if ($comment) print '<!-- '.$comment.' -->'."\n";
 
         printCommonFooter($zone);
-        //var_dump($langs);		// Uncommment to see the property _tab_loaded to see which language file were loaded
 
         if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '</div> <!-- End div id-container -->'."\n";	// End div container
 

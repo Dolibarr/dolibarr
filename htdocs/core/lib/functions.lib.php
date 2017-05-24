@@ -280,6 +280,7 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
     	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
     	$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
 	
+        // Code for search criteria persistence.
     	// Retrieve values if restore_lastsearch_values is set and there is saved values
     	if (! empty($_GET['restore_lastsearch_values']) && ! empty($_SESSION['lastsearch_values_'.$relativepathstring]))        // Keep $_GET here
     	{
