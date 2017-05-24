@@ -3806,12 +3806,12 @@ else if ($id > 0 || ! empty($ref))
 		if ($object->situation_cycle_ref && $object->statut == 0) {
 			print '<div class="div-table-responsive">';
 			
-			print '<form name="updatealllines" id="updatealllines" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '"#updatealllines" method="POST">';
+			print '<form name="updatealllines" id="updatealllines" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '#updatealllines" method="POST">';
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '" />';
 			print '<input type="hidden" name="action" value="updatealllines" />';
 			print '<input type="hidden" name="id" value="' . $object->id . '" />';
 			
-			print '<table id="tablelines" class="noborder noshadow" width="100%">';
+			print '<table id="tablelines_all_progress" class="noborder noshadow" width="100%">';
 			print '<tr class="liste_titre nodrag nodrop">';
 			
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
