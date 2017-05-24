@@ -119,23 +119,30 @@ if ($id > 0 || ! empty($ref))
 
 
 	$head = resource_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), 0, 'resource');
+	dol_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), -1, 'resource');
 
 
-	/*
-	*   Resource synthese pour rappel
-	*/
+	$linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	 
+	 
+	$morehtmlref='<div class="refidno">';
+	$morehtmlref.='</div>';
+	 
+	 
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+	 
+	 
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+	 
+	
+	// Object
+
 	print '<table width="100%" class="border">';
-
-	print '<tr><td class="titlefield">'.$langs->trans("ResourceFormLabel_ref").'</td><td>';
-	$linkback = $objet->ref.' <a href="list.php">'.$langs->trans("BackToList").'</a>';
-	print $form->showrefnav($object, 'id', $linkback,1,"rowid");
-	print '</td>';
-	print '</tr>';
 
 	// Resource type
 	print '<tr>';
-	print '<td>' . $langs->trans("ResourceType") . '</td>';
+	print '<td class="titlefield">' . $langs->trans("ResourceType") . '</td>';
 	print '<td>';
 	print $object->type_label;
 	print '</td>';
@@ -144,6 +151,8 @@ if ($id > 0 || ! empty($ref))
 	print '</table>';
 	print '</div>';
 
+	dol_fiche_end();
+	
 	print '<br>';
 
 	if (! empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER))     $hideaddcontactforuser=1;

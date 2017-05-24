@@ -189,7 +189,9 @@ class FormActions
 
         	$page=0; $param=''; $sortfield='a.datep';
         	
-        	$total = 0;	$var=true; 
+        	$total = 0; 
+        	
+        	print '<div class="div-table-responsive">';
         	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
         	print '<tr class="liste_titre">';
         	print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], '', $page, $param, '');
@@ -243,6 +245,7 @@ class FormActions
         		print '</tr>';
         	}
         	print '</table>';
+        	print '</div>';
         }
 
         return $num;

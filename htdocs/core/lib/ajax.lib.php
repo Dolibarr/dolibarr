@@ -354,9 +354,9 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * Make content of an input box selected when we click into input field.
  * 
  * @param string	$htmlname	Id of html object 
- * @param int		$addlink	Add a link to after
+ * @param string	$addlink	Add a 'link to' after
  */
-function ajax_autoselect($htmlname, $addlink=0)
+function ajax_autoselect($htmlname, $addlink='')
 {
 	global $langs;
 	$out = '<script type="text/javascript">
@@ -364,7 +364,7 @@ function ajax_autoselect($htmlname, $addlink=0)
 				    jQuery("#'.$htmlname.'").click(function() { jQuery(this).select(); } );
 				});
 		    </script>';
-	if ($addlink) $out.=' <a href="'.$url.'" target="_blank">'.$langs->trans("Link").'</a>';
+	if ($addlink) $out.=' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
 	return $out;
 }
 

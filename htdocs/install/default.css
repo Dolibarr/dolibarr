@@ -54,9 +54,9 @@ span.titre {
 	font-weight: bold;
 	background: #FFFFFF;
 	color: #444;
-	border: 1px solid #999;
-	padding: 5px 5px 5px 5px;
-	margin: 0 0 0 15px;
+	border: 1px solid #bbb;
+	padding: 10px 10px 10px 10px;
+	margin: 0 0 10px 10px;
 }
 
 div.soustitre {

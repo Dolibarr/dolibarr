@@ -578,7 +578,7 @@ if ($rowid > 0)
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 
-    dol_fiche_head($head, 'subscription', $langs->trans("Member"), 0, 'user');
+    dol_fiche_head($head, 'subscription', $langs->trans("Member"), -1, 'user');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
     

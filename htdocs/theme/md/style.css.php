@@ -544,7 +544,7 @@ textarea.centpercent {
 .cursorpointer {
 	cursor: pointer;
 }
-.cusormove {
+.cursormove {
 	cursor: move;
 }
 .badge {
@@ -701,7 +701,7 @@ div.fiche>form>div.div-table-responsive {
     justify-content: flex-start;
 }
 .thumbstat {
-	flex: 1 1 114px;
+	flex: 1 1 116px;
 }
 .thumbstat150 {
 	flex: 1 1 150px;
@@ -1979,9 +1979,10 @@ div.tabsElem { margin-top: 6px; }		/* To avoid overlap of tabs when not browser 
 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
-    padding-top: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
-    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
-    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
+    padding-top: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
+	padding-bottom: 16px;
     margin: 0px 0px 16px 0px;
     -moz-border-radius:3px;
     -webkit-border-radius: 3px;
@@ -1991,8 +1992,6 @@ div.tabBar {
     border-top: 1px solid #CCC;
 	width: auto;
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
-
-	padding-bottom: 12px;
 	border-bottom: 1px solid #aaa; 
 }
 div.tabBar div.titre {
@@ -4627,8 +4626,8 @@ border-top-right-radius: 6px;
 	}
 
     div.tabBar {
-        padding-left: 0px;
-        padding-right: 0px;
+        padding-left: 8px;
+        padding-right: 8px;
         -moz-border-radius: 0;
         -webkit-border-radius: 0;
     	border-radius: 0px;

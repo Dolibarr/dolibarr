@@ -4783,7 +4783,7 @@ class Form
                 {
                     $retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth75imp" id="'.$prefix.'year" name="'.$prefix.'year">';
 
-                    for ($year = $syear - 5; $year < $syear + 10 ; $year++)
+                    for ($year = $syear - 10; $year < $syear + 10 ; $year++)
                     {
                         $retstring.='<option value="'.$year.'"'.($year == $syear ? ' selected':'').'>'.$year.'</option>';
                     }

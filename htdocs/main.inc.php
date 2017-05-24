@@ -859,7 +859,7 @@ if (! defined('NOLOGIN'))
 }
 
 
-dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]);
+dol_syslog("--- Access to ".$_SERVER["PHP_SELF"].' - action='.GETPOST('action','az09').', massaction='.GETPOST('massaction','az09'));
 //Another call for easy debugg
 //dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
 
