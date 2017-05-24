@@ -832,7 +832,7 @@ td.showDragHandle {
 	position: fixed;
 	top: 50px;
 <?php } ?>
-	z-index: 200;
+	z-index: 90;
 	-webkit-transform: translateZ(0);
 	-moz-transform: translateZ(0);
 	-ms-transform: translateZ(0);
@@ -889,7 +889,7 @@ div.login_block {
 
 	position: auto;
 	top: auto;
-	z-index: 200;
+	z-index: 90;
 }
 div.login_block {
 	/* position: initial !important;*/
@@ -899,7 +899,7 @@ div.login_block {
 	padding-left: 0 ! important;
 }
 #id-left {
-	z-index: 201;
+	z-index: 91;
 	background: #FFF;
 	border-right: 1px solid rgba(0,0,0,0.3);
 <?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
@@ -4116,7 +4116,7 @@ span.noborderoncategories {
 /* ============================================================================== */
 
 ul.ulselectedfields {
-    z-index: 100;			/* To have the select box appears on first plan even when near buttons are decorated by jmobile */
+    z-index: 90;			/* To have the select box appears on first plan even when near buttons are decorated by jmobile */
 }
 dl.dropdown {
     margin:0px;

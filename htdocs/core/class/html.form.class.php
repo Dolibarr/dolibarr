@@ -968,7 +968,7 @@ class Form
     		$out.=  ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 			$out.='<style type="text/css">
 					.ui-autocomplete {
-						z-index: 150;
+						z-index: 250;
 					}
 				</style>';
     		if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
