@@ -27,7 +27,6 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancysystem.class.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $error = 0;
@@ -196,7 +195,6 @@ $helpurl = '';
 llxheader('', $title, $helpurl);
 
 $form = new Form($db);
-$htmlacc = new FormVentilation($db);
 $formaccounting = new FormAccounting($db);
 
 $accountsystem = new AccountancySystem($db);
@@ -231,7 +229,7 @@ if ($action == 'create') {
 	// Account parent
 	print '<tr><td>' . $langs->trans("Accountparent") . '</td>';
 	print '<td>';
-	print $htmlacc->select_account($object->account_parent, 'account_parent', 1, null, 0, 0, 'minwidth200');
+	print $formaccounting->select_account($object->account_parent, 'account_parent', 1, null, 0, 0, 'minwidth200');
 	print '</td></tr>';
 
 	// Category
@@ -295,7 +293,7 @@ if ($action == 'create') {
 			// Account parent
 			print '<tr><td>' . $langs->trans("Accountparent") . '</td>';
 			print '<td>';
-			print $htmlacc->select_account($object->account_parent, 'account_parent', 1);
+			print $formaccounting->select_account($object->account_parent, 'account_parent', 1);
 			print '</td></tr>';
 
 			// Category

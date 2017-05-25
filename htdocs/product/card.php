@@ -52,7 +52,7 @@ if (! empty($conf->propal->enabled))     require_once DOL_DOCUMENT_ROOT.'/comm/p
 if (! empty($conf->facture->enabled))    require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->commande->enabled))   require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 $langs->load("products");
 $langs->load("other");
@@ -808,7 +808,7 @@ llxHeader('', $title, $helpurl);
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
-if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
 
 // Load object modBarCodeProduct
 $res=0;
@@ -1113,13 +1113,13 @@ else
             // Accountancy_code_sell
             print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
             print '<td>';
-		    print $formaccountancy->select_account(GETPOST('accountancy_code_sell'), 'accountancy_code_sell', 1, null, 1, 1, '');
+		    print $formaccounting->select_account(GETPOST('accountancy_code_sell'), 'accountancy_code_sell', 1, null, 1, 1, '');
             print '</td></tr>';
 
             // Accountancy_code_buy
             print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
             print '<td>';
-			print $formaccountancy->select_account(GETPOST('accountancy_code_buy'), 'accountancy_code_buy', 1, null, 1, 1, '');
+			print $formaccounting->select_account(GETPOST('accountancy_code_buy'), 'accountancy_code_buy', 1, null, 1, 1, '');
             print '</td></tr>';
 		}			
 		else // For external software 
@@ -1406,15 +1406,15 @@ else
                 // Accountancy_code_sell
                 print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
                 print '<td>';
-				print $formaccountancy->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
+				print $formaccounting->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
                 print '</td></tr>';
 
                 // Accountancy_code_buy
                 print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
                 print '<td>';
-				print $formaccountancy->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 1, 1);
+				print $formaccounting->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 1, 1);
                 print '</td></tr>';
-			}			
+			}
 			else // For external software 
 			{
                 // Accountancy_code_sell
