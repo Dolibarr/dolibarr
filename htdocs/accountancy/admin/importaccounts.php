@@ -146,36 +146,35 @@ if ($result) {
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		print '<tr class="oddeven">';
-		
+
 		print '<td align="left">';
 		print $objp->accounting;
 		print '</td>';
-		
+
 		print '<td align="left">';
 		print '<input name="label" size="30" value="">';
 		print '</td>';
-		
+
 		// Colonne choix du compte
 		print '<td>';
 		print $htmlacc->select_account($accounting->account_parent, 'AccountParent');
 		print '</td>';
-		
+
 		print '<td>';
-		print $htmlacc->select_pcgtype($accounting->pcg_type, 'pcgType');
+		print '<input type="text" name="pcgType" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype'])?GETPOST('pcg_subtype','alpha'):$accounting->pcg_type).'">';
 		print '</td>';
-		
+
 		print '<td>';
-		print $htmlacc->select_pcgsubtype($accounting->pcg_subtype, 'pcgSubType');
+		print '<input type="text" name="pcgSubType" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype'])?GETPOST('pcg_subtype','alpha'):$accounting->pcg_subtype).'">';
 		print '</td>';
-		
+
 		// Colonne choix ligne a ventiler
-		
 		$checked = ('label' == 'O') ? ' checked' : '';
-		
+
 		print '<td align="center">';
 		print '<input type="checkbox" name="mesCasesCochees[]" ' . $checked . ' value="' . $objp->accounting . '"/>';
 		print '</td>';
-		
+
 		print '</tr>';
 		$i ++;
 	}
