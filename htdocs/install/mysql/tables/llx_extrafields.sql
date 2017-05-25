@@ -21,12 +21,14 @@ create table llx_extrafields
 (
 	rowid           integer AUTO_INCREMENT PRIMARY KEY,
 	name            varchar(64) NOT NULL,         				-- name of field into extrafields tables
-	entity          integer DEFAULT 1 NOT NULL,				-- multi company id
-    elementtype     varchar(64) NOT NULL DEFAULT 'member',	-- for which element this extra fields is for
+	entity          integer DEFAULT 1 NOT NULL,					-- multi company id
+    elementtype     varchar(64) NOT NULL DEFAULT 'member',		-- for which element this extra fields is for
 	tms             timestamp,									-- date of last update
 	label           varchar(255) NOT NULL,        				-- label to show for attribute
 	type            varchar(8),
 	size            varchar(8) DEFAULT NULL,
+	fieldcomputed   text,
+	fielddefault    varchar(255),
 	fieldunique     integer DEFAULT 0,
 	fieldrequired   integer DEFAULT 0,
 	perms			varchar(255),								-- not used yet

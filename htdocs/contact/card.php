@@ -1021,7 +1021,7 @@ else
 
         dol_htmloutput_errors($error,$errors);
 
-        dol_fiche_head($head, 'card', $title, 0, 'contact');
+        dol_fiche_head($head, 'card', $title, -1, 'contact');
 
         if ($action == 'create_user')
         {

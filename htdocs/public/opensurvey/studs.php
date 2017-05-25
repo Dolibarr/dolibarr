@@ -47,6 +47,9 @@ $nblignes=$object->fetch_lines();
 //If the survey has not yet finished, then it can be modified
 $canbemodified = ((empty($object->date_fin) || $object->date_fin > dol_now()) && $object->status != Opensurveysondage::STATUS_CLOSED);
 
+// Security check
+if (empty($conf->opensurvey->enabled)) accessforbidden('',0,0,1);
+
 
 /*
  * Actions

@@ -2083,44 +2083,45 @@ else
 
             print "</div>";
         }
-	// Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
-	}
-
-	if ($action != 'presend')
-	{
-		print '<div class="fichecenter"><div class="fichehalfleft">';
-
-		/*
-		 * Documents generes
-		*/
-		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->contrat->dir_output . "/" . dol_sanitizeFileName($object->ref);
-		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-		$genallowed = $user->rights->contrat->creer;
-		$delallowed = $user->rights->contrat->supprimer;
-
-		$var = true;
-
-		print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
-
-
-			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
-			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
-
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
+        
+    	// Select mail models is same action as presend
+    	if (GETPOST('modelselected')) {
+    		$action = 'presend';
+    	}
+    
+    	if ($action != 'presend')
+    	{
+    		print '<div class="fichecenter"><div class="fichehalfleft">';
+    
+    		/*
+    		 * Documents generes
+    		*/
+    		$filename = dol_sanitizeFileName($object->ref);
+    		$filedir = $conf->contrat->dir_output . "/" . dol_sanitizeFileName($object->ref);
+    		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+    		$genallowed = $user->rights->contrat->creer;
+    		$delallowed = $user->rights->contrat->supprimer;
+    
+    		$var = true;
+    
+    		print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+    
+    
+    			// Show links to link elements
+    			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
+    			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+    
+    
+    		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+    
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'contract', $socid);
 
-
-		print '</div></div></div>';
-	}
+    
+    		print '</div></div></div>';
+    	}
 
 		/*
 		 * Action presend
