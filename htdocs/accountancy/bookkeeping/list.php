@@ -292,7 +292,6 @@ $title_page = $langs->trans("Bookkeeping");
 llxHeader('', $title_page);
 
 // List
-
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
