@@ -2214,6 +2214,16 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file=$conf->don->dir_output.'/'.$original_file;
 	}
 
+	// Wrapping pour les dons
+	else if ($modulepart == 'dolresource' && !empty($conf->resource->dir_output))
+	{
+		if ($fuser->rights->resource->{$read} || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->resource->dir_output.'/'.$original_file;
+	}
+	
 	// Wrapping pour les remises de cheques
 	else if ($modulepart == 'remisecheque' && !empty($conf->banque->dir_output))
 	{

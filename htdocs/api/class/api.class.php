@@ -66,6 +66,7 @@ class DolibarrApi
      *
      * @return array
      */
+    /* Disabled, most APIs does not share same signature for method index 
     function index()
     {
         return array(
@@ -74,7 +75,7 @@ class DolibarrApi
                 'message' => __class__.' is up and running!'
             )
         );
-    }
+    }*/
 
 
     /**

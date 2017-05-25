@@ -156,7 +156,8 @@ class Thirdparties extends DolibarrApi
         if ($result)
         {
             $num = $db->num_rows($result);
-            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $soc_static = new Societe($db);
@@ -310,7 +311,26 @@ class Thirdparties extends DolibarrApi
       return $this->company;
     }
 
-    /**
+	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   object  $object    Object to clean
+	 * @return    array    Array of cleaned object properties
+	 */
+	function _cleanObjectDatas($object) {
+	
+	    $object = parent::_cleanObjectDatas($object);
+	
+	    unset($object->total_ht);
+	    unset($object->total_tva);
+	    unset($object->total_localtax1);
+	    unset($object->total_localtax2);
+	    unset($object->total_ttc);
+	    
+	    return $object;
+	}	
+	
+	/**
      * Validate fields before create or update object
      * 
      * @param array $data   Datas to validate

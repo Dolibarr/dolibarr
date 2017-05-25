@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
@@ -395,11 +395,11 @@ elseif (empty($action) || preg_match('/upgrade/i',$action))
             print '<br><div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
         }
 
-        print "<br>";
+        print "<br><br>";
 
         print '<div class="center"><a href="../index.php?mainmenu=home' . (isset($login) ? '&username=' . urlencode($login) : '') . '">';
-        print $langs->trans("GoToDolibarr");
-        print '</a></div>';
+        print $langs->trans("GoToDolibarr").'...';
+        print '</a></div><br>';
     }
     else
     {

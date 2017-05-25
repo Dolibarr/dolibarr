@@ -762,7 +762,7 @@ Calendar=Calendar
 GroupBy=Group by...
 ViewFlatList=View flat list
 RemoveString=Remove string '%s'
-SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix language files registering to <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">http://transifex.com/projects/p/dolibarr/</a>. 
+SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix language files registering to <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a>. 
 DirectDownloadLink=Direct download link
 Download=Download
 ActualizeCurrency=Update currency rate
@@ -773,6 +773,7 @@ BulkActions=Bulk actions
 ClickToShowHelp=Click to show tooltip help
 HR=HR
 HRAndBank=HR and Bank
+AutomaticallyCalculated=Automatically calculated
 # Week day
 Monday=Monday
 Tuesday=Tuesday
