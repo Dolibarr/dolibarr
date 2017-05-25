@@ -322,7 +322,7 @@ if ($action == 'delbookkeepingyear') {
 		$delyear = dol_print_date(dol_now(), '%Y');
 	}
 	$year_array = $formaccounting->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
-	$journal_array = $formaccounting->selectjournal_accountancy_bookkepping($deljournal, 'deljournal', 0, 'array');
+	$journal_array = $formaccounting->selectjournal($deljournal, 'deljournal', '', 1, 'array', 1, 1);
 
 	$form_question['delyear'] = array (
 			'name' => 'delyear',
