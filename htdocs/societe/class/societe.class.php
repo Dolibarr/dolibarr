@@ -389,8 +389,6 @@ class Societe extends CommonObject
         $this->forme_juridique_code  = 0;
         $this->tva_assuj = 1;
         $this->status = 1;
-
-        return 1;
     }
 
 
