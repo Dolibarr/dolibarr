@@ -109,8 +109,8 @@ if (! empty($force_install_message))
 <table class="nobordernopadding<?php if ($force_install_noedit) print ' hidewhennoedit'; ?>">
 
 	<tr>
-		<td colspan="3" class="label" align="center">
-		<h3><?php echo $langs->trans("WebServer"); ?></h3>
+		<td colspan="3" class="label">
+		<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/globe.svg" width="20" alt="webserver"> <?php echo $langs->trans("WebServer"); ?></h3>
 		</td>
 	</tr>
 
@@ -232,8 +232,8 @@ if (! empty($force_install_message))
 	<!-- Dolibarr database -->
 
 	<tr>
-		<td colspan="3" class="label" align="center"><br>
-		<h3><?php echo $langs->trans("DolibarrDatabase"); ?></h3>
+		<td colspan="3" class="label"><br>
+		<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/database.svg" width="20" alt="webserver"> <?php echo $langs->trans("DolibarrDatabase"); ?></h3>
 		</td>
 	</tr>
 
@@ -466,8 +466,8 @@ if (! empty($force_install_message))
 	$force_install_databaserootpass = parse_database_pass($force_install_databaserootpass);
 	?>
 	<tr class="hidesqlite hideroot">
-		<td colspan="3" class="label" align="center"><br>
-		<h3><?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
+		<td colspan="3" class="label"><br>
+		<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/shield.svg" width="20" alt="webserver"> <?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
 		</td>
 	</tr>
 
