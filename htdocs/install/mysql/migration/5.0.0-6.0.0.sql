@@ -34,6 +34,10 @@
 -- VMYSQL4.3 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN date_fin DATETIME NULL DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_opensurvey_sondage ALTER COLUMN date_fin DROP NOT NULL;
 
+
+ALTER TABLE llx_extrafields ADD COLUMN fieldcomputed text;
+ALTER TABLE llx_extrafields ADD COLUMN fielddefault varchar(255);
+
 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN fk_user_creat integer NOT NULL DEFAULT 0;
@@ -250,7 +254,6 @@ ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_code		 va
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_tx	     double(24,8) DEFAULT 1;
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price	 double(24,8) DEFAULT NULL;
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
-
 
 create table llx_payment_various
 (

@@ -5604,20 +5604,32 @@ function verifCond($strRights)
  *
  * @param 	string	$s				String to evaluate
  * @param	int		$returnvalue	0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
+ * @param   int     $hideerrors     1=Hide errors
  * @return	mixed					Nothing or return of eval
  */
-function dol_eval($s,$returnvalue=0)
+function dol_eval($s, $returnvalue=0, $hideerrors=1)
 {
 	// Only global variables can be changed by eval function and returned to caller
-	global $langs, $user, $conf;
-	global $leftmenu;
+	global $db, $langs, $user, $conf;
+	global $mainmenu, $leftmenu;
 	global $rights;
 	global $object;
-    global $soc;
+	global $mysoc;
+	
+	global $obj;       // To get $obj used into list when dol_eval is used for computed fields and $obj is not yet $object      
+	global $soc;       // For backward compatibility
 
 	//print $s."<br>\n";
-	if ($returnvalue) return @eval('return '.$s.';');
-	else @eval($s);
+	if ($returnvalue)
+	{
+	    if ($hideerrors) return @eval('return '.$s.';');
+	    else return eval('return '.$s.';');
+	}
+	else
+	{
+	    if ($hideerrors) @eval($s);
+	    else eval($s);
+	}
 }
 
 /**

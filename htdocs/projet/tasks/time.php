@@ -96,7 +96,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $search_date='';
     $search_datehour='';
@@ -305,7 +305,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			// Tabs for project
 			$tab='tasks';
 			$head=project_prepare_head($projectstatic);
-			dol_fiche_head($head, $tab, $langs->trans("Project"), 0, ($projectstatic->public?'projectpub':'project'));
+			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'));
 
 			$param=($mode=='mine'?'&mode=mine':'');
 
