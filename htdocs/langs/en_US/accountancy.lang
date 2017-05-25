@@ -257,7 +257,7 @@ Formula=Formula
 ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
 ExportNotSupported=The export format setuped is not supported into this page
 BookeppingLineAlreayExists=Lines already existing into bookeeping
-
+NoJournalDefined=No journal defined
 Binded=Lines bound
 ToBind=Lines to bind
 
