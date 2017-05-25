@@ -41,7 +41,7 @@ function admin_accounting_prepare_head(AccountingAccount $object=null)
 	$head[$h][2] = 'general';
 	$h ++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/journals.php';
+	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/journal.php';
 	$head[$h][1] = $langs->trans("Journaux");
 	$head[$h][2] = 'journal';
 	$h ++;
