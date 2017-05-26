@@ -36,14 +36,22 @@
 class ExtraFields
 {
 	var $db;
-	// Tableau contenant le nom des champs en clef et la definition de ces champs
+
+	// type of element (for what object is the extrafield)
+	var $attribute_elementtype;
+	
+	// Array with type of the extra field
 	var $attribute_type;
-	// Tableau contenant le nom des champs en clef et le label de ces champs en value
+	// Array with label of extra field
 	var $attribute_label;
-	// Tableau contenant le nom des champs en clef et la taille/longueur max de ces champs en value
+	// Array with size of extra field
 	var $attribute_size;
-	// Tableau contenant le nom des choix en clef et la valeur de ces choix en value
+	// array with list of possible values for some types of extra fields
 	var $attribute_choice;
+	// Array to store compute formula for computed fields
+	var $attribute_computed;
+	// Array to store default value
+	var $attribute_default;
 	// Array to store if attribute is unique or not
 	var $attribute_unique;
 	// Array to store if attribute is required or not
@@ -77,16 +85,17 @@ class ExtraFields
 	'phone'=>'ExtrafieldPhone',
 	'mail'=>'ExtrafieldMail',
 	'url'=>'ExtrafieldUrl',
+	'password' => 'ExtrafieldPassword',
 	'select' => 'ExtrafieldSelect',
 	'sellist' => 'ExtrafieldSelectList',
 	'radio' => 'ExtrafieldRadio',
 	'checkbox' => 'ExtrafieldCheckBox',
 	'chkbxlst' => 'ExtrafieldCheckBoxFromList',
 	'link' => 'ExtrafieldLink',
-	'password' => 'ExtrafieldPassword',
 	'separate' => 'ExtrafieldSeparator',
 	);
 
+	
 	/**
 	 *	Constructor
 	 *
@@ -96,10 +105,12 @@ class ExtraFields
 	{
 		$this->db = $db;
 		$this->error = array();
+		$this->attribute_elementtype = array();
 		$this->attribute_type = array();
 		$this->attribute_label = array();
 		$this->attribute_size = array();
-		$this->attribute_elementtype = array();
+		$this->attribute_computed = array();
+		$this->attribute_default = array();
 		$this->attribute_unique = array();
 		$this->attribute_required = array();
 		$this->attribute_perms = array();
@@ -118,15 +129,16 @@ class ExtraFields
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', ...)
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
-	 *  @param	string	$default_value		Defaulted value (Example: '', '0', 'null', 'avalue')
+	 *  @param	string	$default_value		Defaulted value (In database. use the default_value feature for default value on screen. Example: '', '0', 'null', 'avalue')
 	 *  @param  array	$param				Params for field
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
 	 *  @param	int		$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
+	 *  @param  string  $computed           Computed value
 	 *  @return int      					<=0 if KO, >0 if OK
 	 */
-	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param=0, $alwayseditable=0, $perms='', $list=0, $ishidden=0)
+	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param=0, $alwayseditable=0, $perms='', $list=0, $ishidden=0, $computed='')
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
@@ -137,13 +149,13 @@ class ExtraFields
 		// Create field into database except for separator type which is not stored in database
 		if ($type != 'separate')
 		{
-			$result=$this->create($attrname, $type, $size, $elementtype, $unique, $required, $default_value, $param, $perms, $list);
+			$result=$this->create($attrname, $type, $size, $elementtype, $unique, $required, $default_value, $param, $perms, $list, $copmputed);
 		}
 		$err1=$this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
 		{
 			// Add declaration of field into table
-			$result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $ishidden);
+			$result2=$this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $ishidden, $default, $computed);
 			$err2=$this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
 			{
@@ -169,13 +181,14 @@ class ExtraFields
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
-	 *  @param  string  $default_value		Default value for field
+	 *  @param  string  $default_value		Default value for field (in database)
 	 *  @param  array	$param				Params for field  (ex for select list : array('options'=>array('value'=>'label of option'))
 	 *  @param	string	$perms				Permission
 	 *	@param	int		$list				Into list view by default
+	 *  @param  string  $computed           Computed value
 	 *  @return int      	           		<=0 if KO, >0 if OK
 	 */
-	private function create($attrname, $type='varchar', $length=255, $elementtype='member', $unique=0, $required=0, $default_value='',$param='', $perms='', $list=0)
+	private function create($attrname, $type='varchar', $length=255, $elementtype='member', $unique=0, $required=0, $default_value='',$param='', $perms='', $list=0, $computed='')
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -258,9 +271,11 @@ class ExtraFields
 	 *  @param	string			$perms			Permission to check
 	 *  @param	int				$list			Into list view by default
 	 *  @param	int				$ishidden		Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
+	 *  @param  string          $default        Default value (in database. use the default_value feature for default value on screen).
+	 *  @param  string          $computed       Computed value
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=0, $ishidden=0)
+	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=0, $ishidden=0, $default='', $computed='')
 	{
 		global $conf;
 
@@ -286,7 +301,7 @@ class ExtraFields
 				$params='';
 			}
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype, fieldunique, fieldrequired, param, alwayseditable, perms, list, ishidden)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype, fieldunique, fieldrequired, param, alwayseditable, perms, list, ishidden, fielddefault, fieldcomputed)";
 			$sql.= " VALUES('".$attrname."',";
 			$sql.= " '".$this->db->escape($label)."',";
 			$sql.= " '".$type."',";
@@ -299,8 +314,10 @@ class ExtraFields
 			$sql.= " '".$params."',";
 			$sql.= " '".$alwayseditable."',";
 			$sql.= " ".($perms?"'".$this->db->escape($perms)."'":"null").",";
-			$sql.= " ".$list;
-			$sql.= ", ".$ishidden;
+			$sql.= " ".$list.",";
+			$sql.= " ".$ishidden.",";
+			$sql.= " ".($default?"'".$this->db->escape($default)."'":"null").",";
+			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null");
 			$sql.=')';
 
 			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
@@ -430,9 +447,11 @@ class ExtraFields
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
 	 *  @param	int		$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
+	 *  @param  string  $default            Default value (in database. use the default_value feature for default value on screen).
+	 *  @param  string  $computed           Computed value
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0, $perms='',$list='',$ishidden=0)
+	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0, $perms='',$list='',$ishidden=0,$default='',$computed='')
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -479,7 +498,7 @@ class ExtraFields
 			{
 				if ($label)
 				{
-					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list,$ishidden);
+					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list,$ishidden,$default,$computed);
 				}
 				if ($result > 0)
 				{
@@ -531,12 +550,14 @@ class ExtraFields
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
 	 *  @param	int		$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
+	 *  @param  string  $default            Default value (in database. use the default_value feature for default value on screen).
+	 *  @param  string  $computed           Computed value
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
-	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0,$ishidden=0)
+	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0,$ishidden=0,$default='',$computed='')
 	{
 		global $conf;
-		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$ishidden);
+		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$ishidden.", ".$default.", ".$computed);
 
 		// Clean parameters
 		if ($elementtype == 'thirdparty') $elementtype='societe';
@@ -557,7 +578,7 @@ class ExtraFields
 			$sql_del.= " WHERE name = '".$attrname."'";
 			$sql_del.= " AND entity = ".$conf->entity;
 			$sql_del.= " AND elementtype = '".$elementtype."'";
-			dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
+
 			$resql1=$this->db->query($sql_del);
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
@@ -573,8 +594,10 @@ class ExtraFields
 			$sql.= " pos,";
 			$sql.= " alwayseditable,";
 			$sql.= " param,";
-			$sql.= " list";
-			$sql.= ", ishidden";
+			$sql.= " list,";
+			$sql.= " ishidden,";
+			$sql.= " fielddefault,";
+			$sql.= " fieldcomputed";
 			$sql.= ") VALUES (";
 			$sql.= "'".$attrname."',";
 			$sql.= " ".$conf->entity.",";
@@ -588,10 +611,12 @@ class ExtraFields
 			$sql.= " '".$pos."',";
 			$sql.= " '".$alwayseditable."',";
 			$sql.= " '".$param."',";
-			$sql.= " ".$list;
-			$sql.= ", ".$ishidden;
+			$sql.= " ".$list.", ";
+			$sql.= " ".$ishidden.", ";
+			$sql.= " ".($default?"'".$this->db->escape($default)."'":"null").",";
+			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null");
 			$sql.= ")";
-			dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
+
 			$resql2=$this->db->query($sql);
 
 			if ($resql1 && $resql2)
@@ -635,7 +660,7 @@ class ExtraFields
 		// For avoid conflicts with external modules
 		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
 
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,list,ishidden";
+		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,list,ishidden,fielddefault,fieldcomputed";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity IN (0,".$conf->entity.")";
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
@@ -658,6 +683,8 @@ class ExtraFields
 					$this->attribute_label[$tab->name]=$tab->label;
 					$this->attribute_size[$tab->name]=$tab->size;
 					$this->attribute_elementtype[$tab->name]=$tab->elementtype;
+					$this->attribute_default[$tab->name]=$tab->fielddefault;
+					$this->attribute_computed[$tab->name]=$tab->fieldcomputed;
 					$this->attribute_unique[$tab->name]=$tab->fieldunique;
 					$this->attribute_required[$tab->name]=$tab->fieldrequired;
 					$this->attribute_param[$tab->name]=($tab->param ? unserialize($tab->param) : '');
@@ -699,6 +726,8 @@ class ExtraFields
 		$type =$this->attribute_type[$key];
 		$size =$this->attribute_size[$key];
 		$elementtype=$this->attribute_elementtype[$key];
+		$default=$this->attribute_default[$key];
+		$computed=$this->attribute_computed[$key];
 		$unique=$this->attribute_unique[$key];
 		$required=$this->attribute_required[$key];
 		$param=$this->attribute_param[$key];
@@ -706,6 +735,8 @@ class ExtraFields
 		$list=$this->attribute_list[$key];
 		$hidden=$this->attribute_hidden[$key];
 
+		if ($computed) return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
+		
 		if (empty($showsize))
 		{
     		if ($type == 'date')
@@ -1218,10 +1249,12 @@ class ExtraFields
 	{
 		global $conf,$langs;
 
+		$elementtype=$this->attribute_elementtype[$key];
 		$label=$this->attribute_label[$key];
 		$type=$this->attribute_type[$key];
 		$size=$this->attribute_size[$key];
-		$elementtype=$this->attribute_elementtype[$key];
+		$default=$this->attribute_default[$key];
+		$computed=$this->attribute_computed[$key];
 		$unique=$this->attribute_unique[$key];
 		$required=$this->attribute_required[$key];
 		$params=$this->attribute_param[$key];
@@ -1229,6 +1262,14 @@ class ExtraFields
 		$list=$this->attribute_list[$key];
 		$hidden=$this->attribute_hidden[$key];	// warning, do not rely on this. If your module need a hidden data, it must use its own table.
 
+		// If field is a computed field, value must become result of compute
+		if ($computed)
+		{
+		    // Make the eval of compute string
+		    //var_dump($computed);
+		    $value = dol_eval($computed, 1, 0);
+		}
+		
 		$showsize=0;
 		if ($type == 'date')
 		{

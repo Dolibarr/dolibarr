@@ -141,6 +141,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
    }
 }
 
+$object = new Project($db);
+
 
 /*
  * Actions
@@ -200,7 +202,6 @@ if (empty($reshook))
  * View
  */
 
-$projectstatic = new Project($db);
 $socstatic = new Societe($db);
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -212,12 +213,12 @@ $title=$langs->trans("Projects");
 
 // Get list of project id allowed to user (in a string list separated by coma)
 $projectsListId='';
-if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1,$socid);
+if (! $user->rights->projet->all->lire) $projectsListId = $object->getProjectsAuthorizedForUser($user,0,1,$socid);
 
 // Get id of types of contacts for projects (This list never contains a lot of elements)
 $listofprojectcontacttype=array();
 $sql = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
-$sql.= " WHERE ctc.element = '" . $projectstatic->element . "'";
+$sql.= " WHERE ctc.element = '" . $object->element . "'";
 $sql.= " AND ctc.source = 'internal'";
 $resql = $db->query($sql);
 if ($resql)
@@ -232,7 +233,7 @@ if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    
 
 
 $distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
-$sql = "SELECT ".$distinct." p.rowid as projectid, p.ref, p.title, p.fk_statut, p.fk_opp_status, p.public, p.fk_user_creat";
+$sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut, p.fk_opp_status, p.public, p.fk_user_creat";
 $sql.= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= ", cls.code as opp_status_code";
@@ -360,8 +361,7 @@ $arrayofselected=is_array($toselect)?$toselect:array();
 if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
 {
     $obj = $db->fetch_object($resql);
-    $id = $obj->projectid;
-    header("Location: ".DOL_URL_ROOT.'/projet/card.php?id='.$id);
+    header("Location: ".DOL_URL_ROOT.'/projet/card.php?id='.$obj->id);
     exit;
 }
 
@@ -566,7 +566,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
             $align=$extrafields->getAlignFlag($key);
             $typeofextrafield=$extrafields->attribute_type[$key];
             print '<td class="liste_titre'.($align?' '.$align:'').'">';
-        	if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
+        	if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attribute_computed[$key]))
 			{
 			    $crit=$val;
 				$tmpkey=preg_replace('/search_options_/','',$key);
@@ -599,7 +599,7 @@ if (! empty($arrayfields['p.fk_statut']['checked']))
 {
 	print '<td class="liste_titre nowrap" align="right">';
     $arrayofstatus = array();
-    foreach($projectstatic->statuts_short as $key => $val) $arrayofstatus[$key]=$langs->trans($val);
+    foreach($object->statuts_short as $key => $val) $arrayofstatus[$key]=$langs->trans($val);
     $arrayofstatus['99']=$langs->trans("NotClosed").' ('.$langs->trans('Draft').'+'.$langs->trans('Opened').')';
 	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
     print '</td>';
@@ -632,7 +632,9 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
         if (! empty($arrayfields["ef.".$key]['checked']))
         {
             $align=$extrafields->getAlignFlag($key);
-            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+            $sortonfield = "ef.".$key;
+            if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
         }
     }
 }
@@ -652,15 +654,15 @@ while ($i < min($num,$limit))
 {
 	$obj = $db->fetch_object($resql);
 
-	$projectstatic->id = $obj->projectid;
-	$projectstatic->user_author_id = $obj->fk_user_creat;
-	$projectstatic->public = $obj->public;
-	$projectstatic->ref = $obj->ref;
-	$projectstatic->datee = $db->jdate($obj->date_end);
-	$projectstatic->statut = $obj->fk_statut;
-	$projectstatic->opp_status = $obj->fk_opp_status;
-	 
-	$userAccess = $projectstatic->restrictedProjectArea($user);    // why this ?
+	$object->id = $obj->id;
+	$object->user_author_id = $obj->fk_user_creat;
+	$object->public = $obj->public;
+	$object->ref = $obj->ref;
+	$object->datee = $db->jdate($obj->date_end);
+	$object->statut = $obj->fk_statut;
+	$object->opp_status = $obj->fk_opp_status;
+	
+	$userAccess = $object->restrictedProjectArea($user);    // why this ?
 	if ($userAccess >= 0)
 	{
 		print '<tr class="oddeven">';
@@ -669,8 +671,8 @@ while ($i < min($num,$limit))
     	if (! empty($arrayfields['p.ref']['checked']))
     	{
     		print '<td class="nowrap">';
-    		print $projectstatic->getNomUrl(1);
-    		if ($projectstatic->hasDelay()) print img_warning($langs->trans('Late'));
+    		print $object->getNomUrl(1);
+    		if ($object->hasDelay()) print img_warning($langs->trans('Late'));
     		print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
     	}
@@ -851,8 +853,7 @@ while ($i < min($num,$limit))
 		// Status
 		if (! empty($arrayfields['p.fk_statut']['checked']))
 		{
-    		$projectstatic->statut = $obj->fk_statut;
-    		print '<td align="right">'.$projectstatic->getLibStatut(5).'</td>';
+    		print '<td align="right">'.$object->getLibStatut(5).'</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
         // Action column
@@ -860,8 +861,8 @@ while ($i < min($num,$limit))
         if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
         {
             $selected=0;
-    		if (in_array($obj->projectid, $arrayofselected)) $selected=1;
-    		print '<input id="cb'.$obj->projectid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->projectid.'"'.($selected?' checked="checked"':'').'>';
+    		if (in_array($obj->id, $arrayofselected)) $selected=1;
+    		print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected?' checked="checked"':'').'>';
         }
         print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -871,7 +872,6 @@ while ($i < min($num,$limit))
 	}
 
 	$i++;
-
 }
 
 // Show total line
