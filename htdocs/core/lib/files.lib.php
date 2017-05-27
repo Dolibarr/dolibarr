@@ -54,7 +54,7 @@ function dol_basename($pathfile)
  *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  *  @see dol_dir_list_indatabase
  */
-function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=false)
+function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=0)
 {
 	global $db, $hookmanager;
 	global $object;
@@ -482,6 +482,8 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0)
     }
    
     dol_delete_file($tmpdestfile);
+    
+    // Create $newpathoftmpdestfile from $newpathofsrcfile
     
     
     

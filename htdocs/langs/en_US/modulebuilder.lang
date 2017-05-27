@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=This tools give you utilites to build or edit your own module.
+EnterNameOfModuleDesc=Enter name of the module to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
 ModuleBuilderDesc2=Path were modules are generated/edited (first alternative directory defined into %s): <strong>%s</strong>
 ModuleBuilderDesc3=Generated/editable modules found: <strong>%s</strong> (they are detected as editable when the file <strong>%s</strong> exists in root of module directory). 
 NewModule=New module
