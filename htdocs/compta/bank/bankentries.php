@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
@@ -345,7 +345,7 @@ $paymentsupplierstatic=new PaiementFourn($db);
 $paymentvatstatic=new TVA($db);
 $paymentsalstatic=new PaymentSalary($db);
 $donstatic=new Don($db);
-$expensereportstatic=new ExpenseReport($db);
+$paymentexpensereportstatic=new PaymentExpenseReport($db);
 $bankstatic=new Account($db);
 $banklinestatic=new AccountLine($db);
 
@@ -966,9 +966,9 @@ if ($resql)
     	        }
     	        elseif ($links[$key]['type']=='payment_expensereport')
     	        {
-    	            print '<a href="'.DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$links[$key]['url_id'].'">';
-    	            print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
-    	            print '</a>';
+    	            $paymentexpensereportstatic->id=$links[$key]['url_id'];
+    	            $paymentexpensereportstatic->ref=$links[$key]['url_id'];
+    	            print ' '.$paymentexpensereportstatic->getNomUrl(2);
     	        }
     	        elseif ($links[$key]['type']=='banktransfert')
     	        {
