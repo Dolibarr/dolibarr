@@ -142,11 +142,12 @@ $journal = '';
 $bankstatic = new Account($db);
 $bankstatic->fetch($id_bank_account);
 $bankstatic->rowid;
+$bankstatic->number;
 $bankstatic->label;
 $bankstatic->fk_accountancy_journal;
 
 $accountingjournalstatic = new AccountingJournal($db);
-if(! empty($id_bank_account) {
+if(! empty($id_bank_account)) {
 	$accountingjournalstatic->fetch($bankstatic->fk_accountancy_journal);
 } else {
 	$accountingjournalstatic->fetch('',$code_journal);
@@ -870,9 +871,9 @@ if (empty($action) || $action == 'view') {
 			else print $accountoshow;
 			print "</td>";
 			if ($val['soclib'] == '') {
-				print "<td>" . $bank_code_journal->label . " - " . $val["ref"] . "</td>";
+				print "<td>" . $bankstatic->label . " - " . $val["ref"] . "</td>";
 			} else {
-				print "<td>" . $bank_code_journal->label . " - " . $val['soclib'] . "</td>";
+				print "<td>" . $bankstatic->label . " - " . $val['soclib'] . "</td>";
 			}
 			print "<td>" . $val["type_payment"] . "</td>";
 			print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
