@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    core/triggers/interface_99_modMyModule_Triggers.class.php
+ * \file    core/triggers/interface_99_modMyModule_MyModuleTriggers.class.php
  * \ingroup mymodule
  * \brief   Example trigger.
  *
@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 /**
  *  Class of triggers for MyModule module
  */
-class InterfaceMyModuleTrigger extends DolibarrTriggers
+class InterfaceMyModuleTriggers extends DolibarrTriggers
 {
 	/**
 	 * @var DoliDB Database handler

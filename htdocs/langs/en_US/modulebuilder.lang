@@ -6,4 +6,12 @@ ModuleBuilderDesc3=Generated/editable modules found: <strong>%s</strong> (they a
 NewModule=New module
 ModuleKey=Key for new module
 ModuleInitialized=Module initialized
-
+ModuleBuilderDescdescription=Enter here all general information that describe your module
+ModuleBuilderDescobjects=Define here the new objects you want to manage with our module. A page to list them and a page to create/edit/view a card will be generated.
+ModuleBuilderDescmenus=This tab is dedicated to define menu entries provided by your module.
+ModuleBuilderDescpermissions=This tab is dedicated to define the new permissions you want to provide with our module.
+ModuleBuilderDesctriggers=This is the view of triggers provided by your module. To include code executed when a triggered business event is launched, just edit this file with your IDE.
+ModuleBuilderDescbuildpackage=You can generate here a "ready to distribute" package file (a normalized .zip file) of your module. Just click on button to get your module package file.
+BuildPackage=Build package
+ModuleIsNotActive=This module was not activated yet (go into Home-Setup-Module to make it live)
+ModuleIsLive=This module has been activated. Any change on it may break a current active feature.
