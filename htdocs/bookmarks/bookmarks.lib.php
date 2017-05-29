@@ -41,29 +41,15 @@ function printBookmarksList($aDb, $aLangs)
 	$langs->load("bookmarks");
 
 	$url= $_SERVER["PHP_SELF"].(! empty($_SERVER["QUERY_STRING"])?'?'.$_SERVER["QUERY_STRING"]:'');
-    // TODO Add post param to $url
     
 	$ret = '';
 	
 	// Menu bookmark
-	/*
-	$ret.= '<div class="menu_titre">';
-	$ret.= '<table class="nobordernopadding" width="100%" summary="bookmarkstable"><tr><td>';
-	$ret.= '<a class="vmenu" href="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</a>';
-	$ret.= '</td><td align="right">';
-	if ($user->rights->bookmark->creer)
-	{
-		$ret.= '<a class="vsmenu addbookmarkpicto" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url).'">';
-		$ret.=img_object($langs->trans('AddThisPageToBookmarks'),'bookmark');
-		$ret.= '</a>';
-	}
-	$ret.= '</td></tr></table>';
-	$ret.= '</div>';
-    */
 	$ret.= '<div class="menu_top"></div>'."\n";
 
-	$ret.= '<!-- form with POST method by default --><form id="actionbookmark" name="actionbookmark" method="POST" action="">';
-	$ret.= '<select name="bookmark" id="boxbookmark" class="flat boxcombo vmenusearchselectcombo">';
+	$ret.= '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
+	$ret.= '<form id="actionbookmark" name="actionbookmark" method="POST" action="">';
+	$ret.= '<select name="bookmark" id="boxbookmark" class="flat boxcombo vmenusearchselectcombo" alt="Bookmarks">';
 	$ret.= '<option hidden value="listbookmarks" class="optiongrey" selected rel="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</option>';
     $ret.= '<option value="listbookmark" class="optionblue" rel="'.dol_escape_htmltag(DOL_URL_ROOT.'/bookmarks/list.php').'">'.dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
 	// Url to go on create new bookmark page
@@ -77,19 +63,18 @@ function printBookmarksList($aDb, $aLangs)
 	{
 		$sql = "SELECT rowid, title, url, target FROM ".MAIN_DB_PREFIX."bookmark";
 		$sql.= " WHERE (fk_user = ".$user->id." OR fk_user is NULL OR fk_user = 0)";
-        $sql.= " AND entity = ".$conf->entity;
+        $sql.= " AND entity IN (".getEntity('bookmarks',1).")";
 		$sql.= " ORDER BY position";
 		if ($resql = $db->query($sql) )
 		{
 			$i=0;
 			while ($i < $conf->global->BOOKMARKS_SHOW_IN_MENU && $obj = $db->fetch_object($resql))
 			{
-				//$ret.='<div class="menu_contenu">';
-			    $ret.='<option name="bookmark'.$obj->rowid.'" value="'.$obj->rowid.'" '.($obj->target == 1?' target="_blank"':'').' rel="'.dol_escape_htmltag($obj->url).'">'.img_picto('','object_bookmark').' '.$obj->title.'</option>';
-				/*$ret.='<a class="vsmenu" title="'.$obj->title.'" href="'.$obj->url.'"'.($obj->target == 1?' target="_blank"':'').'>';
-				if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $ret.=' '.img_object('','bookmark').' ';
-				$ret.= dol_trunc($obj->title, 20).'</a><br>';*/
-				//$ret.='</div>';
+			    $ret.='<option name="bookmark'.$obj->rowid.'" value="'.$obj->rowid.'" '.($obj->target == 1?' target="_blank"':'').' rel="'.dol_escape_htmltag($obj->url).'">';
+			    //$ret.='<span class="fa fa-print">aa</span>';
+			    $ret.=img_picto('','object_bookmark').' ';
+			    $ret.=$obj->title;
+			    $ret.='</option>';
 				$i++;
 			}
 		}

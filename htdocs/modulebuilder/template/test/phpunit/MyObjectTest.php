@@ -17,20 +17,18 @@
  */
 
 /**
- * \file    test/unit/MyClassTest.php
+ * \file    test/unit/MyObjectTest.php
  * \ingroup mymodule
- * \brief   Example PHPUnit test.
- *
- * Put detailed description here.
+ * \brief   PHPUnit test for MyObject class.
  */
 
 namespace test\unit;
 
 /**
- * Class MyClassTest
+ * Class MyObjectTest
  * @package Testmymodule
  */
-class MyClassTest extends \PHPUnit_Framework_TestCase
+class MyObjectTest extends \PHPUnit_Framework_TestCase
 {
 	/**
 	 * Global test setup

@@ -226,9 +226,10 @@ class Interfaces
      *  Return list of triggers. Function used by admin page htdoc/admin/triggers.
      *  List is sorted by trigger filename so by priority to run.
      *
-     * 	@return	array					Array list of triggers
+     *	@param	array		$forcedirtriggers		null=All default directories. This parameter is used by modulebuilder module only.
+     * 	@return	array								Array list of triggers
      */
-    function getTriggersList()
+    function getTriggersList($forcedirtriggers=null)
     {
         global $conf, $langs;
 
@@ -241,11 +242,15 @@ class Interfaces
         $i = 0;
 
         $dirtriggers=array_merge(array('/core/triggers/'),$conf->modules_parts['triggers']);
+        if (is_array($forcedirtriggers))
+        {
+        	$dirtriggers=$forcedirtriggers;
+        }
+        	
         foreach($dirtriggers as $reldir)
         {
             $dir=dol_buildpath($reldir,0);
             $newdir=dol_osencode($dir);
-            //print "xx".$dir;exit;
 
             // Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php at each call)
             if (! is_dir($newdir)) continue;

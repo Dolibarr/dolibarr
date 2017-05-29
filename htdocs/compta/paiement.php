@@ -309,9 +309,11 @@ if (empty($reshook))
  * View
  */
 
+$form=new Form($db);
+
+
 llxHeader('', $langs->trans("Payment"));
 
-$form=new Form($db);
 
 
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement')
@@ -575,6 +577,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 //print '<tr><td colspan="3">';
                 print '<br>';
                 print '<table class="noborder" width="100%">';
+                
                 print '<tr class="liste_titre">';
                 print '<td>'.$arraytitle.'</td>';
                 print '<td align="center">'.$langs->trans('Date').'</td>';
@@ -741,11 +744,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     $totalrecudeposits+=$deposits;
                     $i++;
                 }
+                
                 if ($i > 1)
                 {
                     // Print total
                     print '<tr class="liste_total">';
-                    print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').'</td>';
+                    print '<td colspan="2" align="left">'.$langs->trans('TotalTTC').'</td>';
+					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
 					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
 					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
 					if (!empty($conf->multicurrency->enabled)) print '<td></td>';

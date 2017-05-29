@@ -168,7 +168,7 @@ DescThirdPartyReport=Consult here the list of the third party customers and supp
 ListAccounts=List of the accounting accounts
 
 Pcgtype=Class of account
-Pcgsubtype=Under class of account
+Pcgsubtype=Subclass of account
 
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
@@ -257,7 +257,7 @@ Formula=Formula
 ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
 ExportNotSupported=The export format setuped is not supported into this page
 BookeppingLineAlreayExists=Lines already existing into bookeeping
-
+NoJournalDefined=No journal defined
 Binded=Lines bound
 ToBind=Lines to bind
 

@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    core/triggers/interface_99_modMyModule_MyTrigger.class.php
+ * \file    core/triggers/interface_99_modMyModule_MyModuleTriggers.class.php
  * \ingroup mymodule
  * \brief   Example trigger.
  *
@@ -30,17 +30,16 @@
  * - The file must stay in core/triggers
  * - The class name must be InterfaceMytrigger
  * - The constructor method must be named InterfaceMytrigger
- * - The name property name must be Mytrigger
+ * - The name property name must be MyTrigger
  */
 
-/** Includes */
-require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT . dol_buildpath('/mymodule/class/MyTrigger.php', 1);
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+
 
 /**
- * Class InterfaceMytrigger
+ *  Class of triggers for MyModule module
  */
-class InterfaceMytrigger extends MyTrigger
+class InterfaceMyModuleTriggers extends DolibarrTriggers
 {
 	/**
 	 * @var DoliDB Database handler
@@ -58,9 +57,7 @@ class InterfaceMytrigger extends MyTrigger
 
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "demo";
-		$this->description = "Triggers of this module are empty functions."
-			. "They have no effect."
-			. "They are provided for tutorial purpose only.";
+		$this->description = "MyModule triggers.";
 		// 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
 		$this->picto = 'mymodule@mymodule';
@@ -86,58 +83,18 @@ class InterfaceMytrigger extends MyTrigger
 		return $this->description;
 	}
 
-	/**
-	 * Trigger version
-	 *
-	 * @return string Version of trigger file
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("Development");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("Experimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("Unknown");
-		}
-	}
-
-    // @codingStandardsIgnoreStart
-	/**
-	 * Compatibility trigger function for Dolibarr < 3.7
-	 *
-	 * @param int $action Trigger action
-	 * @param CommonObject $object Object trigged from
-	 * @param User $user User that trigged
-	 * @param Translate $langs Translations handler
-	 * @param Conf $conf Configuration
-	 * @return int                  <0 if KO, 0 if no triggered ran, >0 if OK
-	 * @deprecated Replaced by DolibarrTriggers::runTrigger()
-	 */
-	public function run_trigger($action, $object, $user, $langs, $conf)
-	{
-		return $this->runTrigger($action, $object, $user, $langs, $conf);
-	}
-	// @codingStandardsIgnoreEnd
 
 	/**
 	 * Function called when a Dolibarrr business event is done.
 	 * All functions "runTrigger" are triggered if file
 	 * is inside directory core/triggers
 	 *
-	 * @param string $action Event action code
-	 * @param CommonObject $object Object
-	 * @param User $user Object user
-	 * @param Translate $langs Object langs
-	 * @param Conf $conf Object conf
-	 * @return int              <0 if KO, 0 if no triggered ran, >0 if OK
+	 * @param string 		$action 	Event action code
+	 * @param CommonObject 	$object 	Object
+	 * @param User 			$user 		Object user
+	 * @param Translate 	$langs 		Object langs
+	 * @param Conf 			$conf 		Object conf
+	 * @return int              		<0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{

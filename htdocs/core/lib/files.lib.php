@@ -54,7 +54,7 @@ function dol_basename($pathfile)
  *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  *  @see dol_dir_list_indatabase
  */
-function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=false)
+function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=0)
 {
 	global $db, $hookmanager;
 	global $object;
@@ -448,14 +448,15 @@ function dol_filemtime($pathoffile)
  * @param	array	$arrayreplacement	Array with strings to replace
  * @param	string	$destfile			Destination file (can't be a directory). If empty, will be same than source file.
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	int		$indexdatabase		Index new file into database.
  * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dolCopyr
  */
-function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0)
+function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0, $indexdatabase=0)
 {
     global $conf;
 
-    dol_syslog("files.lib.php::dolReplaceInFile srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask);
+    dol_syslog("files.lib.php::dolReplaceInFile srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." indexdatabase=".$indexdatabase);
 
     if (empty($srcfile)) return -1;
     if (empty($destfile)) $destfile=$srcfile;
@@ -483,11 +484,16 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0)
    
     dol_delete_file($tmpdestfile);
     
+    // Create $newpathoftmpdestfile from $newpathofsrcfile
+    $content=file_get_contents($newpathofsrcfile, 'r');
     
+    $content = make_substitutions($content, $arrayreplacement, null);
     
+    file_put_contents($newpathoftmpdestfile, $content);
+    @chmod($newpathoftmpdestfile, octdec($newmask));
     
     // Rename
-    $result=dol_move($newpathoftmpdestfile, $newpathofdestfile, $newmask, (($destfile == $srcfile)?1:0));
+    $result=dol_move($newpathoftmpdestfile, $newpathofdestfile, $newmask, (($destfile == $srcfile)?1:0), 0, $indexdatabase);
     if (! $result)
     {
         dol_syslog("files.lib.php::dolReplaceInFile failed to move tmp file to final dest", LOG_WARNING);
@@ -567,10 +573,11 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
  * @param	string	$destfile			Destination file (a directory)
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
- * @return	int							<0 if error, 0 if nothing done (dest dir already exists and overwriteifexists=0), >0 if OK
+ * @param	array	$arrayreplacement	Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
+ * @return	int							<0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
  * @see		dol_copy
  */
-function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
+function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement=null)
 {
 	global $conf;
 
@@ -581,7 +588,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
 	if (empty($srcfile) || empty($destfile)) return -1;
 
 	$destexists=dol_is_dir($destfile);
-	if (! $overwriteifexists && $destexists) return 0;
+	//if (! $overwriteifexists && $destexists) return 0;	// The overwriteifexists is for files only, so propaated to dol_copy only.
     
     if (! $destexists)
     {
@@ -590,37 +597,37 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
         $dirmaskdec=octdec($newmask);
         if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);
         $dirmaskdec |= octdec('0200');  // Set w bit required to be able to create content for recursive subdirs files
-        dol_mkdir($destfile."/".$file, '', decoct($dirmaskdec));
+        dol_mkdir($destfile, '', decoct($dirmaskdec));
     }
     
-	$srcfile=dol_osencode($srcfile);
-	$destfile=dol_osencode($destfile);
+	$ossrcfile=dol_osencode($srcfile);
+	$osdestfile=dol_osencode($destfile);
 
-    // recursive function to copy
-    // all subdirectories and contents:
-	if (is_dir($srcfile))
+    // Recursive function to copy all subdirectories and contents:
+	if (is_dir($ossrcfile))
 	{
-        $dir_handle=opendir($srcfile);
+        $dir_handle=opendir($ossrcfile);
         while ($file=readdir($dir_handle))
         {
             if ($file!="." && $file!="..")
             {
-                if (is_dir($srcfile."/".$file))
+                if (is_dir($ossrcfile."/".$file))
                 {
-                    if (!is_dir($destfile."/".$file))
-                    {
-                        // We must set mask just before creating dir, becaause it can be set differently by dol_copy
-                    	umask(0);
-						$dirmaskdec=octdec($newmask);
-						if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);
-						$dirmaskdec |= octdec('0200');  // Set w bit required to be able to create content for recursive subdirs files
-                    	dol_mkdir($destfile."/".$file, '', decoct($dirmaskdec));
-                    }
-                    $tmpresult=dolCopyDir($srcfile."/".$file, $destfile."/".$file, $newmask, $overwriteifexists);
+                    //var_dump("xxx dolCopyDir $srcfile/$file, $destfile/$file, $newmask, $overwriteifexists");
+                    $tmpresult=dolCopyDir($srcfile."/".$file, $destfile."/".$file, $newmask, $overwriteifexists, $arrayreplacement);
                 }
                 else
 				{
-                    $tmpresult=dol_copy($srcfile."/".$file, $destfile."/".$file, $newmask, $overwriteifexists);
+					$newfile = $file;
+					// Replace destination filename with a new one
+					if (is_array($arrayreplacement))
+					{
+						foreach($arrayreplacement as $key => $val)
+						{
+							$newfile = str_replace($key, $val, $newfile);
+						}
+					}
+                    $tmpresult=dol_copy($srcfile."/".$file, $destfile."/".$newfile, $newmask, $overwriteifexists);
                 }
                 // Set result
                 if ($result > 0 && $tmpresult >= 0)
@@ -639,7 +646,8 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
     }
     else
 	{
-        $result=dol_copy($srcfile, $destfile, $newmask, $overwriteifexists);
+		// Source directory does not exists
+        $result = -2;
     }
 
     return $result;
@@ -658,10 +666,11 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
  * @param   integer	$newmask            Mask in octal string for new file (0 by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
+ * @param	int		$indexdatabase		Index new file into database.
  * @return  boolean 		            True if OK, false if KO
  * @see dol_move_uploaded_file
  */
-function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1, $testvirus=0)
+function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1, $testvirus=0, $indexdatabase=1)
 {
     global $user, $db, $conf;
     $result=false;
@@ -707,7 +716,7 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1, $testvi
         }
 
         // Move ok
-        if ($result)
+        if ($result && $indexdatabase)
         {
             // Rename entry into ecm database
             $rel_filetorenamebefore = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $srcfile);
