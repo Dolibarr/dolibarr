@@ -32,7 +32,7 @@ require '../../main.inc.php';
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $langs->load("compta");
 $langs->load("bills");
@@ -117,12 +117,11 @@ if ($action == 'update') {
 llxHeader();
 
 $form = new Form($db);
-$formaccountancy = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 
 $linkback = '';
 print load_fiche_titre($langs->trans('MenuDefaultAccounts'), $linkback, 'title_accountancy');
 
-print '<br>';
 print $langs->trans("DefaultBindingDesc").'<br>';
 print '<br>';
 
@@ -142,7 +141,7 @@ foreach ( $list_account as $key ) {
 	print '<td>' . $label . '</td>';
 	// Value
 	print '<td>';  // Do not force align=right, or it align also the content of the select box 
-	print $formaccountancy->select_account($conf->global->$key, $key, 1, '', 1, 1);
+	print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	print '</td>';
 	print '</tr>';
 }

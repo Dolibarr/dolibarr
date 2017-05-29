@@ -956,7 +956,7 @@ div.vmenu, td.vmenu {
 }
 .side-nav {
 	position: absolute;
-    z-index: 200;
+    z-index: 90;
     display: none;
 }
 div.blockvmenulogo
@@ -4133,7 +4133,7 @@ span.noborderoncategories {
 /* ============================================================================== */
 
 ul.ulselectedfields {
-    z-index: 100;			/* To have the select box appears on first plan even when near buttons are decorated by jmobile */
+    z-index: 95;			/* To have the select box appears on first plan even when near buttons are decorated by jmobile */
 }
 dl.dropdown {
     margin:0px;

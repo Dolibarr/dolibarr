@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Charlie BENKE		<charlie@patas-monkey.com> 
@@ -331,23 +331,24 @@ if ($id)
 	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-	
-    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
-    
+
+	$morehtmlref='<div class="refidno">';
+
+	$userstatic=new User($db);
+	$userstatic->fetch($object->fk_user);
+
+	$morehtmlref.=$langs->trans('Employee') . ' : ' . $userstatic->getNomUrl(1);
+	$morehtmlref.='</div>';
+
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
+
     print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
     print '<table class="border" width="100%">';
 
-	// Employee
-	print '<tr><td class="titlefield">'.$langs->trans("Employee").'</td><td>';
-	$usersal=new User($db);
-	$usersal->fetch($object->fk_user);
-	print $usersal->getNomUrl(1);
-	print '</td></tr>';
-
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
 	print "<tr>";
 	print '<td>'.$langs->trans("DateStartPeriod").'</td><td colspan="3">';
@@ -390,9 +391,9 @@ if ($id)
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
 	print '</table>';
-	
+
 	print '</div>';
-    
+
 	dol_fiche_end();
 
 	

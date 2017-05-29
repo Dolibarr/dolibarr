@@ -28,8 +28,8 @@ require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
 // Langs
@@ -61,7 +61,7 @@ $offset = $limit * $page;
 
 $object = new BookKeeping($db);
 
-$formventilation = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
@@ -98,7 +98,7 @@ if (! empty($search_accountancy_code_end)) {
  * Action
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $search_accountancy_code_start = '';
     $search_accountancy_code_end = '';
@@ -137,7 +137,7 @@ if ($action == 'export_csv') {
 }
 
 else {
-    $title_page = $langs->trans("AccountBalance") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end);
+    $title_page = $langs->trans("AccountBalance") . (($search_date_start || $search_date_end) ? ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end) : '');
     
     llxHeader('', $title_page);
     
@@ -160,7 +160,7 @@ else {
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     
     $button = '<input type="submit" name="button_export_csv" class="butAction" value="' . $langs->trans("Export") . '" />';
-    print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, 0, 'title_accountancy', 0, $button);
+    print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $result, 'title_accountancy', 0, $button);
     
     
     $moreforfilter = '';
@@ -186,10 +186,10 @@ else {
     print '<tr class="liste_titre_filter">';
     print '<td class="liste_titre" colspan="5">';
     print $langs->trans('From');
-    print $formventilation->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, '');
+    print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, '');
     print ' ';
     print $langs->trans('to');
-    print $formventilation->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, '');
+    print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, '');
     print '</td>';
     print '<td align="right" class="liste_titre">';
 	$searchpicto=$form->showFilterAndCheckAddButtons(0);
