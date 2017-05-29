@@ -274,7 +274,7 @@ foreach ($dirmodels as $reldir)
 
 			while (($file = readdir($handle))!==false)
 			{
-				if (substr($file, 0, 21) == 'mod_supplier_proposal_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+				if (substr($file, 0, 22) == 'mod_supplier_proposal_' && substr($file, dol_strlen($file)-3, 3) == 'php')
 				{
 					$file = substr($file, 0, dol_strlen($file)-4);
 
