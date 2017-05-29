@@ -32,15 +32,15 @@ $langs->load("other");
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $module=GETPOST('module');
-$tab=GETPOST('tab');
 if (empty($module)) $module='initmodule';
 if (empty($tab)) $tab='description';
+
+$modulename=dol_sanitizeFileName(GETPOST('modulename','alpha'));
 
 
 // Security check
 if (! $user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) accessforbidden('ModuleBuilderNotAllowed');
 
-$modulename=dol_sanitizeFileName(GETPOST('modulename','alpha'));
 
 // Dir for custom dirs
 $tmp=explode(',', $dolibarr_main_document_root_alt);
@@ -55,33 +55,57 @@ $FILEFLAG='modulebuilder.txt';
 
 if ($dircustom && $action == 'initmodule' && $modulename)
 {
-    $srcfile = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
-    $destfile = $dircustom.'/'.$modulename;
-    $result = dolCopyDir($srcfile, $destfile, 0, 0);
+    $srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
+    $destdir = $dircustom.'/'.$modulename;
+
+    $arrayreplacement=array(
+        'mymodule'=>strtolower($modulename),
+     	'MyModule'=>$modulename
+    );
+    
+    $result = dolCopyDir($srcdir, $destdir, 0, 0);
     //dol_mkdir($destfile);
     if ($result <= 0)
     {
         $error++;
-        setEventMessages($langs->trans("ErrorFailedToCopyDir"), null, 'errors');
+        $langs->load("errors");
+        setEventMessages($langs->trans("ErrorFailToCopyDir", $srcdir, $destdir), null, 'errors');
     }
 
     // Edit PHP files
-    $listofphpfilestoedit = dol_dir_list($destfile, 'files', 1, '\.php$', 'fullname', SORT_ASC, 0, true);
-    foreach($listofphpfilestoedit as $phpfileval)
+    if (! $error)
     {
-        $arrayreplacement=array(
-            'mymodule'=>$modulename
-        );
-        $result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
-        var_dump($phpfileval);
-        var_dump($result);
-    }    
-    
+	    $listofphpfilestoedit = dol_dir_list($destdir, 'files', 1, '\.php$', '', 'fullname', SORT_ASC, 0, 1);
+	    foreach($listofphpfilestoedit as $phpfileval)
+	    {
+	        var_dump($phpfileval['fullname']);
+	    	
+	    	$arrayreplacement=array(
+	            'mymodule'=>strtolower($modulename),
+	        	'MyModule'=>$modulename,
+	        	'MYMODULE'=>strtoupper($modulename),
+	        	'My module'=>$modulename,
+	        	'htdocs/modulebuilder/template/'=>'',
+	        );
+	        
+	        
+	        $result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
+	        //var_dump($result);
+	        if ($result < 0)
+	        {
+	        	setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
+	        }
+	    }    
+    }
+        
     if (! $error)
     {
         setEventMessages('ModuleInitialized', null);
+        $module=$modulename;
+        $modulename = '';
     }
 }
+
 
 
 /*
@@ -96,6 +120,7 @@ $text=$langs->trans("ModuleBuilder");
 print load_fiche_titre($text, '', 'title_setup');
 
 $listofmodules=array();
+
 /*
 if (!empty($conf->modulebuilder->enabled) && $mainmenu == 'modulebuilder')	// Entry for Module builder
 {
@@ -124,7 +149,7 @@ if (!empty($conf->modulebuilder->enabled) && $mainmenu == 'modulebuilder')	// En
         $newmenu->add('', 'NoGeneratedModuleFound', 0, 0);
     }*/
 
-            
+
 // Show description of content
 print $langs->trans("ModuleBuilderDesc").'<br>';
 print $langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $dircustom).'<br>';
@@ -161,7 +186,10 @@ if ($module == 'initmodule')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="initmodule">';
     print '<input type="hidden" name="module" value="initmodule">';
-    print '<input type="text" name="modulename" value="" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'">';
+    
+    print $langs->trans("EnterNameOfModuleDesc").'<br><br>';
+    
+    print '<input type="text" name="modulename" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'">';
     print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
     print '</form>';
 }

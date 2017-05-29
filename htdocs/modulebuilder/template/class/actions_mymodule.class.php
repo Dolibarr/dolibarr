@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    class/actions_mymodule.class.php
+ * \file    htdocs/modulebuilder/template/class/actions_mymodule.class.php
  * \ingroup mymodule
  * \brief   Example hook overload.
  *
