@@ -122,7 +122,6 @@ $formaccounting = new FormAccounting($db);
 $linkback = '';
 print load_fiche_titre($langs->trans('MenuDefaultAccounts'), $linkback, 'title_accountancy');
 
-print '<br>';
 print $langs->trans("DefaultBindingDesc").'<br>';
 print '<br>';
 

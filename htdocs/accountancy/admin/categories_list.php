@@ -451,13 +451,8 @@ $formadmin=new FormAdmin($db);
 
 llxHeader();
 
-$titre=$langs->trans("DictionarySetup");
+$titre=$langs->trans($tablib[$id]);
 $linkback='';
-if ($id)
-{
-    $titre.=' - '.$langs->trans($tablib[$id]);
-    $linkback='<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionaryList").'</a>';
-}
 $titlepicto='title_setup';
 
 print load_fiche_titre($titre,$linkback,$titlepicto);

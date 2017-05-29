@@ -143,6 +143,7 @@ if ($action == 'valide')
 
 }
 
+$linkback = '';
 // $linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', '');

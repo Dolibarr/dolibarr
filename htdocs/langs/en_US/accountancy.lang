@@ -168,7 +168,7 @@ DescThirdPartyReport=Consult here the list of the third party customers and supp
 ListAccounts=List of the accounting accounts
 
 Pcgtype=Class of account
-Pcgsubtype=Under class of account
+Pcgsubtype=Subclass of account
 
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
