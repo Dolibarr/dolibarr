@@ -429,23 +429,23 @@ class Form
         if ($direction > 0) { $extracss=($extracss?$extracss.' ':'').'inline-block'; $extrastyle='padding: 0px; padding-right: 3px !important;'; }
 
         $classfortooltip='classfortooltip';
-        
+
         $s='';$textfordialog='';
-        
+
         $htmltext=str_replace('"',"&quot;",$htmltext);
-        if ($tooltiptrigger != '') 
+        if ($tooltiptrigger != '')
         {
             $classfortooltip='classfortooltiponclick';
             $textfordialog.='<div style="display: none;" id="idfortooltiponclick_'.$tooltiptrigger.'" class="classfortooltiponclicktext">'.$htmltext.'</div>';
         }
-        if ($tooltipon == 2 || $tooltipon == 3) 
+        if ($tooltipon == 2 || $tooltipon == 3)
         {
             $paramfortooltipimg=' class="'.$classfortooltip.' inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'"';
             if ($tooltiptrigger == '') $paramfortooltipimg.=' title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on img tag to store tooltip
             else $paramfortooltipimg.=' dolid="'.$tooltiptrigger.'"';
         }
         else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':'').($extrastyle?' style="'.$extrastyle.'"':''); // Attribut to put on td text tag
-        if ($tooltipon == 1 || $tooltipon == 3) 
+        if ($tooltipon == 1 || $tooltipon == 3)
         {
             $paramfortooltiptd=' class="'.($tooltipon == 3 ? 'cursorpointer ' : '').$classfortooltip.' inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'" ';
             if ($tooltiptrigger == '') $paramfortooltiptd.=' title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
@@ -496,7 +496,7 @@ class Form
 
         $alt = '';
         if ($tooltiptrigger) $alt=$langs->trans("ClickToShowHelp");
-        
+
         //For backwards compatibility
         if ($type == '0') $type = 'info';
         elseif ($type == '1') $type = 'help';
@@ -1076,6 +1076,8 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
+			$events = null;
+
            	if ($conf->use_javascript_ajax && ! $forcecombo)
             {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
@@ -3448,7 +3450,7 @@ class Form
             $cat = new Categorie($this->db);
             $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
 		}
-		
+
         $output = '<select class="flat" name="'.$htmlname.'">';
 		$outarray=array();
         if (is_array($cate_arbo))
@@ -4921,7 +4923,7 @@ class Form
      *	@param  int	$iSecond  		    Default preselected duration (number of seconds or '')
      * 	@param	int	$disabled           Disable the combo box
      * 	@param	string	$typehour		If 'select' then input hour and input min is a combo,
-     *						            if 'text' input hour is in text and input min is a text, 
+     *						            if 'text' input hour is in text and input min is a text,
      *						            if 'textselect' input hour is in text and input min is a combo
      *  @param	integer	$minunderhours	If 1, show minutes selection under the hours
      * 	@param	int	$nooutput		    Do not output html string but return it
@@ -4966,7 +4968,7 @@ class Form
 
         if ($typehour!='text') $retstring.=' '.$langs->trans('HourShort');
         else $retstring.=':';
-        
+
         // Minutes
         if ($minunderhours) $retstring.='<br>';
         else $retstring.="&nbsp;";
@@ -4986,7 +4988,7 @@ class Form
         {
         	$retstring.='<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" size="1" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat maxwidth50" value="'.(($minSelected != '')?((int) $minSelected):'').'">';
         }
-        
+
         if ($typehour!='text') $retstring.=' '.$langs->trans('MinuteShort');
 
         //$retstring.="&nbsp;";
@@ -5908,6 +5910,10 @@ class Form
 		{
 		    $ret.=$object->ref.'<br>'.$object->label;
 		}
+		else if (in_array($object->element, array('adherent_type')))
+		{
+			$ret.=$object->label;
+		}
 		else if ($fieldref != 'none') $ret.=dol_htmlentities($object->$fieldref);
 
 
@@ -6211,7 +6217,7 @@ class Form
         return $out;
     }
 
-    
+
     /**
      *	Return HTML to show the search and clear seach button
      *
@@ -6220,7 +6226,7 @@ class Form
     function showFilterButtons()
     {
         global $conf, $langs;
-    
+
         $out='<div class="nowrap">';
         $out.='<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
         $out.='<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -6239,7 +6245,7 @@ class Form
     function showCheckAddButtons($cssclass='checkforaction', $calljsfunction=0)
     {
         global $conf, $langs;
-    
+
         $out='';
         if (! empty($conf->use_javascript_ajax)) $out.='<div class="inline-block checkallactions"><input type="checkbox" id="checkallactions" name="checkallactions" class="checkallactions"></div>';
         $out.='<script type="text/javascript">

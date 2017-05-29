@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
+/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014 Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2014-2015 Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,6 @@ require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 $langs->load("compta");
 $langs->load("bills");
@@ -160,7 +158,6 @@ if ($action == 'setdisabledirectinput') {
 llxHeader();
 
 $form = new Form($db);
-$formaccountancy = new FormVentilation($db);
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');

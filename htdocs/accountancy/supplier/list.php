@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
- * Copyright (C) 2016	  	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ require '../../main.inc.php';
 // Class
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
@@ -85,7 +85,7 @@ if ($user->societe_id > 0)
 if (! $user->rights->accounting->bind->write)
 	accessforbidden();
 
-$formventilation = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 $accounting = new AccountingAccount($db);
 // TODO: we should need to check if result is a really exist accountaccount rowid.....
 $aarowid_s = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT, 1);
@@ -238,11 +238,11 @@ if ($result) {
 	$i = 0;
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
-	
+
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	
+
 	$arrayofmassactions =  array(
 	    'ventil'=>$langs->trans("Ventilate")
 	    //'presend'=>$langs->trans("SendByMail"),
@@ -251,8 +251,7 @@ if ($result) {
 	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
 	//if ($massaction == 'presend') $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('ventil', $arrayofmassactions, 1);
-	
-	
+
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -261,15 +260,15 @@ if ($result) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
-	
+
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
 	print $langs->trans("DescVentilTodoCustomer") . '</br><br>';
 
 	if ($msg) print $msg.'<br>';
-	
+
 	$moreforfilter = '';
-	
+
     print '<div class="div-table-responsive">';
 
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -329,7 +328,7 @@ if ($result) {
 		$productfourn_static->id = $objp->product_id;
 		$productfourn_static->type = $objp->type;
 		$productfourn_static->label = $objp->product_label;
-		
+
 		$facturefourn_static->ref = $objp->ref;
 		$facturefourn_static->id = $objp->facid;
 		$facturefourn_static->type = $objp->type;
@@ -347,14 +346,14 @@ if ($result) {
 				$objp->aarowid_suggest = $aarowid_p;
 		}
 		if ($objp->code_buy_l == -1) $objp->code_buy_l='';
-		
+
 		if (! empty($objp->code_buy)) {
 			$objp->code_buy_p = $objp->code_buy;       // Code on product
 		} else {
 			$code_buy_p_notset = 'color:orange';
 		}
 		if (empty($objp->code_buy_l) && empty($objp->code_buy_p)) $code_buy_p_notset = 'color:red';
-		
+
 		// $objp->code_buy_p is now code of product/service
 		// $objp->code_buy_l is now default code of product/service
 					
@@ -362,23 +361,23 @@ if ($result) {
 
 		// Line id
 		print '<td>' . $objp->rowid . '</td>';
-		
+
 		// Ref Invoice
 		print '<td>' . $facturefourn_static->getNomUrl(1) . '</td>';
 
 		print '<td class="tdoverflowonsmartphone">';
 		print $objp->invoice_label;
 		print '</td>';
-		
+
 		print '<td align="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
-		
+
 		// Ref product
 		print '<td>';
 		if ($productfourn_static->id)
 			print $productfourn_static->getNomUrl(1);
 		if ($objp->product_label) print '<br>'.$objp->product_label;
         print '</td>';
-        
+
         // Description
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
@@ -409,9 +408,9 @@ if ($result) {
 
 		// Suggested accounting account
 		print '<td align="center">';
-		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
+		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
-		
+
 		// Colonne choix ligne a ventiler
 		print '<td align="center">';
 		print '<input type="checkbox" class="flat checkforselect" name="toselect[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
