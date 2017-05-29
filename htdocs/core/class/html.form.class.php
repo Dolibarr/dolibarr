@@ -577,16 +577,16 @@ class Form
     	  				jQuery(".massaction").hide();
     	            }
         		}
-    
+
         	jQuery(document).ready(function () {
         		initCheckForSelect();
         		jQuery(".checkforselect").click(function() {
         			initCheckForSelect();
     	  		});
     	  		jQuery(".massactionselect").change(function() {
-        			var massaction = $( this ).val();  
+        			var massaction = $( this ).val();
         			var urlform = $( this ).closest("form").attr("action").replace("#show_files","");
-        			if (massaction == "builddoc") 
+        			if (massaction == "builddoc")
                     {
                         urlform = urlform + "#show_files";
     	            }
@@ -989,7 +989,7 @@ class Form
     		$out.=  ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 			$out.='<style type="text/css">
 					.ui-autocomplete {
-						z-index: 150;
+						z-index: 250;
 					}
 				</style>';
     		if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
@@ -1034,7 +1034,7 @@ class Form
     {
         global $conf,$user,$langs;
 
-        $out=''; 
+        $out='';
         $num=0;
         $outarray=array();
 
@@ -1076,8 +1076,6 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-			$events = null;
-			
            	if ($conf->use_javascript_ajax && ! $forcecombo)
             {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
@@ -4178,7 +4176,7 @@ class Form
                 }
                 print '</div>';
             }
-            if ($more) 
+            if ($more)
             {
                 print '<div class="inline-block">';
                 print $more;
@@ -5017,10 +5015,16 @@ class Form
      *  @param	string			$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' or 'POS' = Do not sort, we keep original order
      *  @param	string			$morecss		Add more class to css styles
      *  @param	int				$addjscombo		    Add js combo
+<<<<<<< HEAD
      *  @param  string          $moreparamonempty   Add more param on the empty option line. Not used if show_empty not set
      *  @param  int             $disablebademail    Check if an email is found into value and if not disable and colorize entry
      *  @param  int             $nohtmlescape       No html escaping.
      * 	@return	string							    HTML select string
+=======
+     *  @param  string          $moreparamonempty   Add more param on the empty option line. Not used if show_empty not set.
+     *  @param  int             $disablebademail    Check if an email is found into value and if not disable and colorize entry.
+     * 	@return	string							    HTML select string.
+>>>>>>> branch '5.0' of git@github.com:Dolibarr/dolibarr.git
      *  @see multiselectarray
      */
     static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0, $moreparamonempty='',$disablebademail=0, $nohtmlescape=0)
@@ -5594,7 +5598,7 @@ class Form
 		{
     		$listofidcompanytoscan=$object->thirdparty->id;
     		if (($object->thirdparty->parent > 0) && ! empty($conf->global->THIRDPARTY_INCLUDE_PARENT_IN_LINKTO)) $listofidcompanytoscan.=','.$object->thirdparty->parent;
-    		
+
     		$possiblelinks=array(
     		    'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('propal',1).')'),
     		    'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('commande',1).')'),
@@ -5606,7 +5610,7 @@ class Form
     		    'invoice_supplier'=>array('enabled'=>$conf->fournisseur->facture->enabled , 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('facture_fourn',1).')')
     		);
 		}
-		
+
 		global $action;
 
 		// Can complete the possiblelink array
@@ -5845,7 +5849,7 @@ class Form
 
         //print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
         $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid,$nodbprefix);
-        
+
         $navurl = $_SERVER["PHP_SELF"];
         // Special case for project/task page
         if ($paramid == 'project_ref')
@@ -5902,11 +5906,11 @@ class Form
 		}
 		else if (in_array($object->element, array('action', 'agenda')))
 		{
-		    $ret.=$object->ref.'<br>'.$object->label;    
+		    $ret.=$object->ref.'<br>'.$object->label;
 		}
 		else if ($fieldref != 'none') $ret.=dol_htmlentities($object->$fieldref);
-		
-		
+
+
 		if ($morehtmlref)
 		{
 		    $ret.=' '.$morehtmlref;
