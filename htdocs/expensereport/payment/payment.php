@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("bills");
 $langs->load("banks");
+$langs->load("trips");
 
 $chid=GETPOST("id",'int');
 $ref=GETPOST('ref','alpha');
@@ -285,16 +286,11 @@ if ($action == 'create' || empty($action))
 	{
 		$objp = $expensereport;
 
-		
-
 		print '<tr class="oddeven">';
 
 		print '<td align="right">'.price($objp->total_ttc)."</td>";
-
 		print '<td align="right">'.price($sumpaid)."</td>";
-
 		print '<td align="right">'.price($objp->total_ttc - $sumpaid)."</td>";
-
 		print '<td align="center">';
 		if ($sumpaid < $objp->total_ttc)
 		{
@@ -308,6 +304,7 @@ if ($action == 'create' || empty($action))
 		print "</td>";
 
 		print "</tr>\n";
+		
 		$total+=$objp->total;
 		$total_ttc+=$objp->total_ttc;
 		$totalrecu+=$objp->am;
@@ -316,7 +313,7 @@ if ($action == 'create' || empty($action))
 	if ($i > 1)
 	{
 		// Print total
-		print "<tr ".$bc[!$var].">";
+		print '<tr class="oddeven">';
 		print '<td colspan="2" align="left">'.$langs->trans("Total").':</td>';
 		print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
 		print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";

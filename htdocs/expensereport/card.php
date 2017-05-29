@@ -156,10 +156,10 @@ if (empty($reshook))
         {
             if ($object->id > 0)
             {
-                // Because createFromClone modifies the object, we must clone it so that we can restore it later
+                // Because createFromClone modifies the object, we must clone it so that we can restore it later if it fails
                 $orig = clone $object;
     
-                $result=$object->createFromClone($socid);
+                $result=$object->createFromClone(GETPOST('fk_user_author','int'));
                 if ($result > 0)
                 {
                     header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -1448,8 +1448,11 @@ else
 				print '<td>'.$langs->trans("User").'</td>';
 				print '<td>';
 				$userfee=new User($db);
-				$userfee->fetch($object->fk_user_author);
-				print $userfee->getNomUrl(-1);
+				if ($object->fk_user_author > 0)
+				{
+				    $userfee->fetch($object->fk_user_author);
+				    print $userfee->getNomUrl(-1);
+				}
 				print '</td></tr>';
 
             	// Ref
@@ -1536,12 +1539,11 @@ else
 				// Clone confirmation
 				if ($action == 'clone') {
 				    // Create an array for form
+				    $criteriaforfilter='hierarchyme';
+				    if (! empty($user->rights->expensereport->readall)) $criteriaforfilter='';
 				    $formquestion = array(
-				        // 'text' => $langs->trans("ConfirmClone"),
-				        // array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
-				        // 1),
-				        // array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
-				        // => 1),
+				        'text' => '',
+				        array('type' => 'other','name' => 'fk_user_author','label' => $langs->trans("SelectTargetUser"),'value' => $form->select_dolusers((GETPOST('fk_user_author', 'int')> 0 ? GETPOST('fk_user_author', 'int') : $user->id), 'fk_user_author', 0, null, 0, $criteriaforfilter))
                     );
 				    // Paiement incomplet. On demande si motif = escompte ou autre
 				    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneExpenseReport'), $langs->trans('ConfirmCloneExpenseReport', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
@@ -1658,7 +1660,7 @@ else
 				    $userauthor=new User($db);
 				    $result=$userauthor->fetch($object->fk_user_author);
 				    if ($result < 0) dol_print_error('',$userauthor->error);
-				    print $userauthor->getNomUrl(-1);
+				    elseif ($result > 0) print $userauthor->getNomUrl(-1);
 				}
 				print '</td></tr>';
 
@@ -1694,8 +1696,8 @@ else
 					if ($object->fk_user_validator > 0)
 					{
 						$userfee=new User($db);
-						$userfee->fetch($object->fk_user_validator);
-						print $userfee->getNomUrl(-1);
+						$result = $userfee->fetch($object->fk_user_validator);
+						if ($result > 0) print $userfee->getNomUrl(-1);
 						if (empty($userfee->email) || ! isValidEmail($userfee->email)) 
 						{
 						    $langs->load("errors");
@@ -1712,8 +1714,8 @@ else
 					if ($object->fk_user_cancel > 0)
 					{
 						$userfee=new User($db);
-						$userfee->fetch($object->fk_user_cancel);
-						print $userfee->getNomUrl(-1);
+						$result = $userfee->fetch($object->fk_user_cancel);
+						if ($result > 0) print $userfee->getNomUrl(-1);
 					}
 					print '</td></tr>';
 
@@ -1734,8 +1736,8 @@ else
 					if ($object->fk_user_approve > 0)
 					{
 						$userapp=new User($db);
-						$userapp->fetch($object->fk_user_approve);
-						print $userapp->getNomUrl(-1);
+						$result = $userapp->fetch($object->fk_user_approve);
+						if ($result > 0) print $userapp->getNomUrl(-1);
 					}
 					print '</td></tr>';
 
@@ -1751,8 +1753,8 @@ else
 					print '<td>'.$langs->trans("REFUSEUR").'</td>';
 					print '<td>';
 					$userfee=new User($db);
-					$userfee->fetch($object->fk_user_refuse);
-					print $userfee->getNomUrl(-1);
+					$result = $userfee->fetch($object->fk_user_refuse);
+					if ($result > 0) print $userfee->getNomUrl(-1);
 					print '</td></tr>';
 
 					print '<tr>';
