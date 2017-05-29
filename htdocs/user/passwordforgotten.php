@@ -173,7 +173,6 @@ else
 
 // Note: $conf->css looks like '/theme/eldy/style.css.php'
 $conf->css = "/theme/".(GETPOST('theme','alpha')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
-//$themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
 $themepath=dol_buildpath($conf->css,1);
 if (! empty($conf->modules_parts['theme']))	// This slow down
 {
