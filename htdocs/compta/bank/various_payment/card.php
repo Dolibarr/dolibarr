@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
 $langs->load("compta");
@@ -180,7 +180,7 @@ if ($action == 'delete')
 llxHeader("",$langs->trans("VariousPayment"));
 
 $form = new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
 
 if ($id)
 {
@@ -271,9 +271,9 @@ if ($action == 'create')
 	{
 		print '<tr><td>'.$langs->trans("AccountAccounting").'</td>';
         print '<td>';
-		print $formaccountancy->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1, '');
+		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1, '');
         print '</td></tr>';
-	}			
+	}
 	else // For external software 
 	{
 		print '<tr><td>'.$langs->trans("AccountAccounting").'</td>';

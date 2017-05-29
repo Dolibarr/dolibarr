@@ -18,6 +18,7 @@ ErrorFailToCreateFile=Failed to create file '<b>%s</b>'.
 ErrorFailToRenameDir=Failed to rename directory '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToCreateDir=Failed to create directory '<b>%s</b>'.
 ErrorFailToDeleteDir=Failed to delete directory '<b>%s</b>'.
+ErrorFailToMakeReplacementInto=Failed to make replacement into file '<b>%s</b>'.
 ErrorThisContactIsAlreadyDefinedAsThisType=This contact is already defined as contact for this type.
 ErrorCashAccountAcceptsOnlyCashMoney=This bank account is a cash account, so it accepts payments of type cash only.
 ErrorFromToAccountsMustDiffers=Source and targets bank accounts must be different.
