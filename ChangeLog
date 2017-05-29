@@ -12,6 +12,28 @@ Upgrading to any other version or any other database system is abolutely require
 make a Dolibarr upgrade.
 
 
+***** ChangeLog for 4.0.6 to 4.0.5 *****
+FIX: #6613 Default subject for Supplier proposal emails is filled with a non-existing key
+FIX: #6623 User card shows "Return to list" link even if the user has no rights to list users
+FIX: #6636 Complete fix
+FIX: #6669 User with no permission to edit customer invoices can see a edit button in project entry
+FIX: #6671 Cannot remove thirdparty type with "#" in its name
+FIX: #6673 Missing "nature" table header in thirdparty list
+FIX: #6675 Restricted user with no agenda permissions can see a button to create appointment in thirdparty contact list
+FIX: #6677 Expired contracts dashboard box does not show the name of the thirdparty
+FIX: #6679 User with restricted supplier invoice permissions can edit project, payment conditions, payment mode
+FIX: #6680 User with restricted supplier invoice permissions sees "reopen" button even if he has no permission to do it
+FIX: #6813
+FIX: Correction with author and validator user on orders
+FIX: doactions hook missing in invoice model page
+FIX: dont get empty "Incoterms : - " string if no incoterm
+FIX: dont lose supplier ref if no supplier price in database
+FIX: forgotten parameter for right multicompany use
+FIX: global $dateSelector isn't the good one, then date selector on objectline_create tpl was hidden
+FIX: limit+1 dosn't show Total line
+FIX: supplier order line were always created with rang = 0
+
+
 ***** ChangeLog for 4.0.5 to 4.0.4 *****
 FIX: #6234
 FIX: #6259
