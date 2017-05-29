@@ -1,20 +1,20 @@
 <?php
-/* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005		Eric Seigne			<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2006		Auguria SARL			<info@auguria.org>
  * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012-2013	Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2011-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2011-2017	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Charlie Benke			<charlie@patas-monkey.com>
- * Copyright (C) 2016		Meziane Sof			<virtualsof@yahoo.fr>
+ * Copyright (C) 2016		Meziane Sof				<virtualsof@yahoo.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,8 +51,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.php';
 if (! empty($conf->propal->enabled))     require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->facture->enabled))    require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->commande->enabled))   require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
 $langs->load("products");
 $langs->load("other");
@@ -272,7 +272,7 @@ if (empty($reshook))
             $object->volume_units       	 = GETPOST('volume_units');
             $object->finished           	 = GETPOST('finished');
 	        $object->fk_unit                 = GETPOST('units');
-			
+
 			$accountancy_code_sell 			 = GETPOST('accountancy_code_sell');
 			$accountancy_code_buy 			 = GETPOST('accountancy_code_buy');
 
@@ -399,7 +399,7 @@ if (empty($reshook))
 
 				$accountancy_code_sell 			 = GETPOST('accountancy_code_sell');
 				$accountancy_code_buy 			 = GETPOST('accountancy_code_buy');
-				
+
 				if ($accountancy_code_sell <= 0) { $object->accountancy_code_sell = ''; } else { $object->accountancy_code_sell = $accountancy_code_sell; }
 				if ($accountancy_code_buy <= 0) { $object->accountancy_code_buy = ''; } else { $object->accountancy_code_buy = $accountancy_code_buy; }
 
@@ -1107,7 +1107,7 @@ else
 
         // Accountancy codes
         print '<table class="border" width="100%">';
-		
+
 		if (! empty($conf->accounting->enabled))
 		{
             // Accountancy_code_sell
@@ -1121,7 +1121,7 @@ else
             print '<td>';
 			print $formaccountancy->select_account(GETPOST('accountancy_code_buy'), 'accountancy_code_buy', 1, null, 1, 1, '');
             print '</td></tr>';
-		}			
+		}
 		else // For external software 
 		{
             // Accountancy_code_sell
@@ -1414,7 +1414,7 @@ else
                 print '<td>';
 				print $formaccountancy->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 1, 1);
                 print '</td></tr>';
-			}			
+			}
 			else // For external software 
 			{
                 // Accountancy_code_sell
@@ -1531,8 +1531,12 @@ else
 			print '<tr><td class="nowrap">';
             print $langs->trans("ProductAccountancySellCode");
             print '</td><td colspan="2">';
-			if (! empty($conf->accounting->enabled)) {
-				print length_accountg($object->accountancy_code_sell);
+			if (! empty($conf->accounting->enabled))
+			{
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch('',$object->accountancy_code_sell);
+
+				print $accountingaccount->getNomUrl(0,1,1,'',1);
             } else {
 				print $object->accountancy_code_sell;
 			}
@@ -1542,8 +1546,12 @@ else
 			print '<tr><td class="nowrap">';
             print $langs->trans("ProductAccountancyBuyCode");
             print '</td><td colspan="2">';
-			if (! empty($conf->accounting->enabled)) {
-				print length_accountg($object->accountancy_code_buy);
+			if (! empty($conf->accounting->enabled))
+			{
+				$accountingaccount2 = new AccountingAccount($db);
+				$accountingaccount2->fetch('',$object->accountancy_code_buy);
+
+				print $accountingaccount2->getNomUrl(0,1,1,'',1);
             } else {
 				print $object->accountancy_code_buy;
 			}
