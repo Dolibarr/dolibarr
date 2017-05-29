@@ -30,6 +30,7 @@
  */
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
 

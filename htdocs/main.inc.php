@@ -1005,8 +1005,18 @@ function top_httphead($contenttype='text/html')
 
     if ($contenttype == 'text/html' ) header("Content-Type: text/html; charset=".$conf->file->character_set_client);
     else header("Content-Type: ".$contenttype);
-    header("X-Content-Type-Options: nosniff");
-    header("X-Frame-Options: SAMEORIGIN");
+    // Security options
+    header("X-Content-Type-Options: nosniff");  // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
+    header("X-Frame-Options: SAMEORIGIN");      // Frames allowed only if on same domain (stop some XSS attacks)
+    if (! empty($conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY))
+    {
+        // For example, to restrict script, object, frames or img to some domains
+        // script-src https://api.google.com https://anotherhost.com; object-src https://youtube.com; child-src https://youtube.com; img-src: https://static.example.com  
+        // For example, to restrict everything to one domain, except object, ...
+        // default-src https://cdn.example.net; object-src 'none'
+        header("Content-Security-Policy: ".$conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY);
+    }
+      
     
     // On the fly GZIP compression for all pages (if browser support it). Must set the bit 3 of constant to 1.
     /*if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) {
@@ -1121,7 +1131,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             
         print '<!-- Includes CSS for Dolibarr theme -->'."\n";
         // Output style sheets (optioncss='print' or ''). Note: $conf->css looks like '/theme/eldy/style.css.php'
-        //$themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
         $themepath=dol_buildpath($conf->css,1);
         $themesubdir='';
         if (! empty($conf->modules_parts['theme']))	// This slow down

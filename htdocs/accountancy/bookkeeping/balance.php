@@ -98,7 +98,7 @@ if (! empty($search_accountancy_code_end)) {
  * Action
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $search_accountancy_code_start = '';
     $search_accountancy_code_end = '';
@@ -137,7 +137,7 @@ if ($action == 'export_csv') {
 }
 
 else {
-    $title_page = $langs->trans("AccountBalance") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end);
+    $title_page = $langs->trans("AccountBalance") . (($search_date_start || $search_date_end) ? ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end) : '');
     
     llxHeader('', $title_page);
     
@@ -160,7 +160,7 @@ else {
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     
     $button = '<input type="submit" name="button_export_csv" class="butAction" value="' . $langs->trans("Export") . '" />';
-    print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, 0, 'title_accountancy', 0, $button);
+    print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $result, 'title_accountancy', 0, $button);
     
     
     $moreforfilter = '';
