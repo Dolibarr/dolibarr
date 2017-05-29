@@ -181,6 +181,13 @@ if (! empty($conf->global->STRIPE_SECURITY_TOKEN))
     }
 }
 
+// Common variables
+$creditor=$mysoc->name;
+$paramcreditor='STRIPE_CREDITOR_'.$suffix;
+if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
+else if (! empty($conf->global->STRIPE_CREDITOR)) $creditor=$conf->global->STRIPE_CREDITOR;
+
+
 
 /*
  * Actions
@@ -218,17 +225,20 @@ if ($action == 'charge')
         dol_syslog("Create customer", LOG_DEBUG, 0, '_stripe');
         $customer = \Stripe\Customer::create(array(
             'email' => $email,
-            'card'  => $stripeToken
-            // TODO
+            'description' => ($email?'Customer for '.$email:null),
+            'metadata' => array('ipaddress'=>$_SERVER['REMOTE_ADDR']),
+            'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
         ));
-         
+        // TODO Add 'business_vat_id' ?
+        
         dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
         $charge = \Stripe\Charge::create(array(
             'customer' => $customer->id,
             'amount'   => price2num($amount, 'MU'),
             'currency' => $currency,
             'description' => 'Stripe payment: '.$FULLTAG,
-            'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars
+            'metadata' => array("FULLTAG" => $FULLTAG, 'Recipient' => $mysoc->name),
+            'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
         ));
     } catch(\Stripe\Error\Card $e) {
         // Since it's a decline, \Stripe\Error\Card will be caught
@@ -329,12 +339,6 @@ if (empty($conf->global->STRIPE_LIVE))
 {
     dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode'),'','warning');
 }
-
-// Common variables
-$creditor=$mysoc->name;
-$paramcreditor='STRIPE_CREDITOR_'.$suffix;
-if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
-else if (! empty($conf->global->STRIPE_CREDITOR)) $creditor=$conf->global->STRIPE_CREDITOR;
 
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
