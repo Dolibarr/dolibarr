@@ -5017,16 +5017,10 @@ class Form
      *  @param	string			$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' or 'POS' = Do not sort, we keep original order
      *  @param	string			$morecss		Add more class to css styles
      *  @param	int				$addjscombo		    Add js combo
-<<<<<<< HEAD
      *  @param  string          $moreparamonempty   Add more param on the empty option line. Not used if show_empty not set
      *  @param  int             $disablebademail    Check if an email is found into value and if not disable and colorize entry
      *  @param  int             $nohtmlescape       No html escaping.
-     * 	@return	string							    HTML select string
-=======
-     *  @param  string          $moreparamonempty   Add more param on the empty option line. Not used if show_empty not set.
-     *  @param  int             $disablebademail    Check if an email is found into value and if not disable and colorize entry.
      * 	@return	string							    HTML select string.
->>>>>>> branch '5.0' of git@github.com:Dolibarr/dolibarr.git
      *  @see multiselectarray
      */
     static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0, $moreparamonempty='',$disablebademail=0, $nohtmlescape=0)
