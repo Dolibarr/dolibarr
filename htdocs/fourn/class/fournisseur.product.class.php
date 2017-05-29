@@ -173,24 +173,24 @@ class ProductFournisseur extends Product
     /**
      *    Modify the purchase price for a supplier
      *
-     *    @param  	int			$qty					Min quantity for which price is valid
-     *    @param  	float		$buyprice				Purchase price for the quantity min
-     *    @param  	User		$user					Object user user made changes
-     *    @param  	string		$price_base_type		HT or TTC
-     *    @param  	Societe		$fourn					Supplier
-     *    @param  	int			$availability			Product availability
-     *    @param	string		$ref_fourn				Supplier ref
-     *    @param	float		$tva_tx					VAT rate
-     *    @param	float		$vat_deductibility_rate	VAT deductibility rate
-     *    @param  	string		$charges				costs affering to product
-	 *    @param  	float		$remise_percent			Discount  regarding qty (percent)
-	 *    @param  	float		$remise					Discount  regarding qty (amount)
-	 *    @param  	int			$newnpr					Set NPR or not
-	 *    @param	int			$delivery_time_days		Delay in days for delivery (max). May be '' if not defined.
-	 * 	  @param    string      $supplier_reputation 	Reputation with this product to the defined supplier (empty, FAVORITE, DONOTORDER)
-     *    @return	int									<0 if KO, >=0 if OK
+     *    @param    int			$qty					Min quantity for which price is valid
+     *    @param    float		$buyprice				Purchase price for the quantity min
+     *    @param    User		$user					Object user user made changes
+     *    @param    string		$price_base_type		HT or TTC
+     *    @param    Societe		$fourn					Supplier
+     *    @param    int			$availability			Product availability
+     *    @param    string		$ref_fourn				Supplier ref
+     *    @param    float		$tva_tx					VAT rate
+     *    @param    string		$charges				costs affering to product
+     *    @param    float		$remise_percent			Discount  regarding qty (percent)
+     *    @param    float		$remise					Discount  regarding qty (amount)
+     *    @param    int			$newnpr					Set NPR or not
+     *    @param    int			$delivery_time_days		Delay in days for delivery (max). May be '' if not defined.
+     *    @param    string		$supplier_reputation	Reputation with this product to the defined supplier (empty, FAVORITE, DONOTORDER)
+     *    @param    float		$vat_deductibility_rate	VAT deductibility rate
+     *    @return   int									<0 if KO, >=0 if OK
      */
-    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $vat_deductibility_rate, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0, $supplier_reputation='')
+    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0, $supplier_reputation='', $vat_deductibility_rate)
     {
         global $conf, $langs;
         //global $mysoc;
