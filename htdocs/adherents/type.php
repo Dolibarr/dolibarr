@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ $pagenext = $page + 1;
 if (! $sortorder) {  $sortorder="DESC"; }
 if (! $sortfield) {  $sortfield="d.lastname"; }
 
-$label=GETPOST("libelle","alpha");
+$label=GETPOST("label","alpha");
 $subscription=GETPOST("subscription","int");
 $vote=GETPOST("vote","int");
 $comment=GETPOST("comment");
@@ -93,17 +93,17 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 	{
 		$object = new AdherentType($db);
 
-		$object->libelle        = trim($label);
-		$object->subscription   = (int) trim($subscription);
-		$object->note           = trim($comment);
-		$object->mail_valid     = (boolean) trim($mail_valid);
-		$object->vote           = (boolean) trim($vote);
+		$object->label			= trim($label);
+		$object->subscription	= (int) trim($subscription);
+		$object->note			= trim($comment);
+		$object->mail_valid		= (boolean) trim($mail_valid);
+		$object->vote			= (boolean) trim($vote);
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0) $error++;
 
-		if ($object->libelle)
+		if ($object->label)
 		{
 			$id=$object->create($user);
 			if ($id > 0)
@@ -131,7 +131,7 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	{
 		$object = new AdherentType($db);
 		$object->id             = $rowid;
-		$object->libelle        = trim($label);
+		$object->label        = trim($label);
 		$object->subscription   = (int) trim($subscription);
 		$object->note           = trim($comment);
 		$object->mail_valid     = (boolean) trim($mail_valid);
@@ -171,7 +171,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 {
 	//dol_fiche_head('');
 
-	$sql = "SELECT d.rowid, d.libelle, d.subscription, d.vote";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql.= " WHERE d.entity IN (".getEntity().")";
 
@@ -180,11 +180,11 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 	{
 		$num = $db->num_rows($result);
 		$nbtotalofrecords = $num;
-		
+
 		$i = 0;
 
 		$param = '';
-		
+
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -193,14 +193,14 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
         print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-		
+
 	    print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
-	   
+
 		$moreforfilter = '';
-		
+
 		print '<div class="div-table-responsive">';
 		print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-		
+
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("Ref").'</th>';
 		print '<th>'.$langs->trans("Label").'</th>';
@@ -214,7 +214,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			$objp = $db->fetch_object($result);
 			print '<tr class="oddeven">';
 			print '<td><a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a></td>';
-			print '<td>'.dol_escape_htmltag($objp->libelle).'</td>';
+			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
 			print '<td align="center">'.yn($objp->subscription).'</td>';
 			print '<td align="center">'.yn($objp->vote).'</td>';
 			if ($user->rights->adherent->configurer)
@@ -226,7 +226,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		}
 		print "</table>";
 		print '</div>';
-		
+
 		print '</form>';
 	}
 	else
@@ -256,7 +256,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 	print '<tbody>';
 
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 	print $form->selectyesno("subscription",1,1);
@@ -316,10 +316,10 @@ if ($rowid > 0)
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/type.php">'.$langs->trans("BackToList").'</a>';
 
 		dol_banner_tab($object, 'rowid', $linkback);
-		
+
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
-		
+
 		print '<table class="border" width="100%">';
 
 		print '<tr><td class="titlefield">'.$langs->trans("SubscriptionRequired").'</td><td>';
@@ -347,7 +347,7 @@ if ($rowid > 0)
 
 		print '</table>';
         print '</div>';
-        
+
 		dol_fiche_end();
 
 
@@ -460,7 +460,7 @@ if ($rowid > 0)
 		    {
 				$membertype=new AdherentType($db);
 		        $result=$membertype->fetch($type);
-				$titre.=" (".$membertype->libelle.")";
+				$titre.=" (".$membertype->label.")";
 		    }
 
 		    $param="&rowid=".$rowid;
@@ -478,12 +478,12 @@ if ($rowid > 0)
 
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			print '<input class="flat" type="hidden" name="rowid" value="'.$rowid.'" size="12"></td>';
-				
+
 			print '<br>';
             print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
-		    
+
             $moreforfilter = '';
-            
+
             print '<div class="div-table-responsive">';
             print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -548,7 +548,7 @@ if ($rowid > 0)
 		        // Type
 		        /*print '<td class="nowrap">';
 		        $membertypestatic->id=$objp->type_id;
-		        $membertypestatic->libelle=$objp->type;
+		        $membertypestatic->label=$objp->type;
 		        print $membertypestatic->getNomUrl(1,12);
 		        print '</td>';
 				*/
@@ -613,7 +613,7 @@ if ($rowid > 0)
 		    print "</table>\n";
             print '</div>';
             print '</form>';
-            
+
 			if ($num > $conf->liste_limit)
 			{
 			    print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'');
@@ -652,7 +652,7 @@ if ($rowid > 0)
 
 		print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
 
-		print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40" value="'.dol_escape_htmltag($object->libelle).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 		print $form->selectyesno("subscription",$object->subscription,1);
