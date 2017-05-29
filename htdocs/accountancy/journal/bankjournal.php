@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
@@ -63,7 +64,10 @@ $langs->load("accountancy");
 $langs->load("trips");
 $langs->load("hrm");
 
+// Old system menu
 $id_bank_account = GETPOST('id_account', 'int');
+// Multi journal
+$code_journal = GETPOST('code_journal', 'alpha');
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -83,9 +87,9 @@ if ($user->societe_id > 0 && empty($id_bank_account))
 /*
  * Actions
  */
-	
+
 $error = 0;
-	
+
 $year_current = strftime("%Y", dol_now());
 $pastmonth = strftime("%m", dol_now()) - 1;
 $pastmonthyear = $year_current;
@@ -134,9 +138,21 @@ $paymentsalstatic = new PaymentSalary($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 
 // Get code of finance journal
-$bank_code_journal = new Account($db);
-$result = $bank_code_journal->fetch($id_bank_account);
-$journal = $bank_code_journal->accountancy_journal;
+$journal = '';
+$bankstatic = new Account($db);
+$bankstatic->fetch($id_bank_account);
+$bankstatic->rowid;
+$bankstatic->number;
+$bankstatic->label;
+$bankstatic->fk_accountancy_journal;
+
+$accountingjournalstatic = new AccountingJournal($db);
+if(! empty($id_bank_account)) {
+	$accountingjournalstatic->fetch($bankstatic->fk_accountancy_journal);
+} else {
+	$accountingjournalstatic->fetch('',$code_journal);
+}
+$journal = $accountingjournalstatic->code;
 
 dol_syslog("accountancy/journal/bankjournal.php", LOG_DEBUG);
 $result = $db->query($sql);
@@ -179,7 +195,7 @@ if ($result) {
 				'name' => $obj->name,
 		        'code_compta' => $compta_soc,
 		);
-		
+
 		$compta_user = (! empty($obj->accountancy_code) ? $obj->accountancy_code : $account_employee);
 
 		$tabuser[$obj->rowid] = array (
@@ -205,8 +221,8 @@ if ($result) {
 		if (is_array($links)) {
 		    // Now loop on each link of record in bank.
 			foreach ( $links as $key => $val ) {
-			    
-			    if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport')))     // So we excluded 'company' here
+
+			    if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert')))     // So we excluded 'company' here
 			    {
 			        // We save tabtype for a future use, to remember what kind of payment it is 
 			        $tabtype[$obj->rowid] = $links[$key]['type'];
@@ -330,11 +346,11 @@ if (! $error && $action == 'writebookkeeping') {
 
 	$error = 0;
 	foreach ( $tabpay as $key => $val ) {      // $key is rowid into llx_bank
-		
+
 	    $errorforline = 0;
-	    
+
 	    $db->begin();
-	    
+
 		// Bank
 		if (! $errorforline)
 		{
@@ -472,6 +488,9 @@ if (! $error && $action == 'writebookkeeping') {
         					$bookkeeping->doc_ref = $objmid->ref_supplier . ' (' . $objmid->ref . ')';
         				}
                         $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
+        				$bookkeeping->numero_compte = $k;
+        			} else if ($tabtype[$key] == 'banktransfert') {
+						$bookkeeping->code_tiers = '';
         				$bookkeeping->numero_compte = $k;
         			} else {
         			    // FIXME Should be a temporary account ???
@@ -705,17 +724,17 @@ if (empty($action) || $action == 'view') {
 	$invoicestatic = new Facture($db);
 	$invoicesupplierstatic = new FactureFournisseur($db);
 	$expensereportstatic = new ExpenseReport($db);
-	
+
 	llxHeader('', $langs->trans("FinanceJournal"));
 
-	$nom = $langs->trans("FinanceJournal") . ' - ' . $bank_code_journal->getNomUrl(1);
+	$nom = $langs->trans("FinanceJournal") . ' - ' . $bankstatic->getNomUrl(1);
 	$builddate = time();
 	//$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 
 	$varlink = 'id_account=' . $id_bank_account;
-	
+
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
 	/*if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 && $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
@@ -852,9 +871,9 @@ if (empty($action) || $action == 'view') {
 			else print $accountoshow;
 			print "</td>";
 			if ($val['soclib'] == '') {
-				print "<td>" . $bank_code_journal->label . " - " . $val["ref"] . "</td>";
+				print "<td>" . $bankstatic->label . " - " . $val["ref"] . "</td>";
 			} else {
-				print "<td>" . $bank_code_journal->label . " - " . $val['soclib'] . "</td>";
+				print "<td>" . $bankstatic->label . " - " . $val['soclib'] . "</td>";
 			}
 			print "<td>" . $val["type_payment"] . "</td>";
 			print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";

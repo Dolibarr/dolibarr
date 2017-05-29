@@ -28,10 +28,10 @@ require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 // Langs
 $langs->load("accountancy");
@@ -94,7 +94,7 @@ if ($sortfield == "") $sortfield = "t.rowid";
 
 $object = new BookKeeping($db);
 
-$formventilation = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
@@ -292,7 +292,6 @@ $title_page = $langs->trans("Bookkeeping");
 llxHeader('', $title_page);
 
 // List
-
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
@@ -322,8 +321,8 @@ if ($action == 'delbookkeepingyear') {
 	if (empty($delyear)) {
 		$delyear = dol_print_date(dol_now(), '%Y');
 	}
-	$year_array = $formventilation->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
-	$journal_array = $formventilation->selectjournal_accountancy_bookkepping($deljournal, 'deljournal', 0, 'array');
+	$year_array = $formaccounting->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
+	$journal_array = $formaccounting->selectjournal($deljournal, 'deljournal', '', 1, 'array', 1, 1);
 
 	$form_question['delyear'] = array (
 			'name' => 'delyear',
@@ -386,17 +385,17 @@ print '</td>';
 print '<td class="liste_titre"><input type="text" name="search_doc_ref" size="8" value="' . dol_escape_htmltag($search_doc_ref) . '"></td>';
 print '<td class="liste_titre">';
 print $langs->trans('From');
-print $formventilation->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, '');
+print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, '');
 print '<br>';
 print $langs->trans('to');
-print $formventilation->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, '');
+print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, '');
 print '</td>';
 print '<td class="liste_titre">';
 print $langs->trans('From');
-print $formventilation->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
+print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
 print '<br>';
 print $langs->trans('to');
-print $formventilation->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
+print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
 print '</td>';
 print '<td class="liste_titre">';
 print '<input type="text" size="7" class="flat" name="search_mvt_label" value="' . $search_mvt_label . '"/>';

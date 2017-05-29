@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    admin/about.php
+ * \file    htdocs/modulebuilder/template/admin/about.php
  * \ingroup mymodule
  * \brief   About page of module MyModule.
  *
