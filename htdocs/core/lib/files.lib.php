@@ -588,7 +588,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 	if (empty($srcfile) || empty($destfile)) return -1;
 
 	$destexists=dol_is_dir($destfile);
-	//if (! $overwriteifexists && $destexists) return 0;	// The overwriteifexists is for files only, so propaated to dol_copy only.
+	//if (! $overwriteifexists && $destexists) return 0;	// The overwriteifexists is for files only, so propagated to dol_copy only.
     
     if (! $destexists)
     {
