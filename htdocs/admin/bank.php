@@ -166,7 +166,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print load_fiche_titre($langs->trans("BankSetupModule"),$linkback,'title_setup');
 
 $head = bank_admin_prepare_head(null);
-dol_fiche_head($head, 'general', $langs->trans("BankSetupModule"), 0, 'account');
+dol_fiche_head($head, 'general', $langs->trans("BankSetupModule"), -1, 'account');
 
 $var=true;
 
