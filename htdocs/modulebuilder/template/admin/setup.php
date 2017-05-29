@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    admin/setup.php
+ * \file    htdocs/modulebuilder/template/admin/setup.php
  * \ingroup mymodule
  * \brief   Example module setup page.
  *
@@ -57,8 +57,8 @@ $page_name = "MyModuleSetup";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">'
-	. $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+
 print load_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header

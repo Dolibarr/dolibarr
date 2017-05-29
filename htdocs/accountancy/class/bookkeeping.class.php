@@ -1053,23 +1053,23 @@ class BookKeeping extends CommonObject
 	 */
 	function deleteByYearAndJournal($delyear='', $journal='') {
 	    global $conf;
-	    
+
 	    if (empty($delyear) && empty($journal)) 
 	    {
 	        return -1;
 	    }
-	    
+
 		$this->db->begin();
-		
+
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
 		$sql.= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql.= " WHERE 1 = 1";
 		if (! empty($delyear)) $sql.= " AND YEAR(doc_date) = " . $delyear;         // FIXME Must use between
 		if (! empty($journal)) $sql.= " AND code_journal = '".$journal."'";
-	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		$sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
 		$resql = $this->db->query($sql);
-		
+
 		if (! $resql) {
 			$this->errors[] = "Error " . $this->db->lasterror();
 			foreach ( $this->errors as $errmsg ) {
@@ -1083,7 +1083,7 @@ class BookKeeping extends CommonObject
 		$this->db->commit();
 		return 1;
 	}
-	
+
 	/**
 	 * Delete bookkepping by piece number
 	 *
@@ -1092,17 +1092,17 @@ class BookKeeping extends CommonObject
 	 */
 	function deleteMvtNum($piecenum) {
 	    global $conf;
-	    
+
 		$this->db->begin();
 		
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
-	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
-		
+		$sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+
 		$resql = $this->db->query($sql);
-		
+
 		if (! $resql) {
 			$this->errors[] = "Error " . $this->db->lasterror();
 			foreach ( $this->errors as $errmsg ) {
@@ -1116,7 +1116,7 @@ class BookKeeping extends CommonObject
 		$this->db->commit();
 		return 1;
 	}
-	
+
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
@@ -1130,27 +1130,27 @@ class BookKeeping extends CommonObject
 		global $user;
 		$error = 0;
 		$object = new Accountingbookkeeping($this->db);
-		
+
 		$this->db->begin();
-		
+
 		// Load source object
 		$object->fetch($fromid);
 		// Reset object
 		$object->id = 0;
-		
+
 		// Clear fields
 		// ...
-		
+
 		// Create clone
 		$result = $object->create($user);
-		
+
 		// Other options
 		if ($result < 0) {
 			$error ++;
 			$this->errors = $object->errors;
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
-		
+
 		// End
 		if (! $error) {
 			$this->db->commit();
@@ -1158,11 +1158,11 @@ class BookKeeping extends CommonObject
 			return $object->id;
 		} else {
 			$this->db->rollback();
-			
+
 			return - 1;
 		}
 	}
-	
+
 	/**
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
@@ -1171,9 +1171,9 @@ class BookKeeping extends CommonObject
 	 */
 	public function initAsSpecimen() {
 		global $user;
-		
+
 		$now=dol_now();
-		
+
 		$this->id = 0;
 		$this->doc_date = $now;
 		$this->doc_type = '';
@@ -1192,7 +1192,7 @@ class BookKeeping extends CommonObject
 		$this->code_journal = '';
 		$this->piece_num = '';
 	}
-	
+
 	/**
 	 * Load an accounting document into memory from database
 	 *
@@ -1201,17 +1201,17 @@ class BookKeeping extends CommonObject
 	 */
 	public function fetchPerMvt($piecenum) {
 		global $conf;
-		
-	    $sql = "SELECT piece_num,doc_date,code_journal,doc_ref,doc_type";
+
+		$sql = "SELECT piece_num,doc_date,code_journal,doc_ref,doc_type";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
-	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
-		
+		$sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+
 		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			
+
 			$this->piece_num = $obj->piece_num;
 			$this->code_journal = $obj->code_journal;
 			$this->doc_date = $this->db->jdate($obj->doc_date);
@@ -1222,10 +1222,10 @@ class BookKeeping extends CommonObject
 			dol_syslog(get_class($this) . "::" . __METHOD__ . $this->error, LOG_ERR);
 			return - 1;
 		}
-		
+
 		return 1;
 	}
-	
+
 	/**
 	 * Return next number movement
 	 *
@@ -1233,8 +1233,8 @@ class BookKeeping extends CommonObject
 	 */
 	public function getNextNumMvt() 
 	{
-	    global $conf;
-	    
+		global $conf;
+
 		$sql = "SELECT MAX(piece_num)+1 as max FROM " . MAIN_DB_PREFIX . $this->table_element;
 	    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
 		
@@ -1243,16 +1243,16 @@ class BookKeeping extends CommonObject
 
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-	        if ($obj) $result = $obj->max;
-	        if (empty($result)) $result = 1;
-	        return $result;
+			if ($obj) $result = $obj->max;
+			if (empty($result)) $result = 1;
+			return $result;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(get_class($this) . "::getNextNumMvt " . $this->error, LOG_ERR);
 			return - 1;
 		}
 	}
-	
+
 	/**
 	 * Load all informations of accountancy document
 	 *
@@ -1260,26 +1260,26 @@ class BookKeeping extends CommonObject
 	 * @return int <0 if KO, >0 if OK
 	 */
 	function fetch_all_per_mvt($piecenum) {
-	    global $conf;
-	    
+		global $conf;
+
 		$sql = "SELECT rowid, doc_date, doc_type,";
 		$sql .= " doc_ref, fk_doc, fk_docdet, code_tiers,";
 		$sql .= " numero_compte, label_compte, debit, credit,";
 		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
-	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
-		
+		$sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+
 		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			
+
 			while ( $obj = $this->db->fetch_object($result) ) {
-				
+
 				$line = new BookKeepingLine();
-				
+
 				$line->id = $obj->rowid;
-				
+
 				$line->doc_date = $this->db->jdate($obj->doc_date);
 				$line->doc_type = $obj->doc_type;
 				$line->doc_ref = $obj->doc_ref;
@@ -1294,7 +1294,7 @@ class BookKeeping extends CommonObject
 				$line->sens = $obj->sens;
 				$line->code_journal = $obj->code_journal;
 				$line->piece_num = $obj->piece_num;
-				
+
 				$this->linesmvt[] = $line;
 			}
 		} else {
@@ -1302,10 +1302,10 @@ class BookKeeping extends CommonObject
 			dol_syslog(get_class($this) . "::" . __METHOD__ . $this->error, LOG_ERR);
 			return - 1;
 		}
-		
+
 		return 1;
 	}
-	
+
 	/**
 	 * Export bookkeping
 	 *
@@ -1313,28 +1313,28 @@ class BookKeeping extends CommonObject
 	 * @return int Result
 	 */
 	function export_bookkeping($model = 'ebp') {
-	    global $conf;
-	    
+		global $conf;
+
 		$sql = "SELECT rowid, doc_date, doc_type,";
 		$sql .= " doc_ref, fk_doc, fk_docdet, code_tiers,";
 		$sql .= " numero_compte, label_compte, debit, credit,";
 		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-	    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
-		
+		$sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
+
 		dol_syslog(get_class($this) . "::export_bookkeping", LOG_DEBUG);
-		
+
 		$resql = $this->db->query($sql);
-		
+
 		if ($resql) {
 			$this->linesexport = array ();
-			
+
 			$num = $this->db->num_rows($resql);
 			while ( $obj = $this->db->fetch_object($resql) ) {
 				$line = new BookKeepingLine();
-				
+
 				$line->id = $obj->rowid;
-				
+
 				$line->doc_date = $this->db->jdate($obj->doc_date);
 				$line->doc_type = $obj->doc_type;
 				$line->doc_ref = $obj->doc_ref;
@@ -1349,11 +1349,11 @@ class BookKeeping extends CommonObject
 				$line->sens = $obj->sens;
 				$line->code_journal = $obj->code_journal;
 				$line->piece_num = $obj->piece_num;
-				
+
 				$this->linesexport[] = $line;
 			}
 			$this->db->free($resql);
-			
+
 			return $num;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
