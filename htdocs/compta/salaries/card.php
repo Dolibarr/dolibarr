@@ -391,9 +391,9 @@ if ($id)
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
 	print '</table>';
-	
+
 	print '</div>';
-    
+
 	dol_fiche_end();
 
 	
