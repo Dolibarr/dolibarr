@@ -30,6 +30,7 @@ create table llx_projet
   title            varchar(255) NOT NULL,
   description      text,
   fk_user_creat    integer NOT NULL,			-- createur du projet
+  fk_user_modif    integer,
   public           integer,						-- project is public or not
   fk_statut        integer DEFAULT 0 NOT NULL,	-- open or close
   fk_opp_status    integer DEFAULT NULL,	        -- if project is used to manage opportunities
