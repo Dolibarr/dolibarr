@@ -214,22 +214,22 @@ ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_invoic
 
 ALTER TABLE llx_facture_rec ADD COLUMN vat_src_code	varchar(10) DEFAULT '';
 
-DELETE FROM llx_const where name = 'ADHERENT_BANK_USE_AUTO';
+DELETE FROM llx_const WHERE name = __ENCRYPT('ADHERENT_BANK_USE_AUTO')__;
 
-UPDATE llx_const set value='moono-lisa' where value = 'moono' AND name = 'FCKEDITOR_SKIN';
+UPDATE llx_const SET value = __ENCRYPT('moono-lisa')__ WHERE value = __ENCRYPT('moono')__ AND name = __ENCRYPT('FCKEDITOR_SKIN')__;
 
-ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
-ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
 
 ALTER TABLE llx_user ADD COLUMN model_pdf varchar(255);
 ALTER TABLE llx_usergroup ADD COLUMN model_pdf varchar(255);
 
-INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('PRODUCT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/products', 'chaine', 0, '');
-INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('CONTRACT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/contracts', 'chaine', 0, '');
-INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USERGROUP_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/usergroups', 'chaine', 0, '');
-INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USER_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/users', 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES (__ENCRYPT('PRODUCT_ADDON_PDF_ODT_PATH')__, 1, __ENCRYPT('DOL_DATA_ROOT/doctemplates/products')__, 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES (__ENCRYPT('CONTRACT_ADDON_PDF_ODT_PATH')__, 1, __ENCRYPT('DOL_DATA_ROOT/doctemplates/contracts')__, 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES (__ENCRYPT('USERGROUP_ADDON_PDF_ODT_PATH')__, 1, __ENCRYPT('DOL_DATA_ROOT/doctemplates/usergroups')__, 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES (__ENCRYPT('USER_ADDON_PDF_ODT_PATH')__, 1, __ENCRYPT('DOL_DATA_ROOT/doctemplates/users')__, 'chaine', 0, '');
 
-INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('MAIN_ENABLE_OVERWRITE_TRANSLATION', 1, '1', 'chaine', 0, 'Enable overwrote of translation');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES (__ENCRYPT('MAIN_ENABLE_OVERWRITE_TRANSLATION')__, 1, __ENCRYPT('1')__, 'chaine', 0, 'Enable overwrote of translation');
 
 ALTER TABLE llx_chargesociales ADD COLUMN ref varchar(16);
 ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;
