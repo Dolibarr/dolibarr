@@ -167,6 +167,14 @@ class Holiday extends CommonObject
         if (! $error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday");
+
+            if (! $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('HOLIDAY_CREATE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
         }
 
         // Commit or rollback
@@ -603,7 +611,13 @@ class Holiday extends CommonObject
 
         if (! $error)
         {
-
+            if (! $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('HOLIDAY_MODIFY',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
         }
 
         // Commit or rollback
@@ -650,7 +664,13 @@ class Holiday extends CommonObject
 
         if (! $error)
         {
-
+            if (! $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('HOLIDAY_DELETE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
         }
 
         // Commit or rollback
