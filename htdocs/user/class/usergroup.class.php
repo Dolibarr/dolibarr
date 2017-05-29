@@ -68,7 +68,7 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *	Charge un objet group avec toutes ces caracteristiques (excpet ->members array)
+	 *	Charge un objet group avec toutes ces caracteristiques (except ->members array)
 	 *
 	 *	@param      int		$id			id du groupe a charger
 	 *	@param      string	$groupname	name du groupe a charger
