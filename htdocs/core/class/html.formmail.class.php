@@ -297,7 +297,7 @@ class FormMail extends Form
         	$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
 			//var_dump($arraydefaultmessage);
 
-        	$out.= "\n<!-- Begin form mail -->\n";
+        	$out.= "\n".'<!-- Begin form mail --><div id="mailformdiv"></div>'."\n";
         	if ($this->withform == 1)
         	{
         		$out.= '<form method="POST" name="mailform" id="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'#formmail">'."\n";
@@ -327,7 +327,7 @@ class FormMail extends Form
         	{
 	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
         	    $out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
-	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
 	        	$out.= ' &nbsp; ';
 	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 	        	$out.= ' &nbsp; ';
@@ -341,7 +341,7 @@ class FormMail extends Form
         	{
 	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
         	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put disabled on option, it is already on select and it makes chrome crazy.
-        	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+        	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
         	    $out.= ' &nbsp; ';
         	    $out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
         	    $out.= ' &nbsp; ';
@@ -634,11 +634,11 @@ class FormMail extends Form
         		if ($this->withtopicreadonly)
         		{
         			$out.= $defaulttopic;
-        			$out.= '<input type="hidden" size="60" id="subject" name="subject" value="'.$defaulttopic.'" />';
+        			$out.= '<input type="hidden" class="quatrevingtpercent" id="subject" name="subject" value="'.$defaulttopic.'" />';
         		}
         		else
         		{
-        			$out.= '<input type="text" size="60" id="subject" name="subject" value="'. ((isset($_POST["subject"]) && ! $_POST['modelselected'])?$_POST["subject"]:($defaulttopic?$defaulttopic:'')) .'" />';
+        			$out.= '<input type="text" class="quatrevingtpercent" id="subject" name="subject" value="'. ((isset($_POST["subject"]) && ! $_POST['modelselected'])?$_POST["subject"]:($defaulttopic?$defaulttopic:'')) .'" />';
         		}
         		$out.= "</td></tr>\n";
         	}
@@ -848,7 +848,7 @@ class FormMail extends Form
 		if ($active >= 0) $sql.=" AND active = ".$active;
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
 		if (!empty($id)) $sql.= " AND rowid=".$id;
-		$sql.= $db->order("lang,label","ASC");
+		$sql.= $db->order("position,lang,label","ASC");
 		//print $sql;
 
 		$resql = $db->query($sql);
@@ -1059,18 +1059,18 @@ class FormMail extends Form
 	}
 	
 	/**
-	 * Set substit array from object
+	 * Get list of substition keys available.
 	 * 
-	 * @param	string	$mode		'form', 'formwithlines', 'formforlines' or 'emailing'
+	 * @param	string	$mode		'formemail', 'formemailwithlines', 'formemailforlines', 'emailing', ...
 	 * @return	void
 	 */
-	function getAvailableSubstitKey($mode='form')
+	static function getAvailableSubstitKey($mode='formemail')
 	{
-		global $conf;
+		global $conf, $langs;
 		
 		$vars=array();
 		
-		if ($mode == 'form' || $mode == 'formwithlines' || $mode == 'formforlines')
+		if ($mode == 'formemail' || $mode == 'formemailwithlines' || $mode == 'formemailforlines')
 		{
 			$vars=array(
 				'__REF__', 
@@ -1133,6 +1133,15 @@ class FormMail extends Form
 				$vars['__SECUREKEYPAYPAL_MEMBER__']='';
 			}
 		}
+		
+		$tmparray=array();
+		$parameters=array('mode'=>$mode);
+		complete_substitutions_array($tmparray, $langs, null, $parameters);
+		foreach($tmparray as $key => $val)
+		{
+		    $vars[$key]=$key;
+		}
+		
 		return $vars;
 	}
 

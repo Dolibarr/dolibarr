@@ -30,7 +30,7 @@ require '../../main.inc.php';
 // Class
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
@@ -52,6 +52,7 @@ $toselect = GETPOST('toselect', 'array');
 $mesCasesCochees = GETPOST('toselect', 'array');
 
 // Search Getpost
+$search_lineid = GETPOST('search_lineid', 'int');
 $search_invoice = GETPOST('search_invoice', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
@@ -84,7 +85,7 @@ if ($user->societe_id > 0)
 if (! $user->rights->accounting->bind->write)
 	accessforbidden();
 
-$formventilation = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 $accounting = new AccountingAccount($db);
 $aarowid_s = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT, 1);
 $aarowid_p = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT, 1);
@@ -100,6 +101,7 @@ if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction !=
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
+	$search_lineid = '';
 	$search_ref = '';
 	$search_invoice = '';
 	$search_label = '';
@@ -177,7 +179,7 @@ llxHeader('', $langs->trans("Ventilation"));
 
 // Customer Invoice lines
 $sql = "SELECT f.facnumber, f.rowid as facid, f.datef, f.type as ftype,";
-$sql .= " l.fk_product, l.description, l.total_ht, l.rowid, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line,";
+$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod,";
 $sql .= " aa.rowid as aarowid";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
@@ -189,6 +191,9 @@ $sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 $sql .= " AND product_type <= 2";
 $sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_sell ='')";
 // Add search filter like
+if ($search_lineid) {
+    $sql .= natural_search("l.rowid", $search_lineid, 1);
+}
 if (strlen(trim($search_invoice))) {
     $sql .= natural_search("f.facnumber",$search_invoice);
 }
@@ -236,7 +241,7 @@ if ($result) {
 	$i = 0;
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
-	
+
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -249,8 +254,7 @@ if ($result) {
 	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
 	//if ($massaction == 'presend') $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('ventil', $arrayofmassactions, 1);
-	
-	
+
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -258,23 +262,22 @@ if ($result) {
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	
-	//$center='<div align="center"><input type="submit" class="butAction" value="' . $langs->trans("Ventilate") . '" name="ventil"></div>';
-	
+	print '<input type="hidden" name="page" value="'.$page.'">';
+
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
 	print $langs->trans("DescVentilTodoCustomer") . '</br><br>';
 
 	if ($msg) print $msg.'<br>';
-	
+
 	$moreforfilter = '';
-	
-    print '<div class="div-table-responsive">';
+
+	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	// We add search filter
 	print '<tr class="liste_titre_filter">';
-	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_lineid" value="' . dol_escape_htmltag($search_lineid) . '""></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
@@ -285,7 +288,7 @@ if ($result) {
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td align="center" class="liste_titre">';
-	$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
 	print '</tr>';
@@ -303,9 +306,9 @@ if ($result) {
 	print_liste_field_titre($langs->trans("IntoAccount"), '', '', '', '', 'align="center"');
 	$checkpicto='';
 	if ($massactionbutton) $checkpicto=$form->showCheckAddButtons('checkforselect', 1);
-	print_liste_field_titre($checkpitco, '', '', '', '', 'align="center"');
+	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
 	print "</tr>\n";
-	
+
 	$facture_static = new Facture($db);
 	$product_static = new Product($db);
 	$form = new Form($db);
@@ -313,7 +316,6 @@ if ($result) {
 	$var = true;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
-		$var = ! $var;
 
 		$objp->code_sell_l = '';
 		$objp->code_sell_p = '';
@@ -327,7 +329,7 @@ if ($result) {
 		$facture_static->ref = $objp->facnumber;
 		$facture_static->id = $objp->facid;
 		$facture_static->type = $objp->ftype;
-		
+
 		$code_sell_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
 
@@ -347,30 +349,30 @@ if ($result) {
 		if (! empty($objp->code_sell)) {
 			$objp->code_sell_p = $objp->code_sell;       // Code on product
 		} else {
-    	    $code_sell_p_notset = 'color:orange';
+			$code_sell_p_notset = 'color:orange';
 		}
 		if (empty($objp->code_sell_l) && empty($objp->code_sell_p)) $code_sell_p_notset = 'color:red';
-		
+
 		// $objp->code_sell_p is now code of product/service
 		// $objp->code_sell_l is now default code of product/service
-					
-		print '<tr '. $bc[$var].'>';
+
+		print '<tr class="oddeven">';
 
 		// Line id
 		print '<td>' . $objp->rowid . '</td>';
-		
+
 		// Ref Invoice
 		print '<td>' . $facture_static->getNomUrl(1) . '</td>';
 
 		print '<td align="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
-		
+
 		// Ref Product
 		print '<td>';
 		if ($product_static->id)
 			print $product_static->getNomUrl(1);
 		if ($objp->product_label) print '<br>'.$objp->product_label;
 		print '</td>';
-		
+
 		print '<td class="tdoverflowonsmartphone">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
 		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
@@ -380,14 +382,14 @@ if ($result) {
 		print '<td align="right">';
 		print price($objp->total_ht);
 		print '</td>';
-		
+
 		// Vat rate
 		if ($objp->vat_tx_l != $objp->vat_tx_p)
 			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
 		print '<td style="' . $code_vat_differ . '" align="right">';
 		print price($objp->tva_tx_line);
 		print '</td>';
-		
+
 		// Current account
 		print '<td align="center" style="' . $code_sell_p_notset . '">';
 	    print (($objp->type_l == 1)?$langs->trans("DefaultForService"):$langs->trans("DefaultForProduct")) . ' = ' . ($objp->code_sell_l > 0 ? length_accountg($objp->code_sell_l) : $langs->trans("Unknown"));
@@ -400,7 +402,7 @@ if ($result) {
 
 		// Suggested accounting account
 		print '<td align="center">';
-		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
+		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 		
 		print '<td align="center">';
@@ -411,7 +413,7 @@ if ($result) {
 	}
 	print '</table>';
 	print "</div>";
-	
+
 	print '</form>';
 } else {
 	print $db->error();

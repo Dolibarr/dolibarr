@@ -83,7 +83,8 @@ llxHeader("","ClickToDial");
 if ($id > 0)
 {
     $object = new User($db);
-    $object->fetch($id);
+    $object->fetch($id, '', '', 1);
+    $object->getrights();
     $object->fetch_clicktodial();
 
 

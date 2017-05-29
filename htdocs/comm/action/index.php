@@ -6,6 +6,7 @@
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +44,8 @@ if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MA
 if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
 $MAXAGENDA=$conf->global->AGENDA_EXT_NB;
 
-$filter=GETPOST("filter",'',3);
-$filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filtert","int",3);
+$filter = GETPOST("filter",'',3);
+$filtert = GETPOST("filtert","int",3);
 $usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
@@ -157,7 +158,6 @@ if ($action =='delete_action')
     $event->fetch($actionid);
     $result=$event->delete();
 }
-
 
 
 /*
@@ -446,6 +446,7 @@ $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql.= ' a.fk_soc, a.fk_contact,';
+$sql.= ' a.fk_element, a.elementtype,';
 $sql.= ' ca.code as type_code, ca.libelle as type_label, ca.color as type_color';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
@@ -570,6 +571,8 @@ if ($resql)
         $event->fulldayevent=$obj->fulldayevent;
         $event->location=$obj->location;
         $event->transparency=$obj->transparency;
+        $event->fk_element=$obj->fk_element;
+        $event->elementtype=$obj->elementtype;
 
         $event->societe->id=$obj->fk_soc;
         $event->contact->id=$obj->fk_contact;
@@ -1155,21 +1158,6 @@ else    // View by day
     echo '</table>';
 }
 
-
-/* TODO Export
- print '
-<a href="" id="actionagenda_ical_link"><img src="'.DOL_URL_ROOT.'/theme/common/ical.gif" border="0"/></a>
-<a href="" id="actionagenda_vcal_link"><img src="'.DOL_URL_ROOT.'/theme/common/vcal.gif" border="0"/></a>
-<a href="" id="actionagenda_rss_link"><img src="'.DOL_URL_ROOT.'/theme/common/rss.gif"  border="0"/></a>
-
-<script>
-$("#actionagenda_rss_link").attr("href","/public/agenda/agendaexport.php?format=rss&type=ActionAgenda&exportkey=dolibarr&token="+getToken()+"&status="+getStatus()+"&userasked="+getUserasked()+"&usertodo="+getUsertodo()+"&userdone="+getUserdone()+"&year="+getYear()+"&month="+getMonth()+"&day="+getDay()+"&showbirthday="+getShowbirthday()+"&action="+getAction()+"&projectid="+getProjectid()+"");
-$("#actionagenda_ical_link").attr("href","/public/agenda/agendaexport.php?format=ical&type=ActionAgenda&exportkey=dolibarr&token="+getToken()+"&status="+getStatus()+"&userasked="+getUserasked()+"&usertodo="+getUsertodo()+"&userdone="+getUserdone()+"&year="+getYear()+"&month="+getMonth()+"&day="+getDay()+"&showbirthday="+getShowbirthday()+"&action="+getAction()+"&projectid="+getProjectid()+"");
-$("#actionagenda_vcal_link").attr("href","/public/agenda/agendaexport.php?format=vcal&type=ActionAgenda&exportkey=dolibarr&token="+getToken()+"&status="+getStatus()+"&userasked="+getUserasked()+"&usertodo="+getUsertodo()+"&userdone="+getUserdone()+"&year="+getYear()+"&month="+getMonth()+"&day="+getDay()+"&showbirthday="+getShowbirthday()+"&action="+getAction()+"&projectid="+getProjectid()+"");
-</script>
-';
-*/
-
 llxFooter();
 
 $db->close();
@@ -1492,6 +1480,12 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             else $contact=$cachecontacts[$event->contact->id];
                             if ($linerelatedto) $linerelatedto.=' / ';
                             if (! empty($contact->id)) $linerelatedto.=$contact->getNomUrl(1,'',0);
+                        }
+                        if (! empty($event->fk_element) && $event->fk_element > 0 && ! empty($event->elementtype) && ! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))
+                        {
+                            include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+                            if ($linerelatedto) $linerelatedto.=' / ';
+                            $linerelatedto.=dolGetElementUrl($event->fk_element,$event->elementtype,1);
                         }
                         if ($linerelatedto) print '<br>'.$linerelatedto;
                     }

@@ -34,7 +34,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 
 $langs->load("users");
 
-$sall=GETPOST('sall');
+$sall=GETPOST('sall', 'alphanohtml');
 $search_group=GETPOST('search_group');
 $optioncss = GETPOST('optioncss','alpha');
 
@@ -131,6 +131,7 @@ if ($resql)
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="mode" value="'.$mode.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 

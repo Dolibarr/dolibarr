@@ -181,10 +181,12 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     							});
     						}
     						console.log("ajax_autocompleter new value selected, we trigger change on original component so field #search_'.$htmlname.'");
+							
     						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
 					}).data("ui-autocomplete")._renderItem = function( ul, item ) {
+						  
 						return $("<li>")
 						.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
 						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
@@ -349,12 +351,12 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 
 
 /**
- * Make a input box content all selected
+ * Make content of an input box selected when we click into input field.
  * 
  * @param string	$htmlname	Id of html object 
- * @param int		$addlink	Add a link to after
+ * @param string	$addlink	Add a 'link to' after
  */
-function ajax_autoselect($htmlname, $addlink=0)
+function ajax_autoselect($htmlname, $addlink='')
 {
 	global $langs;
 	$out = '<script type="text/javascript">
@@ -362,7 +364,7 @@ function ajax_autoselect($htmlname, $addlink=0)
 				    jQuery("#'.$htmlname.'").click(function() { jQuery(this).select(); } );
 				});
 		    </script>';
-	if ($addlink) $out.=' <a href="'.$url.'" target="_blank">'.$langs->trans("Link").'</a>';
+	if ($addlink) $out.=' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
 	return $out;
 }
 

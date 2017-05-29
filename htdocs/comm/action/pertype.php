@@ -38,8 +38,8 @@ if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class
 
 if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
 
-$filter=GETPOST("filter",'',3);
-$filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filtert","int",3);
+$filter = GETPOST("filter",'',3);
+$filtert = GETPOST("filtert","int",3);
 $usergroup = GETPOST("usergroup","int",3);
 //if (! ($usergroup > 0) && ! ($filtert > 0)) $filtert = $user->id;
 //$showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
@@ -250,7 +250,7 @@ $picto='calendarweek';
 $nav.=' &nbsp; <form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
 $nav.='<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 $nav.='<input type="hidden" name="action" value="' . $action . '">';
-$nav.='<input type="hidden" name="usertodo" value="' . $filtert . '">';
+$nav.='<input type="hidden" name="filtert" value="' . $filtert . '">';
 $nav.='<input type="hidden" name="usergroup" value="' . $usergroup . '">';
 $nav.='<input type="hidden" name="actioncode" value="' . $actioncode . '">';
 $nav.='<input type="hidden" name="resourceid" value="' . $resourceid . '">';
@@ -714,7 +714,7 @@ jQuery(document).ready(function() {
 		else if (ids.indexOf(",") > -1)	/* There is several events */
 		{
 			/* alert(\'several events\'); */
-			url = "'.DOL_URL_ROOT.'/comm/action/listactions.php?usertodo="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+day;
+			url = "'.DOL_URL_ROOT.'/comm/action/listactions.php?filtert="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+day;
 			window.location.href = url;
 		}
 		else	/* One event */

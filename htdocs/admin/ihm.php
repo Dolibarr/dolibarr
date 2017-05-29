@@ -45,22 +45,10 @@ $langs->load("agenda");
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
-
-// List of supported permanent search area
-$searchform=array();
-/* deprecated
-if (empty($conf->use_javascript_ajax))
-{
-    $searchform=array("MAIN_SEARCHFORM_SOCIETE", "MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE", "MAIN_SEARCHFORM_ADHERENT", "MAIN_SEARCHFORM_PROJECT", "MAIN_SEARCHFORM_EMPLOYEE");
-    $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_ADHERENT,$conf->global->MAIN_SEARCHFORM_PROJECT,$conf->global->MAIN_SEARCHFORM_EMPLOYEE);
-    $searchformtitle=array($langs->trans("Companies"), $langs->trans("Contacts"), $langs->trans("ProductsAndServices"), $langs->trans("Members"), $langs->trans("Projects"), $langs->trans("Users"));
-    $searchformmodule=array('Module1Name','Module1Name','Module50Name','Module310Name','Module400Name');
-}
-*/
 
 
 /*
@@ -99,32 +87,46 @@ if ($action == 'update')
 
 	dolibarr_set_const($db, "MAIN_THEME",						$_POST["main_theme"],'chaine',0,'',$conf->entity);
 
-	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'),array()))));
-	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKBODY', $conf->entity);
-	else dolibarr_set_const($db, 'THEME_ELDY_BACKBODY', implode(',',colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'),array())),'chaine',0,'',$conf->entity);
-	
 	$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
 	if (! $val) dolibarr_del_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', $conf->entity);
     else dolibarr_set_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', GETPOST('THEME_TOPMENU_DISABLE_IMAGE'),'chaine',0,'',$conf->entity);
     
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKBODY', $conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_BACKBODY', $val,'chaine',0,'',$conf->entity);
+	
     $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TOPMENU_BACK1', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_TOPMENU_BACK1', implode(',',colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array())),'chaine',0,'',$conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_TOPMENU_BACK1', $val,'chaine',0,'',$conf->entity);
 
-	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array()))));
+    $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKTITLE1', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_BACKTITLE1', implode(',',colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array())),'chaine',0,'',$conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_BACKTITLE1', $val,'chaine',0,'',$conf->entity);
 
-	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'),array()))));
+    $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_LINEIMPAIR1'),array()))));
+    if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEIMPAIR1', $conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_LINEIMPAIR1', $val,'chaine',0,'',$conf->entity);
+    $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_LINEIMPAIR1'),array()))));
+    if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEIMPAIR2', $conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_LINEIMPAIR2', $val,'chaine',0,'',$conf->entity);
+    
+    $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_LINEPAIR1'),array()))));
+    if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEPAIR1', $conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_LINEPAIR1', $val,'chaine',0,'',$conf->entity);
+    $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_LINEPAIR1'),array()))));
+    if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEPAIR2', $conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_LINEPAIR2', $val,'chaine',0,'',$conf->entity);
+    
+    $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLENOTAB', implode(',',colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'),array())),'chaine',0,'',$conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $val,'chaine',0,'',$conf->entity);
     
     if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", '0', 'chaine', 0, '', $conf->entity);    // If empty, we set to '0' ('000000' is for black)
 	else dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $_POST["THEME_ELDY_USE_HOVER"], 'chaine', 0, '', $conf->entity);
 
 	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTLINK', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_TEXTLINK', implode(',',colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array())),'chaine',0,'',$conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_TEXTLINK', $val,'chaine',0,'',$conf->entity);
 	
     dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",			$_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
@@ -161,34 +163,6 @@ if ($action == 'update')
 	            if ($result > 0)
 	            {
 	                dolibarr_set_const($db, "MAIN_LOGIN_BACKGROUND",$original_file,'chaine',0,'',$conf->entity);
-	
-	                // Create thumbs of logo (Note that PDF use original file and not thumbs)
-	                /*
-	                if ($isimage > 0)
-	                {
-	                    // Create thumbs
-	                    //$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retreive value with get...
-	
-	                    // Create small thumb, Used on logon for example
-	                    $imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-	                    if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbSmall,$reg))
-	                    {
-	                        $imgThumbSmall = $reg[1];    // Save only basename
-	                        dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall,'chaine',0,'',$conf->entity);
-	                    }
-	                    else dol_syslog($imgThumbSmall);
-	
-	                    // Create mini thumb, Used on menu or for setup page for example
-	                    $imgThumbMini = vignette($dirforimage.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
-	                    if (image_format_supported($imgThumbMini) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbMini,$reg))
-	                    {
-	                        $imgThumbMini = $reg[1];     // Save only basename
-	                        dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini,'chaine',0,'',$conf->entity);
-	                    }
-	                    else dol_syslog($imgThumbMini);
-	                }
-	                else dol_syslog("ErrorImageFormatNotSupported",LOG_WARNING);
-	                */
 	            }
 	            else if (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
 	            {
@@ -275,21 +249,6 @@ if ($action == 'edit')	// Edit
     show_theme(null,1);
     print '<br>';
 
-    // List of permanent supported search box
-    if (! empty($searchform))
-    {
-        print '<table summary="search" class="noborder" width="100%">';
-        print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("PermanentLeftSearchForm").'</td><td colspan="2">'.$langs->trans("Activated").'</td></tr>';
-        foreach ($searchform as $key => $value)
-        {
-            print '<tr><td class="titlefield">'.$searchformtitle[$key].'</td><td colspan="2">';
-            print $form->selectyesno($searchform[$key],$searchformconst[$key],1);
-            print '</td></tr>';
-        }
-        print '</table>';
-        print '<br>';
-    }
-    
     // Other
     print '<table summary="edit" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
@@ -389,13 +348,6 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-	// Hide helpcenter link on login page
-	print '<tr><td class="titlefield">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
-	print $form->selectyesno('MAIN_HELPCENTER_DISABLELINK',isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0,1);
-	print '</td>';
-	print '<td width="20">&nbsp;</td>';
-	print '</tr>';
-	
 	// Message of the day on home page
     print '<tr><td class="titlefield">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
 
@@ -420,8 +372,14 @@ if ($action == 'edit')	// Edit
 	$doleditor->Create();
 	print '</td></tr>'."\n";
 	
-	// Background
+	// Hide helpcenter link on login page
+	print '<tr><td class="titlefield">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
+	print $form->selectyesno('MAIN_HELPCENTER_DISABLELINK',isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0,1);
+	print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
 	
+	// Background
 	print '<tr><td><label for="imagebackground">'.$langs->trans("BackgroundImageLogin").' (png,jpg)</label></td><td colspan="2">';
     print '<div class="centpercent inline-block">';
 	print '<input type="file" class="flat class=minwidth200" name="imagebackground" id="imagebackground">';
@@ -475,23 +433,6 @@ else	// Show
     show_theme(null,0);
     print '<br>';
 
-
-    // List of search forms to show
-    if (! empty($searchform))
-    {
-        print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td><td>&nbsp;</td></tr>';
-        foreach ($searchform as $key => $value)
-        {
-            
-            print '<tr class="oddeven"><td class="titlefield">'.$searchformtitle[$key].'</td><td>'.yn($searchformconst[$key]).'</td>';
-    		print '<td align="left">';
-    		if (! empty($searchformmodule[$key])) print $langs->trans("IfModuleEnabled",$langs->transnoentitiesnoconv($searchformmodule[$key]));
-            print '</td></tr>';
-        }
-        print '</table>';
-        print '<br>';
-    }
 
     // Other
     print '<table class="noborder" width="100%">';
@@ -577,11 +518,6 @@ else	// Show
     print yn((isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0),1);
     print '</td></tr>';
 
-	// Link to help center
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelpCenter").'</td><td colspan="2">';
-    print yn((isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0),1);
-    print '</td></tr>';
-
     // Message of the day
     print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
     if (isset($conf->global->MAIN_MOTD)) print dol_htmlcleanlastbr($conf->global->MAIN_MOTD);
@@ -602,8 +538,12 @@ else	// Show
     else print '&nbsp;';
     print '</td></tr>'."\n";
     
+	// Link to help center
+    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelpCenter").'</td><td colspan="2">';
+    print yn((isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0),1);
+    print '</td></tr>';
+
     // Background login
-    
     print '<tr class="oddeven"><td>'.$langs->trans("BackgroundImageLogin").'</td><td colspan="2">';
     print '<div class="centpercent inline-block">';
     print $conf->global->MAIN_LOGIN_BACKGROUND;
@@ -620,7 +560,7 @@ else	// Show
     
     print '</table>'."\n";
     
-    print '<div class="tabsAction">';
+    print '<div class="tabsAction tabsActionNoBottom">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
     print '</div>';
 }

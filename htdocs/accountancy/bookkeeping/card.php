@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016 Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +18,23 @@
  */
 
 /**
- * \file htdocs/accountancy/bookkeeping/card.php
+ * \file	htdocs/accountancy/bookkeeping/card.php
  * \ingroup Advanced accountancy
- * \brief Page to show book-entry
+ * \brief	Page to show book-entry
  */
 require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 // Langs
 $langs->load("accountancy");
+$langs->load("bank");
+$langs->load("bills");
+$langs->load("trips");
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -38,7 +42,7 @@ if ($user->societe_id > 0) {
 	accessforbidden();
 }
 
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 $piece_num = GETPOST("piece_num");
 
 $mesg = '';
@@ -210,7 +214,7 @@ else if ($action == "confirm_create") {
 llxHeader();
 
 $html = new Form($db);
-$formventilation = new FormVentilation($db);
+$formaccountancy = new FormAccounting($db);
 
 /*
  *  Confirmation to delete the command
@@ -222,26 +226,6 @@ if ($action == 'delete') {
 
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("CreateMvts"));
-
-	$code_journal_array = array (
-			$conf->global->ACCOUNTING_SELL_JOURNAL => $conf->global->ACCOUNTING_SELL_JOURNAL,
-			$conf->global->ACCOUNTING_PURCHASE_JOURNAL => $conf->global->ACCOUNTING_PURCHASE_JOURNAL,
-			$conf->global->ACCOUNTING_SOCIAL_JOURNAL => $conf->global->ACCOUNTING_SOCIAL_JOURNAL,
-			$conf->global->ACCOUNTING_MISCELLANEOUS_JOURNAL => $conf->global->ACCOUNTING_MISCELLANEOUS_JOURNAL,
-			$conf->global->ACCOUNTING_EXPENSEREPORT_JOURNAL => $conf->global->ACCOUNTING_EXPENSEREPORT_JOURNAL
-	);
-
-	$sql = 'SELECT DISTINCT accountancy_journal FROM ' . MAIN_DB_PREFIX . 'bank_account WHERE clos=0';
-	$resql = $db->query($sql);
-	if (! $resql) {
-		setEventMessages($db->lasterror, null, 'errors');
-	} else {
-		while ( $obj_bank = $db->fetch_object($resql) ) {
-			if (! empty($obj_bank->accountancy_journal)) {
-				$code_journal_array[$obj_bank->accountancy_journal] = $obj_bank->accountancy_journal;
-			}
-		}
-	}
 
 	$book = new BookKeeping($db);
 	$next_num_mvt = $book->getNextNumMvt();
@@ -270,9 +254,10 @@ if ($action == 'create') {
 	print '</tr>';
 
 	print '<tr>';
-	print '<td class="fieldrequired">' . $langs->trans("Codejournal") . '</td>';
-	print '<td>' . $html->selectarray('code_journal', $code_journal_array) . '</td>';
-	print '</tr>';
+	print '<td class="fieldrequired">'.$langs->trans("AccountancyJournal").'</td>';
+	print '<td>';
+	print $formaccountancy->select_journal('', 'code_journal', '', 0, '', 1, 1, 1, 1);
+	print '</td></tr>';
 
 	print '<tr>';
 	print '<td>' . $langs->trans("Docref") . '</td>';
@@ -305,28 +290,53 @@ if ($action == 'create') {
 
 		dol_fiche_head();
 		
+		print '<div class="fichecenter">';
+		
 		print '<table class="border" width="100%">';
+
 		print '<tr class="pair">';
 		print '<td class="titlefield">' . $langs->trans("NumMvts") . '</td>';
 		print '<td>' . $book->piece_num . '</td>';
 		print '</tr>';
+
 		print '<tr class="impair">';
 		print '<td>' . $langs->trans("Docdate") . '</td>';
 		print '<td>' . dol_print_date($book->doc_date, 'daytextshort') . '</td>';
 		print '</tr>';
+
 		print '<tr class="pair">';
 		print '<td>' . $langs->trans("Codejournal") . '</td>';
-		print '<td>' . $book->code_journal . '</td>';
-		print '</tr>';
+		print '<td>';	
+		$accountingjournal = new AccountingJournal($db);
+		$accountingjournal->fetch('',$book->code_journal);
+		print $accountingjournal->getNomUrl(0,1,1,'',1);	
+		print '</td></tr>';
+		
 		print '<tr class="impair">';
 		print '<td>' . $langs->trans("Docref") . '</td>';
 		print '<td>' . $book->doc_ref . '</td>';
 		print '</tr>';
+
+		$typelabel = $book->doc_type;
+		if ($typelabel == 'bank') {
+			$typelabel = $langs->trans('Bank');
+		}
+		if ($typelabel == 'customer_invoice') {
+			$typelabel = $langs->trans('CustomerInvoice');
+		}
+		if ($typelabel == 'supplier_invoice') {
+			$typelabel = $langs->trans('SupplierInvoice');
+		}
+		if ($typelabel == 'expense_report') {
+			$typelabel = $langs->trans('ExpenseReport');
+		}
 		print '<tr class="pair">';
 		print '<td>' . $langs->trans("Doctype") . '</td>';
-		print '<td>' . $book->doc_type . '</td>';
+		print '<td>' . $typelabel . '</td>';
 		print '</tr>';
 		print '</table>';
+		
+		print '</div>';
 		
 		dol_fiche_end();
 
@@ -369,8 +379,7 @@ if ($action == 'create') {
 				print "</tr>\n";
 
 				foreach ($book->linesmvt as $line) {
-					$var = ! $var;
-					print '<tr ' . $bc[$var] . '>';
+					print '<tr class="oddeven">';
 
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
@@ -378,10 +387,10 @@ if ($action == 'create') {
 					if ($action == 'update' && $line->id == $id) {
 
 						print '<td>';
-						print $formventilation->select_account($line->numero_compte, 'account_number', 0, array (), 1, 1, '');
+						print $formaccounting->select_account($line->numero_compte, 'account_number', 0, array (), 1, 1, '');
 						print '</td>';
 						print '<td>';
-						print $formventilation->select_auxaccount($line->code_tiers, 'code_tiers', 1);
+						print $formaccounting->select_auxaccount($line->code_tiers, 'code_tiers', 1);
 						print '</td>';
 						print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
 						print '<td align="right"><input type="text" size="6" name="debit" value="' . price($line->debit) . '"/></td>';
@@ -420,17 +429,16 @@ if ($action == 'create') {
 				}
 
 				if ($action == "" || $action == 'add') {
-					$var = ! $var;
-					print '<tr ' . $bc[$var] . '>';
+					print '<tr class="oddeven">';
 					print '<td>';
-					print $formventilation->select_account($account_number, 'account_number', 0, array (), 1, 1, '');
+					print $formaccounting->select_account($account_number, 'account_number', 0, array (), 1, 1, '');
 					print '</td>';
 					print '<td>';
-					print $formventilation->select_auxaccount($code_tiers, 'code_tiers', 1);
+					print $formaccounting->select_auxaccount($code_tiers, 'code_tiers', 1);
 					print '</td>';
 					print '<td><input type="text" size="15" name="label_compte" value="' . $label_compte . '"/></td>';
-					print '<td align="right"><input type="text" size="6" name="debit" value="' . price($debit) . '"/></td>';
-					print '<td align="right"><input type="text" size="6" name="credit" value="' . price($credit) . '"/></td>';
+					print '<td align="right"><input type="text" class="right maxwidth50" name="debit" value="' . price($debit) . '"/></td>';
+					print '<td align="right"><input type="text" class="right maxwidth50" name="credit" value="' . price($credit) . '"/></td>';
 					print '<td></td>';
 					print '<td></td>';
 					print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';

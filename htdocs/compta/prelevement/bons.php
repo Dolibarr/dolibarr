@@ -105,6 +105,7 @@ if ($result)
   print '<input type="hidden" name="action" value="list">';
   print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
   print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+  print '<input type="hidden" name="page" value="'.$page.'">';
   print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
   
   print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
@@ -124,19 +125,17 @@ if ($result)
   print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'. $db->escape($search_ref).'"></td>';
   print '<td class="liste_titre">&nbsp;</td>';
   print '<td class="liste_titre" align="right">';
-  $searchpitco=$form->showFilterAndCheckAddButtons(0);
-  print $searchpitco;
+  $searchpicto=$form->showFilterAndCheckAddButtons(0);
+  print $searchpicto;
   print '</td>';
   print '</tr>';
 
-  $var=True;
 
   while ($i < min($num,$limit))
   {
-      $obj = $db->fetch_object($result);
-      
+      $obj = $db->fetch_object($result);     
 
-      print "<tr ".$bc[$var]."><td>";
+      print '<tr class="oddeven"><td>';
 
       print $bon->LibStatut($obj->statut,2);
       print "&nbsp;";

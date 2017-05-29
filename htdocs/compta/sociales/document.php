@@ -33,6 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+if (! empty($conf->projet->enabled))
+{
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 $langs->load("other");
 $langs->load("companies");
@@ -40,7 +45,7 @@ $langs->load("compta");
 $langs->load("bills");
 
 $id = GETPOST('id','int');
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
@@ -88,6 +93,7 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer)
  */
 
 $form = new Form($db);
+if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $title = $langs->trans("SocialContribution") . ' - ' . $langs->trans("Documents");
 $help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
@@ -105,9 +111,24 @@ if ($object->id)
 	// Label of social contribution
 	$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+    // Project
+	if (! empty($conf->projet->enabled))
+	{
+	    $langs->load("projects");
+	    $morehtmlref.='<br>'.$langs->trans('Project') . ' : ';
+        if (! empty($object->fk_project)) {
+            $proj = new Project($db);
+            $proj->fetch($object->fk_project);
+            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+            $morehtmlref.=$proj->ref;
+            $morehtmlref.='</a>';
+        } else {
+            $morehtmlref.='';
+        }
+	}		
 	$morehtmlref.='</div>';
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 

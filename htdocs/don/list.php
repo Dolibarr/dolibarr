@@ -43,7 +43,7 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.datedon";
 
 $statut=isset($_GET["statut"])?$_GET["statut"]:"-1";
-$search_all=GETPOST('sall','alpha');
+$search_all=GETPOST('sall', 'alphanohtml');
 $search_ref=GETPOST('search_ref','alpha');
 $search_company=GETPOST('search_company','alpha');
 $search_name=GETPOST('search_name','alpha');
@@ -149,6 +149,7 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
     if ($search_all)
@@ -183,8 +184,8 @@ if ($resql)
     print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
     print '<td class="liste_titre" align="right"></td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
+    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    print $searchpicto;
     print '</td>';
 	print "</tr>\n";
 

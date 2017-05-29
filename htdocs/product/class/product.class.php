@@ -494,7 +494,7 @@ class Product extends CommonObject
 			$sql = "SELECT count(*) as nb";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product";
 			$sql.= " WHERE entity IN (".getEntity('product', 1).")";
-			$sql.= " AND ref = '" .$this->ref."'";
+			$sql.= " AND ref = '" .$this->db->escape($this->ref)."'";
 
 			$result = $this->db->query($sql);
 			if ($result)
@@ -1076,7 +1076,7 @@ class Product extends CommonObject
    			// Delete all child tables
 			if (! $error)
 			{
-				$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price','product_lot','product_warehouse_properties');  // product_batch is done before
+				$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price','product_lot');  // product_batch is done before
     			foreach($elements as $table)
     			{
     				if (! $error)
@@ -1212,14 +1212,14 @@ class Product extends CommonObject
 					$sql2.= " label='".$this->db->escape($this->label)."',";
 					$sql2.= " description='".$this->db->escape($this->description)."'";
 					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.= ", note='".$this->db->escape($this->note)."'";
-					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$key."'";
+					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$this->db->escape($key)."'";
 				}
 				else
 				{
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description";
 					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.=", note";
 					$sql2.= ")";
-					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->label)."',";
+					$sql2.= " VALUES(".$this->id.",'".$this->db->escape($key)."','". $this->db->escape($this->label)."',";
 					$sql2.= " '".$this->db->escape($this->description)."'";
 					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.= ", '".$this->db->escape($this->note)."'";
 					$sql2.= ")";
@@ -1247,14 +1247,14 @@ class Product extends CommonObject
 					$sql2.= " label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
 					$sql2.= " description='".$this->db->escape($this->multilangs["$key"]["description"])."'";
 					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.= ", note='".$this->db->escape($this->multilangs["$key"]["note"])."'";
-					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$key."'";
+					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$this->db->escape($key)."'";
 				}
 				else
 				{
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description";
 					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.=", note";
 					$sql2.= ")";
-					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->multilangs["$key"]["label"])."',";
+					$sql2.= " VALUES(".$this->id.",'".$this->db->escape($key)."','". $this->db->escape($this->multilangs["$key"]["label"])."',";
 					$sql2.= " '".$this->db->escape($this->multilangs["$key"]["description"])."'";
 					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.= ", '".$this->db->escape($this->note)."'";
 					$sql2.= ")";
@@ -1944,7 +1944,7 @@ class Product extends CommonObject
 						$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
 						$sql.= " WHERE entity IN (".getEntity('productprice', 1).")";
 						$sql.= " AND price_level=".$i;
-						$sql.= " AND fk_product = '".$this->id."'";
+						$sql.= " AND fk_product = ".$this->id;
 						$sql.= " ORDER BY date_price DESC, rowid DESC";
 						$sql.= " LIMIT 1";
 						$resql = $this->db->query($sql);
@@ -1969,7 +1969,7 @@ class Product extends CommonObject
 							{
 								$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise";
 								$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
-								$sql.= " WHERE fk_product_price = '".$this->prices_by_qty_id[$i]."'";
+								$sql.= " WHERE fk_product_price = ".$this->prices_by_qty_id[$i];
 								$sql.= " ORDER BY quantity ASC";
 								$resultat=array();
 								$resql = $this->db->query($sql);
@@ -2006,7 +2006,7 @@ class Product extends CommonObject
 					$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 					$sql.= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
-					$sql.= " WHERE fk_product = '".$this->id."'";
+					$sql.= " WHERE fk_product = ".$this->id;
 					$sql.= " ORDER BY date_price DESC, rowid DESC";
 					$sql.= " LIMIT 1";
 					$resql = $this->db->query($sql);
@@ -2022,7 +2022,7 @@ class Product extends CommonObject
 						{
 							$sql = "SELECT rowid,price, unitprice, quantity, remise_percent, remise";
 							$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
-							$sql.= " WHERE fk_product_price = '".$this->prices_by_qty_id[0]."'";
+							$sql.= " WHERE fk_product_price = ".$this->prices_by_qty_id[0];
 							$sql.= " ORDER BY quantity ASC";
 							$resultat=array();
 							$resql = $this->db->query($sql);
@@ -2459,9 +2459,10 @@ class Product extends CommonObject
 	 *
 	 *  @param		string	$sql        Request to execute
 	 *  @param		string	$mode		'byunit'=number of unit, 'bynumber'=nb of entities
+	 *  @param      int     $year       Year (0=current year)
 	 *  @return   	array       		<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function _get_stats($sql,$mode)
+	function _get_stats($sql, $mode, $year=0)
 	{
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2482,8 +2483,15 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$year = strftime('%Y',time());
-		$month = strftime('%m',time());
+		if (empty($year)) 
+		{
+		    $year = strftime('%Y',time());
+		    $month = strftime('%m',time());
+		}
+		else
+		{
+		    $month=12;    // We imagine we are at end of year, so we get last 12 month before, so all correct year.
+		}
 		$result = array();
 
 		for ($j = 0 ; $j < 12 ; $j++)
@@ -2516,9 +2524,11 @@ class Product extends CommonObject
 	 *  @param  	int		$socid                   Limit count on a particular third party id
 	 *  @param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
 	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
+	 *  @param      int     $year                    Year (0=last 12 month)
+	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_vente($socid, $mode, $filteronproducttype=-1)
+	function get_nb_vente($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
 	{
 		global $conf;
 		global $user;
@@ -2536,10 +2546,11 @@ class Product extends CommonObject
 		$sql.= " AND f.entity IN (".getEntity('facture', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND f.fk_soc = $socid";
+		$sql.=$morefilter;
 		$sql.= " GROUP BY date_format(f.datef,'%Y%m')";
 		$sql.= " ORDER BY date_format(f.datef,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode);
+		return $this->_get_stats($sql,$mode, $year);
 	}
 
 
@@ -2549,9 +2560,11 @@ class Product extends CommonObject
 	 *  @param  	int		$socid                   Limit count on a particular third party id
 	 * 	@param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
 	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
+	 *  @param      int     $year                    Year (0=last 12 month)
+	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_achat($socid, $mode, $filteronproducttype=-1)
+	function get_nb_achat($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
 	{
 		global $conf;
 		global $user;
@@ -2569,11 +2582,11 @@ class Product extends CommonObject
 		$sql.= " AND f.entity IN (".getEntity('facture_fourn', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND f.fk_soc = $socid";
+		$sql.=$morefilter;
 		$sql.= " GROUP BY date_format(f.datef,'%Y%m')";
 		$sql.= " ORDER BY date_format(f.datef,'%Y%m') DESC";
 
-		$resarray=$this->_get_stats($sql,$mode);
-		return $resarray;
+		return $this->_get_stats($sql,$mode, $year);
 	}
 
 	/**
@@ -2582,9 +2595,11 @@ class Product extends CommonObject
 	 *  @param  	int		$socid                   Limit count on a particular third party id
 	 * 	@param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
 	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
+	 *  @param      int     $year                    Year (0=last 12 month)
+	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_propal($socid, $mode, $filteronproducttype=-1)
+	function get_nb_propal($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
 	{
 		global $conf;
 		global $user;
@@ -2602,10 +2617,11 @@ class Product extends CommonObject
 		$sql.= " AND p.entity IN (".getEntity('propal', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND p.fk_soc = ".$socid;
+		$sql.=$morefilter;
 		$sql.= " GROUP BY date_format(p.datep,'%Y%m')";
 		$sql.= " ORDER BY date_format(p.datep,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode);
+		return $this->_get_stats($sql,$mode, $year);
 	}
 
 	/**
@@ -2614,9 +2630,11 @@ class Product extends CommonObject
 	 *  @param  	int		$socid                   Limit count on a particular third party id
 	 * 	@param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
 	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
+	 *  @param      int     $year                    Year (0=last 12 month)
+	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_propalsupplier($socid, $mode, $filteronproducttype=-1)
+	function get_nb_propalsupplier($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
 	{
 		global $conf;
 		global $user;
@@ -2634,10 +2652,11 @@ class Product extends CommonObject
 		$sql.= " AND p.entity IN (".getEntity('propal', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND p.fk_soc = ".$socid;
+		$sql.=$morefilter;
 		$sql.= " GROUP BY date_format(p.date_valid,'%Y%m')";
 		$sql.= " ORDER BY date_format(p.date_valid,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode);
+		return $this->_get_stats($sql,$mode, $year);
 	}
 	
 	/**
@@ -2646,9 +2665,11 @@ class Product extends CommonObject
 	 *  @param  	int		$socid                   Limit count on a particular third party id
 	 *  @param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
 	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
+	 *  @param      int     $year                    Year (0=last 12 month)
+	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_order($socid, $mode, $filteronproducttype=-1)
+	function get_nb_order($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
 	{
 		global $conf, $user;
 
@@ -2665,10 +2686,11 @@ class Product extends CommonObject
 		$sql.= " AND c.entity IN (".getEntity('commande', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND c.fk_soc = ".$socid;
+		$sql.=$morefilter;
 		$sql.= " GROUP BY date_format(c.date_commande,'%Y%m')";
 		$sql.= " ORDER BY date_format(c.date_commande,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode);
+		return $this->_get_stats($sql,$mode, $year);
 	}
 
 	/**
@@ -2677,9 +2699,11 @@ class Product extends CommonObject
 	 *  @param  	int		$socid                   Limit count on a particular third party id
 	 *  @param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
 	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
+	 *  @param      int     $year                    Year (0=last 12 month)
+	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_ordersupplier($socid, $mode, $filteronproducttype=-1)
+	function get_nb_ordersupplier($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
 	{
 		global $conf, $user;
 
@@ -2696,10 +2720,11 @@ class Product extends CommonObject
 		$sql.= " AND c.entity IN (".getEntity('supplier_order', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND c.fk_soc = ".$socid;
+		$sql.=$morefilter;
 		$sql.= " GROUP BY date_format(c.date_commande,'%Y%m')";
 		$sql.= " ORDER BY date_format(c.date_commande,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode);
+		return $this->_get_stats($sql,$mode, $year);
 	}
 
 	/**
@@ -4062,7 +4087,7 @@ class Product extends CommonObject
 						$relativefile=preg_replace('/^\//', '', $pdir.$photo);
 						if (empty($nolink)) 
 						{
-						    $urladvanced=getAdvancedPreviewUrl('product', $relativefile);
+						    $urladvanced=getAdvancedPreviewUrl('product', $relativefile, 0, 'entity='.$this->entity);
 						    if ($urladvanced) $return.='<a href="'.$urladvanced.'">';
 						    else $return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
 						}
@@ -4367,14 +4392,31 @@ class Product extends CommonObject
         $this->id=0;
         $this->ref = 'PRODUCT_SPEC';
         $this->label = 'PRODUCT SPECIMEN';
-        $this->description = 'PRODUCT SPECIMEN '.dol_print_date($now,'dayhourlog');
+        $this->description = 'This is description of this product specimen that was created the '.dol_print_date($now,'dayhourlog').'.';
         $this->specimen=1;
         $this->country_id=1;
         $this->tosell=1;
         $this->tobuy=1;
 		$this->tobatch=0;
         $this->note='This is a comment (private)';
+        $this->date_creation = $now;
+        $this->date_modification = $now;
+        
+        $this->weight = 4;
+        $this->weight_unit = 1;
 
+        $this->length = 5;
+        $this->length_unit = 1;
+        $this->width = 6;
+        $this->width_unit = 0;
+        $this->height = null;
+        $this->height_unit = null;
+        
+        $this->surface = 30;
+        $this->surface_unit = 0;
+        $this->volume = 300;
+        $this->volume_unit = 0;
+        
         $this->barcode=-1;	// Create barcode automatically
     }
 

@@ -29,7 +29,7 @@ require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
@@ -83,7 +83,7 @@ if ($user->societe_id > 0)
 if (! $user->rights->accounting->bind->write)
 	accessforbidden();
 
-$formventilation = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 $accounting = new AccountingAccount($db);
 
 
@@ -246,9 +246,8 @@ if ($result) {
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-
-	//$center='<div class="center"><input type="submit" class="butAction" value="' . $langs->trans("Ventilate") . '" name="ventil"></div>';
-
+	print '<input type="hidden" name="page" value="'.$page.'">';
+	
 	print_barre_liste($langs->trans("ExpenseReportLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
 	print $langs->trans("DescVentilTodoExpenseReport") . '</br><br>';
@@ -299,7 +298,6 @@ if ($result) {
 	$var = true;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
-		$var = ! $var;
 
 		$objp->aarowid_suggest = '';
 		$objp->aarowid_suggest = $objp->aarowid;
@@ -307,7 +305,7 @@ if ($result) {
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
 
-		print '<tr '. $bc[$var].'>';
+		print '<tr class="oddeven">';
 
 		// Line id
 		print '<td>' . $objp->rowid . '</td>';
@@ -345,7 +343,7 @@ if ($result) {
 
 		// Suggested accounting account
 		print '<td align="center">';
-		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
+		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
 		print '<td align="center">';

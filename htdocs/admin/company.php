@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2016	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $langs->load("admin");
 $langs->load("companies");
@@ -545,7 +545,6 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans("FiscalYearInformation").'</td><td>'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
-	$var=true;
 
 	
 	print '<tr class="oddeven"><td><label for="fiscalmonthstart">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
@@ -561,10 +560,9 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<td class="titlefield">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
 	print '<td align="right">&nbsp;</td>';
 	print "</tr>\n";
-	$var=true;
 
 	
-	print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" id=\"use_vat\" value=\"1\"".(empty($conf->global->FACTURE_TVAOPTION)?"":" checked")."> ".$langs->trans("VATIsUsed")."</label></td>";
+	print "<tr class=\"oddeven\"><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" id=\"use_vat\" value=\"1\"".(empty($conf->global->FACTURE_TVAOPTION)?"":" checked")."> ".$langs->trans("VATIsUsed")."</label></td>";
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label for=\"use_vat\">".$langs->trans("VATIsUsedDesc")."</label></td></tr>";
@@ -573,7 +571,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	print "</td></tr>\n";
 
 	
-	print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" id=\"no_vat\" value=\"0\"".(empty($conf->global->FACTURE_TVAOPTION)?" checked":"")."> ".$langs->trans("VATIsNotUsed")."</label></td>";
+	print "<tr class=\"oddeven\"><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" id=\"no_vat\" value=\"0\"".(empty($conf->global->FACTURE_TVAOPTION)?" checked":"")."> ".$langs->trans("VATIsNotUsed")."</label></td>";
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label for=\"no_vat\">".$langs->trans("VATIsNotUsedDesc")."</label></td></tr>";
@@ -595,10 +593,9 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<td>'.$langs->transcountry("LocalTax1Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
 		print '<td align="right">&nbsp;</td>';
 		print "</tr>\n";
-		$var=true;
 		
 		// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
-		print "<tr ".$bc[$var]."><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax1\" id=\"lt1\" value=\"localtax1on\"".(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on")?" checked":"")."> ".$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code)."</td>";
+		print "<tr class=\"oddeven\"><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax1\" id=\"lt1\" value=\"localtax1on\"".(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on")?" checked":"")."> ".$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code)."</td>";
 		print '<td colspan="2">';
 		print '<table class="nobordernopadding">';
 		print "<tr><td><label for=\"lt1\">".$langs->transcountry("LocalTax1IsUsedDesc",$mysoc->country_code)."</label></td></tr>";
@@ -620,7 +617,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print "</td></tr>\n";
 
 		
-		print "<tr ".$bc[$var]."><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax1\" id=\"nolt1\" value=\"localtax1off\"".((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1off")?" checked":"")."> ".$langs->transcountry("LocalTax1IsNotUsed",$mysoc->country_code)."</td>";
+		print "<tr class=\"oddeven\"><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax1\" id=\"nolt1\" value=\"localtax1off\"".((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1off")?" checked":"")."> ".$langs->transcountry("LocalTax1IsNotUsed",$mysoc->country_code)."</td>";
 		print '<td colspan="2">';
 		print "<table>";
 		print "<tr><td><label for=\"nolt1\">".$langs->transcountry("LocalTax1IsNotUsedDesc",$mysoc->country_code)."</label></td></tr>";
@@ -639,11 +636,10 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<td>'.$langs->transcountry("LocalTax2Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
 		print '<td align="right">&nbsp;</td>';
 		print "</tr>\n";
-		$var=true;
 
 		
 		// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
-		print "<tr ".$bc[$var]."><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax2\" id=\"lt2\" value=\"localtax2on\"".(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on")?" checked":"")."> ".$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code)."</td>";
+		print "<tr class=\"oddeven\"><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax2\" id=\"lt2\" value=\"localtax2on\"".(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on")?" checked":"")."> ".$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code)."</td>";
 		print '<td colspan="2">';
 		print '<table class="nobordernopadding">';
 		print "<tr><td><label for=\"lt2\">".$langs->transcountry("LocalTax2IsUsedDesc",$mysoc->country_code)."</label></td></tr>";
@@ -662,7 +658,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print "</td></tr>\n";
 
 		
-		print "<tr ".$bc[$var]."><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax2\" id=\"nolt2\" value=\"localtax2off\"".((empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2off")?" checked":"")."> ".$langs->transcountry("LocalTax2IsNotUsed",$mysoc->country_code)."</td>";
+		print "<tr class=\"oddeven\"><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax2\" id=\"nolt2\" value=\"localtax2off\"".((empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2off")?" checked":"")."> ".$langs->transcountry("LocalTax2IsNotUsed",$mysoc->country_code)."</td>";
 		print '<td colspan="2">';
 		print "<table>";
 		print "<tr><td><label for=\"nolt2\">".$langs->transcountry("LocalTax2IsNotUsedDesc",$mysoc->country_code)."</label></td></tr>";
@@ -696,7 +692,6 @@ else
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
-	$var=true;
 
 	
 	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("CompanyName").'</td><td>';
@@ -799,7 +794,6 @@ else
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
-	$var=true;
 
 	// Managing Director(s)
 	
@@ -965,7 +959,6 @@ else
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans("FiscalYearInformation").'</td><td>'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
-	$var=true;
 
 	
 	print '<tr class="oddeven"><td>'.$langs->trans("FiscalMonthStart").'</td><td>';
@@ -983,10 +976,9 @@ else
 	print '<td>'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
 	print '<td align="right">&nbsp;</td>';
 	print "</tr>\n";
-	$var=true;
 
 	
-	print "<tr ".$bc[$var]."><td width=\"160\"><input ".$bc[$var]." type=\"radio\" name=\"optiontva\" id=\"use_vat\" disabled value=\"1\"".(empty($conf->global->FACTURE_TVAOPTION)?"":" checked")."> ".$langs->trans("VATIsUsed")."</td>";
+	print "<tr class=\"oddeven\"><td width=\"160\"><input class=\"oddeven\" type=\"radio\" name=\"optiontva\" id=\"use_vat\" disabled value=\"1\"".(empty($conf->global->FACTURE_TVAOPTION)?"":" checked")."> ".$langs->trans("VATIsUsed")."</td>";
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label for=\"use_vat\">".$langs->trans("VATIsUsedDesc")."</label></td></tr>";
@@ -995,7 +987,7 @@ else
 	print "</td></tr>\n";
 
 	
-	print "<tr ".$bc[$var]."><td width=\"160\"><input ".$bc[$var]." type=\"radio\" name=\"optiontva\" id=\"no_vat\" disabled value=\"0\"".(empty($conf->global->FACTURE_TVAOPTION)?" checked":"")."> ".$langs->trans("VATIsNotUsed")."</td>";
+	print "<tr class=\"oddeven\"><td width=\"160\"><input class=\"oddeven\" type=\"radio\" name=\"optiontva\" id=\"no_vat\" disabled value=\"0\"".(empty($conf->global->FACTURE_TVAOPTION)?" checked":"")."> ".$langs->trans("VATIsNotUsed")."</td>";
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label=\"no_vat\">".$langs->trans("VATIsNotUsedDesc")."</label></td></tr>";
@@ -1018,10 +1010,9 @@ else
 		print '<td>'.$langs->transcountry("LocalTax1Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
 		print '<td align="right">&nbsp;</td>';
 		print "</tr>\n";
-		$var=true;
 
 		
-		print "<tr ".$bc[$var]."><td width=\"160\"><input ".$bc[$var]." type=\"radio\" name=\"optionlocaltax1\" id=\"lt1\" disabled value=\"localtax1on\"".(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on")?" checked":"")."> ".$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code)."</td>";
+		print "<tr class=\"oddeven\"><td width=\"160\"><input class=\"oddeven\" type=\"radio\" name=\"optionlocaltax1\" id=\"lt1\" disabled value=\"localtax1on\"".(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on")?" checked":"")."> ".$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code)."</td>";
 		print '<td colspan="2">';
 		print "<table>";
 		print "<tr><td></label for=\"lt1\">".$langs->transcountry("LocalTax1IsUsedDesc",$mysoc->country_code)."</label></td></tr>";
@@ -1049,7 +1040,7 @@ else
 		print "</td></tr>\n";
 
 		
-		print "<tr ".$bc[$var]."><td width=\"160\"><input ".$bc[$var]." type=\"radio\" name=\"optionlocaltax1\" id=\"nolt1\" disabled value=\"localtax1off\"".((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1off")?" checked":"")."> ".$langs->transcountry("LocalTax1IsNotUsed",$mysoc->country_code)."</td>";
+		print "<tr class=\"oddeven\"><td width=\"160\"><input class=\"oddeven\" type=\"radio\" name=\"optionlocaltax1\" id=\"nolt1\" disabled value=\"localtax1off\"".((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1off")?" checked":"")."> ".$langs->transcountry("LocalTax1IsNotUsed",$mysoc->country_code)."</td>";
 		print '<td colspan="2">';
 		print "<table>";
 		print "<tr><td><label for=\"no_lt1\">".$langs->transcountry("LocalTax1IsNotUsedDesc",$mysoc->country_code)."</label></td></tr>";
@@ -1069,10 +1060,9 @@ else
 		print '<td>'.$langs->transcountry("LocalTax2Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
 		print '<td align="right">&nbsp;</td>';
 		print "</tr>\n";
-		$var=true;
 
 		
-		print "<tr ".$bc[$var]."><td width=\"160\"><input ".$bc[$var]." type=\"radio\" name=\"optionlocaltax2\" id=\"lt2\" disabled value=\"localtax2on\"".(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on")?" checked":"")."> ".$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code)."</td>";
+		print "<tr class=\"oddeven\"><td width=\"160\"><input class=\"oddeven\" type=\"radio\" name=\"optionlocaltax2\" id=\"lt2\" disabled value=\"localtax2on\"".(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on")?" checked":"")."> ".$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code)."</td>";
 		print '<td colspan="2">';
 		print "<table>";
 		print "<tr><td><label for=\"lt2\">".$langs->transcountry("LocalTax2IsUsedDesc",$mysoc->country_code)."</label></td></tr>";
@@ -1101,7 +1091,7 @@ else
 		print "</td></tr>\n";
 
 		
-		print "<tr ".$bc[$var]."><td width=\"160\"><input ".$bc[$var]." type=\"radio\" name=\"optionlocaltax2\" id=\"nolt2\" disabled value=\"localtax2off\"".((empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2off")?" checked":"")."> ".$langs->transcountry("LocalTax2IsNotUsed",$mysoc->country_code)."</td>";
+		print "<tr class=\"oddeven\"><td width=\"160\"><input class=\"oddeven\" type=\"radio\" name=\"optionlocaltax2\" id=\"nolt2\" disabled value=\"localtax2off\"".((empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2off")?" checked":"")."> ".$langs->transcountry("LocalTax2IsNotUsed",$mysoc->country_code)."</td>";
 		print '<td colspan="2">';
 		print "<table>";
 		print "<tr><td><label for=\"nolt2\">".$langs->transcountry("LocalTax2IsNotUsedDesc",$mysoc->country_code)."</label></td></tr>";

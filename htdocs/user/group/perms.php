@@ -82,16 +82,16 @@ llxHeader('',$langs->trans("Permissions"));
 
 if ($id)
 {
-    $fgroup = new Usergroup($db);
-    $fgroup->fetch($id);
-    $fgroup->getrights();
+    $object = new Usergroup($db);
+    $object->fetch($id);
+    $object->getrights();
 
     /*
      * Affichage onglets
      */
-    $head = group_prepare_head($fgroup);
+    $head = group_prepare_head($object);
     $title = $langs->trans("Group");
-    dol_fiche_head($head, 'rights', $title, 0, 'group');
+    dol_fiche_head($head, 'rights', $title, -1, 'group');
 
     // Charge les modules soumis a permissions
     $modules = array();
@@ -127,7 +127,7 @@ if ($id)
                         // Load all permissions
                         if ($objMod->rights_class)
                         {
-                        	$entity=((! empty($conf->multicompany->enabled) && ! empty($fgroup->entity)) ? $fgroup->entity : null);
+                        	$entity=((! empty($conf->multicompany->enabled) && ! empty($object->entity)) ? $object->entity : null);
                             $ret=$objMod->insert_permissions(0, $entity);
                             $modules[$objMod->rights_class]=$objMod;
                         }
@@ -150,7 +150,7 @@ if ($id)
     {
         if (empty($conf->multicompany->transverse_mode))
         {
-        	$sql.= " AND r.entity = ".$fgroup->entity;
+        	$sql.= " AND r.entity = ".$object->entity;
         }
         else
         {
@@ -162,7 +162,7 @@ if ($id)
     	$sql.= " AND r.entity IN (0,".$conf->entity.")";
     }
 
-    $sql.= " AND ugr.fk_usergroup = ".$fgroup->id;
+    $sql.= " AND ugr.fk_usergroup = ".$object->id;
 
     $result=$db->query($sql);
 
@@ -183,32 +183,31 @@ if ($id)
         dol_print_error($db);
     }
 
-
+    
+    
+    dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+     
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
+     
     /*
      * Ecran ajout/suppression permission
      */
 
     print '<table class="border" width="100%">';
 
-    // Ref
-    print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-    print '<td colspan="2">';
-    print $form->showrefnav($fgroup,'id','',$user->rights->user->user->lire || $user->admin);
-    print '</td>';
-    print '</tr>';
-
     // Nom
-    print '<tr><td width="25%">'.$langs->trans("Name").'</td>';
-    print '<td colspan="2">'.$fgroup->name.'';
-    if (! $fgroup->entity)
+    print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
+    print '<td colspan="2">'.$object->name.'';
+    if (! $object->entity)
     {
         print img_picto($langs->trans("GlobalGroup"),'redstar');
     }
     print "</td></tr>\n";
 
     // Note
-    print '<tr><td width="25%" class="tdtop">'.$langs->trans("Note").'</td>';
-    print '<td class="valeur">'.dol_htmlentitiesbr($fgroup->note).'</td>';
+    print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
+    print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'</td>';
     print "</tr>\n";
 
     print '</table><br>';
@@ -230,7 +229,7 @@ if ($id)
     {
         if (empty($conf->multicompany->transverse_mode))
         {
-        	$sql.= " AND r.entity = ".$fgroup->entity;
+        	$sql.= " AND r.entity = ".$object->entity;
         }
         else
         {
@@ -280,9 +279,9 @@ if ($id)
                     print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName();
                     print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
                     print '<td align="center" class="nowrap">';
-                    print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
+                    print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$object->id.'&amp;action=addrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
                     print '/';
-                    print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
+                    print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$object->id.'&amp;action=delrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
                     print '</td>';
                     print '<td colspan="2">&nbsp;</td>';
                     print '</tr>';
@@ -299,7 +298,7 @@ if ($id)
                 // Own permission by group
                 if ($caneditperms)
                 {
-                    print '<td align="center"><a class="reposition" href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
+                    print '<td align="center"><a class="reposition" href="perms.php?id='.$object->id.'&amp;action=delrights&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
                 }
                 print '<td align="center">';
                 print img_picto($langs->trans("Active"),'tick');
@@ -310,7 +309,7 @@ if ($id)
                 // Do not own permission
                 if ($caneditperms)
                 {
-                    print '<td align="center"><a class="reposition" href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+                    print '<td align="center"><a class="reposition" href="perms.php?id='.$object->id.'&amp;action=addrights&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
                 }
                 print '<td>&nbsp</td>';
             }
@@ -324,6 +323,10 @@ if ($id)
         }
     }
     print '</table>';
+    
+    print '</div>';
+    
+    dol_fiche_end();
 }
 
 llxFooter();

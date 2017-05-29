@@ -94,15 +94,13 @@ if ($result)
 	print_liste_field_titre($langs->trans("Reason"),$_SERVER["PHP_SELF"],"pr.motif","",$urladd);
 	print "</tr>\n";
 
-	$var=True;
-
 	$total = 0;
 
 	while ($i < min($num,$conf->liste_limit))
 	{
 		$obj = $db->fetch_object($result);
 
-		print "<tr ".$bc[$var]."><td>";
+		print '<tr class="oddeven"><td>';
 		print $ligne->LibStatut($obj->statut,2).'&nbsp;';
 		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 

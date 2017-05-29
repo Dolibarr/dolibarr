@@ -77,14 +77,14 @@ $viewstatut=GETPOST('viewstatut');
 $optioncss = GETPOST('optioncss','alpha');
 $object_statut=GETPOST('propal_statut');
 
-$sall=GETPOST("sall");
+$sall=GETPOST('sall', 'alphanohtml');
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 
 $day=GETPOST("day","int");
 $month=GETPOST("month","int");
 $year=GETPOST("year","int");
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -242,6 +242,7 @@ $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= ' p.rowid, p.note_private, p.total_ht, p.tva as total_vat, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 $sql.= ' p.datec as date_creation, p.tms as date_update,';
+$sql.= " pr.rowid as project_id, pr.ref as project_ref,";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
 // Add fields from extrafields
@@ -259,6 +260,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 if ($sall || $search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
 if ($search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = p.fk_projet";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 if ($search_user > 0)
@@ -377,6 +379,7 @@ if ($resql)
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	if ($search_login)  	 $param.='&search_login='.$search_login;
 	if ($search_town)		 $param.='&search_town='.$search_town;
+	if ($search_zip)		 $param.='&search_zip='.$search_zip;
 	if ($socid > 0)          $param.='&socid='.$socid;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 	// Add $param from extra fields
@@ -404,7 +407,8 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-
+	print '<input type="hidden" name="page" value="'.$page.'">';
+	
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
 	
 	if ($massaction == 'presend')
@@ -532,7 +536,7 @@ if ($resql)
 	    $moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	    $moreforfilter.='</div>';
 	}
-	// If the user can view prospects other than his'
+	// If the user can view products
 	if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire))
 	{
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -566,7 +570,7 @@ if ($resql)
 	{
 	    print '<td class="liste_titre">';
     	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
-	   print '</td>';
+ 	    print '</td>';
 	}
 	if (! empty($arrayfields['p.ref_client']['checked']))
 	{
@@ -696,8 +700,8 @@ if ($resql)
 	}
 	// Action column
 	print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterButtons();
-	print $searchpitco;
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
 	print '</td>';
 	
 	print "</tr>\n";
@@ -992,7 +996,7 @@ if ($resql)
 		   $i++;
 		   if ($i == 1)
 	       {
-        		if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+        		if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
         		else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
 	       }
 		   elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
@@ -1001,7 +1005,6 @@ if ($resql)
 		   else print '<td></td>';
 		}
 		print '</tr>';
-		
 	}
 
 	$db->free($resql);

@@ -24,7 +24,7 @@
 /**
  *	    \file       htdocs/user/bank.php
  *      \ingroup    HRM
- *		\brief      BAN tab for users
+ *		\brief      Tab for HRM
  */
 
 require '../main.inc.php';
@@ -38,31 +38,35 @@ $langs->load("banks");
 $langs->load("bills");
 
 $id = GETPOST('id','int');
-$action = GETPOST("action");
+$bankid = GETPOST('bankid','int');
+$action = GETPOST("action",'alpha');
+$cancel = GETPOST('cancel','alpha');
 
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 if ($user->id == $id) $feature2=''; // A user can always read its own card
-$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
+$result = restrictedArea($user, 'salaries|hrm', $id, 'user&user', $feature2);
 
 $object = new User($db);
 if ($id > 0 || ! empty($ref))
 {
-	$result = $object->fetch($id, $ref);
+	$result = $object->fetch($id, $ref, '', 1);
+	$object->getrights();
 }
+
 
 /*
  *	Actions
  */
 
-if ($action == 'update' && ! $_POST["cancel"])
+if ($action == 'update' && ! $cancel)
 {
 	// Modification
 	$account = new UserBankAccount($db);
 
-    $account->fetch($id);
+    $account->fetch($bankid);
 
     $account->userid          = $object->id;
 
@@ -81,18 +85,20 @@ if ($action == 'update' && ! $_POST["cancel"])
 	$account->owner_address   = $_POST["owner_address"];
 
 	$result = $account->update($user);
-	if (! $result)
+
+    if (! $result)
 	{
 		setEventMessages($account->error, $account->errors, 'errors');
-		$_GET["action"]='edit';     // Force chargement page edition
+		$action='edit';     // Force chargement page edition
 	}
 	else
 	{
-		$url=DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
+		$url=DOL_URL_ROOT.'/user/bank.php?id='.$object->id.'&bankid='.$bankid;
         header('Location: '.$url);
         exit;
 	}
 }
+
 
 /*
  *	View
@@ -100,35 +106,41 @@ if ($action == 'update' && ! $_POST["cancel"])
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader(null, $langs->trans("BankAccounts"));
 
 $head = user_prepare_head($object);
 
 $account = new UserBankAccount($db);
-if (! $id)
-    $account->fetch(0,$object->id);
+if (! $bankid)
+{
+    $account->fetch(0, '', $id);
+}
 else
-    $account->fetch($id);
+{
+    $account->fetch($bankid);
+}
 if (empty($account->userid)) $account->userid=$object->id;
 
 
-if ($id && $action == 'edit' && $user->rights->user->user->creer)
+if ($bankid && $action == 'edit' && $user->rights->user->user->creer)
 {
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="id" value="'.GETPOST("id",'int').'">';
+    print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
-if ($id && $action == 'create' && $user->rights->user->user->creer)
+if ($bankid && $action == 'create' && $user->rights->user->user->creer)
 {
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
+    print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
 
 
 // View
-if ($id && $action != 'edit')
+if ($account->id && $action != 'edit')
 {
 	$title = $langs->trans("User");
 	dol_fiche_head($head, 'bank', $title, -1, 'user');
@@ -144,13 +156,26 @@ if ($id && $action != 'edit')
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
+    
+    print '<table class="border centpercent">';
+    
+    print '<tr><td class="titlefield">'.$langs->trans("xxx").'</td>';
+    print '<td></td></tr>';
+    
+    print '</table>';
+    
+    print '</br>';
+    
+    print load_fiche_titre($langs->trans("BAN"));
+    
+    print '<div class="underbanner clearboth"></div>';
     print '<table class="border centpercent">';
 
     print '<tr><td class="titlefield">'.$langs->trans("LabelRIB").'</td>';
-    print '<td colspan="4">'.$account->label.'</td></tr>';
+    print '<td>'.$account->label.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BankName").'</td>';
-	print '<td colspan="4">'.$account->bank.'</td></tr>';
+	print '<td>'.$account->bank.'</td></tr>';
 
 	// Show fields of bank account
 	foreach ($account->getFieldsToShow() as $val) {
@@ -170,7 +195,7 @@ if ($id && $action != 'edit')
 	}
 
 	print '<tr><td class="tdtop">'.$langs->trans("IBAN").'</td>';
-	print '<td colspan="4">'.$account->iban . '&nbsp;';
+	print '<td>'.$account->iban . '&nbsp;';
     if (! empty($account->iban)) {
         if (! checkIbanForAccount($account)) {
             print img_picto($langs->trans("IbanNotValid"),'warning');
@@ -181,7 +206,7 @@ if ($id && $action != 'edit')
     print '</td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("BIC").'</td>';
-	print '<td colspan="4">'.$account->bic.'&nbsp;';
+	print '<td>'.$account->bic.'&nbsp;';
     if (! empty($account->bic)) {
         if (! checkSwiftForAccount($account)) {
             print img_picto($langs->trans("SwiftNotValid"),'warning');
@@ -191,15 +216,15 @@ if ($id && $action != 'edit')
     }
     print '</td></tr>';
 
-	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
+	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print $account->domiciliation;
 	print "</td></tr>\n";
 
-	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwner").'</td><td colspan="4">';
+	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwner").'</td><td>';
 	print $account->proprio;
 	print "</td></tr>\n";
 
-	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
+	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 	print $account->owner_address;
 	print "</td></tr>\n";
 
@@ -222,7 +247,7 @@ if ($id && $action != 'edit')
 
 	if ($user->rights->user->user->creer)
 	{
-		print '<a class="butAction" href="bank.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+		print '<a class="butAction" href="bank.php?id='.$object->id.'&bankid='.$account->id.'&action=edit">'.$langs->trans("Edit").'</a>';
 	}
 
 	print '</div>';
@@ -307,8 +332,6 @@ if ($id && $action == 'edit' && $user->rights->user->user->creer)
 	print '<input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
     print '</div>';
 }
-
-if ($id && $action == 'edit' && $user->rights->user->user->creer) print '</form>';
 
 if ($id && $action == 'edit' && $user->rights->user->user->creer) print '</form>';
     

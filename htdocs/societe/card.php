@@ -55,7 +55,7 @@ if (! empty($conf->notification->enabled)) $langs->load("mails");
 
 $mesg=''; $error=0; $errors=array();
 
-$action		= (GETPOST('action') ? GETPOST('action') : 'view');
+$action		= (GETPOST('action','aZ09') ? GETPOST('action','aZ09') : 'view');
 $cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage','alpha');
 $confirm	= GETPOST('confirm');
@@ -750,7 +750,6 @@ if (empty($reshook))
 
     // Actions to send emails
     $id=$socid;
-    $actiontypecode='AC_OTH_AUTO';
     $trigger_name='COMPANY_SENTBYMAIL';
     $paramname='socid';
     $mode='emailfromthirdparty';
@@ -1545,7 +1544,7 @@ else
 
             dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
-
+            print '<div class="fichecenter2">'; 
             print '<table class="border" width="100%">';
 
             // Ref/ID
@@ -1743,7 +1742,7 @@ else
             //TODO: Place into a function to control showing by country or study better option
             if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
             {
-                print '<tr><td>'.fieldLabel($langs->transcountry("LocalTax1IsUsed",$mysoc->country_code),'localtax1assuj_value').'</td><td colspan="3">';
+                print '<tr><td>'.fieldLabel($langs->transcountry("LocalTax1IsUsed",$mysoc->country_code),'localtax1assuj_value').'</td><td>';
                 print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
                 if(! isOnlyOneLocalTax(1))
                 {
@@ -1752,7 +1751,7 @@ else
                     print '</span>';
                 }
             
-                print '</td><td>'.fieldLabel($langs->transcountry("LocalTax2IsUsed",$mysoc->country_code),'localtax2assuj_value').'</td><td colspan="3">';
+                print '</td><td>'.fieldLabel($langs->transcountry("LocalTax2IsUsed",$mysoc->country_code),'localtax2assuj_value').'</td><td>';
                 print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
                 if  (! isOnlyOneLocalTax(2))
                 {
@@ -1935,7 +1934,8 @@ else
             print '</tr>';
 
             print '</table>';
-
+            print '</div>';
+            
 	        dol_fiche_end();
 
             print '<div align="center">';
@@ -1952,13 +1952,14 @@ else
         /*
          * View
          */
+        
         if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
         //if ($res < 0) { dol_print_error($db); exit; }
 
 
         $head = societe_prepare_head($object);
 
-        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
+        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), -1, 'company');
 
         // Confirm delete third party
         if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)))

@@ -209,6 +209,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    // Online  
 		    case 'PAYMENT_PAYBOX_OK':
 		    case 'PAYMENT_PAYPAL_OK':
+			case 'PAYMENT_STRIPE_OK':
 		    
 			// Donation
 		    case 'DON_CREATE':

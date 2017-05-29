@@ -98,19 +98,19 @@ class PaymentSalary extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_salary SET";
 
 		$sql.= " tms=".$this->db->idate($this->tms).",";
-		$sql.= " fk_user='".$this->fk_user."',";
+		$sql.= " fk_user=".$this->fk_user.",";
 		$sql.= " datep=".$this->db->idate($this->datep).",";
 		$sql.= " datev=".$this->db->idate($this->datev).",";
-		$sql.= " amount='".$this->amount."',";
+		$sql.= " amount=".price2num($this->amount).",";
 		$sql.= " fk_typepayment=".$this->fk_typepayment."',";
-		$sql.= " num_payment='".$this->num_payment."',";
+		$sql.= " num_payment='".$this->db->escape($this->num_payment)."',";
 		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " datesp=".$this->db->idate($this->datesp).",";
 		$sql.= " dateep=".$this->db->idate($this->dateep).",";
 		$sql.= " note='".$this->db->escape($this->note)."',";
 		$sql.= " fk_bank=".($this->fk_bank > 0 ? "'".$this->fk_bank."'":"null").",";
-		$sql.= " fk_user_author='".$this->fk_user_author."',";
-		$sql.= " fk_user_modif='".$this->fk_user_modif."'";
+		$sql.= " fk_user_author=".$this->fk_user_author.",";
+		$sql.= " fk_user_modif=".$this->fk_user_modif;
 
 		$sql.= " WHERE rowid=".$this->id;
 

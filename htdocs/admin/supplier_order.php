@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2015 Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2017 Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,7 +234,7 @@ print "<br>";
 
 $head = supplierorder_admin_prepare_head();
 
-dol_fiche_head($head, 'order', $langs->trans("Suppliers"), 0, 'company');
+dol_fiche_head($head, 'order', $langs->trans("Suppliers"), -1, 'company');
 
 
 // Supplier order numbering module
@@ -382,7 +382,6 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($dirmodels as $reldir)
 {
 	$dir = dol_buildpath($reldir."core/modules/supplier_order/pdf/");
@@ -403,7 +402,7 @@ foreach ($dirmodels as $reldir)
 	                $module = new $classname($db, new CommandeFournisseur($db));
 
                     
-                    print "<tr ".$bc[$var].">\n";
+                    print "<tr class=\"oddeven\">\n";
                     print "<td>";
 	                print (empty($module->name)?$name:$module->name);
 	                print "</td>\n";
@@ -491,6 +490,7 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 $var=false;
+
 //if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 //{
 	print '<tr class="oddeven"><td>';
@@ -536,8 +536,14 @@ else
 }
 */
 
+$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
 print '<tr class="oddeven"><td colspan="2">';
-print $langs->trans("FreeLegalTextOnOrders").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
 $variablename='SUPPLIER_ORDER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {

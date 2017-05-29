@@ -84,11 +84,11 @@ $hookmanager->initHooks(array('skeleton'));
 
 
 
-/*******************************************************************
-* ACTIONS
-*
-* Put here all code to do according to value of "action" parameter
-********************************************************************/
+/*
+ * ACTIONS
+ *
+ * Put here all code to do according to value of "action" parameter
+ */
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -109,9 +109,9 @@ if (empty($reshook))
 	}
 	
 	// Action to add record
-	if ($action == 'add')
+	if ($action == 'add' && ! empty($user->rights->mymodule->create))
 	{
-		if (GETPOST('cancel'))
+		if ($cancel)
 		{
 			$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/list.php',1);
 			header("Location: ".$urltogo);
@@ -154,7 +154,7 @@ if (empty($reshook))
 	}
 
 	// Action to update record
-	if ($action == 'update')
+	if ($action == 'update' && ! empty($user->rights->mymodule->create))
 	{
 		$error=0;
 
@@ -189,7 +189,7 @@ if (empty($reshook))
 	}
 
 	// Action to delete
-	if ($action == 'confirm_delete')
+	if ($action == 'confirm_delete' && ! empty($user->rights->mymodule->delete))
 	{
 		$result=$object->delete($user);
 		if ($result > 0)
@@ -210,15 +210,15 @@ if (empty($reshook))
 
 
 
-/***************************************************
-* VIEW
-*
-* Put here all code to build page
-****************************************************/
-
-llxHeader('','MyPageName','');
+/*
+ * VIEW
+ *
+ * Put here all code to build page
+ */
 
 $form=new Form($db);
+
+llxHeader('','MyPageName','');
 
 
 // Put here content of your page
@@ -297,52 +297,305 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 {
     $res = $object->fetch_optionals($object->id, $extralabels);
 
-	$head = commande_prepare_head($object);
-	dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), 0, 'order');
+	$head = mymodule_prepare_head($object);
+	dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order');
 		
-	print load_fiche_titre($langs->trans("MyModule"));
-    
-	dol_fiche_head();
-
+	$formconfirm = '';
+	
+	// Confirmation to delete
 	if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMyOjbect'), $langs->trans('ConfirmDeleteMyObject'), 'confirm_delete', '', 0, 1);
-		print $formconfirm;
+	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
 	}
 	
+	// Confirmation of action xxxx
+	if ($action == 'xxx')
+	{
+	    $formquestion=array();
+	    /*
+	        $formquestion = array(
+	            // 'text' => $langs->trans("ConfirmClone"),
+	            // array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+	            // array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+	            // array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1)));
+	    }*/	
+	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
+	}
+	
+	if (! $formconfirm) {
+	    $parameters = array('lineid' => $lineid);
+	    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+	    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+	}
+	
+	// Print form confirm
+	print $formconfirm;
+	
+	
+	
+	// Object card
+	// ------------------------------------------------------------
+	
+	$linkback = '<a href="' . DOL_URL_ROOT . '/mymodule/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	
+	
+	$morehtmlref='<div class="refidno">';
+	/*
+	// Ref bis
+	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mymodule->creer, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mymodule->creer, 'string', '', null, null, '', 1);
+	// Thirdparty
+	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
+	// Project
+	if (! empty($conf->projet->enabled))
+	{
+	    $langs->load("projects");
+	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+	    if ($user->rights->mymodule->creer)
+	    {
+	        if ($action != 'classify')
+	        {
+	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	            if ($action == 'classify') {
+	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+	                $morehtmlref.='</form>';
+	            } else {
+	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+	            }
+	        }
+	    } else {
+	        if (! empty($object->fk_project)) {
+	            $proj = new Project($db);
+	            $proj->fetch($object->fk_project);
+	            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+	            $morehtmlref.=$proj->ref;
+	            $morehtmlref.='</a>';
+	        } else {
+	            $morehtmlref.='';
+	        }
+	    }
+	}
+	*/
+	$morehtmlref.='</div>';
+	
+	
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	
+	
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">'."\n";
 	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 	// LIST_OF_TD_LABEL_FIELDS_VIEW
+
+
+	// Other attributes
+	$cols = 2;
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+
 	print '</table>';
+	print '</div>';
+	print '<div class="fichehalfright">';
+	print '<div class="ficheaddleft">';
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent">';
+	
+	
+
+	print '</table>';
+	print '</div>';
+	print '</div>';
+	print '</div>';
+	
+	print '<div class="clearboth"></div><br>';
 	
 	dol_fiche_end();
 
 
-	// Buttons
-	print '<div class="tabsAction">'."\n";
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
-	if (empty($reshook))
-	{
-		if ($user->rights->mymodule->write)
-		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
-		}
-
-		if ($user->rights->mymodule->delete)
-		{
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
-		}
+	// Buttons for actions
+	if ($action != 'presend' && $action != 'editline') {
+    	print '<div class="tabsAction">'."\n";
+    	$parameters=array();
+    	$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    
+    	if (empty($reshook))
+    	{
+    		if ($user->rights->mymodule->write)
+    		{
+    			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+    		}
+    
+    		if ($user->rights->mymodule->delete)
+    		{
+    			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
+    		}
+    	}
+    	print '</div>'."\n";
 	}
-	print '</div>'."\n";
 
+	
+	// Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+	    $action = 'presend';
+	}
+	
+	if ($action != 'presend')
+	{
+	    print '<div class="fichecenter"><div class="fichehalfleft">';
+	    print '<a name="builddoc"></a>'; // ancre
+	    // Documents
+	    $comref = dol_sanitizeFileName($object->ref);
+	    $relativepath = $comref . '/' . $comref . '.pdf';
+	    $filedir = $conf->mymodule->dir_output . '/' . $comref;
+	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+	    $genallowed = $user->rights->mymodule->creer;
+	    $delallowed = $user->rights->mymodule->supprimer;
+	    print $formfile->showdocuments('mymodule', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+	
+	
+	    // Show links to link elements
+	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+	    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+	
+	
+	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	
+	    // List of actions on element
+	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+	    $formactions = new FormActions($db);
+	    $somethingshown = $formactions->showactions($object, 'order', $socid);
+	
+	    print '</div></div></div>';
+	}
+	
 
-	// Example 2 : Adding links to objects
-	// Show links to link elements
-	//$linktoelem = $form->showLinkToObjectBlock($object, null, array('skeleton'));
-	//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+	/*
+	 * Action presend
+	 */
+    /*
+	if ($action == 'presend')
+	{
+		$object->fetch_projet();
 
+		$ref = dol_sanitizeFileName($object->ref);
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+		$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+		$file = $fileparams['fullname'];
+
+		// Define output language
+		$outputlangs = $langs;
+		$newlang = '';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+			$newlang = $_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+			$newlang = $object->thirdparty->default_lang;
+
+		if (!empty($newlang))
+		{
+			$outputlangs = new Translate('', $conf);
+			$outputlangs->setDefaultLang($newlang);
+			$outputlangs->load('commercial');
+		}
+
+		// Build document if it not exists
+		if (! $file || ! is_readable($file)) {
+			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if ($result <= 0) {
+				dol_print_error($db, $object->error, $object->errors);
+				exit();
+			}
+			$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+			$file = $fileparams['fullname'];
+		}
+
+		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
+		print '<div class="clearboth"></div>';
+		print '<br>';
+		print load_fiche_titre($langs->trans('SendOrderByMail'));
+
+		dol_fiche_head('');
+
+		// Cree l'objet formulaire mail
+		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+		$formmail = new FormMail($db);
+		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
+        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+
+        if($formmail->fromtype === 'user'){
+            $formmail->fromid = $user->id;
+
+        }
+		$formmail->trackid='ord'.$object->id;
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+		{
+			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
+		}
+		$formmail->withfrom = 1;
+		$liste = array();
+		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value)
+			$liste [$key] = $value;
+		$formmail->withto = GETPOST('sendto') ? GETPOST('sendto') : $liste;
+		$formmail->withtocc = $liste;
+		$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
+		if (empty($object->ref_client)) {
+			$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__');
+		} else if (! empty($object->ref_client)) {
+			$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__ (__REFCLIENT__)');
+		}
+		$formmail->withfile = 2;
+		$formmail->withbody = 1;
+		$formmail->withdeliveryreceipt = 1;
+		$formmail->withcancel = 1;
+		// Tableau des substitutions
+		$formmail->setSubstitFromObject($object);
+		$formmail->substit ['__ORDERREF__'] = $object->ref;
+
+		$custcontact = '';
+		$contactarr = array();
+		$contactarr = $object->liste_contact(- 1, 'external');
+
+		if (is_array($contactarr) && count($contactarr) > 0)
+		{
+			foreach ($contactarr as $contact)
+			{
+				if ($contact['libelle'] == $langs->trans('TypeContact_commande_external_CUSTOMER')) {	// TODO Use code and not label
+					$contactstatic = new Contact($db);
+					$contactstatic->fetch($contact ['id']);
+					$custcontact = $contactstatic->getFullName($langs, 1);
+				}
+			}
+
+			if (! empty($custcontact)) {
+				$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
+			}
+		}
+
+		// Tableau des parametres complementaires
+		$formmail->param['action'] = 'send';
+		$formmail->param['models'] = 'order_send';
+		$formmail->param['models_id']=GETPOST('modelmailselected','int');
+		$formmail->param['orderid'] = $object->id;
+		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
+
+		// Init list of files
+		if (GETPOST("mode") == 'init') {
+			$formmail->clear_attached_files();
+			$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
+		}
+
+		// Show form
+		print $formmail->get_form();
+
+		dol_fiche_end();
+	}*/
 }
 
 

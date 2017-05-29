@@ -35,7 +35,7 @@ $langs->load("users");
 $langs->load("admin");
 $langs->load("other");
 
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 
 
 $securityevent=new Events($db);
@@ -105,7 +105,7 @@ foreach ($eventstolog as $key => $arr)
 		print '<td>';
 		$key='MAIN_LOGEVENTS_'.$arr['id'];
 		$value=$conf->global->$key;
-		print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.($value?' checked':'').'>';
+		print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.($value?' checked':'').'>';
 		print '</td></tr>'."\n";
 	}
 }

@@ -107,7 +107,7 @@ if (empty($reshook))
 
 	// Visible
 	$alwayscheckedmodules=array('barcode','bookmark','categorie','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
-	$alwaysuncheckedmodules=array('dynamicprices','loan','multicurrency','paybox','paypal','google','printing','scanner','workflow');  // Module we never want
+	$alwaysuncheckedmodules=array('dynamicprices','loan','multicurrency','paybox','paypal','stripe','google','printing','scanner','workflow');  // Module we never want
 	// Not visible
 	$alwayshiddencheckedmodules=array('accounting','api','barcode','bookmark','clicktodial','comptabilite','cron','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
 									'mailmanspip','notification','oauth','syslog','user','webservices',
@@ -202,7 +202,7 @@ asort($orders);
  * Actions
  */
 
-if (GETPOST("action") == 'gotodemo')
+if (GETPOST('action','aZ09') == 'gotodemo')
 {
 	//print 'ee'.GETPOST("demochoice");
 	$disablestring='';

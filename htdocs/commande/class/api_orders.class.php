@@ -152,7 +152,8 @@ class Orders extends DolibarrApi
         if ($result)
         {
             $num = $db->num_rows($result);
-            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $commande_static = new Commande($db);
@@ -494,6 +495,21 @@ class Orders extends DolibarrApi
         );
     }
 
+    /**
+     * Clean sensible object datas
+     *
+     * @param   object  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object) {
+    
+        $object = parent::_cleanObjectDatas($object);
+    
+        unset($object->address);
+    
+        return $object;
+    }
+    
     /**
      * Validate fields before create or update object
      *

@@ -210,7 +210,7 @@ class Conf
                 $file=dol_sanitizeFileName($file);
                 include_once DOL_DOCUMENT_ROOT . "/".$file."/".$file."_consts.php";
                 foreach ($file2bddconsts as $key=>$value) {
-                    $this->global->$key=constant($value);
+                    $this->global->$key=$value;
                 }
             }
         }
@@ -358,8 +358,8 @@ class Conf
     			$this->supplier_order->dir_temp=$rootfordata."/fournisseur/commande/temp";
     			$this->supplier_invoice=new stdClass();
     			$this->supplier_invoice->enabled=1;
-    			$this->supplier_order->dir_output=$rootfordata."/fournisseur/facture";
-    			$this->supplier_order->dir_temp=$rootfordata."/fournisseur/facture/temp";
+    			$this->supplier_invoice->dir_output=$rootfordata."/fournisseur/facture";
+    			$this->supplier_invoice->dir_temp=$rootfordata."/fournisseur/facture/temp";
 			}
 		}
 
@@ -580,6 +580,12 @@ class Conf
 
 		if (empty($this->global->MAIN_SIZE_SHORTLIST_LIMIT)) $this->global->MAIN_SIZE_SHORTLIST_LIMIT=3;
 
+		// Save inconsistent option
+		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && $conf->global->AGENDA_DEFAULT_FILTER_TYPE == 'AC_NON_AUTO')
+		{
+		    $conf->global->AGENDA_DEFAULT_FILTER_TYPE='0';    // 'AC_NON_AUTO' does not exists when AGENDA_DEFAULT_FILTER_TYPE is not on.
+		}
+		    
 		// For backward compatibility
 		if (isset($this->product))   $this->produit=$this->product;
 		if (isset($this->facture))   $this->invoice=$this->facture;

@@ -19,7 +19,7 @@ require '../main.inc.php';
 require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
 $id = GETPOST('id');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 $object = new ProductAttribute($db);
 
 

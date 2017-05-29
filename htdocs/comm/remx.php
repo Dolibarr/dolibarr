@@ -185,7 +185,7 @@ if ($action == 'setremise' && $user->rights->societe->creer)
 	}
 }
 
-if (GETPOST("action") == 'confirm_remove' && GETPOST("confirm")=='yes')
+if (GETPOST('action','aZ09') == 'confirm_remove' && GETPOST("confirm")=='yes')
 {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)

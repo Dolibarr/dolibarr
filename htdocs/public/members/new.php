@@ -27,7 +27,7 @@
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
  *  MEMBER_NEWFORM_EDITAMOUNT           Amount can be edited
- *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal of paybox
+ *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal, paybox or stripe
  *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
  *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once subscribe submitted
  *  MEMBER_NEWFORM_FORCETYPE            Force type of member
@@ -91,6 +91,7 @@ $extrafields = new ExtraFields($db);
 function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
     global $user, $conf, $langs, $mysoc;
+    
     top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
     print '<body id="mainbody" class="publicnewmemberform" style="margin-top: 10px;">';
 
@@ -314,6 +315,18 @@ if ($action == 'add')
                     	$urlback.='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2);
                     }
                     
+                }
+				else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe')
+                {
+                    $urlback=DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
+                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                    if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
+					/*
+                    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+                    {
+                    	$urlback.='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2);
+                    }
+					*/
                 }
                 else
                 {
@@ -579,7 +592,7 @@ if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)
     {
         $amount=GETPOST('amount')?GETPOST('amount'):$conf->global->MEMBER_NEWFORM_AMOUNT;
     }
-    // $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal' or 'paybox'
+    // $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
     print '<tr><td>'.$langs->trans("Subscription").'</td><td class="nowrap">';
     if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT))
     {

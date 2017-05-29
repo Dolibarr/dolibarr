@@ -126,22 +126,16 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 }
 
 
-// Load object if id or ref is provided as parameter
 $object=new Skeleton_Class($db);
-if (($id > 0 || ! empty($ref)) && $action != 'add')
-{
-	$result=$object->fetch($id,$ref);
-	if ($result < 0) dol_print_error($db);
-}
 
 
 
 
-/*******************************************************************
-* ACTIONS
-*
-* Put here all code to do according to value of "action" parameter
-********************************************************************/
+/*
+ * ACTIONS
+ *
+ * Put here all code to do according to value of "action" parameter
+ */
 
 if (GETPOST('cancel')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
@@ -177,11 +171,11 @@ if (empty($reshook))
 
 
 
-/***************************************************
-* VIEW
-*
-* Put here all code to build page
-****************************************************/
+/*
+ * VIEW
+ *
+ * Put here all code to build page
+ */
 
 $now=dol_now();
 
@@ -244,7 +238,6 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.=$db->order($sortfield,$sortorder);
-//$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -308,6 +301,7 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
@@ -354,7 +348,9 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
        if (! empty($arrayfields["ef.".$key]['checked'])) 
        {
 			$align=$extrafields->getAlignFlag($key);
-			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+			$sortonfield = "ef.".$key;
+			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
        }
    }
 }
@@ -383,7 +379,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
             $align=$extrafields->getAlignFlag($key);
             $typeofextrafield=$extrafields->attribute_type[$key];
             print '<td class="liste_titre'.($align?' '.$align:'').'">';
-        	if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
+        	if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attribute_computed[$key]))
 			{
 			    $crit=$val;
 				$tmpkey=preg_replace('/search_options_/','',$key);
@@ -421,11 +417,19 @@ if (! empty($arrayfields['t.tms']['checked']))
 }*/
 // Action column
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+print $searchpicto;
 print '</td>';
 print '</tr>'."\n";
     
+
+// Detect if we need a fetch on each output line
+$needToFetchEachLine=0;
+foreach ($extrafields->attribute_computed as $key => $val)
+{
+    if (preg_match('/\$object/',$val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
+}
+
 
 $i=0;
 $totalarray=array();

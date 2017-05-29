@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
@@ -221,7 +221,7 @@ if (empty($reshook))
 	    $db->begin();
 
 	    // Clean parameters amount if payment is for a credit note
-	    if (GETPOST('type') == 2)
+	    if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE)
 	    {
 		    foreach ($amounts as $key => $value)	// How payment is dispatch
 		    {
@@ -249,7 +249,7 @@ if (empty($reshook))
 	    // Creation of payment line
 	    $paiement = new Paiement($db);
 	    $paiement->datepaye     = $datepaye;
-	    $paiement->amounts      = $amounts;   // Array with all payments dispatching
+	    $paiement->amounts      = $amounts;   // Array with all payments dispatching with invoice id
 	    $paiement->multicurrency_amounts = $multicurrency_amounts;   // Array with all payments dispatching
 	    $paiement->paiementid   = dol_getIdFromCode($db,GETPOST('paiementcode'),'c_paiement');
 	    $paiement->num_paiement = GETPOST('num_paiement');
@@ -257,7 +257,7 @@ if (empty($reshook))
 
 	    if (! $error)
 	    {
-	    	$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices')=='on'?1:0));
+	    	$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices')=='on'?1:0));    // This include closing invoices
 	    	if ($paiement_id < 0)
 	        {
 	            setEventMessages($paiement->error, $paiement->errors, 'errors');
@@ -268,7 +268,7 @@ if (empty($reshook))
 	    if (! $error)
 	    {
 	    	$label='(CustomerInvoicePayment)';
-	    	if (GETPOST('type') == 2) $label='(CustomerInvoicePaymentBack)';
+	    	if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE) $label='(CustomerInvoicePaymentBack)';  // Refund of a credit note
 	        $result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),GETPOST('chqemetteur'),GETPOST('chqbank'));
 	        if ($result < 0)
 	        {
@@ -281,7 +281,7 @@ if (empty($reshook))
 	    {
 	        $db->commit();
 
-	        // If payment dispatching on more than one invoice, we keep on summary page, otherwise go on invoice card
+	        // If payment dispatching on more than one invoice, we keep on summary page, otherwise jump on invoice card
 	        $invoiceid=0;
 	        foreach ($paiement->amounts as $key => $amount)
 	        {
@@ -309,9 +309,11 @@ if (empty($reshook))
  * View
  */
 
-llxHeader();
-
 $form=new Form($db);
+
+
+llxHeader('', $langs->trans("Payment"));
+
 
 
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement')
@@ -324,8 +326,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		$facture->fetch_thirdparty();
 
 		$title='';
-		if ($facture->type != 2) $title.=$langs->trans("EnterPaymentReceivedFromCustomer");
-		if ($facture->type == 2) $title.=$langs->trans("EnterPaymentDueToCustomer");
+		if ($facture->type != Facture::TYPE_CREDIT_NOTE) $title.=$langs->trans("EnterPaymentReceivedFromCustomer");
+		if ($facture->type == Facture::TYPE_CREDIT_NOTE) $title.=$langs->trans("EnterPaymentDueToCustomer");
 		print load_fiche_titre($title);
 
 		// Initialize data for confirmation (this is used because data can be change during confirmation)
@@ -347,7 +349,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		}
 
 		// Add realtime total information
-		if ($conf->use_javascript_ajax)
+		if (! empty($conf->use_javascript_ajax))
 		{
 			print "\n".'<script type="text/javascript" language="javascript">';
 			print '$(document).ready(function () {
@@ -369,7 +371,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			                    }
             					if ($(\'#fieldchqemetteur\').val() == \'\')
             					{
-            						var emetteur = ('.$facture->type.' == 2) ? \''.dol_escape_js(dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM)).'\' : jQuery(\'#thirdpartylabel\').val();
+            						var emetteur = ('.$facture->type.' == '.Facture::TYPE_CREDIT_NOTE.') ? \''.dol_escape_js(dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM)).'\' : jQuery(\'#thirdpartylabel\').val();
             						$(\'#fieldchqemetteur\').val(emetteur);
             					}
             				}
@@ -437,14 +439,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			';
 
 			print '	});'."\n";
-			if (!empty($conf->use_javascript_ajax)){
-				//Add js for AutoFill
-				print ' $(document).ready(function () {';
-				print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
-								$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value")).trigger("change");
-							});';
-				print '	});'."\n";
-			}
+
+			//Add js for AutoFill
+			print ' $(document).ready(function () {';
+			print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
+							$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value")).trigger("change");
+						});';
+			print '	});'."\n";
+
 			print '	</script>'."\n";
 		}
 
@@ -575,6 +577,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 //print '<tr><td colspan="3">';
                 print '<br>';
                 print '<table class="noborder" width="100%">';
+                
                 print '<tr class="liste_titre">';
                 print '<td>'.$arraytitle.'</td>';
                 print '<td align="center">'.$langs->trans('Date').'</td>';
@@ -741,11 +744,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     $totalrecudeposits+=$deposits;
                     $i++;
                 }
+                
                 if ($i > 1)
                 {
                     // Print total
                     print '<tr class="liste_total">';
-                    print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').'</td>';
+                    print '<td colspan="2" align="left">'.$langs->trans('TotalTTC').'</td>';
+					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
 					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
 					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
 					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
@@ -817,7 +822,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 /**
  *  Show list of payments
  */
-if (! GETPOST('action'))
+if (! GETPOST('action','aZ09'))
 {
     if ($page == -1) $page = 0 ;
     $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;

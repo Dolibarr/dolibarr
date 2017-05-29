@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
@@ -337,7 +337,7 @@ if ($action == 'add')
 				unset($_SESSION['assignedtouser']);
 
 				$moreparam='';
-				if ($user->id != $object->userownerid) $moreparam="usertodo=-1";	// We force to remove filter so created record is visible when going back to per user view.
+				if ($user->id != $object->userownerid) $moreparam="filtert=-1";	// We force to remove filter so created record is visible when going back to per user view.
 
 				$db->commit();
 				if (! empty($backtopage))
@@ -706,7 +706,7 @@ if ($action == 'create')
 		if (GETPOST('complete') == '0' || GETPOST("afaire") == 1) $percent='0';
 		else if (GETPOST('complete') == 100 || GETPOST("afaire") == 2) $percent=100;
 	}
-	$formactions->form_select_status_action('formaction',$percent,1,'complete');
+	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 	print '</td></tr>';
 
     // Location
@@ -1114,7 +1114,7 @@ if ($id > 0)
 			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			// TODO Refresh also list of project if $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
 			// FIXME If we change company, we may get a project that does not match
-			print $form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0);
+			print $form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth200');
 			print '</div>';
 			print '</td></tr>';
 
@@ -1396,7 +1396,11 @@ if ($id > 0)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			print '<td colspan="3">'.dolGetElementUrl($object->fk_element,$object->elementtype,1).'</td></tr>';
+			$link=dolGetElementUrl($object->fk_element,$object->elementtype,1);
+			print '<td colspan="3">';
+			if (empty($link)) print '<span class="opacitymedium">'.$langs->trans("ObjectDeleted").'</span>';
+			else print $link;
+			print '</td></tr>';
 		}
 
 		// Description
@@ -1428,7 +1432,7 @@ if ($id > 0)
 				} else {
 					$value = $object->array_options["options_" . $key];
 				}
-				print '<tr><td width="30%">'.$label.'</td><td>';
+				print '<tr><td class="titlefield">'.$label.'</td><td>';
 				print $extrafields->showOutputField($key,$value);
 				print "</td></tr>\n";
 			}
@@ -1491,7 +1495,7 @@ if ($id > 0)
 	{
 		if (empty($conf->global->AGENDA_DISABLE_BUILDDOC))
 		{
-			print '<div style="clear:both;">&nbsp;<br><br></div><div class="fichecenter"><div class="fichehalfleft">';
+			print '<div style="clear:both;"></div><div class="fichecenter"><div class="fichehalfleft">';
             print '<a name="builddoc"></a>'; // ancre
 
             /*
@@ -1512,8 +1516,6 @@ if ($id > 0)
 
 
 			print '</div></div></div>';
-
-            print '<div style="clear:both;">&nbsp;</div>';
 	    }
 	}
 }

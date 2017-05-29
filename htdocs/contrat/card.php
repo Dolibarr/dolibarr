@@ -332,14 +332,20 @@ if (empty($reshook))
 								else {
 								    $desc = dol_htmlentitiesbr($lines[$i]->desc);
 						        }
+
+								$txtva = $lines[$i]->vat_src_code ? $lines[$i]->tva_tx . ' (' .  $lines[$i]->vat_src_code . ')' : $lines[$i]->tva_tx;
+
+								// View third's localtaxes for now
+								$localtax1_tx = get_localtax($txtva, 1, $object->thirdparty);
+								$localtax2_tx = get_localtax($txtva, 2, $object->thirdparty);
 	
 			                    $result = $object->addline(
 					                $desc,
 					                $lines[$i]->subprice,
 					                $lines[$i]->qty,
-					                $lines[$i]->tva_tx,
-					                $lines[$i]->localtax1_tx,
-					                $lines[$i]->localtax2_tx,
+                                    $txtva,
+                                    $localtax1_tx,
+                                    $localtax2_tx,
 					                $lines[$i]->fk_product,
 					                $lines[$i]->remise_percent,
 					                $lines[$i]->date_start,
@@ -947,7 +953,6 @@ if (empty($reshook))
 	 */
 
 	// Actions to send emails
-	$actiontypecode='AC_CONT';
 	$trigger_name='CONTRACT_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromcontract';
@@ -1050,12 +1055,7 @@ if ($result > 0)
 	$modCodeContract = new $module();
 }
 
-
-/*********************************************************************
- *
- * Mode creation
- *
- *********************************************************************/
+// Create
 if ($action == 'create')
 {
 	print load_fiche_titre($langs->trans('AddContract'),'','title_commercial.png');
@@ -1152,7 +1152,7 @@ if ($action == 'create')
 	else
 	{
 		print '<td>';
-		print $form->select_company('','socid','','SelectThirdParty',1);
+		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -1751,7 +1751,7 @@ else
             if ($action == 'deleteline' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $object->lines[$cursorline-1]->id == GETPOST('rowid'))
             {
                 print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'),$langs->trans("DeleteContractLine"),$langs->trans("ConfirmDeleteContractLine"),"confirm_deleteline",'',0,1);
-                if ($ret == 'html') print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
+                if ($ret == 'html') print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
             }
 
             /*
@@ -1771,7 +1771,7 @@ else
                 array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
 
                 $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'),$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
-                print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
+                print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
             }
 
             /*
@@ -1783,7 +1783,7 @@ else
                 $dateactend   = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
                 $comment      = GETPOST('comment');
                 $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
-                print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
+                print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
             }
 
             /*
@@ -1795,7 +1795,7 @@ else
                 $dateactend   = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
                 $comment      = GETPOST('comment');
                 $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
-                print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
+                print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
             }
 
 
@@ -2083,44 +2083,45 @@ else
 
             print "</div>";
         }
-	// Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
-	}
-
-	if ($action != 'presend')
-	{
-		print '<div class="fichecenter"><div class="fichehalfleft">';
-
-		/*
-		 * Documents generes
-		*/
-		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->contrat->dir_output . "/" . dol_sanitizeFileName($object->ref);
-		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-		$genallowed = $user->rights->contrat->creer;
-		$delallowed = $user->rights->contrat->supprimer;
-
-		$var = true;
-
-		print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
-
-
-			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
-			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
-
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
+        
+    	// Select mail models is same action as presend
+    	if (GETPOST('modelselected')) {
+    		$action = 'presend';
+    	}
+    
+    	if ($action != 'presend')
+    	{
+    		print '<div class="fichecenter"><div class="fichehalfleft">';
+    
+    		/*
+    		 * Documents generes
+    		*/
+    		$filename = dol_sanitizeFileName($object->ref);
+    		$filedir = $conf->contrat->dir_output . "/" . dol_sanitizeFileName($object->ref);
+    		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+    		$genallowed = $user->rights->contrat->creer;
+    		$delallowed = $user->rights->contrat->supprimer;
+    
+    		$var = true;
+    
+    		print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+    
+    
+    			// Show links to link elements
+    			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
+    			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+    
+    
+    		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+    
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'contract', $socid);
 
-
-		print '</div></div></div>';
-	}
+    
+    		print '</div></div></div>';
+    	}
 
 		/*
 		 * Action presend

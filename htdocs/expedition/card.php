@@ -191,6 +191,7 @@ if (empty($reshook))
 	    $object->note				= GETPOST('note','alpha');
 	    $object->origin				= $origin;
 	    $object->origin_id			= $origin_id;
+            $object->fk_project         = GETPOST('projectid');
 	    $object->weight				= GETPOST('weight','int')==''?"NULL":GETPOST('weight','int');
 	    $object->sizeH				= GETPOST('sizeH','int')==''?"NULL":GETPOST('sizeH','int');
 	    $object->sizeW				= GETPOST('sizeW','int')==''?"NULL":GETPOST('sizeW','int');
@@ -595,7 +596,6 @@ if (empty($reshook))
 
 	// Actions to send emails
 	if (empty($id)) $id=$facid;
-	$actiontypecode='AC_SHIP';
 	$trigger_name='SHIPPING_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromshipment';
@@ -696,6 +696,21 @@ if ($action == 'create')
             print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
             print '</tr>';
 
+            // Project
+            if (! empty($conf->projet->enabled))
+            {
+                $projectid = GETPOST('projectid')?GETPOST('projectid'):0;
+                if ($origin == 'project') $projectid = ($originid ? $originid : 0);
+
+                $langs->load("projects");
+                print '<tr>';
+                print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
+                $numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
+                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
+                print '</td>';
+                print '</tr>';
+            }
+
             // Date delivery planned
             print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
             print '<td colspan="3">';
@@ -726,7 +741,9 @@ if ($action == 'create')
             print '<tr><td>';
             print $langs->trans("Weight");
             print '</td><td><input name="weight" size="4" value="'.GETPOST('weight','int').'"> ';
-            print $formproduct->select_measuring_units("weight_units","weight",GETPOST('weight_units','int'));
+            $text=$formproduct->select_measuring_units("weight_units","weight",GETPOST('weight_units','int'));
+            $htmltext=$langs->trans("KeepEmptyForAutoCalculation");
+            print $form->textwithpicto($text, $htmltext);
             print '</td></tr>';
             // Dim
             print '<tr><td>';
@@ -735,7 +752,9 @@ if ($action == 'create')
             print ' x <input name="sizeH" size="4" value="'.GETPOST('sizeH','int').'">';
             print ' x <input name="sizeS" size="4" value="'.GETPOST('sizeS','int').'">';
             print ' ';
-            print $formproduct->select_measuring_units("size_units","size");
+            $text=$formproduct->select_measuring_units("size_units","size");
+            $htmltext=$langs->trans("KeepEmptyForAutoCalculation");
+            print $form->textwithpicto($text, $htmltext);
             print '</td></tr>';
 
             // Delivery method
@@ -865,7 +884,7 @@ if ($action == 'create')
                 if (! empty($line->date_start)) $type=1;
                 if (! empty($line->date_end)) $type=1;
 
-                print "<tr ".$bc[$var].">\n";
+                print '<tr class="oddeven">'."\n";
                 
                 // Product label
                 if ($line->fk_product > 0)  // If predefined product
@@ -1009,7 +1028,7 @@ if ($action == 'create')
 									{
 										$img=img_warning($langs->trans("StockTooLow"));
 									}
-									print "<tr ".$bc[$var]."><td>&nbsp; &nbsp; &nbsp; ->
+									print "<tr class=\"oddeven\"><td>&nbsp; &nbsp; &nbsp; ->
 										<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
 										</a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
 										<td align=\"center\">".$value['stock']." ".$img."</td></tr>";
@@ -1096,10 +1115,10 @@ if ($action == 'create')
                                 $nbofsuggested++;
 						    }
 						}
+						$tmpwarehouseObject=new Entrepot($db);
 						foreach ($product->stock_warehouse as $warehouse_id=>$stock_warehouse)    // $stock_warehouse is product_stock
 						{
-							$warehouseObject=new Entrepot($db);
-							$warehouseObject->fetch($warehouse_id);
+							$tmpwarehouseObject->fetch($warehouse_id);
 							if ($stock_warehouse->real > 0) 
 							{
 								$stock = + $stock_warehouse->real; // Convert it to number
@@ -1122,7 +1141,7 @@ if ($action == 'create')
 									print '<td align="left">';
 									if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 									{
-										print $warehouseObject->getNomUrl(0).' ';
+										print $tmpwarehouseObject->getNomUrl(0).' ';
 										 
 										print '<!-- Show details of stock -->';
 										print '('.$stock.')';
@@ -1158,7 +1177,7 @@ if ($action == 'create')
 									{
 										$img=img_warning($langs->trans("StockTooLow"));
 									}
-									print "<tr ".$bc[$var]."><td>";
+									print '<tr class"oddeven"><td>';
 									print "&nbsp; &nbsp; &nbsp; ->
 									<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
 									</a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
@@ -1175,7 +1194,7 @@ if ($action == 'create')
 						$subj=0;
 						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 						
-						$warehouseObject=new Entrepot($db);
+						$tmpwarehouseObject=new Entrepot($db);
 						$productlotObject=new Productlot($db);
 						// Define nb of lines suggested for this order line
 						$nbofsuggested=0;
@@ -1190,7 +1209,7 @@ if ($action == 'create')
 						}
 						foreach ($product->stock_warehouse as $warehouse_id=>$stock_warehouse) 
 						{
-							$warehouseObject->fetch($warehouse_id);
+							$tmpwarehouseObject->fetch($warehouse_id);
 							if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
 						        foreach ($stock_warehouse->detail_batch as $dbatch)
 								{
@@ -1203,7 +1222,7 @@ if ($action == 'create')
 									 
 									print '<td align="left">';
 									 
-									print $warehouseObject->getNomUrl(0).' / ';
+									print $tmpwarehouseObject->getNomUrl(0).' / ';
 									 
 									print '<!-- Show details of lot -->';
 									print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
@@ -1223,6 +1242,7 @@ if ($action == 'create')
 								}
 							}
 						}
+						
 					}
 					if ($subj == 0) // Line not shown yet, we show it
 					{
@@ -1246,8 +1266,11 @@ if ($action == 'create')
 						print '<td align="left">';
 						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
-    						if ($warehouseObject) 
+							$warehouse_selected_id = GETPOST('entrepot_id','int');							
+    						if ($warehouse_selected_id > 0) 
     						{
+    							$warehouseObject=new Entrepot($db);
+    							$warehouseObject->fetch($warehouse_selected_id);
     							print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->libelle);
     						}
     						else

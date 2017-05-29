@@ -28,7 +28,7 @@
 require '../../main.inc.php';
 
 // Class
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
@@ -43,6 +43,7 @@ $langs->load("productbatch");
 $account_parent = GETPOST('account_parent');
 $changeaccount = GETPOST('changeaccount');
 // Search Getpost
+$search_lineid = GETPOST('search_lineid', 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_invoice = GETPOST('search_invoice', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
@@ -76,7 +77,7 @@ if ($user->societe_id > 0)
 if (! $user->rights->accounting->bind->write)
 	accessforbidden();
 
-$formventilation = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 
 
 /*
@@ -86,6 +87,7 @@ $formventilation = new FormVentilation($db);
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
+    $search_lineid = '';
 	$search_ref = '';
 	$search_invoice = '';
 	$search_label = '';
@@ -151,7 +153,7 @@ print '<script type="text/javascript">
  * Customer Invoice lines
  */
 $sql = "SELECT f.rowid, f.facnumber, f.type, f.datef, f.ref_client,";
-$sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc,";
+$sql .= " fd.rowid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.code_client,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number, aa.label as label_compte,";
 $sql .= " fd.situation_percent, co.label as country, s.tva_intra";
@@ -168,6 +170,9 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_SITUATION . ")";
 } else {
 	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_STANDARD . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_DEPOSIT . "," . Facture::TYPE_SITUATION . ")";
+}
+if ($search_lineid) {
+    $sql .= natural_search("fd.rowid", $search_lineid, 1);
 }
 if (strlen(trim($search_invoice))) {
 	$sql .= natural_search("f.facnumber", $search_invoice);
@@ -243,21 +248,22 @@ if ($result) {
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
 	
 	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 	print $langs->trans("DescVentilDoneCustomer") . '<br>';
 
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
-	print $formventilation->select_account($account_parent, 'account_parent', 1);
+	print $formaccounting->select_account($account_parent, 'account_parent', 1);
 	print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("ChangeBinding") . '"/></div>';
 
 	$moreforfilter = '';
-	
-    print '<div class="div-table-responsive">';
+
+	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-	
+
 	print '<tr class="liste_titre_filter">';
-	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_lineid" value="' . dol_escape_htmltag($search_lineid) . '""></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
@@ -272,7 +278,7 @@ if ($result) {
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print "</td></tr>\n";
-	
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "fd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
@@ -297,16 +303,16 @@ if ($result) {
 
 		$facture_static->ref = $objp->facnumber;
 		$facture_static->id = $objp->rowid;
-		
+
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
 		$product_static->type = $objp->product_type;
 		$product_static->label = $objp->product_label;
-		
+
 		print '<tr class="oddeven">';
 
 		print '<td>' . $objp->rowid . '</td>';
-		
+
 		// Ref Invoice
 		print '<td>' . $facture_static->getNomUrl(1) . '</td>';
 
@@ -318,31 +324,34 @@ if ($result) {
 			print $product_static->getNomUrl(1);
 		if ($objp->product_label) print '<br>'.$objp->product_label;
 		print '</td>';
-		
+
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
 		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->description);
 		print '</td>';
-		
+
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
 		print '<td align="center">' . price($objp->tva_tx) . '</td>';
 		print '<td>';
-		print $codecompta . ' <a href="./card.php?id=' . $objp->fdid . '">';
+		print $codecompta . ' <a href="./card.php?id=' . $objp->rowid . '">';
 		print img_edit();
 		print '</a>';
 		print '</td>';
+
 		print '<td>' . $objp->country .'</td>';
+
 		print '<td>' . $objp->tva_intra . '</td>';
-		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->fdid . '"/></td>';
+
+		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
 
 		print "</tr>";
 		$i ++;
 	}
-	
+
 	print "</table>";
 	print "</div>";
-	
+
     if ($nbtotalofrecords > $limit) {
         print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, '', 0, '', '', $limit, 1);
     }

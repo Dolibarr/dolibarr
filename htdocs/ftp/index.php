@@ -37,7 +37,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ftp','');
 
 // Get parameters
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $section=GETPOST('section');
 if (! $section) $section='/';
 $numero_ftp = GETPOST("numero_ftp");

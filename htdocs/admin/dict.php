@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $langs->load("errors");
 $langs->load("admin");
@@ -431,7 +431,7 @@ $tabhelp[2]  = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[3]  = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[4]  = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[5]  = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[6]  = array('code'=>$langs->trans("EnterAnyCode"), 'position'=>$langs->trans("PositionIntoComboList"));
+$tabhelp[6]  = array('code'=>$langs->trans("EnterAnyCode"), 'color'=>$langs->trans("ColorFormat"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[7]  = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[8]  = array('code'=>$langs->trans("EnterAnyCode"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[9]  = array('code'=>$langs->trans("EnterAnyCode"), 'unicode'=>$langs->trans("UnicodeCurrency"));
@@ -619,7 +619,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         }
     }
     // Other checks
-    if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
+    if (GETPOST('actionadd') && $tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
         $ok=0;
         setEventMessages($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'), null, 'errors');
     }
@@ -660,7 +660,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	if ($_POST["accountancy_code"] <= 0) $_POST["accountancy_code"]='';	// If empty, we force to null
 	if ($_POST["accountancy_code_sell"] <= 0) $_POST["accountancy_code_sell"]='';	// If empty, we force to null
 	if ($_POST["accountancy_code_buy"] <= 0) $_POST["accountancy_code_buy"]='';	// If empty, we force to null
-
+    if ($id == 10 && isset($_POST["code"]))  // Spaces are not allowed into code 
+    {
+        $_POST["code"]=preg_replace('/\s/','',$_POST["code"]);
+    }
+    
     // Si verif ok et action add, on ajoute la ligne
     if ($ok && GETPOST('actionadd'))
     {
@@ -914,10 +918,19 @@ if (empty($id))
 print "<br>\n";
 
 
+$param = '&id='.$id;
+if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
+if ($search_code != '')     $param.= '&search_code='.urlencode($search_country_id);
+$paramwithsearch = $param;
+if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
+if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
+if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
+
+
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.urlencode($_GET["code"]).'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'rowid='.$rowid.'&code='.urlencode($_GET["code"]).$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
 }
 //var_dump($elementList);
 
@@ -1069,7 +1082,7 @@ if ($id)
         print '</tr>';
 
         // Line to enter new values
-        print '<tr class="oddeven nodrag nodrop nohover">';
+        print '<!-- line to add new entry --><tr class="oddeven nodrag nodrop nohover">';
 
         $obj = new stdClass();
         // If data was already input, we define them in obj to populate input fields.
@@ -1087,11 +1100,11 @@ if ($id)
         $reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
         $error=$hookmanager->error; $errors=$hookmanager->errors;
 
-        if ($id == 3) unset($fieldlist[2]); // Remove field ??? if dictionnary Regions
+        if ($id == 3) unset($fieldlist[2]); // Remove field ??? if dictionary Regions
 
         if (empty($reshook))
         {
-       		fieldList($fieldlist,$obj,$tabname[$id],'add');
+       		fieldList($fieldlist, $obj, $tabname[$id], 'add');
         }
 
         if ($id == 4) print '<td></td>';
@@ -1130,14 +1143,6 @@ if ($id)
         $num = $db->num_rows($resql);
         $i = 0;
 
-        $param = '&id='.$id;
-        if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
-        if ($search_code != '')     $param.= '&search_code='.urlencode($search_country_id);
-        $paramwithsearch = $param;
-        if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
-        if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
-        if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
-        
         // There is several pages
         if ($num > $listlimit)
         {
@@ -1183,8 +1188,8 @@ if ($id)
     	print '<td class="liste_titre" colspan="2" align="right">';
     	if ($filterfound)
     	{
-        	$searchpitco=$form->showFilterAndCheckAddButtons(0);
-        	print $searchpitco;
+        	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+        	print $searchpicto;
     	}
     	print '</td>';
         print '</tr>';
@@ -1223,6 +1228,7 @@ if ($id)
             if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
             if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
             if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
+            if ($fieldlist[$field]=='position')        { $align='right'; }
             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
             {
                 //if ($id != 25) $valuetoshow=$form->textwithtooltip($langs->trans("Label"), $langs->trans("LabelUsedByDefault"),2,1,img_help(1,''));
@@ -1299,13 +1305,13 @@ if ($id)
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
                     // Show fields
-                    if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
+                    if (empty($reshook)) fieldList($fieldlist, $obj, $tabname[$id], 'edit');
 
                     print '<td colspan="3" align="center">';
+                    print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
                     print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
-                    print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
                 }
@@ -1489,6 +1495,7 @@ if ($id)
                             $class='tddict';
                             if ($fieldlist[$field] == 'tracking') $class.=' tdoverflowauto';
                             if ($fieldlist[$field] == 'code') $class.=' width100';
+                            if ($fieldlist[$field] == 'position') $class.=' right';
                             // Show value for field
 							if ($showfield) print '<!-- '.$fieldlist[$field].' --><td align="'.$align.'" class="'.$class.'">'.$valuetoshow.'</td>';
                         }
@@ -1507,6 +1514,7 @@ if ($id)
                     if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $canbedisabled=0; $canbedisabled = 0; }
                     $canbemodified=$iserasable;
                     if ($obj->code == 'RECEP') $canbemodified=1;
+                    if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm") $canbemodified=1;
 
                     // Url 
                     $rowidcol=$tabrowid[$id];
@@ -1547,7 +1555,7 @@ if ($id)
                     {
                         print '<td align="center">';
                         if ($user->admin) print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
-                        //else print '<a href="#">'.img_delete().'</a>';    // Some dictionnary can be edited by other profile than admin
+                        //else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
                         print '</td>';
                     }
                     else print '<td>&nbsp;</td>';
@@ -1638,10 +1646,10 @@ $db->close();
 /**
  *	Show fields in insert/edit mode
  *
- * 	@param		array	$fieldlist		Array of fields
- * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
- *  @param		string	$tabname		Name of SQL table
- *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ * 	@param		array		$fieldlist		Array of fields
+ * 	@param		Object		$obj			If we show a particular record, obj is filled with record fields
+ *  @param		string		$tabname		Name of SQL table
+ *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
 function fieldList($fieldlist, $obj='', $tabname='', $context='')
@@ -1654,11 +1662,19 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
-	if (! empty($conf->accounting->enabled)) $formaccountancy = new FormVentilation($db);
+	if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 	foreach ($fieldlist as $field => $value)
 	{
-		if ($fieldlist[$field] == 'country')
+	    if (in_array($fieldlist[$field], array('code', 'libelle', 'type')) && $tabname == MAIN_DB_PREFIX."c_actioncomm" && in_array($obj->type, array('system','systemauto')))
+        {
+            $hidden = (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'');
+            print '<td>';
+            print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$hidden.'">';
+            print $langs->trans($hidden);
+            print '</td>';
+        }
+	    elseif ($fieldlist[$field] == 'country')
 		{
 			if (in_array('region_id',$fieldlist))
 			{
@@ -1748,15 +1764,16 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 		    print '<td>';
 		    $transfound=0;
 	        // Special case for labels
-	        if ($tabname == MAIN_DB_PREFIX.'c_payment_term') {
+	        if ($tabname == MAIN_DB_PREFIX.'c_payment_term') 
+	        {
 	            $langs->load("bills");
 	            $transkey="PaymentCondition".strtoupper($obj->code);
+    	        if ($langs->trans($transkey) != $transkey)
+                {
+                    $transfound=1;
+                    print $form->textwithpicto($langs->trans($transkey), $langs->trans("GoIntoTranslationMenuToChangeThis"));
+                }
 	        }
-	        if ($langs->trans($transkey) != $transkey)
-            {
-                $transfound=1;
-                print $form->textwithpicto($langs->trans($transkey), $langs->trans("GoIntoTranslationMenuToChangeThis"));
-            }
 		    if (! $transfound)
 		    {
 		        print '<textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
@@ -1794,7 +1811,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			{
 			    $fieldname = $fieldlist[$field];
 				$accountancy_account = (! empty($obj->$fieldname) ? $obj->$fieldname : 0);
-				print $formaccountancy->select_account($accountancy_account, $fieldlist[$field], 1, '', 1, 1, 'maxwidth200 maxwidthonsmartphone');
+				print $formaccounting->select_account($accountancy_account, $fieldlist[$field], 1, '', 1, 1, 'maxwidth200 maxwidthonsmartphone');
 			}
 			else
 			{
@@ -1810,13 +1827,14 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			if ($fieldlist[$field]=='affect') $class='maxwidth50';
 			if ($fieldlist[$field]=='delay') $class='maxwidth50';
 			if ($fieldlist[$field]=='position') $class='maxwidth50';
-			if ($fieldlist[$field]=='libelle') $class='quatrevingtpercent';
+			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $class='quatrevingtpercent';
 			if ($fieldlist[$field]=='tracking') $class='quatrevingtpercent';
 			if ($fieldlist[$field]=='sortorder' || $fieldlist[$field]=='sens' || $fieldlist[$field]=='category_type') $class='maxwidth50';
 			print '<td class="'.$classtd.'">';
 			$transfound=0;
 			if (in_array($fieldlist[$field], array('label','libelle')))
 			{
+			    $transkey='';
 			    // Special case for labels
 			    if ($tabname == MAIN_DB_PREFIX.'c_civility') {
 			        $transkey="Civility".strtoupper($obj->code);
@@ -1825,7 +1843,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			        $langs->load("bills");
 			        $transkey="PaymentCondition".strtoupper($obj->code);
 			    }
-			    if ($langs->trans($transkey) != $transkey)
+			    if ($transkey && $langs->trans($transkey) != $transkey)
 			    {
 			        $transfound=1;
 			        print $form->textwithpicto($langs->trans($transkey), $langs->trans("GoIntoTranslationMenuToChangeThis"));

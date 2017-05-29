@@ -36,6 +36,7 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -62,7 +63,7 @@ $amount=price2num(GETPOST("amount"));
 if (! GETPOST("currency",'alpha')) $currency=$conf->currency;
 else $currency=GETPOST("currency",'alpha');
 
-if (! GETPOST("action"))
+if (! GETPOST('action','aZ09'))
 {
     if (! GETPOST("amount") && ! GETPOST("source"))
     {
@@ -95,6 +96,7 @@ $ref=$REF=GETPOST('ref','alpha');
 $TAG=GETPOST("tag",'alpha');
 $FULLTAG=GETPOST("fulltag",'alpha');  // fulltag is tag with more informations
 $SECUREKEY=GETPOST("securekey");	        // Secure key
+$FULLTAG.=($FULLTAG?'.':'').'PM=paybox';
 
 if (! empty($SOURCE))
 {
@@ -126,19 +128,22 @@ $valid=true;
 /*
  * Actions
  */
-if (GETPOST("action") == 'dopayment')
+
+if (GETPOST('action','aZ09') == 'dopayment')
 {
     $PRICE=price2num(GETPOST("newamount"),'MT');
     $email=GETPOST("email");
 
+    $origfulltag=GETPOST("fulltag",'alpha');
+    
 	$mesg='';
 	if (empty($PRICE) || ! is_numeric($PRICE)) $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
-	elseif (empty($email))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
-	elseif (! isValidEMail($email)) $mesg=$langs->trans("ErrorBadEMail",$email);
-	elseif (empty($FULLTAG))        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
-    elseif (dol_strlen($urlok) > 150) $mesg='Error urlok too long '.$urlok;
+	elseif (empty($email))            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
+	elseif (! isValidEMail($email))   $mesg=$langs->trans("ErrorBadEMail",$email);
+    elseif (! $origfulltag)           $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
+	elseif (dol_strlen($urlok) > 150) $mesg='Error urlok too long '.$urlok;
     elseif (dol_strlen($urlko) > 150) $mesg='Error urlko too long '.$urlko;
-
+    
 	if (empty($mesg))
 	{
 		dol_syslog("newpayment.php call paybox api and do redirect", LOG_DEBUG);
@@ -156,7 +161,13 @@ if (GETPOST("action") == 'dopayment')
  * View
  */
 
-llxHeaderPayBox($langs->trans("PaymentForm"));
+$head='';
+if (! empty($conf->global->PAYBOX_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYBOX_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+
+$conf->dol_hide_topmenu=1;
+$conf->dol_hide_leftmenu=1;
+
+llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
 
 // Common variables
@@ -782,9 +793,9 @@ print '</div>'."\n";
 print '<br>';
 
 
-html_print_paybox_footer($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs);
 
 
-llxFooterPayBox();
+llxFooter('', 'public');
 
 $db->close();

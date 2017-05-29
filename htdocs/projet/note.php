@@ -28,9 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
 $langs->load('projects');
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $id = GETPOST('id','int');
-$ref= GETPOST('ref');
+$ref= GETPOST('ref','alpha');
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
@@ -82,7 +82,7 @@ if ($id > 0 || ! empty($ref))
 	
 	// Project card
 	
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	
 	$morehtmlref='<div class="refidno">';
 	// Title

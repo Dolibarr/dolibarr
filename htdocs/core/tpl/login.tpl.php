@@ -77,16 +77,25 @@ $(document).ready(function () {
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
 
+
+<!-- Title with version -->
+<div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
+<?php
+if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
+echo dol_escape_htmltag($title); 
+if ($disablenofollow) echo '</a>';
+?>
+</div>
+
+
+
 <div class="login_table">
 
 <div id="login_line1">
 
 <div id="login_left">
-
 <img alt="" src="<?php echo $urllogo; ?>" id="img_logo" />
-
 </div>
-
 
 
 <div id="login_right">
@@ -146,10 +155,10 @@ if (! empty($hookmanager->resArray['options'])) {
 <?php } ?>
 </table>
 
-</div> <!-- end div left -->
+</div> <!-- end div login-right -->
 
+</div> <!-- end div login-line1 -->
 
-</div>
 
 <div id="login_line2" style="clear: both">
 
@@ -209,19 +218,9 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 
 ?>
 
-</div>
+</div> <!-- end login line 2 -->
 
-</div>
-
-
-<!-- Title with version -->
-<div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
-<?php
-if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
-echo dol_escape_htmltag($title); 
-if ($disablenofollow) echo '</a>';
-?>
-</div>
+</div> <!-- end login table -->
 
 
 </form>
@@ -259,7 +258,7 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 <?php if ($main_home)
 {
 ?>
-	<div class="center login_main_home" style="max-width: 80%">
+	<div class="center login_main_home" style="max-width: 70%">
 	<?php echo $main_home; ?>
 	</div><br>
 <?php

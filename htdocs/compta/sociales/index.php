@@ -152,6 +152,7 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 	
 	if ($year)
@@ -202,8 +203,8 @@ if ($resql)
 		print '</td>';
 
         print '<td class="liste_titre" align="right">';
-        $searchpitco=$form->showFilterAndCheckAddButtons(0);
-        print $searchpitco;
+        $searchpicto=$form->showFilterAndCheckAddButtons(0);
+        print $searchpicto;
         print '</td>';
 		print "</tr>\n";
 
@@ -273,7 +274,7 @@ if ($resql)
 		if (isset($totalarray['totalttcfield']))
 		{
 		    print '<tr class="liste_total">';
-            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
             else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
             print '<td></td>';
             print '<td></td>';

@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 $langs->load("banks");
 $langs->load("categories");
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 if (!$user->rights->banque->configurer)
   accessforbidden();
@@ -108,7 +108,7 @@ if ($result)
 		
 		print '<tr class="oddeven">';
 		print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
-		if (GETPOST("action") == 'edit' && GETPOST("categid")== $objp->rowid)
+		if (GETPOST('action','aZ09') == 'edit' && GETPOST("categid")== $objp->rowid)
 		{
 			print "<td colspan=2>";
 			print '<input type="hidden" name="categid" value="'.$objp->rowid.'">';

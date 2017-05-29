@@ -170,7 +170,6 @@ foreach($configfileparameters as $key)
             continue;
         }
 
-		
 		print '<tr class="oddeven">';
 		if ($newkey == 'separator')
 		{
@@ -233,12 +232,10 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	$var=True;
 
 	while ($i < $num)
     {
     	$obj = $db->fetch_object($resql);
-    	
 
     	print '<tr class="oddeven">';
     	print '<td>'.$obj->name.'</td>'."\n";

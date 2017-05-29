@@ -27,7 +27,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $langs->load('admin');
 
@@ -113,7 +113,7 @@ if ($action == 'update') {
 
 llxHeader();
 $form=new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('TaxSetup'),$linkback,'title_setup');
@@ -136,10 +136,10 @@ else
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
     print "</tr>\n";
-    print '<tr '.$bc[false].'><td width="200"><input type="radio" name="tax_mode" value="0"'.($tax_mode != 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDefault').'</td>';
+    print '<tr class="oddeven"><td width="200"><input type="radio" name="tax_mode" value="0"'.($tax_mode != 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDefault').'</td>';
     print '<td colspan="2">'.nl2br($langs->trans('OptionVatDefaultDesc'));
     print "</td></tr>\n";
-    print '<tr '.$bc[true].'><td width="200"><input type="radio" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDebitOption').'</td>';
+    print '<tr class="oddeven"><td width="200"><input type="radio" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDebitOption').'</td>';
     print '<td colspan="2">'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
 
     print "</table>\n";
@@ -152,7 +152,7 @@ else
     print '<tr class="liste_titre"><td>&nbsp;</td><td>'.$langs->trans("Buy").'</td><td>'.$langs->trans("Sell").'</td></tr>';
 
     // Products
-    print '<tr '.$bc[false].'><td>'.$langs->trans("Product").'</td>';
+    print '<tr class="oddeven"><td>'.$langs->trans("Product").'</td>';
     print '<td>';
     print $langs->trans("OnDelivery");
     print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
@@ -163,7 +163,7 @@ else
     print '</td></tr>';
 
     // Services
-    print '<tr '.$bc[true].'><td>'.$langs->trans("Services").'</td>';
+    print '<tr class="oddeven"><td>'.$langs->trans("Services").'</td>';
     print '<td>';
     if ($tax_mode == 0)
     {
@@ -206,7 +206,7 @@ foreach ($list as $key)
 {
 	
 
-	print '<tr '.$bc[$var].' class="value">';
+	print '<tr class="oddeven value">';
 
 	// Param
 	$label = $langs->trans($key); 
@@ -216,7 +216,7 @@ foreach ($list as $key)
 	print '<td>';
 	if (! empty($conf->accounting->enabled))
 	{
-		print $formaccountancy->select_account($conf->global->$key, $key, 1, '', 1, 1);
+		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	}
 	else
 	{

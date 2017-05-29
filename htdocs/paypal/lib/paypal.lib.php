@@ -24,143 +24,6 @@
 
 
 /**
- * Show header
- *
- * @param 	string	$title		Title
- * @param 	string	$head		More header to add
- * @return	void
- */
-function llxHeaderPaypal($title, $head = "")
-{
-	global $user, $conf, $langs;
-
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
-	$appli='Dolibarr';
-	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
-
-	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
-	print "\n";
-	print "<html>\n";
-	print "<head>\n";
-	print '<meta name="robots" content="noindex,nofollow">'."\n";
-	print '<meta name="keywords" content="dolibarr,payment,online">'."\n";
-	print '<meta name="description" content="Welcome on '.$appli.' online payment form">'."\n";
-	print "<title>".$title."</title>\n";
-	if ($head) print $head."\n";
-	if (! empty($conf->global->PAYPAL_CSS_URL)) print '<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYPAL_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
-	else
-	{
-		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$conf->css.'?lang='.$langs->defaultlang.'">'."\n";
-		print '<style type="text/css">';
-		print '.CTableRow1      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #e6E6eE; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
-		print '.CTableRow2      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #FFFFFF; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
-		print '</style>';
-	}
-
-	if ($conf->use_javascript_ajax)
-	{
-		print '<!-- Includes for JQuery (Ajax library) -->'."\n";
-		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css" />'."\n";          // JNotify
-
-		// Output standard javascript links
-		$ext='.js';
-
-		// JQuery. Must be before other includes
-		print '<!-- Includes JS for JQuery -->'."\n";
-		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.min'.$ext.'"></script>'."\n";
-		// jQuery jnotify
-		if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY))
-		{
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min'.$ext.'"></script>'."\n";
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/jnotify'.$ext.'"></script>'."\n";
-		}
-	}
-	print "</head>\n";
-	print '<body style="margin: 20px;">'."\n";
-}
-
-/**
- * Show footer
- *
- * @return	void
- */
-function llxFooterPaypal()
-{
-	print "</body>\n";
-	print "</html>\n";
-}
-
-
-/**
- * Show footer of company in HTML pages
- *
- * @param   Societe		$fromcompany	Third party
- * @param   Translate	$langs			Output language
- * @return	void
- */
-function html_print_paypal_footer($fromcompany,$langs)
-{
-	global $conf;
-
-	// Juridical status
-	$line1="";
-	if ($fromcompany->forme_juridique_code)
-	{
-		$line1.=($line1?" - ":"").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
-	}
-	// Capital
-	if ($fromcompany->capital)
-	{
-		$line1.=($line1?" - ":"").$langs->transnoentities("CapitalOf",$fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
-	}
-	// Prof Id 1
-	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || ! $fromcompany->idprof2))
-	{
-		$field=$langs->transcountrynoentities("ProfId1",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof1;
-	}
-	// Prof Id 2
-	if ($fromcompany->idprof2)
-	{
-		$field=$langs->transcountrynoentities("ProfId2",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof2;
-	}
-
-	// Second line of company infos
-	$line2="";
-	// Prof Id 3
-	if ($fromcompany->idprof3)
-	{
-		$field=$langs->transcountrynoentities("ProfId3",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof3;
-	}
-	// Prof Id 4
-	if ($fromcompany->idprof4)
-	{
-		$field=$langs->transcountrynoentities("ProfId4",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof4;
-	}
-	// IntraCommunautary VAT
-	if ($fromcompany->tva_intra != '')
-	{
-		$line2.=($line2?" - ":"").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
-	}
-
-	print '<br><br><hr>'."\n";
-	print '<div class="center"><font style="font-size: 10px;">'."\n";
-	print $fromcompany->name.'<br>';
-	print $line1.'<br>';
-	print $line2;
-	print '</font></div>'."\n";
-}
-
-/**
  *  Define head array for tabs of paypal tools setup pages
  *
  *  @return			Array of head
@@ -328,7 +191,7 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
  * @param	string	$paymentType		Payment type
  * @param  	string	$returnURL			Url to use if payment is OK
  * @param   string	$cancelURL			Url to use if payment is KO
- * @param   string	$tag				Tag
+ * @param   string	$tag				Full tag
  * @return	void
  */
 function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$returnURL,$cancelURL,$tag)
@@ -443,7 +306,7 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
  * @param 	string 			$paymentType		Payment type
  * @param 	string 			$returnURL			Return Url
  * @param 	string 			$cancelURL			Cancel Url
- * @param 	string 			$tag				Tag
+ * @param 	string 			$tag				Full tag
  * @param 	string 			$solutionType		Type
  * @param 	string 			$landingPage		Landing page
  * @param	string			$shipToName			Ship to name
@@ -566,7 +429,7 @@ function getDetails($token)
  *	@param	string	$payerID			Payer ID
  *	@param	string	$ipaddress			IP Address
  *	@param	string	$FinalPaymentAmt	Amount
- *	@param	string	$tag				Tag
+ *	@param	string	$tag				Full tag
  *	@return	void
  */
 function confirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $tag)

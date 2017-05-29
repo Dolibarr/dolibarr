@@ -27,7 +27,7 @@
 require '../../main.inc.php';
 
 // Class
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
@@ -74,7 +74,7 @@ if ($user->societe_id > 0)
 if (! $user->rights->accounting->bind->write)
 	accessforbidden();
 
-$formventilation = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 
 
 /*
@@ -219,13 +219,14 @@ if ($result) {
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-
+	print '<input type="hidden" name="page" value="'.$page.'">';
+	
 	print_barre_liste($langs->trans("ExpenseReportLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
 	print $langs->trans("DescVentilDoneExpenseReport") . '<br>';
 
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
-	print $formventilation->select_account(GETPOST('account_parent'), 'account_parent', 1);
+	print $formaccounting->select_account(GETPOST('account_parent'), 'account_parent', 1);
 	print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("ChangeBinding") . '" /></div>';
 
 	$moreforfilter = '';
@@ -268,13 +269,12 @@ if ($result) {
 	$var = True;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
-		$var = ! $var;
 		$codeCompta = length_accountg($objp->account_number) . ' - ' . $objp->label;
 
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
 		
-		print '<tr '. $bc[$var].'>';
+		print '<tr class="oddeven">';
 
 		print '<td>' . $objp->rowid . '</td>';
 

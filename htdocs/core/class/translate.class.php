@@ -170,6 +170,7 @@ class Translate
 	 * 	@param	int		$forcelangdir		To force a different lang directory
 	 *  @param  int     $loadfromfileonly   1=Do not load overwritten translation from file or old conf.
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
+	 *  @see loadLangs
 	 */
 	function load($domain,$alt=0,$stopafterdirection=0,$forcelangdir='',$loadfromfileonly=0)
 	{
@@ -296,7 +297,12 @@ class Translate
 												$tabtranslatedomain[$key] = $value;
 											}
 										}
-									} else {
+									}
+									elseif ($key[0] == '#')
+									{
+									    continue;
+									}
+									else {
 										$this->tab_translate[$key] = $value;
 										//if ($domain == 'orders') print "$tab[0] value $value<br>";
 										if ($usecachekey) {
@@ -458,10 +464,10 @@ class Translate
 			}
 		}
 
-		if (! $found)
+		if (! $found && ! empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
 		{
     		// Overwrite translation with database read
-            $sql="SELECT transkey, transvalue FROM ".MAIN_DB_PREFIX."overwrite_trans where lang='".$this->defaultlang."'";            
+            $sql="SELECT transkey, transvalue FROM ".MAIN_DB_PREFIX."overwrite_trans where lang='".$db->escape($this->defaultlang)."'";            
 		    $resql=$db->query($sql);
 		    
 		    if ($resql)

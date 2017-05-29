@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,8 +65,8 @@ $dateend=dol_mktime(0, 0, 0, GETPOST('dateendmonth'), GETPOST('dateendday'), GET
 if ($status == ''   && ! isset($_GET['status']) && ! isset($_POST['status'])) $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 if (empty($action) && ! isset($_GET['action']) && ! isset($_POST['action'])) $action=(empty($conf->global->AGENDA_DEFAULT_VIEW)?'show_month':$conf->global->AGENDA_DEFAULT_VIEW);
 
-$filter=GETPOST("filter",'',3);
-$filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filtert","int",3);
+$filter = GETPOST("filter",'',3);
+$filtert = GETPOST("filtert","int",3);
 $usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
@@ -183,6 +184,7 @@ $sql.= " s.nom as societe, s.rowid as socid, s.client,";
 $sql.= " a.id, a.label, a.datep as dp, a.datep2 as dp2,";
 $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= " a.fk_contact, a.note, a.percent as percent,";
+$sql.= " a.fk_element, a.elementtype,";
 $sql.= " c.code as type_code, c.libelle as type_label,";
 $sql.= " sp.lastname, sp.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a";
@@ -322,6 +324,7 @@ if ($resql)
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
     $nav='';
     if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -355,14 +358,15 @@ if ($resql)
 	print '</td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
+    if (! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT)) print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
     print '<td class="liste_titre center">';
     print $formactions->form_select_status_action('formaction',$status,1,'status',1,2);
     print '</td>';
 	// Action column
 	print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterButtons();
-	print $searchpitco;
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
 	print '</td>';
 	print "</tr>\n";
 	
@@ -375,7 +379,8 @@ if ($resql)
 	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ActionsOwnedByShort"),$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
+    if (! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT)) print_liste_field_titre($langs->trans("LinkedObject"),$_SERVER["PHP_SELF"],"a.fk_element",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("ActionsOwnedByShort"),$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre("");
 	print "</tr>\n";
@@ -481,6 +486,18 @@ if ($resql)
 			print "&nbsp;";
 		}
 		print '</td>';
+
+        // Linked object
+        if (! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT)) {
+            print '<td>';
+            if ($obj->fk_element > 0 && ! empty($obj->elementtype)) {
+                include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+                print dolGetElementUrl($obj->fk_element,$obj->elementtype,1);
+            } else {
+                print "&nbsp;";
+            }
+            print '</td>';
+        }
 
 		// User to do
 		print '<td align="left">';

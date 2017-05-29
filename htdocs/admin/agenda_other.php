@@ -4,6 +4,7 @@
  * Copyright (C) 2011-2017  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry	    <jfefe@aternatik.fr>
  * Copyright (C) 2016		Charlie Benke		    <charlie@patas-monkey.com>
+ * Copyright (C) 2017       Open-DSI                <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,7 +197,7 @@ print "<br>\n";
 
 $head=agenda_prepare_head();
 
-dol_fiche_head($head, 'other', $langs->trans("Agenda"), 0, 'action');
+dol_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
 
 
 /*
@@ -245,7 +246,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     
     clearstatcache();
     
-    $var=true;
     foreach ($dirmodels as $reldir)
     {
     	$dir = dol_buildpath($reldir."core/modules/action/doc/");
@@ -263,10 +263,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			$classname = substr($file, 0, dol_strlen($file) -12);
             			
             			require_once $dir.'/'.$file;
-            			$module = new $classname($db, new ActionComm($db));
+            			$module = new $classname($db, new ActionComm($db));           			
             			
-            			
-            			print "<tr ".$bc[$var].">\n";
+            			print '<tr class="oddeven">'."\n";
             			print "<td>";
             			print (empty($module->name)?$name:$module->name);
             			print "</td>\n";
@@ -338,8 +337,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     print '</table><br>';
 }
 
-$var=true;
-
 print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
 print '<input type="hidden" name="action" value="set">';
 
@@ -380,7 +377,6 @@ if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 }
 
 // AGENDA_DEFAULT_FILTER_TYPE
-
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_TYPE").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
@@ -389,7 +385,6 @@ $formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AG
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_STATUS
-
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_STATUS").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
@@ -398,7 +393,6 @@ $formactions->form_select_status_action('agenda', $conf->global->AGENDA_DEFAULT_
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_VIEW
-
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";

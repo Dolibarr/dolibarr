@@ -34,7 +34,7 @@ $langs->load("categories");
 $id=GETPOST('id','int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 $cancel=GETPOST('cancel');
 

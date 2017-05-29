@@ -48,7 +48,7 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user,'societe',$socid,'');
 
-$search_all=trim(GETPOST("sall"));
+$search_all=trim(GETPOST('sall', 'alphanohtml'));
 $search_nom=trim(GETPOST("search_nom"));
 $search_nom_only=trim(GETPOST("search_nom_only"));
 $search_barcode=trim(GETPOST("sbarcode"));
@@ -118,7 +118,9 @@ $fieldstosearchall = array(
 	's.nom'=>"ThirdPartyName",
 	's.name_alias'=>"AliasNameShort",
 	's.code_client'=>"CustomerCode",
-    "s.code_fournisseur"=>"SupplierCode",
+    's.code_fournisseur'=>"SupplierCode",
+	's.code_compta'=>"CustomerAccountancyCodeShort",
+	's.code_compta_fournisseur'=>"SupplierAccountancyCodeShort",
 	's.email'=>"EMail",
 	's.url'=>"URL",
     's.tva_intra'=>"VATIntra",
@@ -185,6 +187,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
    }
 }
 
+$object = new Societe($db);
+
 
 /*
  * Actions
@@ -194,7 +198,7 @@ if (GETPOST('cancel')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -202,7 +206,7 @@ if (empty($reshook))
     // Selection of new fields
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    // Do we click on purge search criteria ?
+    // Did we click on purge search criteria ?
     if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
     {
         $search_nom='';
@@ -491,6 +495,9 @@ if ($search_sale > 0)	$param.='&amp;search_sale='.urlencode($search_sale);
 if ($search_nom != '') $param.= "&amp;search_nom=".urlencode($search_nom);
 if ($search_town != '') $param.= "&amp;search_town=".urlencode($search_town);
 if ($search_zip != '') $param.= "&amp;search_zip=".urlencode($search_zip);
+if ($search_phone != '') $param.= "&amp;search_phone=".urlencode($search_phone);
+if ($search_email != '') $param.= "&amp;search_email=".urlencode($search_email);
+if ($search_url != '') $param.= "&amp;search_url=".urlencode($search_url);
 if ($search_state != '') $param.= "&amp;search_state=".urlencode($search_state);
 if ($search_country != '') $param.= "&amp;search_country=".urlencode($search_country);
 if ($search_customer_code != '') $param.= "&amp;search_customer_code=".urlencode($search_customer_code);
@@ -542,6 +549,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
 
@@ -597,7 +605,7 @@ if ($user->rights->societe->client->voir || $socid)
 	$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user, 0, 1, 'maxwidth300');
 	$moreforfilter.='</div>';
 }
-if (! empty($moreforfilter))
+if ($moreforfilter)
 {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
@@ -823,7 +831,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
             $align=$extrafields->getAlignFlag($key);
             $typeofextrafield=$extrafields->attribute_type[$key];
             print '<td class="liste_titre'.($align?' '.$align:'').'">';
-		    if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
+		    if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attribute_computed[$key]))
 			{
 			    $crit=$val;
 				$tmpkey=preg_replace('/search_options_/','',$key);
@@ -861,8 +869,8 @@ if (! empty($arrayfields['s.status']['checked']))
 }
 // Action column
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterButtons();
-print $searchpitco;
+$searchpicto=$form->showFilterButtons();
+print $searchpicto;
 print '</td>';
 
 print "</tr>\n";
@@ -899,7 +907,9 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
         if (! empty($arrayfields["ef.".$key]['checked']))
         {
             $align=$extrafields->getAlignFlag($key);
-            print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+            $sortonfield = "ef.".$key;
+            if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
         }
     }
 }

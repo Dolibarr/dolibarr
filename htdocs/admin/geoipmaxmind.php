@@ -33,7 +33,7 @@ accessforbidden();
 $langs->load("admin");
 $langs->load("errors");
 
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 
 /*
  * Actions

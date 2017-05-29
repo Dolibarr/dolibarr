@@ -32,6 +32,7 @@ create table llx_facture_rec
   remise_percent     real     DEFAULT 0,
   remise_absolue     real     DEFAULT 0,
   
+  vat_src_code		 varchar(10)  DEFAULT '',			-- Vat code used as source of vat fields. Not strict foreign key here.
   tva                double(24,8)     DEFAULT 0,
   localtax1			 double(24,8)     DEFAULT 0,           -- amount localtax1
   localtax2          double(24,8)     DEFAULT 0,           -- amount localtax2

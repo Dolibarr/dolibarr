@@ -92,8 +92,8 @@ class pdf_standard extends ModelePDFProduct
 		$langs->load("companies");
 
 		$this->db = $db;
-		$this->name = "PDF template";
-		$this->description = $langs->trans("DocumentModelPdf");
+		$this->name = "standard";
+		$this->description = $langs->trans("DocumentModelStandardPDF");
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -107,15 +107,9 @@ class pdf_standard extends ModelePDFProduct
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 		
 		$this->option_logo = 1;                    // Affiche logo
-		$this->option_tva = 0;                     // Gere option tva PRODUCT_TVAOPTION
-		$this->option_modereg = 0;                 // Affiche mode reglement
-		$this->option_condreg = 0;                 // Affiche conditions reglement
 		$this->option_codeproduitservice = 0;      // Affiche code produit-service
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
-		$this->option_escompte = 0;                // Affiche si il y a eu escompte
-		$this->option_credit_note = 0;             // Support credit notes
-		$this->option_freetext = 1;				   // Support add of a personalised text
-		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
+		$this->option_freetext = 0;				   // Support add of a personalised text
 
 		// Recupere emetteur
 		$this->emetteur=$mysoc;
@@ -262,7 +256,7 @@ class pdf_standard extends ModelePDFProduct
 				}
 				if ($object->weight)
 				{
-				    $pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").': '.$object->length.'x'.$object->width.'x'.$object->height, 0, 1);
+				    $pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").': '.($object->length != ''?$object->length:'?').' x '.($object->width != ''?$object->width:'?').' x '.($object->height != ''?$object->height:'?'), 0, 1);
 				    $nexY = $pdf->GetY();
 				}
 				if ($object->surface)

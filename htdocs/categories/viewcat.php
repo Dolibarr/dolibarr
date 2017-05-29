@@ -37,7 +37,7 @@ $langs->load("categories");
 $id=GETPOST('id','int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 $removeelem = GETPOST('removeelem','int');
 $elemid=GETPOST('elemid');
@@ -289,11 +289,9 @@ else
 	print "</tr>\n";
 	if (count($cats) > 0)
 	{
-		$var=true;
 		foreach ($cats as $cat)
-		{
-			
-			print "\t<tr ".$bc[$var].">\n";
+		{			
+			print "\t".'<tr class="oddeven">'."\n";
 			print "\t\t".'<td class="nowrap">';
 			print "<a href='viewcat.php?id=".$cat->id."&amp;type=".$type."'>".$cat->label."</a>";
 			print "</td>\n";
@@ -360,11 +358,9 @@ if ($object->type == Categorie::TYPE_PRODUCT)
 
 		if (count($prods) > 0)
 		{
-			$var=true;
 			foreach ($prods as $prod)
-			{
-				
-				print "\t<tr ".$bc[$var].">\n";
+			{				
+				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $prod->getNomUrl(1);
 				print "</td>\n";
@@ -411,12 +407,9 @@ if ($object->type == Categorie::TYPE_SUPPLIER)
 
 		if (count($socs) > 0)
 		{
-			$var=true;
 			foreach ($socs as $soc)
-			{
-				
-				print "\t<tr ".$bc[$var].">\n";
-
+			{				
+				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $soc->getNomUrl(1);
 				print "</td>\n";
@@ -464,14 +457,13 @@ if($object->type == Categorie::TYPE_CUSTOMER)
 		if (count($socs) > 0)
 		{
 			$i = 0;
-			$var=true;
 			foreach ($socs as $key => $soc)
 			{
 				if ($user->societe_id > 0 && $soc->id != $user->societe_id)	continue; 	// External user always see only themself
 
 				$i++;
 				
-				print "\t<tr ".$bc[$var].">\n";
+				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $soc->getNomUrl(1);
 				print "</td>\n";
@@ -520,11 +512,9 @@ if ($object->type == Categorie::TYPE_MEMBER)
 
 		if (count($prods) > 0)
 		{
-			$var=true;
 			foreach ($prods as $key => $member)
-			{
-				
-				print "\t<tr ".$bc[$var].">\n";
+			{				
+				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				$member->ref=$member->login;
 				print $member->getNomUrl(1,0);
@@ -574,12 +564,11 @@ if($object->type == Categorie::TYPE_CONTACT)
 		if (count($contacts) > 0)
 		{
 			$i = 0;
-			$var=true;
 			foreach ($contacts as $key => $contact)
 			{
 				$i++;
 				
-				print "\t<tr ".$bc[$var].">\n";
+				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $contact->getNomUrl(1,'category');
 				print "</td>\n";
@@ -629,11 +618,9 @@ if ($object->type == Categorie::TYPE_ACCOUNT)
 
         if (count($accounts) > 0)
         {
-            $var=true;
             foreach ($accounts as $key => $account)
-            {
-                
-                print "\t<tr ".$bc[$var].">\n";
+            {              
+                print "\t".'<tr class="oddeven">'."\n";
                 print '<td class="nowrap" valign="top">';
                 print $account->getNomUrl(1,0);
                 print "</td>\n";
@@ -684,11 +671,9 @@ if ($object->type == Categorie::TYPE_PROJECT)
 
 		if (count($projects) > 0)
 		{
-			$var=true;
 			foreach ($projects as $key => $project)
-			{
-				
-				print "\t<tr ".$bc[$var].">\n";
+			{				
+				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $project->getNomUrl(1,0);
 				print "</td>\n";

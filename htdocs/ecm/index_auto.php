@@ -49,7 +49,7 @@ $result = restrictedArea($user, 'ecm', 0);
 
 // Get parameters
 $socid=GETPOST('socid','int');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $section=GETPOST("section")?GETPOST("section","int"):GETPOST("section_id","int");
 $module=GETPOST("module");
 if (! $section) $section=0;

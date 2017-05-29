@@ -100,7 +100,7 @@ class Task extends CommonObject
         // Clean parameters
         $this->label = trim($this->label);
         $this->description = trim($this->description);
-
+        
         // Check parameters
         // Put here code to add control on parameters values
 
@@ -127,8 +127,8 @@ class Task extends CommonObject
         $sql.= ", ".$user->id;
         $sql.= ", ".($this->date_start!=''?"'".$this->db->idate($this->date_start)."'":'null');
         $sql.= ", ".($this->date_end!=''?"'".$this->db->idate($this->date_end)."'":'null');
-        $sql.= ", ".($this->planned_workload!=''?$this->planned_workload:0);
-        $sql.= ", ".($this->progress!=''?$this->progress:0);
+        $sql.= ", ".(($this->planned_workload!='' && $this->planned_workload >= 0)?$this->planned_workload:'null');
+        $sql.= ", ".(($this->progress!='' && $this->progress >= 0)?$this->progress:'null');
         $sql.= ")";
 
         $this->db->begin();
@@ -300,7 +300,7 @@ class Task extends CommonObject
         $sql.= " planned_workload=".((isset($this->planned_workload) && $this->planned_workload != '')?$this->planned_workload:"null").",";
         $sql.= " dateo=".($this->date_start!=''?"'".$this->db->idate($this->date_start)."'":'null').",";
         $sql.= " datee=".($this->date_end!=''?"'".$this->db->idate($this->date_end)."'":'null').",";
-        $sql.= " progress=".$this->progress.",";
+        $sql.= " progress=".(($this->progress!='' && $this->progress >= 0)?$this->progress:'null').",";
         $sql.= " rang=".((!empty($this->rang))?$this->rang:"0");
         $sql.= " WHERE rowid=".$this->id;
 

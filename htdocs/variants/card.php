@@ -19,13 +19,13 @@ require '../main.inc.php';
 require 'class/ProductAttribute.class.php';
 require 'class/ProductAttributeValue.class.php';
 
-$id = GETPOST('id');
-$valueid = GETPOST('valueid');
-$action = GETPOST('action');
-$label = GETPOST('label');
-$ref = GETPOST('ref');
-$confirm = GETPOST('confirm');
-$cancel = GETPOST('cancel');
+$id = GETPOST('id','int');
+$valueid = GETPOST('valueid','alpha');
+$action = GETPOST('action','alpha');
+$label = GETPOST('label','alpha');
+$ref = GETPOST('ref','alpha');
+$confirm = GETPOST('confirm','alpha');
+$cancel = GETPOST('cancel','alpha');
 
 $object = new ProductAttribute($db);
 $objectval = new ProductAttributeValue($db);
@@ -92,10 +92,10 @@ if ($confirm == 'yes') {
 			setEventMessage($langs->trans('RecordSaved'));
 			header('Location: '.dol_buildpath('/variants/list.php', 2));
 		}
-
 		exit();
-	} elseif ($action == 'confirm_deletevalue') {
-
+	}
+	elseif ($action == 'confirm_deletevalue') 
+	{
 		if ($objectval->fetch($valueid) > 0) {
 
 			if ($objectval->delete() < 1) {

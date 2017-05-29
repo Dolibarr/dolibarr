@@ -154,13 +154,13 @@ class SupplierProposal extends CommonObject
 	 */
 	const STATUS_SIGNED = 2;
 	/**
-	 * Not signed quote
+	 * Not signed quote, canceled
 	 */
 	const STATUS_NOTSIGNED = 3;
 	/**
-	 * Billed or processed quote
+	 * Billed or closed/processed quote
 	 */
-	const STATUS_BILLED = 4;	
+	const STATUS_CLOSE = 4;	
 	
 	
 	
@@ -839,7 +839,7 @@ class SupplierProposal extends CommonObject
             if ($this->id)
             {
                 $this->ref='(PROV'.$this->id.')';
-                $sql = 'UPDATE '.MAIN_DB_PREFIX."supplier_proposal SET ref='".$this->ref."' WHERE rowid=".$this->id;
+                $sql = 'UPDATE '.MAIN_DB_PREFIX."supplier_proposal SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
 
                 dol_syslog(get_class($this)."::create", LOG_DEBUG);
                 $resql=$this->db->query($sql);
@@ -1143,9 +1143,8 @@ class SupplierProposal extends CommonObject
                 $this->note                 = $obj->note_private; // TODO deprecated
                 $this->note_private         = $obj->note_private;
                 $this->note_public          = $obj->note_public;
-                $this->statut               = $obj->fk_statut;
+                $this->statut               = (int) $obj->fk_statut;
                 $this->statut_libelle       = $obj->statut_label;
-
                 $this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
                 $this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
                 $this->date_creation		= $this->db->jdate($obj->datec); //Creation date
@@ -2836,7 +2835,7 @@ class SupplierProposalLine  extends CommonObjectLine
         $sql.= " ".price2num($this->localtax2_tx).",";
 		$sql.= " '".$this->localtax1_type."',";
 		$sql.= " '".$this->localtax2_type."',";
-        $sql.= " ".($this->subprice?price2num($this->subprice):"null").",";
+        $sql.= " ".price2num($this->subprice).",";
         $sql.= " ".price2num($this->remise_percent).",";
         $sql.= " ".(isset($this->info_bits)?"'".$this->info_bits."'":"null").",";
         $sql.= " ".price2num($this->total_ht).",";
@@ -2855,7 +2854,7 @@ class SupplierProposalLine  extends CommonObjectLine
 		$sql.= ", ".$this->multicurrency_total_ht;
 		$sql.= ", ".$this->multicurrency_total_tva;
 		$sql.= ", ".$this->multicurrency_total_ttc;
-		$sql.= ", ".$this->fk_unit;
+        $sql.= ", fk_unit=".($this->fk_unit?$this->fk_unit:'null');
 		$sql.= ')';
 
         dol_syslog(get_class($this).'::insert', LOG_DEBUG);
@@ -3003,14 +3002,14 @@ class SupplierProposalLine  extends CommonObjectLine
         $sql.= " , tva_tx='".price2num($this->tva_tx)."'";
         $sql.= " , localtax1_tx=".price2num($this->localtax1_tx);
         $sql.= " , localtax2_tx=".price2num($this->localtax2_tx);
-		$sql.= " , localtax1_type='".$this->localtax1_type."'";
-		$sql.= " , localtax2_type='".$this->localtax2_type."'";
+		$sql.= " , localtax1_type='".$this->db->escape($this->localtax1_type)."'";
+		$sql.= " , localtax2_type='".$this->db->escape($this->localtax2_type)."'";
         $sql.= " , qty='".price2num($this->qty)."'";
         $sql.= " , subprice=".price2num($this->subprice)."";
         $sql.= " , remise_percent=".price2num($this->remise_percent)."";
         $sql.= " , price=".price2num($this->price)."";					// TODO A virer
         $sql.= " , remise=".price2num($this->remise)."";				// TODO A virer
-        $sql.= " , info_bits='".$this->info_bits."'";
+        $sql.= " , info_bits='".$this->db->escape($this->info_bits)."'";
         if (empty($this->skip_update_total))
         {
             $sql.= " , total_ht=".price2num($this->total_ht)."";
@@ -3025,13 +3024,13 @@ class SupplierProposalLine  extends CommonObjectLine
         $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
         $sql.= " , ref_fourn=".(! empty($this->ref_fourn)?"'".$this->db->escape($this->ref_fourn)."'":"null");
-		
+        $sql.= " , fk_unit=".($this->fk_unit?$this->fk_unit:'null');
+        
 		// Multicurrency
 		$sql.= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
         $sql.= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
         $sql.= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
         $sql.= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
-        $sql.= " , fk_unit=".$this->fk_unit;
 		
 		$sql.= " WHERE rowid = ".$this->rowid;
 

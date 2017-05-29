@@ -44,7 +44,7 @@ $langs->load('bills');
 $langs->load('orders');
 $langs->load('commercial');
 
-$action	= GETPOST('action');
+$action	= GETPOST('action','aZ09');
 $cancelbutton = GETPOST('cancel');
 
 // Security check
@@ -130,7 +130,7 @@ if ($object->id > 0)
 	 */
 	$head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), -1, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 	
@@ -753,7 +753,6 @@ if ($object->id > 0)
 	
 	print '</div>';
 	
-	print '<br>';
 
 	if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
 	{

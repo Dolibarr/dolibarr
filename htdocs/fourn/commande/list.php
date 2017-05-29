@@ -60,6 +60,8 @@ $orderday=GETPOST("orderday","int");
 $deliveryyear=GETPOST("deliveryyear","int");
 $deliverymonth=GETPOST("deliverymonth","int");
 $deliveryday=GETPOST("deliveryday","int");
+
+$sall=GETPOST('search_all', 'alphanohtml');
 $search_product_category=GETPOST('search_product_category','int');
 $search_ref=GETPOST('search_ref');
 $search_refsupp=GETPOST('search_refsupp');
@@ -75,7 +77,6 @@ $search_ht=GETPOST('search_ht');
 $search_ttc=GETPOST('search_ttc');
 $search_status=(GETPOST('search_status','alpha')!=''?GETPOST('search_status','alpha'):GETPOST('statut','alpha'));	// alpha and not intbecause it can be '6,7'
 $optioncss = GETPOST('optioncss','alpha');
-$sall=GETPOST('search_all');
 $socid = GETPOST('socid','int');
 $search_sale=GETPOST('search_sale','int');
 $search_total_ht=GETPOST('search_total_ht','alpha');
@@ -676,6 +677,7 @@ if ($resql)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
@@ -1018,8 +1020,8 @@ if ($resql)
 	}
 	// Action column
 	print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterButtons();
-	print $searchpitco;
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
 	print '</td>';
 
 	print "</tr>\n";

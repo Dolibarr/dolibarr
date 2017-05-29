@@ -1,14 +1,16 @@
 <?php
 require 'SegmentIterator.php';
 class SegmentException extends Exception
-{}
+{
+}
+
 /**
  * Class for handling templating segments with odt files
  * You need PHP 5.2 at least
  * You need Zip Extension or PclZip library
  *
- * @copyright  GPL License 2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
- * @copyright  GPL License 2012 - Stephen Larroque - lrq3000@gmail.com
+ * @copyright  2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
+ * @copyright  2012 - Stephen Larroque - lrq3000@gmail.com
  * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
  * @version 1.4.5 (last update 2013-04-07)
  */
@@ -22,11 +24,13 @@ class Segment implements IteratorAggregate, Countable
 	protected $images = array();
 	protected $odf;
 	protected $file;
+	
     /**
      * Constructor
      *
-     * @param string $name name of the segment to construct
-     * @param string $xml XML tree of the segment
+     * @param string $name  name of the segment to construct
+     * @param string $xml   XML tree of the segment
+     * @param string $odf   odf
      */
     public function __construct($name, $xml, $odf)
     {
@@ -139,6 +143,8 @@ class Segment implements IteratorAggregate, Countable
         }
         $reg = "/\[!--\sBEGIN\s$this->name\s--\](.*)\[!--\sEND\s$this->name\s--\]/sm";
         $this->xmlParsed = preg_replace($reg, '$1', $this->xmlParsed);
+	// Miguel Erill 09704/2017 - Add macro replacement to invoice lines
+        $this->xmlParsed = $this->macroReplace($this->xmlParsed);
         $this->file->open($this->odf->getTmpfile());
         foreach ($this->images as $imageKey => $imageValue) {
 			if ($this->file->getFromName('Pictures/' . $imageValue) === false) {
@@ -152,10 +158,35 @@ class Segment implements IteratorAggregate, Countable
         
         return $this->xmlParsed;
     }
+
+   /**
+    * Function to replace macros for invoice short and long month, invoice year
+    * 
+    * Substitution occur when the invoice is generated, not considering the invoice date
+    * so do not (re)generate in a diferent date than the one that the invoice belongs to
+    * Perhaps it would be better to use the invoice issued date but I still do not know
+    * how to get it here
+    *
+    * Miguel Erill 09/04/2017
+    * 
+    * @param	string	$value	String to convert
+    */
+    public function macroReplace($text)
+    {
+        global $langs;
+
+        $patterns=array( '__CURRENTDAY__','__CURRENTDAYTEXT__','__CURRENTMONTHSHORT__','__CURRENTMONTH__','__CURRENTYEAR__' );
+        $values=array( date('j'), $langs->trans(date('l')), $langs->trans(date('M')), $langs->trans(date('F')), date('Y') );
+
+        $text=preg_replace($patterns, $values, $text);
+
+	return $text;
+    }
+
     /**
      * Analyse the XML code in order to find children
      *
-     * @param string $xml
+     * @param string $xml   Xml
      * @return Segment
      */
     protected function _analyseChildren($xml)
@@ -172,11 +203,14 @@ class Segment implements IteratorAggregate, Countable
         }
         return $this;
     }
+    
     /**
      * Assign a template variable to replace
      *
-     * @param string $key
-     * @param string $value
+     * @param string $key       Key
+     * @param string $value     Value
+     * @param string $encode    Encode
+     * @param string $charset   Charset
      * @throws SegmentException
      * @return Segment
      */
@@ -230,7 +264,7 @@ IMG;
     /**
      * Shortcut to retrieve a child
      *
-     * @param string $prop
+     * @param string $prop      Prop
      * @return Segment
      * @throws SegmentException
      */
@@ -245,8 +279,8 @@ IMG;
     /**
      * Proxy for setVars
      *
-     * @param string $meth
-     * @param array $args
+     * @param string $meth      Meth
+     * @param array $args       Args
      * @return Segment
      */
     public function __call($meth, $args)

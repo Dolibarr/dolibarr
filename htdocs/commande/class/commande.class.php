@@ -9,7 +9,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2016-2017 Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +116,6 @@ class Commande extends CommonOrder
 
     public $demand_reason_id;   // Source reason. Why we receive order (after a phone campaign, ...)
     public $demand_reason_code;
-    public $address;
     public $date;				// Date commande
 	/**
 	 * @deprecated
@@ -136,6 +135,7 @@ class Commande extends CommonOrder
     public $linked_objects=array();
 
     public $user_author_id;
+    public $user_valid;
 
 	/**
 	 * @var OrderLine[]
@@ -464,6 +464,7 @@ class Commande extends CommonOrder
                     if ($this->lines[$i]->fk_product > 0)
                     {
                         $mouvP = new MouvementStock($this->db);
+                        $mouvP->origin = &$this;
                         // We increment stock of product (and sub-products)
                         $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
                         if ($result < 0) { $error++; $this->error=$mouvP->error; break; }
@@ -1102,6 +1103,7 @@ class Commande extends CommonOrder
             $line->desc              = $object->lines[$i]->desc;
             $line->price             = $object->lines[$i]->price;
             $line->subprice          = $object->lines[$i]->subprice;
+            $line->vat_src_code      = $object->lines[$i]->vat_src_code;
             $line->tva_tx            = $object->lines[$i]->tva_tx;
             $line->localtax1_tx      = $object->lines[$i]->localtax1_tx;
             $line->localtax2_tx      = $object->lines[$i]->localtax2_tx;
@@ -1465,7 +1467,8 @@ class Commande extends CommonOrder
             $tva_tx = get_default_tva($mysoc,$this->thirdparty,$prod->id);
             $tva_npr = get_default_npr($mysoc,$this->thirdparty,$prod->id);
             if (empty($tva_tx)) $tva_npr=0;
-
+            $vat_src_code = '';     // May be defined into tva_tx
+            
             $localtax1_tx=get_localtax($tva_tx,1,$this->thirdparty,$mysoc,$tva_npr);
             $localtax2_tx=get_localtax($tva_tx,2,$this->thirdparty,$mysoc,$tva_npr);
 
@@ -1484,6 +1487,7 @@ class Commande extends CommonOrder
             $line->qty=$qty;
             $line->subprice=$price;
             $line->remise_percent=$remise_percent;
+            $line->vat_src_code=$vat_src_code;
             $line->tva_tx=$tva_tx;
             $line->localtax1_tx=$localtax1_tx;
             $line->localtax2_tx=$localtax2_tx;
@@ -1538,7 +1542,7 @@ class Commande extends CommonOrder
         // Check parameters
         if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-        $sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut';
+        $sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_user_valid, c.fk_statut';
         $sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_availability, c.fk_input_reason';
         $sql.= ', c.fk_account';
         $sql.= ', c.date_commande';
@@ -1582,6 +1586,7 @@ class Commande extends CommonOrder
                 $this->socid				= $obj->fk_soc;
                 $this->statut				= $obj->fk_statut;
                 $this->user_author_id		= $obj->fk_user_author;
+                $this->user_valid           = $obj->fk_user_valid;
                 $this->total_ht				= $obj->total_ht;
                 $this->total_tva			= $obj->total_tva;
                 $this->total_localtax1		= $obj->total_localtax1;
@@ -1702,6 +1707,7 @@ class Commande extends CommonOrder
             $line->fk_commande=$this->id;
             $line->fk_remise_except=$remise->id;
             $line->desc=$remise->description;   	// Description ligne
+            $line->vat_src_code=$remise->vat_src_code;
             $line->tva_tx=$remise->tva_tx;
             $line->subprice=-$remise->amount_ht;
             $line->price=-$remise->amount_ht;
@@ -1757,7 +1763,7 @@ class Commande extends CommonOrder
         $this->lines=array();
 
         $sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.label as custom_label, l.description, l.price, l.qty, l.vat_src_code, l.tva_tx,';
-        $sql.= ' l.localtax1_tx, l.localtax2_tx, l.fk_remise_except, l.remise_percent, l.subprice, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.rang, l.info_bits, l.special_code,';
+        $sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.fk_remise_except, l.remise_percent, l.subprice, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.rang, l.info_bits, l.special_code,';
         $sql.= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 	    $sql.= ' l.fk_unit,';
 		$sql.= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
@@ -1794,9 +1800,11 @@ class Commande extends CommonOrder
 
                 $line->vat_src_code     = $objp->vat_src_code; 
                 $line->tva_tx           = $objp->tva_tx;
-                $line->localtax1_tx     = $objp->localtax1_tx;
+	            $line->localtax1_tx     = $objp->localtax1_tx;
                 $line->localtax2_tx     = $objp->localtax2_tx;
-                $line->total_ht         = $objp->total_ht;
+	            $line->localtax1_type	= $objp->localtax1_type;
+	            $line->localtax2_type	= $objp->localtax2_type;
+	            $line->total_ht         = $objp->total_ht;
                 $line->total_ttc        = $objp->total_ttc;
                 $line->total_tva        = $objp->total_tva;
                 $line->total_localtax1  = $objp->total_localtax1;
@@ -2866,11 +2874,6 @@ class Commande extends CommonOrder
                     $this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
                     dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
                     $this->db->rollback();
-                    unset($_POST['productid']);
-                    unset($_POST['tva_tx']);
-                    unset($_POST['price_ht']);
-                    unset($_POST['qty']);
-                    unset($_POST['buying_price']);
                     return self::STOCK_NOT_ENOUGH_FOR_ORDER;
                 }
             }
@@ -2997,8 +3000,8 @@ class Commande extends CommonOrder
 		$sql.= " total_ht=".(isset($this->total_ht)?$this->total_ht:"null").",";
 		$sql.= " total_ttc=".(isset($this->total_ttc)?$this->total_ttc:"null").",";
 		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
-		$sql.= " fk_user_author=".(isset($this->user_author)?$this->user_author:"null").",";
-		$sql.= " fk_user_valid=".(isset($this->fk_user_valid)?$this->fk_user_valid:"null").",";
+		$sql.= " fk_user_author=".(isset($this->user_author_id)?$this->user_author_id:"null").",";
+		$sql.= " fk_user_valid=".(isset($this->user_valid)?$this->user_valid:"null").",";
 		$sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
 		$sql.= " fk_cond_reglement=".(isset($this->cond_reglement_id)?$this->cond_reglement_id:"null").",";
 		$sql.= " fk_mode_reglement=".(isset($this->mode_reglement_id)?$this->mode_reglement_id:"null").",";
@@ -3541,25 +3544,26 @@ class Commande extends CommonOrder
             $line->qty=1;
             $line->subprice=100;
             $line->price=100;
-            $line->tva_tx=19.6;
+            $line->tva_tx=20;
             if ($xnbp == 2)
             {
                 $line->total_ht=50;
-                $line->total_ttc=59.8;
-                $line->total_tva=9.8;
+                $line->total_ttc=60;
+                $line->total_tva=10;
                 $line->remise_percent=50;
             }
             else
             {
                 $line->total_ht=100;
-                $line->total_ttc=119.6;
-                $line->total_tva=19.6;
+                $line->total_ttc=120;
+                $line->total_tva=20;
                 $line->remise_percent=0;
             }
             if ($num_prods > 0)
             {
             	$prodid = mt_rand(1, $num_prods);
             	$line->fk_product=$prodids[$prodid];
+				$line->product_ref='SPECIMEN';
             }
 
             $this->lines[$xnbp]=$line;
@@ -3804,6 +3808,7 @@ class OrderLine extends CommonOrderLine
             $this->qty              = $objp->qty;
             $this->price            = $objp->price;
             $this->subprice         = $objp->subprice;
+            $this->vat_src_code     = $objp->vat_src_code;
             $this->tva_tx           = $objp->tva_tx;
             $this->localtax1_tx		= $objp->localtax1_tx;
             $this->localtax2_tx		= $objp->localtax2_tx;
@@ -3871,7 +3876,7 @@ class OrderLine extends CommonOrderLine
 
 	    $this->db->begin();
 
-        $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid='".$this->rowid."';";
+        $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid=".$this->rowid;
 
         dol_syslog("OrderLine::delete", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -4115,11 +4120,12 @@ class OrderLine extends CommonOrderLine
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
 		$sql.= " description='".$this->db->escape($this->desc)."'";
 		$sql.= " , label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
+		$sql.= " , vat_src_code=".(! empty($this->vat_src_code)?"'".$this->db->escape($this->vat_src_code)."'":"''");
 		$sql.= " , tva_tx=".price2num($this->tva_tx);
 		$sql.= " , localtax1_tx=".price2num($this->localtax1_tx);
 		$sql.= " , localtax2_tx=".price2num($this->localtax2_tx);
-		$sql.= " , localtax1_type='".$this->localtax1_type."'";
-		$sql.= " , localtax2_type='".$this->localtax2_type."'";
+		$sql.= " , localtax1_type='".$this->db->escape($this->localtax1_type)."'";
+		$sql.= " , localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql.= " , qty=".price2num($this->qty);
 		$sql.= " , subprice=".price2num($this->subprice)."";
 		$sql.= " , remise_percent=".price2num($this->remise_percent)."";

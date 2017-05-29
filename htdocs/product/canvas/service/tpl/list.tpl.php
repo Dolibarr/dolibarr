@@ -71,8 +71,8 @@
   				<td class="liste_titre" align="<?php echo $searchfield['align']; ?>"><input class="flat" type="text" name="s<?php echo $searchfield['alias']; ?>" value=""></td>
 	<?php } else if ($key == $num) { 	
         print '<td class="liste_titre" align="right">';
-        $searchpitco=$form->showFilterAndCheckAddButtons(0);
-        print $searchpitco;
+        $searchpicto=$form->showFilterAndCheckAddButtons(0);
+        print $searchpicto;
         print '</td>';
  			} else { ?>
   			<td class="liste_titre">&nbsp;</td>

@@ -71,12 +71,18 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $transkey='';
     $transvalue='';
     $toselect='';
     $search_array_options=array();
+}
+
+if ($action == 'setMAIN_ENABLE_OVERWRITE_TRANSLATION')
+{
+    if (GETPOST('value')) dolibarr_set_const($db, 'MAIN_ENABLE_OVERWRITE_TRANSLATION', 1, 'chaine', 0, '', $conf->entity);
+    else dolibarr_set_const($db, 'MAIN_ENABLE_OVERWRITE_TRANSLATION', 0, 'chaine', 0, '', $conf->entity);
 }
 
 if ($action == 'add' || (GETPOST('add') && $action != 'update'))
@@ -114,8 +120,16 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 		}
 		else
 		{
-	        $db->rollback();
-		    setEventMessages($db->lasterror(), null, 'errors');
+
+		    $db->rollback();
+		    if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+		    {
+		        setEventMessages($langs->trans("WarningAnEntryAlreadyExistForTransKey"), null, 'warnings');
+		    }
+		    else 
+		    {
+		        setEventMessages($db->lasterror(), null, 'errors');
+		    }
 			$action='';
 		}
 	}
@@ -161,6 +175,24 @@ print $langs->trans("CurrentUserLanguage").': <strong>'.$s.' '.$current_language
 
 print '<br>';
 
+print $langs->trans("EnableOverwriteTranslation").' ';
+if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
+{
+    // Button off, click to enable
+    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&amp;value=1">';
+    print img_picto($langs->trans("Disabled"),'switch_off');
+    print '</a>';
+}
+else
+{
+    // Button on, click to disable
+    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&amp;value=0">';
+    print img_picto($langs->trans("Activated"),'switch_on');
+    print '</a>';
+}
+
+print '<br><br>';
+
 $param='&mode='.$mode;
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -177,6 +209,7 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 
 $head=translation_prepare_head();
 
@@ -232,7 +265,9 @@ if ($mode == 'overwrite')
     	print '<td align="center">';
     	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
     //}
-    print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="add">';
+    $disabled='';
+    if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) $disabled=' disabled="disabled"';
+    print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add">';
     print "</td>\n";
     print '</tr>';
     
@@ -387,8 +422,8 @@ if ($mode == 'searchkey')
     print '</td>';    
     // Action column
     print '<td class="liste_titre nowrap" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-    print $searchpitco;
+    $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+    print $searchpicto;
     print '</td>';
     print '</tr>';
     
@@ -407,9 +442,17 @@ if ($mode == 'searchkey')
         print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td><td>';
         print dol_escape_htmltag($val);
         print '</td><td align="right">';
-        if ($val != $newlangfileonly->tab_translate[$key]) 
+        if (! empty($newlangfileonly->tab_translate[$key]))
         {
-            $htmltext = $langs->trans("OriginalValueWas", $newlangfileonly->tab_translate[$key]);
+            if ($val != $newlangfileonly->tab_translate[$key]) 
+            {
+                $htmltext = $langs->trans("OriginalValueWas", $newlangfileonly->tab_translate[$key]);
+                print $form->textwithpicto('', $htmltext, 1, 'info');
+            }
+        }
+        else
+        {
+            $htmltext = $langs->trans("TransKeyWithoutOriginalValue", $key);
             print $form->textwithpicto('', $htmltext, 1, 'warning');
         }
         /*if (! empty($conf->multicompany->enabled) && !$user->entity)

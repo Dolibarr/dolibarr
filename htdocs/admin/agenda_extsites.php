@@ -137,7 +137,7 @@ print '<input type="hidden" name="action" value="save">';
 
 $head=agenda_prepare_head();
 
-dol_fiche_head($head, 'extsites', $langs->trans("Agenda"), 0, 'action');
+dol_fiche_head($head, 'extsites', $langs->trans("Agenda"), -1, 'action');
 
 print $langs->trans("AgendaExtSitesDesc")."<br>\n";
 print "<br>\n";

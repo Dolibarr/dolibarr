@@ -60,7 +60,7 @@ $id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
 if ($user->societe_id > 0) $id=$user->societe_id;
 $result = restrictedArea($user,'societe',$id,'&societe');
 
-$action		= GETPOST('action');
+$action		= GETPOST('action','aZ09');
 $mode		= GETPOST("mode");
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -204,7 +204,7 @@ if ($id > 0)
 {
 	$head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), -1, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 	
@@ -788,8 +788,7 @@ if ($id > 0)
 
             while ($i < $num && $i < $MAXLIST) {
                 $objp = $db->fetch_object($resql);
-                $var = ! $var;
-                print "<tr " . $bc[$var] . ">";
+                print '<tr class="oddeven">';
                 print '<td class="nowrap">';
                 $sendingstatic->id = $objp->id;
                 $sendingstatic->ref = $objp->ref;
@@ -1090,11 +1089,15 @@ if ($id > 0)
     
     				if (! empty($conf->commande->enabled))
     				{
-    					if (! empty($orders2invoice) && $orders2invoice > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-    					else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+    				    if ($object->client != 0 && $object->client != 2)
+    				    {
+    					   if (! empty($orders2invoice) && $orders2invoice > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+    					   else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+    				    }
+    				    else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
     				}
-    
-    				if ($object->client != 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
+
+    				if ($object->client != 0 && $object->client != 2) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
     				else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
     
     			}

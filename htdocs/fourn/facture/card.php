@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2015	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016  Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2016-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ if (!empty($conf->projet->enabled)) {
 if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
 
 $langs->load('bills');
@@ -61,7 +62,7 @@ if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $id			= (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $socid		= GETPOST('socid', 'int');
-$action		= GETPOST("action");
+$action		= GETPOST('action','aZ09');
 $confirm	= GETPOST("confirm");
 $ref		= GETPOST('ref','alpha');
 $cancel		= GETPOST('cancel','alpha');
@@ -70,7 +71,7 @@ $projectid	= GETPOST('projectid','int');
 $origin		= GETPOST('origin', 'alpha');
 $originid	= GETPOST('originid', 'int');
 
-//PDF
+// PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ?  1 : 0));
 $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
@@ -1187,39 +1188,17 @@ if (empty($reshook))
 	 */
 
 	// Actions to send emails
-	$actiontypecode='AC_SUP_INV';
 	$trigger_name='BILL_SUPPLIER_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromsupplierinvoice';
 	$trackid='sin'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-
-	// Build document
-	if ($action == 'builddoc')
-	{
-		// Save modele used
-	    $object->fetch($id);
-	    $object->fetch_thirdparty();
-
-		// Save last template used to generate document
-		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-	    $outputlangs = $langs;
-	    $newlang=GETPOST('lang_id','alpha');
-	    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-	    if (! empty($newlang))
-	    {
-	        $outputlangs = new Translate("",$conf);
-	        $outputlangs->setDefaultLang($newlang);
-	    }
-		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-	    if ($result	< 0)
-	    {
-			setEventMessages($object->error, $object->errors, 'errors');
-    	    $action='';
-	    }
-	}
+	// Actions to build doc
+	$upload_dir = $conf->fournisseur->facture->dir_output;
+	$permissioncreate = $user->rights->fournisseur->facture->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+	
 	// Make calculation according to calculationrule
 	if ($action == 'calculate')
 	{
@@ -1234,22 +1213,6 @@ if (empty($reshook))
 	        exit;
 	    }
 	}
-	// Delete file in doc form
-	if ($action == 'remove_file')
-	{
-	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	    if ($object->fetch($id))
-	    {
-	    	$object->fetch_thirdparty();
-	        $upload_dir =	$conf->fournisseur->facture->dir_output . "/";
-	        $file =	$upload_dir	. '/' .	GETPOST('file');
-	        $ret=dol_delete_file($file,0,0,0,$object);
-	        if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-	        else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-	    }
-	}
-
 	if ($action == 'update_extras')
 	{
 		// Fill array 'array_options' with data from add form
@@ -1924,7 +1887,7 @@ else
         $head = facturefourn_prepare_head($object);
         $titre=$langs->trans('SupplierInvoice');
 
-        dol_fiche_head($head, 'card', $titre, 0, 'bill');
+        dol_fiche_head($head, 'card', $titre, -1, 'bill');
 
         // Clone confirmation
         if ($action == 'clone')
@@ -2354,7 +2317,7 @@ else
     	$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement, p.rowid, p.fk_bank,';
     	$sql.= ' c.id as paiement_type,';
     	$sql.= ' pf.amount,';
-    	$sql.= ' ba.rowid as baid, ba.ref as baref, ba.label';
+    	$sql.= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
     	$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
     	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
     	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
@@ -2402,6 +2365,16 @@ else
     	                $bankaccountstatic->id=$objp->baid;
     	                $bankaccountstatic->ref=$objp->baref;
     	                $bankaccountstatic->label=$objp->baref;
+						$bankaccountstatic->number = $objp->banumber;
+
+						if (! empty($conf->accounting->enabled)) {
+							$bankaccountstatic->account_number = $objp->account_number;
+
+							$accountingjournal = new AccountingJournal($db);
+							$accountingjournal->fetch($objp->fk_accountancy_journal);
+							$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+						}
+
     	                print '<td align="right">';
     	                if ($objp->baid > 0) print $bankaccountstatic->getNomUrl(1,'transactions');
     	                print '</td>';
@@ -2792,8 +2765,8 @@ else
 	                 * Documents generes
 	                 */
 	                $ref=dol_sanitizeFileName($object->ref);
-	                $subdir = get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref;
-	                $filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref;
+	                $subdir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$ref;
+	                $filedir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
 	                $urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
 	                $genallowed=$user->rights->fournisseur->facture->creer;
 	                $delallowed=$user->rights->fournisseur->facture->supprimer;

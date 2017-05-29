@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Security check
 if (! $user->rights->facture->lire) accessforbidden();
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $socid=0;
 if ($user->societe_id > 0)
@@ -145,7 +145,7 @@ if ($year)
         print '<td align="right">'.$langs->trans("Size").'</td>';
         print '<td align="right">'.$langs->trans("Date").'</td>';
         print '</tr>';
-        $var=true;
+
         if (is_resource($handle))
         {
             while (($file = readdir($handle))!==false)
@@ -155,7 +155,7 @@ if ($year)
                     
                     $tfile = $dir . '/'.$year.'/'.$file;
                     $relativepath = $year.'/'.$file;
-                    print "<tr ".$bc[$var].">".'<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
+                    print '<tr class="oddeven">'.'<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
                     print '<td align="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
                     print '<td align="right">'.dol_print_date(dol_filemtime($tfile),"dayhour").'</td></tr>';
                 }

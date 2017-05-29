@@ -110,18 +110,18 @@ class Form
         }
         else
 		{
-            if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
+            if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 	        if ($fieldrequired) $ret.='<span class="fieldrequired">';
             $ret.=$langs->trans($text);
 	        if ($fieldrequired) $ret.='</span>';
 	        if (! empty($notabletag)) $ret.=' ';
-            if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</td>';
-            if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right">';
-            if ($htmlname && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
+            if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='</td>';
+            if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='<td align="right">';
+            if ($htmlname && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='<a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
 	        if (! empty($notabletag) && $notabletag == 1) $ret.=' : ';
 	        if (! empty($notabletag) && $notabletag == 3) $ret.=' ';
-            if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</td>';
-            if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</tr></table>';
+            if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='</td>';
+            if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='</tr></table>';
         }
 
         return $ret;
@@ -159,7 +159,7 @@ class Form
         }
         else
         {
-            if (GETPOST('action') == 'edit'.$htmlname)
+            if (GETPOST('action','aZ09') == 'edit'.$htmlname)
             {
                 $ret.="\n";
                 $ret.='<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam?'?'.$moreparam:'').'">';
@@ -429,23 +429,23 @@ class Form
         if ($direction > 0) { $extracss=($extracss?$extracss.' ':'').'inline-block'; $extrastyle='padding: 0px; padding-right: 3px !important;'; }
 
         $classfortooltip='classfortooltip';
-        
+
         $s='';$textfordialog='';
-        
+
         $htmltext=str_replace('"',"&quot;",$htmltext);
-        if ($tooltiptrigger != '') 
+        if ($tooltiptrigger != '')
         {
             $classfortooltip='classfortooltiponclick';
             $textfordialog.='<div style="display: none;" id="idfortooltiponclick_'.$tooltiptrigger.'" class="classfortooltiponclicktext">'.$htmltext.'</div>';
         }
-        if ($tooltipon == 2 || $tooltipon == 3) 
+        if ($tooltipon == 2 || $tooltipon == 3)
         {
             $paramfortooltipimg=' class="'.$classfortooltip.' inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'"';
             if ($tooltiptrigger == '') $paramfortooltipimg.=' title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on img tag to store tooltip
             else $paramfortooltipimg.=' dolid="'.$tooltiptrigger.'"';
         }
         else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':'').($extrastyle?' style="'.$extrastyle.'"':''); // Attribut to put on td text tag
-        if ($tooltipon == 1 || $tooltipon == 3) 
+        if ($tooltipon == 1 || $tooltipon == 3)
         {
             $paramfortooltiptd=' class="'.($tooltipon == 3 ? 'cursorpointer ' : '').$classfortooltip.' inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'" ';
             if ($tooltiptrigger == '') $paramfortooltiptd.=' title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
@@ -492,9 +492,10 @@ class Form
      */
     function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 2, $tooltiptrigger='')
     {
-        global $conf;
+        global $conf, $langs;
 
         $alt = '';
+        if ($tooltiptrigger) $alt=$langs->trans("ClickToShowHelp");
 
         //For backwards compatibility
         if ($type == '0') $type = 'info';
@@ -576,16 +577,16 @@ class Form
     	  				jQuery(".massaction").hide();
     	            }
         		}
-    
+
         	jQuery(document).ready(function () {
         		initCheckForSelect();
         		jQuery(".checkforselect").click(function() {
         			initCheckForSelect();
     	  		});
     	  		jQuery(".massactionselect").change(function() {
-        			var massaction = $( this ).val();  
+        			var massaction = $( this ).val();
         			var urlform = $( this ).closest("form").attr("action").replace("#show_files","");
-        			if (massaction == "builddoc") 
+        			if (massaction == "builddoc")
                     {
                         urlform = urlform + "#show_files";
     	            }
@@ -985,18 +986,23 @@ class Form
     		}
     		// mode 1
     		$urloption='htmlname='.$htmlname.'&outjson=1&filter='.$filter;
-    		print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+    		$out.=  ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+			$out.='<style type="text/css">
+					.ui-autocomplete {
+						z-index: 250;
+					}
+				</style>';
     		if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
     		else if ($hidelabel > 1) {
     			if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
     			else $placeholder=' title="'.$langs->trans("RefOrLabel").'"';
     			if ($hidelabel == 2) {
-    				print img_picto($langs->trans("Search"), 'search');
+    				$out.=  img_picto($langs->trans("Search"), 'search');
     			}
     		}
-            print '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->THIRDPARTY_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
+            $out.=  '<input type="text" class="'.$morecss.'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->THIRDPARTY_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
     		if ($hidelabel == 3) {
-    			print img_picto($langs->trans("Search"), 'search');
+    			$out.=  img_picto($langs->trans("Search"), 'search');
     		}
     	}
     	else
@@ -1028,7 +1034,7 @@ class Form
     {
         global $conf,$user,$langs;
 
-        $out=''; 
+        $out='';
         $num=0;
         $outarray=array();
 
@@ -1071,7 +1077,7 @@ class Form
         if ($resql)
         {
 			$events = null;
-			
+
            	if ($conf->use_javascript_ajax && ! $forcecombo)
             {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
@@ -1455,9 +1461,9 @@ class Form
        {
         	if (! empty($conf->multicompany->transverse_mode))
         	{
-        		$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-        		$sql.= " WHERE ug.fk_user = u.rowid";
-        		$sql.= " AND ug.entity = ".$conf->entity;
+        		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug";
+        		$sql.= " ON ug.fk_user = u.rowid";
+        		$sql.= " WHERE ug.entity = ".$conf->entity;
         	}
         	else
         	{
@@ -2496,7 +2502,7 @@ class Form
                     }
                     if ($objp->supplier_reputation)
                     {
-            			//TODO dictionnary
+            			//TODO dictionary
             			$reputations=array(''=>$langs->trans('Standard'),'FAVORITE'=>$langs->trans('Favorite'),'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
 
                         $opt .= " - ".$reputations[$objp->supplier_reputation];
@@ -3444,7 +3450,7 @@ class Form
             $cat = new Categorie($this->db);
             $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
 		}
-		
+
         $output = '<select class="flat" name="'.$htmlname.'">';
 		$outarray=array();
         if (is_array($cate_arbo))
@@ -4172,7 +4178,7 @@ class Form
                 }
                 print '</div>';
             }
-            if ($more) 
+            if ($more)
             {
                 print '<div class="inline-block">';
                 print $more;
@@ -4777,7 +4783,7 @@ class Form
                 {
                     $retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth75imp" id="'.$prefix.'year" name="'.$prefix.'year">';
 
-                    for ($year = $syear - 5; $year < $syear + 10 ; $year++)
+                    for ($year = $syear - 10; $year < $syear + 10 ; $year++)
                     {
                         $retstring.='<option value="'.$year.'"'.($year == $syear ? ' selected':'').'>'.$year.'</option>';
                     }
@@ -4917,7 +4923,7 @@ class Form
      *	@param  int	$iSecond  		    Default preselected duration (number of seconds or '')
      * 	@param	int	$disabled           Disable the combo box
      * 	@param	string	$typehour		If 'select' then input hour and input min is a combo,
-     *						            if 'text' input hour is in text and input min is a text, 
+     *						            if 'text' input hour is in text and input min is a text,
      *						            if 'textselect' input hour is in text and input min is a combo
      *  @param	integer	$minunderhours	If 1, show minutes selection under the hours
      * 	@param	int	$nooutput		    Do not output html string but return it
@@ -4956,13 +4962,13 @@ class Form
         }
         elseif ($typehour=='text' || $typehour=='textselect')
         {
-        	$retstring.='<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" size="1" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat maxwidth50" value="'.($hourSelected?((int) $hourSelected):'').'">';
+        	$retstring.='<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" size="1" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat maxwidth50" value="'.(($hourSelected != '')?((int) $hourSelected):'').'">';
         }
         else return 'BadValueForParameterTypeHour';
 
         if ($typehour!='text') $retstring.=' '.$langs->trans('HourShort');
         else $retstring.=':';
-        
+
         // Minutes
         if ($minunderhours) $retstring.='<br>';
         else $retstring.="&nbsp;";
@@ -4980,9 +4986,9 @@ class Form
         }
         elseif ($typehour=='text' )
         {
-        	$retstring.='<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" size="1" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat maxwidth50" value="'.($minSelected?((int) $minSelected):'').'">';
+        	$retstring.='<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" size="1" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat maxwidth50" value="'.(($minSelected != '')?((int) $minSelected):'').'">';
         }
-        
+
         if ($typehour!='text') $retstring.=' '.$langs->trans('MinuteShort');
 
         //$retstring.="&nbsp;";
@@ -5011,10 +5017,16 @@ class Form
      *  @param	string			$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' or 'POS' = Do not sort, we keep original order
      *  @param	string			$morecss		Add more class to css styles
      *  @param	int				$addjscombo		    Add js combo
+<<<<<<< HEAD
      *  @param  string          $moreparamonempty   Add more param on the empty option line. Not used if show_empty not set
      *  @param  int             $disablebademail    Check if an email is found into value and if not disable and colorize entry
      *  @param  int             $nohtmlescape       No html escaping.
      * 	@return	string							    HTML select string
+=======
+     *  @param  string          $moreparamonempty   Add more param on the empty option line. Not used if show_empty not set.
+     *  @param  int             $disablebademail    Check if an email is found into value and if not disable and colorize entry.
+     * 	@return	string							    HTML select string.
+>>>>>>> branch '5.0' of git@github.com:Dolibarr/dolibarr.git
      *  @see multiselectarray
      */
     static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0, $moreparamonempty='',$disablebademail=0, $nohtmlescape=0)
@@ -5588,7 +5600,7 @@ class Form
 		{
     		$listofidcompanytoscan=$object->thirdparty->id;
     		if (($object->thirdparty->parent > 0) && ! empty($conf->global->THIRDPARTY_INCLUDE_PARENT_IN_LINKTO)) $listofidcompanytoscan.=','.$object->thirdparty->parent;
-    		
+
     		$possiblelinks=array(
     		    'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('propal',1).')'),
     		    'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('commande',1).')'),
@@ -5600,7 +5612,7 @@ class Form
     		    'invoice_supplier'=>array('enabled'=>$conf->fournisseur->facture->enabled , 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('facture_fourn',1).')')
     		);
 		}
-		
+
 		global $action;
 
 		// Can complete the possiblelink array
@@ -5839,7 +5851,7 @@ class Form
 
         //print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
         $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid,$nodbprefix);
-        
+
         $navurl = $_SERVER["PHP_SELF"];
         // Special case for project/task page
         if ($paramid == 'project_ref')
@@ -5896,11 +5908,15 @@ class Form
 		}
 		else if (in_array($object->element, array('action', 'agenda')))
 		{
-		    $ret.=$object->ref.'<br>'.$object->label;    
+		    $ret.=$object->ref.'<br>'.$object->label;
+		}
+		else if (in_array($object->element, array('adherent_type')))
+		{
+			$ret.=$object->label;
 		}
 		else if ($fieldref != 'none') $ret.=dol_htmlentities($object->$fieldref);
-		
-		
+
+
 		if ($morehtmlref)
 		{
 		    $ret.=' '.$morehtmlref;
@@ -6035,7 +6051,7 @@ class Form
             {
                 if ($addlinktofullsize)
                 {
-                    $urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile);
+                    $urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile, 0, '&entity='.$entity);
                     if ($urladvanced) $ret.='<a href="'.$urladvanced.'">';
                     else $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
                 }
@@ -6046,7 +6062,7 @@ class Form
             {
                 if ($addlinktofullsize)
                 {
-                    $urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile);
+                    $urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile, 0, '&entity='.$entity);
                     if ($urladvanced) $ret.='<a href="'.$urladvanced.'">';
                     else $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
                 }
@@ -6201,7 +6217,7 @@ class Form
         return $out;
     }
 
-    
+
     /**
      *	Return HTML to show the search and clear seach button
      *
@@ -6210,7 +6226,7 @@ class Form
     function showFilterButtons()
     {
         global $conf, $langs;
-    
+
         $out='<div class="nowrap">';
         $out.='<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
         $out.='<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -6229,7 +6245,7 @@ class Form
     function showCheckAddButtons($cssclass='checkforaction', $calljsfunction=0)
     {
         global $conf, $langs;
-    
+
         $out='';
         if (! empty($conf->use_javascript_ajax)) $out.='<div class="inline-block checkallactions"><input type="checkbox" id="checkallactions" name="checkallactions" class="checkallactions"></div>';
         $out.='<script type="text/javascript">

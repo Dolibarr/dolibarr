@@ -145,7 +145,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->adherent-
     $result=$object->delete($user);
     if ($result > 0)
     {
-    	header("Location: card_subscriptions.php?rowid=".$object->fk_adherent);
+    	header("Location: ".DOL_URL_ROOT."/adherents/card.php?rowid=".$object->fk_adherent);
     	exit;
     }
     else

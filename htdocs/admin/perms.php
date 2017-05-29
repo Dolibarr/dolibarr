@@ -32,7 +32,7 @@ $langs->load("admin");
 $langs->load("users");
 $langs->load("other");
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 if (!$user->admin) accessforbidden();
 
@@ -140,7 +140,6 @@ if ($result)
 {
     $num	= $db->num_rows($result);
     $i		= 0;
-    $var	= True;
     $oldmod	= "";
 
     while ($i < $num)
@@ -187,8 +186,7 @@ if ($result)
         }
 
         
-        print '<tr '. $bc[$var].'>';
-
+        print '<tr class="oddeven">';
         print '<td>'.img_object('',$picto).' '.$objMod->getName();
         print '<a name="'.$objMod->getName().'">&nbsp;</a>';
 

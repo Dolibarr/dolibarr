@@ -39,11 +39,11 @@ $langs->load("orders");
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service');
 
+$sall = GETPOST('search_all', 'alphanohtml');
 $sref = GETPOST('search_ref', 'alpha');
 $snom = GETPOST('search_nom', 'alpha');
 $suser = GETPOST('search_user', 'alpha');
 $sttc = GETPOST('search_ttc', 'alpha');
-$sall = GETPOST('search_all', 'alpha');
 $sdate = GETPOST('search_date', 'alpha');
 $page = GETPOST('page', 'int');
 $sproduct = GETPOST('sproduct', 'int');
@@ -179,8 +179,8 @@ if ($resql)
          $form->select_date('', 'search_date', 0, 0, 1, '', 1, 0, 1, 0, '').
          '</td>'.
          '<td class="liste_titre" align="right">';
-         $searchpitco=$form->showFilterAndCheckAddButtons(0);
-         print $searchpitco;
+         $searchpicto=$form->showFilterAndCheckAddButtons(0);
+         print $searchpicto;
          '</td>'.
          '</tr>';
 

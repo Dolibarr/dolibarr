@@ -31,7 +31,7 @@ $socid='';
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $socid=0;
 if ($user->societe_id > 0)

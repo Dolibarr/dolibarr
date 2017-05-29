@@ -293,7 +293,6 @@ print '<td align="right">%</td>';
 print '</tr>';
 
 $oldyear=0;
-$var=true;
 foreach ($data as $val)
 {
     $year = $val['year'];
@@ -301,7 +300,7 @@ foreach ($data as $val)
     {	// If we have empty year
         $oldyear--;
         
-        print '<tr '.$bc[$var].' height="24">';
+        print '<tr class="oddeven" height="24">';
         print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
         print '<td align="right">0</td>';
         print '<td align="right"></td>';
@@ -311,7 +310,7 @@ foreach ($data as $val)
         print '<td align="right"></td>';
         print '</tr>';
     }
-    print '<tr '.$bc[$var].' height="24">';
+    print '<tr class="oddeven" height="24">';
     print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
     print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';

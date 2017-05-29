@@ -79,17 +79,17 @@ class modFacture extends DolibarrModules
 		$this->const = array();
 		$r=0;
 
-		$this->const[$r][0] = "FACTURE_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "crabe";
-		$this->const[$r][3] = 'Name of PDF model of invoice';
-		$this->const[$r][4] = 0;
-		$r++;
-
 		$this->const[$r][0] = "FACTURE_ADDON";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_facture_terre";
 		$this->const[$r][3] = 'Name of numbering numerotation rules of invoice';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "FACTURE_ADDON_PDF";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "crabe";
+		$this->const[$r][3] = 'Name of PDF model of invoice';
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -100,6 +100,13 @@ class modFacture extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 		
+		/*$this->const[$r][0] = "FACTURE_DRAFT_WATERMARK";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "__(Draft)__";
+		$this->const[$r][3] = 'Watermark to show on draft invoices';
+		$this->const[$r][4] = 0;
+		$r++;*/
+
 		
 		// Boxes
 		//$this->boxes = array(0=>array(1=>'box_factures_imp.php'),1=>array(1=>'box_factures.php'));
@@ -304,8 +311,8 @@ class modFacture extends DolibarrModules
 		}
 
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type = 'invoice' AND entity = ".$conf->entity,
-				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','invoice',".$conf->entity.")"
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[1][2])."' AND type = 'invoice' AND entity = ".$conf->entity,
+				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."','invoice',".$conf->entity.")"
 		);
 
 		return $this->_init($sql,$options);

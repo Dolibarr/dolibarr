@@ -35,7 +35,7 @@ $langs->load("users");
 $langs->load('other');
 
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 $id=(GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('id','int'));
 $ref = GETPOST('ref', 'alpha');
@@ -86,7 +86,7 @@ if (! $sortfield) $sortfield="name";
 $object = new User($db);
 if ($id > 0 || ! empty($ref))
 {
-	$result = $object->fetch($id, $ref);
+	$result = $object->fetch($id, $ref, '', 1);
 	$object->getrights();
 	$entitytouseforuserdir = $object->entity;
 	if (empty($entitytouseforuserdir)) $entitytouseforuserdir=1;

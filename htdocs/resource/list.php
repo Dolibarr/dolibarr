@@ -91,15 +91,11 @@ if (empty($sortorder)) $sortorder="ASC";
 if (empty($sortfield)) $sortfield="t.rowid";
 if (empty($arch)) $arch = 0;
 
-$page           = GETPOST('page','int');
-if ($page == -1) {
-	$page = 0 ;
-}
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
-if (! $sortfield) $sortfield="p.ref";
-if (! $sortorder) $sortorder="ASC";
-$offset = $conf->liste_limit * $page ;
+$offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -187,6 +183,7 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $moreforfilter = '';
@@ -232,8 +229,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 }
 // Action column
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
 print '</td>';
 print "</tr>\n";
 

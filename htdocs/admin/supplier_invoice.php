@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2015 Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2017 Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,7 +205,7 @@ print "<br>";
 
 $head = supplierorder_admin_prepare_head();
 
-dol_fiche_head($head, 'invoice', $langs->trans("Suppliers"), 0, 'company');
+dol_fiche_head($head, 'invoice', $langs->trans("Suppliers"), -1, 'company');
 
 
 // Supplier invoice numbering module
@@ -361,7 +361,6 @@ foreach ($dirmodels as $reldir)
 
     if (is_dir($dir))
     {
-        $var=true;
 
         $handle=opendir($dir);
 
@@ -379,7 +378,7 @@ foreach ($dirmodels as $reldir)
 	                $module = new $classname($db, new FactureFournisseur($db));
 
                     
-                    print "<tr ".$bc[$var].">\n";
+                    print "<tr class=\"oddeven\">\n";
                     print "<td>";
 	                print (empty($module->name)?$name:$module->name);
 	                print "</td>\n";
@@ -471,8 +470,14 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
+$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
 print '<tr class="oddeven"><td colspan="2">';
-print $langs->trans("FreeLegalTextOnInvoices").' '.img_info($langs->trans("AddCRIfTooLong")).'</br>';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
 $variablename='SUPPLIER_INVOICE_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {

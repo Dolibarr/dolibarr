@@ -209,6 +209,23 @@ class Adherent extends CommonObject
 
 		// Substitutions
 		$substitutionarray=array(
+				'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
+				'__ID__'=>$msgishtml?dol_htmlentitiesbr($this->id):$this->id,
+				'__CIVILITY__'=>$this->getCivilityLabel(),
+				'__FIRSTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
+				'__LASTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
+				'__FULLNAME__'=>$msgishtml?dol_htmlentitiesbr($this->getFullName($langs)):$this->getFullName($langs),
+				'__COMPANY__'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
+				'__ADDRESS__'=>$msgishtml?dol_htmlentitiesbr($this->address):$this->address,
+				'__ZIP__'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
+				'__TOWN_'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
+				'__COUNTRY__'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
+				'__EMAIL__'=>$msgishtml?dol_htmlentitiesbr($this->email):$this->email,
+				'__BIRTH__'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
+				'__PHOTO__'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
+				'__LOGIN__'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
+				'__PASSWORD__'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass,
+				// For backward compatibility
 				'%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
 				'%ID%'=>$msgishtml?dol_htmlentitiesbr($this->id):$this->id,
 				'%CIVILITY%'=>$this->getCivilityLabel(),
@@ -225,7 +242,6 @@ class Adherent extends CommonObject
 				'%PHOTO%'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
 				'%LOGIN%'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
 				'%PASSWORD%'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass,
-				// For backward compatibility
 				'%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
 				'%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
 				'%PRENOM%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
@@ -234,16 +250,10 @@ class Adherent extends CommonObject
 				'%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
 				'%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
 		);
-		// Add extrafields as substitution key %EXTRA_XXX%
-		foreach($this->array_options as $key => $val)
-		{
-			$keyshort=preg_replace('/^(options|extra)_/','',$key);
-			$substitutionarray['%EXTRA_'.$keyshort.'%']=$val;
-		}
 
-		complete_substitutions_array($substitutionarray, $langs);
+		complete_substitutions_array($substitutionarray, $langs, $this);
 
-		return make_substitutions($text,$substitutionarray);
+		return make_substitutions($text, $substitutionarray, $langs);
 	}
 
 
@@ -335,7 +345,7 @@ class Adherent extends CommonObject
                 {
                     // Add link to user
                     $sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-                    $sql.= " fk_member = '".$this->id."'";
+                    $sql.= " fk_member = ".$this->id;
                     $sql.= " WHERE rowid = ".$this->user_id;
                     dol_syslog(get_class($this)."::create", LOG_DEBUG);
                     $resql = $this->db->query($sql);
@@ -439,18 +449,18 @@ class Adherent extends CommonObject
         $sql.= ", town="   .($this->town?"'".$this->db->escape($this->town)."'":"null");
         $sql.= ", country=".($this->country_id>0?"'".$this->country_id."'":"null");
         $sql.= ", state_id=".($this->state_id>0?"'".$this->state_id."'":"null");
-        $sql.= ", email='".$this->email."'";
-        $sql.= ", skype='".$this->skype."'";
+        $sql.= ", email='".$this->db->escape($this->email)."'";
+        $sql.= ", skype='".$this->db->escape($this->skype)."'";
         $sql.= ", phone="   .($this->phone?"'".$this->db->escape($this->phone)."'":"null");
         $sql.= ", phone_perso=" .($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
         $sql.= ", phone_mobile=" .($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
         $sql.= ", note_private=" .($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
         $sql.= ", note_public=" .($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
         $sql.= ", photo="   .($this->photo?"'".$this->photo."'":"null");
-        $sql.= ", public='".$this->public."'";
+        $sql.= ", public='".$this->db->escape($this->public)."'";
         $sql.= ", statut="  .$this->statut;
         $sql.= ", fk_adherent_type=".$this->typeid;
-        $sql.= ", morphy='".$this->morphy."'";
+        $sql.= ", morphy='".$this->db->escape($this->morphy)."'";
         $sql.= ", birth="   .($this->birth?"'".$this->db->idate($this->birth)."'":"null");
         if ($this->datefin)   $sql.= ", datefin='".$this->db->idate($this->datefin)."'";		// Must be modified only when deleting a subscription
         if ($this->datevalid) $sql.= ", datevalid='".$this->db->idate($this->datevalid)."'";	// Must be modified only when validating a member
@@ -649,7 +659,7 @@ class Adherent extends CommonObject
         // Search for last subscription id and end date
         $sql = "SELECT rowid, datec as dateop, dateadh as datedeb, datef as datefin";
         $sql.= " FROM ".MAIN_DB_PREFIX."subscription";
-        $sql.= " WHERE fk_adherent='".$this->id."'";
+        $sql.= " WHERE fk_adherent=".$this->id;
         $sql.= " ORDER by dateadh DESC";	// Sort by start subscription date
 
         dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
@@ -1089,7 +1099,7 @@ class Adherent extends CommonObject
         elseif ($ref || $fk_soc) {
         	$sql.= " AND d.entity IN (".getEntity().")";
         	if ($ref) $sql.= " AND d.rowid='".$this->db->escape($ref)."'";
-        	elseif ($fk_soc) $sql.= " AND d.fk_soc='".$fk_soc."'";
+        	elseif ($fk_soc > 0) $sql.= " AND d.fk_soc=".$fk_soc;
         }
         elseif ($ref_ext)
         {

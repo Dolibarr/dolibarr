@@ -93,16 +93,22 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("PayBoxSetup"),$linkback,'title_setup');
 
-print $langs->trans("PayBoxDesc")."<br>\n";
+$h = 0;
+$head = array();
 
-print '<br>';
+$head[$h][0] = DOL_URL_ROOT."/paybox/admin/paybox.php";
+$head[$h][1] = $langs->trans("PayBox");
+$head[$h][2] = 'payboxaccount';
+$h++;
+
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
-dol_fiche_head(null, 'payboxaccount', '');
+dol_fiche_head($head, 'payboxaccount', '', -1);
 
-$var=true;
+print $langs->trans("PayBoxDesc")."<br>\n";
+print '<br>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -131,7 +137,6 @@ print '<input size="32" type="text" name="PAYBOX_PBX_IDENTIFIANT" value="'.$conf
 print '<br>'.$langs->trans("Example").': 2 ('.$langs->trans("Test").')';
 print '</td></tr>';
 
-$var=true;
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("UsageParameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -207,7 +212,7 @@ print '</form>';
 
 print '<br><br>';
 
-print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
+print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br><br>';
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
 print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?amount=<i>9.99</i>&tag=<i>your_free_tag</i></b>'."<br>\n";
 if (! empty($conf->commande->enabled))
@@ -232,7 +237,6 @@ if (! empty($conf->adherent->enabled))
 	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=membersubscription&ref=<i>member_ref</i></b>'."<br>\n";
 }
 
-print "<br>";
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
 llxFooter();

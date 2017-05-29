@@ -110,7 +110,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 }
 
 // Init search fields
-$sall=GETPOST('sall','alpha');
+$sall=GETPOST('sall', 'alphanohtml');
 $search_user=GETPOST('search_user','alpha');
 $search_login=GETPOST('search_login','alpha');
 $search_lastname=GETPOST('search_lastname','alpha');
@@ -119,9 +119,9 @@ $search_gender=GETPOST('search_gender','alpha');
 $search_employee=GETPOST('search_employee','alpha');
 $search_accountancy_code=GETPOST('search_accountancy_code','alpha');
 $search_email=GETPOST('search_email','alpha');
-$search_statut=GETPOST('search_statut','alpha');
+$search_statut=GETPOST('search_statut','intcomma');
 $search_thirdparty=GETPOST('search_thirdparty','alpha');
-$search_supervisor=GETPOST('search_supervisor','alpha');
+$search_supervisor=GETPOST('search_supervisor','intcomma');
 $search_previousconn=GETPOST('search_previousconn','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 
@@ -148,7 +148,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
     {
     	$search_user="";
     	$search_login="";
@@ -204,8 +204,8 @@ else
 }
 if ($socid > 0) $sql.= " AND u.fk_soc = ".$socid;
 //if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
-if ($search_supervisor > 0)   $sql.= " AND u.fk_user = ".$search_supervisor;
-if ($search_thirdparty != '') $sql.=natural_search(array('s.nom'), $search_thirdparty);
+if ($search_supervisor > 0)   $sql.= " AND u.fk_user = ".$db->escape($search_supervisor);
+if ($search_thirdparty != '') $sql.= natural_search(array('s.nom'), $search_thirdparty);
 if ($search_login != '')      $sql.= natural_search("u.login", $search_login);
 if ($search_lastname != '')   $sql.= natural_search("u.lastname", $search_lastname);
 if ($search_firstname != '')  $sql.= natural_search("u.firstname", $search_firstname);
@@ -214,9 +214,9 @@ if (is_numeric($search_employee) && $search_employee >= 0)    {
 	$sql .= ' AND u.employee = '.(int) $search_employee;
 }
 if ($search_accountancy_code != '')  $sql.= natural_search("u.accountancy_code", $search_accountancy_code);
-if ($search_email != '')  $sql.= natural_search("u.email", $search_email);
-if ($search_statut != '' && $search_statut >= 0) $sql.= " AND (u.statut=".$search_statut.")";
-if ($sall)                    $sql.= natural_search(array_keys($fieldstosearchall), $sall);
+if ($search_email != '')             $sql.= natural_search("u.email", $search_email);
+if ($search_statut != '' && $search_statut >= 0) $sql.= " AND u.statut IN (".$db->escape($search_statut).")";
+if ($sall)                           $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -296,6 +296,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
@@ -419,8 +420,8 @@ if (! empty($arrayfields['u.statut']['checked']))
 }
 // Action column
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
 print '</td>';
 
 print "</tr>\n";

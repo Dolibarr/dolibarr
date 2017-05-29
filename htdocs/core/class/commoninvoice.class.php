@@ -51,7 +51,8 @@ abstract class CommonInvoice extends CommonObject
     const TYPE_DEPOSIT = 3;
 
     /**
-     * Proforma invoice
+     * Proforma invoice. 
+     * @deprectad Remove this. A "proforma invoice" is an order with a look of invoice, not an invoice !
      */
     const TYPE_PROFORMA = 4;
 
@@ -90,11 +91,11 @@ abstract class CommonInvoice extends CommonObject
 
 	
 	/**
-	 * 	Return remain amount to pay.
-	 *  Property ->id and ->total_ttc must be set.
+	 * 	Return remain amount to pay. Property ->id and ->total_ttc must be set.
+	 *  This does not include open direct debit requests.
 	 *
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *	@return		int						Remain of amount to pay
+	 *	@return		double						Remain of amount to pay
 	 */
 	function getRemainToPay($multicurrency=0)
 	{
@@ -547,6 +548,12 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var int
 	 */
 	public $fk_product;
+
+	/**
+	 * VAT code
+	 * @var string
+	 */
+	public $vat_src_code;
 
 	/**
 	 * VAT %

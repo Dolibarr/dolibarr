@@ -24,39 +24,40 @@
 
 create table llx_bank_account
 (
-  rowid					integer AUTO_INCREMENT PRIMARY KEY,
-  datec					datetime,
-  tms					timestamp,
-  ref					varchar(12) NOT NULL,
-  label					varchar(30) NOT NULL,
-  entity				integer DEFAULT 1 NOT NULL,	-- multi company id
-  fk_user_author		integer,
-  fk_user_modif			integer,
-  bank					varchar(60),
-  code_banque			varchar(128),
-  code_guichet			varchar(6),
-  number				varchar(255),
-  cle_rib				varchar(5),
-  bic					varchar(11),
-  iban_prefix			varchar(34),				-- full iban. 34 according to ISO 13616
-  country_iban			varchar(2),					-- deprecated
-  cle_iban				varchar(2),
-  domiciliation			varchar(255),
-  state_id				integer        DEFAULT NULL,
-  fk_pays				integer        NOT NULL,
-  proprio				varchar(60),
-  owner_address     	varchar(255),
-  courant				smallint DEFAULT 0 NOT NULL,
-  clos					smallint DEFAULT 0 NOT NULL,
-  rappro				smallint DEFAULT 1,
-  url					varchar(128),
-  account_number		varchar(32),				-- bank accountancy number
-  accountancy_journal	varchar(16) DEFAULT NULL,	-- bank accountancy journal
-  currency_code			varchar(3) NOT NULL,
-  min_allowed			integer DEFAULT 0,
-  min_desired			integer DEFAULT 0,
-  comment				text,						-- TODO rename in note_private
-  note_public     		text,
-  model_pdf       		varchar(255),
-  import_key      		varchar(14)
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  datec						datetime,
+  tms						timestamp,
+  ref						varchar(12) NOT NULL,
+  label						varchar(30) NOT NULL,
+  entity					integer DEFAULT 1 NOT NULL,	-- multi company id
+  fk_user_author			integer,
+  fk_user_modif				integer,
+  bank						varchar(60),
+  code_banque				varchar(128),
+  code_guichet				varchar(6),
+  number					varchar(255),
+  cle_rib					varchar(5),
+  bic						varchar(11),
+  iban_prefix				varchar(34),				-- full iban. 34 according to ISO 13616
+  country_iban				varchar(2),					-- deprecated
+  cle_iban					varchar(2),
+  domiciliation				varchar(255),
+  state_id					integer        DEFAULT NULL,
+  fk_pays					integer        NOT NULL,
+  proprio					varchar(60),
+  owner_address				varchar(255),
+  courant					smallint DEFAULT 0 NOT NULL,
+  clos						smallint DEFAULT 0 NOT NULL,
+  rappro					smallint DEFAULT 1,
+  url						varchar(128),
+  account_number			varchar(32),				-- bank accountancy number
+  fk_accountancy_journal	integer,					-- bank accountancy journal
+  currency_code				varchar(3) NOT NULL,
+  min_allowed				integer DEFAULT 0,
+  min_desired				integer DEFAULT 0,
+  comment					text,						-- TODO rename in note_private
+  note_public				text,
+  model_pdf					varchar(255),
+  import_key				varchar(14),
+  extraparams			    varchar(255)				-- for other parameters with json format
 )ENGINE=innodb;

@@ -377,7 +377,10 @@ if (empty($reshook))
 									$array_options = $lines[$i]->array_options;
 								}
 
-								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $date_start, $date_end, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->fk_unit, $object->origin, $lines[$i]->rowid);
+								$tva_tx = $lines[$i]->tva_tx;
+								if (! empty($lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
+								
+								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $date_start, $date_end, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->fk_unit, $object->origin, $lines[$i]->rowid);
 
 								if ($result < 0) {
 									$error++;
@@ -1256,7 +1259,6 @@ if (empty($reshook))
 
 
 	// Actions to send emails
-	$actiontypecode='AC_COM';
 	$trigger_name='ORDER_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromorder';
@@ -1325,13 +1327,7 @@ $formorder = new FormOrder($db);
 $formmargin = new FormMargin($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
-/**
- * *******************************************************************
- *
- * Mode creation
- *
- * *******************************************************************
- */
+// Mode creation
 if ($action == 'create' && $user->rights->commande->creer)
 {
 	print load_fiche_titre($langs->trans('CreateOrder'),'','title_commercial.png');
@@ -1499,9 +1495,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	}
 	print '</tr>' . "\n";
 
-	/*
-	 * Contact de la commande
-	 */
+	// Contact of order
 	if ($socid > 0) {
 		print "<tr><td>" . $langs->trans("DefaultContact") . '</td><td colspan="2">';
 		$form->select_contacts($soc->id, $setcontact, 'contactid', 1, $srccontactslist);
@@ -1586,9 +1580,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 	// Project
 	if (! empty($conf->projet->enabled) && $socid > 0)
 	{
-		$projectid = GETPOST('projectid')?GETPOST('projectid'):0;
-		if ($origin == 'project') $projectid = ($originid ? $originid : 0);
-
 		$langs->load("projects");
 		print '<tr>';
 		print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
@@ -1643,8 +1634,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 	// Note public
 	print '<tr>';
-	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
-	print '<td valign="top" colspan="2">';
+	print '<td class="tdtop">' . $langs->trans('NotePublic') . '</td>';
+	print '<td colspan="2">';
 
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
@@ -1654,8 +1645,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 	// Note private
 	if (empty($user->societe_id)) {
 		print '<tr>';
-		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
-		print '<td valign="top" colspan="2">';
+		print '<td class="tdtop">' . $langs->trans('NotePrivate') . '</td>';
+		print '<td colspan="2">';
 
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
@@ -1746,11 +1737,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '</table>';
 	}
 } else {
-	/* *************************************************************************** */
-	/*                                                                             */
-	/* Mode vue et edition                                                         */
-	/*                                                                             */
-	/* *************************************************************************** */
+	// Mode view
 	$now = dol_now();
 
 	if ($object->id > 0) {
@@ -2445,8 +2432,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 		dol_fiche_end();
 
 		/*
-		 * Boutons actions
-		*/
+		 * Buttons for actions
+		 */
 		if ($action != 'presend' && $action != 'editline') {
 			print '<div class="tabsAction">';
 

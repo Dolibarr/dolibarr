@@ -102,14 +102,14 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 /**
  * 	Get list of entity id to use
  *
- * 	@param	string	$element	Current element 
- *                              'societe', 'socpeople', 'actioncomm', 'agenda', 'resource', 
+ * 	@param	string	$element	Current element
+ *                              'societe', 'socpeople', 'actioncomm', 'agenda', 'resource',
  *                              'product', 'productprice', 'stock',
- *                              'propal', 'facture', 'facture_fourn',
- *                              'categorie', 'bank_account', 'bank_account', 'adherent', 'user',  
+ *                              'propal', 'supplier_proposal', 'facture', 'facture_fourn',
+ *                              'categorie', 'bank_account', 'bank_account', 'adherent', 'user',
  *                              'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
  *                              'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
- *                              'email_template', 'event',  
+ *                              'email_template', 'event',
  * 	@param	int		$shared		0=Return id of entity, 1=Return id entity + shared entities
  * 	@return	mixed				Entity id(s) to use
  */
@@ -121,7 +121,7 @@ function getEntity($element=false, $shared=0)
 	if ($element == 'actioncomm') $element='agenda';
 	if ($element == 'fichinter')  $element='intervention';
 	if ($element == 'categorie')  $element='category';
-	
+
 	if (is_object($mc))
 	{
 		return $mc->getEntity($element, $shared);
@@ -237,83 +237,177 @@ function dol_shutdown()
 
 
 /**
- *  Return value of a param into GET or POST supervariable
+ *  Return value of a param into GET or POST supervariable.
+ *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
+ *  Note: The property $user->default_values is loaded by the main when loading the user.
  *
  *  @param	string	$paramname   Name of parameter to found
- *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's text and sign, 'aZ'=check it's a-z only, 'array'=check it's array, 'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string), 'day', 'month', 'year', 'custom'= custom filter specify $filter and $options)
+ *  @param	string	$check	     Type of check
+ *                                  ''=no check (deprecated)
+ *                                  'none'=no check (only for param that should have very rich content)
+ *                                  'int'=check it's numeric
+ *                                  'alpha'=check it's text and sign
+ *                                  'aZ'=check it's a-z only
+ *                                  'aZ09'=check it's simple alpha string (recommended for keys)
+ *                                  'array'=check it's array
+ *                                  'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
+ *                                  'nohtml', 'alphanohtml'=check there is no html content
+ *                                  'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
- *  @param  int     $filter      Filter to apply when $check is set to custom. (See http://php.net/manual/en/filter.filters.php for détails)
- *  @param  mixed   $options     Options to pass to filter_var when $check is set to custom
+ *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'.
  *  @return string|string[]      Value found (string or array), or '' if check fails
+ *
+ *  @TODO Set default value for check to alpha. Check all WYSIWYG edition (email and description...) is still ok with rich text.
  */
-function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
+function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 {
-	if (empty($method))
-	{
-		$out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
-		
-		// Management of default values
-		if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
-		{
-			$relativepathstring = preg_replace('/\.[a-z]+$/', '', $_SERVER["PHP_SELF"]);
-			if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
-			$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-			$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
-			$relativepathstring=dol_string_nospecial($relativepathstring, '-');
-			// $relativepathstring is now string that identify the page: '_societe_card', '_agenda_card', ...
-			$keyfordefaultvalue = 'MAIN_DEFAULT_FOR_'.$relativepathstring.'_'.$paramname;
-			global $conf;
-			if (isset($conf->global->$keyfordefaultvalue)) $out = $conf->global->$keyfordefaultvalue;
-		}
-	}
+    global $mysoc,$user,$conf;
+
+    if (empty($paramname)) return 'BadFirstParameterForGETPOST';
+
+    if (empty($method)) $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
 	elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
 	elseif ($method==4) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:(isset($_COOKIE[$paramname])?$_COOKIE[$paramname]:''));
 	else return 'BadThirdParameterForGETPOST';
 
-	if (! empty($check))
+	if (empty($method) || $method == 3 || $method == 4)
 	{
-	    // Replace vars like __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__
-	    // TODO Add more var like __PREVIOUSDAY__, __PREVIOUSMONTH__, __PREVIOUSYEAR__
-	    if (! is_array($out) && preg_match('/^__([a-z0-9]+)__$/i', $out, $reg))
+    	$relativepathstring = $_SERVER["PHP_SELF"];
+    	if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+    	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+    	$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+
+        // Code for search criteria persistence.
+    	// Retrieve values if restore_lastsearch_values is set and there is saved values
+    	if (! empty($_GET['restore_lastsearch_values']) && ! empty($_SESSION['lastsearch_values_'.$relativepathstring]))        // Keep $_GET here
+    	{
+	        $tmp=json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
+	        if (is_array($tmp))
+	        {
+	            foreach($tmp as $key => $val)
+	            {
+	                if ($key == $paramname)
+	                {
+	                    $out=$val;
+	                    break;
+	                }
+	            }
+	        }
+    	}
+	    // Else, retreive default values if we are not doing a sort
+	    elseif (! isset($_GET['sortfield']) && ! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
 	    {
-	        if ($reg[1] == 'DAY')
+	        if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 	        {
-    	        $tmp=dol_getdate(dol_now(), true);
-    	        $out = $tmp['mday'];
+	            if (! empty($user->default_values))		// $user->default_values defined from menu default values
+	            {
+	                //var_dump($user->default_values[$relativepathstring]['createform']);
+	                if (isset($user->default_values[$relativepathstring]['createform'][$paramname])) $out = $user->default_values[$relativepathstring]['createform'][$paramname];
+	            }
 	        }
-	        elseif ($reg[1] == 'MONTH')
+	        // Management of default search_filters and sort order
+	        //elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+	        elseif (! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 	        {
-    	        $tmp=dol_getdate(dol_now(), true);
-    	        $out = $tmp['mon'];
-	        }
-	        elseif ($reg[1] == 'YEAR')
-	        {
-	            $tmp=dol_getdate(dol_now(), true);
-	            $out = $tmp['year'];
-	        }
-	        elseif ($reg[1] == 'MYCOUNTRYID')
-	        {
-	            global $mysoc;
-	            $out = $mysoc->country_id;
-	        }
-	        elseif ($reg[1] == 'USERID')
-	        {
-	            global $user;
-	            $out = $user->id;
-	        }
-	        elseif ($reg[1] == 'ENTITYID')
-	        {
-	            global $conf;
-	            $out = $conf->entity;
+	            if (! empty($user->default_values))		// $user->default_values defined from menu default values
+	            {
+	                //var_dump($user->default_values[$relativepathstring]);
+	                if ($paramname == 'sortfield')
+	                {
+	                    if (isset($user->default_values[$relativepathstring]['sortorder']))    // We will use the key of $user->default_values[path][sortorder]
+	                    {
+	                        $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+	                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
+	                        {
+	                            if ($out) $out.=', ';
+	                            $out.=dol_string_nospecial($key, '', $forbidden_chars_to_replace);
+	                        }
+	                    }
+	                }
+	                elseif ($paramname == 'sortorder')
+	                {
+	                    if (isset($user->default_values[$relativepathstring]['sortorder']))    // We will use the val of $user->default_values[path][sortorder]
+	                    {
+	                        $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+	                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
+	                        {
+	                            if ($out) $out.=', ';
+	                            $out.=dol_string_nospecial($val, '', $forbidden_chars_to_replace);
+	                        }
+	                    }
+	                }
+	                elseif (isset($user->default_values[$relativepathstring]['filters'][$paramname]))
+	                {
+	                    $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+	                    $out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '', $forbidden_chars_to_replace);
+	                }
+	            }
 	        }
 	    }
 
+	}
+
+	if (empty($check) && ! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2)
+	{
+	   dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and 2nd param not defined, when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+	   // Enable this line to know who call the GETPOST with empty $check parameter.
+	   //var_dump(debug_backtrace()[0]);
+	}
+
+	if (! empty($check))
+	{
+	    // Replace vars like __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__, ...
+	    if (! is_array($out))
+	    {
+	        $maxloop=20; $loopnb=0;    // Protection against infinite loop
+	        while (preg_match('/__([A-Z0-9]+_?[A-Z0-9]+)__/i', $out, $reg) && ($loopnb < $maxloop))    // Detect '__ABCDEF__' as key 'ABCDEF' and '__ABC_DEF__' as key 'ABC_DEF'. Detection is also correct when 2 vars are side by side.
+	        {
+	            $loopnb++; $newout = '';
+
+    	        if ($reg[1] == 'DAY')       { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['mday']; }
+    	        elseif ($reg[1] == 'MONTH') { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['mon'];  }
+    	        elseif ($reg[1] == 'YEAR')  { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['year']; }
+    	    	elseif ($reg[1] == 'PREVIOUS_DAY')   { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; }
+    	        elseif ($reg[1] == 'PREVIOUS_MONTH') { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_prev_month($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
+    	        elseif ($reg[1] == 'PREVIOUS_YEAR')  { $tmp=dol_getdate(dol_now(), true); $newout = ($tmp['year'] - 1); }
+    	    	elseif ($reg[1] == 'NEXT_DAY')   { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; }
+    	        elseif ($reg[1] == 'NEXT_MONTH') { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_month($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
+    	        elseif ($reg[1] == 'NEXT_YEAR')  { $tmp=dol_getdate(dol_now(), true); $newout = ($tmp['year'] + 1); }
+    	        elseif ($reg[1] == 'MYCOUNTRYID')
+    	        {
+    	            $newout = $mysoc->country_id;
+    	        }
+    	        elseif ($reg[1] == 'USERID')
+    	        {
+    	            $newout = $user->id;
+    	        }
+    	    	elseif ($reg[1] == 'SUPERVISORID')
+    	        {
+    	            $newout = $user->fk_user;
+    	        }
+    	        elseif ($reg[1] == 'ENTITYID')
+    	        {
+    	            $newout = $conf->entity;
+    	        }
+    	        else $newout = '';     // Key not found, we replace with empty string
+    	        //var_dump('__'.$reg[1].'__ -> '.$newout);
+    	        $out = preg_replace('/__'.preg_quote($reg[1],'/').'__/', $newout, $out);
+	        }
+	    }
+
+	    // Check is done after replacement
 	    switch ($check)
 	    {
+	        case 'none':
+	            break;
 	        case 'int':
 	            if (! is_numeric($out)) { $out=''; }
+	            break;
+	        case 'intcomma':
+	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
 	            break;
 	        case 'alpha':
 	            $out=trim($out);
@@ -331,18 +425,47 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	            break;
 	        case 'aZ09':
 	            $out=trim($out);
-	            if (preg_match('/[^a-z0-9]+/i',$out)) $out='';
+	            if (preg_match('/[^a-z0-9_\-]+/i',$out)) $out='';
 	            break;
 	        case 'array':
 	            if (! is_array($out) || empty($out)) $out=array();
 	            break;
 			case 'nohtml':
-				$out=dol_string_nohtmltag($out);
+			    $out=dol_string_nohtmltag($out);
 				break;
-	        case 'custom':
+			case 'alphanohtml':	// Recommended for search params
+	            $out=trim($out);
+	            // '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+	            // '../' is dangerous because it allows dir transversals
+	            if (preg_match('/"/',$out)) $out='';
+	            else if (preg_match('/\.\.\//',$out)) $out='';
+			    $out=dol_string_nohtmltag($out);
+				break;
+			case 'custom':
 	            if (empty($filter)) return 'BadFourthParameterForGETPOST';
 	            $out=filter_var($out, $filter, $options);
 	            break;
+	    }
+	}
+
+    // Code for search criteria persistence.
+	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
+	if (empty($method) || $method == 3 || $method == 4)
+	{
+	    //if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder', 'sortfield", 'smonth', 'syear', 'month', 'year')))
+	    if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder','sortfield')))
+	    {
+	        //var_dump($paramname.' - '.$out.' '.$user->default_values[$relativepathstring]['filters'][$paramname]);
+
+	        // We save search key only if:
+	        // - not empty, or
+	        // - if value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
+
+	        //if (! empty($out) || ! empty($user->default_values[$relativepathstring]['filters'][$paramname]))
+	        if (! empty($out))
+	        {
+                $user->lastsearch_values_tmp[$relativepathstring][$paramname]=$out;
+	        }
 	    }
 	}
 
@@ -351,17 +474,17 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 
 
 /**
- *  Return a prefix to use for this Dolibarr instance for session or cookie names.
+ *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
  *  This prefix is unique for instance and avoid conflict between multi-instances,
- *  even when having two instances with one root dir or two instances in virtual servers
+ *  even when having two instances with one root dir or two instances in virtual servers.
  *
- *  @param  string  $mode       '' or 'email'              
+ *  @param  string  $mode       '' (prefix for session name) or 'email' (prefix for email id)
  *  @return	string      		A calculated prefix
  */
 function dol_getprefix($mode='')
 {
     global $conf;
-    
+
     // If MAIL_PREFIX_FOR_EMAIL_ID is set and prefix is for email
     if ($mode == 'email' && ! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))
     {
@@ -496,19 +619,20 @@ function dol_buildpath($path, $type=0)
 }
 
 /**
- *	Create a clone of instance of object (new instance with same properties)
- * 	This function works for both PHP4 and PHP5
+ *	Create a clone of instance of object (new instance with same value for properties)
+ *  Property that are reference are also new object (true clone)
  *
  * 	@param	object	$object		Object to clone
  *	@return object				Object clone
- *  @deprecated Dolibarr no longer supports PHP4, use PHP5 native clone construct
  *  @see https://php.net/manual/language.oop5.cloning.php
  */
 function dol_clone($object)
 {
-	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
+	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
 
-	$myclone = clone $object;
+	//$myclone = clone $object;                    // PHP clone is a shallow copy only, not a real clone, so properties of references will keep references (refer to the same target/variable
+	$myclone=unserialize(serialize($object));
+
 	return $myclone;
 }
 
@@ -1013,23 +1137,31 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	global $conf, $form, $user, $langs;
 
 	$error = 0;
-	
+
 	$maxvisiblephotos=1;
 	$showimage=1;
 	$showbarcode=empty($conf->barcode->enabled)?0:($object->barcode?1:0);
 	if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 	$modulepart='unknown';
 
-	if ($object->element == 'societe')   $modulepart='societe';
-	if ($object->element == 'contact')   $modulepart='contact';
-	if ($object->element == 'member')    $modulepart='memberphoto';
-	if ($object->element == 'user')      $modulepart='userphoto';
-	if ($object->element == 'product')   $modulepart='product';
-	if ($object->element == 'propal')    $modulepart='propal';
-	if ($object->element == 'commande')  $modulepart='commande';
-	if ($object->element == 'facture')   $modulepart='facture';
-	if ($object->element == 'fichinter') $modulepart='ficheinter';
-	
+	if ($object->element == 'societe')         $modulepart='societe';
+	if ($object->element == 'contact')         $modulepart='contact';
+	if ($object->element == 'member')          $modulepart='memberphoto';
+	if ($object->element == 'user')            $modulepart='userphoto';
+	if ($object->element == 'product')         $modulepart='product';
+
+	if (class_exists("Imagick"))
+	{
+		if ($object->element == 'propal')    $modulepart='propal';
+		if ($object->element == 'commande')  $modulepart='commande';
+		if ($object->element == 'facture')   $modulepart='facture';
+		if ($object->element == 'fichinter') $modulepart='ficheinter';
+		if ($object->element == 'contrat')   $modulepart='contract';
+	    if ($object->element == 'supplier_proposal') $modulepart='supplier_proposal';
+		if ($object->element == 'order_supplier')    $modulepart='supplier_order';
+	    if ($object->element == 'invoice_supplier')  $modulepart='supplier_invoice';
+	}
+
 	if ($object->element == 'product')
 	{
 	    $width=80; $cssclass='photoref';
@@ -1051,26 +1183,33 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	else
 	{
-        if ($showimage)
+		if ($showimage)
         {
             if ($modulepart != 'unknown')
             {
                 $phototoshow='';
-                
                 // Check if a preview file is available
-                if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter')) && class_exists("Imagick"))
+                if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract', 'supplier_order', 'supplier_proposal', 'supplier_invoice')) && class_exists("Imagick"))
                 {
                     $objectref = dol_sanitizeFileName($object->ref);
                     $dir_output = $conf->$modulepart->dir_output . "/";
-                    $filepath = $dir_output . $objectref . "/";
+                    if (in_array($modulepart, array('invoice_supplier', 'supplier_invoice')))
+                    {
+                        $subdir = get_exdir($object->id, 2, 0, 0, $object, $modulepart).$objectref;
+                    }
+                    else
+                    {
+                        $subdir = get_exdir($object->id, 0, 0, 0, $object, $modulepart).$objectref;
+                    }
+                    $filepath = $dir_output . $subdir . "/";
                     $file = $filepath . $objectref . ".pdf";
-                    $relativepath = $objectref.'/'.$objectref.'.pdf';
-                    
+                    $relativepath = $subdir.'/'.$objectref.'.pdf';
+
                     // Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
                     $fileimage = $file.'_preview.png';              // If PDF has 1 page
                     $fileimagebis = $file.'_preview-0.png';         // If PDF has more than one page
                     $relativepathimage = $relativepath.'_preview.png';
-                    
+
                     // Si fichier PDF existe
                     if (file_exists($file))
                     {
@@ -1083,12 +1222,12 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                             $ret = dol_convert_file($file, 'png', $fileimage);
                             if ($ret < 0) $error++;
                         }
-    
+
                         // Si fichier png PDF d'1 page trouve
                         if (file_exists($fileimage))
                         {
                             $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
-                            $phototoshow.= '<img height="70" class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+                            $phototoshow.= '<img height="70" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
                             $phototoshow.= '</div></div>';
                         }
                         // Si fichier png PDF de plus d'1 page trouve
@@ -1096,7 +1235,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                         {
                             $preview = preg_replace('/\.png/','',$relativepathimage) . "-0.png";
                             $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
-                            $phototoshow.= '<img height="70" class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
+                            $phototoshow.= '<img height="70" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
                             $phototoshow.= '</div></div>';
                         }
                     }
@@ -1113,7 +1252,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     $morehtmlleft.='</div>';
                 }
             }
-            
+
             if (! $phototoshow && $conf->browser->layout != 'phone')      // Show No photo link (picto of pbject)
             {
                 $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
@@ -1122,7 +1261,6 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     $width=80;
                     $cssclass='photorefcenter';
                     $nophoto=img_picto('', 'title_agenda', '', false, 1);
-                    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
                 }
                 else
                 {
@@ -1130,18 +1268,18 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     $picto = $object->picto;
                     if ($object->element == 'project' && ! $object->public) $picto = 'project'; // instead of projectpub
     				$nophoto=img_picto('', 'object_'.$picto, '', false, 1);
-    				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
                 }
+                $morehtmlleft.='<!-- No photo to show --><div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
                 $morehtmlleft.='</div>';
             }
         }
 	}
-	
+
 	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
-	
+
 	if ($object->element == 'societe')
 	{
-	    if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) 
+	    if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE))
     	{
 	       	$morehtmlstatus.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
     	}
@@ -1168,7 +1306,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye);
 		$morehtmlstatus.=$tmptxt;
 	}
-	elseif ($object->element == 'contrat' || $object->element == 'contract') 
+	elseif ($object->element == 'contrat' || $object->element == 'contract')
 	{
         if ($object->statut==0) $morehtmlstatus.=$object->getLibStatut(2);
         else $morehtmlstatus.=$object->getLibStatut(4);
@@ -1179,14 +1317,14 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		$morehtmlstatus.=$tmptxt;
 	}
 	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
-	
+
 	// Add label
 	if ($object->element == 'product' || $object->element == 'bank_account' || $object->element == 'project_task')
 	{
 		if (! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
 	}
-	
-	if ($object->element != 'product' && $object->element != 'bookmark') 
+
+	if ($object->element != 'product' && $object->element != 'bookmark')
 	{
     	$morehtmlref.='<div class="refidno">';
     	$morehtmlref.=$object->getBannerAddress('refaddress',$object);
@@ -1198,7 +1336,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		$morehtmlref.=$langs->trans("TechnicalID").': '.$object->id;
 		$morehtmlref.='</div>';
 	}
-	
+
 	print '<div class="'.($onlybanner?'arearefnobottom ':'arearef ').'heightref valignmiddle" width="100%">';
 	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlstatus, $morehtmlright);
 	print '</div>';
@@ -2336,7 +2474,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 	if ($trunc == 'right')
 	{
 		$newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-		if (dol_strlen($newstring,$stringencoding) > ($size+($nodot?0:1)))
+        if (dol_strlen($newstring,$stringencoding) > ($size+($nodot?0:1)))
 		return dol_substr($newstring,0,$size,$stringencoding).($nodot?'':'...');
 		else
 		return $string;
@@ -2601,7 +2739,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = 'class="pictoedit"
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Modify');
 
-	return img_picto($titlealt, 'edit.png', ($float ? 'style="float: '.($langs->tab_translate["DIRECTION"] == 'rtl'?'left':'right').'"' : $other));
+	return img_picto($titlealt, 'edit.png', ($float ? 'style="float: '.($langs->tab_translate["DIRECTION"] == 'rtl'?'left':'right').'"' : "") . ($other?' '.$other:''));
 }
 
 /**
@@ -2961,7 +3099,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv=0, $admin='1')
 		return img_picto($text, 'info', 'class="hideonsmartphone"');
 	}
 
-	return ($nodiv?'':'<div class="'.(empty($admin)?'':($admin=='1'?'info':$admin)).' hideonsmartphone">').img_picto($admin?$langs->trans('InfoAdmin'):$langs->trans('Note'), ($nodiv?'info':'info_black'), 'class="hideonsmartphone"').' '.$text.($nodiv?'':'</div>');
+	return ($nodiv?'':'<div class="'.(empty($admin)?'':($admin=='1'?'info':$admin)).' hideonsmartphone">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin?$langs->trans('InfoAdmin'):$langs->trans('Note')).'"></span> '.$text.($nodiv?'':'</div>');
 }
 
 
@@ -3033,17 +3171,18 @@ function dol_print_error($db='',$error='',$errors=null)
 		if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
 		{
 			$out.="<b>".$langs->trans("DatabaseTypeManager").":</b> ".$db->type."<br>\n";
-			$out.="<b>".$langs->trans("RequestLastAccessInError").":</b> ".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."<br>\n";
-			$out.="<b>".$langs->trans("ReturnCodeLastAccessInError").":</b> ".($db->lasterrno()?$db->lasterrno():$langs->trans("ErrorNoRequestInError"))."<br>\n";
-			$out.="<b>".$langs->trans("InformationLastAccessInError").":</b> ".($db->lasterror()?$db->lasterror():$langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$out.="<b>".$langs->trans("RequestLastAccessInError").":</b> ".($db->lastqueryerror()?dol_escape_htmltag($db->lastqueryerror()):$langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$out.="<b>".$langs->trans("ReturnCodeLastAccessInError").":</b> ".($db->lasterrno()?dol_escape_htmltag($db->lasterrno()):$langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$out.="<b>".$langs->trans("InformationLastAccessInError").":</b> ".($db->lasterror()?dol_escape_htmltag($db->lasterror()):$langs->trans("ErrorNoRequestInError"))."<br>\n";
 			$out.="<br>\n";
 		}
 		else                            // Mode CLI
 		{
-			$out.='> '.$langs->transnoentities("DatabaseTypeManager").":\n".$db->type."\n";
-			$out.='> '.$langs->transnoentities("RequestLastAccessInError").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."\n";
-			$out.='> '.$langs->transnoentities("ReturnCodeLastAccessInError").":\n".($db->lasterrno()?$db->lasterrno():$langs->trans("ErrorNoRequestInError"))."\n";
-			$out.='> '.$langs->transnoentities("InformationLastAccessInError").":\n".($db->lasterror()?$db->lasterror():$langs->trans("ErrorNoRequestInError"))."\n";
+		    // No dol_escape_htmltag for output, we are in CLI mode
+		    $out.='> '.$langs->transnoentities("DatabaseTypeManager").":\n".$db->type."\n";
+			$out.='> '.$langs->transnoentities("RequestLastAccessInError").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->transnoentities("ErrorNoRequestInError"))."\n";
+			$out.='> '.$langs->transnoentities("ReturnCodeLastAccessInError").":\n".($db->lasterrno()?$db->lasterrno():$langs->transnoentities("ErrorNoRequestInError"))."\n";
+			$out.='> '.$langs->transnoentities("InformationLastAccessInError").":\n".($db->lasterror()?$db->lasterror():$langs->transnoentities("ErrorNoRequestInError"))."\n";
 
 		}
 		$syslog.=", sql=".$db->lastquery();
@@ -3134,8 +3273,8 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	@param	string	$begin       ("" by defaut)
  *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
  *	@param  string	$moreattrib  Add more attributes on th ("" by defaut). To add more css class, use param $prefix.
- *	@param  string	$sortfield   Current field used to sort
- *	@param  string	$sortorder   Current sort order
+ *	@param  string	$sortfield   Current field used to sort (Ex: 'd.datep,d.id')
+ *	@param  string	$sortorder   Current sort order (Ex: 'asc,desc')
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
  *	@return	string
  */
@@ -3151,9 +3290,16 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	$tag='th';
 	if ($thead==2) $tag='div';
 
-	// If field is used as sort criteria we use a specific class
+	$tmpsortfield=explode(',',$sortfield);
+	$sortfield1=trim($tmpsortfield[0]);    // If $sortfield is 'd.datep,d.id', it becomes 'd.datep'
+	$tmpfield=explode(',',$field);
+	$field1=trim($tmpfield[0]);            // If $field is 'd.datep,d.id', it becomes 'd.datep'
+
+	//var_dump('field='.$field.' field1='.$field1.' sortfield='.$sortfield.' sortfield1='.$sortfield1);
+
+	// If field is used as sort criteria we use a specific css class liste_titre_sel
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
-	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '. $moreattrib.'>';
+	if ($field1 && ($sortfield1 == $field1 || $sortfield1 == preg_replace("/^[^\.]+\./","",$field1))) $out.= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '. $moreattrib.'>';
 	else $out.= '<'.$tag.' class="'.$prefix.'liste_titre" '. $moreattrib.'>';
 
 	if (empty($thead) && $field)    // If this is a sort field
@@ -3163,15 +3309,15 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		$options=preg_replace('/&+/i','&',$options);
 		if (! preg_match('/^&/',$options)) $options='&'.$options;
 
-		if ($field != $sortfield)
+		if ($field1 != $sortfield1) // We are on another field
 		{
-            if ($sortorder == 'DESC') $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
-            if ($sortorder == 'ASC' || ! $sortorder) $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
+            if (preg_match('/^DESC/', $sortorder)) $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
+            else $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
 		}
-		else
+		else                      // We are of first sorting criteria
 		{
-            if ($sortorder == 'DESC' || ! $sortorder) $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
-            if ($sortorder == 'ASC') $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
+            if (preg_match('/^ASC/', $sortorder)) $out.= '<a href="'.$file.'?sortfield='.$sortfield.'&sortorder=desc&begin='.$begin.$options.'">';
+		    else $out.= '<a href="'.$file.'?sortfield='.$sortfield.'&sortorder=asc&begin='.$begin.$options.'">';
 		}
 	}
 
@@ -3193,19 +3339,19 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		//$sortimg.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
 		//$sortimg.= '<span class="nowrap">';
 
-		if (! $sortorder || $field != $sortfield)
+		if (! $sortorder || $field1 != $sortfield1)
 		{
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 		}
 		else
 		{
-			if ($sortorder == 'DESC' ) {
+			if (preg_match('/^DESC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
 				$sortimg.= '<span class="nowrap">'.img_up("Z-A",0).'</span>';
 			}
-			if ($sortorder == 'ASC' ) {
+			if (preg_match('/^ASC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 				$sortimg.= '<span class="nowrap">'.img_down("A-Z",0).'</span>';
@@ -3276,7 +3422,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 2px;"><tr>';
-	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
+	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle" valign="middle">'.img_picto('',$picto, 'class="valignmiddle" id="pictotitle"', $pictoisfullpath).'</td>';
 	$return.= '<td class="nobordernopadding" valign="middle">';
 	$return.= '<div class="titre">'.$titre.'</div>';
 	$return.= '</td>';
@@ -3298,7 +3444,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
  *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder)
  *	@param	string    	$sortfield       	Field to sort on ('' by default)
  *	@param	string	    $sortorder       	Order to sort ('' by default)
- *	@param	string	    $center          	String in the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction() 
+ *	@param	string	    $center          	String in the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction()
  *	@param	int		    $num				Number of records found by select with limit+1
  *	@param	int|string  $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value of number to not show number. Use '' if unknown.
  *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
@@ -3518,14 +3664,14 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
 	    $morelabel=' ('.$reg[1].')';
 	    $rate=preg_replace('/\s*'.preg_quote($morelabel,'/').'/','',$rate);
 	}
-	if (preg_match('/\*/',$rate) || preg_match('/'.constant('MAIN_LABEL_MENTION_NPR').'/i',$rate))
+	if (preg_match('/\*/',$rate))
 	{
 		$rate=str_replace('*','',$rate);
 		$info_bits |= 1;
 	}
 
 	$ret=price($rate,0,'',0,0).($addpercent?'%':'');
-	if ($info_bits & 1) $ret.=' '.($usestarfornpr?'*':constant('MAIN_LABEL_MENTION_NPR'));
+	if ($info_bits & 1) $ret.=' *';
 	$ret.=$morelabel;
 	return $ret;
 }
@@ -3822,7 +3968,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller
 	{
 	    $conf->global->MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY = 1;
 	}
-	    
+
 	// Search local taxes
 	if (! empty($conf->global->MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY))
 	{
@@ -4067,7 +4213,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 /**
  *	Return vat rate of a product in a particular selling country or default country vat if product is unknown
  *  Function called by get_default_tva
- *  
+ *
  *  @param	int			$idprod          	Id of product or 0 if not a predefined product
  *  @param  Societe		$thirdparty_seller  Thirdparty with a ->country_code defined (FR, US, IT, ...)
  *	@param	int			$idprodfournprice	Id product_fournisseur_price (for "supplier" order/invoice)
@@ -4105,7 +4251,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 		}
 		else
 		{
-			// TODO Read default product vat according to countrycode and product. Vat for couple countrycode/product is a feature not implemeted yet. 
+			// TODO Read default product vat according to countrycode and product. Vat for couple countrycode/product is a feature not implemeted yet.
 			// May be usefull/required if hidden option SERVICE_ARE_ECOMMERCE_200238EC is on
 		}
 	}
@@ -4414,7 +4560,8 @@ function yn($yesno, $case=1, $color=0)
 
 /**
  *	Return a path to have a directory according to object.
- *  New usage:       $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'modulepart')
+ *  New usage:       $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart)
+ *         or:       $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, $modulepart)     if multidir_output not defined.
  *  Old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
  *
  *	@param	string	$num            Id of object (deprecated, $object will be used in future)
@@ -4435,7 +4582,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';
 	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
 	{
-		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided
+		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided.
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
 		else $num = preg_replace('/^.*\-/i','',$num);
 		$num = substr("000".$num, -$level);
@@ -4865,45 +5012,78 @@ function dol_concatdesc($text1,$text2,$forxml=false)
 /**
  *  Make substition into a string replacing key with vals from $substitutionarray (oldval=>newval)
  *
- *  @param	string	$chaine      			Source string in which we must do substitution
- *  @param  array	$substitutionarray		Array with key->val to substitute
- * 	@return string  		    			Output string after subsitutions
+ *  @param	string		$text	      			Source string in which we must do substitution
+ *  @param  array		$substitutionarray		Array with key->val to substitute
+ *  @param	Translate	$outputlangs			Output language
+ * 	@return string  		    				Output string after substitutions
  *  @see	complete_substitutions_array
  */
-function make_substitutions($chaine,$substitutionarray)
+function make_substitutions($text, $substitutionarray, $outputlangs=null)
 {
-	global $conf;
+	global $conf, $langs;
 
 	if (! is_array($substitutionarray)) return 'ErrorBadParameterSubstitutionArrayWhenCalling_make_substitutions';
 
-	// Make substitition
+	if (empty($outputlangs)) $outputlangs=$langs;
+
+	// Make substitution for language keys
+	if (is_object($outputlangs))
+	{
+		while (preg_match('/__\((.*)\)__/', $text, $reg))
+		{
+			$msgishtml = 0;
+			if (dol_textishtml($text,1)) $msgishtml = 1;
+			$text = preg_replace('/__\('.preg_quote($reg[1]).'\)__/', $msgishtml?dol_htmlentitiesbr($outputlangs->transnoentitiesnoconv($reg[1])):$outputlangs->transnoentitiesnoconv($reg[1]), $text);
+		}
+	}
+
+	// Make substitition for array $substitutionarray
 	foreach ($substitutionarray as $key => $value)
 	{
 		if ($key == '__SIGNATURE__' && (! empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))) $value='';
-		$chaine=str_replace("$key","$value",$chaine);	// We must keep the " to work when value is 123.5 for example
+		$text=str_replace("$key","$value",$text);	// We must keep the " to work when value is 123.5 for example
 	}
 
-	return $chaine;
+	return $text;
 }
 
 /**
- *  Complete the $substitutionarray with more entries
+ *  Complete the $substitutionarray with more entries.
+ *  Can also add substitution keys coming from external module that had set the "substitutions=1" into module_part array. In this case, method completesubstitutionarray provided by module is called.
  *
  *  @param  array		$substitutionarray		Array substitution old value => new value value
- *  @param  Translate	$outputlangs            If we want substitution from special constants, we provide a language
- *  @param  object		$object                 If we want substitution from special constants, we provide data in a source object
- *  @param  Mixed		$parameters       		Add more parameters (useful to pass product lines)
+ *  @param  Translate	$outputlangs            Output language
+ *  @param  Object		$object                 Source object
+ *  @param  mixed		$parameters       		Add more parameters (useful to pass product lines)
  *  @param  string      $callfunc               What is the name of the custom function that will be called? (default: completesubstitutionarray)
  *  @return	void
  *  @see 	make_substitutions
  */
-function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='',$parameters=null,$callfunc="completesubstitutionarray")
+function complete_substitutions_array(&$substitutionarray, $outputlangs, $object=null, $parameters=null, $callfunc="completesubstitutionarray")
 {
 	global $conf,$user;
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	// Check if there is external substitution to do asked by plugins
+	// Add a substitution key for each object property
+	if (is_object($object))
+	{
+		// TODO
+	}
+
+	// Add a substitution key for each extrafields, using key __EXTRA_XXX__
+	if (is_object($object) && is_array($object->array_options))
+	{
+		foreach($object->array_options as $key => $val)
+		{
+			$keyshort=preg_replace('/^(options|extra)_/','',$key);
+			$substitutionarray['__EXTRA_'.$keyshort.'__']=$val;
+			// For backward compatibiliy
+			$substitutionarray['%EXTRA_'.$keyshort.'%']=$val;
+		}
+	}
+
+	// Check if there is external substitution to do, requested by plugins
 	$dirsubstitutions=array_merge(array(),(array) $conf->modules_parts['substitutions']);
 
 	foreach($dirsubstitutions as $reldir)
@@ -5427,20 +5607,32 @@ function verifCond($strRights)
  *
  * @param 	string	$s				String to evaluate
  * @param	int		$returnvalue	0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
+ * @param   int     $hideerrors     1=Hide errors
  * @return	mixed					Nothing or return of eval
  */
-function dol_eval($s,$returnvalue=0)
+function dol_eval($s, $returnvalue=0, $hideerrors=1)
 {
 	// Only global variables can be changed by eval function and returned to caller
-	global $langs, $user, $conf;
-	global $leftmenu;
+	global $db, $langs, $user, $conf;
+	global $mainmenu, $leftmenu;
 	global $rights;
 	global $object;
-    global $soc;
+	global $mysoc;
+
+	global $obj;       // To get $obj used into list when dol_eval is used for computed fields and $obj is not yet $object
+	global $soc;       // For backward compatibility
 
 	//print $s."<br>\n";
-	if ($returnvalue) return @eval('return '.$s.';');
-	else @eval($s);
+	if ($returnvalue)
+	{
+	    if ($hideerrors) return @eval('return '.$s.';');
+	    else return eval('return '.$s.';');
+	}
+	else
+	{
+	    if ($hideerrors) @eval($s);
+	    else eval($s);
+	}
 }
 
 /**
@@ -5638,7 +5830,7 @@ function printCommonFooter($zone='private')
     	           this.href=this.href+\'&page_y=\'+page_y;
     	           });'."\n";
     	print '});'."\n";
-    	
+
     	if (empty($conf->dol_use_jmobile))
     	{
         	print '<!-- Set handler to switch left menu page (menuhider) -->'."\n";
@@ -5648,7 +5840,7 @@ function printCommonFooter($zone='private')
         	print "  $('.login_block').toggle();";
         	print '});'."\n";
     	}
-    	
+
     	print '</script>'."\n";
 	}
 
@@ -5811,9 +6003,9 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
     {
     	$value=preg_replace('/([<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"),'/').'\-])/','\1\2',$value);	// Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
     }
-    
+
     $value = preg_replace('/\s*\|\s*/','|', $value);
-    
+
     $crits = explode(' ', $value);
     $res = '';
     if (! is_array($fields)) $fields = array($fields);
@@ -5936,10 +6128,11 @@ function getImageFileNameForSize($file, $extName, $extImgTarget='')
  *
  * @param   string    $modulepart     propal, facture, facture_fourn, ...
  * @param   string    $relativepath   Relative path of docs.
- * @param	int		  $alldata		  Return array with all components (1 is recommended, then use a simple a href link with the class, target and mime attribute added. 'documentpreview' css class is handled by jquery code into main.inc.php)  
+ * @param	int		  $alldata		  Return array with all components (1 is recommended, then use a simple a href link with the class, target and mime attribute added. 'documentpreview' css class is handled by jquery code into main.inc.php)
+ * @param	string	  $param		  More param on http links
  * @return  string|array              Output string with href link or array with all components of link
  */
-function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0)
+function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0, $param='')
 {
     global $conf, $langs;
 
@@ -5949,15 +6142,15 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0)
     //$mime_preview[]='vnd.oasis.opendocument.presentation';
     //$mime_preview[]='archive';
     $num_mime = array_search(dol_mimetype($relativepath, '', 1), $mime_preview);
- 
-    if ($alldata == 1) 
+
+    if ($alldata == 1)
     {
     	if ($num_mime !== false) return array('target'=>'_blank', 'css'=>'documentpreview', 'url'=>DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath), 'mime'=>dol_mimetype($relativepath), );
     	else return array();
     }
 
     // old behavior
-    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath)).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js($langs->trans('Preview')).'\')';
+    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath).($param?'&'.$param:'')).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js($langs->trans('Preview')).'\')';
     else return '';
 }
 

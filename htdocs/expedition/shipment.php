@@ -113,7 +113,7 @@ if (empty($reshook))
     	if ($result < 0)
     		setEventMessages($object->error, $object->errors, 'errors');
     }
-    
+    /*
     if ($action == 'setdeliveryaddress' && $user->rights->commande->creer)
     {
     	$object = new Commande($db);
@@ -122,7 +122,7 @@ if (empty($reshook))
     	if ($result < 0)
     		setEventMessages($object->error, $object->errors, 'errors');
     }
-    
+    */
     if ($action == 'setmode' && $user->rights->commande->creer)
     {
     	$object = new Commande($db);
@@ -880,6 +880,7 @@ if ($id > 0 || ! empty($ref))
                 print '<input type="hidden" name="shipping_method_id" value="'.$object->shipping_method_id.'">';
 				print '<input type="hidden" name="origin" value="commande">';
 				print '<input type="hidden" name="origin_id" value="'.$object->id.'">';
+				print '<input type="hidden" name="projectid" value="'.$object->fk_project.'">';
 				//print '<table class="border" width="100%">';
 
 				$langs->load("stocks");

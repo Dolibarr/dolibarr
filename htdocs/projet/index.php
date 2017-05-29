@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->load("projects");
 $langs->load("companies");
 
-$mine = GETPOST('mode')=='mine' ? 1 : 0;
+$mine = GETPOST('mode','aZ09')=='mine' ? 1 : 0;
 $search_project_user = GETPOST('search_project_user','int');
 
 // Security check

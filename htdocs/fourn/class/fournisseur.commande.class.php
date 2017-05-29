@@ -1487,6 +1487,9 @@ class CommandeFournisseur extends CommonOrder
 			$localtax2_type=$localtaxes_type[2];
 
             $subprice = price2num($pu,'MU');
+            
+            $rangmax = $this->line_max();
+            $rang = $rangmax + 1;
 
             // Insert line
             $this->line=new CommandeFournisseurLigne($this->db);
@@ -2669,21 +2672,22 @@ class CommandeFournisseur extends CommonOrder
             $sql.= " FROM ".MAIN_DB_PREFIX.'c_input_method';
             $sql.= " WHERE active=1 AND rowid = ".$db->escape($this->methode_commande_id);
 
-            $query = $db->query($sql);
-            if ($query && $db->num_rows($query))
+            $resql = $db->query($sql);
+            if ($resql)
             {
-                $obj = $db->fetch_object($query);
-
-                $string = $langs->trans($obj->code);
-                if ($string == $obj->code)
+                if ($db->num_rows($query))
                 {
-                    $string = $obj->label != '-' ? $obj->label : '';
-                }
-
-                return $string;
+                    $obj = $db->fetch_object($query);
+    
+                    $string = $langs->trans($obj->code);
+                    if ($string == $obj->code)
+                    {
+                        $string = $obj->label != '-' ? $obj->label : '';
+                    }
+                    return $string;
+                }    
             }
-
-            dol_print_error($db);
+            else dol_print_error($db);
         }
 
         return '';
@@ -2817,7 +2821,7 @@ class CommandeFournisseur extends CommonOrder
 
     
     /**
-     * Calc status regarding dispatch stock
+     * Calc status regarding to dispatched stock
      *
      * @param 		User 	$user                   User action
      * @param       int     $closeopenorder         Close if received
@@ -3209,12 +3213,12 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= ", tva_tx='".price2num($this->tva_tx)."'";
         $sql.= ", localtax1_tx='".price2num($this->total_localtax1)."'";
         $sql.= ", localtax2_tx='".price2num($this->total_localtax2)."'";
-        $sql.= ", localtax1_type='".$this->localtax1_type."'";
-        $sql.= ", localtax2_type='".$this->localtax2_type."'";
+        $sql.= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
+        $sql.= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
         $sql.= ", qty='".price2num($this->qty)."'";
         $sql.= ", date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
         $sql.= ", date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
-        $sql.= ", info_bits='".$this->info_bits."'";
+        $sql.= ", info_bits='".$this->db->escape($this->info_bits)."'";
         $sql.= ", total_ht='".price2num($this->total_ht)."'";
         $sql.= ", total_tva='".price2num($this->total_tva)."'";
         $sql.= ", total_localtax1='".price2num($this->total_localtax1)."'";
@@ -3291,7 +3295,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
         $this->db->begin();
 
-        $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid='".$this->rowid."';";
+        $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid=".$this->rowid;
 
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);

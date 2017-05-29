@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 $id = GETPOST('id','int');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 $langs->load("companies");
 $langs->load("members");
@@ -36,7 +36,7 @@ $langs->load("bills");
 $langs->load("users");
 
 $object = new User($db);
-$object->fetch($id);
+$object->fetch($id, '', '', 1);
 $object->getrights();
 
 // If user is not user read and no permission to read other users, we stop
@@ -52,9 +52,10 @@ $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('usercard','globalcard'));
 
-/******************************************************************************/
-/*                     Actions                                                */
-/******************************************************************************/
+
+/*
+ * Actions
+ */
 
 $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -75,9 +76,9 @@ if (empty($reshook)) {
 }
 
 
-/******************************************************************************/
-/* Affichage fiche                                                            */
-/******************************************************************************/
+/*
+ * View
+ */
 
 llxHeader();
 

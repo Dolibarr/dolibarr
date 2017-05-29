@@ -63,7 +63,7 @@ if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="d.date_debut";
 
 
-$sall         = GETPOST('sall');
+$sall         = GETPOST('sall', 'alphanohtml');
 $search_ref   = GETPOST('search_ref');
 $search_user  = GETPOST('search_user','int');
 $search_amount_ht = GETPOST('search_amount_ht','alpha');
@@ -314,6 +314,7 @@ if ($resql)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
@@ -461,8 +462,8 @@ if ($resql)
 	}
 	// Action column
 	print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterButtons();
-	print $searchpitco;
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
 	print '</td>';
 
 	print "</tr>\n";
@@ -694,7 +695,7 @@ if ($resql)
 	        $i++;
 	        if ($i == 1)
 	        {
-	            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+	            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
 	            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
 	        }
 	        elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';

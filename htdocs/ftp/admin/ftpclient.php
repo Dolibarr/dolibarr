@@ -247,40 +247,46 @@ else
 			print '<td></td>';
 			print "</tr>";
 
-			
+			$keyforname="FTP_NAME_" . $idrss;
+			$keyforserver="FTP_SERVER_" . $idrss;
+			$keyforport="FTP_PORT_" . $idrss;
+			$keyforuser="FTP_USER_" . $idrss;
+			$keyforpassword="FTP_PASSWORD_" . $idrss;
+			$keyforpassive="FTP_PASSIVE_" . $idrss;
+				
 			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Name")."</td>";
-			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_NAME_" . $idrss . "\" value=\"" . @constant("FTP_NAME_" . $idrss) . "\" size=\"64\"></td>";
+			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_NAME_" . $idrss . "\" value=\"" . $conf->global->$keyforname . "\" size=\"64\"></td>";
 			print "</tr>";
 
 			
 			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Server")."</td>";
-			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_SERVER_" . $idrss . "\" value=\"" . @constant("FTP_SERVER_" . $idrss) . "\" size=\"64\"></td>";
+			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_SERVER_" . $idrss . "\" value=\"" . $conf->global->$keyforserver . "\" size=\"64\"></td>";
 			print "</tr>";
 
 			
 			print '<tr class="oddeven">';
 			print "<td width=\"100\">".$langs->trans("Port")."</td>";
-			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_PORT_" . $idrss . "\" value=\"" . @constant("FTP_PORT_" . $idrss) . "\" size=\"64\"></td>";
+			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_PORT_" . $idrss . "\" value=\"" . $conf->global->$keyforport . "\" size=\"64\"></td>";
 			print "</tr>";
 
 			
 			print '<tr class="oddeven">';
 			print "<td width=\"100\">".$langs->trans("User")."</td>";
-			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_USER_" . $idrss . "\" value=\"" . @constant("FTP_USER_" . $idrss) . "\" size=\"24\"></td>";
+			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_USER_" . $idrss . "\" value=\"" . $conf->global->$keyforuser . "\" size=\"24\"></td>";
 			print "</tr>";
 
 			
 			print '<tr class="oddeven">';
 			print "<td width=\"100\">".$langs->trans("Password")."</td>";
-			print "<td><input type=\"password\" class=\"flat\" name=\"FTP_PASSWORD_" . $idrss . "\" value=\"" . @constant("FTP_PASSWORD_" . $idrss) . "\" size=\"24\"></td>";
+			print "<td><input type=\"password\" class=\"flat\" name=\"FTP_PASSWORD_" . $idrss . "\" value=\"" . $conf->global->$keyforpassword . "\" size=\"24\"></td>";
 			print "</tr>";
 
 			
 			print '<tr class="oddeven">';
 			print "<td width=\"100\">".$langs->trans("FTPPassiveMode")."</td>";
-			print '<td>'.$form->selectyesno('FTP_PASSIVE_'.$idrss, @constant("FTP_PASSIVE_" . $idrss), 1).'</td>';
+			print '<td>'.$form->selectyesno('FTP_PASSIVE_'.$idrss, $conf->global->$keyforpassive, 1).'</td>';
 			print "</tr>";
 
 			print "<tr>";

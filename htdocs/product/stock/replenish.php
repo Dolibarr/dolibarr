@@ -48,7 +48,7 @@ $result=restrictedArea($user,'produit|service');
 $action = GETPOST('action','alpha');
 $sref = GETPOST('sref', 'alpha');
 $snom = GETPOST('snom', 'alpha');
-$sall = GETPOST('sall', 'alpha');
+$sall = GETPOST('sall', 'alphanohtml');
 $type = GETPOST('type','int');
 $tobuy = GETPOST('tobuy', 'int');
 $salert = GETPOST('salert', 'alpha');
@@ -513,8 +513,8 @@ print '<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&
 print '<td class="liste_titre" align="right">' . $langs->trans('Draft') . '&nbsp;<input type="checkbox" id="draftorder" name="draftorder" ' . (!empty($draftchecked)?$draftchecked:'') . '></td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
 print '</td>';
 print '</tr>';
 

@@ -53,7 +53,7 @@ $langs->load('bills');
 $langs->load('companies');
 $langs->load('products');
 
-$sall=trim(GETPOST('sall'));
+$sall=trim(GETPOST('sall', 'alphanohtml'));
 $projectid=(GETPOST('projectid')?GETPOST('projectid','int'):0);
 
 $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
@@ -433,7 +433,7 @@ if ($search_status != '' && $search_status >= 0)
     if ($search_status == '2') $sql.=" AND f.fk_statut = 2";  // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
     if ($search_status == '3') $sql.=" AND f.fk_statut = 3";  // abandonned
 }
-if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
+if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode;
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
@@ -454,7 +454,7 @@ if ($month_lim > 0)
 	else if ($year_lim > 0 && ! empty($day_lim))
 		$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_lim, $day_lim, $year_lim))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month_lim, $day_lim, $year_lim))."'";
 	else
-		$sql.= " AND date_format(f.date_lim_reglement, '%m') = '".$month_lim."'";
+		$sql.= " AND date_format(f.date_lim_reglement, '%m') = '".$db->escape($month_lim)."'";
 }
 else if ($year_lim > 0)
 {
@@ -517,7 +517,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql.= $db->plimit($limit,$offset);
+$sql.= $db->plimit($limit+1,$offset);
 //print $sql;
 
 $resql = $db->query($sql);
@@ -536,7 +536,7 @@ if ($resql)
     $param='&socid='.$socid;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($sall)				 $param.='&sall='.$sall;
+	if ($sall)				 $param.='&sall='.urlencode($sall);
     if ($day)                $param.='&day='.urlencode($day);
     if ($month)              $param.='&month='.urlencode($month);
     if ($year)               $param.='&year=' .urlencode($year);
@@ -600,6 +600,7 @@ if ($resql)
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
@@ -759,14 +760,14 @@ if ($resql)
     // Filters lines
     print '<tr class="liste_titre_filter">';
 	// Ref
-	if (! empty($arrayfields['f.facnumber']['checked'])) 
+	if (! empty($arrayfields['f.facnumber']['checked']))
 	{
         print '<td class="liste_titre" align="left">';
         print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
         print '</td>';
 	}
 	// Ref customer
-	if (! empty($arrayfields['f.ref_client']['checked'])) 
+	if (! empty($arrayfields['f.ref_client']['checked']))
 	{
     	print '<td class="liste_titre">';
     	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.dol_escape_htmltag($search_refcustomer).'">';
@@ -804,6 +805,11 @@ if ($resql)
         $formother->select_year($year_lim?$year_lim:-1,'year_lim',1, 20, 5);
     	print '<br><input type="checkbox" name="option" value="late"'.($option == 'late'?' checked':'').'> '.$langs->trans("Late");
         print '</td>';
+	}
+	// Project
+	if (! empty($arrayfields['p.ref']['checked']))
+	{
+	    print '<td class="liste_titre" align="left"><input class="flat" type="text" size="6" name="search_project" value="'.$search_project.'"></td>';
 	}
 	// Thirpdarty
 	if (! empty($arrayfields['s.nom']['checked'])) 
@@ -936,8 +942,8 @@ if ($resql)
 	}
 	// Action column
 	print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterButtons();
-	print $searchpitco;
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
     print '</td>';
     print "</tr>\n";
 
@@ -1015,7 +1021,7 @@ if ($resql)
     
                 print '<td class="nobordernopadding nowrap">';
                 print $facturestatic->getNomUrl(1,'',200,0,'',0,1);
-                print $obj->increment;
+                print empty($obj->increment)?'':' ('.$obj->increment.')';
                 print '</td>';
     
                 print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
@@ -1070,6 +1076,20 @@ if ($resql)
     		    if (! $i) $totalarray['nbfield']++;
     		}
 
+            // Project
+    		if (! empty($arrayfields['p.ref']['checked']))
+    		{
+    		    print '<td class="nowrap">';
+    		    if ($obj->project_id > 0)
+    		    {
+	    		    $projectstatic->id=$obj->project_id;
+    			    $projectstatic->ref=$obj->project_ref;
+    			    print $projectstatic->getNomUrl(1);
+    		    }
+    		    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+    		}
+    		
     		// Third party
     		if (! empty($arrayfields['s.nom']['checked']))
     		{
@@ -1270,7 +1290,7 @@ if ($resql)
     		   $i++;
     		   if ($i == 1)
     	       {
-            		if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+            		if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
             		else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
     	       }
     		   elseif ($totalarray['totalhtfield'] == $i)  print '<td align="right">'.price($totalarray['totalht']).'</td>';
@@ -1294,15 +1314,13 @@ if ($resql)
 	print $hookmanager->resPrint;
     
 	print "</table>\n";
-    print "</div>";
+    print '</div>';
     
     print "</form>\n";
     
     if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
     {
-        /*
-         * Show list of available documents
-         */
+        // Show list of available documents
         $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
         $urlsource.=str_replace('&amp;','&',$param);
         

@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>  
  * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2014      Juanjo Menent		<jmenent@2byte.es>
  *   
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 require '../../main.inc.php';
 
 // Class
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
@@ -44,6 +44,7 @@ $langs->load("productbatch");
 $account_parent = GETPOST('account_parent');
 $changeaccount = GETPOST('changeaccount');
 // Search Getpost
+$search_lineid = GETPOST('search_lineid', 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_invoice = GETPOST('search_invoice', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
@@ -75,7 +76,7 @@ if ($user->societe_id > 0)
 if (! $user->rights->accounting->bind->write)
 	accessforbidden();
 
-$formventilation = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 
 
 /*
@@ -85,6 +86,7 @@ $formventilation = new FormVentilation($db);
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
+    $search_lineid = '';
 	$search_ref = '';
 	$search_invoice = '';
 	$search_label = '';
@@ -148,7 +150,7 @@ print '<script type="text/javascript">
  * Supplier Invoice lines
  */
 $sql = "SELECT f.rowid as facid, f.ref as facnumber, f.ref_supplier, f.libelle as invoice_label, f.datef,";
-$sql.= " l.fk_product, l.description, l.total_ht , l.qty, l.rowid, l.tva_tx, aa.label, aa.account_number, ";
+$sql.= " l.rowid, l.fk_product, l.description, l.total_ht , l.qty, l.tva_tx, aa.label, aa.account_number, ";
 $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type";
 $sql.= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
 $sql.= " , " . MAIN_DB_PREFIX . "accounting_account as aa";
@@ -156,6 +158,9 @@ $sql.= " , " . MAIN_DB_PREFIX . "facture_fourn_det as l";
 $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 $sql.= " WHERE f.rowid = l.fk_facture_fourn and f.fk_statut >= 1 AND l.fk_code_ventilation <> 0 ";
 $sql.= " AND aa.rowid = l.fk_code_ventilation";
+if ($search_lineid) {
+    $sql .= natural_search("l.rowid", $search_lineid, 1);
+}
 if (strlen(trim($search_invoice))) {
 	$sql .= natural_search("f.ref", $search_invoice);
 }
@@ -225,13 +230,14 @@ if ($result) {
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-		
+	print '<input type="hidden" name="page" value="'.$page.'">';
+	
 	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 	
 	print $langs->trans("DescVentilDoneSupplier") . '<br>';
 	
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
-	print $formventilation->select_account(GETPOST('account_parent'), 'account_parent', 1);
+	print $formaccounting->select_account(GETPOST('account_parent'), 'account_parent', 1);
 	print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("ChangeBinding") . '" /></div>';
 	
 	$moreforfilter = '';
@@ -240,7 +246,7 @@ if ($result) {
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	
 	print '<tr class="liste_titre_filter">';
-    print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_lineid" value="' . dol_escape_htmltag($search_lineid) . '""></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';

@@ -439,7 +439,7 @@ if ($step == 1 || ! $datatoexport)
     $h++;
     */
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
+    dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -1);
 
 
     print '<table class="notopnoleftnoright" width="100%">';
@@ -609,7 +609,14 @@ if ($step == 2 && $datatoexport)
         $text=$langs->trans($label);
         $tablename=getablenamefromfield($code,$sqlmaxforexport);
         $htmltext ='<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
-        $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
+        if (! empty($objexport->array_export_special[0][$code]))
+        {
+            $htmltext.='<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
+        }
+        else
+        {
+            $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
+        }
 		if (! empty($objexport->array_export_examplevalues[0][$code]))
 		{
 		    $htmltext.=$langs->trans("SourceExample").': <b>'.$objexport->array_export_examplevalues[0][$code].'</b><br>';
@@ -645,9 +652,8 @@ if ($step == 2 && $datatoexport)
     
     /*
      * Barre d'action
-     *
      */
-    print '<div class="tabsAction">';
+    print '<div class="tabsAction tabsActionNoBottom">';
 
     if (count($array_selected))
 	{
@@ -828,7 +834,7 @@ if ($step == 3 && $datatoexport)
 	/*
 	 * Barre d'action
 	 */
-	print '<div class="tabsAction">';
+	print '<div class="tabsAction tabsActionNoBottom">';
 	// il n'est pas obligatoire de filtrer les champs
 	print '<a class="butAction" href="javascript:FilterField.submit();">'.$langs->trans("NextStep").'</a>';
 	print '</div>';
@@ -883,14 +889,14 @@ if ($step == 4 && $datatoexport)
     print '<table width="100%" class="border">';
 
     // Module
-    print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
+    print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
     print '<td>';
     //print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
     print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
     // Lot de donnees a exporter
-    print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
+    print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
 	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
     print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
@@ -898,7 +904,7 @@ if ($step == 4 && $datatoexport)
     print '</td></tr>';
 
     // List of exported fields
-    print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
+    print '<tr><td>'.$langs->trans("ExportedFields").'</td>';
     $list='';
     foreach($array_selected as $code=>$value)
     {

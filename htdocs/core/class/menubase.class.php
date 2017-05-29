@@ -216,20 +216,20 @@ class Menubase
         $sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
         $sql.= " menu_handler='".$this->db->escape($this->menu_handler)."',";
         $sql.= " module='".$this->db->escape($this->module)."',";
-        $sql.= " type='".$this->type."',";
+        $sql.= " type='".$this->db->escape($this->type)."',";
         $sql.= " mainmenu='".$this->db->escape($this->mainmenu)."',";
         $sql.= " leftmenu='".$this->db->escape($this->leftmenu)."',";
-        $sql.= " fk_menu='".$this->fk_menu."',";
+        $sql.= " fk_menu='".$this->db->escape($this->fk_menu)."',";
         $sql.= " fk_mainmenu=".($this->fk_mainmenu?"'".$this->fk_mainmenu."'":"null").",";
         $sql.= " fk_leftmenu=".($this->fk_leftmenu?"'".$this->fk_leftmenu."'":"null").",";
-        $sql.= " position='".$this->position."',";
+        $sql.= " position=".($this->position > 0 ? $this->position : 0).",";
         $sql.= " url='".$this->db->escape($this->url)."',";
         $sql.= " target='".$this->db->escape($this->target)."',";
         $sql.= " titre='".$this->db->escape($this->titre)."',";
         $sql.= " langs='".$this->db->escape($this->langs)."',";
         $sql.= " perms='".$this->db->escape($this->perms)."',";
         $sql.= " enabled='".$this->db->escape($this->enabled)."',";
-        $sql.= " usertype='".$this->user."'";
+        $sql.= " usertype='".$this->db->escape($this->user)."'";
         $sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);

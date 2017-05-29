@@ -53,7 +53,7 @@ $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_contract=GETPOST('search_contract');
 $search_ref_supplier=GETPOST('search_ref_supplier','alpha');
-$sall=GETPOST('sall');
+$sall=GETPOST('sall', 'alphanohtml');
 $search_status=GETPOST('search_status');
 $socid=GETPOST('socid');
 $search_user=GETPOST('search_user','int');
@@ -340,6 +340,7 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
 	
     print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'title_commercial.png', 0, '', '', $limit);
 
@@ -509,8 +510,8 @@ if ($resql)
         print '<td class="liste_titre" colspan="4" align="right"></td>';
     }
     print '<td class="liste_titre" align="middle">';
-    $searchpitco=$form->showFilterButtons();
-    print $searchpitco;
+    $searchpicto=$form->showFilterButtons();
+    print $searchpicto;
     print '</td>';
     print "</tr>\n";
     

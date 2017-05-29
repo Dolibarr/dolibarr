@@ -15,8 +15,8 @@
 
 -- Requests to change character set and collation of a column
 
--- ALTER TABLE llx_accountingaccount MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
--- ALTER TABLE llx_accountingaccount MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
+-- ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
+-- ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
 -- You can check with "show full columns from llx_accountingaccount";
 
 
@@ -306,6 +306,18 @@ DELETE FROM llx_c_shipment_mode where code IN (select code from tmp_c_shipment_m
 drop table tmp_c_shipment_mode;
 
 
+-- Clean product prices
+--delete from llx_product_price where date_price between '2017-04-20 06:51:00' and '2017-04-20 06:51:05'; 
+-- Set product prices into llx_product with last price into llx_product_prices
+--update llx_product as p set 
+-- p.price = (select pp.price from llx_product_price as pp where pp.price_level = 1 and pp.fk_product = p.rowid order by pp.tms desc limit 1),
+-- p.price_ttc = (select pp.price_ttc from llx_product_price as pp where pp.price_level = 1 and pp.fk_product = p.rowid order by pp.tms desc limit 1),
+-- p.price_min = (select pp.price_min from llx_product_price as pp where pp.price_level = 1 and pp.fk_product = p.rowid order by pp.tms desc limit 1),
+-- p.price_min_ttc = (select pp.price_min_ttc from llx_product_price as pp where pp.price_level = 1 and pp.fk_product = p.rowid order by pp.tms desc limit 1),
+-- p.tva_tx = 0
+-- where price = 17.5
+
+
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_expensereport set date_debut = date_create where DATE(STR_TO_DATE(date_debut, '%Y-%m-%d')) IS NULL;
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
@@ -324,3 +336,4 @@ drop table tmp_c_shipment_mode;
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_expensereport_det as ed set date = (select date_debut from llx_expensereport as e where ed.fk_expensereport = e.rowid) where DATE(STR_TO_DATE(date, '%Y-%m-%d')) < '1000-00-00';
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+

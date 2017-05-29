@@ -15,6 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * The following vars must be defined:
+ * $type2label
+ * $form
+ * $conf, $lang,
+ * The following vars may also be defined:
+ * $elementtype
+ */
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE admin_extrafields_edit.tpl.php -->
@@ -24,9 +34,10 @@
     	{
         	console.log("select new type "+type);
     		var size = jQuery("#size");
+    		var computed_value = jQuery("#computed_value");
+    		var default_value = jQuery("#default_value");
     		var unique = jQuery("#unique");
     		var required = jQuery("#required");
-    		var default_value = jQuery("#default_value");
     		var alwayseditable = jQuery("#alwayseditable");
     		var list = jQuery("#list");
     		<?php
@@ -42,6 +53,27 @@
     		}
     		?>
 
+    		// Case of computed field
+    		if (type == 'varchar' || type == 'int' || type == 'double' || type == 'price') { 
+    			jQuery("tr.extra_computed_value").show(); 
+    		} else {
+    			computed_value.val(''); jQuery("tr.extra_computed_value").hide();
+    		} 
+    		if (computed_value.val())
+    		{
+        		console.log("We enter a computed formula");
+        		jQuery("#default_value").val('');
+        		/* jQuery("#unique, #required, #alwayseditable, #ishidden, #list").removeAttr('checked'); */
+        		jQuery("#default_value, #unique, #required, #alwayseditable, #ishidden, #list").attr('disabled', true);
+        		jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_ishidden, tr.extra_list").hide();
+    		}
+    		else
+    		{
+        		console.log("No computed formula");
+        		jQuery("#default_value, #unique, #required, #alwayseditable, #ishidden, #list").attr('disabled', false);
+        		jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_ishidden, tr.extra_list").show();
+    		}
+    		
 			if (type == 'date') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
 			else if (type == 'datetime') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
     		else if (type == 'double')   { size.removeAttr('disabled'); unique.removeAttr('disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
@@ -65,9 +97,11 @@
 			if (type == 'separate')
 			{
 				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.val('').prop('disabled', true); 
+				jQuery('#size, #default_value').val('').prop('disabled', true); 
 			}
 			else
 			{
+				default_value.removeAttr('disabled');
 				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.val('').removeAttr('disabled'); 
 			}			
     	}
@@ -75,6 +109,11 @@
     	jQuery("#type").change(function() {
     		init_typeoffields($(this).val());
     	});
+
+    	// If we enter a formula, we disable other fields
+    	jQuery("#computed_value").keyup(function() {
+    		init_typeoffields(jQuery('#type').val());
+    	});    	
     });
 </script>
 
@@ -92,6 +131,8 @@
 <?php
 $type=$extrafields->attribute_type[$attrname];
 $size=$extrafields->attribute_size[$attrname];
+$computed=$extrafields->attribute_computed[$attrname];
+$default=$extrafields->attribute_default[$attrname];
 $unique=$extrafields->attribute_unique[$attrname];
 $required=$extrafields->attribute_required[$attrname];
 $pos=$extrafields->attribute_pos[$attrname];
@@ -156,9 +197,7 @@ else
 ?>
 </td></tr>
 <!-- Size -->
-<tr><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" size="5" value="<?php echo $size; ?>"></td></tr>
-<!-- Position -->
-<tr><td><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php  echo $extrafields->attribute_pos[$attrname];  ?>"></td></tr>
+<tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" size="5" value="<?php echo $size; ?>"></td></tr>
 <!--  Value (for select list / radio) -->
 <tr id="value_choice">
 <td>
@@ -177,12 +216,18 @@ else
     </table>
 </td>
 </tr>
+<!-- Position -->
+<tr><td class="titlefield"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php echo dol_escape_htmltag($extrafields->attribute_pos[$attrname]);  ?>"></td></tr>
+<!-- Computed value -->
+<tr class="extra_computed_value"><td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td><td class="valeur"><input id="computed_value" class="quatrevingtpercent" type="text" name="computed_value" value="<?php echo dol_escape_htmltag($computed); ?>"></td></tr>
+<!-- Default value -->
+<!-- Edit of default into sql structure not yet supported -->
 <!-- Unique -->
-<tr><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo ($unique?' checked':''); ?>></td></tr>
+<tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo ($unique?' checked':''); ?>></td></tr>
 <!-- Required -->
-<tr><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo ($required?' checked':''); ?>></td></tr>
+<tr class="extra_required"><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo ($required?' checked':''); ?>></td></tr>
 <!-- Always editable -->
-<tr><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ($alwayseditable?' checked':''); ?>></td></tr>
+<tr class="extra_alwayseditable"><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ($alwayseditable?' checked':''); ?>></td></tr>
 <!-- Is visible or not -->
 <?php if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) { ?>
     <tr><td><?php echo $langs->trans("Hidden"); ?></td><td class="valeur"><input id="ishidden" type="checkbox" name="ishidden"<?php echo ($ishidden ?' checked':''); ?>></td></tr>

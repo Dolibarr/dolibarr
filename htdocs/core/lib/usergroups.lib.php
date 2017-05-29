@@ -59,6 +59,11 @@ function user_prepare_head($object)
 	    $h++;
 	}
 
+    $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("UserGUISetup");
+    $head[$h][2] = 'guisetup';
+    $h++;
+
 	if ($canreadperms)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$object->id;
@@ -67,15 +72,27 @@ function user_prepare_head($object)
 		$h++;
 	}
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("UserGUISetup");
-    $head[$h][2] = 'guisetup';
-    $h++;
-
     if (! empty($conf->agenda->enabled))
     {
+        if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
+        $MAXAGENDA=$conf->global->AGENDA_EXT_NB;
+        
+        $i=1;
+        $nbagenda = 0;
+        while ($i <= $MAXAGENDA)
+        {
+            $key=$i;
+            $name='AGENDA_EXT_NAME_'.$object->id.'_'.$key;
+            $src='AGENDA_EXT_SRC_'.$object->id.'_'.$key;
+            $offsettz='AGENDA_EXT_OFFSETTZ_'.$object->id.'_'.$key;
+            $color='AGENDA_EXT_COLOR_'.$object->id.'_'.$key;
+            $i++;
+        
+            if (! empty($object->conf->$name)) $nbagenda++;
+        }
+        
 	    $head[$h][0] = DOL_URL_ROOT.'/user/agenda_extsites.php?id='.$object->id;
-	    $head[$h][1] = $langs->trans("ExtSites");
+	    $head[$h][1] = $langs->trans("ExtSites").($nbagenda ? ' <span class="badge">'.$nbagenda.'</span>' : '');
 	    $head[$h][2] = 'extsites';
 	    $h++;
     }
@@ -124,16 +141,17 @@ function user_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'user');
 
-	if (! empty($conf->hrm->enabled) && $user->rights->hrm->employee->read)
+    if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
+       || (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
     {
 		// Bank
     	$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
-    	$head[$h][1] = $langs->trans("Bank");
+    	$head[$h][1] = $langs->trans("HRAndBank");
     	$head[$h][2] = 'bank';
     	$h++;
 	}
 
-    //Info on users is visible only by internal user
+    // Such info on users is visible only by internal user
     if (empty($user->societe_id))
     {
 		// Notes
@@ -400,7 +418,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     					$file=$dirtheme."/".$subdir."/thumb.png";
     					$url=$urltheme."/".$subdir."/thumb.png";
     					if (! file_exists($file)) $url=DOL_URL_ROOT.'/public/theme/common/nophoto.png';
-    					print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.(GETPOST("optioncss")?'&optioncss='.GETPOST("optioncss",'alpha',1):'').($fuser?'&id='.$fuser->id:'').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
+    					print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.(GETPOST('optioncss','alpha',1)?'&optioncss='.GETPOST('optioncss','alpha',1):'').($fuser?'&id='.$fuser->id:'').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
     					if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
     					else $title=$langs->trans("ShowPreview");
     					print '<img src="'.$url.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
@@ -426,7 +444,50 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 
     print '</td></tr>';
 
-	// BackgroundColor
+    // TopMenuDisableImages
+    if ($foruserprofile)
+    {
+        /*
+         print '<tr class="oddeven">';
+         print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
+         print '<td>'.($conf->global->THEME_TOPMENU_DISABLE_IMAGE?$conf->global->THEME_TOPMENU_DISABLE_IMAGE:$langs->trans("Default")).'</td>';
+         print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_TOPMENU_DISABLE_IMAGE" id="check_THEME_TOPMENU_DISABLE_IMAGE" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
+         print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
+         print '> '.$langs->trans("UsePersonalValue").'</td>';
+         print '<td>';
+         if ($edit)
+         {
+         print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_TOPMENU_DISABLE_IMAGE,array()),''),'THEME_TOPMENU_DISABLE_IMAGE','formcolor',1).' ';
+         }
+         else
+         {
+         $color = colorArrayToHex(colorStringToArray($conf->global->THEME_TOPMENU_DISABLE_IMAGE,array()),'');
+         if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+         else print '';
+         }
+         if ($edit) print '<br>('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+         print '</td>';*/
+    }
+    else
+    {
+        $default=$langs->trans('No');
+        print '<tr class="oddeven">';
+        print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
+        print '<td colspan="'.($colspan-1).'">';
+        if ($edit)
+        {
+            print $form->selectyesno('THEME_TOPMENU_DISABLE_IMAGE', $conf->global->THEME_TOPMENU_DISABLE_IMAGE, 1);
+        }
+        else
+        {
+            print yn($conf->global->THEME_TOPMENU_DISABLE_IMAGE);
+        }
+        print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+        print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+        print '</td>';
+    }
+    
+	// Background color THEME_ELDY_BACKBODY
     if ($foruserprofile)
 	{
 	    /*
@@ -518,52 +579,6 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '</td>';
 	}
 	
-	// TopMenuBackgroundColor
-	if ($foruserprofile)
-	{
-	    /*
-	     print '<tr class="oddeven">';
-	     print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
-	     print '<td>'.($conf->global->THEME_ELDY_TOPMENU_BACK1?$conf->global->THEME_ELDY_TOPMENU_BACK1:$langs->trans("Default")).'</td>';
-	     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TOPMENU_BACK1" id="check_THEME_ELDY_TOPMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
-	     print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
-	     print '> '.$langs->trans("UsePersonalValue").'</td>';
-	     print '<td>';
-	     if ($edit)
-	     {
-	     print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),''),'THEME_ELDY_TOPMENU_BACK1','formcolor',1).' ';
-	     }
-	     else
-	     {
-	     $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),'');
-	     if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
-	     else print '';
-	     }
-	    	if ($edit) print '<br>('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
-	    	print '</td>';*/
-	}
-	else
-	{
-	    $default=$langs->trans('No');
-	    print '<tr class="oddeven">';
-	    print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
-	    print '<td colspan="'.($colspan-1).'">';
-	    if ($edit)
-	    {
-	        print $form->selectyesno('THEME_TOPMENU_DISABLE_IMAGE', $conf->global->THEME_TOPMENU_DISABLE_IMAGE, 1);
-	    }
-	    else
-	    {
-	        print yn($conf->global->THEME_TOPMENU_DISABLE_IMAGE);
-	    }
-	    print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
-    	print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-	    print '</td>';
-	}
-	
-	
-	
-	
 	// BackgroundTableTitleColor
 	if ($foruserprofile)
 	{
@@ -590,6 +605,62 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '</tr>';
 	}
 
+	// BackgroundTableLineOddColor
+	if ($foruserprofile)
+	{
+
+	}
+	else
+	{
+	    $default='ffffff';
+	    if ($conf->theme == 'md') $default='ffffff';
+	
+	    print '<tr class="oddeven">';
+	    print '<td>'.$langs->trans("BackgroundTableLineOddColor").'</td>';
+	    print '<td colspan="'.($colspan-1).'">';
+	    if ($edit)
+	    {
+	        print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEIMPAIR1,array()),''),'THEME_ELDY_LINEIMPAIR1','formcolor',1).' ';
+	    }
+	    else
+	    {
+	        $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEIMPAIR1,array()),'');
+	        if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+	        else print $langs->trans("Default");
+	    }
+	    print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+	    print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+	    print '</td>';
+	}
+	
+	// BackgroundTableLineEvenColor
+	if ($foruserprofile)
+	{
+	
+	}
+	else
+	{
+	    $default='f8f8f8';
+	    if ($conf->theme == 'md') $default='f8f8f8';
+	
+	    print '<tr class="oddeven">';
+	    print '<td>'.$langs->trans("BackgroundTableLineEvenColor").'</td>';
+	    print '<td colspan="'.($colspan-1).'">';
+	    if ($edit)
+	    {
+	        print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEPAIR1,array()),''),'THEME_ELDY_LINEPAIR1','formcolor',1).' ';
+	    }
+	    else
+	    {
+	        $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEPAIR1,array()),'');
+	        if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+	        else print $langs->trans("Default");
+	    }
+	    print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+	    print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+	    print '</td>';
+	}
+	
 	// TextTitleColor
 	if ($foruserprofile)
 	{
@@ -609,7 +680,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    {
 	        print $formother->showColor($conf->global->THEME_ELDY_TEXTTITLENOTAB, $langs->trans("Default"));
 	    }
-	    print ' &nbsp; ('.$langs->trans("Default").': <strong>3c3c14</strong>) ';
+	    print ' &nbsp; ('.$langs->trans("Default").': <strong><span style="color: #3c3c14">3c3c14</span></strong>) ';
     	print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 	    
 	    print '</td>';
@@ -654,9 +725,14 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    {
 	        $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTLINK,array()),'');
 	        if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
-	        else print $langs->trans("Default");
+	        else 
+	        {
+	            //print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$defaultcolor.'" value="'.$langs->trans("Default").'">';
+	            //print '<span style="color: #000078">'.$langs->trans("Default").'</span>';
+	            print $langs->trans("Default");
+	        }
 	    }
-	    print ' &nbsp; ('.$langs->trans("Default").': <strong>000078</strong>) ';
+	    print ' &nbsp; ('.$langs->trans("Default").': <strong><span style="color: #000078">000078</span></strong>) ';
     	print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 	    print '</td>';
 	}

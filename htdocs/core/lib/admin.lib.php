@@ -624,6 +624,11 @@ function defaultvalues_prepare_head()
     $head[$h][2] = 'sortorder';
     $h++;
 
+    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=focus";
+    $head[$h][1] = $langs->trans("DefaultFocus");
+    $head[$h][2] = 'focus';
+    $h++;
+
     /*$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=searchkey";
     $head[$h][1] = $langs->trans("TranslationKeySearch");
     $head[$h][2] = 'searchkey';
@@ -807,7 +812,7 @@ function activateModule($value,$withdeps=1)
         return $ret;
     }
 
-    $result=$objMod->init();
+    $result=$objMod->init();    // Enable module
     if ($result <= 0) 
     {
         $ret['errors'][]=$objMod->error;
@@ -1175,9 +1180,10 @@ function complete_elementList_with_modules(&$elementList)
  *
  *	@param	array	$tableau		Array of constants
  *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (no form into table), 2=No form nor button at all
+ *  @param  string  $helptext       Help
  *	@return	void
  */
-function form_constantes($tableau,$strictw3c=0)
+function form_constantes($tableau, $strictw3c=0, $helptext='')
 {
     global $db,$bc,$langs,$conf,$_Avery_Labels;
 
@@ -1188,7 +1194,10 @@ function form_constantes($tableau,$strictw3c=0)
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Description").'</td>';
-    print '<td>'.$langs->trans("Value").'*</td>';
+    print '<td>';
+    $text = $langs->trans("Value");
+    print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
+    print '</td>';
     if (empty($strictw3c)) print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
     print "</tr>\n";
     $var=true;

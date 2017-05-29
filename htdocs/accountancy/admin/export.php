@@ -130,7 +130,7 @@ print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="update">';
 
-dol_fiche_head($head, 'export', $langs->trans("Configuration"), 0, 'cron');
+dol_fiche_head($head, 'export', $langs->trans("Configuration"), -1, 'cron');
 
 $var = true;
 

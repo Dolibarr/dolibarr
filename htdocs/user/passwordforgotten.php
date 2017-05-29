@@ -172,7 +172,7 @@ else
 }
 
 // Note: $conf->css looks like '/theme/eldy/style.css.php'
-$conf->css = "/theme/".(GETPOST('theme')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
+$conf->css = "/theme/".(GETPOST('theme','alpha')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
 //$themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
 $themepath=dol_buildpath($conf->css,1);
 if (! empty($conf->modules_parts['theme']))	// This slow down
@@ -190,15 +190,6 @@ $conf_css = $themepath."?lang=".$langs->defaultlang;
 
 $jquerytheme = 'smoothness';
 if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
-
-if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
-{
-    $login_background = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png';
-}
-else
-{
-    $login_background = DOL_URL_ROOT.'/theme/login_background.png';
-}
 
 if (! $username) $focus_element = 'username';
 else $focus_element = 'password';

@@ -284,7 +284,7 @@ print load_fiche_titre($langs->trans("OrdersSetup"),$linkback,'title_setup');
 
 $head = order_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Orders"), 0, 'order');
+dol_fiche_head($head, 'general', $langs->trans("Orders"), -1, 'order');
 
 /*
  * Orders Numbering model
@@ -565,12 +565,18 @@ print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 $var=true;
 
+$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_ORDER_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
-print $langs->trans("FreeLegalTextOnOrders").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
 $variablename='ORDER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -593,8 +599,9 @@ print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_COMMANDE_DRAFT_WATERMARK\">";
 print '<tr class="oddeven"><td>';
-print $langs->trans("WatermarkOnDraftOrders").'</td><td>';
-print '<input size="50" class="flat" type="text" name="COMMANDE_DRAFT_WATERMARK" value="'.$conf->global->COMMANDE_DRAFT_WATERMARK.'">';
+print $form->textwithpicto($langs->trans("WatermarkOnDraftOrders"), $htmltext);
+print '</td><td>';
+print '<input class="flat minwidth200" type="text" name="COMMANDE_DRAFT_WATERMARK" value="'.$conf->global->COMMANDE_DRAFT_WATERMARK.'">';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";

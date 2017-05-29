@@ -496,6 +496,55 @@ function getFormeJuridiqueLabel($code)
     }
 }
 
+/**
+ *  Return if a country is inside the EEC (European Economic Community)
+ *  TODO Add a field into country dictionary.
+ *  
+ *  @param      Object      $object    Object
+ *  @return     boolean		           true = country inside EEC, false = country outside EEC
+ */
+function isInEEC($object)
+{
+    // List of all country codes that are in europe for european vat rules
+    // List found on http://ec.europa.eu/taxation_customs/common/faq/faq_1179_en.htm#9
+    $country_code_in_EEC=array(
+        'AT',	// Austria
+        'BE',	// Belgium
+        'BG',	// Bulgaria
+        'CY',	// Cyprus
+        'CZ',	// Czech republic
+        'DE',	// Germany
+        'DK',	// Danemark
+        'EE',	// Estonia
+        'ES',	// Spain
+        'FI',	// Finland
+        'FR',	// France
+        'GB',	// United Kingdom
+        'GR',	// Greece
+        'HR',   // Croatia
+        'NL',	// Holland
+        'HU',	// Hungary
+        'IE',	// Ireland
+        'IM',	// Isle of Man - Included in UK
+        'IT',	// Italy
+        'LT',	// Lithuania
+        'LU',	// Luxembourg
+        'LV',	// Latvia
+        'MC',	// Monaco - Included in France
+        'MT',	// Malta
+        //'NO',	// Norway
+        'PL',	// Poland
+        'PT',	// Portugal
+        'RO',	// Romania
+        'SE',	// Sweden
+        'SK',	// Slovakia
+        'SI',	// Slovenia
+        'UK',	// United Kingdom
+        //'CH',	// Switzerland - No. Swizerland in not in EEC
+    );
+    //print "dd".$this->country_code;
+    return in_array($object->country_code, $country_code_in_EEC);
+}
 
 
 /**
@@ -649,6 +698,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     $sortfield = GETPOST("sortfield",'alpha');
     $sortorder = GETPOST("sortorder",'alpha');
+    $page = GETPOST('page','int');
     $search_status		= GETPOST("search_status",'int');
     if ($search_status=='') $search_status=1; // always display activ customer first
     $search_name = GETPOST("search_name",'alpha');
@@ -684,7 +734,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<input type="hidden" name="socid" value="'.$object->id.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-
+    print '<input type="hidden" name="page" value="'.$page.'">';
+    
     print "\n".'<table class="noborder" width="100%">'."\n";
 
     $param="socid=".$object->id;
@@ -1013,7 +1064,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         if (get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         if (get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         if (get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
-        $sql.= " WHERE u.rowid = a.fk_user_author";
+        $sql.= " WHERE u.rowid = a.fk_user_action";
         $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
         if (get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
         if (get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
@@ -1215,8 +1266,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $out.='<td class="liste_titre"></td>';
         // Action column
         $out.='<td class="liste_titre" align="middle">';
-        $searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-        $out.=$searchpitco;
+        $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+        $out.=$searchpicto;
         $out.='</td>';
         $out.='</tr>';
         

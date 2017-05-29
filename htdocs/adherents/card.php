@@ -1273,7 +1273,7 @@ else
 		 */
 		$head = member_prepare_head($object);
 
-		dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
+		dol_fiche_head($head, 'general', $langs->trans("Member"), -1, 'user');
 
 		// Confirm create user
 		if ($action == 'create_user')

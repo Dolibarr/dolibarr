@@ -89,13 +89,13 @@ if ($rowid)
     $caneditfieldmember=$user->rights->adherent->creer;
 }
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('subscription'));
+
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
-
-
-
 
 /*
  * 	Actions
@@ -578,7 +578,7 @@ if ($rowid > 0)
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 
-    dol_fiche_head($head, 'subscription', $langs->trans("Member"), 0, 'user');
+    dol_fiche_head($head, 'subscription', $langs->trans("Member"), -1, 'user');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
     
@@ -821,11 +821,9 @@ if ($rowid > 0)
             }
             print "</tr>\n";
 
-            $var=True;
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
-                
                 print '<tr class="oddeven">';
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
@@ -869,6 +867,13 @@ if ($rowid > 0)
         {
             include_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
             print showPaypalPaymentUrl('membersubscription',$object->ref);
+        }
+
+        // Link for stripe payment
+        if (! empty($conf->stripe->enabled))
+        {
+            include_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
+            print showStripePaymentUrl('membersubscription',$object->ref);
         }
 
     }

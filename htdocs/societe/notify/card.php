@@ -36,7 +36,7 @@ $langs->load("admin");
 $langs->load("other");
 
 $socid = GETPOST("socid",'int');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 $contactid=GETPOST('contactid');    // May be an int or 'thirdparty'
 $actionid=GETPOST('actionid');
 
@@ -454,6 +454,7 @@ if ($result > 0)
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="socid" value="'.$object->id.'">';
     
     // List of active notifications
