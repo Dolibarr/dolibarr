@@ -91,15 +91,11 @@ if (empty($sortorder)) $sortorder="ASC";
 if (empty($sortfield)) $sortfield="t.rowid";
 if (empty($arch)) $arch = 0;
 
-$page           = GETPOST('page','int');
-if ($page == -1) {
-	$page = 0 ;
-}
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
-if (! $sortfield) $sortfield="p.ref";
-if (! $sortorder) $sortorder="ASC";
-$offset = $conf->liste_limit * $page ;
+$offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
