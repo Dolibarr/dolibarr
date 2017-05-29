@@ -106,7 +106,7 @@ class Members extends DolibarrApi
             $sql.= ' AND t.fk_adherent_type='.$typeid;
         }
         // Add sql filters
-        if ($sqlfilters) 
+        if ($sqlfilters)
         {
             if (! DolibarrApi::_checkFilters($sqlfilters))
             {
@@ -115,7 +115,7 @@ class Members extends DolibarrApi
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        
+
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)    {
             if ($page < 0)
@@ -132,9 +132,10 @@ class Members extends DolibarrApi
         {
             $i=0;
             $num = $db->num_rows($result);
-            while ($i < min($limit, $num))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
-                $obj = $db->fetch_object($result);
+            	$obj = $db->fetch_object($result);
                 $member = new Adherent($this->db);
                 if($member->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($member);

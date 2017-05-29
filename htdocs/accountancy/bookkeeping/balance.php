@@ -28,8 +28,8 @@ require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
 // Langs
@@ -61,7 +61,7 @@ $offset = $limit * $page;
 
 $object = new BookKeeping($db);
 
-$formventilation = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
@@ -186,10 +186,10 @@ else {
     print '<tr class="liste_titre_filter">';
     print '<td class="liste_titre" colspan="5">';
     print $langs->trans('From');
-    print $formventilation->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, '');
+    print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, '');
     print ' ';
     print $langs->trans('to');
-    print $formventilation->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, '');
+    print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, '');
     print '</td>';
     print '<td align="right" class="liste_titre">';
 	$searchpicto=$form->showFilterAndCheckAddButtons(0);

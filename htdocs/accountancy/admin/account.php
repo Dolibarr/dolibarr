@@ -27,7 +27,6 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 // Langs
 $langs->load("compta");
@@ -56,7 +55,6 @@ if (! $user->rights->accounting->chartofaccount) accessforbidden();
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'sortorder');
-$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOST("page", 'int');
 if ($page == - 1) {
 	$page = 0;
@@ -64,10 +62,8 @@ if ($page == - 1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield)
-	$sortfield = "aa.account_number";
-if (! $sortorder)
-	$sortorder = "ASC";
+if (! $sortfield) $sortfield = "aa.account_number";
+if (! $sortorder) $sortorder = "ASC";
 
 $arrayfields=array(
     'aa.account_number'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
@@ -79,6 +75,9 @@ $arrayfields=array(
 );
 
 $accounting = new AccountingAccount($db);
+
+// Initialize technical object to manage context to save list fields
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'accountingaccountlist';
 
 
 /*
@@ -146,6 +145,7 @@ if (empty($reshook))
 /*
  * View
  */
+
 $form=new Form($db);
 
 llxHeader('', $langs->trans("ListAccounts"));
@@ -171,7 +171,6 @@ if (strlen(trim($search_label)))			$sql .= natural_search("aa.label", $search_la
 if (strlen(trim($search_accountparent)))	$sql .= natural_search("aa.account_parent", $search_accountparent);
 if (strlen(trim($search_pcgtype)))			$sql .= natural_search("aa.pcg_type", $search_pcgtype);
 if (strlen(trim($search_pcgsubtype)))		$sql .= natural_search("aa.pcg_subtype", $search_pcgsubtype);
-
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -193,22 +192,29 @@ if ($resql)
 
     $params='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($search_account) $params.= '&amp;search_account='.urlencode($search_account);
-	if ($search_label) $params.= '&amp;search_label='.urlencode($search_label);
-	if ($search_accountparent) $params.= '&amp;search_accountparent='.urlencode($search_accountparent);
-	if ($search_pcgtype) $params.= '&amp;search_pcgtype='.urlencode($search_pcgtype);
-	if ($search_pcgsubtype) $params.= '&amp;search_pcgsubtype='.urlencode($search_pcgsubtype);
+	if ($search_account) $params.= '&search_account='.urlencode($search_account);
+	if ($search_label) $params.= '&search_label='.urlencode($search_label);
+	if ($search_accountparent) $params.= '&search_accountparent='.urlencode($search_accountparent);
+	if ($search_pcgtype) $params.= '&search_pcgtype='.urlencode($search_pcgtype);
+	if ($search_pcgsubtype) $params.= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
     if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 
-	print '<form method="GET" action="' . $_SERVER["PHP_SELF"] . '">';
+	print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	
 	$htmlbuttonadd = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
 	
     print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $htmlbuttonadd);
 	
 	// Box to select active chart of account
-    $var = ! $var;
     print $langs->trans("Selectchartofaccounts") . " : ";
     print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
     $sql = "SELECT rowid, pcg_version, label, active";
@@ -216,12 +222,10 @@ if ($resql)
     $sql .= " WHERE active = 1";
     dol_syslog('accountancy/admin/account.php:: $sql=' . $sql);
     $resqlchart = $db->query($sql);
-    $var = true;
     if ($resqlchart) {
         $numbis = $db->num_rows($resqlchart);
         $i = 0;
         while ( $i < $numbis ) {
-            $var = ! $var;
             $row = $db->fetch_row($resqlchart);
     
             print '<option value="' . $row[0] . '"';
@@ -269,7 +273,8 @@ if ($resql)
 	$accountstatic = new AccountingAccount($db);
 	$accountparent = new AccountingAccount($db);
 
-	while ( $i < min($num, $limit) ) 
+	$i=0;
+	while ($i < min($num, $limit)) 
 	{
 		$obj = $db->fetch_object($resql);
 
@@ -368,7 +373,6 @@ if ($resql)
 		if (! $i) $totalarray['nbfield']++;
 		
 		print "</tr>\n";
-		$var = ! $var;
 		$i++;
 	}
 	

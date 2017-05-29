@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016	Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2017	Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
@@ -235,7 +235,7 @@ if (empty($reshook))
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
-if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
 
 $title = $langs->trans("Loan") . ' - ' . $langs->trans("Card");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
@@ -337,19 +337,19 @@ if ($action == 'create')
 		// Accountancy_account_capital
         print '<tr><td class="titlefieldcreate">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
         print '<td>';
-		print $formaccountancy->select_account($object->accountancy_account_capital, 'accountancy_account_capital', 1, '', 0, 1);
+		print $formaccounting->select_account($object->accountancy_account_capital, 'accountancy_account_capital', 1, '', 0, 1);
         print '</td></tr>';
 
 		// Accountancy_account_insurance
         print '<tr><td>'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
         print '<td>';
-		print $formaccountancy->select_account($object->accountancy_account_insurance, 'accountancy_account_insurance', 1, '', 0, 1);
+		print $formaccounting->select_account($object->accountancy_account_insurance, 'accountancy_account_insurance', 1, '', 0, 1);
         print '</td></tr>';
 
 		// Accountancy_account_interest
         print '<tr><td>'.$langs->trans("LoanAccountancyInterestCode").'</td>';
         print '<td>';
-		print $formaccountancy->select_account($object->accountancy_account_interest, 'accountancy_account_interest', 1, '', 0, 1);
+		print $formaccounting->select_account($object->accountancy_account_interest, 'accountancy_account_interest', 1, '', 0, 1);
         print '</td></tr>';
 	}
 	else // For external software 
@@ -541,7 +541,7 @@ if ($id > 0)
 		{
 			if (! empty($conf->accounting->enabled))
 			{
-				print $formaccountancy->select_account($object->account_capital, 'accountancy_account_capital', 1, '', 0, 1);
+				print $formaccounting->select_account($object->account_capital, 'accountancy_account_capital', 1, '', 0, 1);
 			}
 			else
 			{
@@ -566,7 +566,7 @@ if ($id > 0)
 		{
 			if (! empty($conf->accounting->enabled))
 			{
-				print $formaccountancy->select_account($object->account_insurance, 'accountancy_account_insurance', 1, '', 0, 1);
+				print $formaccounting->select_account($object->account_insurance, 'accountancy_account_insurance', 1, '', 0, 1);
 			}
 			else
 			{
@@ -591,7 +591,7 @@ if ($id > 0)
 		{
 			if (! empty($conf->accounting->enabled))
 			{
-				print $formaccountancy->select_account($object->account_interest, 'accountancy_account_interest', 1, '', 0, 1);
+				print $formaccounting->select_account($object->account_interest, 'accountancy_account_interest', 1, '', 0, 1);
 			}
 			else
 			{
