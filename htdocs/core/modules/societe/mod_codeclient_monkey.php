@@ -123,7 +123,29 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
         $sql = "SELECT MAX(CAST(SUBSTRING(".$field." FROM ".$posindice.") AS SIGNED)) as max";   // This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE ".$field." LIKE '".$prefix."____-%'";
-		$sql.= " AND entity IN (".getEntity('societe', 1).")";
+		dol_include_once("/multicompany/class/dao_multicompany.class.php");
+		
+		 $dm = new DaoMulticompany($db);
+		 $dm->getEntities();
+		 
+		 $passTest =0;
+		 if(!empty($dm->entities)){
+			foreach($dm->entities as $entity){
+				if(!empty($entity->options['sharings']['societe'])){
+					foreach($entity->options['sharings']['societe'] as $theEntity){
+						
+						if($conf->entity == $theEntity){
+							$passTest =1;
+						}
+					}
+				}
+
+			}
+		
+		 }
+		if(empty($passTest)){
+			$sql.= " AND entity IN (".getEntity('societe', 1).")";
+		}
 
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 
