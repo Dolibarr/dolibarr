@@ -256,17 +256,19 @@ class ExpenseReport extends CommonObject
     /**
      *	Load an object from its id and create a new one in database
      *
-     *	@param		int			$socid			Id of thirdparty
-     *	@return		int							New id of clone
+     *	@param		int			$fk_user_author		  Id of new user
+     *	@return		int							      New id of clone
      */
-    function createFromClone($socid=0)
+    function createFromClone($fk_user_author)
     {
         global $user,$hookmanager;
     
         $error=0;
     
+        if (empty($fk_user_author)) $fk_user_author = $user->id;
+        
         $this->context['createfromclone'] = 'createfromclone';
-    
+        
         $this->db->begin();
     
         // get extrafields so they will be clone
@@ -282,7 +284,7 @@ class ExpenseReport extends CommonObject
         $this->fk_statut=0;
 
         // Clear fields
-        $this->fk_user_author     = $user->id;     // Note fk_user_author is not the 'author' but the guy the expense report is for.
+        $this->fk_user_author     = $fk_user_author;     // Note fk_user_author is not the 'author' but the guy the expense report is for.
         $this->fk_user_valid      = '';
         $this->date_create  	  = '';
         $this->date_creation      = '';
