@@ -46,7 +46,7 @@ if (! $res) die("Include of main fails");
 require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-dol_include_once('/mymodule/class/skeleton_class.class.php');
+dol_include_once('/mymodule/class/myobject.class.php');
 
 // Load traductions files requiredby by page
 $langs->load("mymodule");

@@ -44,7 +44,7 @@ if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@inc
 if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
-dol_include_once('/mymodule/class/myobject_class.class.php');
+dol_include_once('/mymodule/class/myobject.class.php');
 
 // Load traductions files requiredby by page
 $langs->load("mymodule");
