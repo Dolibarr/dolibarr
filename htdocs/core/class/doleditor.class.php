@@ -167,7 +167,7 @@ class DolEditor
         {
             $found=1;
             //$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'"'.($this->readonly?' disabled':'').' class="flat">';
-            $out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 2px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
+            $out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
             $out.= $this->content;
             $out.= '</textarea>';
 

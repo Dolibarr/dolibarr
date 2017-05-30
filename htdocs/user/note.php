@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 $id = GETPOST('id','int');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 $langs->load("companies");
 $langs->load("members");

@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -23,7 +23,6 @@
  *     	\file       htdocs/public/paypal/newpayment.php
  *		\ingroup    paypal
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
- *		\author	    Laurent Destailleur
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -39,6 +38,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -51,8 +51,9 @@ $langs->load("dict");
 $langs->load("bills");
 $langs->load("companies");
 $langs->load("errors");
-$langs->load("paybox");
+$langs->load("paybox");     // File with generic data
 $langs->load("paypal");
+$langs->load("stripe");
 
 // Input are:
 // type ('invoice','order','contractline'),
@@ -66,7 +67,7 @@ $amount=price2num(GETPOST("amount"));
 if (! GETPOST("currency",'alpha')) $currency=$conf->currency;
 else $currency=GETPOST("currency",'alpha');
 
-if (! GETPOST("action"))
+if (! GETPOST('action','aZ09'))
 {
     if (! GETPOST("amount") && ! GETPOST("source"))
     {
@@ -99,6 +100,7 @@ $ref=$REF=GETPOST('ref','alpha');
 $TAG=GETPOST("tag",'alpha');
 $FULLTAG=GETPOST("fulltag",'alpha');		// fulltag is tag with more informations
 $SECUREKEY=GETPOST("securekey");	        // Secure key
+$FULLTAG.=($FULLTAG?'.':'').'PM=paypal';
 
 if (! empty($SOURCE))
 {
@@ -183,11 +185,12 @@ if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
  * Actions
  */
 
-if (GETPOST("action") == 'dopayment')
+if (GETPOST('action','aZ09') == 'dopayment')
 {
 	$PAYPAL_API_PRICE=price2num(GETPOST("newamount"),'MT');
     $PAYPAL_PAYMENT_TYPE='Sale';
 
+	$origfulltag=GETPOST("fulltag",'alpha');
     $shipToName=GETPOST("shipToName");
     $shipToStreet=GETPOST("shipToStreet");
     $shipToCity=GETPOST("shipToCity");
@@ -203,7 +206,7 @@ if (GETPOST("action") == 'dopayment')
 	if (empty($PAYPAL_API_PRICE) || ! is_numeric($PAYPAL_API_PRICE))   $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
 	//elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 	//elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
-	elseif (empty($FULLTAG))        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
+	elseif (! $origfulltag)        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
 
     //var_dump($_POST);
 	if (empty($mesg))
@@ -254,9 +257,15 @@ if (GETPOST("action") == 'dopayment')
  * View
  */
 
-llxHeaderPaypal($langs->trans("PaymentForm"));
+$head='';
+if (! empty($conf->global->PAYPAL_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYPAL_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
-if (! empty($PAYPAL_API_SANDBOX))
+$conf->dol_hide_topmenu=1;
+$conf->dol_hide_leftmenu=1;
+
+llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
+
+if (! empty($conf->global->PAYPAL_API_SANDBOX))
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode'),'','warning');
 }
@@ -267,7 +276,7 @@ $paramcreditor='PAYPAL_CREDITOR_'.$suffix;
 if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
 else if (! empty($conf->global->PAYPAL_CREDITOR)) $creditor=$conf->global->PAYPAL_CREDITOR;
 
-print '<span id="dolpaymentspan"></span>'."\n";
+print '<span id="dopaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
@@ -343,7 +352,7 @@ $error=0;
 $var=false;
 
 // Free payment
-if (! GETPOST("source") && $valid)
+if (! GETPOST("source"))
 {
 	$found=true;
 	$tag=GETPOST("tag");
@@ -390,7 +399,7 @@ if (! GETPOST("source") && $valid)
 
 
 // Payment on customer order
-if (GETPOST("source") == 'order' && $valid)
+if (GETPOST("source") == 'order')
 {
 	$found=true;
 	$langs->load("orders");
@@ -409,10 +418,13 @@ if (GETPOST("source") == 'order' && $valid)
 		$result=$order->fetch_thirdparty($order->socid);
 	}
 
-	$amount=$order->total_ttc;
-    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
-    $amount=price2num($amount);
-
+    if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
+    {
+    	$amount=$order->total_ttc;
+        if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+        $amount=price2num($amount);
+    }
+    
 	$fulltag='ORD='.$order->ref.'.CUS='.$order->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($order->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
@@ -497,7 +509,7 @@ if (GETPOST("source") == 'order' && $valid)
 
 
 // Payment on customer invoice
-if (GETPOST("source") == 'invoice' && $valid)
+if (GETPOST("source") == 'invoice')
 {
 	$found=true;
 	$langs->load("bills");
@@ -516,10 +528,13 @@ if (GETPOST("source") == 'invoice' && $valid)
 		$result=$invoice->fetch_thirdparty($invoice->socid);
 	}
 
-	$amount=price2num($invoice->total_ttc - $invoice->getSommePaiement());
-    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
-    $amount=price2num($amount);
-
+    if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
+    {
+    	$amount=price2num($invoice->total_ttc - $invoice->getSommePaiement());
+        if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+        $amount=price2num($amount);
+    }
+    
 	$fulltag='INV='.$invoice->ref.'.CUS='.$invoice->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($invoice->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
@@ -603,7 +618,7 @@ if (GETPOST("source") == 'invoice' && $valid)
 }
 
 // Payment on contract line
-if (GETPOST("source") == 'contractline' && $valid)
+if (GETPOST("source") == 'contractline')
 {
 	$found=true;
 	$langs->load("contracts");
@@ -640,35 +655,38 @@ if (GETPOST("source") == 'contractline' && $valid)
 		}
 	}
 
-	$amount=$contractline->total_ttc;
-	if ($contractline->fk_product)
-	{
-		$product=new Product($db);
-		$result=$product->fetch($contractline->fk_product);
-
-		// We define price for product (TODO Put this in a method in product class)
-		if (! empty($conf->global->PRODUIT_MULTIPRICES))
-		{
-			$pu_ht = $product->multiprices[$contract->thirdparty->price_level];
-			$pu_ttc = $product->multiprices_ttc[$contract->thirdparty->price_level];
-			$price_base_type = $product->multiprices_base_type[$contract->thirdparty->price_level];
-		}
-		else
-		{
-			$pu_ht = $product->price;
-			$pu_ttc = $product->price_ttc;
-			$price_base_type = $product->price_base_type;
-		}
-
-		$amount=$pu_ttc;
-		if (empty($amount))
-		{
-			dol_print_error('','ErrorNoPriceDefinedForThisProduct');
-			exit;
-		}
-	}
-    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
-    $amount=price2num($amount);
+    if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
+    {
+    	$amount=$contractline->total_ttc;
+    	if ($contractline->fk_product)
+    	{
+    		$product=new Product($db);
+    		$result=$product->fetch($contractline->fk_product);
+    
+    		// We define price for product (TODO Put this in a method in product class)
+    		if (! empty($conf->global->PRODUIT_MULTIPRICES))
+    		{
+    			$pu_ht = $product->multiprices[$contract->thirdparty->price_level];
+    			$pu_ttc = $product->multiprices_ttc[$contract->thirdparty->price_level];
+    			$price_base_type = $product->multiprices_base_type[$contract->thirdparty->price_level];
+    		}
+    		else
+    		{
+    			$pu_ht = $product->price;
+    			$pu_ttc = $product->price_ttc;
+    			$price_base_type = $product->price_base_type;
+    		}
+    
+    		$amount=$pu_ttc;
+    		if (empty($amount))
+    		{
+    			dol_print_error('','ErrorNoPriceDefinedForThisProduct');
+    			exit;
+    		}
+    	}
+        if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+        $amount=price2num($amount);
+    }
 
 	$fulltag='COL='.$contractline->ref.'.CON='.$contract->ref.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
 	//$fulltag.='.NAM='.strtr($contract->thirdparty->name,"-"," ");
@@ -798,7 +816,7 @@ if (GETPOST("source") == 'contractline' && $valid)
 }
 
 // Payment on member subscription
-if (GETPOST("source") == 'membersubscription' && $valid)
+if (GETPOST("source") == 'membersubscription')
 {
 	$found=true;
 	$langs->load("members");
@@ -818,10 +836,13 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 		$subscription=new Subscription($db);
 	}
 
-	$amount=$subscription->total_ttc;
-    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
-    $amount=price2num($amount);
-
+    if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
+    {
+    	$amount=$subscription->total_ttc;
+        if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+        $amount=price2num($amount);
+    }
+    
 	$fulltag='MEM='.$member->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
@@ -948,12 +969,13 @@ if ($found && ! $error)	// We are in a management option and no error
 
 	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
 	{
-		print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
+		print '<br><input class="button" type="submit" id="dopayment" name="dopayment" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
 	}
 	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
 	{
-		print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PaypalDoPayment").'">';
+		print '<br><input class="button" type="submit" id="dopayment" name="dopayment" value="'.$langs->trans("PaypalDoPayment").'">';
 	}
+	print '<img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">';
 }
 else
 {
@@ -965,11 +987,24 @@ print '</td></tr>'."\n";
 print '</table>'."\n";
 print '</form>'."\n";
 print '</div>'."\n";
+
+
+print '<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	jQuery("#dopayment").click(function() {
+		jQuery("#dopayment").hide();
+        jQuery("#hourglasstopay").show();
+	});
+});
+</script>';
+
+
 print '<br>';
 
 
-html_print_paypal_footer($mysoc,$langs);
 
-llxFooterPaypal();
+htmlPrintOnlinePaymentFooter($mysoc,$langs);
+
+llxFooter('', 'public');
 
 $db->close();

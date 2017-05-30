@@ -189,9 +189,9 @@ class Categorie extends CommonObject
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		if ($id)
+		if ($id > 0)
 		{
-			$sql.= " WHERE rowid = '".$id."'";
+			$sql.= " WHERE rowid = ".$id;
 		}
 		else
 		{
@@ -399,7 +399,7 @@ class Categorie extends CommonObject
 		{
 			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');
 		}
-		$sql .= ", visible = '".$this->visible."'";
+		$sql .= ", visible = '".$this->db->escape($this->visible)."'";
 		$sql .= ", fk_parent = ".$this->fk_parent;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -792,11 +792,12 @@ class Categorie extends CommonObject
 	/**
 	 * Return list of fetched instance of elements having this category
 	 *
-	 * @param   string $type Type of category ('customer', 'supplier', 'contact', 'product', 'member')
-	 *
-	 * @return  mixed        -1 if KO, array of instance of object if OK
+	 * @param   string     $type       Type of category ('customer', 'supplier', 'contact', 'product', 'member')
+	 * @param   int        $onlyids    Return only ids of objects (consume less memory)
+	 * @return  mixed                  -1 if KO, array of instance of object if OK
+	 * @see containsObject
 	 */
-	function getObjectsInCateg($type)
+	function getObjectsInCateg($type, $onlyids=0)
 	{
 		$objs = array();
 
@@ -813,10 +814,18 @@ class Categorie extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			while ($rec = $this->db->fetch_array($resql)) {
-				$obj = new $this->MAP_OBJ_CLASS[$type]( $this->db );
-				$obj->fetch( $rec['fk_' . $this->MAP_CAT_FK[$type]]);
-				$objs[] = $obj;
+			while ($rec = $this->db->fetch_array($resql)) 
+			{
+			    if ($onlyids)
+			    {
+			        $objs[] = $rec['fk_' . $this->MAP_CAT_FK[$type]];
+			    }
+			    else
+			    {
+				    $obj = new $this->MAP_OBJ_CLASS[$type]( $this->db );
+				    $obj->fetch( $rec['fk_' . $this->MAP_CAT_FK[$type]]);
+				    $objs[] = $obj;
+			    }
 			}
 			return $objs;
 		}
@@ -834,6 +843,7 @@ class Categorie extends CommonObject
 	 * @param   int    $object_id id of the object to search
 	 *
 	 * @return  int                        number of occurrences
+	 * @see getObjectsInCateg
 	 */
 	function containsObject($type, $object_id )
 	{
@@ -1670,7 +1680,7 @@ class Categorie extends CommonObject
 	                $sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
 	                $sql2.= " SET label='".$this->db->escape($this->label)."',";
 	                $sql2.= " description='".$this->db->escape($this->description)."'";
-	                $sql2.= " WHERE fk_category=".$this->id." AND lang='".$key."'";
+	                $sql2.= " WHERE fk_category=".$this->id." AND lang='".$this->db->escape($key)."'";
 	            }
 	            else
 	            {
@@ -1692,7 +1702,7 @@ class Categorie extends CommonObject
 	                $sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
 	                $sql2.= " SET label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
 	                $sql2.= " description='".$this->db->escape($this->multilangs["$key"]["description"])."'";
-	                $sql2.= " WHERE fk_category=".$this->id." AND lang='".$key."'";
+	                $sql2.= " WHERE fk_category=".$this->id." AND lang='".$this->db->escape($key)."'";
 	            }
 	            else
 	            {

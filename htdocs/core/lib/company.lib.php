@@ -698,6 +698,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     $sortfield = GETPOST("sortfield",'alpha');
     $sortorder = GETPOST("sortorder",'alpha');
+    $page = GETPOST('page','int');
     $search_status		= GETPOST("search_status",'int');
     if ($search_status=='') $search_status=1; // always display activ customer first
     $search_name = GETPOST("search_name",'alpha');
@@ -733,7 +734,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<input type="hidden" name="socid" value="'.$object->id.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-
+    print '<input type="hidden" name="page" value="'.$page.'">';
+    
     print "\n".'<table class="noborder" width="100%">'."\n";
 
     $param="socid=".$object->id;
@@ -1062,7 +1064,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         if (get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         if (get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         if (get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
-        $sql.= " WHERE u.rowid = a.fk_user_author";
+        $sql.= " WHERE u.rowid = a.fk_user_action";
         $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
         if (get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
         if (get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
@@ -1264,8 +1266,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $out.='<td class="liste_titre"></td>';
         // Action column
         $out.='<td class="liste_titre" align="middle">';
-        $searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-        $out.=$searchpitco;
+        $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+        $out.=$searchpicto;
         $out.='</td>';
         $out.='</tr>';
         

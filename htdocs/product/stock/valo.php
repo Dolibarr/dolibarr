@@ -33,7 +33,7 @@ $result=restrictedArea($user,'stock');
 
 $sref=GETPOST("sref");
 $snom=GETPOST("snom");
-$sall=GETPOST("sall");
+$sall=GETPOST('sall', 'alphanohtml');
 
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");

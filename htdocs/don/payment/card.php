@@ -34,7 +34,7 @@ $langs->load('companies');
 
 // Security check
 $id=GETPOST('rowid')?GETPOST('rowid','int'):GETPOST('id','int');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 if ($user->societe_id) $socid=$user->societe_id;
 // TODO Add rule to restrict access payment

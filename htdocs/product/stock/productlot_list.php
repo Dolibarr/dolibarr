@@ -309,6 +309,7 @@ if ($resql)
     print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
 	
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
 	
@@ -399,8 +400,8 @@ if ($resql)
      }*/
     // Action column
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-    print $searchpitco;
+    $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+    print $searchpicto;
     print '</td>';
     print '</tr>'."\n";
     
@@ -569,7 +570,7 @@ if ($resql)
             $i++;
             if ($i == 1)
             {
-                if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+                if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
                 else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
             }
             elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';

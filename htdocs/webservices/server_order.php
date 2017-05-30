@@ -325,7 +325,7 @@ $server->register(
 
 $server->register(
 		'validOrder',
-		array('authentication'=>'tns:authentication','id'=>'xsd:string'),	// Entry values
+		array('authentication'=>'tns:authentication','id'=>'xsd:string','id_warehouse'=>'xsd:string'),  // Entry values
 		array('result'=>'tns:result'),	// Exit values
 		$ns,
 		$ns.'#validOrder',
@@ -793,9 +793,10 @@ function createOrder($authentication,$order)
  *
  * @param	array		$authentication		Array of authentication information
  * @param	int			$id					Id of order to validate
+ * @param	int			$id_warehouse		Id of warehouse to use for stock decrease
  * @return	array							Array result
  */
-function validOrder($authentication,$id='')
+function validOrder($authentication,$id='',$id_warehouse=0)
 {
 	global $db,$conf,$langs;
 
@@ -821,7 +822,8 @@ function validOrder($authentication,$id='')
 			$db->begin();
 			if ($result > 0)
 			{
-				$result=$order->valid($fuser);
+
+				$result=$order->valid($fuser,$id_warehouse);
 
 				if ($result	>= 0)
 				{

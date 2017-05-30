@@ -36,7 +36,7 @@ if ($user->societe_id > 0) accessforbidden();
 // If the user does not have perm to read the page
 if(!$user->rights->holiday->read) accessforbidden();
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $holiday = new Holiday($db);
 

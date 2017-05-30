@@ -436,7 +436,8 @@ if ($mode == 'common')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-
+    print '<input type="hidden" name="page" value="'.$page.'">';
+    
     dol_fiche_head($head, $mode, '', -1);
 
     $moreforfilter = '';

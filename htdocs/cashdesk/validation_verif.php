@@ -34,20 +34,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);
 
-$action =GETPOST('action');
+$action =GETPOST('action','aZ09');
 $bankaccountid=GETPOST('cashdeskbank');
 
 switch ($action)
 {
-
 	default:
-
-		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=validation';
+	    $redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=validation';
 		break;
 
-
 	case 'valide_achat':
-        
 	    $thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
 	    
 		$company=new Societe($db);
@@ -115,13 +111,11 @@ switch ($action)
 
 
 	case 'retour':
-
 		$redirection = 'affIndex.php?menutpl=facturation';
 		break;
 
 
 	case 'valide_facture':
-
 		$now=dol_now();
 
 		// Recuperation de la date et de l'heure
@@ -363,3 +357,4 @@ switch ($action)
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
 
 header('Location: '.$redirection);
+exit;

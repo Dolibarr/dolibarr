@@ -1,2 +1,2 @@
-File to flag module build using official module template.
+File to flag module built using official module template.
 When this file is present into a module directory, you can edit it with the module builder tool.

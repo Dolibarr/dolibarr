@@ -144,12 +144,12 @@ class CompanyBankAccount extends Account
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET";
         $sql.= " bank = '" .$this->db->escape($this->bank)."'";
-        $sql.= ",code_banque='".$this->code_banque."'";
-        $sql.= ",code_guichet='".$this->code_guichet."'";
-        $sql.= ",number='".$this->number."'";
-        $sql.= ",cle_rib='".$this->cle_rib."'";
-        $sql.= ",bic='".$this->bic."'";
-        $sql.= ",iban_prefix = '".$this->iban."'";
+        $sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
+        $sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
+        $sql.= ",number='".$this->db->escape($this->number)."'";
+        $sql.= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
+        $sql.= ",bic='".$this->db->escape($this->bic)."'";
+        $sql.= ",iban_prefix = '".$this->db->escape($this->iban)."'";
         $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
         $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
         $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";

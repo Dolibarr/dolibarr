@@ -18,8 +18,8 @@ License: GPL-3.0+
 #Packager: Laurent Destailleur (Eldy) <eldy@users.sourceforge.net>
 Vendor: Dolibarr dev team
 
-URL: http://www.dolibarr.org
-Source0: http://www.dolibarr.org/files/lastbuild/package_rpm_opensuse/%{name}-%{version}.tgz
+URL: https://www.dolibarr.org
+Source0: https://www.dolibarr.org/files/lastbuild/package_rpm_opensuse/%{name}-%{version}.tgz
 Patch0: %{name}-forrpm.patch
 BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
@@ -173,6 +173,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/bookmarks
 %_datadir/dolibarr/htdocs/cashdesk
 %_datadir/dolibarr/htdocs/categories
+%_datadir/dolibarr/htdocs/collab
 %_datadir/dolibarr/htdocs/comm
 %_datadir/dolibarr/htdocs/commande
 %_datadir/dolibarr/htdocs/compta
@@ -181,6 +182,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/contrat
 %_datadir/dolibarr/htdocs/core
 %_datadir/dolibarr/htdocs/cron
+%_datadir/dolibarr/htdocs/custom
 %_datadir/dolibarr/htdocs/don
 %_datadir/dolibarr/htdocs/ecm
 %_datadir/dolibarr/htdocs/expedition
@@ -210,6 +212,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/public
 %_datadir/dolibarr/htdocs/resource
 %_datadir/dolibarr/htdocs/societe
+%_datadir/dolibarr/htdocs/stripe
 %_datadir/dolibarr/htdocs/supplier_proposal
 %_datadir/dolibarr/htdocs/support
 %_datadir/dolibarr/htdocs/theme

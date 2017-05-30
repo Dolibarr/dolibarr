@@ -24,6 +24,44 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
+-- Clean corrupted values for tms
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_opensurvey_sondage set tms = date_fin where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_opensurvey_sondage set tms = date_fin where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+-- Remove default not null on date_fin
+-- VMYSQL4.3 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN date_fin DATETIME NULL DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_opensurvey_sondage ALTER COLUMN date_fin DROP NOT NULL;
+
+
+ALTER TABLE llx_extrafields ADD COLUMN fieldcomputed text;
+ALTER TABLE llx_extrafields ADD COLUMN fielddefault varchar(255);
+
+ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN fk_user_creat integer NOT NULL DEFAULT 0;
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN status integer DEFAULT 1 after date_fin;
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_comments tinyint NOT NULL DEFAULT 1;
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_spy tinyint NOT NULL DEFAULT 1 AFTER allow_comments;
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN sujet TEXT;
+
+
+create table llx_notify_def_object
+(
+  id				integer AUTO_INCREMENT PRIMARY KEY,
+  entity			integer DEFAULT 1 NOT NULL,		-- multi company id
+  objet_type		varchar(16),					-- 'actioncomm'
+  objet_id			integer NOT NULL,				-- id of parent key
+  type_notif		varchar(16) DEFAULT 'browser',	-- 'browser', 'email', 'sms', 'webservice', ...
+  date_notif		datetime,						-- date notification
+  user_id			integer,						-- notification is for this user
+  moreparam			varchar(255)
+)ENGINE=innodb;
+
+ALTER TABLE llx_facturedet_rec ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
+
 ALTER TABLE llx_extrafields ADD COLUMN langs varchar(24);
 
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN fk_unit integer DEFAULT NULL;
@@ -45,9 +83,12 @@ ALTER TABLE llx_ecm_files ADD INDEX idx_ecm_files_label (label);
 ALTER TABLE llx_holiday ADD COLUMN import_key				varchar(14);
 ALTER TABLE llx_holiday ADD COLUMN extraparams				varchar(255);	
 
+ALTER TABLE llx_expedition ADD COLUMN fk_projet integer DEFAULT NULL after fk_soc;
+
 ALTER TABLE llx_expensereport ADD COLUMN import_key			varchar(14);
 ALTER TABLE llx_expensereport ADD COLUMN extraparams		varchar(255);	
 
+ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);	
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_CREATE','Product or service created','Executed when a product or sevice is created','product',30);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_MODIFY','Product or service modified','Executed when a product or sevice is modified','product',30);
@@ -63,6 +104,7 @@ ALTER TABLE llx_c_email_templates ADD COLUMN content_lines text;
 ALTER TABLE llx_loan ADD COLUMN fk_projet integer DEFAULT NULL;
 
 ALTER TABLE llx_holiday ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_projet ADD COLUMN fk_user_modif integer;
 
 ALTER TABLE llx_projet_task_time ADD COLUMN datec date;
 ALTER TABLE llx_projet_task_time ADD COLUMN tms timestamp;
@@ -114,16 +156,44 @@ CREATE TABLE llx_product_attribute_combination
   entity INT DEFAULT 1 NOT NULL
 );
 
-INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (1,'VT', 'Journal des ventes', 1, 1);
-INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (2,'AC', 'Journal des achats', 2, 1);
-INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (3,'BQ', 'Journal de banque', 3, 1);
-INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (4,'OD', 'Journal des opérations diverses', 0, 1);
-INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (5,'AN', 'Journal des à-nouveaux', 9, 1);
 
-ALTER TABLE llx_accounting_journal ADD COLUMN entity integer DEFAULT 1;
+ALTER TABLE llx_bank_account drop foreign key bank_fk_accountancy_journal;
+
+-- Add journal entries
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (1,'VT', 'Sale journal', 2, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (2,'AC', 'Purchase journal', 3, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (3,'BQ', 'Bank journal', 4, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (4,'OD', 'Other journal', 1, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (5,'AN', 'Has new journal', 9, 1);
+-- Fix old entries
+UPDATE llx_accounting_journal SET nature = 1 where code = 'OD' and nature = 0;
+UPDATE llx_accounting_journal SET nature = 2 where code = 'VT' and nature = 1;
+UPDATE llx_accounting_journal SET nature = 3 where code = 'AC' and nature = 2;
+UPDATE llx_accounting_journal SET nature = 4 where (code = 'BK' or code = 'BQ') and nature = 3;
+
+UPDATE llx_bank_account as ba set accountancy_journal = 'BQ' where accountancy_journal = 'BK';
+UPDATE llx_bank_account as ba set accountancy_journal = 'OD' where accountancy_journal IS NULL;
+
+ALTER TABLE llx_bank_account ADD COLUMN fk_accountancy_journal integer;
+ALTER TABLE llx_bank_account ADD INDEX idx_fk_accountancy_journal (fk_accountancy_journal);
+
+UPDATE llx_bank_account as ba set fk_accountancy_journal = (SELECT rowid FROM llx_accounting_journal as aj where ba.accountancy_journal = aj.code) where accountancy_journal not in ('1', '2', '3', '4', '5', '6', '5', '8', '9', '10', '11', '12', '13', '14', '15');
+ALTER TABLE llx_bank_account ADD CONSTRAINT fk_bank_account_accountancy_journal FOREIGN KEY (fk_accountancy_journal) REFERENCES llx_accounting_journal (rowid);
+
+--Update general ledger for FEC format & harmonization
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_tiers varchar(32);
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN label_compte varchar(255);
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_journal varchar(32);
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN thirdparty_label varchar(255) AFTER code_tiers;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN label_operation varchar(255) AFTER label_compte;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN multicurrency_amount double AFTER sens;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN multicurrency_code varchar(255) AFTER multicurrency_amount;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN lettering_code varchar(255) AFTER multicurrency_code;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_lettering datetime AFTER lettering_code;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN journal_label varchar(255) AFTER code_journal;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_validated datetime AFTER validated;
 
 ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
-
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_CREATE','Expense report created','Executed when an expense report is created','expensereport',201);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_VALIDATE','Expense report validated','Executed when an expense report is validated','expensereport',202);
@@ -145,18 +215,22 @@ ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_invoic
 
 ALTER TABLE llx_facture_rec ADD COLUMN vat_src_code	varchar(10) DEFAULT '';
 
-UPDATE llx_const set value='moono-lisa' where value = 'moono' AND name = 'FCKEDITOR_SKIN';
+DELETE FROM llx_const WHERE name = __ENCRYPT('ADHERENT_BANK_USE_AUTO')__;
 
-ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
-ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+UPDATE llx_const SET value = __ENCRYPT('moono-lisa')__ WHERE value = __ENCRYPT('moono')__ AND name = __ENCRYPT('FCKEDITOR_SKIN')__;
+
+ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
 
 ALTER TABLE llx_user ADD COLUMN model_pdf varchar(255);
 ALTER TABLE llx_usergroup ADD COLUMN model_pdf varchar(255);
 
-INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('PRODUCT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/products', 'chaine', 0, '');
-INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('CONTRACT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/contracts', 'chaine', 0, '');
-INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USERGROUP_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/usergroups', 'chaine', 0, '');
-INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USER_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/users', 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES (__ENCRYPT('PRODUCT_ADDON_PDF_ODT_PATH')__, 1, __ENCRYPT('DOL_DATA_ROOT/doctemplates/products')__, 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES (__ENCRYPT('CONTRACT_ADDON_PDF_ODT_PATH')__, 1, __ENCRYPT('DOL_DATA_ROOT/doctemplates/contracts')__, 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES (__ENCRYPT('USERGROUP_ADDON_PDF_ODT_PATH')__, 1, __ENCRYPT('DOL_DATA_ROOT/doctemplates/usergroups')__, 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES (__ENCRYPT('USER_ADDON_PDF_ODT_PATH')__, 1, __ENCRYPT('DOL_DATA_ROOT/doctemplates/users')__, 'chaine', 0, '');
+
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES (__ENCRYPT('MAIN_ENABLE_OVERWRITE_TRANSLATION')__, 1, __ENCRYPT('1')__, 'chaine', 0, 'Enable overwrote of translation');
 
 ALTER TABLE llx_chargesociales ADD COLUMN ref varchar(16);
 ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;
@@ -166,6 +240,21 @@ ALTER TABLE llx_cronjob ADD COLUMN processing integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_website ADD COLUMN fk_user_create integer;
 ALTER TABLE llx_website ADD COLUMN fk_user_modif integer;
 
+-- Add missing fields making not possible to enter reference price of products into another currency
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN multicurrency_tx			double(24,8) DEFAULT 1;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN multicurrency_price_ttc	double(24,8) DEFAULT NULL;
+
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_multicurrency		 integer;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN multicurrency_code		 varchar(255);
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN multicurrency_tx	     double(24,8) DEFAULT 1;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN multicurrency_price	 double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
+
+ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN fk_multicurrency		 integer;
+ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_code		 varchar(255);
+ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_tx	     double(24,8) DEFAULT 1;
+ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price	 double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
 
 create table llx_payment_various
 (
@@ -205,7 +294,9 @@ ALTER TABLE llx_default_values ADD UNIQUE INDEX uk_default_values(type, entity, 
 ALTER TABLE llx_supplier_proposaldet ADD INDEX idx_supplier_proposaldet_fk_supplier_proposal (fk_supplier_proposal);
 ALTER TABLE llx_supplier_proposaldet ADD INDEX idx_supplier_proposaldet_fk_product (fk_product);
 
+UPDATE llx_supplier_proposaldet SET fk_unit = NULL where fk_unit not in (SELECT rowid from llx_c_units);
 ALTER TABLE llx_supplier_proposaldet ADD CONSTRAINT fk_supplier_proposaldet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
+
 ALTER TABLE llx_supplier_proposaldet ADD CONSTRAINT fk_supplier_proposaldet_fk_supplier_proposal FOREIGN KEY (fk_supplier_proposal) REFERENCES llx_supplier_proposal (rowid);
 
 -- NEW inventory module
@@ -253,10 +344,9 @@ insert into llx_c_tva(fk_pays,taux,code,recuperableonly,localtax1,localtax1_type
 
 ALTER TABLE llx_events MODIFY COLUMN ip varchar(250);
 
-UPDATE llx_accounting_journal SET nature = 1 where code = 'OD' and nature = 0;
-UPDATE llx_accounting_journal SET nature = 2 where code = 'VT' and nature = 1;
-UPDATE llx_accounting_journal SET nature = 3 where code = 'AC' and nature = 2;
-UPDATE llx_accounting_journal SET nature = 4 where (code = 'BK' or code = 'BQ') and nature = 3;
+ALTER TABLE llx_facture ADD COLUMN fk_fac_rec_source integer;
+
+DELETE from llx_c_actioncomm where code in ('AC_PROP','AC_COM','AC_FAC','AC_SHIP','AC_SUP_ORD','AC_SUP_INV') AND id NOT IN (SELECT DISTINCT fk_action FROM llx_actioncomm);
 
 
-
+ALTER TABLE llx_inventory ADD COLUMN ref varchar(48);

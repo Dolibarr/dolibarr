@@ -27,6 +27,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 
@@ -71,7 +72,7 @@ if ($action == 'updateMask')
 
 if ($action == 'setmod')
 {
-	dolibarr_set_const($db, "CHEQUERECEIPTS_ADDON",$value,'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "CHEQUERECEIPTS_ADDON",$value, 'chaine', 0, '', $conf->entity);
 }
 
 if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
@@ -105,7 +106,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print load_fiche_titre($langs->trans("BankSetupModule"),$linkback,'title_setup');
 
 $head = bank_admin_prepare_head(null);
-dol_fiche_head($head, 'checkreceipts', $langs->trans("BankSetupModule"), 0, 'account');
+dol_fiche_head($head, 'checkreceipts', $langs->trans("BankSetupModule"), -1, 'account');
 
 /*
  *  Numbering module

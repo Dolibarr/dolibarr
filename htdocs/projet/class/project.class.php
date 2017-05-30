@@ -922,15 +922,16 @@ class Project extends CommonObject
     /**
      * 	Return clicable name (with picto eventually)
      *
-     * 	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     * 	@param	string	$option			Variant ('', 'nolink')
-     * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
-     *  @param	string	$moreinpopup	Text to add into popup
-     *  @param	string	$sep			Separator between ref and label if option addlabel is set
-     *  @param	int   	$notooltip		1=Disable tooltip
-     * 	@return	string					Chaine avec URL
+     * 	@param	int		$withpicto		          0=No picto, 1=Include picto into link, 2=Only picto
+     * 	@param	string	$option			          Variant ('', 'nolink')
+     * 	@param	int		$addlabel		          0=Default, 1=Add label into string, >1=Add first chars into string
+     *  @param	string	$moreinpopup	          Text to add into popup
+     *  @param	string	$sep			          Separator between ref and label if option addlabel is set
+     *  @param	int   	$notooltip		          1=Disable tooltip
+     *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     * 	@return	string					          String with URL
      */
-    function getNomUrl($withpicto=0, $option='', $addlabel=0, $moreinpopup='', $sep=' - ', $notooltip=0)
+    function getNomUrl($withpicto=0, $option='', $addlabel=0, $moreinpopup='', $sep=' - ', $notooltip=0, $save_lastsearch_value=-1)
     {
         global $conf, $langs, $user;
 
@@ -940,10 +941,8 @@ class Project extends CommonObject
         
         $label='';
         if ($option != 'nolink') $label = '<u>' . $langs->trans("ShowProject") . '</u>';
-        if (! empty($this->ref))
-            $label .= ($label?'<br>':'').'<b>' . $langs->trans('Ref') . ': </b>' . $this->ref;	// The space must be after the : to not being explode when showing the title in img_picto
-        if (! empty($this->title))
-            $label .= ($label?'<br>':'').'<b>' . $langs->trans('Label') . ': </b>' . $this->title;	// The space must be after the : to not being explode when showing the title in img_picto
+        $label .= ($label?'<br>':'').'<b>' . $langs->trans('Ref') . ': </b>' . $this->ref;	// The space must be after the : to not being explode when showing the title in img_picto
+        $label .= ($label?'<br>':'').'<b>' . $langs->trans('Label') . ': </b>' . $this->title;	// The space must be after the : to not being explode when showing the title in img_picto
         if (! empty($this->thirdparty_name))
             $label .= ($label?'<br>':'').'<b>' . $langs->trans('ThirdParty') . ': </b>' . $this->thirdparty_name;	// The space must be after the : to not being explode when showing the title in img_picto
         if (! empty($this->dateo))
@@ -965,6 +964,10 @@ class Project extends CommonObject
             {
                 $url = DOL_URL_ROOT . '/projet/card.php?id=' . $this->id;
             }
+            // Add param to save lastsearch_values or not
+            $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0); 
+            if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+            if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
         
         $linkclose='';
@@ -1113,7 +1116,7 @@ class Project extends CommonObject
         // Get id of types of contacts for projects (This list never contains a lot of elements)
         $listofprojectcontacttype=array();
         $sql2 = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
-        $sql2.= " WHERE ctc.element = '" . $this->element . "'";
+        $sql2.= " WHERE ctc.element = '" . $this->db->escape($this->element) . "'";
         $sql2.= " AND ctc.source = 'internal'";
         $resql = $this->db->query($sql2);
         if ($resql)

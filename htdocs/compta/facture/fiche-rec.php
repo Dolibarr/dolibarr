@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 $langs->load('bills');
 $langs->load('compta');
 $langs->load('admin');
+$langs->load('other');
 
 // Security check
 $id=(GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int'));
@@ -140,7 +141,7 @@ if (empty($reshook))
     if (GETPOST('cancel')) $action='';
 
     // Set note
-    include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not include_once
+    include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	    // Must be include, not include_once
 
     include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
@@ -615,7 +616,7 @@ if (empty($reshook))
     	else
     	{
     		// Insert line
-    		$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit);
+    		$result = $object->addline($desc, $pu_ht, $qty, $tva_tx,$localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit);
 
     		if ($result > 0)
     		{
@@ -787,7 +788,9 @@ if (empty($reshook))
     			$description,
     			$pu_ht,
     			$qty,
-                    	$vat_rate,
+			    $vat_rate,
+			    $localtax1_rate,
+			    $localtax1_rate,
     			GETPOST('productid'),
     			GETPOST('remise_percent'),
     			'HT',
@@ -938,7 +941,7 @@ if ($action == 'create')
 		    '__INVOICE_YEAR__' =>  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($object->date,'%Y').')',
 		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'y'),'%Y').')'
 		);
-		$substitutionarray['__(TRANSKEY)__']=$langs->trans("TransKey");
+		$substitutionarray['__(TransKey)__']=$langs->trans("TransKey");
 		
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach($substitutionarray as $key => $val)
@@ -1180,8 +1183,22 @@ else
 
 		print '<tr><td>'.$langs->trans("AmountVAT").'</td><td colspan="3">'.price($object->total_tva,'',$langs,1,-1,-1,$conf->currency).'</td>';
 		print '</tr>';
+
+		// Amount Local Taxes
+		if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) 	// Localtax1
+		{
+			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
+			print '<td class="nowrap">' . price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		}
+		if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) 	// Localtax2
+		{
+			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
+			print '<td class=nowrap">' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		}
+
 		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td colspan="3">'.price($object->total_ttc,'',$langs,1,-1,-1,$conf->currency).'</td>';
 		print '</tr>';
+
 
 		// Payment term
 		print '<tr><td>';
@@ -1242,7 +1259,7 @@ else
 		    '__INVOICE_YEAR__' =>  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%Y').')',
 		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'),'%Y').')'
 		);
-		$substitutionarray['__(TRANSKEY)__']=$langs->trans("TransKey");
+		$substitutionarray['__(TransKey)__']=$langs->trans("TransKey");
 		
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach($substitutionarray as $key => $val)
@@ -1635,6 +1652,7 @@ else
         	print '<input type="hidden" name="action" value="list">';
         	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
         	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+            print '<input type="hidden" name="page" value="'.$page.'">';
         	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 	        print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy.png',0,'','',$limit);
@@ -1753,8 +1771,8 @@ else
 			}
 			// Action column
 			print '<td class="liste_titre" align="middle">';
-			$searchpitco=$form->showFilterAndCheckAddButtons(0, 'checkforselect', 1);
-			print $searchpitco;
+			$searchpicto=$form->showFilterAndCheckAddButtons(0, 'checkforselect', 1);
+			print $searchpicto;
 			print '</td>';
 			print "</tr>\n";
 

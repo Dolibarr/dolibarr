@@ -24,9 +24,16 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 
 require '../../main.inc.php';
 
+
+/*
+ * View
+ */
+
+top_httphead('text/html');  // TODO Use a json mime type
+
 global $user, $db, $langs, $conf;
 
-$time = (int) GETPOST('time');    // Use the time parameter that is always increased by time_update, even if call is late
+$time = (int) GETPOST('time','int');    // Use the time parameter that is always increased by time_update, even if call is late
 //$time=dol_now();
 
 

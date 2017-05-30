@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $langs->load("admin");
 $langs->load("companies");

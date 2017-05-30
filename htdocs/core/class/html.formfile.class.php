@@ -126,7 +126,9 @@ class FormFile
             {
                 $out .= '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
             }
-            $out .= '<input class="flat minwidth400" type="file" name="userfile"';
+
+            $out .= '<input class="flat minwidth400" type="file"';
+            $out .= ((! empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD) || $conf->browser->layout != 'classic')?' name="userfile"':' name="userfile[]" multiple');
             $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
             $out .= '>';
             $out .= ' ';
@@ -708,7 +710,7 @@ class FormFile
 					
 					// Show file name with link to download
 					$out.= '<td class="tdoverflowmax300">';
-                    $tmp = $this->showPreview($file,$modulepart,$relativepath);
+                    $tmp = $this->showPreview($file,$modulepart,$relativepath,0,$param);
                     $out.= ($tmp?$tmp.' ':'');
 					$out.= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
 					$mime=dol_mimetype($relativepath,'',0);
@@ -871,7 +873,7 @@ class FormFile
     			// Preview
     			if (! empty($conf->use_javascript_ajax) && ($conf->browser->layout != 'phone'))
     			{
-                    $tmparray = getAdvancedPreviewUrl($modulepart, $relativepath, 1);
+                    $tmparray = getAdvancedPreviewUrl($modulepart, $relativepath, 1, '&entity='.$entity);
                     if ($tmparray && $tmparray['url']) $tmpout.= '<li><a href="'.$tmparray['url'].'"'.($tmparray['css']?' class="'.$tmparray['css'].'"':'').($tmparray['mime']?' mime="'.$tmparray['mime'].'"':'').($tmparray['target']?' target="'.$tmparray['target'].'"':'').'>'.img_picto('','detail').' '.$langs->trans("Preview").' '.$ext.'</a></li>';
     			}
     			
@@ -992,7 +994,7 @@ class FormFile
 			if (empty($url)) $url=$_SERVER["PHP_SELF"];
 			
 			print '<!-- html.formfile::list_of_documents -->'."\n";
-			if (GETPOST('action') == 'editfile' && $permtoeditline)
+			if (GETPOST('action','aZ09') == 'editfile' && $permtoeditline)
 			{
 			    print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param.'" method="POST">';
 			    print '<input type="hidden" name="action" value="renamefile">';
@@ -1129,7 +1131,7 @@ class FormFile
 					print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
 					if ($showrelpart == 1) print $relativepath;
 					//print dol_trunc($file['name'],$maxlength,'middle');
-					if (GETPOST('action') == 'editfile' && $file['name'] == basename(GETPOST('urlfile')))
+					if (GETPOST('action','aZ09') == 'editfile' && $file['name'] == basename(GETPOST('urlfile')))
 					{
 					    print '</a>';
 					    print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
@@ -1159,7 +1161,7 @@ class FormFile
 						    if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
 						    //print $file['path'].'/'.$minifile.'<br>';
 
-						    $urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+						    $urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 0, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
 						    if (empty($urlforhref)) $urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
 						    print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
 							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
@@ -1266,7 +1268,7 @@ class FormFile
 				}
 			}				
 			
-			if (GETPOST('action') == 'editfile' && $permtoeditline)
+			if (GETPOST('action','aZ09') == 'editfile' && $permtoeditline)
 			{
 			    print '</form>';
 			}
@@ -1675,16 +1677,17 @@ class FormFile
      * @param   string    $modulepart     propal, facture, facture_fourn, ...
      * @param   string    $relativepath   Relative path of docs
      * @param   string    $ruleforpicto   Rule for picto: 0=Preview picto, 1=Use picto of mime type of file)
+     * @param	string	  $param		  More param on http links
      * @return  string    $out            Output string with HTML
      */
-    public function showPreview($file, $modulepart, $relativepath, $ruleforpicto=0)
+    public function showPreview($file, $modulepart, $relativepath, $ruleforpicto=0, $param='')
     {
         global $langs, $conf;
 
         $out='';
-        if ($conf->browser->layout != 'phone')
+        if ($conf->browser->layout != 'phone' && ! empty($conf->use_javascript_ajax))
         {
-            $urladvancedpreview=getAdvancedPreviewUrl($modulepart, $relativepath, 1);      // Return if a file is qualified for preview.
+            $urladvancedpreview=getAdvancedPreviewUrl($modulepart, $relativepath, 1, $param);      // Return if a file is qualified for preview.
             if (count($urladvancedpreview))
             {
                 $out.= '<a class="pictopreview '.$urladvancedpreview['css'].'" href="'.$urladvancedpreview['url'].'"'.(empty($urladvancedpreview['mime'])?'':' mime="'.$urladvancedpreview['mime'].'"').' '.(empty($urladvancedpreview['target'])?'':' target="'.$urladvancedpreview['target'].'"').'>';

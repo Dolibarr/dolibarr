@@ -75,6 +75,13 @@ if (! $sortfield)
 // Initialize technical object to manage context to save list fields
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'interventionlist';
 
+$sall=GETPOST('sall', 'alphanohtml');
+$search_ref=GETPOST('search_ref')?GETPOST('search_ref','alpha'):GETPOST('search_inter','alpha');
+$search_company=GETPOST('search_company','alpha');
+$search_desc=GETPOST('search_desc','alpha');
+$search_status=GETPOST('search_status');
+$optioncss = GETPOST('optioncss','alpha');
+
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
@@ -281,6 +288,7 @@ if ($resql)
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
@@ -395,8 +403,8 @@ if ($resql)
 		print '</td>';
     }
 	print '<td class="liste_titre" align="right">';
-	$searchpitco=$form->showFilterButtons();
-	print $searchpitco;
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
 	print '</td>';
 	
     print "</tr>\n";
@@ -585,7 +593,7 @@ if ($resql)
 	        $i++;
 	        if ($i == 1)
 	        {
-	            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+	            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
 	            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
 	        }
 	        elseif ($totalarray['totaldurationfield'] == $i) print '<td align="right">'.convertSecondToTime($totalarray['totalduration'], 'allhourmin').'</td>';

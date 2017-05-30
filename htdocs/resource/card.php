@@ -221,29 +221,41 @@ if ( $object->fetch($id) > 0 )
 	}
 	else
 	{
-		dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"),0,'resource');
+		dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"), -1, 'resource');
 
+		$formconfirm = '';
+		
 		// Confirm deleting resource line
 	    if ($action == 'delete')
 	    {
-	        print $form->formconfirm("card.php?&id=".$id,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResource"),"confirm_delete_resource",'','',1);
+	        $formconfirm = $form->formconfirm("card.php?&id=".$id,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResource"),"confirm_delete_resource",'','',1);
 	    }
 
-
+	    // Print form confirm
+	    print $formconfirm;
+	    
+	    
+	    $linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	    
+	    
+	    $morehtmlref='<div class="refidno">';
+	    $morehtmlref.='</div>';
+	    
+	    
+	    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+	    
+	    
+	    print '<div class="fichecenter">';
+	    print '<div class="underbanner clearboth"></div>';
+	    
 		/*---------------------------------------
 		 * View object
 		 */
 		print '<table width="100%" class="border">';
 
-		print '<tr><td class="titlefield">'.$langs->trans("ResourceFormLabel_ref").'</td><td>';
-		$linkback = $objet->ref.' <a href="list.php">'.$langs->trans("BackToList").'</a>';
-		print $form->showrefnav($object, 'id', $linkback,1,"rowid");
-		print '</td>';
-		print '</tr>';
-
 		// Resource type
 		print '<tr>';
-		print '<td>' . $langs->trans("ResourceType") . '</td>';
+		print '<td class="titlefield">' . $langs->trans("ResourceType") . '</td>';
 		print '<td>';
 		print $object->type_label;
 		print '</td>';
@@ -267,9 +279,14 @@ if ( $object->fetch($id) > 0 )
 		print '</tr>';
 
 		print '</table>';
+		
+		print '</div>';
+		
+		print '<div class="clearboth"></div><br>';
+		
+		dol_fiche_end();
 	}
 
-	print '</div>';
 
 	/*
 	 * Boutons actions

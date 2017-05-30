@@ -110,6 +110,8 @@ class User extends CommonObject
 	
 	public $conf;           		// To store personal config
 	public $default_values;         // To store default values for user
+	public $lastsearch_values_tmp;  // To store current search criterias for user
+	public $lastsearch_values;      // To store last saved search criterias for user
 	
 	public $users;					// To store all tree of users hierarchy
 	public $parentof;				// To store an array of all parents for all ids.

@@ -273,6 +273,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 // Line with explanation and button new job
@@ -289,8 +290,10 @@ print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $
 
 
 print $langs->trans('CronInfo').'<br>';
-print $stringcurrentdate.'<br>';
-if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS));
+
+$text =$langs->trans("HoursOnThisPageAreOnServerTZ").' '.$stringcurrentdate.'<br>';
+if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) $text.=$langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS);
+print info_admin($text);
 print '<br>';
 
 
@@ -406,11 +409,11 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td class="center">';
-		if(!empty($obj->datestart)) {print dol_print_date($obj->datestart,'dayhour');}
+		if(!empty($obj->datestart)) {print dol_print_date($db->jdate($obj->datestart),'dayhour');}
 		print '</td>';
 
 		print '<td class="center">';
-		if(!empty($obj->dateend)) {print dol_print_date($obj->dateend,'dayhour');}
+		if(!empty($obj->dateend)) {print dol_print_date($db->jdate($obj->dateend),'dayhour');}
 		print '</td>';
 
 		print '<td align="right">';
@@ -422,11 +425,11 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td class="center">';
-		if(!empty($obj->datenextrun)) {print dol_print_date($obj->datenextrun,'dayhour');}
+		if(!empty($obj->datenextrun)) {print dol_print_date($db->jdate($obj->datenextrun),'dayhour');}
 		print '</td>';
 
 		print '<td class="center">';
-		if(!empty($obj->datelastrun)) {print dol_print_date($obj->datelastrun,'dayhour');}
+		if(!empty($obj->datelastrun)) {print dol_print_date($db->jdate($obj->datelastrun),'dayhour');}
 		print '</td>';
 
 		print '<td class="center">';

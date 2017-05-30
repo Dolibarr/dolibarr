@@ -32,7 +32,7 @@ $langs->load("admin");
 $langs->load("users");
 $langs->load("other");
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 if (!$user->admin) accessforbidden();
 

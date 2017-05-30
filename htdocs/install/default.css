@@ -54,9 +54,9 @@ span.titre {
 	font-weight: bold;
 	background: #FFFFFF;
 	color: #444;
-	border: 1px solid #999;
-	padding: 5px 5px 5px 5px;
-	margin: 0 0 0 15px;
+	border: 1px solid #bbb;
+	padding: 10px 10px 10px 10px;
+	margin: 0 0 10px 10px;
 }
 
 div.soustitre {
@@ -289,11 +289,11 @@ div.comment {
 }
 
 h3 {
-	margin-top: 10px;
+	margin-top: 20px;
 	font-size:16px;
 	font-weight: normal;
-	color: #4965B3;
-	text-shadow: 1px 1px 1px #c0c0c0;
+	color: rgb(100,60,20);
+	/* text-shadow: 1px 1px 1px #c0c0c0; */
 }
 
 tr.bg1 {
@@ -345,15 +345,15 @@ ul {
 
 .button {
     background: #fcfcfc;
-    border: 1px solid #d0d0d0;
+    border: 1px solid #e0e0e0;
     padding: 0.3em 0.7em;
     margin: 0 0.5em;
-    -moz-border-radius:0 5px 0 5px;
-    -webkit-border-radius:0 5px 0 5px;
-    border-radius:0 5px 0 5px;
-    -moz-box-shadow: 2px 2px 3px #CCC;
-    -webkit-box-shadow: 2px 2px 3px #CCC;
-    box-shadow: 2px 2px 3px #CCC;
+    -moz-border-radius: 5px 5px 5px 5px;
+    -webkit-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
+    -moz-box-shadow: 2px 2px 3px #ddd;
+    -webkit-box-shadow: 2px 2px 3px #ddd;
+    box-shadow: 2px 2px 3px #ddd;
 }
 a.button:hover {
     text-decoration:none;
@@ -368,3 +368,12 @@ a.button:hover {
 .center {
     text-align: center;
 }
+
+.valignmiddle {
+	vertical-align: middle;
+}
+
+.valigntextbottom {
+	vertical-align: text-bottom;
+}
+

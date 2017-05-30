@@ -43,8 +43,7 @@ $action = GETPOST('action','alpha');
 if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
-    $result=dolibarr_set_const($db, "PAYPAL_API_SANDBOX",GETPOST('PAYPAL_API_SANDBOX','alpha'),'chaine',0,'',$conf->entity);
-    if (! $result > 0) $error++;
+	
     $result=dolibarr_set_const($db, "PAYPAL_API_USER",GETPOST('PAYPAL_API_USER','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_API_PASSWORD",GETPOST('PAYPAL_API_PASSWORD','alpha'),'chaine',0,'',$conf->entity);
@@ -84,6 +83,21 @@ if ($action == 'setvalue' && $user->admin)
     }
 }
 
+if ($action=="setlive")
+{
+    $liveenable = GETPOST('value','int')?0:1;
+    $res = dolibarr_set_const($db, "PAYPAL_API_SANDBOX", $liveenable,'yesno',0,'',$conf->entity);
+    if (! $res > 0) $error++;
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+}
+
 
 /*
  *	View
@@ -96,7 +110,6 @@ llxHeader('',$langs->trans("PaypalSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ModuleSetup").' PayPal',$linkback);
-print '<br>';
 
 $head=paypaladmin_prepare_head();
 
@@ -105,7 +118,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
 
-dol_fiche_head($head, 'paypalaccount', '');
+dol_fiche_head($head, 'paypalaccount', '', -1);
 
 print $langs->trans("PaypalDesc")."<br>\n";
 
@@ -122,23 +135,30 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 
 // Account Parameters
-$var=true;
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("AccountParameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-
-print '<tr class="oddeven"><td class="fieldrequired">';
-print $langs->trans("PAYPAL_API_SANDBOX").'</td><td>';
-print $form->selectyesno("PAYPAL_API_SANDBOX",$conf->global->PAYPAL_API_SANDBOX,1);
+print '<tr class="oddeven">';
+print '<td class="titlefield">';
+print $langs->trans("PaypalLiveEnabled").'</td><td>';
+if (empty($conf->global->PAYPAL_API_SANDBOX))
+{
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
+    print img_picto($langs->trans("Activated"),'switch_on');
+}
+else
+{
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
+    print img_picto($langs->trans("Disabled"),'switch_off');
+}
 print '</td></tr>';
-
 
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_USER").'</td><td>';
 print '<input size="32" type="text" name="PAYPAL_API_USER" value="'.$conf->global->PAYPAL_API_USER.'">';
-print ' &nbsp; '.$langs->trans("Example").': paypal_api1.mywebsite.com';
+print ' &nbsp; '.$langs->trans("Example").': admin-facilitator_api1.example.com, paypal_api1.mywebsite.com';
 print '</td></tr>';
 
 
@@ -155,20 +175,19 @@ print '<br>'.$langs->trans("Example").': ASsqXEmw4KzmX-CPChWSVDNCNfd.A3YNR7uz-Vn
 print '</td></tr>';
 
 
-print '<tr class="oddeven"><td class="fieldrequired">';
+print '<tr class="oddeven"><td>';
 print $langs->trans("PAYPAL_SSLVERSION").'</td><td>';
 print $form->selectarray("PAYPAL_SSLVERSION",array('1'=> $langs->trans('TLSv1'),'6'=> $langs->trans('TLSv1.2')),$conf->global->PAYPAL_SSLVERSION);
 print '</td></tr>';
 
 // Usage Parameters
-$var=true;
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("UsageParameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 
-print '<tr class="oddeven"><td class="fieldrequired">';
+print '<tr class="oddeven"><td>';
 print $langs->trans("PAYPAL_API_INTEGRAL_OR_PAYPALONLY").'</td><td>';
 print $form->selectarray("PAYPAL_API_INTEGRAL_OR_PAYPALONLY",array('integral'=> $langs->trans('PaypalModeIntegral'),'paypalonly'=> $langs->trans('PaypalModeOnlyPaypal')),$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY);
 print '</td></tr>';
@@ -221,7 +240,6 @@ print '<input size="32" type="email" name="PAYPAL_PAYONLINE_SENDEMAIL" value="'.
 print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
 print '</td></tr>';
 
-$var=true;
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("UrlGenerationParameters").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -278,7 +296,7 @@ $token='';
 
 
 // Url list
-print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
+print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br><br>';
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
 print '<strong>'.getPaypalPaymentUrl(1,'free')."</strong><br><br>\n";
 if (! empty($conf->commande->enabled))
@@ -367,9 +385,9 @@ if (! empty($conf->adherent->enabled))
         }
         print '</form>';
 	}
+	print '<br>';
 }
 
-print "<br>";
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
 if (! empty($conf->use_javascript_ajax))

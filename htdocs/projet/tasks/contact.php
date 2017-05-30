@@ -293,33 +293,23 @@ if ($id > 0 || ! empty($ref))
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
 		
 		$morehtmlref='';
-		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param, 0, '', '', 1);
 		
-		if (empty($withproject)) 
+		// Project
+		if (empty($withproject))
 		{
-		    print '<div class="fichecenter">';
+		    $morehtmlref.='<div class="refidno">';
+		    $morehtmlref.=$langs->trans("Project").': ';
+		    $morehtmlref.=$projectstatic->getNomUrl(1);
+		    $morehtmlref.='<br>';
 		
-		    print '<div class="underbanner clearboth"></div>';
-		    print '<table class="border" width="100%">';
-
-		    // Project
-		    print '<tr><td class="titlefield">'.$langs->trans("Project").'</td><td>';
-    		print $projectstatic->getNomUrl(1);
-    		print '</td></tr>';
-
-    		// Customer
-    		print "<tr><td>".$langs->trans("ThirdParty")."</td>";
-    		print '<td colspan="3">';
-    		if ($projectstatic->thirdparty->id > 0) print $projectstatic->thirdparty->getNomUrl(1);
-    		else print '&nbsp;';
-    		print '</td></tr>';
-		
-    		print "</table>";
-		
-    		print '</div>';
+		    // Third party
+		    $morehtmlref.=$langs->trans("ThirdParty").': ';
+		    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+		    $morehtmlref.='</div>';
 		}
-
 		
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param, 0, '', '', 1);
+
 		dol_fiche_end();
 
 		/*

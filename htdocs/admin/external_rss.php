@@ -38,7 +38,7 @@ if (!$user->admin) accessforbidden();
 
 $def = array();
 $lastexternalrss=0;
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 
 /*

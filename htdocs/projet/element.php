@@ -43,6 +43,7 @@ if (! empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn
 if (! empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 if (! empty($conf->contrat->enabled))		require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 if (! empty($conf->ficheinter->enabled))	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+if (! empty($conf->expedition->enabled))    require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 if (! empty($conf->deplacement->enabled))	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 if (! empty($conf->expensereport->enabled))	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 if (! empty($conf->agenda->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -123,12 +124,12 @@ $userstatic=new User($db);
 $userAccess = $object->restrictedProjectArea($user);
 
 $head=project_prepare_head($object);
-dol_fiche_head($head, 'element', $langs->trans("Project"),0,($object->public?'projectpub':'project'));
+dol_fiche_head($head, 'element', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
 
 // Project card
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 $morehtmlref='<div class="refidno">';
 // Title
@@ -231,6 +232,7 @@ print '<div class="clearboth"></div>';
 
 dol_fiche_end();
 
+print '<br>';
 
 /*
  * Referers types
@@ -333,12 +335,24 @@ $listofreferent=array(
 	'class'=>'Fichinter',
 	'table'=>'fichinter',
 	'datefieldname'=>'date_valid',
-	'disableamount'=>1,
+	'disableamount'=>0,
+	'margin'=>'minus',	
     'urlnew'=>DOL_URL_ROOT.'/fichinter/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid,
     'lang'=>'interventions',
     'buttonnew'=>'AddIntervention',
     'testnew'=>$user->rights->ficheinter->creer,
     'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire),
+'shipping'=>array(
+    'name'=>"Shippings",
+	'title'=>"ListShippingAssociatedProject",
+	'class'=>'Expedition',
+	'table'=>'expedition',
+	'datefieldname'=>'date_valid',
+	'urlnew'=>DOL_URL_ROOT.'/expedition/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid,
+	'lang'=>'sendings',
+	'buttonnew'=>'CreateShipment',
+	'testnew'=>0,
+	'test'=>$conf->expedition->enabled && $user->rights->expedition->lire),
 'trip'=>array(
 	'name'=>"TripsAndExpenses",
 	'title'=>"ListExpenseReportsAssociatedProject",
@@ -559,6 +573,7 @@ foreach ($listofreferent as $key => $value)
 				if ($tablename != 'expensereport_det' && method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
 				if ($tablename == 'don' || $tablename == 'chargesociales') $total_ht_by_line=$element->amount;
 				elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
+				else if($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();				
 				elseif ($tablename == 'projet_task')
 				{
 					if ($idofelementuser)
@@ -583,6 +598,7 @@ foreach ($listofreferent as $key => $value)
 				if ($qualifiedfortotal) $total_ht = $total_ht + $total_ht_by_line;
 
 				if ($tablename == 'don' || $tablename == 'chargesociales') $total_ttc_by_line=$element->amount;
+				else if($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();								
 				elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 				elseif ($tablename == 'projet_task')
 				{
@@ -948,6 +964,7 @@ foreach ($listofreferent as $key => $value)
 				    $total_ht_by_line=null;
 				    $othermessage='';
 					if ($tablename == 'don' || $tablename == 'chargesociales') $total_ht_by_line=$element->amount;
+					else if($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();
 					elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
 					elseif (in_array($tablename, array('projet_task')))
 					{
@@ -988,6 +1005,7 @@ foreach ($listofreferent as $key => $value)
 				{
 				    $total_ttc_by_line=null;
 					if ($tablename == 'don' || $tablename == 'chargesociales') $total_ttc_by_line=$element->amount;
+					else if($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();
 					elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 					elseif ($tablename == 'projet_task')
 					{

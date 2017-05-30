@@ -753,8 +753,8 @@ class ActionComm extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
-        $sql.= " SET percent = '".$this->percentage."'";
-        if ($this->fk_action > 0) $sql.= ", fk_action = '".$this->fk_action."'";
+        $sql.= " SET percent = '".$this->db->escape($this->percentage)."'";
+        if ($this->fk_action > 0) $sql.= ", fk_action = '".$this->db->escape($this->fk_action)."'";
         $sql.= ", label = ".($this->label ? "'".$this->db->escape($this->label)."'":"null");
         $sql.= ", datep = ".(strval($this->datep)!='' ? "'".$this->db->idate($this->datep)."'" : 'null');
         $sql.= ", datep2 = ".(strval($this->datef)!='' ? "'".$this->db->idate($this->datef)."'" : 'null');
@@ -763,11 +763,11 @@ class ActionComm extends CommonObject
         $sql.= ", fk_project =". ($this->fk_project > 0 ? "'".$this->fk_project."'":"null");
         $sql.= ", fk_soc =". ($socid > 0 ? "'".$socid."'":"null");
         $sql.= ", fk_contact =". ($contactid > 0 ? "'".$contactid."'":"null");
-        $sql.= ", priority = '".$this->priority."'";
-        $sql.= ", fulldayevent = '".$this->fulldayevent."'";
+        $sql.= ", priority = '".$this->db->escape($this->priority)."'";
+        $sql.= ", fulldayevent = '".$this->db->escape($this->fulldayevent)."'";
         $sql.= ", location = ".($this->location ? "'".$this->db->escape($this->location)."'":"null");
-        $sql.= ", transparency = '".$this->transparency."'";
-        $sql.= ", fk_user_mod = '".$user->id."'";
+        $sql.= ", transparency = '".$this->db->escape($this->transparency)."'";
+        $sql.= ", fk_user_mod = ".$user->id;
         $sql.= ", fk_user_action=".($userownerid > 0 ? "'".$userownerid."'":"null");
         $sql.= ", fk_user_done=".($userdoneid > 0 ? "'".$userdoneid."'":"null");
         if (! empty($this->fk_element)) $sql.= ", fk_element=".($this->fk_element?$this->fk_element:"null");

@@ -35,7 +35,7 @@ $langs->load("admin");
 $langs->load("other");
 
 $error=0;
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 
 $syslogModules = array();
 $activeModules = array();

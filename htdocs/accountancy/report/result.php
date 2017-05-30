@@ -35,7 +35,7 @@ $langs->load("accountancy");
 $langs->load("compta");
 
 $mesg = '';
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 $cat_id = GETPOST('account_category');
 $selectcpt = GETPOST('cpt_bk');
 $id = GETPOST('id', 'int');

@@ -23,11 +23,11 @@
 
 // $mysoc must be defined
 // $id must be defined
-// $actiontypecode must be defined
 // $paramname must be defined
 // $mode must be defined
-// $object and $uobject may be defined.
-
+// $trigger_name must be set (can be '')
+// $actiontypecode can be set
+// $object and $uobject may be defined
 
 /*
  * Add file in email form
@@ -116,6 +116,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		if (method_exists($object,"fetch_thirdparty") && $object->element != 'societe')
 		{
 			$result=$object->fetch_thirdparty();
+			if ($object->element == 'user' && $result == 0) $result=1;    // Even if not found, we consider ok
 			$thirdparty=$object->thirdparty;
 			$sendtosocid=$thirdparty->id;
 		}
@@ -154,7 +155,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				}
 			}
 		}
-		else dol_print_error('','Use actions_sendmails.in.php for a type that is not supported');
+		else dol_print_error('','Use actions_sendmails.in.php for an element/object that is not supported');
 	}
 	else $thirdparty = $mysoc;
 
@@ -187,7 +188,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				{
 					$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
 				}
-				else	// Id du contact
+				elseif ($val)	// Id du contact
 				{
 					$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
 					$sendtoid[] = $val;
@@ -217,7 +218,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				{
 					$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
 				}
-				else	// Id du contact
+				elseif ($val)	// Id du contact
 				{
 					$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
 					//$sendtoid[] = $val;  TODO Add also id of contact in CC ?
@@ -346,7 +347,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				{
 					$error=0;
 
-					// FIXME This must be moved into a trigger for action $trigger_name
+					// FIXME This must be moved into the trigger for action $trigger_name
 					if (! empty($conf->dolimail->enabled))
 					{
 						$mid = (GETPOST('mid','int') ? GETPOST('mid','int') : 0);	// Original mail id is set ?
@@ -369,21 +370,26 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					// Initialisation of datas
 					if (is_object($object))
 					{
-						$object->socid			= $sendtosocid;	// To link to a company
-						$object->sendtoid		= $sendtoid;	// To link to contacts/addresses. This is an array.
-						$object->actiontypecode	= $actiontypecode;
-						$object->actionmsg		= $actionmsg;  // Long text
-						$object->actionmsg2		= $actionmsg2; // Short text
+					    if (empty($actiontypecode)) $actiontypecode='AC_OTH_AUTO'; // Event insert into agenda automatically
+					    
+						$object->socid			= $sendtosocid;	   // To link to a company
+						$object->sendtoid		= $sendtoid;	   // To link to contacts/addresses. This is an array.
+						$object->actiontypecode	= $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+						$object->actionmsg		= $actionmsg;      // Long text
+						$object->actionmsg2		= $actionmsg2;     // Short text
 						$object->trackid        = $trackid;
 						$object->fk_element		= $object->id;
 						$object->elementtype	= $object->element;
 
 						// Call of triggers
-						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-						$interface=new Interfaces($db);
-						$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
-						if ($result < 0) {
-							$error++; $errors=$interface->errors;
+						if (! empty($trigger_name))
+						{
+    						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+    						$interface=new Interfaces($db);
+    						$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
+    						if ($result < 0) {
+    							$error++; $errors=$interface->errors;
+    						}
 						}
 					}
 						
@@ -397,8 +403,12 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						// This avoid sending mail twice if going out and then back to page
 						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
 						setEventMessages($mesg, null, 'mesgs');
-						if ($conf->dolimail->enabled) header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.$object->id.'&'.($paramname2?$paramname2:'mid').'='.$parm2val);
-						else header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.$object->id);
+						if ($conf->dolimail->enabled) 
+						{
+						    header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:'').'&'.($paramname2?$paramname2:'mid').'='.$parm2val);
+						    exit;
+						}
+						header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:''));
 						exit;
 					}
 				}

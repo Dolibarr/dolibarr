@@ -39,7 +39,7 @@ session_cache_limiter(FALSE);
 require_once '../../main.inc.php';
 
 // Define javascript type
-header('Content-type: text/javascript; charset=UTF-8');
+top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
@@ -982,7 +982,7 @@ function newpopup(url,title) {
 function document_preview(file, type, title)
 {
 	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png"];
-	console.log("document_preview A click was done. file="+file+", type="+type);
+	console.log("document_preview A click was done. file="+file+", type="+type+", title="+title);
 	
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		var width='85%';
@@ -1018,8 +1018,8 @@ function document_preview(file, type, title)
 
 	}
 	function show_preview(){
-
-		var newElem = '<object data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'"></object>';
+		/* console.log("file="+file+" type="+type+" width="+width+" height="+height); */
+		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
 
 		$("#dialogforpopup").html(newElem);
 		$("#dialogforpopup").dialog({

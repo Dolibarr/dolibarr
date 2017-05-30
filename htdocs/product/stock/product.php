@@ -51,7 +51,7 @@ $langs->load("sendings");
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 $backtopage=GETPOST('backtopage');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel');
 
 $id=GETPOST('id', 'int');
@@ -638,7 +638,7 @@ if ($id > 0 || $ref)
         print $form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1);
         print '</td>';
 		print '<td>'.price2num($object->stock_reel, 'MS');
-		if ($object->seuil_stock_alerte != '' && ($object->stock_reel < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
+		if ($object->seuil_stock_alerte != '' && ($object->stock_reel < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit", $object->seuil_stock_alerte));
 		print '</td>';
 		print '</tr>';
 
@@ -689,7 +689,7 @@ if ($id > 0 || $ref)
         print "<td>";
         //print (empty($stocktheo)?0:$stocktheo);
         print $form->textwithpicto((empty($stocktheo)?0:$stocktheo), $helpondiff);
-        if ($object->seuil_stock_alerte != '' && ($object->stock_theorique < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
+        if ($object->seuil_stock_alerte != '' && ($object->stock_theorique < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit", $object->seuil_stock_alerte));
         print '</td>';
         print '</tr>';
 

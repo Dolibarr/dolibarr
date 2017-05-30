@@ -20,7 +20,8 @@ include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->load("main");
 $langs->load('cashdesk');
-header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
+top_httphead('text/html');
 
 $facid=GETPOST('facid','int');
 $object=new Facture($db);

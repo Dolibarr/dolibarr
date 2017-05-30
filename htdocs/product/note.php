@@ -34,7 +34,7 @@ $langs->load("companies");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));

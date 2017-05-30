@@ -21,16 +21,17 @@ GeoIP                  1.4           LGPL-2.1+                   Yes            
 Mobiledetect           2.8.17        MIT License                 Yes             Detect mobile devices browsers
 NuSoap                 0.9.5         LGPL 2.1+                   Yes             Library to develop SOAP Web services (not into rpm and deb package)
 PEAR Mail_MIME         1.8.9         BSD                         Yes             NuSoap dependency
-odtPHP                 1.0.1         GPL-2+  b                   Yes             Library to build/edit ODT files
+odtPHP                 1.0.1         GPL-2+                      Yes             Library to build/edit ODT files
 ParseDown              1.6           MIT License                 Yes             Markdown parser
 PHPExcel               1.8.1         LGPL-2.1+                   Yes             Read/Write XLS files, read ODS files
 php-iban               1.4.7         LGPL-3+                     Yes             Parse and validate IBAN (and IIBAN) bank account information in PHP
 PHPoAuthLib            0.8.2         MIT License                 Yes             Library to provide oauth1 and oauth2 to different service
 PHPPrintIPP            1.3           GPL-2+                      Yes             Library to send print IPP requests
-Restler                3.0.0RC6      LGPL-3+                     Yes             Library to develop REST Web services
+Restler                3.0.0RC6      LGPL-3+                     Yes             Library to develop REST Web services (+ swagger-ui js lib into dir explorer)
 TCPDF                  6.2.12        LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 Swift Mailer           5.4.2-DEV     MIT license                 Yes             Comprehensive mailing tools for PHP
+Stripe                 4.7.0         MIT licence                 Yes             Library for Stripe module
 
 JS libraries:
 jQuery                 1.11.3        MIT License                 Yes             JS library
@@ -51,138 +52,13 @@ jQuery Timepicker      1.1.0         GPL and MIT License         Yes            
 jQuery Tiptip          1.3           GPL and MIT License         Yes             JS library for tooltips
 jsGanttImproved        1.7.5.2       BSD License                 Yes             JS library (to build Gantt reports)
 JsTimezoneDetect       1.0.6         MIT License                 Yes             JS library to detect user timezone
+SwaggerUI			   2.0.24		 GPL-2+                      Yes             JS library to offer the REST API explorer
 
 For licenses compatibility informations:
 http://www.gnu.org/licenses/licenses.en.html
 
 
-Copyright
----------
+Copyright / Authors
+-------------------
 
-Copyright (C) 2016
-
-Copyright (C) 2015
-- Laurent Destailleur <eldy@users.sourceforge.net>
-- Marcos García <marcosgdf@gmail.com>
-- Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
-- Frederic France <frederic.france@free.fr>
-- Regis Houssin <regis.houssin@capnetworks.com>
-
-Copyright (C) 2014
-- Laurent Destailleur <eldy@users.sourceforge.net>
-- Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
-- Jean-François Ferry <jfefe@aternatik.fr>
-- Marcos García <marcosgdf@gmail.com>
-- Philippe Grand <philippe.grand@atoo-net.com>
-- Florian Henry <florian.henry@open-concept.pro>
-- Regis Houssin <regis.houssin@capnetworks.com>
-- Maxime Kohlhaas <mko@atm-consulting.fr>
-- Juanjo Menent <jmenent@2byte.es>
-- Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
-- Frederic France <frederic.france@free.fr>
-
-Copyright (C) 2013
-- Christophe Battarel <christophe.battarel@altairis.fr>
-- Laurent Destailleur <eldy@users.sourceforge.net>
-- Jean-François Ferry <jfefe@aternatik.fr>
-- Marcos García <marcosgdf@gmail.com>
-- Philippe Grand <philippe.grand@atoo-net.com>
-- Florian Henry <florian.henry@open-concept.pro>
-- Regis Houssin <regis.houssin@capnetworks.com>
-- Maxime Kohlhaas <mko@atm-consulting.fr>
-- Juanjo Menent <jmenent@2byte.es>
-- Adolfo Segura <adolfo.segura@gmail.com>
-- Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
-
-Copyright (C) 2012
-- Christophe Battarel <christophe.battarel@altairis.fr>
-- Laurent Destailleur <eldy@users.sourceforge.net>
-- Jean-François Ferry <jfefe@aternatik.fr>
-- Marcos García <marcosgdf@gmail.com>
-- Philippe Grand <philippe.grand@atoo-net.com>
-- Jean Heimburger <jean@tiaris.info>
-- Florian Henry <florian.henry@open-concept.pro>
-- Regis Houssin <regis.houssin@capnetworks.com>
-- Maxime Kohlhaas <mko@atm-consulting.fr>
-- Juanjo Menent <jmenent@2byte.es>
-- Nicolas Péré <nicolas@amarok2.net>
-- Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
-
-Copyright (C) 2011
-- Laurent Destailleur <eldy@users.sourceforge.net>
-- Regis Houssin <regis.houssin@capnetworks.com>
-- Juanjo Menent <jmenent@2byte.es>
-- Philippe Grand <philippe.grand@atoo-net.com>
-- Jean Heimburger <jean@tiaris.info>
-
-Copyright (C) 2010
-- Laurent Destailleur <eldy@users.sourceforge.net>
-- Regis Houssin <regis.houssin@capnetworks.com>
-- Juanjo Menent <jmenent@2byte.es>
-- r2gnl
-- meos
-
-Copyright (C) 2009
-- Laurent Destailleur <eldy@users.sourceforge.net>
-- Regis Houssin <regis.houssin@capnetworks.com>
-- Juanjo Menent <jmenent@2byte.es>
-
-Copyright (C) 2008
-- Laurent Destailleur <eldy@users.sourceforge.net>
-- Regis Houssin <regis.houssin@capnetworks.com>
-- Rodolphe Quiedeville <rodolphe@quiedeville.org>
-- Jeremie Ollivier <jeremie.o@laposte.net>
-
-Copyright (C) 2007
-- Rodolphe Quiedeville <rodolphe@quiedeville.org>
-- Laurent Destailleur <eldy@users.sourceforge.net>
-- Regis Houssin <regis.houssin@capnetworks.com>
-- Auguria SARL <info@auguria.org>
-- Jean Heimburger <jean@tiaris.info>
-- Jeremie Ollivier <jeremie.o@laposte.net>
-
-Copyright (C) 2006
-- Auguria SARL <info@auguria.org>
-- Marc Barilley/Ocebo <marc@ocebo.com>
-- Laurent Destailleur <eldy@users.sourceforge.net>
-- Rodolphe Quiedeville <rodolphe@quiedeville.org>
-- Regis Houssin <regis.houssin@capnetworks.com>
-- Andre Cianfarani <acianfa@free.fr>
-- Yannick Warnier <ywarnier@beeznest.org>
-- Jean Heimburger <jean@tiaris.info>
-
-Copyright (C) 2005
-- Brice Davoleau <brice.davoleau@gmail.com>
-- Laurent Destailleur <eldy@users.sourceforge.net>
-- Benoit Mortier <benoit.mortier@opensides.be>
-- Rodolphe Quiedeville <rodolphe@quiedeville.org>
-- Eric Seigne <erics@rycks.com>
-- Matthieu Valleton <mv@seeschloss.org>
-- Regis Houssin <regis.houssin@capnetworks.com>
-
-Copyright (C) 2004
-- Laurent Destailleur <eldy@users.sourceforge.net>
-- Rodolphe Quiedeville <rodolphe@quiedeville.org>
-- Eric Seigne <erics@rycks.com>
-- Benoit Mortier <benoit.mortier@opensides.be>
-- Christophe Combelles <ccomb@free.fr>
-- Sebastien Di Cintio <sdicintio@ressource-toi.org>
-
-Copyright (C) 2003
-- Jean-Louis Bergamo <jlb@j1b.org>
-- Xavier Dutoit <doli@sydesy.com>
-- Rodolphe Quiedeville <rodolphe@quiedeville.org>
-- Emmanuel Raviart <eraviart@entrouvert.com>
-- Eric Seigne <erics@rycks.com>
-
-Copyright (C) 2002
-- Jean-Louis Bergamo <jlb@j1b.org>
-- Rodolphe Quiedeville <rodolphe@quiedeville.org>
-
-Copyright (C) 2001
-- Rodolphe Quiedeville <rodolphe@quiedeville.org>
-
-
-
-
-
+See page https://github.com/Dolibarr/dolibarr/graphs/contributors

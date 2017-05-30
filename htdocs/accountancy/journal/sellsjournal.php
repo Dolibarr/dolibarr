@@ -60,7 +60,7 @@ $now = dol_now();
 if ($user->societe_id > 0)
 	accessforbidden();
 
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 
 /*
@@ -593,7 +593,7 @@ if (empty($action) || $action == 'view') {
 			// print ' (' . $companystatic->getNomUrl(0, 'customer', 16) . ')';
 			print '</td>';
 			print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Code_tiers") . "</td>";
-			print "</td><td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+			print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 			print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 		    print "</tr>";
 		}

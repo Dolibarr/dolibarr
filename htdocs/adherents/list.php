@@ -37,7 +37,7 @@ $langs->load("companies");
 // Security check
 $result=restrictedArea($user,'adherent');
 
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $filter=GETPOST("filter");
 $statut=GETPOST("statut");
 $search=GETPOST("search");
@@ -57,7 +57,7 @@ $type=GETPOST("type");
 $search_email=GETPOST("search_email");
 $search_categ = GETPOST("search_categ",'int');
 $catid        = GETPOST("catid",'int');
-$sall=GETPOST("sall");
+$sall=GETPOST('sall', 'alphanohtml');
 $optioncss = GETPOST('optioncss','alpha');
 
 if ($statut < -1) $statut = '';
@@ -353,6 +353,7 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
@@ -560,8 +561,8 @@ if (! empty($arrayfields['d.statut']['checked']))
 }
 // Action column
 print '<td class="liste_titre" align="middle">';
-$searchpitco=$form->showFilterButtons();
-print $searchpitco;
+$searchpicto=$form->showFilterButtons();
+print $searchpicto;
 print '</td>';
 
 print "</tr>\n";

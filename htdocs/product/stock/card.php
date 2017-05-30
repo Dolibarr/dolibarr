@@ -38,7 +38,7 @@ $langs->load("stocks");
 $langs->load("companies");
 $langs->load("categories");
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel');
 $confirm=GETPOST('confirm');
 

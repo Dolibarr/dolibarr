@@ -55,7 +55,7 @@ if (! empty($conf->notification->enabled)) $langs->load("mails");
 
 $mesg=''; $error=0; $errors=array();
 
-$action		= (GETPOST('action') ? GETPOST('action') : 'view');
+$action		= (GETPOST('action','aZ09') ? GETPOST('action','aZ09') : 'view');
 $cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage','alpha');
 $confirm	= GETPOST('confirm');
@@ -750,7 +750,6 @@ if (empty($reshook))
 
     // Actions to send emails
     $id=$socid;
-    $actiontypecode='AC_OTH_AUTO';
     $trigger_name='COMPANY_SENTBYMAIL';
     $paramname='socid';
     $mode='emailfromthirdparty';
@@ -1545,7 +1544,7 @@ else
 
             dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
-
+            print '<div class="fichecenter2">'; 
             print '<table class="border" width="100%">';
 
             // Ref/ID
@@ -1935,7 +1934,8 @@ else
             print '</tr>';
 
             print '</table>';
-
+            print '</div>';
+            
 	        dol_fiche_end();
 
             print '<div align="center">';
@@ -1952,13 +1952,14 @@ else
         /*
          * View
          */
+        
         if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
         //if ($res < 0) { dol_print_error($db); exit; }
 
 
         $head = societe_prepare_head($object);
 
-        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
+        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), -1, 'company');
 
         // Confirm delete third party
         if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)))

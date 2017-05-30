@@ -60,7 +60,7 @@ $id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
 if ($user->societe_id > 0) $id=$user->societe_id;
 $result = restrictedArea($user,'societe',$id,'&societe');
 
-$action		= GETPOST('action');
+$action		= GETPOST('action','aZ09');
 $mode		= GETPOST("mode");
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -204,7 +204,7 @@ if ($id > 0)
 {
 	$head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), -1, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 	
@@ -788,8 +788,7 @@ if ($id > 0)
 
             while ($i < $num && $i < $MAXLIST) {
                 $objp = $db->fetch_object($resql);
-                $var = ! $var;
-                print "<tr " . $bc[$var] . ">";
+                print '<tr class="oddeven">';
                 print '<td class="nowrap">';
                 $sendingstatic->id = $objp->id;
                 $sendingstatic->ref = $objp->ref;

@@ -43,7 +43,7 @@ $substitutionarrayfortest=array(
 '__FIRSTNAME__' => 'TESTFirstname'
 );
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 
 /*

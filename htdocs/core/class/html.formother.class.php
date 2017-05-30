@@ -274,15 +274,17 @@ class FormOther
      *    @param    int		$increment     	increment value
      *    @param    int		$start         	start value
      *    @param    int		$end           	end value
+     *    @param    int     $showempty      Add also an empty line
      *    @return   string					HTML select string
      */
-    function select_percent($selected=0,$htmlname='percent',$disabled=0,$increment=5,$start=0,$end=100)
+    function select_percent($selected=0,$htmlname='percent',$disabled=0,$increment=5,$start=0,$end=100,$showempty=0)
     {
         $return = '<select class="flat" name="'.$htmlname.'" '.($disabled?'disabled':'').'>';
+        if ($showempty) $return.='<option value="-1"'.(($selected == -1 || $selected == '')?' selected':'').'>&nbsp;</option>';
 
         for ($i = $start ; $i <= $end ; $i += $increment)
         {
-            if ($selected == $i)
+            if ($selected != '' && (int) $selected == $i)
             {
                 $return.= '<option value="'.$i.'" selected>';
             }

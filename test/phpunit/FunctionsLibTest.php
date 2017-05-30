@@ -81,6 +81,8 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         global $conf,$user,$langs,$db;
         //$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
+        if (! function_exists('mb_substr')) { print "\n".__METHOD__." function mb_substr must be enabled.\n"; die(); }
+        
         print __METHOD__."\n";
     }
 

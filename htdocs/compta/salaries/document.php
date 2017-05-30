@@ -6,7 +6,7 @@
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2016 Alexandre Spangaro    <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2017 Alexandre Spangaro    <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 
 $langs->load("other");
+$langs->load("users");
 $langs->load("salaries");
+$langs->load('hrm');
 $langs->load("companies");
 
 $id = GETPOST('id','int');
@@ -83,7 +85,6 @@ $form = new Form($db);
 
 llxHeader("",$langs->trans("SalaryPayment"));
 
-
 if ($object->id)
 {
 	$object->fetch_thirdparty();
@@ -91,7 +92,6 @@ if ($object->id)
 	$head=salaries_prepare_head($object);
 
 	dol_fiche_head($head, 'documents',  $langs->trans("SalaryPayment"), 0, 'payment');
-
 
 	// Construit liste des fichiers
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
@@ -101,29 +101,34 @@ if ($object->id)
 		$totalsize+=$file['size'];
 	}
 
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-    print '<table class="border" width="100%">';
+	$morehtmlref='<div class="refidno">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$userstatic=new User($db);
+	$userstatic->fetch($object->fk_user);
 
-	// Ref
-	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
-	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
-	print '</td></tr>';
+	$morehtmlref.=$langs->trans('Employee') . ' : ' . $userstatic->getNomUrl(1);
+	$morehtmlref.='</div>';
 
-	// Societe
-	//print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
-    print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-    print '</table>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
-    print '</div>';
+	print '<table class="border" width="100%">';
+	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+	print '</table>';
 
-    $modulepart = 'salaries';
-    $permission = $user->rights->salaries->write;
-    $param = '&id=' . $object->id;
-    include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+	print '</div>';
+
+	dol_fiche_end();
+
+	$modulepart = 'salaries';
+	$permission = $user->rights->salaries->write;
+	$param = '&id=' . $object->id;
+	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
 }
 else

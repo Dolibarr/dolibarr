@@ -37,7 +37,7 @@ $langs->load("admin");
 $langs->load("other");
 
 $id = GETPOST("id",'int');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 $actionid=GETPOST('actionid');
 
 // Security check
@@ -435,6 +435,7 @@ if ($result > 0)
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="id" value="'.$object->id.'">';
     
     // List of notifications done

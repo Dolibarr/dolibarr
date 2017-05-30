@@ -479,7 +479,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if ($lines[$i]->planned_workload || $lines[$i]->duration)
 				{
 					if ($lines[$i]->planned_workload) print round(100 * $lines[$i]->duration / $lines[$i]->planned_workload,2).' %';
-					else print $langs->trans('WorkloadNotDefined');
+					else print '<span class="opacitymedium">'.$langs->trans('WorkloadNotDefined').'</span>';
 				}
 				print '</td>';
 

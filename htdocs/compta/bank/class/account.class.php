@@ -160,7 +160,7 @@ class Account extends CommonObject
      * @var string
      */
     public $account_number;
-	public $accountancy_journal;
+	public $fk_accountancy_journal;
 
     /**
      * Currency code
@@ -471,11 +471,11 @@ class Account extends CommonObject
 
 		if ($accline->insert() > 0) {
 
-			if ($categorie) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_account (";
-				$sql .= "fk_account, fk_categorie";
+			if ($categorie>0) {
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
+				$sql .= "lineid, fk_categ";
 				$sql .= ") VALUES (";
-				$sql .= " ".$accline->id.", ".$categorie;
+				$sql .= $accline->id.", ".$categorie;
 				$sql .= ")";
 
 				$result = $this->db->query($sql);
@@ -545,7 +545,7 @@ class Account extends CommonObject
         $sql.= ", label";
         $sql.= ", entity";
         $sql.= ", account_number";
-		$sql.= ", accountancy_journal";
+		$sql.= ", fk_accountancy_journal";
 		$sql.= ", bank";
         $sql.= ", code_banque";
         $sql.= ", code_guichet";
@@ -569,7 +569,7 @@ class Account extends CommonObject
         $sql.= ", '".$this->db->escape($this->label)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", '".$this->db->escape($this->account_number)."'";
-		$sql.= ", '".$this->db->escape($this->accountancy_journal)."'";
+		$sql.= ", ".($this->fk_accountancy_journal > 0 ? $this->db->escape($this->fk_accountancy_journal) : "null");
 		$sql.= ", '".$this->db->escape($this->bank)."'";
         $sql.= ", '".$this->code_banque."'";
         $sql.= ", '".$this->code_guichet."'";
@@ -701,21 +701,20 @@ class Account extends CommonObject
         $sql.= ",clos = ".$this->clos;
         $sql.= ",rappro = ".$this->rappro;
         $sql.= ",url = ".($this->url?"'".$this->url."'":"null");
-        $sql.= ",account_number = '".$this->account_number."'";
-		$sql.= ",accountancy_journal = '".$this->accountancy_journal."'";
-
+        $sql.= ",account_number = '".$this->db->escape($this->account_number)."'";
+		$sql.= ",fk_accountancy_journal = ".($this->fk_accountancy_journal > 0 ? $this->db->escape($this->fk_accountancy_journal) : "null");
 		$sql.= ",bank  = '".$this->db->escape($this->bank)."'";
-        $sql.= ",code_banque='".$this->code_banque."'";
-        $sql.= ",code_guichet='".$this->code_guichet."'";
-        $sql.= ",number='".$this->number."'";
-        $sql.= ",cle_rib='".$this->cle_rib."'";
-        $sql.= ",bic='".$this->bic."'";
-        $sql.= ",iban_prefix = '".$this->iban."'";
+        $sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
+        $sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
+        $sql.= ",number='".$this->db->escape($this->number)."'";
+        $sql.= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
+        $sql.= ",bic='".$this->db->escape($this->bic)."'";
+        $sql.= ",iban_prefix = '".$this->db->escape($this->iban)."'";
         $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
         $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
         $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 
-        $sql.= ",currency_code = '".$this->currency_code."'";
+        $sql.= ",currency_code = '".$this->db->escape($this->currency_code)."'";
 
         $sql.= ",min_allowed = ".($this->min_allowed != '' ? price2num($this->min_allowed) : "null");
         $sql.= ",min_desired = ".($this->min_desired != '' ? price2num($this->min_desired) : "null");
@@ -797,12 +796,12 @@ class Account extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
         $sql.= " bank  = '".$this->db->escape($this->bank)."'";
-        $sql.= ",code_banque='".$this->code_banque."'";
-        $sql.= ",code_guichet='".$this->code_guichet."'";
-        $sql.= ",number='".$this->number."'";
-        $sql.= ",cle_rib='".$this->cle_rib."'";
-        $sql.= ",bic='".$this->bic."'";
-        $sql.= ",iban_prefix = '".$this->iban."'";
+        $sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
+        $sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
+        $sql.= ",number='".$this->db->escape($this->number)."'";
+        $sql.= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
+        $sql.= ",bic='".$this->db->escape($this->bic)."'";
+        $sql.= ",iban_prefix = '".$this->db->escape($this->iban)."'";
         $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
         $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
         $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
@@ -847,7 +846,7 @@ class Account extends CommonObject
         $sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant, ba.clos, ba.rappro, ba.url,";
         $sql.= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
         $sql.= " ba.domiciliation, ba.proprio, ba.owner_address, ba.state_id, ba.fk_pays as country_id,";
-        $sql.= " ba.account_number, ba.accountancy_journal, ba.currency_code,";
+        $sql.= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
         $sql.= " ba.min_allowed, ba.min_desired, ba.comment,";
         $sql.= " ba.datec as date_creation, ba.tms as date_update,";
         $sql.= ' c.code as country_code, c.label as country,';
@@ -897,7 +896,7 @@ class Account extends CommonObject
                 $this->country       = $obj->country;
 
                 $this->account_number = $obj->account_number;
-				$this->accountancy_journal = $obj->accountancy_journal;
+				$this->fk_accountancy_journal = $obj->fk_accountancy_journal;
 
                 $this->currency_code  = $obj->currency_code;
                 $this->account_currency_code  = $obj->currency_code;
@@ -1360,7 +1359,7 @@ class Account extends CommonObject
     {
         $country_code=$this->getCountryCode();
 
-        if (in_array($country_code,array('CH','FR','ES','GA','IT'))) return 1; // France, Spain, Gabon, ...
+        if (in_array($country_code,array('CH','FR','ES','GA','IT','NC'))) return 1; // France, Spain, Gabon, ...
         if (in_array($country_code,array('AU','BE','CA','DE','DK','GR','GB','ID','IE','IR','KR','NL','NZ','UK','US'))) return 2;      // Australia, England...
         return 0;
     }
@@ -1858,7 +1857,7 @@ class AccountLine extends CommonObject
         
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
         $sql.= " rappro = 1";
-        $sql.= ", num_releve = '".$this->num_releve."'";
+        $sql.= ", num_releve = '".$this->db->escape($this->num_releve)."'";
         $sql.= ", fk_user_rappro = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 

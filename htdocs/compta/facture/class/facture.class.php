@@ -279,6 +279,8 @@ class Facture extends CommonInvoice
 		// Create invoice from a template invoice
 		if ($this->fac_rec > 0)
 		{
+		    $this->fk_fac_rec_source = $this->fac_rec;
+		    
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 			$_facrec = new FactureRec($this->db);
 			$result=$_facrec->fetch($this->fac_rec);
@@ -386,7 +388,7 @@ class Facture extends CommonInvoice
 		$sql.= ", note_public";
 		$sql.= ", ref_client, ref_int";
         $sql.= ", fk_account";
-		$sql.= ", fk_facture_source, fk_user_author, fk_projet";
+		$sql.= ", fk_fac_rec_source, fk_facture_source, fk_user_author, fk_projet";
 		$sql.= ", fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf";
 		$sql.= ", situation_cycle_ref, situation_counter, situation_final";
 		$sql.= ", fk_incoterms, location_incoterms";
@@ -410,6 +412,7 @@ class Facture extends CommonInvoice
 		$sql.= ", ".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
 		$sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
 		$sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
+		$sql.= ", ".($this->fk_fac_rec_source?"'".$this->db->escape($this->fk_fac_rec_source)."'":"null");
 		$sql.= ", ".($this->fk_facture_source?"'".$this->db->escape($this->fk_facture_source)."'":"null");
 		$sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql.= ", ".($this->fk_project?$this->fk_project:"null");
@@ -434,7 +437,7 @@ class Facture extends CommonInvoice
 
 			// Update ref with new one
 			$this->ref='(PROV'.$this->id.')';
-			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET facnumber='".$this->ref."' WHERE rowid=".$this->id;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET facnumber='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql=$this->db->query($sql);
@@ -4590,18 +4593,18 @@ class FactureLigne extends CommonInvoiceLine
         $sql.= ", remise_percent=".price2num($this->remise_percent)."";
         if ($this->fk_remise_except) $sql.= ", fk_remise_except=".$this->fk_remise_except;
         else $sql.= ", fk_remise_except=null";
-		$sql.= ", vat_src_code = '".(empty($this->vat_src_code)?'':$this->vat_src_code)."'";
+		$sql.= ", vat_src_code = '".(empty($this->vat_src_code)?'':$this->db->escape($this->vat_src_code))."'";
         $sql.= ", tva_tx=".price2num($this->tva_tx)."";
         $sql.= ", localtax1_tx=".price2num($this->localtax1_tx)."";
         $sql.= ", localtax2_tx=".price2num($this->localtax2_tx)."";
-		$sql.= ", localtax1_type='".$this->localtax1_type."'";
-		$sql.= ", localtax2_type='".$this->localtax2_type."'";
-        $sql.= ", qty=".price2num($this->qty)."";
+		$sql.= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
+		$sql.= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
+        $sql.= ", qty=".price2num($this->qty);
         $sql.= ", date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
         $sql.= ", date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
         $sql.= ", product_type=".$this->product_type;
-        $sql.= ", info_bits='".$this->info_bits."'";
-        $sql.= ", special_code='".$this->special_code."'";
+        $sql.= ", info_bits='".$this->db->escape($this->info_bits)."'";
+        $sql.= ", special_code='".$this->db->escape($this->special_code)."'";
         if (empty($this->skip_update_total))
         {
         	$sql.= ", total_ht=".price2num($this->total_ht)."";

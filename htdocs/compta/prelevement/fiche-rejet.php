@@ -138,7 +138,6 @@ if ($resql)
   	print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td align="right">'.$langs->trans("Amount").'</td>';
   	print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td><td align="center">'.$langs->trans("Invoice").'</td></tr>';
 
-  	$var=True;
 	$total = 0;
 
 	if ($num > 0)
@@ -148,7 +147,7 @@ if ($resql)
         {
     		$obj = $db->fetch_object($resql);
     
-    		print "<tr ".$bc[$var]."><td>";
+    		print '<tr class="oddeven"><td>';
     
     		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
     		print img_picto('', 'statut'.$obj->statut).' ';

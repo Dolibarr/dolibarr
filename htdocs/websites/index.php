@@ -38,7 +38,7 @@ define('NOSTYLECHECK',1);
  * @param 	int    	$disablehead		More content into html header
  * @param 	array  	$arrayofjs			Array of complementary js files
  * @param 	array  	$arrayofcss			Array of complementary css files
- * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (set this only if autodetect fails)
  * @return	void
  */
 function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
@@ -48,6 +48,8 @@ function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, 
     // html header
     top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
+    print '<body id="mainbody">';
+    
     // top menu and left menu area
     if (empty($conf->dol_hide_topmenu))
     {
@@ -77,7 +79,7 @@ $langs->load("website");
 
 if (! $user->admin) accessforbidden();
 
-if (! ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)))
+if (! ((GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)))
 {
     $conf->dol_hide_leftmenu = 1;   // Force hide of left menu.
 }

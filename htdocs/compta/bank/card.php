@@ -35,8 +35,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formbank.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
 $langs->load("banks");
 $langs->load("bills");
@@ -44,7 +45,7 @@ $langs->load("categories");
 $langs->load("companies");
 $langs->load("compta");
 
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
 // Security check
@@ -99,7 +100,8 @@ if ($action == 'add')
 
 	$account_number 		 = GETPOST('account_number','alpha');
 	if ($account_number <= 0) { $object->account_number = ''; } else { $object->account_number = $account_number; }
-	$object->accountancy_journal  = trim($_POST["accountancy_journal"]);
+	$fk_accountancy_journal  = GETPOST('fk_accountancy_journal','int');
+	if ($fk_accountancy_journal <= 0) { $object->fk_accountancy_journal = ''; } else { $object->fk_accountancy_journal = $fk_accountancy_journal; }
 
     $object->solde           = $_POST["solde"];
     $object->date_solde      = dol_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
@@ -197,7 +199,8 @@ if ($action == 'update')
 
 	$account_number 		 = GETPOST('account_number', 'int');
 	if ($account_number <= 0) { $object->account_number = ''; } else { $object->account_number = $account_number; }
-	$object->accountancy_journal = trim($_POST["accountancy_journal"]);
+	$fk_accountancy_journal  = GETPOST('fk_accountancy_journal','int');
+	if ($fk_accountancy_journal <= 0) { $object->fk_accountancy_journal = ''; } else { $object->fk_accountancy_journal = $fk_accountancy_journal; }
 
     $object->currency_code   = trim($_POST["account_currency_code"]);
 
@@ -277,7 +280,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->
 $form = new Form($db);
 $formbank = new FormBank($db);
 $formcompany = new FormCompany($db);
-if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
@@ -499,42 +502,29 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 	// Accountancy code
-    if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED))
-    {
-		if (! empty($conf->accounting->enabled))
-		{
-			print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
-			print '<td>';
-			print $formaccountancy->select_account($object->account_number, 'account_number', 1, '', 1, 1);
-			print '</td></tr>';
-		}
-		else
-		{
-			print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
-			print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number', 'alpha'):$object->account_number).'"></td></tr>';
-		}
+	$fieldrequired='';
+    if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)) $fieldrequired='fieldrequired '; 
+    
+	if (! empty($conf->accounting->enabled))
+	{
+		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
+		print '<td>';
+		print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
+		print '</td></tr>';
 	}
-    else
-    {
-		if (! empty($conf->accounting->enabled))
-		{
-			print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
-			print '<td>';
-			print $formaccountancy->select_account($object->account_number, 'account_number', 1, '', 1, 1);
-			print '</td></tr>';
-		}
-		else
-		{
-			print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
-			print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number', 'alpha'):$object->account_number).'"></td></tr>';
-		}
+	else
+	{
+		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
+		print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number', 'alpha'):$object->account_number).'"></td></tr>';
 	}
 
 	// Accountancy journal
 	if (! empty($conf->accounting->enabled))
 	{
 		print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
-	    print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(GETPOST("accountancy_journal")?GETPOST('accountancy_journal', 'alpha'):$object->accountancy_journal).'"></td></tr>';
+	    print '<td>';
+		print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, '', 0, 0);
+		print '</td></tr>';
 	}
 
 	print '</table>';
@@ -677,7 +667,14 @@ else
 		if (! empty($conf->accounting->enabled))
 		{
 		    print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
-		    print '<td>'.$object->accountancy_journal.'</td></tr>';
+		    print '<td>';
+			
+			$accountingjournal = new AccountingJournal($db);
+			$accountingjournal->fetch($object->fk_accountancy_journal);
+
+			print $accountingjournal->getNomUrl(0,1,1,'',1);
+			
+			print '</td></tr>';
 		}
 		
 		// Other attributes
@@ -958,41 +955,42 @@ else
 
 
 		//print '<div class="underbanner clearboth"></div>';
-		
+
 		print '<table class="border" width="100%">';
-		
+
 		// Accountancy code
 		$tdextra = ' class="titlefieldcreate"';
-		
+
 		if (!empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)) {
 		    $tdextra = ' class="fieldrequired titlefieldcreate"';
 		}
-		
+
 		print '<tr class="liste_titre_add"><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		if (!empty($conf->accounting->enabled)) {
-		    print $formaccountancy->select_account($object->account_number, 'account_number', 1, '', 1, 1);
+		    print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
 		} else {
 		    print '<input type="text" name="account_number" value="'.(GETPOST("account_number") ? GETPOST("account_number") : $object->account_number).'">';
 		}
 		print '</td></tr>';
-		
+
 		// Accountancy journal
 		if (! empty($conf->accounting->enabled))
 		{
-		    print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
-		    print '<td><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?GETPOST("accountancy_journal"):$object->accountancy_journal).'"></td></tr>';
+			print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
+			print '<td>';
+			print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, '', 0, 0);
+			print '</td></tr>';
 		}
-		
+
 		print '</table>';
-		
-		
+
 		if ($_POST["type"] == Account::TYPE_SAVINGS || $_POST["type"] == Account::TYPE_CURRENT)
 		{
 		    print '<br>';
-		    
+
 		    //print '<div class="underbanner clearboth"></div>';
-		    
+
 			print '<table class="border" width="100%">';
 
 			// If bank account

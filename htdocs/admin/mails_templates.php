@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $langs->load("errors");
 $langs->load("admin");
@@ -767,7 +767,7 @@ if ($resql)
                 {
                     print '<td align="center">';
                     if ($user->admin) print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
-                    //else print '<a href="#">'.img_delete().'</a>';    // Some dictionnary can be edited by other profile than admin
+                    //else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
                     print '</td>';
                 }
                 else print '<td>&nbsp;</td>';
@@ -841,7 +841,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
-	if (! empty($conf->accounting->enabled)) $formaccountancy = new FormVentilation($db);
+	if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 	foreach ($fieldlist as $field => $value)
 	{

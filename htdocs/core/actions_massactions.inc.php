@@ -274,12 +274,12 @@ if (! $error && $massaction == 'confirm_presend')
                         // Insert logs into agenda
                         foreach($listofqualifiedinvoice as $invid => $object)
                         {
-                            if ($objectclass == 'Propale') $actiontypecode='AC_PROP';
+                            /*if ($objectclass == 'Propale') $actiontypecode='AC_PROP';
                             if ($objectclass == 'Commande') $actiontypecode='AC_COM';
                             if ($objectclass == 'Facture') $actiontypecode='AC_FAC';
                             if ($objectclass == 'Supplier_Proposal') $actiontypecode='AC_SUP_PRO';
                             if ($objectclass == 'CommandeFournisseur') $actiontypecode='AC_SUP_ORD';
-                            if ($objectclass == 'FactureFournisseur') $actiontypecode='AC_SUP_INV';
+                            if ($objectclass == 'FactureFournisseur') $actiontypecode='AC_SUP_INV';*/
                             
                             $actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
                             if ($message)
@@ -289,10 +289,10 @@ if (! $error && $massaction == 'confirm_presend')
                                 $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
                                 $actionmsg = dol_concatdesc($actionmsg, $message);
                             }
-
+                            $actionmsg2='';
+                            
                             // Initialisation donnees
                             $object->sendtoid		= 0;
-                            $object->actiontypecode	= $actiontypecode;
                             $object->actionmsg		= $actionmsg;  // Long text
                             $object->actionmsg2		= $actionmsg2; // Short text
                             $object->fk_element		= $invid;

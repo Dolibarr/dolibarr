@@ -42,7 +42,7 @@ error_reporting(0);		// Disable all errors
 @set_time_limit(900);	// Need 900 on some OS like Windows 7/64
 error_reporting($err);
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $setuplang=(GETPOST('selectlang','',3)?GETPOST('selectlang','',3):'auto');
 $langs->setDefaultLang($setuplang);
 

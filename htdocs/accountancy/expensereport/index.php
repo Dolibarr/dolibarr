@@ -55,7 +55,7 @@ if ($year == 0) {
 }
 
 // Validate History
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 
 /*
@@ -167,7 +167,7 @@ print '<br>';
 
 //print '<div class="inline-block divButAction">';
 // TODO Remove this. Should be done always.
-if ($conf->global->MAIN_FEATURES_LEVEL > 0) print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
+if ($conf->global->MAIN_FEATURES_LEVEL > 1) print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
 //print '</div>';
 
 

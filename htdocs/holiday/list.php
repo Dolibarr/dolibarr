@@ -55,7 +55,7 @@ $pagenext = $page + 1;
 
 $id = GETPOST('id','int');
 
-$sall            = GETPOST('sall');
+$sall            = GETPOST('sall', 'alphanohtml');
 $search_ref      = GETPOST('search_ref');
 $month_create    = GETPOST('month_create');
 $year_create     = GETPOST('year_create');
@@ -282,6 +282,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 
 if ($sall)
@@ -373,8 +374,8 @@ print '</td>';
 
 // ACTION
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
 print '</td>';
 
 print "</tr>\n";

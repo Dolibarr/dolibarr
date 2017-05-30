@@ -25,6 +25,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 $langs->load("admin");
@@ -274,7 +275,7 @@ foreach ($dirmodels as $reldir)
 
 			while (($file = readdir($handle))!==false)
 			{
-				if (substr($file, 0, 21) == 'mod_supplier_proposal_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+				if (substr($file, 0, 22) == 'mod_supplier_proposal_' && substr($file, dol_strlen($file)-3, 3) == 'php')
 				{
 					$file = substr($file, 0, dol_strlen($file)-4);
 

@@ -464,11 +464,11 @@ class Don extends CommonObject
         $sql .= ",note_public=".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
         $sql .= ",datedon='".$this->db->idate($this->date)."'";
         $sql .= ",date_valid=".($this->date_valid?"'".$this->db->idate($this->date)."'":"null");
-        $sql .= ",email='".$this->email."'";
-        $sql .= ",phone='".$this->phone."'";
-        $sql .= ",phone_mobile='".$this->phone_mobile."'";
+        $sql .= ",email='".$this->db->escape($this->email)."'";
+        $sql .= ",phone='".$this->db->escape($this->phone)."'";
+        $sql .= ",phone_mobile='".$this->db->escape($this->phone_mobile)."'";
         $sql .= ",fk_statut=".$this->statut;
-        $sql .= " WHERE rowid = '".$this->id."'";
+        $sql .= " WHERE rowid = ".$this->id;
 
         dol_syslog(get_class($this)."::Update", LOG_DEBUG);
         $resql=$this->db->query($sql);

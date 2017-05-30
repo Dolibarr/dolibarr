@@ -191,6 +191,7 @@ if (empty($reshook))
 	    $object->note				= GETPOST('note','alpha');
 	    $object->origin				= $origin;
 	    $object->origin_id			= $origin_id;
+            $object->fk_project         = GETPOST('projectid');
 	    $object->weight				= GETPOST('weight','int')==''?"NULL":GETPOST('weight','int');
 	    $object->sizeH				= GETPOST('sizeH','int')==''?"NULL":GETPOST('sizeH','int');
 	    $object->sizeW				= GETPOST('sizeW','int')==''?"NULL":GETPOST('sizeW','int');
@@ -595,7 +596,6 @@ if (empty($reshook))
 
 	// Actions to send emails
 	if (empty($id)) $id=$facid;
-	$actiontypecode='AC_SHIP';
 	$trigger_name='SHIPPING_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromshipment';
@@ -695,6 +695,21 @@ if ($action == 'create')
             print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Company').'</td>';
             print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
             print '</tr>';
+
+            // Project
+            if (! empty($conf->projet->enabled))
+            {
+                $projectid = GETPOST('projectid')?GETPOST('projectid'):0;
+                if ($origin == 'project') $projectid = ($originid ? $originid : 0);
+
+                $langs->load("projects");
+                print '<tr>';
+                print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
+                $numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
+                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
+                print '</td>';
+                print '</tr>';
+            }
 
             // Date delivery planned
             print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
@@ -1013,7 +1028,7 @@ if ($action == 'create')
 									{
 										$img=img_warning($langs->trans("StockTooLow"));
 									}
-									print "<tr ".$bc[$var]."><td>&nbsp; &nbsp; &nbsp; ->
+									print "<tr class=\"oddeven\"><td>&nbsp; &nbsp; &nbsp; ->
 										<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
 										</a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
 										<td align=\"center\">".$value['stock']." ".$img."</td></tr>";

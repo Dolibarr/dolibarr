@@ -33,21 +33,22 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
 {
     global $langs, $conf;
 
-    // Define javascript type
-    header('Content-type: text/javascript; charset=UTF-8');
-
+    top_httphead('text/javascript; charset=UTF-8');
+    
     $nowtime = time();
     //$nowtimeprevious = floor($nowtime / 60) * 60;   // auto_check_events_not_before is rounded to previous minute
 
     // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when.
+    /* session already started into main
     session_cache_limiter(FALSE);
     header('Cache-Control: no-cache');
-    session_start();
+    session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
+    session_start();*/
     if (! isset($_SESSION['auto_check_events_not_before'])) 
     {
         print 'console.log("_SESSION[auto_check_events_not_before] is not set");'."\n";
         // Round to eliminate the seconds
-        $_SESSION['auto_check_events_not_before'] = $nowtime;   // auto_check_events_not_before is rounded to previous minute
+        $_SESSION['auto_check_events_not_before'] = $nowtime;
     }
     print 'var nowtime = ' . $nowtime . ';' . "\n";
     print 'var login = \'' . $_SESSION['dol_login'] . '\';' . "\n";

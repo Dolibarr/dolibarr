@@ -62,10 +62,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 
 $action=GETPOST('action','alpha');
-$original_file=GETPOST("file");
+$original_file=GETPOST("file",'alpha');
 $modulepart=GETPOST('modulepart','alpha');
-$urlsource=GETPOST("urlsource");
-$entity=GETPOST('entity')?GETPOST('entity','int'):$conf->entity;
+$urlsource=GETPOST("urlsource",'alpha');
+$entity=GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity;
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
@@ -84,7 +84,7 @@ if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatib
  * View
  */
 
-if (GETPOST("cache"))
+if (GETPOST("cache",'alpha'))
 {
     // Important: Following code is to avoid page request by browser and PHP CPU at
     // each Dolibarr page access.
@@ -137,9 +137,9 @@ if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
 if ($modulepart == 'barcode')
 {
     $generator=GETPOST("generator","alpha");
-    $code=GETPOST("code");
+    $code=GETPOST("code",'alpha');
     $encoding=GETPOST("encoding","alpha");
-    $readable=GETPOST("readable")?GETPOST("readable","alpha"):"Y";
+    $readable=GETPOST("readable",'alpha')?GETPOST("readable","alpha"):"Y";
 
     if (empty($generator) || empty($encoding))
     {
@@ -191,13 +191,13 @@ else					// Open and return file
     // Les drois sont ok et fichier trouve
     if ($type)
     {
+        top_httphead($type);
         header('Content-Disposition: inline; filename="'.basename($original_file).'"');
-        header('Content-type: '.$type);
     }
     else
     {
+        top_httphead('image/png');
         header('Content-Disposition: inline; filename="'.basename($original_file).'"');
-        header('Content-type: image/png');
     }
 
     $original_file_osencoded=dol_osencode($original_file);

@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $langs->load("errors");
 $langs->load("admin");
@@ -215,21 +215,6 @@ if ($id == 25)
 			$elementList[$item] = $value;
 		}
 	}
-}
-
-// Define localtax_typeList (used for dictionary "llx_c_tva")
-$localtax_typeList = array();
-if ($id == 10)
-{
-	$localtax_typeList = array(
-			"0" => $langs->trans("No"),
-			"1" => $langs->trans("Yes").' ('.$langs->trans("Type")." 1)",	//$langs->trans("%ageOnAllWithoutVAT"),
-			"2" => $langs->trans("Yes").' ('.$langs->trans("Type")." 2)",	//$langs->trans("%ageOnAllBeforeVAT"),
-			"3" => $langs->trans("Yes").' ('.$langs->trans("Type")." 3)",	//$langs->trans("%ageOnProductsWithoutVAT"),
-			"4" => $langs->trans("Yes").' ('.$langs->trans("Type")." 4)",	//$langs->trans("%ageOnProductsBeforeVAT"),
-			"5" => $langs->trans("Yes").' ('.$langs->trans("Type")." 5)",	//$langs->trans("%ageOnServiceWithoutVAT"),
-			"6" => $langs->trans("Yes").' ('.$langs->trans("Type")." 6)"	//$langs->trans("%ageOnServiceBeforeVAT"),
-	);
 }
 
 
@@ -1075,21 +1060,6 @@ if ($id)
                             	$key = $langs->trans('SizeUnit'.strtolower($obj->unit));
                                 $valuetoshow = ($obj->code && $key != 'SizeUnit'.strtolower($obj->unit) ? $key : $obj->{$fieldlist[$field]});
                             }
-
-							else if ($fieldlist[$field]=='localtax1_type') {
-							  if ($obj->localtax1 != 0)
-							    $valuetoshow=$localtax_typeList[$valuetoshow];
-							  else
-							    $valuetoshow = '';
-							  $align="right";
-							}
-							else if ($fieldlist[$field]=='localtax2_type') {
-							 if ($obj->localtax2 != 0)
-							    $valuetoshow=$localtax_typeList[$valuetoshow];
-							  else
-							    $valuetoshow = '';
-							  $align="right";
-							}
 							else if ($fieldlist[$field]=='taux') {
                                 $valuetoshow = price($valuetoshow, 0, $langs, 0, 0);
 							    $align="right";
@@ -1253,13 +1223,13 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 	global $conf,$langs,$db;
 	global $form;
 	global $region_id;
-	global $elementList,$sourceList,$localtax_typeList;
+	global $elementList,$sourceList;
 	global $bc;
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
-	$formaccountancy = new FormVentilation($db);
-	
+	$formaccounting = new FormAccounting($db);
+
 	foreach ($fieldlist as $field => $value)
 	{
 		if ($fieldlist[$field] == 'country')
@@ -1376,31 +1346,13 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 		elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
 			print '<td><input type="text" class="flat" value="'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" size="10" name="'.$fieldlist[$field].'"></td>';
 		}
-		elseif ($fieldlist[$field]=='unit') {
-			print '<td>';
-			$units = array(
-					'mm' => $langs->trans('SizeUnitmm'),
-					'cm' => $langs->trans('SizeUnitcm'),
-					'point' => $langs->trans('SizeUnitpoint'),
-					'inch' => $langs->trans('SizeUnitinch')
-			);
-			print $form->selectarray('unit', $units, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), 0, 0, 0);
-			print '</td>';
-		}
-		// Le type de taxe locale
-		elseif ($fieldlist[$field] == 'localtax1_type' || $fieldlist[$field] == 'localtax2_type')
-		{
-			print '<td align="center">';
-			print $form->selectarray($fieldlist[$field], $localtax_typeList, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
-			print '</td>';
-		}
 		elseif ($fieldlist[$field] == 'accountancy_code' || $fieldlist[$field] == 'accountancy_code_sell' || $fieldlist[$field] == 'accountancy_code_buy')
 		{
 			print '<td>';
 			if (! empty($conf->accounting->enabled))
 			{
 				$accountancy_account = (! empty($obj->$fieldlist[$field]) ? $obj->$fieldlist[$field] : 0);
-				print $formaccountancy->select_account($accountancy_account, $fieldlist[$field], 1, '', 1, 1, 'maxwidth200 maxwidthonsmartphone');
+				print $formaccounting->select_account($accountancy_account, $fieldlist[$field], 1, '', 1, 1, 'maxwidth200 maxwidthonsmartphone');
 			}
 			else
 			{

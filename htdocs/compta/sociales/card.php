@@ -38,7 +38,7 @@ $langs->load("compta");
 $langs->load("bills");
 
 $id=GETPOST('id','int');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
@@ -75,6 +75,13 @@ if ($action == 'reopen' && $user->rights->tax->charges->creer) {
             setEventMessages($object->error, $object->errors, 'errors');
         }
     }
+}
+
+// Link to a project
+if ($action == 'classin' && $user->rights->tax->charges->creer)
+{
+    $object->fetch($id);
+    $object->setProject(GETPOST('projectid'));
 }
 
 if ($action == 'setlib' && $user->rights->tax->charges->creer)
@@ -203,11 +210,9 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
 	{
         $result=$object->fetch($id);
 
-        $object->lib		= GETPOST('label');
         $object->date_ech	= $dateech;
         $object->periode	= $dateperiod;
         $object->amount		= price2num($amount);
-		$object->fk_project	= GETPOST("fk_project");
 
         $result=$object->update($user);
         if ($result <= 0)
@@ -276,6 +281,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 
 $form = new Form($db);
 $formsocialcontrib = new FormSocialContrib($db);
+if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $title = $langs->trans("SocialContribution") . ' - ' . $langs->trans("Card");
 $help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
@@ -430,15 +436,47 @@ if ($id > 0)
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		}
 
-		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
+		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill');
 
 		$morehtmlref='<div class="refidno">';
 		// Ref customer
 		$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
 		$morehtmlref.=$form->editfieldval("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+		// Project
+		if (! empty($conf->projet->enabled))
+		{
+		    $langs->load("projects");
+		    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+		    if ($user->rights->tax->charges->creer)
+		    {
+		        if ($action != 'classify')
+		            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+		            if ($action == 'classify') {
+		                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+		                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+		                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+		                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		                $morehtmlref.=$formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+		                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		                $morehtmlref.='</form>';
+		            } else {
+		                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+		            }
+		    } else {
+		        if (! empty($object->fk_project)) {
+		            $proj = new Project($db);
+		            $proj->fetch($object->fk_project);
+		            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+		            $morehtmlref.=$proj->ref;
+		            $morehtmlref.='</a>';
+		        } else {
+		            $morehtmlref.='';
+		        }
+		    }
+		}		
 		$morehtmlref.='</div>';
 		
-		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php">' . $langs->trans("BackToList") . '</a>';
+		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 		
 		$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 		
@@ -449,25 +487,6 @@ if ($id > 0)
 		print '<div class="underbanner clearboth"></div>';
 		
 		print '<table class="border" width="100%">';
-
-        /*
-		// Ref
-		print '<tr><td>'.$langs->trans("Ref").'</td><td>';
-		print $form->showrefnav($object,'id',$linkback);
-		print "</td></tr>";
-        */
-
-		// Label
-		/*if ($action == 'edit')
-		{
-			print '<tr><td>'.$langs->trans("Label").'</td><td>';
-			print '<input type="text" name="label" size="40" value="'.$object->lib.'">';
-			print '</td></tr>';
-		}
-		else
-		{
-			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->lib.'</td></tr>';
-		}*/
 		
 		// Type
 		print '<tr><td class="titlefield">'.$langs->trans("Type")."</td><td>".$object->type_libelle."</td>";
@@ -507,22 +526,6 @@ if ($id > 0)
         else {
             print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
         }
-
-		// Project
-		if (! empty($conf->projet->enabled)){
-			print '<tr><td class="nowrap">';
-			print $langs->trans("Project");
-			print '</td><td>';
-			if ($action == 'edit') {
-				$formproject=new FormProjets($db);
-				$numproject=$formproject->select_projects(-1,$object->fk_project,'fk_project',16,0,1,1);
-			} else {
-				$project=new Project($db);
-				$project->fetch($object->fk_project);
-				print $project->getNomUrl(1,'',1);;
-			}
-			print '</td></tr>';
-		}
 
         // Mode of payment
         print '<tr><td>';

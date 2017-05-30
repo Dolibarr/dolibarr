@@ -159,11 +159,11 @@ class Mailing extends CommonObject
 		$sql .= " SET titre = '".$this->db->escape($this->titre)."'";
 		$sql .= ", sujet = '".$this->db->escape($this->sujet)."'";
 		$sql .= ", body = '".$this->db->escape($this->body)."'";
-		$sql .= ", email_from = '".$this->email_from."'";
-		$sql .= ", email_replyto = '".$this->email_replyto."'";
-		$sql .= ", email_errorsto = '".$this->email_errorsto."'";
-		$sql .= ", bgcolor = '".($this->bgcolor?$this->bgcolor:null)."'";
-		$sql .= ", bgimage = '".($this->bgimage?$this->bgimage:null)."'";
+		$sql .= ", email_from = '".$this->db->escape($this->email_from)."'";
+		$sql .= ", email_replyto = '".$this->db->escape($this->email_replyto)."'";
+		$sql .= ", email_errorsto = '".$this->db->escape($this->email_errorsto)."'";
+		$sql .= ", bgcolor = '".($this->bgcolor?$this->db->escape($this->bgcolor):null)."'";
+		$sql .= ", bgimage = '".($this->bgimage?$this->db->escape($this->bgimage):null)."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Mailing::Update", LOG_DEBUG);
@@ -585,7 +585,7 @@ class Mailing extends CommonObject
 	 *  @param	strin	$desc			Desc error
 	 *  @return string        			Label
 	 */
-	static public function libStatutDest($statut,$mode=0,$desc='')
+	public static function libStatutDest($statut,$mode=0,$desc='')
 	{
 		global $langs;
 		$langs->load('mails');

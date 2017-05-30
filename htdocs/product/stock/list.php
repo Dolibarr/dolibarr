@@ -32,9 +32,9 @@ $langs->load("stocks");
 // Security check
 $result=restrictedArea($user,'stock');
 
+$sall=GETPOST('sall', 'alphanohtml');
 $search_ref=GETPOST("sref","alpha")?GETPOST("sref","alpha"):GETPOST("search_ref","alpha");
 $search_label=GETPOST("snom","alpha")?GETPOST("snom","alpha"):GETPOST("search_label","alpha");
-$sall=GETPOST("sall","alpha");
 $search_status=GETPOST("search_status","int");
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
@@ -135,7 +135,8 @@ if ($result)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-
+	print '<input type="hidden" name="page" value="'.$page.'">';
+	
 	print_barre_liste($langs->trans("ListOfWarehouses"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_generic.png', 0, '', '', $limit);
 	
 	if ($sall)
@@ -168,8 +169,8 @@ if ($result)
 	print '</td>';
 
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
+    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    print $searchpicto;
     print '</td>';
 
 	print '</tr>';

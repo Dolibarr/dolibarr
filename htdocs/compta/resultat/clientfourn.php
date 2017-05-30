@@ -231,13 +231,11 @@ $result = $db->query($sql);
 if ($result) {
     $num = $db->num_rows($result);
     $i = 0;
-    $var=true;
     while ($i < $num)
     {
         $objp = $db->fetch_object($result);
         
-
-        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+        print '<tr class="oddeven"><td>&nbsp;</td>';
         print "<td>".$langs->trans("Bills").' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$objp->socid.'">'.$objp->name."</td>\n";
 
         if ($modecompta == 'CREANCES-DETTES')
@@ -282,7 +280,7 @@ if ($modecompta != 'CREANCES-DETTES')
                 $objp = $db->fetch_object($result);
                 
 
-                print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+                print '<tr class="oddeven"><td>&nbsp;</td>';
                 print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")." (".$langs->trans("PaymentsNotLinkedToInvoice").")\n";
 
                 if ($modecompta == 'CREANCES-DETTES')
@@ -303,9 +301,8 @@ if ($modecompta != 'CREANCES-DETTES')
 }
 
 if ($total_ttc == 0)
-{
-    
-    print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+{    
+    print '<tr class="oddeven"><td>&nbsp;</td>';
     print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
     print '</tr>';
 }
@@ -361,15 +358,13 @@ $result = $db->query($sql);
 if ($result) {
     $num = $db->num_rows($result);
     $i = 0;
-    $var=true;
     if ($num > 0)
     {
         while ($i < $num)
         {
             $objp = $db->fetch_object($result);
             
-
-            print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+            print '<tr class="oddeven"><td>&nbsp;</td>';
             print "<td>".$langs->trans("Bills")." <a href=\"".DOL_URL_ROOT."/fourn/facture/list.php?socid=".$objp->socid."\">".$objp->name."</a></td>\n";
 
             if ($modecompta == 'CREANCES-DETTES')
@@ -386,9 +381,8 @@ if ($result) {
         }
     }
     else
-    {
-        
-        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+    {        
+        print '<tr class="oddeven"><td>&nbsp;</td>';
         print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
@@ -447,7 +441,6 @@ $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($result) {
     $num = $db->num_rows($result);
-    $var=true;
     $i = 0;
     if ($num) {
         while ($i < $num) {
@@ -458,8 +451,7 @@ if ($result) {
             $subtotal_ht += $obj->amount;
             $subtotal_ttc += $obj->amount;
 
-            $var = !$var;
-            print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+            print '<tr class="oddeven"><td>&nbsp;</td>';
             print '<td>'.$obj->label.'</td>';
             if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
             print '<td align="right">'.price(-$obj->amount).'</td>';
@@ -468,8 +460,7 @@ if ($result) {
         }
     }
     else {
-        $var = !$var;
-        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+        print '<tr class="oddeven"><td>&nbsp;</td>';
         print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
@@ -526,7 +517,6 @@ $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($result) {
     $num = $db->num_rows($result);
-    $var=true;
     $i = 0;
     if ($num) {
         while ($i < $num) {
@@ -537,8 +527,7 @@ if ($result) {
             $subtotal_ht += $obj->amount;
             $subtotal_ttc += $obj->amount;
 
-            $var = !$var;
-            print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+            print '<tr class="oddeven"><td>&nbsp;</td>';
             print '<td>'.$obj->label.'</td>';
             if ($modecompta == 'CREANCES-DETTES')
             	print '<td align="right">'.price(-$obj->amount).'</td>';
@@ -548,8 +537,7 @@ if ($result) {
         }
     }
     else {
-        $var = !$var;
-        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+        print '<tr class="oddeven"><td>&nbsp;</td>';
         print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
@@ -615,7 +603,6 @@ if (! empty($conf->salaries->enabled))
 	if ($result)
 	{
 	    $num = $db->num_rows($result);
-	    $var=true;
 	    $i = 0;
 	    if ($num)
 	    {
@@ -628,8 +615,7 @@ if (! empty($conf->salaries->enabled))
 	            $subtotal_ht += $obj->amount;
 	            $subtotal_ttc += $obj->amount;
 
-	            $var = !$var;
-	            print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+	            print '<tr class="oddeven"><td>&nbsp;</td>';
 
 	            print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/compta/salaries/index.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
@@ -641,8 +627,7 @@ if (! empty($conf->salaries->enabled))
 	    }
 	    else
 	    {
-	        $var = !$var;
-	        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+	        print '<tr class="oddeven"><td>&nbsp;</td>';
 	        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 	        print '</tr>';
 	    }
@@ -704,7 +689,6 @@ if (! empty($conf->expensereport->enabled))
 	if ($result)
 	{
 		$num = $db->num_rows($result);
-		$var=true;
 		if ($num)
 		{
 			while ($obj = $db->fetch_object($result))
@@ -714,8 +698,7 @@ if (! empty($conf->expensereport->enabled))
 				$subtotal_ht += $obj->amount_ht;
 				$subtotal_ttc += $obj->amount_ttc;
 
-				$var = !$var;
-				print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+				print '<tr class="oddeven"><td>&nbsp;</td>';
 
 				print "<td>".$langs->trans("ExpenseReport")." <a href=\"".DOL_URL_ROOT."/expensereport/list.php?search_user=".$obj->userid."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
@@ -726,8 +709,7 @@ if (! empty($conf->expensereport->enabled))
 		}
 		else
 		{
-			$var = !$var;
-			print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+			print '<tr class="oddeven"><td>&nbsp;</td>';
 			print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 			print '</tr>';
 		}
@@ -782,7 +764,6 @@ if (! empty($conf->don->enabled))
 	if ($result)
 	{
 		$num = $db->num_rows($result);
-		$var=true;
 		$i = 0;
 		if ($num)
 		{
@@ -795,8 +776,7 @@ if (! empty($conf->don->enabled))
 				$subtotal_ht += $obj->amount;
 				$subtotal_ttc += $obj->amount;
 
-				$var = !$var;
-				print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+				print '<tr class="oddeven"><td>&nbsp;</td>';
 
 				print "<td>".$langs->trans("Donation")." <a href=\"".DOL_URL_ROOT."/don/list.php?search_company=".$obj->name."&search_name=".$obj->firstname." ".$obj->lastname."\">".$obj->name. " ".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
@@ -808,8 +788,7 @@ if (! empty($conf->don->enabled))
 		}
 		else
 		{
-			$var = !$var;
-			print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+			print '<tr class="oddeven"><td>&nbsp;</td>';
 			print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 			print '</tr>';
 		}
@@ -859,7 +838,6 @@ if ($modecompta == 'CREANCES-DETTES')
     if ($result)
     {
         $num = $db->num_rows($result);
-        $var=false;
         $i = 0;
         if ($num)
         {
@@ -878,7 +856,7 @@ if ($modecompta == 'CREANCES-DETTES')
     } else {
         dol_print_error($db);
     }
-    print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+    print '<tr class="oddeven"><td>&nbsp;</td>';
     print "<td>".$langs->trans("VATToPay")."</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">".price($amount)."</td>\n";
@@ -908,7 +886,6 @@ if ($modecompta == 'CREANCES-DETTES')
     if ($result)
     {
         $num = $db->num_rows($result);
-        $var=true;
         $i = 0;
         if ($num)
         {
@@ -928,7 +905,7 @@ if ($modecompta == 'CREANCES-DETTES')
     } else {
         dol_print_error($db);
     }
-    print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+    print '<tr class="oddeven"><td>&nbsp;</td>';
     print "<td>".$langs->trans("VATToCollect")."</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">".price($amount)."</td>\n";
@@ -955,7 +932,6 @@ else
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
-        $var=false;
         $i = 0;
         if ($num) {
             while ($i < $num) {
@@ -974,7 +950,7 @@ else
     } else {
         dol_print_error($db);
     }
-    print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+    print '<tr class="oddeven"><td>&nbsp;</td>';
     print "<td>".$langs->trans("VATPaid")."</td>\n";
     if ($modecompta == 'CREANCES-DETTES')
     	print "<td align=\"right\">".price($amount)."</td>\n";
@@ -1000,7 +976,6 @@ else
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
-        $var=true;
         $i = 0;
         if ($num) {
             while ($i < $num) {
@@ -1021,7 +996,7 @@ else
     {
         dol_print_error($db);
     }
-    print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+    print '<tr class="oddeven"><td>&nbsp;</td>';
     print "<td>".$langs->trans("VATCollected")."</td>\n";
     if ($modecompta == 'CREANCES-DETTES')
     	print "<td align=\"right\">".price($amount)."</td>\n";

@@ -397,8 +397,8 @@ abstract class CommonObject
         //print "lastname=".$this->lastname." name=".$this->name." nom=".$this->nom."<br>\n";
         $lastname=$this->lastname;
         $firstname=$this->firstname;
-        if (empty($lastname))  $lastname=(isset($this->lastname)?$this->lastname:(isset($this->name)?$this->name:(isset($this->nom)?$this->nom:'')));
-
+        if (empty($lastname))  $lastname=(isset($this->lastname)?$this->lastname:(isset($this->name)?$this->name:(isset($this->nom)?$this->nom:(isset($this->societe)?$this->societe:(isset($this->company)?$this->company:'')))));
+        
         $ret='';
         if ($option && $this->civility_id)
         {
@@ -579,7 +579,7 @@ abstract class CommonObject
             // On recherche id type_contact
             $sql = "SELECT tc.rowid";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
-            $sql.= " WHERE tc.element='".$this->element."'";
+            $sql.= " WHERE tc.element='".$this->db->escape($this->element)."'";
             $sql.= " AND tc.source='".$source."'";
             $sql.= " AND tc.code='".$type_contact."' AND tc.active=1";
 			//print $sql;
@@ -791,7 +791,7 @@ abstract class CommonObject
         if ($source == 'external'|| $source == 'thirdparty') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
         $sql.= " WHERE ec.element_id =".$this->id;
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
-        $sql.= " AND tc.element='".$this->element."'";
+        $sql.= " AND tc.element='".$this->db->escape($this->element)."'";
         if ($code) $sql.= " AND tc.code = '".$this->db->escape($code)."'";
         if ($source == 'internal') $sql.= " AND tc.source = 'internal'";
         if ($source == 'external' || $source == 'thirdparty') $sql.= " AND tc.source = 'external'";
@@ -852,7 +852,7 @@ abstract class CommonObject
         //$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as s ON ec.fk_socpeople=s.rowid";	// Si contact de type external, alors il est lie a une societe
         $sql.= " WHERE ec.rowid =".$rowid;
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
-        $sql.= " AND tc.element = '".$this->element."'";
+        $sql.= " AND tc.element = '".$this->db->escape($this->element)."'";
 
         dol_syslog(get_class($this)."::swapContactStatus", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -893,10 +893,10 @@ abstract class CommonObject
         $tab = array();
         $sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle, tc.position";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
-        $sql.= " WHERE tc.element='".$this->element."'";
+        $sql.= " WHERE tc.element='".$this->db->escape($this->element)."'";
         if ($activeonly == 1) $sql.= " AND tc.active=1"; // only the active types
-        if (! empty($source) && $source != 'all') $sql.= " AND tc.source='".$source."'";
-        if (! empty($code)) $sql.= " AND tc.code='".$code."'";
+        if (! empty($source) && $source != 'all') $sql.= " AND tc.source='".$this->db->escape($source)."'";
+        if (! empty($code)) $sql.= " AND tc.code='".$this->db->escape($code)."'";
         $sql.= $this->db->order($order,'ASC');
 
         //print "sql=".$sql;
@@ -2691,16 +2691,16 @@ abstract class CommonObject
     	if ($updatesource)
     	{
     		$sql.= "fk_source = ".$sourceid;
-    		$sql.= ", sourcetype = '".$sourcetype."'";
+    		$sql.= ", sourcetype = '".$this->db->escape($sourcetype)."'";
     		$sql.= " WHERE fk_target = ".$this->id;
-    		$sql.= " AND targettype = '".$this->element."'";
+    		$sql.= " AND targettype = '".$this->db->escape($this->element)."'";
     	}
     	else if ($updatetarget)
     	{
     		$sql.= "fk_target = ".$targetid;
-    		$sql.= ", targettype = '".$targettype."'";
+    		$sql.= ", targettype = '".$this->db->escape($targettype)."'";
     		$sql.= " WHERE fk_source = ".$this->id;
-    		$sql.= " AND sourcetype = '".$this->element."'";
+    		$sql.= " AND sourcetype = '".$this->db->escape($this->element)."'";
     	}
 
     	dol_syslog(get_class($this)."::updateObjectLinked", LOG_DEBUG);
@@ -2749,19 +2749,19 @@ abstract class CommonObject
 		{
 			if ($deletesource)
 			{
-				$sql.= " fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."'";
-				$sql.= " AND fk_target = ".$this->id." AND targettype = '".$this->element."'";
+				$sql.= " fk_source = ".$sourceid." AND sourcetype = '".$this->db->escape($sourcetype)."'";
+				$sql.= " AND fk_target = ".$this->id." AND targettype = '".$this->db->escape($this->element)."'";
 			}
 			else if ($deletetarget)
 			{
-				$sql.= " fk_target = ".$targetid." AND targettype = '".$targettype."'";
-				$sql.= " AND fk_source = ".$this->id." AND sourcetype = '".$this->element."'";
+				$sql.= " fk_target = ".$targetid." AND targettype = '".$this->db->escape($targettype)."'";
+				$sql.= " AND fk_source = ".$this->id." AND sourcetype = '".$this->db->escape($this->element)."'";
 			}
 			else
 			{
-				$sql.= " (fk_source = ".$this->id." AND sourcetype = '".$this->element."')";
+				$sql.= " (fk_source = ".$this->id." AND sourcetype = '".$this->db->escape($this->element)."')";
 				$sql.= " OR";
-				$sql.= " (fk_target = ".$this->id." AND targettype = '".$this->element."')";
+				$sql.= " (fk_target = ".$this->id." AND targettype = '".$this->db->escape($this->element)."')";
 			}
 		}
 

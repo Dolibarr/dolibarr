@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $langs->load('projects');
 $langs->load('users');
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $mode=GETPOST("mode");
 $id=GETPOST('id','int');
 $taskid=GETPOST('taskid');
@@ -417,8 +417,8 @@ for($i=0;$i<7;$i++)
 }
 // Action column
 print '<td class="liste_titre nowrap" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
 print '</td>';
 print "</tr>\n";
 
