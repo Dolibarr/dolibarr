@@ -1686,6 +1686,91 @@ function dol_uncompress($inputfile,$outputdir)
 
 
 /**
+ * Compress a directory and subdirectories into a package file.
+ *
+ * @param 	string	$inputdir		Source dir name
+ * @param 	string	$outputfile		Target file name
+ * @param 	string	$mode			'zip'
+ * @return	int						<0 if KO, >0 if OK
+ */
+function dol_compress_dir($inputdir, $outputfile, $mode="zip")
+{
+    $foundhandler=0;
+
+    dol_syslog("Try to zip dir ".$inputdir." into ".$outputdir." mode=".$mode);
+    try
+    {
+        if ($mode == 'gz')     { $foundhandler=0; }
+        elseif ($mode == 'bz') { $foundhandler=0; }
+        elseif ($mode == 'zip')
+        {
+            /*if (defined('ODTPHP_PATHTOPCLZIP'))
+            {
+                $foundhandler=0;        // TODO implement this
+
+                include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
+                $archive = new PclZip($outputfile);
+                $archive->add($inputfile, PCLZIP_OPT_REMOVE_PATH, dirname($inputfile));
+                //$archive->add($inputfile);
+                return 1;
+            }
+            else*/
+            if (class_exists('ZipArchive'))
+            {
+                $foundhandler=1;
+                
+                // Initialize archive object
+                $zip = new ZipArchive();
+                $zip->open($outputfile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+                
+                // Create recursive directory iterator
+                /** @var SplFileInfo[] $files */
+                $files = new RecursiveIteratorIterator(
+                    new RecursiveDirectoryIterator($inputdir),
+                    RecursiveIteratorIterator::LEAVES_ONLY
+                    );
+
+                foreach ($files as $name => $file)
+                {
+                    // Skip directories (they would be added automatically)
+                    if (!$file->isDir())
+                    {
+                        // Get real and relative path for current file
+                        $filePath = $file->getRealPath();
+                        $relativePath = substr($filePath, strlen($inputdir) + 1);
+                
+                        // Add current file to archive
+                        $zip->addFile($filePath, $relativePath);
+                    }
+                }
+                
+                // Zip archive will be created only after closing object
+                $zip->close();                
+    
+                return 1;
+            }
+        }
+
+        if (! $foundhandler)
+        {
+            dol_syslog("Try to zip with format ".$mode." with no handler for this format",LOG_ERR);
+            return -2;
+        }
+    }
+    catch (Exception $e)
+    {
+        global $langs, $errormsg;
+        $langs->load("errors");
+        dol_syslog("Failed to open file ".$outputfile, LOG_ERR);
+        dol_syslog($e->getMessage(), LOG_ERR);
+        $errormsg=$langs->trans("ErrorFailedToWriteInDir",$outputfile);
+        return -1;
+    }
+}
+
+
+
+/**
  * Return file(s) into a directory (by default most recent)
  *
  * @param 	string		$dir			Directory to scan
