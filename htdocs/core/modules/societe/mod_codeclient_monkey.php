@@ -125,12 +125,11 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$sql.= " WHERE ".$field." LIKE '".$prefix."____-%'";
 		dol_include_once("/multicompany/class/dao_multicompany.class.php");
 		
-		 $dm = new DaoMulticompany($db);
-		 $dm->getEntities();
+		 $mc->dao->getEntities();
 		 
 		 $passTest =0;
-		 if(!empty($dm->entities)){
-			foreach($dm->entities as $entity){
+		 if(!empty($mc->dao->entities)){
+			foreach($mc->dao->entities as $entity){
 				if(!empty($entity->options['sharings']['societe'])){
 					foreach($entity->options['sharings']['societe'] as $theEntity){
 						
