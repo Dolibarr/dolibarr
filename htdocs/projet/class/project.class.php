@@ -385,7 +385,7 @@ class Project extends CommonObject
         else if (! empty($ref))
         {
         	$sql.= " WHERE ref='".$this->db->escape($ref)."'";
-        	$sql.= " AND entity IN (".getEntity('project',1).")";
+        	$sql.= " AND entity IN (".getEntity('project').")";
         }
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -1108,7 +1108,7 @@ class Project extends CommonObject
         {
             $sql.= ", " . MAIN_DB_PREFIX . "element_contact as ec";
         }
-        $sql.= " WHERE p.entity IN (".getEntity('project',1).")";
+        $sql.= " WHERE p.entity IN (".getEntity('project').")";
         // Internal users must see project he is contact to even if project linked to a third party he can't see.
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
         if ($socid > 0) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = " . $socid . ")";
@@ -1681,7 +1681,7 @@ class Project extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
         if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
         $sql.= " WHERE p.fk_statut = 1";
-        $sql.= " AND p.entity IN (".getEntity('project').')';
+        $sql.= " AND p.entity IN (".getEntity('project', false).')';
         if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
         // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
@@ -1756,7 +1756,7 @@ class Project extends CommonObject
 	    $sql = "SELECT count(p.rowid) as nb";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	    $sql.= " WHERE";
-	    $sql.= " p.entity IN (".getEntity('projet', 1).")";
+	    $sql.= " p.entity IN (".getEntity('projet').")";
 		if (! $user->rights->projet->all->lire) 
 		{
 			$projectsListId = $this->getProjectsAuthorizedForUser($user,0,1);

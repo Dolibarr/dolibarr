@@ -179,7 +179,7 @@ class Skeleton_Class extends CommonObject
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		$sql.= ' WHERE 1 = 1';
 		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity("skeleton", 1) . ")";
+		    $sql .= " AND entity IN (" . getEntity('skeleton') . ")";
 		}
 		if (null !== $ref) {
 			$sql .= ' AND t.ref = ' . '\'' . $ref . '\'';
@@ -257,7 +257,7 @@ class Skeleton_Class extends CommonObject
 		}
 		$sql.= ' WHERE 1 = 1';
 		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity("skeleton", 1) . ")";
+		    $sql .= " AND entity IN (" . getEntity('skeleton') . ")";
 		}
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);

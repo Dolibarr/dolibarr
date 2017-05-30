@@ -114,7 +114,7 @@ $infoprod=array();
 $sql  = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, SUM(pd.qty) as c";
 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
-$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 $sql.= " AND p.rowid = pd.fk_product";
 if ($type !== '') {
 	$sql.= " AND fk_product_type = ".$type;

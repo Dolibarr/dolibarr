@@ -134,7 +134,7 @@ if ($action == 'validatehistory') {
 	$sql1.= " WHERE erd.fk_expensereport IN ( SELECT er.rowid FROM " . MAIN_DB_PREFIX . "expensereport as er";
 	$sql1.= " WHERE er.date_debut >= '" . $db->idate(dol_get_first_day($year_current, 1, false)) . "'";
 	$sql1.= " AND er.date_debut <= '" . $db->idate(dol_get_last_day($year_current, 12, false)) . "'";
-	$sql1.= " AND er.entity IN (" . getEntity("accountancy", 1) . ")";
+	$sql1.= " AND er.entity IN (" . getEntity('accountancy') . ")";
 	$sql1.=")";
 	
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
@@ -206,7 +206,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid =
 $sql .= " WHERE er.date_debut >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 $sql .= " AND er.date_debut <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
 $sql .= " AND er.fk_statut > 0 ";
-$sql .= " AND er.entity IN (" . getEntity("expensereport", 0) . ")";     // We don't share object for accountancy
+$sql .= " AND er.entity IN (" . getEntity('expensereport', false) . ")";     // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NULL";
 $sql .= " GROUP BY erd.fk_code_ventilation,aa.account_number,aa.label";
 
@@ -259,7 +259,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid =
 $sql .= " WHERE er.date_debut >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 $sql .= " AND er.date_debut <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
 $sql .= " AND er.fk_statut > 0 ";
-$sql .= " AND er.entity IN (" . getEntity("expensereport", 0) . ")";     // We don't share object for accountancy
+$sql .= " AND er.entity IN (" . getEntity('expensereport', false) . ")";     // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NOT NULL";
 $sql .= " GROUP BY erd.fk_code_ventilation,aa.account_number,aa.label";
 
@@ -313,7 +313,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     $sql .= " WHERE er.date_debut >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
     $sql .= " AND er.date_debut <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
     $sql .= " AND er.fk_statut > 0 ";
-    $sql .= " AND er.entity IN (" . getEntity("expensereport", 0) . ")";     // We don't share object for accountancy
+    $sql .= " AND er.entity IN (" . getEntity('expensereport', false) . ")";     // We don't share object for accountancy
     
     dol_syslog('/accountancy/expensereport/index.php:: sql=' . $sql);
     $resql = $db->query($sql);

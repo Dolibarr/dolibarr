@@ -110,10 +110,10 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  *                              'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
  *                              'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
  *                              'email_template', 'event',
- * 	@param	int		$shared		0=Return id of entity, 1=Return id entity + shared entities
+ * 	@param	int		$shared		true=Return id entity + shared entities (by default), false=Return id of current entity or referent entity if current element is "societe"
  * 	@return	mixed				Entity id(s) to use
  */
-function getEntity($element=false, $shared=0)
+function getEntity($element=false, $shared=true)
 {
 	global $conf, $mc;
 

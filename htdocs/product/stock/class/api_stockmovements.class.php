@@ -104,7 +104,7 @@ class StockMovements extends DolibarrApi
         
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."stock_mouvement as t";
-        //$sql.= ' WHERE t.entity IN ('.getEntity('stock', 1).')';
+        //$sql.= ' WHERE t.entity IN ('.getEntity('stock').')';
         $sql.= ' WHERE 1 = 1';
         // Add sql filters
         if ($sqlfilters) 

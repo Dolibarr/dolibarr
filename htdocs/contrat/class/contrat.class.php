@@ -504,7 +504,7 @@ class Contrat extends CommonObject
 		if ($ref)
 		{
 			$sql.= " WHERE ref='".$this->db->escape($ref)."'";
-			$sql.= " AND entity IN (".getEntity('contract').")";
+			$sql.= " AND entity IN (".getEntity('contract', false).")";
 		}
 		else $sql.= " WHERE rowid=".$id;
 
@@ -2180,7 +2180,7 @@ class Contrat extends CommonObject
 		$prodids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE entity IN (".getEntity('product', 1).")";
+		$sql.= " WHERE entity IN (".getEntity('product').")";
 		$sql.= " AND tosell = 1";
 		$resql = $this->db->query($sql);
 		if ($resql)

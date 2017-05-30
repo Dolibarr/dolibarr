@@ -220,7 +220,7 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 } else {
 	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_STANDARD . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_DEPOSIT . "," . Facture::TYPE_SITUATION . ")";
 }
-$sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")";    // We don't share object for accountancy
+$sql .= " AND f.entity IN (" . getEntity('facture', false) . ")";    // We don't share object for accountancy
 
 $sql .= $db->order($sortfield, $sortorder);
 

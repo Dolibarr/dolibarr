@@ -271,7 +271,7 @@ class modResource extends DolibarrModules
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'resource as r ';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_resource as c ON c.rowid=r.fk_code_type_resource';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'resource_extrafields as extra ON extra.fk_object = c.rowid';
-		$this->export_sql_end[$r] .=' AND r.entity IN ('.getEntity('resource',1).')';
+		$this->export_sql_end[$r] .=' AND r.entity IN ('.getEntity('resource').')';
 		
 
 		// Imports
