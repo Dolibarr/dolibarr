@@ -190,7 +190,7 @@ class ProductFournisseur extends Product
      *    @param    float		$vat_deductibility_rate	VAT deductibility rate
      *    @return   int									<0 if KO, >=0 if OK
      */
-    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0, $supplier_reputation='', $vat_deductibility_rate)
+    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0, $supplier_reputation='', $vat_deductibility_rate=100)
     {
         global $conf, $langs;
         //global $mysoc;
