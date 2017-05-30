@@ -757,6 +757,8 @@ SomeTranslationAreUncomplete=Some languages may be partially translated or may c
 DirectDownloadLink=Direct download link
 Download=Download
 ActualizeCurrency=Update currency rate
+TitleSetToDraft=Go back to draft
+ConfirmSetToDraft=Are you sure you want to go back to Draft status ?
 # Week day
 Monday=Monday
 Tuesday=Tuesday
