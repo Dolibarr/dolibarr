@@ -123,7 +123,6 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
         $sql = "SELECT MAX(CAST(SUBSTRING(".$field." FROM ".$posindice.") AS SIGNED)) as max";   // This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE ".$field." LIKE '".$prefix."____-%'";
-		dol_include_once("/multicompany/class/dao_multicompany.class.php");
 		
 		 $mc->dao->getEntities();
 		 
