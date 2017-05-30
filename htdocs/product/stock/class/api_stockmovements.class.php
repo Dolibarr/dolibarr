@@ -320,6 +320,7 @@ class StockMovements extends DolibarrApi
         unset($object->user);
         unset($object->fk_project);
         unset($object->project);
+        unset($object->canvas);
         
         //unset($object->eatby);        Filled correctly in read mode
         //unset($object->sellby);       Filled correctly in read mode
