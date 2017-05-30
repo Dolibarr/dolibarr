@@ -210,7 +210,7 @@ if ($catid > 0)    $sql.= " AND cm.fk_categorie = ".$db->escape($catid);
 if ($catid == -2)  $sql.= " AND cm.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cm.fk_categorie = ".$db->escape($search_categ);
 if ($search_categ == -2) $sql.= " AND cm.fk_categorie IS NULL";
-$sql.= " AND d.entity IN (".getEntity('adherent', 1).")";
+$sql.= " AND d.entity IN (".getEntity('adherent').")";
 if ($sall) $sql.=natural_search(array_keys($fieldstosearchall), $sall);
 if ($type > 0) $sql.=" AND t.rowid=".$db->escape($type);
 if ($statut != '') $sql.=" AND d.statut in (".$db->escape($statut).")";     // Peut valoir un nombre ou liste de nombre separes par virgules

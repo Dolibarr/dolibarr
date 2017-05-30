@@ -90,7 +90,7 @@ $sql.= ", date_format(b.dateo,'%Y-%m') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE b.fk_account = ba.rowid";
-$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 $sql.= " AND b.amount >= 0";
 if (! empty($id))
 	$sql .= " AND b.fk_account IN (".$db->escape($id).")";
@@ -118,7 +118,7 @@ $sql.= ", date_format(b.dateo,'%Y-%m') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE b.fk_account = ba.rowid";
-$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 $sql.= " AND b.amount <= 0";
 if (! empty($id))
 	$sql .= " AND b.fk_account IN (".$db->escape($id).")";
@@ -250,7 +250,7 @@ $sql = "SELECT SUM(b.amount) as total";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE b.fk_account = ba.rowid";
-$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 if (! empty($id))
 	$sql.= " AND b.fk_account IN (".$db->escape($id).")";
 
@@ -290,7 +290,7 @@ else
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= " WHERE b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+	$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 	if ($id && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$id.")";
 
 	$resql = $db->query($sql);
@@ -321,7 +321,7 @@ else
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql.= " AND b.datev >= '".($year-$annee)."-01-01 00:00:00'";
 		$sql.= " AND b.datev <= '".($year-$annee)."-12-31 23:59:59'";
 		$sql.= " AND b.amount > 0";
@@ -410,7 +410,7 @@ else
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql.= " AND b.datev >= '".($year-$annee)."-01-01 00:00:00'";
 		$sql.= " AND b.datev <= '".($year-$annee)."-12-31 23:59:59'";
 		$sql.= " AND b.amount < 0";

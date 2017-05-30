@@ -110,7 +110,7 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "product_price ";
 			$sql .= " WHERE fk_product='" . $id . "'";
-			$sql .= " AND entity IN (" . getEntity('productprice', 1) . ")";
+			$sql .= " AND entity IN (" . getEntity('productprice') . ")";
 			$sql .= " AND price_level=" . $price_level;
 			$sql .= " ORDER BY date_price";
 			$sql .= " DESC LIMIT 1";

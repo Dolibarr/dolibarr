@@ -172,7 +172,7 @@ class modFicheinter extends DolibarrModules
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'fichinterdet as fd ON f.rowid = fd.fk_fichinter,';
         $this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'societe as s';
         $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
-        $this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('intervention',1).')';
+        $this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('intervention').')';
         $r++;
 
     }

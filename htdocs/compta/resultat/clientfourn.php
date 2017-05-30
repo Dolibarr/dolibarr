@@ -263,7 +263,7 @@ if ($modecompta != 'CREANCES-DETTES')
     $sql.= " WHERE pf.rowid IS NULL";
     $sql.= " AND p.fk_bank = b.rowid";
     $sql.= " AND b.fk_account = ba.rowid";
-    $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+    $sql.= " AND ba.entity IN (".getEntity('bank_account').")";
     if (! empty($date_start) && ! empty($date_end))
     	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
     $sql.= " GROUP BY name, idp";
@@ -654,7 +654,7 @@ if (! empty($conf->expensereport->enabled))
 		$sql = "SELECT p.rowid, p.ref, u.rowid as userid, u.firstname, u.lastname, date_format(date_valid,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
-		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
+		$sql.= " WHERE p.entity = ".getEntity('expensereport');
 		$sql.= " AND p.fk_statut>=5";
 
 		$column='p.date_valid';
@@ -664,7 +664,7 @@ if (! empty($conf->expensereport->enabled))
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
-		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
+		$sql.= " WHERE p.entity = ".getEntity('expensereport');
 		$sql.= " AND p.fk_statut>=5";
 
 		$column='pe.datep';
@@ -745,7 +745,7 @@ if (! empty($conf->don->enabled))
 	    $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
 	    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
 	    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
-	    $sql.= " WHERE p.entity = ".getEntity('donation',1);
+	    $sql.= " WHERE p.entity = ".getEntity('donation');
 	    $sql.= " AND fk_statut >= 2";	 
 	}
 	if (! empty($date_start) && ! empty($date_end))

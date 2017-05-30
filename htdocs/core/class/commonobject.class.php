@@ -959,7 +959,7 @@ abstract class CommonObject
         $sql.= " WHERE ec.element_id = ".$id;
         $sql.= " AND ec.fk_socpeople = c.rowid";
         if ($source == 'internal') $sql.= " AND c.entity IN (0,".$conf->entity.")";
-        if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('societe', 1).")";
+        if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('societe').")";
         $sql.= " AND ec.fk_c_type_contact = tc.rowid";
         $sql.= " AND tc.element = '".$element."'";
         $sql.= " AND tc.source = '".$source."'";

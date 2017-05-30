@@ -690,7 +690,7 @@ class Task extends CommonObject
                 $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec2";
                 $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
             }
-            $sql.= " WHERE p.entity IN (".getEntity('project',1).")";
+            $sql.= " WHERE p.entity IN (".getEntity('project').")";
             $sql.= " AND t.fk_projet = p.rowid";
         }
         elseif ($mode == 1)
@@ -710,7 +710,7 @@ class Task extends CommonObject
             {
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
             }
-            $sql.= " WHERE p.entity IN (".getEntity('project',1).")";
+            $sql.= " WHERE p.entity IN (".getEntity('project').")";
         }
         else return 'BadValueForParameterMode';
 
@@ -1704,7 +1704,7 @@ class Task extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
         if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
         $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
-        $sql.= " WHERE p.entity IN (".getEntity('project').')';
+        $sql.= " WHERE p.entity IN (".getEntity('project', false)')';
         $sql.= " AND p.fk_statut = 1";
         $sql.= " AND t.fk_projet = p.rowid";
         $sql.= " AND t.progress < 100";         // tasks to do

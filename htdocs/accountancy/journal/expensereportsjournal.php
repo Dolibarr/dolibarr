@@ -97,7 +97,7 @@ $sql .= " JOIN " . MAIN_DB_PREFIX . "expensereport as er ON er.rowid = erd.fk_ex
 $sql .= " JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = er.fk_user_author";
 $sql .= " WHERE er.fk_statut > 0 ";
 $sql .= " AND erd.fk_code_ventilation > 0 ";
-$sql .= " AND er.entity IN (" . getEntity("expensereport", 0) . ")";  // We don't share object for accountancy
+$sql .= " AND er.entity IN (" . getEntity('expensereport', false) . ")";  // We don't share object for accountancy
 if ($date_start && $date_end)
 	$sql .= " AND er.date_debut >= '" . $db->idate($date_start) . "' AND er.date_debut <= '" . $db->idate($date_end) . "'";
 $sql .= " ORDER BY er.date_debut";

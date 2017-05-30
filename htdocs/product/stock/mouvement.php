@@ -434,7 +434,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND
 $sql.= " WHERE m.fk_product = p.rowid";
 if ($msid > 0) $sql .= " AND m.rowid = ".$msid;
 $sql.= " AND m.fk_entrepot = e.rowid";
-$sql.= " AND e.entity IN (".getEntity('stock', 1).")";
+$sql.= " AND e.entity IN (".getEntity('stock').")";
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
 if ($id > 0) $sql.= " AND e.rowid ='".$id."'";
 if ($month > 0)
