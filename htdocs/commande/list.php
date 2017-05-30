@@ -71,7 +71,7 @@ $search_zip=GETPOST('search_zip','alpha');
 $search_state=trim(GETPOST("search_state"));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
-$sall=GETPOST('sall');
+$sall=GETPOST('sall', 'alphanohtml');
 $socid=GETPOST('socid','int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
@@ -1412,7 +1412,7 @@ if ($resql)
 	        $i++;
 	        if ($i == 1)
 	        {
-	            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+	            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
 	            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
 	        }
 	        elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';

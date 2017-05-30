@@ -41,8 +41,8 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="m.date_creat";
 
-$sall=GETPOST("sall","alpha");
-$sref=GETPOST("sref","alpha");
+$sall=GETPOST('sall', 'alphanohtml');
+$sref=GETPOST("sref", "alpha");
 $filteremail=GETPOST('filteremail','alpha');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array

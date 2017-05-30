@@ -137,7 +137,7 @@ if (empty($reshook))
     if (GETPOST('cancel')) $action='';
 
     // Set note
-    include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not include_once
+    include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	    // Must be include, not include_once
 
     include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
@@ -612,7 +612,7 @@ if (empty($reshook))
     	else
     	{
     		// Insert line
-    		$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit);
+    		$result = $object->addline($desc, $pu_ht, $qty, $tva_tx,$localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit);
 
     		if ($result > 0)
     		{
@@ -784,7 +784,9 @@ if (empty($reshook))
     			$description,
     			$pu_ht,
     			$qty,
-                    	$vat_rate,
+			    $vat_rate,
+			    $localtax1_rate,
+			    $localtax1_rate,
     			GETPOST('productid'),
     			GETPOST('remise_percent'),
     			'HT',
@@ -1180,8 +1182,22 @@ else
 
 		print '<tr><td>'.$langs->trans("AmountVAT").'</td><td colspan="3">'.price($object->total_tva,'',$langs,1,-1,-1,$conf->currency).'</td>';
 		print '</tr>';
+
+		// Amount Local Taxes
+		if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) 	// Localtax1
+		{
+			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
+			print '<td class="nowrap">' . price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		}
+		if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) 	// Localtax2
+		{
+			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
+			print '<td class=nowrap">' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		}
+
 		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td colspan="3">'.price($object->total_ttc,'',$langs,1,-1,-1,$conf->currency).'</td>';
 		print '</tr>';
+
 
 		// Payment term
 		print '<tr><td>';

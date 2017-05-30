@@ -88,7 +88,7 @@ $toselect = GETPOST('toselect', 'array');
 $option = GETPOST('option');
 if ($option == 'late') $filter = 'paye:0';
 
-$search_all = GETPOST('sall');
+$search_all = GETPOST('sall', 'alphanohtml');
 $search_label = GETPOST("search_label","alpha");
 $search_company = GETPOST("search_company","alpha");
 $search_amount_no_tax = GETPOST("search_amount_no_tax","alpha");
@@ -970,7 +970,7 @@ if ($resql)
     		   $i++;
     		   if ($i == 1)
     	       {
-            		if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+            		if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
             		else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
     	       }
     		   elseif ($totalarray['totalhtfield'] == $i)  print '<td align="right">'.price($totalarray['totalht']).'</td>';

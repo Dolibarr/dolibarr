@@ -68,7 +68,7 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *	Charge un objet group avec toutes ces caracteristiques (excpet ->members array)
+	 *	Charge un objet group avec toutes ces caracteristiques (except ->members array)
 	 *
 	 *	@param      int		$id			id du groupe a charger
 	 *	@param      string	$groupname	name du groupe a charger
@@ -335,16 +335,16 @@ class UserGroup extends CommonObject
 				$error++;
 				dol_print_error($this->db);
 			}
-			
+
 			if (! $error)
 			{
 			    $this->context = array('audit'=>$langs->trans("PermissionsAdd"));
-			
+
 			    // Call trigger
 			    $result=$this->call_trigger('GROUP_MODIFY',$user);
 			    if ($result < 0) { $error++; }
 			    // End call triggers
-			}			
+			}
 		}
 
 		if ($error) {
@@ -444,11 +444,11 @@ class UserGroup extends CommonObject
 				$error++;
 				dol_print_error($this->db);
 			}
-			
+
 			if (! $error)
 			{
 		        $this->context = array('audit'=>$langs->trans("PermissionsDelete"));
-		        
+
 			    // Call trigger
 			    $result=$this->call_trigger('GROUP_MODIFY',$user);
 			    if ($result < 0) { $error++; }
@@ -805,7 +805,7 @@ class UserGroup extends CommonObject
 				$muser=new User($this->db);
 				$muser->fetch($val->id);
 				$info2 = $muser->_load_ldap_info();
-                                $valueofldapfield[] = $muser->_load_ldap_dn($info2);
+				$valueofldapfield[] = $muser->_load_ldap_dn($info2);
 			}
 			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield)?$valueofldapfield:'');
 		}
@@ -833,7 +833,11 @@ class UserGroup extends CommonObject
 		$this->note='This is a note';
 		$this->datec=time();
 		$this->datem=time();
-		$this->members=array($user->id);	// Members of this group is just me
+
+		// Members of this group is just me
+		$this->members=array(
+				$user->id => $user
+		);
 	}
 }
 

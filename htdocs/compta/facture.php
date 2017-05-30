@@ -2384,7 +2384,8 @@ if ($action == 'create')
 		else
 		{
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-			$tmp='<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
+			if (empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) $tmp='<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
+			else $tmp='<input type="radio" name="type" id="radio_creditnote" value="2" > ';
 			$text = $tmp.$langs->trans("InvoiceAvoir") . ' ';
 			$text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
 			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
@@ -3800,23 +3801,20 @@ else if ($id > 0 || ! empty($ref))
 	// Lines
 	$result = $object->getLinesArray();
 
-	if (! empty($conf->use_javascript_ajax) && $object->statut == 0) {
-		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
-	}
-
-    print '<div class="div-table-responsive">';
-	print '<table id="tablelines" class="noborder noshadow" width="100%">';
-
 	// Show global modifiers
 	if (! empty($conf->global->INVOICE_USE_SITUATION))
 	{
 		if ($object->situation_cycle_ref && $object->statut == 0) {
-			print '<tr class="liste_titre nodrag nodrop">';
-			print '<form name="updatealllines" id="updatealllines" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '"#updatealllines" method="POST">';
+			print '<div class="div-table-responsive">';
+			
+			print '<form name="updatealllines" id="updatealllines" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '#updatealllines" method="POST">';
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '" />';
 			print '<input type="hidden" name="action" value="updatealllines" />';
 			print '<input type="hidden" name="id" value="' . $object->id . '" />';
-
+			
+			print '<table id="tablelines_all_progress" class="noborder noshadow" width="100%">';
+			print '<tr class="liste_titre nodrag nodrop">';
+			
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 				print '<td align="center" width="5">&nbsp;</td>';
 			}
@@ -3839,7 +3837,7 @@ else if ($id > 0 || ! empty($ref))
 			print '<td width="10">&nbsp;</td>';
 			print '<td width="10">&nbsp;</td>';
 			print "</tr>\n";
-
+			
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 				print '<td align="center" width="5">&nbsp;</td>';
 			}
@@ -3852,16 +3850,32 @@ else if ($id > 0 || ! empty($ref))
 			print '<td align="right" class="nowrap"><input type="text" size="1" value="" name="all_progress">%</td>';
 			print '<td colspan="4" align="right"><input class="button" type="submit" name="all_percent" value="Modifier" /></td>';
 			print '</tr>';
+			
+			print '</table>';
+			
 			print '</form>';
+			
+			print '</div>';
+			
 		}
+		
 	}
-
+	
+	
+	
 	print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">
 	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateligne') . '">
 	<input type="hidden" name="mode" value="">
 	<input type="hidden" name="id" value="' . $object->id . '">
 	';
+
+	if (! empty($conf->use_javascript_ajax) && $object->statut == 0) {
+		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
+	}
+
+    print '<div class="div-table-responsive">';
+	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	// Show object lines
 	if (! empty($object->lines))

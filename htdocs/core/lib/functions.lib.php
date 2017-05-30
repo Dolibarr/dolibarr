@@ -286,6 +286,9 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	        case 'int':
 	            if (! is_numeric($out)) { $out=''; }
 	            break;
+	        case 'intcomma':
+	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
+	            break;
 	        case 'alpha':
 	            $out=trim($out);
 	            // '"' is dangerous because param in url can close the href= or src= and add javascript functions.
@@ -302,15 +305,23 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	            break;
 	        case 'aZ09':
 	            $out=trim($out);
-	            if (preg_match('/[^a-z0-9]+/i',$out)) $out='';
+	            if (preg_match('/[^a-z0-9_\-]+/i',$out)) $out='';
 	            break;
 	        case 'array':
 	            if (! is_array($out) || empty($out)) $out=array();
 	            break;
 			case 'nohtml':
-				$out=dol_string_nohtmltag($out);
+			    $out=dol_string_nohtmltag($out);
 				break;
-	        case 'custom':
+			case 'alphanohtml':	// Recommended for search params
+	            $out=trim($out);
+	            // '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+	            // '../' is dangerous because it allows dir transversals
+	            if (preg_match('/"/',$out)) $out='';
+	            else if (preg_match('/\.\.\//',$out)) $out='';
+			    $out=dol_string_nohtmltag($out);
+				break;
+			case 'custom':
 	            if (empty($filter)) return 'BadFourthParameterForGETPOST';
 	            $out=filter_var($out, $filter, $options);
 	            break;
@@ -2929,17 +2940,18 @@ function dol_print_error($db='',$error='',$errors=null)
 		if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
 		{
 			$out.="<b>".$langs->trans("DatabaseTypeManager").":</b> ".$db->type."<br>\n";
-			$out.="<b>".$langs->trans("RequestLastAccessInError").":</b> ".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."<br>\n";
-			$out.="<b>".$langs->trans("ReturnCodeLastAccessInError").":</b> ".($db->lasterrno()?$db->lasterrno():$langs->trans("ErrorNoRequestInError"))."<br>\n";
-			$out.="<b>".$langs->trans("InformationLastAccessInError").":</b> ".($db->lasterror()?$db->lasterror():$langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$out.="<b>".$langs->trans("RequestLastAccessInError").":</b> ".($db->lastqueryerror()?dol_escape_htmltag($db->lastqueryerror()):$langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$out.="<b>".$langs->trans("ReturnCodeLastAccessInError").":</b> ".($db->lasterrno()?dol_escape_htmltag($db->lasterrno()):$langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$out.="<b>".$langs->trans("InformationLastAccessInError").":</b> ".($db->lasterror()?dol_escape_htmltag($db->lasterror()):$langs->trans("ErrorNoRequestInError"))."<br>\n";
 			$out.="<br>\n";
 		}
 		else                            // Mode CLI
 		{
-			$out.='> '.$langs->transnoentities("DatabaseTypeManager").":\n".$db->type."\n";
-			$out.='> '.$langs->transnoentities("RequestLastAccessInError").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."\n";
-			$out.='> '.$langs->transnoentities("ReturnCodeLastAccessInError").":\n".($db->lasterrno()?$db->lasterrno():$langs->trans("ErrorNoRequestInError"))."\n";
-			$out.='> '.$langs->transnoentities("InformationLastAccessInError").":\n".($db->lasterror()?$db->lasterror():$langs->trans("ErrorNoRequestInError"))."\n";
+		    // No dol_escape_htmltag for output, we are in CLI mode
+		    $out.='> '.$langs->transnoentities("DatabaseTypeManager").":\n".$db->type."\n";
+			$out.='> '.$langs->transnoentities("RequestLastAccessInError").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->transnoentities("ErrorNoRequestInError"))."\n";
+			$out.='> '.$langs->transnoentities("ReturnCodeLastAccessInError").":\n".($db->lasterrno()?$db->lasterrno():$langs->transnoentities("ErrorNoRequestInError"))."\n";
+			$out.='> '.$langs->transnoentities("InformationLastAccessInError").":\n".($db->lasterror()?$db->lasterror():$langs->transnoentities("ErrorNoRequestInError"))."\n";
 
 		}
 		$syslog.=", sql=".$db->lastquery();
@@ -5830,9 +5842,10 @@ function getImageFileNameForSize($file, $extName, $extImgTarget='')
  *
  * @param   string    $modulepart     propal, facture, facture_fourn, ...
  * @param   string    $relativepath   Relative path of docs
+ * @param	string	  $param		  More param on http links
  * @return  string                    Output string with HTML
  */
-function getAdvancedPreviewUrl($modulepart, $relativepath)
+function getAdvancedPreviewUrl($modulepart, $relativepath, $param='')
 {
     global $conf;
     
@@ -5843,7 +5856,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath)
     //$mime_preview[]='archive';
     $num_mime = array_search(dol_mimetype($relativepath, '', 1), $mime_preview);
 
-    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;attachment=0&amp;file='.$relativepath).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js('Preview').'\')';
+    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;attachment=0&amp;file='.$relativepath.($param?'&amp;'.$param:'')).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js('Preview').'\')';
     else return '';
 }
 

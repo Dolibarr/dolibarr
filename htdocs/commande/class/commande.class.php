@@ -9,7 +9,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2016-2017 Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,6 +136,7 @@ class Commande extends CommonOrder
     public $linked_objects=array();
 
     public $user_author_id;
+    public $user_valid;
 
 	/**
 	 * @var OrderLine[]
@@ -1542,7 +1543,7 @@ class Commande extends CommonOrder
         // Check parameters
         if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-        $sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut';
+        $sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_user_valid, c.fk_statut';
         $sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_availability, c.fk_input_reason';
         $sql.= ', c.fk_account';
         $sql.= ', c.date_commande';
@@ -1586,6 +1587,7 @@ class Commande extends CommonOrder
                 $this->socid				= $obj->fk_soc;
                 $this->statut				= $obj->fk_statut;
                 $this->user_author_id		= $obj->fk_user_author;
+                $this->user_valid           = $obj->fk_user_valid;
                 $this->total_ht				= $obj->total_ht;
                 $this->total_tva			= $obj->total_tva;
                 $this->total_localtax1		= $obj->total_localtax1;
@@ -3004,8 +3006,8 @@ class Commande extends CommonOrder
 		$sql.= " total_ht=".(isset($this->total_ht)?$this->total_ht:"null").",";
 		$sql.= " total_ttc=".(isset($this->total_ttc)?$this->total_ttc:"null").",";
 		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
-		$sql.= " fk_user_author=".(isset($this->user_author)?$this->user_author:"null").",";
-		$sql.= " fk_user_valid=".(isset($this->fk_user_valid)?$this->fk_user_valid:"null").",";
+		$sql.= " fk_user_author=".(isset($this->user_author_id)?$this->user_author_id:"null").",";
+		$sql.= " fk_user_valid=".(isset($this->user_valid)?$this->user_valid:"null").",";
 		$sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
 		$sql.= " fk_cond_reglement=".(isset($this->cond_reglement_id)?$this->cond_reglement_id:"null").",";
 		$sql.= " fk_mode_reglement=".(isset($this->mode_reglement_id)?$this->mode_reglement_id:"null").",";
@@ -3883,7 +3885,7 @@ class OrderLine extends CommonOrderLine
 
 	    $this->db->begin();
 
-        $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid='".$this->rowid."';";
+        $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid=".$this->rowid;
 
         dol_syslog("OrderLine::delete", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -4131,8 +4133,8 @@ class OrderLine extends CommonOrderLine
 		$sql.= " , tva_tx=".price2num($this->tva_tx);
 		$sql.= " , localtax1_tx=".price2num($this->localtax1_tx);
 		$sql.= " , localtax2_tx=".price2num($this->localtax2_tx);
-		$sql.= " , localtax1_type='".$this->localtax1_type."'";
-		$sql.= " , localtax2_type='".$this->localtax2_type."'";
+		$sql.= " , localtax1_type='".$this->db->escape($this->localtax1_type)."'";
+		$sql.= " , localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql.= " , qty=".price2num($this->qty);
 		$sql.= " , subprice=".price2num($this->subprice)."";
 		$sql.= " , remise_percent=".price2num($this->remise_percent)."";

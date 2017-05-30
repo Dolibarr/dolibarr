@@ -439,18 +439,18 @@ class Adherent extends CommonObject
         $sql.= ", town="   .($this->town?"'".$this->db->escape($this->town)."'":"null");
         $sql.= ", country=".($this->country_id>0?"'".$this->country_id."'":"null");
         $sql.= ", state_id=".($this->state_id>0?"'".$this->state_id."'":"null");
-        $sql.= ", email='".$this->email."'";
-        $sql.= ", skype='".$this->skype."'";
+        $sql.= ", email='".$this->db->escape($this->email)."'";
+        $sql.= ", skype='".$this->db->escape($this->skype)."'";
         $sql.= ", phone="   .($this->phone?"'".$this->db->escape($this->phone)."'":"null");
         $sql.= ", phone_perso=" .($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
         $sql.= ", phone_mobile=" .($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
         $sql.= ", note_private=" .($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
         $sql.= ", note_public=" .($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
         $sql.= ", photo="   .($this->photo?"'".$this->photo."'":"null");
-        $sql.= ", public='".$this->public."'";
+        $sql.= ", public='".$this->db->escape($this->public)."'";
         $sql.= ", statut="  .$this->statut;
         $sql.= ", fk_adherent_type=".$this->typeid;
-        $sql.= ", morphy='".$this->morphy."'";
+        $sql.= ", morphy='".$this->db->escape($this->morphy)."'";
         $sql.= ", birth="   .($this->birth?"'".$this->db->idate($this->birth)."'":"null");
         if ($this->datefin)   $sql.= ", datefin='".$this->db->idate($this->datefin)."'";		// Must be modified only when deleting a subscription
         if ($this->datevalid) $sql.= ", datevalid='".$this->db->idate($this->datevalid)."'";	// Must be modified only when validating a member
@@ -649,7 +649,7 @@ class Adherent extends CommonObject
         // Search for last subscription id and end date
         $sql = "SELECT rowid, datec as dateop, dateadh as datedeb, datef as datefin";
         $sql.= " FROM ".MAIN_DB_PREFIX."subscription";
-        $sql.= " WHERE fk_adherent='".$this->id."'";
+        $sql.= " WHERE fk_adherent=".$this->id;
         $sql.= " ORDER by dateadh DESC";	// Sort by start subscription date
 
         dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);

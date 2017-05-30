@@ -80,7 +80,7 @@ class Form
      * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
      * @param	string	$moreparam		More param to add on a href URL.
      * @param   int     $fieldrequired  1 if we want to show field as mandatory using the "fieldrequired" CSS.
-     * @param   int     $notabletag     1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' ' 
+     * @param   int     $notabletag     1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
      * @return	string					HTML edit field
      */
     function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='', $fieldrequired=0, $notabletag=0)
@@ -512,7 +512,7 @@ class Form
      *
      * @param	string	$selected		Value auto selected when at least one record is selected. Not a preselected value. Use '0' by default.
      * @param	int		$arrayofaction	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
-     * @param   int     $alwaysvisible  1=select button always visible 
+     * @param   int     $alwaysvisible  1=select button always visible
      * @return	string					Select list
      */
     function selectMassAction($selected, $arrayofaction, $alwaysvisible=0)
@@ -556,16 +556,16 @@ class Form
     	  				jQuery(".massaction").hide();
     	            }
         		}
-    
+
         	jQuery(document).ready(function () {
         		initCheckForSelect();
         		jQuery(".checkforselect").click(function() {
         			initCheckForSelect();
     	  		});
     	  		jQuery(".massactionselect").change(function() {
-        			var massaction = $( this ).val();  
+        			var massaction = $( this ).val();
         			var urlform = $( this ).closest("form").attr("action").replace("#show_files","");
-        			if (massaction == "builddoc") 
+        			if (massaction == "builddoc")
                     {
                         urlform = urlform + "#show_files";
     	            }
@@ -586,7 +586,7 @@ class Form
     		</script>
         	';
     	}
-    	
+
     	return $ret;
     }
 
@@ -968,7 +968,7 @@ class Form
     		$out.=  ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 			$out.='<style type="text/css">
 					.ui-autocomplete {
-						z-index: 150;
+						z-index: 250;
 					}
 				</style>';
     		if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
@@ -1013,7 +1013,7 @@ class Form
     {
         global $conf,$user,$langs;
 
-        $out=''; 
+        $out='';
         $num=0;
         $outarray=array();
 
@@ -1055,8 +1055,6 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-			$events = null;
-			
            	if ($conf->use_javascript_ajax && ! $forcecombo)
             {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
@@ -1420,7 +1418,7 @@ class Form
 		    // Build list includeUsers to have only hierarchy and current user
 		    $includeUsers = implode(",",$user->getAllChildIds(1));
 		}
-		
+
         $out='';
 
         // On recherche les utilisateurs
@@ -1637,7 +1635,7 @@ class Form
 			$i++;
 		}
 		if ($nbassignetouser) $out.='</div>';
-		
+
 		//$out.='</form>';
         return $out;
     }
@@ -1663,7 +1661,7 @@ class Form
      *  @param      int         $hidepriceinlabel       1=Hide prices in label
      *  @param      string      $warehouseStatus        warehouse status filter, following comma separated filter options can be used
      *										            'warehouseopen' = select products from open warehouses,
-	 *										            'warehouseclosed' = select products from closed warehouses, 
+	 *										            'warehouseclosed' = select products from closed warehouses,
 	 *										            'warehouseinternal' = select products from warehouses for internal correct/transfer only
      *  @return		void
      */
@@ -1730,7 +1728,7 @@ class Form
      *  @param      int     $hidepriceinlabel   1=Hide prices in label
      *  @param      string  $warehouseStatus    warehouse status filter, following comma separated filter options can be used
      *										    'warehouseopen' = select products from open warehouses,
-	 *										    'warehouseclosed' = select products from closed warehouses, 
+	 *										    'warehouseclosed' = select products from closed warehouses,
 	 *										    'warehouseinternal' = select products from warehouses for internal correct/transfer only
      *  @return     array    				    Array of keys for json
      */
@@ -1745,19 +1743,19 @@ class Form
         if (! empty($warehouseStatus))
         {
             require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-            if (preg_match('/warehouseclosed/', $warehouseStatus)) 
+            if (preg_match('/warehouseclosed/', $warehouseStatus))
             {
                 $warehouseStatusArray[] = Entrepot::STATUS_CLOSED;
             }
-            if (preg_match('/warehouseopen/', $warehouseStatus)) 
+            if (preg_match('/warehouseopen/', $warehouseStatus))
             {
                 $warehouseStatusArray[] = Entrepot::STATUS_OPEN_ALL;
             }
-            if (preg_match('/warehouseinternal/', $warehouseStatus)) 
+            if (preg_match('/warehouseinternal/', $warehouseStatus))
             {
                 $warehouseStatusArray[] = Entrepot::STATUS_OPEN_INTERNAL;
             }
-        }		
+        }
 
         $selectFields = " p.rowid, p.label, p.ref, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
         (count($warehouseStatusArray)) ? $selectFieldsGrouped = ", sum(ps.reel) as stock" : $selectFieldsGrouped = ", p.stock";
@@ -1796,7 +1794,7 @@ class Form
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_product = p.rowid";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on ps.fk_entrepot = e.rowid";
         }
-        
+
         //Price by customer
         if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
         	$sql.=" LEFT JOIN  ".MAIN_DB_PREFIX."product_customer_price as pcp ON pcp.fk_soc=".$socid." AND pcp.fk_product=p.rowid";
@@ -1863,7 +1861,7 @@ class Form
             $num = $this->db->num_rows($result);
 
             $events=null;
-            
+
             if ($conf->use_javascript_ajax && ! $forcecombo)
             {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
@@ -1871,9 +1869,9 @@ class Form
             	$out.= $comboenhancement;
             	$nodatarole=($comboenhancement?' data-role="none"':'');
             }
-            
+
             $out.='<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'"'.$nodatarole.'>';
-            
+
             $textifempty='';
             // Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
             //if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
@@ -2898,7 +2896,7 @@ class Form
 
         // Set default value if not already set by caller
         if (empty($selected) && ! empty($conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID)) $selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;
-        
+
         print '<select class="flat" name="'.$htmlname.'">';
         if ($addempty) print '<option value="0">&nbsp;</option>';
         foreach($this->cache_conditions_paiements as $id => $arrayconditions)
@@ -3409,7 +3407,7 @@ class Form
         // Clean parameters
         $newselectedchoice=empty($selectedchoice)?"no":$selectedchoice;
         if ($conf->browser->layout == 'phone') $width='95%';
-        
+
         if (is_array($formquestion) && ! empty($formquestion))
         {
         	// First add hidden fields and value
@@ -3675,7 +3673,7 @@ class Form
         require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
         $out='';
-        
+
         $formproject=new FormProjets($this->db);
 
         $langs->load("project");
@@ -3703,8 +3701,8 @@ class Form
                 $out.="&nbsp;";
             }
         }
-        
-        if (empty($nooutput)) 
+
+        if (empty($nooutput))
         {
             print $out;
             return '';
@@ -4049,7 +4047,7 @@ class Form
                 }
                 print '</div>';
             }
-            if ($more) 
+            if ($more)
             {
                 print '<div class="inline-block">';
                 print $more;
@@ -4259,7 +4257,7 @@ class Form
 		// Make select dynamic
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 		$out.= ajax_combobox($htmlname);
-		
+
         return $out;
     }
 
@@ -4454,13 +4452,13 @@ class Form
         		$key.= $rate['nprtva'] ? '*': '';
         		if ($mode > 0 && $rate['code']) $key.=' ('.$rate['code'].')';
         		if ($mode < 0) $key = $rate['rowid'];
-        		
+
         		$return.= '<option value="'.$key.'"';
         		if (! $selectedfound)
         		{
             		if ($defaultcode) // If defaultcode is defined, we used it in priority to select combo option instead of using rate+npr flag
             		{
-                        if ($defaultcode == $rate['code']) 
+                        if ($defaultcode == $rate['code'])
                         {
                             $return.= ' selected';
                             $selectedfound=true;
@@ -4884,7 +4882,7 @@ class Form
      *  @param	string			$morecss		Add more class to css styles
      *  @param	int				$addjscombo		    Add js combo
      *  @param  string          $moreparamonempty   Add more param on the empty option line. Not used if show_empty not set.
-     *  @param  int             $disablebademail    Check if an email is found into value and if not disable and colorize entry. 
+     *  @param  int             $disablebademail    Check if an email is found into value and if not disable and colorize entry.
      * 	@return	string							    HTML select string.
      *  @see multiselectarray
      */
@@ -4906,7 +4904,7 @@ class Form
         {
         	$minLengthToAutocomplete=0;
         	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?(constant('REQUIRE_JQUERY_MULTISELECT')?constant('REQUIRE_JQUERY_MULTISELECT'):'select2'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
-        	
+
         	// Enhance with select2
         	$nodatarole='';
         	if ($conf->use_javascript_ajax)
@@ -4933,7 +4931,7 @@ class Form
         	// Translate
         	if ($translate)
         	{
-	        	foreach($array as $key => $value) 
+	        	foreach($array as $key => $value)
 	        	{
 	        	    $array[$key]=$langs->trans($value);
 	        	}
@@ -5452,7 +5450,7 @@ class Form
 
 		$linktoelem='';
 		$linktoelemlist='';
-		
+
 		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
 
 		$possiblelinks=array();
@@ -5460,7 +5458,7 @@ class Form
 		{
     		$listofidcompanytoscan=$object->thirdparty->id;
     		if (($object->thirdparty->parent > 0) && ! empty($conf->global->THIRDPARTY_INCLUDE_PARENT_IN_LINKTO)) $listofidcompanytoscan.=','.$object->thirdparty->parent;
-    		
+
     		$possiblelinks=array(
     		    'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('propal',1).')'),
     		    'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('commande',1).')'),
@@ -5472,9 +5470,9 @@ class Form
     		    'invoice_supplier'=>array('enabled'=>$conf->fournisseur->facture->enabled , 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('facture_fourn',1).')')
     		);
 		}
-		
+
 		global $action;
-		
+
 		// Can complet the possiblelink array
 		$hookmanager->initHooks(array('commonobject'));
 		$parameters=array();
@@ -5499,7 +5497,7 @@ class Form
 			$num = 0;
 
 			if (empty($possiblelink['enabled'])) continue;
-			
+
 			if (! empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || ! in_array($key, $excludelinksto)))
 			{
 				print '<div id="'.$key.'list"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
@@ -5711,7 +5709,7 @@ class Form
 
         //print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
         $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid,$nodbprefix);
-        
+
         $navurl = $_SERVER["PHP_SELF"];
         // Special case for project/task page
         if ($paramid == 'project_ref')
@@ -5753,10 +5751,10 @@ class Form
 		    if ($conf->browser->layout == 'phone') $ret.='<div class="floatleft">'.$morehtmlleft.'</div>';    // class="center" to have photo in middle
 		    else $ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
 		}
-		
+
 		//if ($conf->browser->layout == 'phone') $ret.='<div class="clearboth"></div>';
 		$ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
-		
+
 		// For thirdparty, contact, user, member, the ref is the id, so we show something else
 		if ($object->element == 'societe')
 		{
@@ -5768,17 +5766,17 @@ class Form
 		}
 		else if (in_array($object->element, array('action', 'agenda')))
 		{
-		    $ret.=$object->ref.'<br>'.$object->label;    
+		    $ret.=$object->ref.'<br>'.$object->label;
 		}
 		else if ($fieldref != 'none') $ret.=dol_htmlentities($object->$fieldref);
-		
-		
+
+
 		if ($morehtmlref)
 		{
 		    $ret.=' '.$morehtmlref;
 		}
-		$ret.='</div>';		
-		
+		$ret.='</div>';
+
 		$ret.='</div><!-- End banner content -->';
 
         return $ret;

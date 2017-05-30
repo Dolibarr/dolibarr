@@ -62,13 +62,12 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_all=GETPOST("search_all");
+$search_all=GETPOST('search_all', 'alphanohtml');
 $search_categ=GETPOST("search_categ",'alpha');
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
 $search_societe=GETPOST("search_societe");
 $search_year=GETPOST("search_year");
-$search_all=GETPOST("search_all");
 $search_status=GETPOST("search_status",'int');
 $search_opp_status=GETPOST("search_opp_status",'alpha');
 $search_opp_percent=GETPOST("search_opp_percent",'alpha');
@@ -855,7 +854,7 @@ if (isset($totalarray['totaloppfield']) || isset($totalarray['totalbudgetfield']
         $i++;
         if ($i == 1)
         {
-            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
             else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
         }
         elseif ($totalarray['totaloppfield'] == $i) print '<td align="right">'.price($totalarray['totalopp']).'</td>';

@@ -75,6 +75,7 @@ ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
 ##### End agenda events #####
+AgendaModelModule=Document templates for event
 DateActionStart=Start date
 DateActionEnd=End date
 AgendaUrlOptions1=You can also add following parameters to filter output:

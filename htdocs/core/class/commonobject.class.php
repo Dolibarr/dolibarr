@@ -397,8 +397,8 @@ abstract class CommonObject
         //print "lastname=".$this->lastname." name=".$this->name." nom=".$this->nom."<br>\n";
         $lastname=$this->lastname;
         $firstname=$this->firstname;
-        if (empty($lastname))  $lastname=(isset($this->lastname)?$this->lastname:(isset($this->name)?$this->name:(isset($this->nom)?$this->nom:'')));
-
+        if (empty($lastname))  $lastname=(isset($this->lastname)?$this->lastname:(isset($this->name)?$this->name:(isset($this->nom)?$this->nom:(isset($this->societe)?$this->societe:(isset($this->company)?$this->company:'')))));
+        
         $ret='';
         if ($option && $this->civility_id)
         {
