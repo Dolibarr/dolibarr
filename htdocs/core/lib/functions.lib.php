@@ -100,7 +100,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 }
 
 /**
- * 	Get list of entity id to use
+ * 	Get list of entity id to use.
  *
  * 	@param	string	$element	Current element
  *                              'societe', 'socpeople', 'actioncomm', 'agenda', 'resource',
@@ -110,10 +110,10 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  *                              'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
  *                              'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
  *                              'email_template', 'event',
- * 	@param	int		$shared		0=Return id of entity, 1=Return id entity + shared entities
+ * 	@param	int	     $shared	1=Return id of current entity + shared entities (default), 0=Return id of current entity only
  * 	@return	mixed				Entity id(s) to use
  */
-function getEntity($element=false, $shared=0)
+function getEntity($element=false, $shared=1)
 {
 	global $conf, $mc;
 
@@ -4704,7 +4704,12 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 	$pattern = "/<[^<>]+>/";
 	$StringHtml = preg_replace('/<br[^>]*>/', "\n", $StringHtml);
 	$temp = dol_html_entity_decode($StringHtml,ENT_COMPAT,$pagecodeto);
-	$temp = preg_replace($pattern,"",$temp);
+
+    // Exemple of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
+    $temp = preg_replace($pattern,"",$temp);    // pass 1
+    // $temp after pass 1: <a href="/myurl" title="A title">0000-021
+    $temp = preg_replace($pattern,"",$temp);    // pass 2
+    // $temp after pass 2: 0000-021
 
 	// Supprime aussi les retours
 	if ($removelinefeed) $temp=str_replace(array("\r\n","\r","\n")," ",$temp);

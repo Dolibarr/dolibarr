@@ -14,7 +14,7 @@
 #----------------------------------------------------------------------------
 
 use Cwd;
-
+use Term::ANSIColor;
 
 # Change this to defined target for option 98 and 99
 $PROJECT="dolibarr";
@@ -313,20 +313,6 @@ foreach my $target (sort keys %CHOOSEDTARGET) {
 
 print "\n";
 
-# Build xml check file
-#-----------------------
-if ($CHOOSEDTARGET{'-CHKSUM'})
-{
-   	print 'Create xml check file with md5 checksum with command php '.$SOURCE.'/build/generate_filecheck_xml.php release='.$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
-  	$ret=`php $SOURCE/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD`;
-  	print $ret."\n";
-  	# Copy to final dir
-  	$NEWDESTI=$DESTI;
-	print "Copy \"$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml\" to $NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml\n";
-    use File::Copy qw(copy);
-    copy "$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml", "$NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml";
-}
-
 
 #print join(',',sort keys %CHOOSEDTARGET)."\n";
 
@@ -335,7 +321,10 @@ if ($CHOOSEDTARGET{'-CHKSUM'})
 $nboftargetok=0;
 $nboftargetneedbuildroot=0;
 $nbofpublishneedtag=0;
+$nbofpublishneedchangelog=0;
+
 foreach my $target (sort keys %CHOOSEDTARGET) {
+	if ($target eq '-CHKSUM') { $nbofpublishneedchangelog++; }
 	if ($CHOOSEDTARGET{$target} < 0) { next; }
 	if ($target ne 'EXE' && $target ne 'EXEDOLIWAMP' && $target ne '-CHKSUM') 
 	{
@@ -345,34 +334,31 @@ foreach my $target (sort keys %CHOOSEDTARGET) {
 }
 foreach my $target (sort keys %CHOOSEDPUBLISH) {
 	if ($CHOOSEDPUBLISH{$target} < 0) { next; }
-	if ($target eq 'ASSO') { $nbofpublishneedtag++; }
-	if ($target eq 'SF') { $nbofpublishneedtag++; }
+	if ($target eq 'ASSO') { $nbofpublishneedchangelog++; $nbofpublishneedtag++; }
+	if ($target eq 'SF') { $nbofpublishneedchangelog++; $nbofpublishneedtag++; }
 	$nboftargetok++;
 }
 
+
 if ($nboftargetok) {
 
-	# Update GIT tag if required
-	#---------------------------
-	if ($nbofpublishneedtag)
+	# Check Changelog
+	#----------------
+	if ($nbofpublishneedchangelog)
 	{
-		print "Go to directory $SOURCE\n";
-		$olddir=getcwd();
-		chdir("$SOURCE");
-		
 		# Test that the ChangeLog is ok
 		$TMPBUILDTOCHECKCHANGELOG=$BUILD;
 		$TMPBUILDTOCHECKCHANGELOG =~ s/\-rc\d*//;
 		$TMPBUILDTOCHECKCHANGELOG =~ s/\-beta\d*//;
-		print "Check if ChangeLog is ok for version $MAJOR.$MINOR\.$TMPBUILDTOCHECKCHANGELOG\n";
+		print "\nCheck if ChangeLog is ok for version $MAJOR.$MINOR\.$TMPBUILDTOCHECKCHANGELOG\n";
 		$ret=`grep "ChangeLog for $MAJOR.$MINOR\.$TMPBUILDTOCHECKCHANGELOG" "$SOURCE/ChangeLog" 2>&1`;
 		if (! $ret)
 		{
-			print "Error: The ChangeLogFile was not updated. Run the following command before building package for $MAJOR.$MINOR.$BUILD:\n";
+			print color("yellow"), "Error: The ChangeLogFile was not updated. Run the following command before building package for $MAJOR.$MINOR.$BUILD:\n", color('reset');
 		}
 		else
 		{
-			print "ChangeLog for $MAJOR.$MINOR\.$BUILD was found into '$SOURCE/ChangeLog. But you can regenerate it with commande:'\n";
+			print "ChangeLog for $MAJOR.$MINOR\.$BUILD was found into '$SOURCE/ChangeLog. But you can regenerate it with command:'\n";
 		}
 		if (! $BUILD || $BUILD eq '0-rc')	# For a major version
 		{
@@ -385,9 +371,39 @@ if ($nboftargetok) {
 		print "\n";
 		if (! $ret)
 		{
-			exit;
+			print "\nPress F to force and continue anyway (or other key to stop)... ";
+			my $WAITKEY=<STDIN>;
+			chomp($WAITKEY);
+			if ($WAITKEY ne 'F')
+			{
+				print "Canceled.\n";
+				exit;
+			}
 		}
-			
+	}
+		
+	# Build xml check file
+	#-----------------------
+	if ($CHOOSEDTARGET{'-CHKSUM'})
+	{
+	   	print 'Create xml check file with md5 checksum with command php '.$SOURCE.'/build/generate_filecheck_xml.php release='.$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
+	  	$ret=`php $SOURCE/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD`;
+	  	print $ret."\n";
+	  	# Copy to final dir
+	  	$NEWDESTI=$DESTI;
+		print "Copy \"$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml\" to $NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml\n";
+	    use File::Copy qw(copy);
+	    copy "$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml", "$NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml";
+	}
+
+	# Update GIT tag if required
+	#---------------------------
+	if ($nbofpublishneedtag)
+	{
+		print "Go to directory $SOURCE\n";
+		$olddir=getcwd();
+		chdir("$SOURCE");
+		
 		print 'Run git tag -a -m "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'" "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'"'."\n";
 		$ret=`git tag -a -m "$MAJOR.$MINOR.$BUILD" "$MAJOR.$MINOR.$BUILD" 2>&1`;
 		if ($ret =~ /(already exists|existe déjà)/)
@@ -517,6 +533,7 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/dolimed*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/dolimod*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/factory*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/forceproject*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/lead*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/management*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/multicompany*`;
