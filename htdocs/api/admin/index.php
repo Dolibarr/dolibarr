@@ -43,12 +43,29 @@ if ($action == 'setproductionmode')
 
 	if (dolibarr_set_const($db, 'API_PRODUCTION_MODE', $status, 'chaine', 0, '', $conf->entity) > 0)
 	{
-	    $result = dol_mkdir($conf->api->dir_temp);
-	    if ($result < 0)
-	    {
-	        setEventMessages($langs->trans("ErrorFaildToCreateDir", $conf->api->dir_temp), null, 'errors');
-	    }
-	    else
+		$error=0;
+
+		if ($status == 1)
+		{
+			$result = dol_mkdir($conf->api->dir_temp);
+			if ($result < 0)
+			{
+				setEventMessages($langs->trans("ErrorFailedToCreateDir", $conf->api->dir_temp), null, 'errors');
+				$error++;
+			}
+		}
+		else
+		{
+			// Delete the cache file otherwise it does not update
+			$result = dol_delete_file($conf->api->dir_temp.'/routes.php');
+			if ($result < 0)
+			{
+				setEventMessages($langs->trans("ErrorFailedToDeleteFile", $conf->api->dir_temp.'/routes.php'), null, 'errors');
+				$error++;
+			}
+		}
+
+	    if (!$error)
 	    {
     		header("Location: ".$_SERVER["PHP_SELF"]);
 	   	    exit;

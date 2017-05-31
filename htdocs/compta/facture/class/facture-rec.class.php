@@ -169,11 +169,16 @@ class FactureRec extends CommonInvoice
 				$num=count($facsrc->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
-                    $result_insert = $this->addline(
+					$tva_tx = $facsrc->lines[$i]->tva_tx;
+					if (! empty($facsrc->lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$facsrc->lines[$i]->vat_src_code.')';
+
+					$result_insert = $this->addline(
                         $facsrc->lines[$i]->desc,
                         $facsrc->lines[$i]->subprice,
                         $facsrc->lines[$i]->qty,
-                        $facsrc->lines[$i]->tva_tx,
+						$tva_tx,
+                        $facsrc->lines[$i]->localtax1_tx,
+                        $facsrc->lines[$i]->localtax2_tx,
                         $facsrc->lines[$i]->fk_product,
                         $facsrc->lines[$i]->remise_percent,
                         'HT',
@@ -243,7 +248,8 @@ class FactureRec extends CommonInvoice
 	 */
 	function fetch($rowid, $ref='', $ref_ext='', $ref_int='')
 	{
-		$sql = 'SELECT f.rowid, f.entity, f.titre, f.fk_soc, f.amount, f.tva, f.total, f.total_ttc, f.remise_percent, f.remise_absolue, f.remise';
+		$sql = 'SELECT f.rowid, f.entity, f.titre, f.fk_soc, f.amount, f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc';
+		$sql.= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
@@ -284,6 +290,8 @@ class FactureRec extends CommonInvoice
 				$this->remise                 = $obj->remise;
 				$this->total_ht               = $obj->total;
 				$this->total_tva              = $obj->tva;
+				$this->total_localtax1        = $obj->localtax1;
+				$this->total_localtax2        = $obj->localtax2;
 				$this->total_ttc              = $obj->total_ttc;
 				$this->paye                   = $obj->paye;
 				$this->close_code             = $obj->close_code;
@@ -364,8 +372,8 @@ class FactureRec extends CommonInvoice
 	{
 		$this->lines=array();
 
-		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.tva_tx, ';
-		$sql.= ' l.remise, l.remise_percent, l.subprice,';
+		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx, ';
+		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
 		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc,';
 		//$sql.= ' l.situation_percent, l.fk_prev_id,';
 		//$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice,';
@@ -404,7 +412,13 @@ class FactureRec extends CommonInvoice
 				$line->fk_product_type  = $objp->fk_product_type;	// Type of product
 				$line->qty              = $objp->qty;
 				$line->subprice         = $objp->subprice;
+
+				$line->vat_src_code     = $objp->vat_src_code;
 				$line->tva_tx           = $objp->tva_tx;
+				$line->localtax1_tx     = $objp->localtax1_tx;
+				$line->localtax2_tx     = $objp->localtax2_tx;
+				$line->localtax1_type   = $objp->localtax1_type;
+				$line->localtax2_type   = $objp->localtax2_type;
 				$line->remise_percent   = $objp->remise_percent;
 				$line->fk_remise_except = $objp->fk_remise_except;
 				$line->fk_product       = $objp->fk_product;
@@ -493,6 +507,8 @@ class FactureRec extends CommonInvoice
      *	@param    	double		$pu_ht              Prix unitaire HT (> 0 even for credit note)
      *	@param    	double		$qty             	Quantite
      *	@param    	double		$txtva           	Taux de tva force, sinon -1
+	 * 	@param		double		$txlocaltax1		Local tax 1 rate (deprecated)
+	 *  @param		double		$txlocaltax2		Local tax 2 rate (deprecated)
      *	@param    	int			$fk_product      	Id du produit/service predefini
      *	@param    	double		$remise_percent  	Pourcentage de remise de la ligne
      *	@param		string		$price_base_type	HT or TTC
@@ -506,17 +522,27 @@ class FactureRec extends CommonInvoice
      *	@param		string		$fk_unit			Unit
      *	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null)
 	{
 	    global $mysoc;
 	    
 		$facid=$this->id;
 
-		dol_syslog(get_class($this)."::addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit", LOG_DEBUG);
+		dol_syslog(get_class($this)."::addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,txlocaltax1=$txlocaltax1,txlocaltax2=$txlocaltax2,fk_product=$fk_product,remise_percent=$remise_percent,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		// Check parameters
 		if ($type < 0) return -1;
+
+		$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
+
+		// Clean vat code
+		$vat_src_code='';
+		if (preg_match('/\((.*)\)/', $txtva, $reg))
+		{
+			$vat_src_code = $reg[1];
+			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+		}
 
 		if ($this->brouillon)
 		{
@@ -524,11 +550,12 @@ class FactureRec extends CommonInvoice
 			$remise_percent=price2num($remise_percent);
 			if (empty($remise_percent)) $remise_percent=0;
 			$qty=price2num($qty);
-			if (! $qty) $qty=1;
 			if (! $info_bits) $info_bits=0;
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
 			$txtva=price2num($txtva);
+			$txlocaltax1	= price2num($txlocaltax1);
+			$txlocaltax2	= price2num($txlocaltax2);
 
 			if ($price_base_type=='HT')
 			{
@@ -543,10 +570,14 @@ class FactureRec extends CommonInvoice
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits, $type, $mysoc);
+
+
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
+			$total_localtax1=$tabprice[9];
+			$total_localtax2=$tabprice[10];
 			
 			$product_type=$type;
 			if ($fk_product)
@@ -563,6 +594,11 @@ class FactureRec extends CommonInvoice
 			$sql.= ", price";
 			$sql.= ", qty";
 			$sql.= ", tva_tx";
+			$sql.= ", vat_src_code";
+			$sql.= ", localtax1_tx";
+			$sql.= ", localtax1_type";
+			$sql.= ", localtax2_tx";
+			$sql.= ", localtax2_type";
 			$sql.= ", fk_product";
 			$sql.= ", product_type";
 			$sql.= ", remise_percent";
@@ -570,6 +606,8 @@ class FactureRec extends CommonInvoice
 			$sql.= ", remise";
 			$sql.= ", total_ht";
 			$sql.= ", total_tva";
+			$sql.= ", total_localtax1";
+			$sql.= ", total_localtax2";
 			$sql.= ", total_ttc";
 			$sql.= ", rang";
 			$sql.= ", special_code";
@@ -581,6 +619,11 @@ class FactureRec extends CommonInvoice
 			$sql.= ", ".price2num($pu_ht);
 			$sql.= ", ".price2num($qty);
 			$sql.= ", ".price2num($txtva);
+			$sql.= ", '".$this->db->escape($vat_src_code)."'";
+			$sql.= ", ".price2num($txlocaltax1);
+			$sql.= ", '".$this->db->escape($localtaxes_type[0])."'";
+			$sql.= ", ".price2num($txlocaltax2);
+			$sql.= ", '".$this->db->escape($localtaxes_type[2])."'";
 			$sql.= ", ".(! empty($fk_product)?"'".$fk_product."'":"null");
 			$sql.= ", ".$product_type;
 			$sql.= ", ".price2num($remise_percent);
@@ -588,6 +631,8 @@ class FactureRec extends CommonInvoice
 			$sql.= ", null";
 			$sql.= ", ".price2num($total_ht);
 			$sql.= ", ".price2num($total_tva);
+			$sql.= ", ".price2num($total_localtax1);
+			$sql.= ", ".price2num($total_localtax2);
 			$sql.= ", ".price2num($total_ttc);
 			$sql.= ", ".$rang;
 			$sql.= ", ".$special_code;
@@ -616,6 +661,8 @@ class FactureRec extends CommonInvoice
 	 *	@param    	double		$pu_ht              Prix unitaire HT (> 0 even for credit note)
 	 *	@param    	double		$qty             	Quantite
 	 *	@param    	double		$txtva           	Taux de tva force, sinon -1
+	 * 	@param		double		$txlocaltax1		Local tax 1 rate (deprecated)
+	 *  @param		double		$txlocaltax2		Local tax 2 rate (deprecated)
 	 *	@param    	int			$fk_product      	Id du produit/service predefini
 	 *	@param    	double		$remise_percent  	Pourcentage de remise de la ligne
 	 *	@param		string		$price_base_type	HT or TTC
@@ -629,28 +676,39 @@ class FactureRec extends CommonInvoice
 	 *	@param		string		$fk_unit			Unit
 	 *	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null)
+	function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null)
 	{
 	    global $mysoc;
 	     
 	    $facid=$this->id;
 	
-	    dol_syslog(get_class($this)."::updateline facid=".$facid." rowid=$rowid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit", LOG_DEBUG);
+	    dol_syslog(get_class($this)."::updateline facid=".$facid." rowid=$rowid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,txlocaltax1=$txlocaltax1,txlocaltax2=$txlocaltax2,fk_product=$fk_product,remise_percent=$remise_percent,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit", LOG_DEBUG);
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 	
 	    // Check parameters
 	    if ($type < 0) return -1;
-	
+
+		$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
+
+		// Clean vat code
+		$vat_src_code='';
+		if (preg_match('/\((.*)\)/', $txtva, $reg))
+		{
+			$vat_src_code = $reg[1];
+			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+		}
+
 	    if ($this->brouillon)
 	    {
 	        // Clean parameters
 	        $remise_percent=price2num($remise_percent);
 	        $qty=price2num($qty);
-	        if (! $qty) $qty=1;
 	        if (! $info_bits) $info_bits=0;
 	        $pu_ht=price2num($pu_ht);
 	        $pu_ttc=price2num($pu_ttc);
 	        $txtva=price2num($txtva);
+		    $txlocaltax1	= price2num($txlocaltax1);
+		    $txlocaltax2	= price2num($txlocaltax2);
 	
 	        if ($price_base_type=='HT')
 	        {
@@ -665,10 +723,13 @@ class FactureRec extends CommonInvoice
 	        // qty, pu, remise_percent et txtva
 	        // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 	        // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-	        $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits, $type, $mysoc);
+	        $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type);
+
 	        $total_ht  = $tabprice[0];
 	        $total_tva = $tabprice[1];
 	        $total_ttc = $tabprice[2];
+		    $total_localtax1=$tabprice[9];
+		    $total_localtax2=$tabprice[10];
 	        	
 	        $product_type=$type;
 	        if ($fk_product)
@@ -685,18 +746,25 @@ class FactureRec extends CommonInvoice
 	        $sql.= ", price=".price2num($pu_ht);
 	        $sql.= ", qty=".price2num($qty);
 	        $sql.= ", tva_tx=".price2num($txtva);
+	        $sql.= ", vat_src_code='".$this->db->escape($vat_src_code)."'";
+		    $sql.= ", localtax1_tx=".price2num($txlocaltax1);
+		    $sql.= ", localtax1_type='".$this->db->escape($localtaxes_type[0])."'";
+		    $sql.= ", localtax2_tx=".price2num($txlocaltax2);
+		    $sql.= ", localtax2_type='".$this->db->escape($localtaxes_type[2])."'";
 	        $sql.= ", fk_product=".(! empty($fk_product)?"'".$fk_product."'":"null");
 	        $sql.= ", product_type=".$product_type;
 	        $sql.= ", remise_percent='".price2num($remise_percent)."'";
 	        $sql.= ", subprice='".price2num($pu_ht)."'";
 	        $sql.= ", total_ht='".price2num($total_ht)."'";
 	        $sql.= ", total_tva='".price2num($total_tva)."'";
+	        $sql.= ", total_localtax1='".price2num($total_localtax1)."'";
+	        $sql.= ", total_localtax2='".price2num($total_localtax2)."'";
 	        $sql.= ", total_ttc='".price2num($total_ttc)."'";
 	        $sql.= ", rang=".$rang;
 	        $sql.= ", special_code=".$special_code;
 	        $sql.= ", fk_unit=".($fk_unit?"'".$this->db->escape($fk_unit)."'":"null");
 	        $sql.= " WHERE rowid = ".$rowid;
-	        
+
 	        dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 	        if ($this->db->query($sql))
 	        {

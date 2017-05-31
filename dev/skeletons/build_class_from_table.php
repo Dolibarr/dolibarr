@@ -251,7 +251,7 @@ $cleanparam='';
 $i=0;
 foreach($property as $key => $prop)
 {
-	$i++;
+	
 	$addfield=1;
 	if ($prop['field'] == 'tms') $addfield=0;	// This is a field of type timestamp edited automatically
 	if ($prop['extra'] == 'auto_increment') $addfield=0;
@@ -263,6 +263,7 @@ foreach($property as $key => $prop)
 		$varprop.="';";
 		$varprop.="\n";
 	}
+	$i++;
 }
 $targetcontent=preg_replace('/\$sql \.= \' field1,\';/', $varprop, $targetcontent);
 $targetcontent=preg_replace('/\$sql \.= \' field2\';/', '', $targetcontent);

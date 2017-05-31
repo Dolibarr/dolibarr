@@ -293,13 +293,13 @@ if (empty($reshook))
         $action = 'builddoc';
         $moreparams = array(
             'use_companybankid'=>GETPOST('companybankid'),
-            'force_dir_output'=>$conf->societe->dir_output.'/'.dol_sanitizeFileName($object->id)
+            'force_dir_output'=>$conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->id)
         );
         $_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid'));
         $_POST['model'] =  GETPOST('modelrib'.GETPOST('companybankid'));
     }
     $id = $socid;
-    $upload_dir = $conf->societe->dir_output;
+    $upload_dir = $conf->societe->multidir_output[$object->entity];
     $permissioncreate=$user->rights->societe->creer;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -657,7 +657,7 @@ if ($socid && $action != 'edit' && $action != "create")
     
         $var=true;
     
-        print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang);
+        print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
     
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
     

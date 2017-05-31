@@ -971,7 +971,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		        $i++;
 		        if ($i == 1)
 		        {
-		            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+		            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
 		            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
 		        }
 		        elseif ($totalarray['totaldurationfield'] == $i) print '<td align="right">'.convertSecondToTime($totalarray['totalduration'],'allhourmin').'</td>';

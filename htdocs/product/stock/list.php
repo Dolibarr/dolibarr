@@ -32,9 +32,9 @@ $langs->load("stocks");
 // Security check
 $result=restrictedArea($user,'stock');
 
+$sall=GETPOST('sall', 'alphanohtml');
 $search_ref=GETPOST("sref","alpha")?GETPOST("sref","alpha"):GETPOST("search_ref","alpha");
 $search_label=GETPOST("snom","alpha")?GETPOST("snom","alpha"):GETPOST("search_label","alpha");
-$sall=GETPOST("sall","alpha");
 $search_status=GETPOST("search_status","int");
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;

@@ -2838,7 +2838,7 @@ class SupplierProposalLine  extends CommonObjectLine
         $sql.= " ".price2num($this->localtax2_tx).",";
 		$sql.= " '".$this->localtax1_type."',";
 		$sql.= " '".$this->localtax2_type."',";
-        $sql.= " ".($this->subprice?price2num($this->subprice):"null").",";
+        $sql.= " ".price2num($this->subprice).",";
         $sql.= " ".price2num($this->remise_percent).",";
         $sql.= " ".(isset($this->info_bits)?"'".$this->info_bits."'":"null").",";
         $sql.= " ".price2num($this->total_ht).",";

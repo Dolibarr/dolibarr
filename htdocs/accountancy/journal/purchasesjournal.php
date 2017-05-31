@@ -109,6 +109,7 @@ dol_syslog('accountancy/journal/purchasesjournal.php:: $sql=' . $sql);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
+
 	// les variables
 	$cptfour = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER)) ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef");
 	$cpttva = (! empty($conf->global->ACCOUNTING_VAT_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : $langs->trans("CodeNotDef");
@@ -123,8 +124,10 @@ if ($result) {
 	$i = 0;
 	while ( $i < $num ) {
 		$obj = $db->fetch_object($result);
+
 		// contrôles
 		$compta_soc = (! empty($obj->code_compta_fournisseur)) ? $obj->code_compta_fournisseur : $cptfour;
+		
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0)
@@ -144,14 +147,21 @@ if ($result) {
 
 		$tabfac[$obj->rowid]["type"] = $obj->type;
 		$tabfac[$obj->rowid]["description"] = $obj->description;
-		$tabfac[$obj->rowid]["fk_facturefourndet"] = $obj->fdid;
+		//$tabfac[$obj->rowid]["fk_facturefourndet"] = $obj->fdid;
+		
+        // Avoid warnings
+        if (! isset($tabttc[$obj->rowid][$compta_soc])) $tabttc[$obj->rowid][$compta_soc] = 0;
+        if (! isset($tabht[$obj->rowid][$compta_prod])) $tabht[$obj->rowid][$compta_prod] = 0;
+        if (! isset($tabtva[$obj->rowid][$compta_tva])) $tabtva[$obj->rowid][$compta_tva] = 0;
+
 		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
 		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
 		$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
 		$tabcompany[$obj->rowid] = array (
 				'id' => $obj->socid,
 				'name' => $obj->name,
-				'code_fournisseur' => $obj->code_compta_fournisseur
+				'code_fournisseur' => $obj->code_fournisseur,
+				'code_compta_fournisseur' => $compta_soc
 		);
 
 		$i ++;
@@ -165,7 +175,7 @@ if ($action == 'writebookkeeping') {
 	$now = dol_now();
 	$error = 0;
 
-	foreach ($tabfac as $key => $val)
+	foreach ($tabfac as $key => $val)  // Loop on each invoice
 	{
 	    $errorforline = 0;
 	     
@@ -188,101 +198,136 @@ if ($action == 'writebookkeeping') {
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->client = $tabcompany[$key]['code_client'];
 
-		foreach ( $tabttc[$key] as $k => $mt ) {
-			// get compte id and label
-
-			$bookkeeping = new BookKeeping($db);
-			$bookkeeping->doc_date = $val["date"];
-			$bookkeeping->doc_ref = $val["ref"];
-			$bookkeeping->date_create = $now;
-			$bookkeeping->doc_type = 'supplier_invoice';
-			$bookkeeping->fk_doc = $key;
-			$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
-			$bookkeeping->code_tiers = $tabcompany[$key]['code_fournisseur'];
-			$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("Code_tiers");
-			$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
-			$bookkeeping->montant = $mt;
-			$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
-			$bookkeeping->debit = ($mt <= 0) ? $mt : 0;
-			$bookkeeping->credit = ($mt > 0) ? $mt : 0;
-			$bookkeeping->code_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
-			$bookkeeping->fk_user_author = $user->id;
-
-			$result = $bookkeeping->create($user);
-			if ($result < 0) {
-			    $error++;
-			    $errorforline++;
-			    setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
-			}
-		}
-
+        if (! $errorforline)
+        {
+    		foreach ( $tabttc[$key] as $k => $mt ) {
+    			// get compte id and label
+    		    if ($mt) {
+        			$bookkeeping = new BookKeeping($db);
+        			$bookkeeping->doc_date = $val["date"];
+        			$bookkeeping->doc_ref = $val["ref"];
+        			$bookkeeping->date_create = $now;
+        			$bookkeeping->doc_type = 'supplier_invoice';
+        			$bookkeeping->fk_doc = $key;
+        			$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
+        			$bookkeeping->code_tiers = $tabcompany[$key]['code_fournisseur'];
+        			$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("Code_tiers");
+        			$bookkeeping->numero_compte = $tabcompany[$key]['code_compta_fournisseur'];
+        			$bookkeeping->montant = $mt;
+        			$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
+        			$bookkeeping->debit = ($mt <= 0) ? $mt : 0;
+        			$bookkeeping->credit = ($mt > 0) ? $mt : 0;
+        			$bookkeeping->code_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
+        			$bookkeeping->fk_user_author = $user->id;
+        
+        			$result = $bookkeeping->create($user);
+           			if ($result < 0) {
+                        if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
+                        {
+                            $error++;
+                            $errorforline++;
+                            //setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+                        }
+                        else
+                        {
+                            $error++;
+                            $errorforline++;
+                            setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+                        }
+        			}
+    		    }
+    		}
+        }
+        
 		// Product / Service
-		foreach ( $tabht[$key] as $k => $mt ) {
-			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(null, $k, true);
-			if ($mt) {
-				// get compte id and label
-				$accountingaccount = new AccountingAccount($db);
-				if ($accountingaccount->fetch(null, $k, true)) {
-					$bookkeeping = new BookKeeping($db);
-					$bookkeeping->doc_date = $val["date"];
-					$bookkeeping->doc_ref = $val["ref"];
-					$bookkeeping->date_create = $now;
-					$bookkeeping->doc_type = 'supplier_invoice';
-					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
-					$bookkeeping->code_tiers = '';
-					$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $accountingaccount->label;
-					$bookkeeping->numero_compte = $k;
-					$bookkeeping->montant = $mt;
-					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
-					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
-					$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
-					$bookkeeping->code_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
-					$bookkeeping->fk_user_author = $user->id;
-
-					$result = $bookkeeping->create($user);
-					if ($result < 0) {
-						$error++;
-						$errorforline++;
-						setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
-					}
-				}
-			}
-		}
-
+        if (! $errorforline)
+        {
+            foreach ( $tabht[$key] as $k => $mt ) {
+    			$accountingaccount = new AccountingAccount($db);
+    			$accountingaccount->fetch(null, $k, true);
+    			if ($mt) {
+    				// get compte id and label
+    				$accountingaccount = new AccountingAccount($db);
+    				if ($accountingaccount->fetch(null, $k, true)) {
+    					$bookkeeping = new BookKeeping($db);
+    					$bookkeeping->doc_date = $val["date"];
+    					$bookkeeping->doc_ref = $val["ref"];
+    					$bookkeeping->date_create = $now;
+    					$bookkeeping->doc_type = 'supplier_invoice';
+    					$bookkeeping->fk_doc = $key;
+    					$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
+    					$bookkeeping->code_tiers = '';
+    					$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $accountingaccount->label;
+    					$bookkeeping->numero_compte = $k;
+    					$bookkeeping->montant = $mt;
+    					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
+    					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
+    					$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
+    					$bookkeeping->code_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
+    					$bookkeeping->fk_user_author = $user->id;
+    
+    					$result = $bookkeeping->create($user);
+    					if ($result < 0) {
+    					    if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
+            			    {
+            			        $error++;
+            			        $errorforline++;
+            			        //setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+            			    }
+            			    else
+            			    {
+            			        $error++;
+            			        $errorforline++;
+            			        setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+            			    }
+    					}
+    				}
+    			}
+    		}
+        }
+        
 		// VAT
 		// var_dump($tabtva);
-		foreach ( $tabtva[$key] as $k => $mt ) {
-			if ($mt) {
-				// get compte id and label
-				$bookkeeping = new BookKeeping($db);
-				$bookkeeping->doc_date = $val["date"];
-				$bookkeeping->doc_ref = $val["ref"];
-				$bookkeeping->date_create = $now;
-				$bookkeeping->doc_type = 'supplier_invoice';
-				$bookkeeping->fk_doc = $key;
-				$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
-				$bookkeeping->code_tiers = '';
-				$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("VAT"). ' '.$def_tva[$key];
-				$bookkeeping->numero_compte = $k;
-				$bookkeeping->montant = $mt;
-				$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
-				$bookkeeping->debit = ($mt > 0) ? $mt : 0;
-				$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
-				$bookkeeping->code_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
-				$bookkeeping->fk_user_author = $user->id;
-
-				$result = $bookkeeping->create($user);
-				if ($result < 0) {
-					$error++;
-					$errorforline++;
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
-			}
-		}
-		
-
+        if (! $errorforline)
+        {
+            foreach ( $tabtva[$key] as $k => $mt ) {
+    			if ($mt) {
+    				// get compte id and label
+    				$bookkeeping = new BookKeeping($db);
+    				$bookkeeping->doc_date = $val["date"];
+    				$bookkeeping->doc_ref = $val["ref"];
+    				$bookkeeping->date_create = $now;
+    				$bookkeeping->doc_type = 'supplier_invoice';
+    				$bookkeeping->fk_doc = $key;
+    				$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
+    				$bookkeeping->code_tiers = '';
+    				$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("VAT"). ' '.$def_tva[$key];
+    				$bookkeeping->numero_compte = $k;
+    				$bookkeeping->montant = $mt;
+    				$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
+    				$bookkeeping->debit = ($mt > 0) ? $mt : 0;
+    				$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
+    				$bookkeeping->code_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
+    				$bookkeeping->fk_user_author = $user->id;
+    
+    				$result = $bookkeeping->create($user);
+    				if ($result < 0) {
+    				    if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
+    				    {
+    				        $error++;
+    				        $errorforline++;
+    				        //setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+    				    }
+    				    else
+    				    {
+    				        $error++;
+    				        $errorforline++;
+    				        setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+    				    }
+    				}
+    			}
+    		}
+        }
 
 		if (! $errorforline)
 		{
@@ -456,18 +501,19 @@ if (empty($action) || $action == 'view') {
 	}
 
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
-	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array (
-			'action' => ''
-	));
+	
+	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
 
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 && $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
+	/*if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 && $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
 		print '<input type="button" class="butActionRefused" style="float: right;" value="' . $langs->trans("Export") . '" disabled="disabled" title="' . $langs->trans('ExportNotSupported') . '"/>';
 	} else {
 		print '<input type="button" class="butAction" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
-	}
+	}*/
 
+    print '<div class="tabsAction">';
 	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
-
+    print '</div>';
+    
 	print '
 	<script type="text/javascript">
 		function launch_export() {
@@ -485,7 +531,7 @@ if (empty($action) || $action == 'view') {
 	/*
 	 * Show result array
 	 */
-	print '<br><br>';
+	print '<br>';
 
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";
@@ -498,7 +544,6 @@ if (empty($action) || $action == 'view') {
 	print "<t><td>" . $langs->trans("Type") . "</td><td align='right'>" . $langs->trans("Debit") . "</td><td align='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
-	$var = true;
 	$r = '';
 
 	$invoicestatic = new FactureFournisseur($db);
@@ -563,11 +608,11 @@ if (empty($action) || $action == 'view') {
 				print "</tr>";
 			}
 		}
-		print "<tr " . $bc[$var] . ">";
 
 		// Third party
 		foreach ( $tabttc[$key] as $k => $mt ) {
-			print "<td><!-- Thirdparty --></td>";
+		    print "<tr " . $bc[$var] . ">";
+		    print "<td><!-- Thirdparty --></td>";
 		    print "<td>" . $date . "</td>";
 			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 			$companystatic->id = $tabcompany[$key]['id'];
@@ -586,9 +631,9 @@ if (empty($action) || $action == 'view') {
 			// print "</td>";
 			print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
 			print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+		    print "</tr>";
 		}
-		print "</tr>";
-
+		
 		$var = ! $var;
 	}
 

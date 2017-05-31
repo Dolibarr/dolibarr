@@ -55,7 +55,7 @@ $pagenext = $page + 1;
 
 $id = GETPOST('id','int');
 
-$sall            = GETPOST('sall');
+$sall            = GETPOST('sall', 'alphanohtml');
 $search_ref      = GETPOST('search_ref');
 $month_create    = GETPOST('month_create');
 $year_create     = GETPOST('year_create');

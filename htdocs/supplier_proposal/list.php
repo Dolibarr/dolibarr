@@ -66,7 +66,7 @@ $search_author=GETPOST('search_author','alpha');
 $search_status=GETPOST('viewstatut','alpha')?GETPOST('viewstatut','alpha'):GETPOST('search_status','int');
 $object_statut=$db->escape(GETPOST('supplier_proposal_statut'));
 
-$sall=GETPOST("sall");
+$sall=GETPOST('sall', 'alphanohtml');
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 $year=GETPOST("year");
 $month=GETPOST("month");

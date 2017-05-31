@@ -34,7 +34,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 
 $langs->load("users");
 
-$sall=GETPOST('sall');
+$sall=GETPOST('sall', 'alphanohtml');
 $search_group=GETPOST('search_group');
 $optioncss = GETPOST('optioncss','alpha');
 

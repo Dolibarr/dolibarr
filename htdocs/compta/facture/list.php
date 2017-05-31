@@ -52,7 +52,7 @@ $langs->load('bills');
 $langs->load('companies');
 $langs->load('products');
 
-$sall=trim(GETPOST('sall'));
+$sall=trim(GETPOST('sall', 'alphanohtml'));
 $projectid=(GETPOST('projectid')?GETPOST('projectid','int'):0);
 
 $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
@@ -409,7 +409,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql.= $db->plimit($limit,$offset);
+$sql.= $db->plimit($limit+1,$offset);
 //print $sql;
 
 $resql = $db->query($sql);
@@ -1117,7 +1117,7 @@ if ($resql)
     		   $i++;
     		   if ($i == 1)
     	       {
-            		if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+            		if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
             		else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
     	       }
     		   elseif ($totalarray['totalhtfield'] == $i)  print '<td align="right">'.price($totalarray['totalht']).'</td>';

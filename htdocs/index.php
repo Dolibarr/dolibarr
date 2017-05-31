@@ -30,7 +30,7 @@ require 'main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // If not defined, we select menu "home"
-$_GET['mainmenu']=GETPOST('mainmenu', 'alpha')?GETPOST('mainmenu', 'alpha'):'home';
+$_GET['mainmenu']=GETPOST('mainmenu', 'aZ09')?GETPOST('mainmenu', 'aZ09'):'home';
 $action=GETPOST('action');
 
 $hookmanager->initHooks(array('index'));
@@ -55,10 +55,10 @@ if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FO
 if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax disabled)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone=GETPOST('areacode');
-	$userid=GETPOST('userid');
-	$boxorder=GETPOST('boxorder');
-	$boxorder.=GETPOST('boxcombo');
+	$zone=GETPOST('areacode', 'aZ09');
+	$userid=GETPOST('userid', 'int');
+	$boxorder=GETPOST('boxorder', 'aZ09');
+	$boxorder.=GETPOST('boxcombo', 'aZ09');
 
 	$result=InfoBox::saveboxorder($db,$zone,$boxorder,$userid);
 }

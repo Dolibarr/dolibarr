@@ -286,7 +286,7 @@ FindPackageFromWebSite=Find a package that provides feature you want (for exampl
 DownloadPackageFromWebSite=Download package (for example from official web site %s).
 UnpackPackageInDolibarrRoot=Unpack package files into Dolibarr server directory dedicated to Dolibarr: <b>%s</b>
 UnpackPackageInModulesRoot=Unpack package files into Dolibarr server directory dedicated to modules: <b>%s</b>
-oiSetupIsReadyForUse=Module deployement is finished. You must however enable and setup the module in your application by going on the page to setup modules: <a href="%s">%s</a>.
+SetupIsReadyForUse=Module deployement is finished. You must however enable and setup the module in your application by going on the page to setup modules: <a href="%s">%s</a>.
 NotExistsDirect=The alternative root directory is not defined.<br>
 InfDirAlt=Since version 3 it is possible to define an alternative root directory.This allows you to store, same place, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
 InfDirExample=<br>Then declare it in the file conf.php<br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>*These lines are commented with "#", to uncomment only remove the character.
@@ -298,12 +298,12 @@ LastActivationDate=Latest activation date
 UpdateServerOffline=Update server offline
 WithCounter=Manage a counter
 GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags could be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as previous but an offset corresponding to the number to the right of the + sign is applied starting on first %s. <br><b>{000000@x}</b> same as previous but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
-GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of third party type on n characters (see dictionary-thirdparty types).<br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of third party type on n characters (see menu Home - Setup - Dictionary - Types of third parties). If you add this tag, the counter will be different for each type of third party.<br>
 GenericMaskCodes3=All other characters in the mask will remain intact.<br>Spaces are not allowed.<br>
-GenericMaskCodes4a=<u>Example on the 99th %s of the third party TheCompany done 2007-01-31:</u><br>
+GenericMaskCodes4a=<u>Example on the 99th %s of the third party TheCompany, with date 2007-01-31:</u><br>
 GenericMaskCodes4b=<u>Example on third party created on 2007-03-01:</u><br>
 GenericMaskCodes4c=<u>Example on product created on 2007-03-01:</u><br>
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC0701-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b>
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC0701-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN0701-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=Returns a customizable number according to a defined mask. 
 ServerAvailableOnIPOrPort=Server is available at address <b>%s</b> on port <b>%s</b>
 ServerNotAvailableOnIPOrPort=Server is not available at address <b>%s</b> on port <b>%s</b>
@@ -1075,6 +1075,7 @@ CurrentTranslationString=Current translation string
 WarningAtLeastKeyOrTranslationRequired=A search criteria is required at least for key or translation string
 NewTranslationStringToShow=New translation string to show
 OriginalValueWas=The original translation is overwritten. Original value was:<br><br>%s
+TransKeyWithoutOriginalValue=You forced a new translation for the translation key '<strong>%s</strong>' that does not exists in any language files
 TotalNumberOfActivatedModules=Total number of activated feature modules: <b>%s</b> / <b>%s</b>
 YouMustEnableOneModule=You must at least enable 1 module
 ClassNotFoundIntoPathWarning=Class %s not found into PHP path

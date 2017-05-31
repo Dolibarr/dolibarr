@@ -171,7 +171,7 @@ SearchOf=Search
 Valid=Valid
 Approve=Approve
 Disapprove=Disapprove
-ReOpen=Re-Opened
+ReOpen=Re-Open
 Upload=Send file
 ToLink=Link
 Select=Select
@@ -757,6 +757,8 @@ SomeTranslationAreUncomplete=Some languages may be partially translated or may c
 DirectDownloadLink=Direct download link
 Download=Download
 ActualizeCurrency=Update currency rate
+TitleSetToDraft=Go back to draft
+ConfirmSetToDraft=Are you sure you want to go back to Draft status ?
 # Week day
 Monday=Monday
 Tuesday=Tuesday
