@@ -82,7 +82,7 @@ else if ($action == 'set_param')
 		$error++;
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-	
+
 	$draft=GETPOST('SHIPPING_DRAFT_WATERMARK','alpha');
 	$res = dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 	if ($res <= 0)

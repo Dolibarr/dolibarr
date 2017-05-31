@@ -5014,8 +5014,100 @@ function dol_concatdesc($text1,$text2,$forxml=false)
 	return $ret;
 }
 
+
 /**
- *  Make substition into a string replacing key with vals from $substitutionarray (oldval=>newval)
+ * Return array of possible common substitutions.
+ *
+ * @param	Translate	$outputlangs	Output language
+ * @param   int         $onlykey        Do not calculate heavy values of keys (performance enhancement when we need only the keys)
+ * @param   array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
+ * @param   Object      $object         Object for keys on object
+ * @return	array						Array of substitutions
+ */
+function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $object=null)
+{
+    global $conf, $mysoc, $user;
+
+    $substitutionarray=array();
+
+    if (empty($exclude) || ! in_array('mycompany', $exclude))
+    {
+        $substitutionarray=array_merge($substitutionarray, array(
+            '__MYCOMPANY_NAME__' => $mysoc->name,
+            '__MYCOMPANY_EMAIL__' => $mysoc->email,
+            '__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
+            '__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
+            '__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
+            '__MYCOMPANY_PROFID4__' => $mysoc->idprof4,
+            '__MYCOMPANY_PROFID5__' => $mysoc->idprof5,
+            '__MYCOMPANY_PROFID6__' => $mysoc->idprof6,
+            '__MYCOMPANY_CAPITAL__' => $mysoc->capital,
+            '__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id
+        ));
+    }
+    if (empty($exclude) || ! in_array('object', $exclude))
+    {
+        if (is_object($object))       // For backward compatibility
+        {
+            $substitutionarray['__TOTAL_TTC__']    =is_object($object)?$object->total_ttc:'';
+            $substitutionarray['__TOTAL_HT__']     =is_object($object)?$object->total_ht:'';
+            $substitutionarray['__TOTAL_VAT__']    =is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
+        }
+        $substitutionarray['__AMOUNT__']       =is_object($object)?$object->total_ttc:'';
+        $substitutionarray['__AMOUNT_WO_TAX__']=is_object($object)?$object->total_ht:'';
+        $substitutionarray['__AMOUNT_VAT__']   =is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
+    }
+
+    if (empty($exclude) || ! in_array('date', $exclude))
+    {
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+        if (! empty($onlykey))
+        {
+            $tmp=$tmp2=$tmp3=$tmp4=$tmp5=array();
+        }
+        else
+        {
+            $tmp=dol_getdate(dol_now(), true);
+            $tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+            $tmp3=dol_get_prev_month($tmp['mday'], $tmp['mon'], $tmp['year']);
+            $tmp4=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+            $tmp5=dol_get_next_month($tmp['mday'], $tmp['mon'], $tmp['year']);
+        }
+        $substitutionarray=array_merge($substitutionarray, array(
+            '__DAY__' => $tmp['mday'],
+            '__MONTH__' => $tmp['mon'],
+            '__YEAR__' => $tmp['year'],
+            '__PREVIOUS_DAY__' => $tmp2['day'],
+            '__PREVIOUS_MONTH__' => $tmp3['month'],
+            '__PREVIOUS_YEAR__' => ($tmp['year'] - 1),
+            '__NEXT_DAY__' => $tmp4['day'],
+            '__NEXT_MONTH__' => $tmp5['month'],
+            '__NEXT_YEAR__' => ($tmp['year'] + 1),
+        ));
+    }
+
+    if (empty($exclude) || ! in_array('user', $exclude))
+    {
+        $substitutionarray=array_merge($substitutionarray, array(
+            '__USER_ID__' => $user->id,
+            '__USER_LOGIN__' => $user->login,
+            '__USER_LASTNAME__' => $user->lastname,
+            '__USER_FIRSTNAME__' => $user->firstname,
+            '__USER_FULLNAME__' => $user->getFullName($outputlangs),
+            '__USER_SUPERVISOR_ID__' => $user->fk_user
+        ));
+    }
+    if (! empty($conf->multicompany->enabled))
+    {
+        $substitutionarray=array_merge($substitutionarray, array('__ENTITY_ID__' => $conf->entity));
+    }
+
+    return $substitutionarray;
+}
+
+/**
+ *  Make substition into a text string, replacing keys with vals from $substitutionarray (oldval=>newval).
  *
  *  @param	string		$text	      			Source string in which we must do substitution
  *  @param  array		$substitutionarray		Array with key->val to substitute
@@ -5034,11 +5126,16 @@ function make_substitutions($text, $substitutionarray, $outputlangs=null)
 	// Make substitution for language keys
 	if (is_object($outputlangs))
 	{
-		while (preg_match('/__\((.*)\)__/', $text, $reg))
+		while (preg_match('/__\(([^\)]*)\)__/', $text, $reg))
 		{
+		    // If key is __(TranslationKey|langfile)__, then force load of langfile.lang
+			$tmp=explode('|',$reg[1]);
+			if (! empty($tmp[1])) $outputlangs->load($tmp[1]);
+
 			$msgishtml = 0;
 			if (dol_textishtml($text,1)) $msgishtml = 1;
-			$text = preg_replace('/__\('.preg_quote($reg[1]).'\)__/', $msgishtml?dol_htmlentitiesbr($outputlangs->transnoentitiesnoconv($reg[1])):$outputlangs->transnoentitiesnoconv($reg[1]), $text);
+
+			$text = preg_replace('/__\('.preg_quote($reg[1], '/').'\)__/', $msgishtml?dol_htmlentitiesbr($outputlangs->transnoentitiesnoconv($reg[1])):$outputlangs->transnoentitiesnoconv($reg[1]), $text);
 		}
 	}
 
