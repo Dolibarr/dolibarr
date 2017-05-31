@@ -430,7 +430,6 @@ print "<br>\n";
 
 if ($mode == 'common')
 {
-    
     print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -763,13 +762,20 @@ if ($mode == 'common')
         }
 
         print "</tr>\n";
-
     }
     
-    print "</table>\n";
-    print '</div>';
+    if ($oldfamily)
+    {
+        print "</table>\n";
+        print '</div>';
+    }
     
     dol_fiche_end();
+    
+    // Show warning about external users
+    print info_admin(showModulesExludedForExternal($modules))."\n";
+    
+    print '</form>';
 }
 
 if ($mode == 'marketplace')
@@ -908,9 +914,6 @@ if ($mode == 'deploy')
     dol_fiche_end();
 }
 
-
-// Show warning about external users
-if ($mode == 'common') print info_admin(showModulesExludedForExternal($modules))."\n";
 
 
 llxFooter();
