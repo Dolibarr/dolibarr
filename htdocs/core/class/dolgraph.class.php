@@ -24,7 +24,12 @@
 
 
 /**
- * Parent class of graph classes
+ * Class to build graphs.
+ * Usage is: 
+ *    $dolgraph=new DolGraph();
+ *    $dolgraph->SetData($data);
+ *    $dolgraph->draw('idofgraph');
+ *    print $dolgraph->show();
  */
 class DolGraph
 {
@@ -780,9 +785,9 @@ class DolGraph
 
 	/**
 	 * Build a graph using JFlot library. Input when calling this method should be:
-	 *	$this->data  = array(array(      0=>'labelxA',     1=>yA),  array('labelxB',yB)); or
+	 *	$this->data  = array(array(0=>'labelxA',1=>yA),  array('labelxB',yB));
+	 *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // or when there is n series to show for each x
 	 *  $this->data  = array(array('label'=>'labelxA','data'=>yA),  array('labelxB',yB));			// TODO Syntax not supported. Removed when dol_print_graph_removed
-	 *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // when there is n series to show for each x
 	 *  $this->legend= array("Val1",...,"Valn");													// list of n series name
 	 *  $this->type  = array('bars',...'lines'); or array('pie')
 	 *  $this->mode = 'depth' ???
@@ -808,7 +813,7 @@ class DolGraph
 
 		$legends=array();
 		$nblot=count($this->data[0])-1;    // -1 to remove legend
-		if ($nblot < 0) dol_print_error('Bad value for property ->data. Must be set by mydolgraph->SetData before callinf mydolgrapgh->draw');
+		if ($nblot < 0) dol_print_error('', 'Bad value for property ->data. Must be set by mydolgraph->SetData before calling mydolgrapgh->draw');
 		$firstlot=0;
 		// Works with line but not with bars
 		//if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
