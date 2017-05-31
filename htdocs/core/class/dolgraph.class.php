@@ -27,7 +27,13 @@
  * Class to build graphs.
  * Usage is: 
  *    $dolgraph=new DolGraph();
+ *    $dolgraph->SetTitle($langs->transnoentities('Tracking_Projects_Pourcent').'<br>'.$langs->transnoentities('Tracking_IndicatorDefGraph').'%');
+ *    $dolgraph->SetMaxValue(50);
  *    $dolgraph->SetData($data);
+ *    $dolgraph->setShowLegend(1);
+ *    $dolgraph->setShowPercent(1);
+ *    $dolgraph->SetType(array('pie'));
+ *    $dolgraph->setWidth('100%');
  *    $dolgraph->draw('idofgraph');
  *    print $dolgraph->show();
  */
@@ -803,7 +809,7 @@ class DolGraph
 	{
 		global $artichow_defaultfont;
 
-		dol_syslog(get_class($this)."::draw_jflot this->type=".join(',',$this->type));
+		dol_syslog(get_class($this)."::draw_jflot this->type=".join(',',$this->type)." this->MaxValue=".$this->MaxValue);
 
 		if (empty($this->width) && empty($this->height))
 		{
