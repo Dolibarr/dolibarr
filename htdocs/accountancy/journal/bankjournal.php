@@ -284,7 +284,8 @@ if ($result) {
 					$paymentvatstatic->id = $links[$key]['url_id'];
 					$paymentvatstatic->ref = $links[$key]['url_id'];
 					$paymentvatstatic->label = $links[$key]['label'];
-					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("PaymentVat");
+					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getNomUrl(2);
+					$tabpay[$obj->rowid]["paymentvatid"] = $paymentvatstatic->id;
 					$tabtp[$obj->rowid][$account_pay_vat] += $obj->amount;
 				} else if ($links[$key]['type'] == 'payment_salary') {
 					$paymentsalstatic->id = $links[$key]['url_id'];
@@ -415,8 +416,11 @@ if (! $error && $action == 'writebookkeeping') {
         					$objmid = $db->fetch_object($resultmid);
         					$bookkeeping->doc_ref = $objmid->ref; // Ref of expensereport
         				}
-        			}
-        
+        			} else if ($tabtype[$key] == 'payment_vat') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->doc_ref = $langs->trans("PaymentVat") . ' (' . $val["paymentvatid"] . ')'; // Rowid of vat payment
+					}
+
         			$result = $bookkeeping->create($user);
         			if ($result < 0) {
         				if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
@@ -489,6 +493,10 @@ if (! $error && $action == 'writebookkeeping') {
         				}
                         $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
         				$bookkeeping->numero_compte = $k;
+					} else if ($tabtype[$key] == 'payment_vat') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->numero_compte = $k;
+						$bookkeeping->doc_ref = $langs->trans("PaymentVat") . ' (' . $val["paymentvatid"] . ')'; // Rowid of vat
         			} else if ($tabtype[$key] == 'banktransfert') {
 						$bookkeeping->code_tiers = '';
         				$bookkeeping->numero_compte = $k;
@@ -724,6 +732,7 @@ if (empty($action) || $action == 'view') {
 	$invoicestatic = new Facture($db);
 	$invoicesupplierstatic = new FactureFournisseur($db);
 	$expensereportstatic = new ExpenseReport($db);
+	$vatstatic = new Tva($db);
 
 	llxHeader('', $langs->trans("FinanceJournal"));
 
@@ -850,7 +859,20 @@ if (empty($action) || $action == 'view') {
 		    }
 		    else dol_print_error($db);
 		}
-
+		elseif ($tabtype[$key] == 'payment_vat')
+		{
+			$sqlmid = 'SELECT v.rowid as id';
+			$sqlmid .= " FROM " . MAIN_DB_PREFIX . "tva as v";
+			$sqlmid .= " WHERE v.rowid=" . $val["paymentvatid"];
+			dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
+			$resultmid = $db->query($sqlmid);
+			if ($resultmid) {
+				$objmid = $db->fetch_object($resultmid);
+				$vatstatic->fetch($objmid->id);
+				$ref=$langs->trans("PaymentVat").' '.$vatstatic->getNomUrl(1);
+			}
+			else dol_print_error($db);
+		}
 
 		/*$invoicestatic->id = $key;
 		$invoicestatic->ref = $val["ref"];
