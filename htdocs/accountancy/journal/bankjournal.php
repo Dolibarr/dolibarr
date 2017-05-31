@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT . '/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT . '/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/salaries/class/paymentsalary.class.php';
@@ -222,7 +223,7 @@ if ($result) {
 		    // Now loop on each link of record in bank.
 			foreach ( $links as $key => $val ) {
 
-			    if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert')))     // So we excluded 'company' here
+			    if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation')))     // So we excluded 'company' here
 			    {
 			        // We save tabtype for a future use, to remember what kind of payment it is 
 			        $tabtype[$obj->rowid] = $links[$key]['type'];
@@ -278,7 +279,8 @@ if ($result) {
 				} else if ($links[$key]['type'] == 'payment_donation') {
 					$paymentdonstatic->id = $links[$key]['url_id'];
 					$paymentdonstatic->fk_donation = $links[$key]['url_id'];
-					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("PaymentDonation");
+					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentdonstatic->getNomUrl(2);
+					$tabpay[$obj->rowid]["paymentdonationid"] = $paymentdonstatic->id;
 					$tabtp[$obj->rowid][$account_pay_donation] += $obj->amount;
 				} else if ($links[$key]['type'] == 'payment_vat') {
 					$paymentvatstatic->id = $links[$key]['url_id'];
@@ -415,6 +417,9 @@ if (! $error && $action == 'writebookkeeping') {
         					$objmid = $db->fetch_object($resultmid);
         					$bookkeeping->doc_ref = $objmid->ref; // Ref of expensereport
         				}
+        			} else if ($tabtype[$key] == 'payment_donation') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
         			}
         
         			$result = $bookkeeping->create($user);
@@ -435,7 +440,7 @@ if (! $error && $action == 'writebookkeeping') {
     			}
     		}
 		}
-		
+
 		// Third party
 		if (! $errorforline)
 		{
@@ -475,7 +480,6 @@ if (! $error && $action == 'writebookkeeping') {
         				$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
         				$bookkeeping->numero_compte = $k;
         			} else if ($tabtype[$key] == 'payment_supplier') {           // If payment is payment of supplier invoice, we get ref of invoice
-        
         				$sqlmid = 'SELECT facf.ref_supplier,facf.ref';
         				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf ";
         				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON  payfacf.fk_facturefourn=facf.rowid";
@@ -489,6 +493,10 @@ if (! $error && $action == 'writebookkeeping') {
         				}
                         $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
         				$bookkeeping->numero_compte = $k;
+        			} else if ($tabtype[$key] == 'payment_donation') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->numero_compte = $k;
+						$bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
         			} else if ($tabtype[$key] == 'banktransfert') {
 						$bookkeeping->code_tiers = '';
         				$bookkeeping->numero_compte = $k;
@@ -724,6 +732,7 @@ if (empty($action) || $action == 'view') {
 	$invoicestatic = new Facture($db);
 	$invoicesupplierstatic = new FactureFournisseur($db);
 	$expensereportstatic = new ExpenseReport($db);
+	$donationstatic = new Don($db);
 
 	llxHeader('', $langs->trans("FinanceJournal"));
 
@@ -793,7 +802,7 @@ if (empty($action) || $action == 'view') {
 		}
 		if ($reflabel == '(CustomerInvoicePayment)') {
 			$reflabel = $langs->trans('Customer');
-		}		
+		}
 		if ($reflabel == '(SocialContributionPayment)') {
 			$reflabel = $langs->trans('SocialContribution');
 		}
@@ -806,7 +815,7 @@ if (empty($action) || $action == 'view') {
 		if ($reflabel == '(ExpenseReportPayment)') {
 			$reflabel = $langs->trans('Employee');
 		}
-		
+
 		$ref=$reflabel;
 		if ($tabtype[$key] == 'payment')
 		{
@@ -850,6 +859,20 @@ if (empty($action) || $action == 'view') {
 		    }
 		    else dol_print_error($db);
 		}
+		elseif ($tabtype[$key] == 'payment_donation')
+		{
+		    $sqlmid = 'SELECT payd.fk_donation as id';
+		    $sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_donation as payd";
+		    $sqlmid .= " WHERE payd.fk_donation=" . $val["paymentdonationid"];
+		    dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
+		    $resultmid = $db->query($sqlmid);
+		    if ($resultmid) {
+		        $objmid = $db->fetch_object($resultmid);
+		        $donationstatic->fetch($objmid->id);
+		        $ref=$langs->trans("Donation").' '.$donationstatic->getNomUrl(1);
+		    }
+		    else dol_print_error($db);
+		}
 
 
 		/*$invoicestatic->id = $key;
@@ -871,7 +894,7 @@ if (empty($action) || $action == 'view') {
 			else print $accountoshow;
 			print "</td>";
 			if ($val['soclib'] == '') {
-				print "<td>" . $bankstatic->label . " - " . $val["ref"] . "</td>";
+				print "<td>" . $bankstatic->label . " - " . $reflabel . "</td>";
 			} else {
 				print "<td>" . $bankstatic->label . " - " . $val['soclib'] . "</td>";
 			}
