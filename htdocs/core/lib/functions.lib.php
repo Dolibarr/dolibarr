@@ -4704,8 +4704,13 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 	$pattern = "/<[^<>]+>/";
 	$StringHtml = preg_replace('/<br[^>]*>/', "\n", $StringHtml);
 	$temp = dol_html_entity_decode($StringHtml,ENT_COMPAT,$pagecodeto);
-	$temp = preg_replace($pattern,"",$temp);
 
+    // Exemple of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
+    $temp = preg_replace($pattern,"",$temp);    // pass 1
+    // $temp after pass 1: <a href="/myurl" title="A title">0000-021
+    $temp = preg_replace($pattern,"",$temp);    // pass 2
+    // $temp after pass 2: 0000-021
+    
 	// Supprime aussi les retours
 	if ($removelinefeed) $temp=str_replace(array("\r\n","\r","\n")," ",$temp);
 
