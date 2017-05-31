@@ -790,16 +790,16 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $maskpersonew[$regKey[1]]=str_pad('', '_', $regKey[2], STR_PAD_RIGHT);
         $tmpmask=preg_replace('/\{'.$regKey[1].'\-'.$regKey[2].'\}/i', $maskpersonew, $tmpmask);
     }*/
-	
-    if(strstr($mask,'extra_')){
 
-			$start = "{extra_";
+    if (strstr($mask,'user_extra_'))
+    {
+			$start = "{user_extra_";
 			$end = "\}";
-			$extra= get_string_between($mask, "extra_", "}");
+			$extra= get_string_between($mask, "user_extra_", "}");
 			if(!empty($user->array_options['options_'.$extra])){
-				$mask =  preg_replace('#('.($start).')(.*?)('.($end).')#si', $user->array_options['options_'.$extra], $mask);	
+				$mask =  preg_replace('#('.$start.')(.*?)('.$end.')#si', $user->array_options['options_'.$extra], $mask);
 			}
-	} 
+    } 
     $maskwithonlyymcode=$mask;
     $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$maskcounter,$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{dd\}/i','dd',$maskwithonlyymcode);
