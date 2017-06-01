@@ -132,7 +132,7 @@ if ($action == 'set_SUPPLIER_PROPOSAL_DRAFT_WATERMARK')
 
 if ($action == 'set_SUPPLIER_PROPOSAL_FREE_TEXT')
 {
-	$freetext = GETPOST('SUPPLIER_PROPOSAL_FREE_TEXT');	// No alpha here, we want exact string
+	$freetext = GETPOST('SUPPLIER_PROPOSAL_FREE_TEXT','none');	// No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "SUPPLIER_PROPOSAL_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 

@@ -158,7 +158,7 @@ else if ($action == 'setmod')
 
 else if ($action == 'set_other')
 {
-	$freetext= GETPOST('CONTRACT_FREE_TEXT');	// No alpha here, we want exact string
+	$freetext= GETPOST('CONTRACT_FREE_TEXT','none');	// No alpha here, we want exact string
 	$res1 = dolibarr_set_const($db, "CONTRACT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	$draft= GETPOST('CONTRACT_DRAFT_WATERMARK','alpha');
