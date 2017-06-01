@@ -77,7 +77,7 @@ else if ($action == 'specimen') // For fiche inter
 	$inter->initAsSpecimen();
 	$inter->status = 0;     // Force statut draft to show watermark
 	$inter->fk_statut = 0;     // Force statut draft to show watermark
-	
+
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
@@ -193,13 +193,13 @@ else if ($action == 'setmod')
 else if ($action == 'setoptions')
 {
     $db->begin();
-    
+
 	$freetext= GETPOST('EXPENSEREPORT_FREE_TEXT');	// No alpha here, we want exact string
 	$res1 = dolibarr_set_const($db, "EXPENSEREPORT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
-	
+
 	$draft= GETPOST('EXPENSEREPORT_DRAFT_WATERMARK','alpha');
 	$res2 = dolibarr_set_const($db, "EXPENSEREPORT_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
-	
+
 	if (! $res1 > 0 || ! $res2 > 0) $error++;
 
  	if (! $error)
@@ -276,7 +276,7 @@ foreach ($dirmodels as $reldir)
 						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-						
+
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -399,7 +399,7 @@ foreach ($dirmodels as $reldir)
 
 		    		if (file_exists($dir.'/'.$file))
 		    		{
-		    			
+
 
 		    			$name = substr($file, 4, dol_strlen($file) -16);
 		    			$classname = substr($file, 0, dol_strlen($file) -12);

@@ -182,7 +182,7 @@ else if ($action == 'setdoc')
 
 else if ($action == 'setmod')
 {
-	// TODO Check if numbering module chosen can be activated 
+	// TODO Check if numbering module chosen can be activated
 	// by calling method canBeActivated
 
 	dolibarr_set_const($db, "COMMANDE_ADDON",$value,'chaine',0,'',$conf->entity);
@@ -331,7 +331,7 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-						
+
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -609,7 +609,7 @@ print "</td></tr>\n";
 print '</form>';
 
 // Shippable Icon in List
-/* Kept as hidden feature for the moment, result seems bugged. 
+/* Kept as hidden feature for the moment, result seems bugged.
 Whet is definition of "shippable" according to all different STOCK_CALCULATE_... options ?
 
 print '<tr class="oddeven">';
@@ -631,7 +631,7 @@ print '</tr>';
 // Ask for payment bank during order
 if ($conf->banque->enabled)
 {
-    
+
     print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp</td><td align="center">';
     if (! empty($conf->use_javascript_ajax))
@@ -653,7 +653,7 @@ if ($conf->banque->enabled)
 }
 else
 {
-    
+
     print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
@@ -661,7 +661,7 @@ else
 // Ask for warehouse during order
 if ($conf->stock->enabled)
 {
-    
+
     print '<tr class="oddeven"><td>';
     print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp</td><td align="center">';
     if (! empty($conf->use_javascript_ajax))
@@ -683,7 +683,7 @@ if ($conf->stock->enabled)
 }
 else
 {
-    
+
     print '<tr class="oddeven"><td>';
     print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
