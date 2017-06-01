@@ -28,7 +28,7 @@
 
 
 
--- Requests to clean corrupted database
+-- Requests to clean corrupted data
 
 
 UPDATE llx_user set api_key = null where api_key = '';
