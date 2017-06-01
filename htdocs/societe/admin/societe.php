@@ -42,6 +42,9 @@ if (!$user->admin) accessforbidden();
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'setcodeclient')
 {
 	if (dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON",$value,'chaine',0,'',$conf->entity) > 0)
@@ -98,35 +101,6 @@ if ($action == 'updateoptions')
 		{
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
-	}
-}
-
-// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
-if ($action == 'setModuleOptions')
-{
-	$post_size=count($_POST);
-
-	$db->begin();
-
-	for($i=0;$i < $post_size;$i++)
-    {
-    	if (array_key_exists('param'.$i,$_POST))
-    	{
-    		$param=GETPOST("param".$i,'alpha');
-    		$value=GETPOST("value".$i,'alpha');
-    		if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-	    	if (! $res > 0) $error++;
-    	}
-    }
-	if (! $error)
-    {
-        $db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        $db->rollback();
-	    setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 

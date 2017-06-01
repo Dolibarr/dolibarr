@@ -39,20 +39,23 @@ require_once '../lib/mymodule.lib.php';
 $langs->load("mymodule@mymodule");
 
 // Access control
-if (! $user->admin) {
-	accessforbidden();
-}
+if (! $user->admin) accessforbidden();
 
 // Parameters
 $action = GETPOST('action', 'alpha');
+
 
 /*
  * Actions
  */
 
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
+
 /*
  * View
  */
+
 $page_name = "MyModuleSetup";
 llxHeader('', $langs->trans($page_name));
 
