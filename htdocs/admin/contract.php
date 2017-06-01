@@ -474,7 +474,7 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 $var=true;
 
-$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray=pdf_getSubstitutionArray($langs, array('objectamount'));
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
