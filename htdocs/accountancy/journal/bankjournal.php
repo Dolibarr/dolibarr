@@ -223,7 +223,7 @@ if ($result) {
 		    // Now loop on each link of record in bank.
 			foreach ( $links as $key => $val ) {
 
-			    if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation')))     // So we excluded 'company' here
+			    if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'payment_salary')))     // So we excluded 'company' here
 			    {
 			        // We save tabtype for a future use, to remember what kind of payment it is 
 			        $tabtype[$obj->rowid] = $links[$key]['type'];
@@ -294,7 +294,7 @@ if ($result) {
 					$paymentsalstatic->ref = $links[$key]['url_id'];
 					$paymentsalstatic->label = $links[$key]['label'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsalstatic->getNomUrl(2);
-					// $tabtp[$obj->rowid][$account_employee] += $obj->amount;
+					$tabpay[$obj->rowid]["paymentsalid"] = $paymentsalstatic->id;
 				} else if ($links[$key]['type'] == 'payment_expensereport') {
 					$paymentexpensereportstatic->id = $links[$key]['url_id'];
 					$paymentexpensereportstatic->fk_expensereport = $links[$key]['url_id'];
@@ -418,14 +418,17 @@ if (! $error && $action == 'writebookkeeping') {
         					$objmid = $db->fetch_object($resultmid);
         					$bookkeeping->doc_ref = $objmid->ref; // Ref of expensereport
         				}
-        			} else if ($tabtype[$key] == 'payment_vat') {
-  			  			$bookkeeping->code_tiers = '';
-	  			  		$bookkeeping->doc_ref = $langs->trans("PaymentVat") . ' (' . $val["paymentvatid"] . ')'; // Rowid of vat payment
-        			} else if ($tabtype[$key] == 'payment_donation') {
-		  			  	$bookkeeping->code_tiers = '';
-			  			  $bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
-        			}
-        
+					} else if ($tabtype[$key] == 'payment_vat') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->doc_ref = $langs->trans("PaymentVat") . ' (' . $val["paymentvatid"] . ')'; // Rowid of vat payment
+					} else if ($tabtype[$key] == 'payment_donation') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
+					} else if ($tabtype[$key] == 'payment_salary') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->doc_ref = $langs->trans("PaymentSalary") . ' (' . $val["paymentsalid"] . ')'; // Ref of salary payment
+					}
+
         			$result = $bookkeeping->create($user);
         			if ($result < 0) {
         				if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
@@ -495,19 +498,23 @@ if (! $error && $action == 'writebookkeeping') {
         					$objmid = $db->fetch_object($resultmid);
         					$bookkeeping->doc_ref = $objmid->ref_supplier . ' (' . $objmid->ref . ')';
         				}
-                $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
-        				$bookkeeping->numero_compte = $k;
-    					} else if ($tabtype[$key] == 'payment_vat') {
-	  		  			$bookkeeping->code_tiers = '';
-		  		  		$bookkeeping->numero_compte = $k;
-			  		  	$bookkeeping->doc_ref = $langs->trans("PaymentVat") . ' (' . $val["paymentvatid"] . ')'; // Rowid of vat
-            	} else if ($tabtype[$key] == 'payment_donation') {
-					  	  $bookkeeping->code_tiers = '';
-						    $bookkeeping->numero_compte = $k;
-						    $bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
-         			} else if ($tabtype[$key] == 'banktransfert') {
-  						  $bookkeeping->code_tiers = '';
-        				$bookkeeping->numero_compte = $k;
+						$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
+						$bookkeeping->numero_compte = $k;
+					} else if ($tabtype[$key] == 'payment_vat') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->numero_compte = $k;
+						$bookkeeping->doc_ref = $langs->trans("PaymentVat") . ' (' . $val["paymentvatid"] . ')'; // Rowid of vat
+					} else if ($tabtype[$key] == 'payment_donation') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->numero_compte = $k;
+						$bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
+					} else if ($tabtype[$key] == 'payment_salary') {
+						$bookkeeping->code_tiers = $tabuser[$key]['accountancy_code'];
+						$bookkeeping->numero_compte = $k;
+						$bookkeeping->doc_ref = $langs->trans("PaymentSalary") . ' (' . $val["paymentsalid"] . ')'; // Rowid of salary payment
+					} else if ($tabtype[$key] == 'banktransfert') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->numero_compte = $k;
         			} else {
         			    // FIXME Should be a temporary account ???
         				$bookkeeping->doc_ref = $k;
@@ -740,8 +747,9 @@ if (empty($action) || $action == 'view') {
 	$invoicestatic = new Facture($db);
 	$invoicesupplierstatic = new FactureFournisseur($db);
 	$expensereportstatic = new ExpenseReport($db);
-  $vatstatic = new Tva($db);
+	$vatstatic = new Tva($db);
 	$donationstatic = new Don($db);
+	$salarystatic = new PaymentSalary($db);
 
 	llxHeader('', $langs->trans("FinanceJournal"));
 
@@ -895,6 +903,20 @@ if (empty($action) || $action == 'view') {
 		        $ref=$langs->trans("Donation").' '.$donationstatic->getNomUrl(1);
 		    }
 		    else dol_print_error($db);
+		}
+		elseif ($tabtype[$key] == 'payment_salary')
+		{
+			$sqlmid = 'SELECT s.rowid as id';
+			$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_salary as s";
+			$sqlmid .= " WHERE s.rowid=" . $val["paymentsalid"];
+			dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
+			$resultmid = $db->query($sqlmid);
+			if ($resultmid) {
+				$objmid = $db->fetch_object($resultmid);
+				$salarystatic->fetch($objmid->id);
+				$ref=$langs->trans("SalaryPayment").' '.$salarystatic->getNomUrl(1);
+			}
+			else dol_print_error($db);
 		}
 
 
