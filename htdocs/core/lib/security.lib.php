@@ -372,7 +372,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		$check = array('adherent','banque','user','usergroup','produit','service','produit|service','categorie'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe');	 // Test for societe object
 		$checkother = array('contact');	 // Test on entity and link to societe. Allowed if link is empty (Ex: contacts...).
-		$checkproject = array('projet'); // Test for project object
+		$checkproject = array('projet','project'); // Test for project object
 		$nocheck = array('barcode','stock','fournisseur');	// No test
 		$checkdefault = 'all other not already defined'; // Test on entity and link to third party. Not allowed if link is empty (Ex: invoice, orders...).
 
@@ -462,6 +462,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 			}
 			else
 			{
+			    if ($dbtablename == 'project') $dbtablename='projet';
 				$sql = "SELECT dbt.".$dbt_select;
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
