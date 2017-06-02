@@ -51,11 +51,13 @@ class TaskStats extends Stats
 	{
 		global $conf, $user, $langs;
 
-		$datay = array ();
+		$datay = array();
 
 		$sql = "SELECT";
 		$sql .= " COUNT(t.rowid), t.priority";
 		$sql.= " FROM ". MAIN_DB_PREFIX . "projet_task as t INNER JOIN " . MAIN_DB_PREFIX . "projet as p ON p.rowid = t.fk_projet";
+		if (! $user->rights->societe->client->voir && ! $user->soc_id)
+			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=" . $user->id;
 		$sql .= $this->buildWhere();
 		//$sql .= " AND t.fk_statut <> 0";     // We want historic also, so all task not draft
 		$sql .= " GROUP BY t.priority";
@@ -112,7 +114,7 @@ class TaskStats extends Stats
 
 		$sql = "SELECT date_format(t.datec,'%Y') as year, COUNT(t.rowid) as nb";
 		$sql.= " FROM ". MAIN_DB_PREFIX . "projet_task as t INNER JOIN " . MAIN_DB_PREFIX . "projet as p ON p.rowid = t.fk_projet";
-		if (! $user->rights->societe->client->voir && ! $user->societe_id)
+		if (! $user->rights->societe->client->voir && ! $user->soc_id)
 			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=" . $user->id;
 		$sql.= $this->buildWhere();
 		$sql.= " GROUP BY year";
@@ -167,7 +169,7 @@ class TaskStats extends Stats
 
 		$sql = "SELECT date_format(t.datec,'%m') as dm, COUNT(t.rowid) as nb";
 		$sql.= " FROM ". MAIN_DB_PREFIX . "projet_task as t INNER JOIN " . MAIN_DB_PREFIX . "projet as p ON p.rowid = t.fk_projet";
-		if (! $user->rights->societe->client->voir && ! $user->societe_id)
+		if (! $user->rights->societe->client->voir && ! $user->soc_id)
 			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=" . $user->id;
 		$sql .= $this->buildWhere();
 		$sql .= " GROUP BY dm";
@@ -179,293 +181,4 @@ class TaskStats extends Stats
 		// var_dump($res);print '<br>';
 		return $res;
 	}
-
-	/**
-	 * Return the Task amount by month for a year
-	 *
-	 * @param int $year scan
-	 * @return array with amount by month
-	 */
-	/*
-	function getAmountByMonth($year)
-	{
-		global $user;
-
-		$this->yearmonth = $year;
-
-		$sql = "SELECT date_format(t.datec,'%m') as dm, COUNT(t.rowid)";
-		$sql.= " FROM ". MAIN_DB_PREFIX . "projet_task as t INNER JOIN " . MAIN_DB_PREFIX . "projet as p ON p.rowid = t.fk_projet";
-		if (! $user->rights->societe->client->voir && ! $user->societe_id)
-			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=" . $user->id;
-		$sql .= $this->buildWhere();
-		$sql .= " GROUP BY dm";
-		$sql .= $this->db->order('dm', 'DESC');
-		$this->yearmonth=0;
-
-		$res = $this->_getAmountByMonth($year, $sql);
-		// var_dump($res);print '<br>';
-		return $res;
-	}*/
-
-
-	/**
-	 * Return amount of elements by month for several years
-	 *
-	 * @param	int		$endyear		Start year
-	 * @param	int		$startyear		End year
-	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-	 * @param   int     $wonlostfilter  Add a filter on status won/lost
-	 * @return 	array					Array of values
-	 */
-    /*
-	function getWeightedAmountByMonthWithPrevYear($endyear,$startyear,$cachedelay=0,$wonlostfilter=1)
-	{
-		global $conf,$user,$langs;
-
-        if ($startyear > $endyear) return -1;
-
-        $datay=array();
-
-        // Search into cache
-        if (! empty($cachedelay))
-        {
-        	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-        	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
-        }
-
-        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
-        $newmask='0644';
-
-        $nowgmt = dol_now();
-
-        $foundintocache=0;
-        if ($cachedelay > 0)
-        {
-        	$filedate=dol_filemtime($newpathofdestfile);
-        	if ($filedate >= ($nowgmt - $cachedelay))
-        	{
-        		$foundintocache=1;
-
-        		$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
-        	}
-        	else
-        	{
-        		dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
-        	}
-        }
-
-        // Load file into $data
-        if ($foundintocache)    // Cache file found and is not too old
-        {
-        	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
-        	$data = json_decode(file_get_contents($newpathofdestfile), true);
-        }
-        else
-		{
-			$year=$startyear;
-			while($year <= $endyear)
-			{
-				$datay[$year] = $this->getWeightedAmountByMonth($year,$wonlostfilter);
-				$year++;
-			}
-
-			$data = array();
-			// $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
-			for ($i = 0 ; $i < 12 ; $i++)
-			{
-				$data[$i][]=$datay[$endyear][$i][0];	// set label
-				$year=$startyear;
-				while($year <= $endyear)
-				{
-					$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
-					$year++;
-				}
-			}
-		}
-
-		// Save cache file
-		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
-		{
-			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
-			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
-			$fp = fopen($newpathofdestfile, 'w');
-			if ($fp)
-			{
-				fwrite($fp, json_encode($data));
-				fclose($fp);
-				if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
-				@chmod($newpathofdestfile, octdec($newmask));
-			}
-			else dol_syslog("Failed to write cache file", LOG_ERR);
-			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
-		}
-
-		return $data;
-	}
-	*/
-
-
-	/**
-	 * Return the Task weighted opp amount by month for a year.
-	 *
-	 * @param  int $year               Year to scan
-	 * @param  int $wonlostfilter      Add a filter on status won/lost
-	 * @return array                   Array with amount by month
-	 */
-    /*
-	function getWeightedAmountByMonth($year, $wonlostfilter=1)
-	{
-		global $user;
-
-		$this->yearmonth = $year;
-
-		$sql = "SELECT date_format(t.datec,'%m') as dm";
-		$sql.= " FROM ". MAIN_DB_PREFIX . "projet_task as t INNER JOIN " . MAIN_DB_PREFIX . "projet as p ON p.rowid = t.fk_projet";
-		if (! $user->rights->societe->client->voir && ! $user->societe_id)
-			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=" . $user->id;
-		$sql .= $this->buildWhere();
-		$sql .= " GROUP BY dm";
-		$sql .= $this->db->order('dm', 'DESC');
-		$this->yearmonth=0;
-
-		$res = $this->_getAmountByMonth($year, $sql);
-		// var_dump($res);print '<br>';
-		return $res;
-	}*/
-
-	/**
-	 * Return amount of elements by month for several years
-	 *
-	 * @param int $endyear		End year
-	 * @param int $startyear	Start year
-	 * @param int $cachedelay accept for cache file (0=No read, no save of cache, -1=No read but save)
-	 * @return array of values
-	 */
-    /*
-	function getTransformRateByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0)
-	{
-		global $conf, $user, $langs;
-
-		if ($startyear > $endyear) return - 1;
-
-		$datay = array();
-
-		// Search into cache
-		if (! empty($cachedelay))
-		{
-			include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-			include_once DOL_DOCUMENT_ROOT . '/core/lib/json.lib.php';
-		}
-
-		$newpathofdestfile = $conf->user->dir_temp . '/' . get_class($this) . '_' . __FUNCTION__ . '_' . (empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix . '_') . $langs->defaultlang . '_user' . $user->id . '.cache';
-		$newmask = '0644';
-
-		$nowgmt = dol_now();
-
-		$foundintocache = 0;
-		if ($cachedelay > 0) {
-			$filedate = dol_filemtime($newpathofdestfile);
-			if ($filedate >= ($nowgmt - $cachedelay)) {
-				$foundintocache = 1;
-
-				$this->_lastfetchdate[get_class($this) . '_' . __FUNCTION__] = $filedate;
-			} else {
-				dol_syslog(get_class($this) . '::' . __FUNCTION__ . " cache file " . $newpathofdestfile . " is not found or older than now - cachedelay (" . $nowgmt . " - " . $cachedelay . ") so we can't use it.");
-			}
-		}
-
-		// Load file into $data
-		if ($foundintocache) // Cache file found and is not too old
-		{
-			dol_syslog(get_class($this) . '::' . __FUNCTION__ . " read data from cache file " . $newpathofdestfile . " " . $filedate . ".");
-			$data = json_decode(file_get_contents($newpathofdestfile), true);
-		} else {
-			$year = $startyear;
-			while ( $year <= $endyear ) {
-				$datay[$year] = $this->getTransformRateByMonth($year);
-				$year ++;
-			}
-
-			$data = array ();
-			// $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
-			for($i = 0; $i < 12; $i ++) {
-				$data[$i][] = $datay[$endyear][$i][0]; // set label
-				$year = $startyear;
-				while ( $year <= $endyear ) {
-					$data[$i][] = $datay[$year][$i][1]; // set yval for x=i
-					$year ++;
-				}
-			}
-		}
-
-		// Save cache file
-		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == - 1)) {
-			dol_syslog(get_class($this) . '::' . __FUNCTION__ . " save cache file " . $newpathofdestfile . " onto disk.");
-			if (! dol_is_dir($conf->user->dir_temp))
-				dol_mkdir($conf->user->dir_temp);
-			$fp = fopen($newpathofdestfile, 'w');
-			fwrite($fp, json_encode($data));
-			fclose($fp);
-			if (! empty($conf->global->MAIN_UMASK))
-				$newmask = $conf->global->MAIN_UMASK;
-			@chmod($newpathofdestfile, octdec($newmask));
-
-			$this->_lastfetchdate[get_class($this) . '_' . __FUNCTION__] = $nowgmt;
-		}
-
-		return $data;
-	}*/
-
-	/**
-	 * Return the Task transformation rate by month for a year
-	 *
-	 * @param int $year scan
-	 * @return array with amount by month
-	 */
-	/*
-	function getTransformRateByMonth($year)
-	{
-		global $user;
-
-		$this->yearmonth = $year;
-
-		$sql = "SELECT date_format(t.datec,'%m') as dm, count(t.rowid)";
-		$sql.= " FROM ". MAIN_DB_PREFIX . "projet_task as t INNER JOIN " . MAIN_DB_PREFIX . "projet as p ON p.rowid = t.fk_projet";
-		if (! $user->rights->societe->client->voir && ! $user->societe_id)
-			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=" . $user->id;
-		$sql .= $this->buildWhere();
-		$sql .= " GROUP BY dm";
-		$sql .= $this->db->order('dm', 'DESC');
-
-		$res_total = $this->_getNbByMonth($year, $sql);
-
-		$this->status=6;
-
-		$sql = "SELECT date_format(t.datec,'%m') as dm, count(t.rowid)";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "projet_task as t";
-		if (! $user->rights->societe->client->voir && ! $user->societe_id)
-			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=" . $user->id;
-		$sql .= $this->buildWhere();
-		$sql .= " GROUP BY dm";
-		$sql .= $this->db->order('dm', 'DESC');
-
-		$this->status=0;
-		$this->yearmonth=0;
-
-		$res_only_wined = $this->_getNbByMonth($year, $sql);
-
-		$res=array();
-
-		foreach($res_total as $key=>$total_row) {
-			//var_dump($total_row);
-			if (!empty($total_row[1])) {
-				$res[$key]=array($total_row[0],(100*$res_only_wined[$key][1])/$total_row[1]);
-			} else {
-				$res[$key]=array($total_row[0],0);
-			}
-
-		}
-		// var_dump($res);print '<br>';
-		return $res;
-	}*/
 }
