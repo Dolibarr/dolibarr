@@ -712,6 +712,7 @@ div.fiche>form>div.div-table-responsive {
     align-self: flex-start;
 }
 
+
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
 /* ============================================================================== */
@@ -2795,6 +2796,9 @@ div.tabBar .noborder {
 
 @media only screen and (max-width: 767px)
 {
+	.thumbstat {
+		flex: 1 1 110px;
+	}
 	.thumbstat150 {
 		flex: 1 1 110px;
 	}
@@ -4593,6 +4597,11 @@ div.tabsElem a.tab {
     	z-index: 201;
         background: #FFF;
 	}
+
+    .login_vertical_align {
+    	padding-left: 20px;
+    	padding-right: 20px;
+    }
 
 	/* Reduce login top right info */
 	.help {
