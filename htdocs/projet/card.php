@@ -134,7 +134,7 @@ if (empty($reshook))
 	        $error++;
 	        setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
 	    }
-	    
+
 	    if (! $error)
 	    {
 	        $error=0;
@@ -308,8 +308,8 @@ if (empty($reshook))
 			    setEventMessages($langs->trans("FailedToCloseProject").':'.$object->error, $object->errors, 'errors');
 	        }
 	    }
-	    
-	    
+
+
 	    if ($error)
 	    {
 			$db->rollback();
@@ -322,7 +322,7 @@ if (empty($reshook))
 			if (GETPOST('socid','int') > 0) $object->fetch_thirdparty(GETPOST('socid','int'));
 			else unset($object->thirdparty);
 	    }
-	    
+
 	}
 
 	// Build doc
@@ -623,7 +623,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     {
         print ' &nbsp; &nbsp; ';
         print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
-    }    
+    }
     print '</div>';
 
     print '</form>';
@@ -645,12 +645,12 @@ if ($action == 'create' && $user->rights->projet->creer)
         });
         </script>';
 }
-elseif ($object->id > 0) 
+elseif ($object->id > 0)
 {
     /*
      * Show or edit
      */
-    
+
     $res=$object->fetch_optionals($object->id,$extralabels);
 
     // To verify role of users
@@ -711,10 +711,11 @@ elseif ($object->id > 0)
     print '<input type="hidden" name="comefromclone" value="'.$comefromclone.'">';
 
     $head=project_prepare_head($object);
-    dol_fiche_head($head, 'project', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
     if ($action == 'edit' && $userWrite > 0)
     {
+        dol_fiche_head($head, 'project', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
+
         print '<table class="border" width="100%">';
 
         // Ref
@@ -835,27 +836,30 @@ elseif ($object->id > 0)
     }
     else
     {
+        dol_fiche_head($head, 'project', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
+
         // Project card
-        
+
         $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-        
+
         $morehtmlref='<div class="refidno">';
         // Title
         $morehtmlref.=$object->title;
         // Thirdparty
-        if ($object->thirdparty->id > 0) 
+        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ';
+        if ($object->thirdparty->id > 0)
         {
-            $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
+            $morehtmlref .= $object->thirdparty->getNomUrl(1, 'project');
         }
         $morehtmlref.='</div>';
-        
+
         // Define a complementary filter for search of next/prev ref.
         if (! $user->rights->projet->all->lire)
         {
             $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
             $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
         }
-        
+
 	    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
@@ -889,7 +893,7 @@ elseif ($object->id > 0)
 	        if (strcmp($object->opp_amount,'')) print price($object->opp_amount,0,$langs,1,0,0,$conf->currency);
 	        print '</td></tr>';
 	    }
-    
+
         // Date start - end
         print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
 		$start = dol_print_date($object->date_start,'dayhour');
@@ -899,7 +903,7 @@ elseif ($object->id > 0)
 		print ($end?$end:'?');
 		if ($object->hasDelay()) print img_warning("Late");
         print '</td></tr>';
-    	     
+
         // Budget
         print '<tr><td>'.$langs->trans("Budget").'</td><td>';
         if (strcmp($object->budget_amount, '')) print price($object->budget_amount,0,$langs,1,0,0,$conf->currency);
@@ -908,16 +912,16 @@ elseif ($object->id > 0)
         // Other attributes
         $cols = 2;
         include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-        
+
         print '</table>';
-        
+
         print '</div>';
         print '<div class="fichehalfright">';
         print '<div class="ficheaddleft">';
         print '<div class="underbanner clearboth"></div>';
-        
+
         print '<table class="border" width="100%">';
-        
+
         // Description
         print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
         print nl2br($object->description);
@@ -929,13 +933,13 @@ elseif ($object->id > 0)
             print $form->showCategories($object->id,'project',1);
             print "</td></tr>";
         }
-        
+
         print '</table>';
-        
+
         print '</div>';
         print '</div>';
         print '</div>';
-        
+
         print '<div class="clearboth"></div>';
     }
 
@@ -956,7 +960,7 @@ elseif ($object->id > 0)
     {
         $defaultcheckedwhenoppclose=1;
         if (empty($conf->global->PROJECT_HIDE_TASKS)) $defaultcheckedwhenoppclose=0;
-        
+
         print '<!-- Javascript to manage opportunity status change -->';
         print '<script type="text/javascript" language="javascript">
             jQuery(document).ready(function() {
@@ -973,9 +977,9 @@ elseif ($object->id > 0)
                     jQuery("#divtocloseproject").show();
                     if (defaultcloseproject) jQuery("#inputcloseproject").prop("checked", true);
                     else jQuery("#inputcloseproject").prop("checked", false);
-                        
+
                     /* Make close project visible or not */
-                    if (elemcode == \'WON\' || elemcode == \'LOST\') 
+                    if (elemcode == \'WON\' || elemcode == \'LOST\')
                     {
                         jQuery("#divtocloseproject").show();
                     }
@@ -983,7 +987,7 @@ elseif ($object->id > 0)
                     {
                         jQuery("#divtocloseproject").hide();
                     }
-                        
+
                     /* Change percent of default percent of new status is higher */
                     if (parseFloat(jQuery("#opp_percent").val()) != parseFloat(defaultpercent))
                     {
@@ -1010,7 +1014,7 @@ elseif ($object->id > 0)
     {
 	    if ($action != "edit" )
 	    {
-	        
+
         	// Create event
         	if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
             	// "workflow" action so should appears somewhere else on

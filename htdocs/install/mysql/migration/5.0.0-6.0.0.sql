@@ -348,5 +348,11 @@ ALTER TABLE llx_facture ADD COLUMN fk_fac_rec_source integer;
 
 DELETE from llx_c_actioncomm where code in ('AC_PROP','AC_COM','AC_FAC','AC_SHIP','AC_SUP_ORD','AC_SUP_INV') AND id NOT IN (SELECT DISTINCT fk_action FROM llx_actioncomm);
 
+-- Fix: delete orphelin category.
+delete from llx_categorie_product where fk_categorie not in (select rowid from llx_categorie where type = 0);
+delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type in (1, 2));
+delete from llx_categorie_member where fk_categorie not in (select rowid from llx_categorie where type = 3);
+delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
+delete from llx_categorie_project where fk_categorie not in (select rowid from llx_categorie where type = 5);
 
 ALTER TABLE llx_inventory ADD COLUMN ref varchar(48);
