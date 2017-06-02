@@ -954,8 +954,7 @@ elseif ($object->id > 0)
     // Change probability from status
     if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     {
-        $defaultcheckedwhenoppclose=1;
-        if (empty($conf->global->PROJECT_HIDE_TASKS)) $defaultcheckedwhenoppclose=0;
+        $defaultcheckedwhenoppclose=0;
         
         print '<!-- Javascript to manage opportunity status change -->';
         print '<script type="text/javascript" language="javascript">
