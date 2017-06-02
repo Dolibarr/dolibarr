@@ -350,3 +350,22 @@ DELETE from llx_c_actioncomm where code in ('AC_PROP','AC_COM','AC_FAC','AC_SHIP
 
 
 ALTER TABLE llx_inventory ADD COLUMN ref varchar(48);
+
+create table llx_loan_schedule
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  fk_loan			integer,
+  datec				datetime,         
+  tms				timestamp,
+  datep				datetime,         
+  amount_capital	real DEFAULT 0,
+  amount_insurance	real DEFAULT 0,
+  amount_interest	real DEFAULT 0,
+  fk_typepayment	integer NOT NULL,
+  num_payment		varchar(50),
+  note_private      text,
+  note_public       text,
+  fk_bank			integer NOT NULL,
+  fk_user_creat		integer,          
+  fk_user_modif		integer           
+)ENGINE=innodb;
