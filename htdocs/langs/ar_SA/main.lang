@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - main
-DIRECTION=ltr
+DIRECTION=rtl
 # Note for Chinese:
 # msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
 # stsongstdlight or cid0cs are for simplified Chinese
@@ -28,83 +28,85 @@ NoTemplateDefined=No template defined for this email type
 AvailableVariables=Available substitution variables
 NoTranslation=لا يوجد ترجمة
 NoRecordFound=لا يوجد سجلات
+NoRecordDeleted=No record deleted
+NotEnoughDataYet=Not enough data
 NoError=لا خطأ
 Error=خطأ
 Errors=أخطاء
-ErrorFieldRequired=Field '%s' is required
-ErrorFieldFormat=Field '%s' has a bad value
-ErrorFileDoesNotExists=File %s does not exist
-ErrorFailedToOpenFile=Failed to open file %s
-ErrorCanNotCreateDir=Can not create dir %s
-ErrorCanNotReadDir=Can not read dir %s
-ErrorConstantNotDefined=Parameter %s not defined
+ErrorFieldRequired=مطلوب حقل '%s' ق
+ErrorFieldFormat=حقل '٪ ق' له قيمة سيئة
+ErrorFileDoesNotExists=الملف غير موجود٪ الصورة
+ErrorFailedToOpenFile=فشل في فتح الملف٪ الصورة
+ErrorCanNotCreateDir=Cannot create dir %s
+ErrorCanNotReadDir=Cannot read dir %s
+ErrorConstantNotDefined=المعلمة٪ S غير معرف
 ErrorUnknown=خطأ غير معروف
 ErrorSQL=خطأ SQL
-ErrorLogoFileNotFound=Logo file '%s' was not found
+ErrorLogoFileNotFound=لم يتم العثور على ملف شعار '٪ ق'
 ErrorGoToGlobalSetup=اذهب إلى 'شركة / مؤسسة' الإعداد لإصلاح هذه
 ErrorGoToModuleSetup=الذهاب إلى الوحدة الإعداد لإصلاح هذه
-ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=%s)
-ErrorAttachedFilesDisabled=تم تعطيل إرفاق ملف في هذا الخادم
+ErrorFailedToSendMail=فشل في إرسال البريد (المرسل =٪ ق، استقبال =٪ ق)
 ErrorFileNotUploaded=ويتم تحميل الملف. تحقق لا يتجاوز هذا الحجم الأقصى المسموح به، أن المساحة الحرة المتوفرة على القرص والتي لا يوجد بالفعل ملف بنفس الاسم في هذا الدليل.
 ErrorInternalErrorDetected=خطأ الكشف عن
-ErrorNoRequestRan=أي طلب ركض
 ErrorWrongHostParameter=المعلمة المضيف خاطئة
 ErrorYourCountryIsNotDefined=لم يتم تعريف بلدك. الذهاب إلى الصفحة الرئيسية الإعداد-تحرير ومشاركة مرة أخرى في النموذج.
 ErrorRecordIsUsedByChild=فشل في حذف هذا السجل. ويستخدم هذا السجل من قبل واحد على الأقل السجلات التابعة.
 ErrorWrongValue=قيمة خاطئة
-ErrorWrongValueForParameterX=Wrong value for parameter %s
+ErrorWrongValueForParameterX=قيمة خاطئة للمعلمة٪ الصورة
 ErrorNoRequestInError=أي طلب في الخطأ
 ErrorServiceUnavailableTryLater=الخدمة غير متوفرة في الوقت الراهن. حاول مجددا لاحقا.
 ErrorDuplicateField=قيمة مكررة في حقل فريد
 ErrorSomeErrorWereFoundRollbackIsDone=تم العثور على بعض الأخطاء. نحن التراجع التغييرات.
-ErrorConfigParameterNotDefined=Parameter <b>%s</b> is not defined inside Dolibarr config file <b>conf.php</b>.
-ErrorCantLoadUserFromDolibarrDatabase=Failed to find user <b>%s</b> in Dolibarr database.
-ErrorNoVATRateDefinedForSellerCountry=Error, no vat rates defined for country '%s'.
-ErrorNoSocialContributionForSellerCountry=Error, no social/fiscal taxes type defined for country '%s'.
+ErrorConfigParameterNotDefined=لم يتم تعريف <b>المعلمة٪ الصورة</b> داخل ملف التكوين Dolibarr <b>conf.php.</b>
+ErrorCantLoadUserFromDolibarrDatabase=فشل في العثور على <b>المستخدم٪ الصورة</b> في قاعدة بيانات Dolibarr.
+ErrorNoVATRateDefinedForSellerCountry=خطأ، لا معدلات ضريبة القيمة المضافة المحددة للبلد '٪ ق'.
+ErrorNoSocialContributionForSellerCountry=خطأ، لا الاجتماعي / المالي نوع الضرائب المحددة للبلد '٪ ق'.
 ErrorFailedToSaveFile=خطأ، فشل في حفظ الملف.
+ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of current one
+MaxNbOfRecordPerPage=Max nb of record per page
 NotAuthorized=غير مصرح لك ان تفعل ذلك.
 SetDate=التاريخ المحدد
 SelectDate=تحديد تاريخ
-SeeAlso=See also %s
+SeeAlso=انظر أيضا الصورة٪
 SeeHere=انظر هنا
+Apply=تطبيق
 BackgroundColorByDefault=لون الخلفية الافتراضية
-FileNotUploaded=لم إيداع الملف
+FileRenamed=The file was successfully renamed
 FileUploaded=تم تحميل الملف بنجاح
+FileGenerated=The file was successfully generated
 FileWasNotUploaded=يتم اختيار ملف لمرفق ولكن لم تحميلها بعد. انقر على "إرفاق ملف" لهذا الغرض.
 NbOfEntries=ملحوظة من إدخالات
-GoToWikiHelpPage=قراءة التعليمات الفورية (تحتاج الوصول إلى الإنترنت)
+GoToWikiHelpPage=Read online help (Internet access needed)
 GoToHelpPage=قراءة المساعدة
 RecordSaved=سجل حفظ
 RecordDeleted=سجل محذوف
 LevelOfFeature=مستوى ميزات
 NotDefined=غير معرف
-DefinedAndHasThisValue=تعريف وقيمة ل
-IsNotDefined=غير محدد
-DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr authentication mode is setup to <b>%s</b> in configuration file <b>conf.php</b>.<br>This means that password database is extern to Dolibarr, so changing this field may have no effects.
+DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr authentication mode is set to <b>%s</b> in configuration file <b>conf.php</b>.<br>This means that the password database is external to Dolibarr, so changing this field may have no effect.
 Administrator=مدير
 Undefined=غير محدد
-PasswordForgotten=نسيت كلمة المرور؟
+PasswordForgotten=Password forgotten?
 SeeAbove=أنظر فوق
 HomeArea=المنطقة الرئيسية
-LastConnexion=آخر إتصال
+LastConnexion=Latest connection
 PreviousConnexion=الاتصال السابق
+PreviousValue=Previous value
 ConnectedOnMultiCompany=إتصال على البيئة
 ConnectedSince=إتصال منذ
-AuthenticationMode=وضع صحة المستندات
-RequestedUrl=URL المطلوب
+AuthenticationMode=Authentication mode
+RequestedUrl=Requested URL
 DatabaseTypeManager=نوع قاعدة البيانات مدير
-RequestLastAccess=طلب الوصول إلى قاعدة البيانات الماضي
-RequestLastAccessInError=طلب الأخير الوصول إلى قاعدة البيانات في الخطأ
-ReturnCodeLastAccessInError=العودة رمز لآخر الوصول إلى قاعدة البيانات في الخطأ
-InformationLastAccessInError=معلومات عن الماضي الوصول إلى قاعدة البيانات في الخطأ
+RequestLastAccessInError=Latest database access request error
+ReturnCodeLastAccessInError=Return code for latest database access request error
+InformationLastAccessInError=Information for latest database access request error
 DolibarrHasDetectedError=كشف Dolibarr خطأ فني
-InformationToHelpDiagnose=هذا هو المعلومات التي يمكن أن تساعد في التشخيص
+InformationToHelpDiagnose=This information can be useful for diagnostic purposes
 MoreInformation=المزيد من المعلومات
 TechnicalInformation=المعلومات التقنية
 TechnicalID=ID الفني
 NotePublic=ملاحظة (الجمهور)
 NotePrivate=ملاحظة (خاص)
-PrecisionUnitIsLimitedToXDecimals=Dolibarr was setup to limit precision of unit prices to <b>%s</b> decimals.
+PrecisionUnitIsLimitedToXDecimals=كان Dolibarr الإعداد للحد من دقة أسعار الوحدات إلى <b>العشرية٪ الصورة.</b>
 DoTest=اختبار
 ToFilter=فلتر
 NoFilter=No filter
@@ -114,11 +116,11 @@ Yes=نعم فعلا
 no=لا
 No=لا
 All=جميع
-Alls=جميع
 Home=الصفحة الرئيسية
 Help=مساعدة
 OnlineHelp=مساعدة على الانترنت
 PageWiki=صفحة ويكيبيديا
+MediaBrowser=Media browser
 Always=دائما
 Never=أبدا
 Under=تحت
@@ -128,6 +130,7 @@ Activate=فعل
 Activated=تنشيط
 Closed=مغلق
 Closed2=مغلق
+NotClosed=Not closed
 Enabled=تمكين
 Deprecated=انتقدت
 Disable=تعطيل
@@ -135,16 +138,15 @@ Disabled=تعطيل
 Add=إضافة
 AddLink=إضافة وصلة
 RemoveLink=نلغي
+AddToDraft=Add to draft
 Update=تحديث
-AddActionToDo=إضافة حدث أن تفعل
-AddActionDone=إضافة حدث القيام به
 Close=إغلاق
-Close2=إغلاق
+CloseBox=Remove widget from your dashboard
 Confirm=تأكيد
-ConfirmSendCardByMail=Do you really want to send content of this card by mail to <b>%s</b> ?
+ConfirmSendCardByMail=Do you really want to send content of this card by mail to <b>%s</b>?
 Delete=حذف
 Remove=إزالة
-Resiliate=Resiliate
+Resiliate=Terminate
 Cancel=إلغاء
 Modify=تعديل
 Edit=تحرير
@@ -162,6 +164,7 @@ Go=اذهب
 Run=اركض
 CopyOf=نسخة من
 Show=تبين
+Hide=Hide
 ShowCardHere=مشاهدة بطاقة
 Search=البحث عن
 SearchOf=البحث عن
@@ -173,7 +176,6 @@ Upload=إرسال ملف
 ToLink=حلقة الوصل
 Select=اختار
 Choose=أختر
-ChooseLangage=الرجاء اختيار لغتك
 Resize=تغيير
 Recenter=Recenter
 Author=مؤلف
@@ -190,7 +192,6 @@ Person=شخص
 Parameter=معلمة
 Parameters=المعايير
 Value=القيمة
-GlobalValue=القيمة العالمية
 PersonalValue=قيمة الشخصية
 NewValue=القيمة الجديدة
 CurrentValue=القيمة الحالية
@@ -199,7 +200,6 @@ Type=اكتب
 Language=لغة
 MultiLanguage=متعدد اللغات
 Note=ملاحظة
-CurrentNote=مذكرة الحالية
 Title=العنوان
 Label=ملصق
 RefOrLabel=المرجع. أو هذا الملصق
@@ -207,8 +207,8 @@ Info=سجل
 Family=عائلة
 Description=الوصف
 Designation=الوصف
-Model=نموذج
-DefaultModel=نموذج افتراضي
+Model=Doc template
+DefaultModel=Default doc template
 Action=حدث
 About=حول
 Number=عدد
@@ -217,9 +217,8 @@ AmountByMonth=المبلغ الشهر
 Numero=عدد
 Limit=حد
 Limits=حدود
-DevelopmentTeam=فريق التطوير
 Logout=تسجيل خروج
-NoLogoutProcessWithAuthMode=No applicative disconnect feature with authentication mode <b>%s</b>
+NoLogoutProcessWithAuthMode=أي ميزة قطع تطبيقية مع وضع <b>المصادقة٪ الصورة</b>
 Connection=الاتصال
 Setup=التثبيت
 Alert=إنذار
@@ -233,13 +232,13 @@ Date=التاريخ
 DateAndHour=التاريخ و الساعة
 DateToday=Today's date
 DateReference=Reference date
-DateStart=تاريخ بداية
-DateEnd=تاريخ انتهاء
+DateStart=تاريخ البدء
+DateEnd=تاريخ الانتهاء
 DateCreation=تاريخ الإنشاء
 DateCreationShort=يخلق. التاريخ
 DateModification=تاريخ التعديل
 DateModificationShort=Modif. التاريخ
-DateLastModification=تاريخ آخر تعديل
+DateLastModification=Latest modification date
 DateValidation=تاريخ التحقق من الصحة
 DateClosing=الموعد النهائي
 DateDue=تاريخ الاستحقاق
@@ -250,12 +249,14 @@ DateOperationShort=دار الأوبرا. التاريخ
 DateLimit=تاريخ الحد
 DateRequest=تاريخ الطلب
 DateProcess=تاريخ العملية
-DatePlanShort=تاريخ مملس
-DateRealShort=تاريخ ريال مدريد.
 DateBuild=تقرير تاريخ الإنشاء
 DatePayment=تاريخ الدفع
 DateApprove=تاريخ الموافقة
 DateApprove2=تاريخ الموافقة (موافقة الثانية)
+UserCreation=Creation user
+UserModification=Modification user
+UserCreationShort=Creat. user
+UserModificationShort=Modif. user
 DurationYear=سنة
 DurationMonth=شهر
 DurationWeek=أسبوع
@@ -267,6 +268,7 @@ DurationDays=أيام
 Year=سنة
 Month=شهر
 Week=أسبوع
+WeekShort=أسبوع
 Day=يوم
 Hour=ساعة
 Minute=دقيقة
@@ -289,6 +291,7 @@ MonthOfDay=شهر من اليوم
 HourShort=H
 MinuteShort=مليون
 Rate=معدل
+CurrencyRate=Currency conversion rate
 UseLocalTax=يشمل الضرائب
 Bytes=بايت
 KiloBytes=كيلو بايت
@@ -305,7 +308,6 @@ Copy=نسخ
 Paste=لصق
 Default=افتراضي
 DefaultValue=القيمة الافتراضية
-DefaultGlobalValue=القيمة العالمية
 Price=السعر
 UnitPrice=سعر الوحدة
 UnitPriceHT=سعر الوحدة (صافي)
@@ -313,7 +315,6 @@ UnitPriceTTC=سعر الوحدة
 PriceU=إلى أعلى
 PriceUHT=UP (صافي)
 PriceUHTCurrency=U.P (currency)
-SupplierProposalUHT=شبكة UP مطلوب
 PriceUTTC=UP (شركة الضريبة)
 Amount=كمية
 AmountInvoice=قيمة الفاتورة
@@ -323,6 +324,9 @@ AmountTTCShort=المبلغ (المؤتمر الوطني العراقي. الض�
 AmountHT=المبلغ (صافية من الضرائب)
 AmountTTC=المبلغ (المؤتمر الوطني العراقي. الضريبية)
 AmountVAT=مبلغ الضريبة
+MulticurrencyAlreadyPaid=Already payed, original currency
+MulticurrencyRemainderToPay=Remain to pay, original currency
+MulticurrencyPaymentAmount=Payment amount, original currency
 MulticurrencyAmountHT=Amount (net of tax), original currency
 MulticurrencyAmountTTC=Amount (inc. of tax), original currency
 MulticurrencyAmountVAT=Amount tax, original currency
@@ -332,10 +336,7 @@ AmountLT1ES=كمية RE
 AmountLT2ES=كمية IRPF
 AmountTotal=الكمية الكلية
 AmountAverage=متوسط ​​كمية
-PriceQtyHT=سعر هذه الكمية (صافية من الضرائب)
 PriceQtyMinHT=دقيقة سعر الكمية. (صافية من الضرائب)
-PriceQtyTTC=سعر هذه الكمية (شركة الضريبة)
-PriceQtyMinTTC=دقيقة سعر الكمية. (المؤتمر الوطني العراقي. من الضرائب)
 Percentage=نسبة مئوية
 Total=الإجمالي الكلي
 SubTotal=حاصل الجمع
@@ -344,6 +345,7 @@ TotalHTShortCurrency=Total (net in currency)
 TotalTTCShort=إجمالي (شركة الضريبة)
 TotalHT=مجموع (صافي الضريبة)
 TotalHTforthispage=مجموع (صافي الضريبة) لهذه الصفحة
+Totalforthispage=Total for this page
 TotalTTC=إجمالي (شركة الضريبة)
 TotalTTCToYourCredit=الإجمالي (المؤتمر الوطني العراقي. الضريبية) لالائتمان الخاصة بك
 TotalVAT=مجموع الضرائب
@@ -351,7 +353,6 @@ TotalLT1=مجموع الضرائب 2
 TotalLT2=مجموع الضرائب 3
 TotalLT1ES=مجموع RE
 TotalLT2ES=مجموع IRPF
-IncludedVAT=وشملت الضرائب
 HT=صافي من الضريبة
 TTC=شركة الضرائب
 VAT=ضريبة المبيعات
@@ -379,13 +380,11 @@ CommercialProposalsShort=مقترحات تجارية
 Comment=التعليق
 Comments=تعليقات
 ActionsToDo=الأحداث للقيام
-ActionsDone=أحداث القيام به
 ActionsToDoShort=لكى يفعل
-ActionsRunningshort=بدأ
 ActionsDoneShort=انتهيت
 ActionNotApplicable=غير قابل للتطبيق
 ActionRunningNotStarted=لبدء
-ActionRunningShort=بدأ
+ActionRunningShort=In progress
 ActionDoneShort=تم الانتهاء من
 ActionUncomplete=Uncomplete
 CompanyFoundation=شركة / مؤسسة
@@ -394,28 +393,23 @@ ContactsAddressesForCompany=اتصالات / عناوين لهذا الطرف ا
 AddressesForCompany=عناوين لهذا الطرف الثالث
 ActionsOnCompany=الأحداث حول هذا الطرف الثالث
 ActionsOnMember=الأحداث عن هذا العضو
-NActions=%s events
-NActionsLate=%s late
+NActionsLate=٪ في وقت متأخر الصورة
 RequestAlreadyDone=طلب المسجل بالفعل
 Filter=فلتر
-FilterOnInto=Search criteria '<strong>%s</strong>' into fields %s
+FilterOnInto=معايير البحث <strong>'٪ ق'</strong> إلى حقول٪ الصورة
 RemoveFilter=إزالة فلتر
 ChartGenerated=الرسم البياني المتولدة
 ChartNotGenerated=الرسم البياني لم تولد
-GeneratedOn=Build on %s
+GeneratedOn=بناء على٪ الصورة
 Generate=توليد
 Duration=المدة الزمنية
 TotalDuration=المدة الإجمالية
 Summary=ملخص
-MyBookmarks=المواقع المفضلة
-OtherInformationsBoxes=صناديق غيرها من المعلومات
-DolibarrBoard=Dolibarr مجلس
 DolibarrStateBoard=إحصائيات
 DolibarrWorkBoard=مهام العمل متنها
 Available=متاح
 NotYetAvailable=لم تتوفر بعد
 NotAvailable=غير متوفر
-Popularity=شعبية
 Categories=الكلمات / فئات
 Category=العلامة / فئة
 By=بواسطة
@@ -434,14 +428,13 @@ ApprovedBy2=التي وافقت عليها (موافقة الثانية)
 Approved=وافق
 Refused=رفض
 ReCalculate=حساب
-ResultOk=نجاح
 ResultKo=فشل
 Reporting=التقارير
 Reportings=التقارير
 Draft=مسودة
 Drafts=الداما
 Validated=التحقق من صحة
-Opened=فتح
+Opened=Opened
 New=جديد
 Discount=تخفيض السعر
 Unknown=غير معروف
@@ -454,11 +447,9 @@ ByCompanies=من قبل أطراف ثالثة
 ByUsers=من قبل المستخدمين
 Links=الروابط
 Link=حلقة الوصل
-Receipts=المبالغ المستلمة
 Rejects=ترفض
 Preview=معاينة
 NextStep=الخطوة التالية
-PreviousStep=خطوة سابقة
 Datas=البيانات
 None=لا شيء
 NoneF=لا شيء
@@ -467,8 +458,11 @@ LateDesc=Delay to define if a record is late or not depends on your setup. Ask y
 Photo=صورة
 Photos=الصور
 AddPhoto=إضافة الصورة
+DeletePicture=حذف صورة
+ConfirmDeletePicture=تأكيد الصورة الحذف؟
 Login=تسجيل الدخول
 CurrentLogin=تسجيل الدخول الحالي
+EnterLoginDetail=Enter login details
 January=كانون الثاني
 February=شهر فبراير
 March=مارس، يسير، يتقدم
@@ -526,32 +520,29 @@ ReportName=اسم التقرير
 ReportPeriod=فترة التقرير
 ReportDescription=وصف
 Report=تقرير
-Keyword=الفحص السنوي clé
+Keyword=Keyword
+Origin=Origin
 Legend=أسطورة
-FillTownFromZip=شغل البلدة من الرمز البريدي
 Fill=تعبئة
 Reset=إعادة تعيين
-ShowLog=وتظهر الدخول
 File=ملف
 Files=ملفات
 NotAllowed=غير مسموح
 ReadPermissionNotAllowed=إذن لا يسمح للقراءة
-AmountInCurrency=Amount in %s currency
+AmountInCurrency=المبلغ بالعملة ق ٪
 Example=مثال
 Examples=أمثلة
 NoExample=على سبيل المثال لا
 FindBug=تقرير خلل
 NbOfThirdParties=عدد من الأطراف الثالثة
-NbOfCustomers=عدد من العملاء
 NbOfLines=عدد الخطوط
 NbOfObjects=عدد الأجسام
-NbOfReferers=عدد المشيرين
-NbOfObjectReferers=Number of refering objects
-Referers=اشارة الأجسام
+NbOfObjectReferers=Number of related items
+Referers=Related items
 TotalQuantity=الكمية الإجمالية
-DateFromTo=From %s to %s
-DateFrom=From %s
-DateUntil=Until %s
+DateFromTo=ل٪ من ق ق ٪
+DateFrom=من ق ٪
+DateUntil=حتى ق ٪
 Check=فحص
 Uncheck=قم بإلغاء التحديد
 Internal=الداخلية
@@ -560,20 +551,13 @@ Internals=الداخلية
 Externals=الخارجية
 Warning=تحذير
 Warnings=تحذيرات
-BuildPDF=بناء الشعبي
-RebuildPDF=إعادة بناء الشعبي
 BuildDoc=بناء مستدات
-RebuildDoc=إعادة بناء مستدات
 Entity=كيان
 Entities=الكيانات
-EventLogs=الجذوع
 CustomerPreview=العميل معاينة
 SupplierPreview=المورد معاينة
-AccountancyPreview=المحاسبة معاينة
 ShowCustomerPreview=وتبين للعملاء معاينة
 ShowSupplierPreview=وتظهر معاينة المورد
-ShowAccountancyPreview=وتظهر معاينة المحاسبة
-ShowProspectPreview=وتظهر احتمال معاينة
 RefCustomer=المرجع. العميل
 Currency=العملة
 InfoAdmin=معلومات للإداريين
@@ -584,48 +568,49 @@ UndoExpandAll=التراجع عن التوسع
 Reason=سبب
 FeatureNotYetSupported=ميزة لم يؤيد
 CloseWindow=إغلاق النافذة
-Question=السؤال
 Response=رد
 Priority=الأولوية
 SendByMail=أرسل عن طريق البريد الالكتروني
 MailSentBy=البريد الإلكتروني التي بعث بها
 TextUsedInTheMessageBody=هيئة البريد الإلكتروني
-SendAcknowledgementByMail=ارسال Ack. عن طريق البريد الإلكتروني
+SendAcknowledgementByMail=Send confirmation email
 EMail=البريد الإلكتروني
 NoEMail=أي بريد إلكتروني
+Email=Email
 NoMobilePhone=لا هاتف المحمول
 Owner=مالك
-DetectedVersion=اكتشاف نسخة
 FollowingConstantsWillBeSubstituted=الثوابت التالية ستكون بديلا المقابلة القيمة.
 Refresh=تجديد
 BackToList=العودة إلى قائمة
 GoBack=العودة
 CanBeModifiedIfOk=يمكن تعديلها إذا كان صحيحا
 CanBeModifiedIfKo=يمكن تعديلها إذا لم يكن صحيحا
+ValueIsValid=قيمة صالحة
+ValueIsNotValid=Value is not valid
+RecordCreatedSuccessfully=Record created successfully
 RecordModifiedSuccessfully=سجل تعديل بنجاح
-RecordsModified=%s records modified
+RecordsModified=%s record modified
+RecordsDeleted=%s record deleted
 AutomaticCode=مدونة الآلي
-NotManaged=لم يفلح
 FeatureDisabled=سمة المعوقين
-MoveBox=Move box %s
+MoveBox=Move widget
 Offered=عرض
 NotEnoughPermissions=ليس لديك إذن لهذا العمل
 SessionName=اسم الدورة
 Method=الطريقة
 Receive=استقبال
+CompleteOrNoMoreReceptionExpected=Complete or nothing more expected
+ExpectedValue=Expected Value
+CurrentValue=القيمة الحالية
 PartialWoman=جزئي
-PartialMan=جزئي
 TotalWoman=المجموع
-TotalMan=المجموع
 NeverReceived=لم يتلق
 Canceled=ألغى
 YouCanChangeValuesForThisListFromDictionarySetup=يمكنك تغيير قيم هذه القائمة من إعداد القائمة - القاموس
 YouCanSetDefaultValueInModuleSetup=You can set the default value used when creating a new record into module setup
 Color=لون
 Documents=ربط الملفات
-DocumentsNb=ملفات مرتبطة (%s)
 Documents2=وثائق
-BuildDocuments=ولدت وثائق
 UploadDisabled=تحميل المعوقين
 MenuECM=وثائق
 MenuAWStats=AWStats
@@ -636,10 +621,14 @@ NoFileFound=لا الوثائق المحفوظة في هذا المجلد
 CurrentUserLanguage=الصيغة الحالية
 CurrentTheme=الموضوع الحالي
 CurrentMenuManager=مدير القائمة الحالي
+Browser=المتصفح
+Layout=Layout
+Screen=Screen
 DisabledModules=والمعوقين وحدات
 For=لأجل
 ForCustomer=الزبون
 Signature=التوقيع
+DateOfSignature=Date of signature
 HidePassword=وتبين للقيادة مع كلمة السر الخفي
 UnHidePassword=وتظهر واضحة للقيادة حقيقية كلمة السر
 Root=جذور
@@ -648,7 +637,6 @@ Page=صفحة
 Notes=وتلاحظ
 AddNewLine=إضافة خط جديد
 AddFile=إضافة ملف
-ListOfFiles=قائمة الملفات المتوفرة
 FreeZone=الدخول مجانا
 FreeLineOfType=دخول مجاني من نوع
 CloneMainAttributes=استنساخ وجوه مع السمات الرئيسية
@@ -656,10 +644,9 @@ PDFMerge=دمج الشعبي
 Merge=دمج
 PrintContentArea=وتظهر الصفحة الرئيسية لطباعة ناحية المحتوى
 MenuManager=مدير القائمة
-NoMenu=لا القائمة الفرعية
 WarningYouAreInMaintenanceMode=انذار ، كنت في وضع الصيانة ، <b>%s</b> الدخول فقط بحيث يتم السماح لاستخدام التطبيق في الوقت الراهن.
 CoreErrorTitle=نظام خطأ
-CoreErrorMessage=عذرا، حدث خطأ. تحقق من سجلات أو اتصل بمسؤول النظام.
+CoreErrorMessage=Sorry, an error occurred. Contact your system administrator to check the logs or disable $dolibarr_main_prod=1 to get more information.
 CreditCard=بطاقة الائتمان
 FieldsWithAreMandatory=حقول إلزامية مع <b>%s</b>
 FieldsWithIsForPublic=<b>%s</b> تظهر الحقول التي تحتوي على قائمة العامة للأعضاء. إذا كنت لا تريد هذا ، والتحقق من "العامة" مربع.
@@ -683,9 +670,17 @@ Frequency=تردد
 IM=التراسل الفوري
 NewAttribute=جديد السمة
 AttributeCode=السمة رمز
-OptionalFieldsSetup=اضافية سمات الإعداد
 URLPhoto=للتسجيل من الصورة / الشعار
 SetLinkToAnotherThirdParty=تصل إلى طرف ثالث آخر
+LinkTo=Link to
+LinkToProposal=Link to proposal
+LinkToOrder=تصل إلى النظام
+LinkToInvoice=Link to invoice
+LinkToSupplierOrder=Link to supplier order
+LinkToSupplierProposal=Link to supplier proposal
+LinkToSupplierInvoice=Link to supplier invoice
+LinkToContract=Link to contract
+LinkToIntervention=Link to intervention
 CreateDraft=إنشاء مشروع
 SetToDraft=العودة إلى مشروع
 ClickToEdit=انقر للتحرير
@@ -699,8 +694,6 @@ ByMonth=من قبل شهر
 ByDay=بعد يوم
 BySalesRepresentative=بواسطة مندوب مبيعات
 LinkedToSpecificUsers=يرتبط اسم مستخدم معين
-DeleteAFile=حذف ملف
-ConfirmDeleteAFile=هل أنت متأكد أنك تريد حذف الملف
 NoResults=لا نتائج
 AdminTools=Admin tools
 SystemTools=ادوات النظام
@@ -708,8 +701,8 @@ ModulesSystemTools=أدوات حدات
 Test=اختبار
 Element=العنصر
 NoPhotoYet=أي صور متوفرة حتى الآن
-HomeDashboard=الرئيسية ملخص 
 Dashboard=Dashboard
+MyDashboard=My dashboard
 Deductible=خصم
 from=من عند
 toward=نحو
@@ -722,12 +715,12 @@ SetDemandReason=مجموعة مصدر
 SetBankAccount=تحديد الحساب المصرفي
 AccountCurrency=عملة الحساب
 ViewPrivateNote=عرض الملاحظات
-XMoreLines=%s line(s) hidden
+XMoreLines=٪ ق خط (ق) مخبأة
 PublicUrl=URL العام
 AddBox=إضافة مربع
 SelectElementAndClickRefresh=حدد عنصر وانقر فوق تحديث
-PrintFile=Print File %s
-ShowTransaction=عرض الصفقة على حساب مصرفي
+PrintFile=طباعة ملف٪ الصورة
+ShowTransaction=Show entry on bank account
 GoIntoSetupToChangeLogo=اذهب إلى الصفحة الرئيسية - إعداد - شركة لتغيير شعار أو الذهاب إلى الصفحة الرئيسية - إعداد - عرض للاختباء.
 Deny=رفض
 Denied=رفض
@@ -740,9 +733,33 @@ Mandatory=إلزامي
 Hello=أهلا
 Sincerely=بإخلاص
 DeleteLine=حذف الخط
-ConfirmDeleteLine=هل أنت متأكد أنك تريد حذف هذا الخط؟
+ConfirmDeleteLine=Are you sure you want to delete this line?
 NoPDFAvailableForDocGenAmongChecked=No PDF were available for the document generation among checked records
-TooManyRecordForMassAction=Too many records selected for mass action. Such action are restriced to a list of %s records.
+TooManyRecordForMassAction=Too many record selected for mass action. The action is restricted to a list of %s records.
+NoRecordSelected=No record selected
+MassFilesArea=Area for files built by mass actions
+ShowTempMassFilesArea=Show area of files built by mass actions
+RelatedObjects=Related Objects
+ClassifyBilled=تصنيف الفواتير
+Progress=تقدم
+ClickHere=اضغط هنا
+FrontOffice=Front office
+BackOffice=المكتب الخلفي
+View=View
+Export=تصدير
+Exports=صادرات
+ExportFilteredList=Export filtered list
+ExportList=Export list
+Miscellaneous=متفرقات
+Calendar=التقويم
+GroupBy=Group by...
+ViewFlatList=View flat list
+RemoveString=Remove string '%s'
+SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix language files registering to <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">http://transifex.com/projects/p/dolibarr/</a>.
+DirectDownloadLink=Direct download link
+Download=Download
+ActualizeCurrency=Update currency rate
+Fiscalyear=السنة المالية
 # Week day
 Monday=يوم الاثنين
 Tuesday=الثلاثاء
@@ -774,10 +791,12 @@ ShortSaturday=دإ
 ShortSunday=دإ
 SelectMailModel=قالب البريد الإلكتروني حدد
 SetRef=تعيين المرجع
-Select2ResultFoundUseArrows=
+Select2ResultFoundUseArrows=Some results found. Use arrows to select.
 Select2NotFound=لا نتائج لبحثك
 Select2Enter=أدخل
+Select2MoreCharacter=or more character
 Select2MoreCharacters=أحرف أو أكثر
+Select2MoreCharactersMore=<strong>Search syntax:</strong><br /><kbd><strong> |</strong></kbd><kbd> OR</kbd> (a|b)<br /><kbd><strong>*</strong></kbd><kbd> Any character</kbd> (a*b)<br /><kbd><strong>^</strong></kbd><kbd> Start with</kbd> (^ab)<br /><kbd><strong>$</strong></kbd><kbd> End with</kbd> (ab$)<br />
 Select2LoadingMoreResults=تحميل المزيد من النتائج ...
 Select2SearchInProgress=بحث في التقدم ...
 SearchIntoThirdparties=الأطراف الثالثة
@@ -786,6 +805,7 @@ SearchIntoMembers=أعضاء
 SearchIntoUsers=المستخدمين
 SearchIntoProductsOrServices=المنتجات أو الخدمات
 SearchIntoProjects=مشاريع
+SearchIntoTasks=المهام
 SearchIntoCustomerInvoices=فواتير العملاء
 SearchIntoSupplierInvoices=فواتير الموردين
 SearchIntoCustomerOrders=طلبات العملاء
@@ -794,4 +814,8 @@ SearchIntoCustomerProposals=مقترحات العملاء
 SearchIntoSupplierProposals=مقترحات المورد
 SearchIntoInterventions=التدخلات
 SearchIntoContracts=عقود
+SearchIntoCustomerShipments=Customer shipments
 SearchIntoExpenseReports=تقارير المصاريف
+SearchIntoLeaves=أوراق
+
+BulkActions=Bulk actions

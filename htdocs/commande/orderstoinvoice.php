@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin          	<regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Andreu Bisquerra Gaya  	<jove@bisquerra.com>
  * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
- * Copyright (C) 2012	   Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012-2017 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015	   Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,13 +46,13 @@ $langs->load('companies');
 if (! $user->rights->facture->creer)
 	accessforbidden();
 
-$id				= (GETPOST('id')?GETPOST('id','int'):GETPOST("facid"));  // For backward compatibility
+$id				= (GETPOST('id')?GETPOST('id','int'):GETPOST("facid","int"));  // For backward compatibility
 $ref			= GETPOST('ref','alpha');
 $action			= GETPOST('action','alpha');
 $confirm		= GETPOST('confirm','alpha');
 $sref			= GETPOST('sref');
 $sref_client	= GETPOST('sref_client');
-$sall			= GETPOST('sall');
+$sall			= GETPOST('sall', 'alphanohtml');
 $socid			= GETPOST('socid','int');
 $selected		= GETPOST('orders_to_invoice');
 $sortfield		= GETPOST("sortfield",'alpha');
@@ -70,9 +70,14 @@ $date_end = dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endda
 $date_starty = dol_mktime(0,0,0,$_REQUEST["date_start_delymonth"],$_REQUEST["date_start_delyday"],$_REQUEST["date_start_delyyear"]);	// Date for local PHP server
 $date_endy = dol_mktime(23,59,59,$_REQUEST["date_end_delymonth"],$_REQUEST["date_end_delyday"],$_REQUEST["date_end_delyyear"]);
 
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('facture');
+
 if ($action == 'create')
 {
-	if (is_array($selected) == false)
+	if (! is_array($selected))
 	{
 		$error++;
 		setEventMessages($langs->trans('Error_OrderNotChecked'), null, 'errors');
@@ -107,7 +112,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 	$langs->load('main');
 	if (isset($_GET['orders_to_invoice']))
 	{
-		$orders_id = $_GET['orders_to_invoice'];
+		$orders_id = GETPOST('orders_to_invoice','',1);
 		$n        = count($orders_id);
 		$i        = 0;
 
@@ -117,7 +122,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 	}
 	if (isset($_POST['orders_to_invoice']))
 	{
-		$orders_id = $_POST['orders_to_invoice'];
+		$orders_id = GETPOST('orders_to_invoice','',2);
 		$nn        = count($orders_id);
 		$ii        = 0;
 
@@ -174,6 +179,9 @@ if (($action == 'create' || $action == 'add') && !$error)
 				$object->remise_absolue		= $_POST['remise_absolue'];
 				$object->remise_percent		= $_POST['remise_percent'];
 
+				$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+				if ($ret < 0) $error++;
+
 				if ($_POST['origin'] && $_POST['originid'])
 				{
 					$object->origin    = $_POST['origin'];
@@ -220,7 +228,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 							{
 								if ($closeOrders)
 								{
-									$objectsrc->classifyBilled();
+									$objectsrc->classifyBilled($user);
 									$objectsrc->setStatut(3);
 								}
 								$lines = $objectsrc->lines;
@@ -342,7 +350,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 		if ($id > 0 && ! $error)
 		{
 			$db->commit();
-			header('Location: '.DOL_URL_ROOT.'/compta/facture.php?facid='.$id);
+			header('Location: '.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$id);
 			exit;
 		}
 		else
@@ -413,7 +421,7 @@ if ($action == 'create' && !$error)
 	print '</tr>'."\n";
 
 	// Type
-	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('Type').'</td><td colspan="2">';
+	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Type').'</td><td colspan="2">';
 	print '<table class="nobordernopadding">'."\n";
 
 	// Standard invoice
@@ -463,6 +471,12 @@ if ($action == 'create' && !$error)
 	// Other attributes
 	$parameters=array('objectsrc' => $objectsrc, 'idsrc' => $listoforders, 'colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		$object=new Facture($db);
+		print $object->showOptionals($extrafields,'edit');
+	}
 
 	// Modele PDF
 	print '<tr><td>'.$langs->trans('Model').'</td>';
@@ -639,8 +653,8 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">';
 
 			$generic_commande->id=$objp->rowid;
@@ -651,7 +665,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td class="nobordernopadding nowrap">';
-			print $generic_commande->getNomUrl(1,$objp->fk_statut);
+			print $generic_commande->getNomUrl(1,0);
 			print '</td>';
 
 			print '<td width="20" class="nobordernopadding nowrap">';

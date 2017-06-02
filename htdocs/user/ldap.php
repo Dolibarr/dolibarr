@@ -42,7 +42,7 @@ if ($user->id == $id) $feature2=''; // A user can always read its own card
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 $object = new User($db);
-$object->fetch($id);
+$object->fetch($id, '', '', 1);
 $object->getrights();
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -96,7 +96,11 @@ $head = user_prepare_head($object);
 $title = $langs->trans("User");
 dol_fiche_head($head, 'ldap', $title, 0, 'user');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '';
+
+if ($user->rights->user->user->lire || $user->admin) {
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+}
 
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
@@ -181,12 +185,12 @@ if ($result > 0)
     $info=$object->_load_ldap_info();
     $dn=$object->_load_ldap_dn($info,1);
     $search = "(".$object->_load_ldap_dn($info,2).")";
-    $records=$ldap->getAttribute($dn,$search);
+    $records = $ldap->getAttribute($dn,$search);
 
     //print_r($records);
 
     // Affichage arbre
-    if (count($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
+    if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
     {
         if (! is_array($records))
         {

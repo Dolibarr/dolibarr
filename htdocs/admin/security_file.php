@@ -114,9 +114,8 @@ llxHeader('',$langs->trans("Files"),$wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
-//print $langs->trans("FilesDesc")."<br>\n";
-//print "<br>\n";
-
+print $langs->trans("SecurityFilesDesc")."<br>\n";
+print "<br>\n";
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -125,7 +124,7 @@ print '<input type="hidden" name="action" value="updateform">';
 
 $head=security_prepare_head();
 
-dol_fiche_head($head, 'file', $langs->trans("Security"));
+dol_fiche_head($head, 'file', $langs->trans("Security"), -1);
 
 
 // Upload options
@@ -137,7 +136,7 @@ print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td colspan="2">'.$langs->trans("MaxSizeForUploadedFiles").'.';
 $max=@ini_get('upload_max_filesize');
 if ($max) print ' '.$langs->trans("MustBeLowerThanPHPLimit",$max*1024,$langs->trans("Kb")).'.';
@@ -148,8 +147,8 @@ print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.
 print '</td>';
 print '</tr>';
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UMask").'</td><td align="right">';
 print $form->textwithpicto('',$langs->trans("UMaskExplanation"));
 print '</td>';
@@ -159,8 +158,8 @@ print '</td>';
 print '</tr>';
 
 // Use anti virus
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td colspan="2">'.$langs->trans("AntiVirusCommand").'<br>';
 print $langs->trans("AntiVirusCommandExample");
 // Check command in inside safe_mode
@@ -177,18 +176,18 @@ if (ini_get('safe_mode') && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
         dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
     }
 }
-print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" size="72" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_COMMAND)?dol_htmlentities($conf->global->MAIN_ANTIVIRUS_COMMAND):'').'">';
+print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_COMMAND)?dol_htmlentities($conf->global->MAIN_ANTIVIRUS_COMMAND):'').'">';
 print "</td>";
 print '</tr>';
 
 // Use anti virus
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
 print $langs->trans("AntiVirusParamExample");
 print '</td>';
 print '<td>';
-print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" size="72" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_PARAM)?dol_htmlentities($conf->global->MAIN_ANTIVIRUS_PARAM):'').'">';
+print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_PARAM)?dol_htmlentities($conf->global->MAIN_ANTIVIRUS_PARAM):'').'">';
 print "</td>";
 print '</tr>';
 

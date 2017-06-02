@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - contracts
 ServiceStatusNotLate=Läuft (nicht abgelaufen)
 ServiceStatusNotLateShort=Läuft
-SearchAContract=Suche einen Vertra
 ListOfInactiveServices=Liste inaktiver Services
 ListOfExpiredServices=Liste abgelaufener Services
 ListOfClosedServices=Liste geschlossener Services
@@ -11,13 +10,9 @@ DateStartPlanned=geplanter Start
 DateStartPlannedShort=geplanter Start
 DateEndPlanned=geplantes Ende
 DateEndPlannedShort=geplantes Ende
-NbOfServices=Anzahl der Services
 CloseService=Service schließen
-ServicesNomberShort=%s Service(s)
-RunningServices=Laufende Services
 BoardRunningServices=Abgelaufene, aktive Services
 ServiceStatus=Service-Status
 CloseRefusedBecauseOneServiceActive=Schließen nicht möglich, es existieren noch aktive Services
 DeleteContractLine=Lösche Vertragsposition
 ConfirmMoveToAnotherContractQuestion=Bitte wählen Sie einen bestehenden Vertrag (desselben Partners) für die Verschiebung des Services:
-Error_CONTRACT_ADDON_NotDefined=Constant CONTRACT_ADDON nicht definiert

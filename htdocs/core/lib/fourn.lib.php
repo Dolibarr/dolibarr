@@ -39,7 +39,7 @@ function facturefourn_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$object->id;
-	$head[$h][1] = $langs->trans('CardBill');
+	$head[$h][1] = $langs->trans('Card');
 	$head[$h][2] = 'card';
 	$h++;
 
@@ -74,7 +74,7 @@ function facturefourn_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$object->ref;
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -101,7 +101,8 @@ function facturefourn_prepare_head($object)
  */
 function ordersupplier_prepare_head($object)
 {
-	global $db, $langs, $conf;
+	global $db, $langs, $conf, $user;
+	
 	$h = 0;
 	$head = array();
 
@@ -150,7 +151,7 @@ function ordersupplier_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->fournisseur->dir_output . "/commande/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -158,8 +159,13 @@ function ordersupplier_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/history.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("OrderFollow");
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/info.php?id='.$object->id;
+	$head[$h][1].= $langs->trans("Events");
+	if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+	{
+	    $head[$h][1].= '/';
+	    $head[$h][1].= $langs->trans("Agenda");
+	}
 	$head[$h][2] = 'info';
 	$h++;
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_order', 'remove');

@@ -55,6 +55,7 @@ class Cronjob extends CommonObject
 	var $unitfrequency;
 	var $frequency;
 	var $status;
+	var $processing;
 	var $fk_user_author;
 	var $fk_user_mod;
 	var $nbrun;
@@ -191,7 +192,7 @@ class Cronjob extends CommonObject
 		$sql.= " ".(! isset($this->params)?'NULL':"'".$this->db->escape($this->params)."'").",";
 		$sql.= " ".(! isset($this->md5params)?'NULL':"'".$this->db->escape($this->md5params)."'").",";
 		$sql.= " ".(! isset($this->module_name)?'NULL':"'".$this->db->escape($this->module_name)."'").",";
-		$sql.= " ".(! isset($this->priority)?'NULL':"'".$this->priority."'").",";
+		$sql.= " ".(! isset($this->priority)?'0':$this->priority).",";
 		$sql.= " ".(! isset($this->datelastrun) || dol_strlen($this->datelastrun)==0?'NULL':$this->db->idate($this->datelastrun)).",";
 		$sql.= " ".(! isset($this->datenextrun) || dol_strlen($this->datenextrun)==0?'NULL':$this->db->idate($this->datenextrun)).",";
 		$sql.= " ".(! isset($this->dateend) || dol_strlen($this->dateend)==0?'NULL':$this->db->idate($this->dateend)).",";
@@ -200,13 +201,13 @@ class Cronjob extends CommonObject
 		$sql.= " ".(! isset($this->datelastresult) || dol_strlen($this->datelastresult)==0?'NULL':$this->db->idate($this->datelastresult)).",";
 		$sql.= " ".(! isset($this->lastoutput)?'NULL':"'".$this->db->escape($this->lastoutput)."'").",";
 		$sql.= " ".(! isset($this->unitfrequency)?'NULL':"'".$this->unitfrequency."'").",";
-		$sql.= " ".(! isset($this->frequency)?'NULL':"'".$this->frequency."'").",";
-		$sql.= " ".(! isset($this->status)?'0':"'".$this->status."'").",";
+		$sql.= " ".(! isset($this->frequency)?'0':$this->frequency).",";
+		$sql.= " ".(! isset($this->status)?'0':$this->status).",";
 		$sql.= " ".$user->id.",";
 		$sql.= " ".$user->id.",";
 		$sql.= " ".(! isset($this->note)?'NULL':"'".$this->db->escape($this->note)."'").",";
-		$sql.= " ".(! isset($this->nbrun)?'0':"'".$this->db->escape($this->nbrun)."'").",";
-		$sql.= " ".(empty($this->maxrun)?'null':"'".$this->db->escape($this->maxrun)."'").",";
+		$sql.= " ".(! isset($this->nbrun)?'0':$this->db->escape($this->nbrun)).",";
+		$sql.= " ".(empty($this->maxrun)?'0':$this->db->escape($this->maxrun)).",";
 		$sql.= " ".(! isset($this->libname)?'NULL':"'".$this->db->escape($this->libname)."'").",";
 		$sql.= " ".(! isset($this->test)?'NULL':"'".$this->db->escape($this->test)."'")."";
 		$sql.= ")";
@@ -287,6 +288,7 @@ class Cronjob extends CommonObject
 		$sql.= " t.unitfrequency,";
 		$sql.= " t.frequency,";
 		$sql.= " t.status,";
+		$sql.= " t.processing,";
 		$sql.= " t.fk_user_author,";
 		$sql.= " t.fk_user_mod,";
 		$sql.= " t.note,";
@@ -330,6 +332,7 @@ class Cronjob extends CommonObject
 				$this->unitfrequency = $obj->unitfrequency;
 				$this->frequency = $obj->frequency;
 				$this->status = $obj->status;
+				$this->processing = $obj->processing;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->fk_user_mod = $obj->fk_user_mod;
 				$this->note = $obj->note;
@@ -352,19 +355,24 @@ class Cronjob extends CommonObject
     /**
      *  Load object in memory from the database
      *
-	 *  @param	string		$sortorder    sort order
-	 *  @param	string		$sortfield    sort field
-	 *  @param	int			$limit		  limit page
-	 *  @param	int			$offset    	  page
-	 *  @param	int			$status    	  display active or not
-	 *  @param	array		$filter    	  filter output
-     *  @return int          			<0 if KO, >0 if OK
+	 *  @param	string		$sortorder      sort order
+	 *  @param	string		$sortfield      sort field
+	 *  @param	int			$limit		    limit page
+	 *  @param	int			$offset    	    page
+	 *  @param	int			$status    	    display active or not
+	 *  @param	array		$filter    	    filter output
+	 *  @param  int         $processing     Processing or not 
+     *  @return int          			    <0 if KO, >0 if OK
      */
-    function fetch_all($sortorder='DESC', $sortfield='t.rowid', $limit=0, $offset=0, $status=1, $filter='')
+    function fetch_all($sortorder='DESC', $sortfield='t.rowid', $limit=0, $offset=0, $status=1, $filter='', $processing=-1)
     {
     	global $langs;
+    	
+    	$this->lines=array();
+    	
     	$sql = "SELECT";
     	$sql.= " t.rowid,";
+    	$sql.= " t.entity,";
     	$sql.= " t.tms,";
     	$sql.= " t.datec,";
     	$sql.= " t.jobtype,";
@@ -387,6 +395,7 @@ class Cronjob extends CommonObject
     	$sql.= " t.unitfrequency,";
     	$sql.= " t.frequency,";
     	$sql.= " t.status,";
+    	$sql.= " t.processing,";
     	$sql.= " t.fk_user_author,";
     	$sql.= " t.fk_user_mod,";
     	$sql.= " t.note,";
@@ -395,12 +404,15 @@ class Cronjob extends CommonObject
     	$sql.= " t.test";
     	$sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
     	$sql.= " WHERE 1 = 1";
+    	if ($processing >= 0) $sql.= " AND t.processing = ".(empty($processing)?'0':'1');
     	if ($status >= 0 && $status < 2) $sql.= " AND t.status = ".(empty($status)?'0':'1');
     	if ($status == 2) $sql.= " AND t.status = 2";
     	//Manage filter
     	if (is_array($filter) && count($filter)>0) {
-    		foreach($filter as $key => $value) {
-    				$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+    		foreach($filter as $key => $value) 
+    		{
+    		    if ($key == 't.rowid') $sql.= ' AND '.$key.' = '.$this->db->escape($value);
+   				else $sql.= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     		}
     	}
 
@@ -411,9 +423,6 @@ class Cronjob extends CommonObject
 
     	$sqlwhere = array();
 
-    	if (!empty($module_name)) {
-    		$sqlwhere[]='(t.module_name='.$module_name.')';
-    	}
     	if (count($sqlwhere)>0) {
     		$sql.= " WHERE ".implode(' AND ',$sqlwhere);
     	}
@@ -427,8 +436,6 @@ class Cronjob extends CommonObject
 
     		if ($num)
     		{
-    			$this->lines=array();
-
 	    		while ($i < $num)
 	    		{
 
@@ -439,6 +446,7 @@ class Cronjob extends CommonObject
 	    			$line->id    = $obj->rowid;
 	    			$line->ref = $obj->rowid;
 
+	    			$line->entity = $obj->entity;
 	    			$line->tms = $this->db->jdate($obj->tms);
 	    			$line->datec = $this->db->jdate($obj->datec);
 	    			$line->label = $obj->label;
@@ -461,6 +469,7 @@ class Cronjob extends CommonObject
 	    			$line->unitfrequency = $obj->unitfrequency;
 	    			$line->frequency = $obj->frequency;
 	    			$line->status = $obj->status;
+	    			$line->processing = $obj->processing;
 	    			$line->fk_user_author = $obj->fk_user_author;
 	    			$line->fk_user_mod = $obj->fk_user_mod;
 	    			$line->note = $obj->note;
@@ -518,9 +527,11 @@ class Cronjob extends CommonObject
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->note)) $this->note=trim($this->note);
 		if (isset($this->nbrun)) $this->nbrun=trim($this->nbrun);
-		if (isset($this->maxrun)) $this->maxrun=trim($this->maxrun);
         if (isset($this->libname)) $this->libname = trim($this->libname);
         if (isset($this->test)) $this->test = trim($this->test);
+
+		if (empty($this->maxrun)) $this->maxrun=0;
+        if (empty($this->processing)) $this->processing=0;
         
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -586,10 +597,11 @@ class Cronjob extends CommonObject
 		$sql.= " unitfrequency=".(isset($this->unitfrequency)?$this->unitfrequency:"null").",";
 		$sql.= " frequency=".(isset($this->frequency)?$this->frequency:"null").",";
 		$sql.= " status=".(isset($this->status)?$this->status:"null").",";
+		$sql.= " processing=".((isset($this->processing) && $this->processing > 0)?$this->processing:"0").",";
 		$sql.= " fk_user_mod=".$user->id.",";
 		$sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
 		$sql.= " nbrun=".((isset($this->nbrun) && $this->nbrun >0)?$this->nbrun:"null").",";
-		$sql.= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0)?$this->maxrun:"null").",";
+		$sql.= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0)?$this->maxrun:"0").",";
 		$sql.= " libname=".(isset($this->libname)?"'".$this->db->escape($this->libname)."'":"null").",";
 		$sql.= " test=".(isset($this->test)?"'".$this->db->escape($this->test)."'":"null");
 		$sql.= " WHERE rowid=".$this->id;
@@ -784,7 +796,8 @@ class Cronjob extends CommonObject
 		$this->lastresult='';
 		$this->unitfrequency='';
 		$this->frequency='';
-		$this->status='';
+		$this->status=0;
+		$this->processing=0;
 		$this->fk_user_author='';
 		$this->fk_user_mod='';
 		$this->note='';
@@ -893,8 +906,10 @@ class Cronjob extends CommonObject
 
 		// Update last run date start (to track running jobs)
 		$this->datelastrun=$now;
+		$this->datelastresult=null;
 		$this->lastoutput='';
 		$this->lastresult='';
+		$this->processing = 1;                // To know job was started
 		$this->nbrun=$this->nbrun + 1;
 		$result = $this->update($user);       // This include begin/commit
 		if ($result<0) {
@@ -956,7 +971,7 @@ class Cronjob extends CommonObject
 				// Create Object for the call module
 				$object = new $this->objectname($this->db);
 	
-				$params_arr = explode(", ",$this->params);
+				$params_arr = array_map('trim', explode(",",$this->params));
 				if (!is_array($params_arr))
 				{
 					$result = call_user_func(array($object, $this->methodename), $this->params);
@@ -1078,20 +1093,25 @@ class Cronjob extends CommonObject
 				}
 				if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 			}
-		}
 
-		dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true)." lastoutput=".$this->lastoutput." lastresult=".$this->lastresult, LOG_DEBUG);
-
-		// Update with result
-		if (is_array($output_arr) && count($output_arr)>0)
-		{
-			foreach($output_arr as $val)
-			{
-				$this->lastoutput.=$val."\n";
-			}
+			// Update with result
+    		if (is_array($output_arr) && count($output_arr)>0)
+    		{
+    			foreach($output_arr as $val)
+    			{
+    				$this->lastoutput.=$val."\n";
+    			}
+    		}
+    		
+    		$this->lastresult=$retval;
+		
+    		dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true)." lastoutput=".$this->lastoutput." lastresult=".$this->lastresult, LOG_DEBUG);
 		}
-		$this->lastresult=$retval;
+		
+		dol_syslog(get_class($this)."::run_jobs now we update job to track it is finished (with success or error)");
+		
 		$this->datelastresult=dol_now();
+		$this->processing=0;
 		$result = $this->update($user);       // This include begin/commit
 		if ($result < 0)
 		{
@@ -1179,8 +1199,63 @@ class Cronjob extends CommonObject
 		}
 
 		return 1;
-
 	}
+	
+	/**
+	 *  Return label of status of user (active, inactive)
+	 *
+	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return	string 			       Label of status
+	 */
+	function getLibStatut($mode=0)
+	{
+	    return $this->LibStatut($this->status,$mode);
+	}
+	
+	/**
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int		$status        	Id statut
+	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string 			       	Label of status
+	 */
+	function LibStatut($status,$mode=0)
+	{
+	    global $langs;
+	    $langs->load('users');
+	
+	    if ($mode == 0)
+	    {
+	        $prefix='';
+	        if ($status == 1) return $langs->trans('Enabled');
+	        if ($status == 0) return $langs->trans('Disabled');
+	    }
+	    if ($mode == 1)
+	    {
+	        if ($status == 1) return $langs->trans('Enabled');
+	        if ($status == 0) return $langs->trans('Disabled');
+	    }
+	    if ($mode == 2)
+	    {
+	        if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"').' '.$langs->trans('Enabled');
+	        if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"').' '.$langs->trans('Disabled');
+	    }
+	    if ($mode == 3)
+	    {
+	        if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"');
+	        if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"');
+	    }
+	    if ($mode == 4)
+	    {
+	        if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"').' '.$langs->trans('Enabled');
+	        if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"').' '.$langs->trans('Disabled');
+	    }
+	    if ($mode == 5)
+	    {
+	        if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"');
+	        if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"');
+	    }
+	}	
 }
 
 

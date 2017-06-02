@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - admin
+# Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Configuració del mòdul workflow
 WorkflowDesc=Aquest mòdul li permet canviar el comportament de les accions automàticament en l'aplicació. De forma predeterminada, el workflow està obert (configuri segons les seves necessitats). Activi les accions automàtiques que li interessin.
 ThereIsNoWorkflowToModify=No hi ha modificacions disponibles del fluxe de treball amb els mòduls activats.
@@ -9,3 +9,7 @@ descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear automàticament una factura a client
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classificar com facturat el pressupost quan la comanda de client relacionada es classifiqui com pagada
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classificar com facturades les comanda(es) quan la factura relacionada es classifiqui com a pagada
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classificar com a facturades les comanda(es) de clients relacionats quan la factura sigui validada
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classifica com a facturat el pressupost enllaçat quan la factura de client sigui validada
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classificar enllaçant origen de la comanda i enviament quan l'enviament està validat i la quantitat enviada és la mateixa que la de la comanda
+AutomaticCreation=Creació automàtica
+AutomaticClassification=Classificació automàtica

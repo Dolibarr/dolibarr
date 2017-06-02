@@ -20,7 +20,7 @@ DoYouWantToStart=¿Quiere iniciar el proceso de instalación/actualización?
 TechnicalParameters=Parámetros técnicos
 IfFirstInstall=Si se trata de la primera instalación, deberá especificar algunos parámetros técnicos. Si no los entiende, no está seguro o va a proceder a una actualización, deje los campos con los valores propuestos por defecto.
 
-; WARNING !!! STRINGS HERE MUST BE LOWER THAN 60 CHARACTERS
+; WARNING !!! STRINGS HERE MUST BE LOWER THAN 70 CHARACTERS
 SMTPServer=Servidor SMTP (El suyo o el de su ISP, únicamente primera instalación) :
 ApachePort=Puerto Apache (únicamente primera instalación, normalmente es el 80) :
 MySqlPort=Puerto Mysql (únicamente primera instalación, normalmente es el 3306) :
@@ -31,6 +31,7 @@ FailedToDeleteLock=Error en la eliminación del archivo %1/www/dolibarr/install.l
 PortAlreadyInUse=Parece que el puerto %1 ya esta siendo usado. Se recomienda cancelar, volver atras y especificar otro valor para el puerto %2. ¿Cancelar y escojer otro valor?
 
 FirefoxDetected=Se ha detectado Firefox en su ordenador. Desea activarlo por defecto como navegador para Dolibarr ?
+ChromeDetected=Se ha detectado Chrome en su ordenador. Desea activarlo por defecto como navegador para Dolibarr ?
 ChooseDefaultBrowser=Escoja su navegador por defecto. Si no está seguro, simplementa haga clic en Abrir :
 
 LaunchNow=Lanzar ahora Dolibarr

@@ -378,10 +378,12 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$parameters["mode"] = $modetax;
 	$parameters["start"] = $date_start;
 	$parameters["end"] = $date_end;
+	$parameters["type"] = 'vat';
+	
 	$object = array(&$x_coll, &$x_paye, &$x_both);
 	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
-	$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	
 	foreach (array_keys($x_coll) as $rate) {
 		$subtot_coll_total_ht = 0;
@@ -406,8 +408,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					$type=1;
 				}
 
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				
+				print '<tr class="oddeven">';
 
 				// Ref
 				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
@@ -574,8 +576,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					$type=1;
 				}
 
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				
+				print '<tr class="oddeven">';
 
 				// Ref
 				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';

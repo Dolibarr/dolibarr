@@ -68,6 +68,7 @@ class box_services_expired extends ModeleBoxes
     		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe s, ".MAIN_DB_PREFIX."contratdet as cd";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     		$sql.= " WHERE cd.statut = 4 AND cd.date_fin_validite <= '".$db->idate($now)."'";
+    		$sql.= " AND c.entity = ".$conf->entity;
     		$sql.= " AND c.fk_soc=s.rowid AND cd.fk_contrat=c.rowid AND c.statut > 0";
             if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
             if (!$user->rights->societe->client->voir  && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -82,6 +83,8 @@ class box_services_expired extends ModeleBoxes
 
     			$i = 0;
 
+    			$thirdpartytmp = new Societe($this->db);
+    			
     			while ($i < $num)
     			{
     			    $late='';
@@ -95,30 +98,30 @@ class box_services_expired extends ModeleBoxes
     				'logo' => $this->boximg,
     				'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
 
-    				$this->info_box_contents[$i][1] = array('td' => 'align="left"',
+    				$this->info_box_contents[$i][1] = array('td' => '',
     				'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some contracts have no ref
     				'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
 
-    				$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-    				'logo' => 'company',
-    				'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+    				$thirdpartytmp->id = $objp->socid;
+    				$thirdpartytmp->name = $objp->name;
 
-    				$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-    				'text' => dol_trunc($objp->name,40),
-    				'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+    				$this->info_box_contents[$i][2] = array('td' => 'class="tdoverflowmax100 maxwidth100onsmartphone" align="left"',
+    				'text' => $thirdpartytmp->getNomUrl(1, 'customer'),
+    				'asis' => 1
+    				);
 
     				$this->info_box_contents[$i][4] = array('td' => 'align="center"',
     				'text' => dol_print_date($dateline,'day'),
     				'text2'=> $late);
 
-    				$this->info_box_contents[$i][5] = array('td' => 'align="right"',
+    				$this->info_box_contents[$i][5] = array('td' => 'class="right"',
     				'text' => $objp->nb_services);
 
 
     				$i++;
     			}
 
-    			if ($num==0) 
+    			if ($num==0)
     			{
     			    $langs->load("contracts");
     			    $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoExpiredServices"));
@@ -128,7 +131,7 @@ class box_services_expired extends ModeleBoxes
     		}
     		else
     		{
-    			$this->info_box_contents[0][0] = array(  'td' => 'align="left"',
+    			$this->info_box_contents[0][0] = array(  'td' => '',
                                                         'maxlength'=>500,
                                                         'text' => ($db->error().' sql='.$sql));
     		}
@@ -137,7 +140,7 @@ class box_services_expired extends ModeleBoxes
     	}
     	else
     	{
-    		$this->info_box_contents[0][0] = array('td' => 'align="left"',
+    		$this->info_box_contents[0][0] = array('td' => '',
     		'text' => $langs->trans("ReadPermissionNotAllowed"));
     	}
     }
@@ -147,11 +150,12 @@ class box_services_expired extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-    function showBox($head = null, $contents = null)
+    function showBox($head = null, $contents = null, $nooutput=0)
     {
-        parent::showBox($this->info_box_head, $this->info_box_contents);
+        parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
 
  }

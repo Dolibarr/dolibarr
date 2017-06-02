@@ -29,18 +29,17 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 
 $langs->load("categories");
 $langs->load("bills");
 
 
-$mesg = '';
-
 $id=GETPOST('id','int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 
 if ($id == "")
@@ -79,7 +78,7 @@ if ($action == 'confirm_delete' && $_GET["file"] && $confirm == 'yes' && $user->
 
 if ($action == 'addthumb' && $_GET["file"])
 {
-    $object->add_thumb($upload_dir."/".$_GET["file"]);
+    $object->addThumbs($upload_dir."/".$_GET["file"]);
 }
 
 
@@ -90,95 +89,67 @@ if ($action == 'addthumb' && $_GET["file"])
 llxHeader("","",$langs->trans("Categories"));
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 if ($object->id)
 {
-	$title=$langs->trans("ProductsCategoryShort");
 	if ($type == Categorie::TYPE_PRODUCT)       $title=$langs->trans("ProductsCategoryShort");
 	elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCategoryShort");
 	elseif ($type == Categorie::TYPE_CUSTOMER)  $title=$langs->trans("CustomersCategoryShort");
 	elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategoryShort");
 	elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
+	elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesShort");
+	elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesShort");
+    else                                        $title=$langs->trans("Category");
 
 	$head = categories_prepare_head($object,$type);
-	dol_fiche_head($head, 'photos', $title, 0, 'category');
 
+
+	dol_fiche_head($head, 'photos', $title, -1, 'category');
+	
+	$linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
+	
+	$object->ref = $object->label;
+	$morehtmlref='<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
+	$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
+	foreach ($ways as $way)
+	{
+	    $morehtmlref.=$way."<br>\n";
+	}
+	$morehtmlref.='</div>';
+	
+	dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+	
 	/*
 	 * Confirmation de la suppression de photo
 	*/
 	if ($action == 'delete')
 	{
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
+	    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
 	}
 
-	print($mesg);
-
+	print '<br>';
+	
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border" width="100%">';
 
-	// Path of category
-	print '<tr><td width="20%" class="notopnoleft">';
-	$ways = $object->print_all_ways();
-	print $langs->trans("Ref").'</td><td>';
-	print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
-	foreach ($ways as $way)
-	{
-		print $way."<br>\n";
-	}
-	print '</td></tr>';
-
 	// Description
-	print '<tr><td width="20%" class="notopnoleft">';
+	print '<tr><td class="titlefield notopnoleft">';
 	print $langs->trans("Description").'</td><td>';
 	print dol_htmlentitiesbr($object->description);
 	print '</td></tr>';
 
-	// Visibility
-	/*		if ($type == 0 && ! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
-	 {
-	if ($object->socid)
-	{
-	$soc = new Societe($db);
-	$soc->fetch($object->socid);
-
-	print '<tr><td width="20%" class="notopnoleft">';
-	print $langs->trans("AssignedToTheCustomer").'</td><td>';
-	print $soc->getNomUrl(1);
+	// Color
+	print '<tr><td class="notopnoleft">';
+	print $langs->trans("Color").'</td><td>';
+	print $formother->showColor($object->color);
 	print '</td></tr>';
-
-	$catsMeres = $object->get_meres ();
-
-	if ($catsMeres < 0)
-	{
-	dol_print_error();
-	}
-	else if (count($catsMeres) > 0)
-	{
-	print '<tr><td width="20%" class="notopnoleft">';
-	print $langs->trans("CategoryContents").'</td><td>';
-	print ($object->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
-	print '</td></tr>';
-	}
-	}
-	else
-	{
-	print '<tr><td width="20%" class="notopnoleft">';
-	print $langs->trans("CategoryContents").'</td><td>';
-	print ($object->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
-	print '</td></tr>';
-	}
-	}
-	else
-	{
-	print '<tr><td width="20%" class="notopnoleft">';
-	print $langs->trans("CategoryContents").'</td><td>';
-	print ($object->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
-	print '</td></tr>';
-	}
-	*/
 
 	print "</table>\n";
-
-	print "</div>\n";
+    print '</div>';
+    
+	print dol_fiche_end();
 
 
 
@@ -229,7 +200,7 @@ if ($object->id)
 		$dir = $upload_dir.'/'.$pdir;
 
 		print '<br>';
-		print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+		print '<table width="100%" valign="top" align="center">';
 
 		foreach ($object->liste_photos($dir) as $key => $obj)
 		{
@@ -286,14 +257,12 @@ if ($object->id)
 			$nbphoto++;
 		}
 
+		print '</table>';
+	
 		if ($nbphoto < 1)
 		{
-			print '<tr align=center valign=middle border=1><td class="photo">';
-			print "<br>".$langs->trans("NoPhotoYet")."<br><br>";
-			print '</td></tr>';
+			print '<div class="opacitymedium">'.$langs->trans("NoPhotoYet")."</div>";
 		}
-
-		print '</table>';
 	}
 }
 else

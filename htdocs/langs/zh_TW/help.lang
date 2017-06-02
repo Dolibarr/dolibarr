@@ -4,7 +4,6 @@ EMailSupport=電子郵件支持
 RemoteControlSupport=網上實時/遠程支持
 OtherSupport=其他支持
 ToSeeListOfAvailableRessources=聯絡/查看可用的資源：
-ClickHere=點擊這裏
 HelpCenter=說明中心
 DolibarrHelpCenter=Dolibarr幫助和支持中心
 ToGoBackToDolibarr=否則，請點擊<a href="%s">這裏使用Dolibarr</a>
@@ -12,7 +11,7 @@ TypeOfSupport=源支持
 TypeSupportCommunauty=社區（免費）
 TypeSupportCommercial=商業
 TypeOfHelp=說明類型
-NeedHelpCenter=需要說明或支援嗎？
+NeedHelpCenter=Need help or support?
 Efficiency=效率
 TypeHelpOnly=只需要說明
 TypeHelpDev=說明+開發
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=有時，是目前公司沒有可供您進行搜尋，
 BackToHelpCenter=否則，請點擊這裏進入<a href="%s">返回幫助中心主頁</a> 。
 LinkToGoldMember=你可以調用由Dolibarr預選您的語言（%s的按一下他的小工具（狀態和最高價格自動更新））的教練之一：
 PossibleLanguages=支持的語言
-MakeADonation=幫助Dolibarr項目，使捐贈
-# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

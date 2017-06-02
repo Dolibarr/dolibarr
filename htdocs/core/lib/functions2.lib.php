@@ -2,9 +2,10 @@
 /* Copyright (C) 2008-2011  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012  Regis Houssin               <regis.houssin@capnetworks.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2016  Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,26 +30,6 @@
 
 // Enable this line to trace path when function is called.
 //print xdebug_print_function_stack('Functions2.lib was called');exit;
-
-/**
- * Return first line of text. Cut will depends if content is HTML or not.
- *
- * @param 	string	$text		Input text
- * @return	string				Output text
- * @see dol_nboflines_bis
- */
-function dolGetFirstLineOfText($text)
-{
-	if (dol_textishtml($text))
-	{
-		$firstline=preg_replace('/<br[^>]*>.*$/s','',$text);		// The s pattern modifier means the . can match newline characters
-	}
-	else
-	{
-    	$firstline=preg_replace('/[\n\r].*/','',$text);
-	}
-    return $firstline.((strlen($firstline) != strlen($text))?'...':'');
-}
 
 /**
  * Same function than javascript unescape() function but in PHP.
@@ -91,7 +72,8 @@ function jsUnEscape($source)
 
 
 /**
- * Return list of modules directories
+ * Return list of modules directories. We detect directories that contains a subdirectory /core/modules
+ * We discard directory modules that contains 'disabled' into their name.
  *
  * @param	string	$subdir		Sub directory (Example: '/mailings')
  * @return	array				Array of directories that can contains module descriptors
@@ -115,6 +97,8 @@ function dolGetModulesDirs($subdir='')
         {
             while (($file = readdir($handle))!==false)
             {
+                if (preg_match('/disabled/',$file)) continue;   // We discard module if it contains disabled into name.
+                
                 if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
                 {
                     if (is_dir($dirroot . '/' . $file . '/core/modules'.$subdir.'/'))
@@ -136,12 +120,14 @@ function dolGetModulesDirs($subdir='')
  *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if setup not done
  *	@return		string							Default paper format code
  */
-function dol_getDefaultFormat($outputlangs='')
+function dol_getDefaultFormat(Translate $outputlangs = null)
 {
     global $langs;
 
     $selected='EUA4';
-    if (empty($outputlangs) || ! is_object($outputlangs)) $outputlangs=$langs;
+    if (!$outputlangs) {
+    	$outputlangs=$langs;
+    }
 
     if ($outputlangs->defaultlang == 'ca_CA') $selected='CAP4';        // Canada
     if ($outputlangs->defaultlang == 'en_US') $selected='USLetter';    // US
@@ -203,9 +189,10 @@ function dol_print_file($langs,$filename,$searchalt=0)
  *  TODO Move this into html.formother
  *
  *	@param	object	$object			Objet to show
+ *  @param  int     $usetable       Output into a table
  *	@return	void
  */
-function dol_print_object_info($object)
+function dol_print_object_info($object, $usetable=0)
 {
     global $langs,$db;
     $langs->load("other");
@@ -219,179 +206,278 @@ function dol_print_object_info($object)
     $deltadateforuser=round($deltadateforclient-$deltadateforserver);
     //print "x".$deltadateforserver." - ".$deltadateforclient." - ".$deltadateforuser;
 
+    if ($usetable) print '<table class="border centpercent">';
+    
     // Import key
     if (! empty($object->import_key))
-    print $langs->trans("ImportedWithSet").': '.$object->import_key.'<br>';
-
-    // User creation
-    if (! empty($object->user_creation))
     {
-        print $langs->trans("CreatedBy").': ';
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("ImportedWithSet");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print $object->import_key;
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
+    }
+
+    // User creation (old method using already loaded object and not id is kept for backward compatibility)
+    if (! empty($object->user_creation) || ! empty($object->user_creation_id))
+    {
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("CreatedBy");
+        if ($usetable) print '</td><td>';
+        else print ': ';
         if (is_object($object->user_creation))
         {
-        	if ($object->user_creation->id) print $object->user_creation->getNomUrl(1);
+        	if ($object->user_creation->id) print $object->user_creation->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
-            $userstatic->fetch($object->user_creation);
-            if ($userstatic->id) print $userstatic->getNomUrl(1);
+            $userstatic->fetch($object->user_creation_id ? $object->user_creation_id : $object->user_creation);
+            if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // Date creation
     if (! empty($object->date_creation))
     {
-        print $langs->trans("DateCreation").': '.dol_print_date($object->date_creation, 'dayhour');
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateCreation");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_creation, 'dayhour');
         if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_creation+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
-    // User change
-    if (! empty($object->user_modification))
+    // User change (old method using already loaded object and not id is kept for backward compatibility)
+    if (! empty($object->user_modification) || ! empty($object->user_modification_id))
     {
-        print $langs->trans("ModifiedBy").': ';
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("ModifiedBy");
+        if ($usetable) print '</td><td>';
+        else print ': ';
         if (is_object($object->user_modification))
         {
-        	if ($object->user_modification->id) print $object->user_modification->getNomUrl(1);
+        	if ($object->user_modification->id) print $object->user_modification->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
-            $userstatic->fetch($object->user_modification);
-            if ($userstatic->id) print $userstatic->getNomUrl(1);
+            $userstatic->fetch($object->user_modification_id ? $object->user_modification_id : $object->user_modification);
+            if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // Date change
     if (! empty($object->date_modification))
     {
-        print $langs->trans("DateLastModification").': '.dol_print_date($object->date_modification, 'dayhour');
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateLastModification");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_modification, 'dayhour');
         if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_modification+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
-    // User validation
-    if (! empty($object->user_validation))
+    // User validation (old method using already loaded object and not id is kept for backward compatibility)
+    if (! empty($object->user_validation) || ! empty($object->user_validation_id))
     {
-        print $langs->trans("ValidatedBy").': ';
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("ValidatedBy");
+        if ($usetable) print '</td><td>';
+        else print ': ';
         if (is_object($object->user_validation))
         {
-            if ($object->user_validation->id) print $object->user_validation->getNomUrl(1);
+            if ($object->user_validation->id) print $object->user_validation->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
-            $userstatic->fetch($object->user_validation);
-			if ($userstatic->id) print $userstatic->getNomUrl(1);
+            $userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
+			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // Date validation
     if (! empty($object->date_validation))
     {
-        print $langs->trans("DateValidation").': '.dol_print_date($object->date_validation, 'dayhour');
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateValidation");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_validation, 'dayhour');
         if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_validation+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
-    // User approve
-    if (! empty($object->user_approve))
+    // User approve (old method using already loaded object and not id is kept for backward compatibility)
+    if (! empty($object->user_approve) || ! empty($object->user_approve_id))
     {
-        print $langs->trans("ApprovedBy").': ';
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("ApprovedBy");
+        if ($usetable) print '</td><td>';
+        else print ': ';
         if (is_object($object->user_approve))
         {
-            if ($object->user_approve->id) print $object->user_approve->getNomUrl(1);
+            if ($object->user_approve->id) print $object->user_approve->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
-            $userstatic->fetch($object->user_approve);
-			if ($userstatic->id) print $userstatic->getNomUrl(1);
+            $userstatic->fetch($object->user_approve_id ? $object->user_approve_id : $object->user_approve);
+			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // Date approve
     if (! empty($object->date_approve))
     {
-        print $langs->trans("DateApprove").': '.dol_print_date($object->date_approve, 'dayhour');
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateApprove");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_approve, 'dayhour');
         if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
+    // User approve
+    if (! empty($object->user_approve_id2))
+    {
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("ApprovedBy");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        $userstatic=new User($db);
+        $userstatic->fetch($object->user_approve_id2);
+        if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
+        else print $langs->trans("Unknown");
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
+    }
+    
+    // Date approve
+    if (! empty($object->date_approve2))
+    {
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateApprove2");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_approve2, 'dayhour');
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve2+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
+    }
+    
     // User close
     if (! empty($object->user_cloture))
     {
-        print $langs->trans("ClosedBy").': ';
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("ClosedBy");
+        if ($usetable) print '</td><td>';
+        else print ': ';
         if (is_object($object->user_cloture))
         {
-			if ($object->user_cloture->id) print $object->user_cloture->getNomUrl(1);
+			if ($object->user_cloture->id) print $object->user_cloture->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_cloture);
-			if ($userstatic->id) print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // Date close
     if (! empty($object->date_cloture))
     {
-        print $langs->trans("DateClosing").': '.dol_print_date($object->date_cloture, 'dayhour');
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateClosing");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_cloture, 'dayhour');
         if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_cloture+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // User conciliate
     if (! empty($object->user_rappro))
     {
-        print $langs->trans("ConciliatedBy").': ';
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("ConciliatedBy");
+        if ($usetable) print '</td><td>';
+        else print ': ';
         if (is_object($object->user_rappro))
         {
-			if ($object->user_rappro->id) print $object->user_rappro->getNomUrl(1);
+			if ($object->user_rappro->id) print $object->user_rappro->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_rappro);
-			if ($userstatic->id) print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // Date conciliate
     if (! empty($object->date_rappro))
     {
-        print $langs->trans("DateConciliating").': '.dol_print_date($object->date_rappro, 'dayhour');
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateConciliating");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_rappro, 'dayhour');
         if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_rappro+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // Date send
     if (! empty($object->date_envoi))
     {
-        print $langs->trans("DateLastSend").': '.dol_print_date($object->date_envoi, 'dayhour');
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateLastSend");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_envoi, 'dayhour');
         if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_envoi+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
+    
+    if ($usetable) print '</table>';
 }
 
 
@@ -401,7 +487,7 @@ function dol_print_object_info($object)
  *
  *	@param	string	$email       	Email address (Ex: "toto@example.com", "John Do <johndo@example.com>")
  *	@param	string	$trackingid    	Tracking id (Ex: thi123 for thirdparty with id 123)
- *	@return boolean     			True if domain email is OK, False if KO
+ *	@return string     			    Return email tracker string
  */
 function dolAddEmailTrackId($email, $trackingid)
 {
@@ -481,7 +567,7 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
  *	Clean an url string
  *
  *	@param	string	$url		Url
- *	@param  string	$http		1 = keep both http:// and https://, 0: remove http:// but not https://
+ *	@param  integer	$http		1 = keep both http:// and https://, 0: remove http:// but not https://
  *	@return string				Cleaned url
  */
 function clean_url($url,$http=1)
@@ -523,8 +609,8 @@ function clean_url($url,$http=1)
  * 	Returns an email value with obfuscated parts.
  *
  * 	@param 		string		$mail				Email
- * 	@param 		string		$replace			Replacement character (defaul : *)
- * 	@param 		int			$nbreplace			Number of replacement character (default : 8)
+ * 	@param 		string		$replace			Replacement character (defaul: *)
+ * 	@param 		int			$nbreplace			Number of replacement character (default: 8)
  * 	@param 		int			$nbdisplaymail		Number of character unchanged (default: 4)
  * 	@param 		int			$nbdisplaydomain	Number of character unchanged of domain (default: 3)
  * 	@param 		bool		$displaytld			Display tld (default: true)
@@ -540,7 +626,8 @@ function dolObfuscateEmail($mail, $replace="*", $nbreplace=8, $nbdisplaymail=4, 
 	$mail_domaine = $tab2[0];
 	$mail_tld = '';
 
-	for($i=1; $i < count($tab2) && $displaytld ;$i++)
+	$nbofelem = count($tab2);
+	for($i=1; $i < $nbofelem && $displaytld; $i++)
 	{
 		$mail_tld .= '.'.$tab2[$i];
 	}
@@ -624,7 +711,7 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
  */
 function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next', $bentityon=true)
 {
-    global $conf;
+    global $conf,$user;
 
     if (! is_object($objsoc)) $valueforccc=$objsoc;
     else if($table == "commande_fournisseur" || $table == "facture_fourn" ) $valueforccc=$objsoc->code_fournisseur;
@@ -693,11 +780,35 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     	$masktype_value='';
     }
 
+    // Personalized field {XXX-1} à {XXX-9}
+    /*$maskperso=array();
+    $maskpersonew=array();
+    $tmpmask=$mask;
+    while (preg_match('/\{([A-Z]+)\-([1-9])\}/i',$tmpmask,$regKey))
+    {
+        $maskperso[$regKey[1]]='\{'.$regKey[1]+'\-'.$regKey[2].'\}';
+        $maskpersonew[$regKey[1]]=str_pad('', '_', $regKey[2], STR_PAD_RIGHT);
+        $tmpmask=preg_replace('/\{'.$regKey[1].'\-'.$regKey[2].'\}/i', $maskpersonew, $tmpmask);
+    }*/
+
+    if (strstr($mask,'user_extra_'))
+    {
+			$start = "{user_extra_";
+			$end = "\}";
+			$extra= get_string_between($mask, "user_extra_", "}");
+			if(!empty($user->array_options['options_'.$extra])){
+				$mask =  preg_replace('#('.$start.')(.*?)('.$end.')#si', $user->array_options['options_'.$extra], $mask);
+			}
+    } 
     $maskwithonlyymcode=$mask;
     $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$maskcounter,$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{dd\}/i','dd',$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{(c+)(0*)\}/i',$maskrefclient,$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{(t+)\}/i',$masktype_value,$maskwithonlyymcode);
+    /*foreach($maskperso as $key => $val)
+    {
+        $maskwithonlyymcode=preg_replace('/'.$val.'/i', $maskpersonew[$key], $maskwithonlyymcode);
+    }*/
     $maskwithnocode=$maskwithonlyymcode;
     $maskwithnocode=preg_replace('/\{yyyy\}/i','yyyy',$maskwithnocode);
     $maskwithnocode=preg_replace('/\{yy\}/i','yy',$maskwithnocode);
@@ -970,13 +1081,13 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 		{
 	        $numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date)+$yearoffset, $numFinal);
         	$numFinal = preg_replace('/\{yy\}/i',  date("y",$date)+$yearoffset, $numFinal);
-        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),2,1)+$yearoffset, $numFinal);
+        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),1,1)+$yearoffset, $numFinal);
 		}
 		else	// we want yyyy to be current year
 		{
         	$numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date), $numFinal);
         	$numFinal = preg_replace('/\{yy\}/i',  date("y",$date), $numFinal);
-        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),2,1), $numFinal);
+        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),1,1), $numFinal);
 		}
         $numFinal = preg_replace('/\{mm\}/i',  date("m",$date), $numFinal);
         $numFinal = preg_replace('/\{dd\}/i',  date("d",$date), $numFinal);
@@ -1008,7 +1119,14 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     dol_syslog("functions2::get_next_value return ".$numFinal,LOG_DEBUG);
     return $numFinal;
 }
-
+function get_string_between($string, $start, $end){
+    $string = " ".$string;
+     $ini = strpos($string,$start);
+     if ($ini == 0) return "";
+     $ini += strlen($start);     
+     $len = strpos($string,$end,$ini) - $ini;
+     return substr($string,$ini,$len);
+}
 /**
  * Check value
  *
@@ -1074,7 +1192,7 @@ function check_value($mask,$value)
 
     // If an offset is asked
     if (! empty($reg[2]) && preg_match('/^\+/',$reg[2])) $maskoffset=preg_replace('/^\+/','',$reg[2]);
-    if (! empty($reg[3]) && preg_match('^\+',$reg[3])) $maskoffset=preg_replace('/^\+/','',$reg[3]);
+    if (! empty($reg[3]) && preg_match('/^\+/',$reg[3])) $maskoffset=preg_replace('/^\+/','',$reg[3]);
 
     // Define $sqlwhere
 
@@ -1155,7 +1273,7 @@ function hexbin($hexa)
  *	Retourne le numero de la semaine par rapport a une date
  *
  *	@param	string	$time   	Date au format 'timestamp'
- *	@return int					Number of week
+ *	@return string					Number of week
  */
 function numero_semaine($time)
 {
@@ -1353,7 +1471,7 @@ function dol_print_reduction($reduction,$langs)
     }
     else
     {
-        $string = $reduction.'%';
+        $string = price($reduction).'%';
     }
 
     return $string;
@@ -1423,7 +1541,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
     $sql.= " WHERE type = '".$type."'";
     $sql.= " AND entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
     $sql.= " ORDER BY description DESC";
-
+		
     dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql)
@@ -1438,14 +1556,15 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 
             // If this generation module needs to scan a directory, then description field is filled
             // with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).
-            if (! empty($obj->description))	// List of directories to scan is defined
+            if (! empty($obj->description))	// A list of directories to scan is defined
             {
                 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
                 $const=$obj->description;
-                $dirtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
+                //irtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
+                $dirtoscan= preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
 
-                $listoffiles=array();
+		$listoffiles=array();
 
                 // Now we add models found in directories scanned
                 $listofdir=explode(',',$dirtoscan);
@@ -1476,7 +1595,19 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
             }
             else
             {
-                $liste[$obj->id]=$obj->label?$obj->label:$obj->lib;
+                if ($type == 'member' && $obj->lib == 'standard')   // Special case, if member template, we add variant per format
+                {
+                    global $_Avery_Labels;
+                    include_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
+                    foreach($_Avery_Labels as $key => $val)
+                    {
+                        $liste[$obj->id.':'.$key]=($obj->label?$obj->label:$obj->lib).' '.$val['name'];
+                    }
+                }
+                else    // Common usage
+                {
+                    $liste[$obj->id]=$obj->label?$obj->label:$obj->lib;
+                }
             }
             $i++;
         }
@@ -1493,7 +1624,8 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 
 /**
  * This function evaluates a string that should be a valid IPv4
- *
+ * Note: For ip 169.254.0.0, it returns 0 with some PHP (5.6.24) and 2 with some minor patchs of PHP (5.6.25). See https://github.com/php/php-src/pull/1954.
+ *   
  * @param	string $ip IP Address
  * @return	int 0 if not valid or reserved range, 1 if valid and public IP, 2 if valid and private range IP
  */
@@ -1533,7 +1665,7 @@ function dol_buildlogin($lastname,$firstname)
 /**
  *  Return array to use for SoapClient constructor
  *
- *  @return     param
+ *  @return     array
  */
 function getSoapParams()
 {
@@ -1824,10 +1956,6 @@ function getElementProperties($element_type)
         $subelement = $regs[2];
     }
 
-    $classfile = strtolower($subelement);
-    $classname = ucfirst($subelement);
-    $classpath = $module.'/class';
-
     // For compat
     if($element_type == "action") {
         $classpath = 'comm/action/class';
@@ -1882,8 +2010,32 @@ function getElementProperties($element_type)
         $module='ficheinter';
         $subelement='fichinter';
     }
-    $classfile = strtolower($subelement);
-    $classname = ucfirst($subelement);
+    if ($element_type == 'dolresource' || $element_type == 'resource') {
+        $classpath = 'resource/class';
+        $module='resource';
+        $subelement='dolresource';
+    }
+    if ($element_type == 'propaldet') {
+        $classpath = 'comm/propal/class';
+        $module='propal';
+        $subelement='propaleligne';
+    }
+    if ($element_type == 'order_supplier')  {
+        $classpath = 'fourn/class';
+        $module='fournisseur';
+        $subelement='commandefournisseur';
+        $classfile='fournisseur.commande';
+    }
+    if ($element_type == 'invoice_supplier')  {
+        $classpath = 'fourn/class';
+        $module='fournisseur';
+        $subelement='facturefournisseur';
+        $classfile='fournisseur.facture';
+    }
+
+    if (!isset($classfile)) $classfile = strtolower($subelement);
+    if (!isset($classname)) $classname = ucfirst($subelement);
+    if (!isset($classpath)) $classpath = $module.'/class';
 
     $element_properties = array(
         'module' => $module,
@@ -1898,13 +2050,14 @@ function getElementProperties($element_type)
 
 /**
  * Fetch an object from its id and element_type
- * Inclusion classes is automatic
+ * Inclusion of classes is automatic
  *
  * @param	int     	$element_id 	Element id
  * @param	string  	$element_type 	Element type
+ * @param	ref     	$element_ref 	Element ref (Use this if element_id but not both)
  * @return 	int|object 					object || 0 || -1 if error
  */
-function fetchObjectByElement($element_id, $element_type)
+function fetchObjectByElement($element_id, $element_type, $element_ref='')
 {
     global $conf;
 	global $db,$conf;
@@ -1914,11 +2067,11 @@ function fetchObjectByElement($element_id, $element_type)
     {
         dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 
-		$objectstat = new $element_prop['classname']($db);
-		$ret = $objectstat->fetch($element_id);
+		$objecttmp = new $element_prop['classname']($db);
+		$ret = $objecttmp->fetch($element_id, $element_ref);
 		if ($ret >= 0)
 		{
-			return $objectstat;
+			return $objecttmp;
 		}
 	}
 	return 0;
@@ -1964,4 +2117,31 @@ function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
 	return array(hexdec($reg[1]),hexdec($reg[2]),hexdec($reg[3]));
 }
 
+/**
+ * Applies the Cartesian product algorithm to an array
+ * Source: http://stackoverflow.com/a/15973172
+ *
+ * @param array $input Array of products
+ * @return array Array of combinations
+ */
+function cartesianArray(array $input) {
+    // filter out empty values
+    $input = array_filter($input);
 
+    $result = array(array());
+
+    foreach ($input as $key => $values) {
+        $append = array();
+
+        foreach($result as $product) {
+            foreach($values as $item) {
+                $product[$key] = $item;
+                $append[] = $product;
+            }
+        }
+
+        $result = $append;
+    }
+
+    return $result;
+}

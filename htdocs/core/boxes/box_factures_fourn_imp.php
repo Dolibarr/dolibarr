@@ -88,7 +88,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 				$num = $db->num_rows($result);
 
 				$line = 0;
-				$l_due_date = $langs->trans('Late').' ('.$langs->trans('DateEcheance').': %s)';
+				$l_due_date = $langs->trans('Late').' ('.$langs->trans('DateDue').': %s)';
 
                 $facturestatic = new FactureFournisseur($db);
 
@@ -117,33 +117,27 @@ class box_factures_fourn_imp extends ModeleBoxes
                     }
 
                     $tooltip = $langs->trans('SupplierInvoice') . ': ' . ($objp->ref?$objp->ref:$objp->facid) . '<br>' . $langs->trans('RefSupplier') . ': ' . $objp->ref_supplier;
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => $this->boximg,
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid,
-                    );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $facturestatic->getNomUrl(1),
                         'text2'=> $late,
-                        'asisi' => 1
+                        'asis' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $thirdpartytmp->getNomUrl(1, '', 40),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => dol_print_date($datelimite,'day'),
                     );
 
@@ -167,14 +161,14 @@ class box_factures_fourn_imp extends ModeleBoxes
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
+                'td' => '',
                 'text' => $langs->trans("ReadPermissionNotAllowed"),
             );
         }
@@ -186,11 +180,12 @@ class box_factures_fourn_imp extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

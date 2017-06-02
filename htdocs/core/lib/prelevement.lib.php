@@ -78,9 +78,9 @@ function prelevement_prepare_head(BonPrelevement $object)
 function prelevement_check_config()
 {
 	global $conf;
-    if(empty($conf->global->PRELEVEMENT_USER)) return -1;
 	if(empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) return -1;
-	if(empty($conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR)) return -1;
+	if(empty($conf->global->PRELEVEMENT_ICS)) return -1;
+    if(empty($conf->global->PRELEVEMENT_USER)) return -1;
 	return 0;
 }
 

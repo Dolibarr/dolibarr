@@ -30,6 +30,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
@@ -50,6 +51,9 @@ $type='expensereport';
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'updateMask')
 {
 	$maskconst=GETPOST('maskconst','alpha');
@@ -74,6 +78,8 @@ else if ($action == 'specimen') // For fiche inter
 
 	$inter = new ExpenseReport($db);
 	$inter->initAsSpecimen();
+	$inter->status = 0;     // Force statut draft to show watermark
+	$inter->fk_statut = 0;     // Force statut draft to show watermark
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
@@ -110,35 +116,6 @@ else if ($action == 'specimen') // For fiche inter
 	{
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
-	}
-}
-
-// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
-if ($action == 'setModuleOptions')
-{
-	$post_size=count($_POST);
-
-	$db->begin();
-
-	for($i=0;$i < $post_size;$i++)
-	{
-		if (array_key_exists('param'.$i,$_POST))
-		{
-			$param=GETPOST("param".$i,'alpha');
-			$value=GETPOST("value".$i,'alpha');
-			if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-			if (! $res > 0) $error++;
-		}
-	}
-	if (! $error)
-	{
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		$db->rollback();
-		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -187,41 +164,29 @@ else if ($action == 'setmod')
 	dolibarr_set_const($db, "EXPENSEREPORT_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
-else if ($action == 'set_EXPENSEREPORT_FREE_TEXT')
+else if ($action == 'setoptions')
 {
-	$freetext= GETPOST('EXPENSEREPORT_FREE_TEXT');	// No alpha here, we want exact string
-	$res = dolibarr_set_const($db, "EXPENSEREPORT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+    $db->begin();
 
-	if (! $res > 0) $error++;
+	$freetext= GETPOST('EXPENSEREPORT_FREE_TEXT','none');	// No alpha here, we want exact string
+	$res1 = dolibarr_set_const($db, "EXPENSEREPORT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
- 	if (! $error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
-}
-
-else if ($action == 'set_EXPENSEREPORT_DRAFT_WATERMARK')
-{
 	$draft= GETPOST('EXPENSEREPORT_DRAFT_WATERMARK','alpha');
+	$res2 = dolibarr_set_const($db, "EXPENSEREPORT_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 
-	$res = dolibarr_set_const($db, "EXPENSEREPORT_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
-
-	if (! $res > 0) $error++;
+	if (! $res1 > 0 || ! $res2 > 0) $error++;
 
  	if (! $error)
     {
+        $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
+        $db->rollback();
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
-
 
 
 /*
@@ -240,7 +205,7 @@ print load_fiche_titre($langs->trans("ExpenseReportsSetup"),$linkback,'title_set
 
 $head=expensereport_admin_prepare_head();
 
-dol_fiche_head($head, 'expensereport', $langs->trans("ExpenseReports"), 0, 'trip');
+dol_fiche_head($head, 'expensereport', $langs->trans("ExpenseReports"), -1, 'trip');
 
 // Interventions numbering model
 /*
@@ -285,8 +250,8 @@ foreach ($dirmodels as $reldir)
 						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-						$var=!$var;
-						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+
+						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
 
@@ -346,7 +311,7 @@ print '</table><br>';
  *  Documents models for Interventions
  */
 
-print load_fiche_titre($langs->trans("TemplatePDFExpenseReports"));
+print load_fiche_titre($langs->trans("TemplatePDFExpenseReports"), '', '');
 
 // Defini tableau def des modeles
 $type='expensereport';
@@ -371,7 +336,6 @@ else
 {
 	dol_print_error($db);
 }
-
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -409,7 +373,7 @@ foreach ($dirmodels as $reldir)
 
 		    		if (file_exists($dir.'/'.$file))
 		    		{
-		    			$var=!$var;
+
 
 		    			$name = substr($file, 4, dol_strlen($file) -16);
 		    			$classname = substr($file, 0, dol_strlen($file) -12);
@@ -423,7 +387,7 @@ foreach ($dirmodels as $reldir)
 
 		    			if ($modulequalified)
 		    			{
-		    				print '<tr '.$bc[$var].'><td width="100">';
+		    				print '<tr class="oddeven"><td width="100">';
 		    				print (empty($module->name)?$name:$module->name);
 		    				print "</td><td>\n";
 		    				if (method_exists($module,'info')) print $module->info($langs);
@@ -494,6 +458,64 @@ foreach ($dirmodels as $reldir)
 }
 
 print '</table>';
+
+
+print '<br>';
+
+
+
+/*
+ * Other options
+ */
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="setoptions">';
+
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="60"></td>';
+print "</tr>\n";
+$var=true;
+
+$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
+$var=! $var;
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnExpenseReports"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
+$variablename='EXPENSEREPORT_FREE_TEXT';
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+{
+    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+}
+else
+{
+    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
+    print $doleditor->Create();
+}
+print '</td></tr>'."\n";
+
+//Use draft Watermark
+
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("WatermarkOnDraftExpenseReports"), $htmltext).'<br>';
+print '<input size="50" class="flat" type="text" name="EXPENSEREPORT_DRAFT_WATERMARK" value="'.$conf->global->EXPENSEREPORT_DRAFT_WATERMARK.'">';
+print '</td></tr>'."\n";
+
+print '</table>';
+
+print '<div class="center">';
+print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+print '</div>';
+
+print '</form>';
 
 dol_fiche_end();
 

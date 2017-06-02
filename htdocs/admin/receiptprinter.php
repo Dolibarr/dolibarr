@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -249,7 +250,7 @@ if ($mode == 'config' && $user->admin)
     } else {
         for ($line=0; $line < $nbofprinters; $line++) {
             $var = !$var;
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
             if ($action=='editprinter' && $printer->listprinters[$line]['rowid']==$printerid) {
                 print '<input type="hidden" name="printerid" value="'.$printer->listprinters[$line]['rowid'].'">';
                 print '<td><input size="50" type="text" name="printername" value="'.$printer->listprinters[$line]['name'].'"></td>';
@@ -377,9 +378,10 @@ if ($mode == 'template' && $user->admin)
     if ($ret > 0) {
         setEventMessages($printer->error, $printer->errors, 'errors');
     } else {
-        for ($line=0; $line < count($printer->listprinterstemplates); $line++) {
+        $max = count($printer->listprinterstemplates);
+        for ($line=0; $line < $max; $line++) {
             $var = !$var;
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
             if ($action=='edittemplate' && $printer->listprinterstemplates[$line]['rowid']==$templateid) {
                 print '<input type="hidden" name="templateid" value="'.$printer->listprinterstemplates[$line]['rowid'].'">';
                 print '<td><input size="50" type="text" name="templatename" value="'.$printer->listprinterstemplates[$line]['name'].'"></td>';
@@ -422,9 +424,10 @@ if ($mode == 'template' && $user->admin)
     print '<th>'.$langs->trans("Tag").'</th>';
     print '<th>'.$langs->trans("Description").'</th>';
     print "</tr>\n";
-    for ($tag=0; $tag < count($printer->tags); $tag++) {
+    $max = count($printer->tags);
+    for ($tag=0; $tag < $max; $tag++) {
         $var = !$var;
-        print '<tr '.$bc[$var].'>';
+        print '<tr class="oddeven">';
         print '<td>&lt;'.$printer->tags[$tag].'&gt;</td><td>'.$langs->trans(strtoupper($printer->tags[$tag])).'</td>';
         print '</tr>';
     }

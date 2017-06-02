@@ -50,6 +50,7 @@ $(document).ready(function() {
 	);
 
 	$('#refreshbutton').click( function() {
+		console.log("Click on refreshbutton");
 		$.pleaseBePatient("<?php echo $langs->trans('PleaseBePatient'); ?>");
 		$.get( "<?php echo DOL_URL_ROOT . '/ecm/ajax/ecmdatabase.php'; ?>", {
 			action: "build",

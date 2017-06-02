@@ -18,9 +18,15 @@
  * or see http://www.gnu.org/
  */
 
+// Following var can be set
+// $permission = permission or not to add a file
+// $permtoedit = permission or not to edit file name, crop file
+// $modulepart = for download
+// $param      = param to add to download links
+
 $langs->load("link");
 if (empty($relativepathwithnofile)) $relativepathwithnofile='';
-
+if (empty($permtoedit)) $permtoedit=-1;
 
 /*
  * Confirm form to delete
@@ -65,13 +71,16 @@ $formfile->form_attach_new_file(
     0,
     0,
     $permission,
-    50,
+    $conf->browser->layout == 'phone' ? 40 : 60,
     $object,
 	'',
 	1,
 	$savingdocmask
 );
 
+$disablemove=1;
+if ($modulepart == 'produit') $disablemove=0;
+    
 // List of document
 $formfile->list_of_documents(
     $filearray,
@@ -79,8 +88,19 @@ $formfile->list_of_documents(
     $modulepart,
     $param,
     0,
-    $relativepathwithnofile,		// relative path with no file. For example "moduledir/0/1"
-    $permission
+    $relativepathwithnofile,		// relative path with no file. For example "0/1"
+    $permission,
+    0,
+    '',
+    0,
+    '',
+    '',
+    0,
+    $permtoedit,
+    $upload_dir,
+    $sortfield,
+    $sortorder,
+    $disablemove
 );
 
 print "<br>";

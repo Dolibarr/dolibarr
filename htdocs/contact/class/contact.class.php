@@ -41,60 +41,61 @@ class Contact extends CommonObject
 	public $table_element='socpeople';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $civility_id;  // In fact we store civility_code
-	var $address;
-	var $zip;
-	var $town;
+	public $civility_id;      // In fact we store civility_code
+	public $civility_code;
+	public $address;
+	public $zip;
+	public $town;
 
 	/**
 	 * @deprecated
 	 * @see state_id
 	 */
-	var $fk_departement;
+	public $fk_departement;
 	/**
 	 * @deprecated
 	 * @see state_code
 	 */
-	var $departement_code;
+	public $departement_code;
 	/**
 	 * @deprecated
 	 * @see state
 	 */
-	var $departement;
-	var $state_id;	        	// Id of department
-	var $state_code;		    // Code of department
-	var $state;			        // Label of department
+	public $departement;
+	public $state_id;	        	// Id of department
+	public $state_code;		    // Code of department
+	public $state;			        // Label of department
 
-    var $poste;                 // Position
+    	public $poste;                 // Position
 
-	var $socid;					// fk_soc
-	var $statut;				// 0=inactif, 1=actif
+	public $socid;					// fk_soc
+	public $statut;				// 0=inactif, 1=actif
 
-	var $code;
-	var $email;
-	var $skype;
-    var $photo;
-    var $jabberid;
-	var $phone_pro;
-	var $phone_perso;
-	var $phone_mobile;
-    var $fax;
+	public $code;
+	public $email;
+	public $skype;
+	public $photo;
+    	public $jabberid;
+	public $phone_pro;
+	public $phone_perso;
+	public $phone_mobile;
+    	public $fax;
 
-    var $priv;
+    	public $priv;
 
-	var $birthday;
-	var $default_lang;
-    var $no_email;				// 1=Don't send e-mail to this contact, 0=do
+	public $birthday;
+	public $default_lang;
+    	public $no_email;				// 1=Don't send e-mail to this contact, 0=do
 
-	var $ref_facturation;       // Nb de reference facture pour lequel il est contact
-	var $ref_contrat;           // Nb de reference contrat pour lequel il est contact
-	var $ref_commande;          // Nb de reference commande pour lequel il est contact
-	var $ref_propal;            // Nb de reference propal pour lequel il est contact
+	public $ref_facturation;       // Reference number of invoice for which it is contact
+	public $ref_contrat;           // Nb de reference contrat pour lequel il est contact
+	public $ref_commande;          // Nb de reference commande pour lequel il est contact
+	public $ref_propal;            // Nb de reference propal pour lequel il est contact
 
-	var $user_id;
-	var $user_login;
+	public $user_id;
+	public $user_login;
 
-	var $oldcopy;				// To contains a clone of this when we need to save old properties of object
+	public $oldcopy;				// To contains a clone of this when we need to save old properties of object
 
 
 	/**
@@ -106,6 +107,49 @@ class Contact extends CommonObject
 	{
 		$this->db = $db;
 		$this->statut = 1;	// By default, status is enabled
+	}
+	
+	/**
+	 *  Load indicators into this->nb for board
+	 *
+	 *  @return     int         <0 if KO, >0 if OK
+	 */
+	function load_state_board()
+	{
+		global $user;
+	
+		$this->nb=array();
+		$clause = "WHERE";
+	
+		$sql = "SELECT count(sp.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		{
+		    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+		    $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			$clause = "AND";
+		}
+		$sql.= ' '.$clause.' sp.entity IN ('.getEntity($this->element, 1).')';
+		$sql.= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat=".$user->id."))";
+        if ($user->societe_id > 0) $sql.=" AND sp.fk_soc = ".$user->societe_id;
+        
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->nb["contacts"]=$obj->nb;
+			}
+			$this->db->free($resql);
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
 	}
 
 	/**
@@ -175,9 +219,9 @@ class Contact extends CommonObject
                 }
 			}
 
-            if (! $error)
+			if (! $error)
             {
-                $result=$this->update_perso($this->id, $user);
+                $result=$this->update_perso($this->id, $user, 1);   // TODO Remove function update_perso, should be same than update
                 if ($result < 0)
                 {
                     $error++;
@@ -185,7 +229,7 @@ class Contact extends CommonObject
                 }
             }
 
-            if (! $error)
+			if (! $error)
             {
                 // Call trigger
                 $result=$this->call_trigger('CONTACT_CREATE',$user);
@@ -273,7 +317,7 @@ class Contact extends CommonObject
 		$sql .= ", phone_perso = ".(isset($this->phone_perso)?"'".$this->db->escape($this->phone_perso)."'":"null");
 		$sql .= ", phone_mobile = ".(isset($this->phone_mobile)?"'".$this->db->escape($this->phone_mobile)."'":"null");
 		$sql .= ", jabberid = ".(isset($this->jabberid)?"'".$this->db->escape($this->jabberid)."'":"null");
-		$sql .= ", priv = '".$this->priv."'";
+		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
 		$sql .= ", statut = ".$this->statut;
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"NULL");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->default_lang."'":"NULL");
@@ -433,16 +477,20 @@ class Contact extends CommonObject
 	 *
 	 *  @param      int			$id         Id of contact
 	 *  @param      User		$user		User asking to change alert or birthday
+	 *  @param      int		    $notrigger	0=no, 1=yes
      *  @return     int         			<0 if KO, >=0 if OK
 	 */
-	function update_perso($id, $user=null)
+	function update_perso($id, $user=null, $notrigger=0)
 	{
 	    $error=0;
 	    $result=false;
 
+	    $this->db->begin();
+	    
 		// Mis a jour contact
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
 		$sql.= " birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
+		$sql.= ", photo = ".($this->photo? "'".$this->photo."'" : "null");
 		if ($user) $sql .= ", fk_user_modif=".$user->id;
 		$sql.= " WHERE rowid=".$this->db->escape($id);
 
@@ -489,7 +537,25 @@ class Contact extends CommonObject
 			}
 		}
 
-		return $result;
+		if (! $error && ! $notrigger)
+		{
+		    // Call trigger
+		    $result=$this->call_trigger('CONTACT_MODIFY',$user);
+		    if ($result < 0) { $error++; }
+		    // End call triggers
+		}
+		
+		if (! $error)
+		{
+		    $this->db->commit();
+		    return 1;
+		}
+		else
+		{
+		    dol_syslog(get_class($this)."::update Error ".$this->error,LOG_ERR);
+		    $this->db->rollback();
+		    return -$error;
+		}
 	}
 
 
@@ -547,6 +613,7 @@ class Contact extends CommonObject
 				$this->ref				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
 				$this->civility_id		= $obj->civility_id;
+				$this->civility_code	= $obj->civility_id;
 				$this->lastname			= $obj->lastname;
 				$this->firstname		= $obj->firstname;
 				$this->address			= $obj->address;
@@ -592,8 +659,11 @@ class Contact extends CommonObject
 				$this->canvas			= $obj->canvas;
 
 				$this->import_key		= $obj->import_key;
+				
+				// Define gender according to civility
+				$this->setGenderFromCivility();
 
-				// Recherche le user Dolibarr lie a ce contact
+				// Search Dolibarr user linked to this contact
 				$sql = "SELECT u.rowid ";
 				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 				$sql .= " WHERE u.fk_socpeople = ". $this->id;
@@ -663,6 +733,21 @@ class Contact extends CommonObject
 	}
 
 
+	/**
+	 * Set property ->gender from property ->civility_id
+	 * 
+	 * @return void
+	 */
+	function setGenderFromCivility()
+	{
+	    unset($this->gender);
+    	if (in_array($this->civility_id, array('MR'))) {
+    	    $this->gender = 'man';
+    	} else if(in_array($this->civility_id, array('MME','MLE'))) {
+    	    $this->gender = 'woman';
+    	}
+	}	
+	
 	/**
 	 *  Load number of elements the contact is used as a link for
 	 *  ref_facturation
@@ -908,39 +993,53 @@ class Contact extends CommonObject
 	 */
 	function getNomUrl($withpicto=0,$option='',$maxlen=0,$moreparam='')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$result='';
-        $label = '<u>' . $langs->trans("ShowContact") . '</u>';
-        $label.= '<br><b>' . $langs->trans("Name") . ':</b> '.$this->getFullName($langs);
-        //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
-        if (! empty($this->poste)) $label.= '<br><b>' . $langs->trans("Poste") . ':</b> '.$this->poste;
-        $label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
-        $phonelist=array();
-        if ($this->phone_pro) $phonelist[]=$this->phone_pro;
-        if ($this->phone_mobile) $phonelist[]=$this->phone_mobile;
-        if ($this->phone_perso) $phonelist[]=$this->phone_perso;
-        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',$phonelist);
-        $label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
+	        $label = '<u>' . $langs->trans("ShowContact") . '</u>';
+	        $label.= '<br><b>' . $langs->trans("Name") . ':</b> '.$this->getFullName($langs);
+	        //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
+	        if (! empty($this->poste)) $label.= '<br><b>' . $langs->trans("Poste") . ':</b> '.$this->poste;
+	        $label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
+	        $phonelist=array();
+	        if ($this->phone_pro) $phonelist[]=$this->phone_pro;
+	        if ($this->phone_mobile) $phonelist[]=$this->phone_mobile;
+	        if ($this->phone_perso) $phonelist[]=$this->phone_perso;
+	        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',$phonelist);
+	        $label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
+	
+	        $link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'"';
+	        $linkclose="";
+	    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
+	        {
+	            $label=$langs->trans("ShowContact");
+	            $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
+	        }
+	       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+	       	$linkclose.= ' class="classfortooltip">';
 
-        $link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'"';
-    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
-        {
-            $label=$langs->trans("ShowContact");
-            $link.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
-        }
-        $link.= ' title="'.dol_escape_htmltag($label, 1).'"';
-        $link.= ' class="classfortooltip">';
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('contactdao'));
+		$parameters=array('id'=>$this->id);
+		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+
+		$link.=$linkclose;
+		
 		$linkend='</a>';
-
+	
 		if ($option == 'xxx')
 		{
 			$link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$linkend='</a>';
 		}
-
-        if ($withpicto) $result.=($link.img_object($label, 'contact', 'class="classfortooltip"').$linkend.' ');
-		$result.=$link.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$linkend;
+	
+	        if ($withpicto) $result.=($link.img_object($label, 'contact', 'class="classfortooltip"').$linkend.' ');
+			$result.=$link.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$linkend;
 		return $result;
 	}
 
@@ -993,24 +1092,24 @@ class Contact extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
-			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
 
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5');
-			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4');
+			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
-			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut==0 || $statut==5) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut5');
-			elseif ($statut==1 || $statut==4) return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('Enabled'),'statut4');
+			if ($statut==0 || $statut==5) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"');
+			elseif ($statut==1 || $statut==4) return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"');
 		}
 	}
 

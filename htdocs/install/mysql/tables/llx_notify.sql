@@ -16,6 +16,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
+-- Table of notification done
 -- ===================================================================
 
 create table llx_notify
@@ -28,6 +29,7 @@ create table llx_notify
   fk_contact      integer NULL,
   fk_user         integer NULL,
   type            varchar(16) DEFAULT 'email',
+  type_target     varchar(16) NULL,		-- What type of target notification was sent to ? 'tocontactid', 'touserid', 'tofixedemail'
   objet_type      varchar(24) NOT NULL,
   objet_id        integer NOT NULL,
   email           varchar(255)

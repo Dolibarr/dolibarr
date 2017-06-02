@@ -14,6 +14,5 @@ BehaviourOnClick=Gedrag bij het klikken op deze URL
 CreateBookmark=Maak weblink
 SetHereATitleForLink=Stel hier een titel voor de weblink in
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Gebruik een externe HTTP URL of een relatieve Dolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Kies of de pagina geopend door een link in het huidige of een nieuw venster moet verschijnen
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Internetfavorietenbeheer
-ListOfBookmarks=Internetfavourietenlijst

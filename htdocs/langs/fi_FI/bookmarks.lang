@@ -14,6 +14,5 @@ BehaviourOnClick=Käyttäytyminen klikkaa URL
 CreateBookmark=Luo kirjanmerkki
 SetHereATitleForLink=Aseta tässä otsikon kirjanmerkki
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Käytä ulkoista http URL tai suhteellisen Dolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Valitse jos sivu avattu yhteys on oltava nykyiseen tai uuteen ikkunaan
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Kirjanmerkkien hallinta
-ListOfBookmarks=Luetteloosi

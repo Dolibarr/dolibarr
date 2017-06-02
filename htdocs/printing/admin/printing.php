@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013       Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 require_once DOL_DOCUMENT_ROOT.'/printing/lib/printing.lib.php';
+use OAuth\Common\Storage\DoliStorage;
 
 $langs->load("admin");
 $langs->load("printing");
@@ -44,6 +45,8 @@ $driver = GETPOST('driver', 'alpha');
 if (! empty($driver)) $langs->load($driver);
 
 if (!$mode) $mode='config';
+
+$OAUTH_SERVICENAME_GOOGLE = 'Google';
 
 
 /*
@@ -100,6 +103,7 @@ if ($action == 'setvalue' && $user->admin)
     $action = '';
 }
 
+
 /*
  * View
  */
@@ -138,17 +142,16 @@ if ($mode == 'setup' && $user->admin)
         $classname = 'printing_'.$driver;
         $langs->load($driver);
         $printer = new $classname($db);
-        //var_dump($printer);
         
         $i=0;
         $submit_enabled=0;
         foreach ($printer->conf as $key)
         {
-            $var=!$var;
+            
             switch ($key['type']) {
                 case "text":
                 case "password":
-                    print '<tr '.$bc[$var].'>';
+                    print '<tr class="oddeven">';
                     print '<td'.($key['required']?' class=required':'').'>'.$langs->trans($key['varname']).'</td>';
                     print '<td><input size="32" type="'.(empty($key['type'])?'text':$key['type']).'" name="setupdriver['.$i.'][value]" value="'.$conf->global->{$key['varname']}.'"';
                     print isset($key['moreattributes'])?' '.$key['moreattributes']:'';
@@ -157,15 +160,28 @@ if ($mode == 'setup' && $user->admin)
                     print '</tr>'."\n";
                     break;
                 case "info":    // Google Api setup or Google OAuth Token
-                    print '<tr '.$bc[$var].'>';
-                    print '<td'.($key['required']?' class=required':'').'>'.$langs->trans($key['varname']).'</td>';
-                    print '<td>'.$langs->trans($key['info']).'</td>';
-                    print '<td>';
+                    print '<tr class="oddeven">';
+                    print '<td'.($key['required']?' class=required':'').'>';
                     if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
                     {
+                        print $langs->trans("IsTokenGenerated");
+                    }
+                    else
+                    {
+                        print $langs->trans($key['varname']);
+                    }
+                    print '</td>';
+                    print '<td>'.$langs->trans($key['info']).'</td>';
+                    print '<td>';
+                    //var_dump($key);
+                    if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
+                    {
+                        // Delete remote tokens
                         if (! empty($key['delete'])) print '<a class="button" href="'.$key['delete'].'">'.$langs->trans('DeleteAccess').'</a><br><br>';
+                        // Request remote token
                         print '<a class="button" href="'.$key['renew'].'">'.$langs->trans('RequestAccess').'</a><br><br>';
-                        print $langs->trans("ToCheckDeleteTokenOnProvider", 'Google').': <a href="https://security.google.com/settings/security/permissions" target="_google">https://security.google.com/settings/security/permissions</a>';
+                        // Check remote access
+                        print $langs->trans("ToCheckDeleteTokenOnProvider", $OAUTH_SERVICENAME_GOOGLE).': <a href="https://security.google.com/settings/security/permissions" target="_google">https://security.google.com/settings/security/permissions</a>';
                     }
                     print '</td>';
                     print '</tr>'."\n";
@@ -175,6 +191,38 @@ if ($mode == 'setup' && $user->admin)
                     break;
             }
             $i++;
+            
+            if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
+            {
+                // Token
+                print '<tr class="oddeven">';
+                print '<td>'.$langs->trans("Token").'</td>';
+                print '<td colspan="2">';
+                $tokenobj=null;
+                // Dolibarr storage
+                $storage = new DoliStorage($db, $conf);
+                try
+                {
+                    $tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME_GOOGLE);
+                }
+                catch(Exception $e)
+                {
+                    // Return an error if token not found
+                }
+                if (is_object($tokenobj))
+                {
+                    //var_dump($tokenobj);
+                    print $tokenobj->getAccessToken().'<br>';
+                    //print 'Refresh: '.$tokenobj->getRefreshToken().'<br>';
+                    //print 'EndOfLife: '.$tokenobj->getEndOfLife().'<br>';
+                    //var_dump($tokenobj->getExtraParams());
+                    /*print '<br>Extra: <br><textarea class="quatrevingtpercent">';
+                    print ''.join(',',$tokenobj->getExtraParams());
+                    print '</textarea>';*/
+                }
+                print '</td>';
+                print '</tr>'."\n";
+            }
         }
     } else {
         print $langs->trans('PleaseSelectaDriverfromList');
@@ -217,8 +265,8 @@ if ($mode == 'config' && $user->admin)
         $langs->load($driver);
         $printer = new $classname($db);
         //print '<pre>'.print_r($printer, true).'</pre>';
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
+        
+        print '<tr class="oddeven">';
         print '<td>'.img_picto('', $printer->picto).' '.$langs->trans($printer->desc).'</td>';
         print '<td class="center">';
         if (! empty($conf->use_javascript_ajax))
@@ -300,8 +348,8 @@ if ($mode == 'userconf' && $user->admin)
     $sql = 'SELECT p.rowid, p.printer_name, p.printer_location, p.printer_id, p.copy, p.module, p.driver, p.userid, u.login FROM '.MAIN_DB_PREFIX.'printing as p, '.MAIN_DB_PREFIX.'user as u WHERE p.userid=u.rowid';
     $resql = $db->query($sql);
     while ($row=$db->fetch_array($resql)) {
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
+        
+        print '<tr class="oddeven">';
         print '<td>'.$row['login'].'</td>';
         print '<td>'.$row['module'].'</td>';
         print '<td>'.$row['driver'].'</td>';

@@ -159,7 +159,7 @@ if ($resql) {
 	$i = 0;
 
 	// export csv
-	if (GETPOST('action') == 'export_csv') {
+	if (GETPOST('action','aZ09') == 'export_csv') {
 
 		header('Content-Type: text/csv');
 		header('Content-Disposition: attachment;filename=export_csv.csv');
@@ -207,7 +207,7 @@ if ($resql) {
 
 		$var = ! $var;
 
-		print "<tr $bc[$var]>";
+		print '<tr'. $bc[$var].'>';
 		print '<td>';
 		$thirdpartystatic->id = $obj->rowid;
 		$thirdpartystatic->name = $obj->name;

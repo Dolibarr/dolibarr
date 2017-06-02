@@ -94,12 +94,14 @@ if ($id > 0 || ! empty($ref))
 		$head=product_prepare_head($product);
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==Product::TYPE_SERVICE?'service':'product');
-		dol_fiche_head($head, 'referers', $titre, 0, $picto);
+		dol_fiche_head($head, 'referers', $titre, -1, $picto);
 
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+		
+        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
         
         print '<div class="fichecenter">';
         
@@ -191,7 +193,8 @@ if ($id > 0 || ! empty($ref))
 				print '</div>';
 
 				$i = 0;
-	            print '<table class="tagtable liste listwithfilterbefore" width="100%">';
+                print '<div class="div-table-responsive">';
+				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 				print '<tr class="liste_titre">';
 				print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"c.rowid","",$option,'',$sortfield,$sortorder);
 				print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$option,'',$sortfield,$sortorder);
@@ -208,9 +211,9 @@ if ($id > 0 || ! empty($ref))
 					while ($i < $num && $i < $conf->liste_limit)
 					{
 						$objp = $db->fetch_object($result);
-						$var=!$var;
+						
 
-						print '<tr '.$bc[$var].'>';
+						print '<tr class="oddeven">';
 	 					print '<td>';
 	                    $orderstatic->id=$objp->commandeid;
 	                    $orderstatic->ref=$objp->ref;
@@ -241,8 +244,8 @@ if ($id > 0 || ! empty($ref))
                 print '<td align="right">'.price($total_ht).'</td>';
                 print '<td></td>';
                 print "</table>";
+                print "</div>";
                 print '</form>';
-                print '<br>';
             } else {
 				dol_print_error($db);
 			}

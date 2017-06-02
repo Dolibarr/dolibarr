@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010	Laurent Destailleur		<eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2015		Jean-François Ferry     <jfefe@aternatik.fr>
@@ -27,13 +27,14 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");
 
 if (! $user->admin)
 	accessforbidden();
 
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 
 //Activate ProfId
 if ($action == 'setproductionmode')
@@ -42,8 +43,33 @@ if ($action == 'setproductionmode')
 
 	if (dolibarr_set_const($db, 'API_PRODUCTION_MODE', $status, 'chaine', 0, '', $conf->entity) > 0)
 	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
+		$error=0;
+
+		if ($status == 1)
+		{
+			$result = dol_mkdir($conf->api->dir_temp);
+			if ($result < 0)
+			{
+				setEventMessages($langs->trans("ErrorFailedToCreateDir", $conf->api->dir_temp), null, 'errors');
+				$error++;
+			}
+		}
+		else
+		{
+			// Delete the cache file otherwise it does not update
+			$result = dol_delete_file($conf->api->dir_temp.'/routes.php');
+			if ($result < 0)
+			{
+				setEventMessages($langs->trans("ErrorFailedToDeleteFile", $conf->api->dir_temp.'/routes.php'), null, 'errors');
+				$error++;
+			}
+		}
+
+	    if (!$error)
+	    {
+    		header("Location: ".$_SERVER["PHP_SELF"]);
+	   	    exit;
+	    }
 	}
 	else
 	{
@@ -70,7 +96,7 @@ print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
-print "<td>".$langs->trans("Value")."</td>";
+print '<td align="center">'.$langs->trans("Value")."</td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
@@ -95,24 +121,31 @@ print '</tr>';
 print '</table>';
 print '<br><br>';
 
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+// Show message
+$message='';
+$url=$urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&userpassword=<strong>thepassword</strong>[&reset=1]';
+$message.=$langs->trans("UrlToGetKeyToUseAPIs").':<br>';
+$message.=img_picto('','object_globe.png').' '.$url;
+print $message;
+print '<br>';
+print '<br>';
+
 // Explorer
 print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
-$url=DOL_MAIN_URL_ROOT.'/api/admin/explorer.php';
-print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-
-// API endpoint
-/*print '<u>'.$langs->trans("ApiEndPointIs").':</u><br>';
-$url=DOL_MAIN_URL_ROOT.'/api/index.php/xxx/list';
-print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-$url=DOL_MAIN_URL_ROOT.'/api/xxx/list.json';
-print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-*/
-
-print '<br>';
-print '<br>';
-print $langs->trans("OnlyActiveElementsAreExposed", DOL_URL_ROOT.'/admin/modules.php');
-
-
+if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer'))
+{
+    $url=DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
+    print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+}
+else
+{
+    print $langs->trans("NotAvailableWithThisDistribution");
+}
 
 llxFooter();
 $db->close();

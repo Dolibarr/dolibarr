@@ -59,17 +59,17 @@ print load_fiche_titre($langs->trans("ProspectionArea"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-/*
- * Search form
- */
-$var=false;
-print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/list.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder nohover" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("Proposal").':</td><td><input type="text" class="flat" name="sall" size=18></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "</table></form><br>\n";
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+{
+    $var=false;
+    print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/list.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<table class="noborder nohover" width="100%">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    print '<tr class="oddeven"><td>';
+    print $langs->trans("Proposal").':</td><td><input type="text" class="flat" name="sall" size=18></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print "</table></form><br>\n";
+}
 
 
 /*
@@ -122,8 +122,8 @@ if ($resql)
         $dataseries[]=array('label'=>$propalstatic->LibStatut($status,1),'data'=>(isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
-            $var=!$var;
-            print "<tr ".$bc[$var].">";
+            
+            print '<tr class="oddeven">';
             print '<td>'.$propalstatic->LibStatut($status,0).'</td>';
             print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
             print "</tr>\n";
@@ -176,9 +176,9 @@ if (! empty($conf->propal->enabled))
 			$var = True;
 			while ($i < $num)
 			{
-				$var=!$var;
+				
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 
 				$propalstatic->id=$obj->rowid;
 				$propalstatic->ref=$obj->ref;
@@ -236,10 +236,10 @@ if ($resql)
 		$var = True;
 		while ($i < $num)
 		{
-			$var=!$var;
+			
 			$obj = $db->fetch_object($resql);
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td width="20%" class="nowrap">';
 
 			$propalstatic->id=$obj->rowid;
@@ -317,8 +317,8 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			while ($i < $nbofloop)
 			{
 				$obj = $db->fetch_object($result);
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				
+				print '<tr class="oddeven">';
 
 				// Ref
 				print '<td class="nowrap" width="140">';
@@ -405,9 +405,9 @@ if (! empty($conf->propal->enabled))
 			$var = True;
 			while ($i < $num)
 			{
-				$var=!$var;
+				
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 
 				$propalstatic->id=$obj->rowid;
@@ -477,9 +477,9 @@ if (! empty($conf->propal->enabled))
 			$var = True;
 			while ($i < $num)
 			{
-				$var=!$var;
+				
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td width="20%" class="nowrap">';
 
 				$propalstatic->id=$obj->rowid;

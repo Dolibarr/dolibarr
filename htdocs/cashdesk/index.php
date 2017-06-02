@@ -58,9 +58,19 @@ top_htmlhead('','',0,0,'',$arrayofcss);
 <div class="conteneur_img_gauche">
 <div class="conteneur_img_droite">
 
-<h1 class="entete"></h1>
-
 <div class="menu_principal hideonsmartphone">
+<div class="logo">
+<?php
+if (! empty($mysoc->logo_small))
+{
+    print '<img class="logopos" alt="Logo company" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">';
+}
+else
+{
+    print '<div class="logopos">'.$mysoc->name.'</div>';
+}
+?>
+</div>
 </div>
 
 <div class="contenu">

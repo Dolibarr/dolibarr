@@ -76,7 +76,10 @@ class modFTP extends DolibarrModules
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 
 		// Constants
-		$this->const = array();			// List of parameters
+		$this->const = array(
+		    1=>array('FTP_CONNECT_WITH_SSL','chaine','0','Use FTPS for FTP module', 1, 'current', 1),
+		    2=>array('FTP_CONNECT_WITH_SFTP','chaine','0','Use SFTP for FTP module', 1, 'current', 1)
+		);			// List of parameters
 
 		// Boxes
 		$this->boxes = array();			// List of boxes
@@ -97,7 +100,7 @@ class modFTP extends DolibarrModules
 		$this->rights[$r][0] = 2801;
 		$this->rights[$r][1] = 'Use FTP client in read mode (browse and download only)';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
 
 		$r++;
@@ -107,12 +110,9 @@ class modFTP extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 
+		
 		// Menus
-		//------
-		$this->menus = array();			// List of menus to add
-		$r=0;
-
-		// Top menu
+		//-------
 		$this->menu[$r]=array('fk_menu'=>0,
 							  'type'=>'top',
 							  'titre'=>'FTP',

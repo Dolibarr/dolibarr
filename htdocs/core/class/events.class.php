@@ -58,6 +58,8 @@ class Events // extends CommonObject
 		array('id'=>'USER_NEW_PASSWORD',      'test'=>1),
 		array('id'=>'USER_ENABLEDISABLE',     'test'=>1),
 		array('id'=>'USER_DELETE',            'test'=>1),
+	/*    array('id'=>'USER_SETINGROUP',        'test'=>1), deprecated. Replace with USER_MODIFY
+	    array('id'=>'USER_REMOVEFROMGROUP',   'test'=>1), deprecated. Replace with USER_MODIFY */
 		array('id'=>'GROUP_CREATE',           'test'=>1),
 		array('id'=>'GROUP_MODIFY',           'test'=>1),
 		array('id'=>'GROUP_DELETE',           'test'=>1),
@@ -169,7 +171,7 @@ class Events // extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."events SET";
-		$sql.= " type='".$this->type."',";
+		$sql.= " type='".$this->db->escape($this->type)."',";
 		$sql.= " dateevent=".$this->db->idate($this->dateevent).",";
 		$sql.= " description='".$this->db->escape($this->description)."'";
 		$sql.= " WHERE rowid=".$this->id;

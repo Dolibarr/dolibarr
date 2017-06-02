@@ -69,14 +69,14 @@ if ($result < 0)
 	dol_print_error($db);
 	exit;
 }
-$upload_dir = $conf->adherent->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'member') . '/' . dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->adherent->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'member');
 
 
 /*
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -85,7 +85,9 @@ include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php
 
 $form = new Form($db);
 
-llxHeader();
+$title=$langs->trans("Member") . " - " . $langs->trans("Documents");
+$helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
+llxHeader("",$title,$helpurl);
 
 if ($id > 0)
 {
@@ -94,7 +96,7 @@ if ($id > 0)
 	{
 			
 		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{
@@ -106,7 +108,7 @@ if ($id > 0)
 
 		$head = member_prepare_head($object);
 
-		dol_fiche_head($head, 'document', $langs->trans("Member"),0,'user');
+		dol_fiche_head($head, 'document', $langs->trans("Member"), -1, 'user');
 
     	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
     	
@@ -156,6 +158,7 @@ if ($id > 0)
 
 		$modulepart = 'member';
 		$permission = $user->rights->adherent->creer;
+		$permtoedit = $user->rights->adherent->creer;
 		$param = '&id=' . $object->id;
 		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 		print "<br><br>";

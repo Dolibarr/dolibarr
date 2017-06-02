@@ -4,6 +4,7 @@
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +58,7 @@ class UserBankAccount extends Account
     /**
      * Create bank information record
      *
-     * @param   Object   $user		User
+     * @param   User   $user		User
      * @return	int					<0 if KO, >= 0 if OK
      */
     function create($user='')
@@ -99,12 +100,12 @@ class UserBankAccount extends Account
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."user_rib SET";
         $sql.= " bank = '" .$this->db->escape($this->bank)."'";
-        $sql.= ",code_banque='".$this->code_banque."'";
-        $sql.= ",code_guichet='".$this->code_guichet."'";
-        $sql.= ",number='".$this->number."'";
-        $sql.= ",cle_rib='".$this->cle_rib."'";
-        $sql.= ",bic='".$this->bic."'";
-        $sql.= ",iban_prefix = '".$this->iban."'";
+        $sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
+        $sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
+        $sql.= ",number='".$this->db->escape($this->number)."'";
+        $sql.= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
+        $sql.= ",bic='".$this->db->escape($this->bic)."'";
+        $sql.= ",iban_prefix = '".$this->db->escape($this->iban)."'";
         $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
         $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
         $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
@@ -131,17 +132,20 @@ class UserBankAccount extends Account
      * 	Load record from database
      *
      *	@param	int		$id			Id of record
+     *	@param	string	$ref		Ref of record
+     *  @param  int     $userid     User id
      * 	@return	int					<0 if KO, >0 if OK
      */
-    function fetch($id)
+    function fetch($id, $ref='', $userid=0)
     {
-        if (empty($id)) return -1;
+        if (empty($id) && empty($ref) && empty($userid)) return -1;
 
         $sql = "SELECT rowid, fk_user, entity, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
         $sql.= " owner_address, label, datec, tms as datem";
         $sql.= " FROM ".MAIN_DB_PREFIX."user_rib";
-        if ($id)    $sql.= " WHERE rowid = ".$id;
-        if ($socid) $sql.= " WHERE fk_user  = ".$userid;
+        if ($id) $sql.= " WHERE rowid = ".$id;
+        if ($ref) $sql.= " WHERE label = '".$this->db->escape($ref)."'";
+        if ($userid) $sql.= " WHERE fk_user = '".$userid."'";
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -177,78 +181,26 @@ class UserBankAccount extends Account
         }
     }
 
-    /**
-     * Return RIB
-     *
-     * @param   boolean     $displayriblabel     Prepend or Hide Label
-     * @return	string		RIB
-     */
-    function getRibLabel($displayriblabel = true)
-    {
-    	global $langs,$conf;
+	/**
+	 * Return RIB
+	 *
+	 * @param   boolean     $displayriblabel     Prepend or Hide Label
+	 * @return	string		RIB
+	 */
+	public function getRibLabel($displayriblabel = true)
+	{
+		$rib = '';
 
-    	if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib)
-    	{
-            if ($this->label && $displayriblabel) $rib = $this->label." : ";
+		if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib) {
 
-    		// Show fields of bank account
-			$fieldlists='BankCode DeskCode AccountNumber BankAccountNumberKey';
-			if (! empty($conf->global->BANK_SHOW_ORDER_OPTION))
-			{
-				if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION))
-				{
-					if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') $fieldlists='BankCode DeskCode BankAccountNumberKey AccountNumber';
-				}
-				else $fieldlists=$conf->global->BANK_SHOW_ORDER_OPTION;
+			if ($this->label && $displayriblabel) {
+				$rib = $this->label." : ";
 			}
-			$fieldlistsarray=explode(' ',$fieldlists);
 
-			foreach($fieldlistsarray as $val)
-			{
-				if ($val == 'BankCode')
-				{
-					if ($this->useDetailedBBAN()  == 1)
-					{
-						$rib.=$this->code_banque.'&nbsp;';
-					}
-				}
+			$rib .= (string) $this;
+		}
 
-				if ($val == 'DeskCode')
-				{
-					if ($this->useDetailedBBAN()  == 1)
-					{
-						$rib.=$this->code_guichet.'&nbsp;';
-					}
-				}
-
-				if ($val == 'BankCode')
-				{
-					if ($this->useDetailedBBAN()  == 2)
-			        {
-			            $rib.=$this->code_banque.'&nbsp;';
-			        }
-				}
-
-				if ($val == 'AccountNumber')
-				{
-					$rib.=$this->number.'&nbsp;';
-				}
-
-				if ($val == 'BankAccountNumberKey')
-				{
-					if ($this->useDetailedBBAN() == 1)
-					{
-						$rib.=$this->cle_rib.'&nbsp;';
-					}
-				}
-			}
-    	}
-    	else
-    	{
-    		$rib='';
-    	}
-
-    	return $rib;
-    }
+		return $rib;
+	}
 }
 

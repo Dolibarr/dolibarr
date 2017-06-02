@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - admin
+# Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Установка модуля Рабочих процессов
 WorkflowDesc=Данный модуль предназначен для изменения поведения автоматических действий в приложении. По умолчанию рабочий процесс открыт (вы можете делать вещи в произвольном порядке). Вы можете включить автоматические действия, которые вам необходимы.
 ThereIsNoWorkflowToModify=Для активированных модулей нет доступных изменений рабочего процесса.
@@ -9,3 +9,7 @@ descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Автоматически создава�
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Классифицировать связанные коммерческие предложения оплаченными, когда заказ клиента обозначен, как оплаченный
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Классифицировать связанные заказы клиента оплаченными, когда счёт клиента оплачен. 
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Классифицировать связанные заказы клиента оплаченными, когда счёт клиента подтверждён.
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer invoice is validated
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated and quantity shipped is the same as in order
+AutomaticCreation=Automatic creation
+AutomaticClassification=Automatic classification

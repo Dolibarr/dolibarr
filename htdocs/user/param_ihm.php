@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro.com>
  *
@@ -32,6 +32,8 @@ $langs->load("products");
 $langs->load("admin");
 $langs->load("users");
 $langs->load("languages");
+$langs->load("projects");
+$langs->load("members");
 
 // Defini si peux lire/modifier permisssions
 $canreaduser=($user->admin || $user->rights->user->user->lire);
@@ -63,7 +65,7 @@ $dirleft = "../core/menus/standard";
 
 // Charge utilisateur edite
 $object = new User($db);
-$object->fetch($id);
+$object->fetch($id, '', '', 1);
 $object->getrights();
 
 // Liste des zone de recherche permanentes supportees
@@ -79,9 +81,11 @@ $formadmin=new FormAdmin($db);
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('usercard','globalcard'));
 
+
 /*
  * Actions
  */
+
 $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -90,6 +94,12 @@ if (empty($reshook)) {
 	if ($action == 'update' && ($caneditfield || !empty($user->admin))) {
 		if (!$_POST["cancel"]) {
 			$tabparam = array();
+
+			if (GETPOST("check_MAIN_LANDING_PAGE") == "on") {
+				$tabparam["MAIN_LANDING_PAGE"] = $_POST["MAIN_LANDING_PAGE"];
+			} else {
+				$tabparam["MAIN_LANDING_PAGE"] = '';
+			}
 
 			if (GETPOST("check_MAIN_LANG_DEFAULT") == "on") {
 				$tabparam["MAIN_LANG_DEFAULT"] = $_POST["main_lang_default"];
@@ -145,6 +155,17 @@ if (empty($reshook)) {
 
 llxHeader();
 
+// List of possible landing pages
+$tmparray=array('index.php'=>'Dashboard');
+if (! empty($conf->societe->enabled)) $tmparray['societe/index.php?mainmenu=companies&leftmenu=']='ThirdPartiesArea';
+if (! empty($conf->projet->enabled)) $tmparray['projet/index.php?mainmenu=project&leftmenu=']='ProjectsArea';
+if (! empty($conf->holiday->enabled) || ! empty($conf->expensereport->enabled)) $tmparray['hrm/index.php?mainmenu=hrm&leftmenu=']='HRMArea';   // TODO Complete list with first level of menus
+if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) $tmparray['product/index.php?mainmenu=products&leftmenu=']='ProductsAndServicesArea';
+if (! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->fichinter->enabled) || ! empty($conf->contrat->enabled)) $tmparray['comm/index.php?mainmenu=commercial&leftmenu=']='CommercialArea';
+if (! empty($conf->compta->enabled) || ! empty($conf->accounting->enabled)) $tmparray['compta/index.php?mainmenu=compta&leftmenu=']='AccountancyTreasuryArea';
+if (! empty($conf->adherent->enabled)) $tmparray['adherents/index.php?mainmenu=members&leftmenu=']='MembersArea';
+if (! empty($conf->agenda->enabled)) $tmparray['comm/action/index.php?mainmenu=agenda&leftmenu=']='Agenda';
+
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
@@ -160,18 +181,16 @@ if ($action == 'edit')
 
 if ($action == 'edit')
 {
-    dol_fiche_head($head, 'guisetup', $title, 0, 'user');
-    
-    $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+    dol_fiche_head($head, 'guisetup', $title, -1, 'user');
+
+	$linkback = '';
+
+	if ($user->rights->user->user->lire || $user->admin) {
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	}
     
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
     
-    
-    print '<div class="underbanner clearboth"></div>';
-    
-    print '<br>';
-    
-
     if (! empty($conf->use_javascript_ajax))
     {/*
         print '<script type="text/javascript" language="javascript">
@@ -192,7 +211,10 @@ if ($action == 'edit')
         jQuery(document).ready(function() {
         	function init_myfunc()
         	{
-        		if (jQuery("#check_MAIN_LANG_DEFAULT").prop("checked")) { jQuery("#main_lang_default").removeAttr(\'disabled\'); }
+        		if (jQuery("#check_MAIN_LANDING_PAGE").prop("checked")) { jQuery("#MAIN_LANDING_PAGE").removeAttr(\'disabled\'); }
+        		else { jQuery("#MAIN_LANDING_PAGE").attr(\'disabled\',\'disabled\'); }
+            
+                if (jQuery("#check_MAIN_LANG_DEFAULT").prop("checked")) { jQuery("#main_lang_default").removeAttr(\'disabled\'); }
         		else { jQuery("#main_lang_default").attr(\'disabled\',\'disabled\'); }
         		
                 if (jQuery("#check_SIZE_LISTE_LIMIT").prop("checked")) { jQuery("#main_size_liste_limit").removeAttr(\'disabled\'); }
@@ -205,7 +227,8 @@ if ($action == 'edit')
         		else { jQuery("#colorpickerTHEME_ELDY_TOPMENU_BACK1").attr(\'disabled\',\'disabled\'); }
             }
         	init_myfunc();
-        	jQuery("#check_SIZE_LISTE_LIMIT").click(function() { init_myfunc(); });
+        	jQuery("#check_MAIN_LANDING_PAGE").click(function() { init_myfunc(); });
+            jQuery("#check_SIZE_LISTE_LIMIT").click(function() { init_myfunc(); });
             jQuery("#check_MAIN_LANG_DEFAULT").click(function() { init_myfunc(); });
             jQuery("#check_MAIN_THEME").click(function() { init_myfunc(); });
             jQuery("#check_THEME_ELDY_TOPMENU_BACK1").click(function() { init_myfunc(); });
@@ -221,9 +244,23 @@ if ($action == 'edit')
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
+    // Landing page
+    
+    print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
+    print '<td>';
+    print (empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE);
+    print '</td>';
+    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_LANDING_PAGE" id="check_MAIN_LANDING_PAGE" type="checkbox" '.(! empty($object->conf->MAIN_LANDING_PAGE)?" checked":"");
+    print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
+    print '> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td>';
+    print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (! empty($object->conf->MAIN_LANDING_PAGE)?$object->conf->MAIN_LANDING_PAGE:''), 0, 0, 0, '', 1);
+    //print info_admin($langs->trans("WarningYouMayLooseAccess"), 0, 0, 0);
+    print '</td></tr>';
+    
     // Langue par defaut
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
+    
+    print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td>';
     print '<td>';
     $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
     print $s?$s.' ':'';
@@ -237,8 +274,8 @@ if ($action == 'edit')
     print '</td></tr>';
 
     // Taille max des listes
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
+    
+    print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"");
     print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
@@ -262,38 +299,52 @@ if ($action == 'edit')
 }
 else
 {
-    dol_fiche_head($head, 'guisetup', $title, 0, 'user');
+    dol_fiche_head($head, 'guisetup', $title, -1, 'user');
     
     $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
     
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-    
-    
-    print '<div class="underbanner clearboth"></div>';
-    
-    print '<br>';
     
     $var=true;
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
+    // Landing page
+    
+    print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
+    print '<td>';
+    print (empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE);
+    print '</td>';
+    print '<td align="left" class="nowrap"><input '.$bc[$var].' name="check_MAIN_LANDING_PAGE" disabled id="check_MAIN_LANDING_PAGE" type="checkbox" '.(! empty($object->conf->MAIN_LANDING_PAGE)?" checked":"");
+    print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
+    print '> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td>';
+    if (! empty($tmparray[$object->conf->MAIN_LANDING_PAGE]))
+    {
+        print $langs->trans($tmparray[$object->conf->MAIN_LANDING_PAGE]);
+    }
+    else print $object->conf->MAIN_LANDING_PAGE;
+    //print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (! empty($object->conf->MAIN_LANDING_PAGE)?$object->conf->MAIN_LANDING_PAGE:''), 0, 0, 0, '', 1);
+    print '</td></tr>';
+    
+    // Language
+    
+    print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td>';
     print '<td>';
     $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
     print ($s?$s.' ':'');
     print (isset($conf->global->MAIN_LANG_DEFAULT) && $conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
     print '</td>';
-    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' type="checkbox" disabled '.(! empty($object->conf->MAIN_LANG_DEFAULT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td align="left" class="nowrap"><input '.$bc[$var].' type="checkbox" disabled '.(! empty($object->conf->MAIN_LANG_DEFAULT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
     $s=(isset($object->conf->MAIN_LANG_DEFAULT) ? picto_from_langcode($object->conf->MAIN_LANG_DEFAULT) : '');
     print ($s?$s.' ':'');
     print (isset($object->conf->MAIN_LANG_DEFAULT) && $object->conf->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):(! empty($object->conf->MAIN_LANG_DEFAULT)?$langs->trans("Language_".$object->conf->MAIN_LANG_DEFAULT):''));
     print '</td></tr>';
 
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
+    
+    print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.(! empty($conf->global->MAIN_SIZE_LISTE_LIMIT)?$conf->global->MAIN_SIZE_LISTE_LIMIT:'&nbsp;').'</td>';
     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' type="checkbox" disabled '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>' . (! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?$object->conf->MAIN_SIZE_LISTE_LIMIT:'&nbsp;') . '</td></tr>';

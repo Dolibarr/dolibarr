@@ -1,11 +1,7 @@
 # Dolibarr language file - Source file is en_US - interventions
 NewIntervention=Новые вмешательства
 ListOfInterventions=Список мероприятий
-EditIntervention=Изменить вмешательства
 LastInterventions=Последнее вмешательства %s
 CreateDraftIntervention=Создать проект
-CustomerDoesNotHavePrefix=Клиент не имеет префикса
 ConfirmDeleteInterventionLine=Вы действительно хотите удалить этот вмешательства линии?
 DocumentModelStandard=Стандартная модель документа для вмешательства
-PacificNumRefModelDesc1=Вернуться Numero с форматом %syymm-NNNN, где гг это год, мм месяца и NNNN последовательность без перерыва и возврата к 0
-PacificNumRefModelError=Вмешательства карты, начиная с $ syymm уже существует и не совместим с этой моделью последовательности. Удалить или переименовать его, чтобы активировать этот модуль.

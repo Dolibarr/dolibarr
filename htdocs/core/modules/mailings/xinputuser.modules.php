@@ -31,13 +31,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 class mailing_xinputuser extends MailingTargets
 {
 	var $name='EmailsFromUser';              // Identifiant du module mailing
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
 	var $desc='EMails input by user';        // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
 	var $require_module=array();            // Module mailing actif si modules require_module actifs
 	var $require_admin=0;                    // Module mailing actif pour user admin ou non
 	var $picto='generic';
-
-	var $db;
-
+	var $tooltip='UseFormatInputEmailToTarget';
+	
 
 	/**
 	 *	Constructor
@@ -104,7 +104,7 @@ class mailing_xinputuser extends MailingTargets
 		global $langs;
 
 		$s='';
-		$s.='<input type="text" name="xinputuser" class="flat" size="40" value="'.GETPOST("xinputuser").'">';
+		$s.='<input type="text" name="xinputuser" class="flat minwidth300" value="'.GETPOST("xinputuser").'">';
 		return $s;
 	}
 

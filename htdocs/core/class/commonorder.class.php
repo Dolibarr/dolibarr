@@ -25,8 +25,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
 
 /**
- *		\class 		CommonOrder
- *       \brief 		Superclass for orders classes
+ *      Superclass for orders classes
  */
 abstract class CommonOrder extends CommonObject
 {
@@ -34,8 +33,7 @@ abstract class CommonOrder extends CommonObject
 }
 
 /**
- *		\class 		CommonOrderLine
- *       \brief 		Superclass for orders classes
+ *      Superclass for orders classes
  */
 abstract class CommonOrderLine extends CommonObjectLine
 {

@@ -109,25 +109,26 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *
 	 * @param   Project			$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
+     * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
-	function get_substitutionarray_object($object,$outputlangs)
+	function get_substitutionarray_object($object,$outputlangs,$array_key='object')
 	{
 		global $conf;
 
 		$resarray=array(
-		'object_id'=>$object->id,
-		'object_ref'=>$object->ref,
-		'object_title'=>$object->title,
-		'object_description'=>$object->description,
-		'object_date_creation'=>dol_print_date($object->date_c,'day'),
-		'object_date_modification'=>dol_print_date($object->date_m,'day'),
-		'object_date_start'=>dol_print_date($object->date_start,'day'),
-		'object_date_end'=>dol_print_date($object->date_end,'day'),
-		'object_note_private'=>$object->note_private,
-		'object_note_public'=>$object->note_public,
-		'object_public'=>$object->public,
-		'object_statut'=>$object->getLibStatut()
+            $array_key.'_id'=>$object->id,
+            $array_key.'_ref'=>$object->ref,
+            $array_key.'_title'=>$object->title,
+            $array_key.'_description'=>$object->description,
+            $array_key.'_date_creation'=>dol_print_date($object->date_c,'day'),
+            $array_key.'_date_modification'=>dol_print_date($object->date_m,'day'),
+            $array_key.'_date_start'=>dol_print_date($object->date_start,'day'),
+            $array_key.'_date_end'=>dol_print_date($object->date_end,'day'),
+            $array_key.'_note_private'=>$object->note_private,
+            $array_key.'_note_public'=>$object->note_public,
+            $array_key.'_public'=>$object->public,
+            $array_key.'_statut'=>$object->getLibStatut()
 		);
 
 		// Retrieve extrafields
@@ -358,7 +359,25 @@ class doc_generic_task_odt extends ModelePDFTask
 		$texte.= '<br></div></div>';
 
 		// Scan directories
-		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
+		$nbofiles=count($listoffiles);
+		if (! empty($conf->global->PROJECT_TASK_ADDON_PDF_ODT_PATH))
+		{
+			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>';
+			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
+			$texte.=$nbofiles;
+			//$texte.=$nbofiles?'</a>':'';
+			$texte.='</b>';
+		}
+
+		if ($nbofiles)
+		{
+   			$texte.='<div id="div_'.get_class($this).'" class="hidden">';
+   			foreach($listoffiles as $file)
+   			{
+                $texte.=$file['name'].'<br>';
+   			}
+   			$texte.='<div id="div_'.get_class($this).'">';
+		}
 
 		$texte.= '</td>';
 
@@ -416,6 +435,7 @@ class doc_generic_task_odt extends ModelePDFTask
 			}
 			$project= new Project($this->db);
 			$project->fetch($object->fk_project);
+			$project->fetch_thirdparty();
 
 			$dir = $conf->projet->dir_output. "/" . $project->ref. "/";
 			$objectref = dol_sanitizeFileName($object->ref);
@@ -450,7 +470,7 @@ class doc_generic_task_odt extends ModelePDFTask
 
 				dol_mkdir($conf->projet->dir_temp);
 
-				$socobject=$object->thirdparty;
+				$socobject=$project->thirdparty;
 
 				// Make substitution
 				$substitutionarray=array(
@@ -645,7 +665,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					$listtasksfiles = $odfHandler->setSegment('tasksfiles');
 
 					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($object->ref);
-					$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$','name',SORT_ASC,1);
+					$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$','name',SORT_ASC,1);
 
 
 					foreach ($filearray as $filedetail)
@@ -687,7 +707,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					$listlines = $odfHandler->setSegment('projectfiles');
 
 					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
-					$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$','name',SORT_ASC,1);
+					$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$','name',SORT_ASC,1);
 
 
 					foreach ($filearray as $filedetail)

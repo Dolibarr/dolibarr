@@ -106,11 +106,14 @@ abstract class ModeleNumRefSuppliersInvoices
 		return true;
 	}
 
-	/**  Returns next value assigned
-	 *
-	 *   @return     string      Valeur
-	 */
-	function getNextValue()
+    /**  Returns next value assigned
+     *
+     * @param	Societe		$objsoc     Object third party
+     * @param  	Object	    $object		Object
+     * @param	string		$mode       'next' for next value or 'last' for last value
+     * @return 	string      			Value if OK, 0 if KO
+     */
+    function getNextValue($objsoc,$object,$mode)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -132,22 +135,3 @@ abstract class ModeleNumRefSuppliersInvoices
 		return $langs->trans("NotAvailable");
 	}
 }
-
-/**
- *	Create a document onto disk according to template model.
- *
- *	@param	    DoliDB		$db  			Database handler
- *	@param	    Object		$object			Object supplier invoice
- *	@param	    string		$modele			Force template to use ('' to not force)
- *	@param		Translate	$outputlangs	Object lang a utiliser pour traduction
- *  @param      int			$hidedetails    Hide details of lines
- *  @param      int			$hidedesc       Hide description
- *  @param      int			$hideref        Hide ref
- *  @return     int         				0 if KO, 1 if OK
- *
- */
-function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
-{
-	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
-}
-

@@ -61,10 +61,11 @@ $action=GETPOST('action','alpha');
 $original_file=GETPOST('file','alpha');	// Do not use urldecode here ($_GET are already decoded by PHP).
 $modulepart=GETPOST('modulepart','alpha');
 $urlsource=GETPOST('urlsource','alpha');
-$entity=GETPOST('entity')?GETPOST('entity','int'):$conf->entity;
+$entity=GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity;
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
+if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatibility
 
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
@@ -94,10 +95,10 @@ else $type=dol_mimetype($original_file);
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
 $attachment = true;
 if (preg_match('/\.(html|htm)$/i',$original_file)) $attachment = false;
-if (isset($_GET["attachment"])) $attachment = GETPOST("attachment")?true:false;
+if (isset($_GET["attachment"])) $attachment = GETPOST("attachment",'alpha')?true:false;
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 
-// Suppression de la chaine de caractere ../ dans $original_file
+// Security: Delete string ../ into $original_file
 $original_file = str_replace("../","/", $original_file);
 
 // Find the subdirectory name as the reference
@@ -108,7 +109,7 @@ if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
 $check_access = dol_check_secure_access_document($modulepart,$original_file,$entity,$refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
-$original_file              = $check_access['original_file'];
+$original_file              = $check_access['original_file'];               // original_file is now a full path name
 
 // Basic protection (against external users only)
 if ($user->societe_id > 0)
@@ -169,10 +170,9 @@ if (! file_exists($original_file_osencoded))
 }
 
 // Permissions are ok and file found, so we return it
-
+top_httphead($type);
 header('Content-Description: File Transfer');
 if ($encoding)   header('Content-Encoding: '.$encoding);
-if ($type)       header('Content-Type: '.$type.(preg_match('/text/',$type)?'; charset="'.$conf->file->character_set_client:''));
 // Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, atachment=need user action to open)
 if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
 else header('Content-Disposition: inline; filename="'.$filename.'"');
@@ -183,7 +183,7 @@ header('Pragma: public');
 
 //ob_clean();
 //flush();
-
+    
 readfile($original_file_osencoded);
 
 if (is_object($db)) $db->close();

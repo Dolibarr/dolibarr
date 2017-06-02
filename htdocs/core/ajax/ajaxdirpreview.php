@@ -40,7 +40,7 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
     require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
-	$action=GETPOST("action");
+	$action=GETPOST('action','aZ09');
     $file=urldecode(GETPOST('file'));
     $section=GETPOST("section");
     $module=GETPOST("module");
@@ -82,6 +82,7 @@ else    // For no ajax call
     $relativepath=$ecmdir->getRelativePath();
     $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 }
+if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
 
 // Load traductions files
 $langs->load("ecm");
@@ -137,11 +138,11 @@ if (! dol_is_dir($upload_dir))
     exit;*/
 }
 
-print '<!-- TYPE='.$type.' -->'."\n";
-print '<!-- Page called with mode='.(isset($mode)?$mode:'').' type='.$type.' module='.$module.' url='.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+print '<!-- ajaxdirpreview type='.$type.' -->'."\n";
+print '<!-- Page called with mode='.(isset($mode)?$mode:'').' type='.$type.' module='.$module.' url='.$url.' '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 $param=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'');
-$url=DOL_URL_ROOT.'/ecm/index.php';
+
 
 // Dir scan
 if ($type == 'directory')
@@ -149,11 +150,11 @@ if ($type == 'directory')
     $formfile=new FormFile($db);
 
     $maxlengthname=40;
-    $excludefiles = array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview\.png)$','^temp$','^payments$','^CVS$','^thumbs$');
+    $excludefiles = array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview.*\.png)$','^temp$','^payments$','^CVS$','^thumbs$');
     $sorting = (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC);
 
     // Right area. If module is defined, we are in automatic ecm.
-    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user');
+    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport');
 
     // TODO change for multicompany sharing
     // Auto area for suppliers invoices
@@ -188,7 +189,10 @@ if ($type == 'directory')
     else if ($module == 'fichinter') $upload_dir = $conf->ficheinter->dir_output;
     // Auto area for users
     else if ($module == 'user') $upload_dir = $conf->user->dir_output;
+    // Auto area for expense report
+    else if ($module == 'expensereport') $upload_dir = $conf->expensereport->dir_output;
 
+    // Automatic list
     if (in_array($module, $automodules))
     {
         $param.='&module='.$module;
@@ -197,7 +201,7 @@ if ($type == 'directory')
         $filearray=dol_dir_list($upload_dir,"files",1,'', $excludefiles, $sortfield, $sorting,1);
         $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname,$url);
     }
-    //Manual area
+    // Manual list
     else
     {
         $relativepath=$ecmdir->getRelativePath();
@@ -208,7 +212,7 @@ if ($type == 'directory')
         {
             $filearray=array();
         }
-        else $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','(\.meta|_preview\.png)$','^temp$','^CVS$'),$sortfield, $sorting,1);
+        else $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','(\.meta|_preview.*\.png)$','^temp$','^CVS$'),$sortfield, $sorting,1);
 
         if ($section)
         {
@@ -240,7 +244,10 @@ if ($section)
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 		$useglobalvars=1;
 		$form = new Form($db);
-		$formquestion=array('urlfile'=>array('type'=>'hidden','value'=>$urlfile,'name'=>'urlfile'));
+		$formquestion=array(
+			'urlfile'=>array('type'=>'hidden','value'=>$urlfile,'name'=>'urlfile'),
+			'section'=>array('type'=>'hidden','value'=>$section,'name'=>'section')
+		);
 		print $form->formconfirm($url,$langs->trans("DeleteFile"),$langs->trans("ConfirmDeleteFile"),'confirm_deletefile',$formquestion,"no",($useajax?'deletefile':0));
 	}
 

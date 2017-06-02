@@ -62,7 +62,7 @@ $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (! $sortfield) $sortfield="position_name";
 
 
 $object = new Product($db);
@@ -110,8 +110,8 @@ if (empty($reshook))
 		}
 	}
 
-	// Action sending file
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_pre_headers.tpl.php';
+	// Action submit/delete file/link
+	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 }
 
@@ -166,7 +166,21 @@ if ($action=='filemerge')
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("CardProduct".$object->type));
+$title = $langs->trans('ProductServiceCard');
+$helpurl = '';
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Documents');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Documents');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
+
+llxHeader('', $title, $helpurl);
 
 
 if ($object->id)
@@ -174,17 +188,18 @@ if ($object->id)
 	$head=product_prepare_head($object);
 	$titre=$langs->trans("CardProduct".$object->type);
 	$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-	dol_fiche_head($head, 'documents', $titre, 0, $picto);
+	
+	dol_fiche_head($head, 'documents', $titre, -1, $picto);
 
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
+	
 	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
 	{
-		$filearrayold=dol_dir_list($upload_dirold,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		$filearrayold=dol_dir_list($upload_dirold,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$filearray=array_merge($filearray, $filearrayold);
 	}
 
@@ -195,7 +210,9 @@ if ($object->id)
 	}
 
 
-    dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+    $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+    $object->next_prev_filter=" fk_product_type = ".$object->type;
+    dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
     
     print '<div class="fichecenter">';
     
@@ -215,6 +232,7 @@ if ($object->id)
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
+    
     // Merge propal PDF document PDF files
     if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
     {
@@ -234,7 +252,8 @@ if ($object->id)
 
     	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
     	{
-    		$filearray = dol_dir_list($upload_dirold, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1);
+
+    		$filearray = array_merge($filearray,dol_dir_list($upload_dirold, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1));
     	}
 
     	// For each file build select list with PDF extention
@@ -262,43 +281,11 @@ if ($object->id)
 
     			print  '<tr class="liste_titre"><td>';
 
-    			$delauft_lang = (empty($lang_id)) ? $langs->getDefaultLang() : $lang_id;
+    			$delauft_lang = empty($lang_id) ? $langs->getDefaultLang() : $lang_id;
 
     			$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12);
 
-    			print  '<select class="flat" id="lang_id" name="lang_id">';
-
-    			asort($langs_available);
-
-    			$uncompletelanguages = array (
-    					'da_DA',
-    					'fi_FI',
-    					'hu_HU',
-    					'is_IS',
-    					'pl_PL',
-    					'ro_RO',
-    					'ru_RU',
-    					'sv_SV',
-    					'tr_TR',
-    					'zh_CN'
-    			);
-    			foreach ( $langs_available as $key => $value )
-    			{
-    				if ($showwarning && in_array($key, $uncompletelanguages))
-    				{
-    					// $value.=' - '.$langs->trans("TranslationUncomplete",$key);
-    				}
-    				if ($filter && is_array($filter)) {
-    					if (! array_key_exists($key, $filter)) {
-    						print  '<option value="' . $key . '">' . $value . '</option>';
-    					}
-    				} else if ($delauft_lang == $key) {
-    					print  '<option value="' . $key . '" selected>' . $value . '</option>';
-    				} else {
-    					print  '<option value="' . $key . '">' . $value . '</option>';
-    				}
-    			}
-    			print  '</select>';
+			    print Form::selectarray('lang_id', $langs_available, $delauft_lang, 0, 0, 0, '', 0, 0, 0, 'ASC');
 
     			if ($conf->global->MAIN_MULTILANGS) {
     				print  '<input type="submit" class="button" name="refresh" value="' . $langs->trans('Refresh') . '">';

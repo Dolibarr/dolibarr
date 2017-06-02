@@ -1,3 +1,2 @@
 # Dolibarr language file - Source file is en_US - orders
-RelatedCustomerOrders=Pedidos de clientes relacionados
-RelatedSupplierOrders=Pedidos a clientes relacionados
+StatusOrderDeliveredShort=Emitido

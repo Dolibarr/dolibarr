@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016		Juanjo Menent   		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,8 +62,13 @@ $formother = new FormOther($db);
 $checkdepositstatic=new RemiseCheque($db);
 $accountstatic=new Account($db);
 
+
+/*
+ * Actions
+ */
+
 // If click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $search_ref='';
     $search_amount='';
@@ -71,13 +77,15 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $month='';
 }
 
+
+
 /*
  * View
  */
 
 llxHeader('',$langs->trans("ChequesReceipts"));
 
-$sql = "SELECT bc.rowid, bc.number as ref, bc.date_bordereau as dp,";
+$sql = "SELECT bc.rowid, bc.ref as ref, bc.date_bordereau as dp,";
 $sql.= " bc.nbcheque, bc.amount, bc.statut,";
 $sql.= " ba.rowid as bid, ba.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
@@ -86,9 +94,9 @@ $sql.= " WHERE bc.fk_bank_account = ba.rowid";
 $sql.= " AND bc.entity = ".$conf->entity;
 
 // Search criteria
-if ($search_ref)			$sql.=" AND bc.number=".$search_ref;
+if ($search_ref)			$sql.=natural_search("bc.ref",$search_ref);
 if ($search_account > 0)	$sql.=" AND bc.fk_bank_account=".$search_account;
-if ($search_amount)			$sql.=" AND bc.amount='".$db->escape(price2num(trim($search_amount)))."'";
+if ($search_amount)			$sql.=natural_search("bc.amount", price2num($search_amount));
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
@@ -104,7 +112,7 @@ else if ($year > 0)
 }
 $sql.= $db->order($sortfield,$sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
@@ -120,6 +128,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 	$param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -129,12 +138,17 @@ if ($resql)
 	print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
 	
 	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_bank.png', '', '', $limit);
 	
-	print '<table class="liste">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bc.number","",$param,"",$sortfield,$sortorder);
+	$moreforfilter='';
+	
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+    print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bc.ref","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("NbOfCheques"),$_SERVER["PHP_SELF"],"bc.nbcheque","",$param,'align="right"',$sortfield,$sortorder);
@@ -153,17 +167,17 @@ if ($resql)
     print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
     $formother->select_year($year?$year:-1,'year',1, 20, 5);
     print '</td>';
-    print '<td>';
+    print '<td class="liste_titre">';
     $form->select_comptes($search_account,'search_account',0,'',1);
     print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="6" name="search_amount" value="'.$search_amount.'">';
+	print '<input class="flat maxwidth50" type="text" name="search_amount" value="'.$search_amount.'">';
 	print '</td>';
-	print '<td></td>';
+	print '<td class="liste_titre"></td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
+    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    print $searchpicto;
     print '</td>';
     print "</tr>\n";
 
@@ -173,11 +187,11 @@ if ($resql)
     	while ($i < min($num,$limit))
     	{
     		$objp = $db->fetch_object($resql);
-    		$var=!$var;
-    		print "<tr ".$bc[$var].">";
+    		
+    		print '<tr class="oddeven">';
     
     		// Num ref cheque
-    		print '<td width="80">';
+    		print '<td>';
     		$checkdepositstatic->id=$objp->rowid;
     		$checkdepositstatic->ref=($objp->ref?$objp->ref:$objp->rowid);
     		$checkdepositstatic->statut=$objp->statut;
@@ -189,7 +203,7 @@ if ($resql)
     
     		// Bank
     		print '<td>';
-    		if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
+    		if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
     		else print '&nbsp;';
     		print '</td>';
     
@@ -212,12 +226,12 @@ if ($resql)
     }
     else
     {
-   		$var=!$var;
-   		print "<tr ".$bc[$var].">";
-   		print '<td colspan="7">'.$langs->trans("None")."</td>";
+   		print '<tr class="oddeven">';
+   		print '<td colspan="7" class="opacitymedium">'.$langs->trans("None")."</td>";
    		print '</tr>';
     }
 	print "</table>";
+	print "</div>";
 	print "</form>\n";
 }
 else

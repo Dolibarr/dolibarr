@@ -48,6 +48,7 @@ class FormMargin
 
 	/**
 	 *	get array with margin information from lines of object
+	 *  TODO Move this in common class.
 	 *
 	 * 	@param	CommonObject	$object			Object we want to get margin information for
 	 * 	@param 	boolean			$force_price	True of not
@@ -92,19 +93,23 @@ class FormMargin
 				$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));
 			}
 
+			$pv = $line->qty * $line->subprice * (1 - $line->remise_percent / 100);
+			$pa_ht = ($pv < 0 ? - $line->pa_ht : $line->pa_ht);      // We choosed to have line->pa_ht always positive in database, so we guess the correct sign
+			$pa = $line->qty * $pa_ht;
+			
 			// calcul des marges
 			if (isset($line->fk_remise_except) && isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT)) {    // remise
-			    $pa = $line->qty * $line->pa_ht;
-			    $pv = $line->qty * $line->subprice * (1 - $line->remise_percent / 100);
 				if ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '1') { // remise globale considérée comme produit
 					$marginInfos['pa_products'] += $pa;
 					$marginInfos['pv_products'] += $pv;
 					$marginInfos['pa_total'] +=  $pa;
 					$marginInfos['pv_total'] +=  $pv;
 					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
-					if ($pv < 0)
-						$marginInfos['margin_on_products'] += -1 * (abs($pv) - $pa);
-					else
+					//if ($pv < 0)
+					//{
+					//	$marginInfos['margin_on_products'] += -1 * (abs($pv) - $pa);
+					//}
+					//else
 						$marginInfos['margin_on_products'] += $pv - $pa;
 				}
 				elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2') { // remise globale considérée comme service
@@ -113,9 +118,9 @@ class FormMargin
 					$marginInfos['pa_total'] +=  $pa;
 					$marginInfos['pv_total'] +=  $pv;
 					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
-					if ($pv < 0)
-						$marginInfos['margin_on_services'] += -1 * (abs($pv) - $pa);
-					else
+					//if ($pv < 0)
+					//	$marginInfos['margin_on_services'] += -1 * (abs($pv) - $pa);
+					//else
 						$marginInfos['margin_on_services'] += $pv - $pa;
 				}
 				elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '3') { // remise globale prise en compte uniqt sur total
@@ -126,29 +131,29 @@ class FormMargin
 			else {
 				$type=$line->product_type?$line->product_type:$line->fk_product_type;
 				if ($type == 0) {  // product
-				    $pa = $line->qty * $line->pa_ht;
-				    $pv = $line->qty * $line->subprice * (1 - $line->remise_percent / 100);
 					$marginInfos['pa_products'] += $pa;
 					$marginInfos['pv_products'] += $pv;
 					$marginInfos['pa_total'] +=  $pa;
 					$marginInfos['pv_total'] +=  $pv;
 					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
-					if ($pv < 0)
-						$marginInfos['margin_on_products'] += -1 * (abs($pv) - $pa);
-					else
-						$marginInfos['margin_on_products'] += $pv - $pa;
+					//if ($pv < 0)
+					//{
+					//    $marginInfos['margin_on_products'] += -1 * (abs($pv) - $pa);
+					//}
+					//else
+					//{
+					    $marginInfos['margin_on_products'] += $pv - $pa;
+					//}
 				}
 				elseif ($type == 1) {  // service
-				    $pa = $line->qty * $line->pa_ht;
-				    $pv = $line->qty * $line->subprice * (1 - $line->remise_percent / 100);
 					$marginInfos['pa_services'] += $pa;
 					$marginInfos['pv_services'] += $pv;
 					$marginInfos['pa_total'] +=  $pa;
 					$marginInfos['pv_total'] +=  $pv;
 					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
-					if ($pv < 0)
-						$marginInfos['margin_on_services'] += -1 * (abs($pv) - $pa);
-					else
+					//if ($pv < 0)
+					//	$marginInfos['margin_on_services'] += -1 * (abs($pv) - $pa);
+					//else
 						$marginInfos['margin_on_services'] += $pv - $pa;
 				}
 			}
@@ -164,9 +169,9 @@ class FormMargin
 			$marginInfos['mark_rate_services'] = 100 * $marginInfos['margin_on_services'] / $marginInfos['pv_services'];
 
 		// if credit note, margin = -1 * (abs(selling_price) - buying_price)
-		if ($marginInfos['pv_total'] < 0)
-			$marginInfos['total_margin'] = -1 * (abs($marginInfos['pv_total']) - $marginInfos['pa_total']);
-		else
+		//if ($marginInfos['pv_total'] < 0)
+		//	$marginInfos['total_margin'] = -1 * (abs($marginInfos['pv_total']) - $marginInfos['pa_total']);
+		//else
 			$marginInfos['total_margin'] = $marginInfos['pv_total'] - $marginInfos['pa_total'];
 		if ($marginInfos['pa_total'] > 0)
 			$marginInfos['total_margin_rate'] = 100 * $marginInfos['total_margin'] / $marginInfos['pa_total'];
@@ -209,7 +214,8 @@ class FormMargin
     	    if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
 		}
 
-		print '<table class="nobordernopadding margintable" width="100%">';
+		print '<!-- Margin table -->'."\n";
+		print '<table class="noborder margintable centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">'.$langs->trans('Margins').'</td>';
 		print '<td class="liste_titre" align="right">'.$langs->trans('SellingPrice').'</td>';
@@ -227,7 +233,7 @@ class FormMargin
 		if (! empty($conf->product->enabled))
 		{
 			//if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
-			print '<tr class="impair">';
+			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans('MarginOnProducts').'</td>';
 			print '<td align="right">'.price($marginInfo['pv_products'], null, null, null, null, $rounding).'</td>';
 			print '<td align="right">'.price($marginInfo['pa_products'], null, null, null, null, $rounding).'</td>';
@@ -241,7 +247,7 @@ class FormMargin
 
 		if (! empty($conf->service->enabled))
 		{
-			print '<tr class="pair">';
+			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans('MarginOnServices').'</td>';
 			print '<td align="right">'.price($marginInfo['pv_services'], null, null, null, null, $rounding).'</td>';
 			print '<td align="right">'.price($marginInfo['pa_services'], null, null, null, null, $rounding).'</td>';
@@ -255,7 +261,7 @@ class FormMargin
 
 		if (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
 		{
-			print '<tr class="impair">';
+			print '<tr class="liste_total">';
 			print '<td>'.$langs->trans('TotalMargin').'</td>';
 			print '<td align="right">'.price($marginInfo['pv_total'], null, null, null, null, $rounding).'</td>';
 			print '<td align="right">'.price($marginInfo['pa_total'], null, null, null, null, $rounding).'</td>';

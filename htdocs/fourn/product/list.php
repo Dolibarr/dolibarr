@@ -23,7 +23,7 @@
 /**
  *		\file       htdocs/fourn/product/list.php
  *		\ingroup    produit
- *		\brief      Page liste des produits ou services
+ *		\brief      Page to list supplier products and services
  */
 
 require '../../main.inc.php';
@@ -120,7 +120,7 @@ if ($fourn_id > 0)
 	$sql .= " AND ppf.fk_soc = ".$fourn_id;
 }
 // Count total nb of records without orderby and limit
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
@@ -170,6 +170,7 @@ if ($resql)
 	if ($fourn_id > 0) print '<input type="hidden" name="fourn_id" value="'.$fourn_id.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
 	print '<table class="liste" width="100%">';
@@ -208,8 +209,8 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 
 		print '<td>';
 		$productstatic->id=$objp->rowid;

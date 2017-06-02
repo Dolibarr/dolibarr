@@ -57,6 +57,7 @@ create table llx_adherent
   datefin          datetime,  -- date de fin de validite de la cotisation
   note_private     text DEFAULT NULL,
   note_public      text DEFAULT NULL,
+  model_pdf		   varchar(255),
   datevalid        datetime,  -- date de validation
   datec            datetime,  -- date de creation
   tms              timestamp, -- date de modification

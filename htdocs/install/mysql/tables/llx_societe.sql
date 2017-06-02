@@ -47,6 +47,7 @@ create table llx_societe
   town                     varchar(50),                         		-- town
   fk_departement           integer        DEFAULT 0,            		--
   fk_pays                  integer        DEFAULT 0,            		--
+  fk_account               integer        DEFAULT 0,            		--
   phone                    varchar(20),                         		-- phone number
   fax                      varchar(20),                         		-- fax number
   url                      varchar(255),                        		--
@@ -85,6 +86,7 @@ create table llx_societe
   cond_reglement           tinyint,                             		-- condition de reglement
   mode_reglement_supplier  tinyint,                             		-- mode de reglement fournisseur
   cond_reglement_supplier  tinyint,                             		-- condition de reglement fournisseur
+  fk_shipping_method       integer,                                     -- preferred shipping method id
   tva_assuj                tinyint        DEFAULT 1,	        		-- assujeti ou non a la TVA
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
   localtax1_value 		   double(6,3),

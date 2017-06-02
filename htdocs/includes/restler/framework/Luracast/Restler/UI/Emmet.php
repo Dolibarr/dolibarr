@@ -4,6 +4,12 @@ namespace Luracast\Restler\UI;
 use Luracast\Restler\UI\Tags as T;
 use Luracast\Restler\Util;
 
+/**
+ * Class Emmet
+ * @package Luracast\Restler\UI
+ *
+ * @version 3.0.0rc6
+ */
 class Emmet
 {
     const DELIMITERS = '.#*>+^[=" ]{$@-#}';

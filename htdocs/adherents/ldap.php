@@ -35,7 +35,7 @@ $langs->load("ldap");
 $langs->load("admin");
 
 $rowid = GETPOST('id','int');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 // Protection
 $socid=0;
@@ -191,12 +191,12 @@ if ($result > 0)
 	}
     else
     {
-    	$records=$ldap->getAttribute($dn,$search);
+    	$records = $ldap->getAttribute($dn,$search);
 
     	//print_r($records);
 
     	// Affichage arbre
-    	if (count($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
+    	if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
     	{
     		if (! is_array($records))
     		{

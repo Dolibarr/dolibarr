@@ -33,21 +33,23 @@ class Establishment extends CommonObject
 	public $table_element_line = '';
 	public $fk_element = 'fk_establishment';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $picto='building';
+    
+    public $id;
+    public $ref;
+	public $rowid;
 
-	var $id;
-	var $rowid;
+	public $name;
+	public $address;
+	public $zip;
+	public $town;
+	public $status;		// 0=open, 1=closed
+	public $entity;
 
-	var $name;
-	var $address;
-	var $zip;
-	var $town;
-	var $status;		// 0=open, 1=closed
-	var $entity;
+	public $country_id;
 
-	var $country_id;
-
-	var $statuts=array();
-	var $statuts_short=array();
+	public $statuts=array();
+	public $statuts_short=array();
 
 	/**
 	 * Constructor
@@ -58,8 +60,8 @@ class Establishment extends CommonObject
 	{
 		$this->db = $db;
 
-		$this->statuts_short = array(0 => 'Opened', 1 => 'Closed');
-        $this->statuts = array(0 => 'Opened', 1 => 'Closed');
+		$this->statuts_short = array(0 => 'Closed', 1 => 'Opened');
+        $this->statuts = array(0 => 'Closed', 1 => 'Opened');
 
 		return 1;
 	}
@@ -96,6 +98,7 @@ class Establishment extends CommonObject
 		$sql.= ", entity";
 		$sql.= ", datec";
 		$sql.= ", fk_user_author";
+		$sql.= ", fk_user_mod";
 		$sql.= ") VALUES (";
 		$sql.= " '".$this->db->escape($this->name)."'";
 		$sql.= ", '".$this->db->escape($this->address)."'";
@@ -105,6 +108,7 @@ class Establishment extends CommonObject
 		$sql.= ", ".$this->status;
 		$sql.= ", ".$conf->entity;
 		$sql.= ", '".$this->db->idate($now)."'";
+		$sql.= ", ". $user->id;
 		$sql.= ", ". $user->id;
 		$sql.= ")";
 
@@ -153,12 +157,12 @@ class Establishment extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."establishment";
-		$sql .= " SET name = '".$this->name."'";
-		$sql .= ", address = '".$this->address."'";
-		$sql .= ", zip = '".$this->zip."'";
-		$sql .= ", town = '".$this->town."'";
-		
-		$sql .= ", status = '".$this->status."'";
+		$sql .= " SET name = '".$this->db->escape($this->name)."'";
+		$sql .= ", address = '".$this->db->escape($this->address)."'";
+		$sql .= ", zip = '".$this->db->escape($this->zip)."'";
+		$sql .= ", town = '".$this->db->escape($this->town)."'";
+		$sql .= ", fk_country = ".($this->country_id > 0 ? $this->country_id : 'null');
+		$sql .= ", status = ".$this->db->escape($this->status);
 		$sql .= ", fk_user_mod = " . $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -195,6 +199,7 @@ class Establishment extends CommonObject
 			$obj = $this->db->fetch_object($result);
 
 			$this->id			= $obj->rowid;
+			$this->ref			= $obj->rowid;
 			$this->name			= $obj->name;
 			$this->address		= $obj->address;
 			$this->zip			= $obj->zip;
@@ -247,9 +252,9 @@ class Establishment extends CommonObject
 	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * @return  string   		   	Label
 	 */
-	function getLibStatus($mode=0)
+	function getLibStatut($mode=0)
 	{
-		return $this->LibStatus($this->status,$mode);
+		return $this->LibStatut($this->status,$mode);
 	}
 
 	/**
@@ -259,7 +264,7 @@ class Establishment extends CommonObject
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @return string      		Label
 	 */
-	function LibStatus($status,$mode=0)
+	function LibStatut($status,$mode=0)
 	{
 		global $langs;
 
@@ -273,23 +278,23 @@ class Establishment extends CommonObject
 		}
 		if ($mode == 2)
 		{
-			if ($status==0) return img_picto($langs->trans($this->statuts_short[$status]),'statut4').' '.$langs->trans($this->statuts_short[$status]);
-			if ($status==1) return img_picto($langs->trans($this->statuts_short[$status]),'statut8').' '.$langs->trans($this->statuts_short[$status]);
+			if ($status==0) return img_picto($langs->trans($this->statuts_short[$status]),'statut5').' '.$langs->trans($this->statuts_short[$status]);
+			if ($status==1) return img_picto($langs->trans($this->statuts_short[$status]),'statut4').' '.$langs->trans($this->statuts_short[$status]);
 		}
 		if ($mode == 3)
 		{
-			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut4');
-			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut8');
+			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut5');
+			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut4');
 		}
 		if ($mode == 4)
 		{
-			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut4').' '.$langs->trans($this->statuts[$status]);
-			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut8').' '.$langs->trans($this->statuts[$status]);
+			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut5').' '.$langs->trans($this->statuts[$status]);
+			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut4').' '.$langs->trans($this->statuts[$status]);
 		}
 		if ($mode == 5)
 		{
-			if ($status==0 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut4');
-			if ($status==1 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut8');
+			if ($status==0 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut5');
+			if ($status==1 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut4');
 		}
 	}
 
@@ -381,4 +386,16 @@ class Establishment extends CommonObject
 
         return '';
     }
+    
+    /**
+     * Initialise object with example values
+     * Id must be 0 if object instance is a specimen
+     *
+     * @return void
+     */
+    public function initAsSpecimen()
+    {
+        $this->id = 0;
+        $this->ref = 'DEAAA';
+    }    
 }

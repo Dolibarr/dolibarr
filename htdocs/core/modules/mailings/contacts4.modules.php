@@ -32,8 +32,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 class mailing_contacts4 extends MailingTargets
 {
 	var $name='ContactsByCategory';
-    // This label is used if no translation is found for key MailingModuleDescXXX where XXX=name is found
-    var $desc='Add contacts by category';
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	var $desc='Add contacts by category';
     var $require_admin=0;
 
     var $require_module=array();
@@ -222,16 +222,21 @@ class mailing_contacts4 extends MailingTargets
 	        $s='';
 	        $s.='<select name="filter" class="flat">';
 	        $s.='<option value="all"></option>';
-	        if ($resql)
+
+	        $num = $this->db->num_rows($resql);
+	        if ($num)
 	        {
-	            $num = $this->db->num_rows($resql);
-	            $i = 0;
-	            while ($i < $num)
-	            {
-	                $obj = $this->db->fetch_object($resql);
-	                $s.='<option value="'.$obj->label.'">'.$obj->label.' ('.$obj->nb.')</option>';
-	                $i++;
-	            }
+    	        $i = 0;
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    $s.='<option value="'.$obj->label.'">'.$obj->label.' ('.$obj->nb.')</option>';
+                    $i++;
+                }
+	        }
+	        else
+	        {
+                $s.='<option value="-1" disabled="disabled">'.$langs->trans("NoContactWithCategoryFound").'</option>';
 	        }
 	        $s.='</select>';
 	        return $s;

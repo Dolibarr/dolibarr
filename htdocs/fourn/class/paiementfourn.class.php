@@ -36,7 +36,8 @@ class PaiementFourn extends Paiement
 {
     public $element='payment_supplier';
     public $table_element='paiementfourn';
-
+    public $picto = 'payment';
+    
     var $statut;        //Status of payment. 0 = unvalidated; 1 = validated
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
@@ -130,7 +131,7 @@ class PaiementFourn extends Paiement
 	 *	@param		int		$closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
 	 *	@return     int         					id of created payment, < 0 if error
 	 */
-	function create($user,$closepaidinvoices=0)
+	function create($user, $closepaidinvoices=0)
 	{
 		global $langs,$conf;
 
@@ -140,6 +141,8 @@ class PaiementFourn extends Paiement
 		// Clean parameters
 		$totalamount = 0;
 		$totalamount_converted = 0;
+		
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		
 		if ($way == 'dolibarr')
 		{
@@ -188,7 +191,6 @@ class PaiementFourn extends Paiement
 			$sql.= " VALUES ('".$this->db->escape($ref)."', ".$conf->entity.", '".$this->db->idate($now)."',";
 			$sql.= " '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.", 0)";
 
-			dol_syslog("PaiementFourn::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -220,7 +222,7 @@ class PaiementFourn extends Paiement
 	                            $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 	                            if ($remaintopay == 0)
 	                            {
-	    					        $result=$invoice->set_paid($user,'','');
+	    					        $result=$invoice->set_paid($user, '', '');
 	                            }
 	                            else dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
 							}
@@ -314,7 +316,7 @@ class PaiementFourn extends Paiement
 		// Si c'est le cas, on refuse le delete
 		if ($bank_line_id)
 		{
-			$accline = new AccountLine($this->db,$bank_line_id);
+			$accline = new AccountLine($this->db);
 			$accline->fetch($bank_line_id);
 			if ($accline->rappro)
 			{
@@ -347,7 +349,7 @@ class PaiementFourn extends Paiement
     			$result=$accline->fetch($bank_line_id);
     			if ($result > 0) // If result = 0, record not found, we don't try to delete
     			{
-    				$result=$accline->delete();
+    				$result=$accline->delete($user);
     			}
     			if ($result < 0)
     			{
@@ -485,7 +487,7 @@ class PaiementFourn extends Paiement
 		global $langs;
 
 		$langs->load('compta');
-		if ($mode == 0)
+		/*if ($mode == 0)
 		{
 			if ($status == 0) return $langs->trans('ToValidate');
 			if ($status == 1) return $langs->trans('Validated');
@@ -515,7 +517,12 @@ class PaiementFourn extends Paiement
 			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
 			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
 		}
-		return $langs->trans('Unknown');
+		if ($mode == 6)
+		{
+			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+		}*/
+		return '';
 	}
 
 
@@ -658,6 +665,49 @@ class PaiementFourn extends Paiement
 			return "";
 		}
 	}
+
+	/**
+	 *	Create a document onto disk according to template model.
+	 *
+	 *	@param	    string		$modele			Force template to use ('' to not force)
+	 *	@param		Translate	$outputlangs	Object lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @return     int         				<0 if KO, 0 if nothing done, >0 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf, $user, $langs;
+
+		$langs->load("suppliers");
+
+		// Set the model on the model name to use
+		if (empty($modele))
+		{
+			if (! empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF))
+			{
+				$modele = $conf->global->SUPPLIER_PAYMENT_ADDON_PDF;
+			}
+			else
+			{
+				$modele = '';       // No default value. For supplier invoice, we allow to disable all PDF generation
+			}
+		}
+
+		if (empty($modele))
+		{
+		    return 0;
+		}
+		else
+		{
+            $modelpath = "core/modules/supplier_payment/pdf/";
+
+            return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+
+
 
 	/**
 	 * 	get the right way of payment

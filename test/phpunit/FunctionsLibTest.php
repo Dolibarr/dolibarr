@@ -81,6 +81,8 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         global $conf,$user,$langs,$db;
         //$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
+        if (! function_exists('mb_substr')) { print "\n".__METHOD__." function mb_substr must be enabled.\n"; die(); }
+        
         print __METHOD__."\n";
     }
 
@@ -119,6 +121,32 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
     }
 
 
+
+	/**
+	 * testDolBuildPath
+	 *
+	 * @return boolean
+	 */
+	public function testDolBuildPath()
+	{
+	    /*$tmp=dol_buildpath('/google/oauth2callback.php', 0);
+	    var_dump($tmp);
+	    */
+	     
+	    /*$tmp=dol_buildpath('/google/oauth2callback.php', 1);
+	    var_dump($tmp);
+	    */
+	     
+	    $result=dol_buildpath('/google/oauth2callback.php', 2);
+	    print __METHOD__." result=".$result."\n";
+	    $this->assertStringStartsWith('http', $result);
+	     
+	    $result=dol_buildpath('/google/oauth2callback.php', 3);
+        print __METHOD__." result=".$result."\n";
+        $this->assertStringStartsWith('http', $result);
+	}
+    
+    
     /**
     * testGetBrowserInfo
     *
@@ -206,40 +234,43 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         // True
         $input='<html>xxx</html>';
         $after=dol_textishtml($input);
-        $this->assertTrue($after);
+        $this->assertTrue($after, 'Test with html tag');
         $input='<body>xxx</body>';
         $after=dol_textishtml($input);
-        $this->assertTrue($after);
+        $this->assertTrue($after, 'Test with body tag');
         $input='xxx <b>yyy</b> zzz';
         $after=dol_textishtml($input);
-        $this->assertTrue($after);
+        $this->assertTrue($after, 'Test with b tag');
+        $input='xxx <u>yyy</u> zzz';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after, 'Test with u tag');
         $input='text with <div>some div</div>';
         $after=dol_textishtml($input);
-        $this->assertTrue($after);
+        $this->assertTrue($after, 'Test with div tag');
         $input='text with HTML &nbsp; entities';
         $after=dol_textishtml($input);
-        $this->assertTrue($after);
+        $this->assertTrue($after, 'Test with entities tag');
         $input='xxx<br>';
         $after=dol_textishtml($input);
-        $this->assertTrue($after);
+        $this->assertTrue($after, 'Test with entities br');
         $input='xxx<br >';
         $after=dol_textishtml($input);
-        $this->assertTrue($after);
+        $this->assertTrue($after, 'Test with entities br');
         $input='xxx<br style="eee">';
         $after=dol_textishtml($input);
-        $this->assertTrue($after);
+        $this->assertTrue($after, 'Test with entities br and attributes');
         $input='xxx<br style="eee" >';
         $after=dol_textishtml($input);
-        $this->assertTrue($after);
+        $this->assertTrue($after, 'Test with entities br and attributes bis');
         $input='<h2>abc</h2>';
         $after=dol_textishtml($input);
-        $this->assertTrue($after);
+        $this->assertTrue($after, 'Test with entities h2');
         $input='<img id="abc" src="https://xxx.com/aaa/image.png" />';
         $after=dol_textishtml($input);
-        $this->assertTrue($after,'Failure on test of img tag');
+        $this->assertTrue($after, 'Test with img tag');
         $input='<a class="azerty" href="https://xxx.com/aaa/image.png" />';
         $after=dol_textishtml($input);
-        $this->assertTrue($after,'Failure on test of a tag');
+        $this->assertTrue($after, 'Test with a tag');
 
         // False
         $input='xxx < br>';
@@ -338,6 +369,22 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $after=dol_string_nohtmltag($text, 1);
         $this->assertEquals("A string with tag with < chars",$after,"test3");
 
+        $text="A string<br>Another string";
+        $after=dol_string_nohtmltag($text,0);
+        $this->assertEquals("A string\nAnother string",$after,"test4");
+
+        $text="A string<br>Another string";
+        $after=dol_string_nohtmltag($text,1);
+        $this->assertEquals("A string Another string",$after,"test5");
+
+        $text='<a href="/myurl" title="<u>Afficher projet</u>">ABC</a>';
+        $after=dol_string_nohtmltag($text,1);
+        $this->assertEquals("ABC",$after,"test6");
+        
+        $text='<a href="/myurl" title="&lt;u&gt;Afficher projet&lt;/u&gt;">DEF</a>';
+        $after=dol_string_nohtmltag($text,1);
+        $this->assertEquals("DEF",$after,"test7");
+        
         return true;
     }
 
@@ -621,6 +668,42 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals("21 jump street\nMyTown, MyState, 99999",$address);
     }
 
+    
+    /**
+     * testDolFormatAddress
+     *
+     * @return	void
+     */
+    public function testDolPrintPhone()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+    
+        $object=new Societe($db);
+        $object->initAsSpecimen();
+    
+        $object->country_code='FR';
+        $phone=dol_print_phone('1234567890', $object->country_code);
+        $this->assertEquals('<span style="margin-right: 10px;">12&nbsp;34&nbsp;56&nbsp;78&nbsp;90</span>', $phone, 'Phone for FR 1');
+    
+        $object->country_code='FR';
+        $phone=dol_print_phone('1234567890', $object->country_code, 0, 0, 0, '');
+        $this->assertEquals('<span style="margin-right: 10px;">1234567890</span>', $phone, 'Phone for FR 2');
+        
+        $object->country_code='FR';
+        $phone=dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
+        $this->assertEquals('<span style="margin-right: 10px;">12 34 56 78 90</span>', $phone, 'Phone for FR 3');
+
+        $object->country_code='CA';
+        $phone=dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
+        $this->assertEquals('<span style="margin-right: 10px;">(123) 456-7890</span>', $phone, 'Phone for CA 1');
+        
+    }
+    
+    
     /**
      * testImgPicto
      *
@@ -639,15 +722,15 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
         $s=img_picto('title','/fullpath/img.png','',1);
         print __METHOD__." s=".$s."\n";
-        $this->assertEquals('<img src="/fullpath/img.png" border="0" alt="" title="title">',$s,'testImgPicto3');
+        $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block valigntextbottom">',$s,'testImgPicto3');
 
         $s=img_picto('title','/fullpath/img.png','',true);
         print __METHOD__." s=".$s."\n";
-        $this->assertEquals('<img src="/fullpath/img.png" border="0" alt="" title="title">',$s,'testImgPicto4');
+        $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block valigntextbottom">',$s,'testImgPicto4');
 
         $s=img_picto('title:alt','/fullpath/img.png','',true);
         print __METHOD__." s=".$s."\n";
-        $this->assertEquals('<img src="/fullpath/img.png" border="0" alt="alt" title="title">',$s,'testImgPicto5');
+        $this->assertEquals('<img src="/fullpath/img.png" alt="alt" title="title" class="inline-block valigntextbottom">',$s,'testImgPicto5');
     }
 
     /**
@@ -970,5 +1053,5 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
 		return true;
 	}
-
+	
 }

@@ -143,7 +143,7 @@ $objmodel = new $classname($db);
 
 
 // Define target path
-$dirname = $conf->banque->dir_temp;
+$dirname = $conf->bank->dir_temp;
 $filename = 'export-bank-receipts-'.$bankref.'-'.$num.'.'.$objmodel->extension;
 
 
@@ -262,7 +262,7 @@ if ($resql)
 		$totalbefore = $total;
 		$total = $total + $objp->amount;
 
-		$var=!$var;
+		
 
 		// Date operation
 		$dateop=$db->jdate($objp->do);
@@ -366,7 +366,7 @@ if ($resql)
 			/*elseif ($links[$key]['type']=='sc')
 				{
 			if ($accountelem) $accountelem.= ', ';
-			//$accountelem.= '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$links[$key]['url_id'].'">';
+			//$accountelem.= '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
 			//$accountelem.= img_object($langs->transnoentitiesnoconv('ShowBill'),'bill').' ';
 			$accountelem.= $langs->transnoentitiesnoconv("SocialContribution");
 			//$accountelem.= '</a>';

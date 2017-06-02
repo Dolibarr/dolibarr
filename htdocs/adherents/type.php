@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 /**
  *      \file       htdocs/adherents/type.php
  *      \ingroup    member
- *		\brief      Member's type setup
+ *      \brief      Member's type setup
  */
 
 require '../main.inc.php';
@@ -44,18 +44,19 @@ $search_email		= GETPOST('search_email','alpha');
 $type				= GETPOST('type','alpha');
 $status				= GETPOST('status','alpha');
 
-$sortfield	= GETPOST('sortfield','alpha');
-$sortorder	= GETPOST('sortorder','alpha');
-$page		= GETPOST('page','int');
-if ($page == -1) { $page = 0 ; }
-$offset = $conf->liste_limit * $page ;
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) {  $sortorder="DESC"; }
 if (! $sortfield) {  $sortfield="d.lastname"; }
 
-$label=GETPOST("libelle","alpha");
-$cotisation=GETPOST("cotisation","int");
+$label=GETPOST("label","alpha");
+$subscription=GETPOST("subscription","int");
 $vote=GETPOST("vote","int");
 $comment=GETPOST("comment");
 $mail_valid=GETPOST("mail_valid");
@@ -68,7 +69,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label('adherent_type');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $search_lastname="";
     $search_login="";
@@ -81,26 +82,28 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('membertypecard','globalcard'));
 
+
 /*
  *	Actions
  */
+
 if ($action == 'add' && $user->rights->adherent->configurer)
 {
 	if (! $cancel)
 	{
 		$object = new AdherentType($db);
 
-		$object->libelle     = trim($label);
-		$object->cotisation  = trim($cotisation);
-		$object->note        = trim($comment);
-		$object->mail_valid  = trim($mail_valid);
-		$object->vote        = trim($vote);
+		$object->label			= trim($label);
+		$object->subscription	= (int) trim($subscription);
+		$object->note			= trim($comment);
+		$object->mail_valid		= (boolean) trim($mail_valid);
+		$object->vote			= (boolean) trim($vote);
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0) $error++;
 
-		if ($object->libelle)
+		if ($object->label)
 		{
 			$id=$object->create($user);
 			if ($id > 0)
@@ -127,12 +130,12 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	if (! $cancel)
 	{
 		$object = new AdherentType($db);
-		$object->id          = $rowid;
-		$object->libelle     = trim($label);
-		$object->cotisation  = trim($cotisation);
-		$object->note        = trim($comment);
-		$object->mail_valid  = trim($mail_valid);
-		$object->vote        = trim($vote);
+		$object->id             = $rowid;
+		$object->label        = trim($label);
+		$object->subscription   = (int) trim($subscription);
+		$object->note           = trim($comment);
+		$object->mail_valid     = (boolean) trim($mail_valid);
+		$object->vote           = (boolean) trim($vote);
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -153,6 +156,7 @@ if ($action == 'delete' && $user->rights->adherent->configurer)
 	exit;
 }
 
+
 /*
  * View
  */
@@ -165,12 +169,9 @@ $form=new Form($db);
 // List of members type
 if (! $rowid && $action != 'create' && $action != 'edit')
 {
-
-	print load_fiche_titre($langs->trans("MembersTypes"));
-
 	//dol_fiche_head('');
 
-	$sql = "SELECT d.rowid, d.libelle, d.cotisation, d.vote";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql.= " WHERE d.entity IN (".getEntity().")";
 
@@ -178,33 +179,55 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 	if ($result)
 	{
 		$num = $db->num_rows($result);
+		$nbtotalofrecords = $num;
+
 		$i = 0;
 
-		print '<table class="noborder" width="100%">';
+		$param = '';
+
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+		print '<input type="hidden" name="action" value="list">';
+		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+        print '<input type="hidden" name="page" value="'.$page.'">';
+		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+
+	    print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+
+		$moreforfilter = '';
+
+		print '<div class="div-table-responsive">';
+		print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Ref").'</td>';
-		print '<td>'.$langs->trans("Label").'</td>';
-		print '<td align="center">'.$langs->trans("SubscriptionRequired").'</td>';
-		print '<td align="center">'.$langs->trans("VoteAllowed").'</td>';
-		print '<td>&nbsp;</td>';
+		print '<th>'.$langs->trans("Ref").'</th>';
+		print '<th>'.$langs->trans("Label").'</th>';
+		print '<th align="center">'.$langs->trans("SubscriptionRequired").'</th>';
+		print '<th align="center">'.$langs->trans("VoteAllowed").'</th>';
+		print '<th>&nbsp;</th>';
 		print "</tr>\n";
 
-		$var=True;
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td><a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a></td>';
-			print '<td>'.dol_escape_htmltag($objp->libelle).'</td>';
-			print '<td align="center">'.yn($objp->cotisation).'</td>';
+			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
+			print '<td align="center">'.yn($objp->subscription).'</td>';
 			print '<td align="center">'.yn($objp->vote).'</td>';
-			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+			if ($user->rights->adherent->configurer)
+				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+			else
+				print '<td align="right">&nbsp;</td>';
 			print "</tr>";
 			$i++;
 		}
 		print "</table>";
+		print '</div>';
+
+		print '</form>';
 	}
 	else
 	{
@@ -233,22 +256,22 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 	print '<tbody>';
 
-	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-	print $form->selectyesno("cotisation",1,1);
+	print $form->selectyesno("subscription",1,1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 	print $form->selectyesno("vote",0,1);
 	print '</td></tr>';
 
-	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-	print '<textarea name="comment" wrap="soft" cols="60" rows="3"></textarea></td></tr>';
+	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
+	print '<textarea name="comment" wrap="soft" class="centpercent" rows="3"></textarea></td></tr>';
 
-	print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
+	print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('mail_valid',$object->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,90);
+	$doleditor=new DolEditor('mail_valid',$object->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,'90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -288,33 +311,29 @@ if ($rowid > 0)
 
 		$head = member_type_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("MemberType"), 0, 'group');
-
-		print '<table class="border" width="100%">';
+		dol_fiche_head($head, 'card', $langs->trans("MemberType"), -1, 'group');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/type.php">'.$langs->trans("BackToList").'</a>';
 
-		// Ref
-		print '<tr><td width="15%">'.$langs->trans("Ref").'</td>';
-		print '<td>';
-		print $form->showrefnav($object, 'rowid', $linkback);
-		print '</td></tr>';
+		dol_banner_tab($object, 'rowid', $linkback);
 
-		// Label
-		print '<tr><td width="15%">'.$langs->trans("Label").'</td><td>'.dol_escape_htmltag($object->libelle).'</td></tr>';
+		print '<div class="fichecenter">';
+		print '<div class="underbanner clearboth"></div>';
 
-		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-		print yn($object->cotisation);
+		print '<table class="border" width="100%">';
+
+		print '<tr><td class="titlefield">'.$langs->trans("SubscriptionRequired").'</td><td>';
+		print yn($object->subscription);
 		print '</tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print yn($object->vote);
 		print '</tr>';
 
-		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		print nl2br($object->note)."</td></tr>";
 
-		print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
+		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 		print nl2br($object->mail_valid)."</td></tr>";
 
 		// Other attributes
@@ -327,6 +346,7 @@ if ($rowid > 0)
 		}
 
 		print '</table>';
+        print '</div>';
 
 		dol_fiche_end();
 
@@ -363,16 +383,14 @@ if ($rowid > 0)
 		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, ";
 		$sql.= " d.datefin,";
 		$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
-		$sql.= " t.libelle as type, t.cotisation";
+		$sql.= " t.libelle as type, t.subscription";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql.= " WHERE d.fk_adherent_type = t.rowid ";
 		$sql.= " AND d.entity IN (".getEntity().")";
 		$sql.= " AND t.rowid = ".$object->id;
 		if ($sall)
 		{
-		    $sql.= " AND (d.firstname LIKE '%".$sall."%' OR d.lastname LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
-		    $sql.= " OR d.email LIKE '%".$sall."%' OR d.login LIKE '%".$sall."%' OR d.address LIKE '%".$sall."%'";
-		    $sql.= " OR d.town LIKE '%".$sall."%' OR d.note_public LIKE '%".$sall."%' OR d.note_private LIKE '%".$sall."%')";
+			$sql.=natural_search(array("f.firstname","d.lastname","d.societe","d.email","d.login","d.address","d.town","d.note_public","d.note_private"), $sall);
 		}
 		if ($status != '')
 		{
@@ -380,22 +398,22 @@ if ($rowid > 0)
 		}
 		if ($action == 'search')
 		{
-		  if (isset($_POST['search']) && $_POST['search'] != '')
-		  {
-		    $sql.= " AND (d.firstname LIKE '%".$_POST['search']."%' OR d.lastname LIKE '%".$_POST['search']."%')";
-		  }
+			if (GETPOST('search'))
+			{
+		  		$sql.= natural_search(array("d.firstname","d.lastname"), GETPOST('search'));
+		  	}
 		}
 		if (! empty($search_lastname))
 		{
-			$sql.= " AND (d.firstname LIKE '%".$search_lastname."%' OR d.lastname LIKE '%".$search_lastname."%')";
+			$sql.= natural_search(array("d.firstname","d.lastname"), $search_lastname);
 		}
 		if (! empty($search_login))
 		{
-		    $sql.= " AND d.login LIKE '%".$search_login."%'";
+			$sql.= natural_search("d.login", $search_login);
 		}
 		if (! empty($search_email))
 		{
-		    $sql.= " AND d.email LIKE '%".$search_email."%'";
+			$sql.= natural_search("d.email", $search_email);
 		}
 		if ($filter == 'uptodate')
 		{
@@ -406,7 +424,7 @@ if ($rowid > 0)
 		    $sql.=" AND datefin < '".$db->idate($now)."'";
 		}
 		// Count total nb of records
-		$nbtotalofrecords = 0;
+		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		{
 			$resql = $db->query($sql);
@@ -442,7 +460,7 @@ if ($rowid > 0)
 		    {
 				$membertype=new AdherentType($db);
 		        $result=$membertype->fetch($type);
-				$titre.=" (".$membertype->libelle.")";
+				$titre.=" (".$membertype->label.")";
 		    }
 
 		    $param="&rowid=".$rowid;
@@ -458,9 +476,16 @@ if ($rowid > 0)
 		        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
 		    }
 
-		    print '<br>';
+			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input class="flat" type="hidden" name="rowid" value="'.$rowid.'" size="12"></td>';
+
+			print '<br>';
             print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
-		    print '<table class="noborder" width="100%">';
+
+            $moreforfilter = '';
+
+            print '<div class="div-table-responsive">';
+            print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 		    print '<tr class="liste_titre">';
 		    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
@@ -473,9 +498,6 @@ if ($rowid > 0)
 		    print "</tr>\n";
 
 			// Lignes des champs de filtre
-			print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-			print '<input class="flat" type="hidden" name="rowid" value="'.$rowid.'" size="12"></td>';
-
 			print '<tr class="liste_titre">';
 
 			print '<td class="liste_titre" align="left">';
@@ -498,9 +520,7 @@ if ($rowid > 0)
 			print '</td>';
 
 			print "</tr>\n";
-			print '</form>';
 
-		    $var=True;
 		    while ($i < $num && $i < $conf->liste_limit)
 		    {
 		        $objp = $db->fetch_object($resql);
@@ -512,8 +532,7 @@ if ($rowid > 0)
 		        $adh->firstname=$objp->firstname;
 
 		        // Lastname
-		        $var=!$var;
-		        print '<tr '.$bc[$var].'>';
+		        print '<tr class="oddeven">';
 		        if ($objp->societe != '')
 		        {
 		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,20).' / '.dol_trunc($objp->societe,12).'</a></td>'."\n";
@@ -529,7 +548,7 @@ if ($rowid > 0)
 		        // Type
 		        /*print '<td class="nowrap">';
 		        $membertypestatic->id=$objp->type_id;
-		        $membertypestatic->libelle=$objp->type;
+		        $membertypestatic->label=$objp->type;
 		        print $membertypestatic->getNomUrl(1,12);
 		        print '</td>';
 				*/
@@ -542,10 +561,10 @@ if ($rowid > 0)
 
 		        // Statut
 		        print '<td class="nowrap">';
-		        print $adh->LibStatut($objp->statut,$objp->cotisation,$datefin,2);
+		        print $adh->LibStatut($objp->statut,$objp->subscription,$datefin,2);
 		        print "</td>";
 
-		        // Date fin cotisation
+		        // Date end subscription
 		        if ($datefin)
 		        {
 			        print '<td align="center" class="nowrap">';
@@ -562,7 +581,7 @@ if ($rowid > 0)
 		        else
 		        {
 			        print '<td align="left" class="nowrap">';
-			        if ($objp->cotisation == 'yes')
+			        if ($objp->subscription == 'yes')
 			        {
 		                print $langs->trans("SubscriptionNotReceived");
 		                if ($objp->statut > 0) print " ".img_warning();
@@ -592,6 +611,8 @@ if ($rowid > 0)
 		    }
 
 		    print "</table>\n";
+            print '</div>';
+            print '</form>';
 
 			if ($num > $conf->liste_limit)
 			{
@@ -631,22 +652,22 @@ if ($rowid > 0)
 
 		print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
 
-		print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40" value="'.dol_escape_htmltag($object->libelle).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-		print $form->selectyesno("cotisation",$object->cotisation,1);
+		print $form->selectyesno("subscription",$object->subscription,1);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print $form->selectyesno("vote",$object->vote,1);
 		print '</td></tr>';
 
-		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-		print '<textarea name="comment" wrap="soft" cols="90" rows="3">'.$object->note.'</textarea></td></tr>';
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
+		print '<textarea name="comment" wrap="soft" class="centpercent" rows="3">'.$object->note.'</textarea></td></tr>';
 
-		print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
+		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('mail_valid',$object->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,90);
+		$doleditor=new DolEditor('mail_valid',$object->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,'90%');
 		$doleditor->Create();
 		print "</td></tr>";
 

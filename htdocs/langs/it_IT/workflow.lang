@@ -1,11 +1,15 @@
-# Dolibarr language file - Source file is en_US - admin
+# Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Impostazioni flusso di lavoro
 WorkflowDesc=Questo modulo è progettato per modificare il comportamento di azioni automatiche nell'applicazione. Per impostazione predefinita, il flusso di lavoro è aperto (si possono fare cose nell'ordine che volete). È possibile attivare le azioni automatiche che vi interessano.
 ThereIsNoWorkflowToModify=Non ci sono modifiche del flusso di lavoro disponibili con i moduli attivati.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crea automaticamente un ordine del cliente, dopo una proposta commerciale firmata
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically crea una fattura cliente dopo una proposta commerciale firmata
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically crea una fattura cliente dopo un contratto convalidato
-descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically crea una fattura cliente dopo un ordine del cliente chiuso
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Creare automaticamente una fattura attiva alla firma di una proposta commerciale
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Creare automaticamente una fattura attiva alla convalida del contratto
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Creare automaticamente una fattura attiva alla chiusura dell'ordine cliente
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifica la proposta commerciale collegata come fatturare quando l'ordine cliente è impostato come pagato
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifica gli ordini dei clienti da fatturare quando la fattura viene impostata come pagata
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifica gli ordini dei clienti "fatturati" quando la fattura viene impostata come pagata
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifica gli ordini dei clienti da fatturare quando la fattura è validata
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classifica il preventivo come pagato quando la relativa fattura cliente è confermata
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classifica l'ordine come spedito quando la spedizione è confermata e la quantità spedita è la stessa dell'ordine
+AutomaticCreation=Creazione automatica
+AutomaticClassification=Classificazione automatica

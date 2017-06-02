@@ -1,13 +1,15 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=رمز الحماية
-Calendar=التقويم
+NumberingShort=N°
 Tools=أدوات
-ToolsDesc=ويكرس هذا المجال لمجموعة الأدوات المتنوعة التي لم تتوفر في إدخالات القوائم الأخرى. <br><br> ويمكن الوصول إلى هذه الأدوات من القائمة على الجانب.
+TMenuTools=أدوات
+ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br /><br />All the tools can be reached in the left menu.
 Birthday=عيد ميلاد
-BirthdayDate=عيد ميلاد
+BirthdayDate=Birthday date
 DateToBirth=تاريخ الميلاد
-BirthdayAlertOn= عيد ميلاد النشطة في حالة تأهب
-BirthdayAlertOff= عيد الميلاد فى حالة تأهب الخاملة
+BirthdayAlertOn=عيد ميلاد النشطة في حالة تأهب
+BirthdayAlertOff=عيد الميلاد فى حالة تأهب الخاملة
+Notify_FICHINTER_ADD_CONTACT=Added contact to Intervention
 Notify_FICHINTER_VALIDATE=تدخل المصادق
 Notify_FICHINTER_SENTBYMAIL=تدخل ترسل عن طريق البريد
 Notify_ORDER_VALIDATE=التحقق من صحة النظام العميل
@@ -41,7 +43,7 @@ Notify_SHIPPING_SENTBYMAIL=الشحن ترسل عن طريق البريد
 Notify_MEMBER_VALIDATE=عضو مصدق
 Notify_MEMBER_MODIFY=تعديل الأعضاء
 Notify_MEMBER_SUBSCRIPTION=عضو المكتتب
-Notify_MEMBER_RESILIATE=عضو resiliated
+Notify_MEMBER_RESILIATE=Member terminated
 Notify_MEMBER_DELETE=عضو حذف
 Notify_PROJECT_CREATE=إنشاء مشروع
 Notify_TASK_CREATE=مهمة إنشاء
@@ -53,7 +55,6 @@ TotalSizeOfAttachedFiles=اجمالى حجم الملفات المرفقة / و�
 MaxSize=الحجم الأقصى
 AttachANewFile=إرفاق ملف جديد / وثيقة
 LinkedObject=ربط وجوه
-Miscellaneous=متفرقات
 NbOfActiveNotifications=عدد الإخطارات (ملحوظة من رسائل البريد الإلكتروني المستلم)
 PredefinedMailTest=هذا هو الاختبار الإلكتروني. تكون مفصولة \\ nThe سطرين من قبل حرف إرجاع.
 PredefinedMailTestHtml=هذا هو البريد <b>الاختبار</b> (الاختبار يجب أن تكون في كلمة جريئة). <br> وتفصل بين الخطين من قبل حرف إرجاع.
@@ -67,37 +68,33 @@ PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ سوف تجد هنا
 PredefinedMailContentSendShipping=__CONTACTCIVNAME__ سوف تجد هنا الشحن __SHIPPINGREF__ __PERSONALIZED__Sincerely __SIGNATURE__
 PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ سوف تجد هنا تدخل __FICHINTERREF__ __PERSONALIZED__Sincerely __SIGNATURE__
 PredefinedMailContentThirdparty=__CONTACTCIVNAME__ __PERSONALIZED__ __SIGNATURE__
-DemoDesc=Dolibarr الاتفاق هو تخطيط موارد المؤسسات وإدارة علاقات العملاء وتتكون من عدة وحدات وظيفية. وقال ان العرض يشمل جميع وحدات لا يعني اي شيء يحدث هذا أبدا. بذلك ، عرض عدة ملامح المتاحة.
-ChooseYourDemoProfil=اختيار عرض ملف المباراة التي أنشطتك...
+DemoDesc=Dolibarr is a compact ERP/CRM supporting several business modules. A demo showcasing all modules makes no sense as this scenario never occurs (several hundred available). So, several demo profiles are available.
+ChooseYourDemoProfil=Choose the demo profile that best suits your needs...
+ChooseYourDemoProfilMore=...or build your own profile<br>(manual module selection)
 DemoFundation=أعضاء في إدارة مؤسسة
 DemoFundation2=إدارة وأعضاء في الحساب المصرفي للمؤسسة
-DemoCompanyServiceOnly=إدارة نشاط بيع الخدمة لحسابهم الخاص فقط
+DemoCompanyServiceOnly=Company or freelance selling service only
 DemoCompanyShopWithCashDesk=تدير متجر مع مكتب النقدية
-DemoCompanyProductAndStocks=إدارة شركة صغيرة أو متوسطة بيع المنتجات
-DemoCompanyAll=إدارة شركة صغيرة أو متوسطة متعددة الأنشطة الرئيسية لجميع وحدات)
-GoToDemo=الذهاب الى التجريبي
+DemoCompanyProductAndStocks=Company selling products with a shop
+DemoCompanyAll=Company with multiple activities (all main modules)
 CreatedBy=أوجدتها ٪ ق
 ModifiedBy=المعدلة ق ٪
 ValidatedBy=يصادق عليها ق ٪
-CanceledBy=ألغى به ق ٪
 ClosedBy=أغلقت ٪ ق
 CreatedById=هوية المستخدم الذي إنشاء
-ModifiedById=هوية المستخدم الذي جعل التغيير الأخير
+ModifiedById=User id who made latest change
 ValidatedById=هوية المستخدم الذي التحقق من صحة
 CanceledById=هوية المستخدم الذي ألغى
 ClosedById=هوية المستخدم الذي أغلق
 CreatedByLogin=تسجيل دخول المستخدم الذي إنشاء
-ModifiedByLogin=تسجيل دخول المستخدم الذي جعل التغيير الأخير
+ModifiedByLogin=User login who made latest change
 ValidatedByLogin=تسجيل دخول المستخدم الذي التحقق من صحة
 CanceledByLogin=تسجيل دخول المستخدم الذي ألغى
 ClosedByLogin=تسجيل دخول المستخدم الذي أغلق
 FileWasRemoved=تم حذف الملف
 DirWasRemoved=دليل أزيل
-FeatureNotYetAvailableShort=متاحة في الإصدار التالي
-FeatureNotYetAvailable=ميزة لم تتوفر بعد في هذه النسخة
-FeatureExperimental=ميزة تجريبية. غير مستقر في هذه النسخة
-FeatureDevelopment=تنمية الميزة. غير مستقر في هذه النسخة
-FeaturesSupported=المزايا
+FeatureNotYetAvailable=Feature not yet available in the current version
+FeaturesSupported=Supported features
 Width=عرض
 Height=ارتفاع
 Depth=متعمق
@@ -108,8 +105,7 @@ Right=حق
 CalculatedWeight=يحسب الوزن
 CalculatedVolume=يحسب حجم
 Weight=وزن
-TotalWeight=الوزن الإجمالي
-WeightUnitton=طن
+WeightUnitton=tonne
 WeightUnitkg=كجم
 WeightUnitg=ز
 WeightUnitmg=مغلم
@@ -127,7 +123,6 @@ SurfaceUnitmm2=مم ²
 SurfaceUnitfoot2=قدم مربع
 SurfaceUnitinch2=in²
 Volume=حجم
-TotalVolume=الحجم الإجمالي
 VolumeUnitm3=متر مكعب
 VolumeUnitdm3=dm³ (L)
 VolumeUnitcm3=سم مكعب (مل)
@@ -145,25 +140,27 @@ SizeUnitinch=بوصة
 SizeUnitfoot=قدم
 SizeUnitpoint=نقطة
 BugTracker=علة تعقب
-SendNewPasswordDesc=هذا الشكل يتيح لك طلب كلمة مرور جديدة. سيكون من إرسالها إلى عنوان البريد الإلكتروني الخاص بك. <br> التغيير لن تكون فعالة إلا بعد النقر على تأكيد الصلة داخل هذه الرسالة. <br> تحقق من بريدك الالكتروني القارئ البرمجيات.
+SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br />Change will become effective once you click on the confirmation link in the email.<br />Check your inbox.
 BackToLoginPage=عودة إلى صفحة تسجيل الدخول
-AuthenticationDoesNotAllowSendNewPassword=طريقة التوثيق <b>٪ ق.</b> <br> في هذا الوضع ، لا يمكن معرفة Dolibarr أو تغيير كلمة السر الخاصة بك. <br> اتصل بمسؤول النظام إذا كنت تريد تغيير كلمة السر الخاصة بك.
-EnableGDLibraryDesc=تثبيت أو تمكين ش ج مكتبة لديكم PHP لاستخدام هذا الخيار.
-EnablePhpAVModuleDesc=كنت بحاجة إلى تثبيت وحدة متوافقة مع مكافحة الفيروسات الخاص بك. (Clamav : PHP4 - clamavlib où PHP5 - clamavlib)
+AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br />In this mode, Dolibarr can't know nor change your password.<br />Contact your system administrator if you want to change your password.
+EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use this option.
 ProfIdShortDesc=<b>الأستاذ عيد ٪ ق</b> هي المعلومات التي تعتمد على طرف ثالث. <br> على سبيل المثال ، لبلد <b>ق ٪</b> انها رمز <b>٪ ق.</b>
 DolibarrDemo=Dolibarr تخطيط موارد المؤسسات وإدارة علاقات العملاء التجريبي
 StatsByNumberOfUnits=إحصاءات في عدد من المنتجات / الخدمات وحدات
 StatsByNumberOfEntities=إحصاءات في عدد من الكيانات في اشارة
-NumberOfProposals=عددا من المقترحات بشأن 12 الشهر الماضي
-NumberOfCustomerOrders=عدد طلبات الزبائن على 12 في الشهر الماضي
-NumberOfCustomerInvoices=عدد من العملاء والفواتير على 12 الشهر الماضي
-NumberOfSupplierOrders=عدد أوامر المورد في آخر 12 شهرا
-NumberOfSupplierInvoices=عدد من فواتير الموردين على 12 الشهر الماضي
-NumberOfUnitsProposals=عدد من الوحدات على مقترحات بشأن 12 الشهر الماضي
-NumberOfUnitsCustomerOrders=عدد من الوحدات على طلبات الزبائن على 12 في الشهر الماضي
-NumberOfUnitsCustomerInvoices=عدد من الوحدات على فواتير العملاء على 12 الشهر الماضي
-NumberOfUnitsSupplierOrders=عدد الوحدات بناء على أوامر المورد في آخر 12 شهرا
-NumberOfUnitsSupplierInvoices=عدد من الوحدات على فواتير الموردين على 12 الشهر الماضي
+NumberOfProposals=Number of proposals in past 12 months
+NumberOfCustomerOrders=Number of customer orders in past 12 months
+NumberOfCustomerInvoices=Number of customer invoices in past 12 months
+NumberOfSupplierProposals=Number of supplier proposals in past 12 months
+NumberOfSupplierOrders=Number of supplier orders in past 12 months
+NumberOfSupplierInvoices=Number of supplier invoices in past 12 months
+NumberOfUnitsProposals=Number of units on proposals in past 12 months
+NumberOfUnitsCustomerOrders=Number of units on customer orders in past 12 months
+NumberOfUnitsCustomerInvoices=Number of units on customer invoices in past 12 months
+NumberOfUnitsSupplierProposals=Number of units on supplier proposals in past 12 months
+NumberOfUnitsSupplierOrders=Number of units on supplier orders in past 12 months
+NumberOfUnitsSupplierInvoices=Number of units on supplier invoices in past 12 months
+EMailTextInterventionAddedContact=A newintervention %s has been assigned to you.
 EMailTextInterventionValidated=التدخل ٪ ق المصادق
 EMailTextInvoiceValidated=فاتورة ٪ ق المصادق
 EMailTextProposalValidated=وقد تم اقتراح %s التحقق من صحة.
@@ -186,7 +183,6 @@ ImageEditor=صورة المحرر
 YouReceiveMailBecauseOfNotification=تلقيت هذه الرسالة لأنه قد تم إضافة البريد الإلكتروني الخاص بك إلى قائمة الأهداف التي يتعين على علم الأحداث ولا سيما في صناعة البرمجيات من %s %s.
 YouReceiveMailBecauseOfNotification2=هذا الحدث هو ما يلي :
 ThisIsListOfModules=هذه هي قائمة من وحدات انتقاؤه من قبل هذا الملف التجريبي (وحدات فقط الأكثر شيوعا هي واضحة في هذا العرض). تعديل هذه لديها أكثر تخصيصا التجريبي وانقر على &quot;ابدأ&quot;.
-ClickHere=اضغط هنا
 UseAdvancedPerms=استخدام أذونات متقدمة من بعض الوحدات
 FileFormat=تنسيق الملف
 SelectAColor=اختيار لون
@@ -203,43 +199,18 @@ YouMustClickToChange=ولكن يجب النقر فوق لأول مرة على ا
 ForgetIfNothing=إذا كنت لم تطلب هذا التغيير، أن ينسوا هذا البريد الإلكتروني. يتم الاحتفاظ بيانات الاعتماد الخاصة بك آمنة.
 IfAmountHigherThan=إذا قدر أعلى <strong>من٪ الصورة</strong>
 SourcesRepository=مستودع للمصادر
+Chart=Chart
 
-##### Calendar common #####
-AddCalendarEntry=إضافة الدخول في التقويم ق ٪
-NewCompanyToDolibarr=شركة٪ الصورة بإضافة
-ContractValidatedInDolibarr=عقد%s التأكد من صلاحيتها
-ContractCanceledInDolibarr=عقد%s إلغاء
-ContractClosedInDolibarr=عقد٪ الصورة مغلقة
-PropalClosedSignedInDolibarr=اقتراح٪ الصورة قعت
-PropalClosedRefusedInDolibarr=اقتراح%s رفض
-PropalValidatedInDolibarr=اقتراح%s التأكد من صلاحيتها
-PropalClassifiedBilledInDolibarr=اقتراح%s تصنف المنقار
-InvoiceValidatedInDolibarr=فاتورة%s التحقق من صحة
-InvoicePaidInDolibarr=تغيير فاتورة%s لدفع
-InvoiceCanceledInDolibarr=فاتورة%s إلغاء
-PaymentDoneInDolibarr=دفع٪ القيام به
-CustomerPaymentDoneInDolibarr=دفع العملاء٪ القيام به الصورة
-SupplierPaymentDoneInDolibarr=دفع المورد٪ القيام به الصورة
-MemberValidatedInDolibarr=عضو%s التأكد من صلاحيتها
-MemberResiliatedInDolibarr=عضو٪ الصورة resiliated
-MemberDeletedInDolibarr=عضو٪ الصورة حذفها
-MemberSubscriptionAddedInDolibarr=وأضاف الاشتراك لعضو٪ الصورة
-ShipmentValidatedInDolibarr=شحنة%s التأكد من صلاحيتها
-ShipmentDeletedInDolibarr=شحنة٪ الصورة حذفها
 ##### Export #####
-Export=تصدير
 ExportsArea=صادرات المنطقة
 AvailableFormats=الأشكال المتاحة
-LibraryUsed=وتستخدم Librairy
-LibraryVersion=النسخة
+LibraryUsed=وتستخدم المكتبة
+LibraryVersion=Library version
 ExportableDatas=تصدير datas
 NoExportableData=ليس للتصدير البيانات (أي وحدات للتصدير مع تحميل البيانات ، ومفقود أذونات)
-ToExport=الصادرات
-NewExport=تصديرية جديدة
 ##### External sites #####
-ExternalSites=المواقع الخارجية
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
-WEBSITE_DESCRIPTION=Description
+WEBSITE_TITLE=العنوان
+WEBSITE_DESCRIPTION=الوصف
 WEBSITE_KEYWORDS=Keywords

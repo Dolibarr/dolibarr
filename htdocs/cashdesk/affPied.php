@@ -22,8 +22,21 @@
  */
 
 ?>
+<!-- affPied.php -->
 <div class="pied">
-<?php
+<?php 
+
+// Wrapper to show tooltips
+if (! empty($conf->use_javascript_ajax) && empty($conf->dol_no_mouse_hover))
+{
+	print "\n<!-- JS CODE TO ENABLE tipTip on all object with class classfortooltip -->\n";
+	print '<script type="text/javascript">
+    	jQuery(document).ready(function () {
+    		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(($conf->browser->layout == 'phone' ? 400 : 700),'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
+    	});
+    </script>' . "\n";
+}
+
 printCommonFooter('private');
 ?>
 </div>

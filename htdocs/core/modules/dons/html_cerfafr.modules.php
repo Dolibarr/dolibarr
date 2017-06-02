@@ -69,9 +69,10 @@ class html_cerfafr extends ModeleDon
      *
      *	@param	Don			$don	        Donation object
      *  @param  Translate	$outputlangs    Lang object for output language
+	 *  @param	string		$currency		Currency code
      *	@return	int             			>0 if OK, <0 if KO
      */
-    function write_file($don,$outputlangs)
+    function write_file($don,$outputlangs,$currency='')
     {
 		global $user,$conf,$langs,$mysoc;
 
@@ -87,7 +88,9 @@ class html_cerfafr extends ModeleDon
 		$outputlangs->load("products");
 		$outputlangs->load("donations");
 
-        if (! empty($conf->don->dir_output))
+		$currency = !empty($currency) ? $currency : $conf->currency;
+		
+		if (! empty($conf->don->dir_output))
         {
 			// Definition of the object don (for upward compatibility)
         	if (! is_object($don))
@@ -165,7 +168,7 @@ class html_cerfafr extends ModeleDon
 		        //$form = str_replace('__IP__',$user->ip,$form); // TODO $user->ip not exist
 		        $form = str_replace('__AMOUNT__',$don->amount,$form);
 				$form = str_replace('__AMOUNTLETTERS__',chiffre_en_lettre($don->amount),$form);
-		        $form = str_replace('__CURRENCY__',$outputlangs->transnoentitiesnoconv("Currency".$conf->currency),$form);
+		        $form = str_replace('__CURRENCY__',$outputlangs->transnoentitiesnoconv("Currency".$currency),$form);
 		        $form = str_replace('__CURRENCYCODE__',$conf->currency,$form);
 		        $form = str_replace('__MAIN_INFO_SOCIETE_NOM__',$mysoc->name,$form);
 		        $form = str_replace('__MAIN_INFO_SOCIETE_ADDRESS__',$mysoc->address,$form);
@@ -269,8 +272,6 @@ class html_cerfafr extends ModeleDon
             $this->error=$langs->trans("ErrorConstantNotDefined","DON_OUTPUTDIR");
             return 0;
 		}
-        $this->error=$langs->trans("ErrorUnknown");
-        return 0;   // Error by default
     }
 }
 

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2017  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ require '../main.inc.php';
 	
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $langs->load("admin");
 $langs->load("loan");
@@ -76,6 +77,7 @@ if ($action == 'update')
 llxHeader();
 
 $form = new Form($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigLoan'),$linkback,'title_setup');
@@ -94,9 +96,7 @@ print "</tr>\n";
 
 foreach ($list as $key)
 {
-	$var=!$var;
-
-	print '<tr '.$bc[$var].' class="value">';
+	print '<tr class="oddeven value">';
 
 	// Param
 	$label = $langs->trans($key); 
@@ -104,7 +104,14 @@ foreach ($list as $key)
 
 	// Value
 	print '<td>';
-	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	if (! empty($conf->accounting->enabled))
+	{
+		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
+	}
+	else
+	{
+		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	}
 	print '</td></tr>';
 }
 

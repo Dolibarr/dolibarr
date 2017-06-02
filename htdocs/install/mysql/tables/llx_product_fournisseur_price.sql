@@ -36,10 +36,18 @@ create table llx_product_fournisseur_price
   unitprice				double(24,8) DEFAULT 0,
   charges				double(24,8) DEFAULT 0,		-- to store transport cost. Constant PRODUCT_CHARGES must be set to see it.
   unitcharges			double(24,8) DEFAULT 0,		-- deprecated
+  default_vat_code	    varchar(10),
   tva_tx				double(6,3) NOT NULL,
   info_bits				integer NOT NULL DEFAULT 0,
   fk_user				integer,
   fk_supplier_price_expression	integer,            -- Link to the rule for dynamic price calculation
   import_key			varchar(14),                -- Import key
-  delivery_time_days    integer
+  delivery_time_days    integer,
+  supplier_reputation varchar(10),
+  
+  fk_multicurrency		integer,
+  multicurrency_code	varchar(255),
+  multicurrency_tx			double(24,8) DEFAULT 1,
+  multicurrency_price	double(24,8) DEFAULT NULL,
+  multicurrency_price_ttc	double(24,8) DEFAULT NULL
 )ENGINE=innodb;

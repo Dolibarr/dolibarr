@@ -1,8 +1,14 @@
 <?php
 namespace Luracast\Restler;
 
-
-interface iProvideMultiVersionApi {
+/**
+ * Interface iProvideMultiVersionApi
+ * @package Luracast\Restler
+ *
+ * @version    3.0.0rc6
+ */
+interface iProvideMultiVersionApi
+{
     /**
      * Maximum api version supported by the api class
      * @return int

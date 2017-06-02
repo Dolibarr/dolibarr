@@ -21,7 +21,6 @@ FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 AmountVAT=Importe IVU
 TotalVAT=Total IVU
-IncludedVAT=IVU incluido
 HT=Sin IVU
 TTC=IVU incluido
 VAT=IVU

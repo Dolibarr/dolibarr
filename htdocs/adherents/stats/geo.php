@@ -53,7 +53,7 @@ $langs->load("companies");
  * View
  */
 
-$arrayjs=array('http://www.google.com/jsapi');
+$arrayjs=array('https://www.google.com/jsapi');
 if (! empty($conf->dol_use_jmobile)) $arrayjs=array();
 
 $title=$langs->trans("Statistics");
@@ -291,12 +291,10 @@ if ($mode)
     print '</tr>';
 
     $oldyear=0;
-    $var=true;
     foreach ($data as $val)
     {
         $year = $val['year'];
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
+        print '<tr class="oddeven">';
         print '<td>'.$val['label'].'</td>';
         if ($label2) print '<td align="center">'.$val['label2'].'</td>';
         print '<td align="right">'.$val['nb'].'</td>';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		JF FERRY			<jfefe@aternatik.fr>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
 *
@@ -22,9 +22,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
 require_once '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
@@ -327,7 +325,7 @@ $server->register(
 
 $server->register(
 		'validOrder',
-		array('authentication'=>'tns:authentication','id'=>'xsd:string'),	// Entry values
+		array('authentication'=>'tns:authentication','id'=>'xsd:string','id_warehouse'=>'xsd:string'),  // Entry values
 		array('result'=>'tns:result'),	// Exit values
 		$ns,
 		$ns.'#validOrder',
@@ -795,9 +793,10 @@ function createOrder($authentication,$order)
  *
  * @param	array		$authentication		Array of authentication information
  * @param	int			$id					Id of order to validate
+ * @param	int			$id_warehouse		Id of warehouse to use for stock decrease
  * @return	array							Array result
  */
-function validOrder($authentication,$id='')
+function validOrder($authentication,$id='',$id_warehouse=0)
 {
 	global $db,$conf,$langs;
 
@@ -823,7 +822,8 @@ function validOrder($authentication,$id='')
 			$db->begin();
 			if ($result > 0)
 			{
-				$result=$order->valid($fuser);
+
+				$result=$order->valid($fuser,$id_warehouse);
 
 				if ($result	>= 0)
 				{
@@ -935,7 +935,7 @@ function updateOrder($authentication,$order)
 			if (isset($order['billed']))
 			{
 				if ($order['billed'])   $result=$object->classifyBilled($fuser);
-				if (! $order['billed']) $result=$object->classifyBilled($fuser);
+				if (! $order['billed']) $result=$object->classifyUnBilled($fuser);
 			}
 
 			//Retreive all extrafield for object

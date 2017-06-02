@@ -51,7 +51,7 @@ class modService extends DolibarrModules
 		$this->module_position = 30;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = "Gestion des services";
+		$this->description = "Service management";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -88,7 +88,7 @@ class modService extends DolibarrModules
 		$this->rights[$r][0] = 531; // id de la permission
 		$this->rights[$r][1] = 'Lire les services'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
         $r++;
 
@@ -130,7 +130,12 @@ class modService extends DolibarrModules
 		*/
 
 
-		// Exports
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+        
+        
+        // Exports
 		//--------
 		$r=0;
 

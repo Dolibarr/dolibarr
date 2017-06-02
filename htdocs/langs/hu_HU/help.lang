@@ -4,7 +4,6 @@ EMailSupport=Email támogagtás
 RemoteControlSupport=Online Valós idejü / távoli támogatás
 OtherSupport=Más jellegü támogatás
 ToSeeListOfAvailableRessources=Kapcsolatba lépni / látni az elérhető erőforrásokat:
-ClickHere=Kattintson ide
 HelpCenter=Segítség központ
 DolibarrHelpCenter=Dolibarr Segítség és Támogatási központ
 ToGoBackToDolibarr=Különben, kattintson <a href="%s">ide</a> a Dolibarr használatához
@@ -12,7 +11,7 @@ TypeOfSupport=Támogatás forrása
 TypeSupportCommunauty=Közösség (ingyenes)
 TypeSupportCommercial=Üzleti
 TypeOfHelp=Típus
-NeedHelpCenter=Segítségre vagy támogatásra van szüksége?
+NeedHelpCenter=Need help or support?
 Efficiency=Hatékonyság
 TypeHelpOnly=Csak segítség
 TypeHelpDev=Segítség és fejlesztés
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Bizonyos esetekben nincs elérhető cég, változtassa
 BackToHelpCenter=Más esetben, kattintson ide, hogy visszatérjen a <a href="%s">Segítség központ nyitólap</a>jára.
 LinkToGoldMember=Hívhatja az egyik előre kiválasztott az ön nyelvén (%s) tudó Dolibarr oktatót ha erre a Widget-re kattint (álltapot és maximális ár autómatikusan frissül):
 PossibleLanguages=Támogatott nyelvek
-MakeADonation=Segítse a Dolibarr projektet, adományozzon
-# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

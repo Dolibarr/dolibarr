@@ -97,7 +97,7 @@ class DoliStorage implements TokenStorageInterface
             $this->tokens = array();
         }
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."oauth_token";
-        $sql.= " WHERE service='".$service."' AND entity=1";
+        $sql.= " WHERE service='".$this->db->escape($service)."' AND entity=1";
         $resql = $this->db->query($sql);
         if (! $resql)
         {
@@ -113,7 +113,7 @@ class DoliStorage implements TokenStorageInterface
         } else {
             // save
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, entity)";
-            $sql.= " VALUES ('".$service."', '".$this->db->escape($serializedToken)."', 1)";
+            $sql.= " VALUES ('".$this->db->escape($service)."', '".$this->db->escape($serializedToken)."', 1)";
             $resql = $this->db->query($sql);
         }
         //print $sql;
@@ -128,8 +128,9 @@ class DoliStorage implements TokenStorageInterface
     public function hasAccessToken($service)
     {
         // get from db
+        dol_syslog("hasAccessToken service=".$service);
         $sql = "SELECT token FROM ".MAIN_DB_PREFIX."oauth_token";
-        $sql.= " WHERE service='".$service."'";
+        $sql.= " WHERE service='".$this->db->escape($service)."'";
         $resql = $this->db->query($sql);
         if (! $resql)
         {
@@ -158,7 +159,7 @@ class DoliStorage implements TokenStorageInterface
         //    unset($tokens[$service]);
 
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token";
-            $sql.= " WHERE service='".$service."'";
+            $sql.= " WHERE service='".$this->db->escape($service)."'";
             $resql = $this->db->query($sql);
         //}
 
@@ -188,7 +189,7 @@ class DoliStorage implements TokenStorageInterface
 
         }
 
-        throw new AuthorizationStateNotFoundException('State not found in conf, are you sure you stored it?');
+        throw new AuthorizationStateNotFoundException('State not found in db, are you sure you stored it?');
     }
 
     /**
@@ -206,7 +207,7 @@ class DoliStorage implements TokenStorageInterface
         $this->states[$service] = $state;
 
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."oauth_state";
-        $sql.= " WHERE service='".$service."' AND entity=1";
+        $sql.= " WHERE service='".$this->db->escape($service)."' AND entity=1";
         $resql = $this->db->query($sql);
         if (! $resql)
         {
@@ -222,7 +223,7 @@ class DoliStorage implements TokenStorageInterface
         } else {
             // save
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_state (service, state, entity)";
-            $sql.= " VALUES ('".$service."', '".$state."', 1)";
+            $sql.= " VALUES ('".$this->db->escape($service)."', '".$this->db->escape($state)."', 1)";
             $resql = $this->db->query($sql);
         }
 
@@ -235,9 +236,10 @@ class DoliStorage implements TokenStorageInterface
      */
     public function hasAuthorizationState($service)
     {
-        // get from db
+        // get state from db
+        dol_syslog("get state from db");
         $sql = "SELECT state FROM ".MAIN_DB_PREFIX."oauth_state";
-        $sql.= " WHERE service='".$service."'";
+        $sql.= " WHERE service='".$this->db->escape($service)."'";
         $resql = $this->db->query($sql);
         $result = $this->db->fetch_array($resql);
         $states[$service] = $result[state];

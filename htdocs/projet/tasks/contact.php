@@ -42,7 +42,7 @@ $project_ref=GETPOST('project_ref','alpha');
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 //$result = restrictedArea($user, 'projet', $id, 'projet_task');
 if (! $user->rights->projet->lire) accessforbidden();
 
@@ -191,49 +191,85 @@ if ($id > 0 || ! empty($ref))
 
     		$param=($mode=='mine'?'&mode=mine':'');
 
-    		print '<table class="border" width="100%">';
-
-    		// Ref
-    		print '<tr><td width="30%">';
-    		print $langs->trans("Ref");
-    		print '</td><td>';
-    		// Define a complementary filter for search of next/prev ref.
-    		if (! $user->rights->projet->all->lire)
-    		{
-    		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
-    		    $projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
-    		}
-    		print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
-    		print '</td></tr>';
-
-    		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
-
-    		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-    		if (! empty($projectstatic->thirdparty->id)) print $projectstatic->thirdparty->getNomUrl(1);
-    		else print '&nbsp;';
-    		print '</td>';
-    		print '</tr>';
-
-    		// Visibility
-    		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-    		if ($projectstatic->public) print $langs->trans('SharedProject');
-    		else print $langs->trans('PrivateProject');
-    		print '</td></tr>';
-
-    		// Statut
-    		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
-
-		   	// Date start
-			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-			print dol_print_date($projectstatic->date_start,'day');
-			print '</td></tr>';
-
-			// Date end
-			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-			print dol_print_date($projectstatic->date_end,'day');
-			print '</td></tr>';
-
-    		print '</table>';
+			// Project card
+    
+            $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+            
+            $morehtmlref='<div class="refidno">';
+            // Title
+            $morehtmlref.=$projectstatic->title;
+            // Thirdparty
+            if ($projectstatic->thirdparty->id > 0) 
+            {
+                $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $projectstatic->thirdparty->getNomUrl(1, 'project');
+            }
+            $morehtmlref.='</div>';
+            
+            // Define a complementary filter for search of next/prev ref.
+            if (! $user->rights->projet->all->lire)
+            {
+                $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
+                $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+            }
+            
+            dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+        
+            print '<div class="fichecenter">';
+            print '<div class="fichehalfleft">';
+            print '<div class="underbanner clearboth"></div>';
+        
+            print '<table class="border" width="100%">';
+        
+            // Visibility
+            print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+            if ($projectstatic->public) print $langs->trans('SharedProject');
+            else print $langs->trans('PrivateProject');
+            print '</td></tr>';
+        
+            // Date start - end
+            print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+            print dol_print_date($projectstatic->date_start,'day');
+            $end=dol_print_date($projectstatic->date_end,'day');
+            if ($end) print ' - '.$end;
+            print '</td></tr>';
+            
+            // Budget
+            print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+            if (strcmp($projectstatic->budget_amount, '')) print price($projectstatic->budget_amount,'',$langs,1,0,0,$conf->currency);
+            print '</td></tr>';
+        
+            // Other attributes
+            $cols = 2;
+            //include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+            
+            print '</table>';
+            
+            print '</div>';
+            print '<div class="fichehalfright">';
+            print '<div class="ficheaddleft">';
+            print '<div class="underbanner clearboth"></div>';
+            
+            print '<table class="border" width="100%">';
+            
+            // Description
+            print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
+            print nl2br($projectstatic->description);
+            print '</td></tr>';
+        
+            // Categories
+            if($conf->categorie->enabled) {
+                print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+                print $form->showCategories($projectstatic->id,'project',1);
+                print "</td></tr>";
+            }
+            
+            print '</table>';
+            
+            print '</div>';
+            print '</div>';
+            print '</div>';
+            
+            print '<div class="clearboth"></div>';
 
     		dol_fiche_end();
 		}
@@ -243,54 +279,42 @@ if ($id > 0 || ! empty($ref))
 		//$arrayofuseridoftask=$object->getListContactId('internal');
 
 		$head = task_prepare_head($object);
-		dol_fiche_head($head, 'task_contact', $langs->trans("Task"), 0, 'projecttask');
+		dol_fiche_head($head, 'task_contact', $langs->trans("Task"), -1, 'projecttask');
 
-
-		/*
-		 *   Projet synthese pour rappel
-		 */
-		print '<table class="border" width="100%">';
 
 		$param=(GETPOST('withproject')?'&withproject=1':'');
 		$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
-
-		// Ref
-		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
+		
 		if (! GETPOST('withproject') || empty($projectstatic->id))
 		{
 		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
 		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-		print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
-		print '</td></tr>';
-
-		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
-
+		
+		$morehtmlref='';
+		
 		// Project
 		if (empty($withproject))
 		{
-    		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-    		print $projectstatic->getNomUrl(1);
-    		print '</td></tr>';
-
-    		// Customer
-    		print "<tr><td>".$langs->trans("ThirdParty")."</td>";
-    		print '<td colspan="3">';
-    		if ($projectstatic->thirdparty->id > 0) print $projectstatic->thirdparty->getNomUrl(1);
-    		else print '&nbsp;';
-    		print '</td></tr>';
+		    $morehtmlref.='<div class="refidno">';
+		    $morehtmlref.=$langs->trans("Project").': ';
+		    $morehtmlref.=$projectstatic->getNomUrl(1);
+		    $morehtmlref.='<br>';
+		
+		    // Third party
+		    $morehtmlref.=$langs->trans("ThirdParty").': ';
+		    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+		    $morehtmlref.='</div>';
 		}
-
-		print "</table>";
+		
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param, 0, '', '', 1);
 
 		dol_fiche_end();
 
 		/*
 		 * Lignes de contacts
 		 */
-		print '<br>';
 /*
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
@@ -327,7 +351,7 @@ if ($id > 0 || ! empty($ref))
 			if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 			// Ligne ajout pour contact interne
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 
 			print '<td class="nowrap">';
 			print img_object('','user').' '.$langs->trans("Users");
@@ -361,8 +385,8 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
 
 				print '<td class="nowrap">';
 				print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
@@ -445,7 +469,9 @@ if ($id > 0 || ! empty($ref))
                     $userstatic->id=$tab[$i]['id'];
                     $userstatic->lastname=$tab[$i]['lastname'];
                     $userstatic->firstname=$tab[$i]['firstname'];
-                    print $userstatic->getNomUrl(1);
+    				$userstatic->photo=$tab[$i]['photo'];
+    				$userstatic->login=$tab[$i]['login'];
+                    print $userstatic->getNomUrl(-1);
                 }
                 if ($tab[$i]['source']=='external')
                 {
@@ -490,6 +516,13 @@ if ($id > 0 || ! empty($ref))
 	{
 		print "ErrorRecordNotFound";
 	}
+}
+
+if (is_object($hookmanager))
+{
+	$hookmanager->initHooks(array('contacttpl'));
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formContactTpl',$parameters,$object,$action);
 }
 
 

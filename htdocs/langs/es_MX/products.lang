@@ -1,3 +1,5 @@
 # Dolibarr language file - Source file is en_US - products
+Products=productos
 ContractStatusClosed=Cerrada
-QtyNeed=Cant.
+ExportDataset_produit_1=productos
+ImportDataset_produit_1=productos

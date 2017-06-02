@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Note de frais
 ExpenseReports=Notes de frais
-Trip=Notes de frais
+ShowExpenseReport=Afficher la note de frais
 Trips=Note de frais
 TripsAndExpenses=Notes de frais
 TripsAndExpensesStatistics=Statistiques notes de frais
@@ -9,27 +9,35 @@ TripCard=Fiche note de frais
 AddTrip=Créer note de frais
 ListOfTrips=Liste des notes de frais
 ListOfFees=Liste des notes de frais
+TypeFees=Types de déplacement et notes de frais
 ShowTrip=Afficher la note de frais
 NewTrip=Nouvelle note de frais
 CompanyVisited=Société/institution visitée
-Kilometers=Kilomètres
 FeesKilometersOrAmout=Montant ou kilomètres
 DeleteTrip=Supprimer les notes de frais / déplacements
 ConfirmDeleteTrip=Êtes-vous sûr de vouloir supprimer cette note de frais ?
 ListTripsAndExpenses=Liste des notes de frais
 ListToApprove=En attente d'approbation
 ExpensesArea=Espace notes de frais
-SearchATripAndExpense=Rechercher une note de frais
 ClassifyRefunded=Classer 'Remboursé'
 ExpenseReportWaitingForApproval=Une nouvelle note de frais a été soumise pour approbation
-ExpenseReportWaitingForApprovalMessage=Une nouvelle note de frais a été soumise et est en attente de validation.\n- Utilisateur: %s\n- Période: %s\nCliquer ici pour valider: %s
+ExpenseReportWaitingForApprovalMessage=Une nouvelle note de frais a été enregistrée et est en attente d'approbation.\\n\n- Utilisateur : %s\\n\n- Période : %s\\n\nCliquez ici pour afficher la note de frais: %s.
+ExpenseReportWaitingForReApproval=Une note de frais a été resoumise pour approbation
+ExpenseReportWaitingForReApprovalMessage=Une note de frais a été enregistrée et est en attente à nouveau d'approbation.\\n\nLe %s, vous avez refusé d'approuver la note de frais pour la raison: %s\\n\nUne nouvelle version a été soumise et attend d'être approuvé.\\n\n- Utilisateur : %s\\n\n- Période : %s\\n\nCliquez ici pour valider la note de frais %s.
+ExpenseReportApproved=Une note de frais a été approuvée
+ExpenseReportApprovedMessage=La note de frais %s a été approuvée.\\n\n- Utilisateur : %s\\n\n- Approuvée par : %s\\n\nCliquez ici pour afficher la note de frais %s.
+ExpenseReportRefused=Une note de frais a été refusée
+ExpenseReportRefusedMessage=La note de frais %s a été refusée.\\n\n- Utilisateur : %s\\n\n- Refusée par : %s\\n\n- Motif du refus : %s\\n\nCliquez ici pour afficher la note de frais: %s
+ExpenseReportCanceled=Une note de frais a été annulée
+ExpenseReportCanceledMessage=La note de frais %s a été annulée.\\n\n- Utilisateur : %s\\n\n- Annulée par : %s\\n\n- Motif de l'annulation :%s\\n\nCliquez ici pour afficher la note de frais %s.
+ExpenseReportPaid=Une note de frais a été réglée
+ExpenseReportPaidMessage=La note de frais %s a été réglée.\\n\n- Utilisateur : %s\\n\n- Réglée par : %s\\n\nCliquez ici pour afficher la note de frais %s.
 TripId=Id note de frais
 AnyOtherInThisListCanValidate=Personne à informer pour la validation.
 TripSociete=Information société
-TripSalarie=Informations utilisateur
 TripNDF=Informations note de frais
 PDFStandardExpenseReports=Modèle de note de frais PDF standard
-ExpenseReportLine=Ligne de la note de frais
+ExpenseReportLine=Ligne de note de frais
 TF_OTHER=Autre
 TF_TRIP=Transport
 TF_LUNCH=Repas
@@ -43,13 +51,8 @@ TF_HOTEL=Hôtel
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=Vous avez déclaré une autre note de frais dans une période similaire.
-AucuneNDF=Pas de note de frais trouvées avec ces critères
 AucuneLigne=Aucune note de frais déclarée
-AddLine=Ajout nouvelle ligne
-AddLineMini=Ajouter
 
-Date_DEBUT=Date début
-Date_FIN=Date fin
 ModePaiement=Mode de paiement
 
 VALIDATOR=Utilisateur responsable de l'approbation
@@ -64,40 +67,25 @@ MOTIF_CANCEL=Motif
 
 DATE_REFUS=Date refus
 DATE_SAVE=Date validation
-DATE_VALIDE=Date validation
 DATE_CANCEL=Date annulation
 DATE_PAIEMENT=Date de paiement
-
-TO_PAID=Payer
 BROUILLONNER=Réouvrir
-SendToValid=Envoyer approbation
-ModifyInfoGen=Editer
 ValidateAndSubmit=Valider et envoyer pour approbation
 ValidatedWaitingApproval=Validé (en attente d'approbation)
-
-NOT_VALIDATOR=Vous n'êtes pas autorisé a approuver cette note de frais
 NOT_AUTHOR=Vous n'êtes pas l'auteur de cette note de frais. Opération annulé.
-
-RefuseTrip=Refuser une note de frais
 ConfirmRefuseTrip=Êtes-vous sûr de vouloir refuser cette note de frais ?
-
 ValideTrip=Approuver note de frais
 ConfirmValideTrip=Êtes-vous sûr de vouloir approuver cette note de frais ?
-
 PaidTrip=Payer note de frais
 ConfirmPaidTrip=Êtes-vous sûr de vouloir changer le statut de cette note de frais en "Payé" ?
-
-CancelTrip=Annuler note de frais
 ConfirmCancelTrip=Êtes-vous sûr de vouloir annuler cette note de frais ?
-
 BrouillonnerTrip=Passer le rapport de dépenses au statut "Brouillon"
 ConfirmBrouillonnerTrip=Êtes-vous sûr de vouloir changer le statut de cette note de frais en "Brouillon" ?
-
 SaveTrip=Valider note de frais
 ConfirmSaveTrip=Êtes-vous sûr de vouloir valider cette note de frais ?
-
 NoTripsToExportCSV=Pas de note de frais à exporter dans cette période
 ExpenseReportPayment=Paiement des notes de frais
-
 ExpenseReportsToApprove=Notes de frais à approuver
 ExpenseReportsToPay=Notes de frais à payer
+CloneExpenseReport=Cloner la note de frais
+ConfirmCloneExpenseReport=Êtes-vous sûr de vouloir copier cette note de frais ?

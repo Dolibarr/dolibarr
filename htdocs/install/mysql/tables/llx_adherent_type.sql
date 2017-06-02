@@ -29,7 +29,7 @@ create table llx_adherent_type
   tms              timestamp,
   statut           smallint NOT NULL DEFAULT 0,
   libelle          varchar(50) NOT NULL,
-  cotisation       varchar(3) NOT NULL DEFAULT 'yes',
+  subscription     varchar(3) NOT NULL DEFAULT 'yes',
   vote             varchar(3) NOT NULL DEFAULT 'yes',
   note             text,
   mail_valid       text -- mail envoye a la validation

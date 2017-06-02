@@ -29,7 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 // Langs
 $langs->load("accountancy");
@@ -67,7 +67,7 @@ $search_code_journal = GETPOST('search_code_journal', 'alpha');
 
 $object = new BookKeeping($db);
 $form = new Form($db);
-$formventilation = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 
 // Filter
 if (empty($search_date_start)) {
@@ -158,7 +158,7 @@ if (! empty($search_code_journal)) {
  * Mode List
  */
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0);
 	if ($nbtotalofrecords < 0) {
@@ -171,7 +171,7 @@ if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
 
-print_barre_liste($langs->trans("Bookkeeping") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end), $page, $_SERVER['PHP_SELF'], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords);
+print_barre_liste($langs->trans("Bookkeeping") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end), $page, $_SERVER['PHP_SELF'], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy');
 
 print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 print '<div class="liste_titre">';
@@ -182,22 +182,22 @@ print $form->select_date($search_date_end, 'date_end');
 print '</div>';
 print '<div class="liste_titre">';
 print $langs->trans('From') . ' ' . $langs->trans('AccountAccounting') . ': ';
-print $formventilation->select_account($search_numero_compte_start, 'search_numero_compte_start', 1, array (), 1, 1, '');
+print $formaccounting->select_account($search_numero_compte_start, 'search_numero_compte_start', 1, array (), 1, 1, '');
 print $langs->trans('To') . ' ' . $langs->trans('AccountAccounting') . ': ';
-print $formventilation->select_account($search_numero_compte_end, 'search_numero_compte_end', 1, array (), 1, 1, '');
+print $formaccounting->select_account($search_numero_compte_end, 'search_numero_compte_end', 1, array (), 1, 1, '');
 print '</div>';
 print '<div class="liste_titre">';
 print $langs->trans('From') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
-print $formventilation->select_auxaccount($search_code_tiers_start, 'search_code_tiers_start', 1);
+print $formaccounting->select_auxaccount($search_code_tiers_start, 'search_code_tiers_start', 1);
 print $langs->trans('To') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
-print $formventilation->select_auxaccount($search_code_tiers_end, 'searchcode_tiers_end', 1);
+print $formaccounting->select_auxaccount($search_code_tiers_end, 'searchcode_tiers_end', 1);
 print '</div>';
 print "<table class=\"noborder\" width=\"100%\">";
 
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("NumPiece"), $_SERVER['PHP_SELF'], "t.piece_num", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Doctype"), $_SERVER['PHP_SELF'], "t.doc_type", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Date"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Date"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("AccountAccounting"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("ThirdPartyAccount"), $_SERVER['PHP_SELF'], "t.code_tiers", "", $options, "", $sortfield, $sortorder);
@@ -267,12 +267,11 @@ print "</tr>\n";
 $var = True;
 
 foreach ( $object->lines as $line ) {
-	$var = ! $var;
 
-	print "<tr $bc[$var]>";
+	print '<tr class="oddeven">';
 	print '<td>' . $line->piece_num . '</td>' . "\n";
 	print '<td>' . $line->doc_type . '</td>' . "\n";
-	print '<td>' . dol_print_date($line->doc_date) . '</td>';
+	print '<td align="center">' . dol_print_date($line->doc_date) . '</td>';
 	print '<td>' . $line->doc_ref . '</td>';
 	print '<td>' . length_accountg($line->numero_compte) . '</td>';
 	print '<td>' . length_accounta($line->code_tiers) . '</td>';

@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
 
 // Init vars
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $numsondage = '';
 if (GETPOST('sondage'))
 {
@@ -41,12 +41,14 @@ if (GETPOST('sondage'))
 
 $object=new Opensurveysondage($db);
 $result=$object->fetch(0,$numsondage);
-if ($result <= 0) dol_print_error('','Failed to get survey id '.$numsondage);
 
 $nblignes=$object->fetch_lines();
 
 //If the survey has not yet finished, then it can be modified
-$canbemodified = (empty($object->date_fin) || $object->date_fin > dol_now());
+$canbemodified = ((empty($object->date_fin) || $object->date_fin > dol_now()) && $object->status != Opensurveysondage::STATUS_CLOSED);
+
+// Security check
+if (empty($conf->opensurvey->enabled)) accessforbidden('',0,0,1);
 
 
 /*
@@ -241,6 +243,16 @@ $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
 llxHeaderSurvey($object->titre, "", 0, 0, $arrayofjs, $arrayofcss);
 
+if (empty($object->ref))     // For survey, id is a hex string
+{
+    $langs->load("errors");
+    print $langs->trans("ErrorRecordNotFound");
+
+    llxFooterSurvey();
+
+    $db->close();
+    exit();
+}
 
 // Define format of choices
 $toutsujet=explode(",",$object->sujet);
@@ -278,7 +290,7 @@ if (!$canbemodified) {
 	llxFooterSurvey();
 
 	$db->close();
-	die;
+	exit;
 }
 
 print '<form name="formulaire" action="studs.php?sondage='.$numsondage.'"'.'#bas" method="POST">'."\n";

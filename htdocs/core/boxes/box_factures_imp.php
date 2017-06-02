@@ -77,14 +77,19 @@ class box_factures_imp extends ModeleBoxes
             $sql.= " f.tva as total_tva,";
             $sql.= " f.total_ttc,";
 			$sql.= " f.paye, f.fk_statut, f.rowid as facid";
-			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+			$sql.= ", sum(pf.amount) as am";
+			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= ", ".MAIN_DB_PREFIX."facture as f";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
 			$sql.= " WHERE f.fk_soc = s.rowid";
 			$sql.= " AND f.entity = ".$conf->entity;
 			$sql.= " AND f.paye = 0";
 			$sql.= " AND fk_statut = 1";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+			$sql.= " GROUP BY s.nom, s.rowid, s.code_client, s.logo, f.facnumber, f.date_lim_reglement,";
+			$sql.= " f.type, f.amount, f.datef, f.total, f.tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
 			//$sql.= " ORDER BY f.datef DESC, f.facnumber DESC ";
 			$sql.= " ORDER BY datelimite ASC, f.facnumber ASC ";
 			$sql.= $db->plimit($max, 0);
@@ -96,7 +101,7 @@ class box_factures_imp extends ModeleBoxes
 				$now=dol_now();
 
 				$line = 0;
-				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
+				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateDue')).': %s)';
 
 				while ($line < $num)
 				{
@@ -122,31 +127,31 @@ class box_factures_imp extends ModeleBoxes
 					}
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $facturestatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $societestatic->getNomUrl(1, '', 44),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => dol_print_date($datelimite,'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3),
+                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$objp->am),
                     );
 
 					$line++;
@@ -159,7 +164,7 @@ class box_factures_imp extends ModeleBoxes
 			else
 			{
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
@@ -167,7 +172,7 @@ class box_factures_imp extends ModeleBoxes
 		}
 		else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
+                'td' => '',
                 'text' => $langs->trans("ReadPermissionNotAllowed"),
             );
 		}
@@ -178,12 +183,12 @@ class box_factures_imp extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }
-

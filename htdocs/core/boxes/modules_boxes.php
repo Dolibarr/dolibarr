@@ -182,6 +182,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 		global $langs, $user, $conf;
 	
 		// Trick to get result into a var from a function that makes print instead of return
+		// TODO Replace ob_start with param nooutput=1 into showBox
 		ob_start();
 		$result = $this->showBox($head, $contents);
 		$output = ob_get_contents();
@@ -191,23 +192,20 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 	}
 	
 	/**
-	 *Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
+	 * Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
 	 *
 	 * @param   array   $head       Array with properties of box title
 	 * @param   array   $contents   Array with properties of box lines
-	 *
-	 * @return  void
+	 * @param	int		$nooutput	No print, only return string
+	 * @return  string
 	 */
-	function showBox($head = null, $contents = null)
+	function showBox($head = null, $contents = null, $nooutput=0)
 	{
 		global $langs, $user, $conf;
 
         require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
 		$MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
-		$bcx = array();
-		$bcx[0] = 'class="box_pair"';
-		$bcx[1] = 'class="box_impair"';
 		$var = false;
 
         $cachetime = 900;   // 900 : 15mn
@@ -236,56 +234,55 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
             // Show box title
             if (! empty($head['text']) || ! empty($head['sublink']) || ! empty($head['subpicto']))
             {
-                //$out.= '<div id="boxto_'.$this->box_id.'_title">'."\n";
-                //$out.= '<table summary="boxtabletitle'.$this->box_id.'" width="100%" class="noborder">'."\n";
-                $out.= '<tr class="box_titre">';
+                $out.= '<tr class="liste_titre box_titre">';
                 $out.= '<td';
                 if ($nbcol > 0) { $out.= ' colspan="'.$nbcol.'"'; }
                 $out.= '>';
                 if ($conf->use_javascript_ajax)
                 {
-                    $out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td>';
+                    $out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax100 maxwidth100onsmartphone">';
                 }
                 if (! empty($head['text']))
                 {
                     $s=dol_trunc($head['text'],isset($head['limit'])?$head['limit']:$MAXLENGTHBOX);
                     $out.= $s;
                 }
-                $out.= ' ';
-                if (! empty($head['sublink'])) $out.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
-                if (! empty($head['subpicto'])) $out.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
-                if (! empty($head['sublink'])) '</a>';
+                $out.= '</td>';
+                
                 if (! empty($conf->use_javascript_ajax))
                 {
-                    $out.= '</td><td class="nocellnopadd boxclose nowrap">';
+                    $sublink='';
+                    if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
+                    if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
+                    if (! empty($head['sublink']))  $sublink.= '</a>';
+                    
+                    $out.= '<td class="nocellnopadd boxclose right nowraponall">';
+                    $out.=$sublink;
                     // The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
-                    $out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="boxhandle hideonsmartphone" style="cursor:move;"');
-                    $out.= img_picto($langs->trans("Close2",$this->box_id),'close_title','class="boxclose" rel="x:y" style="cursor:pointer;" id="imgclose'.$this->box_id.'"');
+                    $out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="boxhandle hideonsmartphone cursormove"');
+                    $out.= img_picto($langs->trans("CloseBox",$this->box_id),'close_title','class="boxclose cursorpointer" rel="x:y" id="imgclose'.$this->box_id.'"');
                     $label=$head['text'];
                     if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
                     $out.= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
                     $out.= '</td></tr></table>';
                 }
-                $out.= '</td>';
+                
                 $out.= "</tr>\n";
-                //$out.= "</table>\n";
-                //$out.= "</div>\n";
             }
 
             // Show box lines
             if ($nblines)
             {
-                //$out.= '<table summary="boxtablelines'.$this->box_id.'" width="100%" class="noborder">'."\n";
                 // Loop on each record
                 for ($i=0, $n=$nblines; $i < $n; $i++)
                 {
                     if (isset($contents[$i]))
                     {
-                        $var=!$var;
+                        
 
                         // TR
                         if (isset($contents[$i][0]['tr'])) $out.= '<tr valign="top" '.$contents[$i][0]['tr'].'>';
-                        else $out.= '<tr valign="top" '.$bcx[$var].'>';
+                        else $out.= '<tr class="oddeven">';
 
                         // Loop on each TD
                         $nbcolthisline=count($contents[$i]);
@@ -329,13 +326,13 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                             if (! empty($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
                             if ($maxlength) $textwithnotags=dol_trunc($textwithnotags,$maxlength);
-                            if (preg_match('/^<img/i',$text) || ! empty($contents[$i][$j]['asis'])) $out.= $text;   // show text with no html cleaning
+                            if (preg_match('/^<img/i',$text) || preg_match('/^<div/i',$text) || ! empty($contents[$i][$j]['asis'])) $out.= $text;   // show text with no html cleaning
                             else $out.= $textwithnotags;                // show text with html cleaning
 
                             // End Url
                             if (! empty($contents[$i][$j]['url'])) $out.= '</a>';
 
-                            if (preg_match('/^<img/i',$text2) || ! empty($contents[$i][$j]['asis2'])) $out.= $text2; // show text with no html cleaning
+                            if (preg_match('/^<img/i',$text2) || preg_match('/^<div/i',$text2) || ! empty($contents[$i][$j]['asis2'])) $out.= $text2; // show text with no html cleaning
                             else $out.= $text2withnotags;               // show text with html cleaning
 
                             if (! empty($textnoformat)) $out.= "\n".$textnoformat."\n";
@@ -363,13 +360,16 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
             }
         } else {
             dol_syslog(get_class($this).'::showBoxCached');
-            $out = dol_readcachefile($cachedir, $filename);
-            print "<!-- Box ".get_class($this)." from cache -->";
-
+            $out = "<!-- Box ".get_class($this)." from cache -->";
+            $out.= dol_readcachefile($cachedir, $filename);
         }
-        print $out;
-    }
-
+        
+        if ($nooutput) return $out;
+        else print $out;
+    
+        return '';
+	}
+	
 }
 
 

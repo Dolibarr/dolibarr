@@ -213,13 +213,13 @@ else if ($action == 'setdated' && $user->rights->deplacement->creer)
 {
     $dated=dol_mktime(GETPOST('datedhour','int'), GETPOST('datedmin','int'), GETPOST('datedsec','int'), GETPOST('datedmonth','int'), GETPOST('datedday','int'), GETPOST('datedyear','int'));
     $object->fetch($id);
-    $result=$object->setValueFrom('dated',$dated,'','','date');
+    $result=$object->setValueFrom('dated', $dated, '', '', 'date', '', $user, 'DEPLACEMENT_MODIFY');
     if ($result < 0) dol_print_error($db, $object->error);
 }
 else if ($action == 'setkm' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    $result=$object->setValueFrom('km',GETPOST('km','int'));
+    $result=$object->setValueFrom('km', GETPOST('km','int'), '', null, 'text', '', $user, 'DEPLACEMENT_MODIFY');
     if ($result < 0) dol_print_error($db, $object->error);
 }
 
@@ -276,10 +276,10 @@ if ($action == 'create')
 
     // Public note
     print '<tr>';
-    print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
+    print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
 
-    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
+    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8,'90%');
     print $doleditor->Create(1);
 
     print '</td></tr>';
@@ -288,10 +288,10 @@ if ($action == 'create')
     if (empty($user->societe_id))
     {
         print '<tr>';
-        print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
+        print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
 
-        $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
+        $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
         print $doleditor->Create(1);
 
         print '</td></tr>';
@@ -373,10 +373,10 @@ else if ($id)
             print '</td></tr>';
 
             // Public note
-            print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
+            print '<tr><td class="tdtop">'.$langs->trans("NotePublic").'</td>';
             print '<td valign="top" colspan="3">';
 
-            $doleditor = new DolEditor('note_public', $object->note_public, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
+            $doleditor = new DolEditor('note_public', $object->note_public, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
             print $doleditor->Create(1);
 
             print "</td></tr>";
@@ -384,10 +384,10 @@ else if ($id)
             // Private note
             if (empty($user->societe_id))
             {
-                print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
+                print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td>';
                 print '<td valign="top" colspan="3">';
 
-                $doleditor = new DolEditor('note_private', $object->note_private, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
+                $doleditor = new DolEditor('note_private', $object->note_private, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
                 print $doleditor->Create(1);
 
                 print "</td></tr>";
@@ -456,7 +456,7 @@ else if ($id)
             print '</td></tr>';
 
             // Km/Price
-            print '<tr><td valign="top">';
+            print '<tr><td class="tdtop">';
             print $form->editfieldkey("FeesKilometersOrAmout",'km',$object->km,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'numeric:6');
             print '</td><td>';
             print $form->editfieldval("FeesKilometersOrAmout",'km',$object->km,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'numeric:6');

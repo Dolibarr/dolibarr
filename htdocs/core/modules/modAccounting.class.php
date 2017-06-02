@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2016      Laurent Destailleur 	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +21,13 @@
 
 /**
  * \file		htdocs/core/modules/modAccounting.class.php
- * \ingroup		Accounting Expert
+ * \ingroup		Advanced accountancy
  * \brief		Module to activate Accounting Expert module
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- * \class	modAccounting
- * \brief	Description and activation class for module accounting expert
+ * Description and activation class for module accounting expert
  */
 class modAccounting extends DolibarrModules
 {
@@ -49,8 +49,8 @@ class modAccounting extends DolibarrModules
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Advanced accounting management";
 
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
+		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 		$this->special = 0;
@@ -70,8 +70,8 @@ class modAccounting extends DolibarrModules
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array("modComptabilite"); // List of modules are in conflict with this module
 		$this->phpmin = array(5, 3); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3, 7); // Minimum version of Dolibarr required by module
-		$this->langfiles = array("accountancy");
+		$this->need_dolibarr_version = array(3, 9); // Minimum version of Dolibarr required by module
+		$this->langfiles = array("accountancy","compta");
 
 		// Constants
 		$this->const = array();
@@ -142,11 +142,6 @@ class modAccounting extends DolibarrModules
 				"chaine",
 				""
 		);
-		$this->const[12] = array(
-				"ACCOUNTING_LIMIT_LIST_VENTILATION",
-				"chaine",
-				"50"
-		);
 		$this->const[13] = array(
 				"ACCOUNTING_LIST_SORT_VENTILATION_TODO",
 				"yesno",
@@ -157,16 +152,19 @@ class modAccounting extends DolibarrModules
 				"yesno",
 				"1"
 		);
+		/*
 		$this->const[15] = array (
 				"ACCOUNTING_GROUPBYACCOUNT",
 				"yesno",
 				"1"
 		);
+		*/
 		$this->const[16] = array (
 				"ACCOUNTING_EXPORT_DATE",
 				"chaine",
 				"%d%m%Y"
 		);
+		/*
 		$this->const[17] = array (
 				"ACCOUNTING_EXPORT_PIECE",
 				"yesno",
@@ -175,7 +173,7 @@ class modAccounting extends DolibarrModules
 		$this->const[18] = array (
 				"ACCOUNTING_EXPORT_GLOBAL_ACCOUNT",
 				"yesno",
-				"1" 
+				"1"
 		);
 		$this->const[19] = array (
 				"ACCOUNTING_EXPORT_LABEL",
@@ -185,13 +183,14 @@ class modAccounting extends DolibarrModules
 		$this->const[20] = array (
 				"ACCOUNTING_EXPORT_AMOUNT",
 				"yesno",
-				"1" 
+				"1"
 		);
 		$this->const[21] = array (
 				"ACCOUNTING_EXPORT_DEVISE",
 				"yesno",
-				"1" 
+				"1"
 		);
+		*/
 		$this->const[22] = array(
 				"ACCOUNTING_EXPENSEREPORT_JOURNAL",
 				"chaine",
@@ -218,24 +217,34 @@ class modAccounting extends DolibarrModules
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
 
+		$this->rights[$r][0] = 50440;
+		$this->rights[$r][1] = 'Manage chart of accounts, setup of accountancy';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'chartofaccount';
+		$this->rights[$r][5] = '';
+		$r++;
+		
 		$this->rights[$r][0] = 50401;
-		$this->rights[$r][1] = 'Read ventilation';
+		$this->rights[$r][1] = 'Bind products and invoices with accounting accounts';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'ventilation';
-		$this->rights[$r][5] = 'read';
+		$this->rights[$r][4] = 'bind';
+		$this->rights[$r][5] = 'write';
 		$r++;
 
+		/*
 		$this->rights[$r][0] = 50402;
-		$this->rights[$r][1] = 'Dispatched ventilation';
+		$this->rights[$r][1] = 'Make binding with products and invoices';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'ventilation';
-		$this->rights[$r][5] = 'dispatch';
+		$this->rights[$r][5] = 'dispatch_advanced';
 		$r++;
-
+        */
+		
 		$this->rights[$r][0] = 50411;
-		$this->rights[$r][1] = 'Lire les mouvements comptables';
+		$this->rights[$r][1] = 'Read operations in General Ledger';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mouvements';
@@ -243,7 +252,7 @@ class modAccounting extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 50412;
-		$this->rights[$r][1] = 'Creer/modifier/annuler les mouvements comptables';
+		$this->rights[$r][1] = 'Write/Edit operations in General Ledger';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mouvements';
@@ -251,7 +260,7 @@ class modAccounting extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 50420;
-		$this->rights[$r][1] = 'Lire CA, bilans, resultats, journaux, grands livres';
+		$this->rights[$r][1] = 'Report and export reports (turnover, balance, journals, general ledger)';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'comptarapport';
@@ -265,17 +274,28 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][4] = 'fiscalyear';
 		$this->rights[$r][5] = '';
 		$r++;
-		
-		$this->rights[$r][0] = 50440;
-		$this->rights[$r][1] = 'Manage chart of accounts';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'chartofaccount';
-		$this->rights[$r][5] = '';
-		$r++;
 
-		// Main menu entries
-		$this->menus = array();
-		$r = 0;
+
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		// Exports
+        //--------
+        $r=0;
+
+        $r++;
+        $this->export_code[$r]=$this->rights_class.'_'.$r;
+        $this->export_label[$r]='Chartofaccounts';
+        $this->export_icon[$r]='accounting';
+		$this->export_permission[$r]=array(array("accounting","chartofaccount"));
+        $this->export_fields_array[$r]=array('ac.rowid'=>'ChartofaccountsId','ac.pcg_version'=>'Chartofaccounts','aa.rowid'=>'Id','aa.account_number'=>"AccountAccounting",'aa.label'=>"Label",'aa.account_parent'=>"Accountparent",'aa.pcg_type'=>"Pcgtype",'aa.pcg_subtype'=>'Pcgsubtype','aa.active'=>'Status');
+        $this->export_TypeFields_array[$r]=array('ac.rowid'=>'List:accounting_system:pcg_version','aa.account_number'=>"Text",'aa.label'=>"Text",'aa.pcg_type'=>'Text','aa.pcg_subtype'=>'Text','aa.active'=>'Status');
+        $this->export_entities_array[$r]=array('ac.rowid'=>"accounting",'ac.pcg_version'=>"accounting",'aa.rowid'=>'accounting','aa.account_number'=>"accounting",'aa.label'=>"accounting",'aa.accountparent'=>"accounting",'aa.pcg_type'=>"accounting",'aa.pcgsubtype'=>"accounting",'aa_active'=>"accounting");
+
+        $this->export_sql_start[$r]='SELECT DISTINCT ';
+        $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'accounting_account as aa, '.MAIN_DB_PREFIX.'accounting_system as ac';
+        $this->export_sql_end[$r] .=' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting', 1).') ';
+
 	}
 }

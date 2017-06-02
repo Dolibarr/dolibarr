@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2016       Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,20 @@
 
 require '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
+
+$langs->load("printing");
+
+
+/*
+ * Actions
+ */
+
+// None
+
+
+/*
+ * View
+ */
 
 llxHeader("",$langs->trans("Printing"));
 

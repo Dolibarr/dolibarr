@@ -15,7 +15,7 @@ use Luracast\Restler\RestException;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc5
+ * @version    3.0.0rc6
  */
 class RateLimit implements iFilter, iUseAuthentication
 {
@@ -53,7 +53,7 @@ class RateLimit implements iFilter, iUseAuthentication
      * @var array all paths beginning with any of the following will be excluded
      * from documentation
      */
-    public static $excludedPaths = array('resources');
+    public static $excludedPaths = array('explorer');
 
 
     /**

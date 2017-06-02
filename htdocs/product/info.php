@@ -56,13 +56,23 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
  *	View
  */
 
-$form=new Form($b);
+$title = $langs->trans('ProductServiceCard');
+$helpurl = '';
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Info');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Info');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
 
-$title=$langs->trans("Product");
-$helpurl='';
-if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-llxHeader('',$title,$help_url);
+llxHeader('', $title, $helpurl);
+
+$form=new Form($b);
 
 if ($id > 0 || $ref)
 {
@@ -81,11 +91,12 @@ if ($id > 0 || $ref)
 	$head=product_prepare_head($object);
     $titre=$langs->trans("CardProduct".$object->type);
     $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-    dol_fiche_head($head, 'info', $titre, 0, $picto);
+    
+    dol_fiche_head($head, 'info', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-
-	dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+	$object->next_prev_filter=" fk_product_type = ".$object->type;
+	dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
 	
 	$object->info($object->id);
 

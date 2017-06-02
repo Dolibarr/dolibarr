@@ -117,12 +117,24 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit)
 	if ($duration_value == 0)  return $time;
 	if ($duration_unit == 'h') return $time + (3600*$duration_value);
 	if ($duration_unit == 'w') return $time + (3600*24*7*$duration_value);
-	if ($duration_value > 0) $deltastring="+".abs($duration_value);
-	if ($duration_value < 0) $deltastring="-".abs($duration_value);
-	if ($duration_unit == 'd') { $deltastring.=" day"; }
-	if ($duration_unit == 'm') { $deltastring.=" month"; }
-	if ($duration_unit == 'y') { $deltastring.=" year"; }
-	return strtotime($deltastring,$time);
+	
+	$deltastring='P';
+	
+	if ($duration_value > 0){ $deltastring.=abs($duration_value); $sub= false; }
+	if ($duration_value < 0){ $deltastring.=abs($duration_value); $sub= true; }
+	if ($duration_unit == 'd') { $deltastring.="D"; }
+	if ($duration_unit == 'm') { $deltastring.="M"; }
+	if ($duration_unit == 'y') { $deltastring.="Y"; }
+	
+	$date = new DateTime();
+	$date->setTimezone(new DateTimeZone('UTC'));
+	$date->setTimestamp($time);
+	$interval = new DateInterval($deltastring);
+	
+	if($sub) $date->sub($interval);
+	else $date->add( $interval );
+	
+	return $date->getTimestamp();
 }
 
 
@@ -159,11 +171,11 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 
 	if ($format == 'all' || $format == 'allwithouthour' || $format == 'allhour' || $format == 'allhourmin')
 	{
-		if ($iSecond === 0) return '0';	// This is to avoid having 0 return a 12:00 AM for en_US
+		if ((int) $iSecond === 0) return '0';	// This is to avoid having 0 return a 12:00 AM for en_US
 
         $sTime='';
         $sDay=0;
-        $sWeek='';
+        $sWeek=0;
 
 		if ($iSecond >= $lengthOfDay)
 		{
@@ -206,7 +218,7 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 		}
 		if ($format == 'allhourmin')
 		{
-			return sprintf("%02d",($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600))).':'.sprintf("%02d",((int) floor(($iSecond % 3600)/60)));
+		    return sprintf("%02d",($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600))).':'.sprintf("%02d",((int) floor(($iSecond % 3600)/60)));
 		}
 		if ($format == 'allhour')
 		{

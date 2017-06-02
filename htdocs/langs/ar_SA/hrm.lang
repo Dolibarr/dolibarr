@@ -5,16 +5,13 @@ Establishments=وثائق
 Establishment=وثيقة
 NewEstablishment=وثيقة جديدة
 DeleteEstablishment=حذف وثيقة
-ConfirmDeleteEstablishment=هل أنت متأكد من حذف هذه الوثيقة
+ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
 OpenEtablishment=فتح وثيقة
 CloseEtablishment=إنشاء وثيقة
 # Dictionary
 DictionaryDepartment=شؤون الموظفين - الأقسام 
 DictionaryFunction=شؤون الموظفين - الوظائف
 # Module
-ListOfEmployees=قائمة الموظفين 
 Employees=الموظفين
 Employee=الموظف
-Employe=Employe
 NewEmployee=موظف جديد
-EmployeeCard=بطاقة موظف

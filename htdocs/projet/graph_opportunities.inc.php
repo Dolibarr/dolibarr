@@ -1,13 +1,14 @@
 <?php 
 if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
-	$sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount, p.fk_opp_status as opp_status";
-	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+	$sql = "SELECT p.fk_opp_status as opp_status, cls.code, COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount";
+	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."c_lead_status as cls";
 	$sql.= " WHERE p.entity = ".$conf->entity;
-	$sql.= " AND p.fk_statut = 1";
+	$sql.= " AND p.fk_opp_status = cls.rowid";
+	$sql.= " AND p.fk_statut = 1";     // Opend projects only
 	if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";
 	if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-	$sql.= " GROUP BY p.fk_opp_status";
+	$sql.= " GROUP BY p.fk_opp_status, cls.code";
 	$resql = $db->query($sql);
 
 	if ($resql)
@@ -16,6 +17,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    $i = 0;
 
 	    $totalnb=0;
+	    $totaloppnb=0;
 	    $totalamount=0;
 	    $ponderated_opp_amount=0;
 	    $valsnb=array();
@@ -32,8 +34,12 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	                $valsnb[$obj->opp_status]=$obj->nb;
 	                $valsamount[$obj->opp_status]=$obj->opp_amount;
 	                $totalnb+=$obj->nb;
-	                $totalamount+=$obj->opp_amount;
-	                $ponderated_opp_amount+=$obj->ponderated_opp_amount;
+	                if ($obj->opp_status) $totaloppnb+=$obj->nb;
+	                if (! in_array($obj->code, array('WON', 'LOST')))
+	                {
+	                   $totalamount+=$obj->opp_amount;
+	                   $ponderated_opp_amount+=$obj->ponderated_opp_amount;
+	                }
 	            }
 	            $total+=$row[0];
 	        }
@@ -44,7 +50,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    $ponderated_opp_amount = $ponderated_opp_amount / 100;
 	    
 	    print '<table class="noborder nohover" width="100%">';
-	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</td></tr>'."\n";
+	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</th></tr>'."\n";
 	    $var=true;
 	    $listofstatus=array_keys($listofoppstatus);
 	    foreach ($listofstatus as $status)
@@ -61,8 +67,8 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        $dataseries[]=array('label'=>$labelstatus,'data'=>(isset($valsamount[$status])?(float) $valsamount[$status]:0));
 	        if (! $conf->use_javascript_ajax)
 	        {
-	            $var=!$var;
-	            print "<tr ".$bc[$var].">";
+	            
+	            print '<tr class="oddeven">';
 	            print '<td>'.$labelstatus.'</td>';
 	            print '<td align="right"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status])?(float) $valsamount[$status]:0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
 	            print "</tr>\n";
@@ -71,14 +77,17 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    if ($conf->use_javascript_ajax)
 	    {
 	        print '<tr class="impair"><td align="center" colspan="2">';
-	        $data=array('series'=>$dataseries);
-	        dol_print_graph('stats',400,180,$data,1,'pie',0,'',0);
+   	        $data=array('series'=>$dataseries);
+   	        dol_print_graph('stats',360,180,$data,1,'pie',0,'',0,$totaloppnb?0:1);
 	        print '</td></tr>';
 	    }
 	    //if ($totalinprocess != $total)
 	    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
-	    print '<tr class="liste_total"><td>'.$langs->trans("OpportunityTotalAmount").'</td><td align="right">'.price($totalamount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
-	    print '<tr class="liste_total"><td>'.$langs->trans("OpportunityPonderatedAmount").'</td><td align="right">'.price(price2num($ponderated_opp_amount,'MT'), 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
+	    print '<tr class="liste_total"><td class="maxwidth200 tdoverflow">'.$langs->trans("OpportunityTotalAmount").' ('.$langs->trans("WonLostExcluded").')</td><td align="right">'.price($totalamount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
+	    print '<tr class="liste_total"><td class="minwidth200 tdoverflow">';
+	    //print $langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')';
+	    print $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')', $langs->trans("OpportunityPonderatedAmountDesc"), 1);
+	    print '</td><td align="right">'.price(price2num($ponderated_opp_amount,'MT'), 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
 	    print "</table><br>";
 	}
 	else

@@ -5,16 +5,13 @@ Establishments=Establiments
 Establishment=Establiment
 NewEstablishment=Nou establiment
 DeleteEstablishment=Elimina l'establiment
-ConfirmDeleteEstablishment=Esteu segur de voler eliminar aquest establiment?
+ConfirmDeleteEstablishment=Vols eliminar aquest establiment?
 OpenEtablishment=Obre l'establiment
 CloseEtablishment=Tanca l'establiment
 # Dictionary
 DictionaryDepartment=HRM - Llistat de departament
 DictionaryFunction=HRM - Llistat de funcions
 # Module
-ListOfEmployees=Llistat d'empleats
 Employees=Empleats
 Employee=Empleat
-Employe=Empleats
 NewEmployee=Nou empleat
-EmployeeCard=Fitxa d'empleat

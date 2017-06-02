@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Ressourcen
 MenuResourceAdd=Neue Ressource
-MenuResourcePlanning=Ressourcen-Planung
 DeleteResource=Ressource löschen
 ConfirmDeleteResourceElement=Bitte Löschung der Ressource dieses Elements bestätigen
 NoResourceInDatabase=Keine Ressource in Datenbank
@@ -9,7 +8,7 @@ NoResourceLinked=Keine Ressource verknüpft
 
 ResourcePageIndex=Liste der Ressourcen
 ResourceSingular=Ressource
-ResourceCard=Ressourcen-Karte
+ResourceCard=Ressource - Karte
 AddResource=Ressource erstellen
 ResourceFormLabel_ref=Ressourcen-Name
 ResourceType=Ressourcen-Typ
@@ -18,8 +17,6 @@ ResourceFormLabel_description=Ressourcen-Beschreibung
 ResourcesLinkedToElement=mit Element verknüpfte Ressourcen 
 
 ShowResource=Ressource anzeigen
-ShowResourcePlanning=Ressourcen-Planung zeigen
-GotoDate=Gehe zu Datum
 
 ResourceElementPage=Element-Ressourcen
 ResourceCreatedWithSuccess=Ressource erfolgreich erstellt
@@ -27,7 +24,6 @@ RessourceLineSuccessfullyDeleted=Ressourcen-Zeile erfolgreich gelöscht
 RessourceLineSuccessfullyUpdated=Ressourcen-Zeile erfolgreich aktualisiert
 ResourceLinkedWithSuccess=Ressource erfolgreich verknüpft
 
-TitleResourceCard=Ressourcen-Karte
 ConfirmDeleteResource=Ressource wirklich löschen?
 RessourceSuccessfullyDeleted=Ressource erfolgreich gelöscht
 DictionaryResourceType=Ressourcen-Typ

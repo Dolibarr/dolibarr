@@ -32,36 +32,49 @@ $langs->load("bills");
 $langs->load("companies");
 
 $id=GETPOST('id');
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
  * View
  */
 
-llxHeader();
+llxHeader('', $langs->trans("Payment"));
 
-$paiement = new Paiement($db);
-$paiement->fetch($id);
-$paiement->info($id);
+$object = new Paiement($db);
+$object->fetch($id, $ref);
+$object->info($object->id);
 
-$head = payment_prepare_head($paiement);
+$head = payment_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("PaymentCustomerInvoice"), 0, 'payment');
+dol_fiche_head($head, 'info', $langs->trans("PaymentCustomerInvoice"), -1, 'payment');
 
-print '<table class="border" width="100%">';
 
-// Ref
-print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/compta/paiement/list.php">' . $langs->trans("BackToList") . '</a>';
 
-print '</table>';
+dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', '');
+
+
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
 
 print '<br>';
 
 print '<table width="100%"><tr><td>';
-dol_print_object_info($paiement);
+dol_print_object_info($object);
 print '</td></tr></table>';
 
 print '</div>';
+
+dol_fiche_end();
 
 llxFooter();
 $db->close();

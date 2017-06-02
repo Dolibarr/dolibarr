@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,6 @@
  *	\file       htdocs/ecm/index_auto.php
  *	\ingroup    ecm
  *	\brief      Main page for ECM section area
- *	\author		Laurent Destailleur
  */
 
 if (! defined('REQUIRE_JQUERY_LAYOUT'))  define('REQUIRE_JQUERY_LAYOUT','1');
@@ -49,7 +49,7 @@ $result = restrictedArea($user, 'ecm', 0);
 
 // Get parameters
 $socid=GETPOST('socid','int');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $section=GETPOST("section")?GETPOST("section","int"):GETPOST("section_id","int");
 $module=GETPOST("module");
 if (! $section) $section=0;
@@ -346,50 +346,11 @@ if ($action == 'refreshmanual')
 
 // Define height of file area (depends on $_SESSION["dol_screenheight"])
 //print $_SESSION["dol_screenheight"];
-$maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-186):660;	// Also into index.php file
+$maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-136):660;	// Also into index.php file
 
 $morejs=array();
 if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs=array("/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js");
-$moreheadcss="
-<!-- dol_screenheight=".$_SESSION["dol_screenheight"]." -->
-<style type=\"text/css\">
-    #containerlayout {
-        height:     ".$maxheightwin."px;
-        margin:     0 auto;
-        width:      100%;
-        min-width:  700px;
-        _width:     700px; /* min-width for IE6 */
-    }
-</style>";
-$moreheadjs=empty($conf->use_javascript_ajax)?"":"
-<script type=\"text/javascript\">
-    jQuery(document).ready(function () {
-        jQuery('#containerlayout').layout({
-        	name: \"ecmlayout\"
-        ,   paneClass:    \"ecm-layout-pane\"
-        ,   resizerClass: \"ecm-layout-resizer\"
-        ,   togglerClass: \"ecm-layout-toggler\"
-        ,   center__paneSelector:   \"#ecm-layout-center\"
-        ,   north__paneSelector:    \"#ecm-layout-north\"
-        ,   west__paneSelector:     \"#ecm-layout-west\"
-        ,   resizable: true
-        ,   north__size:        32
-        ,   north__resizable:   false
-        ,   north__closable:    false
-        ,   west__size:         340
-        ,   west__minSize:      280
-        ,   west__slidable:     true
-        ,   west__resizable:    true
-        ,   west__togglerLength_closed: '100%'
-        ,   useStateCookie:     true
-            });
 
-        jQuery('#ecm-layout-center').layout({
-            center__paneSelector:   \".ecm-in-layout-center\"
-        ,   resizable: false
-            });
-    });
-</script>";
 
 llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,'',0,0);
 
@@ -399,36 +360,28 @@ $rowspan=0;
 $sectionauto=array();
 if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 {
-	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))     { $langs->load("products"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'product', 'test'=>(! empty($conf->product->enabled) || ! empty($conf->service->enabled)), 'label'=>$langs->trans("ProductsAndServices"),     'desc'=>$langs->trans("ECMDocsByProducts")); }
-	if (! empty($conf->societe->enabled))     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
-	if (! empty($conf->propal->enabled))      { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'propal',  'test'=>$conf->propal->enabled,  'label'=>$langs->trans("Prop"),    'desc'=>$langs->trans("ECMDocsByProposals")); }
-	if (! empty($conf->contrat->enabled))     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'contract','test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"),    'desc'=>$langs->trans("ECMDocsByContracts")); }
-	if (! empty($conf->commande->enabled))    { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order',   'test'=>$conf->commande->enabled,'label'=>$langs->trans("CustomersOrders"),       'desc'=>$langs->trans("ECMDocsByOrders")); }
-	if (! empty($conf->facture->enabled))     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice', 'test'=>$conf->facture->enabled, 'label'=>$langs->trans("CustomersInvoices"),     'desc'=>$langs->trans("ECMDocsByInvoices")); }
-	if (! empty($conf->fournisseur->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order_supplier',   'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersOrders"),     'desc'=>$langs->trans("ECMDocsByOrders")); }
-	if (! empty($conf->fournisseur->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice_supplier', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersInvoices"),   'desc'=>$langs->trans("ECMDocsByInvoices")); }
-	if (! empty($conf->tax->enabled))         { $langs->load("compta"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'tax', 'test'=>$conf->tax->enabled, 'label'=>$langs->trans("SocialContributions"),     'desc'=>$langs->trans("ECMDocsBySocialContributions")); }
-	if (! empty($conf->projet->enabled))      { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'project', 'test'=>$conf->projet->enabled, 'label'=>$langs->trans("Projects"),     'desc'=>$langs->trans("ECMDocsByProjects")); }
-	if (! empty($conf->ficheinter->enabled))      { $langs->load("interventions"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'fichinter', 'test'=>$conf->ficheinter->enabled, 'label'=>$langs->trans("Interventions"),     'desc'=>$langs->trans("ECMDocsByInterventions")); }
-	$rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'user', 'test'=>1, 'label'=>$langs->trans("Users"),     'desc'=>$langs->trans("ECMDocsByUsers"));
-	
+	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))	{ $langs->load("products"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'product', 'test'=>(! empty($conf->product->enabled) || ! empty($conf->service->enabled)), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts")); }
+	if (! empty($conf->societe->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
+	if (! empty($conf->propal->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'propal',  'test'=>$conf->propal->enabled, 'label'=>$langs->trans("Prop"), 'desc'=>$langs->trans("ECMDocsByProposals")); }
+	if (! empty($conf->contrat->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'contract','test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"), 'desc'=>$langs->trans("ECMDocsByContracts")); }
+	if (! empty($conf->commande->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order',   'test'=>$conf->commande->enabled, 'label'=>$langs->trans("CustomersOrders"), 'desc'=>$langs->trans("ECMDocsByOrders")); }
+	if (! empty($conf->facture->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice', 'test'=>$conf->facture->enabled, 'label'=>$langs->trans("CustomersInvoices"), 'desc'=>$langs->trans("ECMDocsByInvoices")); }
+	if (! empty($conf->fournisseur->enabled))	{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order_supplier', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersOrders"), 'desc'=>$langs->trans("ECMDocsByOrders")); }
+	if (! empty($conf->fournisseur->enabled))	{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice_supplier', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersInvoices"), 'desc'=>$langs->trans("ECMDocsByInvoices")); }
+	if (! empty($conf->tax->enabled))			{ $langs->load("compta"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'tax', 'test'=>$conf->tax->enabled, 'label'=>$langs->trans("SocialContributions"), 'desc'=>$langs->trans("ECMDocsBySocialContributions")); }
+	if (! empty($conf->projet->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'project', 'test'=>$conf->projet->enabled, 'label'=>$langs->trans("Projects"), 'desc'=>$langs->trans("ECMDocsByProjects")); }
+	if (! empty($conf->ficheinter->enabled))	{ $langs->load("interventions"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'fichinter', 'test'=>$conf->ficheinter->enabled, 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsByInterventions")); }
+	if (! empty($conf->expensereport->enabled))	{ $langs->load("trips"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'expensereport', 'test'=>$conf->expensereport->enabled, 'label'=>$langs->trans("ExpenseReports"), 'desc'=>$langs->trans("ECMDocsByExpenseReports")); }
+	$rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'user', 'test'=>1, 'label'=>$langs->trans("Users"), 'desc'=>$langs->trans("ECMDocsByUsers"));
 }
 
-print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
+//print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
 
 $helptext1=''; $helptext2='';
 $helptext1.=$langs->trans("ECMAreaDesc");
 $helptext1.=$langs->trans("ECMAreaDesc2");
 $helptext2.=$langs->trans("ECMAreaDesc");
 $helptext2.=$langs->trans("ECMAreaDesc2");
-
-/*
-print '<div class="hideonsmartphone">';
-print $langs->trans("ECMAreaDesc")."<br>";
-print $langs->trans("ECMAreaDesc2")."<br>";
-print "<br>\n";
-print '</div>';
-*/
 
 // Confirm remove file (for non javascript users)
 if ($action == 'delete' && empty($conf->use_javascript_ajax))
@@ -437,19 +390,19 @@ if ($action == 'delete' && empty($conf->use_javascript_ajax))
 
 }
 
-if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
-else $classviewhide='visible';
+//if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
+//else $classviewhide='visible';
+$classviewhide='inline-block';
 
 
-if (empty($conf->dol_use_jmobile))
-{
 $head = ecm_prepare_dasboard_head('');
-dol_fiche_head($head, 'index_auto', '', 1, '');
-}
+dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), 1, '');
+
 
 // Start container of all panels
 ?>
-<div id="containerlayout"> <!-- begin div id="containerlayout" -->
+<!-- Begin div id="containerlayout" -->
+<div id="containerlayout">
 <div id="ecm-layout-north" class="toolbar largebutton">
 <?php
 
@@ -482,12 +435,13 @@ if ($action == 'delete_section')
 
 if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
 {
-	print '<table width="100%" class="nobordernopadding">';
+	print '<table width="100%" class="liste noborderbottom">'."\n";
 
-	print '<tr class="liste_titre">';
-    print '<td class="liste_titre" align="left" colspan="6">';
+	print '<!-- Title for auto directories -->'."\n";
+	print '<tr class="liste_titre">'."\n";
+    print '<th class="liste_titre" align="left" colspan="6">';
     print '&nbsp;'.$langs->trans("ECMSections");
-	print '</td></tr>';
+	print '</th></tr>';
 
     $showonrightsize='';
     // Auto section
@@ -495,30 +449,10 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	{
 		$htmltooltip=$langs->trans("ECMAreaDesc2");
 
-		// Root title line (Automatic section)
-		print '<tr>';
-		print '<td>';
-		print '<table class="nobordernopadding"><tr class="nobordernopadding">';
-		print '<td align="left" width="24">';
-		print img_picto_common('','treemenu/base.gif');
-		print '</td><td align="left">';
-		$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsAuto").')';
-		print $form->textwithpicto($txt, $htmltooltip, 1, 0);
-		print '</td>';
-		print '</tr></table>';
-		print '</td>';
-		print '<td align="right">&nbsp;</td>';
-		print '<td align="right">&nbsp;</td>';
-		print '<td align="right">&nbsp;</td>';
-		print '<td align="right">&nbsp;</td>';
-		print '<td align="center">';
-		print '</td>';
-		print '</tr>';
-
 		$sectionauto=dol_sort_array($sectionauto,'label','ASC',true,false);
 
 		print '<tr>';
-    	print '<td colspan="6" style="padding-left: 20px">';
+    	print '<td colspan="6">';
 	    print '<div id="filetreeauto" class="ecmfiletree"><ul class="ecmjqft">';
 
 		$nbofentries=0;
@@ -574,6 +508,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 
 $mode='noajax';
+$url=DOL_URL_ROOT.'/ecm/index_auto.php';
 include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 
 
@@ -583,12 +518,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 </div>
 
 </div>
-</div> <!-- end div id="containerlayout" -->
+</div> <!-- End div id="containerlayout" -->
 <?php
 // End of page
 
 
-//dol_fiche_end();
+dol_fiche_end(1);
 
 
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {

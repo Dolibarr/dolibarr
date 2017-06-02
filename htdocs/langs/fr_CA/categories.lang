@@ -1,13 +1,10 @@
 # Dolibarr language file - Source file is en_US - categories
 MembersCategoriesArea=Espace tags/catégories de membres
-CategorySuccessfullyCreated=Ce(tte) tag/catégorie %s a été ajouté avec succès
 ProductIsInCategories=Produit/service appartient aux tags/catégories suivant(e)s
-SupplierIsInCategories=Tiers appartient aux libellés/catégories fournisseurs suivant(e)s:
 CompanyIsInCustomersCategories=Ce tiers appartient aux tags/catégories de clients/prospects suivant(e)s
 CompanyIsInSuppliersCategories=Ce tiers appartient aux tags/catégories de fournisseurs suivant(e)s
 MemberIsInCategories=Ce membre appartient aux tags/catégories suivant(e)s
 ContactIsInCategories=Ce contact appartient aux tags/catégories suivant(e)s
-CompanyHasNoCategory=Ce tiers n'appartient à aucun tag/catégorie
 ClassifyInCategory=Classer dans le(a) tag/catégorie
 MembersCategoryShort=Tags/catégories de membres
 ProspectsCategoriesShort=Prospects tags/catégories

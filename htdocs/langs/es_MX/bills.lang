@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - bills
+BillsCustomers=Facturas de clientes
+ConfirmDeletePayment=Are you sure you want to delete this payment ?
 PaymentAmount=Importe de pago
 BillStatusPaid=Pagado
 BillStatusStarted=Iniciado
@@ -11,7 +13,5 @@ BillTo=Hacia
 ReasonDiscount=Razón
 PaymentTypeCB=Tarjeta de crédito
 PaymentTypeShortCB=Tarjeta de crédito
-PaymentTypeCHQ=Verificar
-PaymentTypeShortCHQ=Verificar
 IBANNumber=CLABE Interbancaria
 BICNumber=Sucursal

@@ -38,7 +38,7 @@ $forbarcode=GETPOST('forbarcode');
 $fk_barcode_type=GETPOST('fk_barcode_type');
 $eraseallbarcode=GETPOST('eraseallbarcode');
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $producttmp=new Product($db);
 $thirdpartytmp=new Societe($db);
@@ -143,7 +143,7 @@ if ($action == 'initbarcodeproducts')
 						$nextvalue=$modBarCodeProduct->getNextValue($productstatic,'');
 
 						//print 'Set value '.$nextvalue.' to product '.$productstatic->id." ".$productstatic->ref." ".$productstatic->type."<br>\n";
-						$result=$productstatic->setValueFrom('barcode', $nextvalue);
+						$result=$productstatic->setValueFrom('barcode', $nextvalue, '', '', 'date', '', $user, 'PRODUCT_MODIFY');
 
 						$nbtry++;
 						if ($result > 0) $nbok++;

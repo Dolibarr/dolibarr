@@ -175,12 +175,12 @@ class Tva extends CommonObject
 		$sql.= " tms=".$this->db->idate($this->tms).",";
 		$sql.= " datep=".$this->db->idate($this->datep).",";
 		$sql.= " datev=".$this->db->idate($this->datev).",";
-		$sql.= " amount='".$this->amount."',";
+		$sql.= " amount=".price2num($this->amount).",";
 		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " note='".$this->db->escape($this->note)."',";
-		$sql.= " fk_bank='".$this->fk_bank."',";
-		$sql.= " fk_user_creat='".$this->fk_user_creat."',";
-		$sql.= " fk_user_modif='".$this->fk_user_modif."'";
+		$sql.= " fk_bank=".$this->fk_bank.",";
+		$sql.= " fk_user_creat=".$this->fk_user_creat.",";
+		$sql.= " fk_user_modif=".$this->fk_user_modif."";
 
 
         $sql.= " WHERE rowid=".$this->id;
@@ -670,5 +670,53 @@ class Tva extends CommonObject
 		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
+
+	/**
+	 *	Informations of vat payment object
+	 *
+	 *	@param	int		$id     Id of vat payment
+	 *	@return	int				<0 if KO, >0 if OK
+	 */
+    function info($id)
+    {
+        $sql = "SELECT t.rowid, t.tms as datec, t.fk_user_creat";
+        $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
+        $sql.= " WHERE t.rowid = ".$id;
+
+        dol_syslog(get_class($this)."::info", LOG_DEBUG);
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
+
+                $this->id = $obj->rowid;
+
+                if ($obj->fk_user_creat) {
+                    $cuser = new User($this->db);
+                    $cuser->fetch($obj->fk_user_creat);
+                    $this->user_creation = $cuser;
+                }
+
+                if ($obj->fk_user_modif) {
+                    $muser = new User($this->db);
+                    $muser->fetch($obj->fk_user_modif);
+                    $this->user_modification = $muser;
+                }
+
+                $this->date_creation     = $this->db->jdate($obj->datec);
+                $this->date_modification = $this->db->jdate($obj->datec);
+                $this->import_key        = $obj->import_key;
+            }
+
+            $this->db->free($result);
+
+        }
+        else
+        {
+            dol_print_error($this->db);
+        }
+    }
 
 }

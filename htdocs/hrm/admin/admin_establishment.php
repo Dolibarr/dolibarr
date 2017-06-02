@@ -74,7 +74,7 @@ print load_fiche_titre($langs->trans("HRMSetup"), $linkback);
 
 // Configuration header
 $head = hrm_admin_prepare_head();
-dol_fiche_head($head, 'establishments', $langs->trans("HRM"), 0, "user");
+dol_fiche_head($head, 'establishments', $langs->trans("HRM"), -1, "user");
 
 $sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status";
 $sql.= " FROM ".MAIN_DB_PREFIX."establishment as e";
@@ -110,16 +110,17 @@ if ($result)
             
 			$establishmentstatic->id=$obj->rowid;
 			$establishmentstatic->name=$obj->name;
-
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			$establishmentstatic->status=$obj->status;
+			
+			
+			print '<tr class="oddeven">';
 			print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
             print '<td align="left">'.$obj->address.'</td>';
 			print '<td align="left">'.$obj->zip.'</td>';
 			print '<td align="left">'.$obj->town.'</td>';
 
             print '<td align="right">';
-			print $establishmenttmp->getLibStatus(5);
+			print $establishmentstatic->getLibStatut(5);
 			print '</td>';
             print "</tr>\n";
 
@@ -129,7 +130,7 @@ if ($result)
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+        print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
 
 	print '</table>';

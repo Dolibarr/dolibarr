@@ -52,16 +52,19 @@ $userstatic=new User($db);
 ?>
 
 <!-- BEGIN PHP TEMPLATE CONTACTS -->
+<div class="div-table-responsive">
 <div class="tagtable centpercent noborder allwidth">
 
-<?php if ($permission) { ?>
+<?php 
+if ($permission) { 
+?>
 	<form class="tagtr liste_titre">
-		<div class="tagtd"><?php echo $langs->trans("Nature"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("ThirdParty"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("ContactType"); ?></div>
-		<div class="tagtd">&nbsp;</div>
-		<div class="tagtd">&nbsp;</div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("Nature"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
+		<div class="tagtd liste_titre">&nbsp;</div>
+		<div class="tagtd liste_titre">&nbsp;</div>
 	</form>
 
 	<?php
@@ -69,7 +72,7 @@ $userstatic=new User($db);
 	$var=true;
 	if (empty($hideaddcontactforuser))
 	{
-		$var=!$var;
+		
 	?>
 	<form class="tagtr impair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
@@ -87,7 +90,7 @@ $userstatic=new User($db);
 		echo $formcompany->selectTypeContact($tmpobject, '', 'type','internal'); 
 		?></div>
 		<div class="tagtd">&nbsp;</div>
-		<div class="tagtd" align="right"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></div>
+		<div class="tagtd right"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></div>
 	</form>
 
 	<?php
@@ -95,7 +98,7 @@ $userstatic=new User($db);
 
 	if (empty($hideaddcontactforthirdparty))
 	{
-		$var=!$var;
+		
 	?>
 
 	<form class="tagtr pair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
@@ -104,44 +107,45 @@ $userstatic=new User($db);
 	<input type="hidden" name="action" value="addcontact" />
 	<input type="hidden" name="source" value="external" />
 	<?php if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">'; ?>
-		<div class="tagtd nowrap"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>
-		<div class="tagtd nowrap maxwidthonsmartphone">
+		<div class="tagtd nowrap noborderbottom"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>
+		<div class="tagtd nowrap maxwidthonsmartphone noborderbottom">
 			<?php $selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
 			<?php 
-			// add company icon for direct link 
-			if ($selectedCompany && empty($conf->dol_use_jmobile)) 
+			// add company icon before select list 
+			if ($selectedCompany) 
 			{
-				$companystatic->fetch($selectedCompany);
-				echo $companystatic->getNomUrl(2, '', 0, 1); 
+			    echo img_object('', 'company', 'class="hideonsmartphone"');
 			}
 			?>
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0); ?>
 		</div>
-		<div class="tagtd maxwidthonsmartphone">
+		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php $nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid', 0, '', '', 0, 'minwidth200'); ?>
 		</div>
-		<div class="tagtd maxwidthonsmartphone">
+		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
 			$tmpobject=$object;
 			if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;
 			$formcompany->selectTypeContact($tmpobject, '', 'type','external'); ?>
 		</div>
-		<div class="tagtd">&nbsp;</div>
-		<div  class="tagtd" align="right">
+		<div class="tagtd noborderbottom">&nbsp;</div>
+		<div class="tagtd right noborderbottom">
 			<input type="submit" id="add-customer-contact" class="button" value="<?php echo $langs->trans("Add"); ?>"<?php if (! $nbofcontacts) echo ' disabled'; ?>>
 		</div>
 	</form>
 
-<?php }
-	} ?>
+<?php 
+	}
+} 
+?>
 
-	<form class="tagtr liste_titre">
-		<div class="tagtd"><?php echo $langs->trans("Nature"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("ThirdParty"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("ContactType"); ?></div>
-		<div class="tagtd" align="center"><?php echo $langs->trans("Status"); ?></div>
-		<div class="tagtd">&nbsp;</div>
+	<form class="tagtr liste_titre liste_titre_add formnoborder">
+		<div class="tagtd liste_titre"><?php echo $langs->trans("Nature"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
+		<div class="tagtd liste_titre center"><?php echo $langs->trans("Status"); ?></div>
+		<div class="tagtd liste_titre">&nbsp;</div>
 	</form>
 
 	<?php $var=true; ?>
@@ -192,7 +196,9 @@ $userstatic=new User($db);
 				$userstatic->id=$tab[$i]['id'];
 				$userstatic->lastname=$tab[$i]['lastname'];
 				$userstatic->firstname=$tab[$i]['firstname'];
-				echo $userstatic->getNomUrl(1);
+				$userstatic->photo=$tab[$i]['photo'];
+				$userstatic->login=$tab[$i]['login'];
+				echo $userstatic->getNomUrl(-1);
 			}
 			if ($tab[$i]['source']=='external')
 			{
@@ -204,7 +210,7 @@ $userstatic=new User($db);
 			?>
 		</div>
 		<div class="tagtd"><?php echo $tab[$i]['libelle']; ?></div>
-		<div class="tagtd" align="center">
+		<div class="tagtd center">
 			<?php //if ($object->statut >= 0) echo '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">'; ?>
 			<?php
 			if ($tab[$i]['source']=='internal')
@@ -224,7 +230,7 @@ $userstatic=new User($db);
 			?>
 			<?php //if ($object->statut >= 0) echo '</a>'; ?>
 		</div>
-		<div class="tagtd nowrap" align="right">
+		<div class="tagtd nowrap right">
 			<?php if ($permission) { ?>
 				&nbsp;<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deletecontact&amp;lineid='.$tab[$i]['rowid']; ?>"><?php echo img_delete(); ?></a>
 			<?php } ?>
@@ -234,6 +240,7 @@ $userstatic=new User($db);
 <?php $i++; ?>
 <?php } } ?>
 
+</div>
 </div>
 <!-- TEMPLATE CONTACTS HOOK BEGIN HERE -->
 <?php

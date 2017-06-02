@@ -40,7 +40,7 @@ class Productbatch extends CommonObject
 	var $batch='';
 	var $qty;
 	public $warehouseid;
-
+	public $fk_product;
 
 
 
@@ -75,7 +75,7 @@ class Productbatch extends CommonObject
 		// Put here code to add control on parameters values
 
         // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.self::$_table_element." (";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_batch (";
 		$sql.= "fk_product_stock,";
 		$sql.= "sellby,";
 		$sql.= "eatby,";
@@ -143,15 +143,18 @@ class Productbatch extends CommonObject
 
 		$sql.= " t.tms,";
 		$sql.= " t.fk_product_stock,";
-		$sql.= " t.sellby,";
-		$sql.= " t.eatby,";
+		$sql.= " t.sellby as oldsellby,";
+		$sql.= " t.eatby as oldeatby,";
 		$sql.= " t.batch,";
 		$sql.= " t.qty,";
 		$sql.= " t.import_key,";
-		$sql.= " w.fk_entrepot";
+		$sql.= " w.fk_entrepot,";
+		$sql.= " w.fk_product,";
+		$sql.= " pl.eatby,";
+		$sql.= " pl.sellby";
 
-        $sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
-        $sql.= " INNER JOIN ".MAIN_DB_PREFIX."product_stock w on t.fk_product_stock=w.rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product_batch as t INNER JOIN ".MAIN_DB_PREFIX."product_stock w on t.fk_product_stock = w.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl on pl.fk_product = w.fk_product and pl.batch = t.batch"; 
         $sql.= " WHERE t.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -165,12 +168,13 @@ class Productbatch extends CommonObject
 				$this->id    = $obj->rowid;
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->fk_product_stock = $obj->fk_product_stock;
-				$this->sellby = $this->db->jdate($obj->sellby);
-				$this->eatby = $this->db->jdate($obj->eatby);
+				$this->sellby = $this->db->jdate($obj->sellby?$obj->sellby:$obj->oldsellby);
+				$this->eatby = $this->db->jdate($obj->eatby?$obj->eatby:$obj->oldeatby);
 				$this->batch = $obj->batch;
 				$this->qty = $obj->qty;
 				$this->import_key = $obj->import_key;
 				$this->warehouseid= $obj->fk_entrepot;
+				$this->fk_product= $obj->fk_product;
 			}
 			$this->db->free($resql);
 
@@ -408,9 +412,9 @@ class Productbatch extends CommonObject
      *  Find first detail record that match eather eat-by or sell-by or batch within given warehouse
      *
      *  @param	int			$fk_product_stock   id product_stock for objet
-     *  @param	date		$eatby    			eat-by date for objet
-     *  @param	date		$sellby   			sell-by date for objet
-     *  @param	string		$batch_number   	batch number for objet
+     *  @param	date		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
+     *  @param	date		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
+     *  @param	string		$batch_number   	batch number for object
      *  @return int          					<0 if KO, >0 if OK
      */
     function find($fk_product_stock=0, $eatby='',$sellby='',$batch_number='')
@@ -421,16 +425,17 @@ class Productbatch extends CommonObject
 		$sql.= " t.rowid,";
 		$sql.= " t.tms,";
 		$sql.= " t.fk_product_stock,";
-		$sql.= " t.sellby,";
-		$sql.= " t.eatby,";
+		$sql.= " t.sellby,";              // deprecated
+		$sql.= " t.eatby,";               // deprecated
 		$sql.= " t.batch,";
 		$sql.= " t.qty,";
 		$sql.= " t.import_key";
 		$sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
 		$sql.= " WHERE fk_product_stock=".$fk_product_stock;
 
-		if (! empty($eatby)) array_push($where," eatby = '".$this->db->idate($eatby)."'");
-		if (! empty($sellby)) array_push($where," sellby = '".$this->db->idate($sellby)."'");
+		if (! empty($eatby)) array_push($where," eatby = '".$this->db->idate($eatby)."'");            // deprecated
+		if (! empty($sellby)) array_push($where," sellby = '".$this->db->idate($sellby)."'");         // deprecated
+		
 		if (! empty($batch_number)) $sql.= " AND batch = '".$this->db->escape($batch_number)."'";
 
 		if (! empty($where)) $sql.= " AND (".implode(" OR ",$where).")";
@@ -468,10 +473,11 @@ class Productbatch extends CommonObject
      *
      *  @param	DoliDB		$db    				database object
      *  @param	int			$fk_product_stock	id product_stock for objet
-     *  @param	int			$with_qty    		doesn't return line with 0 quantity
-	 *  @return int         					<0 if KO, >0 if OK
+     *  @param	int			$with_qty    		1 = doesn't return line with 0 quantity
+     *  @param  int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
+     *  @return array         					<0 if KO, array of batch
      */
-    public static function findAll($db,$fk_product_stock,$with_qty=0)
+    public static function findAll($db, $fk_product_stock, $with_qty=0, $fk_product=0)
     {
     	global $langs;
 		$ret = array();
@@ -480,14 +486,24 @@ class Productbatch extends CommonObject
 		$sql.= " t.rowid,";
 		$sql.= " t.tms,";
 		$sql.= " t.fk_product_stock,";
-		$sql.= " t.sellby,";
-		$sql.= " t.eatby,";
+		$sql.= " t.sellby as oldsellby,";     // deprecated but may not be migrated into new table
+		$sql.= " t.eatby as oldeatby,";       // deprecated but may not be migrated into new table
 		$sql.= " t.batch,";
 		$sql.= " t.qty,";
 		$sql.= " t.import_key";
+		if ($fk_product > 0)
+		{
+		    $sql.= ", pl.eatby as eatby, pl.sellby as sellby";
+		    // TODO May add extrafields to ?
+		}
         $sql.= " FROM ".MAIN_DB_PREFIX."product_batch as t";
+        if ($fk_product > 0)
+        {
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.fk_product = ".$fk_product." AND pl.batch = t.batch";
+            // TODO May add extrafields to ?
+        }
 		$sql.= " WHERE fk_product_stock=".$fk_product_stock;
-		if ($with_qty) $sql.= " AND qty<>0";
+		if ($with_qty) $sql.= " AND t.qty <> 0";
 
 		dol_syslog("productbatch::findAll", LOG_DEBUG);
 		$resql=$db->query($sql);
@@ -499,17 +515,17 @@ class Productbatch extends CommonObject
             {
                 $obj = $db->fetch_object($resql);
 
-				$tmp = new productbatch($db);
+				$tmp = new Productbatch($db);
 				$tmp->id    = $obj->rowid;
 				$tmp->tms = $db->jdate($obj->tms);
 				$tmp->fk_product_stock = $obj->fk_product_stock;
-				$tmp->sellby = $db->jdate($obj->sellby);
-				$tmp->eatby = $db->jdate($obj->eatby);
+				$tmp->sellby = $db->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
+				$tmp->eatby = $db->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
 				$tmp->batch = $obj->batch;
 				$tmp->qty = $obj->qty;
 				$tmp->import_key = $obj->import_key;
 
-				array_push($ret,$tmp);
+				$ret[$tmp->batch] = $tmp;       // $ret is for a $fk_product_stock and unique key is on $fk_product_stock+batch
 				$i++;
             }
             $db->free($resql);

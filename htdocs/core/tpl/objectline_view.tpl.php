@@ -30,11 +30,13 @@
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
- *
+ * $object_rights->creer initialized from = $object->getRights()
+ * $disableedit, $disablemove, $disableremove
+ * 
  * $type, $text, $description, $line
  */
 
-global $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins;
+global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 $usemargins=0;
 if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
@@ -43,7 +45,7 @@ if (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
 if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
-if (empty($usemargins)) $usemargins=0;
+if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 
 ?>
 <?php $coldisplay=0; ?>
@@ -52,7 +54,7 @@ if (empty($usemargins)) $usemargins=0;
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
-	<td class="linecoldescription"><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
+	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
 	<?php 
 	if (($line->info_bits & 2) == 2) {
 	?>
@@ -61,6 +63,7 @@ if (empty($usemargins)) $usemargins=0;
 		$txt='';
 		print img_object($langs->trans("ShowReduc"),'reduc').' ';
 		if ($line->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
+		elseif ($line->description == '(EXCESS RECEIVED)') $txt=$langs->trans("ExcessReceived");
 		//else $txt=$langs->trans("Discount");
 		print $txt;
 		?>
@@ -68,19 +71,26 @@ if (empty($usemargins)) $usemargins=0;
 		<?php
 		if ($line->description)
 		{
-			if ($line->description == '(CREDIT_NOTE)' && $objp->fk_remise_except > 0)
+			if ($line->description == '(CREDIT_NOTE)' && $line->fk_remise_except > 0)
 			{
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
 				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
 			}
-			elseif ($line->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
+			elseif ($line->description == '(DEPOSIT)' && $line->fk_remise_except > 0)
 			{
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
 				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
 				// Add date of deposit
-				if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
+				if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) 
+				    echo ' ('.dol_print_date($discount->datec).')';
+			}
+			elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0)
+			{
+				$discount=new DiscountAbsolute($this->db);
+				$discount->fetch($line->fk_remise_except);
+				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
 			}
 			else
 			{
@@ -128,8 +138,10 @@ if (empty($usemargins)) $usemargins=0;
 	</td>
 	<?php if ($object->element == 'supplier_proposal') { ?>
 		<td class="linecolrefsupplier" align="right"><?php echo $line->ref_fourn; ?></td>
-	<?php } ?>
-	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
+	<?php } 
+	// VAT Rate
+	?>
+	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits); ?></td>
 
 	<td align="right" class="linecoluht nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
 	
@@ -182,7 +194,10 @@ if (empty($usemargins)) $usemargins=0;
   	{
 		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
   		?>
+  		
+  	<?php if (!empty($user->rights->margins->creer)) { ?>
   	<td align="right" class="linecolmargin1 nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
+  	<?php } ?>
   	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) { ?>
   	  <td align="right" class="linecolmargin2 nowrap margininfos"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
   	<?php }
@@ -200,10 +215,15 @@ if (empty($usemargins)) $usemargins=0;
 		<td align="right" class="linecolutotalht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_total_ht); ?></td>
 		<?php } ?>
 	<?php } ?>
+        <?php if ($outputalsopricetotalwithtax) { ?>
+        <td align="right" class="liencolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ttc); ?></td>
+        <?php } ?>
 
-	<?php if ($this->statut == 0  && ($object_rights->creer)) { ?>
+
+	<?php 
+	if ($this->statut == 0  && ($object_rights->creer)) { ?>
 	<td class="linecoledit" align="center"><?php $coldisplay++; ?>
-		<?php if (($line->info_bits & 2) == 2) { ?>
+		<?php if (($line->info_bits & 2) == 2 || ! empty($disableedit)) { ?>
 		<?php } else { ?>
 		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id; ?>">
 		<?php echo img_edit(); ?>
@@ -213,7 +233,7 @@ if (empty($usemargins)) $usemargins=0;
 
 	<td class="linecoldelete" align="center"><?php $coldisplay++; ?>
 		<?php
-		if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
+		if (($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disableremove)) {
 			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=ask_deleteline&amp;lineid=' . $line->id . '">';
 			print img_delete();
 			print '</a>';
@@ -221,7 +241,8 @@ if (empty($usemargins)) $usemargins=0;
 		?>
 	</td>
 
-	<?php if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref)) { ?>
+	<?php 
+	if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) { ?>
 	<td align="center" class="linecolmove tdlineupdown"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
@@ -235,7 +256,7 @@ if (empty($usemargins)) $usemargins=0;
 		<?php } ?>
 	</td>
     <?php } else { ?>
-    <td align="center"<?php echo (empty($conf->browser->phone)?' class="linecolmove tdlineupdown"':' class="linecolmove"'); ?>><?php $coldisplay++; ?></td>
+    <td align="center"<?php echo ((empty($conf->browser->phone) && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"'); ?>><?php $coldisplay++; ?></td>
 	<?php } ?>
 <?php } else { ?>
 	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>

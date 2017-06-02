@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - users
+DefaultRightsDesc=Define here <u>default</u> permissions that are automatically granted to a <u>new created</u> user (Go to user card to change permissions of an existing user).
+CreateGroup=Create a group
+RemoveFromGroup=Remove from a group
+NonAffectedUsers=Non-assigned users
+UsePersonalValue=Use a personal choice
+CreateInternalUserDesc=This form allows you to create an internal user for your company. To create an external user (customer, supplier, ...), use the button 'Create Dolibarr user' from third party's contact card.
+InternalExternalDesc=An <b>internal</b> user is a user that is part of your company.<br>An <b>external</b> user is a customer, supplier or other organisation.<br><br>In both cases, permissions defines their rights on Dolibarr, also an external user can have a different menu manager than an internal user (See Home - Setup - Display)
+PermissionInheritedFromAGroup=Permission granted through inherited rights from one of the user groups.
+UserWillBeInternalUser=Created user will be an internal user (because they are not linked to a particular third party)
+UserWillBeExternalUser=Created user will be an external user (because they are linked to a particular third party)
+NewUserPassword=Password changed for %s
+NbOfUsers=No. of users
+ColorUser=Colour for the user

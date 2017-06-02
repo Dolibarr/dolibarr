@@ -14,7 +14,7 @@ use Luracast\Restler\Util;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc5
+ * @version    3.0.0rc6
  *
  * ============================ magic  properties ==============================
  * @property Tags parent parent tag
@@ -154,10 +154,10 @@ class Tags implements ArrayAccess, Countable
      */
     public function id($value)
     {
-        $this->attributes['id'] = isset($value)
-            ? (string)$value
-            : Util::nestedValue($this->attributes, 'name');
-        static::$instances[$value] = $this;
+        if (!empty($value) && is_string($value)) {
+            $this->attributes['id'] = $value;
+            static::$instances[$value] = $this;
+        }
         return $this;
     }
 

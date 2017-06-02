@@ -29,6 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (! empty($conf->projet->enabled)) {
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 $langs->load("orders");
 $langs->load("sendings");
@@ -119,13 +123,13 @@ else if ($action == 'deletecontact' && $user->rights->expedition->creer)
 		dol_print_error($db);
 	}
 }
-
+/*
 else if ($action == 'setaddress' && $user->rights->expedition->creer)
 {
 	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
-}
+}*/
 
 
 /*
@@ -152,86 +156,104 @@ if ($id > 0 || ! empty($ref))
 	$langs->trans("OrderCard");
 
 	$head = shipping_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Shipment"), 0, 'sending');
+	dol_fiche_head($head, 'contact', $langs->trans("Shipment"), -1, 'sending');
 
 
-   /*
-	*   Facture synthese pour rappel
-	*/
-	print '<table class="border" width="100%">';
-
+	// Shipment card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
+	
+	$morehtmlref='<div class="refidno">';
+	// Ref customer shipment
+	$morehtmlref.=$form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+	// Thirdparty
+    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+    // Project
+    if (! empty($conf->projet->enabled)) {
+        $langs->load("projects");
+        $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
+        if (0) {    // Do not change on shipment
+            if ($action != 'classify') {
+                $morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+            }
+            if ($action == 'classify') {
+                // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                $morehtmlref .= '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
+                $morehtmlref .= '<input type="hidden" name="action" value="classin">';
+                $morehtmlref .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+                $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                $morehtmlref .= '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+                $morehtmlref .= '</form>';
+            } else {
+                $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+            }
+        } else {
+            // We don't have project on shipment, so we will use the project or source object instead
+            // TODO Add project on shipment
+            $morehtmlref .= ' : ';
+            if (! empty($objectsrc->fk_project)) {
+                $proj = new Project($db);
+                $proj->fetch($objectsrc->fk_project);
+                $morehtmlref .= '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $objectsrc->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+                $morehtmlref .= $proj->ref;
+                $morehtmlref .= '</a>';
+            } else {
+                $morehtmlref .= '';
+            }
+        }
+    }
+	$morehtmlref.='</div>';
+	
+	
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	
+	
+	print '<div class="fichecenter">';
+    //print '<div class="fichehalfleft">';
+	print '<div class="underbanner clearboth"></div>';
 
-	// Ref
-	print '<tr><td width="18%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-	print "</td></tr>";
+    print '<table class="border centpercent">';
 
-	// Customer
-	print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-	print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td>';
-	print "</tr>";
-
-	// Linked documents
+    // Linked documents
 	if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
 	{
-		print '<tr><td>';
-		$objectsrc=new Commande($db);
-		$objectsrc->fetch($object->$typeobject->id);
-		print $langs->trans("RefOrder").'</td>';
-		print '<td colspan="3">';
-		print $objectsrc->getNomUrl(1,'commande');
-		print "</td>\n";
-		print '</tr>';
+	    print '<tr><td class="titlefield">';
+	    $objectsrc=new Commande($db);
+	    $objectsrc->fetch($object->$typeobject->id);
+	    print $langs->trans("RefOrder").'</td>';
+	    print '<td colspan="3">';
+	    print $objectsrc->getNomUrl(1,'commande');
+	    print "</td>\n";
+	    print '</tr>';
 	}
 	if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
 	{
-		print '<tr><td>';
-		$objectsrc=new Propal($db);
-		$objectsrc->fetch($object->$typeobject->id);
-		print $langs->trans("RefProposal").'</td>';
-		print '<td colspan="3">';
-		print $objectsrc->getNomUrl(1,'expedition');
-		print "</td>\n";
-		print '</tr>';
+	    print '<tr><td class="titlefield">';
+	    $objectsrc=new Propal($db);
+	    $objectsrc->fetch($object->$typeobject->id);
+	    print $langs->trans("RefProposal").'</td>';
+	    print '<td colspan="3">';
+	    print $objectsrc->getNomUrl(1,'expedition');
+	    print "</td>\n";
+	    print '</tr>';
 	}
-
-	// Ref expedition client
-	print '<tr><td>';
-    print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-	print $langs->trans('RefCustomer').'</td><td align="left">';
-    print '</td>';
-    print '</tr></table>';
-    print '</td><td colspan="3">';
-	print $objectsrc->ref_client;
-	print '</td>';
-	print '</tr>';
-
-	// Delivery address
-	if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
-	{
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('DeliveryAddress');
-		print '</td>';
-
-		if ($action != 'editdelivery_address' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_address&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryAddress'),1).'</a></td>';
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-
-		if ($action == 'editdelivery_address')
-		{
-			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'fk_address','shipping',$object->id);
-		}
-		else
-		{
-			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'none','shipping',$object->id);
-		}
-		print '</td></tr>';
-	}
-
+	
 	print "</table>";
 
+	
+	//print '</div>';
+	//print '<div class="fichehalfright">';
+	//print '<div class="ficheaddleft">';
+	//print '<div class="underbanner clearboth"></div>';
+	
+	
+	//print '</div>';
+	//print '</div>';
+	print '</div>';
+		
+	print '<div class="clearboth"></div>';
+	
+	
 	dol_fiche_end();
 
 	// Lignes de contacts

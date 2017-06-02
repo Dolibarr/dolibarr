@@ -1,14 +1,16 @@
 <?php
 require 'SegmentIterator.php';
 class SegmentException extends Exception
-{}
+{
+}
+
 /**
  * Class for handling templating segments with odt files
  * You need PHP 5.2 at least
  * You need Zip Extension or PclZip library
  *
- * @copyright  GPL License 2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
- * @copyright  GPL License 2012 - Stephen Larroque - lrq3000@gmail.com
+ * @copyright  2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
+ * @copyright  2012 - Stephen Larroque - lrq3000@gmail.com
  * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
  * @version 1.4.5 (last update 2013-04-07)
  */
@@ -22,11 +24,13 @@ class Segment implements IteratorAggregate, Countable
 	protected $images = array();
 	protected $odf;
 	protected $file;
+	
     /**
      * Constructor
      *
-     * @param string $name name of the segment to construct
-     * @param string $xml XML tree of the segment
+     * @param string $name  name of the segment to construct
+     * @param string $xml   XML tree of the segment
+     * @param string $odf   odf
      */
     public function __construct($name, $xml, $odf)
     {
@@ -76,12 +80,61 @@ class Segment implements IteratorAggregate, Countable
     /**
      * Replace variables of the template in the XML code
      * All the children are also called
+     * Complete the current segment with new line
      *
      * @return string
      */
     public function merge()
     {
-        $this->xmlParsed .= str_replace(array_keys($this->vars), array_values($this->vars), $this->xml);
+        // To provide debug information on line number processed 
+        global $count;
+        if (empty($count)) $count=1;
+        else $count++;
+        
+        if (empty($this->savxml)) $this->savxml = $this->xml;       // Sav content of line at first line merged, so we will reuse original for next steps
+        $this->xml = $this->savxml;
+        $tmpvars = $this->vars;                                     // Store into $tmpvars so we won't modify this->vars when completing data with empty values
+        
+        // Search all tags fou into condition to complete $tmpvars, so we will proceed all tests even if not defined
+        $reg='@\[!--\sIF\s([{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
+        preg_match_all($reg, $this->xml, $matches, PREG_SET_ORDER);
+        //var_dump($tmpvars);exit;
+        foreach($matches as $match)   // For each match, if there is no entry into this->vars, we add it
+        {
+            if (! empty($match[1]) && ! isset($tmpvars[$match[1]]))
+            {
+                $tmpvars[$match[1]] = '';     // Not defined, so we set it to '', we just need entry into this->vars for next loop
+            }
+        }
+        
+        // Conditionals substitution
+        // Note: must be done before static substitution, else the variable will be replaced by its value and the conditional won't work anymore
+        foreach($tmpvars as $key => $value)
+        {
+            // If value is true (not 0 nor false nor null nor empty string)
+            if ($value)
+            {
+                // Remove the IF tag
+                $this->xml = str_replace('[!-- IF '.$key.' --]', '', $this->xml);
+                // Remove everything between the ELSE tag (if it exists) and the ENDIF tag
+                $reg = '@(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+                $this->xml = preg_replace($reg, '', $this->xml);
+            }
+            // Else the value is false, then two cases: no ELSE and we're done, or there is at least one place where there is an ELSE clause, then we replace it
+            else
+            {
+                // Find all conditional blocks for this variable: from IF to ELSE and to ENDIF
+                $reg = '@\[!--\sIF\s' . $key . '\s--\](.*)(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+                preg_match_all($reg, $this->xml, $matches, PREG_SET_ORDER);
+                foreach($matches as $match) { // For each match, if there is an ELSE clause, we replace the whole block by the value in the ELSE clause
+                    if (!empty($match[3])) $this->xml = str_replace($match[0], $match[3], $this->xml);
+                }
+                // Cleanup the other conditional blocks (all the others where there were no ELSE clause, we can just remove them altogether)
+                $this->xml = preg_replace($reg, '', $this->xml);
+            }
+        }
+        
+        $this->xmlParsed .= str_replace(array_keys($tmpvars), array_values($tmpvars), $this->xml);
         if ($this->hasChildren()) {
             foreach ($this->children as $child) {
                 $this->xmlParsed = str_replace($child->xml, ($child->xmlParsed=="")?$child->merge():$child->xmlParsed, $this->xmlParsed);
@@ -90,6 +143,8 @@ class Segment implements IteratorAggregate, Countable
         }
         $reg = "/\[!--\sBEGIN\s$this->name\s--\](.*)\[!--\sEND\s$this->name\s--\]/sm";
         $this->xmlParsed = preg_replace($reg, '$1', $this->xmlParsed);
+	// Miguel Erill 09704/2017 - Add macro replacement to invoice lines
+        $this->xmlParsed = $this->macroReplace($this->xmlParsed);
         $this->file->open($this->odf->getTmpfile());
         foreach ($this->images as $imageKey => $imageValue) {
 			if ($this->file->getFromName('Pictures/' . $imageValue) === false) {
@@ -100,12 +155,38 @@ class Segment implements IteratorAggregate, Countable
 			}
         }
         $this->file->close();
+        
         return $this->xmlParsed;
     }
+
+   /**
+    * Function to replace macros for invoice short and long month, invoice year
+    * 
+    * Substitution occur when the invoice is generated, not considering the invoice date
+    * so do not (re)generate in a diferent date than the one that the invoice belongs to
+    * Perhaps it would be better to use the invoice issued date but I still do not know
+    * how to get it here
+    *
+    * Miguel Erill 09/04/2017
+    * 
+    * @param	string	$value	String to convert
+    */
+    public function macroReplace($text)
+    {
+        global $langs;
+
+        $patterns=array( '__CURRENTDAY__','__CURRENTDAYTEXT__','__CURRENTMONTHSHORT__','__CURRENTMONTH__','__CURRENTYEAR__' );
+        $values=array( date('j'), $langs->trans(date('l')), $langs->trans(date('M')), $langs->trans(date('F')), date('Y') );
+
+        $text=preg_replace($patterns, $values, $text);
+
+	return $text;
+    }
+
     /**
      * Analyse the XML code in order to find children
      *
-     * @param string $xml
+     * @param string $xml   Xml
      * @return Segment
      */
     protected function _analyseChildren($xml)
@@ -122,18 +203,21 @@ class Segment implements IteratorAggregate, Countable
         }
         return $this;
     }
+    
     /**
      * Assign a template variable to replace
      *
-     * @param string $key
-     * @param string $value
+     * @param string $key       Key
+     * @param string $value     Value
+     * @param string $encode    Encode
+     * @param string $charset   Charset
      * @throws SegmentException
      * @return Segment
      */
     public function setVars($key, $value, $encode = true, $charset = 'ISO-8859')
     {
         if (strpos($this->xml, $this->odf->getConfig('DELIMITER_LEFT') . $key . $this->odf->getConfig('DELIMITER_RIGHT')) === false) {
-            throw new SegmentException("var $key not found in {$this->getName()}");
+            //throw new SegmentException("var $key not found in {$this->getName()}");
         }
 
 		$value=$this->odf->htmlToUTFAndPreOdf($value);
@@ -180,7 +264,7 @@ IMG;
     /**
      * Shortcut to retrieve a child
      *
-     * @param string $prop
+     * @param string $prop      Prop
      * @return Segment
      * @throws SegmentException
      */
@@ -195,8 +279,8 @@ IMG;
     /**
      * Proxy for setVars
      *
-     * @param string $meth
-     * @param array $args
+     * @param string $meth      Meth
+     * @param array $args       Args
      * @return Segment
      */
     public function __call($meth, $args)
@@ -218,4 +302,3 @@ IMG;
     }
 }
 
-?>

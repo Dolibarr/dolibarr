@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
@@ -83,13 +83,19 @@ if ($user->societe_id > 0)
 $hookmanager->initHooks(array('paymentsupplier'));
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('paymentsupplier');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+
+$arrayfields=array();
+
 
 
 /*
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
     $search_ref="";
     $search_account="";
@@ -100,6 +106,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $day='';
     $year='';
     $month='';
+    $search_array_options=array();
 }
 
 $parameters=array('socid'=>$socid);
@@ -319,7 +326,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
     $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datefacture);
 
     $sql = 'SELECT s.nom as name, s.rowid as socid,';
-    $sql.= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total, fk_mode_reglement, fk_account';
+    $sql.= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
     $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -334,7 +341,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         {
             $obj = $db->fetch_object($resql);
             $total = $obj->total;
-
+            
             print load_fiche_titre($langs->trans('DoPayment'));
 
             print '<form id="payment_form" name="addpaiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -345,25 +352,21 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '<input type="hidden" name="socid" value="'.$obj->socid.'">';
             print '<input type="hidden" name="societe" value="'.$obj->name.'">';
 
-            dol_fiche_head('');
+            dol_fiche_head(null);
             
             print '<table class="border" width="100%">';
 
-            print '<tr><td class="fieldrequired">'.$langs->trans('Company').'</td><td colspan="2">';
+            print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans('Company').'</td><td>';
             $supplierstatic->id=$obj->socid;
             $supplierstatic->name=$obj->name;
             print $supplierstatic->getNomUrl(1,'supplier');
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
             $form->select_date($dateinvoice,'','','','',"addpaiement",1,1,0,0,'','',$object->date);
-            print '</td>';
-            print '<td>'.$langs->trans('Comments').'</td></tr>';
+            print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
             $form->select_types_paiements(empty($_POST['paiementid'])?$obj->fk_mode_reglement:$_POST['paiementid'],'paiementid');
             print '</td>';
-            print '<td rowspan="3" valign="top">';
-            print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
-            print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
             if (! empty($conf->banque->enabled))
             {
                 print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
@@ -372,11 +375,16 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             }
             else
             {
-                print '<tr><td colspan="2">&nbsp;</td></tr>';
+                print '<tr><td>&nbsp;</td></tr>';
             }
+            print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
+            print '<tr><td>'.$langs->trans('Comments').'</td>';
+            print '<td class="tdtop">';
+            print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
             print '</table>';
             dol_fiche_end();
 
+            
 			$parameters=array('facid'=>$facid, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 			$reshook=$hookmanager->executeHooks('paymentsupplierinvoices',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 			$error=$hookmanager->error; $errors=$hookmanager->errors;
@@ -385,15 +393,15 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				/*
 	             * Autres factures impayees
 	             */
-	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef as df';
-	            $sql.= ', SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am';
+	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef as df,';
+	            $sql.= ' SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am';
 	            $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 	            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
 	            $sql.= " WHERE f.entity = ".$conf->entity;
 	            $sql.= ' AND f.fk_soc = '.$object->socid;
 	            $sql.= ' AND f.paye = 0';
 	            $sql.= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
-	            $sql.= ' GROUP BY f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef';
+	            $sql.= ' GROUP BY f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef';
 	            $resql = $db->query($sql);
 	            if ($resql)
 	            {
@@ -403,7 +411,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    $i = 0;
 	                    print '<br>';
 
-						if(!empty($conf->global->FAC_AUTO_FILLJS)){
+	                    if (!empty($conf->use_javascript_ajax)){
 							//Add js for AutoFill
 							print "\n".'<script type="text/javascript" language="javascript">';
 							print ' $(document).ready(function () {';
@@ -413,18 +421,22 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '	});'."\n";
 							print '	</script>'."\n";
 						}
-						print '<table class="liste" width="100%">';
-	                    print '<tr class="liste_titre">';
+
+                        print '<div class="div-table-responsive-no-min">';
+                        print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+						print '<tr class="liste_titre">';
 	                    print '<td>'.$langs->trans('Invoice').'</td>';
 	                    print '<td>'.$langs->trans('RefSupplier').'</td>';
 	                    print '<td align="center">'.$langs->trans('Date').'</td>';
-	                    print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
+	                    if (!empty($conf->multicurrency->enabled)) print '<td>'.$langs->trans('Currency').'</td>';
 						if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
-	                    print '<td align="right">'.$langs->trans('AlreadyPaid').'</td>';
 						if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyAlreadyPaid').'</td>';
-	                    print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
 						if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyRemainderToPay').'</td>';
-	                    print '<td align="center">'.$langs->trans('PaymentAmount').'</td>';
+	                    print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
+	                    print '<td align="right">'.$langs->trans('AlreadyPaid').'</td>';
+	                    print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
+						print '<td align="center">'.$langs->trans('PaymentAmount').'</td>';
 						if (!empty($conf->multicurrency->enabled)) print '<td align="center">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
 	                    print '</tr>';
 
@@ -435,14 +447,20 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    while ($i < $num)
 	                    {
 	                        $objp = $db->fetch_object($resql);
-	                        $var=!$var;
-	                        print '<tr '.$bc[$var].'>';
+	                        
+	                        print '<tr class="oddeven">';
+	                        
+	                        // Ref
 	                        print '<td>';
 	                        $invoicesupplierstatic->ref=$objp->ref;
 	                        $invoicesupplierstatic->id=$objp->facid;
 	                        print $invoicesupplierstatic->getNomUrl(1);
 	                        print '</td>';
+	                        
+	                        // Ref supplier
 	                        print '<td>'.$objp->ref_supplier.'</td>';
+	                        
+	                        // Date
 	                        if ($objp->df > 0 )
 	                        {
 	                            print '<td align="center">';
@@ -452,24 +470,44 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        {
 	                            print '<td align="center"><b>!!!</b></td>';
 	                        }
+	                        
+	                        // Multicurrency
+	                        if (!empty($conf->multicurrency->enabled)) 
+	                        {
+    	                        // Currency
+	                            print '<td align="center">'.$objp->multicurrency_code."</td>\n";
+	                        
+	                            print '<td align="right">';
+	                            if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency)
+	                            {
+	                                print price($objp->multicurrency_total_ttc);
+	                            }
+	                            print '</td>';
+
+							    print '<td align="right">';
+							    if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) 
+						        {         
+						            print price($objp->multicurrency_am);
+							    }
+							    print '</td>';
+							    
+							    print '<td align="right">';
+							    if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) 
+						        {
+						            print price($objp->multicurrency_total_ttc - $objp->multicurrency_am);
+							    }
+							    print '</td>';
+	                        }
+
 	                        print '<td align="right">'.price($objp->total_ttc).'</td>';
 							
-							// Multicurrency
-							if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.price($objp->multicurrency_total_ttc).'</td>';
-	                        
 	                        print '<td align="right">'.price($objp->am).'</td>';
 							
-							// Multicurrency
-							if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.price($objp->multicurrency_am).'</td>';
-	                        
 	                        print '<td align="right">'.price($objp->total_ttc - $objp->am).'</td>';
-							
-							// Multicurrency
-							if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.price($objp->multicurrency_total_ttc - $objp->multicurrency_am).'</td>';
 							
 	                        print '<td align="center">';
 	                        $namef = 'amount_'.$objp->facid;
-							if(!empty($conf->global->FAC_AUTO_FILLJS))
+	                        if (!empty($conf->use_javascript_ajax))
 								print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->total_ttc - $objp->am)."'");
 	                        print '<input type="text" size="8" name="'.$namef.'" value="'.GETPOST($namef).'">';
 							print "</td>";
@@ -478,10 +516,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							if (!empty($conf->multicurrency->enabled)) 
 							{
 								print '<td align="center">';
-			                    $namef = 'multicurrency_amount_'.$objp->facid;
-								if(!empty($conf->global->FAC_AUTO_FILLJS))
-									print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->multicurrency_total_ttc - $objp->multicurrency_am)."'");
-		                        print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
+								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency)
+								{
+    			                    $namef = 'multicurrency_amount_'.$objp->facid;
+    			                    if (!empty($conf->use_javascript_ajax))
+    									print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->multicurrency_total_ttc - $objp->multicurrency_am)."'");
+    		                        print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
+								}
 			                    print "</td>";
 							}
 							
@@ -496,15 +537,20 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        // Print total
 	                        print '<tr class="liste_total">';
 	                        print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').':</td>';
+							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
+							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
+							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
+							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 	                        print '<td align="right"><b>'.price($total_ttc).'</b></td>';
-							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
-	                        print '<td align="right"><b>'.price($totalrecu).'</b></td>';
-							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
+							print '<td align="right"><b>'.price($totalrecu).'</b></td>';
 	                        print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
 	                        print '<td align="center">&nbsp;</td>';
+	                        if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 	                        print "</tr>\n";
 	                    }
 	                    print "</table>\n";
+	                    
+	                    print "</div>";
 	                }
 	                $db->free($resql);
 	            }
@@ -527,10 +573,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	            $preselectedchoice=$addwarning?'no':'yes';
 
 	            print '<br>';
-	            if (!empty($totalpayment)) $text=$langs->trans('ConfirmSupplierPayment',$totalpayment,$langs->trans("Currency".$conf->currency));
+	            if (!empty($totalpayment)) $text=$langs->trans('ConfirmSupplierPayment',price($totalpayment),$langs->trans("Currency".$conf->currency));
 				if (!empty($multicurrency_totalpayment)) 
 				{
-					$text.='<br />'.$langs->trans('ConfirmSupplierPayment',$multicurrency_totalpayment,$langs->trans("paymentInInvoiceCurrency"));
+					$text.='<br>'.$langs->trans('ConfirmSupplierPayment',price($multicurrency_totalpayment),$langs->trans("paymentInInvoiceCurrency"));
 				}
 	            if (GETPOST('closepaidinvoices'))
 	            {
@@ -543,6 +589,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '</form>';
         }
     }
+    else dol_print_error($db);        
 }
 
 /*
@@ -550,10 +597,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
  */
 if (empty($action))
 {
-    if ($page == -1) $page = 0 ;
     $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+    $sortfield = GETPOST("sortfield",'alpha');
+    $sortorder = GETPOST("sortorder",'alpha');
+    $page=GETPOST("page",'int');
+    if ($page == -1) { $page = 0 ; }
     $offset = $limit * $page ;
-
+    $pageprev = $page - 1;
+    $pagenext = $page + 1;
     if (! $sortorder) $sortorder='DESC';
     if (! $sortfield) $sortfield='p.datep';
 
@@ -564,19 +615,16 @@ if (empty($action))
     if (!$user->rights->societe->client->voir) $sql .= ' sc.fk_soc, sc.fk_user,';
     $sql.= ' SUM(f.amount)';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
-    if (!$user->rights->societe->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
+    if (!$user->rights->societe->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE f.entity = ".$conf->entity;
     if (!$user->rights->societe->client->voir) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    if ($socid)
-    {
-        $sql .= ' AND f.fk_soc = '.$socid;
-    }
+    if ($socid > 0) $sql .= ' AND f.fk_soc = '.$socid;
     // Search criteria
     if ($search_ref)       		    $sql .= natural_search('p.rowid', $search_ref);
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
@@ -587,6 +635,14 @@ if (empty($action))
     $sql.= " GROUP BY p.rowid, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, c.code, c.libelle, ba.rowid, ba.label";
     if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= $db->order($sortfield,$sortorder);
+    
+    $nbtotalofrecords = '';
+    if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+    {
+        $result = $db->query($sql);
+        $nbtotalofrecords = $db->num_rows($result);
+    }
+    
     $sql.= $db->plimit($limit+1, $offset);
 
     $resql = $db->query($sql);
@@ -596,62 +652,99 @@ if (empty($action))
         $i = 0;
         $var=True;
 
-        $paramlist='';
-        $paramlist.=($search_ref?"&search_ref=".urlencode($search_ref):"");
-        $paramlist.=($search_company?"&search_company=".urlencode($search_company):"");
-        $paramlist.=($search_amount?"&search_amount=".urlencode($search_amount):"");
-        $paramlist.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
-        if ($optioncss != '') $paramlist.='&optioncss='.urlencode($optioncss);
-
-        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num, 0, 'title_accountancy.png');
+        $param='';
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+        if ($search_ref)            $param.=($search_ref?"&search_ref=".urlencode($search_ref):"");
+        if ($search_company)        $param.=($search_company?"&search_company=".urlencode($search_company):"");
+        if ($search_amount != '')   $param.=($search_amount?"&search_amount=".urlencode($search_amount):"");
+        if ($search_payment_num)    $param.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
+    	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
+    	// Add $param from extra fields
+    	foreach ($search_array_options as $key => $val)
+    	{
+    	    $crit=$val;
+    	    $tmpkey=preg_replace('/search_options_/','',$key);
+    	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
+    	}
+    	
+    	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
+        
+        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 
         print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
         if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-        print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans('RefPayment'),$_SERVER["PHP_SELF"],'p.rowid','',$paramlist,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'dp','',$paramlist,'align="center"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('ThirdParty'),$_SERVER["PHP_SELF"],'s.nom','',$paramlist,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Type'),$_SERVER["PHP_SELF"],'c.libelle','',$paramlist,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$paramlist,"",$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Account'),$_SERVER["PHP_SELF"],'ba.label','',$paramlist,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Amount'),$_SERVER["PHP_SELF"],'p.amount','',$paramlist,'align="right"',$sortfield,$sortorder);
-        //print_liste_field_titre($langs->trans('Invoice'),$_SERVER["PHP_SELF"],'ref_supplier','',$paramlist,'',$sortfield,$sortorder);
-		print_liste_field_titre('');
-		print "</tr>\n";
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+        print '<input type="hidden" name="action" value="list">';
+        print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+        print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+        print '<input type="hidden" name="page" value="'.$page.'">';
+        
+        $moreforfilter='';
+        
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
+    	else $moreforfilter = $hookmanager->resPrint;
+    
+        if ($moreforfilter)
+        {
+       		print '<div class="liste_titre liste_titre_bydiv centpercent">';
+            print $moreforfilter;
+            print '</div>';
+        }
+    
+        $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+        $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+        
+        print '<div class="div-table-responsive">';
+        print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
         // Lines for filters fields
-        print '<tr class="liste_titre">';
-        print '<td align="left">';
-        print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
+        print '<tr class="liste_titre_filter">';
+        print '<td  class="liste_titre" align="left">';
+        print '<input class="flat" type="text" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
         print '</td>';
-        print '<td>&nbsp;</td>';
-        print '<td align="left">';
-        print '<input class="flat" type="text" size="6" name="search_company" value="'.$search_company.'">';
+        print '<td class="liste_titre">&nbsp;</td>';
+        print '<td class="liste_titre" align="left">';
+        print '<input class="flat" type="text" size="6" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
         print '</td>';
-        print '<td>';
+        print '<td class="liste_titre">';
         $form->select_types_paiements($search_paymenttype,'search_paymenttype','',2,1,1);
         print '</td>';
-        print '<td align="left">';
-        print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.$search_payment_num.'">';
+        print '<td class="liste_titre" align="left">';
+        print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.dol_escape_htmltag($search_payment_num).'">';
         print '</td>';
-        print '<td>';
+        print '<td class="liste_titre">';
         $form->select_comptes($search_account,'search_account',0,'',1);
         print '</td>';
-        print '<td align="right">';
-        print '<input class="flat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
+        print '<td class="liste_titre" align="right">';
+        print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
         print '</td>';
         print '<td class="liste_titre" align="right">';
-        $searchpitco=$form->showFilterAndCheckAddButtons(0);
-        print $searchpitco;
+        $searchpicto=$form->showFilterAndCheckAddButtons(0);
+        print $searchpicto;
         print '</td>';
         print "</tr>\n";
 
+        print '<tr class="liste_titre">';
+        print_liste_field_titre($langs->trans('RefPayment'),$_SERVER["PHP_SELF"],'p.rowid','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'dp','',$param,'align="center"',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('ThirdParty'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Type'),$_SERVER["PHP_SELF"],'c.libelle','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Account'),$_SERVER["PHP_SELF"],'ba.label','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Amount'),$_SERVER["PHP_SELF"],'p.amount','',$param,'align="right"',$sortfield,$sortorder);
+        //print_liste_field_titre($langs->trans('Invoice'),$_SERVER["PHP_SELF"],'ref_supplier','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre('');
+        print "</tr>\n";
+        
         while ($i < min($num,$limit))
         {
             $objp = $db->fetch_object($resql);
-            $var=!$var;
-            print '<tr '.$bc[$var].'>';
+            
+            print '<tr class="oddeven">';
 
             // Ref payment
             print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->pid.'</a></td>';
@@ -661,7 +754,7 @@ if (empty($action))
 
             // Thirdparty
             print '<td>';
-            if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->name,32).'</a>';
+            if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->name,32).'</a>';
             else print '&nbsp;';
             print '</td>';
 
@@ -673,7 +766,7 @@ if (empty($action))
             print '<td>'.$objp->num_paiement.'</td>';
             
             print '<td>';
-            if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dol_trunc($objp->label,24).'</a>';
+            if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dol_trunc($objp->label,24).'</a>';
             else print '&nbsp;';
             print '</td>';
 
@@ -691,6 +784,7 @@ if (empty($action))
             $i++;
         }
         print "</table>";
+        print "</div>";
         print "</form>\n";
     }
     else

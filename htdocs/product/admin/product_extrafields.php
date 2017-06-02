@@ -20,7 +20,7 @@
  */
 
 /**
- *      \file       htdocs/societe/admin/societe_extrafields.php
+ *      \file       htdocs/product/admin/product_extrafields.php
  *		\ingroup    societe
  *		\brief      Page to setup extra fields of third party
  */
@@ -73,8 +73,9 @@ else if (empty($conf->service->enabled))
 	$textobject = $langs->trans('Products');
 }
 
-$help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
-llxHeader('',$title);
+//$help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
+$help_url='';
+llxHeader('',$title,$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -83,7 +84,7 @@ print load_fiche_titre($title,$linkback,'title_setup');
 
 $head = product_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $textobject, 0, 'product');
+dol_fiche_head($head, 'attributes', $textobject, -1, 'product');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

@@ -59,8 +59,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 /*
  * View
  */
-
-llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+$title=$langs->trans("Member") . " - " . $langs->trans("Note");
+$helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
+llxHeader("",$title,$helpurl);
 
 $form = new Form($db);
 
@@ -68,7 +69,7 @@ if ($id)
 {
 	$head = member_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("Member"), 0, 'user');
+	dol_fiche_head($head, 'note', $langs->trans("Member"), -1, 'user');
 
 	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -108,7 +109,6 @@ if ($id)
     print "</table>";
 
     print '</div>';
-    print '<br>';
 
 
     $cssclass='titlefield';

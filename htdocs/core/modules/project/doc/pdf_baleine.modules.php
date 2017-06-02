@@ -223,7 +223,7 @@ class pdf_baleine extends ModelePDFProjects
 					$progress=$object->lines[$i]->progress.'%';
 					$datestart=dol_print_date($object->lines[$i]->date_start,'day');
 					$dateend=dol_print_date($object->lines[$i]->date_end,'day');
-					$planned_workload=convertSecondToTime($object->lines[$i]->planned_workload,'allhourmin');
+					$planned_workload=convertSecondToTime((int) $object->lines[$i]->planned_workload,'allhourmin');
 
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
@@ -488,7 +488,8 @@ class pdf_baleine extends ModelePDFProjects
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		$showdetails=0;
+		global $conf;
+		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'PROJECT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 

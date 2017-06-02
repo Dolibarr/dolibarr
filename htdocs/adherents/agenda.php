@@ -30,12 +30,13 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 $langs->load("companies");
 $langs->load("members");
 
-$id = GETPOST('id','int');
+$id = GETPOST('id','int')?GETPOST('id','int'):GETPOST('rowid','int');
 
 // Security check
 $result=restrictedArea($user,'adherent',$id);
@@ -77,48 +78,27 @@ if ($object->id > 0)
 
 	$langs->load("companies");
 
-	llxHeader("",$langs->trans("Agenda"),'');
+	$title=$langs->trans("Member") . " - " . $langs->trans("Agenda");
+	$helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
+	llxHeader("",$title,$helpurl);
 
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = member_prepare_head($object);
 
-	dol_fiche_head($head, 'agenda', $langs->trans("Member"),0,'user');
+	dol_fiche_head($head, 'agenda', $langs->trans("Member"), -1, 'user');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
 	
 	dol_banner_tab($object, 'rowid', $linkback);
     
-    print '<div class="fichecenter">';
-    
-    print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
-
-	// Login
-	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-	{
-	    print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
-	}
-
-	// Type
-	print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
-
-	// Morphy
-	print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
-	/*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-	 print $form->showphoto('memberphoto',$member);
-	print '</td>';*/
-	print '</tr>';
-
-	// Company
-	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
-
-	// Civility
-	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
-	print '</tr>';
-
-	print '</table>';
-
-	print '</div>';
+	print '<div class="fichecenter">';
+	
+	print '<div class="underbanner clearboth"></div>';
+	
+	$object->info($id);
+	print dol_print_object_info($object, 1);
+	
+	print '</div>';	
 
 	dol_fiche_end();
 	
@@ -131,36 +111,17 @@ if ($object->id > 0)
 
     if (! empty($conf->agenda->enabled))
     {
-        print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1">'.$langs->trans("AddAction").'</a></div>';
+        print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id.'">'.$langs->trans("AddAction").'</a></div>';
     }
 
     print '</div>';
 
-    print '<br>';
-
     $out='';
-
-    /*$objthirdparty=$object->thirdparty;
-    $objcon=new stdClass();
-
-    $permok=$user->rights->agenda->myactions->create;
-    if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
-    {
-        $out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-        if (get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
-        $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1">';
-    	$out.=$langs->trans("AddAnAction").' ';
-    	$out.=img_picto($langs->trans("AddAnAction"),'filenew');
-    	$out.="</a>";
-	}*/
 
     print load_fiche_titre($langs->trans("ActionsOnMember"),$out,'');
 
-    // List of todo actions
-    show_actions_todo($conf,$langs,$db,$object);
-
-    // List of done actions
-    show_actions_done($conf,$langs,$db,$object);
+    // List of actions
+    show_actions_done($conf,$langs,$db,$object,null,0,'','');
 }
 
 

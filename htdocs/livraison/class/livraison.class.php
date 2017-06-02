@@ -250,7 +250,7 @@ class Livraison extends CommonObject
 	 * 	Load a delivery receipt
 	 *
 	 * 	@param	int		$id			Id of object to load
-	 * 	@return	void
+	 * 	@return	integer
 	 */
 	function fetch($id)
 	{
@@ -263,7 +263,7 @@ class Livraison extends CommonObject
         $sql.= ', l.fk_incoterms, l.location_incoterms';
         $sql.= ", i.libelle as libelle_incoterms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->element."'";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON l.fk_incoterms = i.rowid';
 		$sql.= " WHERE l.rowid = ".$id;
 
@@ -492,7 +492,7 @@ class Livraison extends CommonObject
 	 *
 	 *	@param	User	$user            Utilisateur qui cree
 	 *	@param  int		$sending_id      Id de l'expedition qui sert de modele
-	 *	@return	void
+	 *	@return	integer
 	 */
 	function create_from_sending($user, $sending_id)
 	{
@@ -585,7 +585,7 @@ class Livraison extends CommonObject
 	 *	Delete line
 	 *
 	 *	@param	int		$lineid		Line id
-	 *	@return	void
+	 *	@return	integer|null
 	 */
 	function deleteline($lineid)
 	{
@@ -610,7 +610,7 @@ class Livraison extends CommonObject
 	/**
 	 * Delete object
 	 *
-	 * @return	void
+	 * @return	integer
 	 */
 	function delete()
 	{
@@ -817,6 +817,12 @@ class Livraison extends CommonObject
 			if ($statut==0)  return img_picto($langs->trans('StatusDeliveryDraft'),'statut0').' '.$langs->trans('StatusDeliveryDraft');
 			if ($statut==1)  return img_picto($langs->trans('StatusDeliveryValidated'),'statut4').' '.$langs->trans('StatusDeliveryValidated');
 		}
+		if ($mode == 6)
+		{
+			if ($statut==-1) return $langs->trans('StatusDeliveryCanceled').' '.img_picto($langs->trans('StatusDeliveryCanceled'),'statut5');
+			if ($statut==0)  return $langs->trans('StatusDeliveryDraft').' '.img_picto($langs->trans('StatusDeliveryDraft'),'statut0');
+			if ($statut==1)  return $langs->trans('StatusDeliveryValidated').' '.img_picto($langs->trans('StatusDeliveryValidated'),'statut4');
+		}
 	}
 
 
@@ -833,7 +839,8 @@ class Livraison extends CommonObject
 
 		$now=dol_now();
 
-		// Charge tableau des produits prodids
+        // Load array of products prodids
+		$num_prods = 0;
 		$prodids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -1002,16 +1009,14 @@ class Livraison extends CommonObject
 
 		$langs->load("deliveries");
 
-		// Positionne modele sur le nom du modele de bon de livraison a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->LIVRAISON_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'typhon';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->LIVRAISON_ADDON_PDF)) {
 				$modele = $conf->global->LIVRAISON_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'typhon';
 			}
 		}
 

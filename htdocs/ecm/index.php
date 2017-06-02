@@ -49,7 +49,7 @@ $result = restrictedArea($user, 'ecm', 0);
 
 // Get parameters
 $socid=GETPOST('socid','int');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $section=GETPOST("section")?GETPOST("section","int"):GETPOST("section_id","int");
 $module=GETPOST("module");
 if (! $section) $section=0;
@@ -100,40 +100,21 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	if (empty($_FILES['userfile']['tmp_name']))
 	{
 		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+		if($_FILES['userfile']['error'] == 1 || $_FILES['userfile']['error'] == 2){
+			setEventMessages($langs->trans('ErrorFileSizeTooLarge'),null, 'errors');
+		}
+		else {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+		}
 	}
 
 	if (! $error)
 	{
-		if (dol_mkdir($upload_dir) >= 0)
-		{
-			$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0, 0, $_FILES['userfile']['error']);
-			if (is_numeric($resupload) && $resupload > 0)
-			{
-				$result=$ecmdir->changeNbOfFiles('+');
-			}
-			else
-			{
-				$langs->load("errors");
-				if ($resupload < 0)	// Unknown error
-				{
-					setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
-				}
-				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-				{
-					setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-				}
-				else	// Known error
-				{
-					setEventMessages($langs->trans($resupload), null, 'errors');
-				}
-			}
-		}
-		else
-		{
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFailToCreateDir",$upload_dir), null, 'errors');
-		}
+	    $res = dol_add_file_process($upload_dir, 0, 1, 'userfile', '', '', '');
+	    if ($res > 0)
+	    {
+	       $result=$ecmdir->changeNbOfFiles('+');
+	    }
 	}
 }
 
@@ -175,10 +156,9 @@ if ($action == 'confirm_deletefile')
 	    		dol_print_error($db,$ecmdir->error);
 	    		exit;
 	    	}
-	    	$relativepath=$ecmdir->getRelativePath();
     	}
     	else $relativepath='';
-    	$upload_dir = $conf->ecm->dir_output.($relativepath?'/'.$relativepath:'');
+    	$upload_dir = $conf->ecm->dir_output;
     	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
 
     	$ret=dol_delete_file($file);
@@ -202,8 +182,11 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
 }
 
 // Refresh directory view
+// This refresh list of dirs, not list of files (for preformance reason). List of files is refresh only if dir was not synchronized.
+// To refresh content of dir with cache, just open the dir in edit mode.
 if ($action == 'refreshmanual')
 {
+
     $ecmdirtmp = new EcmDirectory($db);
 
 	// This part of code is same than into file ecm/ajax/ecmdatabase.php TODO Remove duplicate
@@ -345,54 +328,11 @@ if ($action == 'refreshmanual')
 
 // Define height of file area (depends on $_SESSION["dol_screenheight"])
 //print $_SESSION["dol_screenheight"];
-$maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-186):660;	// Also into index_auto.php file
+$maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-136):660;	// Also into index_auto.php file
 
 $morejs=array();
 if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs=array("/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js");
-$moreheadcss="
-<!-- dol_screenheight=".$_SESSION["dol_screenheight"]." -->
-<style type=\"text/css\">
-    #containerlayout {
-        height:     ".$maxheightwin."px;
-        margin:     0 auto;
-        width:      100%;
-        min-width:  700px;
-        _width:     700px; /* min-width for IE6 */
-    }
-</style>";
-$moreheadjs=empty($conf->use_javascript_ajax)?"":"
-<script type=\"text/javascript\">
-    jQuery(document).ready(function () {
-        jQuery('#containerlayout').layout({
-        	name: \"ecmlayout\"
-        ,   paneClass:    \"ecm-layout-pane\"
-        ,   resizerClass: \"ecm-layout-resizer\"
-        ,   togglerClass: \"ecm-layout-toggler\"
-        ,   center__paneSelector:   \"#ecm-layout-center\"
-        ,   north__paneSelector:    \"#ecm-layout-north\"
-        ,   west__paneSelector:     \"#ecm-layout-west\"
-        ,   resizable: true
-        ,   north__size:        32
-        ,   north__resizable:   false
-        ,   north__closable:    false
-        ,   west__size:         340
-        ,   west__minSize:      280
-        ,   west__slidable:     true
-        ,   west__resizable:    true
-        ,   west__togglerLength_closed: '100%'
-        ,   useStateCookie:     true
-            });
 
-        jQuery('#ecm-layout-center').layout({
-            center__paneSelector:   \".ecm-in-layout-center\"
-        ,   south__paneSelector:    \".ecm-in-layout-south\"
-        ,   resizable: false
-        ,   south__minSize:      32
-        ,   south__resizable:   false
-        ,   south__closable:    false
-            });
-    });
-</script>";
 
 llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,'',0,0);
 
@@ -414,16 +354,6 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	if (! empty($conf->projet->enabled))      { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'project', 'test'=>$conf->projet->enabled, 'label'=>$langs->trans("Projects"),     'desc'=>$langs->trans("ECMDocsByProjects")); }
 }
 
-print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
-
-/*
-print '<div class="hideonsmartphone">';
-print $langs->trans("ECMAreaDesc")."<br>";
-print $langs->trans("ECMAreaDesc2")."<br>";
-print "<br>\n";
-print '</div>';
-*/
-
 // Confirm remove file (for non javascript users)
 if ($action == 'delete' && empty($conf->use_javascript_ajax))
 {
@@ -431,19 +361,18 @@ if ($action == 'delete' && empty($conf->use_javascript_ajax))
 
 }
 
-if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
-else $classviewhide='visible';
+//if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
+//else $classviewhide='visible';
+$classviewhide='inline-block';
 
 
-if (empty($conf->dol_use_jmobile))
-{
 $head = ecm_prepare_dasboard_head('');
-dol_fiche_head($head, 'index', '', 1, '');
-}
+dol_fiche_head($head, 'index', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), 1, '');
 
 // Start container of all panels
 ?>
-<div id="containerlayout"> <!-- begin div id="containerlayout" -->
+<!-- Begin div id="containerlayout" -->
+<div id="containerlayout">
 <div id="ecm-layout-north" class="toolbar largebutton">
 <?php
 
@@ -463,8 +392,8 @@ else
     print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
     print '</a>';
 }
-$url=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
-print '<a href="'.$url.'" class="toolbarbutton" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
+$relativeurl=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
+print '<a href="'.$relativeurl.'" class="toolbarbutton" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
 print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
 print '</a>';
 
@@ -489,43 +418,22 @@ if ($action == 'delete_section')
 
 if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
 {
-	print '<table width="100%" class="nobordernopadding">';
+	print '<table width="100%" class="liste noborderbottom">'."\n";
 
-	print '<tr class="liste_titre">';
-    print '<td class="liste_titre" align="left" colspan="6">';
+	print '<!-- Title for manual directories -->'."\n";
+	print '<tr class="liste_titre">'."\n";
+    print '<th class="liste_titre" align="left" colspan="6">';
     print '&nbsp;'.$langs->trans("ECMSections");
-	print '</td></tr>';
+	print '</th></tr>';
 
     $showonrightsize='';
 
 	// Manual section
 	$htmltooltip=$langs->trans("ECMAreaDesc2");
-
-
-	// Root of manual section
-	print '<tr><td>';
-	print '<table class="nobordernopadding"><tr class="nobordernopadding">';
-	print '<td align="left" width="24px">';
-	print img_picto_common('','treemenu/base.gif');
-	print '</td><td align="left">';
-	$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsManual").')';
-	print $form->textwithpicto($txt, $htmltooltip, 1, 'info');
-	print '</td>';
-	print '</tr></table></td>';
-	print '<td align="right">';
-	print '</td>';
-	print '<td align="right">&nbsp;</td>';
-	//print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.img_edit_add().'</a></td>';
-	print '<td align="right">&nbsp;</td>';
-	print '<td align="right">&nbsp;</td>';
-	print '<td align="center">';
-	//print $form->textwithpicto('',$htmltooltip,1,"info");
-	print '</td>';
-	print '</tr>';
-
+	
     if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
     {
-        print '<tr><td colspan="6" style="padding-left: 20px">';
+        print '<tr><td colspan="6">';
 
     	// Show filemanager tree
 	    print '<div id="filetree" class="ecmfiletree"></div>';
@@ -715,6 +623,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 
 $mode='noajax';
+$url=DOL_URL_ROOT.'/ecm/index.php';
 include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 
 
@@ -752,12 +661,12 @@ else print '&nbsp;';
 ?>
 </div>
 </div>
-</div> <!-- end div id="containerlayout" -->
+</div> <!-- End div id="containerlayout" -->
 <?php
 // End of page
 
 
-//dol_fiche_end();
+dol_fiche_end(1);
 
 
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {

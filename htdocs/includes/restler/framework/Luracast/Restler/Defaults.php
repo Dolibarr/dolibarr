@@ -15,7 +15,7 @@ use Luracast\Restler\Data\Validator;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc5
+ * @version    3.0.0rc6
  */
 class Defaults
 {
@@ -165,6 +165,12 @@ class Defaults
      * @var bool when set to true, it will exclude the response body
      */
     public static $emptyBodyForNullResponse = true;
+
+    /**
+     * @var bool when set to true, the response will not be outputted directly into the buffer.
+     * If set, Restler::handle() will return the response as a string.
+     */
+    public static $returnResponse = false;
 
     /**
      * @var bool enables CORS support

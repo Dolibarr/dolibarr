@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009       Laurent Destailleur        <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2013  Juanjo Menent	       <jmenent@2byte.es>
+ * Copyright (C) 2010-2016  Juanjo Menent	       <jmenent@2byte.es>
  * Copyright (C) 2013-2014  Philippe Grand             <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
  *
@@ -28,7 +28,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 
 $langs->load("admin");
 $langs->load("companies");
@@ -40,29 +41,15 @@ if (!$user->admin)
   accessforbidden();
 
 $action = GETPOST('action','alpha');
+$value = GETPOST('value','alpha');
+$label = GETPOST('label','alpha');
+$scandir = GETPOST('scandir','alpha');
+$type = 'bankaccount';
 
 
 /*
  * Actions
  */
-
-if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
-{
-	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT');	// No alpha here, we want exact string
-
-    $res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
-
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
-}
 
 //Order display of bank account
 if ($action == 'setbankorder')
@@ -78,71 +65,115 @@ if ($action == 'setbankorder')
 	}
 }
 
+
+if ($action == 'specimen')
+{
+    $modele=GETPOST('module','alpha');
+    
+    if ($modele == 'sepamandate')
+    {
+        $object = new CompanyBankAccount($db);
+    }
+    else
+    {
+        $object = new Account($db);
+    }
+    $object->initAsSpecimen();
+    
+    // Search template files
+    $file=''; $classname=''; $filefound=0;
+    $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+    foreach($dirmodels as $reldir)
+    {
+        $file=dol_buildpath($reldir."core/modules/bank/doc/pdf_".$modele.".modules.php",0);
+        if (file_exists($file))
+        {
+            $filefound=1;
+            $classname = "pdf_".$modele;
+            break;
+        }
+    }
+    
+    if ($filefound)
+    {
+        require_once $file;
+        
+        $module = new $classname($db);
+        
+        if ($module->write_file($object,$langs) > 0)
+        {
+            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=bank&file=SPECIMEN.pdf");
+            return;
+        }
+        else
+        {
+            setEventMessages($module->error, null, 'errors');
+            dol_syslog($module->error, LOG_ERR);
+        }
+    }
+    else
+    {
+        setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+        dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+    }
+}
+
+// Activate a model
+if ($action == 'set')
+{
+	$ret = addDocumentModel($value, $type, $label, $scandir);
+}
+
+else if ($action == 'del')
+{
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+        if ($conf->global->BANKADDON_PDF == "$value") dolibarr_del_const($db, 'BANKADDON_PDF',$conf->entity);
+	}
+}
+// Set default model
+else if ($action == 'setdoc')
+{
+    if (dolibarr_set_const($db, "BANKADDON_PDF",$value,'chaine',0,'',$conf->entity))
+    {
+        // The constant that was read before the new set
+        // We therefore requires a variable to have a coherent view
+        $conf->global->BANKADDON_PDF = $value;
+    }
+    
+    // On active le modele
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0)
+    {
+        $ret = addDocumentModel($value, $type, $label, $scandir);
+    }
+}
+
+
+
 /*
  * view
  */
 
-llxHeader("",$langs->trans("BankSetupModule"));
-
 $form=new Form($db);
+
+$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+
+llxHeader("",$langs->trans("BankSetupModule"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("BankSetupModule"),$linkback,'title_setup');
 
-
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_BANK_CHEQUERECEIPT_FREE_TEXT">';
-
 $head = bank_admin_prepare_head(null);
-dol_fiche_head($head, 'general', $langs->trans("BankSetupModule"), 0, 'account');
+dol_fiche_head($head, 'general', $langs->trans("BankSetupModule"), -1, 'account');
 
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td>';
-print '<td align="center" width="60">&nbsp;</td>';
-print '<td width="80">&nbsp;</td>';
-print "</tr>\n";
 $var=true;
 
 $var=! $var;
 
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnChequeReceipts").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-$variablename='BANK_CHEQUERECEIPT_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
-    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
-    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
-    print $doleditor->Create();
-}
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-print '</table>';
-print "<br>";
-
-/*
-$var=!$var;
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"set_BANK_CHEQUERECEIPT_DRAFT_WATERMARK\">";
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("WatermarkOnDraftChequeReceipt").'<br>';
-print '<input size="50" class="flat" type="text" name="BANK_CHEQUERECEIPT_DRAFT_WATERMARK" value="'.$conf->global->BANK_CHEQUERECEIPT_DRAFT_WATERMARK.'">';
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-print '</form>';
-*/
-
-
 //Show bank account order
-print load_fiche_titre($langs->trans("BankOrderShow"));
+print load_fiche_titre($langs->trans("BankOrderShow"), '', '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -155,10 +186,10 @@ print "</tr>\n";
 
 $bankorder[0][0]=$langs->trans("BankOrderGlobal");
 $bankorder[0][1]=$langs->trans("BankOrderGlobalDesc");
-$bankorder[0][2]='BankCode DeskCode AccountNumber BankAccountNumberKey';
+$bankorder[0][2]='BankCode DeskCode BankAccountNumber BankAccountNumberKey';
 $bankorder[1][0]=$langs->trans("BankOrderES");
 $bankorder[1][1]=$langs->trans("BankOrderESDesc");
-$bankorder[1][2]='BankCode DeskCode BankAccountNumberKey AccountNumber';
+$bankorder[1][2]='BankCode DeskCode BankAccountNumberKey BankAccountNumber';
 
 $var = true;
 $i=0;
@@ -168,7 +199,7 @@ while ($i < $nbofbank)
 {
 	$var = !$var;
 
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>'.$bankorder[$i][0]."</td><td>\n";
 	print $bankorder[$i][1];
 	print '</td>';
@@ -200,9 +231,151 @@ while ($i < $nbofbank)
 
 print '</table>'."\n";
 
-dol_fiche_end();
 
-print '</form>';
+print '<br><br>';
+
+
+/*
+ * Document templates generators
+ */
+//if (! empty($conf->global->MAIN_FEATURES_LEVEL))
+//{
+print load_fiche_titre($langs->trans("BankAccountModelModule"), '', '');
+
+// Load array def with activated templates
+$def = array();
+$sql = "SELECT nom";
+$sql .= " FROM " . MAIN_DB_PREFIX . "document_model";
+$sql .= " WHERE type = '" . $type . "'";
+$sql .= " AND entity = " . $conf->entity;
+$resql = $db->query($sql);
+if ($resql) {
+    $i = 0;
+    $num_rows = $db->num_rows($resql);
+    while ($i < $num_rows) {
+        $array = $db->fetch_array($resql);
+        array_push($def, $array[0]);
+        $i ++;
+    }
+} else {
+    dol_print_error($db);
+}
+
+print "<table class=\"noborder\" width=\"100%\">\n";
+print "<tr class=\"liste_titre\">\n";
+print '<td>' . $langs->trans("Name") . '</td>';
+print '<td>' . $langs->trans("Description") . '</td>';
+print '<td align="center" width="60">' . $langs->trans("Status") . "</td>\n";
+print '<td align="center" width="60">' . $langs->trans("Default") . "</td>\n";
+print '<td align="center" width="38">' . $langs->trans("ShortInfo") . '</td>';
+print '<td align="center" width="38">' . $langs->trans("Preview") . '</td>';
+print "</tr>\n";
+
+clearstatcache();
+
+foreach ($dirmodels as $reldir) 
+{
+    foreach (array('', '/doc') as $valdir) {
+        $dir = dol_buildpath($reldir . "core/modules/bank" . $valdir);
+        
+        if (is_dir($dir)) {
+            $handle = opendir($dir);
+            if (is_resource($handle)) {
+                while (($file = readdir($handle)) !== false) {
+                    $filelist[] = $file;
+                }
+                closedir($handle);
+                arsort($filelist);
+                
+                foreach ($filelist as $file) {
+                    if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+                        
+                        if (file_exists($dir . '/' . $file)) {
+                            $name = substr($file, 4, dol_strlen($file) - 16);
+                            $classname = substr($file, 0, dol_strlen($file) - 12);
+                            
+                            require_once $dir . '/' . $file;
+                            $module = new $classname($db);
+                            
+                            $modulequalified = 1;
+                            if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2)
+                                $modulequalified = 0;
+                            if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1)
+                                $modulequalified = 0;
+                            
+                            if ($modulequalified) {
+                                print '<tr class="oddeven"><td width="100">';
+                                print(empty($module->name) ? $name : $module->name);
+                                print "</td><td>\n";
+                                if (method_exists($module, 'info'))
+                                    print $module->info($langs);
+                                else
+                                    print $module->description;
+                                print '</td>';
+                                
+                                // Active
+                                if (in_array($name, $def)) {
+                                    print '<td align="center">' . "\n";
+                                    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=del&value=' . $name . '">';
+                                    print img_picto($langs->trans("Enabled"), 'switch_on');
+                                    print '</a>';
+                                    print '</td>';
+                                } else {
+                                    print '<td align="center">' . "\n";
+                                    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=set&value=' . $name . '&amp;scandir=' . $module->scandir . '&amp;label=' . urlencode($module->name) . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
+                                    print "</td>";
+                                }
+                                
+                                // Default
+                                print '<td align="center">';
+                                if ($conf->global->BANKADDON_PDF == $name) {
+                                    print img_picto($langs->trans("Default"), 'on');
+                                } else {
+                                    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setdoc&value=' . $name . '&amp;scandir=' . $module->scandir . '&amp;label=' . urlencode($module->name) . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
+                                }
+                                print '</td>';
+                                
+                                // Info
+                                $htmltooltip = '' . $langs->trans("Name") . ': ' . $module->name;
+                                $htmltooltip .= '<br>' . $langs->trans("Type") . ': ' . ($module->type ? $module->type : $langs->trans("Unknown"));
+                                if ($module->type == 'pdf') {
+                                    $htmltooltip .= '<br>' . $langs->trans("Width") . '/' . $langs->trans("Height") . ': ' . $module->page_largeur . '/' . $module->page_hauteur;
+                                }
+                                $htmltooltip .= '<br><br><u>' . $langs->trans("FeaturesSupported") . ':</u>';
+                                $htmltooltip .= '<br>' . $langs->trans("Logo") . ': ' . yn($module->option_logo, 1, 1);
+                                //$htmltooltip .= '<br>' . $langs->trans("PaymentMode") . ': ' . yn($module->option_modereg, 1, 1);
+                                //$htmltooltip .= '<br>' . $langs->trans("PaymentConditions") . ': ' . yn($module->option_condreg, 1, 1);
+                                $htmltooltip .= '<br>' . $langs->trans("MultiLanguage") . ': ' . yn($module->option_multilang, 1, 1);
+                                // $htmltooltip.='<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
+                                // $htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
+                                //$htmltooltip .= '<br>' . $langs->trans("WatermarkOnDraftOrders") . ': ' . yn($module->option_draft_watermark, 1, 1);
+                                
+                                print '<td align="center">';
+                                print $form->textwithpicto('', $htmltooltip, 1, 0);
+                                print '</td>';
+                                
+                                // Preview
+                                print '<td align="center">';
+                                if ($module->type == 'pdf') {
+                                    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=specimen&module=' . $name . '">' . img_object($langs->trans("Preview"), 'bill') . '</a>';
+                                } else {
+                                    print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+                                }
+                                print '</td>';
+                                
+                                print "</tr>\n";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+//}
+
+
+dol_fiche_end();
 
 llxFooter();
 

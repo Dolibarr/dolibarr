@@ -23,8 +23,7 @@
  */
 
 /**
- *  \class      EcmDirectory
- *  \brief      Class to manage ECM directories
+ *  Class to manage ECM directories
  */
 class EcmDirectory // extends CommonObject
 {
@@ -203,7 +202,7 @@ class EcmDirectory // extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
 		$sql.= " label='".$this->db->escape($this->label)."',";
-		$sql.= " fk_parent='".$this->fk_parent."',";
+		$sql.= " fk_parent='".$this->db->escape($this->fk_parent)."',";
 		$sql.= " description='".$this->db->escape($this->description)."'";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -239,14 +238,15 @@ class EcmDirectory // extends CommonObject
 	/**
 	 *	Update cache of nb of documents into database
 	 *
-	 * 	@param	string	$sign		'+' or '-'
+	 * 	@param	string	$value		'+' or '-' or new number
 	 *  @return int		         	<0 if KO, >0 if OK
 	 */
-	function changeNbOfFiles($sign)
+	function changeNbOfFiles($value)
 	{
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
-		$sql.= " cachenbofdoc = cachenbofdoc ".$sign." 1";
+		if (preg_match('/[0-9]+/', $value)) $sql.= " cachenbofdoc = ".(int) $value;
+		else $sql.= " cachenbofdoc = cachenbofdoc ".$value." 1";
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::changeNbOfFiles", LOG_DEBUG);
@@ -255,6 +255,12 @@ class EcmDirectory // extends CommonObject
 		{
 			$this->error="Error ".$this->db->lasterror();
 			return -1;
+		}
+		else
+		{
+		    if (preg_match('/[0-9]+/', $value)) $this->cachenbofdoc = (int) $value;
+		    else if ($value == '+') $this->cachenbofdoc++;
+		    else if ($value == '-') $this->cachenbofdoc--;
 		}
 
 		return 1;
@@ -661,7 +667,7 @@ class EcmDirectory // extends CommonObject
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dir=$conf->ecm->dir_output.'/'.$this->getRelativePath();
-		$filelist=dol_dir_list($dir,'files',0,'','(\.meta|_preview\.png)$');
+		$filelist=dol_dir_list($dir,'files',0,'','(\.meta|_preview.*\.png)$');
 
 		// Test if filelist is in database
 

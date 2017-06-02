@@ -77,153 +77,25 @@ if ($action == 'update' && empty($_POST["cancel"]))
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     GETPOST("MAIN_MAIL_EMAIL_FROM"), 'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		GETPOST("MAIN_MAIL_ERRORS_TO"),  'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",    GETPOST("MAIN_MAIL_AUTOCOPY_TO"),'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, 'MAIN_MAIL_DEFAULT_FROMTYPE',GETPOST('MAIN_MAIL_DEFAULT_FROMTYPE'),'chaine',0,'',$conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }
 
 
-/*
- * Add file in email form
- */
-if (GETPOST('addfile') || GETPOST('addfilehtml'))
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+// Actions to send emails
+$id=0;
+$actiontypecode='';     // Not an event for agenda
+$trigger_name='';       // Disable triggers
+$paramname='id';
+$mode='emailfortest';
+$trackid=(($action == 'testhtml')?"testhtml":"test");
+include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-	// Set tmp user directory
-	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp';
-	dol_add_file_process($upload_dir,0,0);
+if ($action == 'presend' && GETPOST('trackid') == 'test')       $action='test';
+if ($action == 'presend' && GETPOST('trackid') == 'testhtml')   $action='testhtml';
 
-	if ($_POST['addfile'])     $action='test';
-	if ($_POST['addfilehtml']) $action='testhtml';
-}
-
-/*
- * Remove file in email form
- */
-if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
-{
-	// Set tmp user directory
-	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp';
-
-	$keytodelete=isset($_POST['removedfile'])?$_POST['removedfile']:$_POST['removedfilehtml'];
-	$keytodelete--;
-
-	$listofpaths=array();
-	$listofnames=array();
-	$listofmimes=array();
-	if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
-
-	if ($keytodelete >= 0)
-	{
-		$pathtodelete=$listofpaths[$keytodelete];
-		$filetodelete=$listofnames[$keytodelete];
-		$result = dol_delete_file($pathtodelete,1);
-		if ($result)
-		{
-			setEventMessages(array($langs->trans("FileWasRemoved"), $filetodelete), null, 'mesgs');
-
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$formmail = new FormMail($db);
-			$formmail->remove_attached_files($keytodelete);
-		}
-	}
-	if ($_POST['removedfile'] || $action='send')     $action='test';
-	if ($_POST['removedfilehtml'] || $action='sendhtml') $action='testhtml';
-}
-
-/*
- * Send mail
- */
-if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GETPOST('addfilehtml') && ! GETPOST('removedfile') && ! GETPOST('cancel'))
-{
-	$error=0;
-
-	$email_from='';
-	if (! empty($_POST["fromname"])) $email_from=$_POST["fromname"].' ';
-	if (! empty($_POST["frommail"])) $email_from.='<'.$_POST["frommail"].'>';
-
-	$errors_to  = $_POST["errorstomail"];
-	$sendto     = $_POST["sendto"];
-	$sendtocc   = $_POST["sendtocc"];
-	$sendtoccc  = $_POST["sendtoccc"];
-	$subject    = $_POST['subject'];
-	$body       = $_POST['message'];
-	$deliveryreceipt= $_POST["deliveryreceipt"];
-	$trackid    = GETPOST('trackid');
-	
-	//Check if we have to decode HTML
-	if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($body, ENT_COMPAT | ENT_HTML401))) {
-		$body=dol_html_entity_decode($body, ENT_COMPAT | ENT_HTML401);
-	}
-
-	// Create form object
-	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-	$formmail = new FormMail($db);
-
-	$attachedfiles=$formmail->get_attached_files();
-	$filepath = $attachedfiles['paths'];
-	$filename = $attachedfiles['names'];
-	$mimetype = $attachedfiles['mimes'];
-
-	if (empty($_POST["frommail"]))
-	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom")), null, 'errors');
-		$action='test';
-		$error++;
-	}
-	if (empty($sendto))
-	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTo")), null, 'errors');
-		$action='test';
-		$error++;
-	}
-	if (! $error)
-	{
-		// Is the message in HTML?
-		$msgishtml=0;	// Message is not HTML
-		if ($action == 'sendhtml') $msgishtml=1;	// Force message to HTML
-
-		// Pratique les substitutions sur le sujet et message
-		$subject=make_substitutions($subject,$substitutionarrayfortest);
-		$body=make_substitutions($body,$substitutionarrayfortest);
-
-		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-        $mailfile = new CMailFile(
-            $subject,
-            $sendto,
-            $email_from,
-            $body,
-            $filepath,
-            $mimetype,
-            $filename,
-            $sendtocc,
-            $sendtoccc,
-            $deliveryreceipt,
-            $msgishtml,
-            $errors_to,
-        	'',
-        	$trackid	
-        );
-
-		$result=$mailfile->sendfile();
-
-		if ($result)
-		{
-			setEventMessages($langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($email_from,2),$mailfile->getValidAddress($sendto,2)), null, 'mesgs');
-		}
-		else
-		{
-			setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, null, 'errors');
-		}
-
-		$action='';
-	}
-}
 
 
 
@@ -242,23 +114,31 @@ $server=! empty($conf->global->MAIN_MAIL_SMTP_SERVER)?$conf->global->MAIN_MAIL_S
 if (! $server) $server='127.0.0.1';
 
 
-/*
- * View
- */
-
 $wikihelp='EN:Setup EMails|FR:Paramétrage EMails|ES:Configuración EMails';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 print load_fiche_titre($langs->trans("EMailsSetup"),'','title_setup');
 
-print $langs->trans("EMailsDesc")."<br>\n";
-print "<br>\n";
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/mails.php";
+$head[$h][1] = $langs->trans("OutGoingEmailSetup");
+$head[$h][2] = 'common';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
+$head[$h][1] = $langs->trans("DictionaryEMailTemplates");
+$head[$h][2] = 'templates';
+$h++;
+
 
 // List of sending methods
 $listofmethods=array();
 $listofmethods['mail']='PHP mail function';
 //$listofmethods['simplemail']='Simplemail class';
 $listofmethods['smtps']='SMTP/SMTPS socket library';
+$listofmethods['swiftmailer']='Swift Mailer socket library';
 
 
 if ($action == 'edit')
@@ -313,6 +193,20 @@ if ($action == 'edit')
                             jQuery("#smtp_server_mess").hide();
 			                jQuery("#smtp_port_mess").hide();
 						}
+                        if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'swiftmailer\')
+                        {
+                            jQuery(".drag").show();
+                            jQuery("#MAIN_MAIL_EMAIL_TLS").val('.$conf->global->MAIN_MAIL_EMAIL_TLS.');
+                            jQuery("#MAIN_MAIL_EMAIL_TLS").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val('.$conf->global->MAIN_MAIL_EMAIL_STARTTLS.');
+                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_SMTP_SERVER").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_SMTP_PORT").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_SMTP_SERVER").show();
+                            jQuery("#MAIN_MAIL_SMTP_PORT").show();
+                            jQuery("#smtp_server_mess").hide();
+                            jQuery("#smtp_port_mess").hide();
+                        }
                     }
                     initfields();
                     jQuery("#MAIN_MAIL_SENDMODE").change(function() {
@@ -334,6 +228,12 @@ if ($action == 'edit')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
 
+	dol_fiche_head($head, 'common', '', -1);
+	
+	print $langs->trans("EMailsDesc")."<br>\n";
+	print "<br>\n";
+	
+	
 	clearstatcache();
 	$var=true;
 
@@ -341,18 +241,18 @@ if ($action == 'edit')
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';
 	print $form->selectyesno('MAIN_DISABLE_ALL_MAILS',$conf->global->MAIN_DISABLE_ALL_MAILS,1);
 	print '</td></tr>';
 
 	// Separator
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
+	
+	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// Method
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 
 	// SuperAdministrator access only
 	if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
@@ -370,8 +270,8 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	// Host server
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>';
+	
+	print '<tr class="oddeven"><td>';
 	if (! $conf->use_javascript_ajax && $linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
 	{
 		print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
@@ -403,8 +303,8 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	// Port
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>';
+	
+	print '<tr class="oddeven"><td>';
 	if (! $conf->use_javascript_ajax && $linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
 	{
 		print $langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike");
@@ -436,9 +336,9 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	// ID
-	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps'))
+	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
-		$var=!$var;
+		
 		$mainstmpid=(! empty($conf->global->MAIN_MAIL_SMTPS_ID)?$conf->global->MAIN_MAIL_SMTPS_ID:'');
 		print '<tr '.$bcdd[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
 		// SuperAdministrator access only
@@ -456,9 +356,9 @@ if ($action == 'edit')
 	}
 
 	// PW
-	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps'))
+	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
-		$var=!$var;
+		
 		$mainsmtppw=(! empty($conf->global->MAIN_MAIL_SMTPS_PW)?$conf->global->MAIN_MAIL_SMTPS_PW:'');
 		print '<tr '.$bcdd[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>';
 		// SuperAdministrator access only
@@ -476,9 +376,9 @@ if ($action == 'edit')
 	}
 
 	// TLS
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
-	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps'))
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
+	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
 		if (function_exists('openssl_open'))
 		{
@@ -490,9 +390,9 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	// STARTTLS
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
-	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps'))
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
+	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
 		if (function_exists('openssl_open'))
 		{
@@ -504,99 +404,122 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	// Separator
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
-
+	
+	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
+	
 	// From
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_EMAIL_FROM" size="32" value="' . (! empty($conf->global->MAIN_MAIL_EMAIL_FROM)?$conf->global->MAIN_MAIL_EMAIL_FROM:'');
 	print '"></td></tr>';
 
+    // Default from type
+    
+    $liste = array();
+    $liste['user'] = $langs->trans('UserEmail');
+    $liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?$langs->trans("NotDefined"):$conf->global->MAIN_INFO_SOCIETE_MAIL).')';
+
+    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
+    print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE',$liste,$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE,0);
+    print '</td></tr>';
+
+    // Separator
+    
+    print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
+    
 	// From
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_ERRORS_TO" size="32" value="' . (! empty($conf->global->MAIN_MAIL_ERRORS_TO)?$conf->global->MAIN_MAIL_ERRORS_TO:'');
 	print '"></td></tr>';
 
 	// Autocopy to
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_AUTOCOPY_TO" size="32" value="' . (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)?$conf->global->MAIN_MAIL_AUTOCOPY_TO:'');
 	print '"></td></tr>';
-	print '</table>';
 
-	print '<br><div class="center">';
-	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+    print '</table>';
+
+    dol_fiche_end();
+    
+    print '<br><div class="center">';
+    print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+    print '</div>';
 
 	print '</form>';
 }
 else
 {
+    dol_fiche_head($head, 'common', '', -1);
+    
+    print $langs->trans("EMailsDesc")."<br>\n";
+    print "<br>\n";
+    
+    
 	$var=true;
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_MAILS).'</td></tr>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_MAILS).'</td></tr>';
 
 	// Separator
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
+	
+	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// Method
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 	$text=$listofmethods[$conf->global->MAIN_MAIL_SENDMODE];
 	if (empty($text)) $text=$langs->trans("Undefined").img_warning();
 	print $text;
 	print '</td></tr>';
 
 	// Host server
-	$var=!$var;
+	
 	if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'mail'))
 	{
-		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
 	}
 	else
 	{
-		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER",ini_get('SMTP')?ini_get('SMTP'):$langs->transnoentities("Undefined")).'</td><td>'.(! empty($conf->global->MAIN_MAIL_SMTP_SERVER)?$conf->global->MAIN_MAIL_SMTP_SERVER:'').'</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER",ini_get('SMTP')?ini_get('SMTP'):$langs->transnoentities("Undefined")).'</td><td>'.(! empty($conf->global->MAIN_MAIL_SMTP_SERVER)?$conf->global->MAIN_MAIL_SMTP_SERVER:'').'</td></tr>';
 	}
 
 	// Port
-	$var=!$var;
+	
 	if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'mail'))
 	{
-		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
 	}
 	else
 	{
-		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT",ini_get('smtp_port')?ini_get('smtp_port'):$langs->transnoentities("Undefined")).'</td><td>'.(! empty($conf->global->MAIN_MAIL_SMTP_PORT)?$conf->global->MAIN_MAIL_SMTP_PORT:'').'</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT",ini_get('smtp_port')?ini_get('smtp_port'):$langs->transnoentities("Undefined")).'</td><td>'.(! empty($conf->global->MAIN_MAIL_SMTP_PORT)?$conf->global->MAIN_MAIL_SMTP_PORT:'').'</td></tr>';
 	}
 
 	// SMTPS ID
-	$var=!$var;
-	if (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	
+	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
-		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_ID.'</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_ID.'</td></tr>';
 	}
 
 	// SMTPS PW
-	$var=!$var;
-	if (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	
+	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
-		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.preg_replace('/./','*',$conf->global->MAIN_MAIL_SMTPS_PW).'</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.preg_replace('/./','*',$conf->global->MAIN_MAIL_SMTPS_PW).'</td></tr>';
 	}
 
 	// TLS
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
-	if (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
+	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
 		if (function_exists('openssl_open'))
 		{
@@ -608,9 +531,9 @@ else
 	print '</td></tr>';
 
 	// STARTTLS
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
-	if (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
+	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
 		if (function_exists('openssl_open'))
 		{
@@ -622,26 +545,41 @@ else
 	print '</td></tr>';
 
 	// Separator
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
+	
+	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// From
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_EMAIL_FROM;
 	if (! empty($conf->global->MAIN_MAIL_EMAIL_FROM) && ! isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("ErrorBadEMail"));
 	print '</td></tr>';
 
-	// Errors To
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
+	// Default from type
+    
+    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
+    print '<td>';
+    if($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user'){
+        print $langs->trans('UserEmail');
+    } else {
+        print $langs->trans('CompanyEmail');
+    }
+    print '</td></tr>';
+
+	// Separator
+	
+	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
+
+    // Errors To
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_ERRORS_TO;
 	if (! empty($conf->global->MAIN_MAIL_ERRORS_TO) && ! isValidEmail($conf->global->MAIN_MAIL_ERRORS_TO)) print img_warning($langs->trans("ErrorBadEMail"));
 	print '</td></tr>';
 
 	// Autocopy to
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
 	print '<td>';
 	if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO))
 	{
@@ -653,9 +591,12 @@ else
 		print '&nbsp;';
 	}
 	print '</td></tr>';
-
+    
 	print '</table>';
 
+	dol_fiche_end();
+	
+	
     if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
     {
         print '<br>';
@@ -673,6 +614,7 @@ else
    	    print info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
     }
 
+    
 	// Boutons actions
 	print '<div class="tabsAction">';
 
@@ -700,13 +642,16 @@ else
 	print '</div>';
 
 
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && ! in_array($action, array('testconnect', 'test', 'testhtml')))
+	{
+        $text = $langs->trans("WarningPHPMail");
+	    print info_admin($text);
+	}
+	    
 	// Run the test to connect
 	if ($action == 'testconnect')
 	{
 		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
-
-		// If we use SSL/TLS
-		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mail = new CMailFile('','','','');
@@ -735,7 +680,7 @@ else
 		$formmail = new FormMail($db);
 		$formmail->fromname = (isset($_POST['fromname'])?$_POST['fromname']:$conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->frommail = (isset($_POST['frommail'])?$_POST['frommail']:$conf->global->MAIN_MAIL_EMAIL_FROM);
-		$formmail->trackid='test';
+		$formmail->trackid=(($action == 'testhtml')?"testhtml":"test");
 		$formmail->withfromreadonly=0;
 		$formmail->withsubstit=0;
 		$formmail->withfrom=1;
@@ -755,7 +700,7 @@ else
 		// Tableau des substitutions
 		$formmail->substit=$substitutionarrayfortest;
 		// Tableau des parametres complementaires du post
-		$formmail->param["action"]=($action == 'testhtml'?"sendhtml":"send");
+		$formmail->param["action"]="send";
 		$formmail->param["models"]="body";
 		$formmail->param["mailid"]=0;
 		$formmail->param["returnurl"]=$_SERVER["PHP_SELF"];
@@ -766,7 +711,7 @@ else
 			$formmail->clear_attached_files();
 		}
 
-		print $formmail->get_form(($action == 'testhtml'?'addfilehtml':'addfile'),($action == 'testhtml'?'removefilehtml':'removefile'));
+		print $formmail->get_form('addfile','removefile');
 
 		print '<br>';
 	}

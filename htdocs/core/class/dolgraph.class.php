@@ -24,7 +24,18 @@
 
 
 /**
- * Parent class of graph classes
+ * Class to build graphs.
+ * Usage is: 
+ *    $dolgraph=new DolGraph();
+ *    $dolgraph->SetTitle($langs->transnoentities('Tracking_Projects_Pourcent').'<br>'.$langs->transnoentities('Tracking_IndicatorDefGraph').'%');
+ *    $dolgraph->SetMaxValue(50);
+ *    $dolgraph->SetData($data);
+ *    $dolgraph->setShowLegend(1);
+ *    $dolgraph->setShowPercent(1);
+ *    $dolgraph->SetType(array('pie'));
+ *    $dolgraph->setWidth('100%');
+ *    $dolgraph->draw('idofgraph');
+ *    print $dolgraph->show();
  */
 class DolGraph
 {
@@ -65,7 +76,7 @@ class DolGraph
 	var $bgcolorgrid=array(255,255,255);			// array(R,G,B)
 	var $datacolor;				// array(array(R,G,B),...)
 
-	private $_stringtoshow;      // To store string to output graph into HTML page
+	private $stringtoshow;      // To store string to output graph into HTML page
 
 
 	/**
@@ -600,7 +611,7 @@ class DolGraph
 
 
 	/**
-	 * Build a graph onto disk using Artichow library
+	 * Build a graph onto disk using Artichow library and return img string to it
 	 *
 	 * @param	string	$file    	Image file name to use if we save onto disk
 	 * @param	string	$fileurl	Url path to show image if saved onto disk
@@ -779,25 +790,26 @@ class DolGraph
 
 
 	/**
-	 * Build a graph onto disk using JFlot library. Input when calling this method should be:
-	 *	$this->data  = array(array(      0=>'labelxA',     1=>yA),  array('labelxB',yB)); or
+	 * Build a graph using JFlot library. Input when calling this method should be:
+	 *	$this->data  = array(array(0=>'labelxA',1=>yA),  array('labelxB',yB));
+	 *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // or when there is n series to show for each x
 	 *  $this->data  = array(array('label'=>'labelxA','data'=>yA),  array('labelxB',yB));			// TODO Syntax not supported. Removed when dol_print_graph_removed
-	 *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // when there is n series to show for each x
 	 *  $this->legend= array("Val1",...,"Valn");													// list of n series name
 	 *  $this->type  = array('bars',...'lines'); or array('pie')
 	 *  $this->mode = 'depth' ???
 	 *  $this->bgcolorgrid
 	 *  $this->datacolor
+	 *  $this->shownodatagraph
 	 *
 	 * @param	string	$file    	Image file name to use to save onto disk (also used as javascript unique id)
-	 * @param	string	$fileurl	Url path to show image if saved onto disk
+	 * @param	string	$fileurl	Url path to show image if saved onto disk. Never used here.
 	 * @return	void
 	 */
 	private function draw_jflot($file,$fileurl)
 	{
 		global $artichow_defaultfont;
 
-		dol_syslog(get_class($this)."::draw_jflot this->type=".join(',',$this->type));
+		dol_syslog(get_class($this)."::draw_jflot this->type=".join(',',$this->type)." this->MaxValue=".$this->MaxValue);
 
 		if (empty($this->width) && empty($this->height))
 		{
@@ -807,7 +819,7 @@ class DolGraph
 
 		$legends=array();
 		$nblot=count($this->data[0])-1;    // -1 to remove legend
-		if ($nblot < 0) dol_print_error('Bad value for property ->data. Must be set by mydolgraph->SetData before callinf mydolgrapgh->draw');
+		if ($nblot < 0) dol_print_error('', 'Bad value for property ->data. Must be set by mydolgraph->SetData before calling mydolgrapgh->draw');
 		$firstlot=0;
 		// Works with line but not with bars
 		//if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
@@ -849,7 +861,14 @@ class DolGraph
 
 		$this->stringtoshow ='<!-- Build using '.$this->_library.' -->'."\n";
 		if (! empty($this->title)) $this->stringtoshow.='<div align="center" class="dolgraphtitle'.(empty($this->cssprefix)?'':' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
+		if (! empty($this->shownographyet))
+		{
+		  $this->stringtoshow.='<div style="width:'.$this->width.'px;height:'.$this->height.'px;" class="nographyet"></div>';
+		  $this->stringtoshow.='<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
+		  return;
+		}
 		$this->stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($this->cssprefix)?'':' dolgraph'.$this->cssprefix).'"></div>'."\n";
+		
 		$this->stringtoshow.='<script id="'.$tag.'">'."\n";
 		$this->stringtoshow.='$(function () {'."\n";
 		$i=$firstlot;

@@ -61,23 +61,19 @@ $helpurl='';
 if ($type == '0')
 {
     $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-    //$title=$langs->trans("StatisticsOfProducts");
-    $title=$langs->trans("Statistics");
 }
 else if ($type == '1')
 {
     $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-    //$title=$langs->trans("StatisticsOfServices");
-    $title=$langs->trans("Statistics");
 }
 else
 {
     $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-    //$title=$langs->trans("StatisticsOfProductsOrServices");
-    $title=$langs->trans("Statistics");
 }
+$title=$langs->trans("Statistics");
 
-llxHeader('','',$helpurl);
+
+llxHeader('', $title, $helpurl);
 
 print load_fiche_titre($title, $mesg,'title_products.png');
 
@@ -107,7 +103,7 @@ $head[$h][1] = $title;
 $head[$h][2] = 'popularityprop';
 $h++;
 
-dol_fiche_head($head,'popularityprop',$langs->trans("Statistics"));
+dol_fiche_head($head, 'popularityprop', $langs->trans("Statistics"), -1);
 
 
 // Array of liens to show
@@ -140,7 +136,6 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    $var=True;
     while ($i < $num)
     {
         $objp = $db->fetch_object($resql);
@@ -170,7 +165,6 @@ print_liste_field_titre($langs->trans('Label'), $_SERVER["PHP_SELF"], 'p.label',
 print_liste_field_titre($langs->trans('NbOfQtyInProposals'), $_SERVER["PHP_SELF"], 'c', '', $param, 'align="right"', $sortfield, $sortorder);
 print "</tr>\n";
 
-$var=True;
 foreach($infoprod as $prodid => $vals)
 {
 	// Multilangs
@@ -190,8 +184,7 @@ foreach($infoprod as $prodid => $vals)
 		}
 	}
 
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	print "<tr>";
 	print '<td><a href="'.DOL_URL_ROOT.'/product/stats/card.php?id='.$prodid.'">';
 	if ($vals['type'] == 1) print img_object($langs->trans("ShowService"),"service");
 	else print img_object($langs->trans("ShowProduct"),"product");

@@ -28,31 +28,93 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 
+$langs->load("companies");
 $langs->load("bills");
+
+$id = GETPOST("facid","int");
+$ref=GETPOST("ref",'alpha');
 
 
 /*
  * View
  */
 
-llxHeader();
+$title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('Info');
+$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+llxHeader('', $title, $helpurl);
 
-$fac = new Facture($db);
-$fac->fetch($_GET["facid"]);
-$fac->info($_GET["facid"]);
+$object = new Facture($db);
+$object->fetch($id, $ref);
+$object->fetch_thirdparty();
 
-$soc = new Societe($db);
-$soc->fetch($fac->socid);
+$object->info($object->id);
 
-$head = facture_prepare_head($fac);
-dol_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"), 0, 'bill');
+$head = facture_prepare_head($object);
+dol_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"), -1, 'bill');
 
+$totalpaye = $object->getSommePaiement();
+
+// Invoice content
+
+$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+
+$morehtmlref='<div class="refidno">';
+// Ref customer
+$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
+$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+// Thirdparty
+$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+// Project
+if (! empty($conf->projet->enabled))
+{
+	$langs->load("projects");
+	$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+	if ($user->rights->facture->creer)
+	{
+		if ($action != 'classify')
+			//$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			$morehtmlref.=' : ';
+		if ($action == 'classify') {
+			//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+			$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+			$morehtmlref.='<input type="hidden" name="action" value="classin">';
+			$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+			$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			$morehtmlref.='</form>';
+		} else {
+			$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+		}
+	} else {
+		if (! empty($object->fk_project)) {
+			$proj = new Project($db);
+			$proj->fetch($object->fk_project);
+			$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+			$morehtmlref.=$proj->ref;
+			$morehtmlref.='</a>';
+		} else {
+			$morehtmlref.='';
+		}
+	}
+}
+$morehtmlref.='</div>';
+
+$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
+
+dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0);
+
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
+
+print '<br>';
 
 print '<table width="100%"><tr><td>';
-dol_print_object_info($fac);
+dol_print_object_info($object);
 print '</td></tr></table>';
 
 print '</div>';
+
+dol_fiche_end();
 
 llxFooter();
 $db->close();

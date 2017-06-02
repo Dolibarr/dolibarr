@@ -21,9 +21,9 @@
  */
 
 /**
- * \file htdocs/accountancy/admin/export.php
- * \ingroup Accounting Expert
- * \brief Setup page to configure accounting expert module
+ * \file 		htdocs/accountancy/admin/export.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		Setup page to configure accounting expert module
  */
 require '../../main.inc.php';
 
@@ -38,8 +38,10 @@ $langs->load("admin");
 $langs->load("accountancy");
 
 // Security check
-if (! $user->admin)
-	accessforbidden();
+if (empty($user->admin) || ! empty($user->rights->accountancy->chartofaccount))
+{
+    accessforbidden();
+}
 
 $action = GETPOST('action', 'alpha');
 
@@ -50,12 +52,14 @@ $main_option = array (
 
 $model_option = array (
 		'ACCOUNTING_EXPORT_SEPARATORCSV',
-		'ACCOUNTING_EXPORT_DATE',
+		'ACCOUNTING_EXPORT_DATE'
+		/*
 		'ACCOUNTING_EXPORT_PIECE',
 		'ACCOUNTING_EXPORT_GLOBAL_ACCOUNT',
 		'ACCOUNTING_EXPORT_LABEL',
 		'ACCOUNTING_EXPORT_AMOUNT',
-		'ACCOUNTING_EXPORT_DEVISE' 
+		'ACCOUNTING_EXPORT_DEVISE'
+		*/
 );
 
 /*
@@ -78,6 +82,9 @@ if ($action == 'update') {
 	if (! empty($modelcsv)) {
 		if (! dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
+		}
+		if ($modelcsv==AccountancyExport::$EXPORT_TYPE_QUADRATUS || $modelcsv==AccountancyExport::$EXPORT_TYPE_CIEL) {
+			dolibarr_set_const($db, 'ACCOUNTING_EXPORT_FORMAT', 'txt', 'chaine', 0, '', $conf->entity);
 		}
 	} else {
 		$error ++;
@@ -123,44 +130,26 @@ print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="update">';
 
-dol_fiche_head($head, 'export', $langs->trans("Configuration"), 0, 'cron');
+dol_fiche_head($head, 'export', $langs->trans("Configuration"), -1, 'cron');
 
 $var = true;
 
 /*
  * Main Options
  */
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">' . $langs->trans('MainOptions') . '</td>';
+print '<td colspan="3">' . $langs->trans('Options') . '</td>';
 print "</tr>\n";
 
 $var = ! $var;
 
-print '<tr ' . $bc[$var] . '>';
-print '<td width="50%">' . $langs->trans("Selectformat") . '</td>';
-if (! $conf->use_javascript_ajax) {
-	print '<td class="nowrap">';
-	print $langs->trans("NotAvailableWhenAjaxDisabled");
-	print "</td>";
-} else {
-	print '<td>';
-	$listformat = array (
-			'csv' => $langs->trans("csv"),
-			'txt' => $langs->trans("txt") 
-	);
-	print $form->selectarray("format", $listformat, $conf->global->ACCOUNTING_EXPORT_FORMAT, 0);
-	
-	print '</td>';
-}
-print "</td></tr>";
-
 $num = count($main_option);
 if ($num) {
 	foreach ( $main_option as $key ) {
-		$var = ! $var;
 		
-		print '<tr ' . $bc[$var] . ' class="value">';
+		print '<tr class="oddeven value">';
 		
 		// Param
 		$label = $langs->trans($key);
@@ -188,7 +177,7 @@ print '</tr>';
 
 $var = ! $var;
 
-print '<tr ' . $bc[$var] . '>';
+print '<tr class="oddeven">';
 print '<td width="50%">' . $langs->trans("Selectmodelcsv") . '</td>';
 if (! $conf->use_javascript_ajax) {
 	print '<td class="nowrap">';
@@ -216,13 +205,32 @@ if ($num2) {
 	print '<tr class="liste_titre">';
 	print '<td colspan="3">' . $langs->trans('OtherOptions') . '</td>';
 	print "</tr>\n";
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV > 1)
-		print '<tr><td colspan="2" bgcolor="red"><b>' . $langs->trans('OptionsDeactivatedForThisExportModel') . '</b></td></tr>';
 	
-	foreach ( $model_option as $key ) {
-		$var = ! $var;
-		
-		print '<tr ' . $bc[$var] . ' class="value">';
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV > 1)
+	{
+		print '<tr><td colspan="2" bgcolor="red"><b>' . $langs->trans('OptionsDeactivatedForThisExportModel') . '</b></td></tr>';
+	}
+	
+	print '<tr class="oddeven">';
+	print '<td width="50%">' . $langs->trans("Selectformat") . '</td>';
+	if (! $conf->use_javascript_ajax) {
+	    print '<td class="nowrap">';
+	    print $langs->trans("NotAvailableWhenAjaxDisabled");
+	    print "</td>";
+	} else {
+	    print '<td>';
+	    $listformat = array (
+	        'csv' => $langs->trans("csv"),
+	        'txt' => $langs->trans("txt")
+	    );
+	    print $form->selectarray("format", $listformat, $conf->global->ACCOUNTING_EXPORT_FORMAT, 0);
+	
+	    print '</td>';
+	}
+	print "</td></tr>";
+	
+	foreach ( $model_option as $key ) {		
+		print '<tr class="oddeven value">';
 		
 		// Param
 		$label = $langs->trans($key);

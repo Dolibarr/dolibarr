@@ -105,7 +105,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 *  @param  string		$type			'customer' or 'supplier'
 	 *  @return	int							>=0 if OK, <0 if KO
 	 */
-	function get_code($db, $societe, $type)
+	function get_code($db, $societe, $type='')
 	{
 		$i = 0;
 		$this->db = $db;

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,16 +71,39 @@ class DolibarrApiAccess implements iAuthenticate
 	{
 		global $db;
 
+		$login = '';
 		$stored_key = '';
 
 		$userClass = Defaults::$userIdentifierClass;
 
+		/*foreach ($_SERVER as $key => $val)
+		{
+		    dol_syslog($key.' - '.$val);
+		}*/
+		
+		// api key can be provided in url with parameter api_key=xxx or ni header with header DOLAPIKEY:xxx
+		$api_key = '';
 		if (isset($_GET['api_key'])) 
+		{
+		    // TODO Add option to disable use of api key on url. Return errors if used.
+		    $api_key = $_GET['api_key'];                         // For backward compatibility
+		}
+		if (isset($_GET['DOLAPIKEY'])) 
+		{
+		    // TODO Add option to disable use of api key on url. Return errors if used.
+		    $api_key = $_GET['DOLAPIKEY'];                     // With GET method
+		}
+		if (isset($_SERVER['HTTP_DOLAPIKEY'])) 
+		{
+		    $api_key = $_SERVER['HTTP_DOLAPIKEY'];     // With header method (recommanded)
+		}
+		
+		if ($api_key) 
 		{
 			$sql = "SELECT u.login, u.datec, u.api_key, ";
 			$sql.= " u.tms as date_modification, u.entity";
 			$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-			$sql.= " WHERE u.api_key = '".$db->escape($_GET['api_key'])."'";
+			$sql.= " WHERE u.api_key = '".$db->escape($api_key)."'";
 
 			$result = $db->query($sql);
 			if ($result)
@@ -95,11 +119,15 @@ class DolibarrApiAccess implements iAuthenticate
 				throw new RestException(503, 'Error when fetching user api_key :'.$db->error_msg);
 			}
 
-			if ( $stored_key != $_GET['api_key']) {
-				$userClass::setCacheIdentifier($_GET['api_key']);
+			if ($stored_key != $api_key) {
+				$userClass::setCacheIdentifier($api_key);
 				return false;
 			}
 
+			if (! $login)
+			{
+			    throw new RestException(503, 'Error when searching logn user fro mapi key');
+			}
 			$fuser = new User($db);
 			if(! $fuser->fetch('',$login)) {
 				throw new RestException(503, 'Error when fetching user :'.$fuser->error);
@@ -115,14 +143,14 @@ class DolibarrApiAccess implements iAuthenticate
         }
 		else
 		{
-		    throw new RestException(401, "Failed to login to API. No parameter 'api_key' provided");
-		    //dol_syslog("Failed to login to API. No parameter key provided", LOG_DEBUG);
-			//return false;
+		    throw new RestException(401, "Failed to login to API. No parameter 'DOLAPIKEY' on HTTP header (neither in URL).");
 		}
 
-        $userClass::setCacheIdentifier(static::$role);
-        Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
-        return in_array(static::$role, (array) static::$requires) || static::$role == 'admin';
+    $userClass::setCacheIdentifier(static::$role);
+    Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
+    $requirefortest = static::$requires;
+    if (! is_array($requirefortest)) $requirefortest=explode(',',$requirefortest);
+    return in_array(static::$role, (array) $requirefortest) || static::$role == 'admin';
 	}
 
 	/**

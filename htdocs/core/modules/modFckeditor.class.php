@@ -45,6 +45,7 @@ class modFckeditor extends DolibarrModules
 		$this->numero = 2000;
 
 		$this->family = "technic";
+		$this->module_position = 20;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Editeur WYSIWYG";
@@ -56,7 +57,7 @@ class modFckeditor extends DolibarrModules
 		$this->picto='list';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/fckeditor/temp","/fckeditor/image");
+		$this->dirs = array("/medias/temp","/medias/image");
 
 		// Config pages
 		$this->config_page_url = array("fckeditor.php");
@@ -64,7 +65,7 @@ class modFckeditor extends DolibarrModules
 		// Dependencies
 		$this->disabled = (in_array(constant('JS_CKEDITOR'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
 		$this->depends = array();
-		$this->requiredby = array();
+		$this->requiredby = array('modWebsites');
 
 		// Constants
 		$this->const = array();
@@ -74,7 +75,7 @@ class modFckeditor extends DolibarrModules
         $this->const[3]  = array("FCKEDITOR_ENABLE_DETAILS","yesno","1","WYSIWIG for products details lines for all entities");
         $this->const[4]  = array("FCKEDITOR_ENABLE_USERSIGN","yesno","1","WYSIWIG for user signature");
         $this->const[5]  = array("FCKEDITOR_ENABLE_MAIL","yesno","1","WYSIWIG for products details lines for all entities");
-		$this->const[6]  = array("FCKEDITOR_SKIN","string","moono","Skin by default for fckeditor");
+		$this->const[6]  = array("FCKEDITOR_SKIN","string","moono-lisa","Skin by default for fckeditor");
 
 		// Boxes
 		$this->boxes = array();

@@ -81,74 +81,22 @@ if ($id)
  * Actions
  */
 
-// Envoi fichier
-if ($_POST["sendit"] && !empty($conf->global->MAIN_UPLOAD_DOC)) {
-    if ($object->fetch($id)) {
-
-        $upload_dir = $conf->bank->dir_output . "/" . $object->ref;
-
-        if (dol_mkdir($upload_dir) >= 0) {
-            $resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'],
-                    $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),
-                    0, 0, $_FILES['userfile']['error']);
-            if (is_numeric($resupload) && $resupload > 0) {
-                if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name'])
-                        == 1) {
-                    // Create small thumbs for image (Ratio is near 16/9)
-                    // Used on logon for example
-                    $imgThumbSmall = vignette($upload_dir . "/" . $_FILES['userfile']['name'],
-                            $maxwidthsmall, $maxheightsmall, '_small', $quality,
-                            "thumbs");
-                    // Create mini thumbs for image (Ratio is near 16/9)
-                    // Used on menu or for setup page for example
-                    $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'],
-                            $maxwidthmini, $maxheightmini, '_mini', $quality,
-                            "thumbs");
-                }
-                $mesg = '<div class="ok">' . $langs->trans("FileTransferComplete") . '</div>';
-            }
-            else {
-                $langs->load("errors");
-                if ($resupload < 0) { // Unknown error
-                    $mesg = '<div class="error">' . $langs->trans("ErrorFileNotUploaded") . '</div>';
-                }
-                else if (preg_match('/ErrorFileIsInfectedWithAVirus/',
-                                $resupload)) { // Files infected by a virus
-                    $mesg = '<div class="error">' . $langs->trans("ErrorFileIsInfectedWithAVirus") . '</div>';
-                }
-                else { // Known error
-                    $mesg = '<div class="error">' . $langs->trans($resupload) . '</div>';
-                }
-            }
-        }
-    }
+if ($object->id > 0)
+{
+    $object->fetch_thirdparty();
+    $upload_dir = $conf->bank->dir_output . "/" . dol_sanitizeFileName($object->ref);
 }
 
-// Delete
-else if ($action == 'confirm_deletefile' && $confirm == 'yes') {
-    if ($object->fetch($id)) {
-
-        $upload_dir = $conf->bank->dir_output;
-        $file = $upload_dir . '/' . GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-        
-            $ret = dol_delete_file($file, 0, 0, 0, $object);
-            if ($ret) {
-                setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-            } else {
-                setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-            }
-            
-        Header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
-        exit;
-    }
-}
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
  * View
  */
 
-llxHeader();
+$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Documents");
+$helpurl = "";
+llxHeader('',$title,$helpurl);
 
 $form = new Form($db);
 
@@ -159,8 +107,7 @@ if ($id > 0 || !empty($ref)) {
 
         // Onglets
         $head = bank_prepare_head($object);
-        dol_fiche_head($head, 'document', $langs->trans("FinancialAccount"), 0,
-                'account');
+        dol_fiche_head($head, 'document', $langs->trans("FinancialAccount"), -1, 'account');
 
 
         // Construit liste des fichiers
@@ -172,51 +119,29 @@ if ($id > 0 || !empty($ref)) {
             $totalsize+=$file['size'];
         }
 
+        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
-        print '<table class="border"width="100%">';
-
-        // Ref
-        // Ref
-        print '<tr><td valign="top" width="25%">' . $langs->trans("Ref") . '</td>';
-        print '<td colspan="3">';
-        print $form->showrefnav($object, 'ref', '', 1, 'ref');
-        print '</td></tr>';
-
-        // Label
-        print '<tr><td valign="top">' . $langs->trans("Label") . '</td>';
-        print '<td colspan="3">' . $object->label . '</td></tr>';
-
-        // Status
-        print '<tr><td valign="top">' . $langs->trans("Status") . '</td>';
-        print '<td colspan="3">' . $object->getLibStatut(4) . '</td></tr>';
-        print '<tr><td>' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . count($filearray) . '</td></tr>';
+        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+        
+        
+        print '<div class="fichecenter">';
+        print '<div class="underbanner clearboth"></div>';
+       
+        print '<table class="border" width="100%">';
+        print '<tr><td class="titlefield">' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . count($filearray) . '</td></tr>';
         print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' . $totalsize . ' ' . $langs->trans("bytes") . '</td></tr>';
         print "</table>\n";
-        print "</div>\n";
 
-        dol_htmloutput_mesg($mesg, $mesgs);
+        print '</div>';
+        
+        dol_fiche_end();
 
-        /*
-         * Confirmation suppression fichier
-         */
-        if ($action == 'delete') {
-            $ret = $form->form_confirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode($_GET["urlfile"]),
-                    $langs->trans('DeleteFile'),
-                    $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile',
-                    '', 0, 1);
-            if ($ret == 'html')
-                print '<br>';
-        }
-
-        // Affiche formulaire upload
-        $formfile = new FormFile($db);
-        $formfile->form_attach_new_file(DOL_URL_ROOT . '/compta/bank/document.php?id=' . $object->id,
-                '', 0, 0, $user->rights->banque, 50, $object);
-
-
-        // List of document
+        
+        $modulepart = 'bank';
+        $permission = $user->rights->banque->modifier;
+        $permtoedit = $user->rights->banque->modifier;
         $param = '&id=' . $object->id;
-        $formfile->list_of_documents($filearray, $object, 'bank', $param);
+        include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
     }
     else {
         dol_print_error($db);
@@ -224,6 +149,7 @@ if ($id > 0 || !empty($ref)) {
 }
 else {
     Header('Location: index.php');
+    exit;
 }
 
 

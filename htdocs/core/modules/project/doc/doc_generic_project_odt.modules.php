@@ -108,40 +108,38 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *
 	 * @param   Project			$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
+     * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
-	function get_substitutionarray_object($object,$outputlangs)
+	function get_substitutionarray_object($object,$outputlangs,$array_key='object')
 	{
 		global $conf;
 
 		$resarray=array(
-		'object_id'=>$object->id,
-		'object_ref'=>$object->ref,
-		'object_title'=>$object->title,
-		'object_description'=>$object->description,
-		'object_date_creation'=>dol_print_date($object->date_c,'day'),
-		'object_date_modification'=>dol_print_date($object->date_m,'day'),
-		'object_date_start'=>dol_print_date($object->date_start,'day'),
-		'object_date_end'=>dol_print_date($object->date_end,'day'),
-		'object_note_private'=>$object->note_private,
-		'object_note_public'=>$object->note_public,
-		'object_public'=>$object->public,
-		'object_statut'=>$object->getLibStatut()
+		    $array_key.'_id'=>$object->id,
+            $array_key.'_ref'=>$object->ref,
+            $array_key.'_title'=>$object->title,
+            $array_key.'_description'=>$object->description,
+            $array_key.'_date_creation'=>dol_print_date($object->date_c,'day'),
+            $array_key.'_date_modification'=>dol_print_date($object->date_m,'day'),
+            $array_key.'_date_start'=>dol_print_date($object->date_start,'day'),
+            $array_key.'_date_end'=>dol_print_date($object->date_end,'day'),
+            $array_key.'_note_private'=>$object->note_private,
+            $array_key.'_note_public'=>$object->note_public,
+            $array_key.'_public'=>$object->public,
+            $array_key.'_statut'=>$object->getLibStatut()
 		);
 
 		// Retrieve extrafields
-		if (is_array($object->array_options) && count($object->array_options))
-		{
-			$extrafieldkey=$object->element;
+		$extrafieldkey=$object->element;
 
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
-			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
-			$object->fetch_optionals($object->id,$extralabels);
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
+		$object->fetch_optionals($object->id,$extralabels);
 
-			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
-		}
-
+		$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
+		
 		return $resarray;
 	}
 
@@ -184,17 +182,50 @@ class doc_generic_project_odt extends ModelePDFProjects
 	function get_substitutionarray_project_contacts($contact,$outputlangs)
 	{
 		global $conf;
+		$pc='projcontacts_'; // prefix to avoid typos
 
-		return array(
-		'projcontacts_id'=>$contact['id'],
-		'projcontacts_rowid'=>$contact['rowid'],
-		'projcontacts_role'=>$contact['libelle'],
-		'projcontacts_lastname'=>$contact['lastname'],
-		'projcontacts_firstname'=>$contact['firstname'],
-		'projcontacts_fullcivname'=>$contact['fullname'],
-		'projcontacts_socname'=>$contact['socname'],
-		'projcontacts_email'=>$contact['email']
-		);
+		$ret = array(
+			$pc.'id'=>$contact['id'],
+			$pc.'rowid'=>$contact['rowid'],
+			$pc.'role'=>$contact['libelle'],
+			$pc.'lastname'=>$contact['lastname'],
+			$pc.'firstname'=>$contact['firstname'],
+			$pc.'civility'=>$contact['civility'],
+			$pc.'fullcivname'=>$contact['fullname'],
+			$pc.'socname'=>$contact['socname'],
+			$pc.'email'=>$contact['email']
+			);
+
+		if ($contact['source']=='external') {
+			$ret[$pc.'isInternal'] = ''; // not internal
+			
+			$ct = new Contact($this->db);
+			$ct->fetch($contact['id']);
+			$ret[$pc.'phone_pro'] = $ct->phone_pro;
+			$ret[$pc.'phone_perso'] = $ct->phone_perso;
+			$ret[$pc.'phone_mobile'] = $ct->phone_mobile;
+			
+			// fetch external user extrafields
+			require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+			$extrafields=new ExtraFields($this->db);
+			$extralabels=$extrafields->fetch_name_optionals_label($ct->table_element, true);
+			$extrafields_num = $ct->fetch_optionals($ct->id, $extralabels);
+			//dol_syslog(get_class($this)."::get_substitutionarray_project_contacts: ===== Number of Extrafields found: ".$extrafields_num, LOG_DEBUG);
+			foreach($ct->array_options as $efkey => $efval) {
+				dol_syslog(get_class($this)."::get_substitutionarray_project_contacts: +++++ Extrafield ".$efkey." => ".$efval, LOG_DEBUG);
+				$ret[$pc.$efkey] = $efval; // add nothing else because it already comes as 'options_XX'
+			}
+		} elseif ($contact['source']=='internal') {
+			$ret[$pc.'isInternal'] = '1'; // this is an internal user
+		
+			$ct = new User($this->db);
+			$ct->fetch($contact['id']);
+			$ret[$pc.'phone_pro'] = $ct->office_phone;
+			$ret[$pc.'phone_perso'] = '';
+			$ret[$pc.'phone_mobile'] = $ct->user_mobile;
+			// do internal users have extrafields ?
+		}
+		return $ret;
 	}
 
 	/**
@@ -273,6 +304,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		return array(
 		'tasktime_rowid'=>$tasktime['rowid'],
 		'tasktime_task_date'=>dol_print_date($tasktime['task_date'],'day'),
+		'tasktime_task_duration_sec'=>$tasktime['task_duration'],
 		'tasktime_task_duration'=>convertSecondToTime($tasktime['task_duration'],'all'),
 		'tasktime_note'=>$tasktime['note'],
 		'tasktime_fk_user'=>$tasktime['fk_user'],
@@ -357,7 +389,25 @@ class doc_generic_project_odt extends ModelePDFProjects
 		$texte.= '<br></div></div>';
 
 		// Scan directories
-		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
+		$nbofiles=count($listoffiles);
+		if (! empty($conf->global->PROJECT_ADDON_PDF_ODT_PATH))
+		{
+			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>';
+			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
+			$texte.=$nbofiles;
+			//$texte.=$nbofiles?'</a>':'';
+			$texte.='</b>';
+		}
+
+		if ($nbofiles)
+		{
+   			$texte.='<div id="div_'.get_class($this).'" class="hidden">';
+   			foreach($listoffiles as $file)
+   			{
+                $texte.=$file['name'].'<br>';
+   			}
+   			$texte.='<div id="div_'.get_class($this).'">';
+		}
 
 		$texte.= '</td>';
 
@@ -466,6 +516,22 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 				dol_mkdir($conf->projet->dir_temp);
 
+				// If PROJECTLEADER contact defined on project, we use it
+				$usecontact=false;
+				$arrayidcontact=$object->getIdContact('external','PROJECTLEADER');
+				if (count($arrayidcontact) > 0)
+				{
+					$usecontact=true;
+					$result=$object->fetch_contact($arrayidcontact[0]);
+				}
+
+				// Recipient name
+				if (! empty($usecontact))
+				{
+        			// if we have a PROJECTLEADER contact and we dont use it as recipient we store the contact object for later use
+        			$contactobject = $object->contact;
+				}
+
 				$socobject=$object->thirdparty;
 
 				// Make substitution
@@ -511,8 +577,12 @@ class doc_generic_project_odt extends ModelePDFProjects
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
+                // retrieve contact information for use in project as contact_xxx tags
+        		$array_project_contact = array();
+        		if ($usecontact)
+            			$array_project_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
-				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other);
+				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_project_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook
 				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
@@ -672,7 +742,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						$listtasksfiles = $listlines->__get('tasksfiles');
 
 						$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref).'/'.dol_sanitizeFileName($task->ref);
-						$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$','name',SORT_ASC,1);
+						$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$','name',SORT_ASC,1);
 
 
 						foreach ($filearray as $filedetail)
@@ -716,7 +786,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 					$listlines = $odfHandler->setSegment('projectfiles');
 
 					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
-					$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$','name',SORT_ASC,1);
+					$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$','name',SORT_ASC,1);
 
 					foreach ($filearray as $filedetail)
 					{

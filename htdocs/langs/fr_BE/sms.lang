@@ -9,4 +9,3 @@ ShowSms=Montrer SMS
 SmsStatusSentPartialy=Partiellement envoyé
 SmsStatusSentCompletely=Complètement envoyé
 SmsSuccessfulySent=SMS envoyé avec succès (du %s au %s)
-NbOfRecipients=Nombre d'objectifs

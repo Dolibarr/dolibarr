@@ -30,14 +30,7 @@ create table llx_tva
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   note            text,
   fk_bank         integer,  
-  fk_user_creat   integer,                    -- utilisateur qui a cree l'info
-  fk_user_modif   integer                     -- utilisateur qui a modifi� l'info
+  fk_user_creat   integer,                    -- utilisateur who create record
+  fk_user_modif   integer,                    -- utilisateur who modify record
+  import_key      varchar(14)
 )ENGINE=innodb;
-
--- 
--- List of codes for the field entity
---
--- 1 : first company vat
--- 2 : second company vat
--- 3 : etc...
---

@@ -1,35 +1,31 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-MenuResourcePlanning=Resource planning
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=Zdroje
+MenuResourceAdd=Nový zdroj
+DeleteResource=Zmazať zdro
+ConfirmDeleteResourceElement=Potvrďte zmazanie zdroja pre túto časť
+NoResourceInDatabase=Žiadne zdroje
+NoResourceLinked=Žiadne zdroje poriradené
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcePageIndex=Zoznam zdojov
+ResourceSingular=Zdroj
+ResourceCard=Karta Zdroja
+AddResource=Vytvoriť zdroj
+ResourceFormLabel_ref=Meno zdroja
+ResourceType=Typ zdroja
+ResourceFormLabel_description=Popis zdroja
 
-ResourcesLinkedToElement=Resources linked to element
+ResourcesLinkedToElement=Zdroje priradené pre časť
 
-ShowResource=Show resource
-ShowResourcePlanning=Show resource planning
-GotoDate=Go to date
+ShowResource=Zobraziť zdroj
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ResourceElementPage=Čiastočné zdroje
+ResourceCreatedWithSuccess=Zdroj úspešne vytvorený
+RessourceLineSuccessfullyDeleted=Riadok zdroja úspešne zmazaný
+RessourceLineSuccessfullyUpdated=Riadok zdroja úspešne aktualizovaný
+ResourceLinkedWithSuccess=Rdroj úspešne priradený
 
-TitleResourceCard=Resource card
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+ConfirmDeleteResource=Potvrďte zmazanie zdroja
+RessourceSuccessfullyDeleted=Zdroj úspešne zmazaný
+DictionaryResourceType=Typ zdroja
 
-SelectResource=Select resource
+SelectResource=Vybrať zdroj

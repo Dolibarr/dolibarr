@@ -82,10 +82,8 @@ if (empty($date_start) || empty($date_end)) {// We define date_start and date_en
 	}
 }
 
-$min = GETPOST("min");
-if (empty($min)) {
-	$min = 0;
-}
+$min = price2num(GETPOST("min"));
+if (empty($min)) $min = 0;
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit
@@ -250,9 +248,11 @@ $parameters["mode"] = $modetax;
 $parameters["start"] = $date_start;
 $parameters["end"] = $date_end;
 $parameters["direction"] = 'sell';
+$parameters["type"] = 'vat';
+
 // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('externalbalance'));
-$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 if (is_array($coll_list)) {
 	$var=true;
@@ -260,7 +260,7 @@ if (is_array($coll_list)) {
 	$i = 1;
 	foreach ($coll_list as $coll) {
 		if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-			$var=!$var;
+			
 			$intra = str_replace($find,$replace,$coll->tva_intra);
 			if(empty($intra)) {
 				if($coll->assuj == '1') {
@@ -270,7 +270,7 @@ if (is_array($coll_list)) {
 					$intra = '';
 				}
 			}
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">'.$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->name=$coll->name;
@@ -320,7 +320,7 @@ if (is_array($coll_list)) {
 //print load_fiche_titre($vatsup);
 
 //print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
+print "<tr class=\"liste_titre liste_titre_topborder\">";
 print '<td align="left">'.$langs->trans("Num")."</td>";
 print '<td align="left">'.$langs->trans("Supplier")."</td>";
 print "<td>".$langs->trans("VATIntra")."</td>";
@@ -333,14 +333,14 @@ $company_static=new Societe($db);
 $coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
 
 $parameters["direction"] = 'buy';
-$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if (is_array($coll_list)) {
 	$var=true;
 	$total = 0;  $totalamount = 0;
 	$i = 1;
 	foreach ($coll_list as $coll) {
 		if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-			$var=!$var;
+			
 			$intra = str_replace($find,$replace,$coll->tva_intra);
 			if (empty($intra)) {
 				if ($coll->assuj == '1') {
@@ -350,7 +350,7 @@ if (is_array($coll_list)) {
 					$intra = '';
 				}
 			}
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">'.$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->name=$coll->name;

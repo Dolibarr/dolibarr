@@ -3,7 +3,6 @@ PaypalSetup=Configuration module PayPal
 PaypalDesc=Ce module permet d'offrir une page de paiement via le prestataire <a href="http://www.paypal.com" target="_blank">Paypal</a> pour réaliser un paiement quelconque ou un paiement par rapport à un objet Dolibarr (facture, commande…)
 PaypalOrCBDoPayment=Poursuivre le paiement par carte ou par Paypal
 PaypalDoPayment=Poursuivre le paiement par Paypal
-PaypalCBDoPayment=Poursuivre le paiement par carte
 PAYPAL_API_SANDBOX=Mode test/bac à sable (sandbox)
 PAYPAL_API_USER=Nom utilisateur API
 PAYPAL_API_PASSWORD=Mot de passe utilisateur API
@@ -15,7 +14,6 @@ PaypalModeOnlyPaypal=PayPal seul
 PAYPAL_CSS_URL=URL optionnelle de la feuille de style CSS de la page de paiement
 ThisIsTransactionId=Voici l'identifiant de la transaction: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Ajouter l'URL de paiement Paypal lors de l'envoi d'un document par email
-PAYPAL_IPN_MAIL_ADDRESS=Adresse email pour les notifications instantanées de paiement (IPN)
 PredefinedMailContentLink=Vous pouvez cliquer sur le lien sécurisé ci-dessous pour effectuer votre paiement (Paypal) si ce dernier n'a pas encore été fait.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Vous êtes actuellement dans le mode "sandbox"
 NewPaypalPaymentReceived=Nouveau paiement Paypal reçu

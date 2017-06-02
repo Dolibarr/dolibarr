@@ -227,7 +227,7 @@ if (! isset($_SESSION['mois'])) $_SESSION['mois']= date('n');
 if (! isset($_SESSION['annee'])) $_SESSION['annee']= date('Y');
 
 //mise a jour des valeurs de session si bouton retour a aujourd'hui
-if ((!issetAndNoEmpty('choixjourajout')) && !issetAndNoEmpty('choixjourretrait') || issetAndNoEmpty('retourmois')){
+if (!issetAndNoEmpty('choixjourajout') && !issetAndNoEmpty('choixjourretrait') && (issetAndNoEmpty('retourmois') || issetAndNoEmpty('retourmois_x'))) {
 	$_SESSION["jour"]=date("j");
 	$_SESSION["mois"]=date("n");
 	$_SESSION["annee"]=date("Y");

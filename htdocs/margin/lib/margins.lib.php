@@ -59,7 +59,7 @@ function marges_admin_prepare_head()
 function marges_prepare_head()
 {
 	global $langs, $conf, $user;
-	$langs->load("marges@marges");
+	$langs->load("margins");
 
 	$h = 0;
 	$head = array();
@@ -109,7 +109,7 @@ function marges_prepare_head()
  * @param 	float	$localtax2_tx		Vat rate special 2 (not used)
  * @param 	int		$fk_pa				Id of buying price (prefer set this to 0 and provide $paht instead. With id, buying price may have change)
  * @param 	float	$paht				Buying price without tax
- * @return	array						Array of margin info
+ * @return	array						Array of margin info (buying price, marge rate, marque rate)
  */
 function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, $fk_pa, $paht)
 {
@@ -118,14 +118,12 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 	$marge_tx_ret='';
 	$marque_tx_ret='';
 
-	if ($fk_pa > 0) {
+	if ($fk_pa > 0 && empty($paht)) {
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$product = new ProductFournisseur($db);
 		if ($product->fetch_product_fournisseur_price($fk_pa))
 		{
 			$paht_ret = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
-			if ($conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
-				$paht_ret += $product->fourn_unitcharges;
 		}
 		else
 		{
@@ -134,7 +132,7 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 	}
 	else
 	{
-		$paht_ret	= $paht;
+		$paht_ret = $paht;
 	}
 
 	// Calculate selling unit price including line discount

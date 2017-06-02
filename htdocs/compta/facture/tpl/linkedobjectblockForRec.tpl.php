@@ -24,45 +24,37 @@
 <?php
 
 global $user;
+global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
-echo '<br>';
-print load_fiche_titre($langs->trans("RelatedRecurringCustomerInvoices"), '', '');
-?>
-<table class="noborder allwidth">
-<tr class="liste_titre">
-	<td><?php echo $langs->trans("Ref"); ?></td>
-	<!-- <td align="center"><?php echo $langs->trans("RefCustomer"); ?></td>
-	<td align="center"><?php echo $langs->trans("Date"); ?></td>-->
-	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
-	<!-- <td align="right"><?php echo $langs->trans("Status"); ?></td> -->
-	<td></td>
-</tr>
-<?php
+
+$total=0; $ilink=0;
 $var=true;
-$total=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
-	$var=!$var;
+    $ilink++;
+    
+    $trclass=($var?'pair':'impair');
+    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
 <tr <?php echo $GLOBALS['bc'][$var]; ?> >
+    <td><?php echo $langs->trans("RepeatableInvoice"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
-	<!-- <td align="center"><?php echo $objectlink->ref_client; ?></td>
-	<td align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td> -->
+	<td align="center"></td>
+	<td align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
 	<td align="right"><?php
 		if ($user->rights->facture->lire) {
 			$total = $total + $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} ?></td>
-	<!-- <td align="right"><?php echo $objectlink->getLibStatut(3); ?></td> -->
+	<td align="right"></td>
 	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
 </tr>
 <?php
 }
 ?>
-</table>
 
 <!-- END PHP TEMPLATE -->

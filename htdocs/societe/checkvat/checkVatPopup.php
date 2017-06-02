@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,24 +34,29 @@ $WS_DOL_URL_WSDL='http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl
 $WS_METHOD ='checkVat';
 
 
-top_htmlhead("", $langs->trans("VATIntraCheckableOnEUSite"));
-print '<body style="margin: 10px">';
+
+$conf->dol_hide_topmenu=1;
+$conf->dol_hide_leftmenu=1;
+
+llxHeader('', $langs->trans("VATIntraCheckableOnEUSite"));
+
 print '<div>';
 print '<div>';
 
 print load_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"),'','title_setup');
 
+$vatNumber = GETPOST("vatNumber",'alpha');
 
-if (! $_REQUEST["vatNumber"])
+if (! $vatNumber)
 {
 	print '<br>';
 	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired",$langs->trans("VATIntraShort")).'</font><br>';
 }
 else
 {
-	$_REQUEST["vatNumber"] = preg_replace('/\^\w/', '', $_REQUEST["vatNumber"]);
-	$countryCode=substr($_REQUEST["vatNumber"],0,2);
-	$vatNumber=substr($_REQUEST["vatNumber"],2);
+	$vatNumber = preg_replace('/\^\w/', '', $vatNumber);
+	$countryCode=substr($vatNumber,0,2);
+	$vatNumber=substr($vatNumber,2);
 	
 	print '<b>'.$langs->trans("Country").'</b>: '.$countryCode.'<br>';
 	print '<b>'.$langs->trans("VATIntraShort").'</b>: '.$vatNumber.'<br>';
@@ -120,7 +125,7 @@ else
 	{
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		print $langs->trans("VATIntraSyntaxIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
-		print $langs->trans("VATIntraValueIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
+		print $langs->trans("ValueIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
 		//$messagetoshow=$soapclient->response;
 	}
 	else
@@ -128,7 +133,7 @@ else
 		// Syntaxe ok
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		print $langs->trans("VATIntraSyntaxIsValid").': <font class="ok">'.$langs->trans("Yes").'</font><br>';
-		print $langs->trans("VATIntraValueIsValid").': ';
+		print $langs->trans("ValueIsValid").': ';
 		if (preg_match('/MS_UNAVAILABLE/i',$result['faultstring']))
 		{
 			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE",$countryCode).'</font><br>';

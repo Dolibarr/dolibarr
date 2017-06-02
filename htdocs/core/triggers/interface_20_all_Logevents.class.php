@@ -63,7 +63,8 @@ class InterfaceLogevents extends DolibarrTriggers
         if ($action == 'USER_LOGIN')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-
+            
+            $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
             $text="(UserLogged,".$object->login.")";
             $text.=(empty($object->trigger_mesg)?'':' - '.$object->trigger_mesg);
@@ -82,6 +83,7 @@ class InterfaceLogevents extends DolibarrTriggers
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
+            $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
             $text="(UserLogoff,".$object->login.")";
             $desc="(UserLogoff,".$object->login.")";
@@ -173,6 +175,9 @@ class InterfaceLogevents extends DolibarrTriggers
         }
 */
 
+		// Add more information into desc from the context property
+		if (! empty($desc) && ! empty($object->context['audit'])) $desc.=' - '.$object->context['audit'];
+		
         // Add entry in event table
 		include_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
@@ -196,8 +201,6 @@ class InterfaceLogevents extends DolibarrTriggers
             dol_syslog(get_class($this).": ".$this->error, LOG_ERR);
             return -1;
         }
-
-		return 0;
     }
 
 }

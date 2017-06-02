@@ -92,6 +92,19 @@ class MenuManager
 			$idsel='home';
 			$classname='class="tmenusel"';
 
+			// Show/Hide vertical menu
+			if ($mode != 'jmobile' && $mode != 'topnb' && (GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+			    $showmode=1;
+			    $classname = 'class="tmenu menuhider"';
+			    $idsel='menu';
+			
+			    if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
+			    if (empty($noout)) print_text_menu_entry('', 1, '#', $id, $idsel, $classname, $atarget);
+			    if (empty($noout)) print_end_menu_entry($showmode);
+			    $menu->add('#', '', 0, $showmode, $atarget, "xxx", '');
+			}			
+			
 			if (empty($noout)) print_start_menu_entry_empty($idsel, $classname, $showmode);
 			if (empty($noout)) print_text_menu_entry_empty($langs->trans("Home"), 1, dol_buildpath('/index.php',1).'?mainmenu=home&amp;leftmenu=', $id, $idsel, $classname, $this->atarget);
 			if (empty($noout)) print_end_menu_entry_empty($showmode);
@@ -147,14 +160,21 @@ class MenuManager
 					if (empty($this->menu->liste[$i]['level']))
 					{
 			    		$altok++;
-						$blockvmenuopened=true;
+    					$blockvmenuopened=true;
+						$lastopened=true;
+        				for($j = ($i + 1); $j < $num; $j++)
+        				{
+        				    if (empty($menu_array[$j]['level'])) $lastopened=false;
+        				}
+        				$alt = 0;   // For menu manager "empty", we force to not have blockvmenufirst defined
+        				$lastopened = 1; // For menu manager "empty", we force to not have blockvmenulast defined
 						if (($alt%2==0))
 						{
-							print '<div class="blockvmenuimpair'.($alt == 1 ? ' blockvmenufirst':'').'">'."\n";
+							print '<div class="blockvmenuimpair blockvmenuunique'.($lastopened?' blockvmenulast':'').($alt == 1 ? ' blockvmenufirst':'').'">'."\n";
 						}
 						else
 						{
-							print '<div class="blockvmenupair'.($alt == 1 ? ' blockvmenufirst':'').'">'."\n";
+							print '<div class="blockvmenupair blockvmenuunique'.($lastopened?' blockvmenulast':'').($alt == 1 ? ' blockvmenufirst':'').'">'."\n";
 						}
 					}
 
@@ -224,8 +244,8 @@ class MenuManager
 		{
 			foreach($this->topmenu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 			{
-				print '<ul class="ulmenu" data-role="listview" data-inset="true">';
-				print '<li data-role="list-dividerxxx" class="lilevel0">';
+				print '<ul class="ulmenu" data-inset="true">';
+				print '<li class="lilevel0">';
 				if ($val['enabled'] == 1)
 				{
 					$relurl=dol_buildpath($val['url'],1);
@@ -249,7 +269,7 @@ class MenuManager
         			if ($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('home','tools')))
 					{
 						// We add sub entry
-						print '<li data-role="list-dividerxxx"><a href="'.$relurl.'">'.$langs->trans("MainArea").'-'.$val['titre'].'</a></li>'."\n";
+						print '<li><a href="'.$relurl.'">'.$langs->trans("MainArea").'-'.$val['titre'].'</a></li>'."\n";
 					}
 					foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 					{
@@ -257,7 +277,7 @@ class MenuManager
 						$relurl2=preg_replace('/__LOGIN__/',$user->login,$relurl2);
 						$relurl2=preg_replace('/__USERID__/',$user->id,$relurl2);
 						//var_dump($val2);
-						print '<li'.($val2['level']==0?' data-role="list-dividerxxx"':'').'><a href="'.$relurl2.'">'.$val2['titre'].'</a></li>'."\n";
+						print '<li><a href="'.$relurl2.'">'.$val2['titre'].'</a></li>'."\n";
 					}
 					//var_dump($submenu);
 					print '</ul>';
@@ -287,8 +307,10 @@ class MenuManager
  */
 function print_start_menu_array_empty()
 {
+    global $conf;
+    
 	print '<div class="tmenudiv">';
-	print '<ul class="tmenu">';
+	print '<ul class="tmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'':' title="Top menu"').'>';
 }
 
 /**
@@ -304,7 +326,7 @@ function print_start_menu_entry_empty($idsel,$classname,$showmode)
 	if ($showmode)
 	{
 		print '<li '.$classname.' id="mainmenutd_'.$idsel.'">';
-		print '<div class="tmenuleft"></div><div class="tmenucenter">';
+		print '<div class="tmenuleft tmenusep"></div><div class="tmenucenter">';
 	}
 }
 
@@ -326,7 +348,7 @@ function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $class
 
 	if ($showmode == 1)
 	{
-		print '<a class="tmenuimage" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
+		print '<a class="tmenuimage" tabindex="-1" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
 		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
 		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';

@@ -2,7 +2,7 @@
 namespace Luracast\Restler\UI;
 
 use Luracast\Restler\CommentParser;
-use Luracast\Restler\Defaults;
+use Luracast\Restler\Data\Text;
 use Luracast\Restler\Restler;
 use Luracast\Restler\Routes;
 use Luracast\Restler\Scope;
@@ -19,18 +19,13 @@ use Luracast\Restler\Util;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc5
+ * @version    3.0.0rc6
  */
 class Nav
 {
+    protected static $tree = array();
     public static $root = 'home';
-    /**
-     * @var null|callable if the api methods are under access control mechanism
-     * you can attach a function here that returns true or false to determine
-     * visibility of a protected api method. this function will receive method
-     * info as the only parameter.
-     */
-    public static $accessControlFunction = null;
+
     /**
      * @var array all paths beginning with any of the following will be excluded
      * from documentation. if an empty string is given it will exclude the root
@@ -40,169 +35,188 @@ class Nav
      * @var array prefix additional menu items with one of the following syntax
      *            [$path => $text]
      *            [$path]
-     *            [$path => ['text' => $text, 'url' => $url]]
+     *            [$path => ['text' => $text, 'url' => $url, 'trail'=> $trail]]
      */
     public static $prepends = array();
     /**
      * @var array suffix additional menu items with one of the following syntax
      *            [$path => $text]
      *            [$path]
-     *            [$path => ['text' => $text, 'url' => $url]]
+     *            [$path => ['text' => $text, 'url' => $url, 'trail'=> $trail]]
      */
     public static $appends = array();
 
     public static $addExtension = true;
 
     protected static $extension = '';
+    protected static $activeTrail = '';
+    protected static $url;
 
-    public static function get($for = '', $activeUrl = null)
+    public static function get($for = '', $activeTrail = null)
     {
-        if (!static::$accessControlFunction && Defaults::$accessControlFunction)
-            static::$accessControlFunction = Defaults::$accessControlFunction;
-        /** @var Restler $restler */
-        $restler = Scope::get('Restler');
-        if (static::$addExtension)
-            static::$extension = '.' . $restler->responseFormat->getExtension();
-        if (is_null($activeUrl))
-            $activeUrl = $restler->url;
-
-        $tree = array();
-        foreach (static::$prepends as $path => $text) {
-            $url = null;
-            if (is_array($text)) {
-                if (isset($text['url'])) {
-                    $url = $text['url'];
-                    $text = $text['text'];
-                } else {
-                    $url = current(array_keys($text));
-                    $text = current($text);
-                }
-            }
-            if (is_numeric($path)) {
-                $path = $text;
-                $text = null;
-            }
-            if (empty($for) || 0 === strpos($path, "$for/"))
-                static::build($tree, $path, $url, $text, $activeUrl);
-        }
-        $routes = Routes::toArray();
-        $routes = $routes['v' . $restler->getRequestedApiVersion()];
-        foreach ($routes as $value) {
-            foreach ($value as $httpMethod => $route) {
-                if ($httpMethod != 'GET') {
-                    continue;
-                }
-                $path = $route['url'];
-                if (false !== strpos($path, '{'))
-                    continue;
-                if ($route['accessLevel'] > 1 && !Util::$restler->_authenticated)
-                    continue;
-                foreach (static::$excludedPaths as $exclude) {
-                    if (empty($exclude)) {
-                        if (empty($path))
-                            continue 2;
-                    } elseif (0 === strpos($path, $exclude)) {
-                        continue 2;
+        if (empty(static::$tree)) {
+            /** @var Restler $restler */
+            $restler = Scope::get('Restler');
+            if (static::$addExtension)
+                static::$extension = isset($restler->responseFormat)
+                    ? '.' . $restler->responseFormat->getExtension()
+                    : '.html';
+            static::$url = $restler->getBaseUrl();
+            if (empty(static::$url))
+                static::$url = '';
+            static::$activeTrail = $activeTrail = empty($activeTrail)
+                ? (empty($restler->url) || $restler->url == 'index'
+                    ? static::$root
+                    : $restler->url
+                )
+                : $activeTrail;
+            if (static::$addExtension)
+                static::$extension = isset($restler->responseFormat)
+                    ? '.' . $restler->responseFormat->getExtension()
+                    : '.html';
+            static::addUrls(static::$prepends);
+            $map = Routes::findAll(
+                static::$excludedPaths,
+                array('POST', 'DELETE', 'PUT', 'PATCH'),
+                $restler->getRequestedApiVersion()
+            );
+            foreach ($map as $path => $data) {
+                foreach ($data as $item) {
+                    $access = $item['access'];
+                    $route = $item['route'];
+                    $url = $route['url'];
+                    if ($access && !Text::contains($url, '{')) {
+                        $label = Util::nestedValue(
+                            $route,
+                            'metadata',
+                            CommentParser::$embeddedDataName,
+                            'label'
+                        );
+                        if (!empty($url)) {
+                            $url .= static::$extension;
+                        }
+                        static::add($url, $label);
                     }
                 }
-                if ($restler->_authenticated
-                    && static::$accessControlFunction
-                    && (!call_user_func(
-                        static::$accessControlFunction, $route['metadata']))
-                ) {
-                    continue;
-                }
-                $text = Util::nestedValue(
-                    $route,
-                    'metadata',
-                    CommentParser::$embeddedDataName,
-                    'label'
-                );
-                if (empty($for) || 0 === strpos($path, "$for/"))
-                    static::build($tree, $path, null, $text, $activeUrl);
             }
+            static::addUrls(static::$appends);
+        } elseif (empty($activeTrail)) {
+            $activeTrail = static::$activeTrail;
         }
-        foreach (static::$appends as $path => $text) {
-            $url = null;
-            if (is_array($text)) {
-                if (isset($text['url'])) {
-                    $url = $text['url'];
-                    $text = $text['text'];
-                } else {
-                    $url = current(array_keys($text));
-                    $text = current($text);
-                }
-            }
-            if (is_numeric($path)) {
-                $path = $text;
-                $text = null;
-            }
-            if (empty($for) || 0 === strpos($path, "$for/"))
-                static::build($tree, $path, $url, $text, $activeUrl);
+        $tree = static::$tree;
+        $activeTrail = explode('/', $activeTrail);
+        $nested = & static::nested($tree, $activeTrail);
+        if (is_array($nested)) {
+            $nested['active'] = true;
         }
         if (!empty($for)) {
             $for = explode('/', $for);
-            $p = & $tree;
-            foreach ($for as $f) {
-                if (isset($p[$f]['children'])) {
-                    $p =  & $p[$f]['children'];
-                } else {
-                    return array();
-                }
-            }
-            return $p;
+            $tree = static::nested($tree, $for)['children'];
         }
-        return $tree;
+        return array_filter($tree);
     }
 
-    protected static function build(&$tree, $path,
-                                    $url = null, $text = null, $activeUrl = null)
+    protected static function & nested(array & $tree, array $parts)
     {
-        $parts = explode('/', $path);
+        if (!empty($parts)) {
+            $part = array_shift($parts);
+            if (empty($tree[$part])) {
+                return $tree[$part];
+            } elseif (empty($parts)) {
+                return static::nested($tree[$part], $parts);
+            } elseif (!empty($tree[$part]['children'])) {
+                return static::nested($tree[$part]['children'], $parts);
+            }
+        } else {
+            return $tree;
+        }
+        return null;
+    }
+
+    public static function addUrls(array $urls)
+    {
+        foreach ($urls as $url => $label) {
+            $trail = null;
+            if (is_array($label)) {
+                if (isset($label['trail'])) {
+                    $trail = $label['trail'];
+                }
+                if (isset($label['url'])) {
+                    $url = $label['url'];
+                    $label = isset($label['label']) ? $label['label'] : null;
+                } else {
+                    $url = current(array_keys($label));
+                    $label = current($label);
+                }
+
+            }
+            if (is_numeric($url)) {
+                $url = $label;
+                $label = null;
+            }
+            static::add($url, $label, $trail);
+        }
+        return static::$tree;
+    }
+
+    public static function add($url, $label = null, $trail = null)
+    {
+        $r = parse_url($url);
+        if (is_null($trail)) {
+            $trail = isset($r['path']) ? $r['path'] : static::$root;
+        }
+        //remove / prefix and / suffixes and any extension
+        $trail = strtok(trim($trail, '/'), '.');
+        $parts = explode('/', $trail);
         if (count($parts) == 1 && empty($parts[0]))
             $parts = array(static::$root);
-        $p = & $tree;
-        $end = end($parts);
-        foreach ($parts as $part) {
-            if (!isset($p[$part])) {
-                $p[$part] = array(
-                    'href' => '#',
-                    'text' => static::title($part)
-                );
-                if ($part == $end) {
-                    $p[$part]['class'] = $part;
-                    if ($text)
-                        $p[$part]['text'] = $text;
-                    if (is_null($url)) {
-                        if (empty($path) && !empty(static::$extension))
-                            $path = 'index';
-                        $p[$part]['href'] = Util::$restler->getBaseUrl()
-                            . '/' . $path . static::$extension;
-                    } else {
-                        if (empty($url) && !empty(static::$extension))
-                            $url = 'index';
-                        $p[$part]['href'] = $url . static::$extension;
-                    }
-                    if ($path == $activeUrl) {
-                        $p[$part]['active'] = true;
-                    }
-                }
-                $p[$part]['children'] = array();
+        if (isset($r['fragment'])) {
+            $parts[] = $r['fragment'];
+            if (is_null($label)) {
+                $label = Text::title($r['fragment']);
+            }
+        }
+        if (empty($r['scheme'])) {
+            //relative url found
+            if (empty($url)) {
+                $label = Text::title(static::$root);
+                $url = static::$url;
+            } else {
+                $url = static::$url . '/' . ltrim($url, '/');
+            }
+        }
+        if (is_null($label)) {
+            $label = Text::title(strtok(end($parts), '.'));
+        }
+        $r['url'] = $url;
+        $r['path'] = $trail;
+        $r['parts'] = $parts;
+        $r['label'] = $label;
+        static::build($r);
+        return $r;
+    }
 
+    public static function build(array $r)
+    {
+        $p = & static::$tree;
+        $parts = $r['parts'];
+        $last = count($parts) - 1;
+        foreach ($parts as $i => $part) {
+            if ($i == $last) {
+                $p[$part]['text'] = $r['label'];
+                $p[$part]['href'] = $r['url'];
+                $p[$part]['class'] = Text::slug($part);
+                /* dynamically do it at run time instead
+                if ($r['path'] == static::$activeTrail)
+                    $p[$part]['active'] = true;
+                */
+            } elseif (!isset($p[$part])) {
+                $p[$part] = array();
+                $p[$part]['text'] = Text::title($part);
+                $p[$part]['href'] = '#';
+                $p[$part]['children'] = array();
             }
             $p = & $p[$part]['children'];
         }
-
     }
-
-    protected static function title($name)
-    {
-        if (empty($name)) {
-            $name = static::$root;
-        } else {
-            $name = ltrim($name, '#');
-        }
-        return ucfirst(preg_replace(array('/(?<=[^A-Z])([A-Z])/', '/(?<=[^0-9])([0-9])/'), ' $0', $name));
-    }
-
-} 
+}

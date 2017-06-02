@@ -9,7 +9,7 @@ namespace Luracast\Restler;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc5
+ * @version    3.0.0rc6
  */
 class Util
 {
@@ -50,8 +50,8 @@ class Util
      * When the deeply nested property is found its value is returned, otherwise
      * false is returned.
      *
-     * @param array        $from    array to extract the value from
-     * @param string|array $key     ... pass more to go deeply inside the array
+     * @param array $from array to extract the value from
+     * @param string|array $key ... pass more to go deeply inside the array
      *                              alternatively you can pass a single array
      *
      * @return null|mixed null when not found, value otherwise
@@ -127,6 +127,38 @@ class Util
             array_shift($usingPath);
         }
         return implode($char, $fromPath);
+    }
+
+    /**
+     * Compare two strings and split the common
+     * sub string from the first string and return it as array
+     *
+     * @static
+     *
+     * @param string $fromPath
+     * @param string $usingPath
+     * @param string $char
+     *            optional, set it as
+     *            blank string for char by char comparison
+     *
+     * @return array with 2 strings first is the common string and second is the remaining in $fromPath
+     */
+    public static function splitCommonPath($fromPath, $usingPath, $char = '/')
+    {
+        if (empty($fromPath))
+            return array('', '');
+        $fromPath = explode($char, $fromPath);
+        $usingPath = explode($char, $usingPath);
+        $commonPath = array();
+        while (count($usingPath)) {
+            if (count($fromPath) && $fromPath[0] == $usingPath[0]) {
+                $commonPath [] = array_shift($fromPath);
+            } else {
+                break;
+            }
+            array_shift($usingPath);
+        }
+        return array(implode($char, $commonPath), implode($char, $fromPath));
     }
 
     /**

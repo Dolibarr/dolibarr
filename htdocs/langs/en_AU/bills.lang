@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - bills
+ConfirmDeletePayment=Are you sure you want to delete this payment ?
+ConfirmConvertToReduc=Do you want to convert this %s into an absolute discount ?<br>The amount will so be saved among all discounts and could be used as a discount for a current or a future invoice for this customer.
+PaymentTypeCHQ=Cheque
+PaymentTypeShortCHQ=Cheque
+BankCode=BSB
+ChequeNumber=Cheque N°
+ChequeOrTransferNumber=Cheque/Transfer N°
+ChequeMaker=Cheque/Transfer transmitter
+ChequeBank=Bank of Cheque
+CheckBank=Cheque
+PaymentByChequeOrderedTo=Cheque payment (including GST) is payable to %s send to
+PaymentByChequeOrderedToShort=Cheque payment (including GST) is payable to
+MenuChequeDeposits=Cheque deposits
+MenuCheques=Cheques
+MenuChequesReceipts=Cheque receipts
+NewChequeDeposit=New Cheque deposit
+ChequesReceipts=Cheque receipts
+ChequesArea=Cheque deposits area
+ChequeDeposits=Cheque deposits
+Cheques=Cheques
+NbCheque=Number of cheques
+CreditNoteConvertedIntoDiscount=This %s has been converted into %s

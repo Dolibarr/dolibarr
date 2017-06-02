@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = در حدود
-CronAbout = درباره cron را
-CronAboutPage = cron را در مورد صفحه
 # Right
 Permission23101 = Read Scheduled job
 Permission23102 = Create/update Scheduled job
@@ -10,7 +7,7 @@ Permission23103 = Delete Scheduled job
 Permission23104 = Execute Scheduled job
 # Admin
 CronSetup= برنامه ریزی راه اندازی مدیریت کار
-URLToLaunchCronJobs=URL برای بررسی و راه اندازی کارهای cron در صورت لزوم
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=و یا برای بررسی و راه اندازی یک کار خاص
 KeyForCronAccess=کلید امنیتی برای URL برای راه اندازی کارهای cron
 FileToLaunchCronJobs=خط فرمان برای راه اندازی کارهای cron
@@ -18,52 +15,41 @@ CronExplainHowToRunUnix=On Unix environment you should use the following crontab
 CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
-CronJobs=شغل برنامه ریزی
-CronListActive=List of enabled/scheduled jobs
-CronListInactive=لیست شغل ها غیر فعال
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronDateLastRun=تاریخ و زمان آخرین اجرا
-CronLastOutput=تاریخ و زمان آخرین خروجی اجرا
-CronLastResult=آخرین نتیجه
-CronListOfCronJobs=لیست شغل ها برنامه ریزی شده
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=فرمان
-CronList=Scheduled jobs
+CronList=شغل برنامه ریزی
 CronDelete=Delete scheduled jobs
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
-CronExecute=Launch scheduled jobs
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
+CronExecute=Launch scheduled job
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allow to execute job that have been planned
-CronWaitingJobs=Waiting jobs
 CronTask=کار
 CronNone=هیچ یک
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=اعدام بعدی
-CronDtLastLaunch=Start date of last execution
-CronDtLastResult=End date of last execution
-CronFrequency=Frequency
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
+CronFrequency=فرکانس
 CronClass=Class
 CronMethod=روش
 CronModule=واحد
-CronAction=عمل
-CronStatus=وضعیت
-CronStatusActive=فعال بودن
-CronStatusInactive=غیر فعال
 CronNoJobs=بدون شغل ثبت نام
 CronPriority=اولویت
-CronLabel=توصیف
+CronLabel=برچسب
 CronNbRun=نیوبیوم. راه اندازی
 CronMaxRun=Max nb. launch
 CronEach=هر
 JobFinished=کار راه اندازی به پایان رسید و
 #Page card
 CronAdd= اضافه کردن شغل
-CronHourStart= Start hour and date of job
 CronEvery=Execute job each
 CronObject=به عنوان مثال / شی برای ایجاد
 CronArgs=پارامترها
-CronSaveSucess=صرفه جویی در موفقیت
+CronSaveSucess=Save successfully
 CronNote=توضیح
 CronFieldMandatory=زمینه های از٪ s الزامی است
 CronErrEndDateStartDt=تاریخ پایان نمی تواند قبل از تاریخ شروع می شود
@@ -79,16 +65,15 @@ CronMethodHelp=روش شی برای راه اندازی. <BR> برای exemple �
 CronArgsHelp=استدلال از روش. <BR> برای exemple به بهانه روش Dolibarr محصولات شی / htdocs / محصول / کلاس / product.class.php، مقدار پارامترهای می تواند <i>0، ProductRef</i>
 CronCommandHelp=خط فرمان سیستم را اجرا کند.
 CronCreateJob=Create new Scheduled Job
-CronFrom=From
+CronFrom=از
 # Info
-CronInfoPage=اطلاعات
 # Common
 CronType=Job type
 CronType_method=روش تماس از یک کلاس Dolibarr
 CronType_command=فرمان شل
-CronMenu=cron را
 CronCannotLoadClass=آیا می توانم کلاس٪ s ​​را بار نیست و یا شی از٪ s
-UseMenuModuleToolsToAddCronJobs=برو به منوی "صفحه اصلی - ماژول ابزار - فهرست فرصت های شغلی" برای دیدن و ویرایش کار برنامه ریزی شده.
-TaskDisabled=Job disabled
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of active jobs, your jobs may be delayed to a maximum of %s hours before being run.

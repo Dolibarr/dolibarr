@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2016	Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@ $langs->load("bills");
 $langs->load("loan");
 
 $chid=GETPOST('id','int');
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
 
 // Security check
@@ -116,7 +116,7 @@ if ($action == 'add_payment')
 
             if (! $error)
             {
-                $result = $payment->addPaymentToBank($user, 'payment_loan', '(LoanPayment)', GETPOST('accountid', 'int'), '', '');
+                $result = $payment->addPaymentToBank($user, $chid, 'payment_loan', '(LoanPayment)', GETPOST('accountid', 'int'), '', '');
                 if (! $result > 0)
                 {
                     setEventMessages($payment->error, $payment->errors, 'errors');
@@ -138,7 +138,7 @@ if ($action == 'add_payment')
         }
 	}
 
-	$_GET["action"]='create';
+	$action = 'create';
 }
 
 
@@ -152,12 +152,11 @@ $form=new Form($db);
 
 
 // Form to create loan's payment
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
 	$total = $loan->capital;
 
 	print load_fiche_titre($langs->trans("DoPayment"));
-	print "<br>\n";
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -165,16 +164,18 @@ if ($_GET["action"] == 'create')
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
+    dol_fiche_head();
+
 	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
 
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Loan").'</td>';
 
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="2">'.dol_print_date($loan->datestart,'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$loan->label."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">'.price($loan->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
-	$sql = "SELECT SUM(amount_capital + amount_insurance + amount_interest) as total";
+	$sql = "SELECT SUM(amount_capital) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan";
 	$sql.= " WHERE fk_loan = ".$chid;
 	$resql = $db->query($sql);
@@ -185,7 +186,7 @@ if ($_GET["action"] == 'create')
 		$db->free();
 	}
 	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2">'.price($sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
-	print '<tr><td valign="top">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total-$sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total-$sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 	print '</tr>';
 
 	print '</table>';
@@ -197,7 +198,7 @@ if ($_GET["action"] == 'create')
 	print '<td colspan="3">'.$langs->trans("Payment").'</td>';
 	print '</tr>';
 
-	print '<tr><td  width="25%" class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
+	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
 	$form->select_date($datepayment, '', '', '', '', "add_payment", 1, 1);
@@ -222,22 +223,23 @@ if ($_GET["action"] == 'create')
 	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
 
 	print '<tr>';
-	print '<td valign="top">'.$langs->trans("NotePrivate").'</td>';
+	print '<td class="tdtop">'.$langs->trans("NotePrivate").'</td>';
 	print '<td valign="top" colspan="2"><textarea name="note_private" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
 	print '</tr>';
 
 	print '<tr>';
-	print '<td valign="top">'.$langs->trans("NotePublic").'</td>';
+	print '<td class="tdtop">'.$langs->trans("NotePublic").'</td>';
 	print '<td valign="top" colspan="2"><textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
 	print '</tr>';
+
 	print '</table>';
 
-	print '<br>';
+    dol_fiche_end();
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$langs->trans("DateDue").'</td>';
-	print '<td align="right">'.$langs->trans("Capital").'</td>';
+	print '<td align="right">'.$langs->trans("LoanCapital").'</td>';
 	print '<td align="right">'.$langs->trans("AlreadyPaid").'</td>';
 	print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
 	print '<td align="right">'.$langs->trans("Amount").'</td>';
@@ -246,7 +248,7 @@ if ($_GET["action"] == 'create')
 	$var=True;
 
 
-	print "<tr ".$bc[$var].">";
+	print '<tr class="oddeven">';
 
 	if ($loan->datestart > 0)
 	{
@@ -266,7 +268,7 @@ if ($_GET["action"] == 'create')
 	print '<td align="right">';
 	if ($sumpaid < $loan->capital)
 	{
-		print $langs->trans("Capital") .': <input type="text" size="8" name="amount_capital">';
+		print $langs->trans("LoanCapital") .': <input type="text" size="8" name="amount_capital">';
 	}
 	else
 	{
@@ -296,13 +298,11 @@ if ($_GET["action"] == 'create')
 
 	print '</table>';
 
-	print '<br><center>';
-
+	print '<br><div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 	print '&nbsp; &nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-
-	print '</center>';
+	print '</div>';
 
 	print "</form>\n";
 }

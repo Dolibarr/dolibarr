@@ -20,7 +20,7 @@
 /**
  *	\defgroup   	document     Module mass mailings
  *	\brief      	Module pour gerer des generations de documents
- *	\file       	htdocs/core/modules/modDocument.class.php
+ *	\file       	htdocs/core/modules/modDocumentGeneration.class.php
  *	\ingroup    	document
  *	\brief      	Fichier de description et activation du module Generation document
  */
@@ -45,7 +45,7 @@ class modDocumentGeneration extends DolibarrModules
 		$this->numero = 1520;
 
 		$this->family = "technic";
-		$this->module_position = 10000;
+		$this->module_position = 80;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Direct mail document generation";
@@ -84,7 +84,7 @@ class modDocumentGeneration extends DolibarrModules
 		$this->rights[$r][0] = 1521;
 		$this->rights[$r][1] = 'Lire les documents';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;

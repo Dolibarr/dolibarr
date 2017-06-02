@@ -1,2 +1,4 @@
 # Dolibarr language file - Source file is en_US - accountancy
-EnabledProduct=In Product
+MenuAccountancy=Rechnungswesen
+AccountingCategory=Accounting category
+Vide=Id. Prof. 6

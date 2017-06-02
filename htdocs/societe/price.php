@@ -151,17 +151,14 @@ $head = societe_prepare_head($object);
 
 dol_fiche_head($head, 'price', $langs->trans("ThirdParty"), 0, 'company');
 
-dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
     
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">';
-
-// Alias names (commercial, trademark or alias names)
-print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
-print $object->name_alias;
-print "</td></tr>";
 
 if (! empty($conf->global->SOCIETE_USEPREFIX)) // Old not used prefix field
 {
@@ -382,7 +379,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		);
 
 		// Count total nb of records
-		$nbtotalofrecords = 0;
+		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 			$nbtotalofrecords = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		}
@@ -421,7 +418,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 			foreach ( $prodcustprice->lines as $line ) {
 
-				print "<tr $bc[$var]>";
+				print '<tr'. $bc[$var].'>';
 				$staticprod = new Product($db);
 				$staticprod->fetch($line->fk_product);
 
@@ -472,7 +469,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	    
 	    
         // Count total nb of records
-        $nbtotalofrecords = 0;
+        $nbtotalofrecords = '';
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $nbtotalofrecords = $prodcustprice->fetch_all('', '', 0, 0, $filter);
@@ -513,8 +510,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
             print '<td colspan="8">&nbsp;</td>';
             // Print the search button
             print '<td class="liste_titre" align="right">';
-            $searchpitco=$form->showFilterAndCheckAddButtons(0);
-            print $searchpitco;
+            $searchpicto=$form->showFilterAndCheckAddButtons(0);
+            print $searchpicto;
             print '</td>';
             print '</tr>';
         }

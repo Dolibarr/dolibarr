@@ -31,9 +31,10 @@ class box_graph_product_distribution extends ModeleBoxes
 	var $boxcode="productdistribution";
 	var $boximg="object_product";
 	var $boxlabel="BoxProductDistribution";
-	var $depends = array("product|service");
+	var $depends = array("product|service","facture|propal|commande");
 
 	var $db;
+	var $param;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
@@ -107,7 +108,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				'sublink'=>'',
 				'subtext'=>$langs->trans("Filter"),
 				'subpicto'=>'filter.png',
-				'subclass'=>'linkobject',
+				'subclass'=>'linkobject boxfilter',
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
@@ -138,7 +139,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$showpointvalue = 1; $nocolor = 0;
 				$mode='customer';
 				$stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid>0?$userid:0));
-				$data1 = $stats_invoice->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+				$data1 = $stats_invoice->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
 				if (empty($data1))
 				{
 					$showpointvalue=0;
@@ -196,7 +197,7 @@ class box_graph_product_distribution extends ModeleBoxes
 
 				$showpointvalue = 1; $nocolor = 0;
 				$stats_proposal = new PropaleStats($this->db, $socid, ($userid>0?$userid:0));
-				$data2 = $stats_proposal->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+				$data2 = $stats_proposal->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
 				if (empty($data2))
 				{
 					$showpointvalue = 0;
@@ -248,6 +249,8 @@ class box_graph_product_distribution extends ModeleBoxes
 
 		if (! empty($conf->commande->enabled) && ! empty($user->rights->commande->lire))
 		{
+			$langs->load("orders");
+			
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showordernb)
 			{
@@ -256,7 +259,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$showpointvalue = 1; $nocolor = 0;
 				$mode='customer';
 				$stats_order = new CommandeStats($this->db, $socid, $mode, ($userid>0?$userid:0));
-				$data3 = $stats_order->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+				$data3 = $stats_order->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
 				if (empty($data3))
 				{
 					$showpointvalue = 0;
@@ -389,11 +392,12 @@ class box_graph_product_distribution extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

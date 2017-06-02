@@ -70,6 +70,7 @@ if (! isset($argv[1])) {	// Check parameters
 
 
 $withdrawreceipt=new BonPrelevement($db);
+// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
 $result=$withdrawreceipt->create($conf->global->PRELEVEMENT_CODE_BANQUE,$conf->global->PRELEVEMENT_CODE_GUICHET,$argv[1]);
 
 

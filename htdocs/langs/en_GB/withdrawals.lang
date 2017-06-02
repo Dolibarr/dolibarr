@@ -1,0 +1,25 @@
+# Dolibarr language file - Source file is en_US - withdrawals
+NotPossibleForThisStatusOfWithdrawReceiptORLine=Not yet possible. Payment status must be set to 'credited' before declaring reject on specific lines.
+NbOfInvoiceToWithdraw=No. of invoices with direct debit orders
+NbOfInvoiceToWithdrawWithInfo=No. of customer invoices with direct debit payment orders having defined bank account information
+AmountToWithdraw=Amount to pay
+NoInvoiceToWithdraw=No customer invoice in payment mode "payment" is waiting. Go to 'Payment' tab on invoice card to make a request.
+NoInvoiceCouldBeWithdrawed=No invoice paid successfully. Check that the invoice is on a company with a valid BAN.
+ClassCreditedConfirm=Are you sure you want to classify this Payment receipt as credited on your bank account?
+WithdrawalRefused=Payment refused
+WithdrawalRefusedConfirm=Are you sure you want to enter a Payment rejection for Company
+RefusedInvoicing=Invoicing the rejection
+NoInvoiceRefused=Do not charge for the rejection
+StatusMotif6=Account without a balance
+CreateAll=Pay it all
+OrderWaiting=Waiting for action
+NotifyTransmision=Payment Transmission
+NotifyCredit=Payment Credit
+WithdrawalFileNotCapable=Unable to generate Payment receipt file for your country %s (Your country is not supported)
+ShowWithdraw=Show Payment
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=However, if invoice has at least one payment not yet processed, it won't be set as paid to allow prior Payment management.
+DoStandingOrdersBeforePayments=This tab allows you to request a direct debit payment order. Once done, go into menu Bank->Direct Debit orders to manage the direct debit payment order. When the payment order is closed, payment on the invoice will be automatically recorded, and the invoice closed if the outstanding balance is null.
+WithdrawalFile=Payment file
+RUMWillBeGenerated=UMR number will be generated once bank account information is saved
+SEPALegalText=By signing this mandate form, you authorise (A) %s to send instructions to your bank to debit your account and (B) your bank to debit your account in accordance with the instructions from %s. As part of your rights, you are entitled to a refund from your bank under the terms and conditions of your agreement with your bank. A refund must be claimed within 8 weeks starting from the date on which your account was debited. Your rights regarding the above mandate are explained in a statement that you can obtain from your bank.
+InfoRejectMessage=Hello,<br><br>the direct debit payment order for invoice %s related to the company %s, for an amount of %s has been refused by the bank.<br><br>--<br>%s

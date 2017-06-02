@@ -39,7 +39,7 @@ session_cache_limiter(FALSE);
 require_once '../../main.inc.php';
 
 // Define javascript type
-header('Content-type: text/javascript; charset=UTF-8');
+top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
@@ -567,28 +567,6 @@ function urlencode(s) {
 
 /*
  * ================================================================= 
- * Purpose: Show a popup HTML page. 
- * Input:   url,title 
- * Author:  Laurent Destailleur 
- * Licence: GPL 
- * ==================================================================
- */
-function newpopup(url,title) {
-	var argv = newpopup.arguments;
-	var argc = newpopup.arguments.length;
-	tmp=url;
-	var l = (argc > 2) ? argv[2] : 600;
-	var h = (argc > 3) ? argv[3] : 400;
-	var left = (screen.width - l)/2;
-	var top = (screen.height - h)/2;
-	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
-	fen=window.open(tmp,title,wfeatures);
-	return false;
-}
-
-
-/*
- * ================================================================= 
  * Purpose:
  * Applique un delai avant execution. Used for autocompletion of companies.
  * Input:   funct, delay 
@@ -656,7 +634,13 @@ function hideMessage(fieldId,message) {
 
 
 /*
- * Used by button to set on/off 
+ * Used by button to set on/off
+ *
+ * @param	string	url			Url
+ * @param	string	code		Code
+ * @param	string	intput		Input
+ * @param	int		entity		Entity
+ * @param	int		strict		Strict
  */
 function setConstant(url, code, input, entity, strict) {
 	$.get( url, {
@@ -714,7 +698,13 @@ function setConstant(url, code, input, entity, strict) {
 }
 
 /*
- * Used by button to set on/off  
+ * Used by button to set on/off
+ *
+ * @param	string	url			Url
+ * @param	string	code		Code
+ * @param	string	intput		Input
+ * @param	int		entity		Entity
+ * @param	int		strict		Strict
  */
 function delConstant(url, code, input, entity, strict) {
 	$.get( url, {
@@ -768,7 +758,17 @@ function delConstant(url, code, input, entity, strict) {
 }
 
 /*
- * Used by button to set on/off  
+ * Used by button to set on/off
+ *
+ * @param	string	action		Action
+ * @param	string	url			Url
+ * @param	string	code		Code
+ * @param	string	intput		Input
+ * @param	string	box			Box
+ * @param	int		entity		Entity
+ * @param	int		yesButton	yesButton
+ * @param	int		noButton	noButton
+ * @param	int		strict		Strict
  */
 function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton, strict) {
 	var boxConfirm = box;
@@ -931,7 +931,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 })( jQuery );
 
 
-/*
+/**
  * Function to output a dialog bog for copy/paste
  * 
  * @param	string	text	Text to put into copy/paste area
@@ -948,6 +948,91 @@ function copyToClipboard(text,text2)
 	return false;
 }
 
+
+/**
+ * Show a popup HTML page. Use the "window.open" function.
+ * 
+ * @param	string	url		Url
+ * @param	string	title  	Title of popup
+ * @return	boolean			False
+ * @see document_preview
+ */
+function newpopup(url,title) {
+	var argv = newpopup.arguments;
+	var argc = newpopup.arguments.length;
+	tmp=url;
+	var l = (argc > 2) ? argv[2] : 600;
+	var h = (argc > 3) ? argv[3] : 400;
+	var left = (screen.width - l)/2;
+	var top = (screen.height - h)/2;
+	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
+	fen=window.open(tmp,title,wfeatures);
+	return false;
+}
+
+/**
+ * Function show document preview. Use the "dialog" function.
+ *
+ * @param 	string file 		Url
+ * @param 	string type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
+ * @param 	string title		Title of popup
+ * @return	void
+ * @see newpopup
+ */
+function document_preview(file, type, title)
+{
+	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png"];
+	console.log("document_preview A click was done. file="+file+", type="+type+", title="+title);
+	
+	if ($.inArray(type, ValidImageTypes) < 0) {
+		var width='85%';
+		var object_width='100%';
+		var height = $( window ).height()*0.90;
+		var object_height='98%';
+
+		show_preview();
+
+	} else {
+		var object_width=0;
+		var object_height=0;
+
+		var img = new Image();
+
+		img.onload = function() {
+			object_width = this.width;
+			object_height = this.height;
+
+			width = $( window ).width()*0.90;
+			if(object_width < width){
+				width = object_width + 30
+			}
+			height = $( window ).height()*0.85;
+			if(object_height < height){
+				height = object_height + 80
+			}
+
+			show_preview();
+
+		};
+		img.src = file;
+
+	}
+	function show_preview(){
+		/* console.log("file="+file+" type="+type+" width="+width+" height="+height); */
+		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
+
+		$("#dialogforpopup").html(newElem);
+		$("#dialogforpopup").dialog({
+			closeOnEscape: true,
+			resizable: true,
+			width: width,
+			height: height,
+			modal: true,
+			title: title
+		});
+	}
+}
+
 /*
  * Provide a function to get an URL GET parameter in javascript 
  * 
@@ -962,6 +1047,7 @@ function getParameterByName(name, valueifnotfound)
         results = regex.exec(location.search);
     return results === null ? valueifnotfound : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
+
 
 // Code in the public domain from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round
 (function() {
@@ -1012,19 +1098,22 @@ function getParameterByName(name, valueifnotfound)
 	}
 })();
 
+// Another solution, easier, to build a javascript rounding function 
+function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + decimals) + "e-" + decimals); }
+
 
 /**
  * Function similar to PHP price2num()
  *
- * @param {number|string} amount    The amount to convert/clean
- * @returns {string}                The amount in universal numeric format (Example: '99.99999')
+ * @param  {number|string} amount    The amount to convert/clean
+ * @return {string}                  The amount in universal numeric format (Example: '99.99999')
  * @todo Implement rounding parameter
  */
 function price2numjs(amount) {
 	if (amount == '') return '';
 
 	<?php
-				$dec = ',';
+		$dec = ',';
 		$thousand = ' ';
 		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
 			$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
@@ -1032,12 +1121,13 @@ function price2numjs(amount) {
 		if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
 			$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
 		}
-		print "var dec='" . $dec . "'; var thousand='" . $thousand . "';\n";    // Set var in javascript
+		if ($thousand == 'Space') $thousand=' ';
+		print "var dec='" . dol_escape_js($dec) . "'; var thousand='" . dol_escape_js($thousand) . "';\n";    // Set var in javascript
 	?>
 
-	var main_max_dec_shown = <?php echo str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
-	var main_rounding_unit = <?php echo $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
-	var main_rounding_tot = <?php echo $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
+	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
+	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
 
 	var amount = amount.toString();
 
@@ -1050,11 +1140,16 @@ function price2numjs(amount) {
 	if (nbdec > rounding) rounding = nbdec;
 	// If rounding higher than max shown
 	if (rounding > main_max_dec_shown) rounding = main_max_dec_shown;
-
 	if (thousand != ',' && thousand != '.') amount = amount.replace(',', '.');
 	amount = amount.replace(' ', '');            // To avoid spaces
 	amount = amount.replace(thousand, '');        // Replace of thousand before replace of dec to avoid pb if thousand is .
 	amount = amount.replace(dec, '.');
-
-	return Math.round10(amount, rounding);
+	//console.log("amount before="+amount+" rouding="+rounding)
+	var res = Math.round10(amount, - rounding);
+	// Other solution is 
+	// var res = dolroundjs(amount, rounding)
+	console.log("res="+res)
+	return res;
 }
+    
+

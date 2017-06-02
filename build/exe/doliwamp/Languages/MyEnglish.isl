@@ -31,6 +31,7 @@ FailedToDeleteLock=Failed to delete the file %1/www/dolibarr/install.lock. You c
 PortAlreadyInUse=Port %1 seems to be already in use. You should cancel to go back and choose another value for %2 port. Cancel choice and choose another value ?
 
 FirefoxDetected=Firefox has been detected on your computer. Would you like to use it as the default browser for Dolibarr ?
+ChromeDetected=Chrome has been detected on your computer. Would you like to use it as the default browser for Dolibarr ?
 ChooseDefaultBrowser=Please choose your default browser. If you are not sure, just click Open :
 
 LaunchNow=Launch Dolibarr now

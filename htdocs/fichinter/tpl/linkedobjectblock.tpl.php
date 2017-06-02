@@ -21,38 +21,33 @@
 
 <?php
 
+global $user;
+
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("interventions");
-echo '<br>';
-print load_fiche_titre($langs->trans('RelatedInterventions'), '', '');
 
-?>
-<table class="noborder allwidth">
-<tr class="liste_titre">
-	<td><?php echo $langs->trans("Ref"); ?></td>
-	<td align="center"><?php echo $langs->trans("Date"); ?></td>
-	<td align="right"><?php echo $langs->trans("Status"); ?></td>
-	<td></td>
-</tr>
-<?php
+$ilink=0;
 $var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
-	$var=!$var;
+    $ilink++;
+    
+    $trclass=($var?'pair':'impair');
+    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
-<tr <?php echo $GLOBALS['bc'][$var]; ?> >
-    <td><?php echo $objectlink->getNomUrl(1); ?></td>
-	<td align="center"><?php echo dol_print_date($objectlink->datev,'day'); ?></td>
-	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
-</tr>
+    <tr class="<?php echo $trclass; ?>">
+		<td><?php echo $langs->trans("Intervention"); ?></td>
+	    <td><?php echo $objectlink->getNomUrl(1); ?></td>
+	    <td></td>
+		<td align="center"><?php echo dol_print_date($objectlink->datev,'day'); ?></td>
+		<td></td>
+		<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
+		<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
+	</tr>
 <?php
 }
-
 ?>
-
-</table>
 
 <!-- END PHP TEMPLATE -->

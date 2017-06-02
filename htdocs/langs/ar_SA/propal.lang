@@ -3,27 +3,21 @@ Proposals=مقترحات تجارية
 Proposal=اقتراح التجارية
 ProposalShort=اقتراح
 ProposalsDraft=مقترحات مشاريع تجارية
-ProposalDraft=اقتراح لمشروع تجاري
-ProposalsOpened=مقترحات التجارية المفتوحة
+ProposalsOpened=افتتح مقترحات تجارية
 Prop=مقترحات تجارية
 CommercialProposal=اقتراح التجارية
-CommercialProposals=مقترحات تجارية
 ProposalCard=اقتراح بطاقة
 NewProp=التجاري الجديد المقترح
-NewProposal=التجاري الجديد المقترح
 NewPropal=اقتراح جديد
 Prospect=احتمال
-ProspectList=احتمال قائمة
 DeleteProp=اقتراح حذف التجارية
 ValidateProp=مصادقة على اقتراح التجارية
 AddProp=إنشاء اقتراح
-ConfirmDeleteProp=هل أنت متأكد من أنك تريد حذف هذا التجارية الاقتراح؟
-ConfirmValidateProp=هل أنت متأكد من هذا التجارية للمصادقة على الاقتراح؟
-LastPropals=آخر مقترحات ٪
-LastClosedProposals=٪ ق الماضي اقتراحات مغلقة
-LastModifiedProposals=آخر تعديل المقترحات ق ٪
+ConfirmDeleteProp=Are you sure you want to delete this commercial proposal?
+ConfirmValidateProp=Are you sure you want to validate this commercial proposal under name <b>%s</b>?
+LastPropals=Latest %s proposals
+LastModifiedProposals=Latest %s modified proposals
 AllPropals=جميع المقترحات
-LastProposals=آخر مقترحات
 SearchAProposal=بحث اقتراح
 NoProposal=No proposal
 ProposalsStatistics=مقترحات تجارية 'إحصاءات
@@ -32,18 +26,13 @@ AmountOfProposalsByMonthHT=المبلغ في الشهر (بعد خصم الضر�
 NbOfProposals=عدد من المقترحات والتجاري
 ShowPropal=وتظهر اقتراح
 PropalsDraft=المسودات
-PropalsOpened=فتح
-PropalsNotBilled=مغلقة لا توصف
+PropalsOpened=Opened
 PropalStatusDraft=مشروع (لا بد من التحقق من صحة)
-PropalStatusValidated=صادق (اقتراح فتح)
-PropalStatusOpened=صادق (اقتراح فتح)
-PropalStatusClosed=مغلقة
+PropalStatusValidated=Validated (proposal is opened)
 PropalStatusSigned=وقعت (لمشروع القانون)
 PropalStatusNotSigned=لم يتم التوقيع (مغلقة)
 PropalStatusBilled=فواتير
 PropalStatusDraftShort=مسودة
-PropalStatusValidatedShort=صادق
-PropalStatusOpenedShort=فتح
 PropalStatusClosedShort=مغلقة
 PropalStatusSignedShort=وقعت
 PropalStatusNotSignedShort=لم يتم التوقيع
@@ -52,25 +41,14 @@ PropalsToClose=مقترحات ليقفل التجارية
 PropalsToBill=ووقع على مشروع القانون التجاري مقترحات
 ListOfProposals=قائمة مقترحات تجارية
 ActionsOnPropal=الإجراءات على الاقتراح
-NoOpenedPropals=لا توجد أية عروض تجارية مفتوحة
-NoOtherOpenedPropals=لا توجد أية عروض تجارية أخرى مفتوحة
-NoPropal=أي اقتراح التجاري
 RefProposal=اقتراح المرجع التجارية
 SendPropalByMail=اقتراح ارسال التجارية عن طريق البريد
-AssociatedDocuments=الوثائق المرتبطة الاقتراح :
-ErrorCantOpenDir=لا نستطيع فتح الدليل
 DatePropal=تاريخ الاقتراح
 DateEndPropal=تاريخ انتهاء الصلاحية
-DateEndPropalShort=نهاية التاريخ
 ValidityDuration=ومدة صلاحيتها
 CloseAs=Set status to
 SetAcceptedRefused=Set accepted/refused
-ClassifyBilled=تصنيف الفواتير
-BuildBill=بناء الفاتورة
 ErrorPropalNotFound=Propal ق لم يتم العثور على ٪
-Estimate=التقدير :
-EstimateShort=التقدير
-OtherPropals=مقترحات أخرى
 AddToDraftProposals=إضافة إلى صياغة اقتراح
 NoDraftProposals=أي مشاريع اقتراحات
 CopyPropalFrom=اقتراح إنشاء التجارية عن طريق نسخ وجود اقتراح
@@ -78,8 +56,8 @@ CreateEmptyPropal=إنشاء خاليا التجارية vierge مقترحات �
 DefaultProposalDurationValidity=تقصير مدة صلاحية اقتراح التجارية (أيام)
 UseCustomerContactAsPropalRecipientIfExist=استخدام العميل عنوان الاتصال إذا حددت بدلا من التصدي لطرف ثالث حسب الاقتراح المستفيدة معالجة
 ClonePropal=اقتراح استنساخ التجارية
-ConfirmClonePropal=هل أنت متأكد من استنساخ هذا الاقتراح <b>٪ ق</b> التجارية؟
-ConfirmReOpenProp=هل أنت متأكد أنك تريد فتح ظهر <b>%s</b> اقتراح التجارية؟
+ConfirmClonePropal=Are you sure you want to clone the commercial proposal <b>%s</b>?
+ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
 ProposalsAndProposalsLines=واقتراح الخطوط التجارية
 ProposalLine=اقتراح خط
 AvailabilityPeriod=توفر تأخير
@@ -97,7 +75,6 @@ TypeContact_propal_external_BILLING=الزبون فاتورة الاتصال
 TypeContact_propal_external_CUSTOMER=اتصل العملاء اقتراح متابعة
 # Document models
 DocModelAzurDescription=اقتراح نموذج كامل (logo...)
-DocModelJauneDescription=اقتراح نموذج اليد الصفراء
 DefaultModelPropalCreate=إنشاء نموذج افتراضي
 DefaultModelPropalToBill=القالب الافتراضي عند إغلاق الأعمال المقترح (أن الفاتورة)
 DefaultModelPropalClosed=القالب الافتراضي عند إغلاق الأعمال المقترح (فواتير)

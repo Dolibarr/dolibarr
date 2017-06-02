@@ -69,10 +69,9 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ContractsSetup"),$linkback,'title_setup');
 
-print '<br>';
 $head=contract_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Contracts"), 0, 'contract');
+dol_fiche_head($head, 'attributes', $langs->trans("Contracts"), -1, 'contract');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

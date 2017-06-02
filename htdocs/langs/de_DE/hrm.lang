@@ -5,16 +5,13 @@ Establishments=Einrichtungen
 Establishment=Einrichtung
 NewEstablishment=Neue Einrichtung
 DeleteEstablishment=Einrichtung löschen
-ConfirmDeleteEstablishment=Sind Sie sicher, dass Sie diese Einrichtung löschen möchten ?
+ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
 OpenEtablishment=Einrichtung öffnen
 CloseEtablishment=Einrichtung schliessen
 # Dictionary
 DictionaryDepartment=PV - Abteilungsliste
 DictionaryFunction=PV - Stellenbezeichnungen Liste
 # Module
-ListOfEmployees=Liste der Mitarbeiter
 Employees=Mitarbeiter
 Employee=Mitarbeiter
-Employe=Mitarbeiter
 NewEmployee=Neuer Mitarbeiter
-EmployeeCard=Mitarbeiter - Karte

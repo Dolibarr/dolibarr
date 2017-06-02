@@ -215,7 +215,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
 	// Build graphic with transformation rate
-	$data = $stats_project->getWeightedAmountByMonthWithPrevYear($endyear,$startyear);
+	$data = $stats_project->getWeightedAmountByMonthWithPrevYear($endyear,$startyear, 0, 0);
 	//var_dump($data);
 	// $data = array(array('Lib',val1,val2,val3),...)
 
@@ -253,6 +253,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 // Show array
 $stats_project->year=0;
 $data_all_year = $stats_project->getAllByYear();
+
 if (!empty($year)) $stats_project->year=$year;
 $arrayyears=array();
 foreach($data_all_year as $val) {
@@ -270,7 +271,7 @@ $h++;
 
 complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
-dol_fiche_head($head,'byyear',$langs->trans("Statistics"), 0, '');
+dol_fiche_head($head,'byyear',$langs->trans("Statistics"), -1, '');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -307,8 +308,9 @@ print '<td align="center">'.$langs->trans("Year").'</td>';
 print '<td align="right">'.$langs->trans("NbOfProjects").'</td>';
 if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
-	print '<td align="right">'.$langs->trans("OpportunityAmount").'</td>';
-	print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
+	print '<td align="right">'.$langs->trans("OpportunityAmountShort").'</td>';
+	print '<td align="right">'.$langs->trans("OpportunityAmountAverageShort").'</td>';
+	print '<td align="right">'.$langs->trans("OpportunityAmountWeigthedShort").'</td>';
 }
 print '</tr>';
 
@@ -320,25 +322,27 @@ foreach ($data_all_year as $val)
 	while ($year && $oldyear > $year+1)
 	{	// If we have empty year
 		$oldyear--;
-		$var=!$var;
+		
 		print '<tr '.$bc[$var].' height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
 			print '<td align="right">0</td>';
 			print '<td align="right">0</td>';
+			print '<td align="right">0</td>';
 		}
 		print '<td align="right">0</td>';
 		print '</tr>';
 	}
-	$var=!$var;
+	
 	print '<tr '.$bc[$var].' height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	{
-		print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
-		print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+		print '<td align="right">'.($val['total']?price(price2num($val['total'],'MT'),1):'0').'</td>';
+		print '<td align="right">'.($val['avg']?price(price2num($val['avg'],'MT'),1):'0').'</td>';
+		print '<td align="right">'.($val['weighted']?price(price2num($val['weighted'],'MT'),1):'0').'</td>';
 	}
 	print '</tr>';
 	$oldyear=$year;

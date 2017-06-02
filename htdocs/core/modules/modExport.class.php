@@ -44,7 +44,7 @@ class modExport extends DolibarrModules
 		$this->numero = 240;
 
 		$this->family = "technic";
-		$this->module_position = 520;
+		$this->module_position = 72;
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Outils d'exports de donnees Dolibarr (via un assistant)";
@@ -81,7 +81,7 @@ class modExport extends DolibarrModules
 		$this->rights[$r][0] = 1201;
 		$this->rights[$r][1] = 'Lire les exports';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
@@ -90,5 +90,11 @@ class modExport extends DolibarrModules
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
+		
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
 	}
 }

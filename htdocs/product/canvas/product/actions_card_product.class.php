@@ -269,7 +269,7 @@ class ActionsCardProduct
 
 		$sql = "SELECT rowid, name, alias, title, align, sort, search, enabled, rang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
-		$sql.= " WHERE element = '".$this->fieldListName."'";
+		$sql.= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " ORDER BY rang ASC";
 
@@ -325,16 +325,15 @@ class ActionsCardProduct
 
         $this->list_datas = array();
 
-		//$_GET["sall"] = 'LL';
 		// Clean parameters
-		$sall=trim(isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"]);
+		$sall=trim(GETPOST('sall', 'alphanohtml'));
 
 		foreach($this->field_list as $field)
 		{
 			if ($field['enabled'])
 			{
 				$fieldname = "s".$field['alias'];
-				$$fieldname = trim(isset($_GET[$fieldname])?$_GET[$fieldname]:$_POST[$fieldname]);
+				$$fieldname = trim(GETPOST($fieldname));
 			}
 		}
 

@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
--- Copyright (C) 2011-2012 Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2011-2016 Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,14 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- Table of "Plan de comptes" for accountancy expert module
+-- Table of chart of accounts
 -- ============================================================================
 
 create table llx_accounting_system
 (
   rowid             integer         AUTO_INCREMENT PRIMARY KEY,
   pcg_version       varchar(32)     NOT NULL,
-  fk_pays           integer         NOT NULL,
   label             varchar(128)    NOT NULL,
   active            smallint        DEFAULT 0
 )ENGINE=innodb;

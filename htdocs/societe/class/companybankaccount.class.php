@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
+ * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,8 @@ class CompanyBankAccount extends Account
 
     var $default_rib;
     var $frstrecur;
+    var $rum;
+    var $date_rum;
 
     var $datec;
     var $datem;
@@ -60,13 +63,14 @@ class CompanyBankAccount extends Account
     /**
      * Create bank information record
      *
-     * @param   Object   $user		User
+     * @param   User   $user		User
+     * @param   int    $notrigger   1=Disable triggers
      * @return	int					<0 if KO, >= 0 if OK
      */
-    function create($user='')
+    function create(User $user = null, $notrigger=0)
     {
-        $now=dol_now();
-
+        $now	= dol_now();
+	$error	= 0;
         // Correct default_rib to be sure to have always one default
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib where fk_soc = ".$this->socid." AND default_rib = 1";
    		$result = $this->db->query($sql);
@@ -85,7 +89,29 @@ class CompanyBankAccount extends Account
             if ($this->db->affected_rows($resql))
             {
                 $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe_rib");
-                return 1;
+		    
+		    if (! $notrigger)
+		    {
+		   	 // Call trigger
+			$result=$this->call_trigger('COMPANY_RIB_CREATE',$user);
+			if ($result < 0) $error++;
+			// End call triggers
+
+			if(! $error )
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		    
+		    }
+		    else
+		    {
+		    	return 1;
+		    }
+               
             }
         }
         else
@@ -98,26 +124,32 @@ class CompanyBankAccount extends Account
     /**
      *	Update bank account
      *
-     *	@param	User	$user	Object user
-     *	@return	int				<=0 if KO, >0 if OK
+     *	@param	User	$user	     Object user
+     *  @param  int     $notrigger   1=Disable triggers
+     *	@return	int				     <=0 if KO, >0 if OK
      */
-    function update($user='')
+    function update(User $user = null, $notrigger = 0)
     {
-    	global $conf;
+	    global $conf;
+	    $error = 0;
+	   
 
         if (! $this->id)
         {
             $this->create();
         }
+		
+		if (dol_strlen($this->domiciliation) > 255) $this->domiciliation = dol_trunc($this->domiciliation, 254, 'right', 'UTF-8', 1);
+		if (dol_strlen($this->owner_address) > 255) $this->owner_address = dol_trunc($this->owner_address, 254, 'right', 'UTF-8', 1);
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET";
         $sql.= " bank = '" .$this->db->escape($this->bank)."'";
-        $sql.= ",code_banque='".$this->code_banque."'";
-        $sql.= ",code_guichet='".$this->code_guichet."'";
-        $sql.= ",number='".$this->number."'";
-        $sql.= ",cle_rib='".$this->cle_rib."'";
-        $sql.= ",bic='".$this->bic."'";
-        $sql.= ",iban_prefix = '".$this->iban."'";
+        $sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
+        $sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
+        $sql.= ",number='".$this->db->escape($this->number)."'";
+        $sql.= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
+        $sql.= ",bic='".$this->db->escape($this->bic)."'";
+        $sql.= ",iban_prefix = '".$this->db->escape($this->iban)."'";
         $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
         $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
         $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
@@ -125,6 +157,8 @@ class CompanyBankAccount extends Account
 	    if ($conf->prelevement->enabled)
 	    {
     	    $sql.= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
+    	    $sql.= ",rum = '".$this->db->escape($this->rum)."'";
+            $sql.= ",date_rum = ".($this->date_rum ? "'".$this->db->idate($this->date_rum)."'" : "null");
 	    }
 	    if (trim($this->label) != '')
             $sql.= ",label = '".$this->db->escape($this->label)."'";
@@ -135,12 +169,33 @@ class CompanyBankAccount extends Account
         $result = $this->db->query($sql);
         if ($result)
         {
-            return 1;
+		
+		
+		if (! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('COMPANY_RIB_MODIFY',$user);
+			if ($result < 0) $error++;
+			// End call triggers
+			if(! $error )
+			{
+				return 1;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+		else
+		{
+			return 1;
+		}
+		
         }
         else
         {
             dol_print_error($this->db);
-            return 0;
+            return -1;
         }
     }
 
@@ -167,6 +222,8 @@ class CompanyBankAccount extends Account
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
+
+                $this->ref             = $obj->fk_soc.'-'.$obj->label;      // Generate an artificial ref
 
                 $this->id			   = $obj->rowid;
                 $this->socid           = $obj->fk_soc;
@@ -201,100 +258,73 @@ class CompanyBankAccount extends Account
     /**
      *  Delete a rib from database
      *
-     *	@param	User	$user	User deleting
-     *  @return int         	<0 if KO, >0 if OK
+     *	@param		User	$user		User deleting
+     *	@param  	int		$notrigger	1=Disable triggers
+     *  @return		int		            <0 if KO, >0 if OK
      */
-    function delete($user='')
+    function delete(User $user = null, $notrigger=0)
     {
         global $conf;
+        
+        $error = 0;
+        
+        dol_syslog(get_class($this) . "::delete ".$this->id, LOG_DEBUG);
+        
+        $this->db->begin();
+        
+        if (! $error && ! $notrigger)
+        {
+            // Call trigger
+            $result=$this->call_trigger('COMPANY_RIB_DELETE',$user);
+            if ($result < 0) $error++;
+            // End call triggers
+        }
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
-        $sql.= " WHERE rowid  = ".$this->id;
-
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-        $result = $this->db->query($sql);
-        if ($result) {
+        if (! $error)
+        {
+            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "societe_rib";
+            $sql .= " WHERE rowid  = " . $this->id;
+            
+            if (! $this->db->query($sql))
+        	{
+        		$error++;
+        		$this->errors[]=$this->db->lasterror();
+        	}
+        }
+        
+        if (! $error)
+        {
+            $this->db->commit();
             return 1;
         }
-        else {
-            dol_print_error($this->db);
-            return -1;
+        else
+        {
+            $this->db->rollback();
+            return -1*$error;
         }
     }
 
-    /**
-     * Return RIB
-     *
-     * @param   boolean     $displayriblabel     Prepend or Hide Label
-     * @return	string		RIB
-     */
-    function getRibLabel($displayriblabel = true)
-    {
-    	global $langs,$conf;
+	/**
+	 * Return RIB
+	 *
+	 * @param   boolean     $displayriblabel     Prepend or Hide Label
+	 * @return	string		RIB
+	 */
+	public function getRibLabel($displayriblabel = true)
+	{
+		$rib = '';
 
-    	if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib)
-    	{
-            if ($this->label && $displayriblabel) $rib = $this->label." : ";
+		if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib || $this->iban || $this->bic ) {
 
-    		// Show fields of bank account
-			$fieldlists='BankCode DeskCode AccountNumber BankAccountNumberKey';
-			if (! empty($conf->global->BANK_SHOW_ORDER_OPTION))
-			{
-				if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION))
-				{
-					if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') $fieldlists='BankCode DeskCode BankAccountNumberKey AccountNumber';
-				}
-				else $fieldlists=$conf->global->BANK_SHOW_ORDER_OPTION;
+			if ($this->label && $displayriblabel) {
+				$rib = $this->label." : ";
 			}
-			$fieldlistsarray=explode(' ',$fieldlists);
 
-			foreach($fieldlistsarray as $val)
-			{
-				if ($val == 'BankCode')
-				{
-					if ($this->useDetailedBBAN()  == 1)
-					{
-						$rib.=$this->code_banque.'&nbsp;';
-					}
-				}
+			$rib .= (string) $this;
+		}
 
-				if ($val == 'DeskCode')
-				{
-					if ($this->useDetailedBBAN()  == 1)
-					{
-						$rib.=$this->code_guichet.'&nbsp;';
-					}
-				}
-
-				if ($val == 'BankCode')
-				{
-					if ($this->useDetailedBBAN()  == 2)
-			        {
-			            $rib.=$this->code_banque.'&nbsp;';
-			        }
-				}
-
-				if ($val == 'AccountNumber')
-				{
-					$rib.=$this->number.'&nbsp;';
-				}
-
-				if ($val == 'BankAccountNumberKey')
-				{
-					if ($this->useDetailedBBAN() == 1)
-					{
-						$rib.=$this->cle_rib.'&nbsp;';
-					}
-				}
-			}
-    	}
-    	else
-    	{
-    		$rib='';
-    	}
-
-    	return $rib;
-    }
+		return $rib;
+	}
 
     /**
      * Set RIB as Default
@@ -350,5 +380,39 @@ class CompanyBankAccount extends Account
     		return -1;
     	}
     }
+    
+    /**
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
+     */
+    function initAsSpecimen()
+    {
+        $this->specimen        = 1;
+        $this->ref             = 'CBA';
+        $this->label           = 'CustomerCorp Bank account';
+        $this->bank            = 'CustomerCorp Bank';
+        $this->courant         = Account::TYPE_CURRENT;
+        $this->clos            = Account::STATUS_OPEN;
+        $this->code_banque     = '123';
+        $this->code_guichet    = '456';
+        $this->number          = 'CUST12345';
+        $this->cle_rib         = 50;
+        $this->bic             = 'CC12';
+        $this->iban            = 'FR999999999';
+        $this->domiciliation   = 'Bank address of customer corp';
+        $this->proprio         = 'Owner';
+        $this->owner_address   = 'Owner address';
+        $this->country_id      = 1;
+        
+        $this->rum             = 'UMR-CU1212-0007-5-1475405262';
+        $this->date_rum        =dol_now() - 10000;
+        $this->frstrecur       = 'FRST';
+        
+        $this->socid = 0;
+    }
+    
 }
 
