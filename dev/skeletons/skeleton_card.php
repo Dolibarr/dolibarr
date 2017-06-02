@@ -297,9 +297,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 {
     $res = $object->fetch_optionals($object->id, $extralabels);
 
-	$head = commande_prepare_head($object);
-	dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), 0, 'order');
-		
+			
 	print load_fiche_titre($langs->trans("MyModule"));
     
 	dol_fiche_head();
