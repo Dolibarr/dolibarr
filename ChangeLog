@@ -22,6 +22,26 @@ Following changes may create regression for some external modules, but were nece
 * Removed the trigger file of PAYPAL module that stored data that was not used by Dolibarr. The trigger event still
   exists, but if an external module need action on it, it must provides itself its trigger file.
 
+***** ChangeLog for 5.0.3 compared to 5.0.2 *****
+FIX: #6677 Expired contracts dashboard box does not show the name of the thirdparty
+FIX: #6813
+FIX: 6863
+FIX: #6877
+FIX: #6881
+FIX: Better sanitizing of search all parameter.
+FIX: Correction with author and validator user on orders
+FIX: dialog window with md theme must not be hidden by left menu part.
+FIX: doactions hook missing in invoice model page
+FIX: Fullname when member is a moral entity with no name.
+FIX: Link to files on bank account tab broken with multicompany FIX: Link to preview on thirdparty broken with multicompany
+FIX: New vat code not correctly implemented if "1 price per customer".
+FIX: Pagination of invoices
+FIX: pagination on resources
+FIX: REST API not possible to add agendaevents
+FIX: situation invoice broken due to the all percent application form inside addline form
+FIX: SQL injection on user/index.php parameter search_statut.
+FIX: XSS
+
 ***** ChangeLog for 5.0.2 compared to 5.0.1 *****
 FIX: #6468 + Fix missing translation
 FIX: #6517 #6525 Autocompletion of thirdparty after n chars not implemented

@@ -958,6 +958,7 @@ elseif ($object->id > 0)
     // Change probability from status
     if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     {
+        // Default value to close or not when we set opp to 'WON'.
         $defaultcheckedwhenoppclose=1;
         if (empty($conf->global->PROJECT_HIDE_TASKS)) $defaultcheckedwhenoppclose=0;
 
@@ -973,12 +974,16 @@ elseif ($object->id > 0)
                     var oldpercent = \''.dol_escape_js($object->opp_percent).'\';
 
                     console.log("We select "+elemcode);
-                    if (elemcode == \'LOST\') defaultcloseproject = 1;
-                    jQuery("#divtocloseproject").show();
-                    if (defaultcloseproject) jQuery("#inputcloseproject").prop("checked", true);
+
+                    /* Define if checkbox to close is checked or not */
+                    var closeproject = 0;
+                    if (elemcode == \'LOST\') closeproject = 1;
+                    if (elemcode == \'WON\') closeproject = defaultcloseproject;
+                    if (closeproject) jQuery("#inputcloseproject").prop("checked", true);
                     else jQuery("#inputcloseproject").prop("checked", false);
 
-                    /* Make close project visible or not */
+                    /* Make the close project checkbox visible or not */
+                    console.log("closeproject="+closeproject);
                     if (elemcode == \'WON\' || elemcode == \'LOST\')
                     {
                         jQuery("#divtocloseproject").show();
