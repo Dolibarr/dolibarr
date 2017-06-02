@@ -2743,6 +2743,8 @@ class ContratLigne extends CommonObjectLine
 		if (empty($this->total_ht)) $this->total_ht = 0;
 		if (empty($this->total_tva)) $this->total_tva = 0;
 		if (empty($this->total_ttc)) $this->total_ttc = 0;
+		if (empty($this->localtax1_tx)) $this->localtax1_tx = 0;
+		if (empty($this->localtax2_tx)) $this->localtax2_tx = 0;
 
 		// Check parameters
 		// Put here code to add control on parameters values
