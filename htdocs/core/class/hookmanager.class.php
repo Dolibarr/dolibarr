@@ -140,6 +140,7 @@ class HookManager
 				'addStatisticLine',
 			    'deleteFile',
 				'doActions',
+			    'doMassActions',
 				'formCreateThirdpartyOptions',
 				'formObjectOptions',
 				'formattachOptions',
