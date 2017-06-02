@@ -2850,7 +2850,7 @@ span.dashboardlineko {
     padding: 1px 2px 1px 2px;
     border-radius: .25em;
 
-    background-color: #af4705;
+    background-color: #9f4705;
     padding: 0px 5px 0px 5px;
     top: -26px;
 }
