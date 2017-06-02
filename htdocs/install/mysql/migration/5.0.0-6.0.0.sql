@@ -159,6 +159,9 @@ CREATE TABLE llx_product_attribute_combination
 
 ALTER TABLE llx_bank_account drop foreign key bank_fk_accountancy_journal;
 
+-- Fix missing entity column after init demo
+ALTER TABLE llx_accounting_journal ADD COLUMN entity integer DEFAULT 1;
+
 -- Add journal entries
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (1,'VT', 'Sale journal', 2, 1);
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (2,'AC', 'Purchase journal', 3, 1);
@@ -375,3 +378,4 @@ create table llx_loan_schedule
   fk_user_creat		integer,          
   fk_user_modif		integer           
 )ENGINE=innodb;
+
