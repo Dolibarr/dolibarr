@@ -18,12 +18,10 @@
 # Generic
 #
 
-# Module label 'ModuleXXXName'
-# (where XXX is value of numeric property 'numero' of module)
-Module500000Name = My module
-# Module description 'ModuleXXXDesc'
-# (where XXX is value of numeric property 'numero' of module)
-Module500000Desc = My module description
+# Module label 'ModuleMyModuleName'
+ModuleMyModuleName = My module
+# Module description 'ModuleMyModuleDesc'
+ModuleMyModuleDesc = My module description
 
 #
 # Admin page
