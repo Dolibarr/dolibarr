@@ -317,7 +317,7 @@ textarea {
 	border-left:solid 1px rgba(0,0,0,.1);
 	border-right:solid 1px rgba(0,0,0,.1);
 	border-bottom:solid 1px rgba(0,0,0,.2);
-		
+
 	background-color: #FFF;
 	padding:4px;
 	margin-left:1px;
@@ -867,10 +867,10 @@ div.fiche>form>div.div-table-responsive {
     	width: 20px;
         object-fit: contain;
     }
-    
+
 	div.statusref {
     	padding-right: 10px;
-   	}    
+   	}
 }
 .linkobject { cursor: pointer; }
 <?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
@@ -1557,12 +1557,12 @@ foreach($mainmenuusedarray as $val)
 	display: table;
     position: absolute;
     height: 100%;
-    width: 100%;	
+    width: 100%;
 }
 .login_center {
 	display: table-cell;
     vertical-align: middle;
-}	
+}
 .login_vertical_align {
 	padding: 10px;
 	padding-bottom: 80px;
@@ -1992,14 +1992,14 @@ div.tabBar {
     border-top: 1px solid #CCC;
 	width: auto;
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
-	border-bottom: 1px solid #aaa; 
+	border-bottom: 1px solid #aaa;
 }
 div.tabBar div.titre {
-	padding-top: 10px;    
+	padding-top: 10px;
 }
 div.tabBarWithBottom {
 	padding-bottom: 18px;
-	border-bottom: 1px solid #aaa; 
+	border-bottom: 1px solid #aaa;
 }
 div.tabBar table.tableforservicepart2:last-child {
     border-bottom: 1px solid #aaa;
@@ -2720,7 +2720,7 @@ tr.liste_titre th, tr.liste_titre td, th.liste_titre, form.liste_titre div, div.
 {
 	border-bottom: 1px solid #<?php echo ($colorbacktitle1 == '255,255,255'?'BBBBBB':'FDFFFF'); ?>;
 }
-/* TODO Once title line is moved under title search, make border bottom of all th black and force to whit when it's first tr */ 
+/* TODO Once title line is moved under title search, make border bottom of all th black and force to whit when it's first tr */
 tr:first-child th.liste_titre {
     border-bottom: 1px solid #FFF ! important;
 }
@@ -2826,7 +2826,7 @@ div .tdtop {
 
 /* Prepare to remove class pair - impair */
 
-.noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre) { 
+.noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre) {
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
@@ -2852,7 +2852,7 @@ div .tdtop {
 /*
  *  Boxes
  */
- 
+
 .ficheaddleft div.boxstats {
     border: none;
 }
@@ -2866,29 +2866,32 @@ div .tdtop {
     text-align: center;
     border-radius: 2px;
 }
-.boxstats, .boxstats130, .boxstatscontent {    
+.boxstats, .boxstats130, .boxstatscontent {
 	white-space: nowrap;
 	overflow: hidden;
     text-overflow: ellipsis;
 }
 .boxstats {
     padding: 3px;
-    width: 105px;    
+    width: 105px;
 }
 .boxstats130 {
-    width: 135px; 
+    width: 135px;
     height: 48px;
-    padding: 3px  
+    padding: 3px
 }
 @media only screen and (max-width: 767px)
 {
+	.thumbstat {
+		flex: 1 1 110px;
+	}
 	.thumbstat150 {
 		flex: 1 1 110px;
 	}
 	.boxstats, .boxstats130 {
-        width: 90px;    
+        width: 90px;
     }
-    .dashboardlineindicator { 
+    .dashboardlineindicator {
         float: left;
     	padding-left: 5px;
     }
@@ -2927,7 +2930,7 @@ span.dashboardlineko {
     padding: 1px 6px 1px 6px;
     background-color: #8c4446;
     color: #FFFFFF ! important;
-    border-radius: .25em;    
+    border-radius: .25em;
 }
 .boxtable {
     margin-bottom: 8px !important;
@@ -4047,7 +4050,7 @@ div.dataTables_length select {
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
 }
-.select2-container-active .select2-choice, .select2-container-active .select2-choices 
+.select2-container-active .select2-choice, .select2-container-active .select2-choices
 {
 	outline: none;
 	border-top: none;

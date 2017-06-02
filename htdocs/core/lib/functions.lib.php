@@ -3235,15 +3235,19 @@ function dol_print_error($db='',$error='',$errors=null)
  * Show a public email and error code to contact if technical error
  *
  * @param	string	$prefixcode		Prefix of public error code
+ * @param   string  $errormessage   Complete error message
  * @return	void
  */
-function dol_print_error_email($prefixcode)
+function dol_print_error_email($prefixcode, $errormessage='')
 {
 	global $langs,$conf;
 
 	$langs->load("errors");
 	$now=dol_now();
-	print '<br><div class="error">'.$langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d')).'</div>';
+	print '<br><div class="center login_main_message"><div class="error">';
+	print $langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d'));
+	if ($errormessage) print '<br><br>'.$errormessage;
+	print '</div></div>';
 }
 
 /**
