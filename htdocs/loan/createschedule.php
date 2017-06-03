@@ -160,7 +160,7 @@ if ($object->nbterm > 0 && count($echeance->lines)==0)
 	while($i <$object->nbterm+1){
 		$mens = round($echeance->calc_mens($capital, $object->rate/100, $object->nbterm-$i+1),2,PHP_ROUND_HALF_UP);
 		$int = ($capital*($object->rate/12))/100;
-		$int = round($int ,2,PHP_ROUND_HALF_UP);
+		$int = round($int,2,PHP_ROUND_HALF_UP);
 		$cap_rest = round($capital - ($mens-$int),2,PHP_ROUND_HALF_UP);
 		print '<tr>';
 		print '<td align="center" id="n'.$i.'">' . $i .'</td>';

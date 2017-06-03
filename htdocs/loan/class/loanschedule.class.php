@@ -24,8 +24,8 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/**     \class      LoanSchedule
- *		\brief      Class to manage Schedule of loans
+/**
+ *		Class to manage Schedule of loans
  */
 class LoanSchedule extends CommonObject
 {
@@ -382,10 +382,10 @@ class LoanSchedule extends CommonObject
 	/**
 	 *  Load all object in memory from database
 	 *
-	 *  @param	int		$id         Id object
+	 *  @param	int		$loanid     Id object
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function fetchall($loan)
+	function fetchall($loanid)
 	{
 		global $langs;
 
@@ -406,7 +406,7 @@ class LoanSchedule extends CommonObject
 		$sql.= " t.fk_user_creat,";
 		$sql.= " t.fk_user_modif";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-		$sql.= " WHERE t.fk_loan = ".$loan;
+		$sql.= " WHERE t.fk_loan = ".$loanid;
 
 		dol_syslog(get_class($this)."::fetchall", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -446,6 +446,11 @@ class LoanSchedule extends CommonObject
 		}
 	}
 
+	/**
+	 *  trans_paiment
+	 *
+	 *  @return void
+	 */
 	function trans_paiment()
 	{
 		require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
@@ -482,11 +487,17 @@ class LoanSchedule extends CommonObject
 	}
 
 
-	function lastpaiment($loan)
+	/**
+	 *  trans_paiment
+	 *
+	 *  @param  int    $loanid     Loan id
+	 *  @return int                < 0 if KO, Date > 0 if OK
+	 */
+	function lastpaiment($loanid)
 	{
 		$sql = "SELECT p.datep";
 		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as p ";
-		$sql.= " WHERE p.fk_loan = " . $loan;
+		$sql.= " WHERE p.fk_loan = " . $loanid;
 		$sql.= " ORDER BY p.datep DESC ";
 		$sql.= " LIMIT 1 ";
 
@@ -500,14 +511,20 @@ class LoanSchedule extends CommonObject
 		}
 	}
 
-	function paimenttorecord($loan,$datemax)
+	/**
+	 *  paimenttorecord
+	 *
+	 *  @param  int        $loanid     Loan id
+	 *  @param  int        $datemax    Date max
+	 *  @return array                  Array of id
+	 */
+	function paimenttorecord($loanid, $datemax)
 	{
 		$sql = "SELECT p.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p ";
-		$sql.= " WHERE p.fk_loan = " . $loan;
-		if(!empty($datemax)){ $sql.= " AND p.datep > '" . $this->db->idate($datemax) ."'";}
+		$sql.= " WHERE p.fk_loan = " . $loanid;
+		if (!empty($datemax)) { $sql.= " AND p.datep > '" . $this->db->idate($datemax) ."'";}
 		$sql.= " AND p.datep <= '" . $this->db->idate(dol_now()). "'";
-
 
 		$resql=$this->db->query($sql);
 
@@ -515,7 +532,6 @@ class LoanSchedule extends CommonObject
 			while($obj = $this->db->fetch_object($resql))
 			{
 				$result[] = $obj->rowid;
-
 			}
 
 		}
