@@ -51,6 +51,9 @@ $type='ficheinter';
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'updateMask')
 {
 	$maskconst=GETPOST('maskconst','alpha');
@@ -114,35 +117,6 @@ else if ($action == 'specimen') // For fiche inter
 	}
 }
 
-// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
-if ($action == 'setModuleOptions')
-{
-	$post_size=count($_POST);
-
-	$db->begin();
-
-	for($i=0;$i < $post_size;$i++)
-	{
-		if (array_key_exists('param'.$i,$_POST))
-		{
-			$param=GETPOST("param".$i,'alpha');
-			$value=GETPOST("value".$i,'alpha');
-			if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-			if (! $res > 0) $error++;
-		}
-	}
-	if (! $error)
-	{
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		$db->rollback();
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-}
-
 // Activate a model
 else if ($action == 'set')
 {
@@ -186,7 +160,7 @@ else if ($action == 'setmod')
 
 else if ($action == 'set_FICHINTER_FREE_TEXT')
 {
-	$freetext= GETPOST('FICHINTER_FREE_TEXT');	// No alpha here, we want exact string
+	$freetext= GETPOST('FICHINTER_FREE_TEXT','none');	// No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "FICHINTER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;

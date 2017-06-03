@@ -591,12 +591,13 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
  *   	Return array of possible substitutions for PDF content (without external module substitutions).
  *
  *		@param	Translate	$outputlangs	Output language
+ *      @param  array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
  *      @param  Object      $object         Object
  *      @return	array						Array of substitutions
  */
-function pdf_getSubstitutionArray($outputlangs, $object=null)
+function pdf_getSubstitutionArray($outputlangs, $exclude=null, $object=null)
 {
-    $substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+    $substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $exclude, $object);
     $substitutionarray['__FROM_NAME__']='__FROM_NAME__';
     $substitutionarray['__FROM_EMAIL__']='__FROM_EMAIL__';
     return $substitutionarray;
@@ -625,9 +626,9 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 	elseif ($unit=='in') $k=72;
 
 	// Make substitution
-	$substitutionarray=pdf_getSubstitutionArray($outputlangs,null);
-	complete_substitutions_array($substitutionarray,$outputlangs,null);
-	$text=make_substitutions($text,$substitutionarray,$outputlangs);
+	$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, null);
+	complete_substitutions_array($substitutionarray, $outputlangs, null);
+	$text=make_substitutions($text, $substitutionarray, $outputlangs);
 	$text=$outputlangs->convToOutputCharset($text);
 
 	$savx=$pdf->getX(); $savy=$pdf->getY();
@@ -854,12 +855,12 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	// Line of free text
 	if (empty($hidefreetext) && ! empty($conf->global->$paramfreetext))
 	{
-		$substitutionarray=pdf_getSubstitutionArray($outputlangs, $object);
+		$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 		// More substitution keys
 		$substitutionarray['__FROM_NAME__']=$fromcompany->name;
 		$substitutionarray['__FROM_EMAIL__']=$fromcompany->email;
-		complete_substitutions_array($substitutionarray,$outputlangs,$object);
-		$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray,$outputlangs);
+		complete_substitutions_array($substitutionarray, $outputlangs, $object);
+		$newfreetext=make_substitutions($conf->global->$paramfreetext, $substitutionarray, $outputlangs);
 		$line.=$outputlangs->convToOutputCharset($newfreetext);
 	}
 

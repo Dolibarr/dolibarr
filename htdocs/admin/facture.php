@@ -51,6 +51,8 @@ $type='invoice';
  * Actions
  */
 
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'updateMask')
 {
     $maskconstinvoice=GETPOST('maskconstinvoice','alpha');
@@ -120,31 +122,6 @@ if ($action == 'specimen')
     {
     	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
-    }
-}
-
-// define constants for models generator that need parameters
-if ($action == 'setModuleOptions')
-{
-    $post_size=count($_POST);
-    for($i=0;$i < $post_size;$i++)
-    {
-        if (array_key_exists('param'.$i,$_POST))
-        {
-            $param=GETPOST("param".$i,'alpha');
-            $value=GETPOST("value".$i,'alpha');
-            if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-        }
-    }
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -229,7 +206,7 @@ if ($action == 'set_FACTURE_DRAFT_WATERMARK')
 
 if ($action == 'set_INVOICE_FREE_TEXT')
 {
-	$freetext = GETPOST('INVOICE_FREE_TEXT');	// No alpha here, we want exact string
+	$freetext = GETPOST('INVOICE_FREE_TEXT','none');	// No alpha here, we want exact string
 
     $res = dolibarr_set_const($db, "INVOICE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 

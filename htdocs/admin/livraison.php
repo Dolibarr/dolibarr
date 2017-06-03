@@ -47,9 +47,12 @@ $label   = GETPOST('label','alpha');
 $scandir = GETPOST('scandir','alpha');
 $type='delivery';
 
+
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask')
 {
@@ -71,7 +74,7 @@ if ($action == 'updateMask')
 
 if ($action == 'set_DELIVERY_FREE_TEXT')
 {
-    $free=GETPOST('DELIVERY_FREE_TEXT');	// No alpha here, we want exact string
+    $free=GETPOST('DELIVERY_FREE_TEXT','none');	// No alpha here, we want exact string
     $res=dolibarr_set_const($db, "DELIVERY_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
@@ -129,35 +132,6 @@ if ($action == 'specimen')
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
         dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
-}
-
-// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
-if ($action == 'setModuleOptions')
-{
-	$post_size=count($_POST);
-
-	$db->begin();
-
-	for($i=0;$i < $post_size;$i++)
-	{
-		if (array_key_exists('param'.$i,$_POST))
-		{
-			$param=GETPOST("param".$i,'alpha');
-			$value=GETPOST("value".$i,'alpha');
-			if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-			if (! $res > 0) $error++;
-		}
-	}
-	if (! $error)
-	{
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		$db->rollback();
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
 }
 
 if ($action == 'set')
