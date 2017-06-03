@@ -49,6 +49,8 @@ $type = 'action';
  *	Actions
  */
 
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if (preg_match('/set_(.*)/',$action,$reg))
 {
 	$code=$reg[1];
@@ -75,21 +77,6 @@ if (preg_match('/del_(.*)/',$action,$reg))
 	else
 	{
 		dol_print_error($db);
-	}
-}
-// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
-if ($action == 'setModuleOptions')
-{
-
-	if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-	if (! $res > 0) $error++;
-	if (! $error)
-	{
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-        setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 if ($action == 'set')
@@ -233,7 +220,7 @@ else
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
     print load_fiche_titre($langs->trans("AgendaModelModule"),'','');
-    
+
     print '<table class="noborder" width="100%">'."\n";
     print '<tr class="liste_titre">'."\n";
     print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
@@ -243,13 +230,13 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     print '<td align="center" width="40">'.$langs->trans("ShortInfo").'</td>';
     print '<td align="center" width="40">'.$langs->trans("Preview").'</td>';
     print '</tr>'."\n";
-    
+
     clearstatcache();
-    
+
     foreach ($dirmodels as $reldir)
     {
     	$dir = dol_buildpath($reldir."core/modules/action/doc/");
-    
+
         if (is_dir($dir))
         {
             $handle=opendir($dir);
@@ -261,10 +248,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
                     {
             			$name = substr($file, 4, dol_strlen($file) -16);
             			$classname = substr($file, 0, dol_strlen($file) -12);
-            			
+
             			require_once $dir.'/'.$file;
-            			$module = new $classname($db, new ActionComm($db));           			
-            			
+            			$module = new $classname($db, new ActionComm($db));
+
             			print '<tr class="oddeven">'."\n";
             			print "<td>";
             			print (empty($module->name)?$name:$module->name);
@@ -272,16 +259,16 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			print "<td>\n";
             			require_once $dir.$file;
             			$module = new $classname($db,$specimenthirdparty);
-            			if (method_exists($module,'info')) 
+            			if (method_exists($module,'info'))
             				print $module->info($langs);
-            			else 
+            			else
             				print $module->description;
             			print "</td>\n";
-            			
+
             			// Active
             			if (in_array($name, $def))
             			{
-            			    
+
             			print '<td align="center">'."\n";
             			if ($conf->global->ACTION_EVENT_ADDON_PDF != "$name")
             			{
@@ -301,7 +288,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
             				print "</td>";
             			}
-            			
+
             			// Default
             			print '<td align="center">';
             			if ($conf->global->ACTION_EVENT_ADDON_PDF == "$name")
@@ -313,7 +300,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
             			}
             			print '</td>';
-            			
+
             			// Info
             			$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
             			$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
@@ -326,7 +313,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			print '<td align="center">';
             			print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
             			print '</td>';
-            			
+
             			print "</tr>\n";
                     }
                 }
@@ -366,7 +353,7 @@ print '</td></tr>'."\n";
 
 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {
-    
+
     print '<!-- AGENDA_USE_EVENT_TYPE_DEFAULT -->';
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";
@@ -404,30 +391,30 @@ print '</td></tr>'."\n";
 // AGENDA NOTIFICATION
 if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 {
-    
+
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans('AGENDA_NOTIFICATION').'</td>'."\n";
     print '<td align="center">&nbsp;</td>'."\n";
     print '<td align="right">'."\n";
-    
+
     if (empty($conf->global->AGENDA_NOTIFICATION)) {
         print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_NOTIFICATION">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
         print '</td></tr>'."\n";
     } else {
         print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_NOTIFICATION">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
         print '</td></tr>'."\n";
-    	
+
         print '<tr class="oddeven">'."\n";
         print '<td>'.$langs->trans('AGENDA_NOTIFICATION_SOUND').'</td>'."\n";
         print '<td align="center">&nbsp;</td>'."\n";
         print '<td align="right">'."\n";
-    
+
         if (empty($conf->global->AGENDA_NOTIFICATION_SOUND)) {
             print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_NOTIFICATION_SOUND">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
         } else {
             print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_NOTIFICATION_SOUND">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
         }
-    
+
         print '</td></tr>'."\n";
     }
 }

@@ -25,4 +25,4 @@ CREATE TABLE llx_product_attribute_combination
   variation_price_percentage INT NULL,
   variation_weight FLOAT NOT NULL,
   entity INT DEFAULT 1 NOT NULL
-);
+)ENGINE=innodb;

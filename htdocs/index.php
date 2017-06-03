@@ -77,7 +77,7 @@ if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$langs->trans("HomeAr
 
 llxHeader('',$title);
 
-    
+
 $resultboxes=FormOther::getBoxesArea($user,"0");    // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 
@@ -88,18 +88,13 @@ if (! empty($conf->global->MAIN_MOTD))
     $conf->global->MAIN_MOTD=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$conf->global->MAIN_MOTD);
     if (! empty($conf->global->MAIN_MOTD))
     {
-    	$i=0;
-    	while (preg_match('/__\(([a-zA-Z|@]+)\)__/i',$conf->global->MAIN_MOTD,$reg) && $i < 100)
-    	{
-    		$tmp=explode('|',$reg[1]);
-    		if (! empty($tmp[1])) $langs->load($tmp[1]);
-    		$conf->global->MAIN_MOTD=preg_replace('/__\('.preg_quote($reg[1]).'\)__/i',$langs->trans($tmp[0]),$conf->global->MAIN_MOTD);
-    		$i++;
-    	}
+        $substitutionarray=getCommonSubstitutionArray($langs);
+        complete_substitutions_array($substitutionarray, $langs);
+        $texttoshow = make_substitutions($conf->global->MAIN_MOTD, $substitutionarray, $langs);
 
         print "\n<!-- Start of welcome text -->\n";
         print '<table width="100%" class="notopnoleftnoright"><tr><td>';
-        print dol_htmlentitiesbr($conf->global->MAIN_MOTD);
+        print dol_htmlentitiesbr($texttoshow);
         print '</td></tr></table><br>';
         print "\n<!-- End of welcome text -->\n";
     }
@@ -136,7 +131,7 @@ if (empty($user->societe_id))
     $action='';
     $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
     $boxstat.=$hookmanager->resPrint;
-    
+
     if (empty($reshook))
     {
 	    // Condition to be checked for each display line dashboard
@@ -179,7 +174,7 @@ if (empty($user->societe_id))
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php",
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php",
     	    DOL_DOCUMENT_ROOT."/supplier_proposal/class/supplier_proposal.class.php",
-            DOL_DOCUMENT_ROOT."/projet/class/project.class.php", 
+            DOL_DOCUMENT_ROOT."/projet/class/project.class.php",
 	        DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php",
 			DOL_DOCUMENT_ROOT."/don/class/don.class.php"
 	    );
@@ -327,12 +322,12 @@ if (empty($user->societe_id))
 	                $board->load_state_board($user);
 	                $boardloaded[$classe]=$board;
 	            }
-	            else 
+	            else
 	            {
 	                $board=$boardloaded[$classe];
 	            }
 
-	            
+
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
 	            $text=$langs->trans($titres[$key]);
 	            $boxstat.='<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';
@@ -353,7 +348,7 @@ if (empty($user->societe_id))
     $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
     $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
     $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    
+
     $boxstat.='</td></tr>';
     $boxstat.='</table>';
     $boxstat.='</div>';
@@ -558,7 +553,7 @@ if (! empty($valid_dashboardlines))
 
         $textlate = $langs->trans("NActionsLate",$board->nbtodolate);
         $textlate.= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
-        
+
         $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats130 boxstatsborder">';
         $boxwork .= '<div class="boxstatscontent">';
         $boxwork .= '<span class="boxstatstext" title="'.dol_escape_htmltag($board->label).'">'.$board->img.' '.$board->label.'</span><br>';
@@ -579,7 +574,7 @@ if (! empty($valid_dashboardlines))
         $boxwork.='</div></div>';
         $boxwork .="\n";
     }
-    
+
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
@@ -693,7 +688,7 @@ function showWeather($totallate,$text,$options)
     $out='';
     $offset=0;
     $factor=10; // By default
-    
+
     $level0=$offset;           if (! empty($conf->global->MAIN_METEO_LEVEL0)) $level0=$conf->global->MAIN_METEO_LEVEL0;
     $level1=$offset+1*$factor; if (! empty($conf->global->MAIN_METEO_LEVEL1)) $level1=$conf->global->MAIN_METEO_LEVEL1;
     $level2=$offset+2*$factor; if (! empty($conf->global->MAIN_METEO_LEVEL2)) $level2=$conf->global->MAIN_METEO_LEVEL2;

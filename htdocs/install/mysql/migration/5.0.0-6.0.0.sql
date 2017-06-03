@@ -159,6 +159,9 @@ CREATE TABLE llx_product_attribute_combination
 
 ALTER TABLE llx_bank_account drop foreign key bank_fk_accountancy_journal;
 
+-- Fix missing entity column after init demo
+ALTER TABLE llx_accounting_journal ADD COLUMN entity integer DEFAULT 1;
+
 -- Add journal entries
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (1,'VT', 'Sale journal', 2, 1);
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (2,'AC', 'Purchase journal', 3, 1);
@@ -348,5 +351,31 @@ ALTER TABLE llx_facture ADD COLUMN fk_fac_rec_source integer;
 
 DELETE from llx_c_actioncomm where code in ('AC_PROP','AC_COM','AC_FAC','AC_SHIP','AC_SUP_ORD','AC_SUP_INV') AND id NOT IN (SELECT DISTINCT fk_action FROM llx_actioncomm);
 
+-- Fix: delete orphelin category.
+delete from llx_categorie_product where fk_categorie not in (select rowid from llx_categorie where type = 0);
+delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type in (1, 2));
+delete from llx_categorie_member where fk_categorie not in (select rowid from llx_categorie where type = 3);
+delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
+delete from llx_categorie_project where fk_categorie not in (select rowid from llx_categorie where type = 5);
 
 ALTER TABLE llx_inventory ADD COLUMN ref varchar(48);
+
+create table llx_loan_schedule
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  fk_loan			integer,
+  datec				datetime,         
+  tms				timestamp,
+  datep				datetime,         
+  amount_capital	real DEFAULT 0,
+  amount_insurance	real DEFAULT 0,
+  amount_interest	real DEFAULT 0,
+  fk_typepayment	integer NOT NULL,
+  num_payment		varchar(50),
+  note_private      text,
+  note_public       text,
+  fk_bank			integer NOT NULL,
+  fk_user_creat		integer,          
+  fk_user_modif		integer           
+)ENGINE=innodb;
+

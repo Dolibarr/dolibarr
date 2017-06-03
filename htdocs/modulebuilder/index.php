@@ -115,9 +115,60 @@ if ($dircustom && $action == 'initmodule' && $modulename)
 
 if ($dircustom && $action == 'generatepackage')
 {
-    $dir = $dircustom.'/'.$modulename;
+    $modulelowercase=strtolower($module);
 	
+    // Dir for module
+    $dir = $dircustom.'/'.$modulelowercase;
+    // Zip file to build
+    $FILENAMEZIP='';
+    
+    // Load module
+    dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
+    $class='mod'.$module;
 
+    if (class_exists($class))
+    {
+        try {
+            $moduleobj = new $class($db);
+        }
+        catch(Exception $e)
+        {
+            $error++;
+            dol_print_error($e->getMessage());
+        }
+    }
+    else
+    {
+        $error++;
+        $langs->load("errors");
+        dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+        exit;
+    }
+    
+    $arrayversion=explode('.',$moduleobj->version,3);
+    if (count($arrayversion))
+    {
+        $FILENAMEZIP="module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2]?".".$arrayversion[2]:"").".zip";
+        $outputfile = $conf->admin->dir_temp.'/'.$FILENAMEZIP;
+    
+        $result = dol_compress_dir($dir, $outputfile, 'zip');
+        if ($result > 0)
+        {
+            setEventMessages($langs->trans("ZipFileGeneratedInto", $outputfile), null);
+        }
+        else
+        {
+            $error++;
+            $langs->load("errors");
+            setEventMessages($langs->trans("ErrorFailToGenerateFile", $outputfile), null, 'errors');
+        }
+    }
+    else
+    {
+        $error++;
+        $langs->load("errors");
+        setEventMessages($langs->trans("ErrorCheckVersionIsDefined"), null, 'errors');
+    }
 }
 
 
@@ -434,6 +485,12 @@ elseif (! empty($module))
 
         if ($tab == 'buildpackage')
         {
+            if (! class_exists('ZipArchive') && ! defined('ODTPHP_PATHTOPCLZIP'))
+            {
+                print img_warning().' '.$langs->trans("ErrNoZipEngine");
+                print '<br>';
+            }
+            
         	print '<form name="generatepackage">';
         	print '<input type="hidden" name="action" value="generatepackage">';
         	print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';

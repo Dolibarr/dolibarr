@@ -155,7 +155,7 @@ class FormMail extends Form
         $listofpaths=array();
         $listofnames=array();
         $listofmimes=array();
-        
+
         $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
         if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
         if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
@@ -182,7 +182,7 @@ class FormMail extends Form
         $listofpaths=array();
         $listofnames=array();
         $listofmimes=array();
-        
+
         $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
         if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
         if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
@@ -209,7 +209,7 @@ class FormMail extends Form
         $listofpaths=array();
         $listofnames=array();
         $listofmimes=array();
-        
+
         $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
         if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
         if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
@@ -266,13 +266,13 @@ class FormMail extends Form
         	$out='';
 
         	$disablebademails=1;
-        	
+
         	// Define list of attached files
         	$listofpaths=array();
         	$listofnames=array();
         	$listofmimes=array();
             $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
-            
+
         	if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
         	if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
         	if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
@@ -415,7 +415,7 @@ class FormMail extends Form
                             {
                                 $posalias++;
                                 $listaliasval=trim($listaliasval);
-                                if ($listaliasval) 
+                                if ($listaliasval)
                                 {
                                     $listaliasval=preg_replace('/</', '&lt;', $listaliasval);
                                     $listaliasval=preg_replace('/>/', '&gt;', $listaliasval);
@@ -720,7 +720,7 @@ class FormMail extends Form
         				$this->substit['__PERSONALIZED__']=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
         			}
         		}
-                
+
                 //Add lines substitution key from each line
                 $lines = '';
                 $defaultlines = $arraydefaultmessage['content_lines'];
@@ -979,14 +979,14 @@ class FormMail extends Form
 			return -1;
 		}
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Set substit array from object
-	 * 
+	 *
 	 * @param	CommonObject	   $object		  Object to use
-	 * @param   Translate  $outputlangs   Object lang 
+	 * @param   Translate  $outputlangs   Object lang
 	 * @return	void
 	 */
 	function setSubstitFromObject($object, $outputlangs=null)
@@ -1001,14 +1001,14 @@ class FormMail extends Form
 		$this->substit['__AMOUNT__'] = price($object->total_ttc);
 		$this->substit['__AMOUNT_WO_TAX__'] = price($object->total_ht);
 		$this->substit['__AMOUNT_VAT__'] = price($object->total_tva);
-		
+
 		$this->substit['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
 		$this->substit['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
-		
+
 		$this->substit['__PROJECT_ID__'] = (is_object($object->projet)?$object->projet->id:'');
 		$this->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
 		$this->substit['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
-		
+
 		$this->substit['__SIGNATURE__'] = $user->signature;
 		$this->substit['__PERSONALIZED__'] = '';
 		$this->substit['__CONTACTCIVNAME__'] = '';	// Will be replace just before sending
@@ -1020,7 +1020,7 @@ class FormMail extends Form
         foreach ($extrafields->attribute_label as $key => $label) {
             $this->substit['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
         }
-		
+
         //Fill substit_lines with each object lines content
         if (is_array($object->lines))
         {
@@ -1057,36 +1057,37 @@ class FormMail extends Form
             }
         }
 	}
-	
+
 	/**
-	 * Get list of substition keys available.
-	 * 
+	 * Get list of substition keys available for emails.
+	 * This include the complete_substitutions_array. TODO Include the getCommonSubstitutionArray().
+	 *
 	 * @param	string	$mode		'formemail', 'formemailwithlines', 'formemailforlines', 'emailing', ...
-	 * @return	void
+	 * @return	array               Array of substitution values for emails.
 	 */
 	static function getAvailableSubstitKey($mode='formemail')
 	{
 		global $conf, $langs;
-		
+
 		$vars=array();
-		
+
 		if ($mode == 'formemail' || $mode == 'formemailwithlines' || $mode == 'formemailforlines')
 		{
 			$vars=array(
-				'__REF__', 
-				'__REFCLIENT__', 
-				'__REFSUPPLIER__', 
-			    '__THIRDPARTY_ID__', 
-			    '__THIRDPARTY_NAME__', 
-			    '__PROJECT_ID__', 
-			    '__PROJECT_REF__', 
+				'__REF__',
+				'__REFCLIENT__',
+				'__REFSUPPLIER__',
+			    '__THIRDPARTY_ID__',
+			    '__THIRDPARTY_NAME__',
+			    '__PROJECT_ID__',
+			    '__PROJECT_REF__',
 			    '__PROJECT_NAME__',
 				'__CONTACTCIVNAME__',
-				'__AMOUNT__', 
-				'__AMOUNT_WO_TAX__', 
-				'__AMOUNT_VAT__', 
+				'__AMOUNT__',
+				'__AMOUNT_WO_TAX__',
+				'__AMOUNT_VAT__',
 			    '__PERSONALIZED__',			// Paypal link will be added here in form mode
-				'__SIGNATURE__', 
+				'__SIGNATURE__',
 			);
 			if ($mode == 'formwithlines')
 			{
@@ -1127,21 +1128,21 @@ class FormMail extends Form
 					if ($conf->contrat->enabled) $vars['__SECUREKEYPAYPAL_CONTRACTLINE__']='SecureKeyPaypalUniquePerContractLine';
 				}
 			}
-			else 
+			else
 			{
 				$vars['__SECUREKEYPAYPAL__']='';
 				$vars['__SECUREKEYPAYPAL_MEMBER__']='';
 			}
 		}
-		
-		$tmparray=array();
+
 		$parameters=array('mode'=>$mode);
+		$tmparray=getCommonSubstitutionArray($langs);
 		complete_substitutions_array($tmparray, $langs, null, $parameters);
 		foreach($tmparray as $key => $val)
 		{
 		    $vars[$key]=$key;
 		}
-		
+
 		return $vars;
 	}
 
