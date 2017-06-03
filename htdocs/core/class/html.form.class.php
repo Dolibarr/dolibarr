@@ -4361,7 +4361,7 @@ class Form
 		$TCurrency = array();
 
 		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
-		$sql.= " WHERE entity IN ('".getEntity('mutlicurrency', false)."')";
+		$sql.= " WHERE entity IN ('".getEntity('mutlicurrency', 0)."')";
 		$resql = $db->query($sql);
 		if ($resql)
 		{

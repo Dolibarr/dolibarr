@@ -1704,7 +1704,7 @@ class Task extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
         if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
         $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
-        $sql.= " WHERE p.entity IN (".getEntity('project', false).')';
+        $sql.= " WHERE p.entity IN (".getEntity('project', 0).')';
         $sql.= " AND p.fk_statut = 1";
         $sql.= " AND t.fk_projet = p.rowid";
         $sql.= " AND t.progress < 100";         // tasks to do

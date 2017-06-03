@@ -504,7 +504,7 @@ class Contrat extends CommonObject
 		if ($ref)
 		{
 			$sql.= " WHERE ref='".$this->db->escape($ref)."'";
-			$sql.= " AND entity IN (".getEntity('contract', false).")";
+			$sql.= " AND entity IN (".getEntity('contract', 0).")";
 		}
 		else $sql.= " WHERE rowid=".$id;
 

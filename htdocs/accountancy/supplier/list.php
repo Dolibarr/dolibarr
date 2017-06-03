@@ -217,7 +217,7 @@ if (strlen(trim($search_account))) {
 if (strlen(trim($search_vat))) {
     $sql .= natural_search("l.tva_tx",$search_vat,1);
 }
-$sql .= " AND f.entity IN (" . getEntity('facture_fourn', false) . ")";  // We don't share object for accountancy
+$sql .= " AND f.entity IN (" . getEntity('facture_fourn', 0) . ")";  // We don't share object for accountancy
 
 $sql .= $db->order($sortfield, $sortorder);
 
