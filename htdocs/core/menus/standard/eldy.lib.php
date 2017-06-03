@@ -1008,7 +1008,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$sql = "SELECT rowid, code, label, nature";
 					$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
 					$sql.= " WHERE entity = ".$conf->entity;
-					$sql.= " ORDER BY nature";
+					$sql.= " ORDER BY label";
 
 					$resql = $db->query($sql);
 					if ($resql)
@@ -1018,30 +1018,30 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 						if ($numr > 0)
 						{
-    						while ($i < $numr)
-    						{
-    							$objp = $db->fetch_object($resql);
+							while ($i < $numr)
+							{
+								$objp = $db->fetch_object($resql);
 
-    							$nature='';
-    							// Must match array $sourceList defined into journals_list.php 
-    							if ($objp->nature == 2) $nature="sells";
-    							if ($objp->nature == 3) $nature="purchases";
-    							if ($objp->nature == 4) $nature="bank";
-    							if ($objp->nature == 1) $nature="various";
-    							if ($objp->nature == 9) $nature="hasnew";
-    							
-    							// To enable when page exists
-    							if (empty($conf->global->MAIN_FEATURES_LEVEL))
-    							{
-    							    if ($nature == 'various' || $nature == 'hasnew') $nature='';	
-    							}
-    								
-    							if ($nature)
-    							{
-                                    if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&code_journal='.$objp->code,dol_trunc($objp->label,25),2,$user->rights->accounting->comptarapport->lire);
-    							}
-    							$i++;
-    						}
+								$nature='';
+								// Must match array $sourceList defined into journals_list.php 
+								if ($objp->nature == 2) $nature="sells";
+								if ($objp->nature == 3) $nature="purchases";
+								if ($objp->nature == 4) $nature="bank";
+								if ($objp->nature == 1) $nature="various";
+								if ($objp->nature == 9) $nature="hasnew";
+
+								// To enable when page exists
+								if (empty($conf->global->MAIN_FEATURES_LEVEL))
+								{
+									if ($nature == 'various' || $nature == 'hasnew') $nature='';
+								}
+
+								if ($nature)
+								{
+									if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid,dol_trunc($objp->label,25),2,$user->rights->accounting->comptarapport->lire);
+								}
+								$i++;
+							}
 						}
 						else
 						{
