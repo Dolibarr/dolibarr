@@ -354,11 +354,13 @@ class SupplierProposal extends CommonObject
      *      @param		string		$label				???
      *      @param		array		$array_option		extrafields array
 	 * 		@param		string		$ref_fourn			Supplier price reference
+	 * 		@param		string		$origin				'order', 'supplier_propal', ...
+	 * 		@param		int			$origin_id			Id of origin line
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
      *    	@see       	add_product
      */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$array_option=0, $ref_fourn='')
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$array_option=0, $ref_fourn='', $origin, $origin_id)
     {
     	global $mysoc;
 
@@ -459,6 +461,8 @@ class SupplierProposal extends CommonObject
             $this->line->product_type=$type;
             $this->line->special_code=$special_code;
             $this->line->fk_parent_line=$fk_parent_line;
+            $this->line->origin=$origin;
+            $this->line->origin_id=$origin_id;
 
 			$this->line->ref_fourn = $this->db->escape($ref_fourn);
 
@@ -875,7 +879,9 @@ class SupplierProposal extends CommonObject
 							$this->lines[$i]->pa_ht,
 							$this->lines[$i]->label,
 							$this->lines[$i]->array_options,
-							$this->lines[$i]->ref_fourn
+							$this->lines[$i]->ref_fourn,
+							'supplier_proposal',
+							$this->lines[$i]->rowid
 						);
 
                         if ($result < 0)
