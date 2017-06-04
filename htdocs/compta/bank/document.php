@@ -3,7 +3,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2017 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ $result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '',
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) {
     $page = 0;
 }
@@ -122,21 +122,21 @@ if ($id > 0 || !empty($ref)) {
         $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
         dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-        
-        
+
+
         print '<div class="fichecenter">';
         print '<div class="underbanner clearboth"></div>';
-       
+
         print '<table class="border" width="100%">';
         print '<tr><td class="titlefield">' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . count($filearray) . '</td></tr>';
         print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' . $totalsize . ' ' . $langs->trans("bytes") . '</td></tr>';
         print "</table>\n";
 
         print '</div>';
-        
+
         dol_fiche_end();
 
-        
+
         $modulepart = 'bank';
         $permission = $user->rights->banque->modifier;
         $permtoedit = $user->rights->banque->modifier;

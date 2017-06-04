@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013-2016 Laurent Destaileur	<ely@users.sourceforge.net>
- * Copyright (C) 2014	   Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2013-2016	Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2014-2017	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ $idline = GETPOST('idline');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 
 if (!$sortfield) {
     $sortfield = 'p.ref';
@@ -402,7 +402,7 @@ print '</tr>';
 
 foreach($listofdata as $key => $val)
 {
-	
+
 
 	$productstatic->fetch($val['id_product']);
 	$warehousestatics->fetch($val['id_sw']);

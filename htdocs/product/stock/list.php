@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
 if (! $sortfield) $sortfield="e.label";
 if (! $sortorder) $sortorder="ASC";
-$page = GETPOST("page");
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page < 0) $page = 0;
 $offset = $limit * $page;
 
@@ -129,22 +129,22 @@ if ($result)
 	if ($search_label)	$param.="&search_label=".$search_label;
 	if ($search_status)	$param.="&search_status=".$search_status;
 	if ($sall)			$param.="&sall=".$sall;
-	
+
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
-	
+
 	print_barre_liste($langs->trans("ListOfWarehouses"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_generic.png', 0, '', '', $limit);
-	
+
 	if ($sall)
 	{
 	    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
 	    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 	}
-	
+
 	$moreforfilter='';
 
     print '<div class="div-table-responsive">';
@@ -174,7 +174,7 @@ if ($result)
     print '</td>';
 
 	print '</tr>';
-    
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"], "e.label","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("LocationSummary"),$_SERVER["PHP_SELF"], "e.lieu","",$param,"",$sortfield,$sortorder);
@@ -192,12 +192,12 @@ if ($result)
 		while ($i < min($num,$limit))
 		{
 			$objp = $db->fetch_object($result);
-            
+
 			$warehouse->id = $objp->rowid;
             $warehouse->label = $objp->ref;
             $warehouse->lieu = $objp->lieu;
             $warehouse->fk_parent = $objp->fk_parent;
-            
+
             print '<tr class="oddeven">';
             print '<td>' . $warehouse->getNomUrl(1) . '</td>';
             // Location
@@ -225,7 +225,7 @@ if ($result)
 
             print "</tr>\n";
 
-            
+
             $i++;
 		}
 
@@ -253,7 +253,7 @@ if ($result)
 
 	print "</table>";
     print "</table>";
-    
+
 	print '</form>';
 }
 else

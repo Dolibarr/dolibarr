@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ $year=GETPOST('year');
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0 ; }
 $offset = $limit * $page ;
 if (! $sortorder) $sortorder="DESC";
@@ -103,7 +103,7 @@ if ($resql)
 
 	$param='';
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	
+
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -112,11 +112,11 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
-	
+
 	print_barre_liste($langs->trans("Actions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_agenda', 0, '', '', $limit);
 
 	$moreforfilter='';
-	
+
 	$i = 0;
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -136,7 +136,7 @@ if ($resql)
 
 		if ($obj)
 		{
-			
+
 			print '<tr class="oddeven">';
 
 			print "<td>".$obj->df."</td>\n";
@@ -169,7 +169,7 @@ if ($resql)
 	print "</table>";
 	print '</div>';
 	print '</form>';
-	
+
 	$db->free($resql);
 }
 else

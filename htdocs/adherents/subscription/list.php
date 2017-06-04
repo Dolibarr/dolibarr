@@ -45,7 +45,7 @@ $date_select=isset($_GET["date_select"])?$_GET["date_select"]:$_POST["date_selec
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0 ; }
 $offset = $limit * $page ;
 $pageprev = $page - 1;
@@ -155,7 +155,7 @@ if ($result)
     $num = $db->num_rows($result);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
-    
+
 	$i = 0;
 
     $title=$langs->trans("ListOfSubscriptions");
@@ -171,7 +171,7 @@ if ($result)
 	if ($search_acount)   $param.="&search_account=".$search_account;
 	if ($search_amount)   $param.="&search_amount=".$search_amount;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
-    
+
 	// List of mass actions available
 	$arrayofmassactions =  array(
 	    //'presend'=>$langs->trans("SendByMail"),
@@ -181,7 +181,7 @@ if ($result)
 	if ($user->rights->adherent->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
 	//if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
-	
+
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -191,7 +191,7 @@ if ($result)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-    
+
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
 
 	if ($sall)
@@ -200,11 +200,11 @@ if ($result)
 	}
 
     $moreforfilter = '';
-    
+
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
-    
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -237,12 +237,12 @@ if ($result)
 	print '<td align="right" class="liste_titre">';
 	print '<input class="flat" type="text" name="search_amount" value="'.dol_escape_htmltag($search_amount).'" size="4">';
 	print '</td>';
-	
+
     // Action column
     print '<td class="liste_titre" align="right">';
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
-    print '</td>';  
+    print '</td>';
 
 	print "</tr>\n";
 
@@ -262,8 +262,8 @@ if ($result)
 	//print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
-	
-	
+
+
     // Static objects
     $subscription=new Subscription($db);
     $adherent=new Adherent($db);
@@ -286,7 +286,7 @@ if ($result)
         $adherent->login=$obj->login;
         $adherent->photo=$obj->photo;
 
-        
+
 
         print '<tr class="oddeven">';
 
@@ -329,7 +329,7 @@ if ($result)
 
         // Price
         print '<td align="right">'.price($obj->subscription).'</td>';
-        
+
         print '<td></td>';
 
         print "</tr>";
@@ -338,7 +338,7 @@ if ($result)
     }
 
     // Total
-    
+
     print '<tr class="liste_total">';
     print "<td>".$langs->trans("Total")."</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";

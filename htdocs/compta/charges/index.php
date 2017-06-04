@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2011-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
@@ -51,7 +51,7 @@ $search_account = GETPOST('search_account','int');
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -92,7 +92,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-if ($mode != 'sconly') 
+if ($mode != 'sconly')
 {
     $center=($year?'<a href="index.php?year='.($year-1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year+1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>":"");
     print_barre_liste($title,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$center,$num,$totalnboflines, 'title_accountancy', 0, '', '', $limit, 1);
@@ -294,7 +294,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 		        $total = $total + $obj->amount;
 
-		        
+
 		        print '<tr class="oddeven">';
 		        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
@@ -309,12 +309,12 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 		        // Date
 		        print '<td align="center">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
-		        
+
 		        // Type payment
 	    	    print '<td>';
 	    	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
 	    	    print $obj->num_payment.'</td>';
-			        
+
 		    	// Account
 		    	if (! empty($conf->banque->enabled))
 			    {
@@ -333,7 +333,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			        else print '&nbsp;';
 			        print '</td>';
 			    }
-			    
+
 	    	    // Paid
 		    	print '<td align="right">'.price($obj->amount)."</td>";
 		        print "</tr>\n";
@@ -424,7 +424,7 @@ while($j<$numlt)
 
 				$total = $total + $obj->amount;
 
-				
+
 				print '<tr class="oddeven">';
 				print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
@@ -465,7 +465,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
         $sal = new PaymentSalary($db);
 
         print "<br>";
-        
+
         print_fiche_titre($langs->trans("SalariesPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 
         $sql = "SELECT s.rowid, s.amount, s.label, s.datep as datep, s.datev as datev, s.datesp, s.dateep, s.salary, s.fk_bank, u.salary as current_salary,";
@@ -508,7 +508,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
                 $total = $total + $obj->amount;
 
-                
+
                 print '<tr class="oddeven">';
 
                 print '<td align="left">'.dol_print_date($db->jdate($obj->dateep),'day').'</td>'."\n";
@@ -527,7 +527,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 	    	    print '<td>';
 	    	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
 	    	    print $obj->num_payment.'</td>';
-			        
+
 		    	// Account
 		    	if (! empty($conf->banque->enabled))
 			    {
@@ -546,7 +546,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 			        else print '&nbsp;';
 			        print '</td>';
 			    }
-			    
+
                 // Paid
                 print '<td align="right">'.price($obj->amount)."</td>";
                 print "</tr>\n";

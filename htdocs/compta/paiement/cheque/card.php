@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013 		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
@@ -50,7 +50,7 @@ $result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque','','',$fieldna
 
 $sortfield=GETPOST('sortfield', 'alpha');
 $sortorder=GETPOST('sortorder', 'alpha');
-$page=GETPOST('page', 'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="b.dateo,b.rowid";
 if ($page < 0) { $page = 0 ; }
@@ -373,7 +373,7 @@ if ($action == 'new')
 {
 	$paymentstatic=new Paiement($db);
 	$accountlinestatic=new AccountLine($db);
-    
+
 	$lines = array();
 
 	$now=dol_now();
@@ -474,7 +474,7 @@ if ($action == 'new')
 		$moreforfilter='';
         print '<div class="div-table-responsive-no-min">';
         print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-		
+
 		print '<tr class="liste_titre">';
 		print '<td style="min-width: 120px">'.$langs->trans("DateChequeReceived").'</td>'."\n";
 		print '<td style="min-width: 120px">'.$langs->trans("ChequeNumber")."</td>\n";
@@ -493,7 +493,7 @@ if ($action == 'new')
     		foreach ($lines[$bid] as $lid => $value)
     		{
     			$account_id = $bid;
-    			if (! isset($accounts[$bid]))
+    			if (! isset($accounts[$bid])) // TODO A non-numeric value encountered !! $accounts[$bid] is the label !
     				$accounts[$bid]=0;
     			$accounts[$bid] += 1;
 
@@ -529,18 +529,18 @@ if ($action == 'new')
     				print '&nbsp;';
     			}
     			print '</td>';
-    
+
     			print '<td align="center">';
     			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
     			print '</td>' ;
     			print '</tr>';
-    
+
     			$i++;
     		}
 		}
 		print "</table>";
         print '</div>';
-        
+
 		print '<div class="tabsAction">';
 		if ($user->rights->banque->cheque)
 		{
@@ -563,15 +563,15 @@ else
 	$accountstatic->fetch($object->account_id);
 
 	$linkback='<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/list.php">'.$langs->trans("BackToList").'</a>';
-	
+
 	$morehtmlref='';
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-	
+
+
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	
+
 	print '<table class="border" width="100%">';
 
 	print '<tr><td class="titlefield">';
@@ -626,7 +626,7 @@ else
 	print '</td>';
 	print '</tr>';
 	*/
-	
+
 	print '<tr><td>'.$langs->trans('Account').'</td><td colspan="2">';
 	print $accountstatic->getNomUrl(1);
 	print '</td></tr>';
@@ -648,7 +648,7 @@ else
 
 	print '</div>';
 
-	
+
 	// List of cheques
 	$sql = "SELECT b.rowid, b.amount, b.num_chq, b.emetteur,";
 	$sql.= " b.dateo as date, b.datec as datec, b.banque,";
@@ -670,7 +670,7 @@ else
 		print '<table class="noborder" width="100%">';
 
 		$param="&amp;id=".$object->id;
-		
+
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans("Cheques"),'','','','','width="30"');
 		print_liste_field_titre($langs->trans("DateChequeReceived"),$_SERVER["PHP_SELF"],"b.dateo,b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
@@ -692,7 +692,7 @@ else
     			if (! isset($accounts[$objp->bid]))
     				$accounts[$objp->bid]=0;
     			$accounts[$objp->bid] += 1;
-    
+
     			print '<tr class="oddeven">';
     			print '<td align="center">'.$i.'</td>';
     			print '<td align="center">'.dol_print_date($db->jdate($objp->date),'day').'</td>';	// Date operation
@@ -735,13 +735,13 @@ else
        			{
        				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reject_check&amp;lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"),'disable').'</a>';
        			}
-    			if ($objp->statut == 2) 
+    			if ($objp->statut == 2)
     			{
     				print ' &nbsp; '.img_picto($langs->trans('CheckRejected'),'statut8').'</a>';
     			}
     		    print '</td>';
     			print '</tr>';
-    			
+
     			$i++;
     		}
         }
@@ -751,7 +751,7 @@ else
             print $langs->trans("None");
             print '</td>';
         }
-                
+
 		print "</table>";
 		print "</div>";
 	}

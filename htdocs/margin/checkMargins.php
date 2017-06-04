@@ -49,7 +49,7 @@ if (! $sortorder)
 if (! $sortfield) {
 	$sortfield = 'f.facnumber';
 }
-$page = GETPOST("page", 'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == - 1) {
 	$page = 0;
 }
@@ -66,7 +66,7 @@ if (GETPOST("button_search_x") || GETPOST("button_search")) {
 
 if ($action == 'update') {
 	$datapost = $_POST;
-	
+
 	foreach ( $datapost as $key => $value ) {
 		if (strpos($key, 'buyingprice_') !== false) {
 			$tmp_array = explode('_', $key);
@@ -202,7 +202,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	
+
 	dol_syslog(__FILE__, LOG_DEBUG);
 	$result = $db->query($sql);
 	if ($result) {
@@ -218,25 +218,25 @@ dol_syslog(__FILE__, LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
-	
+
 	print '<br>';
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
-	
+
 	if ($conf->global->MARGIN_TYPE == "1")
 	    $labelcostprice=$langs->trans('BuyingPrice');
 	else   // value is 'costprice' or 'pmp'
 	    $labelcostprice=$langs->trans('CostPrice');
-	
+
 	$moreforfilter='';
-	
+
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	//$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	//if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 	$selectedfields='';
-	
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-	
+
 	print '<tr class="liste_titre liste_titre_search">';
 	print '<td><input type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 	print '<td></td>';
@@ -249,7 +249,7 @@ if ($result) {
     print $searchpitco;
     print '</td>';
 	print "</tr>\n";
-    
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "f.facnumber", "", $options, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "", "", $options, 'width=20%', $sortfield, $sortorder);
@@ -259,12 +259,12 @@ if ($result) {
 	print_liste_field_titre($langs->trans("AmountTTC"), $_SERVER["PHP_SELF"], "d.total_ht", "", $options, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
-	
+
 	if ($num > 0) {
-		while ($objp = $db->fetch_object($result)) 
+		while ($objp = $db->fetch_object($result))
 		{
 			$var = ! $var;
-			
+
 			print '<tr class="oddeven">';
 			print '<td>';
 			$result_inner = $invoicestatic->fetch($objp->invoiceid);
@@ -301,14 +301,14 @@ if ($result) {
 			print price($objp->total_ht);
 			print '</td>';
 			print '<td></td>';
-				
+
 			print "</tr>\n";
-			
+
 			$i ++;
 		}
 	}
 	print "</table>";
-	
+
 	print "</div>";
 } else {
 	dol_print_error($db);

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,7 +58,7 @@ $diroutputmassaction=$conf->bank->dir_output . '/temp/massgeneration/'.$user->id
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -129,9 +129,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $search_number='';
     $search_statut='';
 }
-    
-    
-    
+
+
+
 /*
  * View
  */
@@ -437,7 +437,7 @@ $var=true;
 foreach ($accounts as $key=>$type)
 {
 	if ($i >= $limit) break;
-	
+
     $found++;
 
 	$acc = new Account($db);
@@ -454,7 +454,7 @@ foreach ($accounts as $key=>$type)
 	{
 		$lastcurrencycode=$acc->currency_code;
 	}
-	
+
 	print '<tr class="oddeven">';
 
     // Ref
@@ -463,14 +463,14 @@ foreach ($accounts as $key=>$type)
         print '<td>'.$acc->getNomUrl(1).'</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Label
     if (! empty($arrayfields['b.label']['checked']))
     {
 		print '<td>'.$acc->label.'</td>';
         if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Account type
     if (! empty($arrayfields['accountype']['checked']))
     {
@@ -479,14 +479,14 @@ foreach ($accounts as $key=>$type)
 		print '</td>';
         if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Number
     if (! empty($arrayfields['b.number']['checked']))
     {
         print '<td>'.$acc->number.'</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Account number
     if (! empty($arrayfields['b.account_number']['checked']))
     {
@@ -499,7 +499,7 @@ foreach ($accounts as $key=>$type)
 
 	    if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Accountancy journal
     if (! empty($arrayfields['b.fk_accountancy_journal']['checked']))
     {
@@ -509,7 +509,7 @@ foreach ($accounts as $key=>$type)
 		print '<td>'.$accountingjournal->getNomUrl(0,1,1,'',1).'</td>';
 		if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Transactions to reconcile
     if (! empty($arrayfields['toreconcile']['checked']))
     {
@@ -528,13 +528,13 @@ foreach ($accounts as $key=>$type)
 	    print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
-    
+
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_label as $key => $val) 
+	   foreach($extrafields->attribute_label as $key => $val)
 	   {
-			if (! empty($arrayfields["ef.".$key]['checked'])) 
+			if (! empty($arrayfields["ef.".$key]['checked']))
 			{
 				print '<td';
 				$align=$extrafields->getAlignFlag($key);
@@ -567,14 +567,14 @@ foreach ($accounts as $key=>$type)
         print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Statut
     if (! empty($arrayfields['b.clos']['checked']))
     {
 		print '<td align="center">'.$acc->getLibStatut(5).'</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Balance
     if (! empty($arrayfields['balance']['checked']))
     {
@@ -585,7 +585,7 @@ foreach ($accounts as $key=>$type)
 		if (! $i) $totalarray['totalbalancefield']=$totalarray['nbfield'];
 	    $totalarray['totalbalance'] += $solde;
     }
-    
+
 	// Action column
 	print '<td class="nowrap" align="center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -596,7 +596,7 @@ foreach ($accounts as $key=>$type)
 	}
 	print '</td>';
 	if (! $i) $totalarray['nbfield']++;
-	
+
 	print '</tr>';
 
 	$total[$acc->currency_code] += $solde;

@@ -41,7 +41,7 @@ $result = restrictedArea($user, 'societe','','');
 
 $mesg = '';
 
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -212,7 +212,7 @@ if ($result)
 	    $labelcostprice=$langs->trans('BuyingPrice');
 	else   // value is 'costprice' or 'pmp'
 	    $labelcostprice=$langs->trans('CostPrice');
-	
+
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";
 
@@ -260,7 +260,7 @@ if ($result)
 				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
 
-			
+
 
 			print '<tr class="oddeven">';
 			if ($client) {
@@ -295,7 +295,7 @@ if ($result)
 	}
 
 	// affichage totaux marges
-	
+
 	$totalMargin = $cumul_vente - $cumul_achat;
 	/*if ($totalMargin < 0)
 	{

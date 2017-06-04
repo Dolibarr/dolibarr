@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016		Juanjo Menent   		<jmenent@2byte.es>
  *
@@ -46,7 +46,7 @@ $search_amount = GETPOST('search_amount','alpha');
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -139,11 +139,11 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
-	
+
 	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_bank.png', '', '', $limit);
-	
+
 	$moreforfilter='';
-	
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -187,9 +187,9 @@ if ($resql)
     	while ($i < min($num,$limit))
     	{
     		$objp = $db->fetch_object($resql);
-    		
+
     		print '<tr class="oddeven">';
-    
+
     		// Num ref cheque
     		print '<td>';
     		$checkdepositstatic->id=$objp->rowid;
@@ -197,29 +197,29 @@ if ($resql)
     		$checkdepositstatic->statut=$objp->statut;
     		print $checkdepositstatic->getNomUrl(1);
     		print '</td>';
-    
+
     		// Date
     		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';  // TODO Use date hour
-    
+
     		// Bank
     		print '<td>';
     		if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
     		else print '&nbsp;';
     		print '</td>';
-    
+
     		// Number of cheques
     		print '<td align="right">'.$objp->nbcheque.'</td>';
-    
+
     		// Amount
     		print '<td align="right">'.price($objp->amount).'</td>';
-    
+
     		// Statut
     		print '<td align="right">';
     		print $checkdepositstatic->LibStatut($objp->statut,5);
     		print '</td>';
-    		
+
     		print '<td></td>';
-    		
+
             print "</tr>\n";
     		$i++;
     	}

@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -57,7 +57,7 @@ if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page","int");
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
@@ -1188,7 +1188,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     global $cachethirdparties, $cachecontacts, $cacheusers, $colorindexused;
 
     $dateint = sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day);
-    
+
     print "\n";
 
     // Line with title of day
@@ -1247,7 +1247,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     if (in_array($user->id, $keysofuserassigned))
                     {
                     $nummytasks++; $cssclass='family_mytasks';
-                    
+
                     if (empty($cacheusers[$event->userownerid]))
                     {
                     	$newuser=new User($db);
@@ -1255,7 +1255,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     	$cacheusers[$event->userownerid]=$newuser;
                     }
                     //var_dump($cacheusers[$event->userownerid]->color);
-                    
+
                     // We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
                     if (! empty($cacheusers[$event->userownerid]->color)) $color=$cacheusers[$event->userownerid]->color;
                     }
@@ -1277,10 +1277,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     }
                     else
                	    {
-                    	$numother++; 
+                    	$numother++;
                     	$color=($event->icalcolor?$event->icalcolor:-1);
                     	$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other');
-    
+
                         if (empty($cacheusers[$event->userownerid]))
                         {
                         	$newuser=new User($db);
@@ -1288,7 +1288,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         	$cacheusers[$event->userownerid]=$newuser;
                         }
                         //var_dump($cacheusers[$event->userownerid]->color);
-    
+
                        	// We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
                        	if (! empty($cacheusers[$event->userownerid]->color)) $color=$cacheusers[$event->userownerid]->color;
                     }
@@ -1364,9 +1364,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     print '">';
                     print '<tr>';
                     print '<td class="tdoverflow nobottom centpercent '.($nowrapontd?'nowrap ':'').'cal_event'.($event->type_code == 'BIRTHDAY'?' cal_event_birthday':'').'">';
-                    
+
                     $daterange='';
-                    
+
                     if ($event->type_code == 'BIRTHDAY') // It's a birthday
                     {
                         print $event->getNomUrl(1,$maxnbofchar,'cal_event','birthday','contact');
@@ -1426,9 +1426,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         // Show title
                         $titletoshow = $daterange;
                         $titletoshow.=($titletoshow?' ':'').$event->libelle;
-                        
+
                         if ($event->type_code == 'ICALEVENT') print $titletoshow;
-                        else 
+                        else
                         {
                             $savlabel=$event->libelle;
                             $event->libelle=$titletoshow;
@@ -1449,11 +1449,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                                 $newuser->fetch($tmpid);
                                 $cacheusers[$tmpid]=$newuser;
                             }
-                            
+
                             $listofusertoshow.=$cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'valigntextbottom');
                         }
                         print $listofusertoshow;
-                        
+
                         if ($event->type_code == 'ICALEVENT') print '<br>('.dol_trunc($event->icalname,$maxnbofchar).')';
 
                         // If action related to company / contact
@@ -1506,7 +1506,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     if ($event->type_code != 'BIRTHDAY' && $event->type_code != 'ICALEVENT')
                     {
                         $withstatus=1;
-                        if ($event->percentage >= 0) $withstatus=2; 
+                        if ($event->percentage >= 0) $withstatus=2;
                     }
                     print '<td class="nobottom right nowrap cal_event_right'.($withstatus >= 2 ?' cal_event_right_status':'').'">';
                     if ($withstatus) print $event->getLibStatut(3,1);

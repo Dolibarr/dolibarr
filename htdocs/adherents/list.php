@@ -65,7 +65,7 @@ if ($statut < -1) $statut = '';
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page ;
 $pageprev = $page - 1;
@@ -403,32 +403,32 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 }
 
 // Ref
-if (! empty($arrayfields['d.ref']['checked'])) 
+if (! empty($arrayfields['d.ref']['checked']))
 {
     print '<td class="liste_titre">';
 	print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
     print '</td>';
 }
 
-if (! empty($arrayfields['d.firstname']['checked'])) 
+if (! empty($arrayfields['d.firstname']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'"></td>';
 }
 
-if (! empty($arrayfields['d.lastname']['checked'])) 
+if (! empty($arrayfields['d.lastname']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'"></td>';
 }
 
-if (! empty($arrayfields['d.company']['checked'])) 
+if (! empty($arrayfields['d.company']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"></td>';
 }
 
-if (! empty($arrayfields['d.login']['checked'])) 
+if (! empty($arrayfields['d.login']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'"></td>';
@@ -440,7 +440,7 @@ if (! empty($arrayfields['d.morphy']['checked']))
     print '</td>';
 }
 
-if (! empty($arrayfields['t.libelle']['checked'])) 
+if (! empty($arrayfields['t.libelle']['checked']))
 {
 	print '<td class="liste_titre">';
 	$listetype=$membertypestatic->liste_array();
@@ -448,18 +448,18 @@ if (! empty($arrayfields['t.libelle']['checked']))
 	print '</td>';
 }
 
-if (! empty($arrayfields['d.address']['checked'])) 
+if (! empty($arrayfields['d.address']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_address" value="'.$search_address.'"></td>';
 }
 
-if (! empty($arrayfields['d.zip']['checked'])) 
+if (! empty($arrayfields['d.zip']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_zip" value="'.$search_zip.'"></td>';
 }
-if (! empty($arrayfields['d.town']['checked'])) 
+if (! empty($arrayfields['d.town']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_town" value="'.$search_town.'"></td>';
@@ -479,31 +479,31 @@ if (! empty($arrayfields['country.code_iso']['checked']))
     print '</td>';
 }
 // Phone pro
-if (! empty($arrayfields['d.phone']['checked'])) 
+if (! empty($arrayfields['d.phone']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_phone" value="'.$search_phone.'"></td>';
 }
 // Phone perso
-if (! empty($arrayfields['d.phone_perso']['checked'])) 
+if (! empty($arrayfields['d.phone_perso']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_phone_perso" value="'.$search_phone_perso.'"></td>';
 }
 // Phone mobile
-if (! empty($arrayfields['d.phone_mobile']['checked'])) 
+if (! empty($arrayfields['d.phone_mobile']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_phone_mobile" value="'.$search_phone_mobile.'"></td>';
 }
 // Email
-if (! empty($arrayfields['d.email']['checked'])) 
+if (! empty($arrayfields['d.email']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_email" value="'.$search_email.'"></td>';
 }
 
-if (! empty($arrayfields['d.datefin']['checked'])) 
+if (! empty($arrayfields['d.datefin']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '</td>';
@@ -626,7 +626,7 @@ while ($i < min($num, $limit))
 	$memberstatic->datefin= $datefin;
 	$memberstatic->socid = $obj->fk_soc;
 	$memberstatic->photo = $obj->photo;
-	
+
 	if (! empty($obj->fk_soc)) {
 	    $memberstatic->fetch_thirdparty();
 		$companyname=$memberstatic->thirdparty->name;
@@ -635,52 +635,52 @@ while ($i < min($num, $limit))
 	}
 
 	print '<tr class="oddeven">';
-	
+
 	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 	{
 		print '<td align="center">'.($i+1).'</td>';
 	}
 
 	// Ref
-	if (! empty($arrayfields['d.ref']['checked'])) 
+	if (! empty($arrayfields['d.ref']['checked']))
 	{
    		print "<td>";
 		print $memberstatic->getNomUrl(-1, 0, 'card', 'ref');
 		print "</td>\n";
-	}		
+	}
 	// Firstname
-	if (! empty($arrayfields['d.firstname']['checked'])) 
+	if (! empty($arrayfields['d.firstname']['checked']))
 	{
     	print "<td>";
 		print $obj->firstname;
 		print "</td>\n";
 	}
 	// Lastname
-	if (! empty($arrayfields['d.lastname']['checked'])) 
+	if (! empty($arrayfields['d.lastname']['checked']))
 	{
     	print "<td>";
 		print $obj->lastname;
 		print "</td>\n";
 	}
 	// Company
-	if (! empty($arrayfields['d.company']['checked'])) 
+	if (! empty($arrayfields['d.company']['checked']))
 	{
     	print "<td>";
     	print $companyname;
 		print "</td>\n";
 	}
 	// Login
-	if (! empty($arrayfields['d.login']['checked'])) 
+	if (! empty($arrayfields['d.login']['checked']))
 	{
 	   print "<td>".$obj->login."</td>\n";
 	}
 	// Moral/Physique
-	if (! empty($arrayfields['d.morphy']['checked'])) 
+	if (! empty($arrayfields['d.morphy']['checked']))
 	{
 	   print "<td>".$memberstatic->getmorphylib($obj->morphy)."</td>\n";
 	}
 	// Type label
-	if (! empty($arrayfields['t.libelle']['checked'])) 
+	if (! empty($arrayfields['t.libelle']['checked']))
 	{
     	$membertypestatic->id=$obj->type_id;
 		$membertypestatic->libelle=$obj->type;
@@ -727,7 +727,7 @@ while ($i < min($num, $limit))
 	    if (! $i) $totalarray['nbfield']++;
 	}
 	// Phone pro
-	if (! empty($arrayfields['d.phone']['checked'])) 
+	if (! empty($arrayfields['d.phone']['checked']))
 	{
 		print '<td class="nocellnopadd">';
 	    print $obj->phone;
@@ -735,7 +735,7 @@ while ($i < min($num, $limit))
 	    if (! $i) $totalarray['nbfield']++;
 	}
 	// Phone perso
-	if (! empty($arrayfields['d.phone_perso']['checked'])) 
+	if (! empty($arrayfields['d.phone_perso']['checked']))
 	{
 		print '<td class="nocellnopadd">';
 	    print $obj->phone_perso;
@@ -743,7 +743,7 @@ while ($i < min($num, $limit))
 	    if (! $i) $totalarray['nbfield']++;
 	}
 	// Phone mobile
-	if (! empty($arrayfields['d.phone_mobile']['checked'])) 
+	if (! empty($arrayfields['d.phone_mobile']['checked']))
 	{
 		print '<td class="nocellnopadd">';
 	    print $obj->phone_mobile;
@@ -756,7 +756,7 @@ while ($i < min($num, $limit))
         print "<td>".dol_print_email($obj->email,0,0,1)."</td>\n";
 	}
 	// End of subscription date
-	$datefin=$db->jdate($obj->datefin);		
+	$datefin=$db->jdate($obj->datefin);
 	if (! empty($arrayfields['d.datefin']['checked']))
 	{
 		if ($datefin)
@@ -847,7 +847,7 @@ while ($i < min($num, $limit))
 	}
 	print "</td>";
 	if (! $i) $totalarray['nbfield']++;
-	
+
 	print "</tr>\n";
 	$i++;
 }

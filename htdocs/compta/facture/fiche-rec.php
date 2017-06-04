@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
@@ -75,7 +75,7 @@ $search_frequency=GETPOST('search_frequency');
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 if (! $sortorder) $sortorder='DESC';
@@ -517,7 +517,7 @@ if (empty($reshook))
 
 			$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
 			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
-			
+
     		// if price ht was forced (ie: from gui when calculated by margin rate and cost price). TODO Why this ?
     		if (! empty($price_ht))
     		{
@@ -942,7 +942,7 @@ if ($action == 'create')
 		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'y'),'%Y').')'
 		);
 		$substitutionarray['__(TransKey)__']=$langs->trans("TransKey");
-		
+
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach($substitutionarray as $key => $val)
 		{
@@ -1260,7 +1260,7 @@ else
 		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'),'%Y').')'
 		);
 		$substitutionarray['__(TransKey)__']=$langs->trans("TransKey");
-		
+
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach($substitutionarray as $key => $val)
 		{
@@ -1323,7 +1323,7 @@ else
 		print '<table class="border" width="100%">';
 
 		print '<tr><td colspan="2"><span class="fa fa-calendar"></span> '.$title.'</td></tr>';
-		
+
 		// if "frequency" is empty or = 0, the reccurence is disabled
 		print '<tr><td style="width: 50%">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1791,8 +1791,8 @@ else
 			print_liste_field_titre($langs->trans("NextDateToExecution"),$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
 			print_liste_field_titre('');		// Field may contains ling text
 			print "</tr>\n";
-			
-			
+
+
 			if ($num > 0)
 			{
 				$var=true;
