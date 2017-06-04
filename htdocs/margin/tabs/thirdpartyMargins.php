@@ -41,7 +41,7 @@ $mesg = '';
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -92,14 +92,14 @@ if ($socid > 0)
     dol_fiche_head($head, 'margin', $langs->trans("ThirdParty"), -1, 'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
-    
+
     dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
-    
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border tableforfield" width="100%">';
-    
+
     if ($object->client)
     {
         print '<tr><td class="titlefield">';
@@ -138,14 +138,14 @@ if ($socid > 0)
     }
 
     print "</table>";
-    
+
     print '</div>';
     print '<div style="clear:both"></div>';
 
     dol_fiche_end();
-    
+
     print '<br>';
-    
+
     $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
     $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht,";
     $sql.= " f.datef, f.paye, f.fk_statut as statut, f.type,";
@@ -206,7 +206,7 @@ if ($socid > 0)
     			$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
     			$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
 
-    			
+
 
     			print '<tr class="oddeven">';
     			print '<td>';
@@ -232,7 +232,7 @@ if ($socid > 0)
     	}
 
     	// affichage totaux marges
-    	
+
     	$totalMargin = $cumul_vente - $cumul_achat;
     	if ($totalMargin < 0)
     	{
@@ -244,7 +244,7 @@ if ($socid > 0)
     		$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
     		$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
     	}
-    	
+
     	// Total
     	print '<tr class="liste_total">';
     	print '<td colspan=2>'.$langs->trans('TotalMargin')."</td>";

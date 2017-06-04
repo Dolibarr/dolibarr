@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2015  Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017  Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Bahfir Abbes		<bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,7 +47,7 @@ $langs->load("other");
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
@@ -203,7 +203,7 @@ if ($result)
     {
         $center='<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
     }
-    
+
 	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $nbtotalofrecords, 'setup');
 
 	if ($action == 'purge')
@@ -211,7 +211,7 @@ if ($result)
 		$formquestion=array();
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'),'confirm_purge',$formquestion,'no',1);
 	}
-	
+
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 
 	print '<div class="div-table-responsive">';
@@ -261,7 +261,7 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-		
+
 
 		print '<tr class="oddeven">';
 
@@ -316,7 +316,7 @@ if ($result)
 	}
 	print "</table>";
 	print "</div>";
-	
+
 	print "</form>";
 	$db->free($result);
 }
