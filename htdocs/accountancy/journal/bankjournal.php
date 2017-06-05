@@ -63,7 +63,7 @@ $langs->load('bills');
 $langs->load('donations');
 $langs->load("accountancy");
 $langs->load("trips");
-$langs->load("hrm");
+$langs->load("salaries");
 
 // Old system menu
 $id_bank_account = GETPOST('id_account', 'int');
@@ -114,7 +114,7 @@ $idpays = $p[0];
 $sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
 $sql .= " ba.courant, ba.ref as baref, ba.account_number,";
 $sql .= " soc.code_compta, soc.code_compta_fournisseur, soc.rowid as socid, soc.nom as name, bu1.type as typeop,";
-$sql .= " u.accountancy_code, u.rowid as userid, u.lastname as name, u.firstname as firstname, bu2.type as typeop";
+$sql .= " u.accountancy_code, u.rowid as userid, u.lastname as lastname, u.firstname as firstname, bu2.type as typeop";
 $sql .= " FROM " . MAIN_DB_PREFIX . "bank as b";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "bank_account as ba on b.fk_account=ba.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url as bu1 ON bu1.fk_bank = b.rowid AND bu1.type='company'";
@@ -201,9 +201,8 @@ if ($result) {
 
 		$tabuser[$obj->rowid] = array (
 				'id' => $obj->userid,
-				'lastname' => $obj->lastname,
-				'firstname' => $obj->firstname,
-		        'accountancy_code' => $compta_user,
+				'name' => $obj->firstname.' '.$obj->lastname,
+				'accountancy_code' => $compta_user,
 		);
 
 		// Variable bookkeeping
@@ -426,7 +425,8 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
 					} else if ($tabtype[$key] == 'payment_salary') {
 						$bookkeeping->code_tiers = '';
-						$bookkeeping->doc_ref = $langs->trans("PaymentSalary") . ' (' . $val["paymentsalid"] . ')'; // Ref of salary payment
+						$bookkeeping->label_compte = $tabuser[$key]['name'];
+						$bookkeeping->doc_ref = $langs->trans("SalaryPayment") . ' (' . $val["paymentsalid"] . ')'; // Ref of salary payment
 					}
 
         			$result = $bookkeeping->create($user);
@@ -510,8 +510,9 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
 					} else if ($tabtype[$key] == 'payment_salary') {
 						$bookkeeping->code_tiers = $tabuser[$key]['accountancy_code'];
-						$bookkeeping->numero_compte = $k;
-						$bookkeeping->doc_ref = $langs->trans("PaymentSalary") . ' (' . $val["paymentsalid"] . ')'; // Rowid of salary payment
+						$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+						$bookkeeping->label_compte = $tabuser[$key]['name'];
+						$bookkeeping->doc_ref = $langs->trans("SalaryPayment") . ' (' . $val["paymentsalid"] . ')'; // Rowid of salary payment
 					} else if ($tabtype[$key] == 'banktransfert') {
 						$bookkeeping->code_tiers = '';
 						$bookkeeping->numero_compte = $k;
