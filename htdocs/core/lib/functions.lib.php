@@ -3479,6 +3479,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 		$amount=str_replace($dec,'.',$amount);
 	}
 
+	if(!is_numeric($amount)) $amount = '0';
 	return $amount;
 }
 
