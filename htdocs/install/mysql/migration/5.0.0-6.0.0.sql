@@ -379,3 +379,4 @@ create table llx_loan_schedule
   fk_user_modif		integer           
 )ENGINE=innodb;
 
+ALTER TABLE llx_tva ADD COLUMN datec date AFTER tms;
