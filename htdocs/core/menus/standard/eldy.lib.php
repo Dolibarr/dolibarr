@@ -1027,6 +1027,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 								if ($objp->nature == 2) $nature="sells";
 								if ($objp->nature == 3) $nature="purchases";
 								if ($objp->nature == 4) $nature="bank";
+								if ($objp->nature == 5) $nature="expensereports";
 								if ($objp->nature == 1) $nature="various";
 								if ($objp->nature == 9) $nature="hasnew";
 
