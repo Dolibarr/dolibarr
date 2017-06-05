@@ -119,7 +119,7 @@ print load_fiche_titre($langs->trans("margesSetup"),$linkback,'title_setup');
 
 $head = marges_admin_prepare_head();
 
-dol_fiche_head($head, 'parameters', $langs->trans("Margins"), 0, 'margin');
+dol_fiche_head($head, 'parameters', $langs->trans("Margins"), -1, 'margin');
 
 print load_fiche_titre($langs->trans("MemberMainOptions"),'','');
 print '<table class="noborder" width="100%">';

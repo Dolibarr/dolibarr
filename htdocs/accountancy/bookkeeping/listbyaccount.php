@@ -29,8 +29,8 @@ require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
 // Langs
@@ -75,7 +75,7 @@ if (empty($search_date_end)) $search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_
 
 $object = new BookKeeping($db);
 
-$formventilation = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
@@ -188,7 +188,7 @@ if ($action == 'delbookkeepingyear') {
 	if (empty($delyear)) {
 		$delyear = dol_print_date(dol_now(), '%Y');
 	}
-	$year_array = $formventilation->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
+	$year_array = $formaccounting->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
 
 	$form_question['delyear'] = array (
 			'name' => 'delyear',

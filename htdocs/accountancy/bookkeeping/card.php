@@ -27,9 +27,8 @@ require '../../main.inc.php';
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 // Langs
 $langs->load("accountancy");
@@ -215,7 +214,6 @@ else if ($action == "confirm_create") {
 llxHeader();
 
 $html = new Form($db);
-$formventilation = new FormVentilation($db);
 $formaccountancy = new FormAccounting($db);
 
 /*
@@ -389,10 +387,10 @@ if ($action == 'create') {
 					if ($action == 'update' && $line->id == $id) {
 
 						print '<td>';
-						print $formventilation->select_account($line->numero_compte, 'account_number', 0, array (), 1, 1, '');
+						print $formaccounting->select_account($line->numero_compte, 'account_number', 0, array (), 1, 1, '');
 						print '</td>';
 						print '<td>';
-						print $formventilation->select_auxaccount($line->code_tiers, 'code_tiers', 1);
+						print $formaccounting->select_auxaccount($line->code_tiers, 'code_tiers', 1);
 						print '</td>';
 						print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
 						print '<td align="right"><input type="text" size="6" name="debit" value="' . price($line->debit) . '"/></td>';
@@ -433,10 +431,10 @@ if ($action == 'create') {
 				if ($action == "" || $action == 'add') {
 					print '<tr class="oddeven">';
 					print '<td>';
-					print $formventilation->select_account($account_number, 'account_number', 0, array (), 1, 1, '');
+					print $formaccounting->select_account($account_number, 'account_number', 0, array (), 1, 1, '');
 					print '</td>';
 					print '<td>';
-					print $formventilation->select_auxaccount($code_tiers, 'code_tiers', 1);
+					print $formaccounting->select_auxaccount($code_tiers, 'code_tiers', 1);
 					print '</td>';
 					print '<td><input type="text" size="15" name="label_compte" value="' . $label_compte . '"/></td>';
 					print '<td align="right"><input type="text" class="right maxwidth50" name="debit" value="' . price($debit) . '"/></td>';

@@ -18,10 +18,9 @@
  */
 
 /**
- *      \file       dev/skeletons/skeleton_script.php
+ *      \file       htdocs/modulebuilder/template/scripts/myobject.php
  *		\ingroup    mymodule
- *      \brief      This file is an example for a command line script
- *					Put here some comments
+ *      \brief      This file is an example for a command line script to work on MyObject
  */
 
 $sapi_type = php_sapi_name();
@@ -71,9 +70,9 @@ print 'Argument 2='.$argv[2]."\n";
 $db->begin();
 
 
-// Examples for manipulating class skeleton_class
-require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
-$myobject=new Skeleton_Class($db);
+// Examples for manipulating class MyObject
+dol_include_once("/mymodule/class/myobject.class.php");
+$myobject=new MyObject($db);
 
 // Example for inserting creating object in database
 /*
@@ -115,7 +114,7 @@ else print "Object with id ".$myobject->id." deleted\n";
 // An example of a direct SQL read without using the fetch method
 /*
 $sql = "SELECT field1, field2";
-$sql.= " FROM ".MAIN_DB_PREFIX."skeleton";
+$sql.= " FROM ".MAIN_DB_PREFIX."myobject";
 $sql.= " WHERE field3 = 'xxx'";
 $sql.= " ORDER BY field1 ASC";
 

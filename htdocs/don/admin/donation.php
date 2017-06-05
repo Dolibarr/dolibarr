@@ -1,9 +1,14 @@
 <?php
 /* Copyright (C) 2005-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012-2015  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2017  Philippe Grand			<philippe.grand@atoo-net.com>
+<<<<<<< HEAD
  * Copyright (C) 2015       Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
+=======
+ * Copyright (C) 2015-2017  Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Benoit Bruchard			<benoitb21@gmail.com>
+>>>>>>> uptream/develop
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $langs->load("admin");
 $langs->load("donations");
@@ -121,7 +126,7 @@ else if ($action == 'del')
 // Options
 if ($action == 'set_DONATION_ACCOUNTINGACCOUNT')
 {
-	$account = GETPOST('DONATION_ACCOUNTINGACCOUNT');	// No alpha here, we want exact string
+	$account = GETPOST('DONATION_ACCOUNTINGACCOUNT','alpha');
 
     $res = dolibarr_set_const($db, "DONATION_ACCOUNTINGACCOUNT",$account,'chaine',0,'',$conf->entity);
 
@@ -139,7 +144,7 @@ if ($action == 'set_DONATION_ACCOUNTINGACCOUNT')
 
 if ($action == 'set_DONATION_MESSAGE')
 {
-	$freemessage = GETPOST('DONATION_MESSAGE');	// No alpha here, we want exact string
+	$freemessage = GETPOST('DONATION_MESSAGE','none');	// No alpha here, we want exact string
 
     $res = dolibarr_set_const($db, "DONATION_MESSAGE",$freemessage,'chaine',0,'',$conf->entity);
 
@@ -199,7 +204,7 @@ else if ($action == 'setart885') {
 
 $dir = "../../core/modules/dons/";
 $form=new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -364,7 +369,7 @@ print '<label for="DONATION_ACCOUNTINGACCOUNT">' . $label . '</label></td>';
 print '<td>';
 if (! empty($conf->accounting->enabled))
 {
-	print $formaccountancy->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, '', 1, 1);
+	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, '', 1, 1);
 }
 else
 {
@@ -401,7 +406,7 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 	print '<tr class="liste_titre">';
 	print '<td colspan="3">' . $langs->trans('Parameters') . '</td>';
 	print "</tr>\n";
-	
+
 	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART200") . '</td>';
 	if (! empty($conf->global->DONATION_ART200)) {
@@ -414,7 +419,7 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 		print '</a></td>';
 	}
 	print '</tr>';
-	
+
 	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART238") . '</td>';
 	if (! empty($conf->global->DONATION_ART238)) {
@@ -427,7 +432,7 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 		print '</a></td>';
 	}
 	print '</tr>';
-	
+
 	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART885") . '</td>';
 	if (! empty($conf->global->DONATION_ART885)) {

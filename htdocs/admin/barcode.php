@@ -39,6 +39,8 @@ $action = GETPOST('action','alpha');
  * Actions
  */
 
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'setbarcodeproducton')
 {
 	$res=dolibarr_set_const($db, "BARCODE_PRODUCT_ADDON_NUM", GETPOST('value'), 'chaine', 0, '', $conf->entity);
@@ -72,33 +74,7 @@ else if ($action == 'update')
 else if ($action == 'updateengine')
 {
     // TODO Update engines.
-    
-}
 
-// define constants for models generator that need parameters
-if ($action == 'setModuleOptions')
-{
-    $post_size=count($_POST);
-
-    for($i=0;$i < $post_size;$i++)
-    {
-        if (array_key_exists('param'.$i,$_POST))
-        {
-            $param=GETPOST("param".$i,'alpha');
-            $value=GETPOST("value".$i,'alpha');
-            if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-        }
-    }
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
 }
 
 if ($action && $action != 'setcoder' && $action != 'setModuleOptions')
@@ -276,7 +252,7 @@ if ($resql)
 		print '<td align="center">';
 		print $formbarcode->setBarcodeEncoder($obj->coder,$barcodelist,$obj->rowid,'form'.$i);
 		print "</td></tr>\n";
-		
+
 		$i++;
 	}
 }
@@ -312,7 +288,7 @@ print '</tr>';
 // Chemin du binaire genbarcode sous linux
 if (! isset($_SERVER['WINDIR']))
 {
-	
+
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
 	print '<td width="60" align="center">';
@@ -328,7 +304,7 @@ if (! isset($_SERVER['WINDIR']))
 // Module products
 if (! empty($conf->product->enabled))
 {
-	
+
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" align="right">';
@@ -339,7 +315,7 @@ if (! empty($conf->product->enabled))
 // Module thirdparty
 if (! empty($conf->societe->enabled))
 {
-	
+
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 	print '<td width="60" align="right">';

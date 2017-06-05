@@ -26,7 +26,7 @@ require '../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $langs->load("admin");
 $langs->load("salaries");
@@ -76,7 +76,7 @@ if ($action == 'update')
 llxHeader('',$langs->trans('SalariesSetup'));
 
 $form = new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('SalariesSetup'),$linkback,'title_setup');
@@ -109,7 +109,7 @@ foreach ($list as $key)
 	print '<td>';
 	if (! empty($conf->accounting->enabled))
 	{
-		print $formaccountancy->select_account($conf->global->$key, $key, 1, '', 1, 1);
+		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	}
 	else
 	{

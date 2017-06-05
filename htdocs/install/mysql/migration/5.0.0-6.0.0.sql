@@ -34,6 +34,10 @@
 -- VMYSQL4.3 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN date_fin DATETIME NULL DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_opensurvey_sondage ALTER COLUMN date_fin DROP NOT NULL;
 
+
+ALTER TABLE llx_extrafields ADD COLUMN fieldcomputed text;
+ALTER TABLE llx_extrafields ADD COLUMN fielddefault varchar(255);
+
 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN fk_user_creat integer NOT NULL DEFAULT 0;
@@ -100,6 +104,7 @@ ALTER TABLE llx_c_email_templates ADD COLUMN content_lines text;
 ALTER TABLE llx_loan ADD COLUMN fk_projet integer DEFAULT NULL;
 
 ALTER TABLE llx_holiday ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_projet ADD COLUMN fk_user_modif integer;
 
 ALTER TABLE llx_projet_task_time ADD COLUMN datec date;
 ALTER TABLE llx_projet_task_time ADD COLUMN tms timestamp;
@@ -153,6 +158,9 @@ CREATE TABLE llx_product_attribute_combination
 
 
 ALTER TABLE llx_bank_account drop foreign key bank_fk_accountancy_journal;
+
+-- Fix missing entity column after init demo
+ALTER TABLE llx_accounting_journal ADD COLUMN entity integer DEFAULT 1;
 
 -- Add journal entries
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (1,'VT', 'Sale journal', 2, 1);
@@ -210,22 +218,22 @@ ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_invoic
 
 ALTER TABLE llx_facture_rec ADD COLUMN vat_src_code	varchar(10) DEFAULT '';
 
-DELETE FROM llx_const where name = 'ADHERENT_BANK_USE_AUTO';
+DELETE FROM llx_const WHERE name = __ENCRYPT('ADHERENT_BANK_USE_AUTO')__;
 
-UPDATE llx_const set value='moono-lisa' where value = 'moono' AND name = 'FCKEDITOR_SKIN';
+UPDATE llx_const SET value = __ENCRYPT('moono-lisa')__ WHERE value = __ENCRYPT('moono')__ AND name = __ENCRYPT('FCKEDITOR_SKIN')__;
 
-ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
-ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
 
 ALTER TABLE llx_user ADD COLUMN model_pdf varchar(255);
 ALTER TABLE llx_usergroup ADD COLUMN model_pdf varchar(255);
 
-INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('PRODUCT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/products', 'chaine', 0, '');
-INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('CONTRACT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/contracts', 'chaine', 0, '');
-INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USERGROUP_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/usergroups', 'chaine', 0, '');
-INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('USER_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/users', 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES (__ENCRYPT('PRODUCT_ADDON_PDF_ODT_PATH')__, 1, __ENCRYPT('DOL_DATA_ROOT/doctemplates/products')__, 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES (__ENCRYPT('CONTRACT_ADDON_PDF_ODT_PATH')__, 1, __ENCRYPT('DOL_DATA_ROOT/doctemplates/contracts')__, 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES (__ENCRYPT('USERGROUP_ADDON_PDF_ODT_PATH')__, 1, __ENCRYPT('DOL_DATA_ROOT/doctemplates/usergroups')__, 'chaine', 0, '');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES (__ENCRYPT('USER_ADDON_PDF_ODT_PATH')__, 1, __ENCRYPT('DOL_DATA_ROOT/doctemplates/users')__, 'chaine', 0, '');
 
-INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('MAIN_ENABLE_OVERWRITE_TRANSLATION', 1, '1', 'chaine', 0, 'Enable overwrote of translation');
+INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES (__ENCRYPT('MAIN_ENABLE_OVERWRITE_TRANSLATION')__, 1, __ENCRYPT('1')__, 'chaine', 0, 'Enable overwrote of translation');
 
 ALTER TABLE llx_chargesociales ADD COLUMN ref varchar(16);
 ALTER TABLE llx_chargesociales ADD COLUMN fk_projet integer DEFAULT NULL;
@@ -250,7 +258,6 @@ ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_code		 va
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_tx	     double(24,8) DEFAULT 1;
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price	 double(24,8) DEFAULT NULL;
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
-
 
 create table llx_payment_various
 (
@@ -344,4 +351,31 @@ ALTER TABLE llx_facture ADD COLUMN fk_fac_rec_source integer;
 
 DELETE from llx_c_actioncomm where code in ('AC_PROP','AC_COM','AC_FAC','AC_SHIP','AC_SUP_ORD','AC_SUP_INV') AND id NOT IN (SELECT DISTINCT fk_action FROM llx_actioncomm);
 
+-- Fix: delete orphelin category.
+delete from llx_categorie_product where fk_categorie not in (select rowid from llx_categorie where type = 0);
+delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type in (1, 2));
+delete from llx_categorie_member where fk_categorie not in (select rowid from llx_categorie where type = 3);
+delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
+delete from llx_categorie_project where fk_categorie not in (select rowid from llx_categorie where type = 5);
+
+ALTER TABLE llx_inventory ADD COLUMN ref varchar(48);
+
+create table llx_loan_schedule
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  fk_loan			integer,
+  datec				datetime,         
+  tms				timestamp,
+  datep				datetime,         
+  amount_capital	real DEFAULT 0,
+  amount_insurance	real DEFAULT 0,
+  amount_interest	real DEFAULT 0,
+  fk_typepayment	integer NOT NULL,
+  num_payment		varchar(50),
+  note_private      text,
+  note_public       text,
+  fk_bank			integer NOT NULL,
+  fk_user_creat		integer,          
+  fk_user_modif		integer           
+)ENGINE=innodb;
 

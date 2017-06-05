@@ -39,7 +39,7 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 $colorbackhmenu1='80,90,120';      // topmenu
 $colorbackvmenu1='255,255,255';      // vmenu
 $colortopbordertitle1='120,120,120';    // top border of title
-$colorbacktitle1='230,230,230';      // title of tables,list
+$colorbacktitle1='230,230,233';      // title of tables,list
 $colorbacktabcard1='255,255,255';  // card
 $colorbacktabactive='234,234,234';
 $colorbacklineimpair1='255,255,255';    // line impair
@@ -56,7 +56,7 @@ $fontsize='13';
 $fontsizesmaller='12';
 
 if (defined('THEME_ONLY_CONSTANT')) return;
-    
+
 session_cache_limiter(FALSE);
 
 require_once '../../main.inc.php';
@@ -272,8 +272,8 @@ input[type=submit] {
 	margin-left: 5px;
 }
 input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
-	<?php if (empty($conf->global->THEME_ELDY_SHOW_BORDER_INPUT)) 
-	print "border: none;" 
+	<?php if (empty($conf->global->THEME_ELDY_SHOW_BORDER_INPUT))
+	print "border: none;"
 	?>
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
@@ -340,9 +340,9 @@ input.buttongen {
 	vertical-align: middle;
 }
 span.timesheetalreadyrecorded input {
-    /*font-size: smaller;*/
     border: none;
-    /*background:	transparent;*/
+    border-bottom: solid 1px rgba(0,0,0,0.4);
+    margin-right: 1px !important;
 }
 
 select.flat, form.flat select {
@@ -363,8 +363,10 @@ select.flat, form.flat select {
 .opacitytransp {
 	opacity: 0;
 }
-select:invalid { color: gray; }
-	input:disabled {
+select:invalid {
+	color: gray;
+}
+input:disabled {
 	background:#ddd;
 }
 
@@ -712,6 +714,7 @@ div.fiche>form>div.div-table-responsive {
     align-self: flex-start;
 }
 
+
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
 /* ============================================================================== */
@@ -901,7 +904,7 @@ td.showDragHandle {
 #id-right, #id-left {
 	padding-top: 16px;
 	padding-bottom: 16px;
-	
+
 	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
 	float: none;
 	vertical-align: top;
@@ -956,7 +959,7 @@ div.vmenu, td.vmenu {
 }
 .side-nav {
 	position: absolute;
-    z-index: 200;
+    z-index: 90;
     display: none;
 }
 div.blockvmenulogo
@@ -987,7 +990,7 @@ div.fiche {
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:($dol_hide_leftmenu?'6':'26')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'16':'6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'16':'12')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
 	<?php if (! empty($conf->dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
 }
@@ -1529,7 +1532,7 @@ foreach($mainmenuusedarray as $val)
 	display: table;
     position: absolute;
     height: 100%;
-    width: 100%;	
+    width: 100%;
 }
 .login_center {
 	display: table-cell;
@@ -1754,12 +1757,12 @@ div.vmenu, td.vmenu {
 	<?php } ?>
 }
 
-/* Force vmenusearchselectcombo with type=text differently than without because beautify with select2 affect vmenusearchselectcombo differently */ 
+/* Force vmenusearchselectcombo with type=text differently than without because beautify with select2 affect vmenusearchselectcombo differently */
 input.vmenusearchselectcombo[type=text] {
 	width: 180px !important;
 }
 .vmenusearchselectcombo {
-	width: 188px; 
+	width: 188px;
 }
 
 .menu_contenu {
@@ -1782,7 +1785,7 @@ font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php p
 a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; white-space: nowrap; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
 
-a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; text-decoration: none; }
+a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; text-decoration: none; }
 
 .vmenu div.blockvmenufirst, .vmenu div.blockvmenulogo, .vmenu div.blockvmenusearchphone, .vmenu div.blockvmenubookmarks
 {
@@ -1815,6 +1818,7 @@ div.blockvmenusearchphone
 }
 div.blockvmenubookmarks
 {
+	padding-top: 10px !important;
 	padding-bottom: 16px !important;
 }
 div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend
@@ -1925,7 +1929,7 @@ td.ecmroot {
     background-image: -webkit-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
     background-image: -ms-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
     background-image: linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-	
+
     background: #FFF;
     background-repeat: repeat-x !important;
     */
@@ -1938,7 +1942,7 @@ td.ecmroot {
     -webkit-box-shadow: 2px 2px 4px #DDD;
     box-shadow: 2px 2px 4px #DDD;
 	*/
-	
+
     padding: 10px 4px 14px 4px !important;
     min-height: 32px;
 }
@@ -1968,7 +1972,7 @@ div.tabs {
     padding-right: 6px !important;
 	clear:both;
 	height:100%;
-	/* background-image: linear-gradient(to top,#f6f6f6 0,#fff 8px);  */	
+	/* background-image: linear-gradient(to top,#f6f6f6 0,#fff 8px);  */
 }
 div.tabsElem {
 	margin-top: 1px;
@@ -1986,12 +1990,12 @@ div.tabBar {
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
 }
 div.tabBar div.titre {
-	padding-top: 10px;    
+	padding-top: 10px;
 }
 
 div.tabBarWithBottom {
 	padding-bottom: 18px;
-	border-bottom: 1px solid #aaa; 
+	border-bottom: 1px solid #aaa;
 }
 div.tabBar table.tableforservicepart2:last-child {
     border-bottom: 1px solid #aaa;
@@ -2622,7 +2626,7 @@ div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_se
 	background: rgb(<?php echo $colorbacktitle1; ?>);
 	font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
     border-bottom: 1px solid #ddd;
-	
+
     color: rgb(<?php echo $colortexttitle; ?>);
     font-family: <?php print $fontlist ?>;
     text-align: <?php echo $left; ?>;
@@ -2681,7 +2685,7 @@ input.liste_titre {
 }
 
 .noborder tr.liste_total, .noborder tr.liste_total td, tr.liste_total, form.liste_total {
-	/* background: #F0F0F0; */
+	height: 32px;
 }
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
     color: #552266;
@@ -2733,7 +2737,7 @@ div.tabBar .noborder {
 
 /* Prepare to remove class pair - impair */
 
-.noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre) { 
+.noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre) {
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
@@ -2760,7 +2764,7 @@ div.tabBar .noborder {
 /*
  *  Boxes
  */
- 
+
 .ficheaddleft div.boxstats {
     border: none;
 }
@@ -2774,19 +2778,19 @@ div.tabBar .noborder {
     text-align: center;
     border-radius: 2px;
 }
-.boxstats, .boxstats130, .boxstatscontent {    
+.boxstats, .boxstats130, .boxstatscontent {
 	white-space: nowrap;
 	overflow: hidden;
     text-overflow: ellipsis;
 }
 .boxstats {
     padding: 3px;
-    width: 105px;    
+    width: 105px;
 }
 .boxstats130 {
-    width: 160px; 
+    width: 160px;
     height: 48px;
-    padding: 3px  
+    padding: 3px
 }
 .boxstatscontent {
 	padding: 3px;
@@ -2794,13 +2798,16 @@ div.tabBar .noborder {
 
 @media only screen and (max-width: 767px)
 {
+	.thumbstat {
+		flex: 1 1 110px;
+	}
 	.thumbstat150 {
 		flex: 1 1 110px;
 	}
 	.boxstats, .boxstats130 {
-        width: 90px;    
+        width: 90px;
     }
-    .dashboardlineindicator { 
+    .dashboardlineindicator {
         float: left;
     	padding-left: 5px;
     }
@@ -2832,7 +2839,7 @@ span.dashboardlineko {
 	color: #FFF;
 	/*color: #8c4446 ! important;
 	padding-left: 1px;*/
-	
+
 	font-size: 80%;
 }
 .dashboardlinelatecoin {
@@ -2841,9 +2848,9 @@ span.dashboardlineko {
     text-align: right;
     top: -24px;
     padding: 1px 2px 1px 2px;
-    border-radius: .25em;    
+    border-radius: .25em;
 
-    background-color: #af4705;
+    background-color: #9f4705;
     padding: 0px 5px 0px 5px;
     top: -26px;
 }
@@ -2853,7 +2860,7 @@ span.dashboardlineko {
     margin-right: 2px;
     background-color: #8c4446;
     color: #FFFFFF ! important;
-    border-radius: .25em;    
+    border-radius: .25em;
 	display: inline-block;
 	vertical-align: middle;
 }
@@ -3954,7 +3961,7 @@ div.dataTables_length select {
 	border-top: 1px solid #ccc;
 	border-bottom: solid 1px rgba(0,0,0,.2);
 }
-.select2-container-active .select2-choice, .select2-container-active .select2-choices 
+.select2-container-active .select2-choice, .select2-container-active .select2-choices
 {
 	outline: none;
 	border-top: none;
@@ -4038,7 +4045,7 @@ a span.select2-chosen
 	border-right: none;
 	border-top: none;
 	border-left: none;
-	
+
 }
 
 
@@ -4132,7 +4139,7 @@ span.noborderoncategories {
 /* ============================================================================== */
 
 ul.ulselectedfields {
-    z-index: 100;			/* To have the select box appears on first plan even when near buttons are decorated by jmobile */
+    z-index: 95;			/* To have the select box appears on first plan even when near buttons are decorated by jmobile */
 }
 dl.dropdown {
     margin:0px;
@@ -4592,7 +4599,12 @@ div.tabsElem a.tab {
     	z-index: 201;
         background: #FFF;
 	}
-	    
+
+    .login_vertical_align {
+    	padding-left: 20px;
+    	padding-right: 20px;
+    }
+
 	/* Reduce login top right info */
 	.help {
 	<?php if ($disableimages) {  ?>
@@ -4627,7 +4639,7 @@ div.tabsElem a.tab {
         vertical-align: middle;
         background: #FFF;
         height: 42px;
-        
+
     	z-index: 202;
     	min-width: 190px;
     	max-width: 190px;

@@ -2,7 +2,11 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+<<<<<<< HEAD
  * Copyright (C) 2011-2014 Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+>>>>>>> uptream/develop
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->load("compta");
 $langs->load("bills");
@@ -94,10 +99,10 @@ llxHeader('', $langs->trans("VATPayments"));
 $form = new Form($db);
 $formother=new FormOther($db);
 $tva_static = new Tva($db);
-$accountstatic = new Account($db);
+$bankstatic = new Account($db);
 
 $sql = "SELECT t.rowid, t.amount, t.label, t.datev as dv, t.datep as dp, t.fk_typepayment as type, t.num_payment, t.fk_bank, pst.code as payment_code,";
-$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.accountancy_journal, ba.label as blabel";
+$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
 $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON t.fk_typepayment = pst.id";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
@@ -227,19 +232,22 @@ if ($result)
 	    {
 	        print '<td>';
 	        if ($obj->fk_bank > 0)
-	        {
-	        	//$accountstatic->fetch($obj->fk_bank);
-	            $accountstatic->id=$obj->bid;
-	            $accountstatic->ref=$obj->bref;
-	            $accountstatic->number=$obj->bnumber;
-	            $accountstatic->accountancy_number=$obj->account_number;
-	            $accountstatic->accountancy_journal=$obj->accountancy_journal;
-	            $accountstatic->label=$obj->blabel;
-	            print $accountstatic->getNomUrl(1);
-	        }
-	        else print '&nbsp;';
-	        print '</td>';
-	    }
+			{
+				$bankstatic->id=$obj->bid;
+				$bankstatic->ref=$obj->bref;
+				$bankstatic->number=$obj->bnumber;
+				$bankstatic->account_number=$obj->account_number;
+
+				$accountingjournal = new AccountingJournal($db);
+				$accountingjournal->fetch($obj->fk_accountancy_journal);
+				$bankstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+
+				$bankstatic->label=$obj->blabel;
+				print $bankstatic->getNomUrl(1);
+			}
+			else print '&nbsp;';
+			print '</td>';
+		}
 		// Amount
         $total = $total + $obj->amount;
 		print "<td align=\"right\">".price($obj->amount)."</td>";

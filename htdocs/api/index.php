@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+/* Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2017	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,10 +144,9 @@ foreach ($modulesdir as $dir)
                      *
                      * Search files named api_<object>.class.php into /htdocs/<module>/class directory
                      *
-                     * @todo : take care of externals module!
                      * @todo : use getElementProperties() function ?
                      */
-                    $dir_part = DOL_DOCUMENT_ROOT.'/'.$moduledirforclass.'/class/';
+                    $dir_part = dol_buildpath('/'.$moduledirforclass.'/class/');
 
                     $handle_part=@opendir(dol_osencode($dir_part));
                     if (is_resource($handle_part))

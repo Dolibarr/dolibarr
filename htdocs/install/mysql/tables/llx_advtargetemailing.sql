@@ -28,4 +28,4 @@ CREATE TABLE llx_advtargetemailing
   datec datetime NOT NULL,
   fk_user_mod integer NOT NULL,
   tms timestamp NOT NULL
-)ENGINE=InnoDB;
+)ENGINE=innodb;

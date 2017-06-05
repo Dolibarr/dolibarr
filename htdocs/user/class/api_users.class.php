@@ -225,9 +225,9 @@ class Users extends DolibarrApi
     /**
 	 * add user to group
 	 *
-	 * @param   int     $id User ID
-	 * @param   int     $group Group ID
-	 * @return  int
+	 * @param   int     $id        User ID
+	 * @param   int     $group     Group ID
+	 * @return  int                1 if success
      * 
 	 * @url	GET {id}/setGroup/{group}
 	 */
@@ -246,7 +246,13 @@ class Users extends DolibarrApi
           throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
         }
     
-        return $this->useraccount->SetInGroup($group,1);
+        $result = $this->useraccount->SetInGroup($group,1);
+        if (! ($result > 0))
+        {
+            throw new RestException(500, $this->useraccount->error);
+        }
+                
+        return 1;
     }
 
 	/**
@@ -287,6 +293,12 @@ class Users extends DolibarrApi
 	    unset($object->lastsearch_values);
 	    unset($object->lastsearch_values_tmp);
 	     
+	    unset($object->total_ht);
+	    unset($object->total_tva);
+	    unset($object->total_localtax1);
+	    unset($object->total_localtax2);
+	    unset($object->total_ttc);
+	    
 	    return $object;
 	}	
 	

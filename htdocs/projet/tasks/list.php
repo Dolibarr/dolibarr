@@ -43,7 +43,7 @@ $id=GETPOST('id','int');
 $search_all=GETPOST('search_all', 'alphanohtml');
 $search_categ=GETPOST("search_categ",'alpha');
 $search_project=GETPOST('search_project');
-if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus'])) 
+if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus']))
 {
     if ($search_all != '') $search_projectstatus=-1;
     else $search_projectstatus=1;
@@ -131,6 +131,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
     }
 }
 
+$object = new Task($db);
+
 
 /*
  * Actions
@@ -171,14 +173,14 @@ if (empty($reshook))
         $toselect='';
         $search_array_options=array();
     }
-    
+
     // Mass actions
     $objectclass='Task';
     $objectlabel='Tasks';
     $permtoread = $user->rights->projet->lire;
     $permtodelete = $user->rights->projet->supprimer;
     $uploaddir = $conf->projet->dir_output.'/tasks';
-    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';    
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 if (empty($search_projectstatus) && $search_projectstatus == '') $search_projectstatus=1;
@@ -190,11 +192,11 @@ if (empty($search_projectstatus) && $search_projectstatus == '') $search_project
  * View
  */
 
+$now = dol_now();
 $form=new Form($db);
 $formother=new FormOther($db);
 $socstatic=new Societe($db);
 $projectstatic = new Project($db);
-$taskstatic = new Task($db);
 $puser=new User($db);
 $tuser=new User($db);
 if ($search_project_user > 0) $puser->fetch($search_project_user);
@@ -231,7 +233,7 @@ if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    
 // Get id of types of contacts for tasks (This list never contains a lot of elements)
 $listoftaskcontacttype=array();
 $sql = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
-$sql.= " WHERE ctc.element = '" . $taskstatic->element . "'";
+$sql.= " WHERE ctc.element = '" . $object->element . "'";
 $sql.= " AND ctc.source = 'internal'";
 $resql = $db->query($sql);
 if ($resql)
@@ -320,7 +322,7 @@ foreach ($search_array_options as $key => $val)
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
     if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -394,7 +396,7 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 }
-    
+
 // List of mass actions available
 $arrayofmassactions =  array(
 //    'presend'=>$langs->trans("SendByMail"),
@@ -542,14 +544,14 @@ if (! empty($arrayfields['t.progress']['checked'])) print '<td class="liste_titr
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-    foreach($extrafields->attribute_label as $key => $val) 
+    foreach($extrafields->attribute_label as $key => $val)
     {
         if (! empty($arrayfields["ef.".$key]['checked']))
         {
             $align=$extrafields->getAlignFlag($key);
             $typeofextrafield=$extrafields->attribute_type[$key];
             print '<td class="liste_titre'.($align?' '.$align:'').'">';
-        	if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
+        	if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attribute_computed[$key]))
 			{
 			    $crit=$val;
 				$tmpkey=preg_replace('/search_options_/','',$key);
@@ -606,7 +608,9 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
         if (! empty($arrayfields["ef.".$key]['checked']))
         {
             $align=$extrafields->getAlignFlag($key);
-            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+            $sortonfield = "ef.".$key;
+            if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
         }
     }
 }
@@ -624,13 +628,20 @@ $plannedworkloadoutputformat='allhourmin';
 $timespentoutputformat='allhourmin';
 if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
 if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
- 
-$now = dol_now();
+
 $i=0;
 $totalarray=array();
 while ($i < min($num,$limit))
 {
 	$obj = $db->fetch_object($resql);
+
+	$object->id = $obj->id;
+	$object->ref = $obj->ref;
+	$object->label = $obj->label;
+	$object->fk_statut = $obj->fk_statut;
+	$object->progress = $obj->progress;
+	$object->datee = $db->jdate($obj->date_end);	// deprecated
+	$object->date_end = $db->jdate($obj->date_end);
 
 	$projectstatic->id = $obj->projectid;
 	$projectstatic->ref = $obj->projectref;
@@ -638,15 +649,7 @@ while ($i < min($num,$limit))
 	$projectstatic->public = $obj->public;
 	$projectstatic->statut = $obj->projectstatus;
 	$projectstatic->datee = $db->jdate($obj->projectdatee);
-	
-	$taskstatic->id = $obj->id;
-	$taskstatic->ref = $obj->ref;
-	$taskstatic->label = $obj->label;
-	$taskstatic->fk_statut = $obj->fk_statut;
-	$taskstatic->progress = $obj->progress;
-	$taskstatic->datee = $db->jdate($obj->date_end);	// deprecated
-	$taskstatic->date_end = $db->jdate($obj->date_end);
-	
+
 	$userAccess = $projectstatic->restrictedProjectArea($user);    // why this ?
 	if ($userAccess >= 0)
 	{
@@ -656,16 +659,16 @@ while ($i < min($num,$limit))
     	if (! empty($arrayfields['t.ref']['checked']))
     	{
     	    print '<td>';
-    	    print $taskstatic->getNomUrl(1,'withproject');
-    		if ($taskstatic->hasDelay()) print img_warning("Late");
+    	    print $object->getNomUrl(1,'withproject');
+    		if ($object->hasDelay()) print img_warning("Late");
     	    print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
-    	}        	 
+    	}
 	    // Label
     	if (! empty($arrayfields['t.label']['checked']))
     	{
     	    print '<td>';
-    	    print $taskstatic->label;
+    	    print $object->label;
     	    print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
     	}
@@ -727,7 +730,7 @@ while ($i < min($num,$limit))
     	    print '</td>';
     	    if (! $i) $totalarray['nbfield']++;
     	}
-    	
+
     	// Planned workload
     	if (! empty($arrayfields['t.planned_workload']['checked']))
     	{
@@ -761,7 +764,7 @@ while ($i < min($num,$limit))
             if (! $i) $totalarray['nbfield']++;
 		    if (! $i) $totalarray['totaldurationeffectivefield']=$totalarray['nbfield'];
 		    $totalarray['totaldurationeffective'] += $obj->duration_effective;
-    	}    		
+    	}
 	    // Calculated progress
     	if (! empty($arrayfields['t.progress_calculated']['checked']))
     	{
@@ -774,7 +777,7 @@ while ($i < min($num,$limit))
     		print '</td>';
             if (! $i) $totalarray['nbfield']++;
             if (! $i) $totalarray['totalprogress_calculated']=$totalarray['nbfield'];
-    	}    		
+    	}
 	    // Declared progress
     	if (! empty($arrayfields['t.progress']['checked']))
     	{
@@ -840,13 +843,13 @@ while ($i < min($num,$limit))
         }
         print '</td>';
         if (! $i) $totalarray['nbfield']++;
-		
+
 		print "</tr>\n";
-    
+
 		//print projectLinesa();
 	}
 
-	$i++;    
+	$i++;
 }
 
 // Show total line

@@ -326,7 +326,6 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 
     $formother = new FormOther($db);
 
-    //$dirthemes=array(empty($conf->global->MAIN_FORCETHEMEDIR)?'/theme':$conf->global->MAIN_FORCETHEMEDIR.'/theme');
     $dirthemes=array('/theme');
     if (! empty($conf->modules_parts['theme']))		// Using this feature slow down application
     {

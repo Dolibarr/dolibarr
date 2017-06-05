@@ -47,6 +47,8 @@ $type='supplier_payment';
  * Actions
  */
 
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'updateMask')
 {
     $maskconstsupplierpayment=GETPOST('maskconstsupplierpayment','alpha');
@@ -66,31 +68,6 @@ if ($action == 'updateMask')
 }else  if ($action == 'setmod')
 {
     dolibarr_set_const($db, "SUPPLIER_PAYMENT_ADDON", $value, 'chaine', 0, '', $conf->entity);
-}
-
-// define constants for models generator that need parameters
-else if ($action == 'setModuleOptions')
-{
-    $post_size=count($_POST);
-    for($i=0;$i < $post_size;$i++)
-    {
-        if (array_key_exists('param'.$i,$_POST))
-        {
-            $param=GETPOST("param".$i,'alpha');
-            $value=GETPOST("value".$i,'alpha');
-            if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-        }
-    }
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
 }
 
 // Activate a model
@@ -195,7 +172,7 @@ dol_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), -1, 'compan
  */
 
 if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) $conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
-    
+
 print load_fiche_titre($langs->trans("PaymentsNumberingModule"), '', '');
 
 // Load array def with activated templates
@@ -265,7 +242,7 @@ foreach ($dirmodels as $reldir)
                         require_once $dir.$filebis;
 
                         $module = new $classname($db);
-						
+
                         // Show modules according to features level
                         if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
                         if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
@@ -375,7 +352,7 @@ foreach ($dirmodels as $reldir)
         {
             while (($file = readdir($handle))!==false)
             {
-                if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))            	
+                if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
                 {
                     $name = substr($file, 4, dol_strlen($file) -16);
                     $classname = substr($file, 0, dol_strlen($file) -12);
@@ -383,7 +360,7 @@ foreach ($dirmodels as $reldir)
 	                require_once $dir.'/'.$file;
 	                $module = new $classname($db, new PaiementFourn($db));
 
-                    
+
                     print "<tr class=\"oddeven\">\n";
                     print "<td>";
 	                print (empty($module->name)?$name:$module->name);

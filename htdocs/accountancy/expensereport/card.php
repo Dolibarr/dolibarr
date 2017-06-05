@@ -30,7 +30,7 @@ require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 // Langs
 $langs->load("bills");
@@ -85,7 +85,7 @@ if ($cancel == $langs->trans("Cancel")) {
 // Create
 $form = new Form($db);
 $expensereport_static = new ExpenseReport($db);
-$formventilation = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 
 if (! empty($id)) {
 	$sql = "SELECT er.ref, er.rowid as facid, erd.fk_c_type_fees, erd.comments, erd.rowid, erd.fk_code_ventilation,";
@@ -135,7 +135,7 @@ if (! empty($id)) {
 			print '<td>' . ($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code))) . '</td>';
 
 			print '<tr><td>' . $langs->trans("Account") . '</td><td>';
-			print $formventilation->select_account($objp->fk_code_ventilation, 'codeventil', 1);
+			print $formaccounting->select_account($objp->fk_code_ventilation, 'codeventil', 1);
 			print '</td></tr>';
 			print '</table>';
 

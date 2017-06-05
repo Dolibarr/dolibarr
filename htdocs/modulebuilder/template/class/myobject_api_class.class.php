@@ -15,19 +15,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
-
+use Luracast\Restler\RestException;
 
 /**
- * API class for skeleton object
+ * \file    htdocs/modulebuilder/template/class/myobject_api_class.class.php
+ * \ingroup mymodule
+ * \brief   File for API management of myobject.
+ */
+ 
+/**
+ * API class for mymodule myobject
  *
  * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
- * 
- *
  */
-class SkeletonApi extends DolibarrApi
+class MyObjectApi extends DolibarrApi
 {
     /**
      * @var array   $FIELDS     Mandatory fields, checked when create and update object 
@@ -37,56 +40,56 @@ class SkeletonApi extends DolibarrApi
     );
 
     /**
-     * @var Skeleton $skeleton {@type Skeleton}
+     * @var MyObject $myobject {@type MyObject}
      */
-    public $skeleton;
+    public $myobject;
 
     /**
      * Constructor
      *
-     * @url     GET skeleton/
+     * @url     GET myobject/
      * 
      */
     function __construct()
     {
 		global $db, $conf;
 		$this->db = $db;
-        $this->skeleton = new Skeleton($this->db);
+        $this->myobject = new MyObject($this->db);
     }
 
     /**
-     * Get properties of a skeleton object
+     * Get properties of a myobject object
      *
-     * Return an array with skeleton informations
+     * Return an array with myobject informations
      *
-     * @param 	int 	$id ID of skeleton
+     * @param 	int 	$id ID of myobject
      * @return 	array|mixed data without useless information
 	 * 
-     * @url	GET skeleton/{id}
+     * @url	GET myobject/{id}
      * @throws 	RestException
      */
     function get($id)
     {		
-		if(! DolibarrApiAccess::$user->rights->skeleton->read) {
+		if(! DolibarrApiAccess::$user->rights->myobject->read) {
 			throw new RestException(401);
 		}
 			
-        $result = $this->skeleton->fetch($id);
+        $result = $this->myobject->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Skeleton not found');
+            throw new RestException(404, 'MyObject not found');
         }
 		
-		if( ! DolibarrApi::_checkAccessToResource('skeleton',$this->skeleton->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('myobject',$this->myobject->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		return $this->_cleanObjectDatas($this->skeleton);
+		return $this->_cleanObjectDatas($this->myobject);
     }
 
     /**
-     * List skeletons
+     * List myobjects
      * 
-     * Get a list of skeletons
+     * Get a list of myobjects
      * 
      * @param int		$mode		Use this param to filter list
      * @param string	$sortfield	Sort field
@@ -94,9 +97,9 @@ class SkeletonApi extends DolibarrApi
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101') or (t.import_key:=:'20160101')"
-     * @return array Array of skeleton objects
+     * @return array Array of myobject objects
      *
-     * @url	GET /skeletons/
+     * @url	GET /myobjects/
      */
     function index($mode, $sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $sqlfilters = '') {
         global $db, $conf;
@@ -110,7 +113,7 @@ class SkeletonApi extends DolibarrApi
 
         $sql = "SELECT s.rowid";
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-        $sql.= " FROM ".MAIN_DB_PREFIX."skeleton as s";
+        $sql.= " FROM ".MAIN_DB_PREFIX."myobject as s";
         
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
         $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
@@ -120,7 +123,7 @@ class SkeletonApi extends DolibarrApi
         //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
         //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
 
-        $sql.= ' AND s.entity IN ('.getEntity('skeleton', 1).')';
+        $sql.= ' AND s.entity IN ('.getEntity('myobject', 1).')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.fk_soc = sc.fk_soc";
         if ($socid) $sql.= " AND s.fk_soc = ".$socid;
         if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
@@ -157,104 +160,104 @@ class SkeletonApi extends DolibarrApi
             while ($i < $num)
             {
                 $obj = $db->fetch_object($result);
-                $skeleton_static = new Skeleton($db);
-                if($skeleton_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($skeleton_static);
+                $myobject_static = new MyObject($db);
+                if($myobject_static->fetch($obj->rowid)) {
+                    $obj_ret[] = parent::_cleanObjectDatas($myobject_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve skeleton list');
+            throw new RestException(503, 'Error when retrieve myobject list');
         }
         if( ! count($obj_ret)) {
-            throw new RestException(404, 'No skeleton found');
+            throw new RestException(404, 'No myobject found');
         }
 		return $obj_ret;
     }
     
     /**
-     * Create skeleton object
+     * Create myobject object
      *
      * @param array $request_data   Request datas
-     * @return int  ID of skeleton
+     * @return int  ID of myobject
      * 
-     * @url	POST skeleton/
+     * @url	POST myobject/
      */
     function post($request_data = NULL)
     {
-        if(! DolibarrApiAccess::$user->rights->skeleton->create) {
+        if(! DolibarrApiAccess::$user->rights->myobject->create) {
 			throw new RestException(401);
 		}
         // Check mandatory fields
         $result = $this->_validate($request_data);
         
         foreach($request_data as $field => $value) {
-            $this->skeleton->$field = $value;
+            $this->myobject->$field = $value;
         }
-        if( ! $this->skeleton->create(DolibarrApiAccess::$user)) {
+        if( ! $this->myobject->create(DolibarrApiAccess::$user)) {
             throw new RestException(500);
         }
-        return $this->skeleton->id;
+        return $this->myobject->id;
     }
 
     /**
-     * Update skeleton
+     * Update myobject
      *
-     * @param int   $id             Id of skeleton to update
+     * @param int   $id             Id of myobject to update
      * @param array $request_data   Datas   
      * @return int 
      * 
-     * @url	PUT skeleton/{id}
+     * @url	PUT myobject/{id}
      */
     function put($id, $request_data = NULL)
     {
-        if(! DolibarrApiAccess::$user->rights->skeleton->create) {
+        if(! DolibarrApiAccess::$user->rights->myobject->create) {
 			throw new RestException(401);
 		}
         
-        $result = $this->skeleton->fetch($id);
+        $result = $this->myobject->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Skeleton not found');
+            throw new RestException(404, 'MyObject not found');
         }
 		
-		if( ! DolibarrApi::_checkAccessToResource('skeleton',$this->skeleton->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('myobject',$this->myobject->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
         foreach($request_data as $field => $value) {
-            $this->skeleton->$field = $value;
+            $this->myobject->$field = $value;
         }
         
-        if($this->skeleton->update($id, DolibarrApiAccess::$user))
+        if($this->myobject->update($id, DolibarrApiAccess::$user))
             return $this->get ($id);
         
         return false;
     }
     
     /**
-     * Delete skeleton
+     * Delete myobject
      *
-     * @param   int     $id   Skeleton ID
+     * @param   int     $id   MyObject ID
      * @return  array
      * 
-     * @url	DELETE skeleton/{id}
+     * @url	DELETE myobject/{id}
      */
     function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->skeleton->supprimer) {
+        if(! DolibarrApiAccess::$user->rights->myobject->supprimer) {
 			throw new RestException(401);
 		}
-        $result = $this->skeleton->fetch($id);
+        $result = $this->myobject->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Skeleton not found');
+            throw new RestException(404, 'MyObject not found');
         }
 		
-		if( ! DolibarrApi::_checkAccessToResource('skeleton',$this->skeleton->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('myobject',$this->myobject->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         
-        if( !$this->skeleton->delete($id))
+        if( !$this->myobject->delete($id))
         {
             throw new RestException(500);
         }
@@ -262,7 +265,7 @@ class SkeletonApi extends DolibarrApi
          return array(
             'success' => array(
                 'code' => 200,
-                'message' => 'Skeleton deleted'
+                'message' => 'MyObject deleted'
             )
         );
         
@@ -278,12 +281,12 @@ class SkeletonApi extends DolibarrApi
      */
     function _validate($data)
     {
-        $skeleton = array();
-        foreach (SkeletonApi::$FIELDS as $field) {
+        $myobject = array();
+        foreach (MyObjectApi::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
-            $skeleton[$field] = $data[$field];
+            $myobject[$field] = $data[$field];
         }
-        return $skeleton;
+        return $myobject;
     }
 }

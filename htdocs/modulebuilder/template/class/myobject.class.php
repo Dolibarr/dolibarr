@@ -20,7 +20,7 @@
  */
 
 /**
- * \file        modulebuilder/skeletons/skeleton_class.class.php
+ * \file        htdocs/modulebuilder/template/class/myobject.class.php
  * \ingroup     mymodule othermodule1 othermodule2
  * \brief       This file is an example for a CRUD class file (Create/Read/Update/Delete)
  */
@@ -31,20 +31,20 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class Skeleton_Class
+ * Class MyModuleObject
  *
  * Put here description of your class.
  */
-class Skeleton_Class extends CommonObject
+class MyModuleObject extends CommonObject
 {
 	/**
 	 * @var string Id to identify managed object
 	 */
-	public $element = 'skeleton';
+	public $element = 'mymoduleobject';
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'skeleton';
+	public $table_element = 'mymoduleobject';
     /**
      * @var array Array with all fields and their property
      */
@@ -67,11 +67,12 @@ class Skeleton_Class extends CommonObject
 	
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	
-	public $table_element_line = 'skeletondet';
-    public $class_element_line = 'SkeletonLine';
-    public $fk_element = 'fk_skeleton';
+	public $table_element_line = 'mymoduleobjectdet';
+    public $class_element_line = 'MyModuleObjectline';
+    public $fk_element = 'fk_mymoduleobject';
+
     /**
-	 * @var Skeleton_ClassLine[] Lines
+	 * @var MyModuleObjectLine[] Lines
 	 */
 	public $lines = array();
 	
@@ -179,7 +180,7 @@ class Skeleton_Class extends CommonObject
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		$sql.= ' WHERE 1 = 1';
 		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity("skeleton", 1) . ")";
+		    $sql .= " AND entity IN (" . getEntity("mymoduleobject", 1) . ")";
 		}
 		if (null !== $ref) {
 			$sql .= ' AND t.ref = ' . '\'' . $ref . '\'';
@@ -257,7 +258,7 @@ class Skeleton_Class extends CommonObject
 		}
 		$sql.= ' WHERE 1 = 1';
 		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity("skeleton", 1) . ")";
+		    $sql .= " AND entity IN (" . getEntity("mymoduleobject", 1) . ")";
 		}
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
@@ -423,7 +424,7 @@ class Skeleton_Class extends CommonObject
 
 		global $user;
 		$error = 0;
-		$object = new Skeleton_Class($this->db);
+		$object = new MyModuleObject($this->db);
 
 		$this->db->begin();
 
@@ -587,9 +588,9 @@ class Skeleton_Class extends CommonObject
 }
 
 /**
- * Class Skeleton_ClassLine
+ * Class MyModuleObjectLine
  */
-class Skeleton_ClassLine
+class MyModuleObjectLine
 {
 	/**
 	 * @var int ID

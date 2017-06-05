@@ -78,7 +78,40 @@ function expensereport_prepare_head($object)
 	return $head;
 }
 
+/**
+ * Returns an array with the tabs for the "Expense report payment" section
+ * It loads tabs from modules looking for the entity payment
+ * 
+ * @param	Paiement	$object		Current payment object
+ * @return	array					Tabs for the payment section
+ */
+function payment_expensereport_prepare_head(PaymentExpenseReport $object) {
 
+	global $langs, $conf;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Card");
+	$head[$h][2] = 'payment';
+	$h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'payment_expensereport');
+
+	$head[$h][0] = DOL_URL_ROOT.'/expensereport/payment/info.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'payment_expensereport', 'remove');
+
+	return $head;
+}
 
 /**
  *  Return array head with list of tabs to view object informations.

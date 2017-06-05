@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    class/actions_mymodule.class.php
+ * \file    htdocs/modulebuilder/template/class/actions_mymodule.class.php
  * \ingroup mymodule
  * \brief   Example hook overload.
  *
@@ -62,24 +62,101 @@ class ActionsMyModule
 	 */
 	public function doActions($parameters, &$object, &$action, $hookmanager)
 	{
+		global $conf, $user, $langs;
+
 		$error = 0; // Error counter
-		$myvalue = 'test'; // A result value
 
+        /*
 		print_r($parameters);
-		echo "action: " . $action;
 		print_r($object);
+		echo "action: " . $action;
+        */
 
-		if (in_array('somecontext', explode(':', $parameters['context']))) {
-		  // do something only for the context 'somecontext'
+	    if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2'))) {    // do something only for the context 'somecontext1' or 'somecontext2'
+
+
 		}
 
 		if (! $error) {
-			$this->results = array('myreturn' => $myvalue);
+			$this->results = array('myreturn' => 999);
 			$this->resprints = 'A text to show';
-			return 0; // or return 1 to replace standard code
+			return 0;                                    // or return 1 to replace standard code
 		} else {
 			$this->errors[] = 'Error message';
 			return -1;
 		}
 	}
+
+
+	/**
+	 * Overloading the doActions function : replacing the parent's function with the one below
+	 *
+	 * @param   array()         $parameters     Hook metadatas (context, etc...)
+	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
+	 * @param   string          $action         Current action (if set). Generally create or edit or null
+	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
+	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
+	 */
+	public function doMassActions($parameters, &$object, &$action, $hookmanager)
+	{
+	    global $conf, $user, $langs;
+
+	    $error = 0; // Error counter
+
+        /*
+	    print_r($parameters);
+	    print_r($object);
+	    echo "action: " . $action;
+        */
+
+	    if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2'))) {  // do something only for the context 'somecontext1' or 'somecontext2'
+
+	        foreach($parameters['toselect'] as $objectid)
+	        {
+	            // Do action on each object id
+
+	        }
+	    }
+
+	    if (! $error) {
+	        $this->results = array('myreturn' => 999);
+	        $this->resprints = 'A text to show';
+	        return 0;                                    // or return 1 to replace standard code
+	    } else {
+	        $this->errors[] = 'Error message';
+	        return -1;
+	    }
+	}
+
+
+	/**
+	 * Overloading the addMoreMassActions function : replacing the parent's function with the one below
+	 *
+	 * @param   array()         $parameters     Hook metadatas (context, etc...)
+	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
+	 * @param   string          $action         Current action (if set). Generally create or edit or null
+	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
+	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
+	 */
+	public function addMoreMassActions($parameters, &$object, &$action, $hookmanager)
+	{
+	    global $conf, $user, $langs;
+
+	    $error = 0; // Error counter
+
+	    if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))  // do something only for the context 'somecontext'
+	    {
+	        $this->resprints = '<option value="0"'.($disabled?' disabled="disabled"':'').'>'.$langs->trans("MyModuleMassAction").'</option>';
+	    }
+
+	    if (! $error) {
+	        return 0;                                    // or return 1 to replace standard code
+	    } else {
+	        $this->errors[] = 'Error message';
+	        return -1;
+	    }
+	}
+
+
+
 }

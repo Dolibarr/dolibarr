@@ -29,7 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 // Langs
 $langs->load("accountancy");
@@ -67,7 +67,7 @@ $search_code_journal = GETPOST('search_code_journal', 'alpha');
 
 $object = new BookKeeping($db);
 $form = new Form($db);
-$formventilation = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 
 // Filter
 if (empty($search_date_start)) {
@@ -182,15 +182,15 @@ print $form->select_date($search_date_end, 'date_end');
 print '</div>';
 print '<div class="liste_titre">';
 print $langs->trans('From') . ' ' . $langs->trans('AccountAccounting') . ': ';
-print $formventilation->select_account($search_numero_compte_start, 'search_numero_compte_start', 1, array (), 1, 1, '');
+print $formaccounting->select_account($search_numero_compte_start, 'search_numero_compte_start', 1, array (), 1, 1, '');
 print $langs->trans('To') . ' ' . $langs->trans('AccountAccounting') . ': ';
-print $formventilation->select_account($search_numero_compte_end, 'search_numero_compte_end', 1, array (), 1, 1, '');
+print $formaccounting->select_account($search_numero_compte_end, 'search_numero_compte_end', 1, array (), 1, 1, '');
 print '</div>';
 print '<div class="liste_titre">';
 print $langs->trans('From') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
-print $formventilation->select_auxaccount($search_code_tiers_start, 'search_code_tiers_start', 1);
+print $formaccounting->select_auxaccount($search_code_tiers_start, 'search_code_tiers_start', 1);
 print $langs->trans('To') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
-print $formventilation->select_auxaccount($search_code_tiers_end, 'searchcode_tiers_end', 1);
+print $formaccounting->select_auxaccount($search_code_tiers_end, 'searchcode_tiers_end', 1);
 print '</div>';
 print "<table class=\"noborder\" width=\"100%\">";
 
