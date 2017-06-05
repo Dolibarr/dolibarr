@@ -329,18 +329,19 @@ if ($id > 0 || $ref)
 			}
             print '</td></tr>';
 
-			// Cost price. Can be used for margin module for option "calculate margin on explicit cost price
-            // Accountancy sell code
-            print '<tr><td>';
-			$textdesc =$langs->trans("CostPriceDescription");
-			$textdesc.="<br>".$langs->trans("CostPriceUsage");
-			$text=$form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
-            print $form->editfieldkey($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
-            print '</td><td colspan="2">';
-            print $form->editfieldval($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
-            print '</td></tr>';
-            
-			print '</table>';
+			if (! empty($conf->margin->enabled)){
+				// Cost price. Can be used for margin module for option "calculate margin on explicit cost price
+				// Accountancy sell code
+				print '<tr><td>';
+				$textdesc =$langs->trans("CostPriceDescription");
+				$textdesc.="<br>".$langs->trans("CostPriceUsage");
+				$text=$form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
+				print $form->editfieldkey($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
+				print '</td><td colspan="2">';
+				print $form->editfieldval($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
+				print '</td></tr>';
+            }
+	    	print '</table>';
 
             print '</div>';
             print '<div style="clear:both"></div>';
