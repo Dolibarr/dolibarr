@@ -239,7 +239,7 @@ function dol_shutdown()
 /**
  *  Return value of a param into GET or POST supervariable.
  *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
- *  Note: The property $user->default_values is loaded by the main when loading the user.
+ *  Note: The property $user->default_values is loaded by main.php when loading the user.
  *
  *  @param	string	$paramname   Name of parameter to found
  *  @param	string	$check	     Type of check
@@ -359,32 +359,34 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 
 	if (! empty($check))
 	{
-	    // Replace vars like __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__, ...
-	    if (! is_array($out))
+	    // Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable paramaters)
+	    // Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__, ...
+	    // We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
+	    if (! is_array($out) && empty($_POST[$paramname]))
 	    {
 	        $maxloop=20; $loopnb=0;    // Protection against infinite loop
 	        while (preg_match('/__([A-Z0-9]+_?[A-Z0-9]+)__/i', $out, $reg) && ($loopnb < $maxloop))    // Detect '__ABCDEF__' as key 'ABCDEF' and '__ABC_DEF__' as key 'ABC_DEF'. Detection is also correct when 2 vars are side by side.
 	        {
 	            $loopnb++; $newout = '';
 
-    	        if ($reg[1] == 'DAY')       { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['mday']; }
-    	        elseif ($reg[1] == 'MONTH') { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['mon'];  }
-    	        elseif ($reg[1] == 'YEAR')  { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['year']; }
+    	        if ($reg[1] == 'DAY')                { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['mday']; }
+    	        elseif ($reg[1] == 'MONTH')          { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['mon'];  }
+    	        elseif ($reg[1] == 'YEAR')           { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['year']; }
     	    	elseif ($reg[1] == 'PREVIOUS_DAY')   { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; }
     	        elseif ($reg[1] == 'PREVIOUS_MONTH') { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_prev_month($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
     	        elseif ($reg[1] == 'PREVIOUS_YEAR')  { $tmp=dol_getdate(dol_now(), true); $newout = ($tmp['year'] - 1); }
-    	    	elseif ($reg[1] == 'NEXT_DAY')   { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; }
-    	        elseif ($reg[1] == 'NEXT_MONTH') { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_month($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
-    	        elseif ($reg[1] == 'NEXT_YEAR')  { $tmp=dol_getdate(dol_now(), true); $newout = ($tmp['year'] + 1); }
-    	        elseif ($reg[1] == 'MYCOUNTRYID')
+    	    	elseif ($reg[1] == 'NEXT_DAY')       { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; }
+    	        elseif ($reg[1] == 'NEXT_MONTH')     { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_month($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
+    	        elseif ($reg[1] == 'NEXT_YEAR')      { $tmp=dol_getdate(dol_now(), true); $newout = ($tmp['year'] + 1); }
+    	        elseif ($reg[1] == 'MYCOUNTRY_ID' || $reg[1] == 'MYCOUNTRYID')
     	        {
     	            $newout = $mysoc->country_id;
     	        }
-    	        elseif ($reg[1] == 'USERID')
+    	        elseif ($reg[1] == 'USER_ID' || $reg[1] == 'USERID')
     	        {
     	            $newout = $user->id;
     	        }
-    	    	elseif ($reg[1] == 'SUPERVISORID')
+    	    	elseif ($reg[1] == 'SUPERVISOR_ID' || $reg[1] == 'SUPERVISORID')
     	        {
     	            $newout = $user->fk_user;
     	        }
@@ -1586,7 +1588,8 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	if (preg_match('/__b__/i',$format))
 	{
 		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-		$month=adodb_strftime('%m',$time+$offsettz+$offsetdst);					// TODO Remove this
+		$month=adodb_strftime('%m',$time+$offsettz+$offsetdst);					// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+        $month=sprintf("%02d", $month);                             // $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
 		if ($encodetooutput)
 		{
 			$monthtext=$outputlangs->transnoentities('Month'.$month);
@@ -2554,6 +2557,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$picto = $regs[1];
 			$path = $regs[2];	// $path is $mymodule
 		}
+
 		// Clean parameters
 		if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto .= '.png';
 		// If alt path are defined, define url where img file is, according to physical path
@@ -2792,7 +2796,7 @@ function img_printer($titlealt = "default", $other='')
 }
 
 /**
- *  Show delete logo
+ *  Show split logo
  *
  *  @param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
@@ -3233,15 +3237,19 @@ function dol_print_error($db='',$error='',$errors=null)
  * Show a public email and error code to contact if technical error
  *
  * @param	string	$prefixcode		Prefix of public error code
+ * @param   string  $errormessage   Complete error message
  * @return	void
  */
-function dol_print_error_email($prefixcode)
+function dol_print_error_email($prefixcode, $errormessage='')
 {
 	global $langs,$conf;
 
 	$langs->load("errors");
 	$now=dol_now();
-	print '<br><div class="error">'.$langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d')).'</div>';
+	print '<br><div class="center login_main_message"><div class="error">';
+	print $langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d'));
+	if ($errormessage) print '<br><br>'.$errormessage;
+	print '</div></div>';
 }
 
 /**
@@ -5014,8 +5022,100 @@ function dol_concatdesc($text1,$text2,$forxml=false)
 	return $ret;
 }
 
+
 /**
- *  Make substition into a string replacing key with vals from $substitutionarray (oldval=>newval)
+ * Return array of possible common substitutions.
+ *
+ * @param	Translate	$outputlangs	Output language
+ * @param   int         $onlykey        Do not calculate heavy values of keys (performance enhancement when we need only the keys)
+ * @param   array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'objectamount', 'date', 'user', ...)
+ * @param   Object      $object         Object for keys on object
+ * @return	array						Array of substitutions
+ */
+function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $object=null)
+{
+    global $conf, $mysoc, $user;
+
+    $substitutionarray=array();
+
+    if (empty($exclude) || ! in_array('mycompany', $exclude))
+    {
+        $substitutionarray=array_merge($substitutionarray, array(
+            '__MYCOMPANY_NAME__' => $mysoc->name,
+            '__MYCOMPANY_EMAIL__' => $mysoc->email,
+            '__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
+            '__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
+            '__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
+            '__MYCOMPANY_PROFID4__' => $mysoc->idprof4,
+            '__MYCOMPANY_PROFID5__' => $mysoc->idprof5,
+            '__MYCOMPANY_PROFID6__' => $mysoc->idprof6,
+            '__MYCOMPANY_CAPITAL__' => $mysoc->capital,
+            '__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id
+        ));
+    }
+    if (empty($exclude) || ! in_array('objectamount', $exclude))
+    {
+        if (is_object($object))       // For backward compatibility
+        {
+            $substitutionarray['__TOTAL_TTC__']    =is_object($object)?$object->total_ttc:'';
+            $substitutionarray['__TOTAL_HT__']     =is_object($object)?$object->total_ht:'';
+            $substitutionarray['__TOTAL_VAT__']    =is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
+        }
+        $substitutionarray['__AMOUNT__']       =is_object($object)?$object->total_ttc:'';
+        $substitutionarray['__AMOUNT_WO_TAX__']=is_object($object)?$object->total_ht:'';
+        $substitutionarray['__AMOUNT_VAT__']   =is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
+    }
+
+    if (empty($exclude) || ! in_array('date', $exclude))
+    {
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+        if (! empty($onlykey))
+        {
+            $tmp=$tmp2=$tmp3=$tmp4=$tmp5=array();
+        }
+        else
+        {
+            $tmp=dol_getdate(dol_now(), true);
+            $tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+            $tmp3=dol_get_prev_month($tmp['mday'], $tmp['mon'], $tmp['year']);
+            $tmp4=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+            $tmp5=dol_get_next_month($tmp['mday'], $tmp['mon'], $tmp['year']);
+        }
+        $substitutionarray=array_merge($substitutionarray, array(
+            '__DAY__' => $tmp['mday'],
+            '__MONTH__' => $tmp['mon'],
+            '__YEAR__' => $tmp['year'],
+            '__PREVIOUS_DAY__' => $tmp2['day'],
+            '__PREVIOUS_MONTH__' => $tmp3['month'],
+            '__PREVIOUS_YEAR__' => ($tmp['year'] - 1),
+            '__NEXT_DAY__' => $tmp4['day'],
+            '__NEXT_MONTH__' => $tmp5['month'],
+            '__NEXT_YEAR__' => ($tmp['year'] + 1),
+        ));
+    }
+
+    if (empty($exclude) || ! in_array('user', $exclude))
+    {
+        $substitutionarray=array_merge($substitutionarray, array(
+            '__USER_ID__' => $user->id,
+            '__USER_LOGIN__' => $user->login,
+            '__USER_LASTNAME__' => $user->lastname,
+            '__USER_FIRSTNAME__' => $user->firstname,
+            '__USER_FULLNAME__' => $user->getFullName($outputlangs),
+            '__USER_SUPERVISOR_ID__' => $user->fk_user
+        ));
+    }
+    if (! empty($conf->multicompany->enabled))
+    {
+        $substitutionarray=array_merge($substitutionarray, array('__ENTITY_ID__' => $conf->entity));
+    }
+
+    return $substitutionarray;
+}
+
+/**
+ *  Make substition into a text string, replacing keys with vals from $substitutionarray (oldval=>newval).
  *
  *  @param	string		$text	      			Source string in which we must do substitution
  *  @param  array		$substitutionarray		Array with key->val to substitute
@@ -5034,11 +5134,16 @@ function make_substitutions($text, $substitutionarray, $outputlangs=null)
 	// Make substitution for language keys
 	if (is_object($outputlangs))
 	{
-		while (preg_match('/__\((.*)\)__/', $text, $reg))
+		while (preg_match('/__\(([^\)]*)\)__/', $text, $reg))
 		{
+		    // If key is __(TranslationKey|langfile)__, then force load of langfile.lang
+			$tmp=explode('|',$reg[1]);
+			if (! empty($tmp[1])) $outputlangs->load($tmp[1]);
+
 			$msgishtml = 0;
 			if (dol_textishtml($text,1)) $msgishtml = 1;
-			$text = preg_replace('/__\('.preg_quote($reg[1]).'\)__/', $msgishtml?dol_htmlentitiesbr($outputlangs->transnoentitiesnoconv($reg[1])):$outputlangs->transnoentitiesnoconv($reg[1]), $text);
+
+			$text = preg_replace('/__\('.preg_quote($reg[1], '/').'\)__/', $msgishtml?dol_htmlentitiesbr($outputlangs->transnoentitiesnoconv($reg[1])):$outputlangs->transnoentitiesnoconv($reg[1]), $text);
 		}
 	}
 

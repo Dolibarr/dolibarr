@@ -76,14 +76,14 @@ class Interfaces
             global $db;
             $user = new User($db);
         }
-        
+
         $nbfile = $nbtotal = $nbok = $nbko = 0;
 
         $files = array();
         $modules = array();
         $orders = array();
 		$i=0;
-		
+
 		$dirtriggers=array_merge(array('/core/triggers'),$conf->modules_parts['triggers']);
         foreach($dirtriggers as $reldir)
         {
@@ -106,7 +106,7 @@ class Interfaces
 						$part3=$reg[3];
 
                         $nbfile++;
-                        
+
                         // Check if trigger file is disabled by name
                         if (preg_match('/NORUN$/i',$file)) continue;
                         // Check if trigger file is for a particular module
@@ -132,7 +132,7 @@ class Interfaces
                             dol_syslog(get_class($this)."::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger", $newdir."/".$file, $fullpathfiles[$modName]), LOG_WARNING);
                             continue;
                         }
-                        
+
                         try {
                             //print 'Todo for '.$modName." : ".$newdir.'/'.$file."\n";
                             include_once $newdir.'/'.$file;
@@ -142,7 +142,7 @@ class Interfaces
                         {
                             dol_syslog('ko for '.$modName." ".$e->getMessage()."\n", LOG_ERR);
                         }
-                        
+
                         $modules[$i] = $modName;
                         $files[$i] = $file;
                         $fullpathfiles[$modName] = $newdir.'/'.$file;
@@ -155,7 +155,7 @@ class Interfaces
         }
 
         asort($orders);
-        
+
         // Loop on each trigger
         foreach ($orders as $key => $value)
         {
@@ -246,7 +246,7 @@ class Interfaces
         {
         	$dirtriggers=$forcedirtriggers;
         }
-        	
+
         foreach($dirtriggers as $reldir)
         {
             $dir=dol_buildpath($reldir,0);

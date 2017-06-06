@@ -170,13 +170,13 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
      * Migration des donnees
      *
      ***************************************************************************************/
+    $db->begin();
+
     if (! $error)
     {
         // Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
         // Version to install is DOL_VERSION
         $dolibarrlastupgradeversionarray=preg_split('/[\.-]/',isset($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_UPGRADE:$conf->global->MAIN_VERSION_LAST_INSTALL);
-
-        $db->begin();
 
         // Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
         // dans la 1ere colonne, la description de l'action a faire
@@ -342,6 +342,8 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 
         	migrate_mode_reglement($db,$langs,$conf);
 
+        	migrate_clean_association($db,$langs,$conf);
+
             // Reload modules
             migrate_reload_modules($db,$langs,$conf);
 
@@ -413,10 +415,10 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         {
             // Migrate to add entity value into llx_societe_remise
             migrate_remise_entity($db,$langs,$conf);
-        
+
             // Migrate to add entity value into llx_societe_remise_except
             migrate_remise_except_entity($db,$langs,$conf);
-        
+
             // Reload modules (this must be always and only into last targeted version)
             $listofmodule=array(
                 'MAIN_MODULE_ACCOUNTING'=>'newboxdefonly',
@@ -426,11 +428,11 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
                 'MAIN_MODULE_PRINTING'=>'newboxdefonly',
             );
             migrate_reload_modules($db,$langs,$conf,$listofmodule);
-        
+
             // Reload menus (this must be always and only into last targeted version)
             migrate_reload_menu($db,$langs,$conf,$versionto);
         }
-        
+
         // Scripts for last version
         $afterversionarray=explode('.','5.0.9');
         $beforeversionarray=explode('.','6.0.9');
@@ -441,43 +443,76 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
                 'MAIN_MODULE_USER'=>'newboxdefonly',
             );
             migrate_reload_modules($db,$langs,$conf,$listofmodule);
-        
+
             // Reload menus (this must be always and only into last targeted version)
             migrate_reload_menu($db,$langs,$conf,$versionto);
         }
-        
-        // Can force activation of some module during migration with third paramater = MAIN_MODULE_XXX,MAIN_MODULE_YYY,...
-        if ($enablemodules)
+    }
+
+
+    // Can force activation of some module during migration with paramater 'enablemodules=MAIN_MODULE_XXX,MAIN_MODULE_YYY,...'
+    if (! $error && $enablemodules)
+    {
+        // Reload modules (this must be always and only into last targeted version)
+        $listofmodules=array();
+        $tmplistofmodules=explode(',', $enablemodules);
+        foreach($tmplistofmodules as $value)
         {
-            // Reload modules (this must be always and only into last targeted version)
-            $listofmodules=array();
-            $tmplistofmodules=explode(',', $enablemodules);
-            foreach($tmplistofmodules as $value)
-            {
-                $listofmodules[$value]='newboxdefonly';
-            }
-            migrate_reload_modules($db,$langs,$conf,$listofmodules,1);
+            $listofmodules[$value]='newboxdefonly';
         }
+        migrate_reload_modules($db,$langs,$conf,$listofmodules,1);
+    }
 
 
-        print '<tr><td colspan="4"><br>'.$langs->trans("MigrationFinished").'</td></tr>';
-
-        // On commit dans tous les cas.
-        // La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
-        $db->commit();
-        $db->close();
-
-
-        // Actions for all versions (not in database)
-        migrate_delete_old_files($db, $langs, $conf);
-        migrate_delete_old_dir($db, $langs, $conf);
-        
-        
-        dol_mkdir(DOL_DATA_ROOT.'/bank');
-        migrate_directories($db, $langs, $conf, '/banque/bordereau', '/bank/checkdeposits');
+    // Can call a dedicated external upgrade process
+    if (! $error)
+    {
+        $parameters=array('versionfrom'=>$versionfrom, 'versionto='.$versionto);
+        $object=new stdClass();
+        $action="upgrade";
+        $reshook=$hookmanager->executeHooks('doUpgrade2',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+        if ($hookmanager->resNbOfHooks > 0)
+        {
+            if ($reshook < 0)
+            {
+                print '<tr><td colspan="4">';
+                print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: ';
+                print $hookmanager->error;
+                print "<!-- (".$reshook.") -->";
+                print '</td></tr>';
+            }
+            else
+            {
+                print '<tr><td colspan="4">';
+                print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: OK';
+                print "<!-- (".$reshook.") -->";
+                print '</td></tr>';
+            }
+        }
+        else
+        {
+            print '<tr><td colspan="4">';
+            print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("None");
+            print '</td></tr>';
+        }
     }
 
     print '</table>';
+
+    // We always commit.
+    // Process is designed so we can run it several times whatever is situation.
+    $db->commit();
+    $db->close();
+
+    // Actions for all versions (no database change, delete files and directories)
+    migrate_delete_old_files($db, $langs, $conf);
+    migrate_delete_old_dir($db, $langs, $conf);
+    // Actions for all versions (no database change, create directories)
+    dol_mkdir(DOL_DATA_ROOT.'/bank');
+    // Actions for all versions (no database change, rename directories)
+    migrate_directories($db, $langs, $conf, '/banque/bordereau', '/bank/checkdeposits');
+
+    print '<div><br>'.$langs->trans("MigrationFinished").'</div>';
 }
 else
 {
@@ -3519,6 +3554,95 @@ function migrate_mode_reglement($db,$langs,$conf)
 	print '</td></tr>';
 }
 
+
+/**
+ * Delete duplicates in table categorie_association
+ *
+ * @param	DoliDB		$db			Database handler
+ * @param	Translate	$langs		Object langs
+ * @param	Conf		$conf		Object conf
+ * @param	string		$versionto	Version target
+ * @return	void
+ */
+function migrate_clean_association($db,$langs,$conf,$versionto)
+{
+    $result = $db->DDLDescTable(MAIN_DB_PREFIX."categorie_association");
+    if ($result)	// result defined for version 3.2 or -
+    {
+        $obj = $db->fetch_object($result);
+        if ($obj)	// It table categorie_association exists
+        {
+            $couples=array();
+            $filles=array();
+            $sql = "SELECT fk_categorie_mere, fk_categorie_fille";
+            $sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
+            dolibarr_install_syslog("upgrade: search duplicate");
+            $resql = $db->query($sql);
+            if ($resql)
+            {
+                $num=$db->num_rows($resql);
+                while ($obj=$db->fetch_object($resql))
+                {
+                    if (! isset($filles[$obj->fk_categorie_fille]))	// Only one record as child (a child has only on parent).
+                    {
+                        if ($obj->fk_categorie_mere != $obj->fk_categorie_fille)
+                        {
+                            $filles[$obj->fk_categorie_fille]=1;	// Set record for this child
+                            $couples[$obj->fk_categorie_mere.'_'.$obj->fk_categorie_fille]=array('mere'=>$obj->fk_categorie_mere, 'fille'=>$obj->fk_categorie_fille);
+                        }
+                    }
+                }
+
+                dolibarr_install_syslog("upgrade: result is num=" . $num . " count(couples)=" . count($couples));
+
+                // If there is duplicates couples or child with two parents
+                if (count($couples) > 0 && $num > count($couples))
+                {
+                    $error=0;
+
+                    $db->begin();
+
+                    // We delete all
+                    $sql="DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
+                    dolibarr_install_syslog("upgrade: delete association");
+                    $resqld=$db->query($sql);
+                    if ($resqld)
+                    {
+                        // And we insert only each record once
+                        foreach($couples as $key => $val)
+                        {
+                            $sql ="INSERT INTO ".MAIN_DB_PREFIX."categorie_association(fk_categorie_mere,fk_categorie_fille)";
+                            $sql.=" VALUES(".$val['mere'].", ".$val['fille'].")";
+                            dolibarr_install_syslog("upgrade: insert association");
+                            $resqli=$db->query($sql);
+                            if (! $resqli) $error++;
+                        }
+                    }
+
+                    if (! $error)
+                    {
+                        print '<tr><td>'.$langs->trans("MigrationCategorieAssociation").'</td>';
+                        print '<td align="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Success").' ('.$num.'=>'.count($couples).')</td></tr>';
+                        $db->commit();
+                    }
+                    else
+                    {
+                        print '<tr><td>'.$langs->trans("MigrationCategorieAssociation").'</td>';
+                        print '<td align="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Failed").'</td></tr>';
+                        $db->rollback();
+                    }
+                }
+            }
+            else
+            {
+                print '<tr><td>'.$langs->trans("Error").'</td>';
+                print '<td align="right"><div class="error">'.$db->lasterror().'</div></td></tr>';
+            }
+        }
+    }
+}
+
+
 /**
  * Migrate categorie association
  *
@@ -3942,10 +4066,13 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/kiwi.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_crabe.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_oursin.modules.php',
-    
+
     DOL_DOCUMENT_ROOT.'/compta/facture/class/api_invoice.class.php',
     DOL_DOCUMENT_ROOT.'/commande/class/api_commande.class.php',
-    DOL_DOCUMENT_ROOT.'/user/class/api_user.class.php'
+    DOL_DOCUMENT_ROOT.'/user/class/api_user.class.php',
+    DOL_DOCUMENT_ROOT.'/product/class/api_product.class.php',
+    DOL_DOCUMENT_ROOT.'/societe/class/api_contact.class.php',
+    DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparty.class.php'
     );
 
     foreach ($filetodeletearray as $filetodelete)
@@ -4298,6 +4425,7 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
         print '</td></tr>';
     }
 }
+
 
 
 

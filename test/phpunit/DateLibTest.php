@@ -179,32 +179,32 @@ class DateLibTest extends PHPUnit_Framework_TestCase
         $user=$this->savuser;
         $langs=$this->savlangs;
         $db=$this->savdb;
-    
+
         // With same hours - Tuesday/Wednesday jan 2013
         $date1=dol_mktime(0, 0, 0, 1, 1, 2013);
         $date2=dol_mktime(0, 0, 0, 1, 2, 2013);
-    
+
         $result=num_public_holiday($date1,$date2,'FR',1);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals(1,$result,'NumPublicHoliday for Tuesday/Wednesday jan 2013 for FR');   // 1 closed days
-    
+
         $result=num_public_holiday($date1,$date2,'XX',1);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals(0,$result,'NumPublicHoliday for Tuesday/Wednesday jan 2013 for XX');   // no closed days (country unknown)
-        
+
         // With same hours - Friday/Sunday jan 2013
         $date1=dol_mktime(0, 0, 0, 1, 4, 2013);
         $date2=dol_mktime(0, 0, 0, 1, 6, 2013);
-        
+
         $result=num_public_holiday($date1,$date2,'FR',1);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(2,$result,'NumPublicHoliday for FR');   // 1 opened day, 2 closed days 
-        
+        $this->assertEquals(2,$result,'NumPublicHoliday for FR');   // 1 opened day, 2 closed days
+
         $result=num_public_holiday($date1,$date2,'XX',1);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals(2,$result,'NumPublicHoliday for XX');   // 1 opened day, 2 closed days (even if country unknown)
     }
-    
+
     /**
      * testNumOpenDay
      *
@@ -217,32 +217,32 @@ class DateLibTest extends PHPUnit_Framework_TestCase
         $user=$this->savuser;
         $langs=$this->savlangs;
         $db=$this->savdb;
-        
+
         // With same hours - Tuesday/Wednesday jan 2013
         $date1=dol_mktime(0, 0, 0, 1, 1, 2013);
         $date2=dol_mktime(0, 0, 0, 1, 2, 2013);
-        
+
         $result=num_open_day($date1,$date2,0,1,0,'FR');
         print __METHOD__." result=".$result."\n";
         $this->assertEquals(1,$result,'NumOpenDay Tuesday/Wednesday jan 2013 for FR');   // 1 opened days
-        
+
         $result=num_open_day($date1,$date2,0,1,0,'XX');
         print __METHOD__." result=".$result."\n";
         $this->assertEquals(2,$result,'NumOpenDay Tuesday/Wednesday jan 2013 for XX');   // 2 opened days (country unknown)
-        
+
         // With same hours - Friday/Sunday jan 2013
         $date1=dol_mktime(0, 0, 0, 1, 4, 2013);
         $date2=dol_mktime(0, 0, 0, 1, 6, 2013);
-        
+
         $result=num_open_day($date1,$date2,0,1,0,'FR');
         print __METHOD__." result=".$result."\n";
         $this->assertEquals(1,$result,'NumOpenDay for FR');   // 1 opened day, 2 closed
-        
+
         $result=num_open_day($date1,$date2,'XX',1);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals(1,$result,'NumOpenDay for XX');   // 1 opened day, 2 closes (even if country unknown)
     }
-    
+
     /**
      * testConvertTime2Seconds
      *
@@ -335,6 +335,11 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('02/01/1970 00:00',$result);
 
+    	// Check %a and %b format for fr_FR
+    	$result=dol_print_date(0,'%a %b %B',true,$outputlangs);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('Jeu Jan. Janvier',$result);
+
     	// Check day format for en_US
     	$outputlangs=new Translate('',$conf);
     	$outputlangs->setDefaultLang('en_US');
@@ -345,9 +350,9 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals('01/02/1970',$result);
 
     	// Check %a and %b format for en_US
-    	$result=dol_print_date(0,'%a %b',true,$outputlangs);
+    	$result=dol_print_date(0,'%a %b %B',true,$outputlangs);
     	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('Thu Jan',$result);
+    	$this->assertEquals('Thu Jan January',$result);
 
     	return $result;
     }

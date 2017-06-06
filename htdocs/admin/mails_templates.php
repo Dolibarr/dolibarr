@@ -59,8 +59,8 @@ $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"),'switch_off');
 $actl[1] = img_picto($langs->trans("Activated"),'switch_on');
 
-$listoffset=GETPOST('listoffset');
-$listlimit=GETPOST('listlimit')>0?GETPOST('listlimit'):1000;
+$listoffset=GETPOST('listoffset','alpha');
+$listlimit=GETPOST('listlimit','alpha')>0?GETPOST('listlimit','alpha'):1000;
 $active = 1;
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -119,14 +119,14 @@ $formmail=new FormMail($db);
 if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
 {
     $tmp=FormMail::getAvailableSubstitKey('formemail');
-    $tmp['__(AnyTransKey)__']='__(AnyTransKey)__';
+    $tmp['__(AnyTranslationKey)__']='__(AnyTranslationKey)__';
     $helpsubstit = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
     $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
 }
 else
 {
     $tmp=FormMail::getAvailableSubstitKey('formemailwithlines');
-    $tmp['__(AnyTransKey)__']='__(AnyTransKey)__';
+    $tmp['__(AnyTranslationKey)__']='__(AnyTranslationKey)__';
     $helpsubstit = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
     $tmp=FormMail::getAvailableSubstitKey('formemailforlines');
     $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
@@ -175,7 +175,7 @@ $id = 25;
 
 if (GETPOST('button_removefilter') || GETPOST('button_removefilter.x') || GETPOST('button_removefilter_x'))
 {
-    //$search_country_id = '';    
+    //$search_country_id = '';
 }
 
 // Actions add or modify an entry into a dictionary
@@ -479,12 +479,12 @@ if ($action != 'edit')
         if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
     	if ($fieldlist[$field]=='content')         { $valuetoshow=''; }
     	if ($fieldlist[$field]=='content_lines')   { $valuetoshow=''; }
-    		
+
         if ($valuetoshow != '')
         {
             print '<td align="'.$align.'">';
         	if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
-        	else if (! empty($tabhelp[$id][$value])) 
+        	else if (! empty($tabhelp[$id][$value]))
         	{
         	    if (in_array($value, array('topic'))) print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, $value);   // Tooltip on click
         	    else print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2);                             // Tooltip on hover
@@ -494,15 +494,15 @@ if ($action != 'edit')
          }
          if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
     }
-    
+
     print '<td colspan="3">';
     print '<input type="hidden" name="id" value="'.$id.'">';
     print '</td>';
     print '</tr>';
-    
+
     // Line to enter new values
     print "<tr ".$bcnd[$var].">";
-    
+
     $obj = new stdClass();
     // If data was already input, we define them in obj to populate input fields.
     if (GETPOST('actionadd'))
@@ -513,12 +513,12 @@ if ($action != 'edit')
             	$obj->$val=GETPOST($val);
         }
     }
-    
+
     $tmpaction = 'create';
     $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
     $reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
     $error=$hookmanager->error; $errors=$hookmanager->errors;
-    
+
     if (empty($reshook))
     {
     	if ($tabname[$id] == MAIN_DB_PREFIX.'c_email_templates' && $action == 'edit')
@@ -530,11 +530,11 @@ if ($action != 'edit')
     		fieldList($fieldlist,$obj,$tabname[$id],'add');
     	}
     }
-    
+
     print '<td align="right" colspan="3">';
     print '</td>';
     print "</tr>";
-    
+
     $fieldsforcontent = array('content');
     if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
     {
@@ -545,7 +545,7 @@ if ($action != 'edit')
         print '<tr class="impair nodrag nodrop nohover"><td colspan="5">';
         if ($tmpfieldlist == 'content') print '<strong>'.$form->textwithpicto($langs->trans("Content"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong><br>';
         if ($tmpfieldlist == 'content_lines') print '<strong>'.$form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong><br>';
-    
+
         if ($context != 'hide')
         {
             //print '<textarea cols="3" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
@@ -556,7 +556,7 @@ if ($action != 'edit')
         }
         else print '&nbsp;';
         print '</td>';
-        if ($tmpfieldlist == 'content') 
+        if ($tmpfieldlist == 'content')
         {
             print '<td align="center" colspan="3" rowspan="'.(count($fieldsforcontent)).'">';
             if ($action != 'edit')
@@ -568,12 +568,12 @@ if ($action != 'edit')
         //else print '<td></td>';
         print '</tr>';
     }
-    
-    
-    
+
+
+
     $colspan=count($fieldlist)+1;
     print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';	// Keep &nbsp; to have a line with enough height
-}    
+}
 
 
 // List of available record in database
@@ -590,7 +590,7 @@ if ($resql)
     if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
     if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
     if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
-    
+
     // There is several pages
     if ($num > $listlimit)
     {
@@ -628,7 +628,7 @@ if ($resql)
         // Affiche nom du champ
         if ($showfield)
         {
-            if (! empty($tabhelp[$id][$value])) 
+            if (! empty($tabhelp[$id][$value]))
             {
                 if (in_array($value, array('topic'))) $valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2);   // Tooltip on hover
                 else $valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2);                             // Tooltip on hover
@@ -653,7 +653,7 @@ if ($resql)
     print '<td class="liste_titre"></td>';
     print '<td class="liste_titre"></td>';
     print '</tr>';
-        
+
     if ($num)
     {
         // Lines with values
@@ -680,7 +680,7 @@ if ($resql)
                 print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                 print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
                 print '</td>';
-                
+
                 $fieldsforcontent = array('content');
                 if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
                 {
@@ -691,11 +691,11 @@ if ($resql)
                     $showfield = 1;
                     $align = "left";
                     $valuetoshow = $obj->{$tmpfieldlist};
-                
+
                     $class = 'tddict';
                     // Show value for field
                     if ($showfield) {
-                
+
                         print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$rowid.' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
                         $okforextended = true;
                         if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
@@ -704,9 +704,9 @@ if ($resql)
                             print $doleditor->Create(1);
                             print '</td>';
                             print '<td></td><td></td><td></td>';
-                
+
                     }
-                }                
+                }
             }
             else
             {
@@ -778,16 +778,16 @@ if ($resql)
                 {
                     $fieldsforcontent = array('content', 'content_lines');
                 }
-                foreach ($fieldsforcontent as $tmpfieldlist) 
+                foreach ($fieldsforcontent as $tmpfieldlist)
                 {
                     $showfield = 1;
                     $align = "left";
                     $valuetoshow = $obj->{$tmpfieldlist};
-                    
+
                     $class = 'tddict';
                     // Show value for field
                     if ($showfield) {
-                        
+
                         print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$i.' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
                         $okforextended = true;
                         if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
@@ -796,13 +796,13 @@ if ($resql)
                         print $doleditor->Create(1);
                         print '</td>';
                         print '<td></td><td></td><td></td>';
-                        
+
                     }
                 }*/
             }
             print "</tr>\n";
-            
-            
+
+
             $i++;
         }
     }
