@@ -235,7 +235,6 @@ class ProjectStats extends Stats
         if (! empty($cachedelay))
         {
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-        	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
         }
 
         $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
@@ -356,7 +355,6 @@ class ProjectStats extends Stats
 		if (! empty($cachedelay))
 		{
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-			include_once DOL_DOCUMENT_ROOT . '/core/lib/json.lib.php';
 		}
 
 		$newpathofdestfile = $conf->user->dir_temp . '/' . get_class($this) . '_' . __FUNCTION__ . '_' . (empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix . '_') . $langs->defaultlang . '_user' . $user->id . '.cache';

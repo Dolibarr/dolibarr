@@ -35,8 +35,6 @@ if (! isset($usedbyinclude) || empty($usedbyinclude))
     $res=@include '../../main.inc.php';
 }
 
-include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
-
 //global $hookmanager;
 $hookmanager->initHooks(array('searchform'));
 
