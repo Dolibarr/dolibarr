@@ -2417,7 +2417,7 @@ else
 
 	        if ($user->rights->societe->supprimer)
 	        {
-	        	print '<div class="inline-block divButAction"><a class="butActionDelete" href="soc.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a></div>';
+	        	print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a></div>';
 	        }
 
 	        if ($user->rights->societe->supprimer)

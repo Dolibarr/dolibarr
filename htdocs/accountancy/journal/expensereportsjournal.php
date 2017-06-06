@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
- * Copyright (C) 2013-2016	Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
  *
@@ -32,10 +32,11 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 
 // Langs
 $langs->load("compta");
@@ -44,6 +45,9 @@ $langs->load("other");
 $langs->load("main");
 $langs->load("accountancy");
 $langs->load("trips");
+
+// Multi journal
+$id_journal = GETPOST('id_journal', 'int');
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -64,6 +68,10 @@ $action = GETPOST('action','aZ09');
 /*
  * Actions
  */
+// Get code of finance journal
+$accountingjournalstatic = new AccountingJournal($db);
+$accountingjournalstatic->fetch($id_journal);
+$journal = $accountingjournalstatic->code;
 
 $year_current = strftime("%Y", dol_now());
 $pastmonth = strftime("%m", dol_now()) - 1;
@@ -157,161 +165,159 @@ if ($action == 'writebookkeeping') {
 	{
 		$errorforline = 0;
 
-	    $db->begin();
-	     
-        if (! $errorforline)
-        {
-    	    foreach ( $tabttc[$key] as $k => $mt ) {
-    			if ($mt) {
-        	        // get compte id and label
-        
-        			$bookkeeping = new BookKeeping($db);
-        			$bookkeeping->doc_date = $val["date"];
-        			$bookkeeping->doc_ref = $val["ref"];
-        			$bookkeeping->date_create = $now;
-        			$bookkeeping->doc_type = 'expense_report';
-        			$bookkeeping->fk_doc = $key;
-        			$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
-        			$bookkeeping->code_tiers = $tabuser[$key]['user_accountancy_code'];
-        			$bookkeeping->label_compte = $tabuser[$key]['name'];
-        			$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
-        			$bookkeeping->montant = $mt;
-        			$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
-        			$bookkeeping->debit = ($mt <= 0) ? $mt : 0;
-        			$bookkeeping->credit = ($mt > 0) ? $mt : 0;
-        			$bookkeeping->code_journal = $conf->global->ACCOUNTING_EXPENSEREPORT_JOURNAL;
-        			$bookkeeping->fk_user_author = $user->id;
-        
-        			$result = $bookkeeping->create($user);
-        			if ($result < 0) {
-        			    if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
-        			    {
-        			        $error++;
-        			        $errorforline++;
-        			        //setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
-        			    }
-        			    else
-        			    {
-        			        $error++;
-        			        $errorforline++;
-        			        setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
-        			    }
-        			}
-    			}
-    		}
-        }
-        
-        if (! $errorforline)
-        {
-            // Fees
-    		foreach ( $tabht[$key] as $k => $mt ) {
-    			$accountingaccount = new AccountingAccount($db);
-    			$accountingaccount->fetch(null, $k, true);
-    			if ($mt) {
-    				// get compte id and label
-    				$accountingaccount = new AccountingAccount($db);
-    				if ($accountingaccount->fetch(null, $k, true)) {
-    					$bookkeeping = new BookKeeping($db);
-    					$bookkeeping->doc_date = $val["date"];
-    					$bookkeeping->doc_ref = $val["ref"];
-    					$bookkeeping->date_create = $now;
-    					$bookkeeping->doc_type = 'expense_report';
-    					$bookkeeping->fk_doc = $key;
-    					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
-    					$bookkeeping->code_tiers = '';
-    					$bookkeeping->label_compte = $accountingaccount->label;
-    					$bookkeeping->numero_compte = $k;
-    					$bookkeeping->montant = $mt;
-    					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
-    					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
-    					$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
-    					$bookkeeping->code_journal = $conf->global->ACCOUNTING_EXPENSEREPORT_JOURNAL;
-    					$bookkeeping->fk_user_author = $user->id;
-    
-    					$result = $bookkeeping->create($user);
-	        			if ($result < 0) {
-            			    if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
-            			    {
-            			        $error++;
-            			        $errorforline++;
-            			        //setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
-            			    }
-            			    else
-            			    {
-            			        $error++;
-            			        $errorforline++;
-            			        setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
-            			    }
-	        			}
-    				}
-    			}
-    		}
-        }
-        
-        if (! $errorforline)
-        {
-            // VAT
-    		// var_dump($tabtva);
-    		foreach ( $tabtva[$key] as $k => $mt ) {
-    			if ($mt) {
-    				// get compte id and label
-    				$bookkeeping = new BookKeeping($db);
-    				$bookkeeping->doc_date = $val["date"];
-    				$bookkeeping->doc_ref = $val["ref"];
-    				$bookkeeping->date_create = $now;
-    				$bookkeeping->doc_type = 'expense_report';
-    				$bookkeeping->fk_doc = $key;
-    				$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
-    				$bookkeeping->code_tiers = '';
-    				$bookkeeping->label_compte = $langs->trans("VAT"). ' '.$def_tva[$key];
-    				$bookkeeping->numero_compte = $k;
-    				$bookkeeping->montant = $mt;
-    				$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
-    				$bookkeeping->debit = ($mt > 0) ? $mt : 0;
-    				$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
-    				$bookkeeping->code_journal = $conf->global->ACCOUNTING_EXPENSEREPORT_JOURNAL;
-    				$bookkeeping->fk_user_author = $user->id;
-    
-    				$result = $bookkeeping->create($user);
-    				if ($result < 0) {
-           			    if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
-        			    {
-        			        $error++;
-        			        $errorforline++;
-        			        //setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
-        			    }
-        			    else
-        			    {
-        			        $error++;
-        			        $errorforline++;
-        			        setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
-        			    }
-    				}
-    			}
-    		}
-        }
-        
+		$db->begin();
+
 		if (! $errorforline)
 		{
-		    $db->commit();
+			foreach ( $tabttc[$key] as $k => $mt ) {
+				if ($mt) {
+					// get compte id and label
+					$bookkeeping = new BookKeeping($db);
+					$bookkeeping->doc_date = $val["date"];
+					$bookkeeping->doc_ref = $val["ref"];
+					$bookkeeping->date_create = $now;
+					$bookkeeping->doc_type = 'expense_report';
+					$bookkeeping->fk_doc = $key;
+					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+					$bookkeeping->code_tiers = $tabuser[$key]['user_accountancy_code'];
+					$bookkeeping->label_compte = $tabuser[$key]['name'];
+					$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+					$bookkeeping->montant = $mt;
+					$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
+					$bookkeeping->debit = ($mt <= 0) ? $mt : 0;
+					$bookkeeping->credit = ($mt > 0) ? $mt : 0;
+					$bookkeeping->code_journal = $journal;
+					$bookkeeping->fk_user_author = $user->id;
+
+					$result = $bookkeeping->create($user);
+					if ($result < 0) {
+						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
+						{
+							$error++;
+							$errorforline++;
+							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+						}
+						else
+						{
+							$error++;
+							$errorforline++;
+							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+						}
+					}
+				}
+			}
+		}
+
+		if (! $errorforline)
+		{
+			// Fees
+			foreach ( $tabht[$key] as $k => $mt ) {
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch(null, $k, true);
+				if ($mt) {
+					// get compte id and label
+					$accountingaccount = new AccountingAccount($db);
+					if ($accountingaccount->fetch(null, $k, true)) {
+						$bookkeeping = new BookKeeping($db);
+						$bookkeeping->doc_date = $val["date"];
+						$bookkeeping->doc_ref = $val["ref"];
+						$bookkeeping->date_create = $now;
+						$bookkeeping->doc_type = 'expense_report';
+						$bookkeeping->fk_doc = $key;
+						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->label_compte = $accountingaccount->label;
+						$bookkeeping->numero_compte = $k;
+						$bookkeeping->montant = $mt;
+						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
+						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
+						$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
+						$bookkeeping->code_journal = $journal;
+						$bookkeeping->fk_user_author = $user->id;
+
+						$result = $bookkeeping->create($user);
+						if ($result < 0) {
+							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
+							{
+								$error++;
+								$errorforline++;
+								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+							}
+							else
+							{
+								$error++;
+								$errorforline++;
+								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (! $errorforline)
+		{
+			// VAT
+			// var_dump($tabtva);
+			foreach ( $tabtva[$key] as $k => $mt ) {
+				if ($mt) {
+					// get compte id and label
+					$bookkeeping = new BookKeeping($db);
+					$bookkeeping->doc_date = $val["date"];
+					$bookkeeping->doc_ref = $val["ref"];
+					$bookkeeping->date_create = $now;
+					$bookkeeping->doc_type = 'expense_report';
+					$bookkeeping->fk_doc = $key;
+					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+					$bookkeeping->code_tiers = '';
+					$bookkeeping->label_compte = $langs->trans("VAT"). ' '.$def_tva[$key];
+					$bookkeeping->numero_compte = $k;
+					$bookkeeping->montant = $mt;
+					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
+					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
+					$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
+					$bookkeeping->code_journal = $journal;
+					$bookkeeping->fk_user_author = $user->id;
+
+					$result = $bookkeeping->create($user);
+					if ($result < 0) {
+						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
+						{
+							$error++;
+							$errorforline++;
+							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+						}
+						else
+						{
+							$error++;
+							$errorforline++;
+							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+						}
+					}
+				}
+			}
+		}
+
+		if (! $errorforline)
+		{
+			$db->commit();
 		}
 		else
 		{
-		    $db->rollback();
+			$db->rollback();
 		}
-		
 	}
 
 	if (empty($error) && count($tabpay)) {
-	    setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
+		setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
 	}
 	elseif (count($tabpay) == $error)
 	{
-	    setEventMessages($langs->trans("NoNewRecordSaved"), null, 'warnings');
+		setEventMessages($langs->trans("NoNewRecordSaved"), null, 'warnings');
 	}
 	else
 	{
-	    setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
+		setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
 	}
 
 	$action='';
@@ -328,7 +334,6 @@ $userstatic = new User($db);
 // Export
 /*if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	$journal = $conf->global->ACCOUNTING_EXPENSEREPORT_JOURNAL;
 
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
@@ -448,7 +453,9 @@ if (empty($action) || $action == 'view') {
 
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 
-	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
+	$varlink = 'id_journal=' . $id_journal;
+
+	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
 	/*if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 && $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
 		print '<input type="button" class="butActionRefused" style="float: right;" value="' . $langs->trans("Export") . '" disabled="disabled" title="' . $langs->trans('ExportNotSupported') . '"/>';
@@ -456,10 +463,10 @@ if (empty($action) || $action == 'view') {
 		print '<input type="button" class="butAction" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 	}*/
 
-    print '<div class="tabsAction">';
+	print '<div class="tabsAction">';
 	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
-    print '</div>';
-    
+	print '</div>';
+
 	print '
 	<script type="text/javascript">
 		function launch_export() {
@@ -556,9 +563,9 @@ if (empty($action) || $action == 'view') {
 
 		// Third party
 		foreach ( $tabttc[$key] as $k => $mt ) {
-		    print '<tr class="oddeven">';
-		    print "<td><!-- Thirdparty --></td>";
-		    print "<td>" . $date . "</td>";
+			print '<tr class="oddeven">';
+			print "<td><!-- Thirdparty --></td>";
+			print "<td>" . $date . "</td>";
 			print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
 			$userstatic->id = $tabuser[$key]['id'];
 			$userstatic->name = $tabuser[$key]['name'];
@@ -566,14 +573,14 @@ if (empty($action) || $action == 'view') {
 			$accountoshow = length_accounta($k);
 			if (empty($accountoshow) || $accountoshow == 'NotDefined')
 			{
-			    print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
+				print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 			}
 			else print $accountoshow;
 			print "</td>";
 			print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("Code_tiers") . "</td>";
 			print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
 			print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-		    print "</tr>";
+			print "</tr>";
 		}
 	}
 

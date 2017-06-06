@@ -63,12 +63,10 @@ $langs->load('bills');
 $langs->load('donations');
 $langs->load("accountancy");
 $langs->load("trips");
-$langs->load("hrm");
+$langs->load("salaries");
 
-// Old system menu
-$id_bank_account = GETPOST('id_account', 'int');
 // Multi journal
-$code_journal = GETPOST('code_journal', 'alpha');
+$id_journal = GETPOST('id_journal', 'int');
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -81,7 +79,7 @@ $action = GETPOST('action','aZ09');
 $now = dol_now();
 
 // Security check
-if ($user->societe_id > 0 && empty($id_bank_account))
+if ($user->societe_id > 0 && empty($id_journal))
 	accessforbidden();
 
 
@@ -112,16 +110,16 @@ $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
 
 $sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
-$sql .= " ba.courant, ba.ref as baref, ba.account_number,";
+$sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
 $sql .= " soc.code_compta, soc.code_compta_fournisseur, soc.rowid as socid, soc.nom as name, bu1.type as typeop,";
-$sql .= " u.accountancy_code, u.rowid as userid, u.lastname as name, u.firstname as firstname, bu2.type as typeop";
+$sql .= " u.accountancy_code, u.rowid as userid, u.lastname as lastname, u.firstname as firstname, bu2.type as typeop";
 $sql .= " FROM " . MAIN_DB_PREFIX . "bank as b";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "bank_account as ba on b.fk_account=ba.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url as bu1 ON bu1.fk_bank = b.rowid AND bu1.type='company'";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url as bu2 ON bu2.fk_bank = b.rowid AND bu2.type='user'";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as soc on bu1.url_id=soc.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u on bu2.url_id=u.rowid";
-$sql .= " WHERE ba.rowid=" . $id_bank_account;
+$sql .= " WHERE ba.fk_accountancy_journal=" . $id_journal;
 $sql .= ' AND ba.entity IN ('.getEntity('bank_account', 0).')';        // We don't share object for accountancy
 if ($date_start && $date_end)
 	$sql .= " AND b.dateo >= '" . $db->idate($date_start) . "' AND b.dateo <= '" . $db->idate($date_end) . "'";
@@ -139,20 +137,8 @@ $paymentsalstatic = new PaymentSalary($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 
 // Get code of finance journal
-$journal = '';
-$bankstatic = new Account($db);
-$bankstatic->fetch($id_bank_account);
-$bankstatic->rowid;
-$bankstatic->number;
-$bankstatic->label;
-$bankstatic->fk_accountancy_journal;
-
 $accountingjournalstatic = new AccountingJournal($db);
-if(! empty($id_bank_account)) {
-	$accountingjournalstatic->fetch($bankstatic->fk_accountancy_journal);
-} else {
-	$accountingjournalstatic->fetch('',$code_journal);
-}
+$accountingjournalstatic->fetch($id_journal);
 $journal = $accountingjournalstatic->code;
 
 dol_syslog("accountancy/journal/bankjournal.php", LOG_DEBUG);
@@ -180,7 +166,7 @@ if ($result) {
 	// one line for bank jounral = tabbq
 	// one line for thirdparty journal = tabtp
 	$i = 0;
-	while ( $i < $num ) 
+	while ( $i < $num )
 	{
 		$obj = $db->fetch_object($result);
 
@@ -194,16 +180,17 @@ if ($result) {
 		$tabcompany[$obj->rowid] = array (
 				'id' => $obj->socid,
 				'name' => $obj->name,
-		        'code_compta' => $compta_soc,
+				'code_compta' => $compta_soc,
 		);
 
 		$compta_user = (! empty($obj->accountancy_code) ? $obj->accountancy_code : $account_employee);
 
 		$tabuser[$obj->rowid] = array (
 				'id' => $obj->userid,
+				'name' => dolGetFirstLastname($obj->firstname, $obj->lastname),
 				'lastname' => $obj->lastname,
 				'firstname' => $obj->firstname,
-		        'accountancy_code' => $compta_user,
+				'accountancy_code' => $compta_user,
 		);
 
 		// Variable bookkeeping
@@ -220,12 +207,12 @@ if ($result) {
 
 		// get_url may return -1 which is not traversable
 		if (is_array($links)) {
-		    // Now loop on each link of record in bank.
+			// Now loop on each link of record in bank.
 			foreach ( $links as $key => $val ) {
 
-			    if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation')))     // So we excluded 'company' here
+			    if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'payment_salary')))     // So we excluded 'company' here
 			    {
-			        // We save tabtype for a future use, to remember what kind of payment it is 
+			        // We save tabtype for a future use, to remember what kind of payment it is
 			        $tabtype[$obj->rowid] = $links[$key]['type'];
 			    }
 
@@ -294,7 +281,7 @@ if ($result) {
 					$paymentsalstatic->ref = $links[$key]['url_id'];
 					$paymentsalstatic->label = $links[$key]['label'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsalstatic->getNomUrl(2);
-					// $tabtp[$obj->rowid][$account_employee] += $obj->amount;
+					$tabpay[$obj->rowid]["paymentsalid"] = $paymentsalstatic->id;
 				} else if ($links[$key]['type'] == 'payment_expensereport') {
 					$paymentexpensereportstatic->id = $links[$key]['url_id'];
 					$paymentexpensereportstatic->fk_expensereport = $links[$key]['url_id'];
@@ -309,7 +296,7 @@ if ($result) {
 
 		$tabbq[$obj->rowid][$compta_bank] += $obj->amount;
 
-		
+
 		// Check account number is ok
 		/*if ($action == 'writebookkeeping')        // Make test now in such a case
 		{
@@ -328,7 +315,7 @@ if ($result) {
     	        setEventMessages($langs->trans('ErrorAccountancyCodeOnThirdPartyNotDefined'), null, 'errors');
     		}
 		}*/
-		
+
 		// if($obj->socid)$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
 
 		$i ++;
@@ -358,7 +345,7 @@ if (! $error && $action == 'writebookkeeping') {
 		if (! $errorforline)
 		{
 		    // Line into bank account
-    		foreach ( $tabbq[$key] as $k => $mt ) 
+    		foreach ( $tabbq[$key] as $k => $mt )
     		{
     			if ($mt) {
         		    $bookkeeping = new BookKeeping($db);
@@ -376,10 +363,10 @@ if (! $error && $action == 'writebookkeeping') {
         			$bookkeeping->code_journal = $journal;
         			$bookkeeping->fk_user_author = $user->id;
         			$bookkeeping->date_create = $now;
-        
+
         			if ($tabtype[$key] == 'payment') {
         			    $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
-    
+
         				$sqlmid = 'SELECT fac.facnumber';
         				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture fac";
         				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON payfac.fk_facture=fac.rowid";
@@ -393,7 +380,7 @@ if (! $error && $action == 'writebookkeeping') {
         				}
         			} else if ($tabtype[$key] == 'payment_supplier') {
         			    $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
-    
+
         				$sqlmid = 'SELECT facf.ref_supplier, facf.ref';
         				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf";
         				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON payfacf.fk_facturefourn=facf.rowid";
@@ -407,7 +394,7 @@ if (! $error && $action == 'writebookkeeping') {
         				}
         			} else if ($tabtype[$key] == 'payment_expensereport') {
         			    $bookkeeping->code_tiers = $tabuser[$key]['accountancy_code'];
-    
+
         				$sqlmid = 'SELECT e.ref';
         				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "expensereport as e";
         				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "payment_expensereport as payer ON payer.fk_expensereport=e.rowid";
@@ -418,14 +405,18 @@ if (! $error && $action == 'writebookkeeping') {
         					$objmid = $db->fetch_object($resultmid);
         					$bookkeeping->doc_ref = $objmid->ref; // Ref of expensereport
         				}
-        			} else if ($tabtype[$key] == 'payment_vat') {
-  			  			$bookkeeping->code_tiers = '';
-	  			  		$bookkeeping->doc_ref = $langs->trans("PaymentVat") . ' (' . $val["paymentvatid"] . ')'; // Rowid of vat payment
-        			} else if ($tabtype[$key] == 'payment_donation') {
-		  			  	$bookkeeping->code_tiers = '';
-			  			  $bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
-        			}
-        
+					} else if ($tabtype[$key] == 'payment_vat') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->doc_ref = $langs->trans("PaymentVat") . ' (' . $val["paymentvatid"] . ')'; // Rowid of vat payment
+					} else if ($tabtype[$key] == 'payment_donation') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
+					} else if ($tabtype[$key] == 'payment_salary') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->label_compte = $tabuser[$key]['name'];
+						$bookkeeping->doc_ref = $langs->trans("SalaryPayment") . ' (' . $val["paymentsalid"] . ')'; // Ref of salary payment
+					}
+
         			$result = $bookkeeping->create($user);
         			if ($result < 0) {
         				if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
@@ -465,7 +456,7 @@ if (! $error && $action == 'writebookkeeping') {
         			$bookkeeping->code_journal = $journal;
         			$bookkeeping->fk_user_author = $user->id;
         			$bookkeeping->date_create = $now;
-        
+
         			if (in_array($tabtype[$key], array('sc', 'payment_sc'))) {   // If payment is payment of social contribution
         				$bookkeeping->code_tiers = '';
         				$bookkeeping->numero_compte = $k;
@@ -495,26 +486,31 @@ if (! $error && $action == 'writebookkeeping') {
         					$objmid = $db->fetch_object($resultmid);
         					$bookkeeping->doc_ref = $objmid->ref_supplier . ' (' . $objmid->ref . ')';
         				}
-                $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
-        				$bookkeeping->numero_compte = $k;
-    					} else if ($tabtype[$key] == 'payment_vat') {
-	  		  			$bookkeeping->code_tiers = '';
-		  		  		$bookkeeping->numero_compte = $k;
-			  		  	$bookkeeping->doc_ref = $langs->trans("PaymentVat") . ' (' . $val["paymentvatid"] . ')'; // Rowid of vat
-            	} else if ($tabtype[$key] == 'payment_donation') {
-					  	  $bookkeeping->code_tiers = '';
-						    $bookkeeping->numero_compte = $k;
-						    $bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
-         			} else if ($tabtype[$key] == 'banktransfert') {
-  						  $bookkeeping->code_tiers = '';
-        				$bookkeeping->numero_compte = $k;
+						$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
+						$bookkeeping->numero_compte = $k;
+					} else if ($tabtype[$key] == 'payment_vat') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->numero_compte = $k;
+						$bookkeeping->doc_ref = $langs->trans("PaymentVat") . ' (' . $val["paymentvatid"] . ')'; // Rowid of vat
+					} else if ($tabtype[$key] == 'payment_donation') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->numero_compte = $k;
+						$bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
+					} else if ($tabtype[$key] == 'payment_salary') {
+						$bookkeeping->code_tiers = $tabuser[$key]['accountancy_code'];
+						$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+						$bookkeeping->label_compte = $tabuser[$key]['name'];
+						$bookkeeping->doc_ref = $langs->trans("SalaryPayment") . ' (' . $val["paymentsalid"] . ')'; // Rowid of salary payment
+					} else if ($tabtype[$key] == 'banktransfert') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->numero_compte = $k;
         			} else {
         			    // FIXME Should be a temporary account ???
         				$bookkeeping->doc_ref = $k;
         				//$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
         				$bookkeeping->numero_compte = 'CodeNotDef';
         			}
-        
+
         			$result = $bookkeeping->create($user);
         			if ($result < 0) {
         				if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
@@ -533,7 +529,7 @@ if (! $error && $action == 'writebookkeeping') {
     			}
     		}
 		}
-		
+
 		if (! $errorforline)
 		{
             $db->commit();
@@ -555,7 +551,7 @@ if (! $error && $action == 'writebookkeeping') {
 	{
 	    setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
 	}
-	
+
 	$action = '';
 }
 
@@ -596,7 +592,7 @@ if ($action == 'export_csv') {
 			if ($reflabel == '(ExpenseReportPayment)') {
 				$reflabel = $langs->trans('Employee');
 			}
-			
+
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 
@@ -740,18 +736,19 @@ if (empty($action) || $action == 'view') {
 	$invoicestatic = new Facture($db);
 	$invoicesupplierstatic = new FactureFournisseur($db);
 	$expensereportstatic = new ExpenseReport($db);
-  $vatstatic = new Tva($db);
+	$vatstatic = new Tva($db);
 	$donationstatic = new Don($db);
+	$salarystatic = new PaymentSalary($db);
 
 	llxHeader('', $langs->trans("FinanceJournal"));
 
-	$nom = $langs->trans("FinanceJournal") . ' - ' . $bankstatic->getNomUrl(1);
+	$nom = $langs->trans("FinanceJournal") . ' - ' . $accountingjournalstatic->getNomUrl(1);
 	$builddate = time();
 	//$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 
-	$varlink = 'id_account=' . $id_bank_account;
+	$varlink = 'id_journal=' . $id_journal;
 
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
@@ -764,7 +761,7 @@ if (empty($action) || $action == 'view') {
     print '<div class="tabsAction">';
 	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
     print '</div>';
-    
+
 	// TODO Avoid using js. We can use a direct link with $param
 	print '
 	<script type="text/javascript">
@@ -896,13 +893,27 @@ if (empty($action) || $action == 'view') {
 		    }
 		    else dol_print_error($db);
 		}
+		elseif ($tabtype[$key] == 'payment_salary')
+		{
+			$sqlmid = 'SELECT s.rowid as id';
+			$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_salary as s";
+			$sqlmid .= " WHERE s.rowid=" . $val["paymentsalid"];
+			dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
+			$resultmid = $db->query($sqlmid);
+			if ($resultmid) {
+				$objmid = $db->fetch_object($resultmid);
+				$salarystatic->fetch($objmid->id);
+				$ref=$langs->trans("SalaryPayment").' '.$salarystatic->getNomUrl(1);
+			}
+			else dol_print_error($db);
+		}
 
 
 		/*$invoicestatic->id = $key;
 		$invoicestatic->ref = $val["ref"];
 		$invoicestatic->type = $val["type"];*/
 		// Bank
-		foreach ( $tabbq[$key] as $k => $mt ) 
+		foreach ( $tabbq[$key] as $k => $mt )
 		{
 		    print '<tr class="oddeven">';
 		    print "<td><!-- Bank bank.rowid=".$key."--></td>";
@@ -961,7 +972,7 @@ if (empty($action) || $action == 'view') {
         		{
         		    print '<span class="error">'.$langs->trans("WaitAccountNotDefined").'</span>';
         		}
-				else print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE); 
+				else print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE);
 				print "</td>";
 				print "<td>" . $reflabel . "</td>";
 				print "<td>&nbsp;</td>";

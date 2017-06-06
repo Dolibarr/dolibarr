@@ -43,6 +43,8 @@ class HookManager
 	var $resArray=array();
 	// Printable result
 	var $resPrint='';
+	// Nb of qualified hook ran
+	var $resNbOfHooks=0;
 
 	/**
 	 * Constructor
@@ -188,7 +190,7 @@ class HookManager
         }
 
         // Init return properties
-        $this->resPrint=''; $this->resArray=array();
+        $this->resPrint=''; $this->resArray=array(); $this->resNbOfHooks=0;
 
         // Loop on each hook to qualify modules that have declared context
         $modulealreadyexecuted=array();
@@ -201,11 +203,13 @@ class HookManager
                 {
                 	//print "Before hook ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction." result=".$result."<br>\n";
 
+                    // test to avoid running twice a hook, when a module implements several active contexts
+                    if (in_array($module,$modulealreadyexecuted)) continue;
+
                 	// jump to next module/class if method does not exist
                     if (! method_exists($actionclassinstance,$method)) continue;
 
-                    // test to avoid running twice a hook, when a module implements several active contexts
-                    if (in_array($module,$modulealreadyexecuted)) continue;
+                    $this->resNbOfHooks++;
 
                     dol_syslog(get_class($this).'::executeHooks a qualified hook was found for method='.$method.' module='.$module." action=".$action." context=".$context);
 
