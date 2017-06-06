@@ -587,6 +587,8 @@ class ActionComm extends CommonObject
 
                 $this->fk_element			= $obj->fk_element;
                 $this->elementtype			= $obj->elementtype;
+				
+                $this->fetchResources();
             }
             $this->db->free($resql);
         }
@@ -600,6 +602,50 @@ class ActionComm extends CommonObject
 
     }
 
+	/**
+     *    Initialize $this->userassigned & this->socpeopleassigned array with list of id of user and contact assigned to event
+     *
+     *    @return	int				<0 if KO, >0 if OK
+     */
+	function fetchResources()
+	{
+		$sql ='SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency';
+		$sql.=' FROM '.MAIN_DB_PREFIX.'actioncomm_resources';
+		$sql.=' WHERE fk_actioncomm = '.$this->id;
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->userassigned=array();
+			$this->socpeopleassigned=array();
+
+			// If owner is known, we must but id first into list
+			if ($this->userownerid > 0) $this->userassigned[$this->userownerid]=array('id'=>$this->userownerid);	// Set first so will be first into list.
+
+            while ($obj = $this->db->fetch_object($resql))
+            {
+            	if ($obj->fk_element > 0)
+				{
+					switch ($obj->element_type) {
+						case 'user':
+							$this->userassigned[$obj->fk_element]=array('id'=>$obj->fk_element, 'mandatory'=>$obj->mandatory, 'answer_status'=>$obj->answer_status, 'transparency'=>$obj->transparency);
+							if (empty($this->userownerid)) $this->userownerid=$obj->fk_element;	// If not defined (should not happened, we fix this)
+							break;
+						case 'socpeople':
+							$this->TContactId[] = $obj->fk_element;
+							$this->socpeopleassigned[$obj->fk_element]=array('id'=>$obj->fk_element, 'mandatory'=>$obj->mandatory, 'answer_status'=>$obj->answer_status, 'transparency'=>$obj->transparency);
+							break;
+					}
+				}
+            }
+
+        	return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
 
     /**
      *    Initialize this->userassigned array with list of id of user assigned to event
