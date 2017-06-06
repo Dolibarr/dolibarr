@@ -580,7 +580,9 @@ class TCPDI extends FPDF_TPL {
      * close all files opened by parsers
      */
     function _closeParsers() {
-        if ($this->state > 2 && count($this->parsers) > 0) {
+    	// REGIS
+    	$num = (is_null($object->lines) ? 0 : count($object->lines)); // for avoid phpunit error : "Parameter must be an array or an object that implements Countable"
+    	if ($this->state > 2 && $num > 0) {
           	$this->cleanUp();
             return true;
         }
