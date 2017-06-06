@@ -66,6 +66,7 @@ RemoveFromRubriqueConfirm=Are you sure you want to remove link between the entry
 ListBankTransactions=List of bank entries
 IdTransaction=Transaction ID
 BankTransactions=Bank entries
+BankTransaction=Bank entry
 ListTransactions=List entries
 ListTransactionsByCategory=List entries/category
 TransactionsToConciliate=Entries to reconcile

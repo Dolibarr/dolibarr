@@ -32,6 +32,7 @@ INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AC', '
 INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('BQ', 'Journal de banque', 4, 1);
 INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('OD', 'Journal des opérations diverses', 1, 1);
 INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AN', 'Journal des à-nouveaux', 9, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('ER', 'Journal des notes de frais', 5, 1);
 --
 -- Descriptif des plans comptables FR PCG99-ABREGE
 --

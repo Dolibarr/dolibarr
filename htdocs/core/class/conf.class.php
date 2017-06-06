@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin      	<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin      	<regis.houssin@capnetworks.com>
  * Copyright (C) 2006 	   Jean Heimburger    	<jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -320,7 +320,7 @@ class Conf
 		// For backward compatibility
 		$this->user->dir_output=$rootforuser."/users";
 		$this->user->dir_temp=$rootforuser."/users/temp";
-		
+
 		// UserGroup
 		$this->usergroup->dir_output=$rootforuser."/usergroups";
 		$this->usergroup->dir_temp=$rootforuser."/usergroups/temp";
@@ -386,13 +386,13 @@ class Conf
 
 		$this->global->MAIN_ACTIVATE_HTML5=1;
         $this->global->MAIN_MAIL_USE_MULTI_PART=1;
-        
+
 		// societe
 		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))       $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
 		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))       $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
 
 		if (empty($this->global->CHEQUERECEIPTS_ADDON))           $this->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_mint';
-		
+
         // Security
 		if (empty($this->global->USER_PASSWORD_GENERATED)) $this->global->USER_PASSWORD_GENERATED='standard'; // Default password generator
         if (empty($this->global->MAIN_UMASK)) $this->global->MAIN_UMASK='0664';         // Default mask
@@ -425,7 +425,7 @@ class Conf
 		$this->currency=$this->global->MAIN_MONNAIE;
 
 		if (empty($conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY)) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY = 30;   // Less than 1 minutes to be sure
-		
+
 		// conf->global->ACCOUNTING_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
         if (empty($this->global->ACCOUNTING_MODE)) $this->global->ACCOUNTING_MODE='RECETTES-DEPENSES';  // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
 
@@ -434,7 +434,7 @@ class Conf
 
         // MAIN_HTML_TITLE
         if (! isset($this->global->MAIN_HTML_TITLE)) $this->global->MAIN_HTML_TITLE='noapp,thirdpartynameonly,contactnameonly,projectnameonly';
-        
+
 		// conf->liste_limit = constante de taille maximale des listes
 		if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) $this->global->MAIN_SIZE_LISTE_LIMIT=25;
 		$this->liste_limit=$this->global->MAIN_SIZE_LISTE_LIMIT;
@@ -461,7 +461,7 @@ class Conf
 		$this->mailing->email_from=$this->email_from;
 		if (! empty($this->global->MAILING_EMAIL_FROM))	$this->mailing->email_from=$this->global->MAILING_EMAIL_FROM;
 		if (! isset($this->global->MAIN_EMAIL_ADD_TRACK_ID)) $this->global->MAIN_EMAIL_ADD_TRACK_ID=1;
-		
+
         // Format for date (used by default when not found or not searched in lang)
         $this->format_date_short="%d/%m/%Y";            // Format of day with PHP/C tags (strftime functions)
         $this->format_date_short_java="dd/MM/yyyy";     // Format of day with Java tags
@@ -485,7 +485,7 @@ class Conf
 		// Default pdf option
 		if (! isset($this->global->MAIN_PDF_DASH_BETWEEN_LINES)) $this->global->MAIN_PDF_DASH_BETWEEN_LINES=1;    // use dash between lines
         if (! isset($this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) $this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT=1;  // allow html content into free footer text
-		
+
 		// Set default value to MAIN_SHOW_LOGO
 		if (! isset($this->global->MAIN_SHOW_LOGO)) $this->global->MAIN_SHOW_LOGO=1;
 
@@ -500,7 +500,7 @@ class Conf
 
 		// By default, we open card if one found
 		if (! isset($this->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE)) $this->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE=1;
-		
+
 		// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent';	// '' means 'all'. Note that contact is added here as it should be a module later.
 
@@ -568,12 +568,12 @@ class Conf
 		    $this->expensereport->payment		= new stdClass();
 		    $this->expensereport->payment->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY)?$this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY:0)*24*60*60;
 		}
-		
+
 		if (! empty($this->global->PRODUIT_MULTIPRICES) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT))
 		{
 		    $this->global->PRODUIT_MULTIPRICES_LIMIT = 5;
 		}
-		
+
 		// For modules that want to disable top or left menu
 		if (! empty($this->global->MAIN_HIDE_TOP_MENU)) $this->dol_hide_topmenu=$this->global->MAIN_HIDE_TOP_MENU;
 		if (! empty($this->global->MAIN_HIDE_LEFT_MENU)) $this->dol_hide_leftmenu=$this->global->MAIN_HIDE_LEFT_MENU;
@@ -581,11 +581,11 @@ class Conf
 		if (empty($this->global->MAIN_SIZE_SHORTLIST_LIMIT)) $this->global->MAIN_SIZE_SHORTLIST_LIMIT=3;
 
 		// Save inconsistent option
-		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && $conf->global->AGENDA_DEFAULT_FILTER_TYPE == 'AC_NON_AUTO')
+		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && (! isset($conf->global->AGENDA_DEFAULT_FILTER_TYPE) || $conf->global->AGENDA_DEFAULT_FILTER_TYPE == 'AC_NON_AUTO'))
 		{
 		    $conf->global->AGENDA_DEFAULT_FILTER_TYPE='0';    // 'AC_NON_AUTO' does not exists when AGENDA_DEFAULT_FILTER_TYPE is not on.
 		}
-		    
+
 		// For backward compatibility
 		if (isset($this->product))   $this->produit=$this->product;
 		if (isset($this->facture))   $this->invoice=$this->facture;
@@ -633,7 +633,7 @@ class Conf
 				$this->loghandlers[$handler] = $loghandlerinstance;
 			}
 		}
-		
+
 	}
 }
 
