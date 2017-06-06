@@ -611,7 +611,7 @@ else
     }
     
     //var_dump($arraytitle,$arrayhide);
-    $list=new Listview($db, 'products');
+    $list=new Listview($db, 'product');
     $listHTML = $list->render($sql,array(
     		'list'=>array(
     				'title'=>$texte
