@@ -1565,7 +1565,7 @@ class BonPrelevement extends CommonObject
 		$XML_DEBITOR .='					<Nm>'.strtoupper(dolEscapeXML(dol_string_unaccent($row_nom))).'</Nm>'.$CrLf;
 		$XML_DEBITOR .='					<PstlAdr>'.$CrLf;
 		$XML_DEBITOR .='						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
-		$XML_DEBITOR .='						<AdrLine>'.dol_trunc(dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => ""))),70,'right','UTF-8',true).'</AdrLine>'.$CrLf;
+		$XML_DEBITOR .='						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => "")))),70,'right','UTF-8',true).'</AdrLine>'.$CrLf;
 		$XML_DEBITOR .='						<AdrLine>'.dolEscapeXML(dol_string_unaccent($row_zip.' '.$row_town)).'</AdrLine>'.$CrLf;
 		$XML_DEBITOR .='					</PstlAdr>'.$CrLf;
 		$XML_DEBITOR .='				</Dbtr>'.$CrLf;
