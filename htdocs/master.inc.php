@@ -1,14 +1,14 @@
 <?php
-/* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com>
- * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+/* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Xavier Dutoit			<doli@sydesy.com>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005		Simon Tosser			<simon@kornog-computing.com>
+ * Copyright (C) 2006		Andre Cianfarani		<andre.cianfarani@acdeveloppement.net>
+ * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -98,11 +98,6 @@ if (! empty($dolibarr_main_document_root_alt))
 	}
 }
 
-// Set properties specific to multicompany
-// TODO Multicompany Remove this. Useless. Var should be read when required.
-$conf->multicompany->transverse_mode = empty($multicompany_transverse_mode)?'':$multicompany_transverse_mode;		// Force Multi-Company transverse mode
-$conf->multicompany->force_entity = empty($multicompany_force_entity)?'':(int) $multicompany_force_entity;			// Force entity in login page
-
 // Chargement des includes principaux de librairies communes
 if (! defined('NOREQUIREUSER')) require_once DOL_DOCUMENT_ROOT .'/user/class/user.class.php';		// Need 500ko memory
 if (! defined('NOREQUIRETRAN')) require_once DOL_DOCUMENT_ROOT .'/core/class/translate.class.php';
@@ -169,10 +164,6 @@ if (! defined('NOREQUIREDB'))
 	else if (!empty($_COOKIE['DOLENTITY']))						// For other application with MultiCompany module (TODO: We should remove this. entity to use should never be stored into client side)
 	{
 		$conf->entity = $_COOKIE['DOLENTITY'];
-	}
-	else if (! empty($conf->multicompany->force_entity) && is_numeric($conf->multicompany->force_entity)) // To force entity in login page
-	{
-		$conf->entity = $conf->multicompany->force_entity;
 	}
 
 	// Sanitize entity

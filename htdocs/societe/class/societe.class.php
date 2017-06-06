@@ -1695,7 +1695,7 @@ class Societe extends CommonObject
 
         $sql = "SELECT DISTINCT u.rowid, u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
-        if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+        if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
         {
         	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
         	$sql.= " WHERE ((ug.fk_user = sc.fk_user";

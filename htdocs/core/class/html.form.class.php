@@ -1468,7 +1468,7 @@ class Form
         }
         else
        {
-        	if (! empty($conf->multicompany->transverse_mode))
+        	if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
         	{
         		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug";
         		$sql.= " ON ug.fk_user = u.rowid";
@@ -1565,7 +1565,7 @@ class Form
 							$moreinfo++;
 						}
 					}
-                    if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                    if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
                     {
                         if ($obj->admin && ! $obj->entity)
                         {
@@ -6196,7 +6196,7 @@ class Form
                     $out.= '>';
 
                     $out.= $obj->name;
-                    if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1)
+                    if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
                     {
                         $out.= " (".$obj->label.")";
                     }
