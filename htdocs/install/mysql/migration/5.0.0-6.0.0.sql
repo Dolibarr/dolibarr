@@ -380,6 +380,8 @@ create table llx_loan_schedule
   fk_user_modif		integer           
 )ENGINE=innodb;
 
+ALTER TABLE llx_tva ADD COLUMN datec date AFTER tms;
+
 ALTER TABLE llx_user_rights ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_user_rights DROP FOREIGN KEY fk_user_rights_fk_user_user;
 ALTER TABLE llx_user_rights DROP INDEX uk_user_rights;
@@ -392,7 +394,4 @@ ALTER TABLE llx_usergroup_rights DROP FOREIGN KEY fk_usergroup_rights_fk_usergro
 ALTER TABLE llx_usergroup_rights DROP INDEX fk_usergroup;
 ALTER TABLE llx_usergroup_rights ADD UNIQUE INDEX uk_usergroup_rights (entity, fk_usergroup, fk_id);
 ALTER TABLE llx_usergroup_rights ADD CONSTRAINT fk_usergroup_rights_fk_usergroup FOREIGN KEY (fk_usergroup) REFERENCES llx_usergroup (rowid);
-
-
-
 
