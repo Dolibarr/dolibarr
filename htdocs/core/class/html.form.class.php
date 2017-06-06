@@ -1085,8 +1085,6 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-			$events = null;
-
            	if ($conf->use_javascript_ajax && ! $forcecombo)
             {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';

@@ -1114,7 +1114,8 @@ if ($id > 0)
 			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			// TODO Refresh also list of project if $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
 			// FIXME If we change company, we may get a project that does not match
-			print $form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth200');
+			print $form->select_thirdparty_list($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events);
+
 			print '</div>';
 			print '</td></tr>';
 
