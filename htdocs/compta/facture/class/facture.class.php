@@ -943,7 +943,7 @@ class Facture extends CommonInvoice
 		$this->date = dol_now();
 		$this->source = 0;
 
-		$num=count($object->lines);
+		$num = (is_null($object->lines) ? 0 : count($object->lines)); // for avoid phpunit error : "Parameter must be an array or an object that implements Countable"
 		for ($i = 0; $i < $num; $i++)
 		{
 			$line = new FactureLigne($this->db);
