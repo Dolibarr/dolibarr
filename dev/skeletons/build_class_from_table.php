@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2017 Nicolas ZABOURI  <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -649,7 +650,7 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     {
     	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
     	{
-    	    $varprop.="print '<tr><td class=\"fieldrequired\">'.\$langs->trans(\"Field".$prop['field']."\").'</td><td>\$object->".$prop['field']."</td></tr>';\n";
+    	    $varprop.="print '<tr><td class=\"fieldrequired\">'.\$langs->trans(\"Field".$prop['field']."\").'</td><td>'.\$object->".$prop['field'].".'</td></tr>';\n";
     	}
     }
     $targetcontent=preg_replace('/LIST_OF_TD_LABEL_FIELDS_VIEW/', $varprop, $targetcontent);
