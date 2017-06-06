@@ -134,7 +134,8 @@ $productorservice_fields = array(
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('product',true);
-if (count($extrafields)>0) {
+$num = (is_null($extrafields) ? 0 : count($extrafields)); // for avoid phpunit error : "Parameter must be an array or an object that implements Countable"
+if ($num > 0) {
 	$extrafield_array = array();
 }
 foreach($extrafields->attribute_label as $key=>$label)
