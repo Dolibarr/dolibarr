@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,12 +47,12 @@ $status=GETPOST("status",'alpha');
 $type=GETPOST('type');
 $optioncss = GETPOST('optioncss','alpha');
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
-if (GETPOST('actioncode','array')) 
+if (GETPOST('actioncode','array'))
 {
     $actioncode=GETPOST('actioncode','array',3);
     if (! count($actioncode)) $actioncode='0';
 }
-else 
+else
 {
     $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
@@ -79,7 +79,7 @@ if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0 ; }
 $offset = $limit * $page ;
 if (! $sortorder)
@@ -337,11 +337,11 @@ if ($resql)
     if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
     if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
     print $nav;
-    
+
     print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $link, $num, -1 * $nbtotalofrecords, '', 0, $nav, '', $limit);
 
     $moreforfilter='';
-    
+
     $i = 0;
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -369,11 +369,11 @@ if ($resql)
 	print $searchpicto;
 	print '</td>';
 	print "</tr>\n";
-	
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
-	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) 
+	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
@@ -392,7 +392,7 @@ if ($resql)
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 	$caction=new CActionComm($db);
 	$arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0));
-	
+
 	$var=true;
 	while ($i < min($num,$limit))
 	{
@@ -405,7 +405,7 @@ if ($resql)
         	continue;
         }
 
-		
+
 
 		$actionstatic->id=$obj->id;
 		$actionstatic->ref=$obj->id;
@@ -413,7 +413,7 @@ if ($resql)
 		$actionstatic->type_label=$obj->type_label;
 		$actionstatic->type_picto=$obj->type_picto;
 		$actionstatic->label=$obj->label;
-		
+
 		print '<tr class="oddeven">';
 
 		// Action (type)
@@ -443,7 +443,7 @@ if ($resql)
 		if (! empty($arraylist[$labeltype])) $labeltype=$arraylist[$labeltype];
 		print dol_trunc($labeltype,28);
 		print '</td>';
-		
+
 		// Start date
 		print '<td align="center" class="nowrap">';
 		print dol_print_date($db->jdate($obj->dp),"dayhour");
@@ -514,7 +514,7 @@ if ($resql)
 		print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent,3,1,$datep).'</td>';
 
 		print '<td></td>';
-		
+
 		print "</tr>\n";
 		$i++;
 	}

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ $section_dir=GETPOST('section_dir');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -430,7 +430,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 	// Manual section
 	$htmltooltip=$langs->trans("ECMAreaDesc2");
-	
+
     if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
     {
         print '<tr><td colspan="6">';

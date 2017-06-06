@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2013 Cédric Salvador      <csalvador@gpcsolutions.fr>
+/* Copyright (C) 2010-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ if ($id > 0 || ! empty($ref)) {
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -106,11 +106,11 @@ if ($object->id > 0)
 		$totalsize+=$file['size'];
 	}
 
-	
+
 	// Project card
-	
+
 	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-	
+
 	$morehtmlref='<div class="refidno">';
 	// Title
 	$morehtmlref.=$object->title;
@@ -120,19 +120,19 @@ if ($object->id > 0)
 	    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref.='</div>';
-	
+
 	// Define a complementary filter for search of next/prev ref.
 	if (! $user->rights->projet->all->lire)
 	{
 	    $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
 	    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
 	}
-	
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-	
+
+
 	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';	
+	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border" width="100%">';
 
@@ -141,10 +141,10 @@ if ($object->id > 0)
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 
 	print "</table>\n";
-	
+
 	print '</div>';
 
-	
+
 	dol_fiche_end();
 
 	$modulepart = 'project';

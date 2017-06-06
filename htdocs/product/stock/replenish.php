@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2016	Laurent Destaileur	<ely@users.sourceforge.net>
- * Copyright (C) 2014		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014-2017	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
  *
@@ -63,7 +63,7 @@ $texte = '';
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
@@ -579,7 +579,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		}else {
 			$result=$prod->load_stats_commande_fournisseur(0,'1,2,3,4');
 		}
-		
+
 		$result=$prod->load_stats_reception(0,'4');
 
 		//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";

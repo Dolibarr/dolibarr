@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  *
@@ -52,7 +52,7 @@ $showmessage=GETPOST('showmessage');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -83,9 +83,9 @@ if ($id > 0 || ! empty($ref))
 {
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
-    
+
 	$object = $product;
-    
+
 	$parameters=array('id'=>$id);
 	$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -117,11 +117,11 @@ if ($id > 0 || ! empty($ref))
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-        
+
 		dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
-        
+
         print '<div class="fichecenter">';
-        
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
@@ -131,14 +131,14 @@ if ($id > 0 || ! empty($ref))
 
         print '</div>';
         print '<div style="clear:both"></div>';
-		
+
 		dol_fiche_end();
 
 		if ($showmessage && $nboflines > 1)
 		{
 			print $langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers"));
 		}
-        elseif ($user->rights->facture->lire) 
+        elseif ($user->rights->facture->lire)
         {
             $sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
             $sql.= " f.facnumber, f.datef, f.paye, f.fk_statut as statut, f.rowid as facid,";
@@ -164,13 +164,13 @@ if ($id > 0 || ! empty($ref))
             $total_ht=0;
             $total_qty=0;
 			$totalrecords=0;
-            if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) 
+            if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
             {
             	$result = $db->query($sql);
-            	if ($result) 
+            	if ($result)
             	{
             		$totalrecords = $db->num_rows($result);
-            		while ($objp = $db->fetch_object($result)) 
+            		while ($objp = $db->fetch_object($result))
             		{
             			$total_ht+=$objp->total_ht;
             			$total_qty+=$objp->qty;
@@ -234,7 +234,7 @@ if ($id > 0 || ! empty($ref))
                     while ($i < min($num,$conf->liste_limit))
 					{
                         $objp = $db->fetch_object($result);
-                        
+
 
                         print '<tr class="oddeven">';
                         print '<td>';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ $result=restrictedArea($user,'mailing');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -109,7 +109,7 @@ if ($result)
 
 	$param = "&amp;sall=".urlencode($sall);
 	if ($filteremail) $param.='&amp;filteremail='.urlencode($filteremail);
-	
+
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -117,9 +117,9 @@ if ($result)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
-	
+
     $moreforfilter = '';
-    
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -151,15 +151,15 @@ if ($result)
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],($filteremail?"mc.statut":"m.statut"),$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('', $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
-	
-	
+
+
 	$email=new Mailing($db);
 
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($result);
 
-		
+
 
 		print "<tr>";
 		print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$obj->rowid.'">';

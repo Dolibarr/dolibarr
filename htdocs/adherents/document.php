@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
@@ -51,7 +51,7 @@ $result=restrictedArea($user,'adherent',$id);
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
@@ -94,7 +94,7 @@ if ($id > 0)
     $result=$membert->fetch($object->typeid);
 	if ($result > 0)
 	{
-			
+
 		// Construit liste des fichiers
 		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
@@ -102,7 +102,7 @@ if ($id > 0)
 		{
 			$totalsize+=$file['size'];
 		}
-	    
+
 	    if (! empty($conf->notification->enabled))
 			$langs->load("mails");
 
@@ -111,11 +111,11 @@ if ($id > 0)
 		dol_fiche_head($head, 'document', $langs->trans("Member"), -1, 'user');
 
     	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
-    	
+
     	dol_banner_tab($object, 'rowid', $linkback);
-        
+
         print '<div class="fichecenter">';
-        
+
         print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent">';
 
@@ -153,7 +153,7 @@ if ($id > 0)
 		print '</table>';
 
 		print '</div>';
-		
+
 		dol_fiche_end();
 
 		$modulepart = 'member';

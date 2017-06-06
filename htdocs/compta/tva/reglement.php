@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ $year = GETPOST("year","int");
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -156,9 +156,9 @@ if ($result)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
-	
+
 	print_barre_liste($langs->trans("VATPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines, 'title_accountancy', 0, '', '', $limit);
-	
+
 	print '<div class="div-table-responsive">';
 	print '<table class="noborder" width="100%">';
 
@@ -199,7 +199,7 @@ if ($result)
 	print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"t.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
-	
+
 	while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
@@ -252,7 +252,7 @@ if ($result)
 
         $i++;
     }
-    
+
     $colspan=5;
     if (! empty($conf->banque->enabled)) $colspan++;
     print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Total").'</td>';
@@ -261,7 +261,7 @@ if ($result)
 
     print "</table>";
     print '</div>';
-    
+
 	print '</form>';
 
     $db->free($result);

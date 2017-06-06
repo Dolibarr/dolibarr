@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,7 @@ $search_status = GETPOST('search_status','int');
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -154,7 +154,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
-	
+
 	if ($year)
 	{
 	    $center=($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":"");
@@ -177,7 +177,7 @@ if ($resql)
 	{
 	    print '<div class="div-table-responsive">';
 	    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-	    
+
 		print '<tr class="liste_titre_filter">';
 		// Ref
 		print '<td class="liste_titre" align="left">';
@@ -218,7 +218,7 @@ if ($resql)
 		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cs.paye","",$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 		print "</tr>\n";
-		
+
 		$i=0;
 		$totalarray=array();
 		while ($i < min($num,$limit))
@@ -258,7 +258,7 @@ if ($resql)
 			if (! $i) $totalarray['nbfield']++;
 		    if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
 			$totalarray['totalttc'] += $obj->amount;
-			
+
 			// Due date
 			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 
@@ -285,7 +285,7 @@ if ($resql)
 	        print '<td></td>';
 	        print '</tr>';
 		}
-		
+
 		print '</table>';
 		print '</div>';
 	}

@@ -42,8 +42,8 @@ $optioncss = GETPOST('optioncss','alpha');
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
-if (empty($page) || $page == -1) { $page = 0; }
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
+if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -172,7 +172,7 @@ if ($resql)
     while ($i < $num)
     {
         $obj = $db->fetch_object($resql);
-        
+
 
         print '<tr class="oddeven">';
         print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->name.'</a>';
@@ -197,7 +197,7 @@ if ($resql)
     print '</div>';
     print "</form>\n";
 
-    $db->free();
+    $db->free($resql);
 }
 else
 {

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ $result = restrictedArea($user, 'prelevement','','','bons');
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -107,11 +107,11 @@ if ($result)
   print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
   print '<input type="hidden" name="page" value="'.$page.'">';
   print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-  
+
   print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
 
   $moreforfilter='';
-    
+
   print '<div class="div-table-responsive">';
   print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -133,7 +133,7 @@ if ($result)
 
   while ($i < min($num,$limit))
   {
-      $obj = $db->fetch_object($result);     
+      $obj = $db->fetch_object($result);
 
       print '<tr class="oddeven"><td>';
 
@@ -151,9 +151,9 @@ if ($result)
     }
   print "</table>";
   print '</div>';
-  
+
   print '</form>';
-  
+
   $db->free($result);
 }
 else

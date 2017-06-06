@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -53,7 +53,7 @@ $fourn_id = GETPOST("fourn_id",'int');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
@@ -200,7 +200,7 @@ if ($resql)
 	{
 	    print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"").(!empty($search_categ) ? '&amp;search_categ='.$search_categ : '').(!empty($toolowstock) ? '&amp;toolowstock='.$toolowstock : ''), $sortfield, $sortorder,'',$num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
 	}
-	
+
 	if (! empty($catid))
 	{
 	    print "<div id='ways'>";
@@ -210,7 +210,7 @@ if ($resql)
 	    print " &gt; ".$ways[0]."<br>\n";
 	    print "</div><br>";
 	}
-	
+
 	// Filter on categories
  	$moreforfilter='';
 	if (! empty($conf->categorie->enabled))
@@ -220,11 +220,11 @@ if ($resql)
 		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ');
 	 	$moreforfilter.='</div>';
 	}
-	
+
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter.=$langs->trans("StockTooLow").' <input type="checkbox" name="toolowstock" value="1"'.($toolowstock?' checked':'').'>';
 	$moreforfilter.='</div>';
-    
+
     if (! empty($moreforfilter))
     {
         print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -234,7 +234,7 @@ if ($resql)
         print $hookmanager->resPrint;
         print '</div>';
     }
-	
+
 	$param='';
 	if ($tosell)	$param.="&tosell=".$tosell;
 	if ($tobuy)		$param.="&tobuy=".$tobuy;
@@ -242,17 +242,17 @@ if ($resql)
 	if ($fourn_id)	$param.="&fourn_id=".$fourn_id;
 	if ($snom)		$param.="&snom=".$snom;
 	if ($sref)		$param.="&sref=".$sref;
-    
+
 	$formProduct = new FormProduct($db);
 	$formProduct->loadWarehouses();
 	$warehouses_list = $formProduct->cache_warehouses;
 	$nb_warehouse = count($warehouses_list);
 	$colspan_warehouse = 1;
 	if (! empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE)) { $colspan_warehouse = $nb_warehouse > 1 ? $nb_warehouse+1 : 1; }
-	
+
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
-	
+
 	// Lignes des champs de filtre
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre">';
@@ -297,7 +297,7 @@ if ($resql)
 	        foreach($warehouses_list as &$wh) {
 	            print_liste_field_titre($wh['label'], '', '','','','align="right"');
 	        }
-	        	
+
 	    }
 	}
 	if ($virtualdiffersfromphysical) print_liste_field_titre($langs->trans("VirtualStock"),$_SERVER["PHP_SELF"], "",$param,"",'align="right"',$sortfield,$sortorder);
@@ -306,7 +306,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')',$_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
-	
+
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);
@@ -338,22 +338,22 @@ if ($resql)
         if ($objp->seuil_stock_alerte != '' && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
 		print $objp->stock_physique;
 		print '</td>';
-		
+
 		// Details per warehouse
 		if (! empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE))	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
 		{
 			if($nb_warehouse>1) {
 				foreach($warehouses_list as &$wh) {
-					
+
 					print '<td align="right">';
 					print empty($product->stock_warehouse[$wh['id']]->real) ? '0' : $product->stock_warehouse[$wh['id']]->real;
 					print '</td>';
 				}
-			}			
-		} 
-		
-			
-		
+			}
+		}
+
+
+
 		// Virtual stock
 		if ($virtualdiffersfromphysical)
 		{
@@ -372,7 +372,7 @@ if ($resql)
 
 	print "</table>";
 	print '</div>';
-	
+
 	print '</form>';
 
 	$db->free($resql);

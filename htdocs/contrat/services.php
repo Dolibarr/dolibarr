@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,7 @@ $langs->load("companies");
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -516,23 +516,23 @@ $var=True; $i=0;
 while ($i < min($num,$limit))
 {
 	$obj = $db->fetch_object($resql);
-	
+
 	$contractstatic->id=$obj->cid;
 	$contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
-	
-	
+
+
 
 	print '<tr class="oddeven">';
-	
+
 	// Ref
-    if (! empty($arrayfields['c.ref']['checked'])) 
+    if (! empty($arrayfields['c.ref']['checked']))
     {
         print '<td>';
 		print $contractstatic->getNomUrl(1,16);
 		print '</td>';
     }
 	// Service
-    if (! empty($arrayfields['p.description']['checked'])) 
+    if (! empty($arrayfields['p.description']['checked']))
     {
         print '<td>';
 		if ($obj->pid)
@@ -552,9 +552,9 @@ while ($i < min($num,$limit))
 		}
 		print '</td>';
     }
-    
+
 	// Third party
-    if (! empty($arrayfields['s.nom']['checked'])) 
+    if (! empty($arrayfields['s.nom']['checked']))
     {
         print '<td>';
 		$companystatic->id=$obj->socid;
@@ -563,9 +563,9 @@ while ($i < min($num,$limit))
 		print $companystatic->getNomUrl(1,'customer',28);
 		print '</td>';
     }
-    
+
 	// Start date
-    if (! empty($arrayfields['cd.date_ouverture_prevue']['checked'])) 
+    if (! empty($arrayfields['cd.date_ouverture_prevue']['checked']))
     {
 		print '<td align="center">';
 		print ($obj->date_ouverture_prevue?dol_print_date($db->jdate($obj->date_ouverture_prevue)):'&nbsp;');
@@ -574,15 +574,15 @@ while ($i < min($num,$limit))
 		else print '&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '</td>';
 	}
-    if (! empty($arrayfields['cd.date_ouverture']['checked'])) 
+    if (! empty($arrayfields['cd.date_ouverture']['checked']))
     {
 	    print '<td align="center">'.($obj->date_ouverture?dol_print_date($db->jdate($obj->date_ouverture)):'&nbsp;').'</td>';
 	}
 	// End date
-    if (! empty($arrayfields['cd.date_fin_validite']['checked'])) 
+    if (! empty($arrayfields['cd.date_fin_validite']['checked']))
     {
 	    print '<td align="center">'.($obj->date_fin_validite?dol_print_date($db->jdate($obj->date_fin_validite)):'&nbsp;');
-		if ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) 
+		if ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5)
 		{
 		    $warning_delay=$conf->contrat->services->expires->warning_delay / 3600 / 24;
             $textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
@@ -591,7 +591,7 @@ while ($i < min($num,$limit))
 		else print '&nbsp;&nbsp;&nbsp;&nbsp;';
 	    print '</td>';
     }
-    if (! empty($arrayfields['cd.date_cloture']['checked'])) 
+    if (! empty($arrayfields['cd.date_cloture']['checked']))
     {
         print '<td align="center">'.dol_print_date($db->jdate($obj->date_cloture)).'</td>';
     }
@@ -658,7 +658,7 @@ while ($i < min($num,$limit))
 	}
 	print '</td>';
 	if (! $i) $totalarray['nbfield']++;
-	
+
 	print "</tr>\n";
 	$i++;
 }

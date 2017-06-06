@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
@@ -54,7 +54,7 @@ if (!$user->rights->projet->lire) accessforbidden();
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -137,83 +137,83 @@ if ($object->id > 0)
 		// Project card
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
-        
+
         $morehtmlref='<div class="refidno">';
         // Title
         $morehtmlref.=$projectstatic->title;
         // Thirdparty
-        if ($projectstatic->thirdparty->id > 0) 
+        if ($projectstatic->thirdparty->id > 0)
         {
             $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $projectstatic->thirdparty->getNomUrl(1, 'project');
         }
         $morehtmlref.='</div>';
-        
+
         // Define a complementary filter for search of next/prev ref.
         if (! $user->rights->projet->all->lire)
         {
             $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
             $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
         }
-        
+
         dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-    
+
         print '<div class="fichecenter">';
         print '<div class="fichehalfleft">';
         print '<div class="underbanner clearboth"></div>';
-    
+
         print '<table class="border" width="100%">';
-    
+
         // Visibility
         print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
         if ($projectstatic->public) print $langs->trans('SharedProject');
         else print $langs->trans('PrivateProject');
         print '</td></tr>';
-    
+
         // Date start - end
         print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
         print dol_print_date($projectstatic->date_start,'day');
         $end=dol_print_date($projectstatic->date_end,'day');
         if ($end) print ' - '.$end;
         print '</td></tr>';
-        
+
         // Budget
         print '<tr><td>'.$langs->trans("Budget").'</td><td>';
         if (strcmp($projectstatic->budget_amount, '')) print price($projectstatic->budget_amount,'',$langs,1,0,0,$conf->currency);
         print '</td></tr>';
-    
+
         // Other attributes
         $cols = 2;
         //include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-        
+
         print '</table>';
-        
+
         print '</div>';
         print '<div class="fichehalfright">';
         print '<div class="ficheaddleft">';
         print '<div class="underbanner clearboth"></div>';
-        
+
         print '<table class="border" width="100%">';
-        
+
         // Description
         print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
         print nl2br($projectstatic->description);
         print '</td></tr>';
-    
+
         // Categories
         if($conf->categorie->enabled) {
             print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
             print $form->showCategories($projectstatic->id,'project',1);
             print "</td></tr>";
         }
-        
+
         print '</table>';
-        
+
         print '</div>';
         print '</div>';
         print '</div>';
-        
+
         print '<div class="clearboth"></div>';
-        
+
 		dol_fiche_end();
 	}
 
@@ -227,7 +227,7 @@ if ($object->id > 0)
 	{
 		$totalsize+=$file['size'];
 	}
-	
+
 	$param=(GETPOST('withproject')?'&withproject=1':'');
 	$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
@@ -237,9 +237,9 @@ if ($object->id > 0)
 	    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 	}
 	else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-	
+
 	$morehtmlref='';
-	
+
 	// Project
 	if (empty($withproject))
 	{
@@ -247,17 +247,17 @@ if ($object->id > 0)
 	    $morehtmlref.=$langs->trans("Project").': ';
 	    $morehtmlref.=$projectstatic->getNomUrl(1);
 	    $morehtmlref.='<br>';
-	
+
 	    // Third party
 	    $morehtmlref.=$langs->trans("ThirdParty").': ';
 	    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
 	    $morehtmlref.='</div>';
 	}
-	
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
-	
+
 	print '<div class="fichecenter">';
-	
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border" width="100%">';
 
@@ -268,7 +268,7 @@ if ($object->id > 0)
 	print "</table>\n";
 
 	print '</div>';
-	
+
 	dol_fiche_end();
 
 	print '<br>';

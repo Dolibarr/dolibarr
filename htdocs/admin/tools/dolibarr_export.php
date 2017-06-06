@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2017	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ $action=GETPOST('action','alpha');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";
 if ($page < 0) { $page = 0; }

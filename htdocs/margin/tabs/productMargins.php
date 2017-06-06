@@ -48,7 +48,7 @@ $mesg = '';
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -68,7 +68,7 @@ $form = new Form($db);
 if ($id > 0 || ! empty($ref))
 {
     $result = $object->fetch($id, $ref);
-    
+
     $title = $langs->trans('ProductServiceCard');
 	$helpurl = '';
 	$shortlabel = dol_trunc($object->label,16);
@@ -96,12 +96,12 @@ if ($id > 0 || ! empty($ref))
 		dol_fiche_head($head, 'margin', $titre, -1, $picto);
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-		
+
         dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
-        
-        
+
+
         print '<div class="fichecenter">';
-        
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
@@ -125,10 +125,10 @@ if ($id > 0 || ! empty($ref))
 		}
 
 		print "</table>";
-		
+
         print '</div>';
         print '<div style="clear:both"></div>';
-		
+
 		dol_fiche_end();
 
 
@@ -167,7 +167,7 @@ if ($id > 0 || ! empty($ref))
                 print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=$object->id",$sortfield,$sortorder,'',0,0,'');
 
                 $i = 0;
-                
+
                 print '<div class="div-table-responsive">';
                 print '<table class="noborder" width="100%">';
 
@@ -196,7 +196,7 @@ if ($id > 0 || ! empty($ref))
                     $var=True;
                     while ($i < $num /*&& $i < $conf->liste_limit*/) {
                         $objp = $db->fetch_object($result);
-                        
+
 
 						$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
 						$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
@@ -229,7 +229,7 @@ if ($id > 0 || ! empty($ref))
                 }
 
                 // affichage totaux marges
-                
+
                 $totalMargin = $cumul_vente - $cumul_achat;
                 if ($totalMargin < 0)
                 {

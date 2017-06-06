@@ -63,7 +63,7 @@ if (! $sortfield)
 	}
 }
 
-$page = GETPOST("page",'int');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -209,9 +209,9 @@ if ($result)
 	    $labelcostprice=$langs->trans('BuyingPrice');
 	else   // value is 'costprice' or 'pmp'
 	    $labelcostprice=$langs->trans('CostPrice');
-	    
+
 	$moreforfilter='';
-	
+
 	$i = 0;
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -260,7 +260,7 @@ if ($result)
 				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
 
-			
+
 
 			print '<tr class="oddeven">';
 			if ($id > 0) {
@@ -308,7 +308,7 @@ if ($result)
 	}
 
 	// affichage totaux marges
-	
+
 	$totalMargin = $cumul_vente - $cumul_achat;
 
 	$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
