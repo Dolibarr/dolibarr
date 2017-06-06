@@ -190,7 +190,7 @@ class HookManager
         }
 
         // Init return properties
-        $this->resPrint=''; $this->resArray=array(); $this->$resNbOfHooks=0;
+        $this->resPrint=''; $this->resArray=array(); $this->resNbOfHooks=0;
 
         // Loop on each hook to qualify modules that have declared context
         $modulealreadyexecuted=array();
@@ -209,7 +209,7 @@ class HookManager
                 	// jump to next module/class if method does not exist
                     if (! method_exists($actionclassinstance,$method)) continue;
 
-                    $this->$resNbOfHooks++;
+                    $this->resNbOfHooks++;
 
                     dol_syslog(get_class($this).'::executeHooks a qualified hook was found for method='.$method.' module='.$module." action=".$action." context=".$context);
 
