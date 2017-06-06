@@ -166,7 +166,7 @@ if ($result) {
 	// one line for bank jounral = tabbq
 	// one line for thirdparty journal = tabtp
 	$i = 0;
-	while ( $i < $num ) 
+	while ( $i < $num )
 	{
 		$obj = $db->fetch_object($result);
 
@@ -187,7 +187,7 @@ if ($result) {
 
 		$tabuser[$obj->rowid] = array (
 				'id' => $obj->userid,
-				'name' => $obj->firstname.' '.$obj->lastname,
+				'name' => dolGetFirstLastname($obj->firstname, $obj->lastname),
 				'lastname' => $obj->lastname,
 				'firstname' => $obj->firstname,
 				'accountancy_code' => $compta_user,
@@ -212,7 +212,7 @@ if ($result) {
 
 			    if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'payment_salary')))     // So we excluded 'company' here
 			    {
-			        // We save tabtype for a future use, to remember what kind of payment it is 
+			        // We save tabtype for a future use, to remember what kind of payment it is
 			        $tabtype[$obj->rowid] = $links[$key]['type'];
 			    }
 
@@ -296,7 +296,7 @@ if ($result) {
 
 		$tabbq[$obj->rowid][$compta_bank] += $obj->amount;
 
-		
+
 		// Check account number is ok
 		/*if ($action == 'writebookkeeping')        // Make test now in such a case
 		{
@@ -315,7 +315,7 @@ if ($result) {
     	        setEventMessages($langs->trans('ErrorAccountancyCodeOnThirdPartyNotDefined'), null, 'errors');
     		}
 		}*/
-		
+
 		// if($obj->socid)$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
 
 		$i ++;
@@ -345,7 +345,7 @@ if (! $error && $action == 'writebookkeeping') {
 		if (! $errorforline)
 		{
 		    // Line into bank account
-    		foreach ( $tabbq[$key] as $k => $mt ) 
+    		foreach ( $tabbq[$key] as $k => $mt )
     		{
     			if ($mt) {
         		    $bookkeeping = new BookKeeping($db);
@@ -363,10 +363,10 @@ if (! $error && $action == 'writebookkeeping') {
         			$bookkeeping->code_journal = $journal;
         			$bookkeeping->fk_user_author = $user->id;
         			$bookkeeping->date_create = $now;
-        
+
         			if ($tabtype[$key] == 'payment') {
         			    $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
-    
+
         				$sqlmid = 'SELECT fac.facnumber';
         				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture fac";
         				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON payfac.fk_facture=fac.rowid";
@@ -380,7 +380,7 @@ if (! $error && $action == 'writebookkeeping') {
         				}
         			} else if ($tabtype[$key] == 'payment_supplier') {
         			    $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
-    
+
         				$sqlmid = 'SELECT facf.ref_supplier, facf.ref';
         				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf";
         				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON payfacf.fk_facturefourn=facf.rowid";
@@ -394,7 +394,7 @@ if (! $error && $action == 'writebookkeeping') {
         				}
         			} else if ($tabtype[$key] == 'payment_expensereport') {
         			    $bookkeeping->code_tiers = $tabuser[$key]['accountancy_code'];
-    
+
         				$sqlmid = 'SELECT e.ref';
         				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "expensereport as e";
         				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "payment_expensereport as payer ON payer.fk_expensereport=e.rowid";
@@ -456,7 +456,7 @@ if (! $error && $action == 'writebookkeeping') {
         			$bookkeeping->code_journal = $journal;
         			$bookkeeping->fk_user_author = $user->id;
         			$bookkeeping->date_create = $now;
-        
+
         			if (in_array($tabtype[$key], array('sc', 'payment_sc'))) {   // If payment is payment of social contribution
         				$bookkeeping->code_tiers = '';
         				$bookkeeping->numero_compte = $k;
@@ -510,7 +510,7 @@ if (! $error && $action == 'writebookkeeping') {
         				//$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
         				$bookkeeping->numero_compte = 'CodeNotDef';
         			}
-        
+
         			$result = $bookkeeping->create($user);
         			if ($result < 0) {
         				if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
@@ -529,7 +529,7 @@ if (! $error && $action == 'writebookkeeping') {
     			}
     		}
 		}
-		
+
 		if (! $errorforline)
 		{
             $db->commit();
@@ -551,7 +551,7 @@ if (! $error && $action == 'writebookkeeping') {
 	{
 	    setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
 	}
-	
+
 	$action = '';
 }
 
@@ -592,7 +592,7 @@ if ($action == 'export_csv') {
 			if ($reflabel == '(ExpenseReportPayment)') {
 				$reflabel = $langs->trans('Employee');
 			}
-			
+
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 
@@ -761,7 +761,7 @@ if (empty($action) || $action == 'view') {
     print '<div class="tabsAction">';
 	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
     print '</div>';
-    
+
 	// TODO Avoid using js. We can use a direct link with $param
 	print '
 	<script type="text/javascript">
@@ -913,7 +913,7 @@ if (empty($action) || $action == 'view') {
 		$invoicestatic->ref = $val["ref"];
 		$invoicestatic->type = $val["type"];*/
 		// Bank
-		foreach ( $tabbq[$key] as $k => $mt ) 
+		foreach ( $tabbq[$key] as $k => $mt )
 		{
 		    print '<tr class="oddeven">';
 		    print "<td><!-- Bank bank.rowid=".$key."--></td>";
@@ -972,7 +972,7 @@ if (empty($action) || $action == 'view') {
         		{
         		    print '<span class="error">'.$langs->trans("WaitAccountNotDefined").'</span>';
         		}
-				else print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE); 
+				else print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE);
 				print "</td>";
 				print "<td>" . $reflabel . "</td>";
 				print "<td>&nbsp;</td>";
