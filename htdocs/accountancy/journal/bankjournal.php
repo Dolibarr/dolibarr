@@ -65,10 +65,8 @@ $langs->load("accountancy");
 $langs->load("trips");
 $langs->load("hrm");
 
-// Old system menu
-$id_bank_account = GETPOST('id_account', 'int');
 // Multi journal
-$code_journal = GETPOST('code_journal', 'alpha');
+$id_journal = GETPOST('id_journal', 'int');
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -81,7 +79,7 @@ $action = GETPOST('action','aZ09');
 $now = dol_now();
 
 // Security check
-if ($user->societe_id > 0 && empty($id_bank_account))
+if ($user->societe_id > 0 && empty($id_journal))
 	accessforbidden();
 
 
@@ -112,7 +110,7 @@ $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
 
 $sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
-$sql .= " ba.courant, ba.ref as baref, ba.account_number,";
+$sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
 $sql .= " soc.code_compta, soc.code_compta_fournisseur, soc.rowid as socid, soc.nom as name, bu1.type as typeop,";
 $sql .= " u.accountancy_code, u.rowid as userid, u.lastname as name, u.firstname as firstname, bu2.type as typeop";
 $sql .= " FROM " . MAIN_DB_PREFIX . "bank as b";
@@ -121,7 +119,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url as bu1 ON bu1.fk_bank = b.row
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url as bu2 ON bu2.fk_bank = b.rowid AND bu2.type='user'";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as soc on bu1.url_id=soc.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u on bu2.url_id=u.rowid";
-$sql .= " WHERE ba.rowid=" . $id_bank_account;
+$sql .= " WHERE ba.fk_accountancy_journal=" . $id_journal;
 $sql .= ' AND ba.entity IN ('.getEntity('bank_account', 0).')';        // We don't share object for accountancy
 if ($date_start && $date_end)
 	$sql .= " AND b.dateo >= '" . $db->idate($date_start) . "' AND b.dateo <= '" . $db->idate($date_end) . "'";
@@ -139,20 +137,8 @@ $paymentsalstatic = new PaymentSalary($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 
 // Get code of finance journal
-$journal = '';
-$bankstatic = new Account($db);
-$bankstatic->fetch($id_bank_account);
-$bankstatic->rowid;
-$bankstatic->number;
-$bankstatic->label;
-$bankstatic->fk_accountancy_journal;
-
 $accountingjournalstatic = new AccountingJournal($db);
-if(! empty($id_bank_account)) {
-	$accountingjournalstatic->fetch($bankstatic->fk_accountancy_journal);
-} else {
-	$accountingjournalstatic->fetch('',$code_journal);
-}
+$accountingjournalstatic->fetch($id_journal);
 $journal = $accountingjournalstatic->code;
 
 dol_syslog("accountancy/journal/bankjournal.php", LOG_DEBUG);
@@ -194,7 +180,7 @@ if ($result) {
 		$tabcompany[$obj->rowid] = array (
 				'id' => $obj->socid,
 				'name' => $obj->name,
-		        'code_compta' => $compta_soc,
+				'code_compta' => $compta_soc,
 		);
 
 		$compta_user = (! empty($obj->accountancy_code) ? $obj->accountancy_code : $account_employee);
@@ -203,7 +189,7 @@ if ($result) {
 				'id' => $obj->userid,
 				'lastname' => $obj->lastname,
 				'firstname' => $obj->firstname,
-		        'accountancy_code' => $compta_user,
+				'accountancy_code' => $compta_user,
 		);
 
 		// Variable bookkeeping
@@ -220,14 +206,14 @@ if ($result) {
 
 		// get_url may return -1 which is not traversable
 		if (is_array($links)) {
-		    // Now loop on each link of record in bank.
+			// Now loop on each link of record in bank.
 			foreach ( $links as $key => $val ) {
 
-			    if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation')))     // So we excluded 'company' here
-			    {
-			        // We save tabtype for a future use, to remember what kind of payment it is 
-			        $tabtype[$obj->rowid] = $links[$key]['type'];
-			    }
+				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation')))     // So we excluded 'company' here
+				{
+					// We save tabtype for a future use, to remember what kind of payment it is 
+					$tabtype[$obj->rowid] = $links[$key]['type'];
+				}
 
 				if ($links[$key]['type'] == 'payment') {
 					$paymentstatic->id = $links[$key]['url_id'];
@@ -740,18 +726,18 @@ if (empty($action) || $action == 'view') {
 	$invoicestatic = new Facture($db);
 	$invoicesupplierstatic = new FactureFournisseur($db);
 	$expensereportstatic = new ExpenseReport($db);
-  $vatstatic = new Tva($db);
+	$vatstatic = new Tva($db);
 	$donationstatic = new Don($db);
 
 	llxHeader('', $langs->trans("FinanceJournal"));
 
-	$nom = $langs->trans("FinanceJournal") . ' - ' . $bankstatic->getNomUrl(1);
+	$nom = $langs->trans("FinanceJournal") . ' - ' . $accountingjournalstatic->getNomUrl(1);
 	$builddate = time();
 	//$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 
-	$varlink = 'id_account=' . $id_bank_account;
+	$varlink = 'id_journal=' . $id_journal;
 
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
