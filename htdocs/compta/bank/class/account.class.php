@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2010	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2028,7 +2028,7 @@ class AccountLine extends CommonObject
             $result.=$langs->trans("BankAccount").': ';
             $accountstatic=new Account($this->db);
             $accountstatic->id=$this->fk_account;
-			$accountstatic->ref=$this->bank_account_ref;
+            $accountstatic->ref=$this->bank_account_ref;
             $accountstatic->label=$this->bank_account_label;
             $result.=$accountstatic->getNomUrl(0).', ';
         }
