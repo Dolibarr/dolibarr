@@ -39,7 +39,7 @@ class ExtraFields
 
 	// type of element (for what object is the extrafield)
 	var $attribute_elementtype;
-	
+
 	// Array with type of the extra field
 	var $attribute_type;
 	// Array with label of extra field
@@ -68,7 +68,7 @@ class ExtraFields
 	var $attribute_list;
 	// Array to store if extra field is hidden
 	var $attribute_hidden;		// warning, do not rely on this. If your module need a hidden data, it must use its own table.
-	
+
 	var $error;
 	var $errno;
 
@@ -95,7 +95,7 @@ class ExtraFields
 	'separate' => 'ExtrafieldSeparator',
 	);
 
-	
+
 	/**
 	 *	Constructor
 	 *
@@ -149,7 +149,7 @@ class ExtraFields
 		// Create field into database except for separator type which is not stored in database
 		if ($type != 'separate')
 		{
-			$result=$this->create($attrname, $type, $size, $elementtype, $unique, $required, $default_value, $param, $perms, $list, $copmputed);
+			$result=$this->create($attrname, $type, $size, $elementtype, $unique, $required, $default_value, $param, $perms, $list, $computed);
 		}
 		$err1=$this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
@@ -349,7 +349,7 @@ class ExtraFields
 		$table=$elementtype.'_extrafields';
 
 		$error=0;
-		
+
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			$result=$this->delete_label($attrname,$elementtype);
@@ -381,7 +381,7 @@ class ExtraFields
                     }
                 }
 			}
-			
+
 			return $result;
 		}
 		else
@@ -736,7 +736,7 @@ class ExtraFields
 		$hidden=$this->attribute_hidden[$key];
 
 		if ($computed) return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
-		
+
 		if (empty($showsize))
 		{
     		if ($type == 'date')
@@ -772,14 +772,14 @@ class ExtraFields
     			{
     			    $showsize = 'minwidth200imp';
     			}
-    			else 
+    			else
     			{
     			    //$showsize=48;
     			    $showsize = 'minwidth400imp';
     			}
     		}
 		}
-        
+
 		if (in_array($type,array('date','datetime')))
 		{
 			$tmp=explode(',',$size);
@@ -1029,7 +1029,7 @@ class ExtraFields
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($db);
-			
+
 			$value_arr=explode(',',$value);
 			$out=$form->multiselectarray($keysuffix.'options_'.$key.$keyprefix, $param['options'], $value_arr, '', 0, '', 0, '100%');
 
@@ -1124,9 +1124,9 @@ class ExtraFields
 				if ($resql) {
 					$num = $this->db->num_rows($resql);
 					$i = 0;
-					
+
 					$data=array();
-					
+
 					while ( $i < $num ) {
 						$labeltoshow = '';
 						$obj = $this->db->fetch_object($resql);
@@ -1152,9 +1152,9 @@ class ExtraFields
 									$labeltoshow = dol_trunc($obj->$field_toshow, 18) . ' ';
 								}
 							}
-							
+
 							$data[$obj->rowid]=$labeltoshow;
-							
+
 						} else {
 							if (! $notrans) {
 								$translabel = $langs->trans($obj->{$InfoFieldList[1]});
@@ -1177,16 +1177,16 @@ class ExtraFields
 
 							$data[$obj->rowid]=$labeltoshow;
 						}
-						
+
 						$i ++;
 					}
 					$this->db->free($resql);
-					
+
 					require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 					$form = new Form($db);
-					
+
 					$out=$form->multiselectarray($keysuffix.'options_'.$key.$keyprefix, $data, $value_arr, '', 0, '', 0, '100%');
-					
+
 				} else {
 					print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
 				}
@@ -1205,11 +1205,11 @@ class ExtraFields
 			if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
 			{
 			    $valuetoshow=$value;
-                if (!empty($value)) 
+                if (!empty($value))
                 {
                     $object = new $InfoFieldList[0]($this->db);
                     $resfetch=$object->fetch($value);
-                    if ($resfetch > 0) 
+                    if ($resfetch > 0)
                     {
                         $valuetoshow=$object->ref;
                         if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ->ref is not name but id (because name is not unique)
@@ -1269,7 +1269,7 @@ class ExtraFields
 		    //var_dump($computed);
 		    $value = dol_eval($computed, 1, 0);
 		}
-		
+
 		$showsize=0;
 		if ($type == 'date')
 		{
@@ -1477,7 +1477,7 @@ class ExtraFields
 					}
 				}
 				$value='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
-				
+
 			} else {
 				dol_syslog(get_class($this) . '::showOutputField error ' . $this->db->lasterror(), LOG_WARNING);
 			}
