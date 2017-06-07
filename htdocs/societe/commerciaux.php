@@ -115,9 +115,9 @@ if (! empty($socid))
 	dol_fiche_head($head, 'salesrepresentative', $langs->trans("ThirdParty"), -1, 'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
-	
+
     dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
-        
+
 	print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
@@ -167,17 +167,14 @@ if (! empty($socid))
 		$i = 0;
 
 		$tmpuser = new User($db);
-		
+
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
 
  			$parameters=array('socid'=>$object->id);
         	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$obj,$action);    // Note that $action and $object may have been modified by hook
-      		if (empty($reshook)) {
-
-				null; // actions in normal case
-      		}
+      		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
       		$tmpuser->id = $obj->rowid;
       		$tmpuser->firstname = $obj->firstname;
@@ -188,7 +185,7 @@ if (! empty($socid))
       		$tmpuser->societe_id = $obj->fk_soc;
       		$tmpuser->photo = $obj->photo;
       		print $tmpuser->getNomUrl(-1);
-      		
+
 			/*print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
 			print img_object($langs->trans("ShowUser"),"user").' ';
 			print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
@@ -216,7 +213,7 @@ if (! empty($socid))
 
 	print '</table>';
 	print "</div>\n";
-	
+
 	dol_fiche_end();
 
 
@@ -263,11 +260,11 @@ if (! empty($socid))
 
 			$var=True;
 			$tmpuser=new User($db);
-				
+
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				
+
 				print "<tr ".$bc[$var]."><td>";
 				$tmpuser->id=$obj->rowid;
 				$tmpuser->firstname=$obj->firstname;

@@ -175,7 +175,7 @@ if (! $action)
         print '</tr>';
 
         // Other attributes
-        $parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
+        $parameters=array('objectsrc' => $objectsrc);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {

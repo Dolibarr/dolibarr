@@ -1498,13 +1498,7 @@ else
 		    print "</tr>\n";
 
 		    // Other attributes
-		    $parameters=array();
-		    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-		    print $hookmanager->resPrint;
-		    if (empty($reshook) && ! empty($extrafields->attribute_label))
-		    {
-		        print $object->showOptionals($extrafields);
-		    }
+    		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
             // Company / Contact
             if (! empty($conf->societe->enabled))
