@@ -253,6 +253,8 @@ class CommandeFournisseur extends CommonOrder
             if ($this->statut == 0) $this->brouillon = 1;
 
 			$this->fetchObjectLinked();
+			
+				$this->lines=array();
 
             $this->lines=array();
 
