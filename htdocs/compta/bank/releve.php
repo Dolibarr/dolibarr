@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2017      Patrick Delcroix	<pmpdelcroix@gmail.com>
+ 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
-
+//show files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 $langs->load("banks");
 $langs->load("categories");
 $langs->load("companies");
@@ -88,7 +92,33 @@ if ($id > 0 || ! empty($ref))
 
 // Initialize technical object to manage context to save list fields
 $contextpage='banktransactionlist'.(empty($object->ref)?'':'-'.$object->id);
+if($action=="dl" && $num>0 && isset($_SESSION["releve"][$num])){
+        unset($zip);
+    $log='';
+        $filearray=$_SESSION["releve"][$num];
+        $zipname = $num.'.zip';
+        $zip = new ZipArchive;
+        $zip->open($zipname, ZipArchive::OVERWRITE);
+        foreach ($filearray as $key=> $files) {
+            if(is_array($files)){
+                foreach ($files as $file) {
+                    $zip->addFile($file["fullname"],$file["name"]);//
+                    $log.=$key.','.$file["name"]."\n";
+                }
+            }else{
+                $log.=$key.','.$langs->trans("Nofile")."\n";
+            }
+        }
+        $zip->addFromString('log.csv', $log);
+        $zip->close();
 
+        ///Then download the zipped file.
+        header('Content-Type: application/zip');
+        header('Content-disposition: attachment; filename='.$zipname);
+        header('Content-Length: ' . filesize($zipname));
+        readfile($zipname);
+}
+unset($_SESSION["releve"][$num]);
 
 /*
  * View
@@ -299,7 +329,6 @@ else
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
-    print '<div class="div-table-responsive">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td align="center">'.$langs->trans("DateOperationShort").'</td>';
@@ -349,10 +378,8 @@ else
 		$i = 0;
 
 		// Ligne Solde debut releve
-		print "<tr ".$bc[$var]."><td colspan=\"3\"></td>";
-		print "<td colspan=\"3\"><b>".$langs->trans("InitialBankBalance")." :</b></td>";
-		print '<td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td>';
-		print "</tr>\n";
+		print "<tr ".$bc[$var]."><td colspan=\"4\"><a href=\"releve.php?num=$num&amp;ve=1&amp;rel=$rel&amp;account=".$object->id."\">&nbsp;</a></td>";
+		print "<td align=\"right\" colspan=\"2\"><b>".$langs->trans("InitialBankBalance")." :</b></td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
 
 		while ($i < $numrows)
 		{
@@ -519,6 +546,7 @@ else
 					dol_print_error($db);
 				}
 			}
+			print Get_attach_files($objp->rowid,$num,$objc->label);
 
 			print "</td>";
 
@@ -555,16 +583,99 @@ else
 	print "\n".'<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("Total")." :</td><td align=\"right\">".price($totald)."</td><td align=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
 
 	// Line Balance
-	print "\n<tr><td align=\"right\" colspan=\"3\">&nbsp;</td><td colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
-	print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td>";
-	print "</tr>\n";
-	print "</table>";
-	print "</div>";
-	
-	print "</form>\n";
+	print "\n<tr><td align=\"right\" colspan=\"4\">&nbsp;</td><td align=\"right\" colspan=\"2\"><b>".$langs->trans("EndBankBalance")." :</b></td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
+	print "</table></form>\n";
 }
 
 
 llxFooter();
 
 $db->close();
+
+
+function Get_attach_files($bankId,$num,$label){
+    $out='';
+    global $db,$conf;
+     $sql='SELECT u.url_id, u.type,ff.rowid as id , ff.`ref` AS reff, f.facnumber AS `ref`,';
+     $sql.=' e.`ref` AS refe, sp.rowid AS ids, d.rowid AS idd';
+     $sql.=' FROM '.MAIN_DB_PREFIX.'bank_url AS u';
+    //invoice customer (CustomerInvoicePayment)
+     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement AS p ON p.fk_bank = u.fk_bank';
+     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture AS pf ON pf.fk_paiement = p.rowid';
+    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'facture AS f ON f.rowid = pf.fk_facture';
+    //invoice suplier (SupplierInvoicePayment)
+    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn AS fp ON fp.fk_bank = u.fk_bank';
+     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS fpf ON fpf.fk_paiementfourn = fp.rowid';
+    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS ff ON ff.rowid = fpf.fk_facturefourn';
+    //EXPENSEs (ExpenseReportPayment)
+    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'payment_expensereport AS ep ON ep.fk_bank = u.fk_bank';
+    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'expensereport AS e ON e.rowid = ep.fk_expensereport';
+    //donation
+    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'payment_donation AS dp ON dp.fk_bank = u.fk_bank';
+    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'don AS d ON d.rowid = dp.fk_donation';
+
+    //loan
+//    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'payment_loan AS lp ON lp.fk_bank = u.fk_bank';
+    //salary
+    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'payment_salary AS sp ON sp.fk_bank = u.fk_bank';
+    //END SQL
+    $sql.=" WHERE u.fk_bank in('".$bankId."')AND  u.type in ('payment','payment_supplier','payment_expensereport','payment_salary','payment_donation' )";
+
+    $resd = $db->query($sql);
+    $files=array(); 
+    $link='';
+    if ($resd)
+     {
+         $numd = $db->num_rows($resd);
+        $upload_dir ='';
+         $i=0;
+         if($numd>0)
+         {
+            
+            
+            $objd = $db->fetch_object($resd);
+          
+            switch($objd->type){
+            case "payment":    
+                $subdir=dol_sanitizeFileName($objd->ref);
+                $upload_dir = $conf->facture->dir_output.'/'.$subdir;
+                $link="../../document.php?modulepart=facture&file=".str_replace('/','%2F',$subdir).'%2F';
+                break;
+               
+            case "payment_supplier":      
+                $subdir=get_exdir($objd->id,2,0,0,$objd,'invoice_supplier').$objd->reff;
+                $upload_dir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
+                $link="../../document.php?modulepart=facture_fournisseur&file=".str_replace('/','%2F',$subdir).'%2F';
+                break;  
+            case "payment_expensereport":
+                $subdir=dol_sanitizeFileName($objd->refe);
+                $upload_dir = $conf->expensereport->dir_output.'/'.$subdir;
+                $link="../../document.php?modulepart=expensereport&file=".str_replace('/','%2F',$subdir).'%2F';
+                break;
+            case "payment_salary":
+                $subdir=dol_sanitizeFileName($objd->ids);
+                $upload_dir = $conf->salaries->dir_output.'/'.$subdir;
+                $link="../../document.php?modulepart=salaries&file=".str_replace('/','%2F',$subdir).'%2F';
+                break;
+            case "payment_donation":
+                $subdir=get_exdir(null,2,0,1,$objd,'donation'). '/'. dol_sanitizeFileName($objd->idd);
+                $upload_dir = $conf->don->dir_output . '/' . $subdir;
+                $link="../../document.php?modulepart=don&file=".str_replace('/','%2F',$subdir).'%2F';
+                break;
+            default:
+                break;
+            }
+            
+            if(!empty($upload_dir)){
+                $files=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$','',SORT_ASC,1);
+                foreach ($files as $key => $file){
+                    $out.= '<br><a href="'.$link.$file['name'].'">'.$file['name'].'</a>';
+                }
+                $_SESSION["releve"][$num][]=$files;
+            }
+
+         }
+     } 
+     $db->free($resd);
+       return $out;
+}
