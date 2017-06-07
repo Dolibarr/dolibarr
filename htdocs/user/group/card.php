@@ -210,7 +210,7 @@ if ($action == 'update')
         setEventMessages($langs->trans('ErrorForbidden'), null, 'mesgs');
     }
 }
-					
+
 // Actions to build doc
 $upload_dir = $conf->usergroup->dir_output;
 $permissioncreate=$user->rights->user->user->creer;
@@ -317,10 +317,10 @@ else
         	dol_fiche_head($head, 'group', $title, -1, 'group');
 
 			dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
-			
+
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
-			
+
         	print '<table class="border" width="100%">';
 
 			// Name
@@ -348,15 +348,11 @@ else
 
 			// Other attributes
             $parameters=array('colspan' => ' colspan="2"');
-            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-            if (empty($reshook) && ! empty($extrafields->attribute_label))
-            {
-            	print $object->showOptionals($extrafields);
-            }
+    		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 			print "</table>\n";
             print '</div>';
-            
+
 			dol_fiche_end();
 
 
@@ -448,7 +444,7 @@ else
             {
             	foreach($object->members as $useringroup)
             	{
-            		
+
 
             		print '<tr class="oddeven">';
             		print '<td>';
@@ -497,7 +493,7 @@ else
             }
             print "</table>";
             print "<br>";
-			
+
 			/*
 	         * Documents generes
 	         */
@@ -506,21 +502,21 @@ else
 	        $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 	        $genallowed = $user->rights->user->user->creer;
 	        $delallowed = $user->rights->user->user->supprimer;
-	
+
 	        $somethingshown = $formfile->show_documents('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
-	
+
 	        // Show links to link elements
 	        $linktoelem = $form->showLinkToObjectBlock($object, null, null);
 	        $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-	
+
 	        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-	
+
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'usergroup', $socid);
-	        
-	        
+
+
 	        print '</div></div></div>';
         }
 

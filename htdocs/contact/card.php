@@ -316,7 +316,7 @@ if (empty($reshook))
                             $object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 
     					    // Create thumbs
-    					    $object->addThumbs($newfile);					    
+    					    $object->addThumbs($newfile);
                         }
                     }
                 }
@@ -664,7 +664,7 @@ else
 			}
 
             // Other attributes
-            $parameters=array('colspan' => ' colspan="3"');
+            $parameters=array('colspan' => ' colspan="3"','cols'=>3);
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
@@ -674,7 +674,7 @@ else
             print "</table><br>";
 
 			print '<hr style="margin-bottom: 20px">';
-			
+
             // Add personnal information
             print load_fiche_titre('<div class="comboperso">'.$langs->trans("PersonalInformations").'</div>','','');
 
@@ -787,7 +787,7 @@ else
 	            print $object->ref;
 	            print '</td></tr>';
            	}
-           	
+
             // Lastname
             print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
             print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="minwidth200" maxlength="80" value="'.(isset($_POST["lastname"])?GETPOST("lastname"):$object->lastname).'" autofocus="autofocus"></td>';
@@ -932,7 +932,7 @@ else
 			}
 
             // Other attributes
-            $parameters=array('colspan' => ' colspan="3"');
+            $parameters=array('colspan' => ' colspan="3"', 'cols'=>3);
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
@@ -1054,7 +1054,7 @@ else
         }
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
-        
+
         $morehtmlref='<div class="refidno">';
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
@@ -1064,14 +1064,14 @@ else
             if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1);
             else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
         }
-        $morehtmlref.='</div>';        
-        
+        $morehtmlref.='</div>';
+
         dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
-        
-        
+
+
         print '<div class="fichecenter">';
         print '<div class="fichehalfleft">';
-        
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
@@ -1102,26 +1102,14 @@ else
         print $object->LibPubPriv($object->priv);
         print '</td></tr>';
 
-        // Note Public
-        /*
-        print '<tr><td class="tdtop">'.$langs->trans("NotePublic").'</td><td>';
-        print nl2br($object->note_public);
-        print '</td></tr>';
-
-        // Note Private
-        print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td>';
-        print nl2br($object->note_private);
-        print '</td></tr>';
-        */
-        
         print '</table>';
-        
+
         print '</div>';
         print '<div class="fichehalfright"><div class="ficheaddleft">';
-       
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
-        
+
 		// Categories
 		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
 			print '<tr><td class="titlefield">' . $langs->trans("Categories") . '</td>';
@@ -1130,14 +1118,10 @@ else
 			print '</td></tr>';
 		}
 
-        // Other attributes
-        $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"');
-        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-        if (empty($reshook) && ! empty($extrafields->attribute_label))
-        {
-        	print $object->showOptionals($extrafields);
-        }
+    	// Other attributes
+    	$cols = 3;
+    	$parameyers=array('socid'=>$socid);
+    	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
         $object->load_ref_elements();
 
@@ -1193,10 +1177,10 @@ else
         print '</td></tr>';
 
         print "</table>";
-        
+
         print '</div></div></div>';
         print '<div style="clear:both"></div>';
-                
+
         print dol_fiche_end();
 
         // Barre d'actions

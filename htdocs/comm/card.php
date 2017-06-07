@@ -131,7 +131,7 @@ if (empty($reshook))
 		$result=$object->setBankAccount(GETPOST('fk_account','int'));
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
-	
+
 	// customer preferred shipping method
     if ($action == 'setshippingmethod' && $user->rights->societe->creer)
     {
@@ -207,9 +207,9 @@ if ($id > 0)
 	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), -1, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
-	
+
     dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
-        
+
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
     print '<div class="underbanner clearboth"></div>';
@@ -376,11 +376,11 @@ if ($id > 0)
 	    $limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
 	    print $form->editfieldval("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer,$limit_field_type,($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
 	    //if (empty($object->outstanding_limit)) print $langs->trans("NoLimit");
-	
+
 	    print '</td>';
 	    print '</tr>';
 	}
-	
+
 	// Multiprice level
 	if (! empty($conf->global->PRODUIT_MULTIPRICES))
 	{
@@ -432,13 +432,8 @@ if ($id > 0)
 	}
 
 	// Other attributes
-	$parameters=array('socid'=>$object->id, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
-	{
-		print $object->showOptionals($extrafields);
-	}
+	$parameters=array('socid'=>$object->id);
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
     // Sales representative
 	include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
@@ -471,10 +466,10 @@ if ($id > 0)
 	if ($object->client == 2 || $object->client == 3)
 	{
     	print '<br>';
-    
+
     	print '<div class="underbanner clearboth"></div>';
     	print '<table class="border" width="100%">';
-	
+
 	    // Level of prospect
 	    print '<tr><td class="titlefield nowrap">';
 	    print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
@@ -508,12 +503,12 @@ if ($id > 0)
         print '</div></td></tr>';
 	   print "</table>";
 	}
-	
+
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 	$boxstat = '';
-	
+
 	// Nbre max d'elements des petites listes
 	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
@@ -521,7 +516,7 @@ if ($id > 0)
 	$boxstat.='<div class="box">';
 	$boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom" width="100%">';
 	$boxstat.='<tr class="impair"><td colspan="2" class="tdboxstats nohover">';
-	
+
 	if ($conf->propal->enabled)
 	{
     	// Box proposals
@@ -557,14 +552,14 @@ if ($id > 0)
 	    $boxstat.='</div>';
 	    if ($link) $boxstat.='</a>';
 	}
-	
+
 	if ($conf->facture->enabled)
 	{
     	$tmp = $object->getOutstandingBills();
     	$outstandingOpened=$tmp['opened'];
     	$outstandingTotal=$tmp['total_ht'];
     	$outstandingTotalIncTax=$tmp['total_ttc'];
-	    
+
     	$text=$langs->trans("OverAllInvoices");
     	$link='';
     	$icon='bill';
@@ -574,7 +569,7 @@ if ($id > 0)
     	$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
     	$boxstat.='</div>';
     	if ($link) $boxstat.='</a>';
-    	
+
     	// Box outstanding bill
     	$warn = '';
     	if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpened)
@@ -591,13 +586,13 @@ if ($id > 0)
     	$boxstat.='</div>';
     	if ($link) $boxstat.='</a>';
 	}
-	
+
 	$boxstat.='</td></tr>';
 	$boxstat.='</table>';
 	$boxstat.='</div>';
-	
+
     print $boxstat;
-    
+
 	$now=dol_now();
 
 	/*
@@ -639,7 +634,7 @@ if ($id > 0)
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$objp = $db->fetch_object($resql);
-				
+
 				print '<tr class="oddeven">';
                 print '<td class="nowrap">';
                 $propal_static->id = $objp->propalid;
@@ -723,7 +718,7 @@ if ($id > 0)
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$objp = $db->fetch_object($resql);
-				
+
 				print '<tr class="oddeven">';
                 print '<td class="nowrap">';
                 $commande_static->id = $objp->cid;
@@ -849,7 +844,7 @@ if ($id > 0)
 				$contrat=new Contrat($db);
 
 				$objp = $db->fetch_object($resql);
-				
+
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 				$contrat->id=$objp->id;
@@ -905,7 +900,7 @@ if ($id > 0)
 				print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/fichinter/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
-				
+
 			}
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
@@ -921,7 +916,7 @@ if ($id > 0)
 				print '<td align="right" style="min-width: 60px">'.convertSecondToTime($objp->duration).'</td>'."\n";
 				print '<td align="right" class="nowrap" style="min-width: 60px">'.$fichinter_static->getLibStatut(5).'</td>'."\n";
 				print '</tr>';
-				
+
 				$i++;
 			}
 			$db->free($resql);
@@ -977,7 +972,7 @@ if ($id > 0)
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$objp = $db->fetch_object($resql);
-				
+
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 				$facturestatic->id = $objp->facid;
@@ -1006,7 +1001,7 @@ if ($id > 0)
     				print price($objp->total_ttc);
     				print '</td>';
 				}
-				
+
 				print '<td align="right" class="nowrap" style="min-width: 60px">'.($facturestatic->LibStatut($objp->paye,$objp->statut,5,$objp->am)).'</td>';
 				print "</tr>\n";
 				$i++;
@@ -1042,31 +1037,31 @@ if ($id > 0)
         {
             print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("ThirdPartyIsClosed").'</a></div>';
         }
-        
+
     	if (! empty($conf->propal->enabled) && $user->rights->propal->creer && $object->status==1)
     	{
     		$langs->load("propal");
     		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a></div>';
     	}
-    
+
     	if (! empty($conf->commande->enabled) && $user->rights->commande->creer && $object->status==1)
     	{
     		$langs->load("orders");
     		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a></div>';
     	}
-    
+
     	if ($user->rights->contrat->creer && $object->status==1)
     	{
     		$langs->load("contracts");
     		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a></div>';
     	}
-    
+
     	if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer && $object->status==1)
     	{
     		$langs->load("fichinter");
     		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a></div>';
     	}
-    
+
     	// Add invoice
     	if ($user->societe_id == 0)
     	{
@@ -1075,7 +1070,7 @@ if ($id > 0)
     			$langs->load("trips");
     			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a></div>';
     		}
-    
+
     		if (! empty($conf->facture->enabled) && $object->status==1)
     		{
     			if (empty($user->rights->facture->creer))
@@ -1086,7 +1081,7 @@ if ($id > 0)
     			{
     				$langs->load("bills");
     				$langs->load("orders");
-    
+
     				if (! empty($conf->commande->enabled))
     				{
     				    if ($object->client != 0 && $object->client != 2)
@@ -1099,11 +1094,11 @@ if ($id > 0)
 
     				if ($object->client != 0 && $object->client != 2) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
     				else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
-    
+
     			}
     		}
     	}
-    
+
     	// Add action
     	if (! empty($conf->agenda->enabled) && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB) && $object->status==1)
     	{
@@ -1117,7 +1112,7 @@ if ($id > 0)
     		}
     	}
     }
-    
+
 	print '</div>';
 
 	if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))

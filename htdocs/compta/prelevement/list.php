@@ -130,9 +130,23 @@ if ($result)
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
 
     $moreforfilter='';
-    
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_line" value="'. dol_escape_htmltag($search_line).'" size="6"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'. dol_escape_htmltag($search_bon).'" size="6"></td>';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_company" value="'. dol_escape_htmltag($search_company).'" size="6"></td>';
+    print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'. dol_escape_htmltag($search_code).'" size="6"></td>';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpicto=$form->showFilterButtons();
+    print $searchpicto;
+    print '</td>';
+    print '</tr>';
 
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Line"),$_SERVER["PHP_SELF"]);
@@ -144,24 +158,10 @@ if ($result)
     print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"pl.amount","","",'align="right"');
     print_liste_field_titre('');
 	print "</tr>\n";
-	
-    print '<tr class="liste_titre">';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_line" value="'. dol_escape_htmltag($search_line).'" size="6"></td>';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'. dol_escape_htmltag($search_bon).'" size="6"></td>';
-    print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_company" value="'. dol_escape_htmltag($search_company).'" size="6"></td>';
-    print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'. dol_escape_htmltag($search_code).'" size="6"></td>';
-    print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre" align="right">';
-    $searchpicto=$form->showFilterAndCheckAddButtons(0);
-    print $searchpicto;
-    print '</td>';
-    print '</tr>';
 
     while ($i < min($num,$limit))
     {
-        $obj = $db->fetch_object($result);    
+        $obj = $db->fetch_object($result);
 
         print '<tr class="oddeven"><td>';
 
@@ -199,9 +199,9 @@ if ($result)
     }
     print "</table>";
     print '</div>';
-    
+
     print '</form>';
-    
+
     $db->free($result);
 }
 else

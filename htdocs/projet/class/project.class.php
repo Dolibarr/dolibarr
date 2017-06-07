@@ -39,7 +39,7 @@ class Project extends CommonObject
     public $fk_element = 'fk_projet';
     protected $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto = 'projectpub';
-    
+
     /**
      * {@inheritdoc}
      */
@@ -102,7 +102,7 @@ class Project extends CommonObject
 	 * @var Task[]
 	 */
 	public $lines;
-	
+
 
     /**
      *  Constructor
@@ -146,7 +146,7 @@ class Project extends CommonObject
             dol_syslog(get_class($this)."::create error -1 ref null", LOG_ERR);
             return -1;
         }
-        
+
         $this->db->begin();
 
         $sql = "INSERT INTO " . MAIN_DB_PREFIX . "projet (";
@@ -261,7 +261,7 @@ class Project extends CommonObject
             dol_syslog(get_class($this)."::update error -3 " . $this->error, LOG_ERR);
             return -3;
         }
-        
+
         if (dol_strlen(trim($this->ref)) > 0)
         {
             $this->db->begin();
@@ -392,7 +392,9 @@ class Project extends CommonObject
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            if ($this->db->num_rows($resql))
+            $num_rows = $this->db->num_rows($resql);
+
+            if ($num_rows)
             {
                 $obj = $this->db->fetch_object($resql);
 
@@ -423,12 +425,16 @@ class Project extends CommonObject
 
                 $this->db->free($resql);
 
+                // Retreive all extrafield for thirdparty
+                $this->fetch_optionals();
+
                 return 1;
             }
-            else
-            {
-                return 0;
-            }
+
+            $this->db->free($resql);
+
+            if ($num_rows) return 1;
+            else return 0;
         }
         else
         {
@@ -745,7 +751,7 @@ class Project extends CommonObject
                 $this->error=$langs->trans("ErrorFieldFormat",$langs->transnoentities("Label")).'. '.$langs->trans('RemoveString',$langs->transnoentitiesnoconv("CopyOf"));
                 return -1;
             }
-            
+
             $this->db->begin();
 
             $sql = "UPDATE " . MAIN_DB_PREFIX . "projet";
@@ -764,7 +770,7 @@ class Project extends CommonObject
                     if ($result < 0) { $error++; }
                     // End call triggers
                 }
-                
+
                 if (!$error)
                 {
                 	$this->statut=1;
@@ -847,7 +853,7 @@ class Project extends CommonObject
                 return -1;
             }
         }
-        
+
         return 0;
     }
 
@@ -936,9 +942,9 @@ class Project extends CommonObject
         global $conf, $langs, $user;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
-        
+
         $result = '';
-        
+
         $label='';
         if ($option != 'nolink') $label = '<u>' . $langs->trans("ShowProject") . '</u>';
         $label .= ($label?'<br>':'').'<b>' . $langs->trans('Ref') . ': </b>' . $this->ref;	// The space must be after the : to not being explode when showing the title in img_picto
@@ -965,11 +971,11 @@ class Project extends CommonObject
                 $url = DOL_URL_ROOT . '/projet/card.php?id=' . $this->id;
             }
             // Add param to save lastsearch_values or not
-            $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0); 
+            $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
             if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
             if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
-        
+
         $linkclose='';
         if (empty($notooltip) && $user->rights->propal->lire)
         {
@@ -988,7 +994,7 @@ class Project extends CommonObject
         $linkstart = '<a href="'.$url.'"';
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
-        
+
         if ($withpicto) $result.=($linkstart . img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1) . $linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$linkstart . $this->ref . $linkend . (($addlabel && $this->title) ? $sep . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
@@ -1150,7 +1156,7 @@ class Project extends CommonObject
         {
             // No filter. Use this if user has permission to see all project
         }
-	    
+
 	$sql.= $filter;
         //print $sql;
 
@@ -1760,7 +1766,7 @@ class Project extends CommonObject
 	    $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	    $sql.= " WHERE";
 	    $sql.= " p.entity IN (".getEntity('projet').")";
-		if (! $user->rights->projet->all->lire) 
+		if (! $user->rights->projet->all->lire)
 		{
 			$projectsListId = $this->getProjectsAuthorizedForUser($user,0,1);
 			$sql .= "AND p.rowid IN (".$projectsListId.")";
@@ -1800,7 +1806,7 @@ class Project extends CommonObject
         $now = dol_now();
 
         return ($this->datee ? $this->datee : $this->date_end) < ($now - $conf->projet->warning_delay);
-	}	
+	}
 
 
 	/**
@@ -1911,10 +1917,10 @@ class Project extends CommonObject
 		return 1;
 	}
 
-	
+
 	/**
 	 * 	Create an array of tasks of current project
-	 * 
+	 *
 	 *  @param  User   $user       Object user we want project allowed to
 	 * 	@return int		           >0 if OK, <0 if KO
 	 */
@@ -1925,6 +1931,6 @@ class Project extends CommonObject
 
 	    $this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0);
 	}
-	
+
 }
 
