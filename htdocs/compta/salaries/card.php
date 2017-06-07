@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Charlie BENKE		<charlie@patas-monkey.com> 
@@ -19,9 +19,9 @@
  */
 
 /**
- *	    \file       htdocs/compta/salaries/card.php
- *      \ingroup    salaries
- *		\brief      Page of salaries payments
+ *	\file       htdocs/compta/salaries/card.php
+ *	\ingroup    salaries
+ *	\brief      Page of salaries payments
  */
 
 require '../../main.inc.php';
@@ -72,7 +72,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$datesp=dol_mktime(12,0,0, $_POST["datespmonth"], $_POST["datespday"], $_POST["datespyear"]);
 	$dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
 	if (empty($datev)) $datev=$datep;
-	
+
 	$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
 	$object->fk_user=GETPOST("fk_user") > 0 ? GETPOST("fk_user","int") : 0;
 	$object->datev=$datev;
@@ -228,8 +228,8 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("NewSalaryPayment"),'', 'title_accountancy.png');
 
-	dol_fiche_head('', '');
-	
+	dol_fiche_head('');
+
 	print '<table class="border" width="100%">';
 
 	// Date payment
@@ -340,12 +340,12 @@ if ($id)
 	$morehtmlref.=$langs->trans('Employee') . ' : ' . $userstatic->getNomUrl(1);
 	$morehtmlref.='</div>';
 
-    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
-    print '<div class="fichecenter">';
+	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+	print '<table class="border" width="100%">';
 
 	// Label
 	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
@@ -405,7 +405,7 @@ if ($id)
 	{
 		if (! empty($user->rights->salaries->delete))
 		{
-			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a>';
 		}
 		else
 		{
