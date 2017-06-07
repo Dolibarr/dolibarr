@@ -4105,25 +4105,36 @@ abstract class CommonObject
      *  Function to get extra fields of a member into $this->array_options
      *  This method is in most cases called by method fetch of objects but you can call it separately.
      *
-     *  @param	int		$rowid			Id of line
-     *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label()
+     *  @param	int		$rowid			Id of line. Use the id of object if not defined. Deprecated. Function must be called without parameters.
+     *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label(). Deprecated. Function must be called without parameters.
      *  @return	int						<0 if error, 0 if no optionals to find nor found, 1 if a line is found and optional loaded
      */
     function fetch_optionals($rowid=null,$optionsArray=null)
     {
     	if (empty($rowid)) $rowid=$this->id;
 
-        //To avoid SQL errors. Probably not the better solution though
+        // To avoid SQL errors. Probably not the better solution though
         if (!$this->table_element) {
             return 0;
         }
 
         if (! is_array($optionsArray))
         {
-            // optionsArray not already loaded, so we load it
-            require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-            $extrafields = new ExtraFields($this->db);
-            $optionsArray = $extrafields->fetch_name_optionals_label($this->table_element);
+            // $extrafields is not a known object, we initialize it. Best practice is to have $extrafields defined into card.php or list.php page.
+            // TODO Use of existing extrafield is not yet ready (must mutualize code that use extrafields in form first)
+            // global $extrafields;
+            //if (! is_object($extrafields))
+            //{
+                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+                $extrafields = new ExtraFields($this->db);
+            //}
+
+            // Load array of extrafields for elementype = $this->table_element
+            if (empty($extrafields->attributes[$this->table_element]['loaded']))
+            {
+                $extrafields->fetch_name_optionals_label($this->table_element);
+            }
+            $optionsArray = $extrafields->attributes[$this->table_element]['label'];
         }
 
         // Request to get complementary values
@@ -4132,12 +4143,15 @@ abstract class CommonObject
             $sql = "SELECT rowid";
             foreach ($optionsArray as $name => $label)
             {
-                $sql.= ", ".$name;
+                if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] != 'separate')
+                {
+                    $sql.= ", ".$name;
+                }
             }
             $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields";
             $sql.= " WHERE fk_object = ".$rowid;
 
-            dol_syslog(get_class($this)."::fetch_optionals", LOG_DEBUG);
+            dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {

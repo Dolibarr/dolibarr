@@ -235,11 +235,8 @@ print $langs->trans("Color").'</td><td>';
 print $formother->showColor($object->color);
 print '</td></tr>';
 
-$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-if (empty($reshook) && ! empty($extrafields->attribute_label))
-{
-	print $object->showOptionals($extrafields);
-}
+// Other attributes
+include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 print '</table>';
 print '</div>';
@@ -290,7 +287,7 @@ else
 	if (count($cats) > 0)
 	{
 		foreach ($cats as $cat)
-		{			
+		{
 			print "\t".'<tr class="oddeven">'."\n";
 			print "\t\t".'<td class="nowrap">';
 			print "<a href='viewcat.php?id=".$cat->id."&amp;type=".$type."'>".$cat->label."</a>";
@@ -359,7 +356,7 @@ if ($object->type == Categorie::TYPE_PRODUCT)
 		if (count($prods) > 0)
 		{
 			foreach ($prods as $prod)
-			{				
+			{
 				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $prod->getNomUrl(1);
@@ -408,7 +405,7 @@ if ($object->type == Categorie::TYPE_SUPPLIER)
 		if (count($socs) > 0)
 		{
 			foreach ($socs as $soc)
-			{				
+			{
 				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $soc->getNomUrl(1);
@@ -462,7 +459,7 @@ if($object->type == Categorie::TYPE_CUSTOMER)
 				if ($user->societe_id > 0 && $soc->id != $user->societe_id)	continue; 	// External user always see only themself
 
 				$i++;
-				
+
 				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $soc->getNomUrl(1);
@@ -513,7 +510,7 @@ if ($object->type == Categorie::TYPE_MEMBER)
 		if (count($prods) > 0)
 		{
 			foreach ($prods as $key => $member)
-			{				
+			{
 				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				$member->ref=$member->login;
@@ -567,7 +564,7 @@ if($object->type == Categorie::TYPE_CONTACT)
 			foreach ($contacts as $key => $contact)
 			{
 				$i++;
-				
+
 				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $contact->getNomUrl(1,'category');
@@ -619,7 +616,7 @@ if ($object->type == Categorie::TYPE_ACCOUNT)
         if (count($accounts) > 0)
         {
             foreach ($accounts as $key => $account)
-            {              
+            {
                 print "\t".'<tr class="oddeven">'."\n";
                 print '<td class="nowrap" valign="top">';
                 print $account->getNomUrl(1,0);
@@ -672,7 +669,7 @@ if ($object->type == Categorie::TYPE_PROJECT)
 		if (count($projects) > 0)
 		{
 			foreach ($projects as $key => $project)
-			{				
+			{
 				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $project->getNomUrl(1,0);

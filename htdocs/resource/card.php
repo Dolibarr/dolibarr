@@ -201,7 +201,7 @@ if ( $object->fetch($id) > 0 )
 		print '</td></tr>';
 
 		// Other attributes
-		$parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
+		$parameters=array('objectsrc' => $objectsrc);
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
@@ -224,7 +224,7 @@ if ( $object->fetch($id) > 0 )
 		dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"), -1, 'resource');
 
 		$formconfirm = '';
-		
+
 		// Confirm deleting resource line
 	    if ($action == 'delete')
 	    {
@@ -233,21 +233,21 @@ if ( $object->fetch($id) > 0 )
 
 	    // Print form confirm
 	    print $formconfirm;
-	    
-	    
+
+
 	    $linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-	    
-	    
+
+
 	    $morehtmlref='<div class="refidno">';
 	    $morehtmlref.='</div>';
-	    
-	    
+
+
 	    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
-	    
-	    
+
+
 	    print '<div class="fichecenter">';
 	    print '<div class="underbanner clearboth"></div>';
-	    
+
 		/*---------------------------------------
 		 * View object
 		 */
@@ -269,21 +269,16 @@ if ( $object->fetch($id) > 0 )
 		print '</td>';
 
 		// Other attributes
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
-		{
-			print $object->showOptionals($extrafields);
-		}
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</tr>';
 
 		print '</table>';
-		
+
 		print '</div>';
-		
+
 		print '<div class="clearboth"></div><br>';
-		
+
 		dol_fiche_end();
 	}
 
