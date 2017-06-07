@@ -692,7 +692,7 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
     overflow-x: auto;
 }
 div.fiche>form>div.div-table-responsive {
-    min-height: 390px;
+    min-height: 392px;
 }
 
 .flexcontainer {

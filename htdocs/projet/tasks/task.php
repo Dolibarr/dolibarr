@@ -511,13 +511,10 @@ if ($id > 0 || ! empty($ref))
 			print nl2br($object->description);
 			print '</td></tr>';
 
-			// Other options
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
-			if (empty($reshook) && ! empty($extrafields->attribute_label))
-			{
-				print $object->showOptionals($extrafields);
-			}
+			// Other attributes
+			$cols = 3;
+			$parameyers=array('socid'=>$socid);
+			include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 			print '</table>';
 

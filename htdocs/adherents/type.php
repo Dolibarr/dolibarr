@@ -336,14 +336,8 @@ if ($rowid > 0)
 		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 		print nl2br($object->mail_valid)."</td></tr>";
 
-		// Other attributes
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
-		{
-			// View extrafields
-			print $object->showOptionals($extrafields);
-		}
+    	// Other attributes
+    	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
         print '</div>';
@@ -674,6 +668,10 @@ if ($rowid > 0)
 		// Other attributes
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		{
+		    print $object->showOptionals($extrafields,'edit');
+		}
 
 		print '</table>';
 

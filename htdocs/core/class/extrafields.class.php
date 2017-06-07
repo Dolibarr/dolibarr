@@ -69,6 +69,9 @@ class ExtraFields
 	// Array to store if extra field is hidden
 	var $attribute_hidden;		// warning, do not rely on this. If your module need a hidden data, it must use its own table.
 
+	// New array to store extrafields definition
+	var $attributes;
+
 	var $error;
 	var $errno;
 
@@ -640,25 +643,28 @@ class ExtraFields
 
 
 	/**
-	 * 	Load array this->attribute_xxx like attribute_label, attribute_type, ...
+	 * 	Load array this->attributes, or old this->attribute_xxx like attribute_label, attribute_type, ...
 	 *
-	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
-	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED
-	 * 	@return	array							Array of attributes for all extra fields
+	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
+	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED. Deprecated. Should not be required.
+	 * 	@return	array							Array of attributes keys+label for all extra fields.
 	 */
 	function fetch_name_optionals_label($elementtype,$forceload=false)
 	{
 		global $conf;
 
-		if ( empty($elementtype) ) return array();
+		if (empty($elementtype) ) return array();
 
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
 
 		$array_name_label=array();
 
-		// For avoid conflicts with external modules
+		// To avoid conflicts with external modules. TODO Remove this.
 		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
+
+		// We should not have several time this log. If we have, there is some optimization to do by calling a simple $object->fetch_optionals() that include cache management.
+		dol_syslog("fetch_name_optionals_label elementtype=".$elementtype);
 
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,list,ishidden,fielddefault,fieldcomputed";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
@@ -673,12 +679,13 @@ class ExtraFields
 			{
 				while ($tab = $this->db->fetch_object($resql))
 				{
-					// we can add this attribute to adherent object
+					// We can add this attribute to object. TODO Remove this and return $this->attributes[$elementtype]['label']
 					if ($tab->type != 'separate')
 					{
 						$array_name_label[$tab->name]=$tab->label;
 					}
 
+					// Old usage
 					$this->attribute_type[$tab->name]=$tab->type;
 					$this->attribute_label[$tab->name]=$tab->label;
 					$this->attribute_size[$tab->name]=$tab->size;
@@ -693,8 +700,25 @@ class ExtraFields
 					$this->attribute_perms[$tab->name]=$tab->perms;
 					$this->attribute_list[$tab->name]=$tab->list;
 					$this->attribute_hidden[$tab->name]=$tab->ishidden;
+
+					// New usage
+					$this->attributes[$tab->elementtype]['type'][$tab->name]=$tab->type;
+					$this->attributes[$tab->elementtype]['label'][$tab->name]=$tab->label;
+					$this->attributes[$tab->elementtype]['size'][$tab->name]=$tab->size;
+					$this->attributes[$tab->elementtype]['elementtype'][$tab->name]=$tab->elementtype;
+					$this->attributes[$tab->elementtype]['default'][$tab->name]=$tab->fielddefault;
+					$this->attributes[$tab->elementtype]['computed'][$tab->name]=$tab->fieldcomputed;
+					$this->attributes[$tab->elementtype]['unique'][$tab->name]=$tab->fieldunique;
+					$this->attributes[$tab->elementtype]['required'][$tab->name]=$tab->fieldrequired;
+					$this->attributes[$tab->elementtype]['param'][$tab->name]=($tab->param ? unserialize($tab->param) : '');
+					$this->attributes[$tab->elementtype]['pos'][$tab->name]=$tab->pos;
+					$this->attributes[$tab->elementtype]['alwayseditable'][$tab->name]=$tab->alwayseditable;
+					$this->attributes[$tab->elementtype]['perms'][$tab->name]=$tab->perms;
+					$this->attributes[$tab->elementtype]['list'][$tab->name]=$tab->list;
+					$this->attributes[$tab->elementtype]['ishidden'][$tab->name]=$tab->ishidden;
 				}
 			}
+			if ($elementtype) $this->attributes[$elementtype]['loaded']=1;
 		}
 		else
 		{

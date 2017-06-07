@@ -250,6 +250,9 @@ class Task extends CommonObject
                 $this->note_private			= $obj->note_private;
                 $this->note_public			= $obj->note_public;
 				$this->rang					= $obj->rang;
+
+                // Retreive all extrafield for thirdparty
+               	$this->fetch_optionals();
             }
 
             $this->db->free($resql);
