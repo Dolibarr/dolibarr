@@ -113,6 +113,8 @@ class ActionComm extends CommonObject
     var $userownerid;	// Id of user owner = fk_user_action into table
     var $userdoneid;	// Id of user done (deprecated)
 
+	var $socpeopleassigned = array(); // Array of user ids
+	var $TContactId = array(); // Array of user ids
     /**
      * Object user of owner
      * @var User
@@ -345,6 +347,26 @@ class ActionComm extends CommonObject
 				}
 			}
 
+			if (!$error)
+			{
+				if (!empty($this->TContactId))
+				{
+					foreach ($this->TContactId as $id)
+					{
+						$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
+						$sql.=" VALUES(".$this->id.", 'socpeople', ".$id.", 0, 0, 0)";
+						
+						$resql = $this->db->query($sql);
+						if (! $resql)
+						{
+							$error++;
+							$this->errors[]=$this->db->lasterror();
+						}
+						
+					}
+				}
+			}
+			
             if (! $error)
             {
             	$action='create';
@@ -617,6 +639,7 @@ class ActionComm extends CommonObject
 		{
 			$this->userassigned=array();
 			$this->socpeopleassigned=array();
+			$this->TContactId=array();
 
 			// If owner is known, we must but id first into list
 			if ($this->userownerid > 0) $this->userassigned[$this->userownerid]=array('id'=>$this->userownerid);	// Set first so will be first into list.
@@ -865,6 +888,29 @@ class ActionComm extends CommonObject
 		           		$this->errors[]=$this->db->lasterror();
 					}
 					//var_dump($sql);exit;
+				}
+			}
+			
+			if (!$error)
+			{
+				$sql ="DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources where fk_actioncomm = ".$this->id." AND element_type = 'socpeople'";
+				$resql = $this->db->query($sql);
+				
+				if (!empty($this->TContactId))
+				{
+					foreach ($this->TContactId as $id)
+					{
+						$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
+						$sql.=" VALUES(".$this->id.", 'socpeople', ".$id.", 0, 0, 0)";
+						
+						$resql = $this->db->query($sql);
+						if (! $resql)
+						{
+							$error++;
+							$this->errors[]=$this->db->lasterror();
+						}
+						
+					}
 				}
 			}
 

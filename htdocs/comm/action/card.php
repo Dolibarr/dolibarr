@@ -319,6 +319,8 @@ if ($action == 'add')
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 	}
 
+	$object->TContactId = $TContactId;
+	
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 	if ($ret < 0) $error++;
@@ -409,8 +411,8 @@ if ($action == 'update')
         $object->fulldayevent= GETPOST("fullday")?1:0;
 		$object->location    = GETPOST('location');
 		$object->socid       = GETPOST("socid");
-//		$object->contactid   = GETPOST("contactid",'int');
 		$object->TContactId   = GETPOST("TContactId",'array');
+		$object->contactid   = !empty($object->TContactId[0]) ? $object->TContactId[0] : 0;
 		//$object->societe->id = $_POST["socid"];			// deprecated
 		//$object->contact->id = $_POST["contactid"];		// deprecated
 		$object->fk_project  = GETPOST("projectid",'int');
@@ -783,7 +785,7 @@ if ($action == 'create')
 
 	// Related contact
 	print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
-	$form->select_contacts(GETPOST('socid','int'), GETPOST('TContactId', 'array'), 'TContactId', 1, '', '', 0, 'minwidth200',0, 0, array(), false, 'multiple', 'contactid');
+	$form->select_contacts(GETPOST('socid','int'), GETPOST('TContactId', 'array'), 'TContactId[]', 1, '', '', 0, 'minwidth200',0, 0, array(), false, 'multiple', 'contactid');
 	print '</td></tr>';
 
 
@@ -882,8 +884,8 @@ if ($id > 0)
         $object->fulldayevent= GETPOST("fullday")?1:0;
 		$object->location    = GETPOST('location');
 		$object->socid       = GETPOST("socid");
-//		$object->contactid   = GETPOST("contactid",'int');
 		$object->TContactId = GETPOST("TContactId",'array');
+		$object->contactid   = !empty($object->TContactId[0]) ? $object->TContactId[0] : 0;
 		//$object->societe->id = $_POST["socid"];			// deprecated
 		//$object->contact->id = $_POST["contactid"];		// deprecated
 		$object->fk_project  = GETPOST("projectid",'int');
@@ -1384,10 +1386,11 @@ if ($id > 0)
 					
 					if ($result > 0)
 					{
-						print $contact->getNomUrl(1);
+						print $contact->getNomUrl(1).'&nbsp;';
 						if ($object->type_code == 'AC_TEL')
 						{
-							print "<br>".dol_print_phone($object->contact->phone_pro);
+							if (!empty($contact->phone_pro)) print '('.dol_print_phone($contact->phone_pro).')';
+							print '<br />';
 						}
 					}
 					
