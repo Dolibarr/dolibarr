@@ -784,7 +784,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
     if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
     else { $rowidcol="rowid"; }
 
-    $sql = "DELETE FROM ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'".($entity >= 0 ? " AND entity = " . $entity: '');
+    $sql = "DELETE FROM ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'".($entity != '' ? " AND entity = " . (int)$entity: '');
 
     dol_syslog("delete", LOG_DEBUG);
     $result = $db->query($sql);
@@ -808,10 +808,10 @@ if ($action == $acts[0])
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-    	$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'".($entity >= 0 ? " AND entity = " . $entity: '');
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'".($entity != '' ? " AND entity = " . (int)$entity: '');
     }
     elseif ($_GET["code"]) {
-    	$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".dol_escape_htmltag(GETPOST('code'))."'".($entity >= 0 ? " AND entity = " . $entity: '');
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".dol_escape_htmltag(GETPOST('code'))."'".($entity != '' ? " AND entity = " . (int)$entity: '');
     }
 
     $result = $db->query($sql);
@@ -828,10 +828,10 @@ if ($action == $acts[1])
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-    	$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'".($entity >= 0 ? " AND entity = " . $entity: '');
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'".($entity != '' ? " AND entity = " . (int)$entity: '');
     }
     elseif ($_GET["code"]) {
-    	$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".dol_escape_htmltag(GETPOST('code'))."'".($entity >= 0 ? " AND entity = " . $entity: '');
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".dol_escape_htmltag(GETPOST('code'))."'".($entity != '' ? " AND entity = " . (int)$entity: '');
     }
 
     $result = $db->query($sql);
@@ -848,10 +848,10 @@ if ($action == 'activate_favorite')
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol."='".$rowid."'".($entity >= 0 ? " AND entity = " . $entity: '');
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol."='".$rowid."'".($entity != '' ? " AND entity = " . (int)$entity: '');
     }
     elseif ($_GET["code"]) {
-    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".dol_escape_htmltag(GETPOST('code'))."'".($entity >= 0 ? " AND entity = " . $entity: '');
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".dol_escape_htmltag(GETPOST('code'))."'".($entity != '' ? " AND entity = " . (int)$entity: '');
     }
 
     $result = $db->query($sql);
@@ -868,10 +868,10 @@ if ($action == 'disable_favorite')
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol."='".$rowid."'".($entity >= 0 ? " AND entity = " . $entity: '');
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol."='".$rowid."'".($entity != '' ? " AND entity = " . (int)$entity: '');
     }
     elseif ($_GET["code"]) {
-    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".dol_escape_htmltag(GETPOST('code'))."'".($entity >= 0 ? " AND entity = " . $entity: '');
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".dol_escape_htmltag(GETPOST('code'))."'".($entity != '' ? " AND entity = " . (int)$entity: '');
     }
 
     $result = $db->query($sql);
@@ -923,7 +923,7 @@ print "<br>\n";
 $param = '&id='.$id;
 if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
 if ($search_code != '')     $param.= '&search_code='.urlencode($search_country_id);
-if ($entity >=0 ) $param.= '&entity='.$entity;
+if ($entity != '') $param.= '&entity=' . (int)$entity;
 $paramwithsearch = $param;
 if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
 if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
