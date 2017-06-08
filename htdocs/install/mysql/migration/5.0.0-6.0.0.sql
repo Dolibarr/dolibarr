@@ -395,3 +395,21 @@ ALTER TABLE llx_usergroup_rights DROP INDEX fk_usergroup;
 ALTER TABLE llx_usergroup_rights ADD UNIQUE INDEX uk_usergroup_rights (entity, fk_usergroup, fk_id);
 ALTER TABLE llx_usergroup_rights ADD CONSTRAINT fk_usergroup_rights_fk_usergroup FOREIGN KEY (fk_usergroup) REFERENCES llx_usergroup (rowid);
 
+CREATE TABLE llx_blockedlog 
+( 
+	rowid integer AUTO_INCREMENT, 
+	tms	timestamp,
+	action varchar(50), 
+	key_value1 real NOT NULL, 
+	signature varchar(32) NOT NULL, 
+	element varchar(50), 
+	fk_object integer, 
+	entity integer, 
+	certified integer, 
+	PRIMARY KEY (rowid), 
+	KEY signature (signature), 
+	KEY fk_object_element (fk_object,element), 
+	KEY entity (entity), 
+	KEY entity_action (entity,action), 
+	KEY entity_action_certified (entity,action,certified) 
+) 
