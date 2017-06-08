@@ -269,7 +269,7 @@ if ($search_user > 0)
     $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql.= ' WHERE p.fk_soc = s.rowid';
-$sql.= ' AND p.entity IN ('.getEntity('propal', 1).')';
+$sql.= ' AND p.entity IN ('.getEntity('propal').')';
 if (! $user->rights->societe->client->voir && ! $socid) //restriction
 {
 	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;

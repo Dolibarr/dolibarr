@@ -109,7 +109,7 @@ if (empty($user->socid)) $fieldstosearchall["t.note_private"]="NotePrivate";
 $arrayfields=array(
     't.field1'=>array('label'=>"Field1", 'checked'=>1),
     't.field2'=>array('label'=>"Field2", 'checked'=>1),
-    //'t.entity'=>array('label'=>"Entity", 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))),
+    //'t.entity'=>array('label'=>"Entity", 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
     't.datec'=>array('label'=>"DateCreationShort", 'checked'=>0, 'position'=>500),
     't.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
     //'t.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
@@ -214,7 +214,7 @@ $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."mytable_extrafields as ef on (t.rowid = ef.fk_object)";
 $sql.= " WHERE 1 = 1";
-//$sql.= " WHERE u.entity IN (".getEntity('mytable',1).")";
+//$sql.= " WHERE u.entity IN (".getEntity('mytable').")";
 if ($search_field1) $sql.= natural_search("field1",$search_field1);
 if ($search_field2) $sql.= natural_search("field2",$search_field2);
 if ($sall)          $sql.= natural_search(array_keys($fieldstosearchall), $sall);

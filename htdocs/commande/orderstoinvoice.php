@@ -548,7 +548,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 	$sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= ' WHERE c.entity IN ('.getEntity('commande', 1).')';
+	$sql.= ' WHERE c.entity IN ('.getEntity('commande').')';
 	$sql.= ' AND c.fk_soc = s.rowid';
 
 	// Show orders with status validated, shipping started and delivered (well any order we can bill)

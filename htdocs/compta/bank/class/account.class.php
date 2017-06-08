@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2010	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1167,7 +1167,7 @@ class Account extends CommonObject
         $sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE b.rappro=0";
         $sql.= " AND b.fk_account = ba.rowid";
-        $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+        $sql.= " AND ba.entity IN (".getEntity('bank_account').")";
         $sql.= " AND (ba.rappro = 1 AND ba.courant != 2)";	// Compte rapprochable
         $sql.= " AND clos = 0";
         if ($filteraccountid) $sql.=" AND ba.rowid = ".$filteraccountid;
@@ -1224,7 +1224,7 @@ class Account extends CommonObject
         $sql = "SELECT COUNT(ba.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE ba.rappro > 0 and ba.clos = 0";
-        $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+        $sql.= " AND ba.entity IN (".getEntity('bank_account').")";
         if (empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) $sql.= " AND ba.courant != 2";
         $resql=$db->query($sql);
         if ($resql)
@@ -1615,7 +1615,7 @@ class AccountLine extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."bank as b,";
         $sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE b.fk_account = ba.rowid";
-        $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+        $sql.= " AND ba.entity IN (".getEntity('bank_account').")";
         if ($num) $sql.= " AND b.num_chq='".$this->db->escape($num)."'";
         else if ($ref) $sql.= " AND b.rowid='".$this->db->escape($ref)."'";
         else $sql.= " AND b.rowid=".$rowid;
@@ -2028,6 +2028,7 @@ class AccountLine extends CommonObject
             $result.=$langs->trans("BankAccount").': ';
             $accountstatic=new Account($this->db);
             $accountstatic->id=$this->fk_account;
+            $accountstatic->ref=$this->bank_account_ref;
             $accountstatic->label=$this->bank_account_label;
             $result.=$accountstatic->getNomUrl(0).', ';
         }

@@ -148,7 +148,7 @@ if ($action == 'search')
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
 	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
-	$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+	$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 	if ($key != "")
 	{
 		// For natural search

@@ -288,7 +288,7 @@ else
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 	}
 
-	$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+	$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 	if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($search_type) && $search_type != '-1')

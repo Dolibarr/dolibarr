@@ -1859,7 +1859,7 @@ class ExpenseReport extends CommonObject
         $sql = "SELECT count(ex.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
         $sql.= " WHERE ex.fk_statut > 0";
-        $sql.= " AND ex.entity IN (".getEntity('expensereport', 1).")";
+        $sql.= " AND ex.entity IN (".getEntity('expensereport').")";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1900,7 +1900,7 @@ class ExpenseReport extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
         if ($option == 'toapprove') $sql.= " WHERE ex.fk_statut = 2";
         else $sql.= " WHERE ex.fk_statut = 5";
-        $sql.= " AND ex.entity IN (".getEntity('expensereport', 1).")";
+        $sql.= " AND ex.entity IN (".getEntity('expensereport').")";
         $sql.= " AND (ex.fk_user_author IN (".join(',',$userchildids).")";
         $sql.= " OR ex.fk_user_validator IN (".join(',',$userchildids)."))";
 

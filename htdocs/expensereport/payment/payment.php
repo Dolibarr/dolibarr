@@ -209,7 +209,7 @@ if ($action == 'create' || empty($action))
 	$sql = "SELECT sum(p.amount) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
 	$sql.= " WHERE p.fk_expensereport = e.rowid AND p.fk_expensereport = ".$chid;
-    $sql.= ' AND e.entity IN ('.getEntity('expensereport', 1).')';
+    $sql.= ' AND e.entity IN ('.getEntity('expensereport').')';
 	$resql = $db->query($sql);
 	if ($resql)
 	{

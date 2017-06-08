@@ -100,7 +100,7 @@ class Members extends DolibarrApi
 
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('adherent', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('adherent').')';
         if (!empty($typeid))
         {
             $sql.= ' AND t.fk_adherent_type='.$typeid;

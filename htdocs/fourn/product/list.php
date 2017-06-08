@@ -130,7 +130,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($catid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid";
-$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
+$sql.= " WHERE p.entity IN (".getEntity('product').")";
 if ($sRefSupplier)
 {
 	$sql .= natural_search('ppf.ref_fourn', $sRefSupplier);

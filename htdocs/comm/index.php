@@ -146,7 +146,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE p.fk_statut = 0";
 	$sql.= " AND p.fk_soc = s.rowid";
-	$sql.= " AND p.entity IN (".getEntity('propal', 1).")";
+	$sql.= " AND p.entity IN (".getEntity('propal').")";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND s.rowid = ".$socid;
 
@@ -227,7 +227,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
     if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE p.fk_statut = 0";
     $sql.= " AND p.fk_soc = s.rowid";
-    $sql.= " AND p.entity IN (".getEntity('propal', 1).")";
+    $sql.= " AND p.entity IN (".getEntity('propal').")";
     if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid)	$sql.= " AND s.rowid = ".$socid;
 
@@ -306,7 +306,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
 	$sql.= " AND c.fk_statut = 0";
-	$sql.= " AND c.entity IN (".getEntity('commande', 1).")";
+	$sql.= " AND c.entity IN (".getEntity('commande').")";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND c.fk_soc = ".$socid;
 
@@ -387,7 +387,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
     if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE cf.fk_soc = s.rowid";
     $sql.= " AND cf.fk_statut = 0";
-    $sql.= " AND cf.entity IN (".getEntity('supplier_order', 1).")";
+    $sql.= " AND cf.entity IN (".getEntity('supplier_order').")";
     if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid)	$sql.= " AND cf.fk_soc = ".$socid;
 
@@ -611,7 +611,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
 	$sql.= ", ".MAIN_DB_PREFIX."product as p";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
-	$sql.= " AND c.entity IN (".getEntity('contract', 1).")";
+	$sql.= " AND c.entity IN (".getEntity('contract').")";
 	$sql.= " AND c.fk_product = p.rowid";
 	if (! $user->rights->societe->client->voir && ! $socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
@@ -669,7 +669,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE p.fk_soc = s.rowid";
-	$sql.= " AND p.entity IN (".getEntity('propal', 1).")";
+	$sql.= " AND p.entity IN (".getEntity('propal').")";
 	$sql.= " AND p.fk_statut = 1";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
@@ -766,7 +766,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	$sql.= ", ".MAIN_DB_PREFIX."commande as c";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
-	$sql.= " AND c.entity IN (".getEntity('commande', 1).")";
+	$sql.= " AND c.entity IN (".getEntity('commande').")";
 	$sql.= " AND c.fk_statut = 1";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;

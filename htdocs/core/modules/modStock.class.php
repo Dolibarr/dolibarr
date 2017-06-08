@@ -176,7 +176,7 @@ class modStock extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'entrepot as e';
 		$this->export_sql_end[$r] .=' WHERE p.rowid = ps.fk_product AND ps.fk_entrepot = e.rowid';
-		$this->export_sql_end[$r] .=' AND e.entity IN ('.getEntity('stock',1).')';
+		$this->export_sql_end[$r] .=' AND e.entity IN ('.getEntity('stock').')';
 
 		if ($conf->productbatch->enabled)
 		{
@@ -196,7 +196,7 @@ class modStock extends DolibarrModules
 			$this->export_sql_start[$r]='SELECT DISTINCT ';
 			$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'entrepot as e, '.MAIN_DB_PREFIX.'product_batch as pb';
 			$this->export_sql_end[$r] .=' WHERE p.rowid = ps.fk_product AND ps.fk_entrepot = e.rowid AND ps.rowid = pb.fk_product_stock';
-			$this->export_sql_end[$r] .=' AND e.entity IN ('.getEntity('stock',1).')';
+			$this->export_sql_end[$r] .=' AND e.entity IN ('.getEntity('stock').')';
 		}
 
 		// Imports

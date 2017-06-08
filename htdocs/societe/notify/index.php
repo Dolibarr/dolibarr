@@ -64,7 +64,7 @@ $sql.= " ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE n.fk_contact = c.rowid";
 $sql.= " AND a.rowid = n.fk_action";
 $sql.= " AND n.fk_soc = s.rowid";
-$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+$sql.= " AND s.entity IN (".getEntity('societe').")";
 if ($socid > 0)	$sql.= " AND s.rowid = " . $user->societe_id;
 
 $sql.= $db->order($sortfield,$sortorder);

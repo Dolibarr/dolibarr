@@ -102,7 +102,7 @@ $arrayfields=array(
 	't.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>1),
 	't.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>1),
 	//'t.import_key'=>array('label'=>$langs->trans("ImportKey"), 'checked'=>1),
-    //'t.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))),
+    //'t.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
     //'t.fk_user_creat'=>array('label'=>$langs->trans("UserCreationShort"), 'checked'=>0, 'position'=>500),
 	//'t.fk_user_modif'=>array('label'=>$langs->trans("UserModificationShort"), 'checked'=>0, 'position'=>500),
     't.datec'=>array('label'=>$langs->trans("DateCreationShort"), 'checked'=>0, 'position'=>500),
@@ -227,7 +227,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."product_lot as t";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot_extrafields as ef on (t.rowid = ef.fk_object)";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE p.rowid = t.fk_product";
-//$sql.= " WHERE u.entity IN (".getEntity('productlot',1).")";
+//$sql.= " WHERE u.entity IN (".getEntity('productlot').")";
 
 if ($search_entity) $sql.= natural_search("entity",$search_entity);
 if ($search_product) $sql.= natural_search("p.ref",$search_product);

@@ -179,7 +179,7 @@ class MyModuleObject extends CommonObject
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		$sql.= ' WHERE 1 = 1';
 		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity("mymoduleobject", 1) . ")";
+		    $sql .= " AND entity IN (" . getEntity('mymoduleobject') . ")";
 		}
 		if (null !== $ref) {
 			$sql .= ' AND t.ref = ' . '\'' . $ref . '\'';
@@ -249,7 +249,7 @@ class MyModuleObject extends CommonObject
 		}
 		$sql.= ' WHERE 1 = 1';
 		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity("mymoduleobject", 1) . ")";
+		    $sql .= " AND entity IN (" . getEntity('mymoduleobject') . ")";
 		}
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);

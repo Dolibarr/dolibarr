@@ -200,7 +200,7 @@ class modContrat extends DolibarrModules
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'contratdet as cod';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (cod.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE co.fk_soc = s.rowid and co.rowid = cod.fk_contrat';
-		$this->export_sql_end[$r] .=' AND co.entity IN ('.getEntity('contract',1).')';
+		$this->export_sql_end[$r] .=' AND co.entity IN ('.getEntity('contract').')';
 	}
 
 
