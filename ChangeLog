@@ -6,6 +6,7 @@ English Dolibarr ChangeLog
 
 For developers:
 NEW: Add a lot of API REST: dictionaryevents, memberstypes, ...
+NEW: getEntity function use true $shared value by default
 
 WARNING: 
 
@@ -21,6 +22,7 @@ Following changes may create regression for some external modules, but were nece
 * Removed Societe::set_commnucation_level (was deprecated in 4.0). Was not used.
 * Removed the trigger file of PAYPAL module that stored data that was not used by Dolibarr. The trigger event still
   exists, but if an external module need action on it, it must provides itself its trigger file.
+* Use getEntity('xxx') instead getEntity('xxx', 1) and use getEntity('xxx', 0) instead getEntity('xxx')
 
 ***** ChangeLog for 5.0.3 compared to 5.0.2 *****
 FIX: #6677 Expired contracts dashboard box does not show the name of the thirdparty

@@ -1319,7 +1319,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     $sql .= " FROM " . MAIN_DB_PREFIX . "product_price as p,";
     $sql .= " " . MAIN_DB_PREFIX . "user as u";
     $sql .= " WHERE fk_product = " . $object->id;
-    $sql .= " AND p.entity IN (" . getEntity('productprice', 1) . ")";
+    $sql .= " AND p.entity IN (" . getEntity('productprice') . ")";
     $sql .= " AND p.fk_user_author = u.rowid";
     if (! empty($socid) && ! empty($conf->global->PRODUIT_MULTIPRICES)) $sql .= " AND p.price_level = " . $soc->price_level;
     $sql .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";

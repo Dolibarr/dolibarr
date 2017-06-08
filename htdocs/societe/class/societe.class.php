@@ -1243,7 +1243,7 @@ class Societe extends CommonObject
 
     	// Generation requete recherche
     	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
-    	$sql.= " WHERE entity IN (".getEntity('category',1).")";
+    	$sql.= " WHERE entity IN (".getEntity('category').")";
     	if (! empty($type))
     	{
     		if ($type == 1 || $type == 2)
@@ -2635,7 +2635,7 @@ class Societe extends CommonObject
         }
 
          //Verify duplicate entries
-        $sql  = "SELECT COUNT(*) as idprof FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$value."' AND entity IN (".getEntity('societe',1).")";
+        $sql  = "SELECT COUNT(*) as idprof FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$value."' AND entity IN (".getEntity('societe').")";
         if($socid) $sql .= " AND rowid <> ".$socid;
         $resql = $this->db->query($sql);
         if ($resql)

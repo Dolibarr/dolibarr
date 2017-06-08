@@ -1065,7 +1065,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         if (get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         if (get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
         $sql.= " WHERE u.rowid = a.fk_user_action";
-        $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
+        $sql.= " AND a.entity IN (".getEntity('agenda').")";
         if (get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
         if (get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
         if (get_class($filterobj) == 'Adherent') 
@@ -1478,7 +1478,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 	$sql = "SELECT s.rowid, s.nom as name, s.address, s.zip, s.town, s.code_client, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= " WHERE s.parent = ".$object->id;
-	$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+	$sql.= " AND s.entity IN (".getEntity('societe').")";
 	$sql.= " ORDER BY s.nom";
 
 	$result = $db->query($sql);

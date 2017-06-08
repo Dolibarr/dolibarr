@@ -153,7 +153,7 @@ class FormProjets
 		// Search all projects
 		$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, s.nom as name, s.name_alias';
 		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p LEFT JOIN '.MAIN_DB_PREFIX .'societe as s ON s.rowid = p.fk_soc';
-		$sql.= " WHERE p.entity IN (".getEntity('project', 1).")";
+		$sql.= " WHERE p.entity IN (".getEntity('project').")";
 		if ($projectsListId !== false) $sql.= " AND p.rowid IN (".$projectsListId.")";
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		if ($socid > 0)
@@ -523,7 +523,7 @@ class FormProjets
 		    if (is_numeric($socid)) $sql.= " AND t.fk_soc=".$socid;
 		    else $sql.= " AND t.fk_soc IN (".$socid.")";
 		}
-		if (! in_array($table_element, array('expensereport_det','stock_mouvement'))) $sql.= ' AND t.entity IN ('.getEntity('project',1).')';
+		if (! in_array($table_element, array('expensereport_det','stock_mouvement'))) $sql.= ' AND t.entity IN ('.getEntity('project').')';
 		if ($linkedtothirdparty) $sql.=" AND s.rowid = t.fk_soc";
 		if ($sqlfilter) $sql.= " AND ".$sqlfilter;
 		$sql.= " ORDER BY ref DESC";
