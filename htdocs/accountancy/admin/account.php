@@ -52,7 +52,7 @@ if ($user->societe_id > 0) accessforbidden();
 if (! $user->rights->accounting->chartofaccount) accessforbidden();
 
 // Load variable for pagination
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit', 'int')::$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'sortorder');
 $page = GETPOST("page", 'int');

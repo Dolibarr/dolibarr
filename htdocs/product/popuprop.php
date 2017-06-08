@@ -38,7 +38,7 @@ $type=GETPOST("type","int");
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit', 'int')::$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');

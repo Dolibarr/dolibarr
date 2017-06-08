@@ -70,7 +70,7 @@ $accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 $btn_changeaccount = GETPOST('changeaccount');
 $btn_changetype = GETPOST('changetype');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit','int')?GETPOST('limit', 'int')::(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');

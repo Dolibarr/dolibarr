@@ -52,7 +52,7 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit', 'int')::$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');

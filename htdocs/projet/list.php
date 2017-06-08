@@ -55,7 +55,7 @@ if (!$user->rights->projet->lire) accessforbidden();
 
 $diroutputmassaction=$conf->projet->dir_output . '/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit', 'int')::$conf->liste_limit;
 $sortfield = GETPOST("sortfield","alpha");
 $sortorder = GETPOST("sortorder");
 $page = GETPOST("page");
