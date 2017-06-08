@@ -980,7 +980,7 @@ if ($id)
     if ($tabname[$id])
     {
         $alabelisused=0;
-        $withentity=false;
+        $withentity=null;
 
         $fieldlist=explode(',',$tabfield[$id]);
 
@@ -1085,7 +1085,7 @@ if ($id)
         if ($id == 4) print '<td></td>';
         print '<td>';
         print '<input type="hidden" name="id" value="'.$id.'">';
-        if (! empty($withentity))
+        if (! is_null($withentity))
         	print '<input type="hidden" name="entity" value="'.$withentity.'">';
         print '</td>';
         print '<td style="min-width: 26px;"></td>';
@@ -1328,7 +1328,7 @@ if ($id)
                     print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-                    if (! empty($withentity))
+                    if (! is_null($withentity))
                     	print '<input type="hidden" name="entity" value="'.$withentity.'">';
                     print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
                     print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
@@ -1344,7 +1344,7 @@ if ($id)
 
                     if (empty($reshook))
                     {
-                    	$withentity=false;
+                    	$withentity=null;
 
                         foreach ($fieldlist as $field => $value)
                         {
@@ -1549,7 +1549,7 @@ if ($id)
                     if (empty($rowidcol) || in_array($id, array(6,7,8,13,17,19,27))) $rowidcol='rowid';
                     $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.((! empty($obj->{$rowidcol}) || $obj->{$rowidcol} == '0')?$obj->{$rowidcol}:(! empty($obj->code)?urlencode($obj->code):'')).'&code='.(! empty($obj->code)?urlencode($obj->code):'');
                     if (! empty($param)) $url .= '&'.$param;
-                    if (! empty($withentity)) $url .= '&entity='.$withentity;
+                    if (! is_null($withentity)) $url .= '&entity='.$withentity;
                     $url.='&';
 
 					// Favorite
@@ -1692,7 +1692,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 	$formcompany = new FormCompany($db);
 	if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
-	$withentity=false;
+	$withentity=null;
 
 	foreach ($fieldlist as $field => $value)
 	{
