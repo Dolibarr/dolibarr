@@ -17,11 +17,9 @@
  */
 
 /**
- * \file    css/mycss.css.php
+ * \file    htdocs/modulebuilder/template/css/mycss.css.php
  * \ingroup mymodule
- * \brief   Example CSS.
- *
- * Put detailed description here.
+ * \brief   CSS file for module MyModule.
  */
 
 header('Content-Type: text/css');
