@@ -109,7 +109,7 @@ if (empty($user->socid)) $fieldstosearchall["t.note_private"]="NotePrivate";
 $arrayfields=array(
     't.field1'=>array('label'=>"Field1", 'checked'=>1),
     't.field2'=>array('label'=>"Field2", 'checked'=>1),
-    //'t.entity'=>array('label'=>"Entity", 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))),
+    //'t.entity'=>array('label'=>"Entity", 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
     't.datec'=>array('label'=>"DateCreationShort", 'checked'=>0, 'position'=>500),
     't.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
     //'t.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),

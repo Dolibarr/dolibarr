@@ -107,16 +107,16 @@ class User extends CommonObject
 	public $all_permissions_are_loaded;	   // All permission are loaded
 	public $nb_rights;			           // Number of rights granted to the user
 	private $_tab_loaded=array();		   // Cache array of already loaded permissions
-	
+
 	public $conf;           		// To store personal config
 	public $default_values;         // To store default values for user
 	public $lastsearch_values_tmp;  // To store current search criterias for user
 	public $lastsearch_values;      // To store last saved search criterias for user
-	
+
 	public $users;					// To store all tree of users hierarchy
 	public $parentof;				// To store an array of all parents for all ids.
 	private $cache_childids;
-	
+
 	public $accountancy_code;			// Accountancy code in prevision of the complete accountancy module
 
 	public $thm;					// Average cost of employee - Used for valuation of time spent
@@ -207,7 +207,7 @@ class User extends CommonObject
 
 		if ($entity < 0)
 		{
-    		if ((empty($conf->multicompany->enabled) || empty($conf->multicompany->transverse_mode)) && (! empty($user->entity)))
+    		if ((empty($conf->multicompany->enabled) || empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) && (! empty($user->entity)))
     		{
     			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
     		}
@@ -218,7 +218,7 @@ class User extends CommonObject
 		}
 		else  // The fetch was forced on an entity
 		{
-			if (!empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode))
+			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 				$sql.= " WHERE u.entity IS NOT NULL";    // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			else
 				$sql.= " WHERE u.entity IN (0, ".$conf->entity.")";
@@ -365,7 +365,7 @@ class User extends CommonObject
 				$this->error=$this->db->lasterror();
 				return -2;
 			}
-			
+
 			// Load user->default_values for user. TODO Save this in memcached ?
 			$sql = "SELECT rowid, entity, type, page, param, value";
 			$sql.= " FROM ".MAIN_DB_PREFIX."default_values";
@@ -376,7 +376,7 @@ class User extends CommonObject
 			{
 			    while ($obj = $this->db->fetch_object($resql))
 			    {
-			        if (! empty($obj->page) && ! empty($obj->type) && ! empty($obj->param)) 
+			        if (! empty($obj->page) && ! empty($obj->type) && ! empty($obj->param))
 			        {
 			            $this->default_values[$obj->page][$obj->type][$obj->param]=$obj->value;
 			        }
@@ -389,7 +389,7 @@ class User extends CommonObject
 				return -3;
 			}
 		}
-		
+
 		return 1;
 	}
 
@@ -469,9 +469,9 @@ class User extends CommonObject
 					$obj = $this->db->fetch_object($result);
 					$nid = $obj->id;
 
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id." AND fk_id=".$nid;
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id." AND fk_id=".$nid." AND entity = ".$entity;
 					if (! $this->db->query($sql)) $error++;
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES (".$this->id.", ".$nid.")";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (entity, fk_user, fk_id) VALUES (".$entity.", ".$this->id.", ".$nid.")";
 					if (! $this->db->query($sql)) $error++;
 
 					$i++;
@@ -581,6 +581,7 @@ class User extends CommonObject
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights";
 					$sql.= " WHERE fk_user = ".$this->id." AND fk_id=".$nid;
+					$sql.= " AND entity = ".$entity;
 					if (! $this->db->query($sql)) $error++;
 
 					$i++;
@@ -660,7 +661,7 @@ class User extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = ur.fk_id";
-		$sql.= " AND r.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+		$sql.= " AND ur.entity = ".$conf->entity;
 		$sql.= " AND ur.fk_user= ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
@@ -706,11 +707,8 @@ class User extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu,";
 		$sql.= " ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = gr.fk_id";
-		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) {
-			$sql.= " AND gu.entity IN (0,".$conf->entity.")";
-		} else {
-			$sql.= " AND r.entity = ".$conf->entity;
-		}
+		$sql.= " AND gr.entity = ".$conf->entity;
+		$sql.= " AND r.entity = ".$conf->entity;
 		$sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
 		$sql.= " AND gu.fk_user = ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
@@ -2014,14 +2012,14 @@ class User extends CommonObject
 
         $result=''; $label='';
         $link=''; $linkstart=''; $linkend='';
-		
+
 		if (! empty($this->photo))
 		{
 		    $label.= '<div class="photointooltip">';
 		    $label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip', 'small', 0, 1);
 		    $label.= '</div><div style="clear: both;"></div>';
 		}
-		
+
 		$label.= '<div class="centpercent">';
 		$label.= '<u>' . $langs->trans("User") . '</u><br>';
 		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','');
@@ -2112,9 +2110,9 @@ class User extends CommonObject
 		}
 		$result.=$linkend;
 		//if ($withpictoimg == -1) $result.='</div>';
-		
+
 		$result.=$companylink;
-		
+
 		return $result;
 	}
 
@@ -2573,7 +2571,7 @@ class User extends CommonObject
 		// Init $this->users array
 		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.photo, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
+		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) || (! empty($user->admin) && empty($user->entity))))
 		{
 			$sql.= " WHERE u.entity IS NOT NULL";
 		}

@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin	<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012 Juanjo Menent	<jmenent@2byte.es>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,7 +165,7 @@ if (empty($user->societe_id))
     	    DOL_DOCUMENT_ROOT."/contact/class/contact.class.php",
     	    DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php",
     	    DOL_DOCUMENT_ROOT."/product/class/product.class.php",
-    	    DOL_DOCUMENT_ROOT."/product/class/service.class.php",
+    	    DOL_DOCUMENT_ROOT."/product/class/product.class.php",
     	    DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php",
     	    DOL_DOCUMENT_ROOT."/commande/class/commande.class.php",
     	    DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php",

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2017	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2015	    Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,7 +76,7 @@ function user_prepare_head($object)
     {
         if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
         $MAXAGENDA=$conf->global->AGENDA_EXT_NB;
-        
+
         $i=1;
         $nbagenda = 0;
         while ($i <= $MAXAGENDA)
@@ -87,10 +87,10 @@ function user_prepare_head($object)
             $offsettz='AGENDA_EXT_OFFSETTZ_'.$object->id.'_'.$key;
             $color='AGENDA_EXT_COLOR_'.$object->id.'_'.$key;
             $i++;
-        
+
             if (! empty($object->conf->$name)) $nbagenda++;
         }
-        
+
 	    $head[$h][0] = DOL_URL_ROOT.'/user/agenda_extsites.php?id='.$object->id;
 	    $head[$h][1] = $langs->trans("ExtSites").($nbagenda ? ' <span class="badge">'.$nbagenda.'</span>' : '');
 	    $head[$h][2] = 'extsites';
@@ -238,8 +238,6 @@ function group_prepare_head($object)
     return $head;
 }
 
-
-
 /**
  * Prepare array with list of tabs
  *
@@ -279,32 +277,6 @@ function user_admin_prepare_head()
 	complete_head_from_modules($conf,$langs,null,$head,$h,'useradmin');
 
 	complete_head_from_modules($conf,$langs,null,$head,$h,'useradmin','remove');
-
-	return $head;
-}
-
-
-
-/**
- * Prepare array with list of tabs
- *
- * @param   Object	$object		Object related to tabs
- * @param	array	$aEntities	Entities array
- * @return  array				Array of tabs
- */
-function entity_prepare_head($object, $aEntities)
-{
-	global $mc;
-
-	$head = array();
-
-	foreach($aEntities as $entity)
-	{
-		$mc->getInfo($entity);
-		$head[$entity][0] = $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;entity='.$entity;
-		$head[$entity][1] = $mc->label;
-		$head[$entity][2] = $entity;
-	}
 
 	return $head;
 }
@@ -485,7 +457,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
         print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
         print '</td>';
     }
-    
+
 	// Background color THEME_ELDY_BACKBODY
     if ($foruserprofile)
 	{
@@ -508,7 +480,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 			else print '';
 	   	}
     	if ($edit) print '<br>('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
-	    print '</td>';*/	    
+	    print '</td>';*/
 	}
 	else
 	{
@@ -530,7 +502,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 	    print '</td>';
 	}
-	
+
 	// TopMenuBackgroundColor
     if ($foruserprofile)
 	{
@@ -553,13 +525,13 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 			else print '';
 	   	}
     	if ($edit) print '<br>('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
-	    print '</td>';*/	    
+	    print '</td>';*/
 	}
 	else
 	{
 	    $default='5a6482';
 	    if ($conf->theme == 'md') $default='5a3278';
-	    
+
 	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
 	    print '<td colspan="'.($colspan-1).'">';
@@ -577,15 +549,15 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 	    print '</td>';
 	}
-	
+
 	// BackgroundTableTitleColor
 	if ($foruserprofile)
 	{
-	    
-	    
+
+
 	}
 	else
-	{	
+	{
 	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("BackgroundTableTitleColor").'</td>';
 	    print '<td colspan="'.($colspan-1).'">';
@@ -613,7 +585,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	{
 	    $default='ffffff';
 	    if ($conf->theme == 'md') $default='ffffff';
-	
+
 	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("BackgroundTableLineOddColor").'</td>';
 	    print '<td colspan="'.($colspan-1).'">';
@@ -631,17 +603,17 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 	    print '</td>';
 	}
-	
+
 	// BackgroundTableLineEvenColor
 	if ($foruserprofile)
 	{
-	
+
 	}
 	else
 	{
 	    $default='f8f8f8';
 	    if ($conf->theme == 'md') $default='f8f8f8';
-	
+
 	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("BackgroundTableLineEvenColor").'</td>';
 	    print '<td colspan="'.($colspan-1).'">';
@@ -659,12 +631,12 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 	    print '</td>';
 	}
-	
+
 	// TextTitleColor
 	if ($foruserprofile)
 	{
-	     
-	     
+
+
 	}
 	else
 	{
@@ -681,12 +653,12 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    }
 	    print ' &nbsp; ('.$langs->trans("Default").': <strong><span style="color: #3c3c14">3c3c14</span></strong>) ';
     	print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-	    
+
 	    print '</td>';
-	
+
 	    print '</tr>';
 	}
-	
+
 	// Text LinkColor
 	if ($foruserprofile)
 	{
@@ -724,7 +696,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    {
 	        $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTLINK,array()),'');
 	        if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
-	        else 
+	        else
 	        {
 	            //print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$defaultcolor.'" value="'.$langs->trans("Default").'">';
 	            //print '<span style="color: #000078">'.$langs->trans("Default").'</span>';
@@ -735,7 +707,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 	    print '</td>';
 	}
-		
+
 	// Use Hover
 	if ($foruserprofile)
 	{
@@ -767,7 +739,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    {
 	        if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='edf4fb';
 	        else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER,array()),'');
-	        if ($color) 
+	        if ($color)
 	        {
 	            if ($color != 'edf4fb') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 	            else print $langs->trans("Default");
@@ -779,7 +751,6 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '</td>';
 	    print '</tr>';
 	}
-	
+
     print '</table>';
 }
-

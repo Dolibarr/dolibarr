@@ -39,7 +39,7 @@ class UserGroup extends CommonObject
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='group';
 	public $entity;		// Entity of group
-	
+
 	/**
 	 * @deprecated
 	 * @see name
@@ -252,16 +252,19 @@ class UserGroup extends CommonObject
 	/**
 	 *    Add a permission to a group
 	 *
-	 *    @param      int		$rid         id du droit a ajouter
-	 *    @param      string	$allmodule   Ajouter tous les droits du module allmodule
-	 *    @param      string	$allperms    Ajouter tous les droits du module allmodule, perms allperms
-	 *    @return     int         			 > 0 if OK, < 0 if KO
+	 *    @param	int		$rid		id du droit a ajouter
+	 *    @param	string	$allmodule	Ajouter tous les droits du module allmodule
+	 *    @param	string	$allperms	Ajouter tous les droits du module allmodule, perms allperms
+	 *    @param	int		$entity		Entity to use
+	 *    @return	int					> 0 if OK, < 0 if KO
 	 */
-	function addrights($rid,$allmodule='',$allperms='')
+	function addrights($rid, $allmodule='', $allperms='', $entity=0)
 	{
 		global $conf, $user, $langs;
 
-		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms");
+		$entity = (! empty($entity)?$entity:$conf->entity);
+
+		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity");
 		$error=0;
 		$whereforadd='';
 
@@ -274,7 +277,7 @@ class UserGroup extends CommonObject
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE id = '".$this->db->escape($rid)."'";
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity = ".$entity;
 
 			$result=$this->db->query($sql);
 			if ($result) {
@@ -311,7 +314,7 @@ class UserGroup extends CommonObject
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE $whereforadd";
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity = ".$entity;
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -323,9 +326,9 @@ class UserGroup extends CommonObject
 					$obj = $this->db->fetch_object($result);
 					$nid = $obj->id;
 
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights WHERE fk_usergroup = $this->id AND fk_id=".$nid;
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights WHERE fk_usergroup = $this->id AND fk_id=".$nid." AND entity = ".$entity;
 					if (! $this->db->query($sql)) $error++;
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_rights (fk_usergroup, fk_id) VALUES ($this->id, $nid)";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_rights (entity, fk_usergroup, fk_id) VALUES (".$entity.", ".$this->id.", ".$nid.")";
 					if (! $this->db->query($sql)) $error++;
 
 					$i++;
@@ -363,17 +366,20 @@ class UserGroup extends CommonObject
 	/**
 	 *    Remove a permission from group
 	 *
-	 *    @param      int		$rid         id du droit a retirer
-	 *    @param      string	$allmodule   Retirer tous les droits du module allmodule
-	 *    @param      string	$allperms    Retirer tous les droits du module allmodule, perms allperms
-	 *    @return     int         			 > 0 if OK, < 0 if OK
+	 *    @param	int		$rid		id du droit a retirer
+	 *    @param	string	$allmodule	Retirer tous les droits du module allmodule
+	 *    @param	string	$allperms	Retirer tous les droits du module allmodule, perms allperms
+	 *    @param	int		$entity		Entity to use
+	 *    @return	int					> 0 if OK, < 0 if OK
 	 */
-	function delrights($rid,$allmodule='',$allperms='')
+	function delrights($rid, $allmodule='', $allperms='', $entity=0)
 	{
 		global $conf, $user, $langs;
 
 		$error=0;
 		$wherefordel='';
+
+		$entity = (! empty($entity)?$entity:$conf->entity);
 
 		$this->db->begin();
 
@@ -384,7 +390,7 @@ class UserGroup extends CommonObject
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE id = '".$this->db->escape($rid)."'";
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity = ".$entity;
 
 			$result=$this->db->query($sql);
 			if ($result) {
@@ -421,7 +427,7 @@ class UserGroup extends CommonObject
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE $wherefordel";
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity = ".$entity;
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -435,6 +441,7 @@ class UserGroup extends CommonObject
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
 					$sql.= " WHERE fk_usergroup = $this->id AND fk_id=".$nid;
+					$sql.= " AND entity = ".$entity;
 					if (! $this->db->query($sql)) $error++;
 
 					$i++;
@@ -498,6 +505,7 @@ class UserGroup extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as u, ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = u.fk_id";
 		$sql.= " AND r.entity = ".$conf->entity;
+		$sql.= " AND u.entity = ".$conf->entity;
 		$sql.= " AND u.fk_usergroup = ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
@@ -755,7 +763,7 @@ class UserGroup extends CommonObject
 	{
 	    return $this->LibStatut(0,$mode);
 	}
-	
+
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -769,7 +777,7 @@ class UserGroup extends CommonObject
 	    $langs->load('users');
 	    return '';
 	}
-	    
+
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -849,7 +857,7 @@ class UserGroup extends CommonObject
 				$user->id => $user
 		);
 	}
-	
+
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
