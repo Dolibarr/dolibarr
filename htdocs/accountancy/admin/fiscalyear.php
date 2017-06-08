@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
 $action = GETPOST('action','aZ09');
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit', 'int')::$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');

@@ -42,7 +42,7 @@ $optioncss = GETPOST('optioncss','alpha');
 
 $date_select=isset($_GET["date_select"])?$_GET["date_select"]:$_POST["date_select"];
 
-$limit = GETPOST('limit','int')?GETPOST('limit', 'int')::$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');

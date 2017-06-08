@@ -91,7 +91,7 @@ if (empty($sortorder)) $sortorder="ASC";
 if (empty($sortfield)) $sortfield="t.rowid";
 if (empty($arch)) $arch = 0;
 
-$limit = GETPOST('limit','int')?GETPOST('limit', 'int')::$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;

@@ -45,7 +45,7 @@ accessforbidden();
 $langs->load("companies");
 $langs->load("orders");
 
-$limit = GETPOST('limit','int')?GETPOST('limit', 'int')::$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
