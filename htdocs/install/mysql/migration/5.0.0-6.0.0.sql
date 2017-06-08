@@ -381,3 +381,11 @@ create table llx_loan_schedule
 )ENGINE=innodb;
 
 ALTER TABLE llx_tva ADD COLUMN datec date AFTER tms;
+
+ALTER TABLE llx_c_paiement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;
+ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
+ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement(entity, code);
+
+ALTER TABLE llx_c_payment_term ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term(entity, code);
+
