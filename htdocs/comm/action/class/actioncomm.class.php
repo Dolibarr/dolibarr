@@ -454,7 +454,8 @@ class ActionComm extends CommonObject
 		$objFrom = clone $this;
 
 		$this->fetch_optionals();
-		$this->fetch_userassigned();
+//		$this->fetch_userassigned();
+		$this->fetchResources();
 
         $this->id=0;
 

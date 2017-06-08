@@ -320,6 +320,7 @@ if ($action == 'add')
 	}
 
 	$object->TContactId = $TContactId;
+	if (!empty($object->TContactId[0])) $object->contactid = $object->TContactId[0];
 	
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
