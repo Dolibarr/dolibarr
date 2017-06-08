@@ -4,7 +4,7 @@
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2013-2016	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2014		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
@@ -226,8 +226,8 @@ if ($action == 'writebookkeeping') {
                     $bookkeeping->doc_type = 'customer_invoice';
                     $bookkeeping->fk_doc = $key;
                     $bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
-                    $bookkeeping->code_tiers = $tabcompany[$key]['code_client'];
-                    $bookkeeping->numero_compte = $tabcompany[$key]['code_compta'];
+                    $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
+                    $bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
                     // $bookkeeping->label_compte = $tabcompany[$key]['name'];
                     $bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Code_tiers");
                     $bookkeeping->montant = $mt;
@@ -255,7 +255,7 @@ if ($action == 'writebookkeeping') {
                 }
             }
         }
-        
+
         // Product / Service
         if (! $errorforline)
         {
@@ -581,7 +581,6 @@ if (empty($action) || $action == 'view') {
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 			$companystatic->client = $tabcompany[$key]['code_client'];
-			$companystatic->client = $tabcompany[$key]['code_client'];
 			print "<td>";
 			$accountoshow = length_accounta($k);
 			if (empty($accountoshow) || $accountoshow == 'NotDefined')
@@ -589,8 +588,6 @@ if (empty($action) || $action == 'view') {
 			    print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 			}
 			else print $accountoshow;
-			// print "</td><td>" . $langs->trans("ThirdParty");
-			// print ' (' . $companystatic->getNomUrl(0, 'customer', 16) . ')';
 			print '</td>';
 			print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Code_tiers") . "</td>";
 			print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
