@@ -2,7 +2,7 @@
 /* Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2015      Charlie BENKE		<charlie@patas-monkey.com> 
+ * Copyright (C) 2015      Charlie BENKE		<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +116,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 		$error++;
 	}
-	
+
 	if (! $error)
 	{
 		$db->begin();
@@ -228,7 +228,7 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("NewSalaryPayment"),'', 'title_accountancy.png');
 
-	dol_fiche_head('');
+	dol_fiche_head('', '');
 
 	print '<table class="border" width="100%">';
 
@@ -300,7 +300,7 @@ if ($action == 'create')
 	}
 
 	// Other attributes
-	$parameters=array('colspan' => ' colspan="1"');
+	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
 	print '</table>';
@@ -351,24 +351,24 @@ if ($id)
 	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("DateStartPeriod").'</td><td colspan="3">';
+	print '<td>'.$langs->trans("DateStartPeriod").'</td><td>';
 	print dol_print_date($object->datesp,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("DateEndPeriod").'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans("DateEndPeriod").'</td><td>';
 	print dol_print_date($object->dateep,'day');
 	print '</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("DatePayment").'</td><td colspan="3">';
+	print '<td>'.$langs->trans("DatePayment").'</td><td>';
 	print dol_print_date($object->datep,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("DateValue").'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
 	print dol_print_date($object->datev,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	if (! empty($conf->banque->enabled))
 	{
@@ -379,7 +379,7 @@ if ($id)
 
 			print '<tr>';
 			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-			print '<td colspan="3">';
+			print '<td>';
 			print $bankline->getNomUrl(1,0,'showall');
 			print '</td>';
 			print '</tr>';
@@ -387,7 +387,7 @@ if ($id)
 	}
 
 	// Other attributes
-	$parameters=array('colspan' => ' colspan="3"');
+	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
 	print '</table>';
@@ -396,7 +396,7 @@ if ($id)
 
 	dol_fiche_end();
 
-	
+
 	/*
 	 * Action buttons
 	 */
