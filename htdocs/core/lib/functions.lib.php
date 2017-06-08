@@ -112,7 +112,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  *									'email_template', 'event',
  * 	@param	int		$shared			0=Return id of current entity only,
  * 									1=Return id of current entity + shared entities (default),
- * 									2=Return id of current entity OR $forceentity value (eg. dictionnary share)
+ * 									2=Return id of current entity OR master entity 1 value (eg. dictionnary share)
  *  @param	int		$forceentity	Entity id
  * 	@return	mixed				Entity id(s) to use
  */
@@ -132,18 +132,9 @@ function getEntity($element=false, $shared=1, $forceentity=null)
 	else
 	{
 		$out='';
-
-		if ($shared == 2)
-		{
-			$out.= $forceentity;
-		}
-		else
-		{
-			$addzero = array('user', 'usergroup', 'email_template', 'default_values');
-			if (in_array($element, $addzero)) $out.= '0,';
-			$out.= $conf->entity;
-		}
-
+		$addzero = array('user', 'usergroup', 'email_template', 'default_values');
+		if (in_array($element, $addzero)) $out.= '0,';
+		$out.= $conf->entity;
 		return $out;
 	}
 }

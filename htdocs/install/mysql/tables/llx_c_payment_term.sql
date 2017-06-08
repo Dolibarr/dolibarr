@@ -20,7 +20,7 @@
 
 create table llx_c_payment_term
 (
-  rowid				integer PRIMARY KEY,
+  rowid				integer,
   entity			integer	DEFAULT 1 NOT NULL,	-- multi company id
   code				varchar(16),
   sortorder			smallint,

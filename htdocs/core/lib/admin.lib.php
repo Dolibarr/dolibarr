@@ -813,7 +813,7 @@ function activateModule($value,$withdeps=1)
     }
 
     $result=$objMod->init();    // Enable module
-    if ($result <= 0) 
+    if ($result <= 0)
     {
         $ret['errors'][]=$objMod->error;
     }
@@ -825,7 +825,7 @@ function activateModule($value,$withdeps=1)
             {
                 // Activation of modules this module depends on
                 // this->depends may be array('modModule1', 'mmodModule2') or array('always'=>"modModule1", 'FR'=>'modModule2')
-                foreach ($objMod->depend as $key => $modulestring)
+                foreach ($objMod->depends as $key => $modulestring)
                 {
                     if ((! is_numeric($key)) && $key != 'always' && $key != $mysoc->country_code)
                     {
@@ -848,19 +848,19 @@ function activateModule($value,$withdeps=1)
     						break;
                 		}
                 	}
-    				
+
     				if ($activate)
     				{
     				    $ret['nbmodules']+=$resarray['nbmodules'];
     				    $ret['nbperms']+=$resarray['nbperms'];
     				}
-    				else 
+    				else
     				{
     				    $ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring);
     				}
                 }
             }
-    
+
             if (isset($objMod->conflictwith) && is_array($objMod->conflictwith) && ! empty($objMod->conflictwith))
             {
                 // Desactivation des modules qui entrent en conflit
@@ -879,12 +879,12 @@ function activateModule($value,$withdeps=1)
         }
     }
 
-    if (! count($ret['errors'])) 
+    if (! count($ret['errors']))
     {
         $ret['nbmodules']++;
         $ret['nbperms']+=count($objMod->rights);
     }
-    
+
     return $ret;
 }
 
@@ -1221,7 +1221,7 @@ function form_constantes($tableau, $strictw3c=0, $helptext='')
         if ($result)
         {
             $obj = $db->fetch_object($result);	// Take first result of select
-            
+
 
             // For avoid warning in strict mode
             if (empty($obj)) {
@@ -1360,7 +1360,7 @@ function showModulesExludedForExternal($modules)
 			//if (empty($conf->global->$moduleconst)) continue;
 			if (! in_array($modulename,$listofmodules)) continue;
 			//var_dump($modulename.'eee'.$langs->trans('Module'.$module->numero.'Name'));
-				
+
 			if ($i > 0) $text.=', ';
 			else $text.=' ';
 			$i++;
@@ -1391,7 +1391,7 @@ function addDocumentModel($name, $type, $label='', $description='')
     $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
     $sql.= (! empty($description)?"'".$db->escape($description)."'":"null");
     $sql.= ")";
-	
+
     dol_syslog("admin.lib::addDocumentModel", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)

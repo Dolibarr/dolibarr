@@ -395,9 +395,11 @@ ALTER TABLE llx_usergroup_rights DROP INDEX fk_usergroup;
 ALTER TABLE llx_usergroup_rights ADD UNIQUE INDEX uk_usergroup_rights (entity, fk_usergroup, fk_id);
 ALTER TABLE llx_usergroup_rights ADD CONSTRAINT fk_usergroup_rights_fk_usergroup FOREIGN KEY (fk_usergroup) REFERENCES llx_usergroup (rowid);
 
+ALTER TABLE llx_c_paiement DROP PRIMARY KEY
 ALTER TABLE llx_c_paiement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;
 ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
-ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement(entity, code);
+ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement(id, entity, code);
 
+ALTER TABLE llx_c_payment_term DROP PRIMARY KEY
 ALTER TABLE llx_c_payment_term ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
-ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term(entity, code);
+ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term(rowid, entity, code);
