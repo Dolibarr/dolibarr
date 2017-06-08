@@ -465,6 +465,7 @@ print "</tr>\n";
 
 
 $i = 0;
+$totalarray=array();
 while ($i < min($num,$limit))
 {
     $obj = $db->fetch_object($result);
@@ -497,32 +498,39 @@ while ($i < min($num,$limit))
         	print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
         }
         print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     if (! empty($arrayfields['u.lastname']['checked']))
 	{
 	      print '<td>'.$obj->lastname.'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     if (! empty($arrayfields['u.firstname']['checked']))
 	{
 	  print '<td>'.$obj->firstname.'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     if (! empty($arrayfields['u.gender']['checked']))
 	{
 	  print '<td>';
 	  if ($obj->gender) print $langs->trans("Gender".$obj->gender);
 	  print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     if (! empty($arrayfields['u.employee']['checked']))
 	{
 	  print '<td>'.yn($obj->employee).'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['u.accountancy_code']['checked']))
 	{
 	  print '<td>'.$obj->accountancy_code.'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     if (! empty($arrayfields['u.email']['checked']))
 	{
 	  print '<td>'.$obj->email.'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['u.fk_soc']['checked']))
 	{
@@ -543,6 +551,7 @@ while ($i < min($num,$limit))
         	print $langs->trans("InternalUser");
         }
         print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     // Multicompany enabled
 	if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
@@ -560,6 +569,7 @@ while ($i < min($num,$limit))
         		print $mc->label;
         	}
         	print '</td>';
+            if (! $i) $totalarray['nbfield']++;
 		}
     }
     // Supervisor
@@ -589,17 +599,20 @@ while ($i < min($num,$limit))
             }
         }
         print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 
     // Date last login
     if (! empty($arrayfields['u.datelastlogin']['checked']))
 	{
         print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datelastlogin),"dayhour").'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     // Date previous login
     if (! empty($arrayfields['u.datepreviouslogin']['checked']))
 	{
         print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datepreviouslogin),"dayhour").'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 
 	// Extra fields
@@ -616,6 +629,7 @@ while ($i < min($num,$limit))
 				$tmpkey='options_'.$key;
 				print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
 				print '</td>';
+                if (! $i) $totalarray['nbfield']++;
 			}
 	   }
 	}
@@ -629,6 +643,7 @@ while ($i < min($num,$limit))
         print '<td align="center">';
         print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
         print '</td>';
+        if (! $i) $totalarray['nbfield']++;
     }
     // Date modification
     if (! empty($arrayfields['u.tms']['checked']))
@@ -636,15 +651,18 @@ while ($i < min($num,$limit))
         print '<td align="center">';
         print dol_print_date($db->jdate($obj->date_update), 'dayhour');
         print '</td>';
+        if (! $i) $totalarray['nbfield']++;
     }
     // Status
     if (! empty($arrayfields['u.statut']['checked']))
     {
-	  $userstatic->statut=$obj->statut;
-      print '<td align="center">'.$userstatic->getLibStatut(3).'</td>';
+	   $userstatic->statut=$obj->statut;
+       print '<td align="center">'.$userstatic->getLibStatut(3).'</td>';
+       if (! $i) $totalarray['nbfield']++;
     }
     // Action column
     print '<td></td>';
+    if (! $i) $totalarray['nbfield']++;
 
     print "</tr>\n";
     $i++;

@@ -41,6 +41,7 @@ $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $backtopage=GETPOST('backtopage','alpha');
 $cancel=GETPOST('cancel','alpha');
+$confirm=GETPOST('confirm','aZ09');
 $status=GETPOST('status','int');
 $opp_status=GETPOST('opp_status','int');
 $opp_percent=price2num(GETPOST('opp_percent','alpha'));
@@ -68,7 +69,7 @@ if ($id > 0 || ! empty($ref))
 }
 
 // Security check
-$socid=GETPOST('socid');
+$socid=GETPOST('socid','int');
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $object->id,'projet&project');
 
@@ -135,6 +136,12 @@ if (empty($reshook))
 	        setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
 	    }
 
+	    // Create with status validated immediatly
+	    if (! empty($conf->global->PROJECT_CREATE_NO_DRAFT))
+	    {
+	        $status=Project::STATUS_VALIDATED;
+	    }
+
 	    if (! $error)
 	    {
 	        $error=0;
@@ -148,10 +155,10 @@ if (empty($reshook))
 	        $object->public          = GETPOST('public','alpha');
 	        $object->opp_amount      = price2num(GETPOST('opp_amount'));
 	        $object->budget_amount   = price2num(GETPOST('budget_amount'));
-	        $object->datec=dol_now();
-	        $object->date_start=$date_start;
-	        $object->date_end=$date_end;
-	        $object->statuts         = $status;
+	        $object->datec           = dol_now();
+	        $object->date_start      = $date_start;
+	        $object->date_end        = $date_end;
+	        $object->statut          = $status;
 	        $object->opp_status      = $opp_status;
 	        $object->opp_percent     = $opp_percent;
 
@@ -365,7 +372,7 @@ if (empty($reshook))
 	}
 
 
-	if ($action == 'confirm_validate' && GETPOST('confirm') == 'yes')
+	if ($action == 'confirm_validate' && $confirm == 'yes')
 	{
 	    $result = $object->setValid($user);
 	    if ($result <= 0)
@@ -374,7 +381,7 @@ if (empty($reshook))
 	    }
 	}
 
-	if ($action == 'confirm_close' && GETPOST('confirm') == 'yes')
+	if ($action == 'confirm_close' && $confirm == 'yes')
 	{
 	    $result = $object->setClose($user);
 	    if ($result <= 0)
@@ -383,7 +390,7 @@ if (empty($reshook))
 	    }
 	}
 
-	if ($action == 'confirm_reopen' && GETPOST('confirm') == 'yes')
+	if ($action == 'confirm_reopen' && $confirm == 'yes')
 	{
 	    $result = $object->setValid($user);
 	    if ($result <= 0)
@@ -409,7 +416,7 @@ if (empty($reshook))
 	    }
 	}
 
-	if ($action == 'confirm_clone' && $user->rights->projet->creer && GETPOST('confirm') == 'yes')
+	if ($action == 'confirm_clone' && $user->rights->projet->creer && $confirm == 'yes')
 	{
 	    $clone_contacts=GETPOST('clone_contacts')?1:0;
 	    $clone_tasks=GETPOST('clone_tasks')?1:0;
@@ -885,12 +892,16 @@ elseif ($object->id > 0)
 
 	        // Opportunity percent
 	        print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
-	        if (strcmp($object->opp_percent,'')) print price($object->opp_percent,0,$langs,1,0).' %';
+	        if (strcmp($object->opp_percent,'')) print price($object->opp_percent, 0, $langs, 1, 0).' %';
 	        print '</td></tr>';
 
 	        // Opportunity Amount
 	        print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-	        if (strcmp($object->opp_amount,'')) print price($object->opp_amount,0,$langs,1,0,0,$conf->currency);
+	        /*if ($object->opp_status)
+	        {
+	           print price($obj->opp_amount, 1, $langs, 1, 0, -1, $conf->currency);
+	        }*/
+	        if (strcmp($object->opp_amount,'')) print price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
 	        print '</td></tr>';
 	    }
 
