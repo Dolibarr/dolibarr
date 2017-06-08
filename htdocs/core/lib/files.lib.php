@@ -72,11 +72,11 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	$reshook = 0;
 	$file_list = array();
 
-	$hookmanager->resArray=array();
-
-	if (! $nohook)
+	if (is_object($hookmanager) && ! $nohook)
 	{
-		$hookmanager->initHooks(array('fileslib'));
+	    $hookmanager->resArray=array();
+
+	    $hookmanager->initHooks(array('fileslib'));
 
 		$parameters=array(
 				'path' => $newpath,
@@ -197,7 +197,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 		}
 	}
 
-	$file_list = array_merge($file_list, $hookmanager->resArray);
+	if (is_object($hookmanager) && is_array($hookmanager->resArray)) $file_list = array_merge($file_list, $hookmanager->resArray);
 
 	return $file_list;
 }
