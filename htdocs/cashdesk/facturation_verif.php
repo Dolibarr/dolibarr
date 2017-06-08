@@ -43,7 +43,7 @@ switch($action)
 			if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = ".$conf_fkentrepot;
-			$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
+			$sql.= " WHERE p.entity IN (".getEntity('product').")";
 
 			// Recuperation des donnees en fonction de la source (liste deroulante ou champ texte) ...
 			if ( $_POST['hdnSource'] == 'LISTE' )

@@ -396,7 +396,7 @@ $sql.= " ,".MAIN_DB_PREFIX."c_stcomm as st";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id";
-$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+$sql.= " AND s.entity IN (".getEntity('societe').")";
 if (! $user->rights->societe->client->voir && ! $socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)           $sql.= " AND s.rowid = ".$socid;
 if ($search_sale)     $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
@@ -839,6 +839,11 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 				if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
 				if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
 				print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
+			}
+			else
+			{
+				// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
+				echo $extrafields->showInputField($key, $search_array_options['search_options_'.$key], '', '', 'search_');
 			}
 			print '</td>';
 		}

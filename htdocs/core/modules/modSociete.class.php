@@ -263,7 +263,7 @@ class modSociete extends DolibarrModules
 		// Add multicompany field
 		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED))
 		{
-		    $nbofallowedentities=count(explode(',',getEntity('societe',1)));    // If project are shared, nb will be > 1
+		    $nbofallowedentities=count(explode(',',getEntity('societe')));    // If project are shared, nb will be > 1
 		    if (! empty($conf->multicompany->enabled) && $nbofallowedentities > 1) $this->export_fields_array[$r]+=array('s.entity'=>'Entity');
 		}
 		$keyforselect='societe'; $keyforelement='company'; $keyforaliasextra='extra';
@@ -286,7 +286,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON sc.fk_user = u.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as payterm ON s.cond_reglement = payterm.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as paymode ON s.mode_reglement = paymode.id';
-		$this->export_sql_end[$r] .=' WHERE s.entity IN ('.getEntity('societe', 1).')';
+		$this->export_sql_end[$r] .=' WHERE s.entity IN ('.getEntity('societe').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
 			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';
 			if (! empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
@@ -323,7 +323,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON c.fk_departement = d.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON c.fk_pays = co.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = c.rowid';
-		$this->export_sql_end[$r] .=' WHERE c.entity IN ('.getEntity("societe", 1).')';
+		$this->export_sql_end[$r] .=' WHERE c.entity IN ('.getEntity('societe').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
 			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';
 			if (! empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {

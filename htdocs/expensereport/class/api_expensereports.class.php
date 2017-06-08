@@ -104,7 +104,7 @@ class ExpenseReports extends DolibarrApi
         
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('expensereport', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('expensereport').')';
         if ($user_ids) $sql.=" AND t.fk_user_author IN (".$user_ids.")";
         
         // Add sql filters

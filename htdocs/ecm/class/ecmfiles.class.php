@@ -263,7 +263,7 @@ class EcmFiles //extends CommonObject
 		$sql.= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity
 		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity("ecmfiles", 1) . ")";
+		    $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		}*/
 		if ($fullpath) {
 			$sql .= " AND t.filepath = '" . $this->db->escape(dirname($fullpath)) . "' AND t.filename = '".$this->db->escape(basename($fullpath))."'";
@@ -371,7 +371,7 @@ class EcmFiles //extends CommonObject
 		$sql.= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity
 		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity("ecmfiles", 1) . ")";
+		    $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		}*/
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);

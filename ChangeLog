@@ -7,6 +7,7 @@ English Dolibarr ChangeLog
 For developers:
 NEW: Add a lot of API REST: dictionaryevents, memberstypes, ...
 NEW: Big refactorization of multicompany transverse mode
+NEW: getEntity function use true $shared value by default
 
 WARNING: 
 
@@ -23,6 +24,7 @@ Following changes may create regression for some external modules, but were nece
 * Removed the trigger file of PAYPAL module that stored data that was not used by Dolibarr. The trigger event still
   exists, but if an external module need action on it, it must provides itself its trigger file.
 * Use $conf->global->MULTICOMPANY_TRANSVERSE_MODE instead $conf->multicompany->transverse_mode
+* Use getEntity('xxx') instead getEntity('xxx', 1) and use getEntity('xxx', 0) instead getEntity('xxx')
 
 ***** ChangeLog for 5.0.3 compared to 5.0.2 *****
 FIX: #6677 Expired contracts dashboard box does not show the name of the thirdparty

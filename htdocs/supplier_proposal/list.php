@@ -266,7 +266,7 @@ if ($search_user > 0)
     $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql.= ' WHERE sp.fk_soc = s.rowid';
-$sql.= ' AND sp.entity IN ('.getEntity('supplier_proposal', 1).')';
+$sql.= ' AND sp.entity IN ('.getEntity('supplier_proposal').')';
 if (! $user->rights->societe->client->voir && ! $socid) //restriction
 {
 	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;

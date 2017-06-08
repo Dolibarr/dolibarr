@@ -200,7 +200,7 @@ if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf
 }
 else
 {
-	$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
+	$sql.= " WHERE u.entity IN (".getEntity('user').")";
 }
 if ($socid > 0) $sql.= " AND u.fk_soc = ".$socid;
 //if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);

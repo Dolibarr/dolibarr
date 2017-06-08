@@ -2527,7 +2527,7 @@ class User extends CommonObject
 		$sql = "SELECT fk_user as id_parent, rowid as id_son";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user";
 		$sql.= " WHERE fk_user <> 0";
-		$sql.= " AND entity IN (".getEntity('user',1).")";
+		$sql.= " AND entity IN (".getEntity('user').")";
 
 		dol_syslog(get_class($this)."::load_parentof", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2577,7 +2577,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
+			$sql.= " WHERE u.entity IN (".getEntity('user').")";
 		}
 		if ($filter) $sql.=" AND ".$filter;
 
@@ -2762,7 +2762,7 @@ class User extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE u.statut > 0";
         //$sql.= " AND employee != 0";
-        $sql.= " AND u.entity IN (".getEntity('user', 1).")";
+        $sql.= " AND u.entity IN (".getEntity('user').")";
 
         $resql=$this->db->query($sql);
         if ($resql)
