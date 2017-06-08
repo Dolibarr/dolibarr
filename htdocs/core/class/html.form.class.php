@@ -2743,7 +2743,8 @@ class Form
 
         $sql = "SELECT rowid, code, libelle as label";
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_payment_term';
-        $sql.= " WHERE active > 0";
+        $sql.= " WHERE entity = " . getEntity('c_payment_term', 2);
+        $sql.= " AND active > 0";
         $sql.= " ORDER BY sortorder";
 
         $resql = $this->db->query($sql);
@@ -2958,6 +2959,7 @@ class Form
         $sql = "SELECT id, code, libelle as label, type, active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
         //if ($active >= 0) $sql.= " WHERE active = ".$active;
+        $sql.= " WHERE entity = " . getEntity('c_paiement', 2);
 
         $resql = $this->db->query($sql);
         if ($resql)
