@@ -136,6 +136,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
     // Create the global $hookmanager object
     include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
     $hookmanager=new HookManager($db);
+    $hookmanager->initHooks(array('upgrade'));
 
     if (!$db->connected)
     {
@@ -493,9 +494,13 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         }
         else
         {
-            print '<tr><td colspan="4">';
-            print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("None");
-            print '</td></tr>';
+            //if (! empty($conf->modules))
+            if (! empty($conf->modules_parts['hooks']))     // If there is at least one module with one hook, we show message to say nothing was done
+            {
+                print '<tr><td colspan="4">';
+                print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("None");
+                print '</td></tr>';
+            }
         }
     }
 

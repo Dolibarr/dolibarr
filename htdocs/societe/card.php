@@ -140,7 +140,7 @@ if (empty($reshook))
 			if (!$errors)
 			{
 			    // TODO Move the merge function into class of object.
-			    
+
 				$db->begin();
 
 				// Recopy some data
@@ -157,16 +157,16 @@ if (empty($reshook))
 				{
 				    if (empty($object->$property)) $object->$property = $soc_origin->$property;
 				}
-				
+
 				// Concat some data
 				$listofproperties=array(
-				    'note_public', 'note_private' 
+				    'note_public', 'note_private'
 				);
 				foreach ($listofproperties as $property)
 				{
 				    $object->$property = dol_concatdesc($object->$property, $soc_origin->$property);
 				}
-				
+
 				// Merge extrafields
 				foreach ($soc_origin->array_options as $key => $val)
 				{
@@ -175,8 +175,8 @@ if (empty($reshook))
 
 				// TODO Merge categories
 				$object->update($object->id, $user);
-				
-				// Move links 
+
+				// Move links
 				$objects = array(
 					'Adherent' => '/adherents/class/adherent.class.php',
 					'Societe' => '/societe/class/societe.class.php',
@@ -278,6 +278,21 @@ if (empty($reshook))
     	$value=GETPOST('lt2');
     	$object->fetch($socid);
     	$res=$object->setValueFrom('localtax2_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
+    }
+
+    if ($action == 'update_extras') {
+        $object->fetch($socid);
+
+        // Fill array 'array_options' with data from update form
+        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+        if ($ret < 0) $error++;
+        if (! $error)
+        {
+            $result = $object->insertExtraFields();
+            if ($result < 0) $error++;
+        }
+        if ($error) $action = 'edit_extras';
     }
 
     // Add new or update third party
@@ -487,7 +502,7 @@ if (empty($reshook))
                 if (empty($object->fournisseur)) $object->code_fournisseur='';
 
                 $result = $object->create($user);
-                
+
 				if ($result >= 0)
                 {
                     if ($object->particulier)
@@ -557,7 +572,7 @@ if (empty($reshook))
 						$object->code_fournisseur = null;
 						$object->code_client = null;
 					}
-					
+
                     $error=$object->error; $errors=$object->errors;
                 }
 
@@ -851,7 +866,7 @@ else
         $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm');
         $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
-        
+
         if(empty($duplicate_code_error)) {
 	        $object->code_client		= GETPOST('code_client', 'alpha');
 	        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
@@ -859,7 +874,7 @@ else
 		else {
 			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'),'', 'warnings');
 		}
-		
+
         $object->code_fournisseur	= GETPOST('code_fournisseur', 'alpha');
         $object->address			= GETPOST('address', 'alpha');
         $object->zip				= GETPOST('zipcode', 'alpha');
@@ -1135,7 +1150,7 @@ else
 	    print '<td colspan="3"><input type="text" name="email" id="email" value="'.$object->email.'"></td></tr>';
         print '<tr><td>'.fieldLabel('Web','url').'</td>';
 	    print '<td colspan="3"><input type="text" name="url" id="url" value="'.$object->url.'"></td></tr>';
-	    
+
         // Skype
         if (! empty($conf->skype->enabled))
         {
@@ -1215,7 +1230,7 @@ else
             print '</td><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
             print $form->selectyesno('localtax2assuj_value',(isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2)?$conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2:0),1);
             print '</td></tr>';
-        
+
         }
         elseif($mysoc->localtax1_assuj=="1")
         {
@@ -1229,7 +1244,7 @@ else
             print $form->selectyesno('localtax2assuj_value',(isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2)?$conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2:0),1);
             print '</td></tr>';
         }
-        
+
         // Type - Size
         print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td class="maxwidthonsmartphone">'."\n";
         $sortparam=(empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
@@ -1544,7 +1559,7 @@ else
 
             dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
-            print '<div class="fichecenter2">'; 
+            print '<div class="fichecenter2">';
             print '<table class="border" width="100%">';
 
             // Ref/ID
@@ -1750,7 +1765,7 @@ else
                     $formcompany->select_localtax(1,$object->localtax1_value, "lt1");
                     print '</span>';
                 }
-            
+
                 print '</td><td>'.fieldLabel($langs->transcountry("LocalTax2IsUsed",$mysoc->country_code),'localtax2assuj_value').'</td><td>';
                 print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
                 if  (! isOnlyOneLocalTax(2))
@@ -1760,7 +1775,7 @@ else
                     print '</span>';
                 }
                 print '</td></tr>';
-            
+
             }
             elseif($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj!="1")
             {
@@ -1773,7 +1788,7 @@ else
                     print '</span>';
                 }
                 print '</td></tr>';
-            
+
             }
             elseif($mysoc->localtax2_assuj=="1" && $mysoc->localtax1_assuj!="1")
             {
@@ -1787,7 +1802,7 @@ else
                 }
                 print '</td></tr>';
             }
-            
+
             // VAT Code
             print '<tr><td>'.fieldLabel('VATIntra','intra_vat').'</td>';
             print '<td colspan="3">';
@@ -1935,7 +1950,7 @@ else
 
             print '</table>';
             print '</div>';
-            
+
 	        dol_fiche_end();
 
             print '<div align="center">';
@@ -1952,7 +1967,7 @@ else
         /*
          * View
          */
-        
+
         if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
         //if ($res < 0) { dol_print_error($db); exit; }
 
@@ -2091,7 +2106,7 @@ else
 		    print '</td></tr><tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
 		    print yn($object->localtax2_assuj);
 		    print '</td></tr>';
-		
+
 		    if($object->localtax1_assuj=="1" && (! isOnlyOneLocalTax(1)))
 		    {
 		        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
@@ -2145,7 +2160,7 @@ else
 		            print '<td>'.$object->localtax1_value.'</td>';
 		        }
 		        print '</tr></form>';
-		
+
 		    }
 		}
 		elseif($mysoc->localtax2_assuj=="1" && $mysoc->localtax1_assuj!="1")
@@ -2155,7 +2170,7 @@ else
 		    print '</td></tr>';
 		    if($object->localtax2_assuj=="1" && (! isOnlyOneLocalTax(2)))
 		    {
-		
+
 		        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 		        print '<input type="hidden" name="action" value="set_localtax2">';
 		        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -2168,7 +2183,7 @@ else
 		            print '<td>'.$object->localtax2_value.'</td>';
 		        }
 		        print '</tr></form>';
-		
+
 		    }
 		}
 		/*
@@ -2179,7 +2194,7 @@ else
 		 print '</td><tr>';
 		 }
 		 */
-		
+
         // VAT Code
         print '<tr>';
 		print '<td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
@@ -2308,14 +2323,9 @@ else
 			print '</td></tr>';
 		}
 
-        // Other attributes
-        $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
-        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-        if (empty($reshook) && ! empty($extrafields->attribute_label))
-        {
-        	print $object->showOptionals($extrafields);
-        }
+		// Other attributes
+		$parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
         // Parent company
         if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
@@ -2574,10 +2584,10 @@ else
 
 	        // Subsidiaries list
 	        if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES))
-	        {	        
+	        {
 	           $result=show_subsidiaries($conf,$langs,$db,$object);
 	        }
-	        
+
 	        // Contacts list
 	        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
 	        {

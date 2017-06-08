@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
@@ -107,13 +107,22 @@ if ($result)
   print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
   print '<input type="hidden" name="page" value="'.$page.'">';
   print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-  
+
   print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
 
   $moreforfilter='';
-    
+
   print '<div class="div-table-responsive">';
   print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+  print '<tr class="liste_titre">';
+  print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'. $db->escape($search_ref).'"></td>';
+  print '<td class="liste_titre">&nbsp;</td>';
+  print '<td class="liste_titre" align="right">';
+  $searchpicto=$form->showFilterButtons();
+  print $searchpicto;
+  print '</td>';
+  print '</tr>';
 
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("WithdrawalsReceipts"),$_SERVER["PHP_SELF"],"p.ref",'','','class="liste_titre"');
@@ -121,19 +130,9 @@ if ($result)
   print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"","","",'align="center"');
   print "</tr>\n";
 
-  print '<tr class="liste_titre">';
-  print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'. $db->escape($search_ref).'"></td>';
-  print '<td class="liste_titre">&nbsp;</td>';
-  print '<td class="liste_titre" align="right">';
-  $searchpicto=$form->showFilterAndCheckAddButtons(0);
-  print $searchpicto;
-  print '</td>';
-  print '</tr>';
-
-
   while ($i < min($num,$limit))
   {
-      $obj = $db->fetch_object($result);     
+      $obj = $db->fetch_object($result);
 
       print '<tr class="oddeven"><td>';
 
@@ -151,9 +150,9 @@ if ($result)
     }
   print "</table>";
   print '</div>';
-  
+
   print '</form>';
-  
+
   $db->free($result);
 }
 else

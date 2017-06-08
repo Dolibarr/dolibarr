@@ -92,7 +92,7 @@ $arrayfields=array(
     'u.accountancy_code'=>array('label'=>$langs->trans("AccountancyCode"), 'checked'=>0),
     'u.email'=>array('label'=>$langs->trans("EMail"), 'checked'=>1),
     'u.fk_soc'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
-    'u.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))),
+    'u.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
     'u.fk_user'=>array('label'=>$langs->trans("HierarchicalResponsible"), 'checked'=>1),
     'u.datelastlogin'=>array('label'=>$langs->trans("LastConnexion"), 'checked'=>1, 'position'=>100),
     'u.datepreviouslogin'=>array('label'=>$langs->trans("PreviousConnexion"), 'checked'=>0, 'position'=>110),
@@ -194,7 +194,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ef on (u.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
-if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
+if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) || (! empty($user->admin) && empty($user->entity))))
 {
 	$sql.= " WHERE u.entity IS NOT NULL";
 }
@@ -545,7 +545,7 @@ while ($i < min($num,$limit))
         print '</td>';
 	}
     // Multicompany enabled
-    if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))
+	if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
     {
         if (! empty($arrayfields['u.entity']['checked']))
 		{
@@ -556,12 +556,8 @@ while ($i < min($num,$limit))
         	}
         	else
         	{
-        		// $mc is defined in conf.class.php if multicompany enabled.
-        		if (is_object($mc))
-        		{
-        			$mc->getInfo($obj->entity);
-        			print $mc->label;
-        		}
+        		$mc->getInfo($obj->entity);
+        		print $mc->label;
         	}
         	print '</td>';
 		}
@@ -581,7 +577,7 @@ while ($i < min($num,$limit))
 	        $user2->photo=$obj->photo2;
 	        $user2->admin=$obj->admin2;
 	        $user2->email=$obj->email2;
-	        $user2->societe_id=$obj->fk_soc2;
+	        $user2->socid=$obj->fk_soc2;
 	        print $user2->getNomUrl(-1,'',0,0,24,0,'');
             if (! empty($conf->multicompany->enabled) && $obj->admin2 && ! $obj->entity2)
             {

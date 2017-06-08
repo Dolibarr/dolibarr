@@ -121,7 +121,7 @@ if (GETPOST('removedassigned') || GETPOST('removedassigned') == '0')
 	$donotclearsession=1;
 	if ($action == 'add') $action = 'create';
 	if ($action == 'update') $action = 'edit';
-	
+
 	$listUserAssignedUpdated = true;
 }
 
@@ -739,7 +739,7 @@ if ($action == 'create')
 	print '<div class="assignedtouser">';
 	print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0');
 	print '</div>';
-	if (in_array($user->id,array_keys($listofuserid))) 
+	if (in_array($user->id,array_keys($listofuserid)))
 	{
 		print '<div class="myavailability">';
 		print $langs->trans("MyAvailability").': <input id="transparency" type="checkbox" name="transparency"'.(((! isset($_GET['transparency']) && ! isset($_POST['transparency'])) || GETPOST('transparency'))?' checked':'').'> '.$langs->trans("Busy");
@@ -757,8 +757,8 @@ if ($action == 'create')
 
 	print '</table>';
 	print '<br><br>';
-	
-	
+
+
 	print '<table class="border" width="100%">';
 
 	// Related company
@@ -835,12 +835,9 @@ if ($action == 'create')
     $doleditor->Create();
     print '</td></tr>';
 
-
     // Other attributes
-    $parameters=array('id'=>$object->id);
+    $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-
-
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		print $object->showOptionals($extrafields,'edit');
@@ -868,11 +865,11 @@ if ($id > 0)
 	$result3=$object->fetch_contact();
 	$result4=$object->fetch_userassigned();
 	$result5=$object->fetch_optionals($id,$extralabels);
-	
-	if ($listUserAssignedUpdated || $donotclearsession) 
+
+	if ($listUserAssignedUpdated || $donotclearsession)
 	{
         $percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):(in_array(GETPOST('complete'),array(-1,100))?GETPOST('complete'):GETPOST("percentage"));	// If status is -1 or 100, percentage is not defined and we must use status
-	
+
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
@@ -890,7 +887,7 @@ if ($id > 0)
 		//$object->societe->id = $_POST["socid"];			// deprecated
 		//$object->contact->id = $_POST["contactid"];		// deprecated
 		$object->fk_project  = GETPOST("projectid",'int');
-		
+
 		$object->note = GETPOST("note");
 	}
 
@@ -1082,11 +1079,11 @@ if ($id > 0)
 				$listofuserid=json_decode($_SESSION['assignedtouser'], true);
 			}
 		}
-		
+
 		print '<div class="assignedtouser">';
 		print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0');
 		print '</div>';
-		if (in_array($user->id,array_keys($listofuserid))) 
+		if (in_array($user->id,array_keys($listofuserid)))
 		{
 			print '<div class="myavailability">';
 			print $langs->trans("MyAvailability").':  <input id="transparency" type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked':'').'>'.$langs->trans("Busy");
@@ -1104,10 +1101,10 @@ if ($id > 0)
 
 		print '</table>';
 
-		
+
 		print '<br><br>';
 
-		
+
 		print '<table class="border" width="100%">';
 
 		if ($conf->societe->enabled)
@@ -1171,7 +1168,7 @@ if ($id > 0)
         print '</td></tr>';
 
         // Other attributes
-        $parameters=array('id'=>$object->id);
+        $parameters=array();
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
@@ -1218,8 +1215,8 @@ if ($id > 0)
 		$out.=img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
 		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
 		$linkback.=$out;
-		
-		
+
+
 		$morehtmlref='<div class="refidno">';
 		// Thirdparty
 		//$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
@@ -1259,14 +1256,14 @@ if ($id > 0)
 		    }
 		}
 		$morehtmlref.='</div>';
-		
-		
+
+
 		dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref);
-		
+
 	    print '<div class="fichecenter">';
-	
+
 		print '<div class="underbanner clearboth"></div>';
-		
+
 		// Affichage fiche action en mode visu
 		print '<table class="border" width="100%">';
 
@@ -1330,7 +1327,7 @@ if ($id > 0)
 		print '<div class="assignedtouser">';
 		print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		print '</div>';
-		if ($object->datep != $object->datef && in_array($user->id,array_keys($listofuserid))) 
+		if ($object->datep != $object->datef && in_array($user->id,array_keys($listofuserid)))
 		{
 			print '<div class="myavailability">';
 			print $langs->trans("MyAvailability").': '.(($object->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
@@ -1370,7 +1367,7 @@ if ($id > 0)
 				}
 			}
 			print '</td></tr>';
-			
+
 			// Related contact
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td>';
 			print '<td colspan="3">';
@@ -1401,7 +1398,7 @@ if ($id > 0)
 			}
 			print '</td></tr>';
 		}
-		
+
 		// Priority
 		print '<tr><td class="nowrap" class="titlefield">'.$langs->trans("Priority").'</td><td colspan="3">';
 		print ($object->priority?$object->priority:'');
@@ -1425,38 +1422,13 @@ if ($id > 0)
 		print '</td></tr>';
 
         // Other attributes
-		$parameters=array('colspan'=>' colspan="3"', 'colspanvalue'=>'3', 'id'=>$object->id);
-        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        $cols=3;
+        include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
 
-		//Extra field
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
-		{
-			print '<br><br>';
-		    print '<div class="underbanner clearboth"></div>';
-			print '<table class="border" width="100%">';
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				if (isset($_POST["options_" . $key])) {
-					if (is_array($_POST["options_" . $key])) {
-						// $_POST["options"] is an array but following code expects a comma separated string
-						$value = implode(",", $_POST["options_" . $key]);
-					} else {
-						$value = $_POST["options_" . $key];
-					}
-				} else {
-					$value = $object->array_options["options_" . $key];
-				}
-				print '<tr><td class="titlefield">'.$label.'</td><td>';
-				print $extrafields->showOutputField($key,$value);
-				print "</td></tr>\n";
-			}
-			print '</table>';
-		}
-
 		print '</div>';
-		
+
 		dol_fiche_end();
 	}
 

@@ -36,7 +36,7 @@ class Task extends CommonObject
     public $fk_element='fk_task';
     public $picto = 'task';
     protected $childtables=array('projet_task_time');    // To test if we can delete object
-    
+
     var $fk_task_parent;
     var $label;
     var $description;
@@ -59,7 +59,7 @@ class Task extends CommonObject
 	var $timespent_nblinesnull;
 	var $timespent_nblines;
 	// For detail of lines of timespent record, there is the property ->lines in common
-	
+
 	// Var used to call method addTimeSpent(). Bad practice.
     var $timespent_id;
     var $timespent_duration;
@@ -100,7 +100,7 @@ class Task extends CommonObject
         // Clean parameters
         $this->label = trim($this->label);
         $this->description = trim($this->description);
-        
+
         // Check parameters
         // Put here code to add control on parameters values
 
@@ -226,7 +226,7 @@ class Task extends CommonObject
         if ($resql)
         {
             $num_rows = $this->db->num_rows($resql);
-            
+
             if ($num_rows)
             {
                 $obj = $this->db->fetch_object($resql);
@@ -250,6 +250,9 @@ class Task extends CommonObject
                 $this->note_private			= $obj->note_private;
                 $this->note_public			= $obj->note_public;
 				$this->rang					= $obj->rang;
+
+                // Retreive all extrafield for thirdparty
+               	$this->fetch_optionals();
             }
 
             $this->db->free($resql);
@@ -409,7 +412,7 @@ class Task extends CommonObject
             $this->db->rollback();
             return 0;
         }
-        
+
         if (! $error)
         {
             // Delete linked contacts
@@ -534,7 +537,7 @@ class Task extends CommonObject
             return -1;
         }
     }
-    
+
 	/**
      *	Return nb of time spent
      *
@@ -579,14 +582,15 @@ class Task extends CommonObject
      * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
      *  @param	string	$sep			Separator between ref and label if option addlabel is set
      *  @param	int   	$notooltip		1=Disable tooltip
+     *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$option='',$mode='task', $addlabel=0, $sep=' - ', $notooltip=0)
+    function getNomUrl($withpicto=0,$option='',$mode='task', $addlabel=0, $sep=' - ', $notooltip=0, $save_lastsearch_value=-1)
     {
         global $conf, $langs, $user;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
-        
+
         $result='';
         $label = '<u>' . $langs->trans("ShowTask") . '</u>';
         if (! empty($this->ref))
@@ -597,8 +601,12 @@ class Task extends CommonObject
         {
         	$label .= "<br>".get_date_range($this->date_start,$this->date_end,'',$langs,0);
         }
-        
+
         $url = DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'');
+        // Add param to save lastsearch_values or not
+        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 
         $linkclose = '';
         if (empty($notooltip))
@@ -611,11 +619,11 @@ class Task extends CommonObject
             $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
         }
-        
+
         $linkstart = '<a href="'.$url.'"';
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
-        
+
         $picto='projecttask';
 
         if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
@@ -706,7 +714,7 @@ class Task extends CommonObject
                 $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec2";
                 $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
             }
-            else 
+            else
             {
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
             }
@@ -790,7 +798,7 @@ class Task extends CommonObject
                     $tasks[$i]->date_start		= $this->db->jdate($obj->date_start);
                     $tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
                     $tasks[$i]->rang	   		= $obj->rang;
-                    
+
                     $tasks[$i]->thirdparty_id	= $obj->thirdparty_id;
                     $tasks[$i]->thirdparty_name	= $obj->thirdparty_name;
                 }
@@ -963,7 +971,7 @@ class Task extends CommonObject
             $tasktime_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task_time");
             $ret = $tasktime_id;
 			$this->timespent_id = $ret;
-			
+
             if (! $notrigger)
             {
                 // Call trigger
@@ -1027,10 +1035,10 @@ class Task extends CommonObject
         global $langs;
 
         $id=$this->id;
-        if (empty($id)) 
+        if (empty($id))
         {
             dol_syslog("getSummaryOfTimeSpent called on a not loaded task", LOG_ERR);
-            return -1; 
+            return -1;
         }
 
         $result=array();
@@ -1045,7 +1053,7 @@ class Task extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
         $sql.= " WHERE t.fk_task = ".$id;
         if ($userid > 0) $sql.=" AND t.fk_user = ".$userid;
-        
+
         dol_syslog(get_class($this)."::getSummaryOfTimeSpent", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1055,14 +1063,14 @@ class Task extends CommonObject
             $result['min_date'] = $obj->min_date;               // deprecated. use the ->timespent_xxx instead
             $result['max_date'] = $obj->max_date;               // deprecated. use the ->timespent_xxx instead
             $result['total_duration'] = $obj->total_duration;   // deprecated. use the ->timespent_xxx instead
-            
+
             $this->timespent_min_date=$this->db->jdate($obj->min_date);
             $this->timespent_max_date=$this->db->jdate($obj->max_date);
             $this->timespent_total_duration=$obj->total_duration;
             $this->timespent_total_amount=$obj->total_amount;
             $this->timespent_nblinesnull=($obj->nblinesnull?$obj->nblinesnull:0);
             $this->timespent_nblines=($obj->nblines?$obj->nblines:0);
-            
+
             $this->db->free($resql);
         }
         else
@@ -1357,7 +1365,7 @@ class Task extends CommonObject
 		$clone_task->fetch($fromid);
 		$clone_task->fetch_optionals();
 		//var_dump($clone_task->array_options);exit;
-		
+
 		$origin_task->fetch($fromid);
 
 		$defaultref='';
@@ -1680,7 +1688,7 @@ class Task extends CommonObject
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
-	
+
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
@@ -1690,12 +1698,12 @@ class Task extends CommonObject
 	function load_board($user)
 	{
 	    global $conf, $langs;
-	
+
 	    $mine=0; $socid=$user->societe_id;
-	    
+
 	    $projectstatic = new Project($this->db);
 	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
-	    
+
 	    // List of tasks (does not care about permissions. Filtering will be done later)
 	    $sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
 	    $sql.= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
@@ -1718,29 +1726,29 @@ class Task extends CommonObject
 	    if ($resql)
 	    {
 	        $task_static = new Task($this->db);
-	
+
 	        $response = new WorkboardResponse();
 	        $response->warning_delay = $conf->projet->task->warning_delay/60/60/24;
 	        $response->label = $langs->trans("OpenedTasks");
 	        if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
 	        else $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mode=mine&amp;mainmenu=project';
 	        $response->img = img_object('',"task");
-	
+
 	        // This assignment in condition is not a bug. It allows walking the results.
 	        while ($obj=$this->db->fetch_object($resql))
 	        {
 	            $response->nbtodo++;
-	
+
 	            $task_static->projectstatus = $obj->projectstatus;
 	            $task_static->progress = $obj->progress;
 	            $task_static->fk_statut = $obj->status;
 	            $task_static->date_end = $this->db->jdate($obj->datee);
-	
+
 	            if ($task_static->hasDelay()) {
 	                $response->nbtodolate++;
 	            }
 	        }
-	
+
 	        return $response;
 	    }
 	    else
@@ -1749,7 +1757,7 @@ class Task extends CommonObject
 	        return -1;
 	    }
 	}
-	
+
 	/**
 	 * Is the task delayed?
 	 *
@@ -1758,7 +1766,7 @@ class Task extends CommonObject
 	public function hasDelay()
 	{
 	    global $conf;
-	
+
         if (! ($this->progress >= 0 && $this->progress < 100)) {
             return false;
         }
@@ -1768,5 +1776,5 @@ class Task extends CommonObject
         $datetouse = ($this->date_end > 0) ? $this->date_end : ($this->datee > 0 ? $this->datee : 0);
 
         return ($datetouse > 0 && ($datetouse < ($now - $conf->projet->task->warning_delay)));
-	}	
+	}
 }
