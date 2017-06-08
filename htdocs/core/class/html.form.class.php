@@ -984,6 +984,7 @@ class Form
 
     	if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
     	{
+    	    // No immediate load of all database
     		$placeholder='';
     		if ($selected && empty($selected_input_value))
     		{
@@ -1016,6 +1017,7 @@ class Form
     	}
     	else
     	{
+    	    // Immediate load of all database
     		$out.=$this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam);
     	}
 
@@ -1023,7 +1025,8 @@ class Form
     }
 
     /**
-     *  Output html form to select a third party
+     *  Output html form to select a third party.
+     *  Note, you must use the select_company to get the component to select a third party. This function must only be called by select_company.
      *
      *	@param	string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in form
@@ -1085,8 +1088,6 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-			$events = null;
-
            	if ($conf->use_javascript_ajax && ! $forcecombo)
             {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
@@ -5759,7 +5760,7 @@ class Form
         $disabled = ($disabled ? ' disabled' : '');
 
         $resultyesno = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
-        if ($useempty) $resultyesno .= '<option value="-1"'.(($value < 0)?' selected':'').'></option>'."\n";
+        if ($useempty) $resultyesno .= '<option value="-1"'.(($value < 0)?' selected':'').'>&nbsp;</option>'."\n";
         if (("$value" == 'yes') || ($value == 1))
         {
             $resultyesno .= '<option value="'.$yes.'" selected>'.$langs->trans("Yes").'</option>'."\n";

@@ -103,6 +103,20 @@ class Project extends CommonObject
 	 */
 	public $lines;
 
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+	/**
+	 * Open/Validated status
+	 */
+	const STATUS_VALIDATED = 1;
+	/**
+	 * Closed status
+	 */
+	const STATUS_CLOSED = 2;
+
+
 
     /**
      *  Constructor

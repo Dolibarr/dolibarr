@@ -4266,7 +4266,7 @@ dl.dropdown {
     position:absolute;
     top:2px;
     list-style:none;
-    max-height: 300px;
+    max-height: 280px;
     overflow: auto;
 }
 .dropdown span.value {
