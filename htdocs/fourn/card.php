@@ -133,9 +133,9 @@ if ($object->id > 0)
 	dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), -1, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
-	
+
 	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
-        
+
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
     print '<div class="underbanner clearboth"></div>';
@@ -243,12 +243,7 @@ if ($object->id > 0)
 
 	// Other attributes
 	$parameters=array('socid'=>$object->id, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
-	{
-		print $object->showOptionals($extrafields);
-	}
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	// Module Adherent
     if (! empty($conf->adherent->enabled))
@@ -278,15 +273,15 @@ if ($object->id > 0)
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 	$boxstat = '';
-	
+
 	// Nbre max d'elements des petites listes
 	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
-	
+
 	// Lien recap
 	$boxstat.='<div class="box">';
 	$boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom" width="100%">';
 	$boxstat.='<tr class="impair"><td colspan="2" class="tdboxstats nohover">';
-	
+
 	if ($conf->supplier_proposal->enabled)
 	{
 	    // Box proposals
@@ -304,7 +299,7 @@ if ($object->id > 0)
 	    $boxstat.='</div>';
 	    if ($link) $boxstat.='</a>';
 	}
-	
+
 	if ($conf->fournisseur->enabled)
 	{
 	    // Box proposals
@@ -322,14 +317,14 @@ if ($object->id > 0)
 	    $boxstat.='</div>';
 	    if ($link) $boxstat.='</a>';
 	}
-	
+
 	if ($conf->fournisseur->enabled)
 	{
 	    $tmp = $object->getOutstandingBills('supplier');
 	    $outstandingOpened=$tmp['opened'];
 	    $outstandingTotal=$tmp['total_ht'];
 	    $outstandingTotalIncTax=$tmp['total_ttc'];
-	     
+
 	    $text=$langs->trans("OverAllInvoices");
 	    $link='';
 	    $icon='bill';
@@ -339,7 +334,7 @@ if ($object->id > 0)
 	    $boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 	    $boxstat.='</div>';
 	    if ($link) $boxstat.='</a>';
-	     
+
 	    // Box outstanding bill
 	    $text=$langs->trans("CurrentOutstandingBill");
 	    $link=DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id;
@@ -351,14 +346,14 @@ if ($object->id > 0)
 	    $boxstat.='</div>';
 	    if ($link) $boxstat.='</a>';
 	}
-	
+
 	$boxstat.='</td></tr>';
 	$boxstat.='</table>';
 	$boxstat.='</div>';
-	
+
 	print $boxstat;
-	
-	
+
+
 	$var=true;
 
 	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
@@ -391,14 +386,14 @@ if ($object->id > 0)
 		$sql.= ' pfp.tms, pfp.ref_fourn as supplier_ref, pfp.price, pfp.quantity, pfp.unitprice';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp';
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pfp.fk_product";
-		$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+		$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 		$sql.= ' AND pfp.fk_soc = '.$object->id;
 		$sql .= $db->order('pfp.tms', 'desc');
 		$sql.= $db->plimit($MAXLIST);
-		
+
 		$query = $db->query($sql);
         if (! $query) dol_print_error($db);
-        
+
 		$return = array();
 
 		if ($db->num_rows($query)) {
@@ -407,7 +402,7 @@ if ($object->id > 0)
 
 			while ($objp = $db->fetch_object($query)) {
 
-				
+
 
 				$productstatic->id = $objp->rowid;
 				$productstatic->ref = $objp->ref;
@@ -445,12 +440,12 @@ if ($object->id > 0)
 		print '</table>';
 	}
 
-	
+
 	/*
 	 * Last supplier proposal
 	 */
 	$proposalstatic = new SupplierProposal($db);
-	
+
 	if ($user->rights->supplier_proposal->lire)
 	{
 	    $sql  = "SELECT p.rowid, p.ref, p.date_valid as dc, p.fk_statut, p.total_ht, p.tva as total_tva, p.total as total_ttc";
@@ -459,17 +454,17 @@ if ($object->id > 0)
 	    $sql.= " AND p.entity =".$conf->entity;
 	    $sql.= " ORDER BY p.date_valid DESC";
 	    $sql.= " ".$db->plimit($MAXLIST);
-	    
+
 	    $resql=$db->query($sql);
 	    if ($resql)
 	    {
 	        $i = 0 ;
 	        $num = $db->num_rows($resql);
-	
+
 	        if ($num > 0)
 	        {
 	            print '<table class="noborder" width="100%">';
-	
+
 	            print '<tr class="liste_titre">';
 	            print '<td colspan="3">';
 	            print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastSupplierProposals",($num<$MAXLIST?"":$MAXLIST)).'</td>';
@@ -478,13 +473,13 @@ if ($object->id > 0)
 	            print '</tr></table>';
 	            print '</td></tr>';
 	        }
-	
+
 	        $var = True;
 	        while ($i < $num && $i <= $MAXLIST)
 	        {
 	            $obj = $db->fetch_object($resql);
-	            
-	
+
+
 	            print '<tr class="oddeven">';
 	            print '<td class="nowrap">';
 	            $proposalstatic->id = $obj->rowid;
@@ -509,14 +504,14 @@ if ($object->id > 0)
 	            $i++;
 	        }
 	        $db->free($resql);
-	
+
 	        if ($num >0) print "</table>";
 	    }
 	    else
 	    {
 	        dol_print_error($db);
 	    }
-	}	
+	}
 
 	/*
 	 * Last supplier orders
@@ -558,7 +553,7 @@ if ($object->id > 0)
 			$object_count = $db->fetch_object($resql);
 			$num = $object_count->total;
 		}
-		
+
 		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut, p.total_ht, p.tva as total_tva, p.total_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
 		$sql.= " WHERE p.fk_soc =".$object->id;
@@ -587,7 +582,7 @@ if ($object->id > 0)
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$obj = $db->fetch_object($resql);
-				
+
 
 				print '<tr class="oddeven">';
                 print '<td class="nowrap">';
@@ -660,7 +655,7 @@ if ($object->id > 0)
 			while ($i < min($num,$MAXLIST))
 			{
 				$obj = $db->fetch_object($resql);
-				
+
 				print '<tr class="oddeven">';
 				print '<td>';
 				print '<a href="facture/card.php?facid='.$obj->rowid.'">';
@@ -712,7 +707,7 @@ if ($object->id > 0)
         {
             print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("ThirdPartyIsClosed").'</a></div>';
         }
-	    
+
 		if ($conf->supplier_proposal->enabled && $user->rights->supplier_proposal->creer && $object->status==1)
 		{
 			$langs->load("supplier_proposal");
@@ -750,9 +745,9 @@ if ($object->id > 0)
         	}
     	}
 	}
-	
+
 	print '</div>';
-	
+
 
 	if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
 	{

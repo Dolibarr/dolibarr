@@ -53,7 +53,7 @@ class MyModuleObject extends CommonObject
      * @var array Array with all fields and their property
      */
 	public $fields;
-	
+
 	/**
 	 * @var mixed Sample property 1
 	 */
@@ -62,11 +62,11 @@ class MyModuleObject extends CommonObject
 	 * @var mixed Sample property 2
 	 */
 	public $prop2;
-	
+
 	//...
-	
+
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	
+
 	public $table_element_line = 'mymoduleobjectdet';
     public $class_element_line = 'MyModuleObjectline';
     public $fk_element = 'fk_mymoduleobject';
@@ -75,9 +75,9 @@ class MyModuleObject extends CommonObject
 	 * @var MyModuleObjectLine[] Lines
 	 */
 	public $lines = array();
-	
-	
-	
+
+
+
 	/**
 	 * Constructor
 	 *
@@ -163,10 +163,9 @@ class MyModuleObject extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id  Id object
-	 * @param string $ref Ref
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param  int     $id      Id object
+	 * @param  string  $ref     Ref
+	 * @return int              <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -180,7 +179,7 @@ class MyModuleObject extends CommonObject
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		$sql.= ' WHERE 1 = 1';
 		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity("mymoduleobject", 1) . ")";
+		    $sql .= " AND entity IN (" . getEntity('mymoduleobject') . ")";
 		}
 		if (null !== $ref) {
 			$sql .= ' AND t.ref = ' . '\'' . $ref . '\'';
@@ -199,19 +198,12 @@ class MyModuleObject extends CommonObject
 				$this->prop2 = $obj->field2;
 				//...
 			}
-			
-			// Retrieve all extrafields for invoice
-			// fetch optionals attributes and labels
-			/*
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields=new ExtraFields($this->db);
-			$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-			$this->fetch_optionals($this->id,$extralabels);
-            */
-			
-			// $this->fetch_lines();
-			
+
 			$this->db->free($resql);
+
+			$this->fetch_optionals();
+
+			// $this->fetch_lines();
 
 			if ($numrows) {
 				return 1;
@@ -221,7 +213,6 @@ class MyModuleObject extends CommonObject
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
 			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
-
 			return - 1;
 		}
 	}
@@ -258,7 +249,7 @@ class MyModuleObject extends CommonObject
 		}
 		$sql.= ' WHERE 1 = 1';
 		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity("mymoduleobject", 1) . ")";
+		    $sql .= " AND entity IN (" . getEntity('mymoduleobject') . ")";
 		}
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
@@ -306,7 +297,7 @@ class MyModuleObject extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
-		
+
 		// Clean parameters
 		if (isset($this->prop1)) {
 			$this->prop1 = trim($this->prop1);
@@ -386,7 +377,7 @@ class MyModuleObject extends CommonObject
 		}
 
 		// If you need to delete child tables to, you can insert them here
-		
+
 		if (!$error) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
 			$sql .= ' WHERE rowid=' . $this->id;
@@ -475,7 +466,7 @@ class MyModuleObject extends CommonObject
         global $menumanager;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
-        
+
         $result = '';
         $companylink = '';
 
@@ -484,7 +475,7 @@ class MyModuleObject extends CommonObject
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
         $url = DOL_URL_ROOT.'/mymodule/'.$this->table_name.'_card.php?id='.$this->id;
-        
+
         $linkclose='';
         if (empty($notooltip))
         {
@@ -497,7 +488,7 @@ class MyModuleObject extends CommonObject
             $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
         }
         else $linkclose = ($morecss?' class="'.$morecss.'"':'');
-        
+
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';

@@ -1780,7 +1780,7 @@ class Adherent extends CommonObject
         $sql = "SELECT count(a.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
         $sql.= " WHERE a.statut > 0";
-        $sql.= " AND a.entity IN (".getEntity('adherent', 1).")";
+        $sql.= " AND a.entity IN (".getEntity('adherent').")";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1818,7 +1818,7 @@ class Adherent extends CommonObject
         $sql = "SELECT a.rowid, a.datefin, a.statut";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
         $sql.= " WHERE a.statut = 1";
-        $sql.= " AND a.entity IN (".getEntity('adherent', 1).")";
+        $sql.= " AND a.entity IN (".getEntity('adherent').")";
         $sql.= " AND (a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."')";
 
         $resql=$this->db->query($sql);

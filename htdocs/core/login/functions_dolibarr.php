@@ -39,7 +39,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 
 	// Force master entity in transversal mode
 	$entity=$entitytotest;
-	if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) $entity=1;
+	if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) $entity=1;
 
 	$login='';
 

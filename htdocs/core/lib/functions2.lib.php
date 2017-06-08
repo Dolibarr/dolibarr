@@ -98,7 +98,7 @@ function dolGetModulesDirs($subdir='')
             while (($file = readdir($handle))!==false)
             {
                 if (preg_match('/disabled/',$file)) continue;   // We discard module if it contains disabled into name.
-                
+
                 if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
                 {
                     if (is_dir($dirroot . '/' . $file . '/core/modules'.$subdir.'/'))
@@ -207,7 +207,7 @@ function dol_print_object_info($object, $usetable=0)
     //print "x".$deltadateforserver." - ".$deltadateforclient." - ".$deltadateforuser;
 
     if ($usetable) print '<table class="border centpercent">';
-    
+
     // Import key
     if (! empty($object->import_key))
     {
@@ -378,7 +378,7 @@ function dol_print_object_info($object, $usetable=0)
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
-    
+
     // Date approve
     if (! empty($object->date_approve2))
     {
@@ -391,7 +391,7 @@ function dol_print_object_info($object, $usetable=0)
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
-    
+
     // User close
     if (! empty($object->user_cloture))
     {
@@ -476,7 +476,7 @@ function dol_print_object_info($object, $usetable=0)
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
-    
+
     if ($usetable) print '</table>';
 }
 
@@ -799,7 +799,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 			if(!empty($user->array_options['options_'.$extra])){
 				$mask =  preg_replace('#('.$start.')(.*?)('.$end.')#si', $user->array_options['options_'.$extra], $mask);
 			}
-    } 
+    }
     $maskwithonlyymcode=$mask;
     $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$maskcounter,$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{dd\}/i','dd',$maskwithonlyymcode);
@@ -928,11 +928,11 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     //print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
 
     // Define $sqlstring
-    if (function_exists('mb_strrpos')) 
+    if (function_exists('mb_strrpos'))
     	{
     	$posnumstart=mb_strrpos($maskwithnocode,$maskcounter, 'UTF-8');
-	} 
-	else 
+	}
+	else
 	{
     	$posnumstart=strrpos($maskwithnocode,$maskcounter);
 	}	// Pos of counter in final string (from 0 to ...)
@@ -1123,7 +1123,7 @@ function get_string_between($string, $start, $end){
     $string = " ".$string;
      $ini = strpos($string,$start);
      if ($ini == 0) return "";
-     $ini += strlen($start);     
+     $ini += strlen($start);
      $len = strpos($string,$end,$ini) - $ini;
      return substr($string,$ini,$len);
 }
@@ -1539,9 +1539,9 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
     $sql = "SELECT nom as id, nom as lib, libelle as label, description as description";
     $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
     $sql.= " WHERE type = '".$type."'";
-    $sql.= " AND entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+    $sql.= " AND entity IN (0,".$conf->entity.")";
     $sql.= " ORDER BY description DESC";
-		
+
     dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql)
@@ -1625,7 +1625,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 /**
  * This function evaluates a string that should be a valid IPv4
  * Note: For ip 169.254.0.0, it returns 0 with some PHP (5.6.24) and 2 with some minor patchs of PHP (5.6.25). See https://github.com/php/php-src/pull/1954.
- *   
+ *
  * @param	string $ip IP Address
  * @return	int 0 if not valid or reserved range, 1 if valid and public IP, 2 if valid and private range IP
  */

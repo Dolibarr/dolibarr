@@ -197,7 +197,7 @@ if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no p
 {
 	$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-$sql.= " WHERE e.entity IN (".getEntity('expedition', 1).")";
+$sql.= " WHERE e.entity IN (".getEntity('expedition').")";
 if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
 {
 	$sql.= " AND e.fk_soc = sc.fk_soc";

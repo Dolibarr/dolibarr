@@ -129,7 +129,7 @@ if ($resql)
             $invoicestatic->type=$obj->type;
             $alreadypayed=$invoicestatic->getSommePaiement();
 
-            
+
             print '<tr class="oddeven"><td>';
             print $invoicestatic->getNomUrl(1,'withdraw');
             print '</td>';
@@ -157,7 +157,7 @@ if ($resql)
     }
     else
     {
-        print '<tr '.$bc[false].'><td colspan="2" class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw").'</td></tr>';
+        print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders")).'</td></tr>';
     }
     print "</table><br>";
 }
@@ -197,7 +197,7 @@ if ($result)
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
-        
+
 
         print '<tr class="oddeven">';
 

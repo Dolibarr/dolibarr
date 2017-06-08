@@ -218,7 +218,7 @@ else
 {
     $sql.=" p.accountancy_code_sell = aa.account_number AND aa.fk_pcg_version = '" . $pcgvercode . "'";
 }
-$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
     if (strlen(trim($search_current_account))) {
         $sql .= natural_search("p.accountancy_code_buy",$search_current_account);

@@ -39,7 +39,7 @@ class ExtraFields
 
 	// type of element (for what object is the extrafield)
 	var $attribute_elementtype;
-	
+
 	// Array with type of the extra field
 	var $attribute_type;
 	// Array with label of extra field
@@ -68,7 +68,10 @@ class ExtraFields
 	var $attribute_list;
 	// Array to store if extra field is hidden
 	var $attribute_hidden;		// warning, do not rely on this. If your module need a hidden data, it must use its own table.
-	
+
+	// New array to store extrafields definition
+	var $attributes;
+
 	var $error;
 	var $errno;
 
@@ -95,7 +98,7 @@ class ExtraFields
 	'separate' => 'ExtrafieldSeparator',
 	);
 
-	
+
 	/**
 	 *	Constructor
 	 *
@@ -149,7 +152,7 @@ class ExtraFields
 		// Create field into database except for separator type which is not stored in database
 		if ($type != 'separate')
 		{
-			$result=$this->create($attrname, $type, $size, $elementtype, $unique, $required, $default_value, $param, $perms, $list, $copmputed);
+			$result=$this->create($attrname, $type, $size, $elementtype, $unique, $required, $default_value, $param, $perms, $list, $computed);
 		}
 		$err1=$this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
@@ -349,7 +352,7 @@ class ExtraFields
 		$table=$elementtype.'_extrafields';
 
 		$error=0;
-		
+
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			$result=$this->delete_label($attrname,$elementtype);
@@ -381,7 +384,7 @@ class ExtraFields
                     }
                 }
 			}
-			
+
 			return $result;
 		}
 		else
@@ -640,25 +643,28 @@ class ExtraFields
 
 
 	/**
-	 * 	Load array this->attribute_xxx like attribute_label, attribute_type, ...
+	 * 	Load array this->attributes, or old this->attribute_xxx like attribute_label, attribute_type, ...
 	 *
-	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
-	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED
-	 * 	@return	array							Array of attributes for all extra fields
+	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
+	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED. Deprecated. Should not be required.
+	 * 	@return	array							Array of attributes keys+label for all extra fields.
 	 */
 	function fetch_name_optionals_label($elementtype,$forceload=false)
 	{
 		global $conf;
 
-		if ( empty($elementtype) ) return array();
+		if (empty($elementtype) ) return array();
 
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
 
 		$array_name_label=array();
 
-		// For avoid conflicts with external modules
+		// To avoid conflicts with external modules. TODO Remove this.
 		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
+
+		// We should not have several time this log. If we have, there is some optimization to do by calling a simple $object->fetch_optionals() that include cache management.
+		dol_syslog("fetch_name_optionals_label elementtype=".$elementtype);
 
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,list,ishidden,fielddefault,fieldcomputed";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
@@ -673,12 +679,13 @@ class ExtraFields
 			{
 				while ($tab = $this->db->fetch_object($resql))
 				{
-					// we can add this attribute to adherent object
+					// We can add this attribute to object. TODO Remove this and return $this->attributes[$elementtype]['label']
 					if ($tab->type != 'separate')
 					{
 						$array_name_label[$tab->name]=$tab->label;
 					}
 
+					// Old usage
 					$this->attribute_type[$tab->name]=$tab->type;
 					$this->attribute_label[$tab->name]=$tab->label;
 					$this->attribute_size[$tab->name]=$tab->size;
@@ -693,8 +700,25 @@ class ExtraFields
 					$this->attribute_perms[$tab->name]=$tab->perms;
 					$this->attribute_list[$tab->name]=$tab->list;
 					$this->attribute_hidden[$tab->name]=$tab->ishidden;
+
+					// New usage
+					$this->attributes[$tab->elementtype]['type'][$tab->name]=$tab->type;
+					$this->attributes[$tab->elementtype]['label'][$tab->name]=$tab->label;
+					$this->attributes[$tab->elementtype]['size'][$tab->name]=$tab->size;
+					$this->attributes[$tab->elementtype]['elementtype'][$tab->name]=$tab->elementtype;
+					$this->attributes[$tab->elementtype]['default'][$tab->name]=$tab->fielddefault;
+					$this->attributes[$tab->elementtype]['computed'][$tab->name]=$tab->fieldcomputed;
+					$this->attributes[$tab->elementtype]['unique'][$tab->name]=$tab->fieldunique;
+					$this->attributes[$tab->elementtype]['required'][$tab->name]=$tab->fieldrequired;
+					$this->attributes[$tab->elementtype]['param'][$tab->name]=($tab->param ? unserialize($tab->param) : '');
+					$this->attributes[$tab->elementtype]['pos'][$tab->name]=$tab->pos;
+					$this->attributes[$tab->elementtype]['alwayseditable'][$tab->name]=$tab->alwayseditable;
+					$this->attributes[$tab->elementtype]['perms'][$tab->name]=$tab->perms;
+					$this->attributes[$tab->elementtype]['list'][$tab->name]=$tab->list;
+					$this->attributes[$tab->elementtype]['ishidden'][$tab->name]=$tab->ishidden;
 				}
 			}
+			if ($elementtype) $this->attributes[$elementtype]['loaded']=1;
 		}
 		else
 		{
@@ -736,7 +760,7 @@ class ExtraFields
 		$hidden=$this->attribute_hidden[$key];
 
 		if ($computed) return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
-		
+
 		if (empty($showsize))
 		{
     		if ($type == 'date')
@@ -772,14 +796,14 @@ class ExtraFields
     			{
     			    $showsize = 'minwidth200imp';
     			}
-    			else 
+    			else
     			{
     			    //$showsize=48;
     			    $showsize = 'minwidth400imp';
     			}
     		}
 		}
-        
+
 		if (in_array($type,array('date','datetime')))
 		{
 			$tmp=explode(',',$size);
@@ -1029,7 +1053,7 @@ class ExtraFields
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($db);
-			
+
 			$value_arr=explode(',',$value);
 			$out=$form->multiselectarray($keysuffix.'options_'.$key.$keyprefix, $param['options'], $value_arr, '', 0, '', 0, '100%');
 
@@ -1124,9 +1148,9 @@ class ExtraFields
 				if ($resql) {
 					$num = $this->db->num_rows($resql);
 					$i = 0;
-					
+
 					$data=array();
-					
+
 					while ( $i < $num ) {
 						$labeltoshow = '';
 						$obj = $this->db->fetch_object($resql);
@@ -1152,9 +1176,9 @@ class ExtraFields
 									$labeltoshow = dol_trunc($obj->$field_toshow, 18) . ' ';
 								}
 							}
-							
+
 							$data[$obj->rowid]=$labeltoshow;
-							
+
 						} else {
 							if (! $notrans) {
 								$translabel = $langs->trans($obj->{$InfoFieldList[1]});
@@ -1177,16 +1201,16 @@ class ExtraFields
 
 							$data[$obj->rowid]=$labeltoshow;
 						}
-						
+
 						$i ++;
 					}
 					$this->db->free($resql);
-					
+
 					require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 					$form = new Form($db);
-					
+
 					$out=$form->multiselectarray($keysuffix.'options_'.$key.$keyprefix, $data, $value_arr, '', 0, '', 0, '100%');
-					
+
 				} else {
 					print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
 				}
@@ -1205,11 +1229,11 @@ class ExtraFields
 			if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
 			{
 			    $valuetoshow=$value;
-                if (!empty($value)) 
+                if (!empty($value))
                 {
                     $object = new $InfoFieldList[0]($this->db);
                     $resfetch=$object->fetch($value);
-                    if ($resfetch > 0) 
+                    if ($resfetch > 0)
                     {
                         $valuetoshow=$object->ref;
                         if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ->ref is not name but id (because name is not unique)
@@ -1269,7 +1293,7 @@ class ExtraFields
 		    //var_dump($computed);
 		    $value = dol_eval($computed, 1, 0);
 		}
-		
+
 		$showsize=0;
 		if ($type == 'date')
 		{
@@ -1477,7 +1501,7 @@ class ExtraFields
 					}
 				}
 				$value='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
-				
+
 			} else {
 				dol_syslog(get_class($this) . '::showOutputField error ' . $this->db->lasterror(), LOG_WARNING);
 			}

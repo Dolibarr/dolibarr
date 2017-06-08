@@ -131,7 +131,7 @@ if ($id > 0 || ! empty($ref))
 			if (! $user->rights->societe->client->voir && ! $socid)
 				$sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 			$sql .= " WHERE p.fk_soc = s.rowid";
-			$sql .= " AND p.entity IN (".getEntity('propal', 1).")";
+			$sql .= " AND p.entity IN (".getEntity('propal').")";
 			$sql .= " AND d.fk_propal = p.rowid";
 			$sql .= " AND d.fk_product =" . $product->id;
 			if (! empty($search_month))

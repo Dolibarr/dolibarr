@@ -1966,7 +1966,7 @@ class FactureFournisseur extends CommonInvoice
 
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
-        $sql.= " WHERE entity IN (".getEntity('product', 1).")";
+        $sql.= " WHERE entity IN (".getEntity('product').")";
 
         $resql = $this->db->query($sql);
         if ($resql)
