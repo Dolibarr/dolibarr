@@ -195,7 +195,7 @@ class Categorie extends CommonObject
 		}
 		else
 		{
-			$sql.= " WHERE label = '".$this->db->escape($label)."' AND entity IN (".getEntity('category',1).")";
+			$sql.= " WHERE label = '".$this->db->escape($label)."' AND entity IN (".getEntity('category').")";
 			if ($type) $sql.= " AND type = '".$this->db->escape($type)."'";
 		}
 
@@ -903,7 +903,7 @@ class Categorie extends CommonObject
 		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE fk_parent != 0";
-		$sql.= " AND entity IN (".getEntity('category',1).")";
+		$sql.= " AND entity IN (".getEntity('category').")";
 
 		dol_syslog(get_class($this)."::load_motherof", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1094,7 +1094,7 @@ class Categorie extends CommonObject
 	function get_all_categories($type=null, $parent=false)
 	{
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE entity IN (".getEntity('category',1).")";
+		$sql.= " WHERE entity IN (".getEntity('category').")";
 		if (! is_null($type))
 			$sql.= " AND type = ".$type;
 		if ($parent)
@@ -1129,7 +1129,7 @@ class Categorie extends CommonObject
 	{
 		$sql = "SELECT count(rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE entity IN (".getEntity('category',1).")";
+		$sql.= " WHERE entity IN (".getEntity('category').")";
 		$res = $this->db->query($sql);
 		if ($res)
 		{
@@ -1155,7 +1155,7 @@ class Categorie extends CommonObject
 		 */
 		$sql = "SELECT c.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c ";
-		$sql.= " WHERE c.entity IN (".getEntity('category',1).")";
+		$sql.= " WHERE c.entity IN (".getEntity('category').")";
 		$sql.= " AND c.type = ".$this->type;
 		$sql.= " AND c.fk_parent = ".$this->fk_parent;
 		$sql.= " AND c.label = '".$this->db->escape($this->label)."'";

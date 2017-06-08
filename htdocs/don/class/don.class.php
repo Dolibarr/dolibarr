@@ -818,7 +818,7 @@ class Don extends CommonObject
         $sql = "SELECT count(d.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " WHERE d.fk_statut > 0";
-        $sql.= " AND d.entity IN (".getEntity('don', 1).")";
+        $sql.= " AND d.entity IN (".getEntity('don').")";
 
         $resql=$this->db->query($sql);
         if ($resql)

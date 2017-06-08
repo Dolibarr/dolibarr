@@ -68,7 +68,7 @@ class ProductAttributeValue
 	 */
 	public function fetch($valueid)
 	{
-		$sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE rowid = ".(int) $valueid." AND entity IN (".getEntity('product', 1).")";
+		$sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE rowid = ".(int) $valueid." AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 

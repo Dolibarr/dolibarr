@@ -2455,7 +2455,7 @@ class CommandeFournisseur extends CommonOrder
         $product=new ProductFournisseur($this->db);
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
-        $sql.= " WHERE entity IN (".getEntity('product', 1).")";
+        $sql.= " WHERE entity IN (".getEntity('product').")";
         $sql.=$this->db->order("rowid","ASC");
         $sql.=$this->db->plimit(1);
         $resql = $this->db->query($sql);

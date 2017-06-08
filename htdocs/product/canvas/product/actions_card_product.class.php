@@ -352,7 +352,7 @@ class ActionsCardProduct
 		}
 
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-		$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
+		$sql.= " WHERE p.entity IN (".getEntity('product').")";
 
 		if ($sall)
 		{

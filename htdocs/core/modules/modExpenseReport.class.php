@@ -186,7 +186,7 @@ class modExpenseReport extends DolibarrModules
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'expensereport_det as ed LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as tf ON ed.fk_c_type_fees = tf.id';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON ed.fk_projet = p.rowid';
 		$this->export_sql_end[$r] .=' WHERE ed.fk_expensereport = d.rowid AND d.fk_user_author = u.rowid';
-		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('expensereport',1).')';
+		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('expensereport').')';
 	}
 
 	/**
