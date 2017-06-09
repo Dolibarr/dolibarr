@@ -125,12 +125,12 @@ $langs->load("cashdesk");
     			<td><input class="texte1_off maxwidth50onsmartphone" type="text" name="txtTotal" value="" disabled /></td><td></td>
                 <!-- Choix du taux de TVA -->
                 <td class="select_tva">
-                <?php //var_dump($tab_tva); 
-					$tva_tx = $obj_facturation->tva();  // Try to get a previously entered VAT rowid. First time, this will return empty.
+                <?php
+					$vatrate = $obj_facturation->vatrate;      // To get vat rate we just have selected
+
 					$buyer = new Societe($db);
 					if ($_SESSION["CASHDESK_ID_THIRDPARTY"] > 0) $buyer->fetch($_SESSION["CASHDESK_ID_THIRDPARTY"]);
-					
-					echo $form->load_tva('selTva', (isset($_POST["selTva"])?GETPOST("selTva",'alpha',2):-1), $mysoc, $buyer, 0, 0, '', false, -1);
+					echo $form->load_tva('selTva', (isset($_POST["selTva"])?GETPOST("selTva",'alpha',2):$vatrate), $mysoc, $buyer, 0, 0, '', false, -1);
 			    ?>
                 </td>
 			</tr>
