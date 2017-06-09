@@ -413,7 +413,7 @@ class Account extends CommonObject
         {
             $sql = "SELECT code FROM ".MAIN_DB_PREFIX."c_paiement";
             $sql.= " WHERE id=".$oper;
-            $sql.= " AND entity = " . getEntity('c_payement_term', 2) . ")";
+            $sql.= " AND entity = " . getEntity('c_paiement', 2) . ")";
             $resql=$this->db->query($sql);
             if ($resql)
             {
