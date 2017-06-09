@@ -364,8 +364,6 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->date_create = $now;
 
 					if ($tabtype[$key] == 'payment') {
-						$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
-
 						$sqlmid = 'SELECT fac.facnumber';
 						$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture fac";
 						$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON payfac.fk_facture=fac.rowid";
@@ -378,8 +376,6 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->doc_ref = $objmid->facnumber;	// Ref of invoice
 						}
 					} else if ($tabtype[$key] == 'payment_supplier') {
-						$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
-
 						$sqlmid = 'SELECT facf.ref_supplier, facf.ref';
 						$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf";
 						$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON payfacf.fk_facturefourn=facf.rowid";
@@ -392,8 +388,6 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->doc_ref = $objmid->ref_supplier . ' (' . $objmid->ref . ')'; // Ref on invoice
 						}
 					} else if ($tabtype[$key] == 'payment_expensereport') {
-						$bookkeeping->code_tiers = $tabuser[$key]['accountancy_code'];
-
 						$sqlmid = 'SELECT e.ref';
 						$sqlmid .= " FROM " . MAIN_DB_PREFIX . "expensereport as e";
 						$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "payment_expensereport as payer ON payer.fk_expensereport=e.rowid";
@@ -473,7 +467,7 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->doc_ref = $objmid->facnumber;
 						}
 						$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
-						$bookkeeping->numero_compte = $k;
+						$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 					} else if ($tabtype[$key] == 'payment_supplier') {		   // If payment is payment of supplier invoice, we get ref of invoice
 						$sqlmid = 'SELECT facf.ref_supplier,facf.ref';
 						$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf ";
@@ -487,7 +481,7 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->doc_ref = $objmid->ref_supplier . ' (' . $objmid->ref . ')';
 						}
 						$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
-						$bookkeeping->numero_compte = $k;
+						$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 					} else if ($tabtype[$key] == 'payment_vat') {
 						$bookkeeping->code_tiers = '';
 						$bookkeeping->numero_compte = $k;
