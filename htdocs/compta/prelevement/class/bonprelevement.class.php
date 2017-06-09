@@ -252,7 +252,7 @@ class BonPrelevement extends CommonObject
     function getErrorString($error)
     {
         global $langs;
-        
+
         $errors = array();
 
         $errors[1027] = $langs->trans("DateInvalid");
@@ -920,7 +920,7 @@ class BonPrelevement extends CommonObject
 
 					$dir=$conf->prelevement->dir_output.'/receipts';
 					if (! is_dir($dir)) dol_mkdir($dir);
-					
+
 					$this->filename = $dir.'/'.$ref.'.xml';
 
 	                // Create withdraw receipt in database
@@ -1028,7 +1028,7 @@ class BonPrelevement extends CommonObject
                         $this->emetteur_bic                = $account->bic;
 
                         $this->emetteur_ics                = $conf->global->PRELEVEMENT_ICS;		// Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
-    
+
                         $this->raison_sociale              = $account->proprio;
                     }
 
@@ -1572,7 +1572,7 @@ class BonPrelevement extends CommonObject
 		$XML_DEBITOR .='					<Nm>'.strtoupper(dolEscapeXML(dol_string_unaccent($row_nom))).'</Nm>'.$CrLf;
 		$XML_DEBITOR .='					<PstlAdr>'.$CrLf;
 		$XML_DEBITOR .='						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
-		$XML_DEBITOR .='						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => "")))),70,'right','UTF-8',true).'</AdrLine>'.$CrLf;
+		$XML_DEBITOR .='						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => ""))),70,'right','UTF-8',true)).'</AdrLine>'.$CrLf;
 		$XML_DEBITOR .='						<AdrLine>'.dolEscapeXML(dol_string_unaccent($row_zip.' '.$row_town)).'</AdrLine>'.$CrLf;
 		$XML_DEBITOR .='					</PstlAdr>'.$CrLf;
 		$XML_DEBITOR .='				</Dbtr>'.$CrLf;
@@ -1668,7 +1668,7 @@ class BonPrelevement extends CommonObject
      *	@return	string					String with SEPA Sender
      */
     function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf='\n')
-    {	
+    {
         // SEPA INITIALISATION
 		global $conf;
 
@@ -1687,12 +1687,12 @@ class BonPrelevement extends CommonObject
 		    $this->emetteur_number_key		   = $account->cle_rib;
 		    $this->emetteur_iban               = $account->iban;
 		    $this->emetteur_bic                = $account->bic;
-		
+
 		    $this->emetteur_ics                = $conf->global->PRELEVEMENT_ICS;		// Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
-		
+
 		    $this->raison_sociale              = $account->proprio;
 		}
-		
+
 		// Récupération info demandeur
 		$sql = "SELECT rowid, ref";
 		$sql.= " FROM";
