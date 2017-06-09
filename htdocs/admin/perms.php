@@ -189,7 +189,7 @@ if ($result)
         $var=!$var;
         print '<tr '. $bc[$var].'>';
 
-        print '<td>'.img_object('',$picto).' '.$objMod->getName();
+        print '<td>'.img_object('',$picto,'class="pictoobjectwidth"').' '.$objMod->getName();
         print '<a name="'.$objMod->getName().'">&nbsp;</a>';
 
         $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle));
