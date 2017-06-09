@@ -53,7 +53,7 @@ class box_produits extends ModeleBoxes
 	 */
 	function loadBox($max=5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $db, $conf, $hookmanager;
 
 		$this->max=$max;
 
@@ -69,6 +69,13 @@ class box_produits extends ModeleBoxes
 			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element, 1).')';
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
 			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
+			// Add where from hooks
+			if (is_object($hookmanager))
+			{
+			    $parameters=array();
+			    $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+			    $sql.=$hookmanager->resPrint;
+			}
 			$sql.= $db->order('p.datec', 'DESC');
 			$sql.= $db->plimit($max, 0);
 

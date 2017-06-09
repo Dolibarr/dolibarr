@@ -1086,6 +1086,9 @@ div.nopadding {
 	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
 }
+.pictoobjectwidth {
+	width: 14px;
+}
 .pictosubstatus {
     padding-left: 2px;
     padding-right: 2px;
@@ -2810,6 +2813,9 @@ div.tabBar .noborder {
     .dashboardlineindicator {
         float: left;
     	padding-left: 5px;
+    }
+    .boxstats {
+        width: 100px;
     }
 }
 

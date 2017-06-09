@@ -1117,7 +1117,8 @@ function dol_get_fiche_end($notab=0)
 }
 
 /**
- *  Show tab footer of a card
+ *  Show tab footer of a card.
+ *  Note: $object->next_prev_filter can be set to restrict select to find next or previous record by $form->showrefnav.
  *
  *  @param	object	$object			Object to show
  *  @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link

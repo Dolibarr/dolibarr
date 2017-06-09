@@ -5829,7 +5829,7 @@ class Form
 
     /**
      *    Return a HTML area with the reference of object and a navigation bar for a business object
-     *    To add a particular filter on select, you must set $object->next_prev_filter to SQL criteria.
+     *    Note: To add a particular filter on select, you can have $object->next_prev_filter set to add SQL criterias.
      *
      *    @param	object	$object			Object to show.
      *    @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link.
@@ -5847,11 +5847,19 @@ class Form
      */
     function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlstatus='',$morehtmlright='')
     {
-    	global $langs,$conf;
+    	global $langs,$conf,$hookmanager;
 
     	$ret='';
         if (empty($fieldid))  $fieldid='rowid';
         if (empty($fieldref)) $fieldref='ref';
+
+        // Add where from hooks
+        if (is_object($hookmanager))
+        {
+            $parameters=array();
+            $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters, $object);    // Note that $action and $object may have been modified by hook
+            $object->next_prev_filter.=$hookmanager->resPrint;
+        }
 
         //print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
         $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid,$nodbprefix);
