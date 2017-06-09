@@ -36,7 +36,7 @@ class RemiseCheque extends CommonObject
 	public $element='chequereceipt';
 	public $table_element='bordereau_cheque';
 	public $picto = 'payment';
-	
+
 	var $num;
 	var $intitule;
 	//! Numero d'erreur Plage 1024-1279
@@ -345,7 +345,7 @@ class RemiseCheque extends CommonObject
 		$this->errno = 0;
 
 		$this->db->begin();
-		
+
 		$numref = $this->getNextNumRef();
 
 		if ($this->errno == 0 && $numref)
@@ -716,7 +716,7 @@ class RemiseCheque extends CommonObject
 	 *
 	 *	@param	int		$bank_id 		   Id of bank transaction line concerned
 	 *	@param	date	$rejection_date    Date to use on the negative payment
-	 * 	@return	int                        Id of negative payment line created 
+	 * 	@return	int                        Id of negative payment line created
 	 */
 	function rejectCheck($bank_id, $rejection_date)
 	{
@@ -727,19 +727,19 @@ class RemiseCheque extends CommonObject
 
 		$bankline = new AccountLine($db);
 		$bankline->fetch($bank_id);
-		
+
 		/* Conciliation is allowed because when check is returned, a new line is created onto bank transaction log.
 		if ($bankline->rappro)
 		{
             $this->error='ActionRefusedLineAlreadyConciliated';
 		    return -1;
 		}*/
-		
+
 		$this->db->begin();
-		
+
 		// Not conciliated, we can delete it
-		//$bankline->delete($user);    // We delete 
-			    
+		//$bankline->delete($user);    // We delete
+
 		$bankaccount = $payment->fk_account;
 
 		// Get invoices list to reopen them
@@ -753,7 +753,7 @@ class RemiseCheque extends CommonObject
 			$rejectedPayment = new Paiement($db);
 			$rejectedPayment->amounts = array();
 			$rejectedPayment->datepaye = $rejection_date;
-			$rejectedPayment->paiementid = dol_getIdFromCode($this->db, 'CHQ', 'c_paiement');
+			$rejectedPayment->paiementid = dol_getIdFromCode($this->db, 'CHQ', 'c_paiement','code','id',getEntity('c_paiement', 2));
 			$rejectedPayment->num_paiement = $payment->numero;
 
 			while($obj = $db->fetch_object($resql))

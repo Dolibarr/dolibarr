@@ -92,7 +92,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-if ($mode != 'sconly') 
+if ($mode != 'sconly')
 {
     $center=($year?'<a href="index.php?year='.($year-1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year+1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>":"");
     print_barre_liste($title,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$center,$num,$totalnboflines, 'title_accountancy', 0, '', '', $limit, 1);
@@ -139,7 +139,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 	$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id AND pct.entity = " . getEntity('c_paiement', 2);
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON pc.fk_bank = b.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
 	$sql.= " WHERE cs.fk_type = c.id";
@@ -260,7 +260,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$sql.= " FROM ".MAIN_DB_PREFIX."tva as pv";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON pv.fk_bank = b.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pv.fk_typepayment = pct.id";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pv.fk_typepayment = pct.id AND pct.entity = " . getEntity('c_paiement', 2);
 		$sql.= " WHERE pv.entity = ".$conf->entity;
 		if ($year > 0)
 		{
@@ -294,7 +294,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 		        $total = $total + $obj->amount;
 
-		        
+
 		        print '<tr class="oddeven">';
 		        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
@@ -309,12 +309,12 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 		        // Date
 		        print '<td align="center">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
-		        
+
 		        // Type payment
 	    	    print '<td>';
 	    	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
 	    	    print $obj->num_payment.'</td>';
-			        
+
 		    	// Account
 		    	if (! empty($conf->banque->enabled))
 			    {
@@ -333,7 +333,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			        else print '&nbsp;';
 			        print '</td>';
 			    }
-			    
+
 	    	    // Paid
 		    	print '<td align="right">'.price($obj->amount)."</td>";
 		        print "</tr>\n";
@@ -424,7 +424,7 @@ while($j<$numlt)
 
 				$total = $total + $obj->amount;
 
-				
+
 				print '<tr class="oddeven">';
 				print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
@@ -465,7 +465,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
         $sal = new PaymentSalary($db);
 
         print "<br>";
-        
+
         print_fiche_titre($langs->trans("SalariesPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 
         $sql = "SELECT s.rowid, s.amount, s.label, s.datep as datep, s.datev as datev, s.datesp, s.dateep, s.salary, s.fk_bank, u.salary as current_salary,";
@@ -474,7 +474,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
         $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON s.fk_typepayment = pct.id";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON s.fk_typepayment = pct.id AND pct.entity = " . getEntity('c_paiement', 2);
 		$sql.= " , ".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE s.entity IN (".getEntity('user').")";
         $sql.= " AND u.rowid = s.fk_user";
@@ -508,7 +508,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
                 $total = $total + $obj->amount;
 
-                
+
                 print '<tr class="oddeven">';
 
                 print '<td align="left">'.dol_print_date($db->jdate($obj->dateep),'day').'</td>'."\n";
@@ -527,7 +527,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 	    	    print '<td>';
 	    	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
 	    	    print $obj->num_payment.'</td>';
-			        
+
 		    	// Account
 		    	if (! empty($conf->banque->enabled))
 			    {
@@ -546,7 +546,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 			        else print '&nbsp;';
 			        print '</td>';
 			    }
-			    
+
                 // Paid
                 print '<td align="right">'.price($obj->amount)."</td>";
                 print "</tr>\n";

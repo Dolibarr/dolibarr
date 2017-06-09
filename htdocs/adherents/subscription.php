@@ -442,7 +442,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                     $paiement = new Paiement($db);
                     $paiement->datepaye     = $paymentdate;
                     $paiement->amounts      = $amounts;
-                    $paiement->paiementid   = dol_getIdFromCode($db,$operation,'c_paiement');
+                    $paiement->paiementid   = dol_getIdFromCode($db,$operation,'c_paiement','code','id',getEntity('c_paiement', 2));
                     $paiement->num_paiement = $num_chq;
                     $paiement->note         = $label;
 

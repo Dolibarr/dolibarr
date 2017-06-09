@@ -2958,8 +2958,8 @@ class Form
 
         $sql = "SELECT id, code, libelle as label, type, active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
-        //if ($active >= 0) $sql.= " WHERE active = ".$active;
         $sql.= " WHERE entity = " . getEntity('c_paiement', 2);
+        //if ($active >= 0) $sql.= " AND active = ".$active;
 
         $resql = $this->db->query($sql);
         if ($resql)

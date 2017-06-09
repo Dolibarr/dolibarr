@@ -88,7 +88,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-if ($mode != 'sconly') 
+if ($mode != 'sconly')
 {
     $center=($year?'<a href="index.php?year='.($year-1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year+1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>":"");
     print_barre_liste($title,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$center,$num,$totalnboflines, 'title_accountancy', 0, '', '', $limit, 1);
@@ -133,7 +133,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 	$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs,";
 	$sql.= " ".MAIN_DB_PREFIX."paiementcharge as pc";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id AND pct.entity = " . getEntity('c_paiement', 2);
 	$sql.= " WHERE cs.fk_type = c.id AND pc.fk_charge = cs.rowid";
 	$sql.= " AND cs.entity = ".$conf->entity;
 	if ($year > 0)
@@ -260,7 +260,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 		        $total = $total + $obj->amount;
 
-		        
+
 		        print '<tr class="oddeven">';
 		        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
@@ -362,7 +362,7 @@ while($j<$numlt)
 
 				$total = $total + $obj->amount;
 
-				
+
 				print '<tr class="oddeven">';
 				print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
@@ -408,7 +408,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
         $sal = new PaymentSalary($db);
 
         print "<br>";
-        
+
         print_fiche_titre($langs->trans("SalariesPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 
         $sql = "SELECT s.rowid, s.amount, s.label, s.datep as datep, s.datev as datev, s.datesp, s.dateep, s.salary, u.salary as current_salary";
@@ -444,7 +444,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
                 $total = $total + $obj->amount;
 
-                
+
                 print '<tr class="oddeven">';
 
                 print '<td align="left">'.dol_print_date($db->jdate($obj->dateep),'day').'</td>'."\n";

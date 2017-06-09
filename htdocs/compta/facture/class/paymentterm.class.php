@@ -93,6 +93,7 @@ class PaymentTerm // extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_payment_term(";
 
 		$sql.= "rowid,";
+		$sql.= "entity,";
 		$sql.= "code,";
 		$sql.= "sortorder,";
 		$sql.= "active,";
@@ -106,6 +107,7 @@ class PaymentTerm // extends CommonObject
         $sql.= ") VALUES (";
 
 		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->rowid."'").",";
+		$sql.= " ".(! isset($this->entity)?getEntity('c_payment_term', 2):"'".$this->entity."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->sortorder)?'NULL':"'".$this->sortorder."'").",";
 		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->active."'").",";
@@ -172,6 +174,7 @@ class PaymentTerm // extends CommonObject
     	global $langs;
         $sql = "SELECT";
 		$sql.= " t.rowid,";
+		$sql.= " t.entity";
 
 		$sql.= " t.code,";
 		$sql.= " t.sortorder,";
@@ -185,6 +188,7 @@ class PaymentTerm // extends CommonObject
 
         $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
         $sql.= " WHERE t.rowid = ".$id;
+        $sql.= " AND t.entity = " . getEntity('c_payment_term', 2);
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -234,6 +238,7 @@ class PaymentTerm // extends CommonObject
 		$sql.= " t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
         $sql.= " WHERE t.code = 'RECEP'";
+        $sql.= " AND t.entity = " . getEntity('c_payment_term', 2);
 
     	dol_syslog(get_class($this)."::getDefaultId", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -296,7 +301,8 @@ class PaymentTerm // extends CommonObject
 		$sql.= " decalage=".(isset($this->decalage)?$this->decalage:"null")."";
 
 
-        $sql.= " WHERE rowid=".$this->id;
+        $sql.= " WHERE rowid = " . $this->id;
+        $sql.= " AND entity = " . getEntity('c_payment_term', 2);
 
 		$this->db->begin();
 
@@ -352,7 +358,8 @@ class PaymentTerm // extends CommonObject
 		$error=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_payment_term";
-		$sql.= " WHERE rowid=".$this->id;
+		$sql.= " WHERE rowid = " . $this->id;
+		$sql.= " AND t.entity = " . getEntity('c_payment_term', 2);
 
 		$this->db->begin();
 

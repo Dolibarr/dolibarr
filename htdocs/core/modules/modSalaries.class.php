@@ -111,7 +111,7 @@ class modSalaries extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 		$this->rights[$r][5] = '';
-		
+
 		$r++;
 		$this->rights[$r][0] = 513;
 		$this->rights[$r][1] = 'Create/modify payment of salaries';
@@ -119,7 +119,7 @@ class modSalaries extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 		$this->rights[$r][5] = '';
-		
+
 		$r++;
 		$this->rights[$r][0] = 514;
 		$this->rights[$r][1] = 'Delete contracts/salaries';
@@ -140,8 +140,8 @@ class modSalaries extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		//--------
 		$r=0;
@@ -157,7 +157,7 @@ class modSalaries extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'user as u';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'payment_salary as p ON p.fk_user = u.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_typepayment = cp.id';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_typepayment = cp.id AND cp.entity = ' . getEntity('c_paiement', 2);
 		$this->export_sql_end[$r] .=' AND u.entity IN ('.getEntity('user').')';
 	}
 

@@ -5652,10 +5652,11 @@ function dol_osencode($str)
  * 		@param	string	$tablename	Table name without prefix
  * 		@param	string	$fieldkey	Field for code
  * 		@param	string	$fieldid	Field for id
+ *      @param  int		$entity		Field for filter by entity
  *      @return int					<0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
-function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
+function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id',$entity=null)
 {
 	global $cache_codes;
 
@@ -5671,6 +5672,8 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 	$sql = "SELECT ".$fieldid." as valuetoget";
 	$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
 	$sql.= " WHERE ".$fieldkey." = '".$db->escape($key)."'";
+	if (! is_null($entity))
+		$sql.= " AND entity = " . (int) $entity;
 	dol_syslog('dol_getIdFromCode', LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)

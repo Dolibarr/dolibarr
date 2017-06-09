@@ -117,7 +117,8 @@ if (GETPOST("orphelins"))
     $sql.= " ".MAIN_DB_PREFIX."c_paiement as c)";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql.= " WHERE p.fk_paiement = c.id";
-    $sql.= " AND p.entity = ".$conf->entity;
+    $sql.= " AND p.entity = " . $conf->entity;
+    $sql.= " AND c.entity = " . getEntity('c_paiement', 2);
     $sql.= " AND pf.fk_facture IS NULL";
 	// Add where from hooks
 	$parameters=array();
@@ -148,7 +149,8 @@ else
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
     }
     $sql.= " WHERE p.fk_paiement = c.id";
-    $sql.= " AND p.entity = ".$conf->entity;
+    $sql.= " AND p.entity = " . $conf->entity;
+    $sql.= " AND c.entity = " . getEntity('c_paiement', 2);
     if (! $user->rights->societe->client->voir && ! $socid)
     {
         $sql.= " AND sc.fk_user = " .$user->id;
@@ -177,7 +179,7 @@ else
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
     if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
     if ($search_payment_num != '')  $sql .= natural_search('p.num_paiement', $search_payment_num);
-    if ($search_amount)      		$sql .= natural_search('p.amount', $search_amount, 1); 
+    if ($search_amount)      		$sql .= natural_search('p.amount', $search_amount, 1);
     if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
 	// Add where from hooks
 	$parameters=array();
@@ -211,7 +213,7 @@ if ($resql)
     $param.=($search_amount?"&search_amount=".urlencode($search_amount):"");
     $param.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
     if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
-    
+
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -220,9 +222,9 @@ if ($resql)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
-    
+
     print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $nbtotalofrecords,'title_accountancy.png', 0, '', '', $limit);
-    
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -277,15 +279,15 @@ if ($resql)
     }
     print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"p.amount","",$param,'align="right"',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("Invoices"),"","","",$param,'align="left"',$sortfield,$sortorder);
-    
+
     $parameters=array();
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-    
+
     if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
-    
+
     while ($i < min($num,$limit))
     {
         $objp = $db->fetch_object($resql);
@@ -314,7 +316,7 @@ if ($resql)
 
         // Type
         print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).'</td>';
-        
+
         // Payment number
         print '<td>'.$objp->num_paiement.'</td>';
 

@@ -45,14 +45,14 @@ switch ($action)
 
 	case 'valide_achat':
 	    $thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
-	    
+
 		$company=new Societe($db);
 		$company->fetch($thirdpartyid);
 
 		$invoice=new Facture($db);
 		$invoice->date=dol_now();
 		$invoice->type= Facture::TYPE_STANDARD;
-		
+
 		// To use a specific numbering module for POS, reset $conf->global->FACTURE_ADDON and other vars here
 		// and restore values just after
 		$sav_FACTURE_ADDON='';
@@ -68,7 +68,7 @@ switch ($action)
 			// To force rule only for POS with mercure
 			//...
 		}
-		
+
 		$num=$invoice->getNextNumRef($company);
 
 		// Restore save values
@@ -76,7 +76,7 @@ switch ($action)
 		{
 			$conf->global->FACTURE_ADDON = $sav_FACTURE_ADDON;
 		}
-		
+
 		$obj_facturation->numInvoice($num);
 
 		$obj_facturation->getSetPaymentMode($_POST['hdnChoix']);
@@ -137,7 +137,7 @@ switch ($action)
 				$cond_reglement_id = 0;
 				break;
 			case 'ESP':
-				$mode_reglement_id = dol_getIdFromCode($db,'LIQ','c_paiement');
+				$mode_reglement_id = dol_getIdFromCode($db,'LIQ','c_paiement','code','id',getEntity('c_paiement', 2));
 				$cond_reglement_id = 0;
 				$note .= $langs->trans("Cash")."\n";
 				$note .= $langs->trans("Received").' : '.$obj_facturation->montantEncaisse()." ".$conf->currency."\n";
@@ -146,11 +146,11 @@ switch ($action)
 				$note .= '--------------------------------------'."\n\n";
 				break;
 			case 'CB':
-				$mode_reglement_id = dol_getIdFromCode($db,'CB','c_paiement');
+				$mode_reglement_id = dol_getIdFromCode($db,'CB','c_paiement','code','id',getEntity('c_paiement', 2));
 				$cond_reglement_id = 0;
 				break;
 			case 'CHQ':
-				$mode_reglement_id = dol_getIdFromCode($db,'CHQ','c_paiement');
+				$mode_reglement_id = dol_getIdFromCode($db,'CHQ','c_paiement','code','id',getEntity('c_paiement', 2));
 				$cond_reglement_id = 0;
 				break;
 		}
@@ -192,10 +192,10 @@ switch ($action)
 			$invoiceline->remise_percent=$tab_liste[$i]['remise_percent'];
 			$invoiceline->price=$tab_liste[$i]['price'];
 			$invoiceline->subprice=$tab_liste[$i]['price'];
-			
+
 			$invoiceline->tva_tx=empty($vat_rate)?0:$vat_rate;	// works even if vat_rate is ''
 			$invoiceline->info_bits=empty($vat_npr)?0:$vat_npr;
-				
+
 			$invoiceline->total_ht=$tab_liste[$i]['total_ht'];
 			$invoiceline->total_ttc=$tab_liste[$i]['total_ttc'];
 			$invoiceline->total_tva=$tab_liste[$i]['total_vat'];
@@ -224,7 +224,7 @@ switch ($action)
 			{
 				$warehouseidtodecrease=(isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0);
 				if (! empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) $warehouseidtodecrease=0;	// If a particular stock is defined, we disable choice
-				
+
 				$resultvalid=$invoice->validate($user, $obj_facturation->numInvoice(), 0);
 
 				if ($warehouseidtodecrease > 0)
@@ -264,7 +264,7 @@ switch ($action)
 			{
 				$warehouseidtodecrease=(isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0);
 				if (! empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) $warehouseidtodecrease=0;	// If a particular stock is defined, we disable choice
-				
+
 				$resultvalid=$invoice->validate($user, $obj_facturation->numInvoice(), 0);
 
 				if ($warehouseidtodecrease > 0)

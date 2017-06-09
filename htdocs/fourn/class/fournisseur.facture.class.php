@@ -130,7 +130,7 @@ class FactureFournisseur extends CommonInvoice
     public $multicurrency_total_ttc;
     //! id of source invoice if replacement invoice or credit note
     public $fk_facture_source;
-    
+
     /**
      * Standard invoice
      */
@@ -517,8 +517,8 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ' t.fk_multicurrency, t.multicurrency_code, t.multicurrency_tx, t.multicurrency_total_ht, t.multicurrency_total_tva, t.multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t';
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (t.fk_cond_reglement = cr.rowid)";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON (t.fk_mode_reglement = p.id)";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (t.fk_cond_reglement = cr.rowid AND cr.entity = " . getEntity('c_payment_term', 2) . ")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON (t.fk_mode_reglement = p.id AND p.entity = " . getEntity('c_paiement', 2) . ")";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON t.fk_incoterms = i.rowid';
         if ($id)  $sql.= " WHERE t.rowid=".$id;
         if ($ref) $sql.= " WHERE t.ref='".$this->db->escape($ref)."'";
@@ -883,7 +883,7 @@ class FactureFournisseur extends CommonInvoice
             }
             // Fin appel triggers
         }
-        
+
         if (! $error)
         {
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
@@ -902,7 +902,7 @@ class FactureFournisseur extends CommonInvoice
             	$error++;
             }
         }
-        
+
 		if (! $error)
 		{
 			// Delete linked object

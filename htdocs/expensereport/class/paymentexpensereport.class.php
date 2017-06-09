@@ -168,6 +168,7 @@ class PaymentExpenseReport extends CommonObject
 		$sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as pt, ".MAIN_DB_PREFIX."payment_expensereport as t)";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
 		$sql.= " WHERE t.rowid = ".$id." AND t.fk_typepayment = pt.id";
+		$sql.= " AND pt.entity = " . getEntity('c_paiement', 2);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -447,7 +448,7 @@ class PaymentExpenseReport extends CommonObject
 	function LibStatut($statut,$mode=0)
 	{
 	    global $langs;
-	
+
 	    return '';
 	}
 
@@ -506,7 +507,7 @@ class PaymentExpenseReport extends CommonObject
 
             $total=$this->total;
             if ($mode == 'payment_expensereport') $amount=$total;
-            
+
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
                 $this->datepaid,
@@ -543,7 +544,7 @@ class PaymentExpenseReport extends CommonObject
                         dol_print_error($this->db);
                     }
                 }
-                
+
                 // Add link 'user' in bank_url between user and bank transaction
                 if (! $error)
                 {
@@ -561,7 +562,7 @@ class PaymentExpenseReport extends CommonObject
                                 $er->user->getFullName($langs),
                                 'user'
                             );
-                            if ($result <= 0) 
+                            if ($result <= 0)
                             {
                             	$this->error=$this->db->lasterror();
                             	dol_syslog(get_class($this).'::addPaymentToBank '.$this->error);

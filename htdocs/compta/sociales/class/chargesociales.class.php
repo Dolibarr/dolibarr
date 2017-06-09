@@ -26,7 +26,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/** 
+/**
  *	Classe permettant la gestion des paiements des charges
  *  La tva collectee n'est calculee que sur les factures payees.
  */
@@ -36,7 +36,7 @@ class ChargeSociales extends CommonObject
     public $table='chargesociales';
     public $table_element='chargesociales';
     public $picto = 'bill';
-    
+
     /**
      * {@inheritdoc}
      */
@@ -83,7 +83,7 @@ class ChargeSociales extends CommonObject
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as c ON cs.fk_type = c.id";
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON cs.fk_mode_reglement = p.id';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON cs.fk_mode_reglement = p.id AND p.entity = ' . getEntity('c_paiement', 2);
         if ($ref) $sql.= " WHERE cs.rowid = ".$ref;
         else $sql.= " WHERE cs.rowid = ".$id;
 
@@ -110,7 +110,7 @@ class ChargeSociales extends CommonObject
                 $this->paye					= $obj->paye;
                 $this->periode				= $this->db->jdate($obj->periode);
                 $this->import_key			= $this->import_key;
-                
+
                 $this->db->free($resql);
 
                 return 1;
@@ -378,7 +378,7 @@ class ChargeSociales extends CommonObject
         if ($return) return 1;
         else return -1;
     }
-    
+
     /**
      *  Retourne le libelle du statut d'une charge (impaye, payee)
      *
@@ -445,7 +445,7 @@ class ChargeSociales extends CommonObject
             if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
             if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
         }
-        
+
         return "Error, mode/status not found";
     }
 

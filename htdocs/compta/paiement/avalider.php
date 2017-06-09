@@ -71,7 +71,8 @@ if ($socid)
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 }
 $sql.= " WHERE p.fk_paiement = c.id";
-$sql.= " AND p.entity = ".$conf->entity;
+$sql.= " AND p.entity = " . $conf->entity;
+$sql.= " AND c.entity = " . getEntity('c_paiement', 2);
 if ($socid)
 {
     $sql.= " AND f.fk_soc = ".$socid;
@@ -111,7 +112,7 @@ if ($resql)
     while ($i < min($num,$limit))
     {
         $objp = $db->fetch_object($resql);
-        
+
         print '<tr class="oddeven">';
         print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
         print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";

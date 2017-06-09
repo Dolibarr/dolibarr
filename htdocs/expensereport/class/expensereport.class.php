@@ -37,9 +37,9 @@ class ExpenseReport extends CommonObject
     var $picto = 'trip';
 
     var $lignes=array();
-    
+
     public $date_debut;
-    
+
     public $date_fin;
 
     var $fk_user_validator;
@@ -65,7 +65,7 @@ class ExpenseReport extends CommonObject
     // Update
 	var $date_modif;
     var $fk_user_modif;
-    
+
     // Refus
     var $date_refuse;
     var $detail_refuse;
@@ -128,17 +128,17 @@ class ExpenseReport extends CommonObject
         $now = dol_now();
 
         $error = 0;
-		
+
         // Check parameters
-        if (empty($this->date_debut) || empty($this->date_fin)) 
+        if (empty($this->date_debut) || empty($this->date_fin))
         {
             $this->error='ErrorFieldRequired';
             return -1;
         }
-        
+
         $fuserid = $this->fk_user_author;       // Note fk_user_author is not the 'author' but the guy the expense report is for.
         if (empty($fuserid)) $fuserid = $user->id;
-        
+
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
@@ -208,7 +208,7 @@ class ExpenseReport extends CommonObject
                 $result=$this->update_price();
                 if ($result > 0)
                 {
-					
+
 					if (!$notrigger)
 					{
 						// Call trigger
@@ -262,19 +262,19 @@ class ExpenseReport extends CommonObject
     function createFromClone($fk_user_author)
     {
         global $user,$hookmanager;
-    
+
         $error=0;
-    
+
         if (empty($fk_user_author)) $fk_user_author = $user->id;
-        
+
         $this->context['createfromclone'] = 'createfromclone';
-        
+
         $this->db->begin();
-    
+
         // get extrafields so they will be clone
         //foreach($this->lines as $line)
             //$line->fetch_optionals($line->rowid);
-    
+
         // Load source object
         $objFrom = clone $this;
 
@@ -325,8 +325,8 @@ class ExpenseReport extends CommonObject
             return -1;
         }
     }
-    
-    
+
+
     /**
      * update
      *
@@ -341,7 +341,7 @@ class ExpenseReport extends CommonObject
 
 		$error = 0;
 		$this->db->begin();
-		
+
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         $sql.= " total_ht = ".$this->total_ht;
         $sql.= " , total_ttc = ".$this->total_ttc;
@@ -417,7 +417,8 @@ class ExpenseReport extends CommonObject
         $sql.= " d.fk_user_valid, d.fk_user_approve,";
         $sql.= " d.fk_statut as status, d.fk_c_paiement,";
         $sql.= " dp.libelle as libelle_paiement, dp.code as code_paiement";                             // INNER JOIN paiement
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id AND dp.entity = " . getEntity('c_paiement', 2);
         if ($ref) $sql.= " WHERE d.ref = '".$this->db->escape($ref)."'";
         else $sql.= " WHERE d.rowid = ".$id;
         $sql.= $restrict;
@@ -455,7 +456,7 @@ class ExpenseReport extends CommonObject
                 $this->fk_user_refuse           = $obj->fk_user_refuse;
                 $this->fk_user_cancel           = $obj->fk_user_cancel;
                 $this->fk_user_approve          = $obj->fk_user_approve;
-                
+
                 $user_author = new User($this->db);
                 if ($this->fk_user_author > 0) $user_author->fetch($this->fk_user_author);
 
@@ -512,7 +513,7 @@ class ExpenseReport extends CommonObject
     {
 		$error = 0;
 		$this->db->begin();
-		
+
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
         $sql.= " SET fk_statut = 6, paid=1";
         $sql.= " WHERE rowid = ".$id." AND fk_statut = 5";
@@ -533,7 +534,7 @@ class ExpenseReport extends CommonObject
 					}
 					// End call triggers
 				}
-				
+
 				if (empty($error))
 				{
 					$this->db->commit();
@@ -670,7 +671,7 @@ class ExpenseReport extends CommonObject
                     $auser->fetch($obj->fk_user_approve);
                     $this->user_approve   = $auser;
                 }
-                
+
             }
             $this->db->free($resql);
         }
@@ -704,8 +705,8 @@ class ExpenseReport extends CommonObject
         $this->date_fin = $now;
         $this->date_approve = $now;
 
-        $type_fees_id = 2;  // TF_TRIP 
-        
+        $type_fees_id = 2;  // TF_TRIP
+
         $this->status = 5;
         $this->fk_statut = 5;
 
@@ -1078,14 +1079,14 @@ class ExpenseReport extends CommonObject
         {
         	$now = dol_now();
 			$this->db->begin();
-			
+
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 2, fk_user_valid = ".$fuser->id.", date_valid='".$this->db->idate($now)."'";
             if ($update_number_int) {
                 $sql.= ", ref_number_int = ".$ref_number_int;
             }
             $sql.= ' WHERE rowid = '.$this->id;
-            
+
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -1099,7 +1100,7 @@ class ExpenseReport extends CommonObject
 					}
 					// End call triggers
 				}
-				
+
 				if (empty($error))
 				{
 					$this->db->commit();
@@ -1123,7 +1124,7 @@ class ExpenseReport extends CommonObject
         {
             dol_syslog(get_class($this)."::setValidate expensereport already with validated status", LOG_WARNING);
         }
-        
+
         return 0;
     }
 
@@ -1183,13 +1184,13 @@ class ExpenseReport extends CommonObject
     {
         $now=dol_now();
 		$error = 0;
-		
+
         // date approval
         $this->date_approve = $this->db->idate($now);
         if ($this->fk_statut != 5)
         {
 			$this->db->begin();
-			
+
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 5, fk_user_approve = ".$fuser->id.",";
             $sql.= " date_approve='".$this->db->idate($this->date_approve)."'";
@@ -1206,7 +1207,7 @@ class ExpenseReport extends CommonObject
 					}
 					// End call triggers
 				}
-				
+
 				if (empty($error))
 				{
 					$this->db->commit();
@@ -1230,7 +1231,7 @@ class ExpenseReport extends CommonObject
         {
             dol_syslog(get_class($this)."::setApproved expensereport already with approve status", LOG_WARNING);
         }
-        
+
         return 0;
     }
 
@@ -1245,7 +1246,7 @@ class ExpenseReport extends CommonObject
     {
         $now = dol_now();
 		$error = 0;
-		
+
         // date de refus
         if ($this->fk_statut != 99)
         {
@@ -1261,7 +1262,7 @@ class ExpenseReport extends CommonObject
                 $this->fk_user_refuse = $fuser->id;
                 $this->detail_refuse = $details;
                 $this->date_refuse = $now;
-                
+
 				if (!$notrigger)
 				{
 					// Call trigger
@@ -1272,7 +1273,7 @@ class ExpenseReport extends CommonObject
 					}
 					// End call triggers
 				}
-				
+
 				if (empty($error))
 				{
 					$this->db->commit();
@@ -1308,11 +1309,11 @@ class ExpenseReport extends CommonObject
     function set_unpaid($fuser, $notrigger = 0)
     {
 		$error = 0;
-		
+
         if ($this->fk_c_deplacement_statuts != 5)
         {
 			$this->db->begin();
-			
+
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET fk_statut = 5";
             $sql.= ' WHERE rowid = '.$this->id;
@@ -1331,7 +1332,7 @@ class ExpenseReport extends CommonObject
 					}
 					// End call triggers
 				}
-				
+
 				if (empty($error))
 				{
 					$this->db->commit();
@@ -1372,7 +1373,7 @@ class ExpenseReport extends CommonObject
         if ($this->fk_statut != 4)
         {
 			$this->db->begin();
-			
+
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET fk_statut = 4, fk_user_cancel = ".$fuser->id;
             $sql.= ", date_cancel='".$this->db->idate($this->date_cancel)."'";
@@ -1393,7 +1394,7 @@ class ExpenseReport extends CommonObject
 					}
 					// End call triggers
 				}
-				
+
 				if (empty($error))
 				{
 					$this->db->commit();
@@ -1433,7 +1434,7 @@ class ExpenseReport extends CommonObject
 
         $sql = 'SELECT MAX(de.ref_number_int) as max';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' de';
-        
+
         $result = $this->db->query($sql);
 
         if($this->db->num_rows($result) > 0):
@@ -1758,7 +1759,7 @@ class ExpenseReport extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."usergroup_user as ugu, ".MAIN_DB_PREFIX."usergroup_rights as ur, ".MAIN_DB_PREFIX."rights_def as rd";
         $sql.= " WHERE ugu.fk_usergroup = ur.fk_usergroup AND ur.fk_id = rd.id and rd.module = 'expensereport' AND rd.perms = 'approve'";       // Permission 'Approve';
         //print $sql;
-        
+
         dol_syslog(get_class($this)."::fetch_users_approver_expensereport sql=".$sql);
         $result = $this->db->query($sql);
         if($result)
@@ -1895,7 +1896,7 @@ class ExpenseReport extends CommonObject
 	    $now=dol_now();
 
 	    $userchildids = $user->getAllChildIds(1);
-	    
+
         $sql = "SELECT ex.rowid, ex.date_valid";
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
         if ($option == 'toapprove') $sql.= " WHERE ex.fk_statut = 2";
@@ -1927,7 +1928,7 @@ class ExpenseReport extends CommonObject
             while ($obj=$this->db->fetch_object($resql))
             {
 	            $response->nbtodo++;
-                
+
 	            if ($option == 'toapprove')
 	            {
 	                if ($this->db->jdate($obj->date_valid) < ($now - $conf->expensereport->approve->warning_delay)) {
@@ -1951,7 +1952,7 @@ class ExpenseReport extends CommonObject
             return -1;
         }
     }
-    
+
     /**
      * Return if an expense report is late or not
      *
@@ -1961,11 +1962,11 @@ class ExpenseReport extends CommonObject
     public function hasDelay($option)
     {
         global $conf;
-    
+
         //Only valid members
         if ($option == 'toapprove' && $this->status != 2) return false;
         if ($option == 'topay' && $this->status != 5) return false;
-    
+
         $now = dol_now();
         if ($option == 'toapprove')
         {
@@ -1973,7 +1974,7 @@ class ExpenseReport extends CommonObject
         }
         else
             return ($this->datevalid?$this->datevalid:$this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
-    }    
+    }
 }
 
 

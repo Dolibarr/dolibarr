@@ -649,9 +649,12 @@ if (empty($reshook))
 			{
 				// If we're on a standard invoice, we have to get excess received to create a discount in TTC without VAT
 
-				$sql = 'SELECT SUM(pf.amount) as total_paiements
-						FROM llx_c_paiement as c, llx_paiement_facture as pf, llx_paiement as p
-						WHERE pf.fk_facture = '.$object->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid ORDER BY p.datep, p.tms';
+				$sql = 'SELECT SUM(pf.amount) as total_paiements';
+				$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
+				$sql.= ' WHERE pf.fk_facture = '.$object->id;
+				$sql.= ' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
+				$sql.= ' AND p.entity = ' . getEntity('c_paiement', 2);
+				$sql.= ' ORDER BY p.datep, p.tms';
 
 				$resql = $db->query($sql);
 				$res = $db->fetch_object($resql);
@@ -3693,6 +3696,7 @@ else if ($id > 0 || ! empty($ref))
     $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
     $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
     $sql .= ' WHERE pf.fk_facture = ' . $object->id . ' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
+    $sql .= ' AND c.entity = ' . getEntity('c_paiement', 2);
     $sql .= ' ORDER BY p.datep, p.tms';
 
     $result = $db->query($sql);

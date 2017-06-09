@@ -38,7 +38,7 @@ class Paiement extends CommonObject
     public $element='payment';
     public $table_element='paiement';
     public $picto = 'payment';
-    
+
 	var $facid;
 	var $datepaye;
 	/**
@@ -65,7 +65,7 @@ class Paiement extends CommonObject
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
     var $fk_paiement;    // Type of paiment
 
-    
+
 	/**
 	 *	Constructor
 	 *
@@ -93,6 +93,7 @@ class Paiement extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
 		$sql.= ' WHERE p.fk_paiement = c.id';
+		$sql.= ' AND c.entity = ' . getEntity('c_paiement', 2);
 		if ($id > 0)
 			$sql.= ' AND p.rowid = '.$id;
 		else if ($ref)
@@ -153,14 +154,14 @@ class Paiement extends CommonObject
 
 		$error = 0;
 		$way = $this->getWay();
-		
+
 		$now=dol_now();
-		
+
         // Clean parameters
         $totalamount = 0;
 		$totalamount_converted = 0;
         $atleastonepaymentnotnull = 0;
-		
+
 		if ($way == 'dolibarr')
 		{
 			$amounts = &$this->amounts;
@@ -171,22 +172,22 @@ class Paiement extends CommonObject
 			$amounts = &$this->multicurrency_amounts;
 			$amounts_to_update = &$this->amounts;
 		}
-		
+
 		foreach ($amounts as $key => $value)	// How payment is dispatch
 		{
 			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value, $way);
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
-			
+
 			$newvalue = price2num($value,'MT');
 			$amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
 			if (! empty($newvalue)) $atleastonepaymentnotnull++;
 		}
-		
+
 		$totalamount = price2num($totalamount);
 		$totalamount_converted = price2num($totalamount_converted);
-		
+
 		// Check parameters
         if (empty($totalamount) && empty($atleastonepaymentnotnull))	 // We accept negative amounts for withdraw reject but not empty arrays
         {
@@ -211,7 +212,7 @@ class Paiement extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_creat)";
 		$sql.= " VALUES (".$conf->entity.", '".$ref."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.")";
-		
+
 		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -227,7 +228,7 @@ class Paiement extends CommonObject
 					$amount = price2num($amount);
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount)';
 					$sql .= ' VALUES ('.$facid.', '. $this->id.', \''.$amount.'\', \''.$this->multicurrency_amounts[$key].'\')';
-		
+
 					dol_syslog(get_class($this).'::Create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
 					$resql=$this->db->query($sql);
 					if ($resql)
@@ -279,7 +280,7 @@ class Paiement extends CommonObject
                                 if ($invoice->type == Facture::TYPE_DEPOSIT)
                                 {
 			                        $amount_ht = $amount_tva = $amount_ttc = array();
-			                         
+
                                     // Loop on each vat rate
                                     $i = 0;
                                     foreach ($invoice->lines as $line)
@@ -292,20 +293,20 @@ class Paiement extends CommonObject
                                             $i ++;
                                         }
                                     }
-                                    
+
                                     // Insert one discount by VAT rate category
                                     $discount = new DiscountAbsolute($this->db);
                                     $discount->description = '(DEPOSIT)';
                                     $discount->fk_soc = $invoice->socid;
                                     $discount->fk_facture_source = $invoice->id;
-                                
+
                                     foreach ($amount_ht as $tva_tx => $xxx)
                                     {
                                         $discount->amount_ht = abs($amount_ht[$tva_tx]);
                                         $discount->amount_tva = abs($amount_tva[$tva_tx]);
                                         $discount->amount_ttc = abs($amount_ttc[$tva_tx]);
                                         $discount->tva_tx = abs($tva_tx);
-                            
+
                                         $result = $discount->create($user);
                                         if ($result < 0)
                                         {
@@ -313,14 +314,14 @@ class Paiement extends CommonObject
                                             break;
                                         }
                                     }
-                                    
+
                                     if ($error)
                                     {
                                         setEventMessages($discount->error, $discount->errors, 'errors');
                                         $error++;
-                                    }                                   
+                                    }
                                 }
-                                
+
                                 // Set invoice to paid
                                 if (! $error)
                                 {
@@ -520,13 +521,13 @@ class Paiement extends CommonObject
 
             $acc = new Account($this->db);
             $result=$acc->fetch($this->fk_account);
-			
+
 			$totalamount=$this->amount;
             if (empty($totalamount)) $totalamount=$this->total; // For backward compatibility
-            
+
             // if dolibarr currency != bank currency then we received an amount in customer currency (currently I don't manage the case : my currency is USD, the customer currency is EUR and he paid me in GBP. Seems no sense for me)
             if (!empty($conf->multicurrency->enabled) && $conf->currency != $acc->currency_code) $totalamount=$this->multicurrency_amount;
-			
+
             if ($mode == 'payment_supplier') $totalamount=-$totalamount;
 
             // Insert payment into llx_bank
@@ -796,7 +797,7 @@ class Paiement extends CommonObject
 
 	/**
 	 *    Information sur l'objet
-	 *    
+	 *
 	 *    @param   int     $id      id du paiement dont il faut afficher les infos
 	 *    @return  void
 	 */
@@ -962,13 +963,13 @@ class Paiement extends CommonObject
 
 	/**
 	 * 	get the right way of payment
-	 * 
+	 *
 	 * 	@return 	string 	'dolibarr' if standard comportment or paid in dolibarr currency, 'customer' if payment received from multicurrency inputs
 	 */
 	function getWay()
 	{
 		global $conf;
-		
+
 		$way = 'dolibarr';
 		if (!empty($conf->multicurrency->enabled))
 		{
@@ -981,10 +982,10 @@ class Paiement extends CommonObject
 				}
 			}
 		}
-		
+
 		return $way;
 	}
-	
+
 	/**
 	 *  Initialise an instance with random values.
 	 *  Used to build previews or test instances.

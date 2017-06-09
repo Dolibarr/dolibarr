@@ -100,7 +100,7 @@ $bankstatic = new Account($db);
 $sql = "SELECT t.rowid, t.amount, t.label, t.datev as dv, t.datep as dp, t.fk_typepayment as type, t.num_payment, t.fk_bank, pst.code as payment_code,";
 $sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
 $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON t.fk_typepayment = pst.id";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON t.fk_typepayment = pst.id AND pst.entity = " . getEntity('c_paiement', 2);
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
 $sql.= " WHERE t.entity = ".$conf->entity;
@@ -156,9 +156,9 @@ if ($result)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
-	
+
 	print_barre_liste($langs->trans("VATPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines, 'title_accountancy', 0, '', '', $limit);
-	
+
 	print '<div class="div-table-responsive">';
 	print '<table class="noborder" width="100%">';
 
@@ -199,7 +199,7 @@ if ($result)
 	print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"t.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
-	
+
 	while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
@@ -252,7 +252,7 @@ if ($result)
 
         $i++;
     }
-    
+
     $colspan=5;
     if (! empty($conf->banque->enabled)) $colspan++;
     print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Total").'</td>';
@@ -261,7 +261,7 @@ if ($result)
 
     print "</table>";
     print '</div>';
-    
+
 	print '</form>';
 
     $db->free($result);

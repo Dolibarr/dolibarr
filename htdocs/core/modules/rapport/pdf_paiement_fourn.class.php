@@ -178,6 +178,7 @@ class pdf_paiement_fourn
 			$sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " AND p.fk_paiement = c.id ";
+		$sql.= " AND c.entity = " . getEntity('c_paiement', 2);
 		$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
 		if (! $user->rights->societe->client->voir && ! $socid)
 		{
@@ -197,7 +198,7 @@ class pdf_paiement_fourn
 			while ($i < $num)
 			{
 				$objp = $this->db->fetch_object($result);
-				
+
 
 				$lines[$i][0] = $objp->ref;
 				$lines[$i][1] = dol_print_date($this->db->jdate($objp->dp),"day",false,$outputlangs,true);

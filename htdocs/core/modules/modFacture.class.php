@@ -71,7 +71,7 @@ class modFacture extends DolibarrModules
 		$this->warnings_activation = array('FR'=>'WarningNoteModuleInvoiceForFrenchLaw');                              // Warning to show when we activate module. array('always'='text') or array('FR'='text')
 		$this->warnings_activation = array();
 		$this->warnings_activation_ext = array('FR'=>'WarningInstallationMayBecomeNotCompliantWithLaw');  // Warning to show when we activate an external module. array('always'='text') or array('FR'='text')
-		
+
 		// Config pages
 		$this->config_page_url = array("facture.php");
 
@@ -99,7 +99,7 @@ class modFacture extends DolibarrModules
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		/*$this->const[$r][0] = "FACTURE_DRAFT_WATERMARK";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "__(Draft)__";
@@ -107,7 +107,7 @@ class modFacture extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;*/
 
-		
+
 		// Boxes
 		//$this->boxes = array(0=>array(1=>'box_factures_imp.php'),1=>array(1=>'box_factures.php'));
 		$this->boxes = array(
@@ -116,16 +116,16 @@ class modFacture extends DolibarrModules
 				2=>array('file'=>'box_graph_invoices_permonth.php','enabledbydefaulton'=>'Home')
 		);
 
-        // Cronjobs 
+        // Cronjobs
         $this->cronjobs = array(
-            0=>array('label'=>'RecurringInvoices', 'jobtype'=>'method', 'class'=>'compta/facture/class/facture-rec.class.php', 'objectname'=>'FactureRec', 'method'=>'createRecurringInvoices', 'parameters'=>'', 'comment'=>'Generate recurring invoices', 'frequency'=>1, 'unitfrequency'=>3600*24), 
+            0=>array('label'=>'RecurringInvoices', 'jobtype'=>'method', 'class'=>'compta/facture/class/facture-rec.class.php', 'objectname'=>'FactureRec', 'method'=>'createRecurringInvoices', 'parameters'=>'', 'comment'=>'Generate recurring invoices', 'frequency'=>1, 'unitfrequency'=>3600*24),
             // 1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>3600, 'unitfrequency'=>3600)
-        ); 
-        // List of cron jobs entries to add 
-        // Example: 
+        );
+        // List of cron jobs entries to add
+        // Example:
         // $this->cronjobs=array(
-        //              0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600), 
-        //              1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600) 
+        //              0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600),
+        //              1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600)
         // );
 
         // Permissions
@@ -206,8 +206,8 @@ class modFacture extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		//--------
 		$r=1;
@@ -267,7 +267,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture_extrafields as extra ON f.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement as p ON pf.fk_paiement = p.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as pt ON pt.id = p.fk_paiement';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as pt ON pt.id = p.fk_paiement AND pt.entity = ' . getEntity('c_paiement', 2);
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON b.rowid = p.fk_bank';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON ba.rowid = b.fk_account';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
