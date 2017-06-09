@@ -60,6 +60,7 @@ $langs->load('donations');
 $langs->load("accountancy");
 $langs->load("trips");
 $langs->load("salaries");
+$langs->load("hrm");
 
 // Multi journal
 $id_journal = GETPOST('id_journal', 'int');
@@ -482,6 +483,20 @@ if (! $error && $action == 'writebookkeeping') {
 						}
 						$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
 						$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
+					} else if ($tabtype[$key] == 'payment_expensereport') {
+						$bookkeeping->code_tiers = $tabuser[$key]['accountancy_code'];
+						$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+						$bookkeeping->label_operation = $tabuser[$key]['name'];
+						$sqlmid = 'SELECT e.ref';
+						$sqlmid .= " FROM " . MAIN_DB_PREFIX . "expensereport as e";
+						$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "payment_expensereport as payer ON payer.fk_expensereport=e.rowid";
+						$sqlmid .= " WHERE payer.fk_expensereport=" . $val["fk_expensereport"];
+						dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+						$resultmid = $db->query($sqlmid);
+						if ($resultmid) {
+							$objmid = $db->fetch_object($resultmid);
+							$bookkeeping->doc_ref = $objmid->ref; // Ref of expensereport
+						}
 					} else if ($tabtype[$key] == 'payment_vat') {
 						$bookkeeping->code_tiers = '';
 						$bookkeeping->numero_compte = $k;
