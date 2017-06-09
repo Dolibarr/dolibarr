@@ -792,6 +792,8 @@ div.fiche>form>div.div-table-responsive {
 /* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
+	.divmainbodylarge { margin-left: 20px !important; margin-right: 20px !important; }
+
     .tdoverflowonsmartphone {
         max-width: 0;
         overflow: hidden;
@@ -3077,7 +3079,8 @@ div.titre {
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }
 
-#divsubscribe { width: 700px; }
+.divmainbodylarge { margin-left: 40px; margin-right: 40px; }
+#divsubscribe { max-width: 900px; }
 #tablesubscribe { width: 100%; }
 
 
