@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -50,7 +50,7 @@ if ($action == 'setvalue' && $user->admin)
 	$error=0;
 
 	$db->begin();
-	
+
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_DN',GETPOST("user"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_OBJECT_CLASS',GETPOST("objectclass"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FILTER',GETPOST("filterconnection"),'chaine',0,'',$conf->entity)) $error++;
@@ -126,7 +126,7 @@ if (! function_exists("ldap_connect"))
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-dol_fiche_head($head, 'members', $langs->trans("LDAPSetup"));
+dol_fiche_head($head, 'members', $langs->trans("LDAPSetup"), -1);
 
 
 print $langs->trans("LDAPDescMembers").'<br>';
