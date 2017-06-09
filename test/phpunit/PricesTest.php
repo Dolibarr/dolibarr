@@ -28,7 +28,6 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/functions.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/price.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 
@@ -161,7 +160,7 @@ class PricesTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result1=".join(', ',$result1)."\n";
         // result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
         $this->assertEquals(array(17.12, 1.71, 18.83, 8.56, 0.856, 9.416, 17.12, 1.71, 18.83, 0, 0, 0, 0, 0, 0, 0, 18.7, 1.87, 20.56, 9.34795),$result1,'Test1 FR');
-
+		
 		// qty=2, unit_price=0, discount_line=0, vat_rate=10, price_base_type='HT', multicurrency_tx=1.09205 (method we provide value), pu_ht_devise=100
 		$mysoc->country_code='FR';
 		$mysoc->country_id=1;
@@ -169,7 +168,7 @@ class PricesTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result1=".join(', ',$result1)."\n";
         // result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
         $this->assertEquals(array(36.63, 3.66, 40.29, 18.31418, 1.83142, 20.1456, 36.63, 3.66, 40.29, 0, 0, 0, 0, 0, 0, 0, 40, 4, 44, 20),$result1,'Test1 FR');
-
+		
         /*
 		 *  Country Spain
 		 */
