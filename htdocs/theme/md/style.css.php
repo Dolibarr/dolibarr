@@ -48,7 +48,7 @@ $colorbacklineimpair2='255,255,255';    // line impair
 $colorbacklinepair1='250,250,250';    // line pair
 $colorbacklinepair2='248,248,248';    // line pair
 $colorbacklinepairhover='244,244,244';    // line pair
-$colorbackbody='240,240,240';
+$colorbackbody='248,248,248';
 $colortexttitlenotab='90,90,90';
 $colortexttitle='20,20,20';
 $colortext='0,0,0';
@@ -1120,6 +1120,9 @@ table.noborder tr.liste_titre td {
 #pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
+}
+.pictoobjectwidth {
+	width: 14px;
 }
 .pictosubstatus {
     padding-left: 2px;
@@ -2893,6 +2896,9 @@ div .tdtop {
     .dashboardlineindicator {
         float: left;
     	padding-left: 5px;
+    }
+    .boxstats {
+        width: 100px;
     }
 }
 .boxstats:hover {
