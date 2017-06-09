@@ -92,7 +92,7 @@ class AccountancyCategory
 	public function getCptBK($id) {
 		global $conf;
 
-		$sql = "SELECT t.numero_compte, t.label_compte, t.doc_ref";
+		$sql = "SELECT t.numero_compte, t.label_operation, t.doc_ref";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as t";
 		$sql .= " WHERE t.numero_compte NOT IN (";
 		$sql .= " SELECT t.account_number";
@@ -104,7 +104,7 @@ class AccountancyCategory
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " AND aa.active = 1)";
-		$sql .= " GROUP BY t.numero_compte, t.label_compte, t.doc_ref";
+		$sql .= " GROUP BY t.numero_compte, t.label_operation, t.doc_ref";
 		$sql .= " ORDER BY t.numero_compte";
 
 		$this->lines_CptBk = array ();

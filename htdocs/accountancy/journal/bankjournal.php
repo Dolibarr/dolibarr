@@ -353,7 +353,7 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_bank"];
 					$bookkeeping->numero_compte = $k;
-					$bookkeeping->label_compte = $compte->label;
+					$bookkeeping->label_operation = $compte->label;
 					$bookkeeping->montant = ($mt < 0 ? - $mt : $mt);
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt >= 0 ? $mt : 0);
@@ -412,7 +412,7 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
 					} else if ($tabtype[$key] == 'payment_salary') {
 						$bookkeeping->code_tiers = '';
-						$bookkeeping->label_compte = $tabuser[$key]['name'];
+						$bookkeeping->label_operation = $tabuser[$key]['name'];
 						$bookkeeping->doc_ref = $langs->trans("SalaryPayment") . ' (' . $val["paymentsalid"] . ')'; // Ref of salary payment
 					}
 
@@ -447,7 +447,7 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->doc_type = 'bank';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_bank"];
-					$bookkeeping->label_compte = $tabcompany[$key]['name'];
+					$bookkeeping->label_operation = $tabcompany[$key]['name'];
 					$bookkeeping->montant = ($mt < 0 ? - $mt : $mt);
 					$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt < 0 ? - $mt : 0);
@@ -499,7 +499,7 @@ if (! $error && $action == 'writebookkeeping') {
 					} else if ($tabtype[$key] == 'payment_salary') {
 						$bookkeeping->code_tiers = $tabuser[$key]['accountancy_code'];
 						$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
-						$bookkeeping->label_compte = $tabuser[$key]['name'];
+						$bookkeeping->label_operation = $tabuser[$key]['name'];
 						$bookkeeping->doc_ref = $langs->trans("SalaryPayment") . ' (' . $val["paymentsalid"] . ')'; // Rowid of salary payment
 					} else if ($tabtype[$key] == 'banktransfert') {
 						$bookkeeping->code_tiers = '';

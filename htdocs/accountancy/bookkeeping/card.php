@@ -52,7 +52,7 @@ $code_tiers = GETPOST('code_tiers');
 if ($code_tiers == - 1) {
 	$code_tiers = null;
 }
-$label_compte = GETPOST('label_compte');
+$label_operation = GETPOST('label_operation');
 $debit = price2num(GETPOST('debit'));
 $credit = price2num(GETPOST('credit'));
 
@@ -83,7 +83,7 @@ if ($action == "confirm_update") {
 		} else {
 			$book->numero_compte = $account_number;
 			$book->code_tiers = $code_tiers;
-			$book->label_compte = $label_compte;
+			$book->label_operation = $label_operation;
 			$book->debit = $debit;
 			$book->credit = $credit;
 
@@ -120,7 +120,7 @@ else if ($action == "add") {
 
 		$book->numero_compte = $account_number;
 		$book->code_tiers = $code_tiers;
-		$book->label_compte = $label_compte;
+		$book->label_operation = $label_operation;
 		$book->debit = $debit;
 		$book->credit = $credit;
 		$book->doc_date = GETPOST('doc_date');
@@ -182,7 +182,7 @@ else if ($action == "confirm_create") {
 	
 	if (! $error)
 	{
-    	$book->label_compte = '';
+    	$book->label_operation = '';
     	$book->debit = 0;
     	$book->credit = 0;
     	$book->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth'), GETPOST('doc_dateday'), GETPOST('doc_dateyear'));
@@ -392,7 +392,7 @@ if ($action == 'create') {
 						print '<td>';
 						print $formaccounting->select_auxaccount($line->code_tiers, 'code_tiers', 1);
 						print '</td>';
-						print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
+						print '<td><input type="text" size="15" name="label_operation" value="' . $line->label_operation . '"/></td>';
 						print '<td align="right"><input type="text" size="6" name="debit" value="' . price($line->debit) . '"/></td>';
 						print '<td align="right"><input type="text" size="6" name="credit" value="' . price($line->credit) . '"/></td>';
 						print '<td align="right">' . price($line->montant) . '</td>';
@@ -404,7 +404,7 @@ if ($action == 'create') {
 					} else {
 						print '<td>' . length_accountg($line->numero_compte) . '</td>';
 						print '<td>' . length_accounta($line->code_tiers) . '</td>';
-						print '<td>' . $line->label_compte . '</td>';
+						print '<td>' . $line->label_operation . '</td>';
 						print '<td align="right">' . price($line->debit) . '</td>';
 						print '<td align="right">' . price($line->credit) . '</td>';
 						print '<td align="right">' . price($line->montant) . '</td>';
@@ -436,7 +436,7 @@ if ($action == 'create') {
 					print '<td>';
 					print $formaccounting->select_auxaccount($code_tiers, 'code_tiers', 1);
 					print '</td>';
-					print '<td><input type="text" size="15" name="label_compte" value="' . $label_compte . '"/></td>';
+					print '<td><input type="text" size="15" name="label_operation" value="' . $label_operation . '"/></td>';
 					print '<td align="right"><input type="text" class="right maxwidth50" name="debit" value="' . price($debit) . '"/></td>';
 					print '<td align="right"><input type="text" class="right maxwidth50" name="credit" value="' . price($credit) . '"/></td>';
 					print '<td></td>';

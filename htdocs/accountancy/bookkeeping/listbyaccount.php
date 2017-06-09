@@ -104,11 +104,11 @@ if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter")) // Bot
   	$options .= '&amp;search_accountancy_code_start=' . $search_accountancy_code_start;
   }
   if (! empty($search_label_account)) {
-  	$filter['t.label_compte'] = $search_label_account;
+  	$filter['t.label_operation'] = $search_label_account;
   	$options .= '&amp;search_label_account=' . $search_label_account;
   }
   if (! empty($search_mvt_label)) {
-  	$filter['t.label_compte'] = $search_mvt_label;
+  	$filter['t.label_operation'] = $search_mvt_label;
   	$options .= '&amp;search_mvt_label=' . $search_mvt_label;
   }
   if (! empty($search_direction)) {
@@ -313,7 +313,7 @@ foreach ( $object->lines as $line ) {
     
     // Affiche un lien vers la facture client/fournisseur
     $doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
-    print strlen(length_accounta($line->code_tiers)) == 0 ? '<td>' . $line->label_compte . '</td>' : '<td>' . $line->label_compte . '<br /><span style="font-size:0.8em">(' . length_accounta($line->code_tiers) . ')</span></td>';
+    print strlen(length_accounta($line->code_tiers)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br /><span style="font-size:0.8em">(' . length_accounta($line->code_tiers) . ')</span></td>';
 
 
 	print '<td align="right">' . price($line->debit) . '</td>';

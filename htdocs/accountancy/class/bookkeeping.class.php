@@ -78,6 +78,7 @@ class BookKeeping extends CommonObject
 	public $code_tiers;
 	public $numero_compte;
 	public $label_compte;
+	public $label_operation;
 	public $debit;
 	public $credit;
 	public $montant;
@@ -135,6 +136,9 @@ class BookKeeping extends CommonObject
 		}
 		if (isset($this->label_compte)) {
 			$this->label_compte = trim($this->label_compte);
+		}
+		if (isset($this->label_operation)) {
+			$this->label_operation = trim($this->label_operation);
 		}
 		if (isset($this->debit)) {
 			$this->debit = trim($this->debit);
@@ -247,6 +251,7 @@ class BookKeeping extends CommonObject
 				$sql .= ", code_tiers";
 				$sql .= ", numero_compte";
 				$sql .= ", label_compte";
+				$sql .= ", label_operation";
 				$sql .= ", debit";
 				$sql .= ", credit";
 				$sql .= ", montant";
@@ -266,6 +271,7 @@ class BookKeeping extends CommonObject
 				$sql .= ",'" . $this->code_tiers . "'";
 				$sql .= ",'" . $this->numero_compte . "'";
 				$sql .= ",'" . $this->db->escape($this->label_compte) . "'";
+				$sql .= ",'" . $this->db->escape($this->label_operation) . "'";
 				$sql .= "," . $this->debit;
 				$sql .= "," . $this->credit;
 				$sql .= "," . $this->montant;
@@ -369,6 +375,9 @@ class BookKeeping extends CommonObject
 		if (isset($this->label_compte)) {
 			$this->label_compte = trim($this->label_compte);
 		}
+		if (isset($this->label_operation)) {
+			$this->label_operation = trim($this->label_operation);
+		}
 		if (isset($this->debit)) {
 			$this->debit = trim($this->debit);
 		}
@@ -412,6 +421,7 @@ class BookKeeping extends CommonObject
 		$sql .= 'code_tiers,';
 		$sql .= 'numero_compte,';
 		$sql .= 'label_compte,';
+		$sql .= 'label_operation,';
 		$sql .= 'debit,';
 		$sql .= 'credit,';
 		$sql .= 'montant,';
@@ -431,6 +441,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' ' . (! isset($this->code_tiers) ? 'NULL' : "'" . $this->db->escape($this->code_tiers) . "'") . ',';
 		$sql .= ' ' . (! isset($this->numero_compte) ? "'NotDefined'" : "'" . $this->db->escape($this->numero_compte) . "'") . ',';
 		$sql .= ' ' . (! isset($this->label_compte) ? 'NULL' : "'" . $this->db->escape($this->label_compte) . "'") . ',';
+		$sql .= ' ' . (! isset($this->label_operation) ? 'NULL' : "'" . $this->db->escape($this->label_operation) . "'") . ',';
 		$sql .= ' ' . (! isset($this->debit) ? 'NULL' : $this->debit ). ',';
 		$sql .= ' ' . (! isset($this->credit) ? 'NULL' : $this->credit ). ',';
 		$sql .= ' ' . (! isset($this->montant) ? 'NULL' : $this->montant ). ',';
@@ -501,6 +512,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.code_tiers,";
 		$sql .= " t.numero_compte,";
 		$sql .= " t.label_compte,";
+		$sql .= " t.label_operation,";
 		$sql .= " t.debit,";
 		$sql .= " t.credit,";
 		$sql .= " t.montant,";
@@ -535,6 +547,7 @@ class BookKeeping extends CommonObject
 				$this->code_tiers = $obj->code_tiers;
 				$this->numero_compte = $obj->numero_compte;
 				$this->label_compte = $obj->label_compte;
+				$this->label_operation = $obj->label_operation;
 				$this->debit = $obj->debit;
 				$this->credit = $obj->credit;
 				$this->montant = $obj->montant;
@@ -587,6 +600,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.code_tiers,";
 		$sql .= " t.numero_compte,";
 		$sql .= " t.label_compte,";
+		$sql .= " t.label_operation,";
 		$sql .= " t.debit,";
 		$sql .= " t.credit,";
 		$sql .= " t.montant,";
@@ -610,7 +624,7 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key . '=' . $value;
 				} elseif ($key == 't.code_tiers' || $key == 't.numero_compte') {
 					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
-				} elseif ($key == 't.label_compte') {
+				} elseif ($key == 't.label_operation') {
 					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
 				}else {
 					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
@@ -650,6 +664,7 @@ class BookKeeping extends CommonObject
 				$line->code_tiers = $obj->code_tiers;
 				$line->numero_compte = $obj->numero_compte;
 				$line->label_compte = $obj->label_compte;
+				$line->label_operation = $obj->label_operation;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
 				$line->montant = $obj->montant;
@@ -701,6 +716,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.code_tiers,";
 		$sql .= " t.numero_compte,";
 		$sql .= " t.label_compte,";
+		$sql .= " t.label_operation,";
 		$sql .= " t.debit,";
 		$sql .= " t.credit,";
 		$sql .= " t.montant,";
@@ -761,6 +777,7 @@ class BookKeeping extends CommonObject
 				$line->code_tiers = $obj->code_tiers;
 				$line->numero_compte = $obj->numero_compte;
 				$line->label_compte = $obj->label_compte;
+				$line->label_operation = $obj->label_operation;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
 				$line->montant = $obj->montant;
@@ -899,6 +916,9 @@ class BookKeeping extends CommonObject
 		if (isset($this->label_compte)) {
 			$this->label_compte = trim($this->label_compte);
 		}
+		if (isset($this->label_operation)) {
+			$this->label_operation = trim($this->label_operation);
+		}
 		if (isset($this->debit)) {
 			$this->debit = trim($this->debit);
 		}
@@ -940,6 +960,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' code_tiers = ' . (isset($this->code_tiers) ? "'" . $this->db->escape($this->code_tiers) . "'" : "null") . ',';
 		$sql .= ' numero_compte = ' . (isset($this->numero_compte) ? "'" . $this->db->escape($this->numero_compte) . "'" : "null") . ',';
 		$sql .= ' label_compte = ' . (isset($this->label_compte) ? "'" . $this->db->escape($this->label_compte) . "'" : "null") . ',';
+		$sql .= ' label_operation = ' . (isset($this->label_operation) ? "'" . $this->db->escape($this->label_operation) . "'" : "null") . ',';
 		$sql .= ' debit = ' . (isset($this->debit) ? $this->debit : "null") . ',';
 		$sql .= ' credit = ' . (isset($this->credit) ? $this->credit : "null") . ',';
 		$sql .= ' montant = ' . (isset($this->montant) ? $this->montant : "null") . ',';
@@ -1199,6 +1220,7 @@ class BookKeeping extends CommonObject
 		$this->code_tiers = '';
 		$this->numero_compte = '';
 		$this->label_compte = '';
+		$this->label_operation = '';
 		$this->debit = 99.9;
 		$this->credit = '';
 		$this->montant = '';
@@ -1282,7 +1304,7 @@ class BookKeeping extends CommonObject
 
 		$sql = "SELECT rowid, doc_date, doc_type,";
 		$sql .= " doc_ref, fk_doc, fk_docdet, code_tiers,";
-		$sql .= " numero_compte, label_compte, debit, credit,";
+		$sql .= " numero_compte, label_compte, label_operation, debit, credit,";
 		$sql .= " montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
@@ -1306,6 +1328,7 @@ class BookKeeping extends CommonObject
 				$line->code_tiers = $obj->code_tiers;
 				$line->numero_compte = $obj->numero_compte;
 				$line->label_compte = $obj->label_compte;
+				$line->label_operation = $obj->label_operation;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
 				$line->montant = $obj->montant;
@@ -1336,7 +1359,7 @@ class BookKeeping extends CommonObject
 
 		$sql = "SELECT rowid, doc_date, doc_type,";
 		$sql .= " doc_ref, fk_doc, fk_docdet, code_tiers,";
-		$sql .= " numero_compte, label_compte, debit, credit,";
+		$sql .= " numero_compte, label_compte, label_operation, debit, credit,";
 		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
@@ -1362,6 +1385,7 @@ class BookKeeping extends CommonObject
 				$line->code_tiers = $obj->code_tiers;
 				$line->numero_compte = $obj->numero_compte;
 				$line->label_compte = $obj->label_compte;
+				$line->label_operation = $obj->label_operation;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
 				$line->montant = $obj->montant;
@@ -1550,6 +1574,7 @@ class BookKeepingLine
 	public $code_tiers;
 	public $numero_compte;
 	public $label_compte;
+	public $label_operation;
 	public $debit;
 	public $credit;
 	public $montant;

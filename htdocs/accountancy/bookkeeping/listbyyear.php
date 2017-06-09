@@ -61,7 +61,7 @@ $search_code_tiers_end = GETPOST('search_code_tiers_end', 'alpha');
 if ($search_code_tiers_end == - 1) {
 	$search_code_tiers_end = '';
 }
-$search_label_compte = GETPOST('search_label_compte', 'alpha');
+$search_label_operation = GETPOST('search_label_operation', 'alpha');
 $search_sens = GETPOST('search_sens', 'alpha');
 $search_code_journal = GETPOST('search_code_journal', 'alpha');
 
@@ -90,7 +90,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_doc_ref = "";
 	$search_numero_compte = "";
 	$search_code_tiers = "";
-	$search_label_compte = "";
+	$search_label_operation = "";
 	$search_sens = "";
 	$search_code_journal = "";
 }
@@ -141,9 +141,9 @@ if (! empty($search_code_tiers_end)) {
 	$filter['t.code_tiers<='] = $search_code_tiers_end;
 	$options .= '&amp;search_code_tiers_end=' . $search_code_tiers_end;
 }
-if (! empty($search_label_compte)) {
-	$filter['t.label_compte'] = $search_label_compte;
-	$options .= '&amp;search_label_compte=' . $search_label_compte;
+if (! empty($search_label_operation)) {
+	$filter['t.label_operation'] = $search_label_operation;
+	$options .= '&amp;search_label_operation=' . $search_label_operation;
 }
 if (! empty($search_sens)) {
 	$filter['t.sens'] = $search_sens;
@@ -201,7 +201,7 @@ print_liste_field_titre($langs->trans("Date"), $_SERVER['PHP_SELF'], "t.doc_date
 print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("AccountAccounting"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("ThirdPartyAccount"), $_SERVER['PHP_SELF'], "t.code_tiers", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_compte", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_operation", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Amount"), $_SERVER['PHP_SELF'], "t.montant", "", $options, 'align="center"', $sortfield, $sortorder);
@@ -236,7 +236,7 @@ print '<input type="text" size=6 class="flat" name="search_code_tiers" value="' 
 print '</td>';
 
 print '<td class="liste_titre">';
-print '<input type="text" size=6 class="flat" name="search_label_compte" value="' . $search_label_compte . '"/>';
+print '<input type="text" size=6 class="flat" name="search_label_operation" value="' . $search_label_operation . '"/>';
 print '</td>';
 
 print '<td class="liste_titre">';
@@ -275,7 +275,7 @@ foreach ( $object->lines as $line ) {
 	print '<td>' . $line->doc_ref . '</td>';
 	print '<td>' . length_accountg($line->numero_compte) . '</td>';
 	print '<td>' . length_accounta($line->code_tiers) . '</td>';
-	print '<td>' . $line->label_compte . '</td>';
+	print '<td>' . $line->label_operation . '</td>';
 	print '<td align="right">' . price($line->debit) . '</td>';
 	print '<td align="right">' . price($line->credit) . '</td>';
 	print '<td align="right">' . price($line->montant) . '</td>';

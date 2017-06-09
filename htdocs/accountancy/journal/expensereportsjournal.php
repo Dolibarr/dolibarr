@@ -176,7 +176,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
 					$bookkeeping->code_tiers = $tabuser[$key]['user_accountancy_code'];
-					$bookkeeping->label_compte = $tabuser[$key]['name'];
+					$bookkeeping->label_operation = $tabuser[$key]['name'];
 					$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
@@ -223,7 +223,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
 						$bookkeeping->code_tiers = '';
-						$bookkeeping->label_compte = $accountingaccount->label;
+						$bookkeeping->label_operation = $accountingaccount->label;
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
@@ -268,7 +268,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
 					$bookkeeping->code_tiers = '';
-					$bookkeeping->label_compte = $langs->trans("VAT"). ' '.$def_tva[$key];
+					$bookkeeping->label_operation = $langs->trans("VAT"). ' '.$def_tva[$key];
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';

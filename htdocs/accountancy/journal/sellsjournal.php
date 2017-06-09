@@ -234,7 +234,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->code_tiers = $tabcompany[$key]['code_client'];
 					$bookkeeping->numero_compte = $tabcompany[$key]['code_compta'];
 					// $bookkeeping->label_compte = $tabcompany[$key]['name'];
-					$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Code_tiers");
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Code_tiers");
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
@@ -279,7 +279,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add;
 						$bookkeeping->code_tiers = '';
 						$bookkeeping->numero_compte = $k;
-						$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label;
+						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 						$bookkeeping->debit = ($mt < 0) ? $mt : 0;
@@ -323,7 +323,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
 					$bookkeeping->code_tiers = '';
 					$bookkeeping->numero_compte = $k;
-					$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT").' '.$def_tva[$key];
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT").' '.$def_tva[$key];
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt < 0) ? $mt : 0;
