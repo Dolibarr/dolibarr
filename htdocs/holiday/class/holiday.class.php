@@ -167,6 +167,14 @@ class Holiday extends CommonObject
         if (! $error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday");
+
+            if (! $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('HOLIDAY_CREATE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
         }
 
         // Commit or rollback
@@ -312,7 +320,7 @@ class Holiday extends CommonObject
         $sql.= " ua.photo as validator_photo";
         
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
-        $sql.= " WHERE cp.entity IN (".getEntity('holiday', 1).")";
+        $sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
         $sql.= " AND cp.fk_user = '".$user_id."'";
 
@@ -437,7 +445,7 @@ class Holiday extends CommonObject
         $sql.= " ua.photo as validator_photo";
         
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
-        $sql.= " WHERE cp.entity IN (".getEntity('holiday', 1).")";
+        $sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
         $sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
 
         // Filtrage de séléction
@@ -546,12 +554,12 @@ class Holiday extends CommonObject
         }
        	$sql.= " halfday = ".$this->halfday.",";
         if(!empty($this->statut) && is_numeric($this->statut)) {
-            $sql.= " statut = '".$this->statut."',";
+            $sql.= " statut = ".$this->statut.",";
         } else {
             $error++;
         }
         if(!empty($this->fk_validator)) {
-            $sql.= " fk_validator = '".$this->fk_validator."',";
+            $sql.= " fk_validator = '".$this->db->escape($this->fk_validator)."',";
         } else {
             $error++;
         }
@@ -561,7 +569,7 @@ class Holiday extends CommonObject
             $sql.= " date_valid = NULL,";
         }
         if(!empty($this->fk_user_valid)) {
-            $sql.= " fk_user_valid = '".$this->fk_user_valid."',";
+            $sql.= " fk_user_valid = '".$this->db->escape($this->fk_user_valid)."',";
         } else {
             $sql.= " fk_user_valid = NULL,";
         }
@@ -571,7 +579,7 @@ class Holiday extends CommonObject
             $sql.= " date_refuse = NULL,";
         }
         if(!empty($this->fk_user_refuse)) {
-            $sql.= " fk_user_refuse = '".$this->fk_user_refuse."',";
+            $sql.= " fk_user_refuse = '".$this->db->escape($this->fk_user_refuse)."',";
         } else {
             $sql.= " fk_user_refuse = NULL,";
         }
@@ -581,7 +589,7 @@ class Holiday extends CommonObject
             $sql.= " date_cancel = NULL,";
         }
         if(!empty($this->fk_user_cancel)) {
-            $sql.= " fk_user_cancel = '".$this->fk_user_cancel."',";
+            $sql.= " fk_user_cancel = '".$this->db->escape($this->fk_user_cancel)."',";
         } else {
             $sql.= " fk_user_cancel = NULL,";
         }
@@ -591,7 +599,7 @@ class Holiday extends CommonObject
             $sql.= " detail_refuse = NULL";
         }
 
-        $sql.= " WHERE rowid= '".$this->id."'";
+        $sql.= " WHERE rowid= ".$this->id;
 
         $this->db->begin();
 
@@ -603,7 +611,13 @@ class Holiday extends CommonObject
 
         if (! $error)
         {
-
+            if (! $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('HOLIDAY_MODIFY',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
         }
 
         // Commit or rollback
@@ -650,7 +664,13 @@ class Holiday extends CommonObject
 
         if (! $error)
         {
-
+            if (! $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('HOLIDAY_DELETE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
         }
 
         // Commit or rollback
@@ -1189,7 +1209,7 @@ class Holiday extends CommonObject
                 $sql = "SELECT u.rowid";
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
-                if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+                if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
                 {
                 	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
                 	$sql.= " WHERE (ug.fk_user = u.rowid";
@@ -1285,7 +1305,7 @@ class Holiday extends CommonObject
                 $sql = "SELECT u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut";
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
-                if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+                if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
                 {
                 	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
                 	$sql.= " WHERE (ug.fk_user = u.rowid";

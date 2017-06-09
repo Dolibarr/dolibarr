@@ -143,6 +143,8 @@ class Segment implements IteratorAggregate, Countable
         }
         $reg = "/\[!--\sBEGIN\s$this->name\s--\](.*)\[!--\sEND\s$this->name\s--\]/sm";
         $this->xmlParsed = preg_replace($reg, '$1', $this->xmlParsed);
+	// Miguel Erill 09704/2017 - Add macro replacement to invoice lines
+        $this->xmlParsed = $this->macroReplace($this->xmlParsed);
         $this->file->open($this->odf->getTmpfile());
         foreach ($this->images as $imageKey => $imageValue) {
 			if ($this->file->getFromName('Pictures/' . $imageValue) === false) {
@@ -156,7 +158,31 @@ class Segment implements IteratorAggregate, Countable
         
         return $this->xmlParsed;
     }
-    
+
+   /**
+    * Function to replace macros for invoice short and long month, invoice year
+    * 
+    * Substitution occur when the invoice is generated, not considering the invoice date
+    * so do not (re)generate in a diferent date than the one that the invoice belongs to
+    * Perhaps it would be better to use the invoice issued date but I still do not know
+    * how to get it here
+    *
+    * Miguel Erill 09/04/2017
+    * 
+    * @param	string	$value	String to convert
+    */
+    public function macroReplace($text)
+    {
+        global $langs;
+
+        $patterns=array( '__CURRENTDAY__','__CURRENTDAYTEXT__','__CURRENTMONTHSHORT__','__CURRENTMONTH__','__CURRENTYEAR__' );
+        $values=array( date('j'), $langs->trans(date('l')), $langs->trans(date('M')), $langs->trans(date('F')), date('Y') );
+
+        $text=preg_replace($patterns, $values, $text);
+
+	return $text;
+    }
+
     /**
      * Analyse the XML code in order to find children
      *

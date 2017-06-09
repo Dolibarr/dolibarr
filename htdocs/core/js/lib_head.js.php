@@ -39,7 +39,7 @@ session_cache_limiter(FALSE);
 require_once '../../main.inc.php';
 
 // Define javascript type
-header('Content-type: text/javascript; charset=UTF-8');
+top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
@@ -567,28 +567,6 @@ function urlencode(s) {
 
 /*
  * ================================================================= 
- * Purpose: Show a popup HTML page. 
- * Input:   url,title 
- * Author:  Laurent Destailleur 
- * Licence: GPL 
- * ==================================================================
- */
-function newpopup(url,title) {
-	var argv = newpopup.arguments;
-	var argc = newpopup.arguments.length;
-	tmp=url;
-	var l = (argc > 2) ? argv[2] : 600;
-	var h = (argc > 3) ? argv[3] : 400;
-	var left = (screen.width - l)/2;
-	var top = (screen.height - h)/2;
-	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
-	fen=window.open(tmp,title,wfeatures);
-	return false;
-}
-
-
-/*
- * ================================================================= 
  * Purpose:
  * Applique un delai avant execution. Used for autocompletion of companies.
  * Input:   funct, delay 
@@ -656,7 +634,13 @@ function hideMessage(fieldId,message) {
 
 
 /*
- * Used by button to set on/off 
+ * Used by button to set on/off
+ *
+ * @param	string	url			Url
+ * @param	string	code		Code
+ * @param	string	intput		Input
+ * @param	int		entity		Entity
+ * @param	int		strict		Strict
  */
 function setConstant(url, code, input, entity, strict) {
 	$.get( url, {
@@ -714,7 +698,13 @@ function setConstant(url, code, input, entity, strict) {
 }
 
 /*
- * Used by button to set on/off  
+ * Used by button to set on/off
+ *
+ * @param	string	url			Url
+ * @param	string	code		Code
+ * @param	string	intput		Input
+ * @param	int		entity		Entity
+ * @param	int		strict		Strict
  */
 function delConstant(url, code, input, entity, strict) {
 	$.get( url, {
@@ -768,7 +758,17 @@ function delConstant(url, code, input, entity, strict) {
 }
 
 /*
- * Used by button to set on/off  
+ * Used by button to set on/off
+ *
+ * @param	string	action		Action
+ * @param	string	url			Url
+ * @param	string	code		Code
+ * @param	string	intput		Input
+ * @param	string	box			Box
+ * @param	int		entity		Entity
+ * @param	int		yesButton	yesButton
+ * @param	int		noButton	noButton
+ * @param	int		strict		Strict
  */
 function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton, strict) {
 	var boxConfirm = box;
@@ -931,7 +931,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 })( jQuery );
 
 
-/*
+/**
  * Function to output a dialog bog for copy/paste
  * 
  * @param	string	text	Text to put into copy/paste area
@@ -949,18 +949,40 @@ function copyToClipboard(text,text2)
 }
 
 
-/*
- * Function show document preview
+/**
+ * Show a popup HTML page. Use the "window.open" function.
+ * 
+ * @param	string	url		Url
+ * @param	string	title  	Title of popup
+ * @return	boolean			False
+ * @see document_preview
+ */
+function newpopup(url,title) {
+	var argv = newpopup.arguments;
+	var argc = newpopup.arguments.length;
+	tmp=url;
+	var l = (argc > 2) ? argv[2] : 600;
+	var h = (argc > 3) ? argv[3] : 400;
+	var left = (screen.width - l)/2;
+	var top = (screen.height - h)/2;
+	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
+	fen=window.open(tmp,title,wfeatures);
+	return false;
+}
+
+/**
+ * Function show document preview. Use the "dialog" function.
  *
- * @params string file File path
- * @params string type mime file
- * @params string title
+ * @param 	string file 		Url
+ * @param 	string type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
+ * @param 	string title		Title of popup
+ * @return	void
+ * @see newpopup
  */
 function document_preview(file, type, title)
 {
-	console.log("document_preview A click was done");
 	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png"];
-	console.log("document_preview A click was done. file="+file+", type="+type);
+	console.log("document_preview A click was done. file="+file+", type="+type+", title="+title);
 	
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		var width='85%';
@@ -996,8 +1018,8 @@ function document_preview(file, type, title)
 
 	}
 	function show_preview(){
-
-		var newElem = '<object data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'"></object>';
+		/* console.log("file="+file+" type="+type+" width="+width+" height="+height); */
+		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
 
 		$("#dialogforpopup").html(newElem);
 		$("#dialogforpopup").dialog({
@@ -1025,6 +1047,7 @@ function getParameterByName(name, valueifnotfound)
         results = regex.exec(location.search);
     return results === null ? valueifnotfound : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
+
 
 // Code in the public domain from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round
 (function() {
@@ -1082,8 +1105,8 @@ function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + deci
 /**
  * Function similar to PHP price2num()
  *
- * @param {number|string} amount    The amount to convert/clean
- * @returns {string}                The amount in universal numeric format (Example: '99.99999')
+ * @param  {number|string} amount    The amount to convert/clean
+ * @return {string}                  The amount in universal numeric format (Example: '99.99999')
  * @todo Implement rounding parameter
  */
 function price2numjs(amount) {
@@ -1128,6 +1151,5 @@ function price2numjs(amount) {
 	console.log("res="+res)
 	return res;
 }
-
     
 

@@ -54,7 +54,7 @@ $mesg = '';
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -96,7 +96,7 @@ if ($id > 0 || ! empty($ref))
 		$head = product_prepare_head($product);
 		$titre = $langs->trans("CardProduct" . $product->type);
 		$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
-		dol_fiche_head($head, 'referers', $titre, 0, $picto);
+		dol_fiche_head($head, 'referers', $titre, -1, $picto);
 
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $product, $action); // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -131,7 +131,7 @@ if ($id > 0 || ! empty($ref))
 			$sql .= ", " . MAIN_DB_PREFIX . "facture_fourn_det as d";
 			if (! $user->rights->societe->client->voir && ! $socid)	$sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 			$sql .= " WHERE f.fk_soc = s.rowid";
-			$sql .= " AND f.entity IN (".getEntity('facture_fourn', 1).")";
+			$sql .= " AND f.entity IN (".getEntity('facture_fourn').")";
 			$sql .= " AND d.fk_facture_fourn = f.rowid";
 			$sql .= " AND d.fk_product =" . $product->id;
 			if (! empty($search_month))

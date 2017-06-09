@@ -43,6 +43,8 @@ class HookManager
 	var $resArray=array();
 	// Printable result
 	var $resPrint='';
+	// Nb of qualified hook ran
+	var $resNbOfHooks=0;
 
 	/**
 	 * Constructor
@@ -57,15 +59,14 @@ class HookManager
 
 	/**
 	 *	Init array $this->hooks with instantiated action controlers.
-	 *  First, a hook is declared by a module by adding a constant MAIN_MODULE_MYMODULENAME_HOOKS
-	 *  with value 'nameofcontext1:nameofcontext2:...' into $this->const of module descriptor file.
+	 *  First, a hook is declared by a module by adding a constant MAIN_MODULE_MYMODULENAME_HOOKS with value 'nameofcontext1:nameofcontext2:...' into $this->const of module descriptor file.
 	 *  This makes $conf->hooks_modules loaded with an entry ('modulename'=>array(nameofcontext1,nameofcontext2,...))
 	 *  When initHooks function is called, with initHooks(list_of_contexts), an array $this->hooks is defined with instance of controler
 	 *  class found into file /mymodule/class/actions_mymodule.class.php (if module has declared the context as a managed context).
 	 *  Then when a hook executeHooks('aMethod'...) is called, the method aMethod found into class will be executed.
 	 *
 	 *	@param	string[]	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
-	 *	@return	int							Always 1
+	 *	@return	int							    Always 1
 	 */
 	function initHooks($arraycontext)
 	{
@@ -116,8 +117,8 @@ class HookManager
      * 	    @param		array	$parameters		Array of parameters
      * 		@param		Object	$object			Object to use hooks on
      * 	    @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
-     * 		@return		mixed					For 'addreplace hooks (doActions,formObjectOptions,pdf_xxx,...):  					Return 0 if we want to keep standard actions, >0 if we want to stop standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results and set into ->resArray.
-     * 											For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results and set into ->resArray.
+     * 		@return		mixed					For 'addreplace' hooks (doActions,formObjectOptions,pdf_xxx,...):  					Return 0 if we want to keep standard actions, >0 if we want to stop standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+     * 											For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
      *                                          All types can also return some values into an array ->results that will be finaly merged into this->resArray for caller.
      * 											$this->error or this->errors are also defined by class called by this function if error.
      */
@@ -133,17 +134,22 @@ class HookManager
 		if (in_array(
 			$method,
 			array(
-				'addMoreActionsButtons',
+                'addCalendarChoice',
+			    'addMoreActionsButtons',
+			    'addMoreMassActions',
 			    'addSearchEntry',
 				'addStatisticLine',
-				'deleteFile',
+			    'deleteFile',
 				'doActions',
+			    'doMassActions',
 				'formCreateThirdpartyOptions',
 				'formObjectOptions',
 				'formattachOptions',
 				'formBuilddocLineOptions',
+			    'formatNotificationMessage',
 			    'getFormMail',
 			    'getIdProfUrl',
+			    'getDirList',
 				'moveUploadedFile',
 			    'pdf_build_address',
 				'pdf_writelinedesc',
@@ -167,7 +173,6 @@ class HookManager
 				'printSearchForm',
 				'printTabsHead',
 				'formatEvent',
-                'addCalendarChoice',
                 'printObjectLine',
                 'printObjectSubLine',
 				'createDictionaryFieldList',
@@ -179,14 +184,16 @@ class HookManager
 
         if ($method == 'insertExtraFields')
         {
-        	$hooktype='returnvalue';	// deprecated. TODO Remove all code with "executeHooks('insertExtraFields'" as soon as there is a trigger available.
+        	$hooktype='returnvalue';	// @deprecated. TODO Remove all code with "executeHooks('insertExtraFields'" as soon as there is a trigger available.
         	dol_syslog("Warning: The hook 'insertExtraFields' is deprecated and must not be used. Use instead trigger on CRUD event (ask it to dev team if not implemented)", LOG_WARNING);
         }
+
+        // Init return properties
+        $this->resPrint=''; $this->resArray=array(); $this->resNbOfHooks=0;
 
         // Loop on each hook to qualify modules that have declared context
         $modulealreadyexecuted=array();
         $resaction=0; $error=0; $result='';
-		$this->resPrint=''; $this->resArray=array();
         foreach($this->hooks as $context => $modules)    // $this->hooks is an array with context as key and value is an array of modules that handle this context
         {
             if (! empty($modules))
@@ -195,11 +202,13 @@ class HookManager
                 {
                 	//print "Before hook ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction." result=".$result."<br>\n";
 
+                    // test to avoid running twice a hook, when a module implements several active contexts
+                    if (in_array($module,$modulealreadyexecuted)) continue;
+
                 	// jump to next module/class if method does not exist
                     if (! method_exists($actionclassinstance,$method)) continue;
 
-                    // test to avoid running twice a hook, when a module implements several active contexts
-                    if (in_array($module,$modulealreadyexecuted)) continue;
+                    $this->resNbOfHooks++;
 
                     dol_syslog(get_class($this).'::executeHooks a qualified hook was found for method='.$method.' module='.$module." action=".$action." context=".$context);
 

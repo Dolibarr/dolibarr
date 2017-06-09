@@ -165,7 +165,7 @@ $sql.= " e.fk_user, e.description,";
 $sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
-$sql.= " WHERE e.entity IN (".getEntity('event', 1).")";
+$sql.= " WHERE e.entity IN (".getEntity('event').")";
 if ($date_start > 0) $sql.= " AND e.dateevent >= '".$db->idate($date_start)."'";
 if ($date_end > 0)   $sql.= " AND e.dateevent <= '".$db->idate($date_end)."'";
 if ($search_code) { $usefilter++; $sql.=natural_search("e.type", $search_code, 0); }
@@ -249,8 +249,8 @@ if ($result)
 	print '</td>';
 
 	print '<td align="right" class="liste_titre">';
-	$searchpitco=$form->showFilterAndCheckAddButtons(0);
-	print $searchpitco;
+	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
 	print '</td>';
 
 	print "</tr>\n";
@@ -261,9 +261,9 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-		$var=!$var;
+		
 
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 
 		// Date
 		print '<td align="left" class="nowrap">'.dol_print_date($db->jdate($obj->dateevent),'%Y-%m-%d %H:%M:%S').'</td>';

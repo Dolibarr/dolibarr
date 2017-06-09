@@ -110,7 +110,7 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "product_price ";
 			$sql .= " WHERE fk_product='" . $id . "'";
-			$sql .= " AND entity IN (" . getEntity('productprice', 1) . ")";
+			$sql .= " AND entity IN (" . getEntity('productprice') . ")";
 			$sql .= " AND price_level=" . $price_level;
 			$sql .= " ORDER BY date_price";
 			$sql .= " DESC LIMIT 1";
@@ -178,11 +178,11 @@ else
 
 	$idprod = (! empty($match[0]) ? $match[0] : '');
 	
-	if (! GETPOST($htmlname) && ! GETPOST($idprod))
+	if (! $htmlname && (! $idprod || ! GETPOST($idprod,'alpha')))
 		return;
 
 		// When used from jQuery, the search term is added as GET param "term".
-	$searchkey = (GETPOST($idprod) ? GETPOST($idprod) : (GETPOST($htmlname) ? GETPOST($htmlname) : ''));
+	$searchkey = (($idprod && GETPOST($idprod,'alpha')) ? GETPOST($idprod,'alpha') :  (GETPOST($htmlname, 'alpha') ? GETPOST($htmlname, 'alpha') : ''));
 
 	$form = new Form($db);
 	if (empty($mode) || $mode == 1) {  // mode=1: customer

@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
 
 // Init vars
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $numsondage = '';
 if (GETPOST('sondage'))
 {
@@ -46,6 +46,9 @@ $nblignes=$object->fetch_lines();
 
 //If the survey has not yet finished, then it can be modified
 $canbemodified = ((empty($object->date_fin) || $object->date_fin > dol_now()) && $object->status != Opensurveysondage::STATUS_CLOSED);
+
+// Security check
+if (empty($conf->opensurvey->enabled)) accessforbidden('',0,0,1);
 
 
 /*
@@ -248,7 +251,7 @@ if (empty($object->ref))     // For survey, id is a hex string
     llxFooterSurvey();
 
     $db->close();
-    exit;
+    exit();
 }
 
 // Define format of choices
@@ -287,7 +290,7 @@ if (!$canbemodified) {
 	llxFooterSurvey();
 
 	$db->close();
-	die;
+	exit;
 }
 
 print '<form name="formulaire" action="studs.php?sondage='.$numsondage.'"'.'#bas" method="POST">'."\n";

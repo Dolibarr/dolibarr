@@ -183,7 +183,7 @@ if($calc ==0 || $calc == 2)
 		{
 			if(($min == 0 or ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) !=0)
 			{
-				$var=!$var;
+				
 				$intra = str_replace($find,$replace,$coll->tva_intra);
 				if(empty($intra))
 				{
@@ -196,7 +196,7 @@ if($calc ==0 || $calc == 2)
 						$intra = '';
 					}
 				}
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$i."</td>";
 				$company_static->id=$coll->socid;
 				$company_static->name=$coll->name;
@@ -258,7 +258,7 @@ if($calc ==0 || $calc == 1){
 		{
 			if(($min == 0 or ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) != 0)
 			{
-				$var=!$var;
+				
 				$intra = str_replace($find,$replace,$coll->tva_intra);
 				if(empty($intra))
 				{
@@ -271,7 +271,7 @@ if($calc ==0 || $calc == 1){
 						$intra = '';
 					}
 				}
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$i."</td>";
 				$company_static->id=$coll->socid;
 				$company_static->name=$coll->name;

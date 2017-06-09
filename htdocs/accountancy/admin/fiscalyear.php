@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,14 +25,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
 
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 // Load variable for pagination
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -125,7 +125,7 @@ if ($result) {
 		while ( $i < $num && $i < $max ) {
 			$obj = $db->fetch_object($result);
 			$fiscalyearstatic->id = $obj->rowid;
-			print '<tr ' . $bc[$var] . '>';
+			print '<tr class="oddeven">';
 			print '<td><a href="fiscalyear_card.php?id=' . $obj->rowid . '">' . img_object($langs->trans("ShowFiscalYear"), "technic") . ' ' . $obj->rowid . '</a></td>';
 			print '<td align="left">' . $obj->label . '</td>';
 			print '<td align="left">' . dol_print_date($db->jdate($obj->date_start), 'day') . '</td>';
@@ -136,7 +136,7 @@ if ($result) {
 			$i ++;
 		}
 	} else {
-		print '<tr ' . $bc[$var] . '><td colspan="5" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
+		print '<tr class="oddeven"><td colspan="5" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
 	}
 	print '</table>';
 } else {

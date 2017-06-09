@@ -74,7 +74,7 @@ print load_fiche_titre($langs->trans("ExpenseReportsSetup"),$linkback,'title_set
 
 $head = expensereport_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("ExpenseReports"), 0, 'trip');
+dol_fiche_head($head, 'attributes', $langs->trans("ExpenseReports"), -1, 'trip');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

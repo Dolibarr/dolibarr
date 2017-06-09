@@ -375,11 +375,11 @@ if ($id)
             // dans les dictionnaires de donnees
             $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
             $valuetoshow=$langs->trans($valuetoshow);   // try to translate
-            $align="left";
+            $align='';
             if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
             if ($valuetoshow != '')
             {
-                print '<td align="'.$align.'">';
+                print '<td class="'.$align.'">';
             	if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
             	else if (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
             	else print $valuetoshow;
@@ -413,14 +413,11 @@ if ($id)
         $reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
         $error=$hookmanager->error; $errors=$hookmanager->errors;
 
-        if ($id == 3) unset($fieldlist[2]);
-
         if (empty($reshook))
         {
        		fieldListWebsites($fieldlist,$obj,$tabname[$id],'add');
         }
 
-        if ($id == 4) print '<td></td>';
         print '<td colspan="3" align="right">';
         if ($action != 'edit')
         {
@@ -430,15 +427,9 @@ if ($id)
         print "</tr>";
 
         $colspan=count($fieldlist)+2;
-        if ($id == 4) $colspan++;
-
-        if (! empty($alabelisused) && $id != 25)  // If there is one label among fields, we show legend of *
-        {
-        	print '<tr><td colspan="'.$colspan.'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
-        }
-        print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';	// Keep &nbsp; to have a line with enough height
     }
 
+    print '</table>';
     print '</form>';
 
 
@@ -450,9 +441,17 @@ if ($id)
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var=true;
         if ($num)
         {
+            print '<br>';
+            
+            print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="page" value="'.$page.'">';
+            print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+            
+            print '<table class="noborder" width="100%">';
+        
             // There is several pages
             if ($num > $listlimit)
             {
@@ -499,18 +498,12 @@ if ($id)
             // Lines with values
             while ($i < $num)
             {
-                $var = ! $var;
 
                 $obj = $db->fetch_object($resql);
                 //print_r($obj);
-                print '<tr '.$bc[$var].' id="rowid-'.$obj->rowid.'">';
+                print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
                 if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
                 {
-                    print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
-                    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                    print '<input type="hidden" name="page" value="'.$page.'">';
-                    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-
                     $tmpaction='edit';
                     $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                     $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
@@ -548,16 +541,6 @@ if ($id)
 
                     $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?urlencode($obj->code):'').'&amp;id='.$id.'&amp;';
 
-					// Favorite
-					// Only activated on country dictionary
-                    if ($id == 4)
-					{
-						print '<td align="center" class="nowrap">';
-						if ($iserasable) print '<a href="'.$url.'action='.$acts[$obj->favorite].'_favorite">'.$actl[$obj->favorite].'</a>';
-						else print $langs->trans("AlwaysActive");
-						print '</td>';
-					}
-
                     // Active
                     print '<td align="center" class="nowrap">';
                     print '<a href="'.$url.'action='.$acts[$obj->status].'">'.$actl[$obj->status].'</a>';
@@ -575,15 +558,15 @@ if ($id)
                 }
                 $i++;
             }
+            
+            print '</table>';
+            
+            print '</form>';
         }
     }
     else {
         dol_print_error($db);
     }
-
-    print '</table>';
-
-    print '</form>';
 }
 
 print '<br>';

@@ -23,8 +23,7 @@
  */
 
 /**
- *  \class      EcmDirectory
- *  \brief      Class to manage ECM directories
+ *  Class to manage ECM directories
  */
 class EcmDirectory // extends CommonObject
 {
@@ -203,7 +202,7 @@ class EcmDirectory // extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
 		$sql.= " label='".$this->db->escape($this->label)."',";
-		$sql.= " fk_parent='".$this->fk_parent."',";
+		$sql.= " fk_parent='".$this->db->escape($this->fk_parent)."',";
 		$sql.= " description='".$this->db->escape($this->description)."'";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -668,7 +667,7 @@ class EcmDirectory // extends CommonObject
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dir=$conf->ecm->dir_output.'/'.$this->getRelativePath();
-		$filelist=dol_dir_list($dir,'files',0,'','(\.meta|_preview\.png)$');
+		$filelist=dol_dir_list($dir,'files',0,'','(\.meta|_preview.*\.png)$');
 
 		// Test if filelist is in database
 

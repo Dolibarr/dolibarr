@@ -54,9 +54,10 @@ class FormActions
      *  @param  string	$htmlname   	Name of html prefix for html fields (selectX and valX)
      *  @param	integer	$showempty		Show an empty line if select is used
      *  @param	integer	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
+     *  @param  string  $morecss        More css on select field
      * 	@return	void
      */
-    function form_select_status_action($formname,$selected,$canedit=1,$htmlname='complete',$showempty=0,$onlyselect=0)
+    function form_select_status_action($formname, $selected, $canedit=1, $htmlname='complete', $showempty=0, $onlyselect=0, $morecss='maxwidth100')
     {
         global $langs,$conf;
 
@@ -120,7 +121,7 @@ class FormActions
         {
         	//var_dump($selected);
         	if ($selected == 'done') $selected='100';
-            print '<select '.($canedit?'':'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat">';
+            print '<select '.($canedit?'':'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'">';
             if ($showempty) print '<option value=""'.($selected == ''?' selected':'').'></option>';
             foreach($listofstatus as $key => $val)
             {
@@ -172,6 +173,7 @@ class FormActions
         	if ($typeelement == 'invoice')   $title=$langs->trans('ActionsOnBill');
         	elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
         	elseif ($typeelement == 'propal')    $title=$langs->trans('ActionsOnPropal');
+        	elseif ($typeelement == 'supplier_payment')    $title=$langs->trans('ActionsOnSupplierPayment');
         	elseif ($typeelement == 'supplier_proposal')    $title=$langs->trans('ActionsOnSupplierProposal');
         	elseif ($typeelement == 'order')     $title=$langs->trans('ActionsOnOrder');
         	elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
@@ -187,7 +189,9 @@ class FormActions
 
         	$page=0; $param=''; $sortfield='a.datep';
         	
-        	$total = 0;	$var=true; 
+        	$total = 0; 
+        	
+        	print '<div class="div-table-responsive">';
         	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
         	print '<tr class="liste_titre">';
         	print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], '', $page, $param, '');
@@ -206,8 +210,8 @@ class FormActions
         		$ref=$action->getNomUrl(1,-1);
         		$label=$action->getNomUrl(0,38);
                 
-        		$var=!$var;
-        		print '<tr '.$bc[$var].'>';
+        		
+        		print '<tr class="oddeven">';
 				print '<td>'.$ref.'</td>';
         		print '<td>'.$label.'</td>';
         		print '<td>'.$action->type.'</td>';
@@ -241,6 +245,7 @@ class FormActions
         		print '</tr>';
         	}
         	print '</table>';
+        	print '</div>';
         }
 
         return $num;

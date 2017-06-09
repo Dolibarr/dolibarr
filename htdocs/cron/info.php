@@ -48,7 +48,7 @@ $object->info($id);
 
 $head = cron_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("CronTask"), 0, 'cron');
+dol_fiche_head($head, 'info', $langs->trans("CronTask"), -1, 'cron');
 
 print '<table width="100%"><tr><td>';
 dol_print_object_info($object);

@@ -29,19 +29,19 @@ $langs->load("bills");
 
 <script type="text/javascript">
 
-	function popupTicket()
+	function popupTicket(id,name)
 	{
 		largeur = 600;
 		hauteur = 500;
 		opt = 'width='+largeur+', height='+hauteur+', left='+(screen.width - largeur)/2+', top='+(screen.height-hauteur)/2+'';
-		window.open('validation_ticket.php?facid=<?php echo GETPOST('facid','int'); ?>', '<?php echo $langs->trans('PrintTicket') ?>', opt);
+		window.open('validation_ticket.php?facid='+id,name, opt);
 	}
 
-	popupTicket();
+	popupTicket(<?php echo GETPOST('facid','int'); ?>,'<?php echo $langs->trans('PrintTicket') ?>');
 
 </script>
 
-<p><a class="lien1" href="<?php echo DOL_URL_ROOT ?>/compta/facture.php?action=builddoc&facid=<?php echo $_GET['facid']; ?>" target="_blank"><?php echo $langs->trans("ShowInvoice"); ?></a></p>
+<p><a class="lien1" href="<?php echo DOL_URL_ROOT ?>/compta/facture/card.php?action=builddoc&facid=<?php echo $_GET['facid']; ?>" target="_blank"><?php echo $langs->trans("ShowInvoice"); ?></a></p>
 <br>
 <p><a class="lien1" href="#" onclick="Javascript: popupTicket(); return(false);"><?php echo $langs->trans("PrintTicket"); ?></a></p>
 

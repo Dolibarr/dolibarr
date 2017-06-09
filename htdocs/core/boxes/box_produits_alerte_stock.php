@@ -155,7 +155,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 	               	}
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => $price,
                     );
 
@@ -166,7 +166,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array('td' => 'align="center"',
                     'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
-					'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit")));
+					'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)));
 
 					$this->info_box_contents[$line][] = array('td' => 'align="right" width="18"',
                     'text' => $productstatic->LibStatut($objp->tosell,3,0));

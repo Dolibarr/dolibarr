@@ -29,7 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 // Langs
 $langs->load("accountancy");
@@ -37,7 +37,7 @@ $langs->load("accountancy");
 $page = GETPOST("page");
 $sortorder = GETPOST("sortorder");
 $sortfield = GETPOST("sortfield");
-$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
 $search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
 $search_doc_type = GETPOST('search_doc_type', 'alpha');
@@ -67,7 +67,7 @@ $search_code_journal = GETPOST('search_code_journal', 'alpha');
 
 $object = new BookKeeping($db);
 $form = new Form($db);
-$formventilation = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 
 // Filter
 if (empty($search_date_start)) {
@@ -182,15 +182,15 @@ print $form->select_date($search_date_end, 'date_end');
 print '</div>';
 print '<div class="liste_titre">';
 print $langs->trans('From') . ' ' . $langs->trans('AccountAccounting') . ': ';
-print $formventilation->select_account($search_numero_compte_start, 'search_numero_compte_start', 1, array (), 1, 1, '');
+print $formaccounting->select_account($search_numero_compte_start, 'search_numero_compte_start', 1, array (), 1, 1, '');
 print $langs->trans('To') . ' ' . $langs->trans('AccountAccounting') . ': ';
-print $formventilation->select_account($search_numero_compte_end, 'search_numero_compte_end', 1, array (), 1, 1, '');
+print $formaccounting->select_account($search_numero_compte_end, 'search_numero_compte_end', 1, array (), 1, 1, '');
 print '</div>';
 print '<div class="liste_titre">';
 print $langs->trans('From') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
-print $formventilation->select_auxaccount($search_code_tiers_start, 'search_code_tiers_start', 1);
+print $formaccounting->select_auxaccount($search_code_tiers_start, 'search_code_tiers_start', 1);
 print $langs->trans('To') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
-print $formventilation->select_auxaccount($search_code_tiers_end, 'searchcode_tiers_end', 1);
+print $formaccounting->select_auxaccount($search_code_tiers_end, 'searchcode_tiers_end', 1);
 print '</div>';
 print "<table class=\"noborder\" width=\"100%\">";
 
@@ -267,9 +267,8 @@ print "</tr>\n";
 $var = True;
 
 foreach ( $object->lines as $line ) {
-	$var = ! $var;
 
-	print '<tr '. $bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>' . $line->piece_num . '</td>' . "\n";
 	print '<td>' . $line->doc_type . '</td>' . "\n";
 	print '<td align="center">' . dol_print_date($line->doc_date) . '</td>';

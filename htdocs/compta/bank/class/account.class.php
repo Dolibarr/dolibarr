@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2010	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -160,7 +160,7 @@ class Account extends CommonObject
      * @var string
      */
     public $account_number;
-	public $accountancy_journal;
+	public $fk_accountancy_journal;
 
     /**
      * Currency code
@@ -475,7 +475,7 @@ class Account extends CommonObject
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
 				$sql .= "lineid, fk_categ";
 				$sql .= ") VALUES (";
-				$sql .= " ".$accline->id.", ".$categorie;
+				$sql .= $accline->id.", ".$categorie;
 				$sql .= ")";
 
 				$result = $this->db->query($sql);
@@ -545,7 +545,7 @@ class Account extends CommonObject
         $sql.= ", label";
         $sql.= ", entity";
         $sql.= ", account_number";
-		$sql.= ", accountancy_journal";
+		$sql.= ", fk_accountancy_journal";
 		$sql.= ", bank";
         $sql.= ", code_banque";
         $sql.= ", code_guichet";
@@ -569,7 +569,7 @@ class Account extends CommonObject
         $sql.= ", '".$this->db->escape($this->label)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", '".$this->db->escape($this->account_number)."'";
-		$sql.= ", '".$this->db->escape($this->accountancy_journal)."'";
+		$sql.= ", ".($this->fk_accountancy_journal > 0 ? $this->db->escape($this->fk_accountancy_journal) : "null");
 		$sql.= ", '".$this->db->escape($this->bank)."'";
         $sql.= ", '".$this->code_banque."'";
         $sql.= ", '".$this->code_guichet."'";
@@ -701,9 +701,8 @@ class Account extends CommonObject
         $sql.= ",clos = ".$this->clos;
         $sql.= ",rappro = ".$this->rappro;
         $sql.= ",url = ".($this->url?"'".$this->url."'":"null");
-        $sql.= ",account_number = '".$this->account_number."'";
-		$sql.= ",accountancy_journal = '".$this->accountancy_journal."'";
-
+        $sql.= ",account_number = '".$this->db->escape($this->account_number)."'";
+		$sql.= ",fk_accountancy_journal = ".($this->fk_accountancy_journal > 0 ? $this->db->escape($this->fk_accountancy_journal) : "null");
 		$sql.= ",bank  = '".$this->db->escape($this->bank)."'";
         $sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
         $sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
@@ -847,7 +846,7 @@ class Account extends CommonObject
         $sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant, ba.clos, ba.rappro, ba.url,";
         $sql.= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
         $sql.= " ba.domiciliation, ba.proprio, ba.owner_address, ba.state_id, ba.fk_pays as country_id,";
-        $sql.= " ba.account_number, ba.accountancy_journal, ba.currency_code,";
+        $sql.= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
         $sql.= " ba.min_allowed, ba.min_desired, ba.comment,";
         $sql.= " ba.datec as date_creation, ba.tms as date_update,";
         $sql.= ' c.code as country_code, c.label as country,';
@@ -897,7 +896,7 @@ class Account extends CommonObject
                 $this->country       = $obj->country;
 
                 $this->account_number = $obj->account_number;
-				$this->accountancy_journal = $obj->accountancy_journal;
+				$this->fk_accountancy_journal = $obj->fk_accountancy_journal;
 
                 $this->currency_code  = $obj->currency_code;
                 $this->account_currency_code  = $obj->currency_code;
@@ -1168,7 +1167,7 @@ class Account extends CommonObject
         $sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE b.rappro=0";
         $sql.= " AND b.fk_account = ba.rowid";
-        $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+        $sql.= " AND ba.entity IN (".getEntity('bank_account').")";
         $sql.= " AND (ba.rappro = 1 AND ba.courant != 2)";	// Compte rapprochable
         $sql.= " AND clos = 0";
         if ($filteraccountid) $sql.=" AND ba.rowid = ".$filteraccountid;
@@ -1185,7 +1184,7 @@ class Account extends CommonObject
 	        $response->warning_delay=$conf->bank->rappro->warning_delay/60/60/24;
 	        $response->label=$langs->trans("TransactionsToConciliate");
 	        $response->url=DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&amp;mainmenu=bank';
-	        $response->img=img_object($langs->trans("TransactionsToConciliate"),"payment");
+	        $response->img=img_object('',"payment");
 
             while ($obj=$this->db->fetch_object($resql))
             {
@@ -1225,7 +1224,7 @@ class Account extends CommonObject
         $sql = "SELECT COUNT(ba.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE ba.rappro > 0 and ba.clos = 0";
-        $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+        $sql.= " AND ba.entity IN (".getEntity('bank_account').")";
         if (empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) $sql.= " AND ba.courant != 2";
         $resql=$db->query($sql);
         if ($resql)
@@ -1243,9 +1242,10 @@ class Account extends CommonObject
      *
      *		@param	int		$withpicto		Include picto into link
      *      @param  string	$mode           ''=Link to card, 'transactions'=Link to transactions card
+     *      @param  string  $option         ''=Show ref, 'reflabel'=Show ref+label
      *		@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0, $mode='')
+    function getNomUrl($withpicto=0, $mode='', $option='')
     {
         global $conf, $langs;
 
@@ -1279,7 +1279,7 @@ class Account extends CommonObject
         }
 
         if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
-        $result.=$link.$this->ref.$linkend;
+        $result.=$link.$this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '').$linkend;
         return $result;
     }
 
@@ -1553,7 +1553,8 @@ class AccountLine extends CommonObject
     var $db;
     var $element='bank';
     var $table_element='bank';
-
+    var $picto = 'generic';
+    
     var $id;
     var $ref;
     var $datec;
@@ -1614,7 +1615,7 @@ class AccountLine extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."bank as b,";
         $sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE b.fk_account = ba.rowid";
-        $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+        $sql.= " AND ba.entity IN (".getEntity('bank_account').")";
         if ($num) $sql.= " AND b.num_chq='".$this->db->escape($num)."'";
         else if ($ref) $sql.= " AND b.rowid='".$this->db->escape($ref)."'";
         else $sql.= " AND b.rowid=".$rowid;
@@ -1856,7 +1857,7 @@ class AccountLine extends CommonObject
         
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
         $sql.= " rappro = 1";
-        $sql.= ", num_releve = '".$this->num_releve."'";
+        $sql.= ", num_releve = '".$this->db->escape($this->num_releve)."'";
         $sql.= ", fk_user_rappro = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
@@ -2027,6 +2028,7 @@ class AccountLine extends CommonObject
             $result.=$langs->trans("BankAccount").': ';
             $accountstatic=new Account($this->db);
             $accountstatic->id=$this->fk_account;
+            $accountstatic->ref=$this->bank_account_ref;
             $accountstatic->label=$this->bank_account_label;
             $result.=$accountstatic->getNomUrl(0).', ';
         }
@@ -2040,5 +2042,61 @@ class AccountLine extends CommonObject
         return $result;
     }
 
+    
+    /**
+     *    Return label of status (activity, closed)
+     *
+     *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+     *    @return   string        		Libelle
+     */
+    function getLibStatut($mode=0)
+    {
+        return $this->LibStatut($this->status,$mode);
+    }
+    
+    /**
+     *  Renvoi le libelle d'un statut donne
+     *
+     *  @param	int		$statut         Id statut
+     *  @param	int		$mode           0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return	string          		Libelle du statut
+     */
+    function LibStatut($statut,$mode=0)
+    {
+        global $langs;
+        //$langs->load('companies');
+        /*
+        if ($mode == 0)
+        {
+            if ($statut==0) return $langs->trans("ActivityCeased");
+            if ($statut==1) return $langs->trans("InActivity");
+        }
+        if ($mode == 1)
+        {
+            if ($statut==0) return $langs->trans("ActivityCeased");
+            if ($statut==1) return $langs->trans("InActivity");
+        }
+        if ($mode == 2)
+        {
+            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
+            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
+        }
+        if ($mode == 3)
+        {
+            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
+            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
+        }
+        if ($mode == 4)
+        {
+            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
+            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
+        }
+        if ($mode == 5)
+        {
+            if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
+            if ($statut==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
+        }*/
+    }
+    
 }
 

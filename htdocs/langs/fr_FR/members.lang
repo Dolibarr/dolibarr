@@ -90,6 +90,7 @@ PublicMemberList=Liste des membres publics
 BlankSubscriptionForm=Formulaire d'auto-inscription public
 BlankSubscriptionFormDesc=Dolibarr peut offrir une URL de page publique permettant de postuler à une adhésion pour les visiteurs externes. S'il existe un module de paiement en ligne, un formulaire de paiement sera également automatiquement proposé.
 EnablePublicSubscriptionForm=Activer le formulaire d'auto-inscription public
+ForceMemberType=Forcer le type de membre
 ExportDataset_member_1=Adhérents et adhésions
 ImportDataset_member_1=Adhérents
 LastMembersModified=Les %s derniers adhérents modifiés

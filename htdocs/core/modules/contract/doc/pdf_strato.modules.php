@@ -294,22 +294,25 @@ class pdf_strato extends ModelePDFContract
 						} else {
 							$datere = $langs->trans("Unknown");
 						}
-						
+
 						$txtpredefinedservice='';
-                        $txtpredefinedservice = $objectligne->product_ref;
+                        $txtpredefinedservice = $objectligne->product_label;
                         if ($objectligne->product_label)
                         {
                         	$txtpredefinedservice .= ' - ';
                         	$txtpredefinedservice .= $objectligne->product_label;
                         }
 
-						$txt='<strong>'.dol_htmlentitiesbr($outputlangs->transnoentities("DateStartPlannedShort")." : ".$datei." - ".$outputlangs->transnoentities("DateEndPlanned")." : ".$datee,1,$outputlangs->charset_output).'</strong>';
+						$desc=dol_htmlentitiesbr($objectligne->desc,1);   // Desc (not empty for free lines)
+						$txt='';
+						$txt.=$outputlangs->transnoentities("Quantity").' : <strong>'.$objectligne->qty.'</strong> - '.$outputlangs->transnoentities("UnitPrice").' : <strong>'.price($objectligne->subprice).'</strong>';   // Desc (not empty for free lines)
 						$txt.='<br>';
-						$txt.='<strong>'.dol_htmlentitiesbr($outputlangs->transnoentities("DateStartRealShort")." : ".$daters,1,$outputlangs->charset_output);
-						if ($objectligne->date_cloture) $txt.=dol_htmlentitiesbr(" - ".$outputlangs->transnoentities("DateEndRealShort")." : ".$datere,1,$outputlangs->charset_output).'</strong>';
-						$desc=dol_htmlentitiesbr($objectligne->desc,1);
+						$txt.=$outputlangs->transnoentities("DateStartPlannedShort")." : <strong>".$datei."</strong> - ".$outputlangs->transnoentities("DateEndPlanned")." : <strong>".$datee.'</strong>';
+						$txt.='<br>';
+                        $txt.=$outputlangs->transnoentities("DateStartRealShort")." : <strong>".$daters.'</strong>';
+						if ($objectligne->date_cloture) $txt.=" - ".$outputlangs->transnoentities("DateEndRealShort")." : '<strong>'".$datere.'</strong>';
 
-						$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txt,dol_concatdesc($txtpredefinedservice,$desc)), 0, 1, 0);
+						$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txtpredefinedservice, dol_concatdesc($txt, $desc)), 0, 1, 0);
 
 						$nexY = $pdf->GetY() + 2;
 						$pageposafter=$pdf->getPage();

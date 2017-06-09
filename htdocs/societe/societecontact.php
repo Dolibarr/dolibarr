@@ -107,13 +107,14 @@ else if ($action == 'deletecontact' && $user->rights->societe->creer)
 		dol_print_error($db);
 	}
 }
-
+/*
 else if ($action == 'setaddress' && $user->rights->societe->creer)
 {
 	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
-}
+}*/
+
 
 /*
  * View
@@ -259,8 +260,8 @@ if ($id > 0 || ! empty($ref))
 
 						$companyname=$objp->company;
 
-						$var=!$var;
-						print "<tr ".$bc[$var].">";
+						
+						print '<tr class="oddeven">';
 
 						// Ref
 						print "<td>";

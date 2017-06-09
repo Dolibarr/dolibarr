@@ -42,7 +42,7 @@ $result = restrictedArea($user, 'societe','','');
 $mesg = '';
 
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -181,7 +181,7 @@ $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
 $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= " AND f.fk_statut > 0";
-$sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
+$sql.= ' AND s.entity IN ('.getEntity('societe').')';
 $sql.= " AND d.fk_facture = f.rowid";
 $sql.= " AND (d.product_type = 0 OR d.product_type = 1)";
 if ($client)
@@ -260,9 +260,9 @@ if ($result)
 				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
 
-			$var=!$var;
+			
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			if ($client) {
 		        print '<td>';
 				$invoicestatic->id=$objp->facid;
@@ -295,7 +295,7 @@ if ($result)
 	}
 
 	// affichage totaux marges
-	$var=!$var;
+	
 	$totalMargin = $cumul_vente - $cumul_achat;
 	/*if ($totalMargin < 0)
 	{

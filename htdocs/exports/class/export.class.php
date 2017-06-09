@@ -220,7 +220,7 @@ class Export
 		foreach ($this->array_export_fields[$indice] as $key => $value)
 		{
 			if (! array_key_exists($key, $array_selected)) continue;		// Field not selected
-
+            if (preg_match('/^none\./', $key)) continue;                    // A field that must not appears into SQL
 			if ($i > 0) $sql.=', ';
 			else $i++;
 
@@ -591,7 +591,7 @@ class Export
 
 				while ($objp = $this->db->fetch_object($resql))
 				{
-					$var=!$var;
+					
 
 					// Process special operations
 					if (! empty($this->array_export_special[$indice]))
@@ -607,11 +607,36 @@ class Export
 								if ($objp->$alias < 0) $objp->$alias='';
 							}
 							// Operation ZEROIFNEG
-							if ($this->array_export_special[$indice][$key]=='ZEROIFNEG')
+							elseif ($this->array_export_special[$indice][$key]=='ZEROIFNEG')
 							{
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias=str_replace(array('.', '-','(',')'),'_',$key);
 								if ($objp->$alias < 0) $objp->$alias='0';
+							}
+							// Operation INVOICEREMAINTOPAY
+							elseif ($this->array_export_special[$indice][$key]=='getRemainToPay')
+							{
+								//$alias=$this->array_export_alias[$indice][$key];
+								$alias=str_replace(array('.', '-','(',')'),'_',$key);
+								$remaintopay='';
+								if ($objp->f_rowid > 0)
+								{
+								    global $tmpobjforcomputecall;
+								    if (! is_object($tmpobjforcomputecall)) 
+								    {
+								        include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+								        $tmpobjforcomputecall=new Facture($this->db);
+								    }
+								    $tmpobjforcomputecall->id = $objp->f_rowid;
+								    $tmpobjforcomputecall->total_ttc = $objp->f_total_ttc;
+								    $remaintopay=$tmpobjforcomputecall->getRemainToPay();
+								}								
+								$objp->$alias=$remaintopay;
+							}
+							else
+							{
+							    $this->error='Operation '.$this->array_export_special[$indice][$key].' not supported.';
+							    return -1;
 							}
 						}
 					}

@@ -28,10 +28,14 @@ require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 $langs->load("contracts");
 
+$action		= GETPOST('action','alpha');
+$confirm	= GETPOST('confirm','alpha');
+$id			= GETPOST('id','int');
+$ref		= GETPOST('ref','alpha');
+
 // Security check
-$contratid = GETPOST("id",'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contrat',$contratid,'');
+$result = restrictedArea($user, 'contrat', $id, '');
 
 
 /*
@@ -41,13 +45,17 @@ $result = restrictedArea($user, 'contrat',$contratid,'');
 llxHeader('',$langs->trans("Contract"),"");
 
 $object = new Contrat($db);
-$object->fetch($contratid);
-$object->fetch_thirdparty();
-$object->info($contratid);
+$object->fetch($id, $ref);
+if ($object->id > 0)
+{
+    $object->fetch_thirdparty();
+}
+
+$object->info($object->id);
 
 $head = contract_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("Contract"), 0, 'contract');
+dol_fiche_head($head, 'info', $langs->trans("Contract"), -1, 'contract');
 
 
 // Contract card

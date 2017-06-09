@@ -44,11 +44,11 @@ if ($user->societe_id > 0) accessforbidden();
 $prev_id = GETPOST('id','int');
 $socid = GETPOST('socid','int');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -166,7 +166,8 @@ if ($result)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 	$massactionbutton='';
@@ -197,7 +198,7 @@ if ($result)
      	$thirdpartytmp->id = $obj->socid;
      	$thirdpartytmp->name = $obj->name;
      	
-      	print "<tr ".$bc[$var].">";
+      	print '<tr class="oddeven">';
       	
       	print "<td>";
       	print $invoicetmp->getNomUrl(1);
@@ -233,7 +234,7 @@ if ($result)
       	print "</tr>\n";
 
       	$total += $obj->total_ttc;
-      	$var=!$var;
+      	
       	$i++;
     }
 

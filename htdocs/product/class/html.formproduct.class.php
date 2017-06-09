@@ -112,7 +112,7 @@ class FormProduct
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$batch."'";
             }
 		}
-		$sql.= " WHERE e.entity IN (".getEntity('stock', 1).")";
+		$sql.= " WHERE e.entity IN (".getEntity('stock').")";
 		if (count($warehouseStatus))
 		{
 			$sql.= " AND e.statut IN (".implode(',',$warehouseStatus).")";
