@@ -1226,11 +1226,13 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                             if ($ret < 0) $error++;
                         }
 
+                        $heightforphotref=70;
+                        if (! empty($conf->dol_optimize_smallscreen)) $heightforphotref=60;
                         // Si fichier png PDF d'1 page trouve
                         if (file_exists($fileimage))
                         {
                             $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
-                            $phototoshow.= '<img height="70" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+                            $phototoshow.= '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
                             $phototoshow.= '</div></div>';
                         }
                         // Si fichier png PDF de plus d'1 page trouve
@@ -1238,7 +1240,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                         {
                             $preview = preg_replace('/\.png/','',$relativepathimage) . "-0.png";
                             $phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
-                            $phototoshow.= '<img height="70" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
+                            $phototoshow.= '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
                             $phototoshow.= '</div></div>';
                         }
                     }

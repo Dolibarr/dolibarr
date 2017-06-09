@@ -858,6 +858,7 @@ div.fiche>form>div.div-table-responsive {
 
 	div.divphotoref {
 		padding-right: 5px;
+	    padding-bottom: 5px;
 	}
     img.photoref, div.photoref {
     	border: none;
