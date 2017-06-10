@@ -80,7 +80,7 @@ $tabname[25]= MAIN_DB_PREFIX."c_email_templates";
 
 // Requests to extract data
 $tabsql=array();
-$tabsql[25]= "SELECT rowid   as rowid, label, type_template, private, position, topic, content_lines, content, active FROM ".MAIN_DB_PREFIX."c_email_templates WHERE entity IN (".getEntity('email_template',1).")";
+$tabsql[25]= "SELECT rowid   as rowid, label, type_template, private, position, topic, content_lines, content, active FROM ".MAIN_DB_PREFIX."c_email_templates WHERE entity IN (".getEntity('email_template').")";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();

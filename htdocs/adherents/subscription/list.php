@@ -42,7 +42,7 @@ $optioncss = GETPOST('optioncss','alpha');
 
 $date_select=isset($_GET["date_select"])?$_GET["date_select"]:$_POST["date_select"];
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -123,7 +123,7 @@ $sql.= " b.fk_account";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
 $sql.= " WHERE d.rowid = c.fk_adherent";
-$sql.= " AND d.entity IN (".getEntity('adherent', 1).")";
+$sql.= " AND d.entity IN (".getEntity('adherent').")";
 if (isset($date_select) && $date_select != '')
 {
     $sql.= " AND c.dateadh LIKE '".$date_select."%'";

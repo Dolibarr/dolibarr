@@ -90,7 +90,7 @@ class box_prospect extends ModeleBoxes
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE s.client IN (2, 3)";
-			$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+			$sql.= " AND s.entity IN (".getEntity('societe').")";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
 			$sql.= " ORDER BY s.tms DESC";
@@ -156,8 +156,8 @@ class box_prospect extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => '',
-                'text' => $langs->trans("ReadPermissionNotAllowed"),
+                'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
             );
 		}
 	}

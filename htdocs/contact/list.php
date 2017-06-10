@@ -74,7 +74,7 @@ $optioncss = GETPOST('optioncss','alpha');
 $type=GETPOST("type");
 $view=GETPOST("view");
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -247,7 +247,7 @@ if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_conta
 if (! empty($search_categ_thirdparty)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";       // We need this table joined to the select in order to filter by categ
 if (! empty($search_categ_supplier)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs2 ON s.rowid = cs2.fk_soc";       // We need this table joined to the select in order to filter by categ
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-$sql.= ' WHERE p.entity IN ('.getEntity('societe', 1).')';
+$sql.= ' WHERE p.entity IN ('.getEntity('societe').')';
 if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
 	$sql .= " AND (sc.fk_user = " .$user->id." OR p.fk_soc IS NULL)";
@@ -682,6 +682,7 @@ print "</tr>\n";
 
 
 $i = 0;
+$totalarray=array();
 while ($i < min($num,$limit))
 {
     $obj = $db->fetch_object($result);
@@ -706,56 +707,67 @@ while ($i < min($num,$limit))
         print '<td valign="middle">';
         print $contactstatic->getNomUrl(1,'',0);
         print '</td>';
+	    if (! $i) $totalarray['nbfield']++;
     }
 	// Firstname
     if (! empty($arrayfields['p.firstname']['checked']))
     {
         print '<td>'.$obj->firstname.'</td>';
+	    if (! $i) $totalarray['nbfield']++;
     }
 	// Zip
     if (! empty($arrayfields['p.zip']['checked']))
     {
         print '<td>'.$obj->zip.'</td>';
+	    if (! $i) $totalarray['nbfield']++;
     }
 	// Town
     if (! empty($arrayfields['p.town']['checked']))
     {
         print '<td>'.$obj->town.'</td>';
+	    if (! $i) $totalarray['nbfield']++;
     }
     // Function
     if (! empty($arrayfields['p.poste']['checked']))
     {
         print '<td>'.dol_trunc($obj->poste,20).'</td>';
+	    if (! $i) $totalarray['nbfield']++;
     }
     // Phone
     if (! empty($arrayfields['p.phone']['checked']))
     {
         print '<td>'.dol_print_phone($obj->phone_pro,$obj->country_code,$obj->rowid,$obj->socid,'AC_TEL').'</td>';
+	    if (! $i) $totalarray['nbfield']++;
     }
     // Phone perso
     if (! empty($arrayfields['p.phone_perso']['checked']))
     {
         print '<td>'.dol_print_phone($obj->phone_perso,$obj->country_code,$obj->rowid,$obj->socid,'AC_TEL').'</td>';
+	    if (! $i) $totalarray['nbfield']++;
     }
     // Phone mobile
     if (! empty($arrayfields['p.phone_mobile']['checked']))
     {
         print '<td>'.dol_print_phone($obj->phone_mobile,$obj->country_code,$obj->rowid,$obj->socid,'AC_TEL').'</td>';
+	    if (! $i) $totalarray['nbfield']++;
     }
     // Fax
     if (! empty($arrayfields['p.fax']['checked']))
     {
         print '<td>'.dol_print_phone($obj->fax,$obj->country_code,$obj->rowid,$obj->socid,'AC_TEL').'</td>';
+	    if (! $i) $totalarray['nbfield']++;
     }
     // EMail
     if (! empty($arrayfields['p.email']['checked']))
     {
         print '<td>'.dol_print_email($obj->email,$obj->rowid,$obj->socid,'AC_EMAIL',18).'</td>';
+	    if (! $i) $totalarray['nbfield']++;
     }
     // Skype
     if (! empty($arrayfields['p.skype']['checked']))
     {
         if (! empty($conf->skype->enabled)) { print '<td>'.dol_print_skype($obj->skype,$obj->rowid,$obj->socid,'AC_SKYPE',18).'</td>'; }
+	    if (! $i) $totalarray['nbfield']++;
     }
     // Company
     if (! empty($arrayfields['p.thirdparty']['checked']))
@@ -770,12 +782,14 @@ while ($i < min($num,$limit))
         else
             print '&nbsp;';
         print '</td>';
+	    if (! $i) $totalarray['nbfield']++;
     }
 
     // Private/Public
     if (! empty($arrayfields['p.priv']['checked']))
     {
 	    print '<td align="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
+	    if (! $i) $totalarray['nbfield']++;
     }
 
 	// Extra fields
@@ -792,6 +806,7 @@ while ($i < min($num,$limit))
 				$tmpkey='options_'.$key;
 				print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
 				print '</td>';
+	            if (! $i) $totalarray['nbfield']++;
 			}
 	   }
 	}
@@ -805,6 +820,7 @@ while ($i < min($num,$limit))
         print '<td align="center">';
         print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
         print '</td>';
+	    if (! $i) $totalarray['nbfield']++;
     }
     // Date modification
     if (! empty($arrayfields['p.tms']['checked']))
@@ -812,11 +828,13 @@ while ($i < min($num,$limit))
         print '<td align="center">';
         print dol_print_date($db->jdate($obj->date_update), 'dayhour');
         print '</td>';
+	    if (! $i) $totalarray['nbfield']++;
     }
     // Status
     if (! empty($arrayfields['p.statut']['checked']))
     {
         print '<td align="center">'.$contactstatic->getLibStatut(3).'</td>';
+	    if (! $i) $totalarray['nbfield']++;
     }
 
    // Action column
@@ -829,7 +847,7 @@ while ($i < min($num,$limit))
     }
     print '</td>';
     if (! $i) $totalarray['nbfield']++;
-    
+
     print "</tr>\n";
     $i++;
 }

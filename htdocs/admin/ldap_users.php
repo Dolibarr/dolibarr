@@ -113,7 +113,7 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 
-dol_fiche_head($head, 'users', $langs->trans("LDAPSetup"));
+dol_fiche_head($head, 'users', $langs->trans("LDAPSetup"), -1);
 
 print $langs->trans("LDAPDescUsers").'<br>';
 print '<br>';

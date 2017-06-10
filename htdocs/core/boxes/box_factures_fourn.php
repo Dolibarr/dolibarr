@@ -178,8 +178,8 @@ class box_factures_fourn extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => '',
-                'text' => $langs->transnoentities("ReadPermissionNotAllowed"),
+                'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->transnoentities("ReadPermissionNotAllowed")
             );
         }
     }

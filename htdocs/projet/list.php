@@ -55,7 +55,7 @@ if (!$user->rights->projet->lire) accessforbidden();
 
 $diroutputmassaction=$conf->projet->dir_output . '/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield","alpha");
 $sortorder = GETPOST("sortorder");
 $page = GETPOST("page");
@@ -135,7 +135,7 @@ $arrayfields=array(
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
+   foreach($extrafields->attribute_label as $key => $val)
    {
        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
    }
@@ -186,7 +186,7 @@ if (empty($reshook))
     	$toselect='';
     	$search_array_options=array();
     }
-    
+
 
     // Mass actions
     $objectclass='Project';
@@ -259,7 +259,7 @@ if ($search_project_user > 0)
 {
 	$sql.=", ".MAIN_DB_PREFIX."element_contact as ecp";
 }
-$sql.= " WHERE p.entity IN (".getEntity('project',1).')';
+$sql.= " WHERE p.entity IN (".getEntity('project').')';
 if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
@@ -297,12 +297,12 @@ else if ($search_eyear > 0)
     $sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_eyear,12,false))."'";
 }
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
-if ($search_status >= 0) 
+if ($search_status >= 0)
 {
     if ($search_status == 99) $sql .= " AND p.fk_statut <> 2";
     else $sql .= " AND p.fk_statut = ".$db->escape($search_status);
 }
-if ($search_opp_status) 
+if ($search_opp_status)
 {
     if (is_numeric($search_opp_status) && $search_opp_status > 0) $sql .= " AND p.fk_opp_status = ".$db->escape($search_opp_status);
     if ($search_opp_status == 'all') $sql .= " AND p.fk_opp_status IS NOT NULL";
@@ -313,7 +313,7 @@ if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
 if ($search_sale > 0) $sql.= " AND sc.fk_user = " .$search_sale;
 // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
 //if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-if ($search_project_user > 0) $sql.= " AND ecp.fk_c_type_contact IN (".join(',',array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user; 
+if ($search_project_user > 0) $sql.= " AND ecp.fk_c_type_contact IN (".join(',',array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
 if ($search_opp_amount != '') $sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
 if ($search_budget_amount != '') $sql .= natural_search('p.budget_amount', $search_budget_amount, 1);
 // Add where from extra fields
@@ -324,7 +324,7 @@ foreach ($search_array_options as $key => $val)
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
     if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -383,8 +383,8 @@ if ($search_ref != '') 			$param.='&search_ref='.$search_ref;
 if ($search_label != '') 		$param.='&search_label='.$search_label;
 if ($search_societe != '') 		$param.='&search_societe='.$search_societe;
 if ($search_status >= 0) 		$param.='&search_status='.$search_status;
-if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all','openedopp','none'))) 	$param.='&search_opp_status='.urlencode($search_opp_status);
-if ((is_numeric($search_opp_percent) && $search_opp_percent >= 0) || in_array($search_opp_percent, array('all','openedopp','none'))) 	$param.='&search_opp_percent='.urlencode($search_opp_percent);
+if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all','openedopp','none'))) 	    $param.='&search_opp_status='.urlencode($search_opp_status);
+if ($search_opp_percent != '') 	$param.='&search_opp_percent='.urlencode($search_opp_percent);
 if ($search_public != '') 		$param.='&search_public='.$search_public;
 if ($search_project_user != '')   $param.='&search_project_user='.$search_project_user;
 if ($search_sale > 0)    		$param.='&search_sale='.$search_sale;
@@ -532,17 +532,17 @@ if (! empty($arrayfields['p.public']['checked']))
     print $form->selectarray('search_public',$array,$search_public);
     print '</td>';
 }
-if (! empty($arrayfields['p.opp_amount']['checked']))
-{
-	print '<td class="liste_titre nowrap right">';
-	print '<input type="text" class="flat" name="search_opp_amount" size="3" value="'.$search_opp_amount.'">';
-	print '</td>';
-}
 if (! empty($arrayfields['p.fk_opp_status']['checked']))
 {
 	print '<td class="liste_titre nowrap center">';
 	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 1, 1, 0, 'maxwidth100');
     print '</td>';
+}
+if (! empty($arrayfields['p.opp_amount']['checked']))
+{
+	print '<td class="liste_titre nowrap right">';
+	print '<input type="text" class="flat" name="search_opp_amount" size="3" value="'.$search_opp_amount.'">';
+	print '</td>';
 }
 if (! empty($arrayfields['p.opp_percent']['checked']))
 {
@@ -620,8 +620,8 @@ if (! empty($arrayfields['commercial']['checked']))      print_liste_field_titre
 if (! empty($arrayfields['p.dateo']['checked']))         print_liste_field_titre($arrayfields['p.dateo']['label'],$_SERVER["PHP_SELF"],"p.dateo","",$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['p.datee']['checked']))         print_liste_field_titre($arrayfields['p.datee']['label'],$_SERVER["PHP_SELF"],"p.datee","",$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['p.public']['checked']))        print_liste_field_titre($arrayfields['p.public']['label'],$_SERVER["PHP_SELF"],"p.public","",$param,"",$sortfield,$sortorder);
-if (! empty($arrayfields['p.opp_amount']['checked']))    print_liste_field_titre($arrayfields['p.opp_amount']['label'],$_SERVER["PHP_SELF"],'p.opp_amount',"",$param,'align="right"',$sortfield,$sortorder);
 if (! empty($arrayfields['p.fk_opp_status']['checked'])) print_liste_field_titre($arrayfields['p.fk_opp_status']['label'],$_SERVER["PHP_SELF"],'p.fk_opp_status',"",$param,'align="center"',$sortfield,$sortorder);
+if (! empty($arrayfields['p.opp_amount']['checked']))    print_liste_field_titre($arrayfields['p.opp_amount']['label'],$_SERVER["PHP_SELF"],'p.opp_amount',"",$param,'align="right"',$sortfield,$sortorder);
 if (! empty($arrayfields['p.opp_percent']['checked']))   print_liste_field_titre($arrayfields['p.opp_percent']['label'],$_SERVER["PHP_SELF"],'p.opp_percent',"",$param,'align="right"',$sortfield,$sortorder);
 if (! empty($arrayfields['p.budget_amount']['checked'])) print_liste_field_titre($arrayfields['p.budget_amount']['label'],$_SERVER["PHP_SELF"],'p.budget_amount',"",$param,'align="right"',$sortfield,$sortorder);
 // Extra fields
@@ -661,7 +661,7 @@ while ($i < min($num,$limit))
 	$object->datee = $db->jdate($obj->date_end);
 	$object->statut = $obj->fk_statut;
 	$object->opp_status = $obj->fk_opp_status;
-	
+
 	$userAccess = $object->restrictedProjectArea($user);    // why this ?
 	if ($userAccess >= 0)
 	{
@@ -770,20 +770,7 @@ while ($i < min($num,$limit))
     		print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
     	}
-    	// Opp Amount
-    	if (! empty($arrayfields['p.opp_amount']['checked']))
-    	{
-			print '<td align="right">';
-			if ($obj->opp_status_code) 
-			{
-			    print price($obj->opp_amount, 1, '', 1, -1, -1, '');
-			    $totalarray['totalopp'] += $obj->opp_amount;
-			}
-			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totaloppfield']=$totalarray['nbfield'];
-    	}
-    	// Opp Status
+	    // Opp Status
     	if (! empty($arrayfields['p.fk_opp_status']['checked']))
     	{
             print '<td class="center">';
@@ -791,11 +778,25 @@ while ($i < min($num,$limit))
 			print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
     	}
+    	// Opp Amount
+    	if (! empty($arrayfields['p.opp_amount']['checked']))
+    	{
+			print '<td align="right">';
+			//if ($obj->opp_status_code)
+			if (strcmp($obj->opp_amount,''))
+			{
+			    print price($obj->opp_amount, 1, $langs, 1, -1, -1, '');
+			    $totalarray['totalopp'] += $obj->opp_amount;
+			}
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+			if (! $i) $totalarray['totaloppfield']=$totalarray['nbfield'];
+    	}
     	// Opp percent
 	    if (! empty($arrayfields['p.opp_percent']['checked']))
     	{
 			print '<td align="right">';
-			if ($obj->opp_percent) print price($obj->opp_percent, 1, '', 1, 0).'%';
+			if ($obj->opp_percent) print price($obj->opp_percent, 1, $langs, 1, 0).'%';
 			print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
     	}
@@ -803,9 +804,9 @@ while ($i < min($num,$limit))
 	    if (! empty($arrayfields['p.budget_amount']['checked']))
     	{
 			print '<td align="right">';
-			if ($obj->budget_amount != '') 
+			if ($obj->budget_amount != '')
 			{
-			    print price($obj->budget_amount, 1, '', 1, -1, -1);
+			    print price($obj->budget_amount, 1, $langs, 1, -1, -1);
 			    $totalarray['totalbudget'] += $obj->budget_amount;
 			}
 			print '</td>';
@@ -826,9 +827,9 @@ while ($i < min($num,$limit))
 		            $tmpkey='options_'.$key;
 		            print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
 		            print '</td>';
+		            if (! $i) $totalarray['nbfield']++;
 		        }
 		    }
-		    if (! $i) $totalarray['nbfield']++;
 		}
 		// Fields from hook
 		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
@@ -866,7 +867,7 @@ while ($i < min($num,$limit))
         }
         print '</td>';
 		if (! $i) $totalarray['nbfield']++;
-		
+
 		print "</tr>\n";
 
 	}
@@ -887,8 +888,8 @@ if (isset($totalarray['totaloppfield']) || isset($totalarray['totalbudgetfield']
             if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
             else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
         }
-        elseif ($totalarray['totaloppfield'] == $i) print '<td align="right">'.price($totalarray['totalopp']).'</td>';
-        elseif ($totalarray['totalbudgetfield'] == $i) print '<td align="right">'.price($totalarray['totalbudget']).'</td>';
+        elseif ($totalarray['totaloppfield'] == $i) print '<td align="right">'.price($totalarray['totalopp'], 1, $langs, 1, -1, -1).'</td>';
+        elseif ($totalarray['totalbudgetfield'] == $i) print '<td align="right">'.price($totalarray['totalbudget'], 1, $langs, 1, -1, -1).'</td>';
         else print '<td></td>';
     }
     print '</tr>';

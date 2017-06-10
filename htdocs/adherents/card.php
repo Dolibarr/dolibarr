@@ -585,7 +585,7 @@ if (empty($reshook))
 
 	if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confirm == 'yes')
 	{
-		$result=$object->delete($id);
+		$result=$object->delete($id, $user);
 		if ($result > 0)
 		{
 			if (! empty($backtopage))

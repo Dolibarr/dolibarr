@@ -77,7 +77,7 @@ if (!$_POST) {
 
 $diroutputmassaction=$conf->product->dir_output . '/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
@@ -286,7 +286,7 @@ else
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 	}
 
-	$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+	$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 	if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
@@ -611,7 +611,7 @@ else
     }
     
     //var_dump($arraytitle,$arrayhide);
-    $list=new Listview($db, 'products');
+    $list=new Listview($db, 'product');
     $listHTML = $list->render($sql,array(
     		'list'=>array(
     				'title'=>$texte

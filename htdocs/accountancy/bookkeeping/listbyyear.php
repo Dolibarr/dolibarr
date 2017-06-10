@@ -37,7 +37,7 @@ $langs->load("accountancy");
 $page = GETPOST("page");
 $sortorder = GETPOST("sortorder");
 $sortfield = GETPOST("sortfield");
-$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
 $search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
 $search_doc_type = GETPOST('search_doc_type', 'alpha');

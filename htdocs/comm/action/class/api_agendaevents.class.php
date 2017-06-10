@@ -112,7 +112,7 @@ class AgendaEvents extends DolibarrApi
 
         $sql = "SELECT t.id as rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('agenda', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('agenda').')';
         if ($user_ids) $sql.=" AND t.fk_user_action IN (".$user_ids.")";
         if ($socid > 0) $sql.= " AND t.fk_soc = ".$socid;
         // Insert sale filter

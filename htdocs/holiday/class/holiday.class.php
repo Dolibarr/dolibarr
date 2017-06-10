@@ -320,7 +320,7 @@ class Holiday extends CommonObject
         $sql.= " ua.photo as validator_photo";
         
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
-        $sql.= " WHERE cp.entity IN (".getEntity('holiday', 1).")";
+        $sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
         $sql.= " AND cp.fk_user = '".$user_id."'";
 
@@ -445,7 +445,7 @@ class Holiday extends CommonObject
         $sql.= " ua.photo as validator_photo";
         
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
-        $sql.= " WHERE cp.entity IN (".getEntity('holiday', 1).")";
+        $sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
         $sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
 
         // Filtrage de séléction
@@ -1209,7 +1209,7 @@ class Holiday extends CommonObject
                 $sql = "SELECT u.rowid";
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
-                if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+                if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
                 {
                 	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
                 	$sql.= " WHERE (ug.fk_user = u.rowid";
@@ -1305,7 +1305,7 @@ class Holiday extends CommonObject
                 $sql = "SELECT u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut";
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
-                if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+                if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
                 {
                 	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
                 	$sql.= " WHERE (ug.fk_user = u.rowid";

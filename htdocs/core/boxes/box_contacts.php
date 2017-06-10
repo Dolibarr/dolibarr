@@ -69,7 +69,7 @@ class box_contacts extends ModeleBoxes
 			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
+			$sql.= " WHERE sp.entity IN (".getEntity('societe').")";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND sp.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if ($user->societe_id) $sql.= " AND sp.fk_soc = ".$user->societe_id;
 			$sql.= " ORDER BY sp.tms DESC";
@@ -151,8 +151,8 @@ class box_contacts extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'align' => 'left',
-                'text' => $langs->trans("ReadPermissionNotAllowed"),
+                'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
 

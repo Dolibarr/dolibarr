@@ -197,7 +197,7 @@ class BookKeeping extends CommonObject
 		$sql .= " AND fk_doc = " . $this->fk_doc;
 		$sql .= " AND fk_docdet = " . $this->fk_docdet;                   // This field can be 0 is record is for several lines 
 		$sql .= " AND numero_compte = '" . $this->db->escape($this->numero_compte) . "'";
-		$sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 
 		$resql = $this->db->query($sql);
 
@@ -211,7 +211,7 @@ class BookKeeping extends CommonObject
 				$sqlnum .= " WHERE doc_type = '" . $this->db->escape($this->doc_type) . "'";		// For example doc_type = 'bank' 
 				$sqlnum .= " AND fk_docdet = " . $this->db->escape($this->fk_docdet);       		// fk_docdet is rowid into llx_bank or llx_facturedet or llx_facturefourndet, or ...
 				$sqlnum .= " AND doc_ref = '" . $this->db->escape($this->doc_ref) . "'";			// ref of source object
-				$sqlnum .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+				$sqlnum .= " AND entity IN (" . getEntity('accountancy') . ")";
 
 				dol_syslog(get_class($this) . ":: create sqlnum=" . $sqlnum, LOG_DEBUG);
 				$resqlnum = $this->db->query($sqlnum);
@@ -223,7 +223,7 @@ class BookKeeping extends CommonObject
 				if (empty($this->piece_num)) {
 					$sqlnum = "SELECT MAX(piece_num)+1 as maxpiecenum";
 					$sqlnum .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-					$sqlnum .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
+					$sqlnum .= " WHERE entity IN (" . getEntity('accountancy') . ")";
 
 					dol_syslog(get_class($this) . ":: create sqlnum=" . $sqlnum, LOG_DEBUG);
 					$resqlnum = $this->db->query($sqlnum);
@@ -524,7 +524,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.piece_num";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		$sql .= ' WHERE 1 = 1';
-	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+	    $sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 		if (null !== $ref) {
 			$sql .= ' AND t.ref = ' . '\'' . $ref . '\'';
 		} else {
@@ -633,7 +633,7 @@ class BookKeeping extends CommonObject
 		}
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		$sql .= ' WHERE 1 = 1';
-	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+	    $sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' ' . $filtermode . ' ', $sqlwhere);
 		}
@@ -747,7 +747,7 @@ class BookKeeping extends CommonObject
 			}
 		}
 		$sql.= ' WHERE 1 = 1';
-	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+	    $sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' ' . $filtermode . ' ', $sqlwhere);
 		}
@@ -843,7 +843,7 @@ class BookKeeping extends CommonObject
 			}
 		}
 		$sql.= ' WHERE 1 = 1';
-	    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+	    $sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' ' . $filtermode . ' ', $sqlwhere);
 		}
@@ -1104,7 +1104,7 @@ class BookKeeping extends CommonObject
 		$sql.= " WHERE 1 = 1";
 		if (! empty($delyear)) $sql.= " AND YEAR(doc_date) = " . $delyear;         // FIXME Must use between
 		if (! empty($journal)) $sql.= " AND code_journal = '".$journal."'";
-		$sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 		$resql = $this->db->query($sql);
 
 		if (! $resql) {
@@ -1136,7 +1136,7 @@ class BookKeeping extends CommonObject
 		$sql = "DELETE";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
-		$sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 
 		$resql = $this->db->query($sql);
 
@@ -1244,7 +1244,7 @@ class BookKeeping extends CommonObject
 		$sql = "SELECT piece_num,doc_date,code_journal,journal_label,doc_ref,doc_type";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
-		$sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 
 		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1276,7 +1276,7 @@ class BookKeeping extends CommonObject
 		global $conf;
 
 		$sql = "SELECT MAX(piece_num)+1 as max FROM " . MAIN_DB_PREFIX . $this->table_element;
-	    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
+	    $sql .= " WHERE entity IN (" . getEntity('accountancy') . ")";
 
 		dol_syslog(get_class($this) . "getNextNumMvt sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1308,7 +1308,7 @@ class BookKeeping extends CommonObject
 		$sql .= " montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
-		$sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 
 		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1362,7 +1362,7 @@ class BookKeeping extends CommonObject
 		$sql .= " numero_compte, label_compte, label_operation, debit, credit,";
 		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
+		$sql .= " WHERE entity IN (" . getEntity('accountancy') . ")";
 
 		dol_syslog(get_class($this) . "::export_bookkeping", LOG_DEBUG);
 
@@ -1432,7 +1432,7 @@ class BookKeeping extends CommonObject
         $sql .= " AND aa.active = 1";
         $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
         $sql .= " AND asy.rowid = " . $pcgver;
-	    $sql .= " AND ab.entity IN (" . getEntity("accountancy", 1) . ")";
+	    $sql .= " AND ab.entity IN (" . getEntity('accountancy') . ")";
         $sql .= " ORDER BY account_number ASC";
         
         dol_syslog(get_class($this) . "::select_account", LOG_DEBUG);
@@ -1497,7 +1497,7 @@ class BookKeeping extends CommonObject
         $sql .= " WHERE aa.account_number = '" . $account . "'";  
         $sql .= " AND parent.active = 1";
         $sql .= " AND root.active = 1";
-        $sql .= " AND aa.entity IN (" . getEntity("accountancy", 1) . ")";
+        $sql .= " AND aa.entity IN (" . getEntity('accountancy') . ")";
 
 		dol_syslog(get_class($this) . "::select_account sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1536,7 +1536,7 @@ class BookKeeping extends CommonObject
 		$sql .= " AND asy.rowid = " . $pcgver;
 		$sql .= " AND aa.active = 1";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_accounting_category as cat ON aa.fk_accounting_category = cat.rowid";
-	    $sql .= " WHERE aa.entity IN (" . getEntity("accountancy", 1) . ")";
+	    $sql .= " WHERE aa.entity IN (" . getEntity('accountancy') . ")";
 
 		dol_syslog(get_class($this) . "::select_account sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);

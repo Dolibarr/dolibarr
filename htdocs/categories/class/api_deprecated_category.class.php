@@ -121,7 +121,7 @@ class CategoryApi extends DolibarrApi
         
         $sql = "SELECT s.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
-        $sql.= ' WHERE s.entity IN ('.getEntity('category', 1).')';
+        $sql.= ' WHERE s.entity IN ('.getEntity('category').')';
         $sql.= ' AND s.type='.array_search($type,CategoryApi::$TYPES);
 
         $nbtotalofrecords = '';
@@ -201,7 +201,7 @@ class CategoryApi extends DolibarrApi
         $sql = "SELECT s.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
         $sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
-        $sql.= ' WHERE s.entity IN ('.getEntity('category', 1).')';
+        $sql.= ' WHERE s.entity IN ('.getEntity('category').')';
         $sql.= ' AND s.type='.array_search($type,CategoryApi::$TYPES);
         $sql.= ' AND s.rowid = sub.fk_categorie';
         $sql.= ' AND sub.'.$subcol_name.' = '.$item;

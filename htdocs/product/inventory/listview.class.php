@@ -41,6 +41,11 @@ class Listview
 		$this->totalRow=0;
 		
 		$this->TField=array();
+		
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$this->extrafields = new ExtraFields($this->db);
+		$this->extralabels = $this->extrafields->fetch_name_optionals_label('product');
+		$this->search_array_options=$this->extrafields->getOptionalsFromPost($this->extralabels,'','search_');
 	}
 
     /**
@@ -808,6 +813,9 @@ class Listview
 				  	}
 					else
 					{
+						// Overrive search from extrafields
+						// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
+						if (isset($this->extralabels[$field])) $TParam['search'][$field] = $this->extrafields->showInputField($field, $this->search_array_options['search_options_'.$field], '', '', 'search_');
 						$visible = 1;
 					}
 		            

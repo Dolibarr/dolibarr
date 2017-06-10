@@ -56,7 +56,7 @@ $sql = "SELECT count(b.rowid)";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE ba.rowid = b.fk_account";
-$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 $sql.= " AND b.fk_type = 'CHQ'";
 $sql.= " AND b.fk_bordereau = 0";
 $sql.= " AND b.amount > 0";
