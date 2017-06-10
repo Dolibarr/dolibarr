@@ -38,6 +38,8 @@
 ALTER TABLE llx_extrafields ADD COLUMN fieldcomputed text;
 ALTER TABLE llx_extrafields ADD COLUMN fielddefault varchar(255);
 
+ALTER TABLE llx_c_typent MODIFY COLUMN libelle varchar(64); 
+
 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN fk_user_creat integer NOT NULL DEFAULT 0;

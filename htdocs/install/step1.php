@@ -33,7 +33,7 @@ include 'inc.php';
 global $langs;
 
 $action=GETPOST('action','alpha');
-$setuplang=(GETPOST('selectlang','',3)?GETPOST('selectlang','',3):'auto');
+$setuplang=(GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):'auto');
 $langs->setDefaultLang($setuplang);
 
 $langs->load("admin");
@@ -341,7 +341,7 @@ if (! $error && $db->connected && $action == "set")
     }
 
     // Show title of step
-    print '<h3>'.$langs->trans("ConfigurationFile").'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/gear.svg" width="20" alt="Configuration"> '.$langs->trans("ConfigurationFile").'</h3>';
     print '<table cellspacing="0" width="100%" cellpadding="1" border="0">';
 
     // Check parameter main_dir
@@ -552,7 +552,7 @@ if (! $error && $db->connected && $action == "set")
                 if ($db->connected)
                 {
                     $resultbis = 1;
-                    
+
                     // Create user
                     $result=$db->DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
                     // Create user bis
@@ -563,7 +563,7 @@ if (! $error && $db->connected && $action == "set")
                             $resultbis=$db->DDLCreateUser('%', $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
                         }
                     }
-                    
+
                     if ($result > 0 && $resultbis > 0)
                     {
 
