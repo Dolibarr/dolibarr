@@ -258,7 +258,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP 5.
 
 // Defini objet langs
 $langs = new Translate('..',$conf);
-if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang'));
+if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));
 else $langs->setDefaultLang('auto');
 
 $bc[false]=' class="bg1"';
@@ -442,9 +442,9 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
         print '<div class="nextbutton" id="nextbutton">';
         if ($nonext == '2')
 		{
-			print $langs->trans("ErrorFoundDuringMigration", $_SERVER["REQUEST_URI"].'&ignoreerrors=1').'<br><br>';	
+			print $langs->trans("ErrorFoundDuringMigration", $_SERVER["REQUEST_URI"].'&ignoreerrors=1').'<br><br>';
 		}
-        
+
         print '<input type="submit" '.($nonext == '2' ? 'disabled="disabled" ':'').'value="'.$langs->trans("NextStep").' ->"';
         if ($jscheckfunction) print ' onClick="return '.$jscheckfunction.'();"';
         print '></div>';
