@@ -397,19 +397,32 @@ ALTER TABLE llx_usergroup_rights ADD CONSTRAINT fk_usergroup_rights_fk_usergroup
 
 CREATE TABLE llx_blockedlog 
 ( 
-	rowid integer AUTO_INCREMENT, 
-	tms	timestamp,
+	rowid integer AUTO_INCREMENT PRIMARY KEY, 
+	tms	timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	action varchar(50), 
-	key_value1 real NOT NULL, 
-	signature varchar(32) NOT NULL, 
+	amounts real NOT NULL, 
+	signature varchar(100) NOT NULL, 
+	signature_line varchar(100) NOT NULL, 
 	element varchar(50), 
-	fk_object integer, 
+	fk_object integer,
+	ref_object varchar(100), 
+	date_object	datetime,
+	object_data	text,
+	fk_user	integer,
 	entity integer, 
-	certified integer, 
-	PRIMARY KEY (rowid), 
+	certified integer,
 	KEY signature (signature), 
 	KEY fk_object_element (fk_object,element), 
-	KEY entity (entity), 
+	KEY entity (entity),
+	KEY fk_user (fk_user), 
 	KEY entity_action (entity,action), 
 	KEY entity_action_certified (entity,action,certified) 
-) 
+) ENGINE=innodb;
+
+CREATE TABLE llx_blockedlog_authority 
+( 
+	rowid integer AUTO_INCREMENT PRIMARY KEY, 
+	blockchain longtext NOT NULL,
+	signature varchar(100) NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=innodb;

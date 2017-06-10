@@ -1,10 +1,5 @@
 <?php
-/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2014 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013	   Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2015       Bahfir Abbes        <bafbes@gmail.com>
+/* Copyright (C) 2017 ATM Consulting <contact@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +16,13 @@
  */
 
 /**
- *	\file       htdocs/core/triggers/interface_50_modAgenda_ActionsAuto.class.php
- *  \ingroup    agenda
- *  \brief      Trigger file for agenda module
+ *	\file       htdocs/core/triggers/interface_50_modAgenda_ActionsBlockedLog.class.php
+ *  \ingroup    system
+ *  \brief      Trigger file for blockedlog module
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/blockedlog.class.php';
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 
 /**
  *  Class of triggered functions for agenda module
@@ -56,19 +51,40 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 0;
 		}
 		
+		if($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED') {
+			$amounts=  (double)$object->total_ttc;
+		}
+		else if($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_ADD_TO_BANK') {
+			$amounts = 0;
+			if(!empty($object->amounts)) {
+				foreach($object->amounts as $amount) {
+					$amounts+= price2num($amount);
+				}
+			}
+			
+			
+		}
+		else if(strpos($action,'PAYMENT')!==false) {
+			$amounts= (double)$object->amount;
+		}
+		else {
+			return 0; // not implemented action log
+		}
+		
 		$b=new BlockedLog($this->db);
-		$b->element = $object->element;
 		$b->action = $action;
-		$b->fk_object = $object->id;
-		$b->key_value1 = 0;
+		$b->amounts= $amounts;
+		$b->setObjectData($object);
 		
 		$res = $b->create($user);
+		
 		if($res<0) {
 			setEventMessage($b->error,'errors');
 			
 			return -1;
 		}
 		else {
+			
 			return 1;
 		}
 		
