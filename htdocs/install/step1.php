@@ -57,14 +57,14 @@ $db_user=GETPOST('db_user','alpha');
 $db_pass=GETPOST('db_pass');
 $db_port=GETPOST('db_port','int');
 $db_prefix=GETPOST('db_prefix','alpha');
-$db_create_database = GETPOST('db_create_database');
-$db_create_user = GETPOST('db_create_user');
+$db_create_database = GETPOST('db_create_database','none');
+$db_create_user = GETPOST('db_create_user','none');
 // Force https
-$main_force_https = ((GETPOST("main_force_https") && (GETPOST("main_force_https") == "on" || GETPOST("main_force_https") == 1)) ? '1' : '0');
+$main_force_https = ((GETPOST("main_force_https",'alpha') && (GETPOST("main_force_https",'alpha') == "on" || GETPOST("main_force_https",'alpha') == 1)) ? '1' : '0');
 // Use alternative directory
-$main_use_alt_dir = ((GETPOST("main_use_alt_dir") && (GETPOST("main_use_alt_dir") == "on" || GETPOST("main_use_alt_dir") == 1)) ? '' : '//');
+$main_use_alt_dir = ((GETPOST("main_use_alt_dir",'alpha') == '' || (GETPOST("main_use_alt_dir",'alpha') == "on" || GETPOST("main_use_alt_dir",'alpha') == 1)) ? '' : '//');
 // Alternative root directory name
-$main_alt_dir_name = ((GETPOST("main_alt_dir_name") && GETPOST("main_alt_dir_name") != '') ? GETPOST("main_alt_dir_name") : 'custom');
+$main_alt_dir_name = ((GETPOST("main_alt_dir_name",'alpha') && GETPOST("main_alt_dir_name",'alpha') != '') ? GETPOST("main_alt_dir_name",'alpha') : 'custom');
 
 session_start();    // To be able to keep info into session (used for not losing password during navigation. The password must not transit through parameters)
 
