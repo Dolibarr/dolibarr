@@ -466,6 +466,7 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->doc_ref = $objmid->facnumber;
 						}
 						$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
+						$bookkeeping->thirdparty_label = $tabcompany[$key]['name'];
 						$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 					} else if ($tabtype[$key] == 'payment_supplier') {		   // If payment is payment of supplier invoice, we get ref of invoice
 						$sqlmid = 'SELECT facf.ref_supplier,facf.ref';
@@ -480,9 +481,11 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->doc_ref = $objmid->ref_supplier . ' (' . $objmid->ref . ')';
 						}
 						$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
+						$bookkeeping->thirdparty_label = $tabcompany[$key]['name'];
 						$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 					} else if ($tabtype[$key] == 'payment_expensereport') {
 						$bookkeeping->code_tiers = $tabuser[$key]['accountancy_code'];
+						$bookkeeping->thirdparty_label = $tabuser[$key]['name'];
 						$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 						$bookkeeping->label_operation = $tabuser[$key]['name'];
 						$sqlmid = 'SELECT e.ref';
@@ -505,6 +508,7 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
 					} else if ($tabtype[$key] == 'payment_salary') {
 						$bookkeeping->code_tiers = $tabuser[$key]['accountancy_code'];
+						$bookkeeping->thirdparty_label = $tabuser[$key]['name'];
 						$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 						$bookkeeping->label_operation = $tabuser[$key]['name'];
 						$bookkeeping->doc_ref = $langs->trans("SalaryPayment") . ' (' . $val["paymentsalid"] . ')'; // Rowid of salary payment
