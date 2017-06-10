@@ -173,7 +173,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
-	$sql.= " WHERE d.entity IN (".getEntity().")";
+	$sql.= " WHERE d.entity IN (".getEntity('adherent').")";
 
 	$result = $db->query($sql);
 	if ($result)
@@ -380,7 +380,7 @@ if ($rowid > 0)
 		$sql.= " t.libelle as type, t.subscription";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql.= " WHERE d.fk_adherent_type = t.rowid ";
-		$sql.= " AND d.entity IN (".getEntity().")";
+		$sql.= " AND d.entity IN (".getEntity('adherent').")";
 		$sql.= " AND t.rowid = ".$object->id;
 		if ($sall)
 		{
