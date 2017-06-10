@@ -18,9 +18,9 @@
  */
 
 /**
- * \file	htdocs/accountancy/bookkeeping/card.php
- * \ingroup Advanced accountancy
- * \brief	Page to show book-entry
+ * \file		htdocs/accountancy/bookkeeping/card.php
+ * \ingroup		Advanced accountancy
+ * \brief		Page to show book-entry
  */
 require '../../main.inc.php';
 
@@ -170,9 +170,9 @@ else if ($action == "confirm_delete") {
 }
 
 else if ($action == "confirm_create") {
-    $error = 0;
-    
-    $book = new BookKeeping($db);
+	$error = 0;
+
+	$book = new BookKeeping($db);
 
 	if (! GETPOST('next_num_mvt'))
 	{
@@ -182,27 +182,27 @@ else if ($action == "confirm_create") {
 	
 	if (! $error)
 	{
-    	$book->label_operation = '';
-    	$book->debit = 0;
-    	$book->credit = 0;
-    	$book->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth'), GETPOST('doc_dateday'), GETPOST('doc_dateyear'));
-    	$book->doc_type = GETPOST('doc_type');
-    	$book->piece_num = GETPOST('next_num_mvt');
-    	$book->doc_ref = GETPOST('doc_ref');
-    	$book->code_journal = GETPOST('code_journal');
-    	$book->fk_doc = 0;
-    	$book->fk_docdet = 0;
-    
-    	$book->montant = 0;
-    
-    	$result = $book->createStd($user);
-    	if ($result < 0) {
-    		setEventMessages($book->error, $book->errors, 'errors');
-    	} else {
-    		setEventMessages($langs->trans('Saved'), null, 'mesgs');
-    		$action = '';
-    		$piece_num = $book->piece_num;
-    	}
+		$book->label_operation = '';
+		$book->debit = 0;
+		$book->credit = 0;
+		$book->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth'), GETPOST('doc_dateday'), GETPOST('doc_dateyear'));
+		$book->doc_type = GETPOST('doc_type');
+		$book->piece_num = GETPOST('next_num_mvt');
+		$book->doc_ref = GETPOST('doc_ref');
+		$book->code_journal = GETPOST('code_journal');
+		$book->fk_doc = 0;
+		$book->fk_docdet = 0;
+
+		$book->montant = 0;
+
+		$result = $book->createStd($user);
+		if ($result < 0) {
+			setEventMessages($book->error, $book->errors, 'errors');
+		} else {
+			setEventMessages($langs->trans('Saved'), null, 'mesgs');
+			$action = '';
+			$piece_num = $book->piece_num;
+		}
 	}
 }
 
@@ -214,7 +214,7 @@ else if ($action == "confirm_create") {
 llxHeader();
 
 $html = new Form($db);
-$formaccountancy = new FormAccounting($db);
+$formaccounting = new FormAccounting($db);
 
 /*
  *  Confirmation to delete the command
@@ -229,10 +229,10 @@ if ($action == 'create') {
 
 	$book = new BookKeeping($db);
 	$next_num_mvt = $book->getNextNumMvt();
-    if (empty($next_num_mvt))
-    {
-        dol_print_error('', 'Failed to get next piece number');
-    }
+	if (empty($next_num_mvt))
+	{
+		dol_print_error('', 'Failed to get next piece number');
+	}
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" name="create_mvt" method="POST">';
 	print '<input type="hidden" name="action" value="confirm_create">' . "\n";
@@ -256,7 +256,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("AccountancyJournal").'</td>';
 	print '<td>';
-	print $formaccountancy->select_journal('', 'code_journal', '', 0, '', 1, 1, 1, 1);
+	print $formaccounting->select_journal('', 'code_journal', '', 0, '', 1, 1, 1, 1);
 	print '</td></tr>';
 
 	print '<tr>';
@@ -289,30 +289,30 @@ if ($action == 'create') {
 		print load_fiche_titre($langs->trans("UpdateMvts"), '<a href="list.php">' . $langs->trans('BackToList') . '</a>');
 
 		dol_fiche_head();
-		
+
 		print '<div class="fichecenter">';
-		
+
 		print '<table class="border" width="100%">';
 
-		print '<tr class="pair">';
+		print '<tr>';
 		print '<td class="titlefield">' . $langs->trans("NumMvts") . '</td>';
 		print '<td>' . $book->piece_num . '</td>';
 		print '</tr>';
 
-		print '<tr class="impair">';
+		print '<tr>';
 		print '<td>' . $langs->trans("Docdate") . '</td>';
 		print '<td>' . dol_print_date($book->doc_date, 'daytextshort') . '</td>';
 		print '</tr>';
 
-		print '<tr class="pair">';
+		print '<tr>';
 		print '<td>' . $langs->trans("Codejournal") . '</td>';
-		print '<td>';	
+		print '<td>';
 		$accountingjournal = new AccountingJournal($db);
 		$accountingjournal->fetch('',$book->code_journal);
-		print $accountingjournal->getNomUrl(0,1,1,'',1);	
+		print $accountingjournal->getNomUrl(0,1,1,'',1);
 		print '</td></tr>';
-		
-		print '<tr class="impair">';
+
+		print '<tr>';
 		print '<td>' . $langs->trans("Docref") . '</td>';
 		print '<td>' . $book->doc_ref . '</td>';
 		print '</tr>';
@@ -330,18 +330,18 @@ if ($action == 'create') {
 		if ($typelabel == 'expense_report') {
 			$typelabel = $langs->trans('ExpenseReport');
 		}
-		print '<tr class="pair">';
+		print '<tr>';
 		print '<td>' . $langs->trans("Doctype") . '</td>';
 		print '<td>' . $typelabel . '</td>';
 		print '</tr>';
 		print '</table>';
-		
+
 		print '</div>';
-		
+
 		dol_fiche_end();
 
 		print '<br>';
-		
+
 		$result = $book->fetch_all_per_mvt($piece_num);
 		if ($result < 0) {
 			setEventMessages($book->error, $book->errors, 'errors');
@@ -358,7 +358,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="fk_docdet" value="' . $book->fk_docdet . '">' . "\n";
 
 			$var=False;
-			
+
 			print "<table class=\"noborder\" width=\"100%\">";
 			if (count($book->linesmvt) > 0) {
 
@@ -411,10 +411,10 @@ if ($action == 'create') {
 						print '<td align="center">' . $line->sens . '</td>';
 
 						print '<td align="center">';
-						print '<a href="./card.php?action=update&amp;id=' . $line->id . '&amp;piece_num=' . $line->piece_num . '">';
+						print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&amp;id=' . $line->id . '&amp;piece_num=' . $line->piece_num . '">';
 						print img_edit();
 						print '</a>&nbsp;';
-						print '<a href="./card.php?action=delete&amp;id=' . $line->id . '&amp;piece_num=' . $line->piece_num . '">';
+						print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delete&amp;id=' . $line->id . '&amp;piece_num=' . $line->piece_num . '">';
 						print img_delete();
 						print '</a>';
 

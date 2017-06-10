@@ -231,8 +231,9 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->doc_type = 'customer_invoice';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
-					$bookkeeping->code_tiers = $tabcompany[$key]['code_client'];
-					$bookkeeping->numero_compte = $tabcompany[$key]['code_compta'];
+					$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
+					$bookkeeping->thirdparty_label = $tabcompany[$key]['name'];
+					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 					// $bookkeeping->label_compte = $tabcompany[$key]['name'];
 					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Code_tiers");
 					$bookkeeping->montant = $mt;

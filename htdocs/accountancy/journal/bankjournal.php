@@ -187,8 +187,6 @@ if ($result) {
 		$tabuser[$obj->rowid] = array (
 				'id' => $obj->userid,
 				'name' => dolGetFirstLastname($obj->firstname, $obj->lastname),
-				'lastname' => $obj->lastname,
-				'firstname' => $obj->firstname,
 				'accountancy_code' => $compta_user,
 		);
 
@@ -514,10 +512,9 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->code_tiers = '';
 						$bookkeeping->numero_compte = $k;
 					} else {
-						// FIXME Should be a temporary account ???
+						// Temporary account
 						$bookkeeping->doc_ref = $k;
-						//$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
-						$bookkeeping->numero_compte = 'CodeNotDef';
+						$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE;
 					}
 
 					$result = $bookkeeping->create($user);
@@ -842,7 +839,7 @@ if (empty($action) || $action == 'view') {
 			if ($resultmid) {
 				$objmid = $db->fetch_object($resultmid);
 				$invoicestatic->fetch($objmid->id);
-				$ref=$langs->trans("Invoice").' '.$invoicestatic->getNomUrl(1);
+				$ref=$invoicestatic->getNomUrl(1);
 			}
 			else dol_print_error($db);
 		}
@@ -856,7 +853,7 @@ if (empty($action) || $action == 'view') {
 			if ($resultmid) {
 				$objmid = $db->fetch_object($resultmid);
 				$invoicesupplierstatic->fetch($objmid->id);
-				$ref=$langs->trans("SupplierInvoice").' '.$invoicesupplierstatic->getNomUrl(1);
+				$ref=$invoicesupplierstatic->getNomUrl(1);
 			}
 			else dol_print_error($db);
 		}
@@ -870,7 +867,7 @@ if (empty($action) || $action == 'view') {
 			if ($resultmid) {
 				$objmid = $db->fetch_object($resultmid);
 				$expensereportstatic->fetch($objmid->id);
-				$ref=$langs->trans("ExpenseReport").' '.$expensereportstatic->getNomUrl(1);
+				$ref=$expensereportstatic->getNomUrl(1);
 			}
 			else dol_print_error($db);
 		}
@@ -884,7 +881,7 @@ if (empty($action) || $action == 'view') {
 			if ($resultmid) {
 				$objmid = $db->fetch_object($resultmid);
 				$vatstatic->fetch($objmid->id);
-				$ref=$langs->trans("PaymentVat").' '.$vatstatic->getNomUrl(1);
+				$ref=$vatstatic->getNomUrl(1);
 			}
 			else dol_print_error($db);
 		}
@@ -898,7 +895,7 @@ if (empty($action) || $action == 'view') {
 			if ($resultmid) {
 				$objmid = $db->fetch_object($resultmid);
 				$donationstatic->fetch($objmid->id);
-				$ref=$langs->trans("Donation").' '.$donationstatic->getNomUrl(1);
+				$ref=$donationstatic->getNomUrl(1);
 			}
 			else dol_print_error($db);
 		}
@@ -912,7 +909,7 @@ if (empty($action) || $action == 'view') {
 			if ($resultmid) {
 				$objmid = $db->fetch_object($resultmid);
 				$salarystatic->fetch($objmid->id);
-				$ref=$langs->trans("SalaryPayment").' '.$salarystatic->getNomUrl(1);
+				$ref=$salarystatic->getNomUrl(1);
 			}
 			else dol_print_error($db);
 		}

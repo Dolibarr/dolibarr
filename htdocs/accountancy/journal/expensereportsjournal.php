@@ -142,7 +142,7 @@ if ($result) {
 		$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
 		$tabuser[$obj->rowid] = array (
 				'id' => $obj->uid,
-				'name' => $obj->firstname.' '.$obj->lastname,
+				'name' => dolGetFirstLastname($obj->firstname, $obj->lastname),
 				'user_accountancy_code' => $obj->user_accountancy_account
 		);
 
@@ -163,6 +163,7 @@ if ($action == 'writebookkeeping') {
 
 		$db->begin();
 
+		// Thirdparty
 		if (! $errorforline)
 		{
 			foreach ( $tabttc[$key] as $k => $mt ) {
@@ -176,6 +177,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
 					$bookkeeping->code_tiers = $tabuser[$key]['user_accountancy_code'];
+					$bookkeeping->thirdparty_label = $tabuser[$key]['name'];
 					$bookkeeping->label_operation = $tabuser[$key]['name'];
 					$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 					$bookkeeping->montant = $mt;
@@ -205,9 +207,9 @@ if ($action == 'writebookkeeping') {
 			}
 		}
 
+		// Fees
 		if (! $errorforline)
 		{
-			// Fees
 			foreach ( $tabht[$key] as $k => $mt ) {
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch(null, $k, true);
@@ -253,9 +255,9 @@ if ($action == 'writebookkeeping') {
 			}
 		}
 
+		// VAT
 		if (! $errorforline)
 		{
-			// VAT
 			// var_dump($tabtva);
 			foreach ( $tabtva[$key] as $k => $mt ) {
 				if ($mt) {

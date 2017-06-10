@@ -129,9 +129,9 @@ if ($result) {
 	while ( $i < $num ) {
 		$obj = $db->fetch_object($result);
 
-		// contrôles
+		// Controls
 		$compta_soc = (! empty($obj->code_compta_fournisseur)) ? $obj->code_compta_fournisseur : $cptfour;
-		
+
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0)
@@ -202,6 +202,7 @@ if ($action == 'writebookkeeping') {
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->client = $tabcompany[$key]['code_client'];
 
+		// Thirdparty
 		if (! $errorforline)
 		{
 			foreach ( $tabttc[$key] as $k => $mt ) {
@@ -214,9 +215,10 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->doc_type = 'supplier_invoice';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
-					$bookkeeping->code_tiers = $tabcompany[$key]['code_fournisseur'];
+					$bookkeeping->code_tiers = $tabcompany[$key]['code_compta_fournisseur'];
+					$bookkeeping->thirdparty_label = $tabcompany[$key]['name'];
 					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("Code_tiers");
-					$bookkeeping->numero_compte = $tabcompany[$key]['code_compta_fournisseur'];
+					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
 					$bookkeeping->debit = ($mt <= 0) ? $mt : 0;
