@@ -353,38 +353,35 @@ elseif (! empty($module))
         	$modulestatusinfo=img_warning().' '.$langs->trans("ModuleIsLive");
         }
 
-        foreach($listofmodules as $tmpmodule => $tmpmodulewithcase)
-        {
-            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=description&module='.$tmpmodulewithcase;
-            $head2[$h][1] = $langs->trans("Description");
-            $head2[$h][2] = 'description';
-            $h++;
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=description&module='.$module;
+        $head2[$h][1] = $langs->trans("Description");
+        $head2[$h][2] = 'description';
+        $h++;
 
-            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$tmpmodulewithcase;
-            $head2[$h][1] = $langs->trans("Objects");
-            $head2[$h][2] = 'objects';
-            $h++;
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module;
+        $head2[$h][1] = $langs->trans("Objects");
+        $head2[$h][2] = 'objects';
+        $h++;
 
-            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=menus&module='.$tmpmodulewithcase;
-            $head2[$h][1] = $langs->trans("Menus");
-            $head2[$h][2] = 'menus';
-            $h++;
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=menus&module='.$module;
+        $head2[$h][1] = $langs->trans("Menus");
+        $head2[$h][2] = 'menus';
+        $h++;
 
-            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=permissions&module='.$tmpmodulewithcase;
-            $head2[$h][1] = $langs->trans("Permissions");
-            $head2[$h][2] = 'permissions';
-            $h++;
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=permissions&module='.$module;
+        $head2[$h][1] = $langs->trans("Permissions");
+        $head2[$h][2] = 'permissions';
+        $h++;
 
-            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=triggers&module='.$tmpmodulewithcase;
-            $head2[$h][1] = $langs->trans("Triggers");
-            $head2[$h][2] = 'triggers';
-            $h++;
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=triggers&module='.$module;
+        $head2[$h][1] = $langs->trans("Triggers");
+        $head2[$h][2] = 'triggers';
+        $h++;
 
-            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=buildpackage&module='.$tmpmodulewithcase;
-            $head2[$h][1] = $langs->trans("BuildPackage");
-            $head2[$h][2] = 'buildpackage';
-            $h++;
-        }
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=buildpackage&module='.$module;
+        $head2[$h][1] = $langs->trans("BuildPackage");
+        $head2[$h][2] = 'buildpackage';
+        $h++;
 
         print $modulestatusinfo.'<br><br>';
 
