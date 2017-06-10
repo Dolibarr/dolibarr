@@ -18,7 +18,8 @@
 /**
  *	Class to manage certif authority
  */
-class BlockedLogAuthority {
+class BlockedLogAuthority 
+{
 	
 	/**
 	 * Id of the log
@@ -113,8 +114,9 @@ class BlockedLogAuthority {
 	/**
 	 *	Get object from database
 	 *
-	 *	@param      int		$rowid       	Id of object to load
-	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
+	 *	@param      int			$id		       	Id of object to load
+	 *	@param      string		$signature		Signature of object to load
+	 *	@return     int         				>0 if OK, <0 if KO, 0 if not found
 	 */
 	public function fetch($id, $signature='') {
 		

@@ -19,7 +19,8 @@
  *	Class to manage Blocked Log
  */
 
-class BlockedLog {
+class BlockedLog 
+{
 	
 	/**
 	 * Id of the log
@@ -41,14 +42,34 @@ class BlockedLog {
 	
 	public $amounts = null;
 	
+	/**
+	 * trigger action
+	 * @var string
+	 */
 	public $action = '';
 	
+	/**
+	 * Object element
+	 * @var string
+	 */
 	public $element = '';
 	
+	/**
+	 * Object id
+	 * @var int
+	 */
 	public $fk_object = 0;
 	
+	/**
+	 * Log certified by remote authority or not
+	 * @var boolean
+	 */
 	public $certified = false;
 	
+	/**
+	 * Author
+	 * @var int
+	 */
 	public $fk_user = 0;
 	
 	public $date_object = 0;
@@ -71,8 +92,6 @@ class BlockedLog {
 
 	/**
 	 *      try to retrieve logged object
-	 *
-	 *      @param		object|string		$object      object logged
 	 */
 	public function getObject() {
 		global $langs;
@@ -100,9 +119,7 @@ class BlockedLog {
 	
 	/**
 	 *      try to retrieve user author
-	 *
-	 *      @param		object|string		$object      object logged
-	 */
+	*/
 	public function getUser() {
 		global $langs, $cachedUser;
 		
@@ -144,19 +161,19 @@ class BlockedLog {
 		
 		if($this->element === 'facture') {
 			if(empty($object->thirdparty))$object->fetch_thirdparty();
-			$this->object_data->thirdparty=new stdClass();
+			$this->object_data->thirdparty = new stdClass();
 			
 			foreach($object->thirdparty as $key=>$value) {
 				if(!is_object($value)) $this->object_data->thirdparty->{$key} = $value;
 			}
 			
-			$this->object_data->total_ht 	= (double)$object->total_ht;
-			$this->object_data->total_tva	= (double)$object->total_tva;
-			$this->object_data->total_ttc	= (double)$object->total_ttc;
-			$this->object_data->total_localtax1= (double)$object->total_localtax1;
-			$this->object_data->total_localtax2= (double)$object->total_localtax2;
-			$this->object_data->note_public	= (double)$object->note_public;
-			$this->object_data->note_private= (double)$object->note_private;
+			$this->object_data->total_ht 	= (double) $object->total_ht;
+			$this->object_data->total_tva	= (double) $object->total_tva;
+			$this->object_data->total_ttc	= (double) $object->total_ttc;
+			$this->object_data->total_localtax1= (double) $object->total_localtax1;
+			$this->object_data->total_localtax2= (double) $object->total_localtax2;
+			$this->object_data->note_public	= (double) $object->note_public;
+			$this->object_data->note_private= (double) $object->note_private;
 						
 		}
 		elseif($this->element==='payment'){
@@ -171,7 +188,7 @@ class BlockedLog {
 	/**
 	 *	Get object from database
 	 *
-	 *	@param      int		$rowid       	Id of object to load
+	 *	@param      int		$id       	Id of object to load
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
 	public function fetch($id) {
@@ -203,7 +220,7 @@ class BlockedLog {
 				$this->ref				= $obj->rowid;
 				
 				$this->signature		= $obj->signature;
-				$this->amounts			= (double)$obj->amounts;
+				$this->amounts			= (double) $obj->amounts;
 				$this->action			= $obj->action;
 				$this->element			= $obj->element;
 				
@@ -434,7 +451,7 @@ class BlockedLog {
 		}
 		else{
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-	         WHERE element='".$element."' AND fk_object=".(int)$fk_object;
+	         WHERE element='".$element."' AND fk_object=".(int) $fk_object;
 			
 		}
 		
@@ -480,7 +497,7 @@ class BlockedLog {
 			$res = $this->db->query($sql);
 			
 			if($res && $obj = $this->db->fetch_object($res)) {
-				$this->amounts = (double)$obj->amount;
+				$this->amounts = (double) $obj->amount;
 			}
 		}
 				
