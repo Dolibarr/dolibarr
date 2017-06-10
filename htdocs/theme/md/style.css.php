@@ -1678,7 +1678,7 @@ div.login_block {
 	vertical-align: middle;
 	background: #FFF;
 	width: 228px;
-	height: 42px;
+	height: 43px;
 	<?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>

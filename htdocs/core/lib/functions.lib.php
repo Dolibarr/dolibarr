@@ -5949,8 +5949,9 @@ function printCommonFooter($zone='private')
         	print '<!-- Set handler to switch left menu page (menuhider) -->'."\n";
         	print 'jQuery(".menuhider").click(function() {';
         	print '  console.log("We click on .menuhider");'."\n";
-        	print "  $('.side-nav').toggle();";
-        	print "  $('.login_block').toggle();";
+        	//print "  $('.side-nav').animate({width:'toggle'},200);\n";     // OK with eldy theme but not with md
+        	print "  $('.side-nav').toggle()\n";
+        	print "  $('.login_block').toggle()\n";
         	print '});'."\n";
     	}
 
