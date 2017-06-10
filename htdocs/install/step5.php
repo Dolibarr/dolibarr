@@ -162,18 +162,23 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
         {
             $conf->setValues($db);
 
-            // Create user
+            // Create admin user
             include_once DOL_DOCUMENT_ROOT .'/user/class/user.class.php';
 
-            // Set default encryption to yes if there is no user yet into database
+            // Set default encryption to yes, generate a salt and set default encryption algorythm (but only if there is no user yet into database)
 		    $sql = "SELECT u.rowid, u.pass, u.pass_crypted";
 		    $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		    //$sql.= " WHERE u.pass IS NOT NULL AND LENGTH(u.pass) < 32"; // Not a MD5 value
 		    $resql=$db->query($sql);
 		    if ($resql)
 		    {
 		        $numrows=$db->num_rows($resql);
-    			if ($numrows == 0) dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1",'chaine',0,'',$conf->entity);
+    			if ($numrows == 0)
+    			{
+    			    // Define default setup for password encryption
+    			    dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
+    			    dolibarr_set_const($db, "MAIN_SECURITY_SALT", dol_print_date(dol_now(), 'dayhourlog'), 'chaine', 0, '', 0);      // All entities
+    			    dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'sha1md5', 'chaine', 0, '', 0);                               // All entities
+    			}
 		    }
 
 		    // Create user used to create the admin user
