@@ -65,6 +65,11 @@ a:hover {
 }
 @media only screen and (max-width: 420px)
 {
+	.demomaxoveflow {
+	    max-width: none !important;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	}
 	.csscolumns {
 		-webkit-column-count: 1; /* Chrome, Safari, Opera */
 	    -moz-column-count: 1; /* Firefox */
