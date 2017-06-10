@@ -410,14 +410,15 @@ CREATE TABLE llx_blockedlog
 	object_data	text,
 	fk_user	integer,
 	entity integer, 
-	certified integer,
-	KEY signature (signature), 
-	KEY fk_object_element (fk_object,element), 
-	KEY entity (entity),
-	KEY fk_user (fk_user), 
-	KEY entity_action (entity,action), 
-	KEY entity_action_certified (entity,action,certified) 
+	certified integer
 ) ENGINE=innodb;
+
+ALTER TABLE llx_blockedlog ADD INDEX signature (signature);
+ALTER TABLE llx_blockedlog ADD INDEX fk_object_element (fk_object,element);
+ALTER TABLE llx_blockedlog ADD INDEX entity (entity);
+ALTER TABLE llx_blockedlog ADD INDEX fk_user (fk_user); 
+ALTER TABLE llx_blockedlog ADD INDEX entity_action (entity,action);
+ALTER TABLE llx_blockedlog ADD INDEX entity_action_certified (entity,action,certified);
 
 CREATE TABLE llx_blockedlog_authority 
 ( 
@@ -426,3 +427,5 @@ CREATE TABLE llx_blockedlog_authority
 	signature varchar(100) NOT NULL,
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=innodb;
+
+ALTER TABLE llx_blockedlog_authority ADD INDEX signature (signature);
