@@ -409,7 +409,7 @@ CREATE TABLE llx_blockedlog
 	date_object	datetime,
 	object_data	text,
 	fk_user	integer,
-	entity integer, 
+	entity integer DEFAULT 1, 
 	certified integer
 ) ENGINE=innodb;
 

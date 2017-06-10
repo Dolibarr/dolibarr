@@ -19,7 +19,7 @@
  *	Class to manage Blocked Log
  */
 
-class BlockedLog 
+class BlockedLog
 {
 	
 	/**

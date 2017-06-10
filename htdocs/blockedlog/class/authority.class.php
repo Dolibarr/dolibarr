@@ -18,7 +18,7 @@
 /**
  *	Class to manage certif authority
  */
-class BlockedLogAuthority 
+class BlockedLogAuthority
 {
 	
 	/**
@@ -54,6 +54,29 @@ class BlockedLogAuthority
     	
     	$this->db = $db;
     	
+	}
+	
+	/**
+	 *	Get the blockchain 
+	 *
+	 *	@return     string         			blockchain
+	 */
+	public function getLocalBlockChain() {
+		
+		$block_static = new BlockedLog($this->db);
+		
+		$this->signature = $block_static->getSignature();
+		
+		$blocks = $block_static->getLog('all', 0, 0, 1) ;
+		
+		$this->blockchain = '';
+		
+		foreach($blocks as &$b) {
+			$this->blockchain.=$b->signature;
+			
+		}
+		
+		return $this->blockchain;
 	}
 	
 	/**

@@ -24,6 +24,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load("admin");
@@ -33,6 +34,21 @@ $langs->load("blockedlog");
 if (! $user->admin) accessforbidden();
   
 $action = GETPOST('action','alpha');
+
+if($action === 'downloadblockchain') {
+	
+	$auth = new BlockedLogAuthority($db);
+	
+	$bc = $auth->getLocalBlockChain();
+	
+	header('Content-Type: application/octet-stream');
+	header("Content-Transfer-Encoding: Binary");
+	header("Content-disposition: attachment; filename=\"" .$auth->signature. ".certif\""); 
+	
+	echo $bc;
+	
+	exit;
+}
 
 
 /*
@@ -58,7 +74,7 @@ print $langs->trans("FingerprintsDesc")."<br>\n";
 
 print '<br>';
 
-echo '<div align="right"><a href="?all=1">'.$langs->trans('ShowAllFingerPrintsMightBeTooLong').'</a></div>';
+echo '<div align="right"><a href="?all=1">'.$langs->trans('ShowAllFingerPrintsMightBeTooLong').'</a> <a href="?action=downloadblockchain">'.$langs->trans('DownloadBlockChain').'</a></div>';
 		
 
 print '<table class="noborder" width="100%">';
