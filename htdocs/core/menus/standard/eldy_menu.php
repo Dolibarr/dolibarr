@@ -105,7 +105,7 @@ class MenuManager
         $menuArbo = new Menubase($this->db,'eldy');
         $menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'eldy', $tabMenu);
         $this->tabMenu=$tabMenu;
-        
+
         //if ($forcemainmenu == 'all') { var_dump($this->tabMenu); exit; }
     }
 
@@ -149,13 +149,13 @@ class MenuManager
 		    print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);  // no output
 		    return $this->menu->getNbOfVisibleMenuEntries();
 		}
-		    
+
         if ($mode == 'jmobile')
         {
             print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);      // Fill this->menu that is empty with top menu
 
             // $this->menu->liste is top menu
-            //var_dump($this->menu->liste);exit;            
+            //var_dump($this->menu->liste);exit;
         	print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
         	foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
         	{
@@ -168,12 +168,12 @@ class MenuManager
 					$relurl=preg_replace('/__LOGIN__/',$user->login,$relurl);
 					$relurl=preg_replace('/__USERID__/',$user->id,$relurl);
 
-					
+
         			print '<a class="alilevel0" href="#">';
-					
+
 					// Add font-awesome
 					if ($val['level'] == 0 && $val['mainmenu'] == 'home') print '<span class="fa fa-home fa-fw paddingright" aria-hidden="true"></span>';
-        			
+
 					print $val['titre'];
         			print '</a>'."\n";
         			// Search submenu fot this mainmenu entry
@@ -184,7 +184,7 @@ class MenuManager
         		    //if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') { var_dump($submenu); exit; }
                     //if ($tmpmainmenu=='accountancy') { var_dump($submenu->liste); exit; }
 	        		$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
-                    
+
         			$canonrelurl=preg_replace('/\?.*$/','',$relurl);
         			$canonnexturl=preg_replace('/\?.*$/','',$nexturl);
         			//var_dump($canonrelurl);
@@ -198,16 +198,16 @@ class MenuManager
         				print '<a href="'.$relurl.'"';
         				//print ' data-ajax="false"';
         				print '>';
-        				if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard")  // No translation 
+        				if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard")  // No translation
         				{
         				    if (in_array($val['mainmenu'], array('cashdesk', 'websites'))) print $langs->trans("Access");
-        				    else print $langs->trans("Dashboard");	
+        				    else print $langs->trans("Dashboard");
         				}
         				else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
         				print '</a>';
         				print '</li>'."\n";
         			}
-        			
+
        				foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu']
        				{
 						$showmenu=true;
