@@ -59,7 +59,7 @@ $offset = $listlimit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admin'));
 
 // This page is a generic page to edit dictionaries

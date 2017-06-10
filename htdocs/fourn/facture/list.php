@@ -116,7 +116,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datef,f.rowid";
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $contextpage='supplierinvoicelist';
 
 $diroutputmassaction=$conf->fournisseur->facture->dir_output . '/temp/massgeneration/'.$user->id;
@@ -125,7 +125,7 @@ $object=new FactureFournisseur($db);
 
 $now=dol_now();
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('supplierinvoicelist'));
 $extrafields = new ExtraFields($db);
 

@@ -51,7 +51,7 @@ if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $acti
 $mine = GETPOST('mode')=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projectcard','globalcard'));
 
 $object = new Project($db);

@@ -52,7 +52,7 @@ if (! $sortfield) $sortfield="f.datef";
 $object = new Societe($db);
 if ($socid > 0) $object->fetch($socid);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartymargins','globalcard'));
 
 

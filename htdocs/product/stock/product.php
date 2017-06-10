@@ -96,7 +96,7 @@ if (! empty($canvas))
     $objcanvas->getCanvas('stockproduct','card',$canvas);
 }
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('stockproductcard','globalcard'));
 
 

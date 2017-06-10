@@ -96,7 +96,7 @@ if ($object_statut != '') $search_status=$object_statut;
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $contextpage='supplierproposallist';
 
 // Security check
@@ -114,7 +114,7 @@ $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 $diroutputmassaction=$conf->supplier_proposal->dir_output . '/temp/massgeneration/'.$user->id;
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('supplier_proposallist'));
 $extrafields = new ExtraFields($db);
 

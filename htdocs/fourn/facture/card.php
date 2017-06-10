@@ -81,7 +81,7 @@ $socid='';
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('invoicesuppliercard','globalcard'));
 
 $object=new FactureFournisseur($db);

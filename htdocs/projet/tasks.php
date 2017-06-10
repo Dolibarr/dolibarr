@@ -64,7 +64,7 @@ $socid=0;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projecttaskcard','globalcard'));
 
 $progress=GETPOST('progress', 'int');

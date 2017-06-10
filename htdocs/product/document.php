@@ -50,7 +50,7 @@ $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productdocuments'));
 
 // Get parameters

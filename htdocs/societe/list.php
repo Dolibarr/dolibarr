@@ -95,7 +95,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $contextpage='thirdpartylist';
 /*if ($search_type == '1,3') { $contextpage='customerlist'; $type='c'; }
 if ($search_type == '2,3') { $contextpage='prospectlist'; $type='p'; }
@@ -105,7 +105,7 @@ if ($type == 'c') { $contextpage='customerlist'; if ($search_type=='') $search_t
 if ($type == 'p') { $contextpage='prospectlist'; if ($search_type=='') $search_type='2,3'; }
 if ($type == 'f') { $contextpage='supplierlist'; if ($search_type=='') $search_type='4'; }
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
