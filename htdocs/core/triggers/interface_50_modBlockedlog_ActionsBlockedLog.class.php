@@ -52,7 +52,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		}
 		
 		if($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED') {
-			$amounts=  (double)$object->total_ttc;
+			$amounts=  (double) $object->total_ttc;
 		}
 		else if($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_ADD_TO_BANK') {
 			$amounts = 0;
@@ -65,7 +65,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			
 		}
 		else if(strpos($action,'PAYMENT')!==false) {
-			$amounts= (double)$object->amount;
+			$amounts= (double) $object->amount;
 		}
 		else {
 			return 0; // not implemented action log
