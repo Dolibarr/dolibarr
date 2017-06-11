@@ -84,7 +84,7 @@ class box_services_expired extends ModeleBoxes
     			$i = 0;
 
     			$thirdpartytmp = new Societe($this->db);
-    			
+
     			while ($i < $num)
     			{
     			    $late='';
@@ -140,8 +140,10 @@ class box_services_expired extends ModeleBoxes
     	}
     	else
     	{
-    		$this->info_box_contents[0][0] = array('td' => '',
-    		'text' => $langs->trans("ReadPermissionNotAllowed"));
+    		$this->info_box_contents[0][0] = array(
+    		    'td' => 'align="left" class="nohover opacitymedium"',
+    		    'text' => $langs->trans("ReadPermissionNotAllowed")
+    		);
     	}
     }
 

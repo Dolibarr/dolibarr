@@ -100,7 +100,7 @@ $form=new Form($db);
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-dol_fiche_head($head, 'ldap', $langs->trans("LDAPSetup"));
+dol_fiche_head($head, 'ldap', $langs->trans("LDAPSetup"), -1);
 
 print '<table class="noborder" width="100%">';
 
@@ -127,7 +127,7 @@ print '</td></tr>';
 // Synchro contact active
 if (! empty($conf->societe->enabled))
 {
-	
+
 	print '<tr class="oddeven"><td>'.$langs->trans("LDAPDnContactActive").'</td><td>';
 	$arraylist=array();
 	$arraylist['0']=$langs->trans("No");
@@ -139,7 +139,7 @@ if (! empty($conf->societe->enabled))
 // Synchro member active
 if (! empty($conf->adherent->enabled))
 {
-	
+
 	print '<tr class="oddeven"><td>'.$langs->trans("LDAPDnMemberActive").'</td><td>';
 	$arraylist=array();
 	$arraylist['0']=$langs->trans("No");

@@ -37,7 +37,7 @@ class Holiday extends CommonObject
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto = 'holiday';
-    
+
 	/**
 	 * @deprecated
 	 * @see id
@@ -128,7 +128,7 @@ class Holiday extends CommonObject
         if (empty($this->fk_user) || ! is_numeric($this->fk_user) || $this->fk_user < 0) { $this->error="ErrorBadParameter"; return -1; }
         if (empty($this->fk_validator) || ! is_numeric($this->fk_validator) || $this->fk_validator < 0)  { $this->error="ErrorBadParameter"; return -1; }
         if (empty($this->fk_type) || ! is_numeric($this->fk_type) || $this->fk_type < 0) { $this->error="ErrorBadParameter"; return -1; }
-        
+
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
         $sql.= "fk_user,";
@@ -290,7 +290,7 @@ class Holiday extends CommonObject
 
         $sql = "SELECT";
         $sql.= " cp.rowid,";
-        
+
         $sql.= " cp.fk_user,";
         $sql.= " cp.date_create,";
         $sql.= " cp.description,";
@@ -312,13 +312,13 @@ class Holiday extends CommonObject
 		$sql.= " uu.login as user_login,";
 		$sql.= " uu.statut as user_statut,";
 		$sql.= " uu.photo as user_photo,";
-		
+
         $sql.= " ua.lastname as validator_lastname,";
         $sql.= " ua.firstname as validator_firstname,";
         $sql.= " ua.login as validator_login,";
         $sql.= " ua.statut as validator_statut,";
         $sql.= " ua.photo as validator_photo";
-        
+
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
         $sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
@@ -379,13 +379,13 @@ class Holiday extends CommonObject
                 $tab_result[$i]['user_login'] = $obj->user_login;
                 $tab_result[$i]['user_statut'] = $obj->user_statut;
                 $tab_result[$i]['user_photo'] = $obj->user_photo;
-                
+
                 $tab_result[$i]['validator_firstname'] = $obj->validator_firstname;
                 $tab_result[$i]['validator_lastname'] = $obj->validator_lastname;
                 $tab_result[$i]['validator_login'] = $obj->validator_login;
                 $tab_result[$i]['validator_statut'] = $obj->validator_statut;
                 $tab_result[$i]['validator_photo'] = $obj->validator_photo;
-                
+
                 $i++;
             }
 
@@ -437,13 +437,13 @@ class Holiday extends CommonObject
         $sql.= " uu.login as user_login,";
         $sql.= " uu.statut as user_statut,";
         $sql.= " uu.photo as user_photo,";
-        
+
         $sql.= " ua.lastname as validator_lastname,";
         $sql.= " ua.firstname as validator_firstname,";
         $sql.= " ua.login as validator_login,";
         $sql.= " ua.statut as validator_statut,";
         $sql.= " ua.photo as validator_photo";
-        
+
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
         $sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
         $sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
@@ -504,13 +504,13 @@ class Holiday extends CommonObject
                 $tab_result[$i]['user_login'] = $obj->user_login;
                 $tab_result[$i]['user_statut'] = $obj->user_statut;
                 $tab_result[$i]['user_photo'] = $obj->user_photo;
-                
+
                 $tab_result[$i]['validator_firstname'] = $obj->validator_firstname;
                 $tab_result[$i]['validator_lastname'] = $obj->validator_lastname;
                 $tab_result[$i]['validator_login'] = $obj->validator_login;
                 $tab_result[$i]['validator_statut'] = $obj->validator_statut;
                 $tab_result[$i]['validator_photo'] = $obj->validator_photo;
-                
+
                 $i++;
             }
             // Retourne 1 et ajoute le tableau à la variable
@@ -817,7 +817,7 @@ class Holiday extends CommonObject
 		    if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
 		    if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
-		
+
 		return $statut;
     }
 
@@ -905,11 +905,11 @@ class Holiday extends CommonObject
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_config(name, value)";
                     $sql.= " VALUES('".$this->db->escape($name)."', '".$this->db->escape($createifnotfound)."')";
                     $result = $this->db->query($sql);
-                    if ($result) 
+                    if ($result)
                     {
                         return $createifnotfound;
                     }
-                    else 
+                    else
                     {
                         $this->error=$this->db->lasterror();
                         return -2;
@@ -920,7 +920,7 @@ class Holiday extends CommonObject
                     return '';
                 }
             }
-            else 
+            else
             {
                 return $obj->value;
             }
@@ -948,12 +948,14 @@ class Holiday extends CommonObject
 
         if (empty($userID) && empty($nbHoliday) && empty($fk_type))
         {
+            $langs->load("holiday");
+
             // Si mise à jour pour tout le monde en début de mois
 			$now=dol_now();
 
             $month = date('m',$now);
             $newdateforlastupdate = dol_print_date($now, '%Y%m%d%H%M%S');
-            
+
             // Get month of last update
             $lastUpdate = $this->getConfCP('lastUpdate', $newdateforlastupdate);
             $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];

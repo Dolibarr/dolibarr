@@ -705,11 +705,13 @@ class Adherent extends CommonObject
      *  Fonction qui supprime l'adherent et les donnees associees
      *
      *  @param	int		$rowid		Id of member to delete
+     *	@param	User	$user		User object
+     *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *  @return	int					<0 if KO, 0=nothing to do, >0 if OK
      */
-    function delete($rowid)
+    function delete($rowid, $user, $notrigger=0)
     {
-        global $conf, $langs, $user;
+        global $conf, $langs;
 
         $result = 0;
 		$error=0;
@@ -719,6 +721,14 @@ class Adherent extends CommonObject
 		if (empty($rowid)) $rowid=$this->id;
 
         $this->db->begin();
+
+        if (! $error && ! $notrigger)
+        {
+            // Call trigger
+            $result=$this->call_trigger('MEMBER_DELETE',$user);
+            if ($result < 0) $error++;
+            // End call triggers
+        }
 
         // Remove category
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".$rowid;
@@ -786,16 +796,6 @@ class Adherent extends CommonObject
         		$errorflag=-5;
         	}
         }
-
-        if (! $error)
-        {
-            // Call trigger
-            $result=$this->call_trigger('MEMBER_DELETE',$user);
-            if ($result < 0) { $error++; }
-            // End call triggers
-        }
-
-
 
         if (! $error)
         {
@@ -1097,7 +1097,7 @@ class Adherent extends CommonObject
         $sql.= " WHERE d.fk_adherent_type = t.rowid";
         if ($rowid) $sql.= " AND d.rowid=".$rowid;
         elseif ($ref || $fk_soc) {
-        	$sql.= " AND d.entity IN (".getEntity().")";
+        	$sql.= " AND d.entity IN (".getEntity('adherent').")";
         	if ($ref) $sql.= " AND d.rowid='".$this->db->escape($ref)."'";
         	elseif ($fk_soc > 0) $sql.= " AND d.fk_soc=".$fk_soc;
         }
@@ -1592,7 +1592,7 @@ class Adherent extends CommonObject
         global $conf, $langs;
 
         if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
-        
+
         $result=''; $label='';
         $link=''; $linkstart=''; $linkend='';
 
@@ -1602,7 +1602,7 @@ class Adherent extends CommonObject
             $label.= Form::showphoto('memberphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip', 'small', 0, 1);
             $label.= '</div><div style="clear: both;"></div>';
         }
-        
+
         $label.= '<div class="centpercent">';
         $label.= '<u>' . $langs->trans("Member") . '</u>';
         if (! empty($this->ref))
@@ -1610,7 +1610,7 @@ class Adherent extends CommonObject
         if (! empty($this->firstname) || ! empty($this->lastname))
             $label.= '<br><b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs);
         $label.='</div>';
-        
+
         if ($option == 'card' || $option == 'category')
         {
             $link = '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id.'"';
@@ -1619,7 +1619,7 @@ class Adherent extends CommonObject
         {
             $link = '<a href="'.DOL_URL_ROOT.'/adherents/subscription.php?rowid='.$this->id.'"';
         }
-        
+
         $linkclose="";
         if (empty($notooltip))
         {
@@ -1632,10 +1632,10 @@ class Adherent extends CommonObject
             $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
         }
-        
+
         $link.=$linkclose.'>';
         $linkend='</a>';
-        
+
         //if ($withpictoimg == -1) $result.='<div class="nowrap">';
         $result.=$link;
         if ($withpictoimg)
@@ -1658,7 +1658,7 @@ class Adherent extends CommonObject
         }
         $result.=$linkend;
         //if ($withpictoimg == -1) $result.='</div>';
-        
+
         return $result;
     }
 
@@ -1883,7 +1883,7 @@ class Adherent extends CommonObject
 			    $modele = $conf->global->ADHERENT_ADDON_PDF;
 		    }
 	    }
-    
+
         $modelpath = "core/modules/member/doc/";
 
         return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);

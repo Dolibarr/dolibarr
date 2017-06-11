@@ -45,7 +45,7 @@ $conf->dol_use_jmobile=GETPOST('dol_use_jmobile','int');
 global $dolibarr_main_demo;
 if (empty($dolibarr_main_demo)) accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page',0,0,1);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $res=$hookmanager->initHooks(array('demo'));
 
 $demoprofiles=array();
@@ -316,7 +316,7 @@ foreach ($demoprofiles as $profilearray)
 		{
 		    print '<div class="clearboth"></div>';
 		}
-		
+
 		print '<form method="POST" class="valigntop inline-block" name="form'.$profilearray['key'].'" action="'.$_SERVER["PHP_SELF"].'#a1'.$profilearray['key'].'">'."\n";
 		print '<input type="hidden" name="action" value="gotodemo">'."\n";
         print '<input type="hidden" name="urlfrom" value="'.dol_escape_htmltag($urlfrom).'">'."\n";
@@ -328,34 +328,35 @@ foreach ($demoprofiles as $profilearray)
         print '<input type="hidden" name="dol_no_mouse_hover" value="'.$conf->dol_no_mouse_hover.'">'."\n";
         print '<input type="hidden" name="dol_use_jmobile" value="'.$conf->dol_use_jmobile.'">'."\n";
 
-        print '<div summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" class="center inline-block CTable CTableRow'.($i%2==0?'1':'0').'" style="width: 400px;">'."\n";
+        print '<div summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" class="center inline-block CTable CTableRow'.($i%2==0?'1':'0').'" style="width: 346px;">'."\n";
 
-        
+
         print '<div id="a1'.$profilearray['key'].'" class="demobox '.(empty($profilearray['url'])?'modulelineshow cursorpointer':'nomodulelines').'">';
 
         print '<a href="'.$urlwithmod.'" class="'.(empty($profilearray['url'])?'modulelineshow':'nomodulelines').'">';
 		print '<div style="padding: 10px;">';
-        
+
 		print '<img class="demothumb" src="'.$profilearray['icon'].'" alt="Demo '.$profilearray['label'].'">';
-		
+
 		print '<div class="clearboth"></div>';
-	
+
 		print '<div class="demothumbtext">';
     	print $langs->trans($profilearray['label']);
     	print '</div>';
-    	
+
     	print '</div>';
     	print '</a>';
-    	 
-    	
+
+
         // Modules
         if (empty($profilearray['url']))
         {
-    		print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="font-size:14px; line-height: 110%; padding-bottom: 8px">';
-    		
-    		print $langs->trans("ThisIsListOfModules").'<br>';
+    		print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="margin-left: 8px; margin-right: 8px; text-align: justify; font-size:14px; line-height: 130%; padding-bottom: 8px">';
+
+    		print $langs->trans("ThisIsListOfModules").'<br><br>';
+
     		print '<div class="csscolumns">';
-    		
+
     		$listofdisabledmodules=explode(',',$profilearray['disablemodules']);
     		$j=0;
     		$nbcolsmod=empty($conf->dol_optimize_smallscreen)?4:3;
@@ -395,10 +396,10 @@ foreach ($demoprofiles as $profilearray)
 
     		print '</div>';
 
-		    print '<div class="center">';
+		    print '<br><div class="center">';
 		    print '<input type="submit" value=" &nbsp; &nbsp; '.$langs->trans("Start").' &nbsp; &nbsp; " class="button">';
 		    print '</div>';
-    	
+
 		    print '</div>';
         }
 

@@ -31,13 +31,17 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$langs->load("members");
-$langs->load("companies");
+$langs->loadLangs(array("members","companies"));
+
+$action=GETPOST('action','aZ09');
+$massaction=GETPOST('massaction','alpha');
+$show_files=GETPOST('show_files','int');
+$confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
 
 // Security check
 $result=restrictedArea($user,'adherent');
 
-$action=GETPOST('action','aZ09');
 $filter=GETPOST("filter");
 $statut=GETPOST("statut");
 $search=GETPOST("search");
@@ -53,7 +57,7 @@ $search_country=GETPOST("search_country");
 $search_phone=GETPOST("search_phone");
 $search_phone_perso=GETPOST("search_phone_perso");
 $search_phone_mobile=GETPOST("search_phone_mobile");
-$type=GETPOST("type");
+$search_type=GETPOST("search_type");
 $search_email=GETPOST("search_email");
 $search_categ = GETPOST("search_categ",'int');
 $catid        = GETPOST("catid",'int');
@@ -73,7 +77,7 @@ $pagenext = $page + 1;
 if (! $sortorder) { $sortorder=($filter=='outofdate'?"DESC":"ASC"); }
 if (! $sortfield) { $sortfield=($filter=='outofdate'?"d.datefin":"d.lastname"); }
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('memberlist'));
 $extrafields = new ExtraFields($db);
 
@@ -155,7 +159,7 @@ if (empty($reshook))
     	$search_firstname="";
     	$search_login="";
     	$search_company="";
-    	$type="";
+    	$search_type="";
     	$search_email="";
     	$search_address="";
     	$search_zip="";
@@ -173,6 +177,14 @@ if (empty($reshook))
     	$toselect='';
     	$search_array_options=array();
     }
+
+    // Mass actions
+    $objectclass='Adherent';
+    $objectlabel='Members';
+    $permtoread = $user->rights->adherent->lire;
+    $permtodelete = $user->rights->adherent->supprimer;
+    $uploaddir = $conf->adherent->dir_output;
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -193,8 +205,8 @@ $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.skype, d.birth, d.pu
 $sql.= " d.fk_adherent_type as type_id, d.morphy, d.statut, d.datec as date_creation, d.tms as date_update,";
 $sql.= " t.libelle as type, t.subscription,";
 $sql.= " state.code_departement as state_code, state.nom as state_name";
-// Add fields for extrafields
-foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+// Add fields from extrafields
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
@@ -212,7 +224,7 @@ if ($search_categ > 0)   $sql.= " AND cm.fk_categorie = ".$db->escape($search_ca
 if ($search_categ == -2) $sql.= " AND cm.fk_categorie IS NULL";
 $sql.= " AND d.entity IN (".getEntity('adherent').")";
 if ($sall) $sql.=natural_search(array_keys($fieldstosearchall), $sall);
-if ($type > 0) $sql.=" AND t.rowid=".$db->escape($type);
+if ($search_type > 0) $sql.=" AND t.rowid=".$db->escape($search_type);
 if ($statut != '') $sql.=" AND d.statut in (".$db->escape($statut).")";     // Peut valoir un nombre ou liste de nombre separes par virgules
 if ($search_ref)
 {
@@ -298,10 +310,10 @@ elseif ($action == 'search')
 	$titre=$langs->trans("MembersListQualified");
 }
 
-if ($type > 0)
+if ($search_type > 0)
 {
 	$membertype=new AdherentType($db);
-	$result=$membertype->fetch(GETPOST("type"));
+	$result=$membertype->fetch(GETPOST("type",'int'));
 	$titre.=" (".$membertype->libelle.")";
 }
 
@@ -326,7 +338,7 @@ if ($search_phone != '') $param.= "&search_phone=".urlencode($search_phone);
 if ($search_phone_perso != '') $param.= "&search_phone_perso=".urlencode($search_phone_perso);
 if ($search_phone_mobile != '') $param.= "&search_phone_mobile=".urlencode($search_phone_mobile);
 if ($filter)         $param.="&filter=".urlencode($filter);
-if ($type > 0)       $param.="&type=".urlencode($type);
+if ($search_type > 0)       $param.="&search_type=".urlencode($search_type);
 if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 foreach ($search_array_options as $key => $val)
@@ -346,7 +358,7 @@ if ($user->rights->adherent->supprimer) $arrayofmassactions['delete']=$langs->tr
 //if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -403,32 +415,32 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 }
 
 // Ref
-if (! empty($arrayfields['d.ref']['checked'])) 
+if (! empty($arrayfields['d.ref']['checked']))
 {
     print '<td class="liste_titre">';
 	print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
     print '</td>';
 }
 
-if (! empty($arrayfields['d.firstname']['checked'])) 
+if (! empty($arrayfields['d.firstname']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'"></td>';
 }
 
-if (! empty($arrayfields['d.lastname']['checked'])) 
+if (! empty($arrayfields['d.lastname']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'"></td>';
 }
 
-if (! empty($arrayfields['d.company']['checked'])) 
+if (! empty($arrayfields['d.company']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"></td>';
 }
 
-if (! empty($arrayfields['d.login']['checked'])) 
+if (! empty($arrayfields['d.login']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'"></td>';
@@ -440,26 +452,26 @@ if (! empty($arrayfields['d.morphy']['checked']))
     print '</td>';
 }
 
-if (! empty($arrayfields['t.libelle']['checked'])) 
+if (! empty($arrayfields['t.libelle']['checked']))
 {
 	print '<td class="liste_titre">';
 	$listetype=$membertypestatic->liste_array();
-	print $form->selectarray("type", $listetype, $type, 1, 0, 0, '', 0, 32);
+	print $form->selectarray("search_type", $listetype, $type, 1, 0, 0, '', 0, 32);
 	print '</td>';
 }
 
-if (! empty($arrayfields['d.address']['checked'])) 
+if (! empty($arrayfields['d.address']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_address" value="'.$search_address.'"></td>';
 }
 
-if (! empty($arrayfields['d.zip']['checked'])) 
+if (! empty($arrayfields['d.zip']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_zip" value="'.$search_zip.'"></td>';
 }
-if (! empty($arrayfields['d.town']['checked'])) 
+if (! empty($arrayfields['d.town']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_town" value="'.$search_town.'"></td>';
@@ -479,31 +491,31 @@ if (! empty($arrayfields['country.code_iso']['checked']))
     print '</td>';
 }
 // Phone pro
-if (! empty($arrayfields['d.phone']['checked'])) 
+if (! empty($arrayfields['d.phone']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_phone" value="'.$search_phone.'"></td>';
 }
 // Phone perso
-if (! empty($arrayfields['d.phone_perso']['checked'])) 
+if (! empty($arrayfields['d.phone_perso']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_phone_perso" value="'.$search_phone_perso.'"></td>';
 }
 // Phone mobile
-if (! empty($arrayfields['d.phone_mobile']['checked'])) 
+if (! empty($arrayfields['d.phone_mobile']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_phone_mobile" value="'.$search_phone_mobile.'"></td>';
 }
 // Email
-if (! empty($arrayfields['d.email']['checked'])) 
+if (! empty($arrayfields['d.email']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth50" type="text" name="search_email" value="'.$search_email.'"></td>';
 }
 
-if (! empty($arrayfields['d.datefin']['checked'])) 
+if (! empty($arrayfields['d.datefin']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '</td>';
@@ -626,7 +638,7 @@ while ($i < min($num, $limit))
 	$memberstatic->datefin= $datefin;
 	$memberstatic->socid = $obj->fk_soc;
 	$memberstatic->photo = $obj->photo;
-	
+
 	if (! empty($obj->fk_soc)) {
 	    $memberstatic->fetch_thirdparty();
 		$companyname=$memberstatic->thirdparty->name;
@@ -635,52 +647,52 @@ while ($i < min($num, $limit))
 	}
 
 	print '<tr class="oddeven">';
-	
+
 	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 	{
 		print '<td align="center">'.($i+1).'</td>';
 	}
 
 	// Ref
-	if (! empty($arrayfields['d.ref']['checked'])) 
+	if (! empty($arrayfields['d.ref']['checked']))
 	{
    		print "<td>";
 		print $memberstatic->getNomUrl(-1, 0, 'card', 'ref');
 		print "</td>\n";
-	}		
+	}
 	// Firstname
-	if (! empty($arrayfields['d.firstname']['checked'])) 
+	if (! empty($arrayfields['d.firstname']['checked']))
 	{
     	print "<td>";
 		print $obj->firstname;
 		print "</td>\n";
 	}
 	// Lastname
-	if (! empty($arrayfields['d.lastname']['checked'])) 
+	if (! empty($arrayfields['d.lastname']['checked']))
 	{
     	print "<td>";
 		print $obj->lastname;
 		print "</td>\n";
 	}
 	// Company
-	if (! empty($arrayfields['d.company']['checked'])) 
+	if (! empty($arrayfields['d.company']['checked']))
 	{
     	print "<td>";
     	print $companyname;
 		print "</td>\n";
 	}
 	// Login
-	if (! empty($arrayfields['d.login']['checked'])) 
+	if (! empty($arrayfields['d.login']['checked']))
 	{
 	   print "<td>".$obj->login."</td>\n";
 	}
 	// Moral/Physique
-	if (! empty($arrayfields['d.morphy']['checked'])) 
+	if (! empty($arrayfields['d.morphy']['checked']))
 	{
 	   print "<td>".$memberstatic->getmorphylib($obj->morphy)."</td>\n";
 	}
 	// Type label
-	if (! empty($arrayfields['t.libelle']['checked'])) 
+	if (! empty($arrayfields['t.libelle']['checked']))
 	{
     	$membertypestatic->id=$obj->type_id;
 		$membertypestatic->libelle=$obj->type;
@@ -727,7 +739,7 @@ while ($i < min($num, $limit))
 	    if (! $i) $totalarray['nbfield']++;
 	}
 	// Phone pro
-	if (! empty($arrayfields['d.phone']['checked'])) 
+	if (! empty($arrayfields['d.phone']['checked']))
 	{
 		print '<td class="nocellnopadd">';
 	    print $obj->phone;
@@ -735,7 +747,7 @@ while ($i < min($num, $limit))
 	    if (! $i) $totalarray['nbfield']++;
 	}
 	// Phone perso
-	if (! empty($arrayfields['d.phone_perso']['checked'])) 
+	if (! empty($arrayfields['d.phone_perso']['checked']))
 	{
 		print '<td class="nocellnopadd">';
 	    print $obj->phone_perso;
@@ -743,7 +755,7 @@ while ($i < min($num, $limit))
 	    if (! $i) $totalarray['nbfield']++;
 	}
 	// Phone mobile
-	if (! empty($arrayfields['d.phone_mobile']['checked'])) 
+	if (! empty($arrayfields['d.phone_mobile']['checked']))
 	{
 		print '<td class="nocellnopadd">';
 	    print $obj->phone_mobile;
@@ -756,7 +768,7 @@ while ($i < min($num, $limit))
         print "<td>".dol_print_email($obj->email,0,0,1)."</td>\n";
 	}
 	// End of subscription date
-	$datefin=$db->jdate($obj->datefin);		
+	$datefin=$db->jdate($obj->datefin);
 	if (! empty($arrayfields['d.datefin']['checked']))
 	{
 		if ($datefin)
@@ -832,22 +844,15 @@ while ($i < min($num, $limit))
 	}
 	// Action column
 	print '<td align="center">';
-	if ($user->rights->adherent->creer)
-	{
-		print "<a href=\"card.php?rowid=".$obj->rowid."&action=edit&backtopage=1\">".img_edit()."</a>";
-	}
-	print '&nbsp;';
-	if ($user->rights->adherent->supprimer && $obj->statut == -1)
-	{
-		print "<a href=\"card.php?rowid=".$obj->rowid."&action=delete&backtopage=1\">".img_picto($langs->trans("Delete"),'disable.png')."</a>";
-	}
-	if ($user->rights->adherent->supprimer && $obj->statut == 1)
-	{
-		print "<a href=\"card.php?rowid=".$obj->rowid."&action=resign&backtopage=1\">".img_picto($langs->trans("Resiliate"),'disable.png')."</a>";
-	}
-	print "</td>";
-	if (! $i) $totalarray['nbfield']++;
-	
+    if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+    {
+        $selected=0;
+		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+    }
+    print '</td>';
+    if (! $i) $totalarray['nbfield']++;
+
 	print "</tr>\n";
 	$i++;
 }

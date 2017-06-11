@@ -36,7 +36,7 @@ $ref = GETPOST('ref','alpha');
 
 $result=restrictedArea($user,'produit|service',$id,'product&product');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('infoproduct'));
 
 $object = new Product($db);

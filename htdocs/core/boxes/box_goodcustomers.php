@@ -59,7 +59,7 @@ class box_goodcustomers extends ModeleBoxes
 
 		// disable box for such cases
 		if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $this->enabled=0;	// disabled by this option
-		if (empty($conf->global->MAIN_BOX_ENABLE_BEST_CUSTOMERS)) $this->enabled=0; // not enabled by default. Very slow on large database 
+		if (empty($conf->global->MAIN_BOX_ENABLE_BEST_CUSTOMERS)) $this->enabled=0; // not enabled by default. Very slow on large database
 	}
 
 	/**
@@ -148,8 +148,10 @@ class box_goodcustomers extends ModeleBoxes
 			}
 		}
 		else {
-			$this->info_box_contents[0][0] = array('align' => 'left',
-				'text' => $langs->trans("ReadPermissionNotAllowed"));
+			$this->info_box_contents[0][0] = array(
+			    'td' => 'align="left" class="nohover opacitymedium"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
 		}
 
 	}

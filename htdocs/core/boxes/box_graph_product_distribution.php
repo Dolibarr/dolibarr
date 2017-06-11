@@ -99,6 +99,10 @@ class box_graph_product_distribution extends ModeleBoxes
 		$nowarray=dol_getdate(dol_now(),true);
 		if (empty($year)) $year=$nowarray['year'];
 
+		$nbofgraph=0;
+		if ($showinvoicenb) $nbofgraph++;
+		if ($showpropalnb)  $nbofgraph++;
+		if ($showordernb)   $nbofgraph++;
 
 		$text = $langs->trans("BoxProductDistribution",$max).' - '.$langs->trans("Year").': '.$year;
 		$this->info_box_head = array(
@@ -112,11 +116,6 @@ class box_graph_product_distribution extends ModeleBoxes
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
-
-		$nbofgraph=0;
-		if ($showinvoicenb) $nbofgraph++;
-		if ($showpropalnb)  $nbofgraph++;
-		if ($showordernb)   $nbofgraph++;
 
 		$paramtitle=$langs->transnoentitiesnoconv("Products").'/'.$langs->transnoentitiesnoconv("Services");
 		if (empty($conf->produit->enabled)) $paramtitle=$langs->transnoentitiesnoconv("Services");
@@ -250,7 +249,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		if (! empty($conf->commande->enabled) && ! empty($user->rights->commande->lire))
 		{
 			$langs->load("orders");
-			
+
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showordernb)
 			{
@@ -309,6 +308,11 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 		}
 
+		if (empty($nbofgraph))
+		{
+		    $langs->load("errors");
+		    $mesg=$langs->trans("ReadPermissionNotAllowed");
+		}
 		if (empty($conf->use_javascript_ajax))
 		{
 			$langs->load("errors");
@@ -380,9 +384,11 @@ class box_graph_product_distribution extends ModeleBoxes
 		}
 		else
 		{
-			$this->info_box_contents[0][0] = array(	'td' => 'align="left" class="nohover"',
-					'maxlength'=>500,
-					'text' => $mesg);
+			$this->info_box_contents[0][0] = array(
+			    'td' => 'align="left" class="nohover opacitymedium"',
+				'maxlength'=>500,
+				'text' => $mesg
+			);
 		}
 
 	}

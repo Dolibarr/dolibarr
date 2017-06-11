@@ -182,29 +182,29 @@ $formadmin = new FormAdmin($db);
 $wikihelp='EN:Setup|FR:Paramétrage|ES:Configuración';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
-print load_fiche_titre($langs->trans("DefaultValues"),'','title_setup');
+$param='&mode='.$mode;
 
-print $langs->trans("DefaultValuesDesc")."<br>\n";
-print "<br>\n";
-
-print $langs->trans("EnableDefaultValues").' ';
+$enabledisablehtml.= $langs->trans("EnableDefaultValues").' ';
 if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
 {
     // Button off, click to enable
-    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&amp;value=1">';
-    print img_picto($langs->trans("Disabled"),'switch_off');
-    print '</a>';
+    $enabledisablehtml.= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=1'.$param.'">';
+    $enabledisablehtml.= img_picto($langs->trans("Disabled"),'switch_off');
+    $enabledisablehtml.= '</a>';
 }
 else
 {
     // Button on, click to disable
-    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&amp;value=0">';
-    print img_picto($langs->trans("Activated"),'switch_on');
-    print '</a>';
+    $enabledisablehtml.= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=0'.$param.'">';
+    $enabledisablehtml.= img_picto($langs->trans("Activated"),'switch_on');
+    $enabledisablehtml.= '</a>';
 }
-print "<br><br>\n";
 
-$param='&mode='.$mode;
+print load_fiche_titre($langs->trans("DefaultValues"), $enabledisablehtml, 'title_setup');
+
+print $langs->trans("DefaultValuesDesc")."<br>\n";
+print "<br>\n";
+
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($optioncss != '')  $param.='&optioncss='.$optioncss;
