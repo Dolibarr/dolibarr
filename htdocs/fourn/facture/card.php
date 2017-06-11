@@ -218,7 +218,7 @@ if (empty($reshook))
 	{
 	    $object->fetch($id);
 	    $object->fetch_thirdparty();
-	    $result=$object->delete($id);
+	    $result=$object->delete($user);
 	    if ($result > 0)
 	    {
 	        header('Location: list.php');

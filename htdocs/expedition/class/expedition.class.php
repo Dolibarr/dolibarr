@@ -195,6 +195,7 @@ class Expedition extends CommonObject
 		// Clean parameters
 		$this->brouillon = 1;
 		$this->tracking_number = dol_sanitizeFileName($this->tracking_number);
+		if (empty($this->fk_project)) $this->fk_project = 0;
 
 		$this->user = $user;
 
