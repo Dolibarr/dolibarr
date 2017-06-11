@@ -50,6 +50,7 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/paymentexpensereport.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/paymentvarious.class.php';
 
 $langs->load("companies");
 $langs->load("other");
@@ -133,6 +134,7 @@ $paymentdonstatic = new PaymentDonation($db);
 $paymentvatstatic = new TVA($db);
 $paymentsalstatic = new PaymentSalary($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
+$paymentvariousstatic = new PaymentVarious($db);
 
 // Get code of finance journal
 $accountingjournalstatic = new AccountingJournal($db);
@@ -207,7 +209,7 @@ if ($result) {
 			// Now loop on each link of record in bank.
 			foreach ( $links as $key => $val ) {
 
-				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'payment_salary')))	 // So we excluded 'company' here
+				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'payment_salary', 'payment_various')))	 // So we excluded 'company' here
 				{
 					// We save tabtype for a future use, to remember what kind of payment it is
 					$tabtype[$obj->rowid] = $links[$key]['type'];
@@ -249,9 +251,9 @@ if ($result) {
 
 					$sqlmid = 'SELECT cchgsoc.accountancy_code';
 					$sqlmid .= " FROM " . MAIN_DB_PREFIX . "c_chargesociales cchgsoc ";
-					$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "chargesociales as chgsoc ON  chgsoc.fk_type=cchgsoc.id";
-					$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementcharge as paycharg ON  paycharg.fk_charge=chgsoc.rowid";
-					$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "bank_url as bkurl ON  bkurl.url_id=paycharg.rowid";
+					$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "chargesociales as chgsoc ON chgsoc.fk_type=cchgsoc.id";
+					$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementcharge as paycharg ON paycharg.fk_charge=chgsoc.rowid";
+					$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "bank_url as bkurl ON bkurl.url_id=paycharg.rowid";
 					$sqlmid .= " WHERE bkurl.fk_bank=" . $obj->rowid;
 
 					dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
@@ -284,10 +286,19 @@ if ($result) {
 					$paymentexpensereportstatic->fk_expensereport = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentexpensereportstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["fk_expensereport"] = $paymentexpensereportstatic->id;
+				} else if ($links[$key]['type'] == 'payment_various') {
+					$paymentvariousstatic->id = $links[$key]['url_id'];
+					$paymentvariousstatic->ref = $links[$key]['url_id'];
+					$paymentvariousstatic->label = $links[$key]['label'];
+					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvariousstatic->getNomUrl(2);
+					$tabpay[$obj->rowid]["paymentvariousid"] = $paymentvariousstatic->id;
+					$paymentvariousstatic->fetch($paymentvariousstatic->id);
+					$account_various = (! empty($paymentvariousstatic->accountancy_code) ? $paymentvariousstatic->accountancy_code : $langs->trans("CodeNotDef"));
+					$tabtp[$obj->rowid][$account_various] += $obj->amount;
 				} else if ($links[$key]['type'] == 'banktransfert') {
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("BankTransfer");
 					$tabtp[$obj->rowid][$account_transfer] += $obj->amount;
-				}
+				} 
 			}
 		}
 
@@ -352,7 +363,7 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_bank"];
 					$bookkeeping->numero_compte = $k;
-					$bookkeeping->label_operation = $compte->label;
+					$bookkeeping->label_operation = $val["label"];
 					$bookkeeping->montant = ($mt < 0 ? - $mt : $mt);
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt >= 0 ? $mt : 0);
@@ -407,6 +418,9 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->code_tiers = '';
 						$bookkeeping->label_operation = $tabuser[$key]['name'];
 						$bookkeeping->doc_ref = $langs->trans("SalaryPayment") . ' (' . $val["paymentsalid"] . ')'; // Ref of salary payment
+					} else if ($tabtype[$key] == 'payment_various') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->doc_ref = $langs->trans("VariousPayment") . ' (' . $val["paymentvariousid"] . ')'; // Ref of various payment
 					}
 
 					$result = $bookkeeping->create($user);
@@ -512,6 +526,10 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 						$bookkeeping->label_operation = $tabuser[$key]['name'];
 						$bookkeeping->doc_ref = $langs->trans("SalaryPayment") . ' (' . $val["paymentsalid"] . ')'; // Rowid of salary payment
+					} else if ($tabtype[$key] == 'payment_various') {
+						$bookkeeping->code_tiers = '';
+						$bookkeeping->numero_compte = $k;
+						$bookkeeping->doc_ref = $langs->trans("VariousPayment") . ' (' . $val["paymentvariousid"] . ')'; // Rowid of various payment
 					} else if ($tabtype[$key] == 'banktransfert') {
 						$bookkeeping->code_tiers = '';
 						$bookkeeping->numero_compte = $k;
@@ -749,6 +767,7 @@ if (empty($action) || $action == 'view') {
 	$vatstatic = new Tva($db);
 	$donationstatic = new Don($db);
 	$salarystatic = new PaymentSalary($db);
+	$variousstatic = new PaymentVarious($db);
 
 	llxHeader('', $langs->trans("FinanceJournal"));
 
@@ -914,6 +933,20 @@ if (empty($action) || $action == 'view') {
 				$objmid = $db->fetch_object($resultmid);
 				$salarystatic->fetch($objmid->id);
 				$ref=$salarystatic->getNomUrl(1);
+			}
+			else dol_print_error($db);
+		}
+		elseif ($tabtype[$key] == 'payment_various')
+		{
+			$sqlmid = 'SELECT v.rowid as id';
+			$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_various as v";
+			$sqlmid .= " WHERE v.rowid=" . $val["paymentvariousid"];
+			dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
+			$resultmid = $db->query($sqlmid);
+			if ($resultmid) {
+				$objmid = $db->fetch_object($resultmid);
+				$variousstatic->fetch($objmid->id);
+				$ref=$variousstatic->getNomUrl(1);
 			}
 			else dol_print_error($db);
 		}
