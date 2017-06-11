@@ -197,7 +197,7 @@ class Paiement extends CommonObject
 
 		$this->db->begin();
 
-		$ref = $this->getNextNumRef('');
+		$this->ref = $this->getNextNumRef('');
 
 		if ($way == 'dolibarr')
 		{
@@ -211,7 +211,7 @@ class Paiement extends CommonObject
 		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_creat)";
-		$sql.= " VALUES (".$conf->entity.", '".$ref."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.")";
+		$sql.= " VALUES (".$conf->entity.", '".$this->ref."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.")";
 
 		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -246,21 +246,27 @@ class Paiement extends CommonObject
 
 							//var_dump($invoice->total_ttc.' - '.$paiement.' -'.$creditnotes.' - '.$deposits.' - '.$remaintopay);exit;
 
-                            // If there is withdrawals request to do and not done yet, we wait before closing.
+                            /* Why this ? We can remove i think.
+                            // If there is withdrawals request to do and not done yet on the invoice the payment is on, we wait before closing.
                             $mustwait=0;
+                            $sqlrequest ="SELECT COUNT(rowid) FROM ".MAIN_DB_PREFIX."prelevement_facture_demande";
+                            $sqlrequest.="WHERE fk_facture = ".$invoice->id." AND traite = 0";
+                            ...
+
                             $listofpayments=$invoice->getListOfPayments();
                             foreach($listofpayments as $paym)
                             {
-                                // This payment might be this one or a previous one
+                                // This payment on invoice $invoice might be the one we record or another one
                                 if ($paym['type']=='PRE')
                                 {
                                     if (! empty($conf->prelevement->enabled))
                                     {
-                                        // FIXME Check if this invoice has a withdraw request
                                         // if not, $mustwait++;      // This will disable automatic close on invoice to allow to process
+
                                     }
                                 }
                             }
+                            */
 
                             //Invoice types that are eligible for changing status to paid
 							$affected_types = array(
@@ -273,7 +279,7 @@ class Paiement extends CommonObject
 
                             if (!in_array($invoice->type, $affected_types)) dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice, nor situation invoice. We do nothing more.");
                             else if ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
-                            else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
+                            //else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
                             else
                             {
                                 // If invoice is a down payment, we also convert down payment to discount
