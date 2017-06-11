@@ -133,20 +133,21 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Highly customizable: enable only the modules you need, add user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one)
 - Works with PHP 5.3+ and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite))
 - Compatible with all Cloud solutions that match MySQL, PHP or PostgreSQL prerequisites.
-- APIs
+- APIs.
 - An easy to understand, maintain and develop code (PHP with no heavy framework; trigger and hook architecture)
 - Support for country specific features:
     - Spanish Tax RE and ISPF
     - French NPR VAT rate (VAT called "Non Perçue Récupérable" for DOM-TOM)
     - Canadian double taxes (federal/province) and other countries using cumulative VAT
     - Tunisian tax stamp
+    - Argentina invoice numbering using A,B,C... 
     - Compatible with [European directives](http://europa.eu/legislation_summaries/taxation/l31057_en.htm) (2006/112/CE ... 2010/45/UE)
 - PDF or ODT generation for invoice, proposals, orders...
 - …
 
 ### Extending
 
-Dolibarr can be extended with a lot of other external modules from third party developers available at the [DoliStore](https://www.dolistore.com).
+Dolibarr can be extended with a lot of other external application or modules from third party developers available at the [DoliStore](https://www.dolistore.com).
 
 ## FUTURE
 
