@@ -49,7 +49,7 @@ function dol_json_encode($elements)
 {
 	dol_syslog('dol_json_encode() is deprecated. Please update your code to use native json_encode().', LOG_WARNING);
 
-	$num=count($elements);
+	$num = (is_null($elements) ? 0 : count($elements)); // for avoid phpunit error : "Parameter must be an array or an object that implements Countable"
 	if (is_object($elements))	// Count number of properties for an object
 	{
 		$num=0;
