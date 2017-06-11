@@ -2162,6 +2162,7 @@ else
 				$file = $fileparams['fullname'];
 			}
 
+			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 			print '<div class="clearboth"></div>';
 			print '<br>';
 			print load_fiche_titre($langs->trans('SendContractByMail'));
