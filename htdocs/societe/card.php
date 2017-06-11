@@ -2462,7 +2462,9 @@ else
 			$action='send';
 			$modelmail='thirdparty';
 
-			//print '<br>';
+    		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
+    		print '<div class="clearboth"></div>';
+    		print '<br>';
 			print load_fiche_titre($langs->trans($titreform));
 
 			dol_fiche_head();

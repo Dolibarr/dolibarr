@@ -1010,7 +1010,8 @@ else
 			// Affichage formulaire de TEST
 			if ($action == 'test')
 			{
-				print load_fiche_titre($langs->trans("TestMailing"));
+			    print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
+			    print load_fiche_titre($langs->trans("TestMailing"));
 
 				// Create l'objet formulaire mail
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';

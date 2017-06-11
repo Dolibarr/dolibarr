@@ -2660,7 +2660,7 @@ else
 	            {
 	                if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->fournisseur->supplier_invoice_advance->send)
 	                {
-	                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a></div>';
+	                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a></div>';
 	                }
 	                else print '<div class="inline-block divButAction"><span class="butActionRefused">'.$langs->trans('SendByMail').'</a></div>';
 	            }
@@ -2836,7 +2836,8 @@ else
                 $file=$fileparams['fullname'];
             }
 
-			print '<div class="clearboth"></div>';
+			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
+            print '<div class="clearboth"></div>';
             print '<br>';
             print load_fiche_titre($langs->trans('SendBillByMail'));
 

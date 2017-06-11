@@ -1669,6 +1669,7 @@ else
                 $action='send';
                 $modelmail='user';
 
+    		    print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
                 print '<div id="presend"></div>';
                 print load_fiche_titre($langs->trans($titreform));
 
