@@ -278,6 +278,7 @@ if ($action == 'create')
 	// Other attributes
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		print $object->showOptionals($extrafields,'edit');
@@ -668,6 +669,7 @@ if ($rowid > 0)
 		// Other attributes
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
 		    print $object->showOptionals($extrafields,'edit');

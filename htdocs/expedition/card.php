@@ -774,6 +774,7 @@ if ($action == 'create')
             // Other attributes
             $parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"', 'socid'=>$socid);
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$expe,$action);    // Note that $action and $object may have been modified by hook
+            print $hookmanager->resPrint;
 
             if (empty($reshook) && ! empty($extrafields->attribute_label)) {
             	print $expe->showOptionals($extrafields, 'edit');

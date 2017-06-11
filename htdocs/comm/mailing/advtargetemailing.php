@@ -777,8 +777,9 @@ if ($object->fetch($id) >= 0) {
 			if (! empty($advTarget->id)) {
 				$parameters = array('array_query' => $advTarget->filtervalue);
 			}
-			// Module extrafield feature
+			// Other attributes
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $std_soc, $action_search);
+            print $hookmanager->resPrint;
 		}
 
 		// State Contact
