@@ -581,7 +581,7 @@ if (empty($reshook))
 	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
-	
+
 	/*
 	 *  Mise a jour d'une ligne d'intervention
 	 */
@@ -997,7 +997,8 @@ if ($action == 'create')
         // Other attributes
         $parameters=array('colspan' => ' colspan="2"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
+        print $hookmanager->resPrint;
+        if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
 			print $object->showOptionals($extrafields,'edit');
 		}
@@ -1147,11 +1148,11 @@ else if ($id > 0 || ! empty($ref))
 	// Print form confirm
 	print $formconfirm;
 
-	
+
 	// Intervention card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-	
-	
+
+
 	$morehtmlref='<div class="refidno">';
 	// Ref customer
 	//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->fichinter->creer, 'string', '', 0, 1);
@@ -1191,16 +1192,16 @@ else if ($id > 0 || ! empty($ref))
 	    }
 	}
 	$morehtmlref.='</div>';
-	
+
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	    
-	
+
+
     print '<div class="fichecenter">';
     print '<div class="fichehalfleft">';
     print '<div class="underbanner clearboth"></div>';
-    
+
     print '<table class="border" width="100%">';
-    
+
 	if (! empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES))
 	{
 		// Date Start
@@ -1279,14 +1280,14 @@ else if ($id > 0 || ! empty($ref))
     include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
     print '</table>';
-    
+
     print '</div>';
     print '<div class="fichehalfright">';
     print '<div class="ficheaddleft">';
     print '<div class="underbanner clearboth"></div>';
-    
+
     print '<table class="border centpercent">';
-    
+
     if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
     {
         // Duration
@@ -1294,15 +1295,15 @@ else if ($id > 0 || ! empty($ref))
         print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
         print '</tr>';
     }
-    
+
 	print "</table>";
-    
+
 	print '</div>';
     print '</div>';
     print '</div>';
-    
+
     print '<div class="clearboth"></div><br>';
-    
+
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
@@ -1367,7 +1368,7 @@ else if ($id > 0 || ! empty($ref))
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				
+
 
 				// Ligne en mode visu
 				if ($action != 'editline' || GETPOST('line_id','int') != $objp->rowid)
@@ -1488,7 +1489,7 @@ else if ($id > 0 || ! empty($ref))
 			// Add new line
 			if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline' && empty($conf->global->FICHINTER_DISABLE_DETAILS))
 			{
-				if (! $num) 
+				if (! $num)
 				{
 				    print '<br><table class="noborder" width="100%">';
 
@@ -1501,7 +1502,7 @@ else if ($id > 0 || ! empty($ref))
       				print '<td colspan="3">&nbsp;</td>';
     				print "</tr>\n";
 				}
-				
+
 				print '<tr class="oddeven">'."\n";
                 print '<td>';
                 // editeur wysiwyg
@@ -1655,7 +1656,7 @@ else if ($id > 0 || ! empty($ref))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifydone">'.$langs->trans("InterventionClassifyDone").'</a></div>';
 				}
-				
+
 				// Clone
 				if ($user->rights->ficheinter->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=ficheinter">' . $langs->trans("ToClone") . '</a></div>';
@@ -1698,7 +1699,7 @@ else if ($id > 0 || ! empty($ref))
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('fichinter'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-		
+
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

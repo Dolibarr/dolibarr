@@ -471,6 +471,7 @@ if ($action == 'create' && !$error)
 	// Other attributes
 	$parameters=array('objectsrc' => $objectsrc, 'idsrc' => $listoforders);
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		$object=new Facture($db);

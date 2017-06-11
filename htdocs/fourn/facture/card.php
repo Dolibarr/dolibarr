@@ -1824,6 +1824,7 @@ if ($action == 'create')
     // Other options
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
     // Bouton "Create Draft"
     print "</table>\n";

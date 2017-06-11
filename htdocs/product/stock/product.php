@@ -568,7 +568,7 @@ if ($id > 0 || $ref)
 
 		// Minimum Price
 		print '<tr><td>'.$langs->trans("BuyingPriceMin").'</td>';
-		print '<td colspan="2">';
+		print '<td>';
 		$product_fourn = new ProductFournisseur($db);
 		if ($product_fourn->find_min_price_product_fournisseur($object->id) > 0)
 		{
@@ -611,17 +611,18 @@ if ($id > 0 || $ref)
 		}
 
         // Stock alert threshold
-        print '<tr><td>'.$form->editfieldkey("StockLimit",'seuil_stock_alerte',$object->seuil_stock_alerte,$object,$user->rights->produit->creer).'</td><td colspan="2">';
+        print '<tr><td>'.$form->editfieldkey("StockLimit",'seuil_stock_alerte',$object->seuil_stock_alerte,$object,$user->rights->produit->creer).'</td><td>';
         print $form->editfieldval("StockLimit",'seuil_stock_alerte',$object->seuil_stock_alerte,$object,$user->rights->produit->creer,'string');
         print '</td></tr>';
 
 		// Hook formObject
-		$parameters=array('cols'=>2);
+		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 
         // Desired stock
         print '<tr><td>'.$form->editfieldkey($form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1),'desiredstock',$object->desiredstock,$object,$user->rights->produit->creer);
-        print '</td><td colspan="2">';
+        print '</td><td>';
         print $form->editfieldval("DesiredStock",'desiredstock',$object->desiredstock,$object,$user->rights->produit->creer,'string');
         print '</td></tr>';
 
@@ -707,7 +708,7 @@ if ($id > 0 || $ref)
 		{
 			dol_print_error($db);
 		}
-		print '<tr><td class="tdtop">'.$langs->trans("LastMovement").'</td><td colspan="3">';
+		print '<tr><td class="tdtop">'.$langs->trans("LastMovement").'</td><td>';
 		if ($lastmovementdate)
 		{
 		    print dol_print_date($lastmovementdate,'dayhour').' ';
@@ -800,7 +801,11 @@ if ((! empty($conf->productbatch->enabled)) && $object->hasbatch())
 	print '<td align="right" width="10%">'.$langs->trans("batch_number").'</td>';
 	print '<td align="center" width="10%">'.$langs->trans("EatByDate").'</td>';
 	print '<td align="center" width="10%">'.$langs->trans("SellByDate").'</td>';
-	print '<td align="right" colspan="5"></td>';
+	print '<td></td>';
+	print '<td></td>';
+	print '<td></td>';
+	print '<td></td>';
+	print '<td></td>';
 	print '</tr>';
 }
 
