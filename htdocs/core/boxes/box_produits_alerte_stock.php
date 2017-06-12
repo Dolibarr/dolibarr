@@ -48,6 +48,21 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 
 	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB	$db      	Database handler
+	 *  @param	string	$param		More parameters
+	 */
+	function __construct($db,$param='')
+	{
+	    global $user;
+
+	    $this->db = $db;
+
+		$this->hidden = ! (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire);
+	}
+
+	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
@@ -64,7 +79,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock",$max));
 
-		if ($user->rights->produit->lire || $user->rights->service->lire)
+		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire)
 		{
 			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity,";
 			$sql.= " SUM(".$db->ifsql("s.reel IS NULL","0","s.reel").") as total_stock";
@@ -77,7 +92,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 			// Add where from hooks
     		if (is_object($hookmanager))
     		{
-    		    $parameters=array();
+			    $parameters=array('boxproductalertstocklist'=>1);
     		    $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
     		    $sql.=$hookmanager->resPrint;
     		}
@@ -164,15 +179,22 @@ class box_produits_alerte_stock extends ModeleBoxes
                         'text' => $price_base_type,
                     );
 
-					$this->info_box_contents[$line][] = array('td' => 'align="center"',
+					$this->info_box_contents[$line][] = array(
+					    'td' => 'align="center"',
                     'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
 					'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)));
 
-					$this->info_box_contents[$line][] = array('td' => 'align="right" width="18"',
-                    'text' => $productstatic->LibStatut($objp->tosell,3,0));
+					$this->info_box_contents[$line][] = array(
+					    'td' => 'align="right" width="18"',
+                        'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell,3,0).'<span>',
+					    'asis' => 1
+					);
 
-                    $this->info_box_contents[$line][] = array('td' => 'align="right" width="18"',
-                    'text' => $productstatic->LibStatut($objp->tobuy,3,1));
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy,3,0).'<span>',
+                        'asis' => 1
+                    );
 
                     $line++;
                 }
@@ -207,11 +229,11 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

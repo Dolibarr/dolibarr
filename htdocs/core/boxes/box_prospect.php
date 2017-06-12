@@ -60,6 +60,8 @@ class box_prospect extends ModeleBoxes
 
 		// disable box for such cases
 		if (! empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) $this->enabled=0;	// disabled by this option
+
+		$this->hidden=! ($user->rights->societe->lire && empty($user->socid));
 	}
 
 	/**
@@ -168,11 +170,11 @@ class box_prospect extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

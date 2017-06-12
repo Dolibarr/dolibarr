@@ -1457,7 +1457,10 @@ else
             $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
             $object->next_prev_filter=" fk_product_type = ".$object->type;
 
-            dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
+            $shownav = 1;
+            if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+            dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
 
             print '<div class="fichecenter">';
@@ -1995,6 +1998,8 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
     $genallowed=$user->rights->produit->creer;
     $delallowed=$user->rights->produit->supprimer;
+
+    $var=true;
 
     print $formfile->showdocuments($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
     $somethingshown=$formfile->numoffiles;

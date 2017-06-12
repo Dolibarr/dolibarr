@@ -160,7 +160,7 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 	}
 
 	echo json_encode($outjson);
-} 
+}
 else
 {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
@@ -171,17 +171,21 @@ else
 	top_httphead();
 
 	if (empty($htmlname))
-		return;
+	{
+		print json_encode(array());
+	    return;
+	}
 
 	$match = preg_grep('/(' . $htmlname . '[0-9]+)/', array_keys($_GET));
 	sort($match);
 
 	$idprod = (! empty($match[0]) ? $match[0] : '');
-	
-	if (! $htmlname && (! $idprod || ! GETPOST($idprod,'alpha')))
-		return;
 
-		// When used from jQuery, the search term is added as GET param "term".
+	if (GETPOST($htmlname,'alpha') == '' && (! $idprod || ! GETPOST($idprod,'alpha')))
+		print json_encode(array());
+	    return;
+
+	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (($idprod && GETPOST($idprod,'alpha')) ? GETPOST($idprod,'alpha') :  (GETPOST($htmlname, 'alpha') ? GETPOST($htmlname, 'alpha') : ''));
 
 	$form = new Form($db);
