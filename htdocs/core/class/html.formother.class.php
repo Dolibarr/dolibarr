@@ -409,7 +409,7 @@ class FormOther
             $sql_usr.= " WHERE u2.entity IN (0,".$conf->entity.")";
             $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->societe_id;
         }
-	$sql_usr.= " ORDER BY u.statut DESC, lastname ASC";
+	    $sql_usr.= " ORDER BY statut DESC, lastname ASC";  // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
         //print $sql_usr;exit;
 
         $resql_usr = $this->db->query($sql_usr);
