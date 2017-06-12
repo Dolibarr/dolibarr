@@ -73,7 +73,12 @@ $ref=GETPOST('ref','alpha');
 // Security check
 $socid='';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user, $origin, $origin_id);
+
+if ($origin == 'expedition') $result=restrictedArea($user, $origin, $id);
+else {
+	$result=restrictedArea($user, 'expedition');
+	if (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) accessforbidden();
+}
 
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');

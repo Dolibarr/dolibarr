@@ -587,7 +587,7 @@ if (! defined('NOLOGIN'))
         // We are already into an authenticated session
         $login=$_SESSION["dol_login"];
         $entity=$_SESSION["dol_entity"];
-        dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login." _SESSION['dol_entity']=".$entity, LOG_DEBUG);
+        dol_syslog("- This is an already logged session. _SESSION['dol_login']=".$login." _SESSION['dol_entity']=".$entity, LOG_DEBUG);
 
         $resultFetchUser=$user->fetch('', $login, '', 1, ($entity > 0 ? $entity : -1));
         if ($resultFetchUser <= 0)
@@ -1083,6 +1083,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         //$ext='';
         //if (! empty($conf->dol_use_jmobile)) $ext='version='.urlencode(DOL_VERSION);
         $ext='version='.urlencode(DOL_VERSION);
+
         if (GETPOST('version','int')) $ext='version='.GETPOST('version','int');	// usefull to force no cache on css/js
         if (GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) $ext.='&testmenuhider='.(GETPOST('testmenuhider','int')?GETPOST('testmenuhider','int'):$conf->global->MAIN_TESTMENUHIDER);
 

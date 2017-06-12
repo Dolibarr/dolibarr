@@ -522,9 +522,12 @@ class Facture extends CommonInvoice
 				{
 					$newinvoiceline=$this->lines[$i];
 					$newinvoiceline->fk_facture=$this->id;
-                    $newinvoiceline->origin = $this->element;           // TODO This seems not used. Here we but origin 'facture' but after
-                    $newinvoiceline->origin_id = $this->lines[$i]->id;  // we put an id of object !
-					if ($result >= 0 && ($newinvoiceline->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
+
+					// TODO This seems not used. Here we put origin 'facture' but after,  we put an id of object !
+					$newinvoiceline->origin = $this->element;
+                    $newinvoiceline->origin_id = $this->lines[$i]->id;
+
+					if ($result >= 0)
 					{
 						// Reset fk_parent_line for no child products and special product
 						if (($newinvoiceline->product_type != 9 && empty($newinvoiceline->fk_parent_line)) || $newinvoiceline->product_type == 9) {
@@ -561,7 +564,7 @@ class Facture extends CommonInvoice
 				    //if (! is_object($line)) $line=json_decode(json_encode($line), FALSE);  // convert recursively array into object.
                 	if (! is_object($line)) $line = (object) $line;
 
-				    if (($line->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
+				    if ($result >= 0)
 					{
 						// Reset fk_parent_line for no child products and special product
 						if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {

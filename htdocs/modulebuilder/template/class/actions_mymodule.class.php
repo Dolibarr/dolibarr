@@ -29,6 +29,20 @@
  */
 class ActionsMyModule
 {
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    /**
+     * @var string Error
+     */
+    public $error = '';
+    /**
+     * @var array Errors
+     */
+    public $errors = array();
+
+
 	/**
 	 * @var array Hook results. Propagated to $hookmanager->resArray for later reuse
 	 */
@@ -39,16 +53,13 @@ class ActionsMyModule
 	 */
 	public $resprints;
 
-	/**
-	 * @var array Errors
-	 */
-	public $errors = array();
 
 	/**
 	 * Constructor
 	 */
-	public function __construct()
+	public function __construct($db)
 	{
+	    $this->db = $db;
 	}
 
 	/**

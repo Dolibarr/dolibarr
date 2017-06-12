@@ -545,7 +545,10 @@ if ($id > 0 || $ref)
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
 
-        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
+        $shownav = 1;
+        if ($user->societe_id && ! in_array('stock', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
         print '<div class="fichecenter">';
 
@@ -961,7 +964,6 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 			print '<td align="right">'.$line['desiredstock'].'</td>';
 			print '<td align="right"><a href="?id='.GETPOST('id').'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse">'.img_delete().'</a></td>';
 			print '</tr>';
-
 		}
 	}
 

@@ -30,36 +30,37 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class Cronjob extends CommonObject
 {
-	var $element='cronjob';			//!< Id that identify managed objects
-	var $table_element='cronjob';		//!< Name of table without prefix where object is stored
+	public $element='cronjob';			//!< Id that identify managed objects
+	public $table_element='cronjob';		//!< Name of table without prefix where object is stored
+    public $picto = 'cron';
 
-    var $jobtype;
-	var $tms='';
-	var $datec='';
-	var $label;
-	var $command;
-	var $classesname;
-	var $objectname;
-	var $methodename;
-	var $params;
-	var $md5params;
-	var $module_name;
-	var $priority;
-	var $datelastrun='';
-	var $datenextrun='';
-	var $dateend='';
-	var $datestart='';
-	var $datelastresult='';
-	var $lastresult;
-	var $lastoutput;
-	var $unitfrequency;
-	var $frequency;
-	var $status;
-	var $processing;
-	var $fk_user_author;
-	var $fk_user_mod;
-	var $nbrun;
-	var $libname;
+    public $jobtype;
+	public $tms='';
+	public $datec='';
+	public $label;
+	public $command;
+	public $classesname;
+	public $objectname;
+	public $methodename;
+	public $params;
+	public $md5params;
+	public $module_name;
+	public $priority;
+	public $datelastrun='';
+	public $datenextrun='';
+	public $dateend='';
+	public $datestart='';
+	public $datelastresult='';
+	public $lastresult;
+	public $lastoutput;
+	public $unitfrequency;
+	public $frequency;
+	public $status;
+	public $processing;
+	public $fk_user_author;
+	public $fk_user_mod;
+	public $nbrun;
+	public $libname;
 
 
     /**
@@ -1265,35 +1266,35 @@ class Cronjob extends CommonObject
 class Cronjobline
 {
 
-	var $id;
-	var $ref;
+	public $id;
+	public $ref;
 
-	var $tms='';
-	var $datec='';
-	var $label;
-	var $jobtype;
-	var $command;
-	var $classesname;
-	var $objectname;
-	var $methodename;
-	var $params;
-	var $md5params;
-	var $module_name;
-	var $priority;
-	var $datelastrun='';
-	var $datenextrun='';
-	var $dateend='';
-	var $datestart='';
-	var $lastresult='';
-	var $lastoutput;
-	var $unitfrequency;
-	var $frequency;
-	var $status;
-	var $fk_user_author;
-	var $fk_user_mod;
-	var $note;
-	var $nbrun;
-	var $libname;
+	public $tms='';
+	public $datec='';
+	public $label;
+	public $jobtype;
+	public $command;
+	public $classesname;
+	public $objectname;
+	public $methodename;
+	public $params;
+	public $md5params;
+	public $module_name;
+	public $priority;
+	public $datelastrun='';
+	public $datenextrun='';
+	public $dateend='';
+	public $datestart='';
+	public $lastresult='';
+	public $lastoutput;
+	public $unitfrequency;
+	public $frequency;
+	public $status;
+	public $fk_user_author;
+	public $fk_user_mod;
+	public $note;
+	public $nbrun;
+	public $libname;
 
 	/**
 	 *  Constructor
