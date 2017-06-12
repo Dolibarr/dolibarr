@@ -335,12 +335,12 @@ if ($result)
     			else print price($objp->price).' '.$langs->trans("HT");
     			print '</td>';
 			}
-			print '<td align="right" class="nowrap">';
+			print '<td align="right" class="nowrap"><span class="statusrefsell">';
 			print $product_static->LibStatut($objp->tosell,5,0);
-			print "</td>";
-            print '<td align="right" class="nowrap">';
+			print "</span></td>";
+            print '<td align="right" class="nowrap"><span class="statusrefbuy">';
             print $product_static->LibStatut($objp->tobuy,5,1);
-            print "</td>";
+            print "</span></td>";
 			print "</tr>\n";
 			$i++;
 		}
