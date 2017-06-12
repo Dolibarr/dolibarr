@@ -74,7 +74,7 @@ print $langs->trans("FingerprintsDesc")."<br>\n";
 
 print '<br>';
 
-echo '<div align="right"><a href="?all=1">'.$langs->trans('ShowAllFingerPrintsMightBeTooLong').'</a> <a href="?action=downloadblockchain">'.$langs->trans('DownloadBlockChain').'</a></div>';
+echo '<div align="right"><a href="?all=1">'.$langs->trans('ShowAllFingerPrintsMightBeTooLong').'</a> | <a href="?action=downloadblockchain">'.$langs->trans('DownloadBlockChain').'</a></div>';
 		
 
 print '<table class="noborder" width="100%">';
@@ -97,21 +97,70 @@ foreach($blocks as &$block) {
    	print '<td>'.dol_print_date($block->tms,'dayhour').'</td>';
    	print '<td>'.$block->ref_object.'</td>';
    	print '<td>'.$langs->trans('log'.$block->action).'</td>';
-   	print '<td>'.$block->getObject().'</td>';
+   	print '<td>'.$block->getObject().'<a href="#" blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
    	print '<td align="right">'.price($block->amounts).'</td>';
    	print '<td>'.$block->getUser().'</td>';
    	print '<td>'.$block->signature.'</td>';
    	print '<td>';
    	
-   	print $block->checkSignature() ? img_picto('OkCheckPaymentValidity', 'on') : img_picto($langs->trans('KoCheckPaymentValidity'), 'off');
-   	print ' '.($block->certified ? img_picto($langs->trans('AddedByAuthority'), 'info') :  img_picto($langs->trans('NotAddedByAuthorityYet'), 'info_black') );
-
+   	print $block->checkSignature() ? img_picto($langs->trans('OkCheckFingerprintValidity'), 'on') : img_picto($langs->trans('KoCheckFingerprintValidity'), 'off');
+   	if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
+   		print ' '.($block->certified ? img_picto($langs->trans('AddedByAuthority'), 'info') :  img_picto($langs->trans('NotAddedByAuthorityYet'), 'info_black') );
+   	}
 	print '</td>';
 	print '</tr>';
 					
 }
 
 print '</table>';
+
+?>
+<script type="text/javascript">
+$('a[rel=show-info]').click(function() {
+
+	$pop = $('<div id="pop-info"><table width="100%" class="border"><thead><th width="25%"><?php echo $langs->trans('Field') ?></th><th><?php echo $langs->trans('Value') ?></th></thead><tbody></tbody></table></div>');
+	
+	$pop.dialog({
+		title:"<?php echo $langs->trans('BlockedlogInfoDialog'); ?>"
+		,modal:true
+		,width:'80%'
+	});
+
+	var fk_block = $(this).attr("blockid");
+	
+	$.ajax({
+		url:"../ajax/block-info.php?id="+fk_block
+		,dataType:'json'
+	}).done(function(data) {
+
+		drawData(data,'');
+		
+	});
+	
+});
+
+function drawData(data, prefix) {
+
+	for(x in data) {
+
+		value = data[x];
+
+		$('#pop-info table tbody').append('<tr><td>'+prefix+x+'</td><td>'+value+'</td></tr>');
+		
+		if( (typeof value === "object") && (value !== null) ) {
+			drawData(value, prefix+x+' &gt;&gt; ');
+		}
+
+	}
+	
+}
+
+</script>
+
+<?php 
+
+
+if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
 
 ?>
 				<script type="text/javascript">
@@ -133,6 +182,8 @@ print '</table>';
 				</script>
 				
 <?php
+
+}
 
 dol_fiche_end();
 
