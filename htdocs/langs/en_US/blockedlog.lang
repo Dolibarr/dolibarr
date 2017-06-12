@@ -1,0 +1,16 @@
+Field=Field
+BlockedLogDesc=This module store event for invoice and payments as block chain
+FingerprintsDesc=All fingerprints stored
+EntityKey=Entity Key
+ShowAllFingerPrintsMightBeTooLong=Show all fingerprints (might be long)
+DownloadBlockChain=Download fingerprints
+KoCheckFingerprintValidity=Fingerprint is not valid
+OkCheckFingerprintValidity=Fingerprint is valid
+AddedByAuthority=Stored into remote authority
+NotAddedByAuthorityYet=Not yet stored into remote authority
+ShowDetails=Show stored details
+logPAYMENT_ADD_TO_BANK=Payment added to bank
+logPAYMENT_CUSTOMER_CREATE=Payment of customer created
+logBILL_PAYED=Customer bill payed
+logBILL_UNPAYED=Customer bill set unpayed
+logBILL_VALIDATE=Customer bill set valid from draft

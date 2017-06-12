@@ -294,7 +294,7 @@ class BlockedLogAuthority
 		
 		//TODO create cron task on activation
 		
-		if(empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
+		if(empty($conf->global->BLOCKEDLOG_AUTHORITY_URL) || empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
 			$this->error = $langs->trans('NoAuthorityURLDefined');
 			return -2;
 		}
