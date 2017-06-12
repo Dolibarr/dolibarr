@@ -98,7 +98,7 @@ if (empty($reshook))
 		if ($id)
 		{
 			$result=$object->fetch($id);
-			$object->cost_price = price2num($cost_price); 
+			$object->cost_price = price2num($cost_price);
 			$result=$object->update($object->id, $user);
 			if ($result > 0)
 			{
@@ -112,7 +112,7 @@ if (empty($reshook))
 			}
 		}
 	}
-	
+
 	if ($action == 'confirm_remove_pf')
 	{
 		if ($rowid)	// id of product supplier price to remove
@@ -299,20 +299,23 @@ if ($id > 0 || $ref)
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $id . '&rowid=' . $rowid, $langs->trans('DeleteProductBuyPrice'), $langs->trans('ConfirmDeleteProductBuyPrice'), 'confirm_remove_pf', '', 0, 1);
 			echo $formconfirm;
 		}
-		
+
 		if ($action <> 'edit' && $action <> 're-edit')
 		{
 			$head=product_prepare_head($object);
 			$titre=$langs->trans("CardProduct".$object->type);
 			$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 			dol_fiche_head($head, 'suppliers', $titre, 0, $picto);
-			
+
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-				
-            dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
-            
+
+            $shownav = 1;
+            if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+			dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+
             print '<div class="fichecenter">';
-            
+
             print '<div class="underbanner clearboth"></div>';
             print '<table class="border tableforfield" width="100%">';
 
@@ -337,14 +340,14 @@ if ($id > 0 || $ref)
             print '</td><td colspan="2">';
             print $form->editfieldval($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
             print '</td></tr>';
-            
+
 			print '</table>';
 
             print '</div>';
             print '<div style="clear:both"></div>';
-			
+
 			dol_fiche_end();
-			
+
 
 			// Form to add or update a price
 			if (($action == 'add_price' || $action == 'updateprice' ) && ($user->rights->produit->creer || $user->rights->service->creer))
@@ -364,7 +367,7 @@ if ($id > 0 || $ref)
 				print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="updateprice">';
-				
+
 				dol_fiche_head();
 
 				print '<table class="border" width="100%">';
@@ -449,11 +452,11 @@ if ($id > 0 || $ref)
 				$default_vat=get_default_tva($mysoc2, $mysoc, $object->id, 0);
 				$default_npr=get_default_npr($mysoc2, $mysoc, $object->id, 0);
 				if (empty($default_vat)) $default_npr=$default_vat;
-				
+
 				print '<tr><td class="fieldrequired">'.$langs->trans("VATRateForSupplierProduct").'</td>';
 				print '<td>';
 				//print $form->load_tva('tva_tx',$object->tva_tx,$supplier,$mysoc);    // Do not use list here as it may be any vat rates for any country
-				if (! empty($rowid))	// If we have a supplier, it is an update, we must show the vat of current supplier price 
+				if (! empty($rowid))	// If we have a supplier, it is an update, we must show the vat of current supplier price
 				{
 				    $tmpproductsupplier=new ProductFournisseur($db);
 				    $tmpproductsupplier->fetch_product_fournisseur_price($rowid, 1);
@@ -462,7 +465,7 @@ if ($id > 0 || $ref)
 				}
 				else
 				{
-                    if (empty($default_vat)) 
+                    if (empty($default_vat))
                     {
                         $default_vat=$object->tva_tx;
                     }
@@ -588,7 +591,7 @@ if ($id > 0 || $ref)
 				$product_fourn_list = $product_fourn->list_product_fournisseur_price($object->id, $sortfield, $sortorder);
 				$nbtotalofrecords = count($product_fourn_list);
 			    print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($product_fourn_list), $nbtotalofrecords, 'title_accountancy.png');
-			     
+
 				// Suppliers list title
 			    print '<div class="div-table-responsive">';
 			    print '<table class="noborder" width="100%">';
@@ -607,7 +610,7 @@ if ($id > 0 || $ref)
 				print_liste_field_titre($langs->trans("DiscountQtyMin"),$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre($langs->trans("NbDaysToDelivery"),$_SERVER["PHP_SELF"],"pfp.delivery_time_days","",$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre($langs->trans("ReputationForThisProduct"),$_SERVER["PHP_SELF"],"pfp.supplier_reputation","",$param,'align="center"',$sortfield,$sortorder);
-				
+
 				// Charges ????
 				if ($conf->global->PRODUCT_CHARGES)
 				{
@@ -628,7 +631,7 @@ if ($id > 0 || $ref)
 
 						// Supplier
 						print '<td>'.$productfourn->getSocNomUrl(1,'supplier').'</td>';
-						
+
 						// Supplier
 						print '<td align="left">'.$productfourn->fourn_ref.'</td>';
 
@@ -674,8 +677,8 @@ if ($id > 0 || $ref)
 						// Reputation
 						print '<td align="center">';
 						if (!empty($productfourn->supplier_reputation) && !empty($object->reputations[$productfourn->supplier_reputation])) {
-							print $object->reputations[$productfourn->supplier_reputation];	
-						}  
+							print $object->reputations[$productfourn->supplier_reputation];
+						}
 						print'</td>';
 
 						// Charges ????
