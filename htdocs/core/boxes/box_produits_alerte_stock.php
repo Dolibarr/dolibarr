@@ -64,7 +64,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock",$max));
 
-		if ($user->rights->produit->lire || $user->rights->service->lire)
+		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire)
 		{
 			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity,";
 			$sql.= " SUM(".$db->ifsql("s.reel IS NULL","0","s.reel").") as total_stock";
