@@ -1868,7 +1868,7 @@ class Propal extends CommonObject
             {
             	$this->oldcopy= clone $this;
             	$this->fk_availability = $id;
-            	$this->availability_id = $availability_id;
+            	$this->availability_id = $id;
             }
 
             if (! $notrigger && empty($error))
