@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2016 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2017      Nicolas ZABOURI	<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -440,17 +441,14 @@ while ($i < min($num, $limit))
         // Show here line of result
         print '<tr '.$bc[$var].'>';
         // LIST_OF_TD_FIELDS_LIST
-        /*
-        if (! empty($arrayfields['t.field1']['checked'])) 
-        {
-            print '<td>'.$obj->field1.'</td>';
-		    if (! $i) $totalarray['nbfield']++;
+        foreach ($arrayfields as $key => $value) {
+        	if (!empty($arrayfields[$key]['checked'])) {
+                	$key2 = str_replace('t.', '', $key);
+                	print '<td>' . $obj->$key2 . '</td>';
+                	if (!$i)
+                    	$totalarray['nbfield'] ++;
+            	}
         }
-        if (! empty($arrayfields['t.field2']['checked'])) 
-        {
-            print '<td>'.$obj->field2.'</td>';
-		    if (! $i) $totalarray['nbfield']++;
-        }*/
     	// Extra fields
 		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 		{

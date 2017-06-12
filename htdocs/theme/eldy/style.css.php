@@ -986,6 +986,9 @@ div.nopadding {
 	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
 }
+.pictoobjectwidth {
+	width: 14px;
+}
 .pictosubstatus {
     padding-left: 2px;
     padding-right: 2px;
@@ -2972,16 +2975,16 @@ div.tabBar .noborder {
     border: 1px solid #CCC;
     text-align: center;
     border-radius: 2px;
-    
+
 	white-space: nowrap;
 	overflow: hidden;
     text-overflow: ellipsis;
-    width: 115px;    
+    width: 115px;
 }
 @media only screen and (max-width: 767px)
 {
     .boxstats {
-        width: 100px;    
+        width: 100px;
     }
 }
 
