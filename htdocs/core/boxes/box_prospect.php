@@ -61,7 +61,7 @@ class box_prospect extends ModeleBoxes
 		// disable box for such cases
 		if (! empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) $this->enabled=0;	// disabled by this option
 
-		$this->hidden=! ($user->rights->societe->lire);
+		$this->hidden=! ($user->rights->societe->lire && empty($user->socid));
 	}
 
 	/**
