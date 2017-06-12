@@ -92,7 +92,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 			// Add where from hooks
     		if (is_object($hookmanager))
     		{
-    		    $parameters=array();
+			    $parameters=array('boxproductalertstocklist'=>1);
     		    $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
     		    $sql.=$hookmanager->resPrint;
     		}
