@@ -182,8 +182,10 @@ else
 	$idprod = (! empty($match[0]) ? $match[0] : '');
 
 	if (GETPOST($htmlname,'alpha') == '' && (! $idprod || ! GETPOST($idprod,'alpha')))
+	{
 		print json_encode(array());
 	    return;
+	}
 
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (($idprod && GETPOST($idprod,'alpha')) ? GETPOST($idprod,'alpha') :  (GETPOST($htmlname, 'alpha') ? GETPOST($htmlname, 'alpha') : ''));
