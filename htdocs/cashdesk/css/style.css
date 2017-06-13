@@ -267,7 +267,6 @@ p.titre {
 
 /* --------------------- Combo lists ------------------- */
 .select_design {
-	width: 370px;
 	overflow: auto;
 }
 
