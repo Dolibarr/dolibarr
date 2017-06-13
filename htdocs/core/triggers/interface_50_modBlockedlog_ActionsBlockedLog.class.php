@@ -51,7 +51,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 0;
 		}
 		
-		if($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED' || $action === 'BILL_SENTBYMAIL') {
+		if($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED' 
+				|| $action === 'BILL_SENTBYMAIL' || $action === 'DOWNLOAD_BILL' || $action === 'PREVIEW_BILL') {
 			$amounts=  (double) $object->total_ttc;
 		}
 		else if($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_ADD_TO_BANK') {

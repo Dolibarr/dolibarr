@@ -19,3 +19,5 @@ logBILL_SENTBYMAIL=Customer bill send by mail
 BlockedlogInfoDialog=Log Details
 Fingerprint=Fingerprint
 DownloadLogCSV=Download fingerprints CSV
+logPREVIEW_BILL=Preview of a validated customer bill in order to print or download
+logDOWNLOAD_BILL=Download of a validated customer bill in order to print or send
