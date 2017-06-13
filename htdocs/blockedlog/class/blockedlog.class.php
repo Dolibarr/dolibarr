@@ -78,6 +78,7 @@ class BlockedLog
 	
 	public $object_data = null;
 	
+	public $error = 0;
 	
 	/**
 	 *      Constructor
@@ -91,9 +92,9 @@ class BlockedLog
 	}
 
 	/**
-	 *      try to retrieve logged object
+	 *      try to retrieve logged object link
 	 */
-	public function getObject() {
+	public function getObjectLink() {
 		global $langs;
 		
 		if($this->element === 'facture') {
@@ -103,6 +104,9 @@ class BlockedLog
 			if($object->fetch($this->fk_object)>0) {
 				return $object->getNomUrl(1);
 			}
+			else{
+				$this->error++;
+			}
 		}
 		else if($this->element === 'payment') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
@@ -110,6 +114,9 @@ class BlockedLog
 			$object = new Paiement($this->db);
 			if($object->fetch($this->fk_object)>0) {
 				return $object->getNomUrl(1);
+			}
+			else{
+				$this->error++;
 			}
 		}
 	
@@ -388,8 +395,13 @@ class BlockedLog
 		
 		$this->getSignatureRecursive();
 	
-		return ($signature_to_test=== $this->signature);
+		$res = ($signature_to_test === $this->signature);
 		
+		if(!$res) {
+			$this->error++;
+		}
+		
+		return $res;
 	}
 	
 	/**
