@@ -64,7 +64,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 $sql = "SELECT e.label, e.rowid, e.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " WHERE e.statut in (0,1)";
-$sql.= " AND e.entity IN (".getEntity('stock', 1).")";
+$sql.= " AND e.entity IN (".getEntity('stock').")";
 $sql.= $db->order('e.statut','DESC');
 $sql.= $db->plimit(15, 0);
 
@@ -119,7 +119,7 @@ $sql.= ", ".MAIN_DB_PREFIX."stock_mouvement as m";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE m.fk_product = p.rowid";
 $sql.= " AND m.fk_entrepot = e.rowid";
-$sql.= " AND e.entity IN (".getEntity('stock', 1).")";
+$sql.= " AND e.entity IN (".getEntity('stock').")";
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
 $sql.= $db->order("datem","DESC");
 $sql.= $db->plimit($max,0);

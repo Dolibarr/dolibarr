@@ -96,18 +96,18 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	if ($cancel) 
+	if ($cancel)
 	{
 		if ($action != 'addlink')
 		{
 			$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/list.php',1);
 			header("Location: ".$urltogo);
 			exit;
-		}		
+		}
 		if ($id > 0 || ! empty($ref)) $ret = $object->fetch($id,$ref);
 		$action='';
 	}
-	
+
 	// Action to add record
 	if ($action == 'add' && ! empty($user->rights->mymodule->create))
 	{
@@ -268,19 +268,19 @@ if ($action == 'create')
 if (($id || $ref) && $action == 'edit')
 {
 	print load_fiche_titre($langs->trans("MyModule"));
-    
+
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	
+
 	dol_fiche_head();
 
 	print '<table class="border centpercent">'."\n";
 	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
 	// LIST_OF_TD_LABEL_FIELDS_EDIT
 	print '</table>';
-	
+
 	dol_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -299,14 +299,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	$head = mymodule_prepare_head($object);
 	dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order');
-		
+
 	$formconfirm = '';
-	
+
 	// Confirmation to delete
 	if ($action == 'delete') {
 	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
 	}
-	
+
 	// Confirmation of action xxxx
 	if ($action == 'xxx')
 	{
@@ -317,28 +317,28 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	            // array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 	            // array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
 	            // array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1)));
-	    }*/	
+	    }*/
 	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
 	}
-	
+
 	if (! $formconfirm) {
 	    $parameters = array('lineid' => $lineid);
 	    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
 	    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 	}
-	
+
 	// Print form confirm
 	print $formconfirm;
-	
-	
-	
+
+
+
 	// Object card
 	// ------------------------------------------------------------
-	
+
 	$linkback = '<a href="' . DOL_URL_ROOT . '/mymodule/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-	
-	
+
+
 	$morehtmlref='<div class="refidno">';
 	/*
 	// Ref bis
@@ -382,11 +382,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 	*/
 	$morehtmlref.='</div>';
-	
-	
+
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-	
+
+
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
@@ -396,7 +396,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 	// Other attributes
-	$cols = 2;
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
@@ -405,16 +404,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
-	
-	
+
+
 
 	print '</table>';
 	print '</div>';
 	print '</div>';
 	print '</div>';
-	
+
 	print '<div class="clearboth"></div><br>';
-	
+
 	dol_fiche_end();
 
 
@@ -424,14 +423,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-    
+
     	if (empty($reshook))
     	{
+    	    // Send
+            print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>'."\n";
+
     		if ($user->rights->mymodule->write)
     		{
     			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
     		}
-    
+
     		if ($user->rights->mymodule->delete)
     		{
     			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
@@ -440,12 +442,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '</div>'."\n";
 	}
 
-	
+
 	// Select mail models is same action as presend
 	if (GETPOST('modelselected')) {
 	    $action = 'presend';
 	}
-	
+
 	if ($action != 'presend')
 	{
 	    print '<div class="fichecenter"><div class="fichehalfleft">';
@@ -458,23 +460,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    $genallowed = $user->rights->mymodule->creer;
 	    $delallowed = $user->rights->mymodule->supprimer;
 	    print $formfile->showdocuments('mymodule', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-	
-	
+
+
 	    // Show links to link elements
 	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
 	    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-	
-	
+
+
 	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-	
+
 	    // List of actions on element
 	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	    $formactions = new FormActions($db);
 	    $somethingshown = $formactions->showactions($object, 'order', $socid);
-	
+
 	    print '</div></div></div>';
 	}
-	
+
 
 	/*
 	 * Action presend

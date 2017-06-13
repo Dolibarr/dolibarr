@@ -45,7 +45,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $object = new Tva($db);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('taxvatcard','globalcard'));
 
 
@@ -65,7 +65,7 @@ if ($action == 'setdatev' && $user->rights->tax->charges->creer)
     $object->datev=dol_mktime(12,0,0,$_POST['datevmonth'],$_POST['datevday'],$_POST['datevyear']);
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
-    
+
     $action='';
 }
 
@@ -81,7 +81,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$object->num_payment=GETPOST("num_payment");
     $object->datev=$datev;
     $object->datep=$datep;
-	
+
 	$amount = price2num(GETPOST("amount"));
 	if ($refund == 1) {
 		$amount= -$amount;
@@ -89,7 +89,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     $object->amount= $amount;
 	$object->label=GETPOST("label");
 	$object->note=GETPOST("note");
-	
+
 	if (empty($object->datev))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateValue")), null, 'errors');
@@ -207,11 +207,11 @@ if ($action == 'create')
         print '$(document).ready(function () {
                 $("#radiopayment").click(function() {
                     $("#label").val($(this).data("label"));
-                    
+
                 });
                 $("#radiorefund").click(function() {
                     $("#label").val($(this).data("label"));
-                    
+
                 });
         });';
 		print '</script>'."\n";
@@ -282,8 +282,9 @@ if ($action == 'create')
 	print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 
     // Other attributes
-    $parameters=array('colspan' => ' colspan="1"');
+    $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
     print '</table>';
 
@@ -349,7 +350,9 @@ if ($id)
 	}
 
 	// Other attributes
-	$reshook=$hookmanager->executeHooks('formObjectOptions','',$object,$action);    // Note that $action and $object may have been modified by hook
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print '</table>';
 

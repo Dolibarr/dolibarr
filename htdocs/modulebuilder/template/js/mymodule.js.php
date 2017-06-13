@@ -19,9 +19,7 @@
 /**
  * \file    htdocs/modulebuilder/template/js/mymodule.js.php
  * \ingroup mymodule
- * \brief   Example JavaScript.
- *
- * Put detailed description here.
+ * \brief   JavaScript file for module MyModule.
  */
 
 header('Content-Type: application/javascript');

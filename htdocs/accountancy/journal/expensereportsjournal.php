@@ -22,13 +22,11 @@
  */
 
 /**
- * \file	htdocs/accountancy/journal/expensereportsjournal.php
- * \ingroup	Advanced accountancy
- * \brief	Page with expense reports journal
+ * \file		htdocs/accountancy/journal/expensereportsjournal.php
+ * \ingroup		Advanced accountancy
+ * \brief		Page with expense reports journal
  */
 require '../../main.inc.php';
-
-// Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
@@ -38,7 +36,6 @@ require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 
-// Langs
 $langs->load("compta");
 $langs->load("bills");
 $langs->load("other");
@@ -46,8 +43,8 @@ $langs->load("main");
 $langs->load("accountancy");
 $langs->load("trips");
 
-// Multi journal
 $id_journal = GETPOST('id_journal', 'int');
+$action = GETPOST('action','aZ09');
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -62,16 +59,15 @@ $now = dol_now();
 if ($user->societe_id > 0)
 	accessforbidden();
 
-$action = GETPOST('action','aZ09');
-
-
 /*
  * Actions
  */
-// Get code of finance journal
+ 
+// Get informations of journal
 $accountingjournalstatic = new AccountingJournal($db);
 $accountingjournalstatic->fetch($id_journal);
 $journal = $accountingjournalstatic->code;
+$journal_label = $accountingjournalstatic->label;
 
 $year_current = strftime("%Y", dol_now());
 $pastmonth = strftime("%m", dol_now()) - 1;
@@ -105,7 +101,7 @@ $sql .= " JOIN " . MAIN_DB_PREFIX . "expensereport as er ON er.rowid = erd.fk_ex
 $sql .= " JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = er.fk_user_author";
 $sql .= " WHERE er.fk_statut > 0 ";
 $sql .= " AND erd.fk_code_ventilation > 0 ";
-$sql .= " AND er.entity IN (" . getEntity("expensereport", 0) . ")";  // We don't share object for accountancy
+$sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";  // We don't share object for accountancy
 if ($date_start && $date_end)
 	$sql .= " AND er.date_debut >= '" . $db->idate($date_start) . "' AND er.date_debut <= '" . $db->idate($date_end) . "'";
 $sql .= " ORDER BY er.date_debut";
@@ -187,6 +183,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->debit = ($mt <= 0) ? $mt : 0;
 					$bookkeeping->credit = ($mt > 0) ? $mt : 0;
 					$bookkeeping->code_journal = $journal;
+					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
 
 					$result = $bookkeeping->create($user);
@@ -233,6 +230,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
 						$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
 						$bookkeeping->code_journal = $journal;
+						$bookkeeping->journal_label = $journal_label;
 						$bookkeeping->fk_user_author = $user->id;
 
 						$result = $bookkeeping->create($user);
@@ -277,6 +275,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
 					$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
 					$bookkeeping->code_journal = $journal;
+					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
 
 					$result = $bookkeeping->create($user);
@@ -444,7 +443,7 @@ if (empty($action) || $action == 'view') {
 
 	llxHeader('', $langs->trans("ExpenseReportsJournal"));
 
-	$nom = $langs->trans("ExpenseReportsJournal");
+	$nom = $langs->trans("ExpenseReportsJournal") . ' - ' . $accountingjournalstatic->getNomUrl(1);
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';

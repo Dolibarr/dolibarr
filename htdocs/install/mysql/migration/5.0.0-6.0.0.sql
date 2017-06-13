@@ -38,6 +38,8 @@
 ALTER TABLE llx_extrafields ADD COLUMN fieldcomputed text;
 ALTER TABLE llx_extrafields ADD COLUMN fielddefault varchar(255);
 
+ALTER TABLE llx_c_typent MODIFY COLUMN libelle varchar(64); 
+
 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN fk_user_creat integer NOT NULL DEFAULT 0;
@@ -381,3 +383,51 @@ create table llx_loan_schedule
 )ENGINE=innodb;
 
 ALTER TABLE llx_tva ADD COLUMN datec date AFTER tms;
+
+ALTER TABLE llx_user_rights ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_user_rights DROP FOREIGN KEY fk_user_rights_fk_user_user;
+ALTER TABLE llx_user_rights DROP INDEX uk_user_rights;
+ALTER TABLE llx_user_rights DROP INDEX fk_user;
+ALTER TABLE llx_user_rights ADD UNIQUE INDEX uk_user_rights (entity, fk_user, fk_id);
+ALTER TABLE llx_user_rights ADD CONSTRAINT fk_user_rights_fk_user_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
+
+ALTER TABLE llx_usergroup_rights ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_usergroup_rights DROP FOREIGN KEY fk_usergroup_rights_fk_usergroup;
+ALTER TABLE llx_usergroup_rights DROP INDEX fk_usergroup;
+ALTER TABLE llx_usergroup_rights ADD UNIQUE INDEX uk_usergroup_rights (entity, fk_usergroup, fk_id);
+ALTER TABLE llx_usergroup_rights ADD CONSTRAINT fk_usergroup_rights_fk_usergroup FOREIGN KEY (fk_usergroup) REFERENCES llx_usergroup (rowid);
+
+CREATE TABLE llx_blockedlog 
+( 
+	rowid integer AUTO_INCREMENT PRIMARY KEY, 
+	tms	timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	action varchar(50), 
+	amounts real NOT NULL, 
+	signature varchar(100) NOT NULL, 
+	signature_line varchar(100) NOT NULL, 
+	element varchar(50), 
+	fk_object integer,
+	ref_object varchar(100), 
+	date_object	datetime,
+	object_data	text,
+	fk_user	integer,
+	entity integer DEFAULT 1 NOT NULL, 
+	certified integer
+) ENGINE=innodb;
+
+ALTER TABLE llx_blockedlog ADD INDEX signature (signature);
+ALTER TABLE llx_blockedlog ADD INDEX fk_object_element (fk_object,element);
+ALTER TABLE llx_blockedlog ADD INDEX entity (entity);
+ALTER TABLE llx_blockedlog ADD INDEX fk_user (fk_user); 
+ALTER TABLE llx_blockedlog ADD INDEX entity_action (entity,action);
+ALTER TABLE llx_blockedlog ADD INDEX entity_action_certified (entity,action,certified);
+
+CREATE TABLE llx_blockedlog_authority 
+( 
+	rowid integer AUTO_INCREMENT PRIMARY KEY, 
+	blockchain longtext NOT NULL,
+	signature varchar(100) NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=innodb;
+
+ALTER TABLE llx_blockedlog_authority ADD INDEX signature (signature);

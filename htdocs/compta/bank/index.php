@@ -55,7 +55,7 @@ $result=restrictedArea($user,'banque');
 
 $diroutputmassaction=$conf->bank->dir_output . '/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -69,7 +69,7 @@ if (! $sortorder) $sortorder='ASC';
 // Initialize technical object to manage context to save list fields
 $contextpage='bankaccountlist';
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
@@ -152,7 +152,7 @@ $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // N
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as b";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bankcacount_extrafields as ef on (c.rowid = ef.fk_object)";
-$sql.= " WHERE entity IN (".getEntity('bank_account', 1).")";
+$sql.= " WHERE entity IN (".getEntity('bank_account').")";
 if ($statut == 'opened')  $sql.= " AND clos = 0";
 if ($statut == 'closed')  $sql.= " AND clos = 1";
 if ($search_ref != '')    $sql.=natural_search('b.ref', $search_ref);

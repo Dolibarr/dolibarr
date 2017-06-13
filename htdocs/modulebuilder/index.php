@@ -45,7 +45,7 @@ if (! $user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) accessfor
 
 // Dir for custom dirs
 $tmp=explode(',', $dolibarr_main_document_root_alt);
-$dircustom = $tmp[0];
+$dirins = $tmp[0];
 
 $FILEFLAG='modulebuilder.txt';
 
@@ -54,16 +54,16 @@ $FILEFLAG='modulebuilder.txt';
  * Actions
  */
 
-if ($dircustom && $action == 'initmodule' && $modulename)
+if ($dirins && $action == 'initmodule' && $modulename)
 {
     $srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
-    $destdir = $dircustom.'/'.strtolower($modulename);
+    $destdir = $dirins.'/'.strtolower($modulename);
 
     $arrayreplacement=array(
         'mymodule'=>strtolower($modulename),
      	'MyModule'=>$modulename
     );
-    
+
     $result = dolCopyDir($srcdir, $destdir, 0, 0, $arrayreplacement);
     //dol_mkdir($destfile);
     if ($result <= 0)
@@ -94,17 +94,17 @@ if ($dircustom && $action == 'initmodule' && $modulename)
 	        	'My module'=>$modulename,
 	        	'htdocs/modulebuilder/template/'=>'',
 	        );
-	        
-	        
+
+
 	        $result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
 	        //var_dump($result);
 	        if ($result < 0)
 	        {
 	        	setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
 	        }
-	    }    
+	    }
     }
-        
+
     if (! $error)
     {
         setEventMessages('ModuleInitialized', null);
@@ -113,15 +113,15 @@ if ($dircustom && $action == 'initmodule' && $modulename)
     }
 }
 
-if ($dircustom && $action == 'generatepackage')
+if ($dirins && $action == 'generatepackage')
 {
     $modulelowercase=strtolower($module);
-	
+
     // Dir for module
-    $dir = $dircustom.'/'.$modulelowercase;
+    $dir = $dirins.'/'.$modulelowercase;
     // Zip file to build
     $FILENAMEZIP='';
-    
+
     // Load module
     dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
     $class='mod'.$module;
@@ -144,13 +144,13 @@ if ($dircustom && $action == 'generatepackage')
         dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
         exit;
     }
-    
+
     $arrayversion=explode('.',$moduleobj->version,3);
     if (count($arrayversion))
     {
         $FILENAMEZIP="module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2]?".".$arrayversion[2]:"").".zip";
         $outputfile = $conf->admin->dir_temp.'/'.$FILENAMEZIP;
-    
+
         $result = dol_compress_dir($dir, $outputfile, 'zip');
         if ($result > 0)
         {
@@ -176,6 +176,14 @@ if ($dircustom && $action == 'generatepackage')
  * View
  */
 
+// Set dir where external modules are installed
+if (! dol_is_dir($dirins))
+{
+    dol_mkdir($dirins);
+}
+$dirins_ok=(dol_is_dir($dirins));
+
+
 llxHeader("",$langs->trans("ModuleBuilder"),"");
 
 
@@ -193,8 +201,8 @@ if (!empty($conf->modulebuilder->enabled) && $mainmenu == 'modulebuilder')	// En
     {
         foreach ($dolibarr_main_document_root_alt as $diralt)
         {*/
-            $dirsincustom=dol_dir_list($dircustom, 'directories');
-            
+            $dirsincustom=dol_dir_list($dirins, 'directories');
+
             if (is_array($dirsincustom) && count($dirsincustom) > 0)
             {
                 foreach ($dirsincustom as $dircustomcursor)
@@ -224,8 +232,40 @@ if (!empty($conf->modulebuilder->enabled) && $mainmenu == 'modulebuilder')	// En
 
 
 // Show description of content
+$newdircustom=$dirins;
+if (empty($newdircustom)) $newdircustom=img_warning();
 print $langs->trans("ModuleBuilderDesc").'<br>';
-print $langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $dircustom).'<br>';
+print $langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'<br>';
+
+$message='';
+if (! $dirins)
+{
+    $message=info_admin($langs->trans("ConfFileMustContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
+    $allowfromweb=-1;
+}
+else
+{
+    if ($dirins_ok)
+    {
+        if (! is_writable(dol_osencode($dirins)))
+        {
+            $langs->load("errors");
+            $message=info_admin($langs->trans("ErrorFailedToWriteInDir",$dirins));
+            $allowfromweb=0;
+        }
+    }
+    else
+    {
+
+        $message=info_admin($langs->trans("NotExistsDirect",$dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
+        $allowfromweb=0;
+    }
+}
+if ($message)
+{
+    print $message;
+}
+
 print $langs->trans("ModuleBuilderDesc3", count($listofmodules), $FILEFLAG).'<br>';
 //print '<br>';
 
@@ -237,7 +277,7 @@ $moduleobj = null;
 if (! empty($module) && $module != 'initmodule')
 {
 	$modulelowercase=strtolower($module);
-	
+
     // Load module
     dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
     $class='mod'.$module;
@@ -261,7 +301,7 @@ if (! empty($module) && $module != 'initmodule')
     }
 }
 
-print '<br>';            
+print '<br>';
 
 
 // Tabs for all modules
@@ -272,7 +312,7 @@ $head[$h][0] = $_SERVER["PHP_SELF"].'?module=initmodule';
 $head[$h][1] = $langs->trans("NewModule");
 $head[$h][2] = 'initmodule';
 $h++;
-    
+
 foreach($listofmodules as $tmpmodule => $tmpmodulewithcase)
 {
     $head[$h][0] = $_SERVER["PHP_SELF"].'?module='.$tmpmodulewithcase;
@@ -292,11 +332,11 @@ if ($module == 'initmodule')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="initmodule">';
     print '<input type="hidden" name="module" value="initmodule">';
-    
+
     print $langs->trans("EnterNameOfModuleDesc").'<br><br>';
-    
+
     print '<input type="text" name="modulename" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'">';
-    print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
+    print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins?'':' disabled="disabled"').'>';
     print '</form>';
 }
 elseif (! empty($module))
@@ -310,53 +350,50 @@ elseif (! empty($module))
        	$modulestatusinfo=img_info('').' '.$langs->trans("ModuleIsNotActive");
         if (! empty($conf->$module->enabled))
         {
-        	$modulestatusinfo=img_warning().' '.$langs->trans("ModuleIsLive");	
+        	$modulestatusinfo=img_warning().' '.$langs->trans("ModuleIsLive");
         }
-        
-        foreach($listofmodules as $tmpmodule => $tmpmodulewithcase)
-        {
-            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=description&module='.$tmpmodulewithcase;
-            $head2[$h][1] = $langs->trans("Description");
-            $head2[$h][2] = 'description';
-            $h++;
-            
-            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$tmpmodulewithcase;
-            $head2[$h][1] = $langs->trans("Objects");
-            $head2[$h][2] = 'objects';
-            $h++;        
-        
-            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=menus&module='.$tmpmodulewithcase;
-            $head2[$h][1] = $langs->trans("Menus");
-            $head2[$h][2] = 'menus';
-            $h++;
-            
-            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=permissions&module='.$tmpmodulewithcase;
-            $head2[$h][1] = $langs->trans("Permissions");
-            $head2[$h][2] = 'permissions';
-            $h++;        
-    
-            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=triggers&module='.$tmpmodulewithcase;
-            $head2[$h][1] = $langs->trans("Triggers");
-            $head2[$h][2] = 'triggers';
-            $h++;        
 
-            $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=buildpackage&module='.$tmpmodulewithcase;
-            $head2[$h][1] = $langs->trans("BuildPackage");
-            $head2[$h][2] = 'buildpackage';
-            $h++;        
-        }
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=description&module='.$module;
+        $head2[$h][1] = $langs->trans("Description");
+        $head2[$h][2] = 'description';
+        $h++;
+
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module;
+        $head2[$h][1] = $langs->trans("Objects");
+        $head2[$h][2] = 'objects';
+        $h++;
+
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=menus&module='.$module;
+        $head2[$h][1] = $langs->trans("Menus");
+        $head2[$h][2] = 'menus';
+        $h++;
+
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=permissions&module='.$module;
+        $head2[$h][1] = $langs->trans("Permissions");
+        $head2[$h][2] = 'permissions';
+        $h++;
+
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=triggers&module='.$module;
+        $head2[$h][1] = $langs->trans("Triggers");
+        $head2[$h][2] = 'triggers';
+        $h++;
+
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=buildpackage&module='.$module;
+        $head2[$h][1] = $langs->trans("BuildPackage");
+        $head2[$h][2] = 'buildpackage';
+        $h++;
 
         print $modulestatusinfo.'<br><br>';
-       
+
         dol_fiche_head($head2, $tab, '', -1, '');
 
         print $langs->trans("ModuleBuilderDesc".$tab).'<br><br>';
-        
+
         if ($tab == 'description')
         {
         	print '<div class="underbanner clearboth"></div>';
         	print '<div class="fichecenter">';
-        	
+
         	print '<table class="border centpercent">';
         	print '<tr class="liste_titre"><td class="titlefield">';
         	print $langs->trans("Parameter");
@@ -369,90 +406,90 @@ elseif (! empty($module))
         	print '</td><td>';
         	print $moduleobj->numero;
         	print '</td></tr>';
-        	
+
         	print '<tr><td>';
         	print $langs->trans("Name");
         	print '</td><td>';
         	print $moduleobj->getName();
         	print '</td></tr>';
-        	
+
         	print '<tr><td>';
         	print $langs->trans("Version");
         	print '</td><td>';
         	print $moduleobj->getVersion();
         	print '</td></tr>';
-        	
+
         	print '<tr><td>';
         	print $langs->trans("Family");
         	print "<br>'crm','financial','hr','projects','products','ecm','technic','interface','other'";
         	print '</td><td>';
         	print $moduleobj->family;
         	print '</td></tr>';
-        	
+
         	print '<tr><td>';
         	print $langs->trans("EditorName");
         	print '</td><td>';
         	print $moduleobj->editor_name;
         	print '</td></tr>';
-        	
+
         	print '<tr><td>';
         	print $langs->trans("EditorUrl");
         	print '</td><td>';
         	print $moduleobj->editor_url;
         	print '</td></tr>';
-        	
+
         	print '<tr><td>';
         	print $langs->trans("Description");
         	print '</td><td>';
         	print $moduleobj->getDesc();
         	print '</td></tr>';
-        	
+
         	print '<tr><td>';
         	print $langs->trans("LongDescription");
         	print '</td><td>';
         	print $moduleobj->getDescLong();
         	print '</td></tr>';
-        	
+
         	print '</table>';
-    		
+
         	print '</div>';
-    		
+
         	print '<br><br>';
         	print '<form name="delete">';
         	print '<input type="hidden" name="action" value="confirm_delete">';
         	print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
         	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
-        	print '<input type="submit" class="buttonDelete" value="'.$langs->trans("Delete").'">';		
+        	print '<input type="submit" class="buttonDelete" value="'.$langs->trans("Delete").'"'.($dirins?'':' disabled="disabled"').'>';
         	print '</form>';
         }
-        
+
         if ($tab == 'objects')
         {
     		print $langs->trans("FeatureNotYetAvailable");
-        	
-        
+
+
         }
-        
+
         if ($tab == 'menus')
         {
     		print $langs->trans("FeatureNotYetAvailable");
-        	
-        
+
+
         }
-        
+
         if ($tab == 'permissions')
         {
     		print $langs->trans("FeatureNotYetAvailable");
-        
+
         }
-        
+
         if ($tab == 'triggers')
         {
         	require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-        	
+
 			$interfaces = new Interfaces($db);
 			$triggers = $interfaces->getTriggersList(array('/'.strtolower($module).'/core/triggers'));
-			
+
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder">
 			<tr class="liste_titre">
@@ -461,11 +498,11 @@ elseif (! empty($module))
 			<td align="center">&nbsp;</td>
 			</tr>
 			';
-			
+
 			$var=True;
 			foreach ($triggers as $trigger)
 			{
-				
+
 				print '<tr class="oddeven">';
 				print '<td valign="top" width="14" align="center">'.$trigger['picto'].'</td>';
 				print '<td class="tdtop">'.$trigger['file'].'</td>';
@@ -478,7 +515,7 @@ elseif (! empty($module))
 				print '</td>';
 				print '</tr>';
 			}
-			
+
 			print '</table>';
 			print '</div>';
         }
@@ -490,15 +527,15 @@ elseif (! empty($module))
                 print img_warning().' '.$langs->trans("ErrNoZipEngine");
                 print '<br>';
             }
-            
+
         	print '<form name="generatepackage">';
         	print '<input type="hidden" name="action" value="generatepackage">';
         	print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
         	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
-        	print '<input type="submit" class="button" value="'.$langs->trans("Generate").'">';		
+        	print '<input type="submit" class="button" value="'.$langs->trans("Generate").'">';
         	print '</form>';
         }
-        
+
         dol_fiche_end();
     }
 }

@@ -50,7 +50,7 @@ $cancel=GETPOST('cancel');
 $amount=GETPOST('amount');
 $donation_date=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
-    
+
 $object = new Don($db);
 $extrafields = new ExtraFields($db);
 
@@ -60,7 +60,7 @@ $result = restrictedArea($user, 'don', $id);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('doncard','globalcard'));
 
 /*
@@ -336,7 +336,7 @@ if ($action == 'create')
     print '</tr>';
 
 	// Country
-    print '<tr><td><label for="selectcountry_id">'.$langs->trans('Country').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+    print '<tr><td><label for="selectcountry_id">'.$langs->trans('Country').'</label></td><td class="maxwidthonsmartphone">';
     print $form->select_country(GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id);
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     print '</td></tr>';
@@ -346,7 +346,7 @@ if ($action == 'create')
 	// Public note
 	print '<tr>';
 	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
-	print '<td valign="top" colspan="2">';
+	print '<td>';
 
     $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
@@ -356,7 +356,7 @@ if ($action == 'create')
 	if (empty($user->societe_id)) {
 		print '<tr>';
 		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
-		print '<td valign="top" colspan="2">';
+		print '<td>';
 
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
@@ -371,8 +371,9 @@ if ($action == 'create')
     }
 
     // Other attributes
-    $parameters=array('colspan' => 3);
+    $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
     if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
 		print $object->showOptionals($extrafields,'edit',$parameters);
@@ -442,7 +443,7 @@ if (! empty($id) && $action == 'edit')
 	}
 	else
 	{
-		print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">';
+		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
 		print price($object->amount,0,$langs,0,0,-1,$conf->currency);
 		print '</td></tr>';
 	}
@@ -467,7 +468,7 @@ if (! empty($id) && $action == 'edit')
 	print '</tr>';
 
 	// Country
-	print '<tr><td class="titlefieldcreate">'.$langs->trans('Country').'</td><td colspan="3">';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans('Country').'</td><td>';
 	print $form->select_country((!empty($object->country_id)?$object->country_id:$mysoc->country_code),'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
@@ -496,8 +497,9 @@ if (! empty($id) && $action == 'edit')
     }
 
     // Other attributes
-    $parameters=array('colspan' => ' colspan="2"');
+    $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
     if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
       	print $object->showOptionals($extrafields,'edit');
@@ -544,9 +546,9 @@ if (! empty($id) && $action != 'edit')
 
 	// Print form confirm
 	print $formconfirm;
-	
+
 	$linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-	
+
 	$morehtmlref='<div class="refidno">';
 	// Project
 	if (! empty($conf->projet->enabled))
@@ -581,8 +583,8 @@ if (! empty($id) && $action != 'edit')
 	    }
 	}
 	$morehtmlref.='</div>';
-	
-	
+
+
     dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
 
@@ -620,7 +622,7 @@ if (! empty($id) && $action != 'edit')
 	// Zip / Town
 	print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
 	print $object->zip.($object->zip && $object->town?' / ':'').$object->town.'</td></tr>';
-	
+
 	// Country
 	print '<tr><td>'.$langs->trans('Country').'</td><td>';
 	if (! empty($object->country_code))
@@ -634,18 +636,18 @@ if (! empty($id) && $action != 'edit')
 	    print $object->country_olddata;
 	}
 	print '</td></tr>';
-	
+
 	// EMail
 	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td>'.dol_print_email($object->email).'</td></tr>';
 	*/
-	
+
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
 	$form->form_modes_reglement(null, $object->modepaymentid,'none');
 	print "</td></tr>\n";
-	
+
 	//print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
-	
+
 	// Project
 	/*
 	if (! empty($conf->projet->enabled))
@@ -660,7 +662,7 @@ if (! empty($id) && $action != 'edit')
 	    print '</td>';
 	    print '</tr>';
 	}*/
-	
+
 	// Other attributes
 	$cols = 2;
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -702,7 +704,7 @@ if (! empty($id) && $action != 'edit')
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
-			
+
 			print '<tr class="oddeven"><td>';
 			print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";

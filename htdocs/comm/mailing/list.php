@@ -45,7 +45,7 @@ $sall=GETPOST('sall', 'alphanohtml');
 $sref=GETPOST("sref", "alpha");
 $filteremail=GETPOST('filteremail','alpha');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('mailinglist'));
 $extrafields = new ExtraFields($db);
 

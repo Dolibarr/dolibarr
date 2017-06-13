@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 $langs->load("stock");
 $langs->load("inventory");
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);

@@ -6,6 +6,8 @@ English Dolibarr ChangeLog
 
 For developers:
 NEW: Add a lot of API REST: dictionaryevents, memberstypes, ...
+NEW: Big refactorization of multicompany transverse mode.
+NEW: getEntity function use true $shared value by default.
 
 WARNING: 
 
@@ -15,12 +17,19 @@ Following changes may create regression for some external modules, but were nece
 * The page societe/soc.php was renamed into societe/card.php to match page naming conventions.
 * The page compta/facture.php was renamed into compta/facture/card.php to match page naming conventions.
 * The signature of method ->delete() of class Product and PriceExpression was changed from 
-  ->delete($id, notrigger) to ->delete(User, notrigger) to match standard dev rules.
+  ->delete(id, notrigger) to ->delete(User, notrigger) to match standard dev rules.
+* The signature of method ->delete() of class Adherent was changed from 
+  ->delete(id) to ->delete(id, User, notrigger) to match standard dev rules.
 * Removed CommonObject::displayMarginInfos (was deprecated in 3.8). Use same method into
   html.formmargin.class.php
 * Removed Societe::set_commnucation_level (was deprecated in 4.0). Was not used.
 * Removed the trigger file of PAYPAL module that stored data that was not used by Dolibarr. The trigger event still
   exists, but if an external module need action on it, it must provides itself its trigger file.
+* Use $conf->global->MULTICOMPANY_TRANSVERSE_MODE instead $conf->multicompany->transverse_mode
+* Use getEntity('xxx') instead getEntity('xxx', 1) and use getEntity('xxx', 0) instead getEntity('xxx')
+* The hook formObjectOptions was not implemented correctly in previous version. Sometimes, you had to return output 
+content by doing a print into function, sometimes by returning content into "resprint". This has been fixed to follow
+hook specifications so you must return output into "resprint".
 
 ***** ChangeLog for 5.0.3 compared to 5.0.2 *****
 FIX: #6677 Expired contracts dashboard box does not show the name of the thirdparty

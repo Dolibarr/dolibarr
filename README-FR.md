@@ -103,25 +103,24 @@ Voir fichier ChangeLog.
 
 ### Divers:
 
-- Application multi-utilisateurs avec différents niveaux de permissions par module.
+- Multi-langue.
+- Multi-utilisateurs avec différents niveaux de permissions par module.
+- Multi-devise.
 - Peux être multi-société par ajout du module externe multi-société.
-- Peux-être multi-devise par ajout du module externe multi-devise.
-- Plusieurs gestionnaires de menus (possibilité de différencier les menus pour les utilisateurs internes ou externes comme les clients ou fournisseurs).
-- Application simple à utiliser.
 - Plusieurs thèmes visuels.
-- Code simple et facilement personnalisable.
-- Requiert PHP et MariaDb, Mysql ou Postgresql (Voir versions exactes sur http://wiki.dolibarr.org/index.php/Prérequis). 
+- Application simple à utiliser.
+- Requiert PHP et MariaDb, Mysql ou Postgresql (Voir versions exactes sur https://wiki.dolibarr.org/index.php/Prérequis). 
 - Compatible avec toutes les offres Cloud du marché respectant les prérequis de base de données et PHP.
-- Export PDF de tous les éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
+- Code simple et facilement personnalisable (pas de framework lourd; mécanisme de hook et triggers).
+- APIs.
+- Génération PDF et ODT des éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
 
 
 ## CE QUE DOLIBARR NE PEUT PAS FAIRE (TACHES A FAIRE)
 
 Voici un liste de fonctionnalites pas encore gérées par Dolibarr:
-- Pas encore de compta analytique double-partie (uniquement gestion de trésorerie).
-- Dolibarr ne gère qu'une seule monnaie à la fois (mono-devise).
 - Dolibarr ne contient pas de module de Gestion de la paie.
-- Les tâches du module de gestion de projets n'ont pas de dépendance entre elle.
+- Les tâches du module de gestion de projets n'ont pas de dépendances entre elle.
 - Dolibarr ne contient pas de Webmail.
 - Dolibarr ne fait pas le café (pas encore). 
 

@@ -825,7 +825,7 @@ function activateModule($value,$withdeps=1)
             {
                 // Activation of modules this module depends on
                 // this->depends may be array('modModule1', 'mmodModule2') or array('always'=>"modModule1", 'FR'=>'modModule2')
-                foreach ($objMod->depend as $key => $modulestring)
+                foreach ($objMod->depends as $key => $modulestring)
                 {
                     if ((! is_numeric($key)) && $key != 'always' && $key != $mysoc->country_code)
                     {
