@@ -1195,11 +1195,14 @@ class Holiday extends CommonObject
      *
      *    @param      boolean			$stringlist	    If true return a string list of id. If false, return an array
      *    @param      boolean   		$type			If true, read Dolibarr user list, if false, return vacation balance list.
+     *    @param      string            $filters        Filters
      *    @return     array|string|int      			Return an array
      */
-    function fetchUsers($stringlist=true,$type=true)
+    function fetchUsers($stringlist=true, $type=true, $filters='')
     {
     	global $conf;
+
+    	dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
 
         // Si vrai donc pour user Dolibarr
         if ($stringlist)
@@ -1219,11 +1222,12 @@ class Holiday extends CommonObject
                 	$sql.= " OR u.admin = 1";
                 }
                 else
+                {
                 	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
-
+                }
                 $sql.= " AND u.statut > 0";
+                if ($filters) $sql.=$filters;
 
-                dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
                 $resql=$this->db->query($sql);
 
                 // Si pas d'erreur SQL
@@ -1261,9 +1265,10 @@ class Holiday extends CommonObject
             {
            		// We want only list of user id
                 $sql = "SELECT DISTINCT cpu.fk_user";
-                $sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu";
+                $sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
+                $sql.= " WHERE cpu.fk_user = u.user";
+                if ($filters) $sql.=$filters;
 
-                dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
                 $resql=$this->db->query($sql);
 
                 // Si pas d'erreur SQL
@@ -1318,8 +1323,8 @@ class Holiday extends CommonObject
                 	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 
                 $sql.= " AND u.statut > 0";
+                if ($filters) $sql.=$filters;
 
-                dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
                 $resql=$this->db->query($sql);
 
                 // Si pas d'erreur SQL
@@ -1358,14 +1363,13 @@ class Holiday extends CommonObject
                 }
             }
             else
-           {
+            {
 				// List of vacation balance users
                 $sql = "SELECT cpu.fk_user, cpu.fk_type, cpu.nb_holiday, u.lastname, u.firstname";
-                $sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu,";
-                $sql.= " ".MAIN_DB_PREFIX."user as u";
+                $sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
                 $sql.= " WHERE cpu.fk_user = u.rowid";
+                if ($filters) $sql.=$filters;
 
-                dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
                 $resql=$this->db->query($sql);
 
                 // Si pas d'erreur SQL
