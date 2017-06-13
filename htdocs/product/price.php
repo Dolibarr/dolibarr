@@ -1328,7 +1328,9 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     $result = $db->query($sql);
     if ($result)
     {
-    	$num = $db->num_rows($result);
+        print '<div class="divlogofpreviouscustomerprice">';
+
+        $num = $db->num_rows($result);
 
     	if (! $num)
     	{
@@ -1471,6 +1473,8 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     		print '</div>';
     		print "<br>";
     	}
+
+    	print '</div>';
     } else {
     	dol_print_error($db);
     }
