@@ -502,8 +502,7 @@ class BlockedLog
 	 */
 	private function getCurrentValue() {
 		
-		if($this->action === 'PAYMENT_CUSTOMER_CREATE'
-		|| $this->action === 'PAYMENT_ADD_TO_BANK') {
+		if($this->element === 'payment') {
 			$sql="SELECT amount FROM ".MAIN_DB_PREFIX."paiement WHERE rowid=".$this->fk_object;
 					
 			$res = $this->db->query($sql);
@@ -512,7 +511,15 @@ class BlockedLog
 				$this->amounts = (double) $obj->amount;
 			}
 		}
-				
+		elseif($this->element === 'facture') {
+			$sql="SELECT total_ttc FROM ".MAIN_DB_PREFIX."facture WHERE rowid=".$this->fk_object;
+			
+			$res = $this->db->query($sql);
+			if($res && $obj = $this->db->fetch_object($res)) {
+				$this->amounts = (double) $obj->total_ttc;
+			}
+		}
+		
 	}
 	
 	/**
