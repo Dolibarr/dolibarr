@@ -808,11 +808,6 @@ if (empty($reshook))
 				$price_min = $product->multiprices_min [$object->thirdparty->price_level];
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
-
-			if ($price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min))) {
-				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
-				$error ++;
-			}
 		} else {
 			$type = GETPOST('type');
 			$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
