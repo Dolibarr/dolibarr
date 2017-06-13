@@ -1561,9 +1561,12 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			// Menu niveau > 0
 			if ($menu_array[$i]['level'] > 0)
 			{
-				if ($menu_array[$i]['enabled'])
+				$cssmenu = '';
+				if ($menu_array[$i]['url']) $cssmenu = ' menu_contenu'.dol_string_nospecial(preg_replace('/\.php.*$/','',$menu_array[$i]['url']));
+
+			    if ($menu_array[$i]['enabled'])
 				{
-					print '<div class="menu_contenu">'.$tabstring;
+					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring;
 					if ($menu_array[$i]['url']) print '<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
 					else print '<span class="vsmenu">';
 					print $menu_array[$i]['titre'];
@@ -1575,7 +1578,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 				else if ($showmenu)
 				{
-					print '<div class="menu_contenu">'.$tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font><br></div>'."\n";
+					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font><br></div>'."\n";
 				}
 			}
 
