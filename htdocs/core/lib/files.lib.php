@@ -1891,6 +1891,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	    if ($fuser->rights->fournisseur->facture->{$lire}) $accessallowed=1;
 	    $original_file=$conf->fournisseur->facture->dir_output.'/'.$original_file;
 	}
+	// Wrapping pour les apercu supplier invoice
+	elseif (($modulepart == 'apercuexpensereport') && !empty($conf->expensereport->dir_output))
+	{
+	    if ($fuser->rights->expensereport->{$lire}) $accessallowed=1;
+	    $original_file=$conf->expensereport->dir_output.'/'.$original_file;
+	}
 	// Wrapping pour les images des stats propales
 	elseif ($modulepart == 'propalstats' && !empty($conf->propal->dir_temp))
 	{
