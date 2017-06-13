@@ -300,7 +300,7 @@ if (! defined('NOTOKENRENEWAL'))
 {
     // roulement des jetons car cree a chaque appel
     if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
-    
+
     // Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = $_SESSION['newtoken']
     $token = dol_hash(uniqid(mt_rand(),TRUE)); // Generates a hash of a random number
     $_SESSION['newtoken'] = $token;
@@ -586,7 +586,7 @@ if (! defined('NOLOGIN'))
         // We are already into an authenticated session
         $login=$_SESSION["dol_login"];
         $entity=$_SESSION["dol_entity"];
-        dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login." _SESSION['dol_entity']=".$entity, LOG_DEBUG);
+        dol_syslog("- This is an already logged session. _SESSION['dol_login']=".$login." _SESSION['dol_entity']=".$entity, LOG_DEBUG);
 
         $resultFetchUser=$user->fetch('',$login,'',1,($entity > 0 ? $entity : -1));
         if ($resultFetchUser <= 0)
@@ -1051,7 +1051,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         $ext='version='.urlencode(DOL_VERSION);
         if (GETPOST('version')) $ext='version='.GETPOST('version','int');	// usefull to force no cache on css/js
         if (GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) $ext='testmenuhider='.GETPOST('testmenuhider','int');
-        
+
         $themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss')?'&amp;optioncss='.GETPOST('optioncss','alpha',1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
         $themeparam.=($ext?'&amp;'.$ext:'');
         if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
@@ -1060,7 +1060,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         if (GETPOST('dol_optimize_smallscreen'))   { $themeparam.='&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen','int'); }
         if (GETPOST('dol_no_mouse_hover'))         { $themeparam.='&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover','int'); }
         if (GETPOST('dol_use_jmobile'))            { $themeparam.='&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile','int'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile','int'); }
-        
+
         if (! defined('DISABLE_JQUERY') && ! $disablejs && $conf->use_javascript_ajax)
         {
             print '<!-- Includes CSS for JQuery (Ajax library) -->'."\n";
@@ -1929,7 +1929,7 @@ if (! function_exists("llxFooter"))
             	});
             </script>' . "\n";
         }
-        
+
         // Wrapper to manage dropdown
         if ($conf->use_javascript_ajax)
         {
@@ -1960,7 +1960,7 @@ if (! function_exists("llxFooter"))
                      console.log("Link has class dropdowncloseonclick, so we close/hide the popup ul");
                      $(this).parent().parent().hide();
                   });
-            
+
                   $(document).bind(\'click\', function (e) {
                       var $clicked = $(e.target);
                       if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
@@ -1968,7 +1968,7 @@ if (! function_exists("llxFooter"))
                 });
                 </script>';
         }
-                
+
 		// A div for the address popup
 		print "\n<!-- A div to allow dialog popup -->\n";
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";
