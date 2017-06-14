@@ -66,7 +66,7 @@ $year_end        = GETPOST('year_end');
 $search_employe  = GETPOST('search_employe');
 $search_valideur = GETPOST('search_valideur');
 $search_statut   = GETPOST('select_statut');
-$type            = GETPOST('type','int'); 
+$type            = GETPOST('type','int');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -310,14 +310,14 @@ print '</td>';
 if ($user->rights->holiday->write_all)
 {
     print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($search_employe,"search_employe",1,"",0,'','',0,32,0,'',0,'','maxwidth200');
+    print $form->select_dolusers($search_employe,"search_employe",1,"",0,'','',0,0,0,'',0,'','maxwidth200');
     print '</td>';
 }
 else
 {
     //print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($user->id,"search_employe",1,"",1,'','',0,32,0,'',0,'','maxwidth200');
+    print $form->select_dolusers($user->id,"search_employe",1,"",1,'','',0,0,0,'',0,'','maxwidth200');
     print '</td>';
 }
 
@@ -331,7 +331,7 @@ if($user->rights->holiday->write_all)
     $valideurobjects = $validator->listUsersForGroup($excludefilter);
     $valideurarray = array();
     foreach($valideurobjects as $val) $valideurarray[$val->id]=$val->id;
-    print $form->select_dolusers($search_valideur,"search_valideur",1,"",0,$valideurarray,'', 0, 32,0,'',0,'','maxwidth200');
+    print $form->select_dolusers($search_valideur,"search_valideur",1,"",0,$valideurarray,'', 0, 0, 0, '', 0, '', 'maxwidth200');
     print '</td>';
 }
 else
@@ -408,7 +408,7 @@ if (! empty($holiday->holiday))
 		$userstatic->login=$infos_CP['user_login'];
 		$userstatic->statut=$infos_CP['user_statut'];
 		$userstatic->photo=$infos_CP['user_photo'];
-		
+
 		// Valideur
 		$approbatorstatic->id=$infos_CP['fk_validator'];
 		$approbatorstatic->lastname=$infos_CP['validator_lastname'];
@@ -416,7 +416,7 @@ if (! empty($holiday->holiday))
 		$approbatorstatic->login=$infos_CP['validator_login'];
 		$approbatorstatic->statut=$infos_CP['validator_statut'];
 		$approbatorstatic->photo=$infos_CP['validator_photo'];
-		
+
 		$date = $infos_CP['date_create'];
 
 		print '<tr class="oddeven">';

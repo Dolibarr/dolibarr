@@ -54,12 +54,13 @@ $alwaysuncheckedmodules=array();
 $alwayshiddencheckedmodules=array();
 $alwayshiddenuncheckedmodules=array();
 
-$url=DOL_URL_ROOT.'/index.php?';
+$url='';
 $url.=($url?'&':'').($conf->dol_hide_topmenu?'dol_hide_topmenu='.$conf->dol_hide_topmenu:'');
 $url.=($url?'&':'').($conf->dol_hide_leftmenu?'dol_hide_leftmenu='.$conf->dol_hide_leftmenu:'');
 $url.=($url?'&':'').($conf->dol_optimize_smallscreen?'dol_optimize_smallscreen='.$conf->dol_optimize_smallscreen:'');
 $url.=($url?'&':'').($conf->dol_no_mouse_hover?'dol_no_mouse_hover='.$conf->dol_no_mouse_hover:'');
 $url.=($url?'&':'').($conf->dol_use_jmobile?'dol_use_jmobile='.$conf->dol_use_jmobile:'');
+$url=DOL_URL_ROOT.'/index.php'.($url?'?'.$url:'');
 
 $tmpaction = 'view';
 $parameters=array();
@@ -104,6 +105,7 @@ if (empty($reshook))
 		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-all.jpg'
 	    )
 	);
+
 
 	// Visible
 	$alwayscheckedmodules=array('barcode','bookmark','categorie','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
@@ -202,7 +204,7 @@ asort($orders);
  * Actions
  */
 
-if (GETPOST('action','aZ09') == 'gotodemo')
+if (GETPOST('action','aZ09') == 'gotodemo')     // Action run when we click on "Start" after selection modules
 {
 	//print 'ee'.GETPOST("demochoice");
 	$disablestring='';
@@ -232,8 +234,9 @@ if (GETPOST('action','aZ09') == 'gotodemo')
     // Do redirect to login page
 	if ($disablestring)
 	{
-		if (GETPOST('urlfrom')) $url.=($url?'&':'').'urlfrom='.urlencode(GETPOST('urlfrom','alpha'));
-		$url.=($url?'&':'').'disablemodules='.$disablestring;
+		if (GETPOST('urlfrom')) $url.=(preg_match('/\?/',$url)?'&amp;':'?').'urlfrom='.urlencode(GETPOST('urlfrom','alpha'));
+		$url.=(preg_match('/\?/',$url)?'&amp;':'?').'disablemodules='.$disablestring;
+        //var_dump($url);exit;
 		header("Location: ".$url);
 		exit;
 	}
@@ -252,25 +255,25 @@ $head.='
 <script type="text/javascript">
 var openedId="";
 jQuery(document).ready(function () {
-jQuery("tr.moduleline").hide();
-// Enable this to allow personalized setup
-jQuery(".modulelineshow").attr("href","#a1profdemoall");
-jQuery(".cursorpointer").css("cursor","pointer");
-jQuery(".modulelineshow").click(function() {
-var idstring=$(this).attr("id");
-if (typeof idstring != "undefined")
-{
-var currentId = idstring.substring(2);
-jQuery("tr.moduleline").hide();
-if (currentId != openedId)
-{
-openedId=currentId;
-jQuery("#tr1"+currentId).show();
-jQuery("#tr2"+currentId).show();
-}
-else openedId = "";
-}
-});
+    jQuery("tr.moduleline").hide();
+    // Enable this to allow personalized setup
+    jQuery(".modulelineshow").attr("href","#a1profdemoall");
+    jQuery(".cursorpointer").css("cursor","pointer");
+    jQuery(".modulelineshow").click(function() {
+    var idstring=$(this).attr("id");
+    if (typeof idstring != "undefined")
+    {
+        var currentId = idstring.substring(2);
+        jQuery("tr.moduleline").hide();
+        if (currentId != openedId)
+        {
+            openedId=currentId;
+            jQuery("#tr1"+currentId).show();
+            jQuery("#tr2"+currentId).show();
+        }
+            else openedId = "";
+        }
+    });
 });
 </script>';
 
@@ -304,13 +307,23 @@ foreach ($demoprofiles as $profilearray)
 	    //print $profilearray['lang'];
 	    if (! empty($profilearray['lang'])) $langs->load($profilearray['lang']);
 
-		$url=$_SERVER["PHP_SELF"].'?action=gotodemo&amp;urlfrom='.urlencode($_SERVER["PHP_SELF"]);
+		$url=$_SERVER["PHP_SELF"].'?action=gotodemo';
 		$urlwithmod=$url.'&amp;demochoice='.$profilearray['key'];
 		// Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
 		//print "xx".$_SERVER["PHP_SELF"].' '.DOL_URL_ROOT.'<br>';
-		$urlfrom=preg_replace('/^'.preg_quote(DOL_URL_ROOT,'/').'/i','',$_SERVER["PHP_SELF"]);
+
+        $urlfrom=preg_replace('/^'.preg_quote(DOL_URL_ROOT,'/').'/i','',$_SERVER["PHP_SELF"]);
 		//print $urlfrom;
-		if (! empty($profilearray['url'])) $urlwithmod=$profilearray['url'];
+
+		if (! empty($profilearray['url']))
+		{
+		    $urlwithmod=$profilearray['url'];
+		    $urlwithmod=$urlwithmod.(preg_match('/\?/',$urlwithmod)?'&amp;':'?').'urlfrom='.urlencode($urlfrom);
+		    if (! empty($profilearray['disablemodules']))
+		    {
+		          $urlwithmod=$urlwithmod.(preg_match('/\?/',$urlwithmod)?'&amp;':'?').'disablemodules='.$profilearray['disablemodules'];
+		    }
+		}
 
 		if (empty($profilearray['url']))
 		{
@@ -348,7 +361,7 @@ foreach ($demoprofiles as $profilearray)
     	print '</a>';
 
 
-        // Modules
+        // Modules (a profile you must choose modules)
         if (empty($profilearray['url']))
         {
     		print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="margin-left: 8px; margin-right: 8px; text-align: justify; font-size:14px; line-height: 130%; padding-bottom: 8px">';

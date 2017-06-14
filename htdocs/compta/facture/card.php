@@ -3429,7 +3429,7 @@ else if ($id > 0 || ! empty($ref))
 			print $object->situation_counter;
 
 			print '</td>';
-			print '<td align="right" class="nowrap">';
+			print '<td class="nowrap">';
 
 			$prevsits_total_amount = 0;
 			foreach ($prevsits as $situation) {
@@ -3437,9 +3437,9 @@ else if ($id > 0 || ! empty($ref))
 			}
 			$prevsits_total_amount += $object->total_ht;
 
-			print price($prevsits_total_amount);
-			print '</td>';
-			print '<td>' . $langs->trans('Currency' . $conf->currency) . '</td></tr>';
+			print price($prevsits_total_amount, 0, $langs, 1, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency) );
+
+			print '</td></tr>';
 
 			// Previous situation(s) deduction(s)
 			for ($i = 0; $i < $cprevsits; $i++) {
@@ -3450,10 +3450,9 @@ else if ($id > 0 || ! empty($ref))
 				print $prevsits[$i]->situation_counter;
 				print '</a></td>';
 
-				print '<td align="right" class="nowrap">';
-				print '- ' . price($prevsits[$i]->total_ht);
-				print '</td>';
-				print '<td>' . $langs->trans('Currency' . $conf->currency) . '</td></tr>';
+				print '<td class="nowrap">';
+				print '- ' . price($prevsits[$i]->total_ht, 0, $langs, 1, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency) );
+				print '</td></tr>';
 			}
 		}
 	}

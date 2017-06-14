@@ -414,6 +414,9 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	        case 'intcomma':
 	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
 	            break;
+	        case 'intcomma':
+	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
+	            break;
 	        case 'alpha':
 	            $out=trim($out);
 	            // '"' is dangerous because param in url can close the href= or src= and add javascript functions.
@@ -758,7 +761,7 @@ function dol_string_unaccent($str)
  */
 function dol_string_nospecial($str,$newstr='_',$badcharstoreplace='')
 {
-	$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+	$forbidden_chars_to_replace=array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=");
 	$forbidden_chars_to_remove=array();
 	if (is_array($badcharstoreplace)) $forbidden_chars_to_replace=$badcharstoreplace;
 	//$forbidden_chars_to_remove=array("(",")");
@@ -1158,14 +1161,15 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 
 	if (class_exists("Imagick"))
 	{
-		if ($object->element == 'propal')    $modulepart='propal';
-		if ($object->element == 'commande')  $modulepart='commande';
-		if ($object->element == 'facture')   $modulepart='facture';
-		if ($object->element == 'fichinter') $modulepart='ficheinter';
-		if ($object->element == 'contrat')   $modulepart='contract';
+	    if ($object->element == 'propal')            $modulepart='propal';
+		if ($object->element == 'commande')          $modulepart='commande';
+		if ($object->element == 'facture')           $modulepart='facture';
+		if ($object->element == 'fichinter')         $modulepart='ficheinter';
+		if ($object->element == 'contrat')           $modulepart='contract';
 	    if ($object->element == 'supplier_proposal') $modulepart='supplier_proposal';
 		if ($object->element == 'order_supplier')    $modulepart='supplier_order';
 	    if ($object->element == 'invoice_supplier')  $modulepart='supplier_invoice';
+		if ($object->element == 'expensereport')     $modulepart='expensereport';
 	}
 
 	if ($object->element == 'product')
@@ -1195,7 +1199,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
             {
                 $phototoshow='';
                 // Check if a preview file is available
-                if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract', 'supplier_order', 'supplier_proposal', 'supplier_invoice')) && class_exists("Imagick"))
+                if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract', 'supplier_order', 'supplier_proposal', 'supplier_invoice', 'expensereport')) && class_exists("Imagick"))
                 {
                     $objectref = dol_sanitizeFileName($object->ref);
                     $dir_output = $conf->$modulepart->dir_output . "/";
