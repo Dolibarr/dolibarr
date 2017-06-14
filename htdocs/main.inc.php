@@ -576,7 +576,7 @@ if (! defined('NOLOGIN'))
 	        $paramsurl=array();
 	        if (GETPOST('textbrowser')) $paramsurl[]='textbrowser='.GETPOST('textbrowser','int');
 	        if (GETPOST('nojs')) $paramsurl[]='nojs='.GETPOST('nojs','int');
-	        if (GETPOST('lang')) $paramsurl[]='lang='.GETPOST('lang','alpha');
+	        if (GETPOST('lang')) $paramsurl[]='lang='.GETPOST('lang', 'aZ09');
             header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl)?'?'.implode('&',$paramsurl):''));
             exit;
         }
@@ -635,7 +635,7 @@ if (! defined('NOLOGIN'))
 	        $paramsurl=array();
 	        if (GETPOST('textbrowser')) $paramsurl[]='textbrowser='.GETPOST('textbrowser','int');
 	        if (GETPOST('nojs')) $paramsurl[]='nojs='.GETPOST('nojs','int');
-	        if (GETPOST('lang')) $paramsurl[]='lang='.GETPOST('lang','alpha');
+	        if (GETPOST('lang')) $paramsurl[]='lang='.GETPOST('lang', 'aZ09');
             header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl)?'?'.implode('&',$paramsurl):''));
             exit;
         }
