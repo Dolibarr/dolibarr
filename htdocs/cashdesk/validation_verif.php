@@ -32,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
-unset ($_SESSION['serObjFacturation']);
 
 $action =GETPOST('action','aZ09');
 $bankaccountid=GETPOST('cashdeskbank');
@@ -45,14 +44,14 @@ switch ($action)
 
 	case 'valide_achat':
 	    $thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
-	    
+
 		$company=new Societe($db);
 		$company->fetch($thirdpartyid);
 
 		$invoice=new Facture($db);
 		$invoice->date=dol_now();
 		$invoice->type= Facture::TYPE_STANDARD;
-		
+
 		// To use a specific numbering module for POS, reset $conf->global->FACTURE_ADDON and other vars here
 		// and restore values just after
 		$sav_FACTURE_ADDON='';
@@ -68,7 +67,7 @@ switch ($action)
 			// To force rule only for POS with mercure
 			//...
 		}
-		
+
 		$num=$invoice->getNextNumRef($company);
 
 		// Restore save values
@@ -76,7 +75,7 @@ switch ($action)
 		{
 			$conf->global->FACTURE_ADDON = $sav_FACTURE_ADDON;
 		}
-		
+
 		$obj_facturation->numInvoice($num);
 
 		$obj_facturation->getSetPaymentMode($_POST['hdnChoix']);
@@ -129,7 +128,7 @@ switch ($action)
 			exit;
 		}
 
-		switch ( $obj_facturation->getSetPaymentMode() )
+		switch ($obj_facturation->getSetPaymentMode() )
 		{
 			case 'DIF':
 				$mode_reglement_id = 0;
@@ -158,7 +157,6 @@ switch ($action)
 		if (empty($cond_reglement_id)) $cond_reglement_id=0;	// If cond_reglement_id not found
 		$note .= $_POST['txtaNotes'];
 		dol_syslog("obj_facturation->getSetPaymentMode()=".$obj_facturation->getSetPaymentMode()." mode_reglement_id=".$mode_reglement_id." cond_reglement_id=".$cond_reglement_id);
-
 
 		$error=0;
 
@@ -255,14 +253,15 @@ switch ($action)
 			}
 			else
 			{
-				$error++;
+				setEventMessage($invoice->error, $invoice->errors, 'errors');
+			    $error++;
 			}
 
 			$id = $invoice->id;
 		}
 		else
 		{
-			$resultcreate=$invoice->create($user,0,0);
+		    $resultcreate=$invoice->create($user,0,0);
 			if ($resultcreate > 0)
 			{
 				$warehouseidtodecrease=(isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0);
@@ -287,7 +286,8 @@ switch ($action)
 							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
 							else $result=$mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
 							if ($result < 0) {
-								$error++;
+							    setEventMessages($mouvP->error, $mouvP->errors, 'errors');
+							    $error++;
 							}
 						}
 					}
@@ -331,14 +331,17 @@ switch ($action)
 				}
 				else
 				{
-					$error++;
+				    setEventMessages($invoice->error, $invoice->errors, 'errors');
+				    $error++;
 				}
 			}
 			else
 			{
-				$error++;
+				setEventMessages($invoice->error, $invoice->errors, 'errors');
+			    $error++;
 			}
 		}
+
 
 		if (! $error)
 		{
@@ -348,14 +351,14 @@ switch ($action)
 		else
 		{
 			$db->rollback();
-			$redirection = 'affIndex.php?facid='.$id.'&mesg=ErrorFailedToCreateInvoice';	// Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
+			$redirection = 'affIndex.php?facid='.$id.'&error=1&mesg=ErrorFailedToCreateInvoice';	// Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
 		}
 		break;
 
 		// End of case: valide_facture
 }
 
-
+unset ($_SESSION['serObjFacturation']);
 
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
 
