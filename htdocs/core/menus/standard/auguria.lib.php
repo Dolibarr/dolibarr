@@ -300,6 +300,8 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 	// We update newmenu for special dynamic menus
 	if ($conf->banque->enabled && $user->rights->banque->lire && $mainmenu == 'bank')	// Entry for each bank account
 	{
+	    include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';     // Required for to get Account::TYPE_CASH for example
+
 		$sql = "SELECT rowid, label, courant, rappro, courant";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql.= " WHERE entity = ".$conf->entity;
