@@ -116,7 +116,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datef,f.rowid";
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $contextpage='supplierinvoicelist';
 
 $diroutputmassaction=$conf->fournisseur->facture->dir_output . '/temp/massgeneration/'.$user->id;
@@ -125,7 +125,7 @@ $object=new FactureFournisseur($db);
 
 $now=dol_now();
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('supplierinvoicelist'));
 $extrafields = new ExtraFields($db);
 
@@ -292,7 +292,7 @@ if ($search_user > 0)
     $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql.= ' WHERE f.fk_soc = s.rowid';
-$sql.= ' AND f.entity IN ('.getEntity('facture_fourn', 1).')';
+$sql.= ' AND f.entity IN ('.getEntity('facture_fourn').')';
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
 if ($socid > 0) $sql .= ' AND s.rowid = '.$socid;

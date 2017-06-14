@@ -38,7 +38,7 @@ $quality = 80;
 function image_format_supported($file)
 {
     $regeximgext='\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.xpm|\.xbm';   // See also into product.class.php
-    
+
     // Case filename is not a format image
     if (! preg_match('/('.$regeximgext.')$/i',$file,$reg)) return -1;
 
@@ -90,7 +90,7 @@ function dol_getImageSize($file, $url = false)
     	$ret['width']=$infoImg[0]; // Largeur de l'image
     	$ret['height']=$infoImg[1]; // Hauteur de l'image
 	}
-	
+
 	return $ret;
 }
 
@@ -438,6 +438,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	dol_mkdir($dirthumb);
 
 	// Initialisation des variables selon l'extension de l'image
+	$img=null;
 	switch($infoImg[2])
 	{
 		case IMAGETYPE_GIF:	    // 1

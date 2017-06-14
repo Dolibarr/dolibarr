@@ -80,7 +80,7 @@ $pagenext = $page + 1;
 $search_country_id = GETPOST('search_country_id','int');
 $search_code = GETPOST('search_code','alpha');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admin'));
 
 // This page is a generic page to edit dictionaries
@@ -189,7 +189,7 @@ $tabsql[21]= "SELECT c.rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX
 $tabsql[22]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
 $tabsql[23]= "SELECT t.rowid as rowid, t.taux, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[24]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_type_resource";
-//$tabsql[25]= "SELECT rowid   as rowid, label, type_template, private, position, topic, content_lines, content, active FROM ".MAIN_DB_PREFIX."c_email_templates WHERE entity IN (".getEntity('email_template',1).")";
+//$tabsql[25]= "SELECT rowid   as rowid, label, type_template, private, position, topic, content_lines, content, active FROM ".MAIN_DB_PREFIX."c_email_templates WHERE entity IN (".getEntity('email_template').")";
 $tabsql[26]= "SELECT rowid   as rowid, code, label, short_label, active FROM ".MAIN_DB_PREFIX."c_units";
 $tabsql[27]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_stcomm";
 $tabsql[28]= "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
@@ -501,6 +501,14 @@ $tabfieldcheck[34] = array();
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp,$tabfieldcheck);
 
+
+// Defaut sortorder
+if (empty($sortfield))
+{
+    $tmp1 = explode(',',$tabsqlsort[$id]);
+    $tmp2 = explode(' ',$tmp1[0]);
+    $sortfield=preg_replace('/^.*\./', '', $tmp2[0]);
+}
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
@@ -944,7 +952,8 @@ if ($id)
 
     if (! preg_match('/ WHERE /',$sql)) $sql.= " WHERE 1 = 1";
     if ($search_country_id > 0) $sql.= " AND c.rowid = ".$search_country_id;
-    if ($search_code != '')     $sql.= natural_search("code", $search_code);
+    if ($search_code != '' && $id != 9)     $sql.= natural_search("code", $search_code);
+    if ($search_code != '' && $id == 9)     $sql.= natural_search("code_iso", $search_code);
 
     if ($sortfield)
     {

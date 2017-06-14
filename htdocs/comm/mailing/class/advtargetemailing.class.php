@@ -466,7 +466,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sqlwhere=array();
 
-		$sqlwhere[]= 't.entity IN ('.getEntity('societe',1).')';
+		$sqlwhere[]= 't.entity IN ('.getEntity('societe').')';
 
 		if (count($arrayquery)>0) {
 
@@ -625,7 +625,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sqlwhere=array();
 
-		$sqlwhere[]= 't.entity IN ('.getEntity('socpeople',1).')';
+		$sqlwhere[]= 't.entity IN ('.getEntity('socpeople').')';
 
 		if (count($arrayquery)>0) {
 

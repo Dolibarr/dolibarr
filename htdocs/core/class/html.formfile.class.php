@@ -35,7 +35,7 @@
 class FormFile
 {
     private $db;
-    
+
     public $error;
     public $numoffiles;
     public $infofiles;			// Used to return informations by function getDocumentsLink
@@ -332,11 +332,11 @@ class FormFile
 							jQuery(\'#togglemassfilesarea\').text("('.dol_escape_js($langs->trans("Hide")).')");
 						}
 						return false;
-					});		
+					});
 				});
 				</script>';
-        }        
-        
+        }
+
         $titletoshow=$langs->trans("Documents");
         if (! empty($title)) $titletoshow=$title;
 
@@ -593,7 +593,7 @@ class FormFile
             if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" id="'.$forname.'_form" method="post">';
             $out.= '<input type="hidden" name="action" value="builddoc">';
             $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            
+
             $out.= load_fiche_titre($titletoshow, '', '');
             $out.= '<div class="div-table-responsive-no-min">';
             $out.= '<table class="liste formdoc noborder" summary="listofdocumentstable" width="100%">';
@@ -682,9 +682,9 @@ class FormFile
                 $sortfield = $sortorder = null;
                 $res = $link->fetchAll($link_list, $object->element, $object->id, $sortfield, $sortorder);
             }
-            
+
             $out.= '<!-- html.formfile::showdocuments -->'."\n";
-            
+
             // Show title of array if not already shown
             if ((! empty($file_list) || ! empty($link_list) || preg_match('/^massfilesarea/', $modulepart)) && ! $headershown)
             {
@@ -706,8 +706,8 @@ class FormFile
 					$out.= '<tr class="oddeven">';
 
 					$documenturl = DOL_URL_ROOT.'/document.php';
-					if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) $documenturl=$conf->global->DOL_URL_ROOT_DOCUMENT_PHP;
-					
+					if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) $documenturl=$conf->global->DOL_URL_ROOT_DOCUMENT_PHP;    // To use another wrapper
+
 					// Show file name with link to download
 					$out.= '<td class="tdoverflowmax300">';
                     $tmp = $this->showPreview($file,$modulepart,$relativepath,0,$param);
@@ -774,7 +774,7 @@ class FormFile
             if (is_array($link_list))
             {
                 $colspan=2;
-                    
+
                 foreach($link_list as $file)
                 {
                     $out.='<tr class="oddeven">';
@@ -791,7 +791,7 @@ class FormFile
                 }
                 $this->numoffiles++;
             }
-            
+
 		 	if (count($file_list) == 0 && count($link_list) == 0 && $headershown)
             {
 	        	$out.='<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
@@ -835,7 +835,7 @@ class FormFile
     	$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
 
     	//if (! empty($conf->dol_use_jmobile)) return '';
-  	 
+
 		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir),'/').'[^\-]+', '\.meta$|\.png$');	// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files)
 
     	// For ajax treatment
@@ -876,7 +876,7 @@ class FormFile
                     $tmparray = getAdvancedPreviewUrl($modulepart, $relativepath, 1, '&entity='.$entity);
                     if ($tmparray && $tmparray['url']) $tmpout.= '<li><a href="'.$tmparray['url'].'"'.($tmparray['css']?' class="'.$tmparray['css'].'"':'').($tmparray['mime']?' mime="'.$tmparray['mime'].'"':'').($tmparray['target']?' target="'.$tmparray['target'].'"':'').'>'.img_picto('','detail').' '.$langs->trans("Preview").' '.$ext.'</a></li>';
     			}
-    			
+
     			// Download
     		    $tmpout.= '<li><a class="pictopreview" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
     			$mime=dol_mimetype($relativepath,'',0);
@@ -946,7 +946,7 @@ class FormFile
 		if ($upload_dir)
 		{
     		$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dir);
-    		$relativedir = preg_replace('/^[\\/]/','',$relativedir); 
+    		$relativedir = preg_replace('/^[\\/]/','',$relativedir);
 		}
 
 		$hookmanager->initHooks(array('formfile'));
@@ -983,7 +983,7 @@ class FormFile
 			        if ($user->rights->service->creer && $object->type == Product::TYPE_SERVICE) $permtoeditline=1;
 			    }
 			}
-			if (empty($conf->global->MAIN_UPLOAD_DOC)) 
+			if (empty($conf->global->MAIN_UPLOAD_DOC))
 			{
 			    $permtoeditline=0;
 			    $permonobject=0;
@@ -992,7 +992,7 @@ class FormFile
 			// Show list of existing files
 			if (empty($useinecm)) print load_fiche_titre($title?$title:$langs->trans("AttachedFiles"));
 			if (empty($url)) $url=$_SERVER["PHP_SELF"];
-			
+
 			print '<!-- html.formfile::list_of_documents -->'."\n";
 			if (GETPOST('action','aZ09') == 'editfile' && $permtoeditline)
 			{
@@ -1003,7 +1003,7 @@ class FormFile
 			}
 			print '<div class="div-table-responsive-no-min">';
 			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborder':'liste').'">'."\n";
-			
+
 			print '<tr class="liste_titre nodrag nodrop">';
 			print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
@@ -1017,10 +1017,10 @@ class FormFile
 			if ($relativedir)
 			{
                 $filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC);
-    
+
                 //var_dump($filearray);
                 //var_dump($filearrayindatabase);
-                
+
                 // Complete filearray with properties found into $filearrayindatabase
     			foreach($filearray as $key => $val)
     			{
@@ -1040,7 +1040,7 @@ class FormFile
     			            break;
     			        }
     			    }
-    			    
+
     			    if (! $found)    // This happen in transition towerd version 6, or if files were added manually into os dir.
     			    {
     			        $filearray[$key]['position']='999999';     // File not indexed are at end. So if we add a file, it will not replace an existing position
@@ -1053,13 +1053,13 @@ class FormFile
         			        dol_syslog("list_of_documents We found a file called '".$filearray[$key]['name']."' not indexed into database. We add it");
         			        include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
         			        $ecmfile=new EcmFiles($this->db);
-        			        	
+
         			        // Add entry into database
         			        $filename = basename($rel_filename);
         			        $rel_dir = dirname($rel_filename);
         			        $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
         			        $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
-        			         
+
         			        $ecmfile->filepath = $rel_dir;
         			        $ecmfile->filename = $filename;
         			        $ecmfile->label = md5_file(dol_osencode($filearray[$key]['fullname']));        // $destfile is a full path to file
@@ -1083,21 +1083,21 @@ class FormFile
     			        }
     			    }
     			}
-    
+
     			/*var_dump($filearray);
     			var_dump($sortfield);
     			var_dump($sortorder);*/
-    			 
+
     			if ($sortfield && $sortorder)
     			{
         			$filearray=dol_sort_array($filearray, $sortfield, $sortorder);
     			}
     			//var_dump($filearray);
 			}
-			
+
 			$nboffiles=count($filearray);
 			if ($nboffiles > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-				
+
 			$var=true; $i=0; $nboflines = 0; $lastrowid=0;
 			foreach($filearray as $key => $file)      // filearray must be only files here
 			{
@@ -1105,10 +1105,10 @@ class FormFile
 						&& $file['name'] != '..'
 						&& ! preg_match('/\.meta$/i',$file['name']))
 				{
-					
-					
+
+
 					if ($filearray[$key]['rowid'] > 0) $lastrowid = $filearray[$key]['rowid'];
-					
+
 					$editline=0;
 					$nboflines++;
 			        print '<!-- Line list_of_documents '.$key.' relativepath = '.$relativepath.' -->'."\n";
@@ -1116,11 +1116,11 @@ class FormFile
 			        print '<!-- In database: position='.$filearray[$key]['position'].' -->'."\n";
 					print '<tr id="row-'.($filearray[$key]['rowid']>0?$filearray[$key]['rowid']:'-AFTER'.$lastrowid.'POS'.($i+1)).'" '.$bcdd[$var].'>';
 					print '<td class="tdoverflowmax300">';
-					
+
 					$filepath=$relativepath.$file['name'];
-					
+
 					if (! $editline) print $this->showPreview($file,$modulepart,$filepath);
-					
+
 					//print "XX".$file['name'];	//$file['name'] must be utf8
 					print '<a class="paddingleft" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 					if ($forcedownload) print '&attachment=1';
@@ -1143,13 +1143,13 @@ class FormFile
 					    print $file['name'];
 					    print '</a>';
 					}
-					
+
 					print "</td>\n";
-					
+
 					print '<td align="right" width="80px">'.dol_print_size($file['size'],1,1).'</td>';
-					
+
 					print '<td align="center" width="130px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
-				
+
 					// Preview
 					if (empty($useinecm))
 					{
@@ -1175,7 +1175,7 @@ class FormFile
     					// Delete or view link
     					// ($param must start with &)
     					print '<td class="valignmiddle right"><!-- action on files -->';
-    					if ($useinecm)     
+    					if ($useinecm)
     					{
     					    print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view('default', 0, 'class="paddingrightonly"').'</a>';
     					}
@@ -1183,10 +1183,10 @@ class FormFile
     					{
         					$newmodulepart=$modulepart;
         					if (in_array($modulepart, array('product','produit','service'))) $newmodulepart='produit|service';
-    						
-        					$disablecrop=1; 
+
+        					$disablecrop=1;
         					if (in_array($modulepart, array('product','produit','service','expensereport','holiday','project','user'))) $disablecrop=0;
-        					
+
     					    if (! $disablecrop && image_format_supported($file['name']) > 0)
     						{
     							if ($permtoeditline)
@@ -1195,7 +1195,7 @@ class FormFile
        			               		print '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode($newmodulepart).'&id='.$object->id.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','class="paddingrightonly"',1).'</a>';
     							}
     						}
-    						
+
     						if ($permtoeditline)
     						{
     						    print '<a href="'.(($useinecm && $useajax)?'#':$url.'?action=editfile&urlfile='.urlencode($filepath).$param).'" class="editfilelink" rel="'.$filepath.'">'.img_edit('default',0,'class="paddingrightonly"').'</a>';
@@ -1213,15 +1213,15 @@ class FormFile
     						if (! empty($conf->dol_use_jmobile)) $useajax=0;
     						if (empty($conf->use_javascript_ajax)) $useajax=0;
     						if (! empty($conf->global->MAIN_ECM_DISABLE_JS)) $useajax=0;
-    
+
     						print '<a href="'.(($useinecm && $useajax)?'#':$url.'?action=delete&urlfile='.urlencode($filepath).$param).'" class="deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
     					}
 					    print "</td>";
 
 					    if (empty($disablemove))
 					    {
-    					    if ($nboffiles > 1 && empty($conf->browser->phone)) { 
-    					    	print '<td align="center" class="linecolmove tdlineupdown">'; 
+    					    if ($nboffiles > 1 && empty($conf->browser->phone)) {
+    					    	print '<td align="center" class="linecolmove tdlineupdown">';
     					    	if ($i > 0) {
     					    		print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id.'">'.img_up('default',0,'imgupforline').'</a>';
     					    	}
@@ -1245,7 +1245,7 @@ class FormFile
 					    if (empty($disablemove)) print '<td class="right"></td>';
 					}
 					print "</tr>\n";
-					
+
 					$i++;
 				}
 			}
@@ -1260,19 +1260,19 @@ class FormFile
 			}
 			print "</table>";
 			print '</div>';
-			
-			if (! $editline && $nboflines > 1) { 
+
+			if (! $editline && $nboflines > 1) {
 				if (! empty($conf->use_javascript_ajax) && $permtoeditline) {
 				    $table_element_line = 'ecm_files';
 				    include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 				}
-			}				
-			
+			}
+
 			if (GETPOST('action','aZ09') == 'editfile' && $permtoeditline)
 			{
 			    print '</form>';
 			}
-			    	
+
 			return $nboffiles;
 		}
 	}
@@ -1449,19 +1449,19 @@ class FormFile
 
                 if (! $found > 0 || ! is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) continue;    // We do not show orphelins files
 
-                
+
                 print '<!-- Line list_of_autoecmfiles '.$key.' -->'."\n";
                 print '<tr class="oddeven">';
                 print '<td>';
                 if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) print $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]->getNomUrl(1,'document');
                 else print $langs->trans("ObjectDeleted",($id?$id:$ref));
-                
+
                 $filename=dol_sanitizeFileName($ref);
                 //$filedir=$conf->$modulepart->dir_output . '/' . dol_sanitizeFileName($obj->ref);
                 $filedir=$file['path'];
                 //$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
                 //print $formfile->getDocumentsLink($modulepart, $filename, $filedir);
-                
+
                 print '</td>';
                 print '<td>';
                 //print "XX".$file['name']; //$file['name'] must be utf8
@@ -1471,9 +1471,9 @@ class FormFile
                 print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
                 print dol_trunc($file['name'],$maxlength,'middle');
                 print '</a>';
-                
+
                 print $this->getDocumentsLink($modulepart, $filename, $filedir);
-                
+
                 print "</td>\n";
                 print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
                 print '<td align="center">'.dol_print_date($file['date'],"dayhour").'</td>';
@@ -1668,11 +1668,11 @@ class FormFile
 
         return $nboflinks;
     }
-    
-    
+
+
     /**
      * Show detail icon with link for preview
-     * 
+     *
      * @param   array     $file           File
      * @param   string    $modulepart     propal, facture, facture_fourn, ...
      * @param   string    $relativepath   Relative path of docs

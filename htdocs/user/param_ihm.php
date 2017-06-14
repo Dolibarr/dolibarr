@@ -78,7 +78,7 @@ $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$lan
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('usercard','globalcard'));
 
 

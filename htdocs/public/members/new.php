@@ -91,7 +91,7 @@ $extrafields = new ExtraFields($db);
 function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
     global $user, $conf, $langs, $mysoc;
-    
+
     top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
     print '<body id="mainbody" class="publicnewmemberform" style="margin-top: 10px;">';
 
@@ -115,7 +115,7 @@ function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayo
     print '<img alt="Logo" id="logosubscribe" title="" src="'.$urllogo.'" />';
     print '</div><br>';
 
-    print '<div style="margin-left: 50px; margin-right: 50px;">';
+    print '<div class="divmainbodylarge">';
 }
 
 /**
@@ -301,32 +301,43 @@ if ($action == 'add')
             {
                 if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
                 {
-                    $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
+                    $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
                     if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
                 }
                 else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
                 {
-                    $urlback=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
+                    $urlback=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
                     if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
-                    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+                    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
                     {
-                    	$urlback.='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2);
+                        if (! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+                        {
+                    	   $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                        }
+                        else
+                        {
+                            $urlback.='&securekey='.urlencode($conf->global->PAYPAL_SECURITY_TOKEN);
+                        }
                     }
-                    
                 }
 				else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
                     if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
-					/*
-                    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+                    if (! empty($conf->global->STRIPE_SECURITY_TOKEN))
                     {
-                    	$urlback.='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2);
+                        if (! empty($conf->global->STRIPE_SECURITY_TOKEN_UNIQUE))
+                        {
+                    	   $urlback.='&securekey='.urlencode(dol_hash($conf->global->STRIPE_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                        }
+                        else
+                        {
+                            $urlback.='&securekey='.urlencode($conf->global->STRIPE_SECURITY_TOKEN);
+                        }
                     }
-					*/
                 }
                 else
                 {
@@ -396,8 +407,9 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" / >';
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print '<input type="hidden" name="action" value="add" />';
 
+print '<br>';
 
-print '<br>'.$langs->trans("FieldsWithAreMandatory",'*').'<br>';
+print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory",'*').'</span><br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
 dol_fiche_head('');
@@ -437,7 +449,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE))
     $defaulttype='';
     $isempty=1;
     if (count($listoftype)==1) { $defaulttype=$tmp[0]; $isempty=0; }
-    print '<tr><td width="15%">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td width="35%">';
+    print '<tr><td class="titlefield">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td>';
     print $form->selectarray("type",  $adht->liste_array(), GETPOST('type')?GETPOST('type'):$defaulttype, $isempty);
     print '</td></tr>'."\n";
 }
@@ -452,7 +464,7 @@ $morphys["phy"] = $langs->trans("Physical");
 $morphys["mor"] = $langs->trans("Moral");
 if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY))
 {
-    print '<tr class="morphy"><td>'.$langs->trans('Nature').' <FONT COLOR="red">*</FONT></td><td>'."\n";
+    print '<tr class="morphy"><td class="titlefield">'.$langs->trans('Nature').' <FONT COLOR="red">*</FONT></td><td>'."\n";
     print $form->selectarray("morphy",  $morphys, GETPOST('morphy'), 1);
     print '</td></tr>'."\n";
 }
@@ -462,14 +474,14 @@ else
     print '<input type="hidden" id="morphy" name="morphy" value="'.$conf->global->MEMBER_NEWFORM_FORCEMORPHY.'">';
 }
 // Civility
-print '<tr><td>'.$langs->trans('UserTitle').'</td><td>';
+print '<tr><td class="titlefield">'.$langs->trans('UserTitle').'</td><td>';
 print $formcompany->select_civility(GETPOST('civility_id'),'civility_id').'</td></tr>'."\n";
 // Lastname
-print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="lastname" size="40" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
 // Firstname
-print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="firstname" size="40" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
 // Company
-print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
+print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address')).'</textarea></td></tr>'."\n";
@@ -480,7 +492,7 @@ print ' / ';
 print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode','selectcountry_id','state_id'), 0, 1);
 print '</td></tr>';
 // Country
-print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
+print '<tr><td>'.$langs->trans('Country').'</td><td>';
 $country_id=GETPOST('country_id');
 if (! $country_id && ! empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) $country_id=getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE,2,$db,$langs);
 if (! $country_id && ! empty($conf->geoipmaxmind->enabled))
@@ -506,20 +518,20 @@ if (empty($conf->global->SOCIETE_DISABLE_STATE))
     print '</td></tr>';
 }
 // EMail
-print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" size="40" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Login
 if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 {
-    print '<tr><td>'.$langs->trans("Login").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="login" size="20" value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
-    print '<tr><td>'.$langs->trans("Password").' <FONT COLOR="red">*</FONT></td><td><input type="password" name="pass1" size="20" value="'.GETPOST("pass1").'"></td></tr>'."\n";
-    print '<tr><td>'.$langs->trans("PasswordAgain").' <FONT COLOR="red">*</FONT></td><td><input type="password" name="pass2" size="20" value="'.GETPOST("pass2").'"></td></tr>'."\n";
+    print '<tr><td>'.$langs->trans("Login").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="login" class="minwidth100"value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
+    print '<tr><td>'.$langs->trans("Password").' <FONT COLOR="red">*</FONT></td><td><input type="password" name="pass1" class="minwidth100" value="'.GETPOST("pass1").'"></td></tr>'."\n";
+    print '<tr><td>'.$langs->trans("PasswordAgain").' <FONT COLOR="red">*</FONT></td><td><input type="password" name="pass2" class="minwidth100" value="'.GETPOST("pass2").'"></td></tr>'."\n";
 }
 // Birthday
 print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateToBirth").'</td><td>';
 print $form->select_date($birthday,'birth',0,0,1,"newmember",1,0,1);
 print '</td></tr>'."\n";
 // Photo
-print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" size="40" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
 // Public
 print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
 // Extrafields

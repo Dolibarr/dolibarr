@@ -178,7 +178,7 @@ class ThirdpartyApi extends DolibarrApi
         if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
         if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
         if ($mode == 3) $sql.= " AND s.client IN (0)";
-        $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
+        $sql.= ' AND s.entity IN ('.getEntity('societe').')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";
         if ($email != NULL) $sql.= " AND s.email = \"".$email."\"";
         if ($socid) $sql.= " AND s.rowid = ".$socid;

@@ -188,9 +188,9 @@ class FormActions
         	print load_fiche_titre($title, $buttontoaddnewevent, '');
 
         	$page=0; $param=''; $sortfield='a.datep';
-        	
-        	$total = 0; 
-        	
+
+        	$total = 0;
+
         	print '<div class="div-table-responsive">';
         	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
         	print '<tr class="liste_titre">';
@@ -209,12 +209,23 @@ class FormActions
         	{
         		$ref=$action->getNomUrl(1,-1);
         		$label=$action->getNomUrl(0,38);
-                
-        		
+
         		print '<tr class="oddeven">';
 				print '<td>'.$ref.'</td>';
         		print '<td>'.$label.'</td>';
-        		print '<td>'.$action->type.'</td>';
+        		print '<td>';
+        		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+        		{
+        		    if ($action->type_picto) print img_picto('', $action->type_picto);
+        		    else {
+        		        if ($action->type_code == 'AC_RDV')   print img_picto('', 'object_group').' ';
+        		        if ($action->type_code == 'AC_TEL')   print img_picto('', 'object_phoning').' ';
+        		        if ($action->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax').' ';
+        		        if ($action->type_code == 'AC_EMAIL') print img_picto('', 'object_email').' ';
+        		    }
+        		}
+        		print $action->type;
+        		print '</td>';
         		print '<td>'.dol_print_date($action->datep,'dayhour');
         		if ($action->datef)
         		{
@@ -233,7 +244,7 @@ class FormActions
         			$userstatic->id = $action->author->id;
         			$userstatic->firstname = $action->author->firstname;
         			$userstatic->lastname = $action->author->lastname;
-        			print $userstatic->getNomUrl(1);
+        			print $userstatic->getNomUrl(1, '', 0, 0, 16, 0, '', '');
         		}
         		print '</td>';
         		print '<td align="right">';
@@ -285,22 +296,22 @@ class FormActions
        	if (! empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) unset($arraylist['AC_OTH_AUTO']);
 
        	$out='';
-       	
-		if (! empty($multiselect)) 
+
+		if (! empty($multiselect))
 		{
 	        if (!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
 			$out.=$form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		}
-		else 
+		else
 		{
 			$out.=$form->selectarray($htmlname, $arraylist, $selected);
 		}
-		
-        if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) 
+
+        if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0)
         {
             $out.=info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup").($hideinfohelp == -1 ? ". ".$langs->trans("YouCanSetDefaultValueInModuleSetup") : ''),1);
         }
-        
+
         if ($nooutput) return $out;
         else print $out;
         return '';

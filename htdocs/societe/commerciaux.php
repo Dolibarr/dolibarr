@@ -142,13 +142,13 @@ if (! empty($socid))
 	$sql = "SELECT DISTINCT u.rowid, u.login, u.fk_soc, u.lastname, u.firstname, u.statut, u.entity, u.photo";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 	$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+	if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 	{
 	    $sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
 	}
 	$sql .= " WHERE sc.fk_soc =".$object->id;
 	$sql .= " AND sc.fk_user = u.rowid";
-	if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+	if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 	{
 		$sql.= " AND ((ug.fk_user = sc.fk_user";
 		$sql.= " AND ug.entity = ".$conf->entity.")";
@@ -174,7 +174,8 @@ if (! empty($socid))
 
  			$parameters=array('socid'=>$object->id);
         	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$obj,$action);    // Note that $action and $object may have been modified by hook
-      		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+            print $hookmanager->resPrint;
+        	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
       		$tmpuser->id = $obj->rowid;
       		$tmpuser->firstname = $obj->firstname;
@@ -229,7 +230,7 @@ if (! empty($socid))
 
 		$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.login, u.email, u.statut, u.fk_soc, u.photo";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+		if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 		{
 			$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
 			$sql.= " WHERE ((ug.fk_user = u.rowid";

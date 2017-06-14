@@ -127,12 +127,13 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 
 		$logfile = $this->getFilename($suffixinfilename);
 
-		if (! empty($conf->global->SYSLOG_FILE_NO_ERROR)) $filefd = @fopen($logfile, 'a+');
+		// Test constant SYSLOG_FILE_NO_ERROR (should stay a constant defined with define('SYSLOG_FILE_NO_ERROR',1);
+		if (defined('SYSLOG_FILE_NO_ERROR')) $filefd = @fopen($logfile, 'a+');
 		else $filefd = fopen($logfile, 'a+');
 
 		if (! $filefd)
 		{
-			if (empty($conf->global->SYSLOG_FILE_NO_ERROR))
+			if (! defined('SYSLOG_FILE_NO_ERROR') || ! constant('SYSLOG_FILE_NO_ERROR'))
 			{
 				// Do not break dolibarr usage if log fails
 				//throw new Exception('Failed to open log file '.basename($logfile));
@@ -151,7 +152,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				LOG_INFO => 'INFO',
 				LOG_DEBUG => 'DEBUG'
 			);
-			
+
 			$delay = "";
 			if (!empty($conf->global->MAIN_SYSLOG_SHOW_DELAY))
 			{
@@ -159,7 +160,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				$delay = " ".sprintf("%05.3f", $this->lastTime != 0 ? $now - $this->lastTime : 0);
 				$this->lastTime = $now;
 			}
-			
+
 			$message = dol_print_date(time(),"%Y-%m-%d %H:%M:%S").$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident>0?str_pad('',$this->ident,' '):'').$content['message'];
 			fwrite($filefd, $message."\n");
 			fclose($filefd);

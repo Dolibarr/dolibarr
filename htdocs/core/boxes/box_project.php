@@ -48,12 +48,14 @@ class box_project extends ModeleBoxes
      */
     function __construct($db,$param='')
     {
-        global $langs;
+        global $user, $langs;
         $langs->load("boxes");
         $langs->load("projects");
 
         $this->db = $db;
         $this->boxlabel="Projects";
+
+        $this->hidden=! ($user->rights->projet->lire);
     }
 
 	/**
@@ -77,26 +79,26 @@ class box_project extends ModeleBoxes
 
 		// list the summary of the orders
 		if ($user->rights->projet->lire) {
-		    
+
 		    include_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 		    $projectstatic = new Project($this->db);
-		    
+
 		    $socid=$user->societe_id;
-		    
+
     		// Get list of project id allowed to user (in a string list separated by coma)
 		    $projectsListId='';
     		if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1,$socid);
-		
+
 		    $sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.public";
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             if($user->socid) $sql.= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=p.fk_soc";
-			$sql.= " WHERE p.entity IN (".getEntity('project',1).')';
+			$sql.= " WHERE p.entity IN (".getEntity('project').')';
             if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
 			if ($user->socid) $sql.= " AND s.rowid = ".$user->socid;
             $sql.= " AND p.fk_statut = 1"; // Seulement les projets ouverts
             if ($socid) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
             if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-            
+
             $sql.= " ORDER BY p.datec DESC";
 			//$sql.= $db->plimit($max, 0);
 
@@ -130,7 +132,7 @@ class box_project extends ModeleBoxes
 
 					$sql ="SELECT count(*) as nb, sum(progress) as totprogress";
 					$sql.=" FROM ".MAIN_DB_PREFIX."projet as p LEFT JOIN ".MAIN_DB_PREFIX."projet_task as pt on pt.fk_projet = p.rowid";
-	           		$sql.= " WHERE p.entity IN (".getEntity('project',1).')';
+	           		$sql.= " WHERE p.entity IN (".getEntity('project').')';
     				$sql.=" AND p.rowid = ".$objp->rowid;
 					$resultTask = $db->query($sql);
 					if ($resultTask) {
@@ -156,7 +158,7 @@ class box_project extends ModeleBoxes
 				}
 				if ($max < $num)
 				{
-				    $this->info_box_contents[$i][0] = array('td' => 'colspan="5"', 'text' => '...');				    
+				    $this->info_box_contents[$i][0] = array('td' => 'colspan="5"', 'text' => '...');
 				    $i++;
 				}
 			}
@@ -195,11 +197,11 @@ class box_project extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
 

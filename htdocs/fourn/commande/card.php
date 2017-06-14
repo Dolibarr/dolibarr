@@ -92,7 +92,7 @@ $datelivraison=dol_mktime(GETPOST('liv_hour','int'), GETPOST('liv_min','int'), G
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('ordersuppliercard','globalcard'));
 
 $object = new CommandeFournisseur($db);
@@ -1572,6 +1572,7 @@ if ($action=='create')
 	// Other options
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
@@ -2173,6 +2174,7 @@ elseif (! empty($object->id))
 			$file=$fileparams['fullname'];
 		}
 
+		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 		print '<div class="clearboth"></div>';
 		print '<br>';
 		print load_fiche_titre($langs->trans('SendOrderByMail'));
@@ -2571,7 +2573,7 @@ elseif (! empty($object->id))
 				{
 					if ($user->rights->fournisseur->commande->commander)
 					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
 					}
 				}
 

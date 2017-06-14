@@ -89,7 +89,7 @@ if ($action == 'create')
 	}
 }
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('orderstoinvoice'));
@@ -471,6 +471,7 @@ if ($action == 'create' && !$error)
 	// Other attributes
 	$parameters=array('objectsrc' => $objectsrc, 'idsrc' => $listoforders);
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		$object=new Facture($db);
@@ -548,7 +549,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 	$sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= ' WHERE c.entity IN ('.getEntity('commande', 1).')';
+	$sql.= ' WHERE c.entity IN ('.getEntity('commande').')';
 	$sql.= ' AND c.fk_soc = s.rowid';
 
 	// Show orders with status validated, shipping started and delivered (well any order we can bill)

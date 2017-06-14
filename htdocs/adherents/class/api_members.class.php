@@ -100,7 +100,7 @@ class Members extends DolibarrApi
 
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('adherent', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('adherent').')';
         if (!empty($typeid))
         {
             $sql.= ' AND t.fk_adherent_type='.$typeid;
@@ -250,11 +250,7 @@ class Members extends DolibarrApi
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        // The Adherent::delete() method uses the global variable $user.
-        global $user;
-        $user = DolibarrApiAccess::$user;
-
-        if (! $member->delete($member->id)) {
+        if (! $member->delete($member->id, DolibarrApiAccess::$user)) {
             throw new RestException(401,'error when deleting member');
         }
 

@@ -84,7 +84,7 @@ $mode=GETPOST("mode");
 
 $diroutputmassaction=$conf->societe->dir_output . '/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield=GETPOST("sortfield",'alpha');
 $sortorder=GETPOST("sortorder",'alpha');
 $page=GETPOST("page",'int');
@@ -95,7 +95,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $contextpage='thirdpartylist';
 /*if ($search_type == '1,3') { $contextpage='customerlist'; $type='c'; }
 if ($search_type == '2,3') { $contextpage='prospectlist'; $type='p'; }
@@ -105,7 +105,7 @@ if ($type == 'c') { $contextpage='customerlist'; if ($search_type=='') $search_t
 if ($type == 'p') { $contextpage='prospectlist'; if ($search_type=='') $search_type='2,3'; }
 if ($type == 'f') { $contextpage='supplierlist'; if ($search_type=='') $search_type='4'; }
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
@@ -247,7 +247,7 @@ if (empty($reshook))
     $permtodelete = $user->rights->societe->supprimer;
     $uploaddir = $conf->societe->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-    
+
     if ($action == 'setstcomm')
     {
         $object = new Client($db);
@@ -396,7 +396,7 @@ $sql.= " ,".MAIN_DB_PREFIX."c_stcomm as st";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id";
-$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+$sql.= " AND s.entity IN (".getEntity('societe').")";
 if (! $user->rights->societe->client->voir && ! $socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)           $sql.= " AND s.rowid = ".$socid;
 if ($search_sale)     $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
@@ -840,6 +840,11 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 				if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
 				print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
 			}
+			else
+			{
+				// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
+				echo $extrafields->showInputField($key, $search_array_options['search_options_'.$key], '', '', 'search_');
+			}
 			print '</td>';
 		}
    }
@@ -925,6 +930,7 @@ print "</tr>\n";
 
 
 $i = 0;
+$totalarray=array();
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
@@ -950,46 +956,55 @@ while ($i < min($num, $limit))
 		print '<td class="tdoverflowmax200">';
 		print $companystatic->getNomUrl(1,'',100);
 		print "</td>\n";
+        if (! $i) $totalarray['nbfield']++;
 	}
 	// Barcode
     if (! empty($arrayfields['s.barcode']['checked']))
 	{
 		print '<td>'.$obj->barcode.'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	// Customer code
     if (! empty($arrayfields['s.code_client']['checked']))
 	{
 		print '<td>'.$obj->code_client.'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     // Supplier code
     if (! empty($arrayfields['s.code_fournisseur']['checked']))
 	{
 		print '<td>'.$obj->code_fournisseur.'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	// Account customer code
     if (! empty($arrayfields['s.code_compta']['checked']))
 	{
 		print '<td>'.$obj->code_compta.'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     // Account supplier code
     if (! empty($arrayfields['s.code_compta_fournisseur']['checked']))
 	{
 		print '<td>'.$obj->code_compta_fournisseur.'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	// Town
     if (! empty($arrayfields['s.town']['checked']))
     {
         print "<td>".$obj->town."</td>\n";
+        if (! $i) $totalarray['nbfield']++;
     }
     // Zip
     if (! empty($arrayfields['s.zip']['checked']))
     {
         print "<td>".$obj->zip."</td>\n";
+        if (! $i) $totalarray['nbfield']++;
     }
     // State
     if (! empty($arrayfields['state.nom']['checked']))
     {
         print "<td>".$obj->state_name."</td>\n";
+        if (! $i) $totalarray['nbfield']++;
     }
     // Country
     if (! empty($arrayfields['country.code_iso']['checked']))
@@ -998,6 +1013,7 @@ while ($i < min($num, $limit))
 		$tmparray=getCountry($obj->fk_pays,'all');
 		print $tmparray['label'];
 		print '</td>';
+        if (! $i) $totalarray['nbfield']++;
     }
 	// Type ent
     if (! empty($arrayfields['typent.code']['checked']))
@@ -1006,42 +1022,52 @@ while ($i < min($num, $limit))
 		if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
 		print $typenArray[$obj->typent_code];
 		print '</td>';
+        if (! $i) $totalarray['nbfield']++;
     }
     if (! empty($arrayfields['s.email']['checked']))
     {
         print "<td>".$obj->email."</td>\n";
+        if (! $i) $totalarray['nbfield']++;
     }
     if (! empty($arrayfields['s.phone']['checked']))
     {
         print "<td>".$obj->phone."</td>\n";
+        if (! $i) $totalarray['nbfield']++;
     }
     if (! empty($arrayfields['s.url']['checked']))
     {
         print "<td>".$obj->url."</td>\n";
+        if (! $i) $totalarray['nbfield']++;
     }
     if (! empty($arrayfields['s.siren']['checked']))
     {
         print "<td>".$obj->idprof1."</td>\n";
+        if (! $i) $totalarray['nbfield']++;
     }
     if (! empty($arrayfields['s.siret']['checked']))
     {
         print "<td>".$obj->idprof2."</td>\n";
+        if (! $i) $totalarray['nbfield']++;
     }
     if (! empty($arrayfields['s.ape']['checked']))
     {
         print "<td>".$obj->idprof3."</td>\n";
+        if (! $i) $totalarray['nbfield']++;
     }
     if (! empty($arrayfields['s.idprof4']['checked']))
     {
         print "<td>".$obj->idprof4."</td>\n";
+        if (! $i) $totalarray['nbfield']++;
     }
     if (! empty($arrayfields['s.idprof5']['checked']))
     {
         print "<td>".$obj->idprof5."</td>\n";
+        if (! $i) $totalarray['nbfield']++;
     }
     if (! empty($arrayfields['s.idprof6']['checked']))
     {
         print "<td>".$obj->idprof6."</td>\n";
+        if (! $i) $totalarray['nbfield']++;
     }
     // Type
     if (! empty($arrayfields['customerorsupplier']['checked']))
@@ -1070,6 +1096,7 @@ while ($i < min($num, $limit))
     	}
     	print $s;
     	print '</td>';
+        if (! $i) $totalarray['nbfield']++;
     }
 
     if (! empty($arrayfields['s.fk_prospectlevel']['checked']))
@@ -1078,6 +1105,7 @@ while ($i < min($num, $limit))
 		print '<td align="center">';
 		print $companystatic->getLibProspLevel();
 		print "</td>";
+        if (! $i) $totalarray['nbfield']++;
     }
 
     if (! empty($arrayfields['s.fk_stcomm']['checked']))
@@ -1093,6 +1121,7 @@ while ($i < min($num, $limit))
 			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommsocid='.$obj->rowid.'&stcomm='.$val['code'].'&action=setstcomm'.$param.($page?'&page='.urlencode($page):'').'">'.img_action($titlealt,$val['code']).'</a>';
 		}
 		print '</div></div></td>';
+        if (! $i) $totalarray['nbfield']++;
     }
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -1108,6 +1137,7 @@ while ($i < min($num, $limit))
 				$tmpkey='options_'.$key;
 				print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
 				print '</td>';
+                if (! $i) $totalarray['nbfield']++;
 			}
 	   }
 	}
@@ -1121,6 +1151,7 @@ while ($i < min($num, $limit))
         print '<td align="center" class="nowrap">';
         print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
         print '</td>';
+        if (! $i) $totalarray['nbfield']++;
     }
     // Date modification
     if (! empty($arrayfields['s.tms']['checked']))
@@ -1128,11 +1159,13 @@ while ($i < min($num, $limit))
         print '<td align="center" class="nowrap">';
         print dol_print_date($db->jdate($obj->date_update), 'dayhour');
         print '</td>';
+        if (! $i) $totalarray['nbfield']++;
     }
     // Status
     if (! empty($arrayfields['s.status']['checked']))
     {
         print '<td align="center" class="nowrap">'.$companystatic->getLibStatut(3).'</td>';
+        if (! $i) $totalarray['nbfield']++;
     }
 
     // Action column
@@ -1145,7 +1178,7 @@ while ($i < min($num, $limit))
     }
     print '</td>';
     if (! $i) $totalarray['nbfield']++;
-    
+
 	print '</tr>'."\n";
 	$i++;
 }

@@ -959,7 +959,7 @@ abstract class CommonObject
         $sql.= " WHERE ec.element_id = ".$id;
         $sql.= " AND ec.fk_socpeople = c.rowid";
         if ($source == 'internal') $sql.= " AND c.entity IN (0,".$conf->entity.")";
-        if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('societe', 1).")";
+        if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('societe').")";
         $sql.= " AND ec.fk_c_type_contact = tc.rowid";
         $sql.= " AND tc.element = '".$element."'";
         $sql.= " AND tc.source = '".$source."'";
@@ -1292,7 +1292,7 @@ abstract class CommonObject
     /**
      *      Load properties id_previous and id_next
      *
-     *      @param	string	$filter		Optional filter
+     *      @param	string	$filter		Optional filter. Example: " AND (t.field1 = 'aa' OR t.field2 = 'bb')"
      *	 	@param  int		$fieldid   	Name of field to use for the select MAX and MIN
      *		@param	int		$nodbprefix	Do not include DB prefix to forge table name
      *      @return int         		<0 if KO, >0 if OK
@@ -1318,11 +1318,15 @@ abstract class CommonObject
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
         $sql.= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
-        if (! empty($filter)) $sql.=" AND ".$filter;
+        if (! empty($filter))
+        {
+            if (! preg_match('/^\s*AND/i', $filter)) $sql.=" AND ";   // For backward compatibility
+            $sql.=$filter;
+        }
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
 
-        //print $sql."<br>";
+        //print $filter.' '.$sql."<br>";
         $result = $this->db->query($sql);
         if (! $result)
         {
@@ -1339,7 +1343,11 @@ abstract class CommonObject
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
         $sql.= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
-        if (! empty($filter)) $sql.=" AND ".$filter;
+        if (! empty($filter))
+        {
+            if (! preg_match('/^\s*AND/i', $filter)) $sql.=" AND ";   // For backward compatibility
+            $sql.=$filter;
+        }
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
         // Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null

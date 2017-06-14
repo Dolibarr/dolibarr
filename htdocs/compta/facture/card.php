@@ -114,7 +114,7 @@ if ($id > 0 || ! empty($ref)) {
 	$ret = $object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
 }
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('invoicecard','globalcard'));
 
 $permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
@@ -2591,6 +2591,7 @@ if ($action == 'create')
 	// Other attributes
 	$parameters = array('objectsrc' => $objectsrc,'colspan' => ' colspan="2"', 'cols'=>2);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
 		print $object->showOptionals($extrafields, 'edit');
 	}
@@ -4070,7 +4071,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('SendByMail') . '</span></div>';
 				} else {
 					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->send) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=presend&amp;mode=init">' . $langs->trans('SendByMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>';
 					} else
 						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendByMail') . '</a></div>';
 				}
@@ -4327,6 +4328,7 @@ else if ($id > 0 || ! empty($ref))
 			$file = $fileparams['fullname'];
 		}
 
+		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 		print '<div class="clearboth"></div>';
 		print '<br>';
 		print load_fiche_titre($langs->trans($titreform));

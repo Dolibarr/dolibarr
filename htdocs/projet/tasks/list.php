@@ -70,7 +70,7 @@ $search_eyear	= GETPOST('search_eyear','int');
 // Initialize context for list
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'tasklist';
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
@@ -85,7 +85,7 @@ if (!$user->rights->projet->lire) accessforbidden();
 
 $diroutputmassaction=$conf->projet->dir_output . '/tasks/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -268,7 +268,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 if ($search_project_user > 0)  $sql.=", ".MAIN_DB_PREFIX."element_contact as ecp";
 if ($search_task_user > 0)     $sql.=", ".MAIN_DB_PREFIX."element_contact as ect";
 $sql.= " WHERE t.fk_projet = p.rowid";
-$sql.= " AND p.entity IN (".getEntity('project',1).')';
+$sql.= " AND p.entity IN (".getEntity('project').')';
 if (! $user->rights->projet->all->lire) $sql.=" AND p.rowid IN (".($projectsListId?$projectsListId:'0').")";    // public and assigned to projects, or restricted to company for external users
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";

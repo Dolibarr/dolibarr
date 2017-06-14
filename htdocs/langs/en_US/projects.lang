@@ -64,6 +64,7 @@ TaskDescription=Task description
 NewTask=New task
 AddTask=Create task
 AddTimeSpent=Create time spent
+AddHereTimeSpentForDay=Add here time spent for this day/task
 Activity=Activity
 Activities=Tasks/activities
 MyActivities=My tasks/activities

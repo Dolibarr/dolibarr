@@ -118,7 +118,7 @@ $langs->load("agenda");
 $langs->load("other");
 $langs->load("commercial");
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agenda'));
 
 
@@ -456,7 +456,7 @@ if ($resourceid > 0) $sql.=", ".MAIN_DB_PREFIX."element_resources as r";
 if ($filtert > 0 || $usergroup > 0) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 if ($usergroup > 0) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
 $sql.= ' WHERE a.fk_action = ca.id';
-$sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
+$sql.= ' AND a.entity IN ('.getEntity('agenda').')';
 // Condition on actioncode
 if (! empty($actioncode))
 {
@@ -648,7 +648,7 @@ if ($showbirthday)
     $sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
     $sql.= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.$user->id.'))';
-    $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
+    $sql.= " AND sp.entity IN (".getEntity('societe').")";
     if ($action == 'show_day')
     {
         $sql.= ' AND MONTH(birthday) = '.$month;

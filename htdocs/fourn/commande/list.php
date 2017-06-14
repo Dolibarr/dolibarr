@@ -101,7 +101,7 @@ $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
 $diroutputmassaction=$conf->fournisseur->commande->dir_output . '/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -114,10 +114,10 @@ if (! $sortorder) $sortorder='DESC';
 
 if ($search_status == '') $search_status=-1;
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $contextpage='supplierorderlist';
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('orderlist'));
 $extrafields = new ExtraFields($db);
 
@@ -524,7 +524,7 @@ if ($search_user > 0)
     $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql.= ' WHERE cf.fk_soc = s.rowid';
-$sql.= ' AND cf.entity IN ('.getEntity('supplier_order', 1).')';
+$sql.= ' AND cf.entity IN ('.getEntity('supplier_order').')';
 if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($search_ref) $sql .= natural_search('cf.ref', $search_ref);

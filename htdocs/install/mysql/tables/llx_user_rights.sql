@@ -1,5 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+-- Copyright (C) 2017	Regis Houssin			<regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,8 +19,9 @@
 
 create table llx_user_rights
 (
-  rowid         integer AUTO_INCREMENT PRIMARY KEY,
-  fk_user       integer NOT NULL,
-  fk_id         integer NOT NULL
+  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  entity		integer DEFAULT 1 NOT NULL, -- multi company id
+  fk_user		integer NOT NULL,
+  fk_id			integer NOT NULL
 )ENGINE=innodb;
 

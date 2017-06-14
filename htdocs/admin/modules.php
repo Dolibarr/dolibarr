@@ -278,7 +278,7 @@ foreach ($modulesdir as $dir)
 
 		            try
 		            {
-		                $res=include_once $dir.$file;     // A class already exists in a different file will send a non catchable fatal error. 
+		                $res=include_once $dir.$file;     // A class already exists in a different file will send a non catchable fatal error.
 		                if (class_exists($modName))
 						{
 							try {
@@ -352,7 +352,7 @@ foreach ($modulesdir as $dir)
 		    			            {
 		    			                $arrayofwarningsext[$modName]=$objMod->warnings_activation_ext;
 		    			            }
-		    			             
+
 		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
 		    						$dirmod[$i]  = $dir;
 		    						//print $i.'-'.$dirmod[$i].'<br>';
@@ -436,7 +436,7 @@ if ($mode == 'common')
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
-    
+
     dol_fiche_head($head, $mode, '', -1);
 
     $moreforfilter = '';
@@ -473,12 +473,12 @@ if ($mode == 'common')
         $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
     }
-    
-    
+
+
     print '<div class="clearboth"></div><br>';
 
     $moreforfilter='';
-    
+
     // Show list of modules
 
     $oldfamily='';
@@ -564,13 +564,13 @@ if ($mode == 'common')
         if ($familykey!=$oldfamily)
         {
         	if ($oldfamily) print '</table></div><br>';
-        	
+
             $familytext=empty($familyinfo[$familykey]['label'])?$familykey:$familyinfo[$familykey]['label'];
             print_fiche_titre($familytext, '', '');
-    		
+
             print '<div class="div-table-responsive">';
         	print '<table class="tagtable liste" summary="list_of_modules">'."\n";
-            
+
         	$atleastoneforfamily=0;
         }
 
@@ -582,9 +582,9 @@ if ($mode == 'common')
         	$oldfamily=$familykey;
         }
 
-        
 
-        
+
+
         // Version (with picto warning or not)
         $version=$objMod->getVersion(0);
         $versiontrans='';
@@ -592,14 +592,14 @@ if ($mode == 'common')
         if (preg_match('/experimental/i', $version)) $versiontrans.=img_warning($langs->trans("Experimental"), 'style="float: left"');
         if (preg_match('/deprecated/i', $version))   $versiontrans.=img_warning($langs->trans("Deprecated"), 'style="float: left"');
         $versiontrans.=$objMod->getVersion(1);
-        
+
         // Define imginfo
         $imginfo="info";
         if ($objMod->isCoreOrExternalModule() == 'external')
         {
             $imginfo="info_black";
         }
-        
+
         print '<tr>'."\n";
 
         // Picto + Name of module
@@ -756,32 +756,32 @@ if ($mode == 'common')
 	        	print "</a>\n";
         	}
         	print "</td>\n";
-        	
+
         	// Link config
         	print '<td class="tdsetuppicto right valignmiddle" width="60px">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
         }
 
         print "</tr>\n";
     }
-    
+
     if ($oldfamily)
     {
         print "</table>\n";
         print '</div>';
     }
-    
+
     dol_fiche_end();
-    
+
     // Show warning about external users
     print info_admin(showModulesExludedForExternal($modules))."\n";
-    
+
     print '</form>';
 }
 
 if ($mode == 'marketplace')
 {
     dol_fiche_head($head, $mode, '', -1);
-    
+
     // Marketplace
     print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
     print "<tr class=\"liste_titre\">\n";
@@ -790,7 +790,7 @@ if ($mode == 'marketplace')
     print '<td>'.$langs->trans("URL").'</td>';
     print '</tr>';
 
-    
+
     print "<tr class=\"oddeven\">\n";
     $url='https://www.dolistore.com';
     print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
@@ -798,7 +798,7 @@ if ($mode == 'marketplace')
     print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
     print '</tr>';
 
-    
+
     print "<tr class=\"oddeven\">\n";
     $url='https://partners.dolibarr.org';
     print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a></td>';
@@ -813,23 +813,23 @@ if ($mode == 'marketplace')
 
 
 // Install external module
-   
+
 if ($mode == 'deploy')
 {
     dol_fiche_head($head, $mode, '', -1);
 
-    
+
     $allowonlineinstall=true;
     $allowfromweb=1;
     if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) $allowonlineinstall=false;
-    
+
     $fullurl='<a href="'.$urldolibarrmodules.'" target="_blank">'.$urldolibarrmodules.'</a>';
     $message='';
     if (! empty($allowonlineinstall))
     {
         if (! in_array('/custom',explode(',',$dolibarr_main_url_root_alt)))
         {
-            $message=info_admin($langs->trans("ConfFileMuseContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
+            $message=info_admin($langs->trans("ConfFileMustContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
             $allowfromweb=-1;
         }
         else
@@ -845,7 +845,7 @@ if ($mode == 'deploy')
             }
             else
             {
-    
+
                 $message=info_admin($langs->trans("NotExistsDirect",$dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
                 $allowfromweb=0;
             }
@@ -856,7 +856,7 @@ if ($mode == 'deploy')
         $message=info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile",$dolibarrdataroot.'/installmodules.lock'));
         $allowfromweb=0;
     }
-    
+
     if ($allowfromweb < 1)
     {
     	print $langs->trans("SomethingMakeInstallFromWebNotPossible");
@@ -864,15 +864,15 @@ if ($mode == 'deploy')
     	//print $langs->trans("SomethingMakeInstallFromWebNotPossible2");
     	print '<br>';
     }
-    
-    
+
+
     if ($allowfromweb >= 0)
     {
-    	if ($allowfromweb == 1) 
+    	if ($allowfromweb == 1)
     	{
     	    //print $langs->trans("ThisIsProcessToFollow").'<br>';
     	}
-    	else 
+    	else
     	{
     	    print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
         	print '<b>'.$langs->trans("StepNb",1).'</b>: ';
@@ -881,7 +881,7 @@ if ($mode == 'deploy')
         	print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
         	print '<b>'.$langs->trans("StepNb",3).'</b>: ';
     	}
-    
+
     	if ($allowfromweb == 1)
     	{
     		print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
@@ -899,12 +899,12 @@ if ($mode == 'deploy')
     		print $langs->trans("SetupIsReadyForUse").'<br>';
     	}
     }
-    
-    
+
+
     if (! empty($result['return']))
     {
     	print '<br>';
-    
+
     	foreach($result['return'] as $value)
     	{
     		echo $value.'<br>';

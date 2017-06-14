@@ -148,7 +148,6 @@ print "</tr>\n";
 
 foreach ($list as $key)
 {
-	
 	print '<tr class="oddeven value">';
 
 	// Param

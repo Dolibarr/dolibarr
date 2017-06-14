@@ -202,7 +202,10 @@ dol_fiche_head($head, 'translation', $titre, 0, $picto);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', 'ref', '', '', 0, '', '', 1);
+$shownav = 1;
+if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+dol_banner_tab($object, 'ref', $linkback, shownav, 'ref');
 
 dol_fiche_end();
 
@@ -245,7 +248,7 @@ if ($action == 'edit')
 		{
 			$s=picto_from_langcode($key);
 			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
-		    
+
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border" width="100%">';
 			print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$object->multilangs[$key]["label"].'"></td></tr>';
@@ -265,7 +268,7 @@ if ($action == 'edit')
 	}
 
 	print '<br>';
-	
+
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -283,7 +286,7 @@ else if ($action != 'add')
 		{
 			$s=picto_from_langcode($key);
 			print ($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
-			
+
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border" width="100%">';
@@ -318,7 +321,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<input type="hidden" name="id" value="'.GETPOST("id",'int').'">';
 
 	dol_fiche_head();
-	
+
 	print '<table class="border" width="100%">';
 	print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Language').'</td><td>';
     print $formadmin->select_language('','forcelangprod',0,$object->multilangs,1);
@@ -339,7 +342,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '</table>';
 
 	dol_fiche_end();
-	
+
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012	   Florian Henry		<florian.henry@open-concept.pro>
  *
@@ -54,7 +54,8 @@ $userid=GETPOST('user', 'int');
 // Security check
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', 'user');
 
-if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->multicompany->transverse_mode)
+// Users/Groups management only in master entity if transverse mode
+if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
 {
     accessforbidden();
 }
@@ -105,7 +106,7 @@ if ($action == 'add')
       		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 			if ($ret < 0) $error++;
 
-      		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) $object->entity = 0;
+      		if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) $object->entity = 0;
 			else $object->entity = $_POST["entity"];
 
             $db->begin();
@@ -148,8 +149,8 @@ if ($action == 'adduser' || $action =='removeuser')
 
 			$edituser = new User($db);
 			$edituser->fetch($userid);
-			if ($action == 'adduser')    $result=$edituser->SetInGroup($object->id,(! empty($conf->multicompany->transverse_mode)?GETPOST('entity','int'):$object->entity));
-			if ($action == 'removeuser') $result=$edituser->RemoveFromGroup($object->id,(! empty($conf->multicompany->transverse_mode)?GETPOST('entity','int'):$object->entity));
+			if ($action == 'adduser')    $result=$edituser->SetInGroup($object->id,(! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)?GETPOST('entity','int'):$object->entity));
+			if ($action == 'removeuser') $result=$edituser->RemoveFromGroup($object->id,(! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)?GETPOST('entity','int'):$object->entity));
 
             if ($result > 0)
             {
@@ -188,7 +189,7 @@ if ($action == 'update')
       	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0) $error++;
 
-		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) $object->entity = 0;
+		if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) $object->entity = 0;
 		else $object->entity = $_POST["entity"];
 
         $ret=$object->update();
@@ -250,7 +251,7 @@ if ($action == 'create')
 	// Multicompany
 	if (! empty($conf->multicompany->enabled) && is_object($mc))
 	{
-		if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+		if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
 			print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 			print "<td>".$mc->select_entities($conf->entity);
@@ -271,6 +272,7 @@ if ($action == 'create')
 	// Other attributes
     $parameters=array('object' => $object, 'colspan' => ' colspan="2"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
     if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
     	print $object->showOptionals($extrafields,'edit');
@@ -333,7 +335,7 @@ else
 			print "</td></tr>\n";
 
 			// Multicompany
-			if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+			if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
 			{
 				$mc->getInfo($object->entity);
 				print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
@@ -382,7 +384,7 @@ else
 
             if (! empty($object->members))
             {
-                if (! (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)))
+                if (! (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)))
                 {
                     foreach($object->members as $useringroup)
                     {
@@ -404,7 +406,7 @@ else
                 // Multicompany
                 if (! empty($conf->multicompany->enabled) && is_object($mc))
                 {
-                    if ($conf->entity == 1 && $conf->multicompany->transverse_mode)
+                    if ($conf->entity == 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
                     {
                         print '</td><td class="tdtop">'.$langs->trans("Entity").'</td>';
                         print "<td>".$mc->select_entities($conf->entity);
@@ -454,7 +456,7 @@ else
             		print '</td>';
             		print '<td>'.$useringroup->lastname.'</td>';
             		print '<td>'.$useringroup->firstname.'</td>';
-            		if (! empty($conf->multicompany->enabled)  && is_object($mc) && ! empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            		if (! empty($conf->multicompany->enabled)  && is_object($mc) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
             		{
             			print '<td class="valeur">';
             			if (! empty($useringroup->usergroup_entity))
@@ -539,7 +541,7 @@ else
             // Multicompany
             if (! empty($conf->multicompany->enabled) && is_object($mc))
             {
-                if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
                 {
                     print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
                     print "<td>".$mc->select_entities($object->entity);
@@ -561,6 +563,7 @@ else
         	// Other attributes
             $parameters=array();
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            print $hookmanager->resPrint;
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
             	print $object->showOptionals($extrafields,'edit');

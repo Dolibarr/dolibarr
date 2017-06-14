@@ -58,7 +58,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('suppliercard','globalcard'));
 
 
@@ -386,7 +386,7 @@ if ($object->id > 0)
 		$sql.= ' pfp.tms, pfp.ref_fourn as supplier_ref, pfp.price, pfp.quantity, pfp.unitprice';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp';
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pfp.fk_product";
-		$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+		$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 		$sql.= ' AND pfp.fk_soc = '.$object->id;
 		$sql .= $db->order('pfp.tms', 'desc');
 		$sql.= $db->plimit($MAXLIST);

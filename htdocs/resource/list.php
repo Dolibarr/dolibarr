@@ -91,7 +91,7 @@ if (empty($sortorder)) $sortorder="ASC";
 if (empty($sortfield)) $sortfield="t.rowid";
 if (empty($arch)) $arch = 0;
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
@@ -257,66 +257,63 @@ if ($ret)
 {
     foreach ($object->lines as $resource)
     {
-            
+        print '<tr class="oddeven">';
 
-            $style='';
-            if ($resource->id == GETPOST('lineid')) $style='style="background: orange;"';
+        if (! empty($arrayfields['t.ref']['checked']))
+        {
+        	print '<td>';
+        	print $resource->getNomUrl(5);
+        	print '</td>';
+	        if (! $i) $totalarray['nbfield']++;
+        }
 
-            print '<tr '.$bc[$var].' '.$style.'>';
+        if (! empty($arrayfields['ty.label']['checked']))
+        {
+        	print '<td>';
+        	print $resource->type_label;
+        	print '</td>';
+	        if (! $i) $totalarray['nbfield']++;
+        }
+        // Extra fields
+        if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+        {
+        	foreach($extrafields->attribute_label as $key => $val)
+        	{
+        		if (! empty($arrayfields["ef.".$key]['checked']))
+        		{
+        			print '<td';
+        			$align=$extrafields->getAlignFlag($key);
+        			if ($align) print ' align="'.$align.'"';
+        			print '>';
+        			$tmpkey='options_'.$key;
+        			print $extrafields->showOutputField($key, $resource->array_options[$tmpkey], '', 1);
+        			print '</td>';
+	                if (! $i) $totalarray['nbfield']++;
+        		}
+        	}
+        }
 
-            if (! empty($arrayfields['t.ref']['checked']))
-            {
-            	print '<td>';
-            	print $resource->getNomUrl(5);
-            	print '</td>';
-            }
+        print '<td align="center">';
+        print '<a href="./card.php?action=edit&id='.$resource->id.'">';
+        print img_edit();
+        print '</a>';
+        print '&nbsp;';
+        print '<a href="./card.php?action=delete&id='.$resource->id.'">';
+        print img_delete();
+        print '</a>';
+        print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 
-            if (! empty($arrayfields['ty.label']['checked']))
-            {
-            	print '<td>';
-            	print $resource->type_label;
-            	print '</td>';
-            }
-            // Extra fields
-            if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-            {
-            	foreach($extrafields->attribute_label as $key => $val)
-            	{
-            		if (! empty($arrayfields["ef.".$key]['checked']))
-            		{
-            			print '<td';
-            			$align=$extrafields->getAlignFlag($key);
-            			if ($align) print ' align="'.$align.'"';
-            			print '>';
-            			$tmpkey='options_'.$key;
-            			print $extrafields->showOutputField($key, $resource->array_options[$tmpkey], '', 1);
-            			print '</td>';
-            		}
-            	}
-            	if (! $i) $totalarray['nbfield']++;
-            }
-
-            print '<td align="center">';
-            print '<a href="./card.php?action=edit&id='.$resource->id.'">';
-            print img_edit();
-            print '</a>';
-            print '&nbsp;';
-            print '<a href="./card.php?action=delete&id='.$resource->id.'">';
-            print img_delete();
-            print '</a>';
-            print '</td>';
-
-            print '</tr>';
+        print '</tr>';
     }
-
-    print '</table>';
-    print "</form>\n";
 }
 else
 {
     print '<tr><td class="opacitymedium">'.$langs->trans('NoResourceInDatabase').'</td></tr>';
 }
 
-llxFooter();
+print '</table>';
+print "</form>\n";
 
+llxFooter();
 $db->close();
