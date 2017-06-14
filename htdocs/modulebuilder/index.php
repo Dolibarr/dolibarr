@@ -113,6 +113,19 @@ if ($dirins && $action == 'initmodule' && $modulename)
     }
 }
 
+if ($dirins && $action == 'confirm_delete')
+{
+    $modulelowercase=strtolower($module);
+
+    // Dir for module
+    $dir = $dirins.'/'.$modulelowercase;
+
+    dol_delete_dir_recursive($dir);
+
+    header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?module=initmodule');
+    exit;
+}
+
 if ($dirins && $action == 'generatepackage')
 {
     $modulelowercase=strtolower($module);
@@ -373,14 +386,29 @@ elseif (! empty($module))
         $head2[$h][2] = 'permissions';
         $h++;
 
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=hooks&module='.$module;
+        $head2[$h][1] = $langs->trans("Hooks");
+        $head2[$h][2] = 'hooks';
+        $h++;
+
         $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=triggers&module='.$module;
         $head2[$h][1] = $langs->trans("Triggers");
         $head2[$h][2] = 'triggers';
         $h++;
 
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=widgets&module='.$module;
+        $head2[$h][1] = $langs->trans("Widgets");
+        $head2[$h][2] = 'widgets';
+        $h++;
+
         $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=buildpackage&module='.$module;
         $head2[$h][1] = $langs->trans("BuildPackage");
         $head2[$h][2] = 'buildpackage';
+        $h++;
+
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=dangerzone&module='.$module;
+        $head2[$h][1] = $langs->trans("DangerZone");
+        $head2[$h][2] = 'dangerzone';
         $h++;
 
         print $modulestatusinfo.'<br><br>';
@@ -421,7 +449,7 @@ elseif (! empty($module))
 
         	print '<tr><td>';
         	print $langs->trans("Family");
-        	print "<br>'crm','financial','hr','projects','products','ecm','technic','interface','other'";
+        	//print "<br>'crm','financial','hr','projects','products','ecm','technic','interface','other'";
         	print '</td><td>';
         	print $moduleobj->family;
         	print '</td></tr>';
@@ -445,7 +473,7 @@ elseif (! empty($module))
         	print '</td></tr>';
 
         	print '<tr><td>';
-        	print $langs->trans("LongDescription");
+        	print $langs->trans("DescriptionLong");
         	print '</td><td>';
         	print $moduleobj->getDescLong();
         	print '</td></tr>';
@@ -453,14 +481,6 @@ elseif (! empty($module))
         	print '</table>';
 
         	print '</div>';
-
-        	print '<br><br>';
-        	print '<form name="delete">';
-        	print '<input type="hidden" name="action" value="confirm_delete">';
-        	print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
-        	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
-        	print '<input type="submit" class="buttonDelete" value="'.$langs->trans("Delete").'"'.($dirins?'':' disabled="disabled"').'>';
-        	print '</form>';
         }
 
         if ($tab == 'objects')
@@ -480,6 +500,12 @@ elseif (! empty($module))
         if ($tab == 'permissions')
         {
     		print $langs->trans("FeatureNotYetAvailable");
+
+        }
+
+        if ($tab == 'hooks')
+        {
+            print $langs->trans("FeatureNotYetAvailable");
 
         }
 
@@ -520,6 +546,12 @@ elseif (! empty($module))
 			print '</div>';
         }
 
+        if ($tab == 'widget')
+        {
+    		print $langs->trans("FeatureNotYetAvailable");
+
+        }
+
         if ($tab == 'buildpackage')
         {
             if (! class_exists('ZipArchive') && ! defined('ODTPHP_PATHTOPCLZIP'))
@@ -534,6 +566,16 @@ elseif (! empty($module))
         	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
         	print '<input type="submit" class="button" value="'.$langs->trans("Generate").'">';
         	print '</form>';
+        }
+
+        if ($tab == 'dangerzone')
+        {
+            print '<form name="delete">';
+            print '<input type="hidden" name="action" value="confirm_delete">';
+            print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
+            print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+            print '<input type="submit" class="buttonDelete" value="'.$langs->trans("Delete").'"'.($dirins?'':' disabled="disabled"').'>';
+            print '</form>';
         }
 
         dol_fiche_end();

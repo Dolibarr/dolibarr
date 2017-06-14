@@ -865,6 +865,7 @@ if ($mode == 'deploy')
     	print '<br>';
     }
 
+    print '<br>';
 
     if ($allowfromweb >= 0)
     {
@@ -885,12 +886,20 @@ if ($mode == 'deploy')
     	if ($allowfromweb == 1)
     	{
     		print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
-    		print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
+
+    		print '<br>';
+
+            print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
     		print '<input type="hidden" name="action" value="install">';
     		print '<input type="hidden" name="mode" value="deploy">';
     		print $langs->trans("YouCanSubmitFile").' <input type="file" name="fileinstall"> ';
     		print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
     		print '</form>';
+
+            print '<br>';
+            print '<br>';
+
+            print '<div class="center"><div class="logo_setup"></div></div>';
     	}
     	else
     	{
