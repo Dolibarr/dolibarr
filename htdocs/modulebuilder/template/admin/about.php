@@ -20,8 +20,6 @@
  * \file    htdocs/modulebuilder/template/admin/about.php
  * \ingroup mymodule
  * \brief   About page of module MyModule.
- *
- * MyModuleDescription.
  */
 
 // Load Dolibarr environment
@@ -84,8 +82,8 @@ echo $langs->trans("MyModuleAboutPage");
 
 echo '<br>';
 
-require_once '../core/modulebuilder/mymodule/core/modules/modMyModule.class.php';
-$tmpmodule = new MyModule($db);
+dol_include_once('/mymodule/core/modules/modMyModule.class.php');
+$tmpmodule = new modMyModule($db);
 print $tmpmodule->getDescLong();
 
 // Page end
