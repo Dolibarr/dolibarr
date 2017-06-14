@@ -2378,15 +2378,6 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-style: solid;
 
 	margin: 0px 0px 8px 0px;
-<<<<<<< HEAD
-=======
-    /*
-	-moz-box-shadow: 2px 2px 4px #CCC;
-	-webkit-box-shadow: 2px 2px 4px #CCC;
-	box-shadow: 2px 2px 4px #CCC;
-    */
-	/* box-shadow: 0 0 3px rgba(0,0,0,0.16); */
->>>>>>> branch '4.0' of git@github.com:Dolibarr/dolibarr.git
 
 	-moz-border-radius: 0.1em;
 	-webkit-border-radius: 0.1em;
@@ -4532,11 +4523,7 @@ img.demothumb {
 }
 @media only screen and (max-width: 767px)
 {
-<<<<<<< HEAD
 	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
-=======
-	.imgopensurveywizard { width:95%; height: auto; }
->>>>>>> branch '4.0' of git@github.com:Dolibarr/dolibarr.git
 
 	#tooltip {
 		position: absolute;
