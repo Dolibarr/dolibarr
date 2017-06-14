@@ -19,9 +19,7 @@
 /**
  * \file    htdocs/modulebuilder/template/admin/setup.php
  * \ingroup mymodule
- * \brief   Example module setup page.
- *
- * Put detailed description here.
+ * \brief   MyModule setup page.
  */
 
 // Load Dolibarr environment

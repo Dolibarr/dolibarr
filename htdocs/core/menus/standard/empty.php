@@ -82,7 +82,7 @@ class MenuManager
 		{
 		    return 1;
 		}
-		
+
 		if ($mode == 'top' || $mode == 'jmobile')
 		{
 			if (empty($noout)) print_start_menu_array_empty();
@@ -98,13 +98,13 @@ class MenuManager
 			    $showmode=1;
 			    $classname = 'class="tmenu menuhider"';
 			    $idsel='menu';
-			
+
 			    if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
 			    if (empty($noout)) print_text_menu_entry('', 1, '#', $id, $idsel, $classname, $atarget);
 			    if (empty($noout)) print_end_menu_entry($showmode);
 			    $menu->add('#', '', 0, $showmode, $atarget, "xxx", '');
-			}			
-			
+			}
+
 			if (empty($noout)) print_start_menu_entry_empty($idsel, $classname, $showmode);
 			if (empty($noout)) print_text_menu_entry_empty($langs->trans("Home"), 1, dol_buildpath('/index.php',1).'?mainmenu=home&amp;leftmenu=', $id, $idsel, $classname, $this->atarget);
 			if (empty($noout)) print_end_menu_entry_empty($showmode);
@@ -201,8 +201,12 @@ class MenuManager
 						print '<div class="menu_top"></div>'."\n";
 					}
 
-					if ($this->menu->liste[$i]['level'] > 0) {
-						print '<div class="menu_contenu">';
+					if ($this->menu->liste[$i]['level'] > 0)
+					{
+        				$cssmenu = '';
+        				if ($this->menu->liste[$i]['url']) $cssmenu = ' menu_contenu'.dol_string_nospecial(preg_replace('/\.php.*$/','',$this->menu->liste[$i]['url']));
+
+					    print '<div class="menu_contenu'.$cssmenu.'">';
 
 						if ($this->menu->liste[$i]['enabled'])
 						{
@@ -229,7 +233,7 @@ class MenuManager
 						print "</div>\n";
 					}
 				}
-		
+
 				if ($altok) print '<div class="blockvmenuend"></div>';
 			}
 
@@ -308,7 +312,7 @@ class MenuManager
 function print_start_menu_array_empty()
 {
     global $conf;
-    
+
 	print '<div class="tmenudiv">';
 	print '<ul class="tmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'':' title="Top menu"').'>';
 }
