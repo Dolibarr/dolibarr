@@ -411,6 +411,9 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	        case 'intcomma':
 	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
 	            break;
+	        case 'intcomma':
+	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
+	            break;
 	        case 'alpha':
 	            $out=trim($out);
 	            // '"' is dangerous because param in url can close the href= or src= and add javascript functions.
@@ -755,7 +758,7 @@ function dol_string_unaccent($str)
  */
 function dol_string_nospecial($str,$newstr='_',$badcharstoreplace='')
 {
-	$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+	$forbidden_chars_to_replace=array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=");
 	$forbidden_chars_to_remove=array();
 	if (is_array($badcharstoreplace)) $forbidden_chars_to_replace=$badcharstoreplace;
 	//$forbidden_chars_to_remove=array("(",")");

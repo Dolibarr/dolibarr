@@ -77,6 +77,8 @@ else header('Cache-Control: no-cache');
 if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) { ob_start("ob_gzhandler"); }
 
 if (GETPOST('theme','alpha')) $conf->theme=GETPOST('theme','alpha');  // If theme was forced on URL
+if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL
+
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
@@ -2360,6 +2362,15 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-style: solid;
 
 	margin: 0px 0px 8px 0px;
+<<<<<<< HEAD
+=======
+    /*
+	-moz-box-shadow: 2px 2px 4px #CCC;
+	-webkit-box-shadow: 2px 2px 4px #CCC;
+	box-shadow: 2px 2px 4px #CCC;
+    */
+	/* box-shadow: 0 0 3px rgba(0,0,0,0.16); */
+>>>>>>> branch '4.0' of git@github.com:Dolibarr/dolibarr.git
 
 	-moz-border-radius: 0.1em;
 	-webkit-border-radius: 0.1em;
@@ -4630,7 +4641,11 @@ border-top-right-radius: 6px;
 }
 @media only screen and (max-width: 767px)
 {
+<<<<<<< HEAD
 	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
+=======
+	.imgopensurveywizard { width:95%; height: auto; }
+>>>>>>> branch '4.0' of git@github.com:Dolibarr/dolibarr.git
 
 	#tooltip {
 		position: absolute;
