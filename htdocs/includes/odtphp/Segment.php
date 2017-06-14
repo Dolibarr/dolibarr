@@ -170,16 +170,17 @@ class Segment implements IteratorAggregate, Countable
     {
         global $langs;
 
-        $nextMonth = strtotime('+1 month');
-
-        $patterns=array( '/__CURRENTDAY__/u','/__CURRENTDAYTEXT__/u',
-                         '/__CURRENTMONTH__/u','/__CURRENTMONTHSHORT__/u','/__CURRENTMONTHLONG__/u',
-                         '/__NEXTMONTH__/u','/__NEXTMONTHSHORT__/u','/__NEXTMONTHLONG__/u',
+        $hoy = dol_getdate(dol_now('tzuser'));
+        $nextMonth = dol_get_next_month($hoy['mon'], $hoy['year'])['month'];
+        
+        $patterns=array( '/__CURRENTDAY__/u','/__CURENTWEEKDAY__/u',
+                         '/__CURRENTMONTH__/u','/__CURRENTMONTHLONG__/u',
+                         '/__NEXTMONTH__/u','/__NEXTMONTHLONG__/u',
                          '/__CURRENTYEAR__/u','/__NEXTYEAR__/u' );
-        $values=array( date('j'), $langs->trans(date('l')), 
-                       $langs->trans(date('n')), $langs->trans(date('M')), $langs->trans(date('F')), 
-                       $langs->trans(date('n', $nextMonth)), $langs->trans(date('M', $nextMonth)), $langs->trans(date('F', $nextMonth)), 
-                       date('Y'), date('Y', strtotime('+1 year')) );
+        $values=array( $hoy['mday'], $langs->trans($hoy['weekday']), 
+                       $hoy['mon'], $langs->trans($hoy['month']), 
+                       $nextMonth, monthArray($langs)[$nextMonth], 
+                       $hoy['year'], $hoy['year']+1 );
 
         $text=preg_replace($patterns, $values, $text);
 
