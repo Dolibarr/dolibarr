@@ -665,6 +665,7 @@ while ($i < min($num,$limit))
     if (! $i) $totalarray['nbfield']++;
 
     print "</tr>\n";
+
     $i++;
 }
 
