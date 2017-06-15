@@ -6383,3 +6383,43 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
     return $mime;
 }
 
+/**
+ * Return value from dictionary
+ * 
+ * @param string	$tablename		name of dictionary
+ * @param string	$field			the value to return
+ * @param int		$id				id of line
+ * @param bool		$checkentity	add filter on entity
+ * @param string	$rowidfield		name of the column rowid
+ */
+function getDictvalue($tablename, $field, $id, $checkentity=false, $rowidfield='rowid')
+{
+	global $dictvalues,$db,$langs;
+	
+	if (!isset($dictvalues[$tablename]))
+	{
+		$dictvalues[$tablename] = array();
+		$sql = 'SELECT * FROM '.$tablename.' WHERE 1';
+		if ($checkentity) $sql.= ' entity IN (0,'.getEntity('').')';
+		
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			while ($obj = $db->fetch_object($resql))
+			{
+				$dictvalues[$tablename][$obj->{$rowidfield}] = $obj;
+			}
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+	
+	if (!empty($dictvalues[$tablename][$id])) return $dictvalues[$tablename][$id]->{$field}; // Found
+	else // Not found
+	{
+		if ($id > 0) return $id;
+		return '';
+	}
+}
