@@ -43,7 +43,8 @@ class Contacts extends DolibarrApi
 	/**
 	 * Constructor
 	 */
-	function __construct() {
+	function __construct()
+	{
 		global $db, $conf;
 		$this->db = $db;
 		$this->contact = new Contact($this->db);
@@ -59,7 +60,8 @@ class Contacts extends DolibarrApi
 	 *
 	 * @throws 	RestException
 	 */
-	function get($id) {
+	function get($id)
+	{
 		if (!DolibarrApiAccess::$user->rights->societe->contact->lire)
 		{
 			throw new RestException(401, 'No permission to read contacts');
@@ -105,7 +107,7 @@ class Contacts extends DolibarrApi
 		}
 
         // case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -171,7 +173,7 @@ class Contacts extends DolibarrApi
 			}
 		}
 		else {
-			throw new RestException(503, 'Error when retreive contacts : ' . $sql);
+			throw new RestException(503, 'Error when retrieve contacts : ' . $sql);
 		}
 		if (!count($obj_ret))
 		{

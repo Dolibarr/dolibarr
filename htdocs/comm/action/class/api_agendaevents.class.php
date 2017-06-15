@@ -63,20 +63,20 @@ class AgendaEvents extends DolibarrApi
      */
     function get($id)
     {
-        if(! DolibarrApiAccess::$user->rights->agenda->myactions->read) {
+        if (! DolibarrApiAccess::$user->rights->agenda->myactions->read) {
             throw new RestException(401, "Insuffisant rights to read an event");
         }
 
         $result = $this->actioncomm->fetch($id);
-        if( ! $result ) {
+        if ( ! $result ) {
             throw new RestException(404, 'Agenda Events not found');
         }
 
-        if(! DolibarrApiAccess::$user->rights->agenda->allactions->read && $this->actioncomm->ownerid != DolibarrApiAccess::$user->id) {
+        if (! DolibarrApiAccess::$user->rights->agenda->allactions->read && $this->actioncomm->ownerid != DolibarrApiAccess::$user->id) {
             throw new RestException(401, "Insuffisant rights to read event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('agenda',$this->actioncomm->id)) {
+		if ( ! DolibarrApi::_checkAccessToResource('agenda',$this->actioncomm->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -101,6 +101,10 @@ class AgendaEvents extends DolibarrApi
         global $db, $conf;
 
         $obj_ret = array();
+
+        if (! DolibarrApiAccess::$user->rights->agenda->myactions->read) {
+        	throw new RestException(401, "Insuffisant rights to read events");
+        }
 
         // case of external user
         $socid = 0;
@@ -155,7 +159,7 @@ class AgendaEvents extends DolibarrApi
             {
                 $obj = $db->fetch_object($result);
                 $actioncomm_static = new ActionComm($db);
-                if($actioncomm_static->fetch($obj->rowid)) {
+                if ($actioncomm_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($actioncomm_static);
                 }
                 $i++;
@@ -164,7 +168,7 @@ class AgendaEvents extends DolibarrApi
         else {
             throw new RestException(503, 'Error when retrieve Agenda Event list : '.$db->lasterror());
         }
-        if( ! count($obj_ret)) {
+        if ( ! count($obj_ret)) {
             throw new RestException(404, 'No Agenda Event found');
         }
 		return $obj_ret;
@@ -178,10 +182,10 @@ class AgendaEvents extends DolibarrApi
      */
     function post($request_data = NULL)
     {
-      if(! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
+      if (! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
 			  throw new RestException(401, "Insuffisant rights to create your Agenda Event");
 		  }
-      if(! DolibarrApiAccess::$user->rights->agenda->allactions->create && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
+      if (! DolibarrApiAccess::$user->rights->agenda->allactions->create && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
 		      throw new RestException(401, "Insuffisant rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
 		  }
 
@@ -216,19 +220,19 @@ class AgendaEvents extends DolibarrApi
      */
     /*
     function put($id, $request_data = NULL) {
-      if(! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
+      if (! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
 			  throw new RestException(401, "Insuffisant rights to create your Agenda Event");
 		  }
-      if(! DolibarrApiAccess::$user->rights->agenda->allactions->create && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
+      if (! DolibarrApiAccess::$user->rights->agenda->allactions->create && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
 		      throw new RestException(401, "Insuffisant rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
 		  }
 
         $result = $this->expensereport->fetch($id);
-        if( ! $result ) {
+        if ( ! $result ) {
             throw new RestException(404, 'expensereport not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
+		if ( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
@@ -236,7 +240,7 @@ class AgendaEvents extends DolibarrApi
             $this->expensereport->$field = $value;
         }
 
-        if($this->expensereport->update($id, DolibarrApiAccess::$user,1,'','','update'))
+        if ($this->expensereport->update($id, DolibarrApiAccess::$user,1,'','','update'))
             return $this->get($id);
 
         return false;
@@ -314,7 +318,6 @@ class AgendaEvents extends DolibarrApi
 
     	unset($object->import_key);
     	unset($object->array_options);
-    	unset($object->linkedObjectsIds);
     	unset($object->context);
     	unset($object->canvas);
     	unset($object->fk_project);
