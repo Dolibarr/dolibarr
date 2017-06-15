@@ -187,6 +187,7 @@ UPDATE llx_bank_account as ba set fk_accountancy_journal = (SELECT rowid FROM ll
 ALTER TABLE llx_bank_account ADD CONSTRAINT fk_bank_account_accountancy_journal FOREIGN KEY (fk_accountancy_journal) REFERENCES llx_accounting_journal (rowid);
 
 --Update general ledger for FEC format & harmonization
+
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_tiers varchar(32);
 ALTER TABLE llx_accounting_bookkeeping CHANGE COLUMN code_tiers thirdparty_code varchar(32);
 

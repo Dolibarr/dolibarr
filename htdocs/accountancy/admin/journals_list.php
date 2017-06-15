@@ -127,7 +127,7 @@ complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
-    // Must match ids defined into eldy.lib.php 
+    // Must match ids defined into eldy.lib.php
     $sourceList = array(
 			'1' => $langs->trans('AccountingJournalType1'),
 			'2' => $langs->trans('AccountingJournalType2'),
@@ -142,7 +142,7 @@ $elementList = array();
 
 if (GETPOST('button_removefilter') || GETPOST('button_removefilter.x') || GETPOST('button_removefilter_x'))
 {
-    $search_country_id = '';    
+    $search_country_id = '';
 }
 
 // Actions add or modify an entry into a dictionary
@@ -371,13 +371,6 @@ if ($id)
 
 print load_fiche_titre($titre,$linkback,$titlepicto);
 
-if (empty($id))
-{
-    print $langs->trans("DictionaryDesc");
-    print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
-}
-print "<br>\n";
-
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
@@ -400,7 +393,7 @@ if ($id)
         else $sql.=" WHERE ";
         $sql.= " c.rowid = ".$search_country_id;
     }
-    
+
     if ($sortfield)
     {
         // If sort order is "country", we use country_code instead
@@ -427,7 +420,7 @@ if ($id)
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
-    
+
     print '<table class="noborder" width="100%">';
 
     // Form to add a new line
@@ -453,7 +446,7 @@ if ($id)
             	$valuetoshow=$langs->trans("Label");
             }
             if ($fieldlist[$field]=='nature')          { $valuetoshow=$langs->trans("Nature"); }
-				
+
             if ($valuetoshow != '')
             {
                 print '<td align="'.$align.'">';
@@ -522,7 +515,7 @@ if ($id)
         if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
         if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
         if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
-        
+
         // There is several pages
         if ($num > $listlimit)
         {
@@ -582,7 +575,7 @@ if ($id)
     	}
     	print '</td>';
     	print '</tr>';
-            
+
         if ($num)
         {
             // Lines with values
@@ -621,7 +614,7 @@ if ($id)
                     {
                         foreach ($fieldlist as $field => $value)
                         {
-                            
+
                             $showfield=1;
                         	$align="left";
                             $valuetoshow=$obj->{$fieldlist[$field]};
@@ -682,10 +675,10 @@ if ($id)
                     else print '<td>&nbsp;</td>';
 
                     print '<td></td>';
-                                         
+
                     print '</td>';
                 }
-                
+
                 print "</tr>\n";
                 $i++;
             }

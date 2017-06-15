@@ -62,7 +62,7 @@ if ($user->societe_id > 0)
 /*
  * Actions
  */
- 
+
 // Get informations of journal
 $accountingjournalstatic = new AccountingJournal($db);
 $accountingjournalstatic->fetch($id_journal);
@@ -175,7 +175,8 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->doc_type = 'expense_report';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
-					$bookkeeping->code_tiers = $tabuser[$key]['user_accountancy_code'];
+					$bookkeeping->subledger_account = $tabuser[$key]['user_accountancy_code'];
+					$bookkeeping->subledger_label = $tabuser[$key]['user_accountancy_code'];
 					$bookkeeping->label_compte = $tabuser[$key]['name'];
 					$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 					$bookkeeping->montant = $mt;
@@ -222,7 +223,8 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->doc_type = 'expense_report';
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
-						$bookkeeping->code_tiers = '';
+						$bookkeeping->subledger_account = '';
+						$bookkeeping->subledger_label = '';
 						$bookkeeping->label_compte = $accountingaccount->label;
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->montant = $mt;
@@ -267,7 +269,8 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->doc_type = 'expense_report';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
-					$bookkeeping->code_tiers = '';
+					$bookkeeping->subledger_account = '';
+					$bookkeeping->subledger_label = '';
 					$bookkeeping->label_compte = $langs->trans("VAT"). ' '.$def_tva[$key];
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->montant = $mt;
@@ -462,7 +465,7 @@ if (empty($action) || $action == 'view') {
 		print '<input type="button" class="butAction" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 	}*/
 
-	print '<div class="tabsAction">';
+	print '<div class="tabsAction tabsActionNoBottom">';
 	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 	print '</div>';
 
@@ -576,7 +579,7 @@ if (empty($action) || $action == 'view') {
 			}
 			else print $accountoshow;
 			print "</td>";
-			print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("Code_tiers") . "</td>";
+			print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("subledger_account") . "</td>";
 			print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
 			print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 			print "</tr>";

@@ -231,10 +231,10 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->doc_type = 'customer_invoice';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
-					$bookkeeping->code_tiers = $tabcompany[$key]['code_client'];
-					$bookkeeping->numero_compte = $tabcompany[$key]['code_compta'];
-					// $bookkeeping->label_compte = $tabcompany[$key]['name'];
-					$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Code_tiers");
+					$bookkeeping->thirdparty_code = $tabcompany[$key]['code_client'];
+					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
+					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
+					$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("subledger_account");
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
@@ -277,7 +277,8 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->doc_type = 'customer_invoice';
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add;
-						$bookkeeping->code_tiers = '';
+						$bookkeeping->subledger_account = '';
+						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label;
 						$bookkeeping->montant = $mt;
@@ -321,7 +322,8 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->doc_type = 'customer_invoice';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
-					$bookkeeping->code_tiers = '';
+					$bookkeeping->subledger_account = '';
+					$bookkeeping->subledger_label = '';
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT").' '.$def_tva[$key];
 					$bookkeeping->montant = $mt;
@@ -373,7 +375,7 @@ if ($action == 'writebookkeeping') {
 	{
 		setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
 	}
-	
+
 	$action='';
 }
 
@@ -416,7 +418,7 @@ $form = new Form($db);
 				print length_accounta(html_entity_decode($k)) . $sep;
 				print ($mt < 0 ? 'C' : 'D') . $sep;
 				print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-				print dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Code_tiers") . $sep;
+				print dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("subledger_account") . $sep;
 				print $val["ref"];
 				print "\n";
 			}
@@ -469,7 +471,7 @@ $form = new Form($db);
 				print '"' . $date . '"' . $sep;
 				print '"' . $val["ref"] . '"' . $sep;
 				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-				print '"' . dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Code_tiers") . '"' . $sep;
+				print '"' . dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("subledger_account") . '"' . $sep;
 				print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
 				print "\n";
@@ -535,7 +537,7 @@ if (empty($action) || $action == 'view') {
 	} else {
 		print '<input type="button" class="butAction" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 	}*/
-	print '<div class="tabsAction">';
+	print '<div class="tabsAction tabsActionNoBottom">';
 	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 	print '</div>';
 
@@ -602,7 +604,7 @@ if (empty($action) || $action == 'view') {
 			// print "</td><td>" . $langs->trans("ThirdParty");
 			// print ' (' . $companystatic->getNomUrl(0, 'customer', 16) . ')';
 			print '</td>';
-			print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Code_tiers") . "</td>";
+			print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("subledger_account") . "</td>";
 			print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 			print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 			print "</tr>";
