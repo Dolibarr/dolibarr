@@ -54,15 +54,14 @@ class FormAccounting extends Form
 	 * @param	string	$htmlname	Name of field in html form
 	 * @param	int		$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
 	 * @param	int		$showempty	Add an empty field
-	 * @param	array	$event		Event options
 	 * @param	int		$select_in	0=selectid value is the journal rowid (default) or 1=selectid is journal code
 	 * @param	int		$select_out	Set value returned by select. 0=rowid (default), 1=code
 	 * @param	string	$morecss	More css non HTML object
 	 * @param	string	$usecache	Key to use to store result into a cache. Next call with same key will reuse the cache.
-	 *
+	 * @param   int     $disabledajaxcombo Disable ajax combo box.
 	 * @return	string				String with HTML select
 	 */
-	function select_journal($selectid, $htmlname = 'journal', $nature=0, $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='')
+	function select_journal($selectid, $htmlname = 'journal', $nature=0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='', $disabledajaxcombo=0)
 	{
 		global $conf;
 
@@ -91,8 +90,6 @@ class FormAccounting extends Form
 				dol_syslog(get_class($this)."::select_journal ".$this->error, LOG_ERR);
 				return -1;
 			}
-
-			$out = ajax_combobox($htmlname, $event);
 
     		$selected = 0;
 			while ($obj = $this->db->fetch_object($resql))
@@ -125,7 +122,7 @@ class FormAccounting extends Form
 			}
 		}
 
-		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, ($disabledajaxcombo?0:1));
 
 		return $out;
 	}
@@ -204,9 +201,9 @@ class FormAccounting extends Form
         {
             dol_print_error($db,$db->lasterror());
         }
-        
-        $out .= ajax_combobox($htmlname, $event);
-        
+
+        $out .= ajax_combobox($htmlname, array());
+
         print $out;
     }
 
@@ -260,7 +257,7 @@ class FormAccounting extends Form
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 		$out = '';
-		
+
     	$options = array();
 		if ($usecache && ! empty($this->options_cache[$usecache]))
 		{

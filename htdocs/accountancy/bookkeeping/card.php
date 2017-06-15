@@ -256,7 +256,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("AccountancyJournal").'</td>';
 	print '<td>';
-	print $formaccountancy->select_journal('', 'code_journal', '', 0, '', 1, 1, 1, 1);
+	print $formaccountancy->select_journal('', 'code_journal', '', 0, 1, 1, 1, 1);
 	print '</td></tr>';
 
 	print '<tr>';
