@@ -3524,7 +3524,7 @@ else if ($id > 0 || ! empty($ref))
             }
             
             print '<tr ' . $bc[$var] . '>';
-            print '<td colspan="2" align="right"></td>';
+            print '<td colspan="3" align="right"></td>';
             print '<td align="right"><b>' . price($total_prev_ht) . '</b></td>';
             print '<td align="right"><b>' . price($total_prev_ttc) . '</b></td>';
             print '<td width="18">&nbsp;</td>';
@@ -3564,7 +3564,7 @@ else if ($id > 0 || ! empty($ref))
             }
             
             print '<tr ' . $bc[$var] . '>';
-            print '<td colspan="2" align="right"></td>';
+            print '<td colspan="3" align="right"></td>';
             print '<td align="right"><b>' . price($total_next_ht) . '</b></td>';
             print '<td align="right"><b>' . price($total_next_ttc) . '</b></td>';
             print '<td width="18">&nbsp;</td>';
