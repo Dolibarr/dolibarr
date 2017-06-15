@@ -188,9 +188,18 @@ ALTER TABLE llx_bank_account ADD CONSTRAINT fk_bank_account_accountancy_journal 
 
 --Update general ledger for FEC format & harmonization
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_tiers varchar(32);
+ALTER TABLE llx_accounting_bookkeeping CHANGE COLUMN code_tiers thirdparty_code varchar(32);
+
+--Subledger account
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN subledger_account varchar(32);
+ALTER TABLE llx_accounting_bookkeeping CHANGE COLUMN thirdparty_label subledger_label varchar(255);    	-- If field was already created, rename it	
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN subledger_label varchar(255) AFTER subledger_account;	-- If field dod not exists yet
+
+update llx_accounting_bookkeeping set subledger_account = numero_compte where subledger_account IS NULL;
+
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN label_compte varchar(255);
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_journal varchar(32);
-ALTER TABLE llx_accounting_bookkeeping ADD COLUMN thirdparty_label varchar(255) AFTER code_tiers;
+
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN label_operation varchar(255) AFTER label_compte;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN multicurrency_amount double AFTER sens;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN multicurrency_code varchar(255) AFTER multicurrency_amount;
