@@ -241,7 +241,7 @@ class FormAccounting extends Form
 	 * Return list of accounts with label by chart of accounts
 	 *
 	 * @param string   $selectid           Preselected id or code of accounting accounts (depends on $select_in)
-	 * @param string   $htmlname           Name of field in html form
+	 * @param string   $htmlname           Name of HTML field id. If name start with '.', it is name of HTML css class, so several component with same name in different forms can be used.
 	 * @param int      $showempty          Add an empty field
 	 * @param array    $event              Event options
 	 * @param int      $select_in          0=selectid value is a aa.rowid (default) or 1=selectid is aa.account_number
@@ -283,8 +283,6 @@ class FormAccounting extends Form
     			dol_syslog(get_class($this) . "::select_account " . $this->error, LOG_ERR);
     			return -1;
     		}
-
-    		$out .= ajax_combobox($htmlname, $event);
 
     		$selected = 0;
     		while ($obj = $this->db->fetch_object($resql))

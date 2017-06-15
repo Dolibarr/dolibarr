@@ -103,8 +103,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
-$idpays = $p[0];
+$idpays = $mysoc->country_id;
 
 $sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
 $sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
@@ -144,6 +143,7 @@ $result = $db->query($sql);
 if ($result) {
 
 	$num = $db->num_rows($result);
+
 	// Variables
 	$account_supplier = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
 	$account_customer = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
@@ -537,6 +537,12 @@ if (! $error && $action == 'writebookkeeping') {
 		else
 		{
 			$db->rollback();
+
+			if ($error >= 10)
+			{
+			    setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped"), null, 'errors');
+			    break;  // Break in the foreach
+			}
 		}
 	}
 

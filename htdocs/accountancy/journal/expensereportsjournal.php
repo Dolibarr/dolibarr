@@ -86,13 +86,13 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
-$idpays = $p[0];
+$idpays = $mysoc->country_id;
 
 $sql = "SELECT er.rowid, er.ref, er.date_debut as de,";
-$sql .= " erd.rowid as erdid, erd.comments, erd.total_ttc, erd.tva_tx, erd.total_ht, erd.total_tva, erd.fk_code_ventilation,";
+$sql .= " erd.rowid as erdid, erd.comments, erd.total_ttc, erd.tva_tx, erd.total_ht, erd.total_tva, erd.fk_code_ventilation, erd.vat_src_code, ";
 $sql .= " u.rowid as uid, u.firstname, u.lastname, u.accountancy_code as user_accountancy_account,";
-$sql .= " f.accountancy_code, ct.accountancy_code_buy as account_tva, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
+$sql .= " f.accountancy_code, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte,";
+$sql .= " ct.accountancy_code_buy as account_tva";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport_det as erd";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_tva as ct ON erd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_type_fees as f ON f.id = erd.fk_c_type_fees";
@@ -110,7 +110,8 @@ dol_syslog('accountancy/journal/expensereportsjournal.php:: $sql=' . $sql);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
-	// les variables
+
+	// Variables
 	$account_salary = (! empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT)) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : $langs->trans("CodeNotDef");
 	$account_vat = (! empty($conf->global->ACCOUNTING_VAT_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : $langs->trans("CodeNotDef");
 
@@ -130,8 +131,11 @@ if ($result) {
 		$compta_fees = $obj->compte;
 		$compta_tva = (! empty($obj->account_tva) ? $obj->account_tva : $account_vat);
 
-		// Define array for display vat tx
-		$def_tva[$obj->rowid]=price($obj->tva_tx);
+		// Define array to display all VAT rates that use this accounting account $compta_tva
+		if (! empty(price2num($obj->tva_tx)) || ! empty($obj->vat_src_code))
+		{
+            $def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code?' ('.$obj->vat_src_code.')':'')]=(vatrate($obj->tva_tx).($obj->vat_src_code?' ('.$obj->vat_src_code.')':''));
+		}
 
 		$taber[$obj->rowid]["date"] = $db->jdate($obj->de);
 		$taber[$obj->rowid]["ref"] = $obj->ref;
@@ -271,7 +275,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
 					$bookkeeping->subledger_account = '';
 					$bookkeeping->subledger_label = '';
-					$bookkeeping->label_compte = $langs->trans("VAT"). ' '.$def_tva[$key];
+					$bookkeeping->label_compte = $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]);
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
@@ -307,6 +311,12 @@ if ($action == 'writebookkeeping') {
 		else
 		{
 			$db->rollback();
+
+			if ($error >= 10)
+			{
+			    setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped"), null, 'errors');
+			    break;  // Break in the foreach
+			}
 		}
 	}
 
@@ -556,7 +566,7 @@ if (empty($action) || $action == 'view') {
 				}
 				else print $accountoshow;
 				print "</td>";
-				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("VAT"). ' '.$def_tva[$key]. "</td>";
+				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]). "</td>";
 				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";

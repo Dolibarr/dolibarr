@@ -184,7 +184,8 @@ class BookKeeping extends CommonObject
             }
             else
             {
-                $this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForInvoiceLine', $this->fk_doc,  $this->doc_type);
+                //$this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForInvoiceLine', $this->doc_ref,  $this->label_compte);
+                $this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForLine', $this->label_compte);
             }
 
 		    return -1;
@@ -451,7 +452,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' ' . (! isset($this->thirdparty_code) ? 'NULL' : "'" . $this->db->escape($this->thirdparty_code) . "'") . ',';
 		$sql .= ' ' . (! isset($this->subledger_account) ? 'NULL' : "'" . $this->db->escape($this->subledger_account) . "'") . ',';
 		$sql .= ' ' . (! isset($this->subledger_label) ? 'NULL' : "'" . $this->db->escape($this->subledger_label) . "'") . ',';
-		$sql .= ' ' . (! isset($this->numero_compte) ? "'NotDefined'" : "'" . $this->db->escape($this->numero_compte) . "'") . ',';
+		$sql .= ' ' . (! isset($this->numero_compte) ? "NULL" : "'" . $this->db->escape($this->numero_compte) . "'") . ',';
 		$sql .= ' ' . (! isset($this->label_compte) ? 'NULL' : "'" . $this->db->escape($this->label_compte) . "'") . ',';
 		$sql .= ' ' . (! isset($this->debit) ? 'NULL' : $this->debit ). ',';
 		$sql .= ' ' . (! isset($this->credit) ? 'NULL' : $this->credit ). ',';
@@ -461,7 +462,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' ' . (! isset($this->import_key) ? 'NULL' : "'" . $this->db->escape($this->import_key) . "'") . ',';
 		$sql .= ' ' . (empty($this->code_journal) ? 'NULL' : "'" . $this->db->escape($this->code_journal) . "'") . ',';
 		$sql .= ' ' . (empty($this->journal_label) ? 'NULL' : "'" . $this->db->escape($this->journal_label) . "'") . ',';
-		$sql .= ' ' . (empty($this->piece_num) ? 'NULL' : $this->piece_num).',';
+		$sql .= ' ' . (empty($this->piece_num) ? 'NULL' : $this->db->escape($this->piece_num)).',';
 		$sql .= ' ' . (! isset($this->entity) ? '1' : $this->entity);
 		$sql .= ')';
 
