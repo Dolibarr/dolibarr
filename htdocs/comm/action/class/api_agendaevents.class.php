@@ -111,8 +111,11 @@ class AgendaEvents extends DolibarrApi
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT t.id as rowid";
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as t";
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
         $sql.= ' WHERE t.entity IN ('.getEntity('agenda').')';
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($user_ids) $sql.=" AND t.fk_user_action IN (".$user_ids.")";
         if ($socid > 0) $sql.= " AND t.fk_soc = ".$socid;
         // Insert sale filter
@@ -297,5 +300,60 @@ class AgendaEvents extends DolibarrApi
 
         }
         return $event;
+    }
+
+    /**
+     * Clean sensible object datas
+     *
+     * @param	object	$object		Object to clean
+     * @return	array				Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object) {
+
+    	$object = parent::_cleanObjectDatas($object);
+
+    	unset($object->import_key);
+    	unset($object->array_options);
+    	unset($object->linkedObjectsIds);
+    	unset($object->context);
+    	unset($object->canvas);
+    	unset($object->fk_project);
+    	unset($object->contact);
+    	unset($object->contact_id);
+    	unset($object->thirdparty);
+    	unset($object->user);
+    	unset($object->origin);
+    	unset($object->origin_id);
+    	unset($object->ref_ext);
+    	unset($object->statut);
+    	unset($object->country);
+    	unset($object->country_id);
+    	unset($object->country_code);
+    	unset($object->barcode_type);
+    	unset($object->barcode_type_code);
+    	unset($object->barcode_type_label);
+    	unset($object->barcode_type_coder);
+    	unset($object->mode_reglement_id);
+    	unset($object->cond_reglement_id);
+    	unset($object->cond_reglement);
+    	unset($object->fk_delivery_address);
+    	unset($object->shipping_method_id);
+    	unset($object->fk_account);
+    	unset($object->total_ht);
+    	unset($object->total_tva);
+    	unset($object->total_localtax1);
+    	unset($object->total_localtax2);
+    	unset($object->total_ttc);
+    	unset($object->fk_incoterms);
+    	unset($object->libelle_incoterms);
+    	unset($object->location_incoterms);
+    	unset($object->name);
+    	unset($object->lastname);
+    	unset($object->firstname);
+    	unset($object->civility_id);
+    	unset($object->contact);
+    	unset($object->societe);
+
+    	return $object;
     }
 }

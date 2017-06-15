@@ -33,6 +33,7 @@ if (!$user->admin)
 
 $langs->load("admin");
 $langs->load("other");
+$langs->load("agenda");
 
 $action = GETPOST('action','alpha');
 $cancel = GETPOST('cancel','alpha');
@@ -172,7 +173,7 @@ if (! empty($triggers))
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
 
-			
+
 			print '<tr class="oddeven">';
 			print '<td>'.$trigger['code'].'</td>';
 			print '<td>'.$trigger['label'].'</td>';
