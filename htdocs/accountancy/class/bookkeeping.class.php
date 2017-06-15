@@ -185,7 +185,12 @@ class BookKeeping extends CommonObject
             else
             {
                 //$this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForInvoiceLine', $this->doc_ref,  $this->label_compte);
-                $this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForLine', $this->label_compte);
+                $mesg=$this->doc_ref.', '.$langs->trans("AccountAccounting").': '.$this->numero_compte;
+                if ($this->subledger_account && $this->subledger_account != $this->numero_compte)
+                {
+                    $mesg.=', '.$langs->trans("SubledgerAccount").': '.$this->subledger_account;
+                }
+                $this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForLine', $mesg);
             }
 
 		    return -1;

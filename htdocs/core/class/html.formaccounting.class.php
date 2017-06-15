@@ -325,14 +325,13 @@ class FormAccounting extends Form
 	/**
 	 * Return list of auxilary thirdparty accounts
 	 *
-	 * @param string $selectid Preselected pcg_type
-	 * @param string $htmlname Name of field in html form
-	 * @param int $showempty Add an empty field
-	 * @param array $event Event options
-	 *
-	 * @return string String with HTML select
+	 * @param string   $selectid       Preselected pcg_type
+	 * @param string   $htmlname       Name of field in html form
+	 * @param int      $showempty      Add an empty field
+	 * @param string   $morecss        More css
+	 * @return string                  String with HTML select
 	 */
-	function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $event = array()) {
+	function select_auxaccount($selectid, $htmlname='account_num_aux', $showempty=0, $morecss='maxwidth200') {
 
 		$aux_account = array();
 
@@ -377,8 +376,7 @@ class FormAccounting extends Form
 		$this->db->free($resql);
 
 		// Build select
-		$out = ajax_combobox($htmlname, $event);
-		$out .= Form::selectarray($htmlname, $aux_account, $selectid, $showempty, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
+		$out .= Form::selectarray($htmlname, $aux_account, $selectid, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $out;
 	}

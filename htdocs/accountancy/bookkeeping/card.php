@@ -387,10 +387,10 @@ if ($action == 'create') {
 					if ($action == 'update' && $line->id == $id) {
 
 						print '<td>';
-						print $formaccounting->select_account($line->numero_compte, 'account_number', 0, array (), 1, 1, '');
+						print $formaccounting->select_account($line->numero_compte, 'account_number', 0, array (), 1, 1, 'maxwidth300');
 						print '</td>';
 						print '<td>';
-						print $formaccounting->select_auxaccount($line->subledger_account, 'subledger_account', 1);
+						print $formaccounting->select_auxaccount($line->subledger_account, 'subledger_account', 1, 'maxwidth300');
 						print '</td>';
 						print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
 						print '<td align="right"><input type="text" size="6" name="debit" value="' . price($line->debit) . '"/></td>';
@@ -431,10 +431,10 @@ if ($action == 'create') {
 				if ($action == "" || $action == 'add') {
 					print '<tr class="oddeven">';
 					print '<td>';
-					print $formaccounting->select_account($account_number, 'account_number', 0, array (), 1, 1, '');
+					print $formaccounting->select_account($account_number, 'account_number', 0, array (), 1, 1, 'maxwidth300');
 					print '</td>';
 					print '<td>';
-					print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1);
+					print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1, 'maxwidth300');
 					print '</td>';
 					print '<td><input type="text" size="15" name="label_compte" value="' . $label_compte . '"/></td>';
 					print '<td align="right"><input type="text" class="right maxwidth50" name="debit" value="' . price($debit) . '"/></td>';

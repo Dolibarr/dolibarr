@@ -389,11 +389,11 @@ print '<td class="liste_titre"><input type="text" name="search_doc_ref" size="8"
 print '<td class="liste_titre">';
 print '<div class="nowrap">';
 print $langs->trans('From');
-print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, '');
+print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, 'maxwidth200');
 print '</div>';
 print '<div class="nowrap">';
 print $langs->trans('to');
-print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, '');
+print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, 'maxwidth200');
 print '</div>';
 print '</td>';
 print '<td class="liste_titre">';

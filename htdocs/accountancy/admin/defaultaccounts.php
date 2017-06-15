@@ -51,8 +51,8 @@ $action = GETPOST('action', 'alpha');
 
 
 $list_account_main = array (
-    'ACCOUNTING_ACCOUNT_SUPPLIER',
     'ACCOUNTING_ACCOUNT_CUSTOMER',
+    'ACCOUNTING_ACCOUNT_SUPPLIER',
 );
 
 $list_account = array (
