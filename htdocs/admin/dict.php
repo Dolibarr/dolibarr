@@ -80,7 +80,7 @@ $pagenext = $page + 1;
 $search_country_id = GETPOST('search_country_id','int');
 $search_code = GETPOST('search_code','alpha');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admin'));
 
 // This page is a generic page to edit dictionaries
@@ -501,6 +501,14 @@ $tabfieldcheck[34] = array();
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp,$tabfieldcheck);
 
+
+// Defaut sortorder
+if (empty($sortfield))
+{
+    $tmp1 = explode(',',$tabsqlsort[$id]);
+    $tmp2 = explode(' ',$tmp1[0]);
+    $sortfield=preg_replace('/^.*\./', '', $tmp2[0]);
+}
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
@@ -944,7 +952,8 @@ if ($id)
 
     if (! preg_match('/ WHERE /',$sql)) $sql.= " WHERE 1 = 1";
     if ($search_country_id > 0) $sql.= " AND c.rowid = ".$search_country_id;
-    if ($search_code != '')     $sql.= natural_search("code", $search_code);
+    if ($search_code != '' && $id != 9)     $sql.= natural_search("code", $search_code);
+    if ($search_code != '' && $id == 9)     $sql.= natural_search("code_iso", $search_code);
 
     if ($sortfield)
     {

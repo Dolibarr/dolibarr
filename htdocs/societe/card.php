@@ -69,7 +69,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycard','globalcard'));
 
 if ($action == 'view' && $object->fetch($socid)<=0)
@@ -2462,7 +2462,9 @@ else
 			$action='send';
 			$modelmail='thirdparty';
 
-			//print '<br>';
+    		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
+    		print '<div class="clearboth"></div>';
+    		print '<br>';
 			print load_fiche_titre($langs->trans($titreform));
 
 			dol_fiche_head();

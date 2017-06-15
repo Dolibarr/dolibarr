@@ -68,7 +68,7 @@ $usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MA
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'contrat',$id);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('contractcard','globalcard'));
 
 $object = new Contrat($db);
@@ -1211,6 +1211,7 @@ if ($action == 'create')
     // Other attributes
     $parameters=array('objectsrc' => $objectsrc,'colspan' => ' colspan="3"', 'cols'=>3);
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
     // Other attributes
     if (empty($reshook) && ! empty($extrafields->attribute_label)) {
@@ -2161,6 +2162,7 @@ else
 				$file = $fileparams['fullname'];
 			}
 
+			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 			print '<div class="clearboth"></div>';
 			print '<br>';
 			print load_fiche_titre($langs->trans('SendContractByMail'));

@@ -215,6 +215,9 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      */
     public $descriptionlong;
 
+
+    // For exports
+
     /**
      * @var string Module export code
      */
@@ -225,6 +228,19 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      */
     public $export_label;
 
+    public $export_permission;
+    public $export_fields_array;
+    public $export_TypeFields_array;
+    public $export_entities_array;
+    public $export_special_array;           // special or computed field
+    public $export_dependencies_array;
+    public $export_sql_start;
+    public $export_sql_end;
+    public $export_sql_order;
+
+
+    // For import
+
     /**
      * @var string Module import code
      */
@@ -234,6 +250,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      * @var string Module import label
      */
     public $import_label;
+
 
     /**
      * @var string Module constant name
@@ -341,6 +358,13 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 * @var bool Whether to hide the module.
 	 */
 	public $hidden = false;
+
+
+
+
+
+
+
 
 
 	/**

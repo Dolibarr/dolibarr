@@ -73,7 +73,12 @@ $ref=GETPOST('ref','alpha');
 // Security check
 $socid='';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user, $origin, $origin_id);
+
+if ($origin == 'expedition') $result=restrictedArea($user, $origin, $id);
+else {
+	$result=restrictedArea($user, 'expedition');
+	if (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) accessforbidden();
+}
 
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
@@ -98,7 +103,7 @@ $extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_el
 // Load object. Make an object->fetch
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('expeditioncard','globalcard'));
 
 $permissiondellink=$user->rights->expedition->livraison->creer;	// Used by the include of actions_dellink.inc.php
@@ -774,6 +779,7 @@ if ($action == 'create')
             // Other attributes
             $parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"', 'socid'=>$socid);
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$expe,$action);    // Note that $action and $object may have been modified by hook
+            print $hookmanager->resPrint;
 
             if (empty($reshook) && ! empty($extrafields->attribute_label)) {
             	print $expe->showOptionals($extrafields, 'edit');
@@ -2036,7 +2042,7 @@ else if ($id || $ref)
 			{
 				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expedition->shipping_advance->send)
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
 				}
 				else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 			}
@@ -2161,6 +2167,7 @@ else if ($id || $ref)
 			$file=$fileparams['fullname'];
 		}
 
+		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 		print '<div class="clearboth"></div>';
 		print '<br>';
 		print load_fiche_titre($langs->trans('SendShippingByEMail'));

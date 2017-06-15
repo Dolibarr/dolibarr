@@ -72,7 +72,7 @@ if (! empty($conf->multicompany->enabled))
 		$entity=(! empty($object->entity) ? $object->entity : $conf->entity);
 }
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('groupcard','globalcard'));
 
 

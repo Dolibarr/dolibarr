@@ -38,6 +38,8 @@
 ALTER TABLE llx_extrafields ADD COLUMN fieldcomputed text;
 ALTER TABLE llx_extrafields ADD COLUMN fielddefault varchar(255);
 
+ALTER TABLE llx_c_typent MODIFY COLUMN libelle varchar(64); 
+
 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN fk_user_creat integer NOT NULL DEFAULT 0;
@@ -185,10 +187,20 @@ UPDATE llx_bank_account as ba set fk_accountancy_journal = (SELECT rowid FROM ll
 ALTER TABLE llx_bank_account ADD CONSTRAINT fk_bank_account_accountancy_journal FOREIGN KEY (fk_accountancy_journal) REFERENCES llx_accounting_journal (rowid);
 
 --Update general ledger for FEC format & harmonization
+
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_tiers varchar(32);
+ALTER TABLE llx_accounting_bookkeeping CHANGE COLUMN code_tiers thirdparty_code varchar(32);
+
+--Subledger account
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN subledger_account varchar(32);
+ALTER TABLE llx_accounting_bookkeeping CHANGE COLUMN thirdparty_label subledger_label varchar(255);    	-- If field was already created, rename it	
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN subledger_label varchar(255) AFTER subledger_account;	-- If field dod not exists yet
+
+update llx_accounting_bookkeeping set subledger_account = numero_compte where subledger_account IS NULL;
+
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN label_compte varchar(255);
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_journal varchar(32);
-ALTER TABLE llx_accounting_bookkeeping ADD COLUMN thirdparty_label varchar(255) AFTER code_tiers;
+
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN label_operation varchar(255) AFTER label_compte;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN multicurrency_amount double AFTER sens;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN multicurrency_code varchar(255) AFTER multicurrency_amount;
@@ -395,3 +407,37 @@ ALTER TABLE llx_usergroup_rights DROP INDEX fk_usergroup;
 ALTER TABLE llx_usergroup_rights ADD UNIQUE INDEX uk_usergroup_rights (entity, fk_usergroup, fk_id);
 ALTER TABLE llx_usergroup_rights ADD CONSTRAINT fk_usergroup_rights_fk_usergroup FOREIGN KEY (fk_usergroup) REFERENCES llx_usergroup (rowid);
 
+CREATE TABLE llx_blockedlog 
+( 
+	rowid integer AUTO_INCREMENT PRIMARY KEY, 
+	tms	timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	action varchar(50), 
+	amounts real NOT NULL, 
+	signature varchar(100) NOT NULL, 
+	signature_line varchar(100) NOT NULL, 
+	element varchar(50), 
+	fk_object integer,
+	ref_object varchar(100), 
+	date_object	datetime,
+	object_data	text,
+	fk_user	integer,
+	entity integer DEFAULT 1 NOT NULL, 
+	certified integer
+) ENGINE=innodb;
+
+ALTER TABLE llx_blockedlog ADD INDEX signature (signature);
+ALTER TABLE llx_blockedlog ADD INDEX fk_object_element (fk_object,element);
+ALTER TABLE llx_blockedlog ADD INDEX entity (entity);
+ALTER TABLE llx_blockedlog ADD INDEX fk_user (fk_user); 
+ALTER TABLE llx_blockedlog ADD INDEX entity_action (entity,action);
+ALTER TABLE llx_blockedlog ADD INDEX entity_action_certified (entity,action,certified);
+
+CREATE TABLE llx_blockedlog_authority 
+( 
+	rowid integer AUTO_INCREMENT PRIMARY KEY, 
+	blockchain longtext NOT NULL,
+	signature varchar(100) NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=innodb;
+
+ALTER TABLE llx_blockedlog_authority ADD INDEX signature (signature);

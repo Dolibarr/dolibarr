@@ -1112,6 +1112,7 @@ if ($action == 'create' || $action == 'adduserldap')
     // Other attributes
     $parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
     if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
     	print $object->showOptionals($extrafields,'edit');
@@ -1162,7 +1163,7 @@ else
 
 		// Check if user has rights
 		$object->getrights();
-		if(empty($object->nb_rights)) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
+		if (empty($object->nb_rights) && $object->statut != 0) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
 
         // Connexion ldap
         // pour recuperer passDoNotExpire et userChangePassNextLogon
@@ -1668,6 +1669,7 @@ else
                 $action='send';
                 $modelmail='user';
 
+    		    print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
                 print '<div id="presend"></div>';
                 print load_fiche_titre($langs->trans($titreform));
 

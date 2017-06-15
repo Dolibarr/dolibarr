@@ -8,7 +8,7 @@ Contact/address		Contact person		Partner/Contact (individual)
 Financial			??					Invoicing
 
 Income / Expense	??					Profit / Loss
-Balance									Net profit
-
+Balance				??					Net profit
+Subledger account	Subledger account	??
 
 

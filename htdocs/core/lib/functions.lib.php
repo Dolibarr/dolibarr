@@ -113,7 +113,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  * 	@param	int	     $shared	1=Return id of current entity + shared entities (default), 0=Return id of current entity only
  * 	@return	mixed				Entity id(s) to use
  */
-function getEntity($element=false, $shared=1)
+function getEntity($element, $shared=1)
 {
 	global $conf, $mc;
 
@@ -407,6 +407,9 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	            break;
 	        case 'int':
 	            if (! is_numeric($out)) { $out=''; }
+	            break;
+	        case 'intcomma':
+	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
 	            break;
 	        case 'intcomma':
 	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
@@ -755,7 +758,7 @@ function dol_string_unaccent($str)
  */
 function dol_string_nospecial($str,$newstr='_',$badcharstoreplace='')
 {
-	$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+	$forbidden_chars_to_replace=array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=");
 	$forbidden_chars_to_remove=array();
 	if (is_array($badcharstoreplace)) $forbidden_chars_to_replace=$badcharstoreplace;
 	//$forbidden_chars_to_remove=array("(",")");
@@ -846,7 +849,7 @@ function dol_strtoupper($utf8_string)
  *	SYSLOG_HANDLERS = ["mod_syslog_syslog"]  	facility is then defined by SYSLOG_FACILITY
  *  Warning, syslog functions are bugged on Windows, generating memory protection faults. To solve
  *  this, use logging to files instead of syslog (see setup of module).
- *  Note: If SYSLOG_FILE_NO_ERROR defined, we never output any error message when writing to log fails.
+ *  Note: If constant 'SYSLOG_FILE_NO_ERROR' defined, we never output any error message when writing to log fails.
  *  Note: You can get log message into html sources by adding parameter &logtohtml=1 (constant MAIN_LOGTOHTML must be set)
  *  This function works only if syslog module is enabled.
  * 	This must not use any call to other function calling dol_syslog (avoid infinite loop).
@@ -1155,14 +1158,15 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 
 	if (class_exists("Imagick"))
 	{
-		if ($object->element == 'propal')    $modulepart='propal';
-		if ($object->element == 'commande')  $modulepart='commande';
-		if ($object->element == 'facture')   $modulepart='facture';
-		if ($object->element == 'fichinter') $modulepart='ficheinter';
-		if ($object->element == 'contrat')   $modulepart='contract';
+	    if ($object->element == 'propal')            $modulepart='propal';
+		if ($object->element == 'commande')          $modulepart='commande';
+		if ($object->element == 'facture')           $modulepart='facture';
+		if ($object->element == 'fichinter')         $modulepart='ficheinter';
+		if ($object->element == 'contrat')           $modulepart='contract';
 	    if ($object->element == 'supplier_proposal') $modulepart='supplier_proposal';
 		if ($object->element == 'order_supplier')    $modulepart='supplier_order';
 	    if ($object->element == 'invoice_supplier')  $modulepart='supplier_invoice';
+		if ($object->element == 'expensereport')     $modulepart='expensereport';
 	}
 
 	if ($object->element == 'product')
@@ -1192,7 +1196,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
             {
                 $phototoshow='';
                 // Check if a preview file is available
-                if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract', 'supplier_order', 'supplier_proposal', 'supplier_invoice')) && class_exists("Imagick"))
+                if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract', 'supplier_order', 'supplier_proposal', 'supplier_invoice', 'expensereport')) && class_exists("Imagick"))
                 {
                     $objectref = dol_sanitizeFileName($object->ref);
                     $dir_output = $conf->$modulepart->dir_output . "/";
@@ -1295,14 +1299,14 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
         if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
             $morehtmlstatus.=ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
         } else {
-            $morehtmlstatus.=$object->getLibStatut(5,0);
+            $morehtmlstatus.='<span class="statusrefsell">'.$object->getLibStatut(5,0).'</span>';
         }
         $morehtmlstatus.=' &nbsp; ';
         //$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Buy").') ';
 	    if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
             $morehtmlstatus.=ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
         } else {
-            $morehtmlstatus.=$object->getLibStatut(5,1);
+            $morehtmlstatus.='<span class="statusrefbuy">'.$object->getLibStatut(5,1).'</span>';
         }
 	}
 	elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan')))
@@ -5949,8 +5953,9 @@ function printCommonFooter($zone='private')
         	print '<!-- Set handler to switch left menu page (menuhider) -->'."\n";
         	print 'jQuery(".menuhider").click(function() {';
         	print '  console.log("We click on .menuhider");'."\n";
-        	print "  $('.side-nav').toggle();";
-        	print "  $('.login_block').toggle();";
+        	//print "  $('.side-nav').animate({width:'toggle'},200);\n";     // OK with eldy theme but not with md
+        	print "  $('.side-nav').toggle()\n";
+        	print "  $('.login_block').toggle()\n";
         	print '});'."\n";
     	}
 

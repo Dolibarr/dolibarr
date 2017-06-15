@@ -57,7 +57,8 @@ llxHeader('', $langs->trans('CPTitreMenu').' ('.$langs->trans("Year").' '.$year.
 // Recent changes are more important than old changes
 $log_holiday = $cp->fetchLog('ORDER BY cpl.rowid DESC', " AND date_action BETWEEN '".$db->idate(dol_get_first_day($year,1,1))."' AND '".$db->idate(dol_get_last_day($year,12,1))."'");	// Load $cp->logs
 
-print load_fiche_titre($langs->trans('LogCP'), '<div class="pagination"><ul><li class="pagination"><a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'">&lt;</a><li class="pagination"><a href="">'.$langs->trans("Year").' '.$year.'</a></li><li class="pagination"><a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'">&gt;</a></li></lu></div>', 'title_hrm.png');
+$pagination='<div class="pagination"><ul><li class="pagination"><a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'"><i class="fa fa-chevron-left" title="Previous"></i></a><li class="pagination"><span class="active">'.$langs->trans("Year").' '.$year.'</span></li><li class="pagination"><a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'"><i class="fa fa-chevron-right" title="Next"></i></a></li></lu></div>';
+print load_fiche_titre($langs->trans('LogCP'), $pagination, 'title_hrm.png');
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
 $lastUpdate = $cp->getConfCP('lastUpdate');
@@ -77,6 +78,18 @@ print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
 
 print '<tbody>';
+
+print '<tr class="liste_titre">';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '</tr>';
+
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans('ID'));
 print_liste_field_titre($langs->trans('Date'), $_SERVER["PHP_SELF"], '', '', '', 'align="center"');
@@ -88,24 +101,9 @@ print_liste_field_titre($langs->trans('PrevSoldeCP'), $_SERVER["PHP_SELF"], '', 
 print_liste_field_titre($langs->trans('NewSoldeCP'), $_SERVER["PHP_SELF"], '', '', '', 'align="right"');
 print '</tr>';
 
-print '<tr class="liste_titre">';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '</tr>';
-
-
-$var=true;
 
 foreach($cp->logs as $logs_CP)
 {
-   	
-
    	$user_action = new User($db);
    	$user_action->fetch($logs_CP['fk_user_action']);
 

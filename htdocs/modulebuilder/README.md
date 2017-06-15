@@ -9,26 +9,26 @@ If you're not a module developer you have no use for this.
 Documentation
 -------------
 
-[Module tutorial](http://wiki.dolibarr.org/index.php/Module_development)
+[Module tutorial](https://wiki.dolibarr.org/index.php/Module_development)
 
-[Dolibarr development](http://wiki.dolibarr.org/index.php/Developer_documentation)
+[Dolibarr development](https://wiki.dolibarr.org/index.php/Developer_documentation)
 
 ### Translations
 
-Dolibarr uses [Transifex](http://transifex.com) to manage it's translations.
+Dolibarr uses [Transifex](https://transifex.com) to manage it's translations.
 
 This template also contains a sample configuration for Transifex managed translations under the hidden [.tx](.tx) directory.
 
 For more informations, see the [translator's documentation](http://wiki.dolibarr.org/index.php/Translator_documentation).
 
-There is a [Transifex project](http://transifex.com/projects/p/dolibarr-module-template) for this module.
+There is a [Transifex project](https://transifex.com/projects/p/dolibarr-module-template) for this module.
 
 Install
 -------
 
 ### Manually
 
-- Make sure Dolibarr (>= 3.3.x) is already installed and configured on your workstation or development server.
+- Make sure Dolibarr is already installed and configured on your workstation or development server.
 
 - In your Dolibarr installation directory, edit the ```htdocs/conf/conf.php``` file
 
@@ -59,8 +59,6 @@ Install
         ```
 
     For more information about the ```conf.php``` file take a look at the conf.php.example file.
-
-*Note that for Dolibarr versions before 3.5, the ```$dolibarr_main_url_root_alt``` has to be an absolute path*
 
 - Clone the repository in ```$dolibarr_main_document_root_alt/mymodule```
 
@@ -187,10 +185,6 @@ The de-facto standard for publishing and marketing modules for Dolibarr is the [
 Templates for required images and texts are [provided](dev/dolistore).  
 Check the dedicated [README](dev/dolistore/README.md) for more informations.
 
-Contributions
--------------
-
-Feel free to contribute and report defects on our [issue tracker](http://github.com/Dolibarr/dolibarr-module-template/issues).
 
 Licenses
 --------

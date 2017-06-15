@@ -60,7 +60,7 @@ $result = restrictedArea($user, 'don', $id);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('doncard','globalcard'));
 
 /*
@@ -373,6 +373,7 @@ if ($action == 'create')
     // Other attributes
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
     if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
 		print $object->showOptionals($extrafields,'edit',$parameters);
@@ -498,6 +499,7 @@ if (! empty($id) && $action == 'edit')
     // Other attributes
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
     if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
       	print $object->showOptionals($extrafields,'edit');

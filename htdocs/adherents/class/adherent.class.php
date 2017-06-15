@@ -1097,7 +1097,7 @@ class Adherent extends CommonObject
         $sql.= " WHERE d.fk_adherent_type = t.rowid";
         if ($rowid) $sql.= " AND d.rowid=".$rowid;
         elseif ($ref || $fk_soc) {
-        	$sql.= " AND d.entity IN (".getEntity().")";
+        	$sql.= " AND d.entity IN (".getEntity('adherent').")";
         	if ($ref) $sql.= " AND d.rowid='".$this->db->escape($ref)."'";
         	elseif ($fk_soc > 0) $sql.= " AND d.fk_soc=".$fk_soc;
         }

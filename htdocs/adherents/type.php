@@ -79,7 +79,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter_x") || GETP
 }
 
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('membertypecard','globalcard'));
 
 
@@ -173,7 +173,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
-	$sql.= " WHERE d.entity IN (".getEntity().")";
+	$sql.= " WHERE d.entity IN (".getEntity('adherent').")";
 
 	$result = $db->query($sql);
 	if ($result)
@@ -278,6 +278,7 @@ if ($action == 'create')
 	// Other attributes
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		print $object->showOptionals($extrafields,'edit');
@@ -380,7 +381,7 @@ if ($rowid > 0)
 		$sql.= " t.libelle as type, t.subscription";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql.= " WHERE d.fk_adherent_type = t.rowid ";
-		$sql.= " AND d.entity IN (".getEntity().")";
+		$sql.= " AND d.entity IN (".getEntity('adherent').")";
 		$sql.= " AND t.rowid = ".$object->id;
 		if ($sall)
 		{
@@ -668,6 +669,7 @@ if ($rowid > 0)
 		// Other attributes
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
 		    print $object->showOptionals($extrafields,'edit');

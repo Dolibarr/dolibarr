@@ -75,10 +75,6 @@ if (empty($search_date_end)) $search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_
 
 $object = new BookKeeping($db);
 
-$formaccounting = new FormAccounting($db);
-$formother = new FormOther($db);
-$form = new Form($db);
-
 
 $options = '';
 $filter = array ();
@@ -126,7 +122,7 @@ if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter")) // Bot
  * Action
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
 	$search_doc_date = '';
 	$search_accountancy_code = '';
@@ -155,6 +151,10 @@ if ($action == 'delmouvconfirm') {
 /*
  * View
  */
+
+$formaccounting = new FormAccounting($db);
+$formother = new FormOther($db);
+$form = new Form($db);
 
 $title_page = $langs->trans("Bookkeeping") . ' ' . strtolower($langs->trans("By")) . ' ' . $langs->trans("AccountAccounting");
 
@@ -217,7 +217,7 @@ if ( preg_match('/^asc/i', $sortorder) )
 else
   $sortorder = "desc";
 
-print '<div class="tabsAction">' . "\n";
+print '<div class="tabsAction tabsActionNoBottom">' . "\n";
 print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
 print '</div>';
 
@@ -257,13 +257,12 @@ print "</tr>\n";
 
 print '</tr>';
 
-$var = True;
 
 $total_debit = 0;
 $total_credit = 0;
 $sous_total_debit = 0;
 $sous_total_credit = 0;
-$displayed_account_number = null;       // Start with undefined to be able to distinguish with empty 
+$displayed_account_number = null;       // Start with undefined to be able to distinguish with empty
 
 foreach ( $object->lines as $line ) {
 
@@ -272,10 +271,10 @@ foreach ( $object->lines as $line ) {
 
     $accountg = length_accountg($line->numero_compte);
 	//if (empty($accountg)) $accountg = '-';
-	
+
 	// Is it a break ?
     if ($accountg != $displayed_account_number || ! isset($displayed_account_number)) {
-        
+
         // Affiche un Sous-Total par compte comptable
         if (isset($displayed_account_number)) {
             print '<tr class="liste_total"><td align="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
@@ -283,7 +282,7 @@ foreach ( $object->lines as $line ) {
             print "<td>&nbsp;</td>\n";
             print '</tr>';
         }
-        
+
         // Show the break account
         $colspan = 9;
         print "<tr>";
@@ -292,7 +291,7 @@ foreach ( $object->lines as $line ) {
         else print '<span class="error">'.$langs->trans("Unknown").'</span>';
         print '</td>';
         print '</tr>';
-        
+
         $displayed_account_number = $accountg;
         //if (empty($displayed_account_number)) $displayed_account_number='-';
         $sous_total_debit = 0;
@@ -303,24 +302,24 @@ foreach ( $object->lines as $line ) {
 	print '<td>&nbsp;</td>';
 	print '<td align="right"><a href="./card.php?piece_num=' . $line->piece_num . '">'.$line->piece_num.'</a></td>';
 	print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
-	
+
 	// TODO Add a link according to doc_type and fk_doc
 	print '<td class="nowrap">';
     //if ($line->doc_type == 'supplier_invoice')
     //if ($line->doc_type == 'customer_invoice')
 	print $line->doc_ref;
     print '</td>';
-    
+
     // Affiche un lien vers la facture client/fournisseur
     $doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
-    print strlen(length_accounta($line->code_tiers)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br /><span style="font-size:0.8em">(' . length_accounta($line->code_tiers) . ')</span></td>';
+    print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_compte . '</td>' : '<td>' . $line->label_compte . '<br /><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
 
 
-	print '<td align="right">' . price($line->debit) . '</td>';
-	print '<td align="right">' . price($line->credit) . '</td>';
+	print '<td align="right">' . ($line->debit ? price($line->debit) :''). '</td>';
+	print '<td align="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
 	print '<td align="center">' . $line->code_journal . '</td>';
 	print '<td align="center">';
-	print '<a href="./card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>&nbsp;';
+	print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>&nbsp;';
 	print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $options . '&page=' . $page . '">' . img_delete() . '</a>';
 	print '</td>';
 	print "</tr>\n";
@@ -355,6 +354,4 @@ print "</table>";
 print '</form>';
 
 llxFooter();
-
-
 $db->close();

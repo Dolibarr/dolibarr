@@ -113,7 +113,7 @@ $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype,$objcanvas);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productcard','globalcard'));
 
 
@@ -1047,6 +1047,7 @@ else
         // Other attributes
         $parameters=array('cols' => 3);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
         	print $object->showOptionals($extrafields,'edit',$parameters);
@@ -1366,6 +1367,7 @@ else
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'cols'=>3);
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            print $hookmanager->resPrint;
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
             	print $object->showOptionals($extrafields,'edit');
@@ -1455,7 +1457,10 @@ else
             $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
             $object->next_prev_filter=" fk_product_type = ".$object->type;
 
-            dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
+            $shownav = 1;
+            if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+            dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
 
             print '<div class="fichecenter">';
@@ -1993,6 +1998,8 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
     $genallowed=$user->rights->produit->creer;
     $delallowed=$user->rights->produit->supprimer;
+
+    $var=true;
 
     print $formfile->showdocuments($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
     $somethingshown=$formfile->numoffiles;

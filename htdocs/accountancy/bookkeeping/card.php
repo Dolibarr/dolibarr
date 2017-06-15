@@ -48,9 +48,9 @@ $piece_num = GETPOST("piece_num");
 $mesg = '';
 
 $account_number = GETPOST('account_number');
-$code_tiers = GETPOST('code_tiers');
-if ($code_tiers == - 1) {
-	$code_tiers = null;
+$subledger_account = GETPOST('subledger_account');
+if ($subledger_account == - 1) {
+	$subledger_account = null;
 }
 $label_operation = GETPOST('label_operation');
 $debit = price2num(GETPOST('debit'));
@@ -82,7 +82,7 @@ if ($action == "confirm_update") {
 			setEventMessages($book->error, $book->errors, 'errors');
 		} else {
 			$book->numero_compte = $account_number;
-			$book->code_tiers = $code_tiers;
+			$book->subledger_account = $subledger_account;
 			$book->label_operation = $label_operation;
 			$book->debit = $debit;
 			$book->credit = $credit;
@@ -119,7 +119,7 @@ else if ($action == "add") {
 		$book = new BookKeeping($db);
 
 		$book->numero_compte = $account_number;
-		$book->code_tiers = $code_tiers;
+		$book->subledger_account = $subledger_account;
 		$book->label_operation = $label_operation;
 		$book->debit = $debit;
 		$book->credit = $credit;
@@ -170,39 +170,39 @@ else if ($action == "confirm_delete") {
 }
 
 else if ($action == "confirm_create") {
-	$error = 0;
+    $error = 0;
 
-	$book = new BookKeeping($db);
+    $book = new BookKeeping($db);
 
 	if (! GETPOST('next_num_mvt'))
 	{
 	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumPiece")), null, 'errors');
 	    $error++;
 	}
-	
+
 	if (! $error)
 	{
-		$book->label_operation = '';
-		$book->debit = 0;
-		$book->credit = 0;
-		$book->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth'), GETPOST('doc_dateday'), GETPOST('doc_dateyear'));
-		$book->doc_type = GETPOST('doc_type');
-		$book->piece_num = GETPOST('next_num_mvt');
-		$book->doc_ref = GETPOST('doc_ref');
-		$book->code_journal = GETPOST('code_journal');
-		$book->fk_doc = 0;
-		$book->fk_docdet = 0;
+    	$book->label_operation = '';
+    	$book->debit = 0;
+    	$book->credit = 0;
+    	$book->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth'), GETPOST('doc_dateday'), GETPOST('doc_dateyear'));
+    	$book->doc_type = GETPOST('doc_type');
+    	$book->piece_num = GETPOST('next_num_mvt');
+    	$book->doc_ref = GETPOST('doc_ref');
+    	$book->code_journal = GETPOST('code_journal');
+    	$book->fk_doc = 0;
+    	$book->fk_docdet = 0;
 
-		$book->montant = 0;
+    	$book->montant = 0;
 
-		$result = $book->createStd($user);
-		if ($result < 0) {
-			setEventMessages($book->error, $book->errors, 'errors');
-		} else {
-			setEventMessages($langs->trans('Saved'), null, 'mesgs');
-			$action = '';
-			$piece_num = $book->piece_num;
-		}
+    	$result = $book->createStd($user);
+    	if ($result < 0) {
+    		setEventMessages($book->error, $book->errors, 'errors');
+    	} else {
+    		setEventMessages($langs->trans('Saved'), null, 'mesgs');
+    		$action = '';
+    		$piece_num = $book->piece_num;
+    	}
 	}
 }
 
@@ -256,7 +256,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("AccountancyJournal").'</td>';
 	print '<td>';
-	print $formaccounting->select_journal('', 'code_journal', '', 0, '', 1, 1, 1, 1);
+	print $formaccountancy->select_journal('', 'code_journal', '', 0, 1, 1, 1, 1);
 	print '</td></tr>';
 
 	print '<tr>';
@@ -312,7 +312,7 @@ if ($action == 'create') {
 		print $accountingjournal->getNomUrl(0,1,1,'',1);
 		print '</td></tr>';
 
-		print '<tr>';
+		print '<tr class="impair">';
 		print '<td>' . $langs->trans("Docref") . '</td>';
 		print '<td>' . $book->doc_ref . '</td>';
 		print '</tr>';
@@ -368,7 +368,7 @@ if ($action == 'create') {
 				print '<tr class="liste_titre">';
 
 				print_liste_field_titre($langs->trans("AccountAccountingShort"));
-				print_liste_field_titre($langs->trans("Code_tiers"));
+				print_liste_field_titre($langs->trans("subledger_account"));
 				print_liste_field_titre($langs->trans("Labelcompte"));
 				print_liste_field_titre($langs->trans("Debit"), "", "", "", "", 'align="right"');
 				print_liste_field_titre($langs->trans("Credit"), "", "", "", "", 'align="right"');
@@ -390,7 +390,7 @@ if ($action == 'create') {
 						print $formaccounting->select_account($line->numero_compte, 'account_number', 0, array (), 1, 1, '');
 						print '</td>';
 						print '<td>';
-						print $formaccounting->select_auxaccount($line->code_tiers, 'code_tiers', 1);
+						print $formaccounting->select_auxaccount($line->subledger_account, 'subledger_account', 1);
 						print '</td>';
 						print '<td><input type="text" size="15" name="label_operation" value="' . $line->label_operation . '"/></td>';
 						print '<td align="right"><input type="text" size="6" name="debit" value="' . price($line->debit) . '"/></td>';
@@ -403,7 +403,7 @@ if ($action == 'create') {
 						print '</td>';
 					} else {
 						print '<td>' . length_accountg($line->numero_compte) . '</td>';
-						print '<td>' . length_accounta($line->code_tiers) . '</td>';
+						print '<td>' . length_accounta($line->subledger_account) . '</td>';
 						print '<td>' . $line->label_operation . '</td>';
 						print '<td align="right">' . price($line->debit) . '</td>';
 						print '<td align="right">' . price($line->credit) . '</td>';
@@ -423,7 +423,7 @@ if ($action == 'create') {
 					print "</tr>\n";
 				}
 
-				if ($total_debit != $total_credit) 
+				if ($total_debit != $total_credit)
 				{
 					setEventMessages(null, array($langs->trans('MvtNotCorrectlyBalanced', $total_credit, $total_debit)), 'warnings');
 				}
@@ -434,7 +434,7 @@ if ($action == 'create') {
 					print $formaccounting->select_account($account_number, 'account_number', 0, array (), 1, 1, '');
 					print '</td>';
 					print '<td>';
-					print $formaccounting->select_auxaccount($code_tiers, 'code_tiers', 1);
+					print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1);
 					print '</td>';
 					print '<td><input type="text" size="15" name="label_operation" value="' . $label_operation . '"/></td>';
 					print '<td align="right"><input type="text" class="right maxwidth50" name="debit" value="' . price($debit) . '"/></td>';

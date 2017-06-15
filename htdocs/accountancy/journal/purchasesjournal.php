@@ -215,9 +215,9 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->doc_type = 'supplier_invoice';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
-					$bookkeeping->code_tiers = $tabcompany[$key]['code_compta_fournisseur'];
-					$bookkeeping->thirdparty_label = $tabcompany[$key]['name'];
-					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("Code_tiers");
+					$bookkeeping->thirdparty_code = $tabcompany[$key]['code_fournisseur'];
+					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta_fournisseur'];
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("subledger_account");
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
@@ -263,7 +263,8 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->doc_type = 'supplier_invoice';
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
-						$bookkeeping->code_tiers = '';
+						$bookkeeping->subledger_account = '';
+						$bookkeeping->subledger_label = '';
 						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $accountingaccount->label;
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->montant = $mt;
@@ -308,7 +309,8 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->doc_type = 'supplier_invoice';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
-					$bookkeeping->code_tiers = '';
+					$bookkeeping->subledger_account = '';
+					$bookkeeping->subledger_label = '';
 					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("VAT"). ' '.$def_tva[$key];
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->montant = $mt;
@@ -481,7 +483,7 @@ $companystatic = new Fournisseur($db);
 				print '"' . $date . '"' . $sep;
 				print '"' . $val["ref"] . '"' . $sep;
 				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-				print '"' . dol_trunc($companystatic->name, 16) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("Code_tiers") . '"' . $sep;
+				print '"' . dol_trunc($companystatic->name, 16) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("subledger_account") . '"' . $sep;
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 				print '"' . ($mt >= 0 ? price($mt) : '') . '"';
 			}
@@ -520,7 +522,7 @@ if (empty($action) || $action == 'view') {
 		print '<input type="button" class="butAction" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 	}*/
 
-	print '<div class="tabsAction">';
+	print '<div class="tabsAction tabsActionNoBottom">';
 	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 	print '</div>';
 
@@ -637,7 +639,7 @@ if (empty($action) || $action == 'view') {
 			}
 			else print $accountoshow;
 			print "</td>";
-			print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("Code_tiers") . "</td>";
+			print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("subledger_account") . "</td>";
 			// print "</td><td>" . $langs->trans("ThirdParty");
 			// print ' (' . $companystatic->getNomUrl(0, 'supplier', 16) . ')';
 			// print "</td>";

@@ -53,7 +53,7 @@ $backtopage=GETPOST("backtopage");
 // Security check
 $result=restrictedArea($user,'stock');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('warehousecard','globalcard'));
 
 $object = new Entrepot($db);
@@ -100,7 +100,7 @@ if ($action == 'add' && $user->rights->stock->creer)
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-	else 
+	else
 	{
 		setEventMessages($langs->trans("ErrorWarehouseRefRequired"), null, 'errors');
 		$action="create";   // Force retour sur page creation
@@ -194,7 +194,7 @@ if ($action == 'create')
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value=""></td></tr>';
 
 	print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" size="40" value="'.(!empty($object->lieu)?$object->lieu:'').'"></td></tr>';
-		
+
 	// Parent entrepot
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 	print $formproduct->selectWarehouses('', 'fk_parent', '', 1);
@@ -276,7 +276,7 @@ else
 			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
 
 			$formconfirm = '';
-			
+
 			// Confirm delete third party
 			if ($action == 'delete')
 			{
@@ -300,7 +300,10 @@ else
 			$morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
         	$morehtmlref.='</div>';
 
-        	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'libelle', $morehtmlref);
+            $shownav = 1;
+            if ($user->societe_id && ! in_array('stock', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+        	dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'libelle', $morehtmlref);
 
         	print '<div class="fichecenter">';
         	print '<div class="fichehalfleft">';
@@ -315,7 +318,7 @@ else
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
 				print $e->getNomUrl(3);
 				print '</td></tr>';
-				
+
 			}
 
 			// Description

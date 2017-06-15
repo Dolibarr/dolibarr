@@ -174,7 +174,8 @@ if (! empty($socid))
 
  			$parameters=array('socid'=>$object->id);
         	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$obj,$action);    // Note that $action and $object may have been modified by hook
-      		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+            print $hookmanager->resPrint;
+        	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
       		$tmpuser->id = $obj->rowid;
       		$tmpuser->firstname = $obj->firstname;

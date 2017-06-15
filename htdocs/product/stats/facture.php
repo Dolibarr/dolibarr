@@ -45,7 +45,7 @@ $socid='';
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productstatsinvoice'));
 
 $showmessage=GETPOST('showmessage');
@@ -83,9 +83,9 @@ if ($id > 0 || ! empty($ref))
 {
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
-    
+
 	$object = $product;
-    
+
 	$parameters=array('id'=>$id);
 	$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -114,14 +114,18 @@ if ($id > 0 || ! empty($ref))
 		dol_fiche_head($head, 'referers', $titre, -1, $picto);
 
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-        
-		dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
-        
+
+        $shownav = 1;
+        if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+
         print '<div class="fichecenter">';
-        
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
@@ -131,14 +135,14 @@ if ($id > 0 || ! empty($ref))
 
         print '</div>';
         print '<div style="clear:both"></div>';
-		
+
 		dol_fiche_end();
 
 		if ($showmessage && $nboflines > 1)
 		{
 			print $langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers"));
 		}
-        elseif ($user->rights->facture->lire) 
+        elseif ($user->rights->facture->lire)
         {
             $sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
             $sql.= " f.facnumber, f.datef, f.paye, f.fk_statut as statut, f.rowid as facid,";
@@ -164,13 +168,13 @@ if ($id > 0 || ! empty($ref))
             $total_ht=0;
             $total_qty=0;
 			$totalrecords=0;
-            if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) 
+            if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
             {
             	$result = $db->query($sql);
-            	if ($result) 
+            	if ($result)
             	{
             		$totalrecords = $db->num_rows($result);
-            		while ($objp = $db->fetch_object($result)) 
+            		while ($objp = $db->fetch_object($result))
             		{
             			$total_ht+=$objp->total_ht;
             			$total_qty+=$objp->qty;
@@ -234,7 +238,7 @@ if ($id > 0 || ! empty($ref))
                     while ($i < min($num,$conf->liste_limit))
 					{
                         $objp = $db->fetch_object($result);
-                        
+
 
                         print '<tr class="oddeven">';
                         print '<td>';

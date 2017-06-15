@@ -34,6 +34,7 @@ if (! empty($cols)) $parameters['cols'] = $cols;
 if (! empty($object->fk_soc)) $parameters['socid'] = $object->fk_soc;
 
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
+print $hookmanager->resPrint;
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element]['label']))
