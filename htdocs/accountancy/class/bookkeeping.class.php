@@ -1445,7 +1445,7 @@ class BookKeeping extends CommonObject
 				$line->fk_docdet = $obj->fk_docdet;
 				$line->thirdparty_code = $obj->thirdparty_code;
 				$line->subledger_account = $obj->subledger_account;
-				$line->subledger_label = $obj->subledger_label:
+				$line->subledger_label = $obj->subledger_label;
 				$line->numero_compte = $obj->numero_compte;
 				$line->label_compte = $obj->label_compte;
 				$line->label_operation = $obj->label_operation;

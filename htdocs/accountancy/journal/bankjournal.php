@@ -425,7 +425,7 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->label_operation = $tabuser[$key]['name'];
 						$bookkeeping->doc_ref = $langs->trans("SalaryPayment") . ' (' . $val["paymentsalid"] . ')'; // Ref of salary payment
 					} else if ($tabtype[$key] == 'payment_various') {
-						$bookkeeping->code_tiers = '';
+						$bookkeeping->subledger_account = '';
 						$bookkeeping->doc_ref = $langs->trans("VariousPayment") . ' (' . $val["paymentvariousid"] . ')'; // Ref of various payment
 					}
 
@@ -503,7 +503,7 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->thirdparty_label = $tabcompany[$key]['name'];
 						$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 					} else if ($tabtype[$key] == 'payment_expensereport') {
-						$bookkeeping->code_tiers = $tabuser[$key]['accountancy_code'];
+						$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 						$bookkeeping->thirdparty_label = $tabuser[$key]['name'];
 						$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 						$bookkeeping->label_operation = $tabuser[$key]['name'];
@@ -534,7 +534,7 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->label_operation = $tabuser[$key]['name'];
 						$bookkeeping->doc_ref = $langs->trans("SalaryPayment") . ' (' . $val["paymentsalid"] . ')'; // Rowid of salary payment
 					} else if ($tabtype[$key] == 'payment_various') {
-						$bookkeeping->code_tiers = '';
+						$bookkeeping->subledger_account = '';
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->doc_ref = $langs->trans("VariousPayment") . ' (' . $val["paymentvariousid"] . ')'; // Rowid of various payment
 					} else if ($tabtype[$key] == 'banktransfert') {
