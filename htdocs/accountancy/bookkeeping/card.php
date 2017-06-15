@@ -18,9 +18,9 @@
  */
 
 /**
- * \file	htdocs/accountancy/bookkeeping/card.php
- * \ingroup Advanced accountancy
- * \brief	Page to show book-entry
+ * \file		htdocs/accountancy/bookkeeping/card.php
+ * \ingroup		Advanced accountancy
+ * \brief		Page to show book-entry
  */
 require '../../main.inc.php';
 
@@ -52,7 +52,7 @@ $subledger_account = GETPOST('subledger_account');
 if ($subledger_account == - 1) {
 	$subledger_account = null;
 }
-$label_compte = GETPOST('label_compte');
+$label_operation = GETPOST('label_operation');
 $debit = price2num(GETPOST('debit'));
 $credit = price2num(GETPOST('credit'));
 
@@ -83,7 +83,7 @@ if ($action == "confirm_update") {
 		} else {
 			$book->numero_compte = $account_number;
 			$book->subledger_account = $subledger_account;
-			$book->label_compte = $label_compte;
+			$book->label_operation = $label_operation;
 			$book->debit = $debit;
 			$book->credit = $credit;
 
@@ -120,7 +120,7 @@ else if ($action == "add") {
 
 		$book->numero_compte = $account_number;
 		$book->subledger_account = $subledger_account;
-		$book->label_compte = $label_compte;
+		$book->label_operation = $label_operation;
 		$book->debit = $debit;
 		$book->credit = $credit;
 		$book->doc_date = GETPOST('doc_date');
@@ -182,7 +182,7 @@ else if ($action == "confirm_create") {
 
 	if (! $error)
 	{
-    	$book->label_compte = '';
+    	$book->label_operation = '';
     	$book->debit = 0;
     	$book->credit = 0;
     	$book->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth'), GETPOST('doc_dateday'), GETPOST('doc_dateyear'));
@@ -214,7 +214,7 @@ else if ($action == "confirm_create") {
 llxHeader();
 
 $html = new Form($db);
-$formaccountancy = new FormAccounting($db);
+$formaccounting = new FormAccounting($db);
 
 /*
  *  Confirmation to delete the command
@@ -229,10 +229,10 @@ if ($action == 'create') {
 
 	$book = new BookKeeping($db);
 	$next_num_mvt = $book->getNextNumMvt();
-    if (empty($next_num_mvt))
-    {
-        dol_print_error('', 'Failed to get next piece number');
-    }
+	if (empty($next_num_mvt))
+	{
+		dol_print_error('', 'Failed to get next piece number');
+	}
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" name="create_mvt" method="POST">';
 	print '<input type="hidden" name="action" value="confirm_create">' . "\n";
@@ -294,17 +294,17 @@ if ($action == 'create') {
 
 		print '<table class="border" width="100%">';
 
-		print '<tr class="pair">';
+		print '<tr>';
 		print '<td class="titlefield">' . $langs->trans("NumMvts") . '</td>';
 		print '<td>' . $book->piece_num . '</td>';
 		print '</tr>';
 
-		print '<tr class="impair">';
+		print '<tr>';
 		print '<td>' . $langs->trans("Docdate") . '</td>';
 		print '<td>' . dol_print_date($book->doc_date, 'daytextshort') . '</td>';
 		print '</tr>';
 
-		print '<tr class="pair">';
+		print '<tr>';
 		print '<td>' . $langs->trans("Codejournal") . '</td>';
 		print '<td>';
 		$accountingjournal = new AccountingJournal($db);
@@ -330,7 +330,7 @@ if ($action == 'create') {
 		if ($typelabel == 'expense_report') {
 			$typelabel = $langs->trans('ExpenseReport');
 		}
-		print '<tr class="pair">';
+		print '<tr>';
 		print '<td>' . $langs->trans("Doctype") . '</td>';
 		print '<td>' . $typelabel . '</td>';
 		print '</tr>';
@@ -392,7 +392,7 @@ if ($action == 'create') {
 						print '<td>';
 						print $formaccounting->select_auxaccount($line->subledger_account, 'subledger_account', 1);
 						print '</td>';
-						print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
+						print '<td><input type="text" size="15" name="label_operation" value="' . $line->label_operation . '"/></td>';
 						print '<td align="right"><input type="text" size="6" name="debit" value="' . price($line->debit) . '"/></td>';
 						print '<td align="right"><input type="text" size="6" name="credit" value="' . price($line->credit) . '"/></td>';
 						print '<td align="right">' . price($line->montant) . '</td>';
@@ -404,17 +404,17 @@ if ($action == 'create') {
 					} else {
 						print '<td>' . length_accountg($line->numero_compte) . '</td>';
 						print '<td>' . length_accounta($line->subledger_account) . '</td>';
-						print '<td>' . $line->label_compte . '</td>';
+						print '<td>' . $line->label_operation . '</td>';
 						print '<td align="right">' . price($line->debit) . '</td>';
 						print '<td align="right">' . price($line->credit) . '</td>';
 						print '<td align="right">' . price($line->montant) . '</td>';
 						print '<td align="center">' . $line->sens . '</td>';
 
 						print '<td align="center">';
-						print '<a href="./card.php?action=update&amp;id=' . $line->id . '&amp;piece_num=' . $line->piece_num . '">';
+						print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&amp;id=' . $line->id . '&amp;piece_num=' . $line->piece_num . '">';
 						print img_edit();
 						print '</a>&nbsp;';
-						print '<a href="./card.php?action=delete&amp;id=' . $line->id . '&amp;piece_num=' . $line->piece_num . '">';
+						print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delete&amp;id=' . $line->id . '&amp;piece_num=' . $line->piece_num . '">';
 						print img_delete();
 						print '</a>';
 
@@ -436,7 +436,7 @@ if ($action == 'create') {
 					print '<td>';
 					print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1);
 					print '</td>';
-					print '<td><input type="text" size="15" name="label_compte" value="' . $label_compte . '"/></td>';
+					print '<td><input type="text" size="15" name="label_operation" value="' . $label_operation . '"/></td>';
 					print '<td align="right"><input type="text" class="right maxwidth50" name="debit" value="' . price($debit) . '"/></td>';
 					print '<td align="right"><input type="text" class="right maxwidth50" name="credit" value="' . price($credit) . '"/></td>';
 					print '<td></td>';

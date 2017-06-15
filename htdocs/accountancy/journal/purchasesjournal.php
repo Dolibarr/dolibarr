@@ -129,7 +129,7 @@ if ($result) {
 	while ( $i < $num ) {
 		$obj = $db->fetch_object($result);
 
-		// contrôles
+		// Controls
 		$compta_soc = (! empty($obj->code_compta_fournisseur)) ? $obj->code_compta_fournisseur : $cptfour;
 
 		$compta_prod = $obj->compte;
@@ -202,6 +202,7 @@ if ($action == 'writebookkeeping') {
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->client = $tabcompany[$key]['code_client'];
 
+		// Thirdparty
 		if (! $errorforline)
 		{
 			foreach ( $tabttc[$key] as $k => $mt ) {
@@ -216,7 +217,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
 					$bookkeeping->thirdparty_code = $tabcompany[$key]['code_fournisseur'];
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta_fournisseur'];
-					$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("subledger_account");
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("subledger_account");
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
@@ -264,7 +265,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
-						$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $accountingaccount->label;
+						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $accountingaccount->label;
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
@@ -310,7 +311,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
 					$bookkeeping->subledger_account = '';
 					$bookkeeping->subledger_label = '';
-					$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("VAT"). ' '.$def_tva[$key];
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("VAT"). ' '.$def_tva[$key];
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';

@@ -26,10 +26,10 @@ create table llx_payment_various
   sens                  smallint DEFAULT 0 NOT NULL,-- Sens of the operation: 0 for debit operation, 1 for credit operation
   amount                double(24,8) DEFAULT 0 NOT NULL,
   fk_typepayment        integer NOT NULL,
-  num_payment           varchar(50),				-- ref
+  num_payment           varchar(50),                -- ref
   label                 varchar(255),
-  accountancy_code		varchar(32),
-  entity                integer DEFAULT 1 NOT NULL,	-- multi company id
+  accountancy_code      varchar(32),
+  entity                integer DEFAULT 1 NOT NULL, -- multi company id
   note                  text,
   fk_bank               integer,
   fk_user_author        integer,                    -- utilisateur qui a cree l'info

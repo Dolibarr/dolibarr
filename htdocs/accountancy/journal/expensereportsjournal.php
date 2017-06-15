@@ -142,7 +142,7 @@ if ($result) {
 		$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
 		$tabuser[$obj->rowid] = array (
 				'id' => $obj->uid,
-				'name' => $obj->firstname.' '.$obj->lastname,
+				'name' => dolGetFirstLastname($obj->firstname, $obj->lastname),
 				'user_accountancy_code' => $obj->user_accountancy_account
 		);
 
@@ -163,6 +163,7 @@ if ($action == 'writebookkeeping') {
 
 		$db->begin();
 
+		// Thirdparty
 		if (! $errorforline)
 		{
 			foreach ( $tabttc[$key] as $k => $mt ) {
@@ -177,7 +178,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
 					$bookkeeping->subledger_account = $tabuser[$key]['user_accountancy_code'];
 					$bookkeeping->subledger_label = $tabuser[$key]['user_accountancy_code'];
-					$bookkeeping->label_compte = $tabuser[$key]['name'];
+					$bookkeeping->label_operation = $tabuser[$key]['name'];
 					$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
@@ -206,9 +207,9 @@ if ($action == 'writebookkeeping') {
 			}
 		}
 
+		// Fees
 		if (! $errorforline)
 		{
-			// Fees
 			foreach ( $tabht[$key] as $k => $mt ) {
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch(null, $k, true);
@@ -225,7 +226,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
-						$bookkeeping->label_compte = $accountingaccount->label;
+						$bookkeeping->label_operation = $accountingaccount->label_operationl;
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
@@ -255,9 +256,9 @@ if ($action == 'writebookkeeping') {
 			}
 		}
 
+		// VAT
 		if (! $errorforline)
 		{
-			// VAT
 			// var_dump($tabtva);
 			foreach ( $tabtva[$key] as $k => $mt ) {
 				if ($mt) {
@@ -271,7 +272,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
 					$bookkeeping->subledger_account = '';
 					$bookkeeping->subledger_label = '';
-					$bookkeeping->label_compte = $langs->trans("VAT"). ' '.$def_tva[$key];
+					$bookkeeping->label_operation = $langs->trans("VAT"). ' '.$def_tva[$key];
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';

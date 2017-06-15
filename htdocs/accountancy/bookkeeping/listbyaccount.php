@@ -100,11 +100,11 @@ if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter")) // Bot
   	$options .= '&amp;search_accountancy_code_start=' . $search_accountancy_code_start;
   }
   if (! empty($search_label_account)) {
-  	$filter['t.label_compte'] = $search_label_account;
+  	$filter['t.label_operation'] = $search_label_account;
   	$options .= '&amp;search_label_account=' . $search_label_account;
   }
   if (! empty($search_mvt_label)) {
-  	$filter['t.label_compte'] = $search_mvt_label;
+  	$filter['t.label_operation'] = $search_mvt_label;
   	$options .= '&amp;search_mvt_label=' . $search_mvt_label;
   }
   if (! empty($search_direction)) {

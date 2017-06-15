@@ -1,13 +1,13 @@
 <?php
 /* Copyright (C) 2007-2010  Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010  Jean Heimburger			<jean@tiaris.info>
- * Copyright (C) 2011	   Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012	   Regis Houssin			<regis@dolibarr.fr>
- * Copyright (C) 2013	   Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2011       Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2013       Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2017  Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2013-2016  Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016  Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2014	   Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014       Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,7 +234,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->thirdparty_code = $tabcompany[$key]['code_client'];
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
-					$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("subledger_account");
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("subledger_account");
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
@@ -280,7 +280,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
-						$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label;
+						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 						$bookkeeping->debit = ($mt < 0) ? $mt : 0;
@@ -325,7 +325,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->subledger_account = '';
 					$bookkeeping->subledger_label = '';
 					$bookkeeping->numero_compte = $k;
-					$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT").' '.$def_tva[$key];
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT").' '.$def_tva[$key];
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt < 0) ? $mt : 0;

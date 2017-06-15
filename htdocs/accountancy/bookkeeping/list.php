@@ -183,7 +183,7 @@ if (! empty($search_accountancy_aux_code_end)) {
     $param .= '&search_accountancy_aux_code_end=' . $search_accountancy_aux_code_end;
 }
 if (! empty($search_mvt_label)) {
-    $filter['t.label_compte'] = $search_mvt_label;
+    $filter['t.label_operation'] = $search_mvt_label;
     $param .= '&search_mvt_label=' . $search_mvt_label;
 }
 if (! empty($search_direction)) {
@@ -424,7 +424,7 @@ print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_d
 print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("AccountAccountingShort"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("SubledgerAccount"), $_SERVER['PHP_SELF'], "t.subledger_account", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_compte", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_operation", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $param, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $param, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -450,7 +450,7 @@ foreach ($object->lines as $line ) {
 	print '<td class="nowrap">' . $line->doc_ref . '</td>';
 	print '<td>' . length_accountg($line->numero_compte) . '</td>';
 	print '<td>' . length_accounta($line->subledger_account) . '</td>';
-	print '<td>' . $line->label_compte . '</td>';
+	print '<td>' . $line->label_operation . '</td>';
 	print '<td align="right">' . ($line->debit ? price($line->debit) : ''). '</td>';
 	print '<td align="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
 

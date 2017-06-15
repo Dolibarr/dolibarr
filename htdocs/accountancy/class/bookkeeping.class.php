@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2016 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2015-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015-2016 Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2015-2016 Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,6 +80,7 @@ class BookKeeping extends CommonObject
 	public $subledger_label;
 	public $numero_compte;
 	public $label_compte;
+	public $label_operation;
 	public $debit;
 	public $credit;
 	public $montant;
@@ -138,11 +139,17 @@ class BookKeeping extends CommonObject
 		if (isset($this->subledger_label)) {
 			$this->subledger_label = trim($this->subledger_label);
 		}
+		if (isset($this->thirdparty_label)) {
+			$this->thirdparty_label = trim($this->thirdparty_label);
+		}
 		if (isset($this->numero_compte)) {
 			$this->numero_compte = trim($this->numero_compte);
 		}
 		if (isset($this->label_compte)) {
 			$this->label_compte = trim($this->label_compte);
+		}
+		if (isset($this->label_operation)) {
+			$this->label_operation = trim($this->label_operation);
 		}
 		if (isset($this->debit)) {
 			$this->debit = trim($this->debit);
@@ -257,6 +264,7 @@ class BookKeeping extends CommonObject
 				$sql .= ", subledger_label";
 				$sql .= ", numero_compte";
 				$sql .= ", label_compte";
+				$sql .= ", label_operation";
 				$sql .= ", debit";
 				$sql .= ", credit";
 				$sql .= ", montant";
@@ -278,6 +286,7 @@ class BookKeeping extends CommonObject
 				$sql .= ",'" . $this->db->escape($this->subledger_label) . "'";
 				$sql .= ",'" . $this->db->escape($this->numero_compte) . "'";
 				$sql .= ",'" . $this->db->escape($this->label_compte) . "'";
+				$sql .= ",'" . $this->db->escape($this->label_operation) . "'";
 				$sql .= "," . $this->debit;
 				$sql .= "," . $this->credit;
 				$sql .= "," . $this->montant;
@@ -381,11 +390,17 @@ class BookKeeping extends CommonObject
 		if (isset($this->subledger_label)) {
 			$this->subledger_label = trim($this->subledger_label);
 		}
+		if (isset($this->thirdparty_label)) {
+			$this->thirdparty_label = trim($this->thirdparty_label);
+		}
 		if (isset($this->numero_compte)) {
 			$this->numero_compte = trim($this->numero_compte);
 		}
 		if (isset($this->label_compte)) {
 			$this->label_compte = trim($this->label_compte);
+		}
+		if (isset($this->label_operation)) {
+			$this->label_operation = trim($this->label_operation);
 		}
 		if (isset($this->debit)) {
 			$this->debit = trim($this->debit);
@@ -432,6 +447,7 @@ class BookKeeping extends CommonObject
 		$sql .= 'subledger_label,';
 		$sql .= 'numero_compte,';
 		$sql .= 'label_compte,';
+		$sql .= 'label_operation,';
 		$sql .= 'debit,';
 		$sql .= 'credit,';
 		$sql .= 'montant,';
@@ -453,6 +469,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' ' . (! isset($this->subledger_label) ? 'NULL' : "'" . $this->db->escape($this->subledger_label) . "'") . ',';
 		$sql .= ' ' . (! isset($this->numero_compte) ? "'NotDefined'" : "'" . $this->db->escape($this->numero_compte) . "'") . ',';
 		$sql .= ' ' . (! isset($this->label_compte) ? 'NULL' : "'" . $this->db->escape($this->label_compte) . "'") . ',';
+		$sql .= ' ' . (! isset($this->label_operation) ? 'NULL' : "'" . $this->db->escape($this->label_operation) . "'") . ',';
 		$sql .= ' ' . (! isset($this->debit) ? 'NULL' : $this->debit ). ',';
 		$sql .= ' ' . (! isset($this->credit) ? 'NULL' : $this->credit ). ',';
 		$sql .= ' ' . (! isset($this->montant) ? 'NULL' : $this->montant ). ',';
@@ -525,6 +542,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.subledger_label,";
 		$sql .= " t.numero_compte,";
 		$sql .= " t.label_compte,";
+		$sql .= " t.label_operation,";
 		$sql .= " t.debit,";
 		$sql .= " t.credit,";
 		$sql .= " t.montant,";
@@ -561,6 +579,7 @@ class BookKeeping extends CommonObject
 				$this->subledger_label = $obj->subledger_label;
 				$this->numero_compte = $obj->numero_compte;
 				$this->label_compte = $obj->label_compte;
+				$this->label_operation = $obj->label_operation;
 				$this->debit = $obj->debit;
 				$this->credit = $obj->credit;
 				$this->montant = $obj->montant;
@@ -615,6 +634,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.subledger_label,";
 		$sql .= " t.numero_compte,";
 		$sql .= " t.label_compte,";
+		$sql .= " t.label_operation,";
 		$sql .= " t.debit,";
 		$sql .= " t.credit,";
 		$sql .= " t.montant,";
@@ -638,9 +658,11 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key . '=' . $value;
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
 					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
-				} elseif ($key == 't.label_compte') {
+				} elseif ($key == 't.label_operation') {
 					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
-				}else {
+				} elseif ($key == 't.thirdparty_label') {
+					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
+				} else {
 					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 				}
 			}
@@ -680,6 +702,7 @@ class BookKeeping extends CommonObject
 				$line->subledger_label = $obj->subledger_label;
 				$line->numero_compte = $obj->numero_compte;
 				$line->label_compte = $obj->label_compte;
+				$line->label_operation = $obj->label_operation;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
 				$line->montant = $obj->montant;
@@ -733,6 +756,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.subledger_label,";
 		$sql .= " t.numero_compte,";
 		$sql .= " t.label_compte,";
+		$sql .= " t.label_operation,";
 		$sql .= " t.debit,";
 		$sql .= " t.credit,";
 		$sql .= " t.montant,";
@@ -756,6 +780,8 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
 					$sqlwhere[] = $key . '=' . $value;
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
+					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
+				} elseif ($key == 't.thirdparty_label') {
 					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
 				} else {
 					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
@@ -795,6 +821,7 @@ class BookKeeping extends CommonObject
 				$line->subledger_label = $obj->subledger_label;
 				$line->numero_compte = $obj->numero_compte;
 				$line->label_compte = $obj->label_compte;
+				$line->label_operation = $obj->label_operation;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
 				$line->montant = $obj->montant;
@@ -853,6 +880,8 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
 					$sqlwhere[] = $key . '=' . $value;
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
+					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
+				} elseif ($key == 't.thirdparty_label') {
 					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
 				} else {
 					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
@@ -933,11 +962,17 @@ class BookKeeping extends CommonObject
 		if (isset($this->subledger_label)) {
 			$this->subledger_label = trim($this->subledger_label);
 		}
+		if (isset($this->thirdparty_label)) {
+			$this->thirdparty_label = trim($this->thirdparty_label);
+		}
 		if (isset($this->numero_compte)) {
 			$this->numero_compte = trim($this->numero_compte);
 		}
 		if (isset($this->label_compte)) {
 			$this->label_compte = trim($this->label_compte);
+		}
+		if (isset($this->label_operation)) {
+			$this->label_operation = trim($this->label_operation);
 		}
 		if (isset($this->debit)) {
 			$this->debit = trim($this->debit);
@@ -982,6 +1017,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' subledger_label = ' . (isset($this->subledger_label) ? "'" . $this->db->escape($this->subledger_label) . "'" : "null") . ',';
 		$sql .= ' numero_compte = ' . (isset($this->numero_compte) ? "'" . $this->db->escape($this->numero_compte) . "'" : "null") . ',';
 		$sql .= ' label_compte = ' . (isset($this->label_compte) ? "'" . $this->db->escape($this->label_compte) . "'" : "null") . ',';
+		$sql .= ' label_operation = ' . (isset($this->label_operation) ? "'" . $this->db->escape($this->label_operation) . "'" : "null") . ',';
 		$sql .= ' debit = ' . (isset($this->debit) ? $this->debit : "null") . ',';
 		$sql .= ' credit = ' . (isset($this->credit) ? $this->credit : "null") . ',';
 		$sql .= ' montant = ' . (isset($this->montant) ? $this->montant : "null") . ',';
@@ -1243,6 +1279,7 @@ class BookKeeping extends CommonObject
 		$this->subledger_label = 'My customer company';
 		$this->numero_compte = '410';
 		$this->label_compte = '';
+		$this->label_operation = '';
 		$this->debit = 99.9;
 		$this->credit = '';
 		$this->montant = '';
@@ -1352,6 +1389,7 @@ class BookKeeping extends CommonObject
 				$line->subledger_label = $obj->subledger_label;
 				$line->numero_compte = $obj->numero_compte;
 				$line->label_compte = $obj->label_compte;
+				$line->label_operation = $obj->label_operation;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
 				$line->montant = $obj->montant;
@@ -1410,6 +1448,7 @@ class BookKeeping extends CommonObject
 				$line->subledger_label = $obj->subledger_label;
 				$line->numero_compte = $obj->numero_compte;
 				$line->label_compte = $obj->label_compte;
+				$line->label_operation = $obj->label_operation;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
 				$line->montant = $obj->montant;
@@ -1600,6 +1639,7 @@ class BookKeepingLine
 	public $subledger_label;
 	public $numero_compte;
 	public $label_compte;
+	public $label_operation;
 	public $debit;
 	public $credit;
 	public $montant;
