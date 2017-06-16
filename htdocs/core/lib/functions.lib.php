@@ -410,6 +410,9 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	        case 'intcomma':
 	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
 	            break;
+	        case 'intcomma':
+	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
+	            break;
 	        case 'alpha':
 	            $out=trim($out);
 	            // '"' is dangerous because param in url can close the href= or src= and add javascript functions.
@@ -754,7 +757,7 @@ function dol_string_unaccent($str)
  */
 function dol_string_nospecial($str,$newstr='_',$badcharstoreplace='')
 {
-	$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+	$forbidden_chars_to_replace=array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=");
 	$forbidden_chars_to_remove=array();
 	if (is_array($badcharstoreplace)) $forbidden_chars_to_replace=$badcharstoreplace;
 	//$forbidden_chars_to_remove=array("(",")");
@@ -4095,29 +4098,49 @@ function get_localtax_by_third($local)
 
 
 /**
- *  Get vat rate and npr from id.
- *  You can call getLocalTaxesFromRate after to get other fields
+ *  Get vat main information from Id.
+ *  You can call getLocalTaxesFromRate after to get other fields.
  *
- *  @param	int      $vatrowid			Line ID into vat rate table.
- *  @return	array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
+ *  @param	int|string  $vatrate		    VAT ID or Rate. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
+ *  @param	Societe	    $buyer         		Company object
+ *  @param	Societe	    $seller        		Company object
+ *  @param  int         $firstparamisid     1 if first param is id into table (use this if you can)
+ *  @return	array       	  				array('rowid'=> , 'code'=> ...)
+ *  @see getLocalTaxesFromRate
  */
-function getTaxesFromId($vatrowid)
+function getTaxesFromId($vatrate, $buyer=null, $seller=null, $firstparamisid=1)
 {
     global $db, $mysoc;
 
-    dol_syslog("getTaxesFromId vatrowid=".$vatrowid);
+    dol_syslog("getTaxesFromId vatrowid=".$vatrate);
 
     // Search local taxes
-    $sql = "SELECT t.rowid, t.code, t.taux as rate, t.recuperableonly as npr";
+    $sql = "SELECT t.rowid, t.code, t.taux as rate, t.recuperableonly as npr, t.accountancy_code_sell, t.accountancy_code_buy";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t";
-    $sql.= " WHERE t.rowid ='".$vatrowid."'";
+    if ($firstparamisid) $sql.= " WHERE t.rowid = ".(int) $vatrate;
+    else
+    {
+        $vatratecleaned = $vatrate;
+        $vatratecode = '';
+        if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
+        {
+            $vatratecleaned = $reg[1];
+            $vatratecode = $reg[2];
+        }
+
+        $sql.=", ".MAIN_DB_PREFIX."c_country as c";
+        if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";    // local tax in spain use the buyer country ??
+        else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
+        $sql.= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
+        if ($vatratecode) $sql.= " AND t.code = '".$vatratecode."'";
+    }
 
     $resql=$db->query($sql);
     if ($resql)
     {
         $obj = $db->fetch_object($resql);
-
-        return array('rowid'=>$obj->rowid, 'code'=>$obj->code, 'rate'=>$obj->rate, 'npr'=>$obj->npr);
+        if ($obj) return array('rowid'=>$obj->rowid, 'code'=>$obj->code, 'rate'=>$obj->rate, 'npr'=>$obj->npr, 'accountancy_code_sell'=>$obj->accountancy_code_sell, 'accountancy_code_buy'=>$obj->accountancy_code_buy);
+        else return array();
     }
     else dol_print_error($db);
 
@@ -4131,12 +4154,13 @@ function getTaxesFromId($vatrowid)
  *  Instead this function must be called when adding a line to get the array of localtax and type, and then
  *  provide it to the function calcul_price_total.
  *
- *  @param	string  $vatrate			VAT Rate. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
- *  @param	int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
- *  @param	Societe	$buyer         		Company object
- *  @param	Societe	$seller        		Company object
- *  @param  int     $firstparamisid     1 if first param is id into table (use this if you can)
- *  @return	array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
+ *  @param	int|string  $vatrate			VAT ID or Rate. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
+ *  @param	int		    $local              Number of localtax (1 or 2, or 0 to return 1 & 2)
+ *  @param	Societe	    $buyer         		Company object
+ *  @param	Societe	    $seller        		Company object
+ *  @param  int         $firstparamisid     1 if first param is id into table (use this if you can)
+ *  @return	array    	    				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
+ *  @see getTaxesFromId
  */
 function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisid=0)
 {
@@ -4144,25 +4168,25 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 
 	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local);
 
-	$vatratecleaned = $vatrate;
-	$vatratecode = '';
-	if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
-	{
-	    $vatratecleaned = $reg[1];
-	    $vatratecode = $reg[2];
-	}
-
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t";
-	if ($firstparamisid) $sql.= " WHERE t.rowid ='".$vatrate."'";
+	if ($firstparamisid) $sql.= " WHERE t.rowid = ".(int) $vatrate;
 	else
 	{
+	    $vatratecleaned = $vatrate;
+	    $vatratecode = '';
+	    if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
+	    {
+	        $vatratecleaned = $reg[1];
+	        $vatratecode = $reg[2];
+	    }
+
 	    $sql.=", ".MAIN_DB_PREFIX."c_country as c";
     	if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";    // local tax in spain use the buyer country ??
     	else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
     	$sql.= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
-    	if ($vatratecode) $sql.= " AND t.code ='".$vatratecode."'";
+    	if ($vatratecode) $sql.= " AND t.code = '".$vatratecode."'";
 	}
 
 	$resql=$db->query($sql);

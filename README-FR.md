@@ -98,7 +98,10 @@ Voir fichier ChangeLog.
 - Rapports
 - Imports/Exports des données
 - Connectivité LDAP
-- De nombreuses autres fonctionnalités issues de modules officiels ou non (AWStats, Bittorrent, Gravatar, Google, Webcalendar...) 
+- Intégratn de ClickToDial
+- Intégration RSS
+- Intégation Skype
+- Intégration de système de paiements (Paypal, Strip, Paybox...)
 - …
 
 ### Divers:
@@ -114,15 +117,37 @@ Voir fichier ChangeLog.
 - Code simple et facilement personnalisable (pas de framework lourd; mécanisme de hook et triggers).
 - APIs.
 - Génération PDF et ODT des éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
+- …
+
+### Extension
+
+Dolibarr peut aussi être étendu à volonté avec l'ajout de module/applications externes développées par des développeus tiers, disponible sur [DoliStore](https://www.dolistore.com).
 
 
-## CE QUE DOLIBARR NE PEUT PAS FAIRE (TACHES A FAIRE)
+## CE QUE DOLIBARR NE PEUT PAS (ENCORE) FAIRE
 
 Voici un liste de fonctionnalites pas encore gérées par Dolibarr:
 - Dolibarr ne contient pas de module de Gestion de la paie.
 - Les tâches du module de gestion de projets n'ont pas de dépendances entre elle.
-- Dolibarr ne contient pas de Webmail.
+- Dolibarr n'embarque pas de Webmail intégré nativement.
 - Dolibarr ne fait pas le café (pas encore). 
+
+
+## DOCUMENTATION
+
+Les documentations utilisateur, développeur et traducteur sont disponible sous forme de ressources de la communautés via la site [Wiki](https://wiki.dolibarr.org).
+
+
+## CONTRIBUTING
+
+Voir le fichier [CONTRIBUTING](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)
+
+
+## CREDITS
+
+Dolibarr est le résultat du travail de nombreux contributeurs depuis des années et utilise des librairies d'autres contributeurs.
+
+Voir le fichier [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT)
 
 
 ## ACTUALITES ET RESEAUX SOCIAUX

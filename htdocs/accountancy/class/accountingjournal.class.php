@@ -46,7 +46,7 @@ class AccountingJournal extends CommonObject
 	function __construct($db) {
 		$this->db = $db;
 	}
-	
+
 	/**
 	 * Load an object from database
 	 *
@@ -62,9 +62,9 @@ class AccountingJournal extends CommonObject
 			$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
 			$sql .= " WHERE";
 			if ($rowid) {
-				$sql .= " rowid = '" . $rowid . "'";
+				$sql .= " rowid = " . (int) $rowid;
 			} elseif ($journal_code) {
-				$sql .= " code = '" . $journal_code . "'";
+				$sql .= " code = '" . $this->db->escape($journal_code) . "'";
 			}
 
 			dol_syslog(get_class($this)."::fetch sql=" . $sql, LOG_DEBUG);
@@ -96,7 +96,7 @@ class AccountingJournal extends CommonObject
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Return clicable name (with picto eventually)
 	 *
@@ -147,7 +147,7 @@ class AccountingJournal extends CommonObject
 		{
 			$linkstart = '';
 			$linkclose = '';
-			$linkend = '';			
+			$linkend = '';
 		}
 
 		$label_link = $this->code;
@@ -158,7 +158,7 @@ class AccountingJournal extends CommonObject
 		if ($withpicto != 2) $result.=$linkstart . $label_link . $linkend;
 		return $result;
 	}
-	
+
 	/**
 	 *  Retourne le libelle du statut d'un user (actif, inactif)
 	 *
@@ -169,7 +169,7 @@ class AccountingJournal extends CommonObject
 	{
 	    return $this->LibType($this->nature,$mode);
 	}
-	
+
 	/**
 	 *  Return type of an accounting journal
 	 *
@@ -182,7 +182,7 @@ class AccountingJournal extends CommonObject
 	    global $langs;
 
 		$langs->load("accountancy");
-	
+
 	    if ($mode == 0)
 	    {
 	        $prefix='';

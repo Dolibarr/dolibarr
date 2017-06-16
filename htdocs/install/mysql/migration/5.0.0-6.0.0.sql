@@ -90,6 +90,8 @@ ALTER TABLE llx_expedition ADD COLUMN fk_projet integer DEFAULT NULL after fk_so
 ALTER TABLE llx_expensereport ADD COLUMN import_key			varchar(14);
 ALTER TABLE llx_expensereport ADD COLUMN extraparams		varchar(255);	
 
+
+
 ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);	
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_CREATE','Product or service created','Executed when a product or sevice is created','product',30);
@@ -187,10 +189,20 @@ UPDATE llx_bank_account as ba set fk_accountancy_journal = (SELECT rowid FROM ll
 ALTER TABLE llx_bank_account ADD CONSTRAINT fk_bank_account_accountancy_journal FOREIGN KEY (fk_accountancy_journal) REFERENCES llx_accounting_journal (rowid);
 
 --Update general ledger for FEC format & harmonization
+
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_tiers varchar(32);
+ALTER TABLE llx_accounting_bookkeeping CHANGE COLUMN code_tiers thirdparty_code varchar(32);
+
+--Subledger account
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN subledger_account varchar(32);
+ALTER TABLE llx_accounting_bookkeeping CHANGE COLUMN thirdparty_label subledger_label varchar(255);    	-- If field was already created, rename it	
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN subledger_label varchar(255) AFTER subledger_account;	-- If field dod not exists yet
+
+update llx_accounting_bookkeeping set subledger_account = numero_compte where subledger_account IS NULL;
+
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN label_compte varchar(255);
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_journal varchar(32);
-ALTER TABLE llx_accounting_bookkeeping ADD COLUMN thirdparty_label varchar(255) AFTER code_tiers;
+
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN label_operation varchar(255) AFTER label_compte;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN multicurrency_amount double AFTER sens;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN multicurrency_code varchar(255) AFTER multicurrency_amount;
@@ -220,6 +232,7 @@ ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_invoic
 ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_invoice_supplier_source FOREIGN KEY (fk_invoice_supplier)      REFERENCES llx_facture_fourn (rowid);
 
 ALTER TABLE llx_facture_rec ADD COLUMN vat_src_code	varchar(10) DEFAULT '';
+ALTER TABLE llx_expensereport_det ADD COLUMN vat_src_code varchar(10)  DEFAULT '';
 
 DELETE FROM llx_const WHERE name = __ENCRYPT('ADHERENT_BANK_USE_AUTO')__;
 
