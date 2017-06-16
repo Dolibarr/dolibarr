@@ -63,8 +63,6 @@ print load_fiche_titre($langs->trans("AccountancyArea"), '', 'title_accountancy'
 
 $step = 0;
 
-print "<br>\n";
-
 print $langs->trans("AccountancyAreaDescIntro")."<br>\n";
 print "<br>\n";print "<br>\n";
 

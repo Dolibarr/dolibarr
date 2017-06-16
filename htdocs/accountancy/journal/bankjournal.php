@@ -103,8 +103,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
-$idpays = $p[0];
+$idpays = $mysoc->country_id;
 
 $sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
 $sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
@@ -144,6 +143,7 @@ $result = $db->query($sql);
 if ($result) {
 
 	$num = $db->num_rows($result);
+
 	// Variables
 	$account_supplier = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
 	$account_customer = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
@@ -364,7 +364,7 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->date_create = $now;
 
 					if ($tabtype[$key] == 'payment') {
-						$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
+						$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 
 						$sqlmid = 'SELECT fac.facnumber';
 						$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture fac";
@@ -378,7 +378,7 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->doc_ref = $objmid->facnumber;	// Ref of invoice
 						}
 					} else if ($tabtype[$key] == 'payment_supplier') {
-						$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
+						$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 
 						$sqlmid = 'SELECT facf.ref_supplier, facf.ref';
 						$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf";
@@ -392,7 +392,7 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->doc_ref = $objmid->ref_supplier . ' (' . $objmid->ref . ')'; // Ref on invoice
 						}
 					} else if ($tabtype[$key] == 'payment_expensereport') {
-						$bookkeeping->code_tiers = $tabuser[$key]['accountancy_code'];
+						$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 
 						$sqlmid = 'SELECT e.ref';
 						$sqlmid .= " FROM " . MAIN_DB_PREFIX . "expensereport as e";
@@ -405,13 +405,13 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->doc_ref = $objmid->ref; // Ref of expensereport
 						}
 					} else if ($tabtype[$key] == 'payment_vat') {
-						$bookkeeping->code_tiers = '';
+						$bookkeeping->subledger_account = '';
 						$bookkeeping->doc_ref = $langs->trans("PaymentVat") . ' (' . $val["paymentvatid"] . ')'; // Rowid of vat payment
 					} else if ($tabtype[$key] == 'payment_donation') {
-						$bookkeeping->code_tiers = '';
+						$bookkeeping->subledger_account = '';
 						$bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
 					} else if ($tabtype[$key] == 'payment_salary') {
-						$bookkeeping->code_tiers = '';
+						$bookkeeping->subledger_account = '';
 						$bookkeeping->label_compte = $tabuser[$key]['name'];
 						$bookkeeping->doc_ref = $langs->trans("SalaryPayment") . ' (' . $val["paymentsalid"] . ')'; // Ref of salary payment
 					}
@@ -458,7 +458,7 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->date_create = $now;
 
 					if (in_array($tabtype[$key], array('sc', 'payment_sc'))) {   // If payment is payment of social contribution
-						$bookkeeping->code_tiers = '';
+						$bookkeeping->subledger_account = '';
 						$bookkeeping->numero_compte = $k;
 					} else if ($tabtype[$key] == 'payment') {	// If payment is payment of customer invoice, we get ref of invoice
 						$sqlmid = 'SELECT fac.facnumber';
@@ -472,7 +472,7 @@ if (! $error && $action == 'writebookkeeping') {
 							$objmid = $db->fetch_object($resultmid);
 							$bookkeeping->doc_ref = $objmid->facnumber;
 						}
-						$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
+						$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 						$bookkeeping->numero_compte = $k;
 					} else if ($tabtype[$key] == 'payment_supplier') {		   // If payment is payment of supplier invoice, we get ref of invoice
 						$sqlmid = 'SELECT facf.ref_supplier,facf.ref';
@@ -486,23 +486,23 @@ if (! $error && $action == 'writebookkeeping') {
 							$objmid = $db->fetch_object($resultmid);
 							$bookkeeping->doc_ref = $objmid->ref_supplier . ' (' . $objmid->ref . ')';
 						}
-						$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
+						$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 						$bookkeeping->numero_compte = $k;
 					} else if ($tabtype[$key] == 'payment_vat') {
-						$bookkeeping->code_tiers = '';
+						$bookkeeping->subledger_account = '';
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->doc_ref = $langs->trans("PaymentVat") . ' (' . $val["paymentvatid"] . ')'; // Rowid of vat
 					} else if ($tabtype[$key] == 'payment_donation') {
-						$bookkeeping->code_tiers = '';
+						$bookkeeping->subledger_account = '';
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->doc_ref = $langs->trans("Donation") . ' (' . $val["paymentdonationid"] . ')'; // Rowid of donation
 					} else if ($tabtype[$key] == 'payment_salary') {
-						$bookkeeping->code_tiers = $tabuser[$key]['accountancy_code'];
+						$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 						$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 						$bookkeeping->label_compte = $tabuser[$key]['name'];
 						$bookkeeping->doc_ref = $langs->trans("SalaryPayment") . ' (' . $val["paymentsalid"] . ')'; // Rowid of salary payment
 					} else if ($tabtype[$key] == 'banktransfert') {
-						$bookkeeping->code_tiers = '';
+						$bookkeeping->subledger_account = '';
 						$bookkeeping->numero_compte = $k;
 					} else {
 						// FIXME Should be a temporary account ???
@@ -537,6 +537,12 @@ if (! $error && $action == 'writebookkeeping') {
 		else
 		{
 			$db->rollback();
+
+			if ($error >= 10)
+			{
+			    setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped"), null, 'errors');
+			    break;  // Break in the foreach
+			}
 		}
 	}
 
@@ -758,7 +764,7 @@ if (empty($action) || $action == 'view') {
 		print '<input type="button" class="butAction" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 	}*/
 
-	print '<div class="tabsAction">';
+	print '<div class="tabsAction tabsActionNoBottom">';
 	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 	print '</div>';
 
