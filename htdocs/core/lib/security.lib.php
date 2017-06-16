@@ -403,9 +403,9 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		else if (in_array($feature,$checksoc))	// We check feature = checksoc
 		{
 			// If external user: Check permission for external users
-			if ($user->societe_id > 0)
+			if ($user->socid > 0)
 			{
-				if ($user->societe_id <> $objectid) return false;
+				if ($user->socid <> $objectid) return false;
 			}
 			// If internal user: Check permission for internal users that are restricted on their objects
 			else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))

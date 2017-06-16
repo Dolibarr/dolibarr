@@ -12,6 +12,7 @@ You can use it as a standalone application or as a web application to be able to
 
 ![ScreenShot](https://www.dolibarr.org/images/dolibarr_screenshot1_640x400.png)
 
+
 ## LICENSE
 
 Dolibarr is released under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version (GPL-3+).
@@ -19,6 +20,7 @@ Dolibarr is released under the terms of the GNU General Public License as publis
 See the [COPYING](https://github.com/Dolibarr/dolibarr/blob/develop/COPYING) file for a full copy of the license.
 
 Other licenses apply for some included dependencies. See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) for a full list.
+
 
 ## INSTALLING
 
@@ -67,6 +69,7 @@ You can use a Web server and a supported database (MariaDb, MySql or Postgresql)
    
 - Follow the installer instructions
 
+
 ## UPGRADING
 
 - Overwrite all old files from 'dolibarr' directory with files provided into the new version's package.
@@ -75,9 +78,11 @@ You can use a Web server and a supported database (MariaDb, MySql or Postgresql)
 
 *Note: migration process can safely be done multiple times by calling the page /install/index.php*
 
+
 ## WHAT'S NEW
 
 See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog) file.
+
 
 ## FEATURES
 
@@ -120,7 +125,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - ClickToDial integration
 - RSS integration
 - Skype integration
-- Payment platforms integration (PayBox, PayPal)
+- Payment platforms integration (PayPal, Stripe, Paybox...)
 - …
 
 ### Other general features
@@ -149,28 +154,33 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 Dolibarr can be extended with a lot of other external application or modules from third party developers available at the [DoliStore](https://www.dolistore.com).
 
+
 ## FUTURE
 
 These are features that Dolibarr does **not** yet fully support:
 
 - Tasks dependencies in projects
 - Payroll module
-- Webmail
+- No native embedded Webmail
 - Dolibarr can't do coffee (yet)
+
 
 ## DOCUMENTATION
 
 Administrator, user, developer and translator's documentations are available along with other community resources on the [Wiki](https://wiki.dolibarr.org).
 
+
 ## CONTRIBUTING
 
 See file [CONTRIBUTING](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)
+
 
 ## CREDITS
 
 Dolibarr is the work of many contributors over the years and uses some fine libraries.
 
 See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) file.
+
 
 ## NEWS AND SOCIAL NETWORKS
 

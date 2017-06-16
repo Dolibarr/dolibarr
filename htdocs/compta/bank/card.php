@@ -524,7 +524,7 @@ if ($action == 'create')
 	{
 		print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
 	    print '<td>';
-		print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, '', 0, 0);
+		print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
 		print '</td></tr>';
 	}
 
@@ -982,7 +982,7 @@ else
 		{
 			print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
-			print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, '', 0, 0);
+			print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
 			print '</td></tr>';
 		}
 

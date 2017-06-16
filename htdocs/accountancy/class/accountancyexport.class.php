@@ -172,7 +172,7 @@ class AccountancyExport
 			print $date . $this->separator;
 			print $line->doc_ref . $this->separator;
 			print length_accountg($line->numero_compte) . $this->separator;
-			print length_accounta($line->code_tiers) . $this->separator;
+			print length_accounta($line->subledger_account) . $this->separator;
 			print price($line->debit) . $this->separator;
 			print price($line->credit) . $this->separator;
 			print $line->code_journal . $this->separator;
@@ -195,7 +195,7 @@ class AccountancyExport
 			print $date . $separator;
 			print $line->code_journal . $separator;
 			print length_accountg($line->numero_compte) . $separator;
-			print length_accounta($line->code_tiers) . $separator;
+			print length_accounta($line->subledger_account) . $separator;
 			print $line->sens . $separator;
 			print price($line->montant) . $separator;
 			print $line->label_compte . $separator;
@@ -254,7 +254,7 @@ class AccountancyExport
 			print price($line->debit) . $this->separator;
 			print price($line->credit) . $this->separator;
 			print 'E' . $this->separator;
-			print length_accountg($line->code_tiers) . $this->separator;
+			print length_accountg($line->subledger_account) . $this->separator;
 			print $this->end_line;
 		}
 	}
@@ -274,7 +274,7 @@ class AccountancyExport
 			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
 			print $date . $this->separator;
 
-			if (empty($line->code_tiers)) {
+			if (empty($line->subledger_account)) {
 				print 'G' . $this->separator;
 				print length_accounta($line->numero_compte) . $this->separator;
 			} else {
@@ -284,7 +284,7 @@ class AccountancyExport
 				if (substr($line->numero_compte, 0, 3) == '401') {
 					print 'F' . $this->separator;
 				}
-				print length_accountg($line->code_tiers) . $this->separator;
+				print length_accountg($line->subledger_account) . $this->separator;
 			}
 
 			print price($line->debit) . $this->separator;
@@ -307,11 +307,11 @@ class AccountancyExport
 		$this->end_line ="\r\n";
 
 		$i = 1;
-		$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be yyyymmdd
+		$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be yyyymmdd
 		foreach ( $TData as $data ) {
 			$code_compta = $data->numero_compte;
-			if (! empty($data->code_tiers))
-				$code_compta = $data->code_tiers;
+			if (! empty($data->subledger_account))
+				$code_compta = $data->subledger_account;
 
 			$Tab = array ();
 			$Tab['num_ecriture'] = str_pad($i, 5);
@@ -349,8 +349,8 @@ class AccountancyExport
 		$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		foreach ( $TData as $data ) {
 			$code_compta = $data->numero_compte;
-			if (! empty($data->code_tiers))
-				$code_compta = $data->code_tiers;
+			if (! empty($data->subledger_account))
+				$code_compta = $data->subledger_account;
 
 			$Tab = array ();
 			$Tab['type_ligne'] = 'M';
@@ -436,19 +436,21 @@ class AccountancyExport
 			print '"'.dol_trunc($line->piece_num,15,'right','UTF-8',1).'"'.$this->separator;
 			print $date . $this->separator;
 			print '"'.dol_trunc($line->piece_num,15,'right','UTF-8',1).'"'.$this->separator;
-			
-			if (empty($line->code_tiers)) {
+
+			if (empty($line->subledger_account)) {
 				print length_accountg($line->numero_compte) . $this->separator;
 			} else {
+			    // FIXME Because the subledger_account is already an accounting account, does we really need
+			    // to concat 4011 or 401 to it ?
 				if (substr($line->numero_compte, 0, 1) == 'C' || substr($line->numero_compte, 0, 1) == '9') {
-					print '411' . substr(str_replace(" ", "", $line->code_tiers), 0, 5) . $this->separator;
+					print '411' . substr(str_replace(" ", "", $line->subledger_account), 0, 5) . $this->separator;
 				}
 				if (substr($line->numero_compte, 0, 1) == 'F' || substr($line->numero_compte, 0, 1) == '0') {
-					print '401' . substr(str_replace(" ", "", $line->code_tiers), 0, 5) . $this->separator;
+					print '401' . substr(str_replace(" ", "", $line->subledger_account), 0, 5) . $this->separator;
 				}
 			}
-			
-			print length_accounta($line->code_tiers) . $this->separator;
+
+			print length_accounta($line->subledger_account) . $this->separator;
 			print price($line->debit) . $this->separator;
 			print price($line->credit) . $this->separator;
 			print price($line->montant).$this->separator;

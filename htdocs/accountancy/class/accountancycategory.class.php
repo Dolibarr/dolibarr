@@ -138,7 +138,7 @@ class AccountancyCategory
 	 */
 	public function getAccountsWithNoCategory($id) {
 	    global $conf;
-	
+
 	    $sql = "SELECT aa.account_number as numero_compte, aa.label as label_compte";
 	    $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
 	    $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
@@ -147,9 +147,9 @@ class AccountancyCategory
 	    $sql .= " AND aa.active = 1";
 	    $sql .= " GROUP BY aa.account_number, aa.label";
 	    $sql .= " ORDER BY aa.account_number, aa.label";
-	
+
 	    $this->lines_CptBk = array ();
-	
+
 	    dol_syslog(__METHOD__, LOG_DEBUG);
 	    $resql = $this->db->query($sql);
 	    if ($resql) {
@@ -159,17 +159,17 @@ class AccountancyCategory
 	                $this->lines_cptbk[] = $obj;
 	            }
 	        }
-	
+
 	        return $num;
 	    } else {
 	        $this->error = "Error " . $this->db->lasterror();
 	        $this->errors[] = $this->error;
 	        dol_syslog(__METHOD__ . " " . implode(',' . $this->errors), LOG_ERR);
-	
+
 	        return - 1;
 	    }
 	}
-	
+
 	/**
 	 * Function to add an accounting account in an accounting category
 	 *
@@ -191,7 +191,7 @@ class AccountancyCategory
 		$sql .= " AND aa.active = 1";
 
 		$this->db->begin();
-		
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
@@ -201,9 +201,9 @@ class AccountancyCategory
 			return -1;
 		}
 
-		while ( $obj = $this->db->fetch_object($resql)) 
+		while ( $obj = $this->db->fetch_object($resql))
 		{
-			if (array_key_exists(length_accountg($obj->account_number), $cpts)) 
+			if (array_key_exists(length_accountg($obj->account_number), $cpts))
 			{
 				$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account";
 				$sql .= " SET fk_accounting_category=" . $id_cat;
@@ -332,7 +332,7 @@ class AccountancyCategory
 	}
 
 	/**
-	 * Function to show result of an accounting account from the general ledger with a sens and a period
+	 * Function to show result of an accounting account from the ledger with a direction and a period
 	 *
 	 * @param int $cpt Id accounting account
 	 * @param string $month Specifig month - Can be empty

@@ -712,7 +712,7 @@ class FormFile
 					$out.= '<td class="tdoverflowmax300">';
                     $tmp = $this->showPreview($file,$modulepart,$relativepath,0,$param);
                     $out.= ($tmp?$tmp.' ':'');
-					$out.= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
+					$out.= '<a class="documentdownload" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
 					$mime=dol_mimetype($relativepath,'',0);
 					if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
 					$out.= ' target="_blank">';

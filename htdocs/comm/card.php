@@ -175,7 +175,7 @@ if (empty($reshook))
 		$result=$object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
-	
+
 	if ($action == 'update_extras') {
         $object->fetch($id);
 
@@ -262,21 +262,23 @@ if ($id > 0)
 		print '</tr>';
 	}
 
-	// Assujeti a TVA ou pas
+	// VAT is used
 	print '<tr>';
-	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td><td>';
+	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td>';
+	print '<td>';
 	print yn($object->tva_assuj);
 	print '</td>';
 	print '</tr>';
 
 	// Local Taxes
-	if ($mysoc->useLocalTax(1))
+	// TODO Move this on same record than VATIsUsed
+	if ($mysoc->localtax1_assuj=="1")
 	{
 		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
 		print yn($object->localtax1_assuj);
 		print '</td></tr>';
 	}
-	if ($mysoc->useLocalTax(2))
+	if ($mysoc->localtax1_assuj=="1")
 	{
 		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
 		print yn($object->localtax2_assuj);

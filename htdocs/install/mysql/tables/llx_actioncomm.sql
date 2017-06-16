@@ -69,8 +69,10 @@ create table llx_actioncomm
   recurdateend      datetime,						-- no more recurring event after this date
      
   fk_element		integer DEFAULT NULL,			-- For link to an element (proposal, invoice, order, ...)
-  elementtype		varchar(255) DEFAULT NULL		-- For link to an element (proposal, invoice, order, ...)
+  elementtype		varchar(255) DEFAULT NULL,		-- For link to an element (proposal, invoice, order, ...)
 
+  import_key		varchar(14),
+  extraparams		varchar(255)					-- for other parameters with json format
 )ENGINE=innodb;
 
 
