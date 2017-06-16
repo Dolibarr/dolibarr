@@ -4247,37 +4247,6 @@ else if ($id > 0 || ! empty($ref))
 		$delallowed = $user->rights->facture->supprimer;
 
 		print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-		
-		if(!empty($conf->blockedlog->enabled) && $object->statut>0) {
-			?>
-			<script type="text/javascript">
-
-			$(document).ready(function() {
-				$('a.documentpreview').click(function() {
-					$.post("<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>"
-							, { 
-								id:<?php echo $object->id; ?> 
-								, element:"<?php echo $object->element ?>"
-								, action:"PREVIEW_BILL" 
-							}
-					);
-				});
-				$('a.documentdownload').click(function() {
-					$.post("<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>"
-							, { 
-								id:<?php echo $object->id; ?> 
-								, element:"<?php echo $object->element ?>"
-								, action:"DOWNLOAD_BILL" 
-							}
-					);
-				});
-			});
-			
-			</script>
-			<?php
-		}
-		
-		
 		$somethingshown = $formfile->numoffiles;
 
 		// Show links to link elements
