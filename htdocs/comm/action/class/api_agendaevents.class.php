@@ -318,7 +318,6 @@ class AgendaEvents extends DolibarrApi
 
     	unset($object->usermod);
     	unset($object->libelle);
-    	unset($object->import_key);
     	unset($object->array_options);
     	unset($object->context);
     	unset($object->canvas);

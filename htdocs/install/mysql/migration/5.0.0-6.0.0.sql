@@ -82,14 +82,17 @@ ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (filepath, filename, ent
 ALTER TABLE llx_ecm_files ADD INDEX idx_ecm_files_label (label);
 
 
+ALTER TABLE llx_expedition ADD COLUMN fk_projet integer DEFAULT NULL after fk_soc;
+
+
 ALTER TABLE llx_holiday ADD COLUMN import_key				varchar(14);
 ALTER TABLE llx_holiday ADD COLUMN extraparams				varchar(255);	
-
-ALTER TABLE llx_expedition ADD COLUMN fk_projet integer DEFAULT NULL after fk_soc;
 
 ALTER TABLE llx_expensereport ADD COLUMN import_key			varchar(14);
 ALTER TABLE llx_expensereport ADD COLUMN extraparams		varchar(255);	
 
+ALTER TABLE llx_actioncomm ADD COLUMN import_key			varchar(14);
+ALTER TABLE llx_actioncomm ADD COLUMN extraparams			varchar(255);	
 
 
 ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);	
