@@ -441,7 +441,8 @@ function measuring_units_string($unit,$measuring_style='')
 		$measuring_units[0] = $langs->transnoentitiesnoconv("WeightUnitkg");
 		$measuring_units[-3] = $langs->transnoentitiesnoconv("WeightUnitg");
 		$measuring_units[-6] = $langs->transnoentitiesnoconv("WeightUnitmg");
-        $measuring_units[99] = $langs->transnoentitiesnoconv("WeightUnitpound");
+		$measuring_units[98] = $langs->transnoentitiesnoconv("WeightUnitounce");
+		$measuring_units[99] = $langs->transnoentitiesnoconv("WeightUnitpound");
 	}
 	else if ($measuring_style == 'size')
 	{
