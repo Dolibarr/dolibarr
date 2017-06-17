@@ -2621,6 +2621,19 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$outputlangs->load('commercial');
 			}
 
+			// Show email form
+
+			// By default if $action=='presend'
+			$titreform='SendOrderByMail';
+			$topicmail='';
+			if (empty($object->ref_client)) {
+			    $topicmail = $outputlangs->trans('SendOrderRef', '__ORDERREF__');
+			} else if (! empty($object->ref_client)) {
+			    $topicmail = $outputlangs->trans('SendOrderRef', '__ORDERREF__ (__REFCLIENT__)');
+			}
+			$action='send';
+			$modelmail='order_send';
+
 			// Build document if it not exists
 			if (! $file || ! is_readable($file)) {
 				$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -2635,7 +2648,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 			print '<div class="clearboth"></div>';
 			print '<br>';
-			print load_fiche_titre($langs->trans('SendOrderByMail'));
+			print load_fiche_titre($langs->trans($titreform));
 
 			dol_fiche_head('');
 
@@ -2662,11 +2675,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$formmail->withto = GETPOST('sendto') ? GETPOST('sendto') : $liste;
 			$formmail->withtocc = $liste;
 			$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
-			if (empty($object->ref_client)) {
-				$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__');
-			} else if (! empty($object->ref_client)) {
-				$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__ (__REFCLIENT__)');
-			}
+			$formmail->withtopic = $topicmail;
 			$formmail->withfile = 2;
 			$formmail->withbody = 1;
 			$formmail->withdeliveryreceipt = 1;
@@ -2696,8 +2705,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 			}
 
 			// Tableau des parametres complementaires
-			$formmail->param['action'] = 'send';
-			$formmail->param['models'] = 'order_send';
+			$formmail->param['action'] = $action;
+			$formmail->param['models'] = $modelmail;
 			$formmail->param['models_id']=GETPOST('modelmailselected','int');
 			$formmail->param['orderid'] = $object->id;
 			$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
