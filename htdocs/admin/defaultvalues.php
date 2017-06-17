@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2017	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +60,9 @@ $defaulturl=preg_replace('/^\//', '', $defaulturl);
 $urlpage = GETPOST('urlpage');
 $key = GETPOST('key');
 $value = GETPOST('value');
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('admindefaultvalues','globaladmin'));
 
 
 /*
