@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2010  Jean Heimburger		<jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin		<regis@dolibarr.fr>
- * Copyright (C) 2013-2015  Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2013-2016  Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry		<florian.henry@open-concept.pro>
  *
@@ -208,10 +208,10 @@ if ($action == 'writebookkeeping') {
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->client = $tabcompany[$key]['code_client'];
 
+		// Thirdparty
 		if (! $errorforline)
 		{
 			foreach ( $tabttc[$key] as $k => $mt ) {
-				// get compte id and label
 				if ($mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
@@ -223,7 +223,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta_fournisseur'];
 					$bookkeeping->subledger_label = '';    // TODO To complete
-					$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("subledger_account");
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("subledger_account");
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
@@ -272,7 +272,7 @@ if ($action == 'writebookkeeping') {
 					    $bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
-						$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $accountingaccount->label;
+						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $accountingaccount->label;
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
@@ -319,7 +319,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 					$bookkeeping->subledger_account = '';
 					$bookkeeping->subledger_label = '';
-					$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]);
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]);
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
