@@ -1891,7 +1891,7 @@ if (! function_exists("llxFooter"))
      */
     function llxFooter($comment='',$zone='private')
     {
-        global $conf, $langs, $user;
+        global $conf, $langs, $user, $object;
         global $delayedhtmlcontent;
 
         // Global html output events ($mesgs, $errors, $warnings)
@@ -2025,6 +2025,40 @@ if (! function_exists("llxFooter"))
                 });
                 </script>';
         }
+
+        // Wrapper to add log when clicking on download or preview
+        if (! empty($conf->blockedlog->enabled) && is_object($object) && $object->id > 0 && $object->statut > 0)
+        {
+            if (in_array($object->element, array('facture')))       // Restrict for the moment to element 'facture'
+            {
+                print "\n<!-- JS CODE TO ENABLE log when making a download or a preview of a document -->\n";
+                ?>
+    			<script type="text/javascript">
+    			jQuery(document).ready(function () {
+    				$('a.documentpreview').click(function() {
+    					$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
+    							, {
+    								id:<?php echo $object->id; ?>
+    								, element:'<?php echo $object->element ?>'
+    								, action:'DOC_PREVIEW'
+    							}
+    					);
+    				});
+    				$('a.documentdownload').click(function() {
+    					$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
+    							, {
+    								id:<?php echo $object->id; ?>
+    								, element:'<?php echo $object->element ?>'
+    								, action:'DOC_DOWNLOAD'
+    							}
+    					);
+    				});
+    			});
+    			</script>
+				<?php
+    		}
+       	}
+
 
 		// A div for the address popup
 		print "\n<!-- A div to allow dialog popup -->\n";

@@ -17,9 +17,9 @@
  */
 
 /**
- *      \file       htdocs/blockedlog/ajax/block-info.php
+ *      \file       htdocs/blockedlog/ajax/block-add.php
  *      \ingroup    blockedlog
- *      \brief      block-info
+ *      \brief      Block-add
  */
 
 
@@ -32,32 +32,18 @@ if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 //if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
+$res=require '../../main.inc.php';
 
-require '../../main.inc.php';
+$id = GETPOST('id','int');
+$element = GETPOST('element','alpha');
+$action = GETPOST('action','alpha');
 
-if(empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) exit('BLOCKEDLOG_AUTHORITY_URL not set');
+if ($element === 'facture') {
+    require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
-
-$auth=new BlockedLogAuthority($db);
-$auth->syncSignatureWithAuthority();
-
-$block_static = new BlockedLog($db);
-
-$blocks = $block_static->getLog('just_certified', 0, 0, 1) ;
-
-$auth->signature = $block_static->getSignature();
-
-foreach($blocks as &$b) {
-	$auth->blockchain.=$b->signature;
-
+	$facture = new Facture($db);
+	if($facture->fetch($id)>0) {
+		$facture->call_trigger($action, $user);
+	}
 }
-
-$hash = $auth->getBlockchainHash();
-
-$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.$auth->signature.'&h='.$hash;
-
-$res = file_get_contents($url);
-//echo $url;
-echo $res;

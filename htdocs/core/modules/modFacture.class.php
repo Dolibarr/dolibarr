@@ -64,13 +64,12 @@ class modFacture extends DolibarrModules
 		$this->dirs = array("/facture/temp");
 
 		// Dependencies
-		$this->depends = array('always'=>"modSociete", 'FR'=>'modBlockedLog');
+		$this->depends = array('always'=>"modSociete");
 		$this->requiredby = array("modComptabilite","modAccounting");
 		$this->conflictwith = array();
 		$this->langfiles = array("bills","companies","compta","products");
-		$this->warnings_activation = array('FR'=>'WarningNoteModuleInvoiceForFrenchLaw');                              // Warning to show when we activate module. array('always'='text') or array('FR'='text')
-		$this->warnings_activation = array();
-		$this->warnings_activation_ext = array('FR'=>'WarningInstallationMayBecomeNotCompliantWithLaw');  // Warning to show when we activate an external module. array('always'='text') or array('FR'='text')
+		$this->warnings_activation = array();                              // Warning to show when we activate module. array('always'='text') or array('FR'='text')
+		$this->warnings_activation_ext = array();                          // Warning to show when we activate an external module. array('always'='text') or array('FR'='text')
 
 		// Config pages
 		$this->config_page_url = array("facture.php");

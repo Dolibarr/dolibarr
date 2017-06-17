@@ -756,7 +756,7 @@ function purgeSessions($mysessionid)
  */
 function activateModule($value,$withdeps=1)
 {
-    global $db, $modules, $langs, $conf;
+    global $db, $modules, $langs, $conf, $mysoc;
 
 	// Check parameters
 	if (empty($value)) {

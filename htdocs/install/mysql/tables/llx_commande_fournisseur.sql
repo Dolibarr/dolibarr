@@ -46,7 +46,7 @@ create table llx_commande_fournisseur
   source				smallint NOT NULL,			-- not used, except by setting this to 42 for orders coming for replenishment and 0 in other case ?
   fk_statut				smallint  default 0,
   billed				smallint  default 0,
-  amount_ht				real      default 0,
+  amount_ht				numeric(24,8)  default 0,
   remise_percent		real      default 0,
   remise				real      default 0,
   tva					double(24,8)      default 0,
