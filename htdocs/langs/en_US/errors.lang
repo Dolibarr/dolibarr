@@ -44,6 +44,7 @@ ErrorFailedToWriteInDir=Failed to write in directory %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 ErrorUserCannotBeDelete=User cannot be deleted. May be it is associated to Dolibarr entities.
 ErrorFieldsRequired=Some required fields were not filled.
+ErrorSubjectIsRequired=The email topic is required
 ErrorFailedToCreateDir=Failed to create a directory. Check that Web server user has permissions to write into Dolibarr documents directory. If parameter <b>safe_mode</b> is enabled on this PHP, check that Dolibarr php files owns to web server user (or group).
 ErrorNoMailDefinedForThisUser=No mail defined for this user
 ErrorFeatureNeedJavascript=This feature need javascript to be activated to work. Change this in setup - display.
