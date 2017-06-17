@@ -3099,11 +3099,11 @@ abstract class CommonObject
             }
             else {
 		if ($weight_units == 99) {
-			// conversion 1 Livre = 0.45359237 KG
+			// conversion 1 Pound = 0.45359237 KG
 			$trueWeightUnit = 0.45359237;
 			$totalWeight += $weight * $qty * $trueWeightUnit;
 		} elseif ($weight_units == 98) {
-			// conversion 1 once = 0.0283495 KG
+			// conversion 1 Ounce = 0.0283495 KG
 			$trueWeightUnit = 0.0283495;
 			$totalWeight += $weight * $qty * $trueWeightUnit;
 		}
