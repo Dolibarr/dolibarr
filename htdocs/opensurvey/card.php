@@ -67,48 +67,48 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
     if ($cancel) $action='';
-    
+
     // Delete
     if ($action == 'delete_confirm')
     {
     	// Security check
     	if (!$user->rights->opensurvey->write) accessforbidden();
-    
+
     	$result=$object->delete($user,'',$numsondage);
-    
+
     	header('Location: '.dol_buildpath('/opensurvey/list.php',1));
     	exit();
     }
-    
+
     // Close
     if ($action == 'close')
     {
         $object->status = Opensurveysondage::STATUS_CLOSED;
         $object->update($user);
     }
-    
+
     // Reopend
     if ($action == 'reopen')
     {
         $object->status = Opensurveysondage::STATUS_VALIDATED;
         $object->update($user);
     }
-    
+
     // Update
     if ($action == 'update')
     {
     	// Security check
     	if (!$user->rights->opensurvey->write) accessforbidden();
-    
+
     	$error=0;
-    
+
     	if (! GETPOST('nouveautitre'))
     	{
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Title")), null, 'errors');
     		$error++;
     		$action = 'edit';
     	}
-    
+
     	if (! $error)
     	{
     		$object->titre = GETPOST('nouveautitre');
@@ -118,7 +118,7 @@ if (empty($reshook))
     		$object->allow_comments = GETPOST('cancomment') == 'on' ? true : false;
     		$object->allow_spy = GETPOST('canseeothersvote') == 'on' ? true : false;
     		$object->mailsonde = GETPOST('mailsonde') == 'on' ? true : false;
-    
+
     		$res=$object->update($user);
     		if ($res < 0)
     		{
@@ -132,7 +132,7 @@ if (empty($reshook))
     if (GETPOST('ajoutcomment'))
     {
     	$error=0;
-    
+
     	if (! GETPOST('comment'))
     	{
     		$error++;
@@ -143,33 +143,33 @@ if (empty($reshook))
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("User")), null, 'errors');
     	}
-    
+
     	if (! $error)
     	{
     		$comment = GETPOST("comment");
     		$comment_user = GETPOST('commentuser');
-    
+
     		$resql = $object->addComment($comment, $comment_user);
-    
+
     		if (! $resql)
     		{
     			setEventMessages($langs->trans('ErrorInsertingComment'), null, 'errors');
     		}
     	}
     }
-    
+
     // Delete comment
     $idcomment=GETPOST('deletecomment','int');
     if ($idcomment)
     {
     	// Security check
     	if (!$user->rights->opensurvey->write) accessforbidden();
-    
+
     	$resql = $object->deleteComment($idcomment);
     }
-    
+
     if ($action == 'edit') {
-    
+
     	// Security check
     	if (!$user->rights->opensurvey->write) accessforbidden();
     }
@@ -307,7 +307,7 @@ print '</td></tr>';
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
 if ($action == 'edit') print $form->select_date($expiredate?$expiredate:$object->date_fin,'expire',0,0,0,'',1,0,1);
-else 
+else
 {
     print dol_print_date($object->date_fin,'day');
     if ($object->date_fin && $object->date_fin < dol_now()) print img_warning($langs->trans("Expired"));
@@ -377,7 +377,7 @@ if ($action != 'edit' && $user->rights->opensurvey->write) {
         //Opened button
         print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=reopen&id=' . $numsondage . '">'.$langs->trans("ReOpen") . '</a>';
     }
-    
+
 	//Delete button
 	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?suppressionsondage=1&id='.$numsondage.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 }
@@ -420,7 +420,7 @@ print '<br>';
 // Add comment
 if ($object->allow_comments) {
 	print $langs->trans("AddACommentForPoll") . '<br>';
-	print '<textarea name="comment" rows="2" cols="80"></textarea><br>'."\n";
+	print '<textarea name="comment" rows="2" class="quatrevingtpercent"></textarea><br>'."\n";
 	print $langs->trans("Name") .': <input type="text" size="50" name="commentuser" value="'.$user->getFullName($langs).'"><br>'."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 	if (isset($erreur_commentaire_vide) && $erreur_commentaire_vide=="yes") {
