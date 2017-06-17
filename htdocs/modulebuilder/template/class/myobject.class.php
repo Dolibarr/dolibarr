@@ -31,11 +31,11 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class MyModuleObject
+ * Class MyObject
  *
  * Put here description of your class.
  */
-class MyModuleObject extends CommonObject
+class MyObject extends CommonObject
 {
 	/**
 	 * @var string Id to identify managed object

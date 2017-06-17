@@ -33,11 +33,13 @@ $action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm','alpha');
 $module=GETPOST('module','alpha');
 $tab=GETPOST('tab','aZ09');
+$tabobj=GETPOST('tabobj','alpha');
 if (empty($module)) $module='initmodule';
 if (empty($tab)) $tab='description';
+if (empty($tabobj)) $tabobj='newobject';
 
 $modulename=dol_sanitizeFileName(GETPOST('modulename','alpha'));
-
+$objectname=dol_sanitizeFileName(GETPOST('objectname','alpha'));
 
 // Security check
 if (! $user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) accessforbidden('ModuleBuilderNotAllowed');
@@ -80,6 +82,18 @@ if ($dirins && $action == 'initmodule' && $modulename)
     	}
     }
 
+    // Delete some files
+    dol_delete_file($destdir.'/myobject_card.php');
+    dol_delete_file($destdir.'/myobject_list.php');
+    dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
+    dol_delete_file($destdir.'/sql/llx_myobject.key.sql');
+    dol_delete_file($destdir.'/sql/llx_myobject.sql');
+    dol_delete_file($destdir.'/scripts/myobject.php');
+    dol_delete_file($destdir.'/img/object_myobject.png');
+    dol_delete_file($destdir.'/class/myobject.class.php');
+    dol_delete_file($destdir.'/class/api_myobject.class.php');
+    dol_delete_file($destdir.'/class/MyObject.txt');
+
     // Edit PHP files
     if (! $error)
     {
@@ -112,6 +126,86 @@ if ($dirins && $action == 'initmodule' && $modulename)
         $modulename = '';
     }
 }
+
+if ($dirins && $action == 'initobject' && $module && $objectname)
+{
+    $srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
+    $destdir = $dirins.'/'.strtolower($module);
+
+    $arrayreplacement=array(
+        'mymodule'=>strtolower($module),
+        'MyModule'=>$module,
+        'myobject'=>strtolower($objectname),
+        'MyObject'=>$objectname
+    );
+
+
+    // Delete some files
+    $filetogenerate = array(
+        'myobject_card.php'=>strtolower($objectname).'_card.php',
+        'myobject_list.php'=>strtolower($objectname).'_list.php',
+        'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
+        'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
+        'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
+        'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
+        'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
+        'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
+        'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php',
+        'class/MyObject.txt'=>'class/'.$objectname.'.txt'
+    );
+
+    foreach($filetogenerate as $srcfile => $destfile)
+    {
+        $result = dol_copy($srcdir.'/'.$srcfile, $destdir.'/'.$destfile);
+        if ($result <= 0)
+        {
+            if ($result < 0)
+            {
+                $error++;
+                $langs->load("errors");
+                setEventMessages($langs->trans("ErrorFailToCopyFile", $srcdir.'/'.$srcfile, $destdir.'/'.$destfile), null, 'errors');
+            }
+            else	// $result == 0
+            {
+                setEventMessages($langs->trans("FileAlreadyExists", $srcdir.'/'.$srcfile, $destdir.'/'.$destfile), null, 'warnings');
+            }
+        }
+        else
+        {
+            // Copy is ok
+        }
+    }
+
+    // Edit PHP files
+    foreach($filetogenerate as $destfile)
+    {
+        $phpfileval['fullname'] = $destdir.'/'.$destfile;
+
+        //var_dump($phpfileval['fullname']);
+        $arrayreplacement=array(
+            'mymodule'=>strtolower($modulename),
+            'MyModule'=>$modulename,
+            'MYMODULE'=>strtoupper($modulename),
+            'My module'=>$modulename,
+            'htdocs/modulebuilder/template/'=>'',
+            'myobject'=>strtolower($objectname),
+            'MyObject'=>$objectname
+        );
+
+        $result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
+        //var_dump($result);
+        if ($result < 0)
+        {
+            setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
+        }
+    }
+
+    if (! $error)
+    {
+        setEventMessages('FilesForObjectInitialized', null);
+    }
+}
+
 
 if ($dirins && $action == 'confirm_delete')
 {
@@ -485,9 +579,53 @@ elseif (! empty($module))
 
         if ($tab == 'objects')
         {
-    		print $langs->trans("FeatureNotYetAvailable");
 
+            $head3 = array();
+            $h=0;
 
+            $modulelowercase=strtolower($module);
+
+            // Dir for module
+            $dir = $dirins.'/'.$modulelowercase.'/class';
+
+            $head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.'&tabobj=newobject';
+            $head3[$h][1] = $langs->trans("NewObject");
+            $head3[$h][2] = 'newobject';
+            $h++;
+
+            $listofobject = dol_dir_list($dir , 'files', 0, '\.txt$');
+            foreach($listofobject as $fileobj)
+            {
+                $objectname = preg_replace('/\.txt$/', '', $fileobj['name']);
+
+                $head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.'&tabobj='.$objectname;
+                $head3[$h][1] = $objectname;
+                $head3[$h][2] = $objectname;
+                $h++;
+            }
+
+            dol_fiche_head($head3, $tabobj, '', -1, '');
+
+            if ($tabobj == 'newobject')
+            {
+                // New module
+                print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+                print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                print '<input type="hidden" name="action" value="initobject">';
+                print '<input type="hidden" name="tab" value="objects">';
+                print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+
+                print $langs->trans("EnterNameOfObjectDesc").'<br><br>';
+
+                print '<input type="text" name="objectname" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'">';
+                print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins?'':' disabled="disabled"').'>';
+                print '</form>';
+            }
+
+            if ($tabobj == 'fields')
+            {
+                print $langs->trans("FeatureNotYetAvailable").'<br><br>';
+            }
         }
 
         if ($tab == 'menus')
