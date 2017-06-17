@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2002-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
- * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
- * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2009-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012  Regis Houssin           <regis.houssin@capnetworks.com>
- * Copyright (C) 2013       Florian Henry           <forian.henry@open-concept.pro>
- * Copyright (C) 2015       Charles-Fr BENKE        <charles.fr@benke.fr>
- * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+ * Copyright (C) 2009-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Florian Henry			<forian.henry@open-concept.pro>
+ * Copyright (C) 2015		Charles-Fr BENKE		<charles.fr@benke.fr>
+ * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -702,20 +702,20 @@ class ExtraFields
 					$this->attribute_hidden[$tab->name]=$tab->ishidden;
 
 					// New usage
-					$this->attributes[$tab->elementtype]['type'][$tab->name]=$tab->type;
-					$this->attributes[$tab->elementtype]['label'][$tab->name]=$tab->label;
-					$this->attributes[$tab->elementtype]['size'][$tab->name]=$tab->size;
-					$this->attributes[$tab->elementtype]['elementtype'][$tab->name]=$tab->elementtype;
-					$this->attributes[$tab->elementtype]['default'][$tab->name]=$tab->fielddefault;
-					$this->attributes[$tab->elementtype]['computed'][$tab->name]=$tab->fieldcomputed;
-					$this->attributes[$tab->elementtype]['unique'][$tab->name]=$tab->fieldunique;
-					$this->attributes[$tab->elementtype]['required'][$tab->name]=$tab->fieldrequired;
-					$this->attributes[$tab->elementtype]['param'][$tab->name]=($tab->param ? unserialize($tab->param) : '');
-					$this->attributes[$tab->elementtype]['pos'][$tab->name]=$tab->pos;
-					$this->attributes[$tab->elementtype]['alwayseditable'][$tab->name]=$tab->alwayseditable;
-					$this->attributes[$tab->elementtype]['perms'][$tab->name]=$tab->perms;
-					$this->attributes[$tab->elementtype]['list'][$tab->name]=$tab->list;
-					$this->attributes[$tab->elementtype]['ishidden'][$tab->name]=$tab->ishidden;
+					$this->attributes[$tab->elementtype][$tab->name]['type']=$tab->type;
+					$this->attributes[$tab->elementtype][$tab->name]['label']=$tab->label;
+					$this->attributes[$tab->elementtype][$tab->name]['size']=$tab->size;
+					$this->attributes[$tab->elementtype][$tab->name]['elementtype']=$tab->elementtype;
+					$this->attributes[$tab->elementtype][$tab->name]['default']=$tab->fielddefault;
+					$this->attributes[$tab->elementtype][$tab->name]['computed']=$tab->fieldcomputed;
+					$this->attributes[$tab->elementtype][$tab->name]['unique']=$tab->fieldunique;
+					$this->attributes[$tab->elementtype][$tab->name]['required']=$tab->fieldrequired;
+					$this->attributes[$tab->elementtype][$tab->name]['param']=($tab->param ? unserialize($tab->param) : '');
+					$this->attributes[$tab->elementtype][$tab->name]['pos']=$tab->pos;
+					$this->attributes[$tab->elementtype][$tab->name]['alwayseditable']=$tab->alwayseditable;
+					$this->attributes[$tab->elementtype][$tab->name]['perms']=$tab->perms;
+					$this->attributes[$tab->elementtype][$tab->name]['list']=$tab->list;
+					$this->attributes[$tab->elementtype][$tab->name]['ishidden']=$tab->ishidden;
 				}
 			}
 			if ($elementtype) $this->attributes[$elementtype]['loaded']=1;
