@@ -80,7 +80,7 @@ $urldolibarrmodules='https://www.dolistore.com/';
  * Actions
  */
 
-if (GETPOST('buttonreset'))
+if (GETPOST('buttonreset','alpha'))
 {
     $search_keyword='';
     $search_status='';
@@ -738,13 +738,17 @@ if ($mode == 'common')
 	        	    print '<!-- This module is an external module and it may have a warning to show (note: your country is '.$mysoc->country_code.') -->'."\n";
 	        	    foreach ($arrayofwarningsext as $keymodule => $arrayofwarningsextbycountry)
 	        	    {
-	        	        if (! empty($modules[$keymodule]->const_name))    // If module that request warning is on
+                        $keymodulelowercase=strtolower(preg_replace('/^mod/','',$keymodule));
+                        if (in_array($keymodulelowercase, $conf->modules))    // If module that request warning is on
 	        	        {
         	        	    foreach ($arrayofwarningsextbycountry as $keycountry => $cursorwarningmessage)
         	        	    {
         	        	        if ($keycountry == 'always' || $keycountry == $mysoc->country_code)
         	        	        {
         	        	            $warningmessage .= ($warningmessage?"\n":"").$langs->trans($cursorwarningmessage, $objMod->getName(), $mysoc->country_code, $modules[$keymodule]->getName());
+        	        	            $warningmessage .= ($warningmessage?"\n":"").($warningmessage?"\n":"").$langs->trans("Module").' : '.$objMod->getName();
+        	        	            if (! empty($objMod->editor_name)) $warningmessage .= ($warningmessage?"\n":"").$langs->trans("Publisher").' : '.$objMod->editor_name;
+        	        	            if (! empty($objMod->editor_name)) $warningmessage .= ($warningmessage?"\n":"").$langs->trans("ModuleTriggeringThisWarning").' : '.$modules[$keymodule]->getName();
         	        	        }
         	        	    }
 	        	        }
