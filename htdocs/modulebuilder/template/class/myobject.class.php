@@ -21,8 +21,8 @@
 
 /**
  * \file        htdocs/modulebuilder/template/class/myobject.class.php
- * \ingroup     mymodule othermodule1 othermodule2
- * \brief       This file is an example for a CRUD class file (Create/Read/Update/Delete)
+ * \ingroup     mymodule
+ * \brief       This file is a CRUD class file for MyObject (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -31,24 +31,22 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class MyObject
- *
- * Put here description of your class.
+ * Class for MyObject
  */
 class MyObject extends CommonObject
 {
 	/**
 	 * @var string Id to identify managed object
 	 */
-	public $element = 'mymoduleobject';
+	public $element = 'myobject';
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'mymoduleobject';
+	public $table_element = 'myobject';
     /**
      * @var array Array with all fields and their property
      */
-	public $picto = 'generic';
+	public $picto = 'myobject';
     /**
      * @var array Array with all fields and their property
      */
@@ -67,12 +65,12 @@ class MyObject extends CommonObject
 
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	public $table_element_line = 'mymoduleobjectdet';
-    public $class_element_line = 'MyModuleObjectline';
-    public $fk_element = 'fk_mymoduleobject';
+	public $table_element_line = 'myobjectdet';
+    public $class_element_line = 'MyObjectline';
+    public $fk_element = 'fk_myobject';
 
     /**
-	 * @var MyModuleObjectLine[] Lines
+	 * @var MyObjectLine[] Lines
 	 */
 	public $lines = array();
 
