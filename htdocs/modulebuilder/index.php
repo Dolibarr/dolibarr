@@ -597,7 +597,7 @@ elseif (! empty($module))
             $head3[$h][2] = 'newobject';
             $h++;
 
-            $listofobject = dol_dir_list($dir , 'files', 0, '\.txt$');
+            $listofobject = dol_dir_list($dir, 'files', 0, '\.txt$');
             foreach($listofobject as $fileobj)
             {
                 $objectname = preg_replace('/\.txt$/', '', $fileobj['name']);
