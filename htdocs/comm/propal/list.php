@@ -363,22 +363,22 @@ if ($resql)
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
-	$param='&viewstatut='.$viewstatut;
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($sall)				 $param.='&sall='.$sall;
-	if ($month)              $param.='&month='.$month;
-	if ($year)               $param.='&year='.$year;
-    if ($search_ref)         $param.='&search_ref=' .$search_ref;
-    if ($search_refcustomer) $param.='&search_refcustomer=' .$search_refcustomer;
-    if ($search_societe)     $param.='&search_societe=' .$search_societe;
-	if ($search_user > 0)    $param.='&search_user='.$search_user;
-	if ($search_sale > 0)    $param.='&search_sale='.$search_sale;
-	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
-	if ($search_login)  	 $param.='&search_login='.$search_login;
-	if ($search_town)		 $param.='&search_town='.$search_town;
-	if ($socid > 0)          $param.='&socid='.$socid;
-	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+	$param='&viewstatut='.urlencode($viewstatut);
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if ($sall)				 $param.='&sall='.urlencode($sall);
+	if ($month)              $param.='&month='.urlencode($month);
+	if ($year)               $param.='&year='.urlencode($year);
+    if ($search_ref)         $param.='&search_ref='.urlencode($search_ref);
+    if ($search_refcustomer) $param.='&search_refcustomer='.urlencode($search_refcustomer);
+    if ($search_societe)     $param.='&search_societe='.urlencode($search_societe);
+	if ($search_user > 0)    $param.='&search_user='.urlencode($search_user);
+	if ($search_sale > 0)    $param.='&search_sale='.urlencode($search_sale);
+	if ($search_montant_ht)  $param.='&search_montant_ht='.urlencode($search_montant_ht);
+	if ($search_login)  	 $param.='&search_login='.urlencode($search_login);
+	if ($search_town)		 $param.='&search_town='.urlencode($search_town);
+	if ($socid > 0)          $param.='&socid='.urlencode($socid);
+	if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
 	{
