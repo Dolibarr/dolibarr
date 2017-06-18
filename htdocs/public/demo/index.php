@@ -291,7 +291,7 @@ print '</div>';
 print '<div class="demobantext" style="max-width: 1024px;">';
 print '<div style="font-size: 20px; padding: 40px;">';
 print '<div style="text-align: justify;">'.$langs->trans("DemoDesc").'</div><br>';
-print '<font color="#555577"><b>'.$langs->trans("ChooseYourDemoProfil").'</b></font>';
+print '<div class="titre"><font style="font-size: 20px">'.$langs->trans("ChooseYourDemoProfil").'</font></div>';
 print '</div>';
 print '</div>';
 
