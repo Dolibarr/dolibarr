@@ -33,11 +33,13 @@ $action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm','alpha');
 $module=GETPOST('module','alpha');
 $tab=GETPOST('tab','aZ09');
+$tabobj=GETPOST('tabobj','alpha');
 if (empty($module)) $module='initmodule';
 if (empty($tab)) $tab='description';
+if (empty($tabobj)) $tabobj='newobject';
 
 $modulename=dol_sanitizeFileName(GETPOST('modulename','alpha'));
-
+$objectname=dol_sanitizeFileName(GETPOST('objectname','alpha'));
 
 // Security check
 if (! $user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) accessforbidden('ModuleBuilderNotAllowed');
@@ -80,6 +82,18 @@ if ($dirins && $action == 'initmodule' && $modulename)
     	}
     }
 
+    // Delete some files
+    dol_delete_file($destdir.'/myobject_card.php');
+    dol_delete_file($destdir.'/myobject_list.php');
+    dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
+    dol_delete_file($destdir.'/sql/llx_myobject.key.sql');
+    dol_delete_file($destdir.'/sql/llx_myobject.sql');
+    dol_delete_file($destdir.'/scripts/myobject.php');
+    dol_delete_file($destdir.'/img/object_myobject.png');
+    dol_delete_file($destdir.'/class/myobject.class.php');
+    dol_delete_file($destdir.'/class/api_myobject.class.php');
+    dol_delete_file($destdir.'/class/MyObject.txt');
+
     // Edit PHP files
     if (! $error)
     {
@@ -112,6 +126,86 @@ if ($dirins && $action == 'initmodule' && $modulename)
         $modulename = '';
     }
 }
+
+if ($dirins && $action == 'initobject' && $module && $objectname)
+{
+    $srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
+    $destdir = $dirins.'/'.strtolower($module);
+
+    $arrayreplacement=array(
+        'mymodule'=>strtolower($module),
+        'MyModule'=>$module,
+        'myobject'=>strtolower($objectname),
+        'MyObject'=>$objectname
+    );
+
+
+    // Delete some files
+    $filetogenerate = array(
+        'myobject_card.php'=>strtolower($objectname).'_card.php',
+        'myobject_list.php'=>strtolower($objectname).'_list.php',
+        'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
+        'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
+        'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
+        'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
+        'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
+        'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
+        'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php',
+        'class/MyObject.txt'=>'class/'.$objectname.'.txt'
+    );
+
+    foreach($filetogenerate as $srcfile => $destfile)
+    {
+        $result = dol_copy($srcdir.'/'.$srcfile, $destdir.'/'.$destfile);
+        if ($result <= 0)
+        {
+            if ($result < 0)
+            {
+                $error++;
+                $langs->load("errors");
+                setEventMessages($langs->trans("ErrorFailToCopyFile", $srcdir.'/'.$srcfile, $destdir.'/'.$destfile), null, 'errors');
+            }
+            else	// $result == 0
+            {
+                setEventMessages($langs->trans("FileAlreadyExists", $srcdir.'/'.$srcfile, $destdir.'/'.$destfile), null, 'warnings');
+            }
+        }
+        else
+        {
+            // Copy is ok
+        }
+    }
+
+    // Edit PHP files
+    foreach($filetogenerate as $destfile)
+    {
+        $phpfileval['fullname'] = $destdir.'/'.$destfile;
+
+        //var_dump($phpfileval['fullname']);
+        $arrayreplacement=array(
+            'mymodule'=>strtolower($modulename),
+            'MyModule'=>$modulename,
+            'MYMODULE'=>strtoupper($modulename),
+            'My module'=>$modulename,
+            'htdocs/modulebuilder/template/'=>'',
+            'myobject'=>strtolower($objectname),
+            'MyObject'=>$objectname
+        );
+
+        $result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
+        //var_dump($result);
+        if ($result < 0)
+        {
+            setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
+        }
+    }
+
+    if (! $error)
+    {
+        setEventMessages('FilesForObjectInitialized', null);
+    }
+}
+
 
 if ($dirins && $action == 'confirm_delete')
 {
@@ -360,7 +454,9 @@ elseif (! empty($module))
         $head2 = array();
         $h=0;
 
-       	$modulestatusinfo=img_info('').' '.$langs->trans("ModuleIsNotActive");
+        $modulelowercase=strtolower($module);
+
+        $modulestatusinfo=img_info('').' '.$langs->trans("ModuleIsNotActive");
         if (! empty($conf->$module->enabled))
         {
         	$modulestatusinfo=img_warning().' '.$langs->trans("ModuleIsLive");
@@ -419,7 +515,12 @@ elseif (! empty($module))
 
         if ($tab == 'description')
         {
-        	print '<div class="underbanner clearboth"></div>';
+            $pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
+
+            print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong><br>';
+            print '<br>';
+
+            print '<div class="underbanner clearboth"></div>';
         	print '<div class="fichecenter">';
 
         	print '<table class="border centpercent">';
@@ -485,9 +586,132 @@ elseif (! empty($module))
 
         if ($tab == 'objects')
         {
-    		print $langs->trans("FeatureNotYetAvailable");
+            $head3 = array();
+            $h=0;
+
+            // Dir for module
+            $dir = $dirins.'/'.$modulelowercase.'/class';
+
+            $head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.'&tabobj=newobject';
+            $head3[$h][1] = $langs->trans("NewObject");
+            $head3[$h][2] = 'newobject';
+            $h++;
+
+            $listofobject = dol_dir_list($dir , 'files', 0, '\.txt$');
+            foreach($listofobject as $fileobj)
+            {
+                $objectname = preg_replace('/\.txt$/', '', $fileobj['name']);
+
+                $head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.'&tabobj='.$objectname;
+                $head3[$h][1] = $objectname;
+                $head3[$h][2] = $objectname;
+                $h++;
+            }
+
+            dol_fiche_head($head3, $tabobj, '', -1, '');
+
+            if ($tabobj == 'newobject')
+            {
+                // New module
+                print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+                print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                print '<input type="hidden" name="action" value="initobject">';
+                print '<input type="hidden" name="tab" value="objects">';
+                print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+
+                print $langs->trans("EnterNameOfObjectDesc").'<br><br>';
+
+                print '<input type="text" name="objectname" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'">';
+                print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins?'':' disabled="disabled"').'>';
+                print '</form>';
+            }
+            else
+            {
+                try {
+                    $pathtoclass = strtolower($module).'/class/'.strtolower($tabobj).'.class.php';
+                    $pathtoapi = strtolower($module).'/class/api_'.strtolower($tabobj).'.class.php';
+                    $pathtolist = strtolower($module).'/'.strtolower($tabobj).'_list.class.php';
+                    $pathtocard = strtolower($module).'/'.strtolower($tabobj).'_card.class.php';
+                    print '<span class="fa fa-file"></span> '.$langs->trans("ClassFile").' : <strong>'.$pathtoclass.'</strong><br>';
+                    print '<span class="fa fa-file"></span> '.$langs->trans("ApiClassFile").' : <strong>'.$pathtoapi.'</strong><br>';
+                    print '<span class="fa fa-file"></span> '.$langs->trans("PageForList").' : <strong>'.$pathtolist.'</strong><br>';
+                    print '<span class="fa fa-file"></span> '.$langs->trans("PageForCreateEditView").' : <strong>'.$pathtocard.'</strong><br>';
+
+                    $result = dol_include_once($pathtoclass);
+                    $tmpobjet = new $tabobj($db);
+
+                    $reflector = new ReflectionClass($tabobj);
+                    $properties = $reflector->getProperties();
+                    $propdefault = $reflector->getDefaultProperties();
+
+                    print load_fiche_titre($langs->trans("Properties"), '', '');
+
+                    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+                    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                    print '<input type="hidden" name="action" value="initobject">';
+                    print '<input type="hidden" name="tab" value="objects">';
+                    print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+                    print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
+
+                    print '<table class="noborder">';
+                    print '<tr class="liste_titre">';
+                    print '<td>'.$langs->trans("Property").'</td>';
+                    print '<td>'.$langs->trans("Description").'</td>';
+                    print '<td>'.$langs->trans("Type").'</td>';
+                    print '<td>'.$langs->trans("DefaultValue").'</td>';
+                    print '<td></td>';
+                    print '</tr>';
+                    print '<tr>';
+                    print '<td><input class="text" name="propname" value=""></td>';
+                    print '<td><input class="text" name="propname" value=""></td>';
+                    print '<td><input class="text" name="propname" value=""></td>';
+                    print '<td><input class="text" name="propname" value=""></td>';
+                    print '<td align="center">';
+                    print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
+                    print '</td></tr>';
+                    foreach($properties as $propkey => $propval)
+                    {
+                        if ($propval->class == $tabobj)
+                        {
+                            $propname=$propval->getName();
+
+                            // Discard generic properties
+                            if (in_array($propname, array('element', 'table_element', 'table_element_line', 'class_element_line', 'ismultientitymanaged'))) continue;
+
+                            // Keep or not lines
+                            if (in_array($propname, array('fk_element', 'lines'))) continue;
 
 
+                            print '<tr class="oddeven"><td>';
+                            print $propname;
+                            print '</td>';
+                            print '<td>';
+
+                            print '</td>';
+
+                            print '<td>';
+
+                            print '</td>';
+
+                            print '<td>';
+                            print $propdefault[$propname];
+                            print '</td>';
+
+                            print '<td>';
+
+                            print '</td>';
+                            print '</tr>';
+                        }
+                    }
+                    print '</table>';
+
+                    print '</form>';
+                }
+                catch(Exception $e)
+                {
+                    print $e->getMessage();
+                }
+            }
         }
 
         if ($tab == 'menus')
@@ -528,10 +752,9 @@ elseif (! empty($module))
 			$var=True;
 			foreach ($triggers as $trigger)
 			{
-
 				print '<tr class="oddeven">';
 				print '<td valign="top" width="14" align="center">'.$trigger['picto'].'</td>';
-				print '<td class="tdtop">'.$trigger['file'].'</td>';
+				print '<td class="tdtop">'.$trigger['relpath'].'</td>';
 				print '<td valign="top" align="center">'.$trigger['status'].'</td>';
 				print '<td class="tdtop">';
 				$text=$trigger['info'];
@@ -560,11 +783,56 @@ elseif (! empty($module))
                 print '<br>';
             }
 
+            $modulelowercase=strtolower($module);
+
+            // Zip file to build
+            $FILENAMEZIP='';
+
+            // Load module
+            dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
+            $class='mod'.$module;
+
+            if (class_exists($class))
+            {
+                try {
+                    $moduleobj = new $class($db);
+                }
+                catch(Exception $e)
+                {
+                    $error++;
+                    dol_print_error($e->getMessage());
+                }
+            }
+            else
+            {
+                $error++;
+                $langs->load("errors");
+                dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+                exit;
+            }
+
+            $arrayversion=explode('.',$moduleobj->version,3);
+            if (count($arrayversion))
+            {
+                $FILENAMEZIP="module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2]?".".$arrayversion[2]:"").".zip";
+                $outputfile = $conf->admin->dir_temp.'/'.$FILENAMEZIP;
+            }
+
+            print '<span class="fa fa-file"></span> '. $langs->trans("PathToModulePackage") . ' : ';
+            if (! dol_is_file($outputfile)) print '<strong>'.$langs->trans("PackageFileNotYetGenerated").'</strong>';
+            else {
+                print '<strong>'.$outputfile.'</strong>';
+                print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfile), 'dayhour').')';
+            }
+            print '</strong><br>';
+
+            print '<br><br>';
+
         	print '<form name="generatepackage">';
         	print '<input type="hidden" name="action" value="generatepackage">';
         	print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
         	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
-        	print '<input type="submit" class="button" value="'.$langs->trans("Generate").'">';
+        	print '<input type="submit" class="button" value="'.$langs->trans("BuildPackage").'">';
         	print '</form>';
         }
 

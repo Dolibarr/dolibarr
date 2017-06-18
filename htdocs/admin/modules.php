@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2003       Jean-Louis Bergamo      <jlb@j1b.org>
- * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
- * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2003-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,12 +75,19 @@ if ($search_version) $param.='&search_version='.urlencode($search_version);
 $dirins=DOL_DOCUMENT_ROOT.'/custom';
 $urldolibarrmodules='https://www.dolistore.com/';
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('adminmodules','globaladmin'));
+
 
 /*
  * Actions
  */
 
-if (GETPOST('buttonreset'))
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (GETPOST('buttonreset','alpha'))
 {
     $search_keyword='';
     $search_status='';
@@ -204,7 +211,7 @@ if ($action == 'set' && $user->admin)
     		setEventMessages($msg, null, 'warnings');
 	    }
 	}
-    header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
+    header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
 
@@ -212,7 +219,7 @@ if ($action == 'reset' && $user->admin)
 {
     $result=unActivateModule($value);
     if ($result) setEventMessages($result, null, 'errors');
-    header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
+    header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
 
@@ -430,6 +437,8 @@ print "<br>\n";
 
 if ($mode == 'common')
 {
+    dol_set_focus('#search_keyword');
+
     print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -441,7 +450,7 @@ if ($mode == 'common')
 
     $moreforfilter = '';
     $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.= $langs->trans('Keyword') . ': <input type="text" name="search_keyword" value="'.dol_escape_htmltag($search_keyword).'">';
+    $moreforfilter.= $langs->trans('Keyword') . ': <input type="text" id="search_keyword" name="search_keyword" value="'.dol_escape_htmltag($search_keyword).'">';
     $moreforfilter.= '</div>';
     $moreforfilter.='<div class="divsearchfield">';
     $moreforfilter.= $langs->trans('Origin') . ': '.$form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), 1);
@@ -474,10 +483,13 @@ if ($mode == 'common')
         print $hookmanager->resPrint;
     }
 
+    $moreforfilter='';
 
     print '<div class="clearboth"></div><br>';
 
-    $moreforfilter='';
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('insertExtraHeader',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+    if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
     // Show list of modules
 
@@ -657,7 +669,7 @@ if ($mode == 'common')
         	}
         	else
         	{
-        		print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
+        		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
         		print img_picto($langs->trans("Activated"),'switch_on');
         		print '</a>';
         	}
@@ -736,20 +748,24 @@ if ($mode == 'common')
 	        	    print '<!-- This module is an external module and it may have a warning to show (note: your country is '.$mysoc->country_code.') -->'."\n";
 	        	    foreach ($arrayofwarningsext as $keymodule => $arrayofwarningsextbycountry)
 	        	    {
-	        	        if (! empty($modules[$keymodule]->const_name))    // If module that request warning is on
+                        $keymodulelowercase=strtolower(preg_replace('/^mod/','',$keymodule));
+                        if (in_array($keymodulelowercase, $conf->modules))    // If module that request warning is on
 	        	        {
         	        	    foreach ($arrayofwarningsextbycountry as $keycountry => $cursorwarningmessage)
         	        	    {
         	        	        if ($keycountry == 'always' || $keycountry == $mysoc->country_code)
         	        	        {
         	        	            $warningmessage .= ($warningmessage?"\n":"").$langs->trans($cursorwarningmessage, $objMod->getName(), $mysoc->country_code, $modules[$keymodule]->getName());
+        	        	            $warningmessage .= ($warningmessage?"\n":"").($warningmessage?"\n":"").$langs->trans("Module").' : '.$objMod->getName();
+        	        	            if (! empty($objMod->editor_name)) $warningmessage .= ($warningmessage?"\n":"").$langs->trans("Publisher").' : '.$objMod->editor_name;
+        	        	            if (! empty($objMod->editor_name)) $warningmessage .= ($warningmessage?"\n":"").$langs->trans("ModuleTriggeringThisWarning").' : '.$modules[$keymodule]->getName();
         	        	        }
         	        	    }
 	        	        }
 	        	    }
 	        	}
         	    print '<!-- Message to show: '.$warningmessage.' -->'."\n";
-	        	print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '"';
+	        	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '"';
 	        	if ($warningmessage) print ' onclick="return confirm(\''.dol_escape_js($warningmessage).'\');"';
 	        	print '>';
 	        	print img_picto($langs->trans("Disabled"),'switch_off');

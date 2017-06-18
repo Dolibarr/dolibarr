@@ -36,6 +36,7 @@ if (!$user->admin)
 
 $langs->load("admin");
 $langs->load("other");
+$langs->load("agenda");
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');

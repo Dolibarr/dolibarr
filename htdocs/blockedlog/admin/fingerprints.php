@@ -16,8 +16,8 @@
  */
 
 /**
- *	\file       htdocs/blockedlog/admin/blockedlog.php
- *  \ingroup    system
+ *	\file       htdocs/blockedlog/admin/fingerprints.php
+ *  \ingroup    blockedlog
  *  \brief      Page setup for blockedlog module
  */
 
@@ -32,39 +32,39 @@ $langs->load("other");
 $langs->load("blockedlog");
 
 if (! $user->admin) accessforbidden();
-  
+
 $action = GETPOST('action','alpha');
 $showonlyerrors = GETPOST('showonlyerrors','int');
 
 $block_static = new BlockedLog($db);
 
 if($action === 'downloadblockchain') {
-	
+
 	$auth = new BlockedLogAuthority($db);
-	
+
 	$bc = $auth->getLocalBlockChain();
-	
+
 	header('Content-Type: application/octet-stream');
 	header("Content-Transfer-Encoding: Binary");
-	header("Content-disposition: attachment; filename=\"" .$auth->signature. ".certif\""); 
-	
+	header("Content-disposition: attachment; filename=\"" .$auth->signature. ".certif\"");
+
 	echo $bc;
-	
+
 	exit;
 }
 else if($action === 'downloadcsv') {
-	
+
 	$res = $db->query("SELECT rowid,tms,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user
 					FROM ".MAIN_DB_PREFIX."blockedlog ORDER BY rowid ASC");
-	
+
 	if($res) {
-		
+
 		$signature = $block_static->getSignature();
-		
+
 		header('Content-Type: application/octet-stream');
 		header("Content-Transfer-Encoding: Binary");
 		header("Content-disposition: attachment; filename=\"" .$signature. ".csv\"");
-		
+
 		print $langs->transnoentities('Id')
 			.';'.$langs->transnoentities('Timestamp')
 			.';'.$langs->transnoentities('Action')
@@ -75,9 +75,9 @@ else if($action === 'downloadcsv') {
 			.';'.$langs->transnoentities('Ref')
 			.';'.$langs->transnoentities('Fingerprint')
 			.';'.$langs->transnoentities('User')."\n";
-		
+
 		while($obj = $db->fetch_object($res)) {
-			
+
 			print $obj->rowid
 				.';'.$obj->tms
 				.';'.$obj->action
@@ -88,15 +88,15 @@ else if($action === 'downloadcsv') {
 				.';'.$obj->ref_object
 				.';'.$obj->signature
 				.';'.$obj->fk_user."\n";
-			
+
 		}
-		
+
 		exit;
 	}
 	else{
 		setEventMessage($db->lasterror, 'errors');
 	}
-	
+
 }
 
 /*
@@ -110,7 +110,7 @@ $form=new Form($db);
 llxHeader('',$langs->trans("BlockedLogSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("ModuleSetup").' BlockedLog',$linkback);
+print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'),$linkback);
 
 $head=blockedlogadmin_prepare_head();
 
@@ -131,52 +131,63 @@ print ' </div>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 
-print '<td>'.$langs->trans('Date').'</td>';
-print '<td>'.$langs->trans('Ref').'</td>';
+print '<td class="minwidth50">'.$langs->trans('#').'</td>';
+print '<td class="center">'.$langs->trans('Date').'</td>';
+print '<td>'.$langs->trans('Author').'</td>';
 print '<td>'.$langs->trans('Action').'</td>';
+print '<td>'.$langs->trans('Ref').'</td>';
 print '<td>'.$langs->trans('Element').'</td>';
 print '<td>'.$langs->trans('Amount').'</td>';
-print '<td>'.$langs->trans('Author').'</td>';
+print '<td class="center">'.$langs->trans('DataOfArchivedEvent').'</td>';
 print '<td>'.$langs->trans('Fingerprint').'</td>';
 print '<td><span id="blockchainstatus"></span></td>';
-				
+
 print '</tr>';
 
 foreach($blocks as &$block) {
 
 	$checksignature = $block->checkSignature();
 	$object_link = $block->getObjectLink();
-	
+
 	if(!$showonlyerrors || $block->error>0) {
-		
+
 	   	print '<tr class="oddeven">';
+	   	print '<td>'.$block->id.'</td>';
 	   	print '<td>'.dol_print_date($block->tms,'dayhour').'</td>';
-	   	print '<td>'.$block->ref_object.'</td>';
-	   	print '<td>'.$langs->trans('log'.$block->action).'</td>';
-	   	print '<td>'.$object_link.'<a href="#" blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
-	   	print '<td align="right">'.price($block->amounts).'</td>';
 	   	print '<td>'.$block->getUser().'</td>';
-	   	print '<td>'.$block->signature.'</td>';
+	   	print '<td>'.$langs->trans('log'.$block->action).'</td>';
+	   	print '<td>'.$block->ref_object.'</td>';
+	   	print '<td>'.$object_link.'</td>';
+	   	print '<td align="right">'.price($block->amounts).'</td>';
+	   	print '<td align="center"><a href="#" blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
+
 	   	print '<td>';
-	   	
-	   	print $block->error == 0 ? img_picto($langs->trans('OkCheckFingerprintValidity'), 'on') : img_picto($langs->trans('KoCheckFingerprintValidity'), 'off');
+	   	print $form->textwithpicto(dol_trunc($block->signature, '12'), $block->signature);
+	   	print '</td>';
+
+	   	print '<td>';
+	   	print $block->error == 0 ? img_picto($langs->trans('OkCheckFingerprintValidity'), 'tick') : img_picto($langs->trans('KoCheckFingerprintValidity'), 'statut8');
+
 	   	if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
 	   		print ' '.($block->certified ? img_picto($langs->trans('AddedByAuthority'), 'info') :  img_picto($langs->trans('NotAddedByAuthorityYet'), 'info_black') );
 	   	}
 		print '</td>';
+
 		print '</tr>';
-						
+
 	}
 }
 
 print '</table>';
+
+
 
 ?>
 <script type="text/javascript">
 $('a[rel=show-info]').click(function() {
 
 	$pop = $('<div id="pop-info"><table width="100%" class="border"><thead><th width="25%"><?php echo $langs->trans('Field') ?></th><th><?php echo $langs->trans('Value') ?></th></thead><tbody></tbody></table></div>');
-	
+
 	$pop.dialog({
 		title:"<?php echo $langs->transnoentities('BlockedlogInfoDialog'); ?>"
 		,modal:true
@@ -184,16 +195,16 @@ $('a[rel=show-info]').click(function() {
 	});
 
 	var fk_block = $(this).attr("blockid");
-	
+
 	$.ajax({
 		url:"../ajax/block-info.php?id="+fk_block
 		,dataType:'json'
 	}).done(function(data) {
 
 		drawData(data,'');
-		
+
 	});
-	
+
 });
 
 function drawData(data, prefix) {
@@ -203,41 +214,41 @@ function drawData(data, prefix) {
 		value = data[x];
 
 		$('#pop-info table tbody').append('<tr><td>'+prefix+x+'</td><td>'+value+'</td></tr>');
-		
+
 		if( (typeof value === "object") && (value !== null) ) {
 			drawData(value, prefix+x+' &gt;&gt; ');
 		}
 
 	}
-	
+
 }
 
 </script>
 
-<?php 
+<?php
 
 
 if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
 
 ?>
 				<script type="text/javascript">
-					
+
 					$.ajax({
 						url : "<?php echo dol_buildpath('/blockedlog/ajax/check_signature.php',1) ?>"
 						,dataType:"html"
 					}).done(function(data) {
-						
+
 						if(data == 'hashisok') {
 							$('#blockchainstatus').html('<?php echo $langs->trans('AuthorityReconizeFingerprintConformity'). ' '. img_picto($langs->trans('SignatureOK'), 'on') ?>');
 						}
 						else{
 							$('#blockchainstatus').html('<?php echo $langs->trans('AuthorityDidntReconizeFingerprintConformity'). ' '.img_picto($langs->trans('SignatureKO'), 'off') ?>');
 						}
-						
+
 					});
-					
+
 				</script>
-				
+
 <?php
 
 }
