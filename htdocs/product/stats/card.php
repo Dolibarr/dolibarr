@@ -69,7 +69,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
     {
         llxHeader("",$langs->trans("ProductStatistics"));
 
-   	    $type = GETPOST('type');
+   	    $type = GETPOST('type', 'intcomma');
 
        	$helpurl='';
         if ($type == '0')

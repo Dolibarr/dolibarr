@@ -66,7 +66,7 @@ $year_end        = GETPOST('year_end');
 $search_employe  = GETPOST('search_employe');
 $search_valideur = GETPOST('search_valideur');
 $search_statut   = GETPOST('select_statut');
-$type            = GETPOST('type','int'); 
+$type            = GETPOST('type','int');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -82,7 +82,7 @@ $fieldstosearchall = array(
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
 	$search_ref="";
 	$month_create="";
@@ -168,7 +168,7 @@ if($year_create > 0) {
     }
 } else {
     if($month_create > 0) {
-        $filter.= " AND date_format(cp.date_create, '%m') = '$month_create'";
+        $filter.= " AND date_format(cp.date_create, '%m') = '".$db->escape($month_create)."'";
     }
 }
 
@@ -313,7 +313,7 @@ print '</td>';
 
 // DATE CREATE
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="month_create" value="'.$month_create.'">';
+print '<input class="flat" type="text" size="1" maxlength="2" name="month_create" value="'.dol_escape_htmltag($month_create).'">';
 $formother->select_year($year_create,'year_create',1, $min_year, 0);
 print '</td>';
 
@@ -409,7 +409,7 @@ if (! empty($holiday->holiday))
 		$userstatic->login=$infos_CP['user_login'];
 		$userstatic->statut=$infos_CP['user_statut'];
 		$userstatic->photo=$infos_CP['user_photo'];
-		
+
 		// Valideur
 		$approbatorstatic->id=$infos_CP['fk_validator'];
 		$approbatorstatic->lastname=$infos_CP['validator_lastname'];
@@ -417,7 +417,7 @@ if (! empty($holiday->holiday))
 		$approbatorstatic->login=$infos_CP['validator_login'];
 		$approbatorstatic->statut=$infos_CP['validator_statut'];
 		$approbatorstatic->photo=$infos_CP['validator_photo'];
-		
+
 		$date = $infos_CP['date_create'];
 
 		print '<tr '.$bc[$var].'>';

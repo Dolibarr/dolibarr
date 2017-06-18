@@ -40,7 +40,7 @@ function printBookmarksList($aDb, $aLangs)
 
 	$langs->load("bookmarks");
 
-	$url= $_SERVER["PHP_SELF"].(! empty($_SERVER["QUERY_STRING"])?'?'.$_SERVER["QUERY_STRING"]:'');
+	$url= $_SERVER["PHP_SELF"].(dol_escape_htmltag($_SERVER["QUERY_STRING"])?'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]):'');
 
 	$ret = '';
 	// Menu bookmark
