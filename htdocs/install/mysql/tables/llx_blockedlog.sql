@@ -4,7 +4,7 @@ CREATE TABLE llx_blockedlog
 	rowid integer AUTO_INCREMENT PRIMARY KEY, 
 	tms	timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	action varchar(50), 
-	amounts numeric(24,8) NOT NULL, 
+	amounts real NOT NULL, 
 	signature varchar(100) NOT NULL, 
 	signature_line varchar(100) NOT NULL, 
 	element varchar(50), 

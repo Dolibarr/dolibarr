@@ -288,14 +288,15 @@ class FormMail extends Form
 				$outputlangs->load('other');
 			}
 
-        	// Get message template
+        	// Get message template for $this->param["models"] into c_email_templates
 			$model_id=0;
         	if (array_key_exists('models_id',$this->param))
         	{
         		$model_id=$this->param["models_id"];
         	}
         	$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
-			//var_dump($arraydefaultmessage);
+			//var_dump($this->param["models"]);
+        	//var_dump($arraydefaultmessage);
 
         	$out.= "\n".'<!-- Begin form mail --><div id="mailformdiv"></div>'."\n";
         	if ($this->withform == 1)
@@ -876,6 +877,7 @@ class FormMail extends Form
 	        	elseif ($type_template=='shipping_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendShipping"); }
 	        	elseif ($type_template=='fichinter_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendFichInter"); }
 	        	elseif ($type_template=='thirdparty')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
+	        	elseif ($type_template=='user')				        { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentUser"); }
 
 	        	$ret['label']='default';
 	        	$ret['topic']='';

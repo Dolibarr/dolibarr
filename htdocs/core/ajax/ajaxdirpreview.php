@@ -139,7 +139,7 @@ if (! dol_is_dir($upload_dir))
 }
 
 print '<!-- ajaxdirpreview type='.$type.' -->'."\n";
-print '<!-- Page called with mode='.(isset($mode)?$mode:'').' type='.$type.' module='.$module.' url='.$url.' '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+//print '<!-- Page called with mode='.dol_escape_htmltag(isset($mode)?$mode:'').' type='.dol_escape_htmltag($type).' module='.dol_escape_htmltag($module).' url='.dol_escape_htmltag($url).' '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 $param=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'');
 
