@@ -2,12 +2,13 @@
 # from Dolibarr GitHub repository.
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
+dist: trusty
 sudo: required
 
 language: php
 
 php:
-- '5.3'
+#- '5.3' // error with Ubuntu Trusty
 - '5.4'
 - '5.5'
 - '5.6'
@@ -17,8 +18,7 @@ php:
 
 addons:
   mariadb: '10.0'
-  # FIXME: find a way to import a MySQL dump into PostgreSQL
-  #postgresql: '9.3'
+  postgresql: '9.3'
   apt:
     packages:
     # We need a webserver to test the webservices
@@ -26,6 +26,8 @@ addons:
     - apache2
     # mod_php is not supported by Travis. Add fcgi. We install FPM later on.
     - libapache2-mod-fastcgi
+    # We need pgloader for import mysql database into pgsql
+    - pgloader
 
 # Start on every boot
 services:
@@ -39,8 +41,7 @@ env:
   # MariaDB overrides MySQL installation so it's not possible to test both yet
   #- DB=mysql
   - DB=mariadb
-  # FIXME: find a way to import a MySQL dump into PostgreSQL
-  #- DB=postgresql
+  - DB=postgresql
   # TODO
   #- DB=sqlite
   # See https://docs.travis-ci.com/user/languages/php/#Apache-%2B-PHP
@@ -53,8 +54,7 @@ matrix:
   allow_failures:
   - php: 7.1
   - php: nightly
-  # FIXME
-  #- env: DB=postgresql
+  - env: DB=postgresql
   # TODO
   #- env: DB=sqlite
 
@@ -113,7 +113,6 @@ install:
   export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
   echo
   
-
 before_script:
 - |
   echo Start travis
@@ -164,16 +163,15 @@ before_script:
   
 - |
   echo "Setting up database"
-  if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
+  if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; then
     echo "MySQL"
     mysql -e 'DROP DATABASE IF EXISTS travis;'
     mysql -e 'CREATE DATABASE IF NOT EXISTS travis;'
     mysql -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
   fi
-  # FIXME: find a way to import a MySQL dump into PostgreSQL
-  #if [ "$DB" = 'postgresql' ]; then
-  #  pgsql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
-  #fi
+  if [ "$DB" = 'postgresql' ]; then
+    pgloader mysql://root@127.0.0.1/travis postgresql:///travis
+  fi
   # TODO: SQLite
   echo
 
@@ -190,10 +188,9 @@ before_script:
   if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
     echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
   fi
-  # FIXME
-  #if [ "$DB" = 'postgresql' ]; then
-  #  echo '$'dolibarr_main_db_type=\'pgsql\'';' >> $CONF_FILE
-  #fi
+  if [ "$DB" = 'postgresql' ]; then
+    echo '$'dolibarr_main_db_type=\'pgsql\'';' >> $CONF_FILE
+  fi
   # TODO: SQLite
   echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
   cat $CONF_FILE
