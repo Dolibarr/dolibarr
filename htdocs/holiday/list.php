@@ -168,7 +168,7 @@ if($year_create > 0) {
     }
 } else {
     if($month_create > 0) {
-        $filter.= " AND date_format(cp.date_create, '%m') = '$month_create'";
+        $filter.= " AND date_format(cp.date_create, '%m') = '".$db->escape($month_create)."'";
     }
 }
 
@@ -302,7 +302,7 @@ print '</td>';
 
 // DATE CREATE
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="month_create" value="'.$month_create.'">';
+print '<input class="flat" type="text" size="1" maxlength="2" name="month_create" value="'.dol_escape_htmltag($month_create).'">';
 $formother->select_year($year_create,'year_create',1, $min_year, 0);
 print '</td>';
 
