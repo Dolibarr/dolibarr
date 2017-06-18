@@ -599,7 +599,7 @@ if ($id)
 
     $fieldlist=explode(',',$tabfield[$id]);
 
-    print '<form action="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?id='.$id.'" method="POST">';
+    print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
     print '<table class="noborder" width="100%">';

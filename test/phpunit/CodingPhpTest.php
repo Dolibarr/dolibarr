@@ -172,7 +172,23 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
             $this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['fullname'].' ('.$val[0].'). Bad.');
             //exit;
 
+            // Test that output of $_SERVER\[\'QUERY_STRING\'\] is escaped.
             $ok=true;
+            $matches=array();
+            // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
+            preg_match_all('/(...................)\$_SERVER\[\'QUERY_STRING\'\]/', $filecontent, $matches, PREG_SET_ORDER);
+            foreach($matches as $key => $val)
+            {
+                if ($val[1] != 'dol_escape_htmltag(')
+                {
+                    $ok=false;
+                    break;
+                }
+            }
+            $this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag around in file '.$file['fullname'].' ('.$val[1].'$_SERVER[\'QUERY_STRING\']). Bad.');
+
+            // Test that output of $_SERVER\[\'PHP_SELF\'\] is escaped (not done for the moment, did not found a way to forge value of $_SERVER['PHP_SELF'] by extern access).
+            /*$ok=true;
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
             preg_match_all('/(...................)\$_SERVER\[\'PHP_SELF\'\]/', $filecontent, $matches, PREG_SET_ORDER);
@@ -184,7 +200,8 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
                     break;
                 }
             }
-            $this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag around in file '.$file['fullname'].' ('.$val[1].'$_SERVER[\'QUERY_STRING\']). Bad.');
+            $this->assertTrue($ok, 'Found a $_SERVER[\'PHP_SELF\'] without dol_escape_htmltag around in file '.$file['fullname'].' ('.$val[1].'$_SERVER[\'PHP_SELF\']). Bad.');
+            */
         }
 
         return;
