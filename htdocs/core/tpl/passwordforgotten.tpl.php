@@ -28,6 +28,9 @@ if (GETPOST('dol_use_jmobile')) $conf->dol_use_jmobile=1;
 // If we force to use jmobile, then we reenable javascript
 if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
 
+$php_self = $_SERVER['PHP_SELF'];
+$php_self.= dol_escape_htmltag($_SERVER["QUERY_STRING"])?'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]):'';
+
 print top_htmlhead('',$langs->trans('SendNewPassword'));
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
@@ -56,7 +59,7 @@ $(document).ready(function () {
 <div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
 <?php
 if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
-echo dol_escape_htmltag($title); 
+echo dol_escape_htmltag($title);
 if ($disablenofollow) echo '</a>';
 ?>
 </div>
@@ -96,7 +99,7 @@ if (! empty($hookmanager->resArray['options'])) {
 }
 ?>
 
-<?php if ($captcha) { 
+<?php if ($captcha) {
 		// Add a variable param to force not using cache (jmobile)
 		$php_self = preg_replace('/[&\?]time=(\d+)/','',$php_self);	// Remove param time
 		if (preg_match('/\?/',$php_self)) $php_self.='&time='.dol_print_date(dol_now(),'dayhourlog');

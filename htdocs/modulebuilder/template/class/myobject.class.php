@@ -36,43 +36,63 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 class MyObject extends CommonObject
 {
 	/**
-	 * @var string Id to identify managed object
+	 * @var string ID to identify managed object
 	 */
 	public $element = 'myobject';
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'myobject';
-    /**
-     * @var array Array with all fields and their property
+
+	/**
+	 * @var array  Does this field is linked to a thirdparty ?
+	 */
+	protected $isnolinkedbythird=1;
+	/**
+	 * @var array  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 */
+	protected $ismultientitymanaged = 1;
+
+
+	/**
+     * @var string String with name of icon for myobject
      */
 	public $picto = 'myobject';
-    /**
-     * @var array Array with all fields and their property
+
+	/**
+	 * @var int    Entity Id
+	 */
+	public $entity;
+
+	/**
+     * @var array  Array with all fields and their property
      */
 	public $fields;
 
+
+
+	// If this object has a subtable with lines
+
 	/**
-	 * @var mixed Sample property 1
+	 * @var int    Name of subtable line
 	 */
-	public $prop1;
+	//public $table_element_line = 'myobjectdet';
 	/**
-	 * @var mixed Sample property 2
+	 * @var int    Field with ID of parent key if this field has a parent
 	 */
-	public $prop2;
-
-	//...
-
-	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
-	public $table_element_line = 'myobjectdet';
-    public $class_element_line = 'MyObjectline';
-    public $fk_element = 'fk_myobject';
-
-    /**
-	 * @var MyObjectLine[] Lines
+	//public $fk_element = 'fk_myobject';
+	/**
+	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	public $lines = array();
+	//public $class_element_line = 'MyObjectline';
+	/**
+	 * @var array  Array of child tables (child tables to delete before deleting a record)
+	 */
+	//protected $childtables=array('myobjectdet');
+	/**
+	 * @var MyObjectLine[]     Array of subtable lines
+	 */
+	//public $lines = array();
 
 
 
