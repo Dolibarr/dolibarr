@@ -333,8 +333,58 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 
 	if (! empty($conf->accounting->enabled) && !empty($user->rights->accounting->mouvements->lire) && $mainmenu == 'accountancy') 	// Entry in accountancy journal for each bank account
 	{
-		$newmenu->add('',$langs->trans("Journalization"),0,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy');
+		if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('',$langs->trans("Journalization"),0,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy');
 
+		// Multi journal
+		$sql = "SELECT rowid, code, label, nature";
+		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
+		$sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " ORDER BY label";
+
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$numr = $db->num_rows($resql);
+			$i = 0;
+
+			if ($numr > 0)
+			{
+				while ($i < $numr)
+				{
+					$objp = $db->fetch_object($resql);
+
+					$nature='';
+					// Must match array $sourceList defined into journals_list.php
+					if ($objp->nature == 2) $nature="sells";
+					if ($objp->nature == 3) $nature="purchases";
+					if ($objp->nature == 4) $nature="bank";
+					if ($objp->nature == 5) $nature="expensereports";
+					if ($objp->nature == 1) $nature="various";
+					if ($objp->nature == 9) $nature="hasnew";
+
+					// To enable when page exists
+					if (empty($conf->global->MAIN_FEATURES_LEVEL))
+					{
+						if ($nature == 'various' || $nature == 'hasnew') $nature='';
+					}
+
+					if ($nature)
+					{
+						if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid,dol_trunc($objp->label,25),2,$user->rights->accounting->comptarapport->lire);
+					}
+					$i++;
+				}
+			}
+			else
+			{
+				// Should not happend. Entries are added
+				$newmenu->add('',$langs->trans("NoJournalDefined"), 2, $user->rights->accounting->comptarapport->lire);
+			}
+		}
+		else dol_print_error($db);
+		$db->free($resql);
+
+		/*
 		$sql = "SELECT rowid, label, accountancy_journal";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql.= " WHERE entity = ".$conf->entity;
@@ -362,6 +412,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		$newmenu->add("/accountancy/journal/sellsjournal.php?leftmenu=journal",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
 		$newmenu->add("/accountancy/journal/purchasesjournal.php?leftmenu=journal",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
 		$newmenu->add("/accountancy/journal/expensereportsjournal.php?leftmenu=journal",$langs->trans("ExpenseReportsJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
+		*/
 	}
 
 	if ($conf->ftp->enabled && $mainmenu == 'ftp')	// Entry for FTP

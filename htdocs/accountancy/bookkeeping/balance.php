@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2016 		Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2016 		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2016 		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2016		Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2016		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2016		Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,10 +100,10 @@ if (! empty($search_accountancy_code_end)) {
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
-    $search_accountancy_code_start = '';
-    $search_accountancy_code_end = '';
-    $search_date_start = '';
-    $search_date_end = '';
+	$search_accountancy_code_start = '';
+	$search_accountancy_code_end = '';
+	$search_date_start = '';
+	$search_date_end = '';
 }
 
 
@@ -137,140 +137,137 @@ if ($action == 'export_csv') {
 }
 
 else {
-    $title_page = $langs->trans("AccountBalance") . (($search_date_start || $search_date_end) ? ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end) : '');
-    
-    llxHeader('', $title_page);
-    
-    // List
+	$title_page = $langs->trans("AccountBalance") . (($search_date_start || $search_date_end) ? ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end) : '');
 
-    $nbtotalofrecords = '';
-    if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-        $nbtotalofrecords = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
-        if ($nbtotalofrecords < 0) {
-            setEventMessages($object->error, $object->errors, 'errors');
-        }
-    }
-    
-    $result = $object->fetchAllBalance($sortorder, $sortfield, $limit, $offset, $filter);
-    if ($result < 0) {
-        setEventMessages($object->error, $object->errors, 'errors');
-    }
-    
-    
-    print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-    
-    $button = '<input type="submit" name="button_export_csv" class="butAction" value="' . $langs->trans("Export") . '" />';
-    print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $result, 'title_accountancy', 0, $button);
-    
-    
-    $moreforfilter = '';
-    
-    $moreforfilter .= '<div class="divsearchfield">';
-    $moreforfilter .= $langs->trans('DateStart') . ': ';
-    $moreforfilter .= $form->select_date($search_date_start, 'date_start', 0, 0, 1, '', 1, 0, 1);
-    $moreforfilter .= $langs->trans('DateEnd') . ': ';
-    $moreforfilter .= $form->select_date($search_date_end, 'date_end', 0, 0, 1, '', 1, 0, 1);
-    $moreforfilter .= '</div>';
-    
-    if (! empty($moreforfilter)) {
-        print '<div class="liste_titre liste_titre_bydiv centpercent">';
-        print $moreforfilter;
-        $parameters = array();
-        $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-        print '</div>';
-    }
-    
-    print '<table class="liste ' . ($moreforfilter ? "listwithfilterbefore" : "") . '">';
+	llxHeader('', $title_page);
 
-    print '<tr class="liste_titre_filter">';
-    print '<td class="liste_titre" colspan="5">';
-    print $langs->trans('From');
-    print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, '');
-    print ' ';
-    print $langs->trans('to');
-    print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, '');
-    print '</td>';
-    print '<td align="right" class="liste_titre">';
+	// List
+	$nbtotalofrecords = '';
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		$nbtotalofrecords = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
+		if ($nbtotalofrecords < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, $offset, $filter);
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+
+	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+
+	$button = '<input type="submit" name="button_export_csv" class="butAction" value="' . $langs->trans("Export") . '" />';
+	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $result, 'title_accountancy', 0, $button);
+
+	$moreforfilter = '';
+
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= $langs->trans('DateStart') . ': ';
+	$moreforfilter .= $form->select_date($search_date_start, 'date_start', 0, 0, 1, '', 1, 0, 1);
+	$moreforfilter .= $langs->trans('DateEnd') . ': ';
+	$moreforfilter .= $form->select_date($search_date_end, 'date_end', 0, 0, 1, '', 1, 0, 1);
+	$moreforfilter .= '</div>';
+
+	if (! empty($moreforfilter)) {
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
+		print $moreforfilter;
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		print '</div>';
+	}
+
+	print '<table class="liste ' . ($moreforfilter ? "listwithfilterbefore" : "") . '">';
+
+	print '<tr class="liste_titre_filter">';
+	print '<td class="liste_titre" colspan="5">';
+	print $langs->trans('From');
+	print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, '');
+	print ' ';
+	print $langs->trans('to');
+	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, '');
+	print '</td>';
+	print '<td align="right" class="liste_titre">';
 	$searchpicto=$form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
-    print '</td>';
-    
-    print '</tr>';
-    
-    print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("AccountAccounting"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
-    print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_compte", "", $options, "", $sortfield, $sortorder);
-    print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
-    print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
-    print_liste_field_titre($langs->trans("Solde"), $_SERVER["PHP_SELF"], "", $options, "", 'align="right"', $sortfield, $sortorder);
-    print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
-    print "</tr>\n";
-    
-    $total_debit = 0;
-    $total_credit = 0;
-    $sous_total_debit = 0;
-    $sous_total_credit = 0;
-    $displayed_account = "";
-    
-    foreach ($object->lines as $line) {
-        $link = '';
-        $total_debit += $line->debit;
-        $total_credit += $line->credit;
-        $description = $object->get_compte_desc($line->numero_compte); // Search description of the account
-        $root_account_description = $object->get_compte_racine($line->numero_compte);
-        if (empty($description)) {
-            $link = '<a href="../admin/card.php?action=create&compte=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
-        }
-        print '<tr class="oddeven">';
-        
-        // Permet d'afficher le compte comptable
-        if ($root_account_description != $displayed_account) {
-            
-            // Affiche un Sous-Total par compte comptable
-            if ($displayed_account != "") {
-                print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit - $sous_total_debit) . '</td>';
-                print "<td>&nbsp;</td>\n";
-                print '</tr>';
-            }
-            
-            // Affiche le compte comptable en d�but de ligne
-            print "<tr>";
-            print '<td colspan="6" style="font-weight:bold; border-bottom: 1pt solid black;">' . $root_account_description . '</td>';
-            print '</tr>';
-            
-            $displayed_account = $root_account_description;
-            $sous_total_debit = 0;
-            $sous_total_credit = 0;
-        }
-        
-        // $object->get_compte_racine($line->numero_compte);
-        
-        print '<td>' . length_accountg($line->numero_compte) . '</td>';
-        print '<td>' . $description . '</td>';
-        print '<td align="right">' . price($line->debit) . '</td>';
-        print '<td align="right">' . price($line->credit) . '</td>';
-        print '<td align="right">' . price($line->credit - $line->debit) . '</td>';
-        print '<td align="center">' . $link;
-        print '</td>';
-        print "</tr>\n";
-        
-        // Comptabilise le sous-total
-        $sous_total_debit += $line->debit;
-        $sous_total_credit += $line->credit;
-    }
-    
-    print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit - $sous_total_debit) . '</td>';
-    print "<td>&nbsp;</td>\n";
-    print '</tr>';
-    
-    print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("AccountBalance") . ':</td><td class="nowrap" align="right">' . price($total_debit) . '</td><td class="nowrap" align="right">' . price($total_credit) . '</td><td class="nowrap" align="right">' . price($total_credit - $total_debit) . '</td>';
-    print "<td>&nbsp;</td>\n";
-    print '</tr>';
-    
-    print "</table>";
-    print '</form>';
-    
-    llxFooter();
+	print '</td>';
+
+	print '</tr>';
+
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("AccountAccounting"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_operation", "", $options, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Solde"), $_SERVER["PHP_SELF"], "", $options, "", 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
+	print "</tr>\n";
+
+	$total_debit = 0;
+	$total_credit = 0;
+	$sous_total_debit = 0;
+	$sous_total_credit = 0;
+	$displayed_account = "";
+
+	foreach ($object->lines as $line) {
+		$link = '';
+		$total_debit += $line->debit;
+		$total_credit += $line->credit;
+		$description = $object->get_compte_desc($line->numero_compte); // Search description of the account
+		$root_account_description = $object->get_compte_racine($line->numero_compte);
+		if (empty($description)) {
+			$link = '<a href="../admin/card.php?action=create&compte=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
+		}
+		print '<tr class="oddeven">';
+
+		// Permet d'afficher le compte comptable
+		if ($root_account_description != $displayed_account) {
+
+			// Affiche un Sous-Total par compte comptable
+			if ($displayed_account != "") {
+				print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit - $sous_total_debit) . '</td>';
+				print "<td>&nbsp;</td>\n";
+				print '</tr>';
+			}
+
+			// Affiche le compte comptable en d�but de ligne
+			print "<tr>";
+			print '<td colspan="6" style="font-weight:bold; border-bottom: 1pt solid black;">' . $root_account_description . '</td>';
+			print '</tr>';
+
+			$displayed_account = $root_account_description;
+			$sous_total_debit = 0;
+			$sous_total_credit = 0;
+		}
+
+		// $object->get_compte_racine($line->numero_compte);
+
+		print '<td>' . length_accountg($line->numero_compte) . '</td>';
+		print '<td>' . $description . '</td>';
+		print '<td align="right">' . price($line->debit) . '</td>';
+		print '<td align="right">' . price($line->credit) . '</td>';
+		print '<td align="right">' . price($line->credit - $line->debit) . '</td>';
+		print '<td align="center">' . $link;
+		print '</td>';
+		print "</tr>\n";
+
+		// Comptabilise le sous-total
+		$sous_total_debit += $line->debit;
+		$sous_total_credit += $line->credit;
+	}
+
+	print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit - $sous_total_debit) . '</td>';
+	print "<td>&nbsp;</td>\n";
+	print '</tr>';
+
+	print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("AccountBalance") . ':</td><td class="nowrap" align="right">' . price($total_debit) . '</td><td class="nowrap" align="right">' . price($total_credit) . '</td><td class="nowrap" align="right">' . price($total_credit - $total_debit) . '</td>';
+	print "<td>&nbsp;</td>\n";
+	print '</tr>';
+
+	print "</table>";
+	print '</form>';
+
+	llxFooter();
 }
 $db->close();
