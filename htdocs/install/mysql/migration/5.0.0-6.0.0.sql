@@ -98,9 +98,9 @@ ALTER TABLE llx_actioncomm ADD COLUMN extraparams			varchar(255);
 
 
 ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);
-ALTER TABLE llx_bank_account CHANGE COLUMN state_id integer DEFAULT NULL;
+ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer DEFAULT NULL;
 
-ALTER TABLE llx_adherent CHANGE COLUMN state_id integer DEFAULT NULL;
+ALTER TABLE llx_adherent MODIFY COLUMN state_id integer DEFAULT NULL;
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_CREATE','Product or service created','Executed when a product or sevice is created','product',30);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_MODIFY','Product or service modified','Executed when a product or sevice is modified','product',30);
