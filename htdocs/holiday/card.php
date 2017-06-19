@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2014-2017	Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 $myparam = GETPOST("myparam");
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('id', 'int');
-$userid = GETPOST('userid')?GETPOST('userid'):$user->id;
+$userID = GETPOST('userID')?GETPOST('userID'):$user->id;
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
@@ -57,6 +57,7 @@ if ($action == 'create')
 	$cp = new Holiday($db);
 
     // If no right to create a request
+    $userid = GETPOST('userid');
     if (($userid == $user->id && empty($user->rights->holiday->write)) || ($userid != $user->id && empty($user->rights->holiday->write_all)))
     {
     	$error++;
@@ -82,7 +83,6 @@ if ($action == 'create')
 
 	    $valideur = GETPOST('valideur');
 	    $description = trim(GETPOST('description'));
-	    $userID = GETPOST('userID');
 
     	// If no type
 	    if ($type <= 0)
@@ -112,7 +112,7 @@ if ($action == 'create')
 	    }
 
 	    // Check if there is already holiday for this period
-	    $verifCP = $cp->verifDateHolidayCP($userID, $date_debut, $date_fin, $halfday);
+	    $verifCP = $cp->verifDateHolidayCP($userid, $date_debut, $date_fin, $halfday);
 	    if (! $verifCP)
 	    {
 	        header('Location: '.$_SERVER["PHP_SELF"].'?action=request&error=alreadyCP');
@@ -762,7 +762,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         // Formulaire de demande
         print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
         print '<input type="hidden" name="action" value="create" />'."\n";
-        print '<input type="hidden" name="userID" value="'.$userid.'" />'."\n";
+        print '<input type="hidden" name="userID" value="'.$userID.'" />'."\n";
 
         dol_fiche_head();
 
