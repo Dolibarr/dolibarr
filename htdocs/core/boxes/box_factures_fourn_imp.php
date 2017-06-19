@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,7 +128,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right"',
-                        'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
+                        'text' => price($objp->total_ttc, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
                     $this->info_box_contents[$line][] = array(
