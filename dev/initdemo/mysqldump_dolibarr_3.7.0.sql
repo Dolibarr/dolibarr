@@ -340,7 +340,7 @@ CREATE TABLE `llx_adherent` (
   `zip` varchar(10) DEFAULT NULL,
   `town` varchar(50) DEFAULT NULL,
   `state_id` int(11) DEFAULT NULL,
-  `country` varchar(50) DEFAULT NULL,
+  `country` int(11) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `skype` varchar(255) DEFAULT NULL,
   `phone` varchar(30) DEFAULT NULL,
