@@ -628,9 +628,9 @@ else
                 $product_static->status     = $objp->tosell;
 				$product_static->entity = $objp->entity;
 
-				if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)	// To optimize call of load_stock
+				if ((! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) || ! empty($conf->global->STOCK_DISABLE_OPTIM_LOAD))	// To optimize call of load_stock
 				{
-				    if ($objp->fk_product_type != 1)    // Not a service
+				    if ($objp->fk_product_type != 1 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))    // Not a service
 				    {
 				        $product_static->load_stock('nobatch');             // Load stock_reel + stock_warehouse. This also call load_virtual_stock()
 				    }

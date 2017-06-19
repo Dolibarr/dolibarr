@@ -246,7 +246,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 // Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
 if (! defined('NOREQUIRETRAN'))
 {
-    $langcode=(GETPOST('lang')?GETPOST('lang','alpha',1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+    $langcode=(GETPOST('lang', 'aZ09')?GETPOST('lang', 'aZ09', 1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
 	$langs->setDefaultLang($langcode);
 }
 

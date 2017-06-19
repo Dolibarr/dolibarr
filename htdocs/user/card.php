@@ -299,7 +299,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && ! $cancel) 
+	if ($action == 'update' && ! $cancel)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -318,7 +318,7 @@ if (empty($reshook)) {
 				$error ++;
 			}
 
-			if (!$error) 
+			if (!$error)
 			{
 				$object->fetch($id);
 
@@ -455,7 +455,7 @@ if (empty($reshook)) {
 								setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 							} else {
         					    // Create thumbs
-        					    $object->addThumbs($newfile);					    
+        					    $object->addThumbs($newfile);
 							}
 						} else {
 							$error ++;
@@ -464,7 +464,7 @@ if (empty($reshook)) {
 						}
 					}
 				}
-				
+
             	if (! $error && ! count($object->errors))
             	{
             		// Then we add the associated categories
@@ -475,7 +475,7 @@ if (empty($reshook)) {
 				if (!$error && !count($object->errors)) {
 					setEventMessages($langs->trans("UserModified"), null, 'mesgs');
 					$db->commit();
-					
+
 					$login = $_SESSION["dol_login"];
 					if ($login && $login == $object->oldcopy->login && $object->oldcopy->login != $object->login)    // Current user has changed its login
 					{
@@ -494,11 +494,11 @@ if (empty($reshook)) {
 		    if ($caneditpassword)    // Case we can edit only password
 		    {
 		        dol_syslog("Not allowed to change fields, only password");
-		        
+
 		        $object->fetch($id);
-		    
+
 		        $object->oldcopy = clone $object;
-		    
+
 		        $ret = $object->setPassword($user, GETPOST("password"));
 		        if ($ret < 0)
 		        {
@@ -1059,7 +1059,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<input size="8" type="text" name="weeklyhours" value="'.GETPOST('weeklyhours').'">';
     print '</td>';
     print "</tr>\n";
-	
+
     // Date employment
     print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
     print '<td>';
@@ -1084,9 +1084,9 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
 		print '</td></tr>';
 	}
-	
+
 	// Categories
-	if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) 
+	if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 	{
 		print '<tr><td>' . fieldLabel('Categories', 'usercats') . '</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
@@ -1094,7 +1094,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 			null, '90%' );
 		print "</td></tr>";
 	}
-	
+
     // Note
     print '<tr><td class="tdtop">';
     print $langs->trans("Note");
@@ -1137,10 +1137,10 @@ else
         $object->fetch($id);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
         $res=$object->fetch_optionals($object->id,$extralabels);
-		
+
 		// Check if user has rights
 		$object->getrights();
-		if(empty($object->nb_rights)) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
+		if (empty($object->nb_rights) && $object->statut != 0) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
 
         // Connexion ldap
         // pour recuperer passDoNotExpire et userChangePassNextLogon
@@ -1455,7 +1455,7 @@ else
             }
 
             // Categories
-		    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) 
+		    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 	    	{
 				print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
 				print '<td colspan="3">';
@@ -1482,22 +1482,22 @@ else
 		            print "</td></tr>\n";
 		        }
 		    }
-		    
+
 		    if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
 		    {
 		        print '<tr><td>'.$langs->trans("OpenIDURL").'</td>';
 		        print '<td>'.$object->openid.'</td>';
 		        print "</tr>\n";
 		    }
-		    
+
 		    print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
 		    print '<td>'.dol_print_date($object->datelastlogin,"dayhour").'</td>';
 		    print "</tr>\n";
-		    
+
 		    print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
 		    print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
 		    print "</tr>\n";
-		    
+
 		    // Other attributes
 		    $parameters=array();
 		    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1505,7 +1505,7 @@ else
 		    {
 		        print $object->showOptionals($extrafields);
 		    }
-		    
+
             // Company / Contact
             if (! empty($conf->societe->enabled))
             {
@@ -1673,7 +1673,7 @@ else
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
                     print '<input type="hidden" name="action" value="addgroup" />';
                 }
-                
+
                 print '<table class="noborder" width="100%">'."\n";
                 print '<tr class="liste_titre"><th class="liste_titre" width="25%">'.$langs->trans("Groups").'</th>'."\n";
                 if(! empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
@@ -1765,7 +1765,7 @@ else
                 }
 
                 print "</table>";
-                
+
                 if ($caneditgroup)
                 {
                     print '</form>';
@@ -2237,9 +2237,9 @@ else
 		print $form->showphoto('userphoto',$object,60,0,$caneditfield,'photowithmargin','small');
 		print '</td>';
 		print '</tr>';
-		
+
 		// Categories
-		if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) 
+		if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire ))
 		{
 			print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td>';
 			print '<td>';

@@ -3327,7 +3327,7 @@ else if ($id > 0 || ! empty($ref))
 			print $object->situation_counter;
 
 			print '</td>';
-			print '<td align="right" class="nowrap">';
+			print '<td align="left" class="nowrap">';
 
 			$prevsits_total_amount = 0;
 			foreach ($prevsits as $situation) {
@@ -3335,9 +3335,10 @@ else if ($id > 0 || ! empty($ref))
 			}
 			$prevsits_total_amount += $object->total_ht;
 
-			print price($prevsits_total_amount);
-			print '</td>';
-			print '<td>' . $langs->trans('Currency' . $conf->currency) . '</td></tr>';
+			print price($prevsits_total_amount, 0, $langs, 1, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency) );
+			
+			print '</td></tr>';
+			
 
 			// Previous situation(s) deduction(s)
 			for ($i = 0; $i < $cprevsits; $i++) {
@@ -3348,10 +3349,10 @@ else if ($id > 0 || ! empty($ref))
 				print $prevsits[$i]->situation_counter;
 				print '</a></td>';
 
-				print '<td align="right" class="nowrap">';
-				print '- ' . price($prevsits[$i]->total_ht);
-				print '</td>';
-				print '<td>' . $langs->trans('Currency' . $conf->currency) . '</td></tr>';
+				print '<td align="left" class="nowrap">';
+				print '- ' . price($prevsits[$i]->total_ht, 0, $langs, 1, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency) );
+				print '</td></tr>';
+				
 			}
 		}
 	}
@@ -3489,7 +3490,7 @@ else if ($id > 0 || ! empty($ref))
     if ($object->type == Facture::TYPE_SITUATION && ! empty($conf->global->INVOICE_USE_SITUATION)) 
     {
         if (count($object->tab_previous_situation_invoice) > 0 || count($object->tab_next_situation_invoice) > 0)
-            print '<table class="nobordernopadding paymenttable" width="100%">';
+            print '<table class="noborder situationstable" width="100%">';
         
         if (count($object->tab_previous_situation_invoice) > 0) {
             // List of previous invoices
@@ -3523,7 +3524,7 @@ else if ($id > 0 || ! empty($ref))
             }
             
             print '<tr ' . $bc[$var] . '>';
-            print '<td colspan="2" align="right"></td>';
+            print '<td colspan="3" align="right"></td>';
             print '<td align="right"><b>' . price($total_prev_ht) . '</b></td>';
             print '<td align="right"><b>' . price($total_prev_ttc) . '</b></td>';
             print '<td width="18">&nbsp;</td>';
@@ -3563,7 +3564,7 @@ else if ($id > 0 || ! empty($ref))
             }
             
             print '<tr ' . $bc[$var] . '>';
-            print '<td colspan="2" align="right"></td>';
+            print '<td colspan="3" align="right"></td>';
             print '<td align="right"><b>' . price($total_next_ht) . '</b></td>';
             print '<td align="right"><b>' . price($total_next_ttc) . '</b></td>';
             print '<td width="18">&nbsp;</td>';
