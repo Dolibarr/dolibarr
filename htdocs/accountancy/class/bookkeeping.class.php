@@ -924,11 +924,10 @@ class BookKeeping extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param User $user User that modifies
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 * @param string $mode Mode
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param  User    $user       User that modifies
+	 * @param  bool    $notrigger  false=launch triggers after, true=disable triggers
+	 * @param  string  $mode       Mode
+	 * @return int                 <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false, $mode='') {
 		$error = 0;
@@ -956,6 +955,7 @@ class BookKeeping extends CommonObject
 		}
 		if (isset($this->subledger_label)) {
 			$this->subledger_label = trim($this->subledger_label);
+		}
 		if (isset($this->numero_compte)) {
 			$this->numero_compte = trim($this->numero_compte);
 		}
@@ -1054,11 +1054,11 @@ class BookKeeping extends CommonObject
 	/**
 	 * Update movement
 	 *
-	 * @param string $piece_num
-	 * @param string $field
-	 * @param string $value
-	 * @param string $mode
-	 * @return number
+	 * @param  string  $piece_num      Piece num
+	 * @param  string  $field          Field
+	 * @param  string  $value          Value
+	 * @param  string  $mode           Mode
+	 * @return number                  <0 if KO, >0 if OK
 	 */
 	public function upddateByMvt($piece_num='', $field='', $value='', $mode='') {
 		$this->db->begin();
@@ -1382,8 +1382,9 @@ class BookKeeping extends CommonObject
 	/**
 	 * Load all informations of accountancy document
 	 *
-	 * @param int $piecenum id of line to get
-	 * @return int <0 if KO, >0 if OK
+	 * @param  int     $piecenum   Id of line to get
+	 * @param  string  $mode       Mode
+	 * @return int                 <0 if KO, >0 if OK
 	 */
 	function fetchAllPerMvt($piecenum, $mode='') {
 		global $conf;
@@ -1498,8 +1499,9 @@ class BookKeeping extends CommonObject
 	/**
 	 * Transform transaction
 	 *
-	 * @param number $direction if 0 tmp => real, if 1 real => tmp
-	 * @param unknown $piecenum
+	 * @param  number   $direction     If 0 tmp => real, if 1 real => tmp
+	 * @param  string   $piece_num     Piece num
+	 * @return void
 	 */
 	public function transformTransaction($direction=0,$piece_num='') {
 		$this->db->begin();
