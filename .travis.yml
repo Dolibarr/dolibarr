@@ -16,7 +16,7 @@ php:
 #- nightly
 
 addons:
-  #mariadb: '10.0'
+  mariadb: '10.0'
   postgresql: '9.3'
   apt:
     sources:
@@ -44,7 +44,7 @@ env:
   matrix:
   # MariaDB overrides MySQL installation so it's not possible to test both yet
   #- DB=mysql
-  - DB=mariadb
+  #- DB=mariadb
   - DB=postgresql
   # TODO
   #- DB=sqlite
