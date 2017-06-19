@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=Wenn Sie den DoliWamp-Installationsassistent verwenden, we
 KeepDefaultValuesDeb=Sie verwenden den Dolibarr-Installationsassistenten in einer Linux Umgebung (Ubuntu, Debian, Fedor...), entsprechend sind hier bereits Werte vorgeschlagenen. Sie müssen lediglich das Passwort des anzulegenden Datenbankbenutzers angeben. Bitte nehmen Sie nur Änderungen vor wenn Sie wissen was Sie tun.
 KeepDefaultValuesMamp=Sie verwenden den DoliMamp-Installationsassistent, entsprechend werden hier bereits Werte vorgeschlagen. Bitte nehmen Sie nur Änderungen vor wenn Sie wissen was Sie tun.
 KeepDefaultValuesProxmox=Sie verwenden den Dolibarr Installationsassistenten einer Proxmox "virtual appliance". Die hier vorgeschlagenen Werte sind bereits optimiert. Bitte nehmen Sie nur Änderungen vor wenn Sie wissen was Sie tun.
+UpgradeExternalModule=Dedizierten Upgradeprozess für externe Module ausführen
 
 #########
 # upgrade
@@ -175,7 +176,7 @@ MigrationReopeningContracts=Durch Fehler geschlossenen Vertrag wiedereröffnen
 MigrationReopenThisContract=Vertrag %s wiedereröffnen
 MigrationReopenedContractsNumber=%s Verträge geändert
 MigrationReopeningContractsNothingToUpdate=Keine geschlossenen Verträge zur Wiedereröffnung
-MigrationBankTransfertsUpdate=Update links between bank entry and a bank transfer
+MigrationBankTransfertsUpdate=Verknüpfung zwischen Banktransaktion und einer Überweisung aktualisieren
 MigrationBankTransfertsNothingToUpdate=Alle Banktransaktionen sind auf neuestem Stand.
 MigrationShipmentOrderMatching=Aktualisierung Versand
 MigrationDeliveryOrderMatching=Aktualisiere Lieferscheine
