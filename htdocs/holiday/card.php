@@ -39,7 +39,6 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 $myparam = GETPOST("myparam");
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('id', 'int');
-$userID = GETPOST('userID')?GETPOST('userID'):$user->id;
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
@@ -57,8 +56,8 @@ if ($action == 'create')
 	$cp = new Holiday($db);
 
     // If no right to create a request
-    $userid = GETPOST('userid');
-    if (($userid == $user->id && empty($user->rights->holiday->write)) || ($userid != $user->id && empty($user->rights->holiday->write_all)))
+    $fuserid = GETPOST('fuserid');
+    if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
     {
     	$error++;
     	setEventMessages($langs->trans('CantCreateCP'), null, 'errors');
@@ -112,7 +111,7 @@ if ($action == 'create')
 	    }
 
 	    // Check if there is already holiday for this period
-	    $verifCP = $cp->verifDateHolidayCP($userid, $date_debut, $date_fin, $halfday);
+	    $verifCP = $cp->verifDateHolidayCP($fuserid, $date_debut, $date_fin, $halfday);
 	    if (! $verifCP)
 	    {
 	        header('Location: '.$_SERVER["PHP_SELF"].'?action=request&error=alreadyCP');
@@ -140,7 +139,7 @@ if ($action == 'create')
 
 	    if (! $error)
 	    {
-    	    $cp->fk_user = $userid;
+    	    $cp->fk_user = $fuserid;
     	    $cp->description = $description;
     	    $cp->date_debut = $date_debut;
     	    $cp->date_fin = $date_fin;
@@ -682,7 +681,7 @@ llxHeader(array(),$langs->trans('CPTitreMenu'));
 if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create')
 {
     // Si l'utilisateur n'a pas le droit de faire une demande
-    if (($userid == $user->id && empty($user->rights->holiday->write)) || ($userid != $user->id && empty($user->rights->holiday->write_all)))
+    if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
     {
         $errors[]=$langs->trans('CantCreateCP');
     }
@@ -762,7 +761,6 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         // Formulaire de demande
         print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
         print '<input type="hidden" name="action" value="create" />'."\n";
-        print '<input type="hidden" name="userID" value="'.$userID.'" />'."\n";
 
         dol_fiche_head();
 
@@ -793,10 +791,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         if (empty($user->rights->holiday->write_all))
         {
-        	print $form->select_dolusers($userid, 'useridbis', 0, '', 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-        	print '<input type="hidden" name="userid" value="'.$userid.'">';
+        	print $form->select_dolusers($fuserid, 'useridbis', 0, '', 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+        	print '<input type="hidden" name="fuserid" value="'.$fuserid.'">';
         }
-        else print $form->select_dolusers(GETPOST('userid')?GETPOST('userid'):$user->id,'userid',0,'',0);
+        else print $form->select_dolusers(GETPOST('fuserid')?GETPOST('fuserid'):$user->id,'fuserid',0,'',0);
         print '</td>';
         print '</tr>';
 
