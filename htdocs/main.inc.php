@@ -654,7 +654,11 @@ if (! defined('NOLOGIN'))
 	           if (constant('DOL_MAIN_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_MAIN_URL_ROOT'),'/').'/', '', $relativepathstring);
 	           $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
                $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
-               if (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
+               if (preg_match('/^https?:/', $relativepathstring))
+               {
+                   dol_syslog('Failted to save the search criteria. Calculation of relative page fails (check parameter $dolibarr_main_url_root in conf file match the URL you use in your browser).', LOG_WARNING);
+               }
+               elseif (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
                {
                    $_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
                    unset($_SESSION['lastsearch_values_tmp_'.$relativepathstring]);
