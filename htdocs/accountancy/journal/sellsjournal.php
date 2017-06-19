@@ -674,7 +674,9 @@ if (empty($action) || $action == 'view') {
 				}
 				else print $accountoshow;
 				print "</td>";
-				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT") . "</td>"; // ' '.join(', ',$def_tva[$key][$k]).
+				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT");
+				print ' '.join(', ',$def_tva[$key][$k]);
+				print "</td>";
 				// print "<td>" . $langs->trans("VAT") . "</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
