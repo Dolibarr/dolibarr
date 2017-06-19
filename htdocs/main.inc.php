@@ -651,14 +651,14 @@ if (! defined('NOLOGIN'))
 	       if (! empty($_GET['save_lastsearch_values']))    // Keep $_GET here
 	       {
                $relativepathstring = preg_replace('/\?.*$/','',$_SERVER["HTTP_REFERER"]);
-	           if (constant('DOL_MAIN_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_MAIN_URL_ROOT'),'/').'/', '', $relativepathstring);
-	           $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+               $relativepathstring = preg_replace('/^https?:\/\/[^\/]*/','',$relativepathstring);     // Get full path except host server
+               // Clean $relativepathstring
+   	           if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
                $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
-               if (preg_match('/^https?:/', $relativepathstring))
-               {
-                   dol_syslog('Failted to save the search criteria. Calculation of relative page fails (check parameter $dolibarr_main_url_root in conf file match the URL you use in your browser).', LOG_WARNING);
-               }
-               elseif (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
+               $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+               //var_dump($relativepathstring);
+
+               if (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
                {
                    $_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
                    unset($_SESSION['lastsearch_values_tmp_'.$relativepathstring]);
