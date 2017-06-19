@@ -4844,7 +4844,7 @@ CREATE TABLE `llx_opensurvey_sondage` (
 
 LOCK TABLES `llx_opensurvey_sondage` WRITE;
 /*!40000 ALTER TABLE `llx_opensurvey_sondage` DISABLE KEYS */;
-INSERT INTO `llx_opensurvey_sondage` VALUES ('m4467s2mtk6khmxc','m4467s2mtk6khmxci2ysw682','fdffdshfghfj jhgjgh','aaa@aaa.com','fdfds','fdffds','2013-03-06 23:00:00','D+','1',1,'dolibarr','0000-00-00 00:00:00');
+INSERT INTO `llx_opensurvey_sondage` VALUES ('m4467s2mtk6khmxc','m4467s2mtk6khmxci2ysw682','fdffdshfghfj jhgjgh','aaa@aaa.com','fdfds','fdffds','2013-03-06 23:00:00','D+','1',1,'dolibarr','2000-01-01 00:00:00');
 /*!40000 ALTER TABLE `llx_opensurvey_sondage` ENABLE KEYS */;
 UNLOCK TABLES;
 
