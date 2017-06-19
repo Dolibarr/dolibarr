@@ -20,6 +20,11 @@ addons:
   mariadb: '10.0'
   postgresql: '9.3'
   apt:
+    sources:
+    # For use the last version of pgloader
+    - postgresql
+    - sourceline: 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main'
+    - key_url: 'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
     packages:
     # We need a webserver to test the webservices
     # Let's install Apache with.
@@ -76,6 +81,13 @@ before_install:
   cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
   phpenv config-rm xdebug.ini
   echo
+ 
+- |
+  echo "Check pgloader version"
+  if [ "$DB" = 'postgresql' ]; then
+    pgloader --version
+    echo
+  fi
 
 install:
 - |
