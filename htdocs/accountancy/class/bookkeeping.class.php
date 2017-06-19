@@ -1060,10 +1060,10 @@ class BookKeeping extends CommonObject
 	 * @param  string  $mode           Mode
 	 * @return number                  <0 if KO, >0 if OK
 	 */
-	public function upddateByMvt($piece_num='', $field='', $value='', $mode='') {
+	public function updateByMvt($piece_num='', $field='', $value='', $mode='') {
 		$this->db->begin();
-		$sql = "UPDATE " . MAIN_DB_PREFIX .  $this->table_element.$mode." as ab";
-		$sql .= ' SET ab.'.$field.'=' . $value;
+		$sql = "UPDATE " . MAIN_DB_PREFIX .  $this->table_element . $mode . " as ab";
+		$sql .= ' SET ab.' . $field . '=' . $value;
 		$sql .= ' WHERE ab.piece_num=' . $piece_num ;
 		$resql = $this->db->query($sql);
 		if (! $resql) {
