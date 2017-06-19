@@ -2528,7 +2528,6 @@ div.pagination li.noborder a:hover {
 div.pagination li a,
 div.pagination li span {
   background-color: #fff;
-  border: 1px solid #ddd;
 }
 div.pagination li:first-child a,
 div.pagination li:first-child span {

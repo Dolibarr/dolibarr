@@ -411,9 +411,6 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	        case 'intcomma':
 	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
 	            break;
-	        case 'intcomma':
-	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
-	            break;
 	        case 'alpha':
 	            $out=trim($out);
 	            // '"' is dangerous because param in url can close the href= or src= and add javascript functions.
@@ -3168,8 +3165,8 @@ function dol_print_error($db='',$error='',$errors=null)
 		$out.="<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"])?dol_htmlentities($_SERVER["HTTP_REFERER"],ENT_COMPAT,'UTF-8'):'')."<br>\n";
 		$out.="<b>".$langs->trans("MenuManager").":</b> ".(isset($conf->standard_menu)?$conf->standard_menu:'')."<br>\n";
 		$out.="<br>\n";
-		$syslog.="url=".$_SERVER["REQUEST_URI"];
-		$syslog.=", query_string=".$_SERVER["QUERY_STRING"];
+		$syslog.="url=".dol_escape_htmltag($_SERVER["REQUEST_URI"]);
+		$syslog.=", query_string=".dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 	}
 	else                              // Mode CLI
 	{
