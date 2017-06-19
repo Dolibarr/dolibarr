@@ -158,9 +158,9 @@ if (empty($reshook))
     }
 
 }
-    
-    
-    
+
+
+
 
 /*
  * View
@@ -271,9 +271,9 @@ if ($resql)
 	    $tmpkey=preg_replace('/search_options_/','',$key);
 	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
-	
+
 	//$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
-	
+
 	$i = 0;
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -283,7 +283,7 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    
+
 	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $nbtotalofrecords, '', 0, '', '', $limit);
 
     if ($sall)
@@ -291,7 +291,7 @@ if ($resql)
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
-    
+
     $moreforfilter='';
     if (! empty($moreforfilter))
     {
@@ -305,28 +305,28 @@ if ($resql)
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	// Lignes des champs de filtre
 	print '<tr class="liste_titre_filter">';
 	// Ref
-	if (! empty($arrayfields['e.ref']['checked']))            
+	if (! empty($arrayfields['e.ref']['checked']))
 	{
 	    print '<td class="liste_titre">';
     	print '<input class="flat" size="6" type="text" name="search_ref_exp" value="'.$search_ref_exp.'">';
         print '</td>';
 	}
 	// Ref customer
-	if (! empty($arrayfields['e.ref_customer']['checked']))            
+	if (! empty($arrayfields['e.ref_customer']['checked']))
 	{
 	    print '<td class="liste_titre">';
     	print '<input class="flat" size="6" type="text" name="search_ref_customer" value="'.$search_ref_customer.'">';
         print '</td>';
 	}
 	// Thirdparty
-	if (! empty($arrayfields['s.nom']['checked']))            
+	if (! empty($arrayfields['s.nom']['checked']))
 	{
     	print '<td class="liste_titre" align="left">';
     	print '<input class="flat" type="text" size="8" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
@@ -358,18 +358,18 @@ if ($resql)
     	print '</td>';
     }
 	// Date delivery planned
-	if (! empty($arrayfields['e.date_delivery']['checked']))            
+	if (! empty($arrayfields['e.date_delivery']['checked']))
 	{
     	print '<td class="liste_titre">&nbsp;</td>';
 	}
-	if (! empty($arrayfields['l.ref']['checked']))            
+	if (! empty($arrayfields['l.ref']['checked']))
 	{
     	// Delivery ref
 		print '<td class="liste_titre">';
 		print '<input class="flat" size="10" type="text" name="search_ref_liv" value="'.$search_ref_liv.'"';
 		print '</td>';
 	}
-	if (! empty($arrayfields['l.date_delivery']['checked']))            
+	if (! empty($arrayfields['l.date_delivery']['checked']))
 	{
 	    // Date received
 		print '<td class="liste_titre">&nbsp;</td>';
@@ -447,7 +447,9 @@ if ($resql)
 	        if (! empty($arrayfields["ef.".$key]['checked']))
 	        {
 	            $align=$extrafields->getAlignFlag($key);
-	            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			$sortonfield = "ef.".$key;
+    			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
 	        }
 	    }
 	}
@@ -461,7 +463,7 @@ if ($resql)
 	if (! empty($arrayfields['l.fk_statut']['checked'])) print_liste_field_titre($arrayfields['l.fk_statut']['label'], $_SERVER["PHP_SELF"],"l.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
-	
+
 	$i=0;
 	$var=true;
 	$totalarray=array();
@@ -471,15 +473,15 @@ if ($resql)
 
     	$shipment->id=$obj->rowid;
     	$shipment->ref=$obj->ref;
-    	
+
     	$companystatic->id=$obj->socid;
     	$companystatic->ref=$obj->name;
     	$companystatic->name=$obj->name;
-		
-		
+
+
 
     	print '<tr class="oddeven">';
-    	 
+
 		// Ref
 		if (! empty($arrayfields['e.ref']['checked']))
 		{
@@ -488,7 +490,7 @@ if ($resql)
     		print "</td>\n";
     		if (! $i) $totalarray['nbfield']++;
 		}
-		
+
 		// Ref customer
 		if (! empty($arrayfields['e.ref_customer']['checked']))
 		{
@@ -496,8 +498,8 @@ if ($resql)
 		    print $obj->ref_customer;
 		    print "</td>\n";
 		    if (! $i) $totalarray['nbfield']++;
-		}		
-		
+		}
+
 		// Third party
 		if (! empty($arrayfields['s.nom']['checked']))
 		{
@@ -546,7 +548,7 @@ if ($resql)
 		    print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
 		}
-		
+
 		// Date delivery planed
 		if (! empty($arrayfields['e.date_delivery']['checked']))
 		{
@@ -558,7 +560,7 @@ if ($resql)
     		}*/
     		print "</td>\n";
 		}
-		
+
 		if (! empty($arrayfields['l.ref']['checked']) || ! empty($arrayfields['l.date_delivery']['checked']))
         {
 		    $shipment->fetchObjectLinked($shipment->id,$shipment->element);
@@ -572,7 +574,7 @@ if ($resql)
                 print !empty($receiving) ? $receiving->getNomUrl($db) : '';
                 print '</td>';
             }
-            
+
     		if (! empty($arrayfields['l.date_delivery']['checked']))
             {
                 // Date received
@@ -629,7 +631,7 @@ if ($resql)
 		// Action column
 		print '<td></td>';
 		if (! $i) $totalarray['nbfield']++;
-		
+
 		print "</tr>\n";
 
 		$i++;
