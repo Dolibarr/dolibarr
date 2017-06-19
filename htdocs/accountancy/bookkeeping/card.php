@@ -231,11 +231,10 @@ llxHeader();
 $html = new Form($db);
 $formaccounting = new FormAccounting($db);
 $accountjournal = new AccountingJournal($db);
-/*
- *  Confirmation to delete the command
- */
+
+// Confirmation to delete the command
 if ($action == 'delete') {
-	$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $id.'&mode='. $mode , $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'confirm_delete', '', 0, 1);
+	$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $id.'&mode='. $mode, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'confirm_delete', '', 0, 1);
 	print $formconfirm;
 }
 if ($action == 'create') {
