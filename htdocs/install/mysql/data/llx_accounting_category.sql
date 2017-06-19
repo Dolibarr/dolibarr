@@ -24,6 +24,6 @@
 -- Categories compte de résultat Français
 --
 
-INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1,'VTE','Ventes de marchandises', '707xxx', 0, 0, '', '10', 1, 1);
-INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2,'MAR','Coût d achats marchandises vendues', '603xxx | 607xxx | 609xxx', 0, 0, '', '20', 1, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1,'VTE',  'Ventes de marchandises', '707xxx', 0, 0, '', '10', 1, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2,'MAR',  'Coût achats marchandises vendues', '603xxx | 607xxx | 609xxx', 0, 0, '', '20', 1, 1);
 INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  3,'MARGE','Marge commerciale', '', 0, 1, '1 + 2', '30', 1, 1);
