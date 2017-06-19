@@ -184,6 +184,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         // dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
 
         $versiontoarray=explode('.',$versionto);
+        $versionranarray=explode('.',DOL_VERSION);
 
         $afterversionarray=explode('.','2.0.0');
         $beforeversionarray=explode('.','2.7.9');
@@ -245,12 +246,6 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_directories($db,$langs,$conf,'/compta','/banque');
 
             migrate_directories($db,$langs,$conf,'/societe','/mycompany');
-
-            // Reload modules
-            migrate_reload_modules($db,$langs,$conf);
-
-            // Reload menus
-            migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
         // Script for VX (X<2.8) -> V2.8
@@ -278,12 +273,6 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_project_user_resp($db,$langs,$conf);
 
             migrate_project_task_actors($db,$langs,$conf);
-
-            // Reload modules
-            migrate_reload_modules($db,$langs,$conf);
-
-            // Reload menus
-            migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
         // Script for VX (X<2.9) -> V2.9
@@ -298,12 +287,6 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_shipping_delivery($db,$langs,$conf);
 
             migrate_shipping_delivery2($db,$langs,$conf);
-
-            // Reload modules
-            migrate_reload_modules($db,$langs,$conf);
-
-            // Reload menus
-            migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
         // Script for VX (X<3.0) -> V3.0
@@ -311,11 +294,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         $beforeversionarray=explode('.','3.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
-            // Reload modules
-            migrate_reload_modules($db,$langs,$conf);
-
-            // Reload menus
-            migrate_reload_menu($db,$langs,$conf,$versionto);
+            // No particular code
         }
 
         // Script for VX (X<3.1) -> V3.1
@@ -326,12 +305,6 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_directories($db,$langs,$conf,'/rss','/externalrss');
 
             migrate_actioncomm_element($db,$langs,$conf);
-
-            // Reload modules
-            migrate_reload_modules($db,$langs,$conf);
-
-            // Reload menus
-            migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
         // Script for VX (X<3.2) -> V3.2
@@ -344,12 +317,6 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         	migrate_mode_reglement($db,$langs,$conf);
 
         	migrate_clean_association($db,$langs,$conf);
-
-            // Reload modules
-            migrate_reload_modules($db,$langs,$conf);
-
-            // Reload menus
-            migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
         // Script for VX (X<3.3) -> V3.3
@@ -376,29 +343,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         $beforeversionarray=explode('.','3.8.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
-        	// Reload modules (this must be always and only into last targeted version)
-			$listofmodule=array(
-				    	'MAIN_MODULE_AGENDA'=>'newboxdefonly',
-						'MAIN_MODULE_BARCODE'=>'newboxdefonly',
-						'MAIN_MODULE_CRON'=>'newboxdefonly',
-				    	'MAIN_MODULE_COMMANDE'=>'newboxdefonly',
-				    	'MAIN_MODULE_DEPLACEMENT'=>'newboxdefonly',
-				    	'MAIN_MODULE_DON'=>'newboxdefonly',
-				    	'MAIN_MODULE_ECM'=>'newboxdefonly',
-				    	'MAIN_MODULE_FACTURE'=>'newboxdefonly',
-				    	'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
-						'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
-						'MAIN_MODULE_OPENSURVEY'=>'newboxdefonly',
-						'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
-						'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
-						'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
-				    	'MAIN_MODULE_SERVICE'=>'newboxdefonly',
-						'MAIN_MODULE_USER'=>'newboxdefonly'
-			);
-        	migrate_reload_modules($db,$langs,$conf,$listofmodule);
-
-        	// Reload menus (this must be always and only into last targeted version)
-        	migrate_reload_menu($db,$langs,$conf,$versionto);
+        	// No particular code
         }
 
         // Scripts for last version
@@ -419,19 +364,6 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 
             // Migrate to add entity value into llx_societe_remise_except
             migrate_remise_except_entity($db,$langs,$conf);
-
-            // Reload modules (this must be always and only into last targeted version)
-            $listofmodule=array(
-                'MAIN_MODULE_ACCOUNTING'=>'newboxdefonly',
-                'MAIN_MODULE_BARCODE'=>'newboxdefonly',
-                'MAIN_MODULE_CRON'=>'newboxdefonly',
-                'MAIN_MODULE_FACTURE'=>'newboxdefonly',
-                'MAIN_MODULE_PRINTING'=>'newboxdefonly',
-            );
-            migrate_reload_modules($db,$langs,$conf,$listofmodule);
-
-            // Reload menus (this must be always and only into last targeted version)
-            migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
         // Scripts for last version
@@ -439,17 +371,43 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         $beforeversionarray=explode('.','6.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
-            // Reload modules (this must be always and only into last targeted version)
-            $listofmodule=array(
-                'MAIN_MODULE_USER'=>'newboxdefonly',
-            );
-            migrate_reload_modules($db,$langs,$conf,$listofmodule);
-
-            // Reload menus (this must be always and only into last targeted version)
-            migrate_reload_menu($db,$langs,$conf,$versionto);
+            // No particular code
         }
     }
 
+    // Code executed only if migrate is LAST ONE. Must always be done.
+    if (versioncompare($versiontoarray,$versionranarray) >= 0 || versioncompare($versiontoarray,$versionranarray) <= -3)
+    {
+        // Reload modules (this must be always done and only into last targeted version, because code to reload module may need table structure of last version)
+        $listofmodule=array(
+            'MAIN_MODULE_AGENDA'=>'newboxdefonly',
+            'MAIN_MODULE_BARCODE'=>'newboxdefonly',
+            'MAIN_MODULE_CRON'=>'newboxdefonly',
+            'MAIN_MODULE_COMMANDE'=>'newboxdefonly',
+            'MAIN_MODULE_DEPLACEMENT'=>'newboxdefonly',
+            'MAIN_MODULE_DON'=>'newboxdefonly',
+            'MAIN_MODULE_ECM'=>'newboxdefonly',
+            'MAIN_MODULE_FACTURE'=>'newboxdefonly',
+            'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
+            'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
+            'MAIN_MODULE_OPENSURVEY'=>'newboxdefonly',
+            'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
+            'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
+            'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
+            'MAIN_MODULE_SERVICE'=>'newboxdefonly',
+            'MAIN_MODULE_USER'=>'newboxdefonly',
+            'MAIN_MODULE_ACCOUNTING'=>'newboxdefonly',
+            'MAIN_MODULE_BARCODE'=>'newboxdefonly',
+            'MAIN_MODULE_CRON'=>'newboxdefonly',
+            'MAIN_MODULE_PRINTING'=>'newboxdefonly',
+
+            'MAIN_MODULE_USER'=>'newboxdefonly',        //This one must be always done and only into last targeted version)
+        );
+        migrate_reload_modules($db,$langs,$conf,$listofmodule);
+
+        // Reload menus (this must be always and only into last targeted version)
+        migrate_reload_menu($db,$langs,$conf,$versionto);
+    }
 
     // Can force activation of some module during migration with paramater 'enablemodules=MAIN_MODULE_XXX,MAIN_MODULE_YYY,...'
     if (! $error && $enablemodules)

@@ -156,12 +156,12 @@ ALTER TABLE llx_facturedet ADD COLUMN situation_percent real;
 ALTER TABLE llx_facturedet ADD COLUMN fk_prev_id integer;
 
 -- Convert SMTP config to main entity, so new entities don't get the old values
-UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SENDMODE";
-UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SMTP_PORT";
-UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SMTP_SERVER";
-UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SMTPS_ID";
-UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SMTPS_PW";
-UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_EMAIL_TLS";
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = 'MAIN_MAIL_SENDMODE';
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = 'MAIN_MAIL_SMTP_PORT';
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = 'MAIN_MAIL_SMTP_SERVER';
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = 'MAIN_MAIL_SMTPS_ID';
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = 'MAIN_MAIL_SMTPS_PW';
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = 'MAIN_MAIL_EMAIL_TLS';
 
 -- This option with this value is not compatible with 3.8. Value must be set to 'mutiselect', 'select2'...
 DELETE from llx_const where name = 'MAIN_USE_JQUERY_MULTISELECT' and value = '1';
