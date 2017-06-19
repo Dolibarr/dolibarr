@@ -214,6 +214,7 @@ AccountingJournalType1=Various operation
 AccountingJournalType2=Sales
 AccountingJournalType3=Purchases
 AccountingJournalType4=Bank
+AccountingJournalType5=Expenses report
 AccountingJournalType9=Has-new
 ErrorAccountingJournalIsAlreadyUse=This journal is already use
 

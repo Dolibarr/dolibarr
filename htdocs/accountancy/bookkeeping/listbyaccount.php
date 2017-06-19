@@ -1,9 +1,8 @@
 <?php
-/*
- * Copyright (C) 2016 Neil Orley	<neil.orley@oeris.fr> largely based on the great work of :
- *  - Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
- *  - Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
- *  - Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2016       Neil Orley			<neil.orley@oeris.fr>
+ * Copyright (C) 2013-2016  Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016  Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,11 +99,11 @@ if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter")) // Bot
   	$options .= '&amp;search_accountancy_code_start=' . $search_accountancy_code_start;
   }
   if (! empty($search_label_account)) {
-  	$filter['t.label_compte'] = $search_label_account;
+  	$filter['t.label_operation'] = $search_label_account;
   	$options .= '&amp;search_label_account=' . $search_label_account;
   }
   if (! empty($search_mvt_label)) {
-  	$filter['t.label_compte'] = $search_mvt_label;
+  	$filter['t.label_operation'] = $search_mvt_label;
   	$options .= '&amp;search_mvt_label=' . $search_mvt_label;
   }
   if (! empty($search_direction)) {
@@ -312,7 +311,7 @@ foreach ( $object->lines as $line ) {
 
     // Affiche un lien vers la facture client/fournisseur
     $doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
-    print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_compte . '</td>' : '<td>' . $line->label_compte . '<br /><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
+    print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br /><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
 
 
 	print '<td align="right">' . ($line->debit ? price($line->debit) :''). '</td>';
