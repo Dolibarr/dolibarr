@@ -44,6 +44,21 @@ class box_contracts extends ModeleBoxes
 
 
     /**
+     *  Constructor
+     *
+     *  @param  DoliDB  $db         Database handler
+     *  @param  string  $param      More parameters
+     */
+    function __construct($db,$param)
+    {
+        global $user;
+
+        $this->db=$db;
+
+        $this->hidden=! ($user->rights->contrat->lire);
+    }
+
+    /**
      *  Load data for box to show them later
      *
      *  @param	int		$max        Maximum number of records to load
@@ -160,11 +175,11 @@ class box_contracts extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-        parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
 
 }

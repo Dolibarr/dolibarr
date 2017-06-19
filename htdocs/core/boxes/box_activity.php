@@ -51,11 +51,17 @@ class box_activity extends ModeleBoxes
      */
     function __construct($db,$param)
     {
-        global $conf;
+        global $conf, $user;
 
         $this->db=$db;
+
         // FIXME: Pb into some status
-        $this->enabled=$conf->global->MAIN_FEATURES_LEVEL;  // Not enabled by default due to bugs (see previous comments)
+        $this->enabled=($conf->global->MAIN_FEATURES_LEVEL);    // Not enabled by default due to bugs (see previous comments)
+
+        $this->hidden= ! ((! empty($conf->facture->enabled) && $user->rights->facture->lire)
+            || (! empty($conf->commande->enabled) && $user->rights->commande->lire)
+            || (! empty($conf->propal->enabled) && $user->rights->propale->lire)
+            );
     }
 
     /**
@@ -352,7 +358,7 @@ class box_activity extends ModeleBoxes
         }
 
         // list the summary of the propals
-        if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
+        if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
         {
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
             $propalstatic=new Propal($db);
@@ -456,10 +462,10 @@ class box_activity extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

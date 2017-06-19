@@ -69,7 +69,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
     {
         llxHeader("",$langs->trans("ProductStatistics"));
 
-   	    $type = GETPOST('type');
+   	    $type = GETPOST('type', 'intcomma');
 
        	$helpurl='';
         if ($type == '0')
@@ -124,8 +124,11 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 		dol_fiche_head($head, 'stats', $titre, 0, $picto);
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-		
-        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
+
+        $shownav = 1;
+        if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 1);
 
         dol_fiche_end();
 	}
@@ -323,15 +326,15 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 			foreach($graphfiles as $key => $val)
 			{
 				if (! $graphfiles[$key]['file']) continue;
-	
+
 				if ($graphfiles == 'propal' && ! $user->rights->propale->lire) continue;
 				if ($graphfiles == 'order' && ! $user->rights->commande->lire) continue;
 				if ($graphfiles == 'invoices' && ! $user->rights->facture->lire) continue;
 				if ($graphfiles == 'proposals_suppliers' && ! $user->rights->supplier_proposal->lire) continue;
 				if ($graphfiles == 'invoices_suppliers' && ! $user->rights->fournisseur->facture->lire) continue;
 				if ($graphfiles == 'orders_suppliers' && ! $user->rights->fournisseur->commande->lire) continue;
-	
-	
+
+
 				if ($i % 2 == 0)
 				{
 					print "\n".'<div class="fichecenter"><div class="fichehalfleft">'."\n";
@@ -340,7 +343,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 				{
 					print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
 				}
-	
+
 				// Date generation
 				if ($graphfiles[$key]['output'] && ! $px->isGraphKo())
 				{
@@ -352,7 +355,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 				    print $dategenerated=($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated"));
 				}
 				$linktoregenerate='<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).((string) $type != ''?'&amp;type='.$type:'').'&amp;action=recalcul&amp;mode='.$mode.'">'.img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')','refresh').'</a>';
-				
+
 				// Show graph
 				print '<table class="noborder" width="100%">';
 				// Label
@@ -366,7 +369,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 				print $graphfiles[$key]['output'];
 				print '</td></tr>';
 				print '</table>';
-	
+
 				if ($i % 2 == 0)
 				{
 					print "\n".'</div>'."\n";
@@ -376,7 +379,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 					print "\n".'</div></div></div>';
 					print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 				}
-	
+
 				$i++;
 			}
 		}

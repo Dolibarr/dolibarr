@@ -45,9 +45,10 @@ class InfoBox
      *  @param	string		$zone			Name or area (-1 for all, 0 for Homepage, 1 for xxx, ...)
      *  @param  User|null   $user	  		Object user to filter
      *  @param	array		$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
+     *  @param  int         $includehidden  Include also hidden boxes
      *  @return array       	        	Array of boxes
      */
-    static function listBoxes($db, $mode, $zone, $user=null, $excludelist=array())
+    static function listBoxes($db, $mode, $zone, $user=null, $excludelist=array(), $includehidden=1)
     {
         global $conf;
 
@@ -72,7 +73,7 @@ class InfoBox
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
            	$sql.= " WHERE d.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
         }
-        
+
         dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user)?$user->id:'')."", LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
@@ -155,7 +156,7 @@ class InfoBox
                         //print '=>'.$boxname.'-enabled='.$enabled.'<br>';
 
                         //print 'xx module='.$module.' enabled='.$enabled;
-                        if ($enabled) $boxes[]=$box;
+                        if ($enabled && ($includehidden || empty($box->hidden))) $boxes[]=$box;
                         else unset($box);
                     }
                     else

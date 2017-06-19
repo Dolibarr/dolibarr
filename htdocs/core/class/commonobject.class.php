@@ -398,7 +398,7 @@ abstract class CommonObject
         $lastname=$this->lastname;
         $firstname=$this->firstname;
         if (empty($lastname))  $lastname=(isset($this->lastname)?$this->lastname:(isset($this->name)?$this->name:(isset($this->nom)?$this->nom:(isset($this->societe)?$this->societe:(isset($this->company)?$this->company:'')))));
-        
+
         $ret='';
         if ($option && $this->civility_id)
         {
@@ -597,11 +597,11 @@ abstract class CommonObject
             dol_syslog("CODE_NOT_VALID_FOR_THIS_ELEMENT");
             return -3;
         }
-            
+
         $datecreate = dol_now();
 
         $this->db->begin();
-        
+
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
         $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
@@ -1230,19 +1230,19 @@ abstract class CommonObject
     function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $fuser=null, $trigkey='')
     {
         global $user,$langs,$conf;
-        
+
         if (empty($table)) 	  $table=$this->table_element;
         if (empty($id))    	  $id=$this->id;
 		if (empty($format))   $format='text';
 		if (empty($id_field)) $id_field='rowid';
 
 		$error=0;
-		
+
         $this->db->begin();
 
         // Special case
         if ($table == 'product' && $field == 'note_private') $field='note';
-        
+
         $sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
         if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
         else if ($format == 'int') $sql.= $field." = ".$this->db->escape($value);
@@ -1284,7 +1284,7 @@ abstract class CommonObject
     /**
      *      Load properties id_previous and id_next
      *
-     *      @param	string	$filter		Optional filter
+     *      @param	string	$filter		Optional filter. Example: " AND (t.field1 = 'aa' OR t.field2 = 'bb')"
      *	 	@param  int		$fieldid   	Name of field to use for the select MAX and MIN
      *		@param	int		$nodbprefix	Do not include DB prefix to forge table name
      *      @return int         		<0 if KO, >0 if OK
@@ -1310,11 +1310,15 @@ abstract class CommonObject
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
         $sql.= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
-        if (! empty($filter)) $sql.=" AND ".$filter;
+        if (! empty($filter))
+        {
+            if (! preg_match('/^\s*AND/i', $filter)) $sql.=" AND ";   // For backward compatibility
+            $sql.=$filter;
+        }
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
 
-        //print $sql."<br>";
+        //print $filter.' '.$sql."<br>";
         $result = $this->db->query($sql);
         if (! $result)
         {
@@ -1331,7 +1335,11 @@ abstract class CommonObject
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
         $sql.= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
-        if (! empty($filter)) $sql.=" AND ".$filter;
+        if (! empty($filter))
+        {
+            if (! preg_match('/^\s*AND/i', $filter)) $sql.=" AND ";   // For backward compatibility
+            $sql.=$filter;
+        }
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
         // Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
@@ -1518,7 +1526,7 @@ abstract class CommonObject
 						if($mode == 1) {
 							$line->subprice = 0;
 						}
-						
+
 						switch ($this->element) {
 							case 'propal':
 								$this->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
@@ -2154,7 +2162,7 @@ abstract class CommonObject
         // Special cas
         //var_dump($this->table_element);exit;
 		if ($this->table_element == 'product') $suffix='';
-            
+
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     	$sql.= " SET note".$suffix." = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
     	$sql.= " WHERE rowid =". $this->id;
@@ -2164,7 +2172,7 @@ abstract class CommonObject
     	{
     		if ($suffix == '_public') $this->note_public = $note;
     		else if ($suffix == '_private') $this->note_private = $note;
-    		else 
+    		else
     		{
     		    $this->note = $note;      // deprecated
     		    $this->note_private = $note;
@@ -2413,7 +2421,7 @@ abstract class CommonObject
     	// Special case
     	if ($origin == 'order') $origin='commande';
     	if ($origin == 'invoice') $origin='facture';
-    	
+
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
@@ -2446,10 +2454,10 @@ abstract class CommonObject
      *	Fetch array of objects linked to current object. Links are loaded into this->linkedObjects array and this->linkedObjectsIds
      *  Possible usage for parameters:
      *  - all parameters empty -> we look all link to current object (current object can be source or target)
-     *  - source id+type -> will get target list linked to source 
-     *  - target id+type -> will get source list linked to target 
-     *  - source id+type + target type -> will get target list of the type 
-     *  - target id+type + target source -> will get source list of the type 
+     *  - source id+type -> will get target list linked to source
+     *  - target id+type -> will get source list linked to target
+     *  - source id+type + target type -> will get target list of the type
+     *  - target id+type + target source -> will get source list of the type
      *
      *	@param	int		$sourceid		Object source id (if not defined, id of object)
      *	@param  string	$sourcetype		Object source type (if not defined, element name of object)
@@ -2902,7 +2910,7 @@ abstract class CommonObject
     function isObjectUsed($id=0)
     {
         if (empty($id)) $id=$this->id;
-        
+
         // Check parameters
         if (! isset($this->childtables) || ! is_array($this->childtables) || count($this->childtables) == 0)
         {
@@ -3019,12 +3027,12 @@ abstract class CommonObject
 
         foreach ($this->lines as $line)
         {
-            if (isset($line->qty_asked))   
+            if (isset($line->qty_asked))
             {
                 if (empty($totalOrdered)) $totalOrdered=0;  // Avoid warning because $totalOrdered is ''
                 $totalOrdered+=$line->qty_asked;    // defined for shipment only
             }
-            if (isset($line->qty_shipped)) 
+            if (isset($line->qty_shipped))
             {
                 if (empty($totalToShip)) $totalToShip=0;    // Avoid warning because $totalToShip is ''
                 $totalToShip+=$line->qty_shipped;   // defined for shipment only
@@ -3052,7 +3060,7 @@ abstract class CommonObject
 
             if (empty($totalWeight)) $totalWeight=0;  // Avoid warning because $totalWeight is ''
             if (empty($totalVolume)) $totalVolume=0;  // Avoid warning because $totalVolume is ''
-            
+
             //var_dump($line->volume_units);
             if ($weight_units < 50)   // >50 means a standard unit (power of 10 of official unit), > 50 means an exotic unit (like inch)
             {
@@ -3369,9 +3377,9 @@ abstract class CommonObject
 				if ($conf->global->MARGIN_TYPE == "1")
 					print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
 				else
-					print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('CostPrice').'</td>';	
+					print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('CostPrice').'</td>';
 			}
-			
+
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
 				print '<td class="linecolmargin2 margininfos" align="right" width="50">'.$langs->trans('MarginRate').'</td>';
 			if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
@@ -3906,7 +3914,7 @@ abstract class CommonObject
 		if ($filefound)
 		{
 			global $db;  // Required to solve a conception default in commonstickergenerator.class.php making an include of code using $db
-		    
+
 			require_once $file;
 
 			$obj = new $classname($this->db);
@@ -3965,7 +3973,7 @@ abstract class CommonObject
 			// output format that does not support UTF8.
 			$sav_charset_output=$outputlangs->charset_output;
 
-			if (in_array(get_class($this), array('Adherent'))) 
+			if (in_array(get_class($this), array('Adherent')))
 			{
 			    $arrayofrecords = array();   // The write_file of templates of adherent class need this
 			    $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
@@ -4226,7 +4234,7 @@ abstract class CommonObject
             require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
             $target_extrafields=$extrafields->fetch_name_optionals_label($this->table_element);
-            
+
             //Eliminate copied source object extra_fields that do not exist in target object
             $new_array_options=array();
             foreach ($this->array_options as $key => $value) {
@@ -4275,7 +4283,7 @@ abstract class CommonObject
     						{
     							if (is_numeric($value)) $res=$object->fetch($value);
 								else $res=$object->fetch('',$value);
-								
+
     							if ($res > 0) $this->array_options[$key]=$object->id;
     							else
     							{

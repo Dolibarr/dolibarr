@@ -47,9 +47,11 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	 */
 	function __construct($db,$param)
 	{
-		global $conf;
+		global $user;
 
 		$this->db=$db;
+
+		$this->hidden = ! ($user->rights->facture->lire);
 	}
 
 	/**
@@ -133,7 +135,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				if (! $mesg)
 				{
 				    $langs->load("bills");
-				    
+
 				    $px1->SetData($data1);
 					unset($data1);
 					$px1->SetPrecisionY(0);
@@ -266,11 +268,11 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

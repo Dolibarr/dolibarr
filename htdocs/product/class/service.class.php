@@ -56,7 +56,7 @@ class Service extends CommonObject
 	 */
 	function load_state_board()
 	{
-		global $conf, $user;
+		global $conf, $user, $hookmanager;
 
 		$this->nb=array();
 
@@ -64,6 +64,13 @@ class Service extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
 		$sql.= " AND p.fk_product_type = 1";
+		// Add where from hooks
+		if (is_object($hookmanager))
+		{
+		    $parameters=array();
+		    $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+		    $sql.=$hookmanager->resPrint;
+		}
 
 		$resql=$this->db->query($sql);
 		if ($resql)

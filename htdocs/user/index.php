@@ -647,9 +647,11 @@ while ($i < min($num,$limit))
       print '<td align="center">'.$userstatic->getLibStatut(3).'</td>';
     }
     // Action column
-    print '<td></td>';
+    print '<td>';
+    print '</td>';
 
     print "</tr>\n";
+
     $i++;
 }
 

@@ -72,7 +72,7 @@ if ($id > 0 || ! empty($ref))
 
     if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
     elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
-    
+
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
 	{
 	    if (! empty($conf->product->enabled)) $upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
@@ -210,11 +210,14 @@ if ($object->id)
 
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-    
-	dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
-    
+
+    $shownav = 1;
+    if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+    dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border tableforfield" width="100%">';
 
@@ -224,14 +227,14 @@ if ($object->id)
 
     print '</div>';
     print '<div style="clear:both"></div>';
-    
+
     dol_fiche_end();
 
     $permission = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
-    
+
     // Merge propal PDF document PDF files
     if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
     {
@@ -307,17 +310,17 @@ if ($object->id)
     				$checked = '';
     				$filename = $filetoadd['name'];
 
-    				if ($conf->global->MAIN_MULTILANGS) 
+    				if ($conf->global->MAIN_MULTILANGS)
     				{
-    					if (array_key_exists($filetoadd['name'] . '_' . $delauft_lang, $filetomerge->lines)) 
+    					if (array_key_exists($filetoadd['name'] . '_' . $delauft_lang, $filetomerge->lines))
     					{
     						$filename = $filetoadd['name'] . ' - ' . $langs->trans('Language_' . $delauft_lang);
     						$checked = ' checked ';
     					}
     				}
-    				else 
+    				else
     				{
-    					if (array_key_exists($filetoadd['name'], $filetomerge->lines)) 
+    					if (array_key_exists($filetoadd['name'], $filetomerge->lines))
     					{
     						$checked = ' checked ';
     					}

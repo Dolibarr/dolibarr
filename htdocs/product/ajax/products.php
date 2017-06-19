@@ -57,7 +57,7 @@ $warehouseStatus = GETPOST('warehousestatus', 'alpha');
  * View
  */
 
-// print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+// print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 dol_syslog(join(',', $_GET));
 // print_r($_GET);
@@ -160,7 +160,7 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 	}
 
 	echo json_encode($outjson);
-} 
+}
 else
 {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
@@ -171,17 +171,23 @@ else
 	top_httphead();
 
 	if (empty($htmlname))
-		return;
+	{
+		print json_encode(array());
+	    return;
+	}
 
 	$match = preg_grep('/(' . $htmlname . '[0-9]+)/', array_keys($_GET));
 	sort($match);
 
 	$idprod = (! empty($match[0]) ? $match[0] : '');
-	
-	if (! GETPOST($htmlname) && ! GETPOST($idprod))
-		return;
 
-		// When used from jQuery, the search term is added as GET param "term".
+	if (GETPOST($htmlname) == '' && ! GETPOST($idprod))
+	{
+		print json_encode(array());
+	    return;
+	}
+
+	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (GETPOST($idprod) ? GETPOST($idprod) : (GETPOST($htmlname) ? GETPOST($htmlname) : ''));
 
 	$form = new Form($db);

@@ -97,8 +97,9 @@ function test_sql_and_script_inject($val, $type)
     $sql_inj += preg_match('/<script/i', $val);
     if (! defined('NOSTYLECHECK')) $sql_inj += preg_match('/<style/i', $val);
     $sql_inj += preg_match('/base[\s]+href/si', $val);
-    $sql_inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='>' onmouseover=alert(1)>
-    $sql_inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='>' onerror = alert(1)>
+    $sql_inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+    $sql_inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='...' onerror = alert(1)>
+//    $sql_inj += preg_match('/onfocus\s*=/i', $val);       // onfocus can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
     if ($type == 1)
     {
         $sql_inj += preg_match('/javascript:/i', $val);
@@ -300,7 +301,7 @@ if (! defined('NOTOKENRENEWAL'))
 {
     // roulement des jetons car cree a chaque appel
     if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
-    
+
     // Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = $_SESSION['newtoken']
     $token = dol_hash(uniqid(mt_rand(),TRUE)); // Generates a hash of a random number
     $_SESSION['newtoken'] = $token;
@@ -576,7 +577,7 @@ if (! defined('NOLOGIN'))
 	        $paramsurl=array();
 	        if (GETPOST('textbrowser')) $paramsurl[]='textbrowser='.GETPOST('textbrowser','int');
 	        if (GETPOST('nojs')) $paramsurl[]='nojs='.GETPOST('nojs','int');
-	        if (GETPOST('lang')) $paramsurl[]='lang='.GETPOST('lang','alpha');
+	        if (GETPOST('lang')) $paramsurl[]='lang='.GETPOST('lang', 'aZ09');
             header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl)?'?'.implode('&',$paramsurl):''));
             exit;
         }
@@ -586,7 +587,7 @@ if (! defined('NOLOGIN'))
         // We are already into an authenticated session
         $login=$_SESSION["dol_login"];
         $entity=$_SESSION["dol_entity"];
-        dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login." _SESSION['dol_entity']=".$entity, LOG_DEBUG);
+        dol_syslog("- This is an already logged session. _SESSION['dol_login']=".$login." _SESSION['dol_entity']=".$entity, LOG_DEBUG);
 
         $resultFetchUser=$user->fetch('',$login,'',1,($entity > 0 ? $entity : -1));
         if ($resultFetchUser <= 0)
@@ -635,7 +636,7 @@ if (! defined('NOLOGIN'))
 	        $paramsurl=array();
 	        if (GETPOST('textbrowser')) $paramsurl[]='textbrowser='.GETPOST('textbrowser','int');
 	        if (GETPOST('nojs')) $paramsurl[]='nojs='.GETPOST('nojs','int');
-	        if (GETPOST('lang')) $paramsurl[]='lang='.GETPOST('lang','alpha');
+	        if (GETPOST('lang')) $paramsurl[]='lang='.GETPOST('lang', 'aZ09');
             header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl)?'?'.implode('&',$paramsurl):''));
             exit;
         }
@@ -1051,7 +1052,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         $ext='version='.urlencode(DOL_VERSION);
         if (GETPOST('version')) $ext='version='.GETPOST('version','int');	// usefull to force no cache on css/js
         if (GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) $ext='testmenuhider='.GETPOST('testmenuhider','int');
-        
+
         $themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss')?'&amp;optioncss='.GETPOST('optioncss','alpha',1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
         $themeparam.=($ext?'&amp;'.$ext:'');
         if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
@@ -1060,7 +1061,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         if (GETPOST('dol_optimize_smallscreen'))   { $themeparam.='&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen','int'); }
         if (GETPOST('dol_no_mouse_hover'))         { $themeparam.='&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover','int'); }
         if (GETPOST('dol_use_jmobile'))            { $themeparam.='&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile','int'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile','int'); }
-        
+
         if (! defined('DISABLE_JQUERY') && ! $disablejs && $conf->use_javascript_ajax)
         {
             print '<!-- Includes CSS for JQuery (Ajax library) -->'."\n";
@@ -1477,14 +1478,14 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    // Link to print main content area
 	    if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && empty($conf->browser->phone))
 	    {
-	        $qs=$_SERVER["QUERY_STRING"];
+	        $qs=dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
 			foreach($_POST as $key=>$value) {
-				if($key!=='action' && !is_array($value))$qs.='&'.$key.'='.urlencode($value);
+				if ($key!=='action' && !is_array($value)) $qs.='&'.$key.'='.urlencode($value);
 			}
 
 			$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
-	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
+	        $text ='<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
 	        $text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
 	        $text.='</a>';
 	        $toprightmenu.=@Form::textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
@@ -1929,7 +1930,7 @@ if (! function_exists("llxFooter"))
             	});
             </script>' . "\n";
         }
-        
+
         // Wrapper to manage dropdown
         if ($conf->use_javascript_ajax)
         {
@@ -1960,7 +1961,7 @@ if (! function_exists("llxFooter"))
                      console.log("Link has class dropdowncloseonclick, so we close/hide the popup ul");
                      $(this).parent().parent().hide();
                   });
-            
+
                   $(document).bind(\'click\', function (e) {
                       var $clicked = $(e.target);
                       if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
@@ -1968,7 +1969,7 @@ if (! function_exists("llxFooter"))
                 });
                 </script>';
         }
-                
+
 		// A div for the address popup
 		print "\n<!-- A div to allow dialog popup -->\n";
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";

@@ -320,7 +320,7 @@ class FormOther
         {
             dol_syslog(__METHOD__ . ': using numeric value for parameter type is deprecated. Use string code instead.', LOG_WARNING);
         }
-        
+
         // Load list of "categories"
         $static_categs = new Categorie($this->db);
         $tab_categs = $static_categs->get_full_arbo($type);
@@ -409,7 +409,7 @@ class FormOther
             $sql_usr.= " WHERE u2.entity IN (0,".$conf->entity.")";
             $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->societe_id;
         }
-	$sql_usr.= " ORDER BY u.statut DESC, lastname ASC";
+	    $sql_usr.= " ORDER BY statut DESC, lastname ASC";  // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
         //print $sql_usr;exit;
 
         $resql_usr = $this->db->query($sql_usr);
@@ -621,12 +621,12 @@ class FormOther
             	$b = hexdec($hexb);
     	    }
         	$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
-            if ($bright > 0.6) $textcolor='000';     	   
+            if ($bright > 0.6) $textcolor='000';
     	}
-    	
+
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
     	$color = colorArrayToHex(colorStringToArray($color,array()),'');
-    	
+
 		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
 		else print $textifnotdefined;
     }
@@ -989,7 +989,7 @@ class FormOther
      *  Class 'Form' must be known.
      *
      * 	@param	   User         $user		 Object User
-     * 	@param	   String       $areacode    Code of area for pages (0=value for Home page)
+     * 	@param	   string       $areacode    Code of area for pages ('0'=value for Home page)
      * 	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlist'=>)
      */
     static function getBoxesArea($user,$areacode)
@@ -1002,16 +1002,16 @@ class FormOther
 
         // $boxactivated will be array of boxes enabled into global setup
         // $boxidactivatedforuser will be array of boxes choosed by user
-        
+
         $selectboxlist='';
-        $boxactivated=InfoBox::listBoxes($db,'activated',$areacode,(empty($user->conf->$confuserzone)?null:$user));	// Search boxes of common+user (or common only if user has no specific setup)
-        
+        $boxactivated=InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone)?null:$user), array(), 0);	// Search boxes of common+user (or common only if user has no specific setup)
+
         $boxidactivatedforuser=array();
         foreach($boxactivated as $box)
         {
         	if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) $boxidactivatedforuser[$box->id]=$box->id;	// We keep only boxes to show for user
         }
-        
+
         // Define selectboxlist
         $arrayboxtoactivatelabel=array();
         if (! empty($user->conf->$confuserzone))
@@ -1062,7 +1062,7 @@ class FormOther
 	        			async: false
 	        		});
 	        		// We force reload to be sure to get all boxes into list
-	        		window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=delbox\';
+	        		window.location.search=\'mainmenu='.GETPOST("mainmenu","aZ09").'&leftmenu='.GETPOST('leftmenu',"aZ09").'&action=delbox\';
 	        	}
 	        	else
 	        	{
@@ -1084,7 +1084,7 @@ class FormOther
 	    					url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
 	    			        async: false
 	    		        });
-	        			window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=addbox&boxid=\'+boxid;
+	        			window.location.search=\'mainmenu='.GETPOST("mainmenu","aZ09").'&leftmenu='.GETPOST('leftmenu',"aZ09").'&action=addbox&boxid=\'+boxid;
 	                }
 	        	});';
 	        	if (! count($arrayboxtoactivatelabel)) $selectboxlist.='jQuery("#boxcombo").hide();';

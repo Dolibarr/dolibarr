@@ -53,7 +53,7 @@ else header('Cache-Control: no-cache');
 // On the fly GZIP compression for all pages (if browser support it). Must set the bit 3 of constant to 1.
 if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) { ob_start("ob_gzhandler"); }
 
-if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang', 'alpha'));	// If language was forced on URL
+if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL
 if (GETPOST('theme')) $conf->theme=GETPOST('theme', 'alpha');  // If theme was forced on URL
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
@@ -985,6 +985,9 @@ div.nopadding {
 #pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
+}
+.pictoobjectwidth {
+	width: 14px;
 }
 .pictosubstatus {
     padding-left: 2px;
@@ -2972,16 +2975,16 @@ div.tabBar .noborder {
     border: 1px solid #CCC;
     text-align: center;
     border-radius: 2px;
-    
+
 	white-space: nowrap;
 	overflow: hidden;
     text-overflow: ellipsis;
-    width: 115px;    
+    width: 115px;
 }
 @media only screen and (max-width: 767px)
 {
     .boxstats {
-        width: 100px;    
+        width: 100px;
     }
 }
 
