@@ -98,11 +98,14 @@ ALTER TABLE llx_actioncomm ADD COLUMN extraparams			varchar(255);
 
 
 ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);	
-ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer DEFAULT NULL;
 
-ALTER TABLE llx_adherent MODIFY COLUMN state_id integer DEFAULT NULL;
-ALTER TABLE llx_adherent MODIFY COLUMN country integer DEFAULT NULL;
+-- VMYSQL4.1 ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer USING state_id::integer;
 
+-- VMYSQL4.1 ALTER TABLE llx_adherent MODIFY COLUMN state_id integer DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_adherent MODIFY COLUMN state_id integer USING state_id::integer;
+-- VMYSQL4.1 ALTER TABLE llx_adherent MODIFY COLUMN country integer DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_adherent MODIFY COLUMN country integer USING country::integer;
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_CREATE','Product or service created','Executed when a product or sevice is created','product',30);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_MODIFY','Product or service modified','Executed when a product or sevice is modified','product',30);
@@ -463,7 +466,7 @@ ALTER TABLE llx_usergroup_rights ADD CONSTRAINT fk_usergroup_rights_fk_usergroup
 CREATE TABLE llx_blockedlog 
 ( 
 	rowid integer AUTO_INCREMENT PRIMARY KEY, 
-	tms	timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	tms	timestamp,
 	action varchar(50), 
 	amounts real NOT NULL, 
 	signature varchar(100) NOT NULL, 
