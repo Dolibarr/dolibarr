@@ -58,41 +58,50 @@ $FILEFLAG='modulebuilder.txt';
 
 if ($dirins && $action == 'initmodule' && $modulename)
 {
-    $srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
-    $destdir = $dirins.'/'.strtolower($modulename);
-
-    $arrayreplacement=array(
-        'mymodule'=>strtolower($modulename),
-     	'MyModule'=>$modulename
-    );
-
-    $result = dolCopyDir($srcdir, $destdir, 0, 0, $arrayreplacement);
-    //dol_mkdir($destfile);
-    if ($result <= 0)
+    if (preg_match('/\s/', $modulename))
     {
-    	if ($result < 0)
-    	{
-        	$error++;
-        	$langs->load("errors");
-        	setEventMessages($langs->trans("ErrorFailToCopyDir", $srcdir, $destdir), null, 'errors');
-    	}
-    	else	// $result == 0
-    	{
-        	setEventMessages($langs->trans("AllFilesDidAlreadyExist", $srcdir, $destdir), null, 'warnings');
-    	}
+        $error++;
+        setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
     }
 
-    // Delete some files
-    dol_delete_file($destdir.'/myobject_card.php');
-    dol_delete_file($destdir.'/myobject_list.php');
-    dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
-    dol_delete_file($destdir.'/sql/llx_myobject.key.sql');
-    dol_delete_file($destdir.'/sql/llx_myobject.sql');
-    dol_delete_file($destdir.'/scripts/myobject.php');
-    dol_delete_file($destdir.'/img/object_myobject.png');
-    dol_delete_file($destdir.'/class/myobject.class.php');
-    dol_delete_file($destdir.'/class/api_myobject.class.php');
-    dol_delete_file($destdir.'/class/MyObject.txt');
+    if (! $error)
+    {
+        $srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
+        $destdir = $dirins.'/'.strtolower($modulename);
+
+        $arrayreplacement=array(
+            'mymodule'=>strtolower($modulename),
+         	'MyModule'=>$modulename
+        );
+
+        $result = dolCopyDir($srcdir, $destdir, 0, 0, $arrayreplacement);
+        //dol_mkdir($destfile);
+        if ($result <= 0)
+        {
+        	if ($result < 0)
+        	{
+            	$error++;
+            	$langs->load("errors");
+            	setEventMessages($langs->trans("ErrorFailToCopyDir", $srcdir, $destdir), null, 'errors');
+        	}
+        	else	// $result == 0
+        	{
+            	setEventMessages($langs->trans("AllFilesDidAlreadyExist", $srcdir, $destdir), null, 'warnings');
+        	}
+        }
+
+        // Delete some files
+        dol_delete_file($destdir.'/myobject_card.php');
+        dol_delete_file($destdir.'/myobject_list.php');
+        dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
+        dol_delete_file($destdir.'/sql/llx_myobject.key.sql');
+        dol_delete_file($destdir.'/sql/llx_myobject.sql');
+        dol_delete_file($destdir.'/scripts/myobject.php');
+        dol_delete_file($destdir.'/img/object_myobject.png');
+        dol_delete_file($destdir.'/class/myobject.class.php');
+        dol_delete_file($destdir.'/class/api_myobject.class.php');
+        dol_delete_file($destdir.'/class/MyObject.txt');
+    }
 
     // Edit PHP files
     if (! $error)
@@ -129,74 +138,86 @@ if ($dirins && $action == 'initmodule' && $modulename)
 
 if ($dirins && $action == 'initobject' && $module && $objectname)
 {
-    $srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
-    $destdir = $dirins.'/'.strtolower($module);
-
-    $arrayreplacement=array(
-        'mymodule'=>strtolower($module),
-        'MyModule'=>$module,
-        'myobject'=>strtolower($objectname),
-        'MyObject'=>$objectname
-    );
-
-
-    // Delete some files
-    $filetogenerate = array(
-        'myobject_card.php'=>strtolower($objectname).'_card.php',
-        'myobject_list.php'=>strtolower($objectname).'_list.php',
-        'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
-        'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
-        'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
-        'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
-        'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
-        'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
-        'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php',
-        'class/MyObject.txt'=>'class/'.$objectname.'.txt'
-    );
-
-    foreach($filetogenerate as $srcfile => $destfile)
+    if (preg_match('/\s/', $objectname))
     {
-        $result = dol_copy($srcdir.'/'.$srcfile, $destdir.'/'.$destfile);
-        if ($result <= 0)
-        {
-            if ($result < 0)
-            {
-                $error++;
-                $langs->load("errors");
-                setEventMessages($langs->trans("ErrorFailToCopyFile", $srcdir.'/'.$srcfile, $destdir.'/'.$destfile), null, 'errors');
-            }
-            else	// $result == 0
-            {
-                setEventMessages($langs->trans("FileAlreadyExists", $srcdir.'/'.$srcfile, $destdir.'/'.$destfile), null, 'warnings');
-            }
-        }
-        else
-        {
-            // Copy is ok
-        }
+        $error++;
+        setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
     }
 
-    // Edit PHP files
-    foreach($filetogenerate as $destfile)
+    if (! $error)
     {
-        $phpfileval['fullname'] = $destdir.'/'.$destfile;
+        $srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
+        $destdir = $dirins.'/'.strtolower($module);
 
-        //var_dump($phpfileval['fullname']);
         $arrayreplacement=array(
-            'mymodule'=>strtolower($modulename),
-            'MyModule'=>$modulename,
-            'MYMODULE'=>strtoupper($modulename),
-            'My module'=>$modulename,
-            'htdocs/modulebuilder/template/'=>'',
+            'mymodule'=>strtolower($module),
+            'MyModule'=>$module,
             'myobject'=>strtolower($objectname),
             'MyObject'=>$objectname
         );
 
-        $result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
-        //var_dump($result);
-        if ($result < 0)
+
+        // Delete some files
+        $filetogenerate = array(
+            'myobject_card.php'=>strtolower($objectname).'_card.php',
+            'myobject_list.php'=>strtolower($objectname).'_list.php',
+            'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
+            'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
+            'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
+            'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
+            'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
+            'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
+            'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php',
+            'class/MyObject.txt'=>'class/'.$objectname.'.txt'
+        );
+
+        foreach($filetogenerate as $srcfile => $destfile)
         {
-            setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
+            $result = dol_copy($srcdir.'/'.$srcfile, $destdir.'/'.$destfile);
+            if ($result <= 0)
+            {
+                if ($result < 0)
+                {
+                    $error++;
+                    $langs->load("errors");
+                    setEventMessages($langs->trans("ErrorFailToCopyFile", $srcdir.'/'.$srcfile, $destdir.'/'.$destfile), null, 'errors');
+                }
+                else	// $result == 0
+                {
+                    setEventMessages($langs->trans("FileAlreadyExists", $srcdir.'/'.$srcfile, $destdir.'/'.$destfile), null, 'warnings');
+                }
+            }
+            else
+            {
+                // Copy is ok
+            }
+        }
+    }
+
+    if (! $error)
+    {
+        // Edit PHP files
+        foreach($filetogenerate as $destfile)
+        {
+            $phpfileval['fullname'] = $destdir.'/'.$destfile;
+
+            //var_dump($phpfileval['fullname']);
+            $arrayreplacement=array(
+                'mymodule'=>strtolower($modulename),
+                'MyModule'=>$modulename,
+                'MYMODULE'=>strtoupper($modulename),
+                'My module'=>$modulename,
+                'htdocs/modulebuilder/template/'=>'',
+                'myobject'=>strtolower($objectname),
+                'MyObject'=>$objectname
+            );
+
+            $result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
+            //var_dump($result);
+            if ($result < 0)
+            {
+                setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
+            }
         }
     }
 
@@ -206,18 +227,90 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
     }
 }
 
-
 if ($dirins && $action == 'confirm_delete')
 {
-    $modulelowercase=strtolower($module);
+    if (preg_match('/\s/', $module))
+    {
+        $error++;
+        setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
+    }
 
-    // Dir for module
-    $dir = $dirins.'/'.$modulelowercase;
+    if (! $error)
+    {
+        $modulelowercase=strtolower($module);
 
-    dol_delete_dir_recursive($dir);
+        // Dir for module
+        $dir = $dirins.'/'.$modulelowercase;
 
-    header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?module=initmodule');
-    exit;
+        $result = dol_delete_dir_recursive($dir);
+
+        if ($result > 0)
+        {
+            setEventMessages($langs->trans("DirDeleted"), null);
+        }
+        else
+        {
+            setEventMessages($langs->trans("NothingDeleted"), null, 'warnings');
+        }
+    }
+
+    //header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?module=initmodule');
+    //exit;
+    $action = '';
+    $module = 'deletemodule';
+}
+
+if ($dirins && $action == 'confirm_deleteobject' && $objectname)
+{
+    if (preg_match('/\s/', $objectname))
+    {
+        $error++;
+        setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
+    }
+
+    if (! $error)
+    {
+        $modulelowercase=strtolower($module);
+        $objectlowercase=strtolower($objectname);
+
+        // Dir for module
+        $dir = $dirins.'/'.$modulelowercase;
+
+        // Delete some files
+        $filetogenerate = array(
+            'myobject_card.php'=>strtolower($objectname).'_card.php',
+            'myobject_list.php'=>strtolower($objectname).'_list.php',
+            'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
+            'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
+            'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
+            'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
+            'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
+            'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
+            'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php',
+            'class/MyObject.txt'=>'class/'.$objectname.'.txt'
+        );
+
+        $resultko = 0;
+        foreach($filetogenerate as $filetodelete)
+        {
+            $resulttmp = dol_delete_file($dir.'/'.$filetodelete, 0, 0, 1);
+            if (! $resulttmp) $resultko++;
+        }
+
+        if ($resultko == 0)
+        {
+            setEventMessages($langs->trans("FilesDeleted"), null);
+        }
+        else
+        {
+            setEventMessages($langs->trans("ErrorSomeFilesCouldNotBeDeleted"), null, 'warnings');
+        }
+    }
+
+    //header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?module=initmodule');
+    //exit;
+    $action = '';
+    $tabobj = 'deleteobject';
 }
 
 if ($dirins && $action == 'generatepackage')
@@ -341,7 +434,7 @@ if (!empty($conf->modulebuilder->enabled) && $mainmenu == 'modulebuilder')	// En
 // Show description of content
 $newdircustom=$dirins;
 if (empty($newdircustom)) $newdircustom=img_warning();
-print $langs->trans("ModuleBuilderDesc").'<br>';
+print $langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'<br>';
 print $langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'<br>';
 
 $message='';
@@ -381,7 +474,7 @@ print $langs->trans("ModuleBuilderDesc3", count($listofmodules), $FILEFLAG).'<br
 $error=0;
 $moduleobj = null;
 
-if (! empty($module) && $module != 'initmodule')
+if (! empty($module) && $module != 'initmodule' && $module != 'deletemodule')
 {
 	$modulelowercase=strtolower($module);
 
@@ -428,6 +521,10 @@ foreach($listofmodules as $tmpmodule => $tmpmodulewithcase)
     $h++;
 }
 
+$head[$h][0] = $_SERVER["PHP_SELF"].'?module=deletemodule';
+$head[$h][1] = $langs->trans("DangerZone");
+$head[$h][2] = 'deletemodule';
+$h++;
 
 
 dol_fiche_head($head, $module, $langs->trans("Modules"), -1, 'generic');
@@ -444,6 +541,19 @@ if ($module == 'initmodule')
 
     print '<input type="text" name="modulename" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'">';
     print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins?'':' disabled="disabled"').'>';
+    print '</form>';
+}
+elseif ($module == 'deletemodule')
+{
+    print '<form name="delete">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="confirm_delete">';
+    print '<input type="hidden" name="module" value="deletemodule">';
+
+    print $langs->trans("EnterNameOfModuleToDeleteDesc").'<br><br>';
+
+    print '<input type="text" name="module" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'" value="">';
+    print '<input type="submit" class="buttonDelete" value="'.$langs->trans("Delete").'"'.($dirins?'':' disabled="disabled"').'>';
     print '</form>';
 }
 elseif (! empty($module))
@@ -502,11 +612,6 @@ elseif (! empty($module))
         $head2[$h][2] = 'buildpackage';
         $h++;
 
-        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=dangerzone&module='.$module;
-        $head2[$h][1] = $langs->trans("DangerZone");
-        $head2[$h][2] = 'dangerzone';
-        $h++;
-
         print $modulestatusinfo.'<br><br>';
 
         dol_fiche_head($head2, $tab, '', -1, '');
@@ -532,6 +637,7 @@ elseif (! empty($module))
 
         	print '<tr><td>';
         	print $langs->trans("Numero");
+        	print ' (<a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank">'.$langs->trans("SeeHere").'</a>)';
         	print '</td><td>';
         	print $moduleobj->numero;
         	print '</td></tr>';
@@ -597,7 +703,7 @@ elseif (! empty($module))
             $head3[$h][2] = 'newobject';
             $h++;
 
-            $listofobject = dol_dir_list($dir , 'files', 0, '\.txt$');
+            $listofobject = dol_dir_list($dir, 'files', 0, '\.txt$');
             foreach($listofobject as $fileobj)
             {
                 $objectname = preg_replace('/\.txt$/', '', $fileobj['name']);
@@ -607,6 +713,12 @@ elseif (! empty($module))
                 $head3[$h][2] = $objectname;
                 $h++;
             }
+
+            $head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.'&tabobj=deleteobject';
+            $head3[$h][1] = $langs->trans("DangerZone");
+            $head3[$h][2] = 'deleteobject';
+            $h++;
+
 
             dol_fiche_head($head3, $tabobj, '', -1, '');
 
@@ -625,6 +737,21 @@ elseif (! empty($module))
                 print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins?'':' disabled="disabled"').'>';
                 print '</form>';
             }
+            elseif ($tabobj == 'deleteobject')
+            {
+                // New module
+                print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+                print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                print '<input type="hidden" name="action" value="confirm_deleteobject">';
+                print '<input type="hidden" name="tab" value="objects">';
+                print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+
+                print $langs->trans("EnterNameOfObjectToDeleteDesc").'<br><br>';
+
+                print '<input type="text" name="objectname" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'">';
+                print '<input type="submit" class="buttonDelete" name="delete" value="'.dol_escape_htmltag($langs->trans("Delete")).'"'.($dirins?'':' disabled="disabled"').'>';
+                print '</form>';
+            }
             else
             {
                 try {
@@ -641,8 +768,9 @@ elseif (! empty($module))
                     $tmpobjet = new $tabobj($db);
 
                     $reflector = new ReflectionClass($tabobj);
-                    $properties = $reflector->getProperties();
-                    $propdefault = $reflector->getDefaultProperties();
+                    $properties = $reflector->getProperties();          // Can also use get_object_vars
+                    $propdefault = $reflector->getDefaultProperties();  // Can also use get_object_vars
+                    //$propstat = $reflector->getStaticProperties();
 
                     print load_fiche_titre($langs->trans("Properties"), '', '');
 
@@ -655,8 +783,10 @@ elseif (! empty($module))
 
                     print '<table class="noborder">';
                     print '<tr class="liste_titre">';
-                    print '<td>'.$langs->trans("Property").'</td>';
-                    print '<td>'.$langs->trans("Description").'</td>';
+                    print '<td>'.$langs->trans("Property");
+                    print ' (<a href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank">'.$langs->trans("Example").'</a>)';
+                    print '</td>';
+                    print '<td>'.$langs->trans("Comment").'</td>';
                     print '<td>'.$langs->trans("Type").'</td>';
                     print '<td>'.$langs->trans("DefaultValue").'</td>';
                     print '<td></td>';
@@ -676,7 +806,7 @@ elseif (! empty($module))
                             $propname=$propval->getName();
 
                             // Discard generic properties
-                            if (in_array($propname, array('element', 'table_element', 'table_element_line', 'class_element_line', 'ismultientitymanaged'))) continue;
+                            if (in_array($propname, array('element', 'childtables', 'table_element', 'table_element_line', 'class_element_line', 'isnolinkedbythird', 'ismultientitymanaged'))) continue;
 
                             // Keep or not lines
                             if (in_array($propname, array('fk_element', 'lines'))) continue;
@@ -686,11 +816,10 @@ elseif (! empty($module))
                             print $propname;
                             print '</td>';
                             print '<td>';
-
+                            print $propval->getDocComment();
                             print '</td>';
-
                             print '<td>';
-
+                            print gettype($tmpobjet->$propname);
                             print '</td>';
 
                             print '<td>';
@@ -834,16 +963,6 @@ elseif (! empty($module))
         	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
         	print '<input type="submit" class="button" value="'.$langs->trans("BuildPackage").'">';
         	print '</form>';
-        }
-
-        if ($tab == 'dangerzone')
-        {
-            print '<form name="delete">';
-            print '<input type="hidden" name="action" value="confirm_delete">';
-            print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
-            print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
-            print '<input type="submit" class="buttonDelete" value="'.$langs->trans("Delete").'"'.($dirins?'':' disabled="disabled"').'>';
-            print '</form>';
         }
 
         dol_fiche_end();

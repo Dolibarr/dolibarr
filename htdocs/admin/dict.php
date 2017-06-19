@@ -55,6 +55,7 @@ $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
 $rowid=GETPOST('rowid','alpha');
 $entity=GETPOST('entity','int');
+$code=GETPOST('code','alpha');
 
 $allowed=$user->admin;
 if ($id == 7 && ! empty($user->rights->accounting->chartofaccount)) $allowed=1;     // Tax page allowed to manager of chart account
@@ -818,8 +819,8 @@ if ($action == $acts[0])
     if ($rowid) {
     	$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
-    elseif ($_GET["code"]) {
-    	$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".dol_escape_htmltag(GETPOST('code'))."'".($entity != '' ? " AND entity = " . (int) $entity : '');
+    elseif ($code) {
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".dol_escape_htmltag($code)."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
 
     $result = $db->query($sql);
@@ -838,8 +839,8 @@ if ($action == $acts[1])
     if ($rowid) {
     	$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
-    elseif ($_GET["code"]) {
-    	$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".dol_escape_htmltag(GETPOST('code'))."'".($entity != '' ? " AND entity = " . (int) $entity : '');
+    elseif ($code) {
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".dol_escape_htmltag($code)."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
 
     $result = $db->query($sql);
@@ -858,8 +859,8 @@ if ($action == 'activate_favorite')
     if ($rowid) {
     	$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol."='".$rowid."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
-    elseif ($_GET["code"]) {
-    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".dol_escape_htmltag(GETPOST('code'))."'".($entity != '' ? " AND entity = " . (int) $entity : '');
+    elseif ($code) {
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".dol_escape_htmltag($code)."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
 
     $result = $db->query($sql);
@@ -878,8 +879,8 @@ if ($action == 'disable_favorite')
     if ($rowid) {
     	$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol."='".$rowid."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
-    elseif ($_GET["code"]) {
-    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".dol_escape_htmltag(GETPOST('code'))."'".($entity != '' ? " AND entity = " . (int) $entity : '');
+    elseif ($code) {
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".dol_escape_htmltag($code)."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
 
     $result = $db->query($sql);
@@ -941,7 +942,7 @@ if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'rowid='.$rowid.'&code='.urlencode(GETPOST('code')).$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'rowid='.$rowid.'&code='.urlencode($code).$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
 }
 //var_dump($elementList);
 

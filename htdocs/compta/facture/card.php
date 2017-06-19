@@ -3590,15 +3590,14 @@ else if ($id > 0 || ! empty($ref))
     if ($object->type == Facture::TYPE_SITUATION && ! empty($conf->global->INVOICE_USE_SITUATION))
     {
         if (count($object->tab_previous_situation_invoice) > 0 || count($object->tab_next_situation_invoice) > 0)
-            print '<table class="nobordernopadding paymenttable" width="100%">';
+            print '<table class="noborder situationstable" width="100%">';
 
         if (count($object->tab_previous_situation_invoice) > 0) {
             // List of previous invoices
             print '<tr class="liste_titre">';
             print '<td>' . $langs->trans('ListOfPreviousSituationInvoices') . '</td>';
             print '<td></td>';
-            if (! empty($conf->banque->enabled))
-                print '<td align="right"></td>';
+            if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
             print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
             print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
             print '<td width="18">&nbsp;</td>';
@@ -3612,8 +3611,7 @@ else if ($id > 0 || ! empty($ref))
                 print '<tr class="oddeven">';
                 print '<td>' . $prev_invoice->getNomUrl(1) . '</td>';
                 print '<td></td>';
-                if (! empty($conf->banque->enabled))
-                    print '<td align="right"></td>';
+                if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
                 print '<td align="right">' . price($prev_invoice->total_ht) . '</td>';
                 print '<td align="right">' . price($prev_invoice->total_ttc) . '</td>';
                 print '<td align="right">' . $prev_invoice->getLibStatut(3, $totalpaye) . '</td>';
@@ -3622,7 +3620,9 @@ else if ($id > 0 || ! empty($ref))
             }
 
             print '<tr class="oddeven">';
-            print '<td colspan="2" align="right"></td>';
+            print '<td></td>';
+            print '<td></td>';
+            if (! empty($conf->banque->enabled)) print '<td></td>';
             print '<td align="right"><b>' . price($total_prev_ht) . '</b></td>';
             print '<td align="right"><b>' . price($total_prev_ttc) . '</b></td>';
             print '<td width="18">&nbsp;</td>';
