@@ -162,21 +162,13 @@ if ($type == 'directory')
     // Auto area for suppliers invoices
     else if ($module == 'invoice') $upload_dir = $conf->facture->dir_output;
     // Auto area for suppliers invoices
-    else if ($module == 'invoice_supplier')
-    {
-        $relativepath='facture';
-        $upload_dir = $conf->fournisseur->dir_output.'/'.$relativepath;
-    }
+    else if ($module == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;
     // Auto area for customers orders
     else if ($module == 'propal') $upload_dir = $conf->propal->dir_output;
     // Auto area for customers orders
     else if ($module == 'order') $upload_dir = $conf->commande->dir_output;
     // Auto area for suppliers orders
-    else if ($module == 'order_supplier')
-    {
-        $relativepath='commande';
-        $upload_dir = $conf->fournisseur->dir_output.'/'.$relativepath;
-    }
+    else if ($module == 'order_supplier') $upload_dir = $conf->fournisseur->commande->dir_output;
     // Auto area for suppliers invoices
     else if ($module == 'contract') $upload_dir = $conf->contrat->dir_output;
     // Auto area for products
@@ -197,10 +189,12 @@ if ($type == 'directory')
         $param.='&module='.$module;
         $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("NoFileFound")));
 
+        if ($module == 'company') $excludefiles[]='^contact$';   // The subdir 'contact' contains files of contacts with no id of thirdparty.
+
         $filearray=dol_dir_list($upload_dir,"files",1,'', $excludefiles, $sortfield, $sorting,1);
         $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname,$url);
     }
-    //Manual area
+    // Manual area
     else
     {
         $relativepath=$ecmdir->getRelativePath();
