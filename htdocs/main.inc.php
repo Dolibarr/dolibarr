@@ -651,9 +651,13 @@ if (! defined('NOLOGIN'))
 	       if (! empty($_GET['save_lastsearch_values']))    // Keep $_GET here
 	       {
                $relativepathstring = preg_replace('/\?.*$/','',$_SERVER["HTTP_REFERER"]);
-	           if (constant('DOL_MAIN_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_MAIN_URL_ROOT'),'/').'/', '', $relativepathstring);
-	           $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+               $relativepathstring = preg_replace('/^https?:\/\/[^\/]*/','',$relativepathstring);     // Get full path except host server
+               // Clean $relativepathstring
+   	           if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
                $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+               $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+               //var_dump($relativepathstring);
+
                if (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
                {
                    $_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];

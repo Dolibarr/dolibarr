@@ -185,10 +185,10 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ServerVersion") . ": " .$version);
 
         // Test database version requirement
-        $versionmindb=$db::VERSIONMIN;
+        $versionmindb=explode('.',$db::VERSIONMIN);
         //print join('.',$versionarray).' - '.join('.',$versionmindb);
         if (count($versionmindb) && count($versionarray)
-        	&& versioncompare($versionarray,$versionmindb) < 0)
+        	&& versioncompare($versionarray, $versionmindb) < 0)
         {
         	// Warning: database version too low.
         	print "<tr><td>".$langs->trans("ErrorDatabaseVersionTooLow",join('.',$versionarray),join('.',$versionmindb))."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>\n";

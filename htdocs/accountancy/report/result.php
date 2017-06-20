@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
- * Copyright (C) 2016 		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016 		Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -117,7 +117,7 @@ $arrayfields=array(
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
+   foreach($extrafields->attribute_label as $key => $val)
    {
        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
    }
@@ -224,7 +224,7 @@ foreach ($search_array_options as $key => $val)
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
     if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -252,7 +252,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
-	
+
 	$param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -270,7 +270,7 @@ if ($resql)
         $crit=$val;
         $tmpkey=preg_replace('/search_options_/','',$key);
         if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-    } 	
+    }
 
     // List of mass actions available
     $arrayofmassactions =  array(
@@ -281,7 +281,7 @@ if ($resql)
     if ($user->rights->ficheinter->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
     //if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
     $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
-    
+
 	// Lines of title fields
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -292,9 +292,9 @@ if ($resql)
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-    
+
 	print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
-	
+
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -302,23 +302,23 @@ if ($resql)
     }
 
     $moreforfilter='';
-    
+
     $parameters=array();
     $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
     else $moreforfilter = $hookmanager->resPrint;
-    
+
     if (! empty($moreforfilter))
     {
         print '<div class="liste_titre liste_titre_bydiv centpercent">';
         print $moreforfilter;
         print '</div>';
     }
-    
+
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
-	
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -357,9 +357,9 @@ if ($resql)
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_label as $key => $val) 
+	   foreach($extrafields->attribute_label as $key => $val)
 	   {
-			if (! empty($arrayfields["ef.".$key]['checked'])) 
+			if (! empty($arrayfields["ef.".$key]['checked']))
 			{
                 $align=$extrafields->getAlignFlag($key);
                 $typeofextrafield=$extrafields->attribute_type[$key];
@@ -406,7 +406,7 @@ if ($resql)
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
-	
+
     print "</tr>\n";
 
     print '<tr class="liste_titre">';
@@ -424,7 +424,9 @@ if ($resql)
             if (! empty($arrayfields["ef.".$key]['checked']))
             {
                 $align=$extrafields->getAlignFlag($key);
-                print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			$sortonfield = "ef.".$key;
+    			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
             }
         }
     }
@@ -437,24 +439,24 @@ if ($resql)
     if (! empty($arrayfields['f.fk_statut']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
-    
+
 	$total = 0;
 	$i = 0;
 	$totalarray=array();
 	while ($i < min($num, $limit))
 	{
 		$obj = $db->fetch_object($resql);
-		
+
 		$objectstatic->id=$obj->rowid;
 		$objectstatic->ref=$obj->ref;
 		$objectstatic->statut=$obj->fk_statut;
-		
+
 		print '<tr class="oddeven">';
-		
+
         if (! empty($arrayfields['f.ref']['checked']))
 		{
 			print "<td>";
-			
+
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
             // Picto + Ref
     		print '<td class="nobordernopadding nowrap">';
@@ -484,7 +486,7 @@ if ($resql)
     		$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
     		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
     		print '</td></tr></table>';
-			
+
 			print "</td>\n";
         	if (! $i) $totalarray['nbfield']++;
 		}
@@ -525,9 +527,9 @@ if ($resql)
     	// Extra fields
 		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 		{
-		   foreach($extrafields->attribute_label as $key => $val) 
+		   foreach($extrafields->attribute_label as $key => $val)
 		   {
-				if (! empty($arrayfields["ef.".$key]['checked'])) 
+				if (! empty($arrayfields["ef.".$key]['checked']))
 				{
 					print '<td';
 					$align=$extrafields->getAlignFlag($key);
@@ -576,7 +578,7 @@ if ($resql)
         }
         print '</td>';
         if (! $i) $totalarray['nbfield']++;
-        
+
 		print "</tr>\n";
 
 		$total += $obj->duree;
@@ -603,14 +605,14 @@ if ($resql)
 	}
 
 	$db->free($resql);
-	
+
 	$parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-				
+
 	print '</table>'."\n";
 	print '</div>';
-	
+
 	print "</form>\n";
 
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
@@ -620,18 +622,18 @@ if ($resql)
 	     */
 	    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	    $urlsource.=str_replace('&amp;','&',$param);
-	
+
 	    $filedir=$diroutputmassaction;
 	    $genallowed=$user->rights->ficheinter->lire;
 	    $delallowed=$user->rights->ficheinter->supprimer;
-	
+
 	    print $formfile->showdocuments('massfilesarea_interventions','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
 	}
 	else
 	{
 	    print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
 	}
-	
+
 }
 else
 {

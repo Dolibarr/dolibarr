@@ -659,7 +659,7 @@ insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (305,'PCG99-BASE','FINAN', 'XXXXXX',  '511', '51', 'Valeurs à l''encaissement', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (306,'PCG99-BASE','FINAN', 'BANK',    '512', '51', 'Banques', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (307,'PCG99-BASE','FINAN', 'XXXXXX',  '514', '51', 'Chèques postaux', '1');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (308,'PCG99-BASE','FINAN', 'XXXXXX',  '515', '51', '"Caisses" du Trésor et des établissements publics', '1');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (308,'PCG99-BASE','FINAN', 'XXXXXX',  '515', '51', 'Caisses du Trésor et des établissements publics', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (309,'PCG99-BASE','FINAN', 'XXXXXX',  '516', '51', 'Sociétés de bourse', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (310,'PCG99-BASE','FINAN', 'XXXXXX',  '517', '51', 'Autres organismes financiers', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (311,'PCG99-BASE','FINAN', 'XXXXXX',  '518', '51', 'Intérêts courus', '1');
@@ -803,7 +803,7 @@ ALTER TABLE llx_user ADD COLUMN job varchar(128) AFTER firstname;
 
 
 -- Use entity 0 for all entities
-INSERT INTO llx_const(name, value, visible, entity) SELECT __ENCRYPT('SYSLOG_HANDLERS')__, __ENCRYPT('["mod_syslog_file"]')__, 0, 0 FROM llx_const WHERE __DECRYPT('name')__ = 'SYSLOG_FILE_ON' AND __DECRYPT('value')__ = '1';
+INSERT INTO llx_const(name, value, visible, entity) SELECT __ENCRYPT('SYSLOG_HANDLERS')__, __ENCRYPT('[\'mod_syslog_file\']')__, 0, 0 FROM llx_const WHERE __DECRYPT('name')__ = 'SYSLOG_FILE_ON' AND __DECRYPT('value')__ = '1';
 
 
 -- New Imports

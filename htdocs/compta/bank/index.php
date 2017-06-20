@@ -129,9 +129,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $search_number='';
     $search_statut='';
 }
-    
-    
-    
+
+
+
 /*
  * View
  */
@@ -416,7 +416,9 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
         if (! empty($arrayfields["ef.".$key]['checked']))
         {
             $align=$extrafields->getAlignFlag($key);
-            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+			$sortonfield = "ef.".$key;
+			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
         }
     }
 }
@@ -437,7 +439,7 @@ $var=true;
 foreach ($accounts as $key=>$type)
 {
 	if ($i >= $limit) break;
-	
+
     $found++;
 
 	$acc = new Account($db);
@@ -454,7 +456,7 @@ foreach ($accounts as $key=>$type)
 	{
 		$lastcurrencycode=$acc->currency_code;
 	}
-	
+
 	print '<tr class="oddeven">';
 
     // Ref
@@ -463,14 +465,14 @@ foreach ($accounts as $key=>$type)
         print '<td>'.$acc->getNomUrl(1).'</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Label
     if (! empty($arrayfields['b.label']['checked']))
     {
 		print '<td>'.$acc->label.'</td>';
         if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Account type
     if (! empty($arrayfields['accountype']['checked']))
     {
@@ -479,14 +481,14 @@ foreach ($accounts as $key=>$type)
 		print '</td>';
         if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Number
     if (! empty($arrayfields['b.number']['checked']))
     {
         print '<td>'.$acc->number.'</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Account number
     if (! empty($arrayfields['b.account_number']['checked']))
     {
@@ -499,7 +501,7 @@ foreach ($accounts as $key=>$type)
 
 	    if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Accountancy journal
     if (! empty($arrayfields['b.fk_accountancy_journal']['checked']))
     {
@@ -509,7 +511,7 @@ foreach ($accounts as $key=>$type)
 		print '<td>'.$accountingjournal->getNomUrl(0,1,1,'',1).'</td>';
 		if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Transactions to reconcile
     if (! empty($arrayfields['toreconcile']['checked']))
     {
@@ -528,13 +530,13 @@ foreach ($accounts as $key=>$type)
 	    print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
-    
+
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_label as $key => $val) 
+	   foreach($extrafields->attribute_label as $key => $val)
 	   {
-			if (! empty($arrayfields["ef.".$key]['checked'])) 
+			if (! empty($arrayfields["ef.".$key]['checked']))
 			{
 				print '<td';
 				$align=$extrafields->getAlignFlag($key);
@@ -567,14 +569,14 @@ foreach ($accounts as $key=>$type)
         print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Statut
     if (! empty($arrayfields['b.clos']['checked']))
     {
 		print '<td align="center">'.$acc->getLibStatut(5).'</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
-    
+
     // Balance
     if (! empty($arrayfields['balance']['checked']))
     {
@@ -585,7 +587,7 @@ foreach ($accounts as $key=>$type)
 		if (! $i) $totalarray['totalbalancefield']=$totalarray['nbfield'];
 	    $totalarray['totalbalance'] += $solde;
     }
-    
+
 	// Action column
 	print '<td class="nowrap" align="center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -596,7 +598,7 @@ foreach ($accounts as $key=>$type)
 	}
 	print '</td>';
 	if (! $i) $totalarray['nbfield']++;
-	
+
 	print '</tr>';
 
 	$total[$acc->currency_code] += $solde;
