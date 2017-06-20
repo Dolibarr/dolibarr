@@ -1111,7 +1111,7 @@ if ($resql)
     	    // Other picto tool
     	    print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->fournisseur->dir_output.'/commande' . '/' . dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->fournisseur->dir_output.'/commande/' . dol_sanitizeFileName($obj->ref);
 			print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
 

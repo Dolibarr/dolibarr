@@ -2438,8 +2438,8 @@ class SupplierProposal extends CommonObject
         $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code, pt.localtax1_tx, pt.localtax2_tx,';
         $sql.= ' pt.product_type, pt.rang, pt.fk_parent_line,';
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
-        $sql.= ' p.description as product_desc, pt.ref_fourn as ref_produit_fourn';
-		$sql.= ' ,pt.fk_multicurrency, pt.multicurrency_code, pt.multicurrency_subprice, pt.multicurrency_total_ht, pt.multicurrency_total_tva, pt.multicurrency_total_ttc, pt.fk_unit';
+        $sql.= ' p.description as product_desc, pt.ref_fourn as ref_produit_fourn,';
+		$sql.= ' pt.fk_multicurrency, pt.multicurrency_code, pt.multicurrency_subprice, pt.multicurrency_total_ht, pt.multicurrency_total_tva, pt.multicurrency_total_ttc, pt.fk_unit';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'supplier_proposaldet as pt';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
         $sql.= ' WHERE pt.fk_supplier_proposal = '.$this->id;
@@ -2826,8 +2826,8 @@ class SupplierProposalLine  extends CommonObjectLine
         $sql.= ' subprice, remise_percent, ';
         $sql.= ' info_bits, ';
         $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang,';
-        $sql.= ' ref_fourn';
-		$sql.= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc, fk_unit)';
+        $sql.= ' ref_fourn,';
+		$sql.= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc, fk_unit)';
         $sql.= " VALUES (".$this->fk_supplier_proposal.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
         $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
@@ -2860,7 +2860,7 @@ class SupplierProposalLine  extends CommonObjectLine
 		$sql.= ", ".$this->multicurrency_total_ht;
 		$sql.= ", ".$this->multicurrency_total_tva;
 		$sql.= ", ".$this->multicurrency_total_ttc;
-        $sql.= ", fk_unit=".($this->fk_unit?$this->fk_unit:'null');
+        $sql.= ", ".($this->fk_unit?$this->fk_unit:'null');
 		$sql.= ')';
 
         dol_syslog(get_class($this).'::insert', LOG_DEBUG);
