@@ -185,8 +185,8 @@ class DoliDBPgsql extends DoliDB
 
 		        // we are inside create table statement so lets process datatypes
     			if (preg_match('/(ISAM|innodb)/i',$line)) { // end of create table sequence
-    				$line=preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
-    				$line=preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
+    				$line=preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb).*;/i',');',$line);
+    				$line=preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb).*;/i',');',$line);
     				$line=preg_replace('/,$/','',$line);
     			}
 
