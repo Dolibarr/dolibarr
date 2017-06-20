@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=#tag/Kategorie
 Rubriques=#tags/Kategorien
+RubriquesTransactions=Tags/Kategorien der Transaktionen
 categories=Tags/Kategorien
 NoCategoryYet=Keine Kategorie/#tags dieser Art erstellt
 In=In
@@ -34,7 +35,7 @@ CompanyIsInSuppliersCategories=Dieser Parnter ist folgenden Lieferanten- Kategor
 MemberIsInCategories=Dieses Mitglied ist folgenden Mitglieder- Kategorien/#tags zugewiesen
 ContactIsInCategories=Dieser Kontakt ist folgenden Kontakte- Kategorien/#tags verknüpft
 ProductHasNoCategory=Dieses Produkt/Leistung ist keiner Kategorie zugewiesen.
-CompanyHasNoCategory=This third party is not in any tags/categories
+CompanyHasNoCategory=Der Partner ist in keinen Tags/Kategorien
 MemberHasNoCategory= Dieses Mitglied ist keiner Kategorie zugewiesen.
 ContactHasNoCategory= Dieser Kontakt ist keiner Kategorie zugewiesen.
 ProjectHasNoCategory=Dieses Projekt ist keiner Kategorie oder Suchwörtern zugewiesen.
@@ -44,7 +45,7 @@ CategoryExistsAtSameLevel=Diese Kategorie existiert bereits auf diesem Level
 ContentsVisibleByAllShort=Öffentlicher Inhalt
 ContentsNotVisibleByAllShort=Privater Inhalt
 DeleteCategory=Lösche Kategorie
-ConfirmDeleteCategory=Möchten Sie diese Kategorie wirklich löschen?
+ConfirmDeleteCategory=Möchten Sie dieses Tag / Kategorie wirklich löschen ?
 NoCategoriesDefined=Keine Kategorie definiert
 SuppliersCategoryShort=Lieferantenkategorien
 CustomersCategoryShort=Kunden-Kategorie/#tag

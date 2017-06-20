@@ -31,6 +31,7 @@ require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 $langs->load("compta");
 $langs->load("bills");

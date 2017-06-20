@@ -1,13 +1,13 @@
 <?php
 /* Copyright (C) 2007-2010  Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010  Jean Heimburger			<jean@tiaris.info>
- * Copyright (C) 2011	   Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012	   Regis Houssin			<regis@dolibarr.fr>
- * Copyright (C) 2013	   Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2011       Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2013       Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2017  Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2013-2016  Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016  Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2014	   Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014       Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,9 +150,9 @@ if ($result) {
 		$compta_tva = (! empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
 
 		// Define array to display all VAT rates that use this accounting account $compta_tva
-		if ((! price2num($obj->tva_tx)) || ! empty($obj->vat_src_code))
+        if (price2num($obj->tva_tx) || ! empty($obj->vat_src_code))
 		{
-            $def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code?' ('.$obj->vat_src_code.')':'')]=(vatrate($obj->tva_tx).($obj->vat_src_code?' ('.$obj->vat_src_code.')':''));
+			$def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code?' ('.$obj->vat_src_code.')':'')]=(vatrate($obj->tva_tx).($obj->vat_src_code?' ('.$obj->vat_src_code.')':''));
 		}
 
 		// Situation invoices handling
@@ -239,7 +239,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 					$bookkeeping->subledger_label = '';    // TODO To complete
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
-					$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("subledger_account");
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("subledger_account");
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
@@ -286,7 +286,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
-						$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label;
+						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 						$bookkeeping->debit = ($mt < 0) ? $mt : 0;
@@ -332,7 +332,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->subledger_account = '';
 					$bookkeeping->subledger_label = '';
 					$bookkeeping->numero_compte = $k;
-					$bookkeeping->label_compte = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT").' '.join(', ',$def_tva[$key][$k]);
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT").' '.join(', ',$def_tva[$key][$k]);
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt < 0) ? $mt : 0;
@@ -591,7 +591,7 @@ if (empty($action) || $action == 'view') {
 	print "<td>" . $langs->trans("Date") . "</td>";
 	print "<td>" . $langs->trans("Piece") . ' (' . $langs->trans("InvoiceRef") . ")</td>";
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
-	print "<td>" . $langs->trans("Type") . "</td>";
+	print "<td>" . $langs->trans("Label") . "</td>";
 	print "<td align='right'>" . $langs->trans("Debit") . "</td>";
 	print "<td align='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
@@ -616,7 +616,6 @@ if (empty($action) || $action == 'view') {
 			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
-			$companystatic->client = $tabcompany[$key]['code_client'];
 			$companystatic->client = $tabcompany[$key]['code_client'];
 			print "<td>";
 			$accountoshow = length_accounta($k);
@@ -675,7 +674,8 @@ if (empty($action) || $action == 'view') {
 				}
 				else print $accountoshow;
 				print "</td>";
-				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT") . ' '.join(', ',$def_tva[$key][$k]). "</td>";
+				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]);
+				print "</td>";
 				// print "<td>" . $langs->trans("VAT") . "</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";

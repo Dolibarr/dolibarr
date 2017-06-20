@@ -152,9 +152,6 @@ if ($action == 'buildnewpassword' && $username)
  * View
  */
 
-$php_self = $_SERVER['PHP_SELF'];
-$php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
-
 $dol_url_root = DOL_URL_ROOT;
 
 // Title

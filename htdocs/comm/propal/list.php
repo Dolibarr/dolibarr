@@ -275,25 +275,25 @@ if (! $user->rights->societe->client->voir && ! $socid) //restriction
 	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
-if ($search_zip)   $sql.= natural_search("s.zip",$search_zip);
-if ($search_state) $sql.= natural_search("state.nom",$search_state);
-if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
-if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
-if ($search_ref)   $sql .= natural_search('p.ref', $search_ref);
+if ($search_zip)   $sql.= natural_search("s.zip", $search_zip);
+if ($search_state) $sql.= natural_search("state.nom", $search_state);
+if ($search_country) $sql .= " AND s.fk_pays IN (".$db->escape($search_country).')';
+if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
+if ($search_ref)         $sql .= natural_search('p.ref', $search_ref);
 if ($search_refcustomer) $sql .= natural_search('p.ref_client', $search_refcustomer);
-if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
-if ($search_login) $sql.= " AND u.login LIKE '%".$db->escape(trim($search_login))."%'";
+if ($search_societe)     $sql .= natural_search('s.nom', $search_societe);
+if ($search_login)       $sql .= natural_search("u.login", $search_login);
 if ($search_montant_ht != '')  $sql.= natural_search("p.total_ht", $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql.= natural_search("p.tva", $search_montant_vat, 1);
 if ($search_montant_ttc != '') $sql.= natural_search("p.total", $search_montant_ttc, 1);
 if ($sall) {
     $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
-if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
+if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$db->escape($search_product_category);
 if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
 if ($viewstatut != '' && $viewstatut != '-1')
 {
-	$sql.= ' AND p.fk_statut IN ('.$viewstatut.')';
+	$sql.= ' AND p.fk_statut IN ('.$db->escape($viewstatut).')';
 }
 if ($month > 0)
 {
@@ -302,16 +302,16 @@ if ($month > 0)
     else if ($year > 0 && ! empty($day))
     $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
     else
-    $sql.= " AND date_format(p.datep, '%m') = '".$month."'";
+    $sql.= " AND date_format(p.datep, '%m') = '".$db->escape($month)."'";
 }
 else if ($year > 0)
 {
 	$sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
-if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
+if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$db->escape($search_sale);
 if ($search_user > 0)
 {
-    $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
+    $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$db->escape($search_user);
 }
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
@@ -365,23 +365,24 @@ if ($resql)
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
-	$param='&viewstatut='.$viewstatut;
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($sall)				 $param.='&sall='.$sall;
-	if ($month)              $param.='&month='.$month;
-	if ($year)               $param.='&year='.$year;
-    if ($search_ref)         $param.='&search_ref=' .$search_ref;
-    if ($search_refcustomer) $param.='&search_refcustomer=' .$search_refcustomer;
-    if ($search_societe)     $param.='&search_societe=' .$search_societe;
-	if ($search_user > 0)    $param.='&search_user='.$search_user;
-	if ($search_sale > 0)    $param.='&search_sale='.$search_sale;
-	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
-	if ($search_login)  	 $param.='&search_login='.$search_login;
-	if ($search_town)		 $param.='&search_town='.$search_town;
-	if ($search_zip)		 $param.='&search_zip='.$search_zip;
-	if ($socid > 0)          $param.='&socid='.$socid;
-	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+	$param='&viewstatut='.urlencode($viewstatut);
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if ($sall)				 $param.='&sall='.urlencode($sall);
+	if ($month)              $param.='&month='.urlencode($month);
+	if ($year)               $param.='&year='.urlencode($year);
+    if ($search_ref)         $param.='&search_ref='.urlencode($search_ref);
+    if ($search_refcustomer) $param.='&search_refcustomer='.urlencode($search_refcustomer);
+    if ($search_societe)     $param.='&search_societe='.urlencode($search_societe);
+	if ($search_user > 0)    $param.='&search_user='.urlencode($search_user);
+	if ($search_sale > 0)    $param.='&search_sale='.urlencode($search_sale);
+	if ($search_montant_ht)  $param.='&search_montant_ht='.urlencode($search_montant_ht);
+	if ($search_login)  	 $param.='&search_login='.urlencode($search_login);
+	if ($search_town)		 $param.='&search_town='.urlencode($search_town);
+	if ($search_zip)		 $param.='&search_zip='.urlencode($search_zip);
+	if ($socid > 0)          $param.='&socid='.urlencode($socid);
+	if ($optioncss != '')    $param.='&optioncss='.urlencode($optioncss);
+
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
 	{
@@ -731,7 +732,9 @@ if ($resql)
            if (! empty($arrayfields["ef.".$key]['checked']))
            {
 				$align=$extrafields->getAlignFlag($key);
-				print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			$sortonfield = "ef.".$key;
+    			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
            }
 	   }
 	}

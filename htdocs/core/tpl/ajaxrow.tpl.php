@@ -63,7 +63,7 @@ $(document).ready(function(){
 					function() {
 						console.log("tableDND end of ajax call");
 						if (reloadpage == 1) {
-							location.href = '<?php echo $_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING']; ?>';
+							location.href = '<?php echo dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']); ?>';
 						} else {
 							$("#<?php echo $tagidfortablednd; ?> .drag").each(
 									function( intIndex ) {

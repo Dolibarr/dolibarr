@@ -39,7 +39,7 @@ ConfirmCloseService=Möchten Sie diesen Service wirklich mit Datum <b>%s</b> dea
 ValidateAContract=Einen Vertrag freigeben
 ActivateService=Service aktivieren
 ConfirmActivateService=Möchten Sie dieses Service wirklich mit Datum <b>%s</b> aktivieren?
-RefContract=Vertragsnummer
+RefContract=Vertrag Nr.
 DateContract=Vertragsdatum
 DateServiceActivate=Service-Aktivierungsdatum
 ShowContract=Zeige Vertrag
@@ -83,6 +83,8 @@ NoteListOfYourExpiredServices=Diese Liste enthält nur Leistungen an Partner, be
 StandardContractsTemplate=Standard Vertragsschablone 
 ContactNameAndSignature=Für %s, Name und Unterschrift
 OnlyLinesWithTypeServiceAreUsed=Nur die Zeile der Kategorie "Service" wird kopiert.
+CloneContract=Dupliziere Vertrag
+ConfirmCloneContract=Möchten Sie den Vertrag <b>%s</b> wirklich duplizieren?
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Vertragsunterzeichnung durch Vertreter

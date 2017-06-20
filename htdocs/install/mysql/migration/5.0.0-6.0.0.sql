@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 5.0.0 or higher.
+-- when current version is 6.0.0 or higher.
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
@@ -25,6 +25,8 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+-- VMYSQL4.1 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT '2001-01-01 00:00:00';
+
 -- Clean corrupted values for tms
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_opensurvey_sondage set tms = date_fin where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
@@ -34,13 +36,7 @@
 -- VMYSQL4.3 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN date_fin DATETIME NULL DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_opensurvey_sondage ALTER COLUMN date_fin DROP NOT NULL;
 
-
-ALTER TABLE llx_extrafields ADD COLUMN fieldcomputed text;
-ALTER TABLE llx_extrafields ADD COLUMN fielddefault varchar(255);
-
-ALTER TABLE llx_c_typent MODIFY COLUMN libelle varchar(64); 
-
-ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
+-- VMYSQL4.1 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN fk_user_creat integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN status integer DEFAULT 1 after date_fin;
@@ -48,6 +44,12 @@ ALTER TABLE llx_opensurvey_sondage ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_comments tinyint NOT NULL DEFAULT 1;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_spy tinyint NOT NULL DEFAULT 1 AFTER allow_comments;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN sujet TEXT;
+
+
+ALTER TABLE llx_extrafields ADD COLUMN fieldcomputed text;
+ALTER TABLE llx_extrafields ADD COLUMN fielddefault varchar(255);
+
+ALTER TABLE llx_c_typent MODIFY COLUMN libelle varchar(64); 
 
 
 create table llx_notify_def_object
@@ -96,6 +98,14 @@ ALTER TABLE llx_actioncomm ADD COLUMN extraparams			varchar(255);
 
 
 ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);	
+
+-- VMYSQL4.1 ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer USING state_id::integer;
+
+-- VMYSQL4.1 ALTER TABLE llx_adherent MODIFY COLUMN state_id integer DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_adherent MODIFY COLUMN state_id integer USING state_id::integer;
+-- VMYSQL4.1 ALTER TABLE llx_adherent MODIFY COLUMN country integer DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_adherent MODIFY COLUMN country integer USING country::integer;
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_CREATE','Product or service created','Executed when a product or sevice is created','product',30);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_MODIFY','Product or service modified','Executed when a product or sevice is modified','product',30);
@@ -213,6 +223,46 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN lettering_code varchar(255) AF
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_lettering datetime AFTER lettering_code;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN journal_label varchar(255) AFTER code_journal;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_validated datetime AFTER validated;
+
+CREATE TABLE llx_accounting_bookkeeping_tmp 
+(
+  rowid                 integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  entity                integer DEFAULT 1 NOT NULL,	-- 					| multi company id
+  doc_date              date NOT NULL,				-- FEC:PieceDate
+  doc_type              varchar(30) NOT NULL,		-- FEC:PieceRef		| facture_client/reglement_client/facture_fournisseur/reglement_fournisseur
+  doc_ref               varchar(300) NOT NULL,		-- 					| facture_client/reglement_client/... reference number
+  fk_doc                integer NOT NULL,			-- 					| facture_client/reglement_client/... rowid
+  fk_docdet             integer NOT NULL,			-- 					| facture_client/reglement_client/... line rowid
+  thirdparty_code       varchar(32),				-- Third party code (customer or supplier) when record is saved (may help debug) 
+  subledger_account     varchar(32),				-- FEC:CompAuxNum	| account number of subledger account
+  subledger_label       varchar(255),				-- FEC:CompAuxLib	| label of subledger account
+  numero_compte         varchar(32) NOT NULL,		-- FEC:CompteNum	| account number
+  label_compte          varchar(255) NOT NULL,		-- FEC:CompteLib	| label of account
+  label_operation       varchar(255),				-- FEC:EcritureLib	| label of the operation
+  debit                 numeric(24,8) NOT NULL,		-- FEC:Debit
+  credit                numeric(24,8) NOT NULL,		-- FEC:Credit
+  montant               numeric(24,8) NOT NULL,		-- FEC:Montant (Not necessary)
+  sens                  varchar(1) DEFAULT NULL,	-- FEC:Sens (Not necessary)
+  multicurrency_amount  numeric(24,8),				-- FEC:Montantdevise
+  multicurrency_code    varchar(255),				-- FEC:Idevise
+  lettering_code        varchar(255),				-- FEC:EcritureLet
+  date_lettering        datetime,					-- FEC:DateLet
+  fk_user_author        integer NOT NULL,			-- 					| user creating
+  fk_user_modif         integer,					-- 					| user making last change
+  date_creation         datetime,					-- FEC:EcritureDate	| creation date
+  tms                   timestamp,					--					| date last modification 
+  import_key            varchar(14),
+  code_journal          varchar(32) NOT NULL,		-- FEC:JournalCode
+  journal_label         varchar(255),				-- FEC:JournalLib
+  piece_num             integer NOT NULL,			-- FEC:EcritureNum
+  validated             tinyint DEFAULT 0 NOT NULL,	-- 					| 0 line not validated / 1 line validated (No deleting / No modification) 
+  date_validated        datetime					-- FEC:ValidDate
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_doc_date (doc_date);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_fk_docdet (fk_docdet);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_numero_compte (numero_compte);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_code_journal (code_journal);
 
 ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
 
@@ -416,7 +466,7 @@ ALTER TABLE llx_usergroup_rights ADD CONSTRAINT fk_usergroup_rights_fk_usergroup
 CREATE TABLE llx_blockedlog 
 ( 
 	rowid integer AUTO_INCREMENT PRIMARY KEY, 
-	tms	timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	tms	timestamp,
 	action varchar(50), 
 	amounts real NOT NULL, 
 	signature varchar(100) NOT NULL, 

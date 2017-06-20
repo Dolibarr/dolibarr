@@ -275,9 +275,11 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	if (empty($method) || $method == 3 || $method == 4)
 	{
     	$relativepathstring = $_SERVER["PHP_SELF"];
+    	// Clean $relativepathstring
     	if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
-    	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
     	$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+    	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+    	//var_dump($relativepathstring);
 
         // Code for search criteria persistence.
     	// Retrieve values if restore_lastsearch_values is set and there is saved values
@@ -406,9 +408,6 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	            break;
 	        case 'int':
 	            if (! is_numeric($out)) { $out=''; }
-	            break;
-	        case 'intcomma':
-	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
 	            break;
 	        case 'intcomma':
 	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
@@ -3167,8 +3166,8 @@ function dol_print_error($db='',$error='',$errors=null)
 		$out.="<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"])?dol_htmlentities($_SERVER["HTTP_REFERER"],ENT_COMPAT,'UTF-8'):'')."<br>\n";
 		$out.="<b>".$langs->trans("MenuManager").":</b> ".(isset($conf->standard_menu)?$conf->standard_menu:'')."<br>\n";
 		$out.="<br>\n";
-		$syslog.="url=".$_SERVER["REQUEST_URI"];
-		$syslog.=", query_string=".$_SERVER["QUERY_STRING"];
+		$syslog.="url=".dol_escape_htmltag($_SERVER["REQUEST_URI"]);
+		$syslog.=", query_string=".dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 	}
 	else                              // Mode CLI
 	{

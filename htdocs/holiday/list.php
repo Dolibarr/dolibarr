@@ -138,7 +138,7 @@ if($year_start > 0) {
     }
 } else {
     if($month_start > 0) {
-        $filter.= " AND date_format(cp.date_debut, '%m') = '$month_start'";
+        $filter.= " AND date_format(cp.date_debut, '%m') = '".$db->escape($month_start)."'";
     }
 }
 
@@ -153,7 +153,7 @@ if($year_end > 0) {
     }
 } else {
     if($month_end > 0) {
-        $filter.= " AND date_format(cp.date_fin, '%m') = '$month_end'";
+        $filter.= " AND date_format(cp.date_fin, '%m') = '".$db->escape($month_end)."'";
     }
 }
 
@@ -168,7 +168,7 @@ if($year_create > 0) {
     }
 } else {
     if($month_create > 0) {
-        $filter.= " AND date_format(cp.date_create, '%m') = '$month_create'";
+        $filter.= " AND date_format(cp.date_create, '%m') = '".$db->escape($month_create)."'";
     }
 }
 
@@ -302,7 +302,7 @@ print '</td>';
 
 // DATE CREATE
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="month_create" value="'.$month_create.'">';
+print '<input class="flat" type="text" size="1" maxlength="2" name="month_create" value="'.dol_escape_htmltag($month_create).'">';
 $formother->select_year($year_create,'year_create',1, $min_year, 0);
 print '</td>';
 
@@ -357,13 +357,13 @@ print '<td class="liste_titre">&nbsp;</td>';
 
 // DATE DEBUT
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.$month_start.'">';
+print '<input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.dol_escape_htmltag($month_start).'">';
 $formother->select_year($year_start,'year_start',1, $min_year, $max_year);
 print '</td>';
 
 // DATE FIN
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
+print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.dol_escape_htmltag($month_end).'">';
 $formother->select_year($year_end,'year_end',1, $min_year, $max_year);
 print '</td>';
 
