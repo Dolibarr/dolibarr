@@ -28,6 +28,9 @@ if (GETPOST('dol_use_jmobile')) $conf->dol_use_jmobile=1;
 // If we force to use jmobile, then we reenable javascript
 if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
 
+$php_self = dol_escape_htmltag($_SERVER['PHP_SELF']);
+$php_self.= dol_escape_htmltag($_SERVER["QUERY_STRING"])?'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]):'';
+
 print top_htmlhead('',$langs->trans('SendNewPassword'));
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
@@ -94,7 +97,7 @@ if (! empty($hookmanager->resArray['options'])) {
 }
 ?>
 
-<?php if ($captcha) { 
+<?php if ($captcha) {
 		// Add a variable param to force not using cache (jmobile)
 		$php_self = preg_replace('/[&\?]time=(\d+)/','',$php_self);	// Remove param time
 		if (preg_match('/\?/',$php_self)) $php_self.='&time='.dol_print_date(dol_now(),'dayhourlog');
@@ -129,7 +132,7 @@ if (! empty($hookmanager->resArray['options'])) {
 <div id="login_line2" style="clear: both">
 
 <!-- Button Send password -->
-<br><input id="password" type="submit" <?php echo $disabled; ?> class="button" name="password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
+<br><input type="submit" <?php echo $disabled; ?> class="button" name="password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
 <div align="center" style="margin-top: 8px;">
