@@ -279,9 +279,11 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	if (empty($method) || $method == 3 || $method == 4)
 	{
     	$relativepathstring = $_SERVER["PHP_SELF"];
+    	// Clean $relativepathstring
     	if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
-    	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
     	$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+    	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+    	//var_dump($relativepathstring);
 
         // Code for search criteria persistence.
     	// Retrieve values if restore_lastsearch_values is set and there is saved values

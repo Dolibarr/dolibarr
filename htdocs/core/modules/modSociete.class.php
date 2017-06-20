@@ -416,7 +416,7 @@ class modSociete extends DolibarrModules
 		$this->import_tables_array[$r]=array('sr'=>MAIN_DB_PREFIX.'societe_rib');
 		$this->import_fields_array[$r]=array('sr.fk_soc'=>"ThirdPartyName*",'sr.bank'=>"Bank",
 				'sr.code_banque'=>"BankCode*",'sr.code_guichet'=>"DeskCode*",'sr.number'=>"BankAccountNumber*",
-				'sr.cle_rib'=>"BankAccountNumberKey*",'sr.bic'=>"BIC",'sr.iban_prefix'=>"IBAN"
+				'sr.cle_rib'=>"BankAccountNumberKey*",'sr.bic'=>"BIC",'sr.iban_prefix'=>"IBAN", 'sr.domiciliation'=>"BankAccountDomiciliation",'sr.proprio' => "BankAccountOwner", 'sr.owner_address' => "BankAccountOwnerAddress", 'sr.default_rib' => 'Default'
 		);
 
 		$this->import_convertvalue_array[$r]=array(
@@ -424,7 +424,7 @@ class modSociete extends DolibarrModules
 		);
 		$this->import_examplevalues_array[$r]=array('sr.fk_soc'=>"MyBigCompany",'sr.bank'=>"ING",
 				'sr.code_banque'=>"0000", 'sr.code_guichet'=>"1111",'sr.number'=>"3333333333",
-				'sr.cle_rib'=>"22",'sr.bic'=>"USHINGMMXXX",'sr.iban_prefix'=>"US00 0000 1111 22 3333 3333"
+				'sr.cle_rib'=>"22",'sr.bic'=>"USHINGMMXXX",'sr.iban_prefix'=>"US00 0000 1111 22 3333 3333",'sr.domiciliation'=>"PARIS",'sr.proprio' => "Name of owner", 'sr.owner_address' => "15 paris street 75000 Paris", 'sr.default_rib' => '1 or 0'
 		);
 
 		// Import Company Salesman

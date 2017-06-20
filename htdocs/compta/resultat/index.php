@@ -680,7 +680,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		if($mois>12) {$annee_decalage=$annee+1;}
 		$case = strftime("%Y-%m",dol_mktime(12,0,0,$mois_modulo,1,$annee_decalage));
 
-		print '<td class="liste_titre" align="right">&nbsp;';
+		print '<td align="right">&nbsp;';
 		if (isset($decaiss_ttc[$case]) && $decaiss_ttc[$case] != 0)
 		{
 			print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price(price2num($decaiss_ttc[$case],'MT')).'</a>';
@@ -689,7 +689,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		}
 		print "</td>";
 
-		print '<td align="right" class="liste_titre borderrightlight">&nbsp;';
+		print '<td align="right" class="borderrightlight">&nbsp;';
 		//if (isset($encaiss_ttc[$case]) && $encaiss_ttc[$case] != 0)
 		if (isset($encaiss_ttc[$case]))
 		{

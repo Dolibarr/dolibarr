@@ -11,6 +11,7 @@ YourEMail=E-mail de confirmare de plată
 Creditor=Creditor
 PaymentCode=Cod Plata
 PayBoxDoPayment=Du-te la plată
+ToPay=Emite plata
 YouWillBeRedirectedOnPayBox=Veţi fi redirecţionat pe pagina Paybox securizat la intrare ai card de credit Informatii
 Continue=Următorul
 ToOfferALinkForOnlinePayment=URL-ul pentru plata %s

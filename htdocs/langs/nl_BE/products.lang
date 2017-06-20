@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - products
 Reference=Artikelcode
-ProductsOnSell=Beschikbaar voor verkoop
 ProductsNotOnSell=Niet beschikbaar voor verkoop
 ServicesNotOnSell=Geen diensten vatbaar voor verkoop
 OnSell=Te koop

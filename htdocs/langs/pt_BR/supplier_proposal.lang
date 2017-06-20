@@ -44,7 +44,6 @@ CommercialAsk=Solicitação de preço
 DefaultModelSupplierProposalCreate=Criação de modelo padrão
 DefaultModelSupplierProposalToBill=Tema padrão quando fechando uma solicitação de preço (aceita)
 DefaultModelSupplierProposalClosed=Tema padrão quando fechando uma solicitação de preço (recusada)
-ListOfSupplierProposal=Lista de solicitações de proposta a fornecedor
 ListSupplierProposalsAssociatedProject=Lista de propostas de fornecedores associadas ao projeto
 SupplierProposalsToClose=Propostas a fornecedor a encerrar
 SupplierProposalsToProcess=Propostas a fornecedor a tratar
