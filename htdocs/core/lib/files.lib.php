@@ -1825,8 +1825,20 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	    $lire='creer'; $read='write'; $download='upload';
 	}
 
+	// Wrapping for miscellaneous medias files
+	if ($modulepart == 'medias' && !empty($dolibarr_main_data_root))
+	{
+	    $accessallowed=1;
+	    $original_file=$dolibarr_main_data_root.'/medias/'.$original_file;
+	}
+	// Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
+	elseif ($modulepart == 'logs' && !empty($dolibarr_main_data_root))
+	{
+	    $accessallowed=($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.log$/', basename($original_file)));
+	    $original_file=$dolibarr_main_data_root.'/'.$original_file;
+	}
 	// Wrapping for some images
-	if (($modulepart == 'mycompany' || $modulepart == 'companylogo') && !empty($conf->mycompany->dir_output))
+	elseif (($modulepart == 'mycompany' || $modulepart == 'companylogo') && !empty($conf->mycompany->dir_output))
 	{
 		$accessallowed=1;
 		$original_file=$conf->mycompany->dir_output.'/logos/'.$original_file;
@@ -2367,13 +2379,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	{
 		$accessallowed=1;
 		$original_file=$conf->fckeditor->dir_output.'/'.$original_file;
-	}
-
-	// Wrapping for miscellaneous medias files
-	elseif ($modulepart == 'medias' && !empty($dolibarr_main_data_root))
-	{
-	    $accessallowed=1;
-	    $original_file=$dolibarr_main_data_root.'/medias/'.$original_file;
 	}
 
 	// Wrapping for backups
