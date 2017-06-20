@@ -65,7 +65,7 @@ create table llx_actioncomm
   errors_to			varchar(256),					-- when event was an email, we store here the erros_to
   
   recurid           varchar(128),                   -- used to store event id to link each other all the repeating event record
-  recurrule         varchar(128),					-- contains string with ical format recurring rule like "FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=19" or "FREQ=WEEKLY;BYDAY=MO"
+  recurrule         varchar(128),					-- contains string with ical format recurring rule like 'FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=19' or 'FREQ=WEEKLY;BYDAY=MO'
   recurdateend      datetime,						-- no more recurring event after this date
      
   fk_element		integer DEFAULT NULL,			-- For link to an element (proposal, invoice, order, ...)

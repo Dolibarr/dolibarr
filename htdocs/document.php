@@ -26,6 +26,7 @@
  *  \brief      Wrapper to download data files
  *  \remarks    Call of this wrapper is made with URL:
  * 				document.php?modulepart=repfichierconcerne&file=pathrelatifdufichier
+ * 				document.php?modulepart=logs&file=dolibarr.log
  */
 
 define('NOTOKENRENEWAL',1); // Disables token renewal
@@ -106,7 +107,7 @@ $refname=basename(dirname($original_file)."/");
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
-$check_access = dol_check_secure_access_document($modulepart,$original_file,$entity,$refname);
+$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $original_file              = $check_access['original_file'];               // original_file is now a full path name
@@ -183,7 +184,7 @@ header('Pragma: public');
 
 //ob_clean();
 //flush();
-    
+
 readfile($original_file_osencoded);
 
 if (is_object($db)) $db->close();
