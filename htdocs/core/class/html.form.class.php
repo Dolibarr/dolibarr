@@ -995,7 +995,7 @@ class Form
     			unset($societetmp);
     		}
     		// mode 1
-    		$urloption='htmlname='.$htmlname.'&outjson=1&filter='.$filter;
+    		$urloption='htmlname='.$htmlname.'&outjson=1&filter='.$filter.($showtype?'&showtype='.$showtype:'');
     		$out.=  ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 			$out.='<style type="text/css">
 					.ui-autocomplete {
@@ -3461,7 +3461,7 @@ class Form
             $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
 		}
 
-        $output = '<select class="flat" name="'.$htmlname.'">';
+        $output = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 		$outarray=array();
         if (is_array($cate_arbo))
         {

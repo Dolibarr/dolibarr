@@ -37,6 +37,7 @@ $langs->load("margins");
 $socid = GETPOST('socid','int');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
+$result = restrictedArea($user,'margins');
 
 
 $mesg = '';

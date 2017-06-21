@@ -1477,7 +1477,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '</td>';
 	} else {
 		print '<td>';
-		print $form->select_company('', 'socid', 's.client = 1 OR s.client = 3', 'SelectThirdParty');
+		print $form->select_company('', 'socid', 's.client = 1 OR s.client = 3', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		// reload page to retrieve customer informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
 		{

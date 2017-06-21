@@ -1436,7 +1436,7 @@ if ($action=='create')
 	}
 	else
 	{
-		print $form->select_company((empty($socid)?'':$socid), 'socid', 's.fournisseur = 1', 'SelectThirdParty');
+		print $form->select_company((empty($socid)?'':$socid), 'socid', 's.fournisseur = 1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
         // reload page to retrieve customer informations
         if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE))
         {
