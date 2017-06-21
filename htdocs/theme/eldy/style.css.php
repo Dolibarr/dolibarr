@@ -4043,11 +4043,14 @@ a span.select2-chosen
 .css-searchselectcombo ul.select2-results {
 	max-height:	none;
 }
-.select2-container-multi.select2-container-disabled .select2-choices {
+.select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;
 	background-image: none;
 	border: none;
 	cursor: default;
+}
+.select2-container-disabled .select2-choice .select2-arrow b {
+	opacity: 0.5;
 }
 .select2-container-multi .select2-choices .select2-search-choice {
   margin-bottom: 3px;

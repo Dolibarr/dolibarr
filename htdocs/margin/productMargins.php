@@ -43,6 +43,7 @@ $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
+$result=restrictedArea($user,'margins');
 
 $mesg = '';
 
