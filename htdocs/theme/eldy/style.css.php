@@ -283,7 +283,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-family: <?php print $fontlist ?>;
     outline: none;
     margin: 0px 0px 0px 0px;
-    border-bottom: solid 1px rgba(0,0,0,.4);
+    border-bottom: solid 1px rgba(0,0,0,.2);
 }
 
 input {
