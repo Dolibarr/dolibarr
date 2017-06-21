@@ -3455,7 +3455,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
  *	@param	string	    $titre				Title to show (required)
  *	@param	int   	    $page				Numero of page to show in navigation links (required)
  *	@param	string	    $file				Url of page (required)
- *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder)
+ *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder). Value must be 'urlencoded' before calling function.
  *	@param	string    	$sortfield       	Field to sort on ('' by default)
  *	@param	string	    $sortorder       	Order to sort ('' by default)
  *	@param	string	    $center          	String in the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction()
