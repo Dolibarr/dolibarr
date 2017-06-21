@@ -88,7 +88,7 @@ if ($action == 'set')
 
 	$newActiveModules = array();
 	$selectedModules = (isset($_POST['SYSLOG_HANDLERS']) ? $_POST['SYSLOG_HANDLERS'] : array());
-	
+
 	// Save options of handler
 	foreach ($syslogModules as $syslogHandler)
 	{
@@ -111,7 +111,7 @@ if ($action == 'set')
 
 	$activeModules = $newActiveModules;
 
-    dolibarr_del_const($db, 'SYSLOG_HANDLERS', -1);  // To be sure ther is not a setup into another entity	
+    dolibarr_del_const($db, 'SYSLOG_HANDLERS', -1);  // To be sure ther is not a setup into another entity
     dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine',0,'',0);
 
 	// Check configuration
@@ -206,7 +206,7 @@ foreach ($syslogModules as $moduleName)
 	//print $moduleName." = ".$moduleactive." - ".$module->getName()." ".($moduleactive == -1)."<br>\n";
 	if (($moduleactive == -1) && empty($conf->global->MAIN_FEATURES_LEVEL)) continue;		// Some modules are hidden if not activable and not into debug mode (end user must not see them)
 
-	
+
 	print '<tr class="oddeven">';
 	print '<td width="140">';
 	print '<input class="oddeven" type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked' : '').($moduleactive <= 0 ? 'disabled' : '').'> ';
@@ -229,6 +229,14 @@ foreach ($syslogModules as $moduleName)
 
 			print $option['name'].': <input type="text" class="flat" name="'.$option['constant'].'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
 			if (! empty($option['example'])) print '<br>'.$langs->trans("Example").': '.$option['example'];
+
+			if ($option['constant'] == 'SYSLOG_FILE' && preg_match('/^DOL_DATA_ROOT\/[^\/]*$/',$value))
+			{
+    			$filelogparam =' (<a href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file='.basename($value).'">';
+    			$filelogparam.=$langs->trans('Download');
+    			$filelogparam.=$filelog.'</a>)';
+    			print $filelogparam;
+			}
 		}
 	}
 	print '</td>';

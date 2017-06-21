@@ -169,7 +169,7 @@ class DoliDBPgsql extends DoliDB
 			$line = preg_replace('/ SEPARATOR/i', ',', $line);
 			$line = preg_replace('/STRING_AGG\(([^,\)]+)\)/i', 'STRING_AGG(\\1, \',\')', $line);
 			//print $line."\n";
-					
+
 		    if ($type == 'auto')
 		    {
               if (preg_match('/ALTER TABLE/i',$line)) $type='dml';
@@ -185,8 +185,8 @@ class DoliDBPgsql extends DoliDB
 
 		        // we are inside create table statement so lets process datatypes
     			if (preg_match('/(ISAM|innodb)/i',$line)) { // end of create table sequence
-    				$line=preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
-    				$line=preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
+    				$line=preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb).*;/i',');',$line);
+    				$line=preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb).*;/i',');',$line);
     				$line=preg_replace('/,$/','',$line);
     			}
 
@@ -210,6 +210,7 @@ class DoliDBPgsql extends DoliDB
     			// tinytext/mediumtext -> text
     			$line=preg_replace('/tinytext/i','text',$line);
     			$line=preg_replace('/mediumtext/i','text',$line);
+    			$line=preg_replace('/longtext/i','text',$line);
 
     			$line=preg_replace('/text\([0-9]+\)/i','text',$line);
 
