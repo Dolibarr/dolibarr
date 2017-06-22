@@ -134,7 +134,7 @@ if ($result) {
 		$compta_tva = (! empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $account_vat);
 
 		// Define array to display all VAT rates that use this accounting account $compta_tva
-		if ((! price2num($obj->tva_tx)) || ! empty($obj->vat_src_code))
+		if (price2num($obj->tva_tx) || ! empty($obj->vat_src_code))
 		{
 			$def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code?' ('.$obj->vat_src_code.')':'')]=(vatrate($obj->tva_tx).($obj->vat_src_code?' ('.$obj->vat_src_code.')':''));
 		}

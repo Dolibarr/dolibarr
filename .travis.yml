@@ -2,6 +2,7 @@
 # from Dolibarr GitHub repository.
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
+dist: precise
 sudo: required
 
 language: php
@@ -10,7 +11,7 @@ php:
 - '5.3'
 - '5.4'
 - '5.5'
-- '5.6'
+- '5.6.29'
 - '7.0'
 - '7.1'
 - nightly
@@ -58,7 +59,7 @@ matrix:
   allow_failures:
   - php: 7.1
   - php: nightly
-  - env: DB=postgresql
+  #- env: DB=postgresql
   # TODO
   #- env: DB=sqlite
 
@@ -261,26 +262,22 @@ script:
   echo "Checking PHP syntax errors"
   # Ensure we catch errors
   set -e
-  #parallel-lint --exclude htdocs/includes --blame .
+  parallel-lint --exclude htdocs/includes --blame .
   set +e
   echo
-
-# TODO: dev/* checks
 
 - |
   echo "Checking coding style"
   # Ensure we catch errors
   set -e
   # Exclusions are defined in the ruleset.xml file
-  #phpcs -s -n -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 .
+  phpcs -s -n -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 .
   set +e
   echo
 
 # TODO: Check Javascript (jshint?)
 
 # TODO: Check CSS (csslint?)
-
-# TODO: check SQL syntax (pgsanity?)
 
 - |
   echo "Upgrading Dolibarr"

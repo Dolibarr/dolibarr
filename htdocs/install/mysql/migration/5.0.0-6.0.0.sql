@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 5.0.0 or higher.
+-- when current version is 6.0.0 or higher.
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
@@ -493,7 +493,7 @@ CREATE TABLE llx_blockedlog_authority
 	rowid integer AUTO_INCREMENT PRIMARY KEY, 
 	blockchain longtext NOT NULL,
 	signature varchar(100) NOT NULL,
-	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+	tms timestamp
 ) ENGINE=innodb;
 
 ALTER TABLE llx_blockedlog_authority ADD INDEX signature (signature);

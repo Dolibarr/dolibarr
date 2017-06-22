@@ -73,7 +73,7 @@ if ($action == 'validatehistory') {
 
 	// First clean corrupted data
 	$sqlclean = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
-	$sqlclean .= " SET fd.fk_code_ventilation = 0";
+	$sqlclean .= " SET fk_code_ventilation = 0";
 	$sqlclean .= ' WHERE fd.fk_code_ventilation NOT IN ';
 	$sqlclean .= '	(SELECT accnt.rowid ';
 	$sqlclean .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
@@ -91,7 +91,7 @@ if ($action == 'validatehistory') {
 		$sql1 .= " AND " . MAIN_DB_PREFIX . "facturedet.fk_code_ventilation = 0";
 	} else {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd, " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
-		$sql1 .= " SET fd.fk_code_ventilation = accnt.rowid";
+		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
 		$sql1 .= " WHERE fd.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS;
 		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_sell=accnt.account_number";
 		$sql1 .= " AND fd.fk_code_ventilation = 0";
@@ -113,7 +113,7 @@ if ($action == 'validatehistory') {
 	$db->begin();
 
 	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
-	$sql1 .= " SET fd.fk_code_ventilation = 0";
+	$sql1 .= " SET fk_code_ventilation = 0";
 	$sql1 .= ' WHERE fd.fk_code_ventilation NOT IN ';
 	$sql1 .= '	(SELECT accnt.rowid ';
 	$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
@@ -134,16 +134,16 @@ if ($action == 'validatehistory') {
 } elseif ($action == 'cleanaccountancycode') {
 	$error = 0;
 	$db->begin();
-	
+
 	// Now clean
 	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
-	$sql1.= " SET fd.fk_code_ventilation = 0";
+	$sql1.= " SET fk_code_ventilation = 0";
 	$sql1.= " WHERE fd.fk_facture IN ( SELECT f.rowid FROM " . MAIN_DB_PREFIX . "facture as f";
 	$sql1.= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($year_current, 1, false)) . "'";
 	$sql1.= " AND f.datef <= '" . $db->idate(dol_get_last_day($year_current, 12, false)) . "'";
 	$sql1.= " AND f.entity IN (" . getEntity('accountancy') . ")";
 	$sql1.=")";
-	
+
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
 
 	$resql1 = $db->query($sql1);
@@ -327,7 +327,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 		print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
 	}
 	print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
-	
+
 	$sql = "SELECT '" . $langs->trans("TotalVente") . "' AS total,";
 	for($i = 1; $i <= 12; $i ++) {
 		$sql .= "  SUM(" . $db->ifsql('MONTH(f.datef)=' . $i, 'fd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";

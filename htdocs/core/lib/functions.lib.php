@@ -3455,7 +3455,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
  *	@param	string	    $titre				Title to show (required)
  *	@param	int   	    $page				Numero of page to show in navigation links (required)
  *	@param	string	    $file				Url of page (required)
- *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder)
+ *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder). Value must be 'urlencoded' before calling function.
  *	@param	string    	$sortfield       	Field to sort on ('' by default)
  *	@param	string	    $sortorder       	Order to sort ('' by default)
  *	@param	string	    $center          	String in the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction()
@@ -6088,13 +6088,13 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 /**
  * Set focus onto field with selector
  *
- * @param 	string	$selector	Selector ('#id') to use to find the HTML input field that must get the autofocus. You must use a CSS selector, so unique id preceding with the '#' char.
+ * @param 	string	$selector	Selector ('#id' or 'input[name="ref"]') to use to find the HTML input field that must get the autofocus. You must use a CSS selector, so unique id preceding with the '#' char.
  * @return	string				HTML code to set focus
  */
 function dol_set_focus($selector)
 {
 	print "\n".'<!-- Set focus onto a specific field -->'."\n";
-	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() { jQuery("'.$selector.'").focus(); });</script>'."\n";
+	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() { jQuery("'.dol_escape_js($selector).'").focus(); });</script>'."\n";
 }
 
 
