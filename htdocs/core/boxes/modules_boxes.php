@@ -255,14 +255,14 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                     $out.= $s;
                 }
                 $out.= '</td>';
-                
+
                 if (! empty($conf->use_javascript_ajax))
                 {
                     $sublink='';
                     if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
                     if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
                     if (! empty($head['sublink']))  $sublink.= '</a>';
-                    
+
                     $out.= '<td class="nocellnopadd boxclose right nowraponall">';
                     $out.=$sublink;
                     // The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
@@ -273,7 +273,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                     $out.= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
                     $out.= '</td></tr></table>';
                 }
-                
+
                 $out.= "</tr>\n";
             }
 
@@ -285,10 +285,8 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                 {
                     if (isset($contents[$i]))
                     {
-                        
-
                         // TR
-                        if (isset($contents[$i][0]['tr'])) $out.= '<tr valign="top" '.$contents[$i][0]['tr'].'>';
+                        if (isset($contents[$i][0]['tr'])) $out.= '<tr class="tdtop" '.$contents[$i][0]['tr'].'>';
                         else $out.= '<tr class="oddeven">';
 
                         // Loop on each TD

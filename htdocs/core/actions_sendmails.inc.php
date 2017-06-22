@@ -447,7 +447,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("MailTo")), null, 'warnings');
-			dol_syslog('Try to send email with no recipiend defined', LOG_WARNING);
+			dol_syslog('Try to send email with no recipient defined', LOG_WARNING);
 			$action = 'presend';
 		}
 	}
