@@ -233,6 +233,20 @@ $num = count($holiday->holiday);
 $form = new Form($db);
 $formother = new FormOther($db);
 
+$param='';
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if ($optioncss != '') $param.='&optioncss='.$optioncss;
+
+print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
+if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
+
 if ($id > 0)
 {
 	$title = $langs->trans("User");
@@ -243,11 +257,9 @@ if ($id > 0)
 
     dol_banner_tab($fuser,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
-
     print '<div class="underbanner clearboth"></div>';
 
     print '<br>';
-
 }
 else
 {
@@ -274,17 +286,7 @@ print $out;
 dol_fiche_end();
 
 
-if ($id > 0) print '</br>';
-
-
-print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="list">';
-print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
-if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
+if ($id > 0) print '<br>';
 
 if ($sall)
 {
@@ -382,16 +384,16 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",'','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateCreateCP"),$_SERVER["PHP_SELF"],"cp.date_create","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"cp.fk_user","",'','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("ValidatorCP"),$_SERVER["PHP_SELF"],"cp.fk_validator","",'','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','','','align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",'','align="right"',$sortfield,$sortorder);
-print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("DateCreateCP"),$_SERVER["PHP_SELF"],"cp.date_create","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"cp.fk_user","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("ValidatorCP"),$_SERVER["PHP_SELF"],"cp.fk_validator","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','',$pram,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",$param,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
 // Lines
@@ -456,6 +458,7 @@ if ($result == '2')
 
 print '</table>';
 print '</div>';
+
 print '</form>';
 
 /*if ($user_id == $user->id)
