@@ -93,6 +93,16 @@ print '
         background-position-y: 16px;
         padding: 1em 15px 1em 40px;
     }
+    li.lilevel0 font.vsmenudisabled {
+        /* background-image: url(/dolibarr_dev/htdocs/theme/eldy/img/next.png) !important; */
+        background-repeat: no-repeat !important;
+        background-position-x: 10px;
+        background-position-y: 16px;
+        padding: 1em 15px 1em 40px;
+        background: #f8f8f8;
+        display: block;
+        font-size: 16px !important;
+    }
     li.lilevel1 {
         padding: 1em 15px 0.5em 40px;
         border-top: 1px solid #aaa;

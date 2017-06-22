@@ -139,10 +139,10 @@ if ($massaction == 'ventil') {
                 $sql = " UPDATE " . MAIN_DB_PREFIX . "expensereport_det";
                 $sql .= " SET fk_code_ventilation = " . $monCompte;
                 $sql .= " WHERE rowid = " . $monId;
-    
+
                 $accountventilated = new AccountingAccount($db);
                 $accountventilated->fetch($monCompte, '');
-    
+
                 dol_syslog('accountancy/expensereport/list.php:: sql=' . $sql, LOG_DEBUG);
                 if ($db->query($sql)) {
                     $msg.= '<div><font color="green">' . $langs->trans("LineOfExpenseReport") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '</font></div>';
@@ -152,7 +152,7 @@ if ($massaction == 'ventil') {
                     $ko++;
                 }
             }
-            
+
             $cpt++;
         }
         $msg.='</div>';
@@ -224,7 +224,7 @@ if ($result) {
 	$i = 0;
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
-	
+
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -237,8 +237,8 @@ if ($result) {
 	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
 	//if ($massaction == 'presend') $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('ventil', $arrayofmassactions, 1);
-	
-	
+
+
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -247,7 +247,7 @@ if ($result) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
-	
+
 	print_barre_liste($langs->trans("ExpenseReportLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
 	print $langs->trans("DescVentilTodoExpenseReport") . '</br><br>';
@@ -290,8 +290,8 @@ if ($result) {
 	if ($massactionbutton) $checkpicto=$form->showCheckAddButtons('checkforselect', 1);
 	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
 	print "</tr>\n";
-	
-	
+
+
 	$expensereport_static = new ExpenseReport($db);
 	$form = new Form($db);
 
@@ -323,7 +323,7 @@ if ($result) {
 		// Fees description -- Can be null
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments));
-		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
+		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->comments);
 		print '</td>';
 
@@ -356,7 +356,7 @@ if ($result) {
 
 	print '</table>';
 	print "</div>";
-	
+
 	print '</form>';
 } else {
 	print $db->error();
