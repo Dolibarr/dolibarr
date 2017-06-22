@@ -194,7 +194,7 @@ if (!empty($sall))
 
 if (empty($user->rights->holiday->read_all)) $filter.=' AND cp.fk_user IN ('.join(',',$childids).')';
 
-if ($type) $filter.=' AND cp.fk_type IN ('.$type.')';
+if ($type > 0) $filter.=' AND cp.fk_type IN ('.$db->escape($type).')';
 
 // Récupération de l'ID de l'utilisateur
 $user_id = $user->id;
@@ -206,17 +206,18 @@ if ($id > 0)
 	$fuser->getrights();
 	$user_id = $fuser->id;
 }
+
 // Récupération des congés payés de l'utilisateur ou de tous les users
 if (empty($user->rights->holiday->read_all) || $id > 0)
 {
-	$holiday_payes = $holiday->fetchByUser($user_id,$order,$filter);	// Load array $holiday->holiday
+	$result = $holiday->fetchByUser($user_id,$order,$filter);	// Load array $holiday->holiday
 }
 else
 {
-    $holiday_payes = $holiday->fetchAll($order,$filter);	// Load array $holiday->holiday
+    $result = $holiday->fetchAll($order,$filter);	// Load array $holiday->holiday
 }
 // Si erreur SQL
-if ($holiday_payes == '-1')
+if ($result == '-1')
 {
     print load_fiche_titre($langs->trans('CPTitreMenu'), '', 'title_hrm.png');
 
@@ -446,9 +447,9 @@ if (! empty($holiday->holiday))
 }
 
 // Si il n'y a pas d'enregistrement suite à une recherche
-if($holiday_payes == '2')
+if ($result == '2')
 {
-    print '<tr '.$bc[false].'>';
+    print '<tr>';
     print '<td colspan="10" class="opacitymedium">'.$langs->trans('NoRecordFound').'</td>';
     print '</tr>';
 }

@@ -535,6 +535,15 @@ if (isset($totalarray['totalhtfield']))
     print '</tr>';
 }
 
+// If no record found
+if ($num == 0)
+{
+    $colspan=1;
+    foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+}
+
+
 $db->free($resql);
 
 $parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
