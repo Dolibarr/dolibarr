@@ -62,11 +62,9 @@ if (! is_object($conf)) dolibarr_install_syslog("repair: conf file not initializ
 
 /*
  * View
-*/
+ */
 
 pHeader('',"upgrade2",GETPOST('action','aZ09'));
-
-$actiondone=0;
 
 // Action to launch the repair script
 $actiondone=1;
@@ -79,6 +77,7 @@ print 'Option clean_orphelin_dir (0 or \'test\' or \'confirmed\') is '.(GETPOST(
 print 'Option clean_product_stock_batch (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch','alpha')?GETPOST('clean_product_stock_batch','alpha'):'0').'<br>'."\n";
 print 'Option set_empty_time_spent_amount (0 or \'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount','alpha')?GETPOST('set_empty_time_spent_amount','alpha'):'0').'<br>'."\n";
 print 'Option rebuild_product_thumbs (0 or \'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs','alpha')?GETPOST('rebuild_product_thumbs','alpha'):'0').'<br>'."\n";
+print 'Option force_disable_of_modules_not_found (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found','alpha')?GETPOST('force_disable_of_modules_not_found','alpha'):'0').'<br>'."\n";
 print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
@@ -313,6 +312,7 @@ if ($ok)
 {
 	clean_data_ecm_directories();
 }
+
 
 
 
@@ -785,6 +785,99 @@ if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
         else
         {
             print '<tr><td>No time spent with empty line on users with a hourly rate defined</td></tr>';
+        }
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+
+}
+
+
+// clean_old_module_entries: Clean data into const when files of module were removed without being
+// clean_linked_elements: Check and clean linked elements
+if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
+{
+    print '<tr><td colspan="2"><br>*** Force modules not found to be disabled</td></tr>';
+
+    $sql ="SELECT DISTINCT name";
+    $sql.=" FROM ".MAIN_DB_PREFIX."const as c";
+    $sql.=" WHERE name LIKE 'MAIN_MODULE_%_HOOKS'";
+    $sql.=" ORDER BY name";
+
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        if ($num)
+        {
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj=$db->fetch_object($resql);
+                $majname = $obj->name;
+
+                print '<tr><td>';
+                print $majname;
+
+                $db->begin();
+
+                if (preg_match('/MAIN_MODULE_(.*)_HOOKS/i', $majname, $reg))
+                {
+                    $name=strtolower($reg[1]);
+
+                    if ($name)
+                    {
+                        $reloffile=$name.'/class/actions_'.$name.'.class.php';
+                        $result = dol_include_once($reloffile);
+                        if (! $result)
+                        {
+                            print ' - File of hooks ('.$reloffile.') NOT found, we disable the module.';
+                            if (GETPOST('force_disable_of_modules_not_found') == 'confirmed')
+                            {
+                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."_HOOKS'";
+                                $resql2=$db->query($sql2);
+                                if (! $resql2)
+                                {
+                                    $error++;
+                                    dol_print_error($db);
+                                }
+                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
+                                $resql2=$db->query($sql2);
+                                if (! $resql2)
+                                {
+                                    $error++;
+                                    dol_print_error($db);
+                                }
+                                else
+                                    print " - Cleaned";
+                            }
+                            else
+                            {
+                                print ' - Canceled (test mode)';
+                            }
+                        }
+                        else
+                        {
+                            print ' - File of hooks ('.$reloffile.') found, we do nothing.';
+                        }
+                    }
+
+                    if (!$error) $db->commit();
+                    else $db->rollback();
+                }
+
+                print'</td></tr>';
+
+                if ($error) break;
+
+                $i++;
+            }
+        }
+        else
+        {
+            print '<tr><td>No active module with missing files found</td></tr>';
         }
     }
     else
