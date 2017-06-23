@@ -1002,6 +1002,7 @@ class FormFile
 			    print '<input type="hidden" name="id" value="'.$object->id.'">';
 			    print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
+
 			print '<div class="div-table-responsive-no-min">';
 			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborder':'liste').'">'."\n";
 
@@ -1106,8 +1107,6 @@ class FormFile
 						&& $file['name'] != '..'
 						&& ! preg_match('/\.meta$/i',$file['name']))
 				{
-
-
 					if ($filearray[$key]['rowid'] > 0) $lastrowid = $filearray[$key]['rowid'];
 
 					$editline=0;
