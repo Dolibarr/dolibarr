@@ -29,6 +29,10 @@
 if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
 if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
+$DOLAPIENTITY = $_SERVER['HTTP_DOLAPIENTITY'];
+$entity=(! empty($DOLAPIENTITY) ? (int) $DOLAPIENTITY : (! empty($DOLAPIENTITY) ? (int) $DOLAPIENTITY : 1));
+if (is_numeric($entity)) define("DOLENTITY", $entity);
+
 $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=include '../main.inc.php';
 if (! $res) die("Include of main fails");
