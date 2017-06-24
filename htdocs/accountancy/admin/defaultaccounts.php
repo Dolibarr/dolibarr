@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
+/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014 Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2014-2015 Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  */
 
 /**
- * \file		htdocs/accountancy/admin/index.php
+ * \file		htdocs/accountancy/admin/defaultaccounts.php
  * \ingroup		Advanced accountancy
  * \brief		Setup page to configure accounting expert module
  */
@@ -53,10 +53,10 @@ $action = GETPOST('action', 'alpha');
 $list_account_main = array (
     'ACCOUNTING_ACCOUNT_CUSTOMER',
     'ACCOUNTING_ACCOUNT_SUPPLIER',
+    'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
 );
 
 $list_account = array (
-    'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
     'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
     'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
     'ACCOUNTING_SERVICE_BUY_ACCOUNT',

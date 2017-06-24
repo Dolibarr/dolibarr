@@ -500,8 +500,7 @@ if ($action == 'create') {
 				print "</tr>\n";
 
 				foreach ( $book->linesmvt as $line ) {
-					$var = ! $var;
-					print '<tr' . $bc[$var] . '>';
+					print '<tr class="oddeven">';
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
 

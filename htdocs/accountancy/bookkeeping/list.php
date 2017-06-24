@@ -438,7 +438,6 @@ $total_debit = 0;
 $total_credit = 0;
 
 foreach ($object->lines as $line ) {
-	$var = ! $var;
 
 	$total_debit += $line->debit;
 	$total_credit += $line->credit;

@@ -1148,7 +1148,6 @@ else
      * Show list of dictionary to show
      */
 
-    $var=true;
     $lastlineisempty=false;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
