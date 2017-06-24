@@ -88,6 +88,7 @@ if (@file_exists($forcedfile)) {
 			$main_data_dir = detect_dolibarr_main_data_root($main_dir);
 		}
 		$main_url = detect_dolibarr_main_url_root();
+
 		if (!empty($force_install_databaserootlogin)) {
 			$userroot = parse_database_login($force_install_databaserootlogin);
 		}
@@ -542,7 +543,7 @@ if (! $error && $db->connected && $action == "set")
                 if ($db->connected)
                 {
                     $resultbis = 1;
-                    
+
                     // Create user
                     $result=$db->DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
                     // Create user bis
@@ -553,7 +554,7 @@ if (! $error && $db->connected && $action == "set")
                             $resultbis=$db->DDLCreateUser('%', $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
                         }
                     }
-                    
+
                     if ($result > 0 && $resultbis > 0)
                     {
 
