@@ -439,6 +439,7 @@ class PriceSchedule extends CommonObject
     {
         global $conf;
         require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
         //Load service duration
         $product= new Product($this->db);
