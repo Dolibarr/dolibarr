@@ -1,7 +1,7 @@
 API REST
 ========
 
-## Integrate your ERP with any other applications using Dolibarr APIs, Triggers or Hooks
+## Integrate your ERP with any other applications using Dolibarr APIs
  
 This module provides the service to make Dolibarr a server of REST Web Services. It depends on external library Restler.
 
