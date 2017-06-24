@@ -836,28 +836,23 @@ if ($resql)
 	print "</tr>\n";
 
     $balance = 0;    // For balance
-	$balancecalculated = false;
-
+	
 	// Loop on each record
-	$sign = 1;
-
     $totalarray=array();
     while ($i < min($num,$limit))
     {
         $objp = $db->fetch_object($resql);
 
         // If we are in a situation where we need/can show balance, we calculate the start of balance
-        if (! $balancecalculated && ! empty($arrayfields['balance']['checked']) && $mode_balance_ok)
+        if ($mode_balance_ok && $i == 0 && ! empty($arrayfields['balance']['checked']))
         {
             if (! $account)
             {
                 dol_print_error('', 'account is not defined but $mode_balance_ok is true');
                 exit;
             }
-
-            //Loop on each record
-            $sign = 1;
-            $i = 0;
+            
+            //Get the sum balance of all records before the date of value
             $sqlforbalance='SELECT SUM(b.amount) as balance';
             $sqlforbalance.= " FROM ";
             $sqlforbalance.= " ".MAIN_DB_PREFIX."bank_account as ba,";
@@ -867,22 +862,46 @@ if ($resql)
             $sqlforbalance.= " AND b.fk_account = ".$account;
             $sqlforbalance.= " AND b.datev < '" . $db->idate($db->jdate($objp->dv)) . "'";
             $resqlforbalance = $db->query($sqlforbalance);
-            //print $sqlforbalance;
             if ($resqlforbalance)
             {
                 $objforbalance = $db->fetch_object($resqlforbalance);
-                if ($objforbalance)
+                if ($objforbalance && isset($objforbalance->balance))
                 {
                     $balance = $objforbalance->balance;
                 }
             }
             else dol_print_error($db);
-
-            $balancecalculated=true;
+            
+            //Loop on records that are in same date of value and stop when reaching this line
+            $sqlforbalance='SELECT b.amount as balance, b.rowid';
+            $sqlforbalance.= " FROM ";
+            $sqlforbalance.= " ".MAIN_DB_PREFIX."bank_account as ba,";
+            $sqlforbalance.= " ".MAIN_DB_PREFIX."bank as b";
+            $sqlforbalance.= " WHERE b.fk_account = ba.rowid";
+            $sqlforbalance.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+            $sqlforbalance.= " AND b.fk_account = ".$account;
+            $sqlforbalance.= " AND b.datev = '" . $db->idate($db->jdate($objp->dv)) . "'";
+            $resqlforbalance = $db->query($sqlforbalance);
+            if ($resqlforbalance)
+            {
+                $num2 = $db->num_rows($resqlforbalance);
+                if ($num2)
+                {
+                    $i2 = 0;
+                    while ($i2 < $num2)
+                    {
+                        $objforbalance = $db->fetch_object($resqlforbalance);
+                        if ($objforbalance->rowid == $objp->rowid) break;
+                        $balance += $objforbalance->balance;
+                        $i2++;
+                    }
+                }
+            }
+            else dol_print_error($db);
         }
-
-        $balance = price2num($balance + ($sign * $objp->amount),'MT');
-
+        
+        $balance = price2num($balance + $objp->amount,'MT');
+        
         if (empty($cachebankaccount[$objp->bankid]))
         {
             $bankaccounttmp = new Account($db);
