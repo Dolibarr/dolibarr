@@ -49,15 +49,15 @@ $(document).ready(function() {
 });
 </script>
 
-<div style="float:right; position: relative; top: 3px; right:5px;" id="hide-<?php echo $blocname ?>" class="linkobject<?php echo ($hide ? ' hideobject' : ''); ?>"><?php echo img_picto('', '1uparrow.png'); ?></div>
-<div style="float:right; position: relative; top: 3px; right:5px;" id="show-<?php echo $blocname ?>" class="linkobject<?php echo ($hide ? '' : ' hideobject'); ?>"><?php echo img_picto('', '1downarrow.png'); ?></div>
-<div id="<?php echo $blocname ?>_title" class="liste_titre"><?php echo $title; ?></div>
+<?php
+print '<div style="float:right; position: relative; top: 3px; right:5px;" id="hide-'.$blocname.'"';
+print ' class="linkobject'.($hide ? ' hideobject' : '').'">'.img_picto('', '1uparrow.png').'</div>'."\n";
+print '<div style="float:right; position: relative; top: 3px; right:5px;" id="show-'.$blocname.'"';
+print ' class="linkobject'.($hide ? '' : ' hideobject').'">'.img_picto('', '1downarrow.png').'</div>'."\n";
+print '<div id="'.$blocname.'_title" class="liste_titre">'.$title.'</div>'."\n";
+print '<div id="'.$blocname.'_bloc" class="'.($hide ? 'hideobject' : 'nohideobject')'">'."\n";
 
-<div id="<?php echo $blocname ?>_bloc" class="<?php echo ($hide ? 'hideobject' : 'nohideobject'); ?>">
-
-<?php include DOL_DOCUMENT_ROOT.'/core/tpl/'.$blocname.'.tpl.php'; ?>
-
-</div>
-<br>
-
+include DOL_DOCUMENT_ROOT.'/core/tpl/'.$blocname.'.tpl.php';
+print '</div><br>';
+?>
 <!-- END PHP TEMPLATE BLOC SHOW/HIDE -->
