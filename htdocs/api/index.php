@@ -24,8 +24,18 @@
  *  \file       htdocs/api/index.php
  */
 
-if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
-if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
+//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
+//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
+//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test
+//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK','1');		// Do not check style html tag into posted data
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');		// If there is no need to load and show top and left menu
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');		// If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');       // Do not load ajax.lib.php library
+if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
+
 
 $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=include '../main.inc.php';
@@ -65,17 +75,6 @@ if (preg_match('/api\/index\.php\/explorer/', $_SERVER["PHP_SELF"]) && ! empty($
 }
 
 
-$api = new DolibarrApi($db);
-
-// Enable the Restler API Explorer.
-// See https://github.com/Luracast/Restler-API-Explorer for more info.
-$api->r->addAPIClass('Luracast\\Restler\\Explorer');
-
-$api->r->setSupportedFormats('JsonFormat', 'XmlFormat', 'UploadFormat');
-$api->r->addAuthenticationClass('DolibarrApiAccess','');
-
-// Define accepted mime types
-UploadFormat::$allowedMimeTypes = array('image/jpeg', 'image/png', 'text/plain', 'application/octet-stream');
 
 
 // Analyze URLs
@@ -89,6 +88,29 @@ UploadFormat::$allowedMimeTypes = array('image/jpeg', 'image/png', 'text/plain',
 
 preg_match('/index\.php\/([^\/]+)(.*)$/', $_SERVER["PHP_SELF"], $reg);
 // .../index.php/categories?sortfield=t.rowid&sortorder=ASC
+
+
+// Set the flag to say to refresh (when we reload the explorer, production must be for API call only)
+$refreshcache=false;
+if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' || $reg[2] == '/resources.json/root'))
+{
+    $refreshcache=true;
+}
+
+
+$api = new DolibarrApi($db, '', $refreshcache);
+//var_dump($api->r->apiVersionMap);
+
+// Enable the Restler API Explorer.
+// See https://github.com/Luracast/Restler-API-Explorer for more info.
+$api->r->addAPIClass('Luracast\\Restler\\Explorer');
+
+$api->r->setSupportedFormats('JsonFormat', 'XmlFormat', 'UploadFormat');
+$api->r->addAuthenticationClass('DolibarrApiAccess','');
+
+// Define accepted mime types
+UploadFormat::$allowedMimeTypes = array('image/jpeg', 'image/png', 'text/plain', 'application/octet-stream');
+
 
 
 // Call Explorer file for all APIs definitions
@@ -174,10 +196,9 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
         }
     }
 
-    // Sort the classes before adding them to Restler. The Restler API Explorer
-    // shows the classes in the order they are added and it's a mess if they are not sorted.
+    // Sort the classes before adding them to Restler.
+    // The Restler API Explorer shows the classes in the order they are added and it's a mess if they are not sorted.
     sort($listofapis);
-    //var_dump($listofapis);
     foreach ($listofapis as $classname)
     {
         $api->r->addAPIClass($classname);
@@ -226,7 +247,7 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' 
 }
 
 // TODO If not found, redirect to explorer
-//var_dump($api);
+//var_dump($api->r->apiVersionMap);
 //exit;
 
 // Call API (we suppose we found it)
