@@ -21,35 +21,37 @@ if (isset($parameters['showblocbydefault'])) $hide=(empty($parameters['showblocb
 if (isset($object->extraparams[$blocname]['showhide'])) $hide = (empty($object->extraparams[$blocname]['showhide']) ? true : false);
 
 ?>
-
 <!-- BEGIN PHP TEMPLATE BLOC SHOW/HIDE -->
 
-<script type="text/javascript">
-$(document).ready(function() {
-	$("#hide-<?php echo $blocname ?>").click(function(){
-		setShowHide(0);
-		$("#<?php echo $blocname ?>_bloc").hide("blind", {direction: "vertical"}, 300).removeClass("nohideobject");
-		$(this).hide();
-		$("#show-<?php echo $blocname ?>").show();
-	});
-	$("#show-<?php echo $blocname ?>").click(function(){
-		setShowHide(1);
-		$("#<?php echo $blocname ?>_bloc").show("blind", {direction: "vertical"}, 300).addClass("nohideobject");
-		$(this).hide();
-		$("#hide-<?php echo $blocname ?>").show();
-	});
-	function setShowHide(status) {
-		var id			= <?php echo $object->id; ?>;
-		var element		= '<?php echo $object->element; ?>';
-		var htmlelement	= '<?php echo $blocname ?>';
-		var type		= 'showhide';
+<?php 
+print '<script type="text/javascript">'."\n";
+print '$(document).ready(function() {'."\n";
+print '$("#hide-'.$blocname.'").click(function(){'."\n";
+print '		setShowHide(0);'."\n";
+print '		$("#'.$blocname.'_bloc").hide("blind", {direction: "vertical"}, 300).removeClass("nohideobject");'."\n";
+print '		$(this).hide();'."\n";
+print '		$("#show-'.$blocname.'").show();'."\n";
+print '});'."\n";
 
-		$.get("<?php echo dol_buildpath('/core/ajax/extraparams.php', 1); ?>?id="+id+"&element="+element+"&htmlelement="+htmlelement+"&type="+type+"&value="+status);
-	}
-});
-</script>
+print '$("#show-'.$blocname.'").click(function(){'."\n";
+print '		setShowHide(1);'."\n";
+print '		$("#'.$blocname.'").show("blind", {direction: "vertical"}, 300).addClass("nohideobject");'."\n";
+print '		$(this).hide();'."\n";
+print '		$("#hide-'.$blocname.'").show();'."\n";
+print '});'."\n";
 
-<?php
+print 'function setShowHide(status) {'."\n";
+print '		var id			= '.$object->id."\n";
+print '		var element		= '.$object->element."\n";
+print '		var htmlelement	= '.$blocname."\n";
+print '		var type		= "showhide";'."\n";
+print '		$.get("'.dol_buildpath('/core/ajax/extraparams.php', 1);
+print '?id="+id+"&element="+element+"&htmlelement="+htmlelement+"&type="+type+"&value="+status);'."\n";
+print '}'."\n";
+
+print '});'."\n";
+print '</script>'."\n";
+
 print '<div style="float:right; position: relative; top: 3px; right:5px;" id="hide-'.$blocname.'"';
 print ' class="linkobject'.($hide ? ' hideobject' : '').'">'.img_picto('', '1uparrow.png').'</div>'."\n";
 print '<div style="float:right; position: relative; top: 3px; right:5px;" id="show-'.$blocname.'"';
