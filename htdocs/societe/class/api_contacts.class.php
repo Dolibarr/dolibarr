@@ -47,6 +47,9 @@ class Contacts extends DolibarrApi
 	{
 		global $db, $conf;
 		$this->db = $db;
+
+		include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+
 		$this->contact = new Contact($this->db);
 	}
 
