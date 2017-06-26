@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>  
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Juanjo Menent		<jmenent@2byte.es>
- *   
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -54,7 +54,7 @@ $search_account = GETPOST('search_account', 'alpha');
 $search_vat = GETPOST('search_vat', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit') ? GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -98,13 +98,13 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 
 if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$error = 0;
-	
+
 	$db->begin();
-	
+
 	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as l";
 	$sql1 .= " SET l.fk_code_ventilation=" . GETPOST('account_parent');
 	$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
-	
+
 	dol_syslog('accountancy/supplier/lines.php::changeaccount sql= ' . $sql1);
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
@@ -182,7 +182,7 @@ if (strlen(trim($search_account))) {
 if (strlen(trim($search_vat))) {
 	$sql .= natural_search("l.tva_tx", $search_vat, 1);
 }
-$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 0) . ")";  // We don't share object for accountancy
+$sql .= " AND f.entity IN (" . getEntity('facture_fourn', 0) . ")";  // We don't share object for accountancy
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -202,7 +202,7 @@ $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
-	
+
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -221,8 +221,8 @@ if ($result) {
 	if ($search_country)
 		$param .= "&search_country=" . $search_country;
 	if ($search_tvaintra)
-		$param .= "&search_tvaintra=" . $search_tvaintra;	
-	
+		$param .= "&search_tvaintra=" . $search_tvaintra;
+
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -231,20 +231,20 @@ if ($result) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
-	
+
 	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
-	
+
 	print $langs->trans("DescVentilDoneSupplier") . '<br>';
-	
+
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
 	print $formaccounting->select_account(GETPOST('account_parent'), 'account_parent', 1);
 	print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("ChangeBinding") . '" /></div>';
-	
+
 	$moreforfilter = '';
-	
+
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-	
+
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_lineid" value="' . dol_escape_htmltag($search_lineid) . '""></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
@@ -261,7 +261,7 @@ if ($result) {
     print $searchpicto;
     print '</td>';
 	print "</tr>\n";
-	
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
@@ -276,68 +276,68 @@ if ($result) {
     $checkpicto=$form->showCheckAddButtons();
 	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
 	print "</tr>\n";
-	
+
 	$facturefournisseur_static = new FactureFournisseur($db);
 	$product_static = new Product($db);
-	
+
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
 
 		$codecompta = length_accountg($objp->account_number) . ' - ' . $objp->label;
-		
+
 		$facturefournisseur_static->ref = $objp->facnumber;
 		$facturefournisseur_static->id = $objp->facid;
-		
+
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
 		$product_static->type = $objp->type;
 		$product_static->label = $objp->product_label;
-		
+
 		print '<tr class="oddeven">';
-		
+
 		print '<td>' . $objp->rowid . '</td>';
-		
+
 		// Ref Invoice
 		print '<td>' . $facturefournisseur_static->getNomUrl(1) . '</td>';
-		
+
 		print '<td>';
 		print $objp->invoice_label;
 		print '</td>';
-		
+
 		print '<td align="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
-		
+
 		// Ref Product
 		print '<td>';
 		if ($product_static->id)
 			print $product_static->getNomUrl(1);
 	    if ($objp->product_label) print '<br>'.$objp->product_label;
 		print '</td>';
-		
+
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
-		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
+		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->description);
 		print '</td>';
-		
+
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
 		print '<td align="center">' . price($objp->tva_tx) . '</td>';
 		print '<td align="left">';
 		print $codecompta . ' <a href="./card.php?id=' . $objp->rowid . '">';
 		print img_edit();
 		print '</a></td>';
-		
+
 		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
-		
+
 		print "</tr>";
 		$i ++;
 	}
     print "</table>";
     print "</div>";
-    
+
     if ($nbtotalofrecords > $limit) {
         print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, '', 0, '', '', $limit, 1);
     }
-    
+
     print '</form>';
 } else {
 	print $db->error();

@@ -81,7 +81,7 @@ $socid='';
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('invoicesuppliercard','globalcard'));
 
 $object=new FactureFournisseur($db);
@@ -206,7 +206,7 @@ if (empty($reshook))
                     }
                     $model=$object->modelpdf;
                     $ret = $object->fetch($id); // Reload to get new records
-    
+
                     $result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
                     if ($result < 0) dol_print_error($db,$result);
 	            }
@@ -218,7 +218,7 @@ if (empty($reshook))
 	{
 	    $object->fetch($id);
 	    $object->fetch_thirdparty();
-	    $result=$object->delete($id);
+	    $result=$object->delete($user);
 	    if ($result > 0)
 	    {
 	        header('Location: list.php');
@@ -1198,7 +1198,7 @@ if (empty($reshook))
 	$upload_dir = $conf->fournisseur->facture->dir_output;
 	$permissioncreate = $user->rights->fournisseur->facture->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-	
+
 	// Make calculation according to calculationrule
 	if ($action == 'calculate')
 	{
@@ -1445,7 +1445,7 @@ if ($action == 'create')
     }
     else
     {
-        print $form->select_company($societe->id, 'socid', 's.fournisseur = 1', 'SelectThirdParty');
+        print $form->select_company($societe->id, 'socid', 's.fournisseur = 1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
         // reload page to retrieve supplier informations
         if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE))
         {
@@ -1674,7 +1674,7 @@ if ($action == 'create')
 	if ($socid > 0)
 	{
 		// Discounts for third party
-		print '<tr><td>' . $langs->trans('Discounts') . '</td><td colspan="2">';
+		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
 		if ($soc->remise_percent)
 			print $langs->trans("CompanyHasRelativeDiscount", '<a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">' . $soc->remise_percent . '</a>');
 		else
@@ -1705,17 +1705,17 @@ if ($action == 'create')
     print '</td></tr>';
 
 	// Payment term
-	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
+	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	$form->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id, 'cond_reglement_id');
 	print '</td></tr>';
 
 	// Payment mode
-	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
+	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id, 'mode_reglement_id', 'DBIT');
 	print '</td></tr>';
 
     // Bank Account
-    print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
+    print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
     $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
     print '</td></tr>';
 
@@ -1724,7 +1724,7 @@ if ($action == 'create')
 	{
 		print '<tr>';
 		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
-        print '<td colspan="2" class="maxwidthonsmartphone">';
+        print '<td class="maxwidthonsmartphone">';
 	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
 		print '</td></tr>';
 	}
@@ -1735,7 +1735,7 @@ if ($action == 'create')
 		$formproject = new FormProjets($db);
 
 		$langs->load('projects');
-		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
+		print '<tr><td>' . $langs->trans('Project') . '</td><td>';
 		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$societe->id:-1), $projectid, 'projectid', 0, 0, 1, 1);
 		print '</td></tr>';
 	}
@@ -1790,7 +1790,7 @@ if ($action == 'create')
 	        $langs->load('orders');
 	        $txt=$langs->trans("SupplierOrder");
         }
-        print '<tr><td>'.$txt.'</td><td colspan="2">'.$objectsrc->getNomUrl(1);
+        print '<tr><td>'.$txt.'</td><td>'.$objectsrc->getNomUrl(1);
         // We check if Origin document (id and type is known) has already at least one invoice attached to it
         $objectsrc->fetchObjectLinked($originid,$origin,'','invoice_supplier');
         $cntinvoice=count($objectsrc->linkedObjects['invoice_supplier']);
@@ -1800,30 +1800,31 @@ if ($action == 'create')
         	echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['invoice_supplier'])->getNomUrl(1).')';
         }
         echo '</td></tr>';
-        print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
-        print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
+        print '<tr><td>'.$langs->trans('TotalHT').'</td><td>'.price($objectsrc->total_ht).'</td></tr>';
+        print '<tr><td>'.$langs->trans('TotalVAT').'</td><td>'.price($objectsrc->total_tva)."</td></tr>";
         if ($mysoc->localtax1_assuj=="1" || $object->total_localtax1 != 0) //Localtax1
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
+            print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax1)."</td></tr>";
         }
 
         if ($mysoc->localtax2_assuj=="1" || $object->total_localtax2 != 0) //Localtax2
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
+            print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax2)."</td></tr>";
         }
-        print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($objectsrc->total_ttc)."</td></tr>";
+        print '<tr><td>'.$langs->trans('TotalTTC').'</td><td>'.price($objectsrc->total_ttc)."</td></tr>";
 
 		if (!empty($conf->multicurrency->enabled))
 		{
-			print '<tr><td>' . $langs->trans('MulticurrencyTotalHT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
-			print '<tr><td>' . $langs->trans('MulticurrencyTotalVAT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
-			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
+			print '<tr><td>' . $langs->trans('MulticurrencyTotalHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
+			print '<tr><td>' . $langs->trans('MulticurrencyTotalVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
+			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
 		}
     }
 
     // Other options
-    $parameters=array('colspan' => ' colspan="6"');
+    $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
     // Bouton "Create Draft"
     print "</table>\n";
@@ -2347,7 +2348,7 @@ else
     	        while ($i < $num)
     	        {
     	            $objp = $db->fetch_object($result);
-    	            
+
     	            print '<tr class="oddeven"><td>';
     	            $paymentstatic->id=$objp->rowid;
     	            $paymentstatic->datepaye=$db->jdate($objp->dp);
@@ -2659,7 +2660,7 @@ else
 	            {
 	                if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->fournisseur->supplier_invoice_advance->send)
 	                {
-	                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a></div>';
+	                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a></div>';
 	                }
 	                else print '<div class="inline-block divButAction"><span class="butActionRefused">'.$langs->trans('SendByMail').'</a></div>';
 	            }
@@ -2835,7 +2836,8 @@ else
                 $file=$fileparams['fullname'];
             }
 
-			print '<div class="clearboth"></div>';
+			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
+            print '<div class="clearboth"></div>';
             print '<br>';
             print load_fiche_titre($langs->trans('SendBillByMail'));
 

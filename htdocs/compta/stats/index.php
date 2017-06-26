@@ -151,7 +151,7 @@ if ($modecompta != 'CREANCES-DETTES')
 	$sql.= " WHERE pf.rowid IS NULL";
 	$sql.= " AND p.fk_bank = b.rowid";
 	$sql.= " AND b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+	$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 	$sql.= " GROUP BY dm";
 	$sql.= " ORDER BY dm";
 

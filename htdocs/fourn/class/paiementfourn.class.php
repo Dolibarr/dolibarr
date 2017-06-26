@@ -531,9 +531,10 @@ class PaiementFourn extends Paiement
 	 *
 	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option			Sur quoi pointe le lien
+	 *  @param		string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *	@return		string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0,$option='',$mode='withlistofinvoices')
 	{
 		global $langs;
 

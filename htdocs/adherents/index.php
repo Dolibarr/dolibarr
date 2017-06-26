@@ -64,8 +64,8 @@ $sql.= " d.statut, count(d.rowid) as somme";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d";
 $sql.= " ON t.rowid = d.fk_adherent_type";
-$sql.= " AND d.entity IN (".getEntity().")";
-$sql.= " WHERE t.entity IN (".getEntity().")";
+$sql.= " AND d.entity IN (".getEntity('adherent').")";
+$sql.= " WHERE t.entity IN (".getEntity('adherent').")";
 $sql.= " GROUP BY t.rowid, t.libelle, t.subscription, d.statut";
 
 dol_syslog("index.php::select nb of members by type", LOG_DEBUG);
@@ -100,7 +100,7 @@ $now=dol_now();
 // old rule: uptodate = if type does not need payment, that end date is null, if type need payment that end date is in future)
 $sql = "SELECT count(*) as somme , d.fk_adherent_type";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql.= " WHERE d.entity IN (".getEntity().")";
+$sql.= " WHERE d.entity IN (".getEntity('adherent').")";
 //$sql.= " AND d.statut = 1 AND ((t.subscription = 0 AND d.datefin IS NULL) OR d.datefin >= '".$db->idate($now)."')";
 $sql.= " AND d.statut = 1 AND d.datefin >= '".$db->idate($now)."'";
 $sql.= " AND t.rowid = d.fk_adherent_type";
@@ -133,7 +133,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	$listofsearchfields['search_member']=array('text'=>'Member');
     }
-    
+
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
@@ -149,7 +149,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		print '</tr>';
     		$i++;
     	}
-    	print '</table>';	
+    	print '</table>';
     	print '</form>';
     	print '<br>';
     }
@@ -211,7 +211,7 @@ $numb=0;
 
 $sql = "SELECT c.subscription, c.dateadh as dateh";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
-$sql.= " WHERE d.entity IN (".getEntity().")";
+$sql.= " WHERE d.entity IN (".getEntity('adherent').")";
 $sql.= " AND d.rowid = c.fk_adherent";
 if(isset($date_select) && $date_select != '')
 {
@@ -275,7 +275,7 @@ $sql = "SELECT a.rowid, a.statut, a.lastname, a.firstname, a.societe as company,
 $sql.= " a.tms as datem, datefin as date_end_subscription,";
 $sql.= " ta.rowid as typeid, ta.libelle, ta.subscription";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
-$sql.= " WHERE a.entity IN (".getEntity().")";
+$sql.= " WHERE a.entity IN (".getEntity('adherent').")";
 $sql.= " AND a.fk_adherent_type = ta.rowid";
 $sql.= $db->order("a.tms","DESC");
 $sql.= $db->plimit($max, 0);
@@ -336,7 +336,7 @@ $sql = "SELECT a.rowid, a.statut, a.lastname, a.firstname, a.societe as company,
 $sql.= " datefin as date_end_subscription,";
 $sql.= " c.rowid as cid, c.tms as datem, c.datec as datec, c.dateadh as date_start, c.datef as date_end, c.subscription";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."subscription as c";
-$sql.= " WHERE a.entity IN (".getEntity().")";
+$sql.= " WHERE a.entity IN (".getEntity('adherent').")";
 $sql.= " AND c.fk_adherent = a.rowid";
 $sql.= $db->order("c.tms","DESC");
 $sql.= $db->plimit($max, 0);

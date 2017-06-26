@@ -265,16 +265,26 @@ $conf->dol_hide_leftmenu=1;
 
 llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
-if (! empty($conf->global->PAYPAL_API_SANDBOX))
-{
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode'),'','warning');
-}
-
 // Common variables
 $creditor=$mysoc->name;
 $paramcreditor='PAYPAL_CREDITOR_'.$suffix;
 if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
 else if (! empty($conf->global->PAYPAL_CREDITOR)) $creditor=$conf->global->PAYPAL_CREDITOR;
+
+// Check link validity
+if (! empty($SOURCE) && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', '')))
+{
+    $langs->load("errors");
+    dol_print_error_email('BADREFINPAYMENTFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $SOURCE, $ref));
+    llxFooter();
+    $db->close();
+    exit;
+}
+
+if (! empty($conf->global->PAYPAL_API_SANDBOX))
+{
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode'),'','warning');
+}
 
 print '<span id="dopaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
@@ -359,14 +369,14 @@ if (! GETPOST("source"))
 	$fulltag=$tag;
 
 	// Creditor
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
     print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
     print '<input type="hidden" name="creditor" value="'.$creditor.'">';
     print '</td></tr>'."\n";
 
 	// Amount
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
@@ -386,7 +396,7 @@ if (! GETPOST("source"))
 	print '</td></tr>'."\n";
 
 	// Tag
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
@@ -424,26 +434,26 @@ if (GETPOST("source") == 'order')
         if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
         $amount=price2num($amount);
     }
-    
+
 	$fulltag='ORD='.$order->ref.'.CUS='.$order->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($order->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
     print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
     print '<input type="hidden" name="creditor" value="'.$creditor.'">';
     print '</td></tr>'."\n";
 
 	// Debitor
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$order->thirdparty->name.'</b>';
 
 	// Object
-	
+
 	$text='<b>'.$langs->trans("PaymentOrderRef",$order->ref).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
@@ -452,7 +462,7 @@ if (GETPOST("source") == 'order')
 	print '</td></tr>'."\n";
 
 	// Amount
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
@@ -472,7 +482,7 @@ if (GETPOST("source") == 'order')
 	print '</td></tr>'."\n";
 
 	// Tag
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
@@ -534,26 +544,26 @@ if (GETPOST("source") == 'invoice')
         if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
         $amount=price2num($amount);
     }
-    
+
 	$fulltag='INV='.$invoice->ref.'.CUS='.$invoice->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($invoice->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
     print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
     print '<input type="hidden" name="creditor" value="'.$creditor.'">';
     print '</td></tr>'."\n";
 
 	// Debitor
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$invoice->thirdparty->name.'</b>';
 
 	// Object
-	
+
 	$text='<b>'.$langs->trans("PaymentInvoiceRef",$invoice->ref).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
@@ -562,7 +572,7 @@ if (GETPOST("source") == 'invoice')
 	print '</td></tr>'."\n";
 
 	// Amount
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
@@ -582,7 +592,7 @@ if (GETPOST("source") == 'invoice')
 	print '</td></tr>'."\n";
 
 	// Tag
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
@@ -662,7 +672,7 @@ if (GETPOST("source") == 'contractline')
     	{
     		$product=new Product($db);
     		$result=$product->fetch($contractline->fk_product);
-    
+
     		// We define price for product (TODO Put this in a method in product class)
     		if (! empty($conf->global->PRODUIT_MULTIPRICES))
     		{
@@ -676,7 +686,7 @@ if (GETPOST("source") == 'contractline')
     			$pu_ttc = $product->price_ttc;
     			$price_base_type = $product->price_base_type;
     		}
-    
+
     		$amount=$pu_ttc;
     		if (empty($amount))
     		{
@@ -697,19 +707,19 @@ if (GETPOST("source") == 'contractline')
 	if (GETPOST('qty')) $qty=GETPOST('qty');
 
 	// Creditor
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
     print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$contract->thirdparty->name.'</b>';
 
 	// Object
-	
+
 	$text='<b>'.$langs->trans("PaymentRenewContractId",$contract->ref,$contractline->ref).'</b>';
 	if ($contractline->fk_product)
 	{
@@ -732,7 +742,7 @@ if (GETPOST("source") == 'contractline')
 	print '</td></tr>'."\n";
 
 	// Quantity
-	
+
 	$label=$langs->trans("Quantity");
 	$qty=1;
 	$duration='';
@@ -760,7 +770,7 @@ if (GETPOST("source") == 'contractline')
 	print '</b></td></tr>'."\n";
 
 	// Amount
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
@@ -780,7 +790,7 @@ if (GETPOST("source") == 'contractline')
 	print '</td></tr>'."\n";
 
 	// Tag
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
@@ -824,6 +834,7 @@ if (GETPOST("source") == 'membersubscription')
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
+
 	$member=new Adherent($db);
 	$result=$member->fetch('',$ref);
 	if ($result < 0)
@@ -842,20 +853,20 @@ if (GETPOST("source") == 'membersubscription')
         if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
         $amount=price2num($amount);
     }
-    
+
 	$fulltag='MEM='.$member->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
     print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
     print '<input type="hidden" name="creditor" value="'.$creditor.'">';
     print '</td></tr>'."\n";
 
 	// Debitor
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Member");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
 	if ($member->morphy == 'mor' && ! empty($member->societe)) print $member->societe;
@@ -863,7 +874,7 @@ if (GETPOST("source") == 'membersubscription')
 	print '</b>';
 
 	// Object
-	
+
 	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
@@ -874,13 +885,13 @@ if (GETPOST("source") == 'membersubscription')
 	if ($member->last_subscription_date || $member->last_subscription_amount)
 	{
 		// Last subscription date
-		
+
 		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("LastSubscriptionDate");
 		print '</td><td class="CTableRow'.($var?'1':'2').'">'.dol_print_date($member->last_subscription_date,'day');
 		print '</td></tr>'."\n";
 
 		// Last subscription amount
-		
+
 		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("LastSubscriptionAmount");
 		print '</td><td class="CTableRow'.($var?'1':'2').'">'.price($member->last_subscription_amount);
 		print '</td></tr>'."\n";
@@ -889,7 +900,7 @@ if (GETPOST("source") == 'membersubscription')
 	}
 
 	// Amount
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount))
 	{
@@ -918,7 +929,7 @@ if (GETPOST("source") == 'membersubscription')
 	print '</td></tr>'."\n";
 
 	// Tag
-	
+
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';

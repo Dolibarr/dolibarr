@@ -9,14 +9,20 @@
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
 -- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
--- To restrict request to Mysql version x.y or more: -- VMYSQLx.y
--- To restrict request to Pgsql version x.y or more: -- VPGSQLx.y
--- To make pk to be auto increment (mysql):    VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
--- To make pk to be auto increment (postgres): VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
--- To set a field as NULL:                     VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
--- To set a field as DEFAULT NULL:             VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
--- To delete orphelins:                        VMYSQL4.1 DELETE FROM llx_usergroup_user WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
--- To delete orphelins:                        VPGSQL8.2 DELETE FROM llx_usergroup_user WHERE fk_user NOT IN (SELECT rowid from llx_user);
+-- To drop an index:        -- VMYSQL4.0 DROP INDEX nomindex on llx_table
+-- To drop an index:        -- VPGSQL8.0 DROP INDEX nomindex
+-- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
+-- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
+-- To make pk to be auto increment (mysql):    -- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+-- To make pk to be auto increment (postgres): -- VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
+-- To set a field as NULL:                     -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NULL;
+-- To set a field as NULL:                     -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
+-- To set a field as NOT NULL:                 -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NOT NULL;
+-- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
+-- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
+-- Note: fields with type BLOB/TEXT can't have default value.
+-- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
+-- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
 UPDATE llx_facture_fourn set ref=rowid where ref IS NULL;
@@ -35,6 +41,7 @@ ALTER TABLE llx_societe_rib ADD COLUMN frstrecur varchar(16) DEFAULT 'FRST' AFTE
 
 ALTER TABLE llx_cronjob ADD COLUMN entity integer DEFAULT 0;
 ALTER TABLE llx_cronjob MODIFY COLUMN params text NULL;
+-- VPGSQL8.2 ALTER TABLE llx_cronjob ALTER COLUMN params DROP NOT NULL;
 
 -- Loan
 create table llx_loan
@@ -156,12 +163,12 @@ ALTER TABLE llx_facturedet ADD COLUMN situation_percent real;
 ALTER TABLE llx_facturedet ADD COLUMN fk_prev_id integer;
 
 -- Convert SMTP config to main entity, so new entities don't get the old values
-UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SENDMODE";
-UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SMTP_PORT";
-UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SMTP_SERVER";
-UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SMTPS_ID";
-UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SMTPS_PW";
-UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_EMAIL_TLS";
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = 'MAIN_MAIL_SENDMODE';
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = 'MAIN_MAIL_SMTP_PORT';
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = 'MAIN_MAIL_SMTP_SERVER';
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = 'MAIN_MAIL_SMTPS_ID';
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = 'MAIN_MAIL_SMTPS_PW';
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = 'MAIN_MAIL_EMAIL_TLS';
 
 -- This option with this value is not compatible with 3.8. Value must be set to 'mutiselect', 'select2'...
 DELETE from llx_const where name = 'MAIN_USE_JQUERY_MULTISELECT' and value = '1';

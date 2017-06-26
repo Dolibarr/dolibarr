@@ -114,7 +114,7 @@ class Categories extends DolibarrApi
         
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('category', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('category').')';
         if (!empty($type))
         {
             $sql.= ' AND t.type='.array_search($type,Categories::$TYPES);
@@ -205,7 +205,7 @@ class Categories extends DolibarrApi
         $sql = "SELECT s.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
         $sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
-        $sql.= ' WHERE s.entity IN ('.getEntity('category', 1).')';
+        $sql.= ' WHERE s.entity IN ('.getEntity('category').')';
         $sql.= ' AND s.type='.array_search($type,Categories::$TYPES);
         $sql.= ' AND s.rowid = sub.fk_categorie';
         $sql.= ' AND sub.'.$subcol_name.' = '.$item;

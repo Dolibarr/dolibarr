@@ -588,38 +588,26 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 
 
 /**
- *   	Return array of possible substitutions
+ *   	Return array of possible substitutions for PDF content (without external module substitutions).
  *
  *		@param	Translate	$outputlangs	Output language
+ *      @param  array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
+ *      @param  Object      $object         Object
  *      @return	array						Array of substitutions
  */
-function pdf_getSubstitutionArray($outputlangs)
+function pdf_getSubstitutionArray($outputlangs, $exclude=null, $object=null)
 {
-	global $conf, $mysoc, $user;
-	$substitutionarray=array(
-		'__MYCOMPANY_NAME__' => $mysoc->name,
-		'__MYCOMPANY_EMAIL__' => $mysoc->email,
-		'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
-		'__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
-		'__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
-		'__MYCOMPANY_PROFID4__' => $mysoc->idprof4,
-		'__MYCOMPANY_PROFID5__' => $mysoc->idprof5,
-		'__MYCOMPANY_PROFID6__' => $mysoc->idprof6,
-		'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
-	    '__USER_ID__' => $user->id,
-		'__USER_LOGIN__' => $user->login,
-		'__USER_LASTNAME__' => $user->lastname,
-		'__USER_FIRSTNAME__' => $user->firstname,
-		'__USER_FULLNAME__' => $user->getFullName($outputlangs)
-	);
-	return $substitutionarray;
+    $substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $exclude, $object);
+    $substitutionarray['__FROM_NAME__']='__FROM_NAME__';
+    $substitutionarray['__FROM_EMAIL__']='__FROM_EMAIL__';
+    return $substitutionarray;
 }
 
 
 /**
  *      Add a draft watermark on PDF files
  *
- *      @param	TCPDF      	$pdf           Object PDF
+ *      @param	TCPDF      	$pdf            Object PDF
  *      @param  Translate	$outputlangs	Object lang
  *      @param  int		    $h		        Height of PDF
  *      @param  int		    $w		        Width of PDF
@@ -630,7 +618,7 @@ function pdf_getSubstitutionArray($outputlangs)
 function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 {
 	global $langs, $mysoc, $user;
-	
+
 	// Print Draft Watermark
 	if ($unit=='pt') $k=1;
 	elseif ($unit=='mm') $k=72/25.4;
@@ -638,11 +626,11 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 	elseif ($unit=='in') $k=72;
 
 	// Make substitution
-	$substitutionarray=pdf_getSubstitutionArray($outputlangs);
-	complete_substitutions_array($substitutionarray,$outputlangs,$object);
-	$text=make_substitutions($text,$substitutionarray,$outputlangs);
+	$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, null);
+	complete_substitutions_array($substitutionarray, $outputlangs, null);
+	$text=make_substitutions($text, $substitutionarray, $outputlangs);
 	$text=$outputlangs->convToOutputCharset($text);
-	
+
 	$savx=$pdf->getX(); $savy=$pdf->getY();
 
 	$watermark_angle=atan($h/$w)/2;
@@ -867,15 +855,19 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	// Line of free text
 	if (empty($hidefreetext) && ! empty($conf->global->$paramfreetext))
 	{
-		$substitutionarray=pdf_getSubstitutionArray($outputlangs);
+		$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 		// More substitution keys
 		$substitutionarray['__FROM_NAME__']=$fromcompany->name;
 		$substitutionarray['__FROM_EMAIL__']=$fromcompany->email;
-		$substitutionarray['__TOTAL_TTC__']=$object->total_ttc;
-		$substitutionarray['__TOTAL_HT__']=$object->total_ht;
-		$substitutionarray['__TOTAL_VAT__']=$object->total_vat;
-		complete_substitutions_array($substitutionarray,$outputlangs,$object);
-		$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray,$outputlangs);
+		complete_substitutions_array($substitutionarray, $outputlangs, $object);
+		$newfreetext=make_substitutions($conf->global->$paramfreetext, $substitutionarray, $outputlangs);
+
+		// Make a change into HTML code to allow to include images from medias directory.
+		// <img alt="" src="/dolibarr_dev/htdocs/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
+		// become
+		// <img alt="" src="'.DOL_DATA_ROOT.'/media/image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
+		$newfreetext=preg_replace('/(<img.*src=")[^\"]*viewimage\.php[^\"]*modulepart=medias[^\"]*file=([^\"]*)("[^\/]*\/>)/', '\1'.DOL_DATA_ROOT.'/medias/\2\3', $newfreetext);
+
 		$line.=$outputlangs->convToOutputCharset($newfreetext);
 	}
 
@@ -1289,16 +1281,16 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 
 			if (empty($hideref))
 			{
-				if ($issupplierline) 
+				if ($issupplierline)
 				{
 					if ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1)
 						$ref_prodserv = $ref_supplier;
 					elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2)
-						$ref_prodserv = $ref_supplier. ' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';  
-					else 
+						$ref_prodserv = $ref_supplier. ' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
+					else
 						$ref_prodserv = $prodser->ref.' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')';
 				}
-				else 
+				else
 					$ref_prodserv = $prodser->ref; // Show local ref only
 
 				if (! empty($libelleproduitservice)) $ref_prodserv .= " - ";

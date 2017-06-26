@@ -45,9 +45,12 @@ $langs->load("compta");
 $langs->load("banks");
 $langs->load("loans");
 
+
 /*
  * Actions
  */
+
+// None
 
 
 /*
@@ -60,8 +63,6 @@ print load_fiche_titre($langs->trans("AccountancyArea"), '', 'title_accountancy'
 
 $step = 0;
 
-print "<br>\n";
-
 print $langs->trans("AccountancyAreaDescIntro")."<br>\n";
 print "<br>\n";print "<br>\n";
 
@@ -73,34 +74,30 @@ print "<br>\n";
 $step++;
 print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescJournalSetup", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("AccountingJournals").'</strong>');
 print "<br>\n";
-print "<br>\n";
 $step++;
 print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescChartModel", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("Pcg_version").'</strong>');
-print "<br>\n";
 print "<br>\n";
 $step++;
 print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescChart", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("Chartofaccounts").'</strong>');
 print "<br>\n";
-print "<br>\n";
 
+print "<br>\n";
 print $langs->trans("AccountancyAreaDescActionOnceBis");
 print "<br>\n";
 print "<br>\n";
 
 $step++;
-print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescMisc", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>')."<br>\n";
+print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescMisc", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>')."\n";
 print "<br>\n";
 $step++;
 $textlink = '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup").'-'.$langs->transnoentitiesnoconv("MenuVatAccounts").'</strong>';
 print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescVat", $step, $textlink);
-print "<br>\n";
 print "<br>\n";
 if (! empty($conf->tax->enabled))
 {
     $textlink = '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup").'-'.$langs->transnoentitiesnoconv("MenuTaxAccounts").'</strong>';
     $step++;
     print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescContrib", $step, $textlink);
-    print "<br>\n";
     print "<br>\n";
 }
 /*if (! empty($conf->salaries->enabled))
@@ -116,7 +113,6 @@ if (! empty($conf->expensereport->enabled))  // TODO Move this in the default ac
     $step++;
     print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescExpenseReport", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuExpenseReportAccounts").'</strong>');
     print "<br>\n";
-    print "<br>\n";
 }
 /*
 if (! empty($conf->loan->enabled))
@@ -124,25 +120,21 @@ if (! empty($conf->loan->enabled))
     $step++;
     print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescLoan", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuSpecialExpenses").'-'.$langs->transnoentitiesnoconv("Loans").'</strong> '.$langs->transnoentitiesnoconv("or").' <strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
     print "<br>\n";
-    print "<br>\n";
 }
 if (! empty($conf->don->enabled))
 {
     $step++;
     print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDonation", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDonationAccounts").'</strong>');
     print "<br>\n";
-    print "<br>\n";
 }*/
 
 $step++;
 print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescProd", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("ProductsBinding").'</strong>');
 print "<br>\n";
-print "<br>\n";
 
 $step++;
 $textlink='<strong>'.$langs->transnoentitiesnoconv("MenuBankCash").'</strong>';
 print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBank", $step, $textlink);
-print "<br>\n";
 print "<br>\n";
 
 
@@ -155,19 +147,19 @@ $step = 0;
 $langs->loadLangs(array('bills', 'trips'));
 
 $step++;
-print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64+$step), $langs->transnoentitiesnoconv("BillsCustomers"), '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy")."-".$langs->transnoentitiesnoconv("CustomersVentilation").'</strong>')."<br>\n";
+print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64+$step), $langs->transnoentitiesnoconv("BillsCustomers"), '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy")."-".$langs->transnoentitiesnoconv("CustomersVentilation").'</strong>')."\n";
 print "<br>\n";
 
 $step++;
-print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64+$step), $langs->transnoentitiesnoconv("BillsSuppliers"), '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy")."-".$langs->transnoentitiesnoconv("SuppliersVentilation").'</strong>')."<br>\n";
+print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64+$step), $langs->transnoentitiesnoconv("BillsSuppliers"), '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy")."-".$langs->transnoentitiesnoconv("SuppliersVentilation").'</strong>')."\n";
 print "<br>\n";
 
 $step++;
-print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64+$step), $langs->transnoentitiesnoconv("ExpenseReports"), '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy")."-".$langs->transnoentitiesnoconv("ExpenseReportsVentilation").'</strong>')."<br>\n";
+print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64+$step), $langs->transnoentitiesnoconv("ExpenseReports"), '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy")."-".$langs->transnoentitiesnoconv("ExpenseReportsVentilation").'</strong>')."\n";
 print "<br>\n";
 
 $step++;
-print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescWriteRecords", chr(64+$step), $langs->transnoentitiesnoconv("Journalization"), $langs->transnoentitiesnoconv("WriteBookKeeping"))."<br>\n";
+print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescWriteRecords", chr(64+$step), $langs->transnoentitiesnoconv("Journalization"), $langs->transnoentitiesnoconv("WriteBookKeeping"))."\n";
 print "<br>\n";
 
 $step++;

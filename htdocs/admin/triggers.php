@@ -47,7 +47,6 @@ print load_fiche_titre($langs->trans("TriggersAvailable"),'','title_setup');
 print $langs->trans("TriggersDesc")."<br>";
 print "<br>\n";
 
-$template_dir = DOL_DOCUMENT_ROOT.'/core/tpl/';
 
 $interfaces = new Interfaces($db);
 $triggers = $interfaces->getTriggersList();

@@ -49,7 +49,7 @@ $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -413,7 +413,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
         $sql = "SELECT s.rowid, s.amount, s.label, s.datep as datep, s.datev as datev, s.datesp, s.dateep, s.salary, u.salary as current_salary";
         $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s, ".MAIN_DB_PREFIX."user as u";
-        $sql.= " WHERE s.entity IN (".getEntity('user',1).")";
+        $sql.= " WHERE s.entity IN (".getEntity('user').")";
         $sql.= " AND u.rowid = s.fk_user";
         if ($year > 0)
         {

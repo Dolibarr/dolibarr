@@ -169,7 +169,7 @@ else if ($action == 'addcat')
 
 else if ($action == 'set_SUPPLIER_ORDER_OTHER')
 {
-    $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT');	// No alpha here, we want exact string
+    $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT','none');	// No alpha here, we want exact string
 	$doubleapproval = GETPOST('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED','alpha');
 	$doubleapproval = price2num($doubleapproval );
 
@@ -280,7 +280,7 @@ foreach ($dirmodels as $reldir)
                         if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
                         if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-                        
+
                         print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
                         print $module->info();
                         print '</td>';
@@ -402,7 +402,7 @@ foreach ($dirmodels as $reldir)
 	                require_once $dir.'/'.$file;
 	                $module = new $classname($db, new CommandeFournisseur($db));
 
-                    
+
                     print "<tr class=\"oddeven\">\n";
                     print "<td>";
 	                print (empty($module->name)?$name:$module->name);
@@ -502,14 +502,14 @@ $var=false;
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</td></tr>\n";
-	
+
 //}
 
 // Ask for payment bank during supplier order
 /* Kept as hidden for the moment
 if ($conf->banque->enabled)
 {
-    
+
     print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp</td><td align="center">';
     if (! empty($conf->use_javascript_ajax))
@@ -531,7 +531,7 @@ if ($conf->banque->enabled)
 }
 else
 {
-    
+
     print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
@@ -553,7 +553,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 else
 {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_notes');
     print $doleditor->Create();
 }
 print '</td><td align="right">';

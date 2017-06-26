@@ -59,7 +59,9 @@ class box_goodcustomers extends ModeleBoxes
 
 		// disable box for such cases
 		if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $this->enabled=0;	// disabled by this option
-		if (empty($conf->global->MAIN_BOX_ENABLE_BEST_CUSTOMERS)) $this->enabled=0; // not enabled by default. Very slow on large database 
+		if (empty($conf->global->MAIN_BOX_ENABLE_BEST_CUSTOMERS)) $this->enabled=0; // not enabled by default. Very slow on large database
+
+		$this->hidden = ! ($user->rights->societe->lire);
 	}
 
 	/**
@@ -86,7 +88,7 @@ class box_goodcustomers extends ModeleBoxes
 			$sql = "SELECT s.rowid, s.nom as name, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms as datem, s.status as status,";
 			$sql.= " count(*) as nbfact, sum(". $db->ifsql('f.paye=1','1','0').") as nbfactpaye";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
-			$sql.= ' WHERE s.entity IN ('.getEntity('societe', 1).')';
+			$sql.= ' WHERE s.entity IN ('.getEntity('societe').')';
 			$sql.= ' AND s.rowid = f.fk_soc';
 			$sql.= " GROUP BY s.rowid, s.nom, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms, s.status";
 			$sql.= $db->order("nbfact","DESC");
@@ -148,8 +150,10 @@ class box_goodcustomers extends ModeleBoxes
 			}
 		}
 		else {
-			$this->info_box_contents[0][0] = array('align' => 'left',
-				'text' => $langs->trans("ReadPermissionNotAllowed"));
+			$this->info_box_contents[0][0] = array(
+			    'td' => 'align="left" class="nohover opacitymedium"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
 		}
 
 	}
@@ -160,11 +164,11 @@ class box_goodcustomers extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
 

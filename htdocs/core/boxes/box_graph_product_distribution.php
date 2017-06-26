@@ -48,9 +48,15 @@ class box_graph_product_distribution extends ModeleBoxes
 	 */
 	function __construct($db,$param)
 	{
-		global $conf;
+		global $user, $conf;
 
 		$this->db=$db;
+
+		$this->hidden = ! (
+		    (! empty($conf->facture->enabled) && ! empty($user->rights->facture->lire))
+		 || (! empty($conf->commande->enabled) && ! empty($user->rights->commande->lire))
+		 || (! empty($conf->propal->enabled) && ! empty($user->rights->propale->lire))
+		);
 	}
 
 	/**
@@ -93,12 +99,16 @@ class box_graph_product_distribution extends ModeleBoxes
 		}
 		if (empty($showinvoicenb) && empty($showpropalnb) && empty($showordernb)) { $showpropalnb=1; $showinvoicenb=1; $showordernb=1; }
 		if (empty($conf->facture->enabled) || empty($user->rights->facture->lire)) $showinvoicenb=0;
-		if (empty($conf->propal->enabled) || empty($user->rights->propal->lire)) $showpropalnb=0;
+		if (empty($conf->propal->enabled) || empty($user->rights->propale->lire)) $showpropalnb=0;
 		if (empty($conf->commande->enabled) || empty($user->rights->commande->lire)) $showordernb=0;
 
 		$nowarray=dol_getdate(dol_now(),true);
 		if (empty($year)) $year=$nowarray['year'];
 
+		$nbofgraph=0;
+		if ($showinvoicenb) $nbofgraph++;
+		if ($showpropalnb)  $nbofgraph++;
+		if ($showordernb)   $nbofgraph++;
 
 		$text = $langs->trans("BoxProductDistribution",$max).' - '.$langs->trans("Year").': '.$year;
 		$this->info_box_head = array(
@@ -112,11 +122,6 @@ class box_graph_product_distribution extends ModeleBoxes
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
-
-		$nbofgraph=0;
-		if ($showinvoicenb) $nbofgraph++;
-		if ($showpropalnb)  $nbofgraph++;
-		if ($showordernb)   $nbofgraph++;
 
 		$paramtitle=$langs->transnoentitiesnoconv("Products").'/'.$langs->transnoentitiesnoconv("Services");
 		if (empty($conf->produit->enabled)) $paramtitle=$langs->transnoentitiesnoconv("Services");
@@ -188,7 +193,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 		}
 
-		if (! empty($conf->propal->enabled) && ! empty($user->rights->propal->lire))
+		if (! empty($conf->propal->enabled) && ! empty($user->rights->propale->lire))
 		{
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showpropalnb)
@@ -250,7 +255,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		if (! empty($conf->commande->enabled) && ! empty($user->rights->commande->lire))
 		{
 			$langs->load("orders");
-			
+
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showordernb)
 			{
@@ -309,6 +314,11 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 		}
 
+		if (empty($nbofgraph))
+		{
+		    $langs->load("errors");
+		    $mesg=$langs->trans("ReadPermissionNotAllowed");
+		}
 		if (empty($conf->use_javascript_ajax))
 		{
 			$langs->load("errors");
@@ -334,7 +344,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$stringtoshow.='<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb?' checked':'').'> '.$langs->trans("ForCustomersInvoices");
 				$stringtoshow.=' &nbsp; ';
 			}
-			if (! empty($conf->propal->enabled) || ! empty($user->rights->propal->lire))
+			if (! empty($conf->propal->enabled) || ! empty($user->rights->propale->lire))
 			{
 				$stringtoshow.='<input type="checkbox" name="'.$param_showpropalnb.'"'.($showpropalnb?' checked':'').'> '.$langs->trans("ForProposals");
 				$stringtoshow.='&nbsp;';
@@ -380,9 +390,11 @@ class box_graph_product_distribution extends ModeleBoxes
 		}
 		else
 		{
-			$this->info_box_contents[0][0] = array(	'td' => 'align="left" class="nohover"',
-					'maxlength'=>500,
-					'text' => $mesg);
+			$this->info_box_contents[0][0] = array(
+			    'td' => 'align="left" class="nohover opacitymedium"',
+				'maxlength'=>500,
+				'text' => $mesg
+			);
 		}
 
 	}
@@ -393,11 +405,11 @@ class box_graph_product_distribution extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }
