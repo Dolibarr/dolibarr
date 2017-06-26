@@ -207,8 +207,19 @@ if ($action == 'set' && $user->admin)
 	    //var_dump($resarray);exit;
 	    if ($resarray['nbperms'] > 0)
 	    {
-    		$msg = $langs->trans('ModuleEnabledAdminMustCheckRights');
-    		setEventMessages($msg, null, 'warnings');
+	        $tmpsql="SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."user WHERE admin <> 1";
+	        $resqltmp=$db->query($tmpsql);
+	        if ($resqltmp)
+	        {
+	            $obj=$db->fetch_object($resqltmp);
+	            //var_dump($obj->nb);exit;
+	            if ($obj && $obj->nb > 1)
+	            {
+	                $msg = $langs->trans('ModuleEnabledAdminMustCheckRights');
+	                setEventMessages($msg, null, 'warnings');
+	            }
+	        }
+	        else dol_print_error($db);
 	    }
 	}
     header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));

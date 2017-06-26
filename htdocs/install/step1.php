@@ -88,6 +88,7 @@ if (@file_exists($forcedfile)) {
 			$main_data_dir = detect_dolibarr_main_data_root($main_dir);
 		}
 		$main_url = detect_dolibarr_main_url_root();
+
 		if (!empty($force_install_databaserootlogin)) {
 			$userroot = parse_database_login($force_install_databaserootlogin);
 		}

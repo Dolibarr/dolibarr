@@ -92,6 +92,9 @@ delete from llx_product_extrafields where fk_object not in (select rowid from ll
 update llx_product_batch set batch = '' where batch = 'Non d&eacute;fini';
 update llx_product_batch set batch = '' where batch = 'Non défini';
 
+update llx_stock_mouvement set batch = null where batch = 'Non d&eacute;fini';
+update llx_stock_mouvement set batch = null where batch = 'Non défini';
+
 DELETE FROM llx_product_lot WHERE fk_product NOT IN (select rowid from llx_product); 
 DELETE FROM llx_product_stock WHERE fk_product NOT IN (select rowid from llx_product); 
 DELETE FROM llx_product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM llx_product_batch as pb);

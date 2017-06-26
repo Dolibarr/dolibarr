@@ -667,10 +667,17 @@ div.myavailability {
 	margin-bottom: 12px;
 }
 
+
 /* For the long description of module */
 .moduledesclong p img,.moduledesclong p a img {
     max-width: 90% !important;
     height: auto !important;
+}
+.imgdoc {
+    margin: 18px;
+    border: 1px solid #ccc;
+    box-shadow: 1px 1px 25px #aaa;
+    max-width: calc(100% - 56px);
 }
 
 
