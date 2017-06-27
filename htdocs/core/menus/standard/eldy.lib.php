@@ -1583,7 +1583,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			    $url = $shorturl = $tmp[0];
 			    $param = (isset($tmp[1])?$tmp[1]:'');    // params in url of the menu link
 
-			    // Complete param to force leftmenu to '' to closed opend menu when we click on a link with no leftmenu defined.
+			    // Complete param to force leftmenu to '' to close open menu when we click on a link with no leftmenu defined.
 			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && ! empty($menu_array[$i]['mainmenu']))
 			    {
 			        $param.=($param?'&':'').'mainmenu='.$menu_array[$i]['mainmenu'].'&leftmenu=';
