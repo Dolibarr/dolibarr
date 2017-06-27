@@ -51,6 +51,7 @@ $dirins = $tmp[0];
 
 $FILEFLAG='modulebuilder.txt';
 
+$now=dol_now();
 
 /*
  * Actions
@@ -106,7 +107,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
     // Edit PHP files
     if (! $error)
     {
-	    $listofphpfilestoedit = dol_dir_list($destdir, 'files', 1, '\.(php|MD|js)$', '', 'fullname', SORT_ASC, 0, 1);
+	    $listofphpfilestoedit = dol_dir_list($destdir, 'files', 1, '\.(php|MD|js|sql|txt|xml|lang)$', '', 'fullname', SORT_ASC, 0, 1);
 	    foreach($listofphpfilestoedit as $phpfileval)
 	    {
 	        //var_dump($phpfileval['fullname']);
@@ -116,7 +117,8 @@ if ($dirins && $action == 'initmodule' && $modulename)
 	        	'MYMODULE'=>strtoupper($modulename),
 	        	'My module'=>$modulename,
 	        	'htdocs/modulebuilder/template/'=>'',
-	        );
+                '---Put here your own copyright and developer email---'=>dol_print_date($now,'%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
+	    	);
 
 
 	        $result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
