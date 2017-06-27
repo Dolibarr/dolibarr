@@ -434,6 +434,8 @@ function currency_name($code_iso, $withcode='', $outputlangs=null)
 
     if (empty($outputlangs)) $outputlangs=$langs;
 
+    $outputlangs->load("dict");
+
     // If there is a translation, we can send immediatly the label
     if ($outputlangs->trans("Currency".$code_iso)!="Currency".$code_iso)
     {
