@@ -1735,6 +1735,7 @@ img.userphotosmall {			/* size for user photo in lists */
     height: 12px;
     background-size: contain;
     vertical-align: middle;
+    background-color: #FFF;
 }
 .span-icon-user {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>);
