@@ -270,7 +270,7 @@ class BookKeeping extends CommonObject
 				$sql .= ", montant";
 				$sql .= ", sens";
 				$sql .= ", fk_user_author";
-				$sql .= ", import_key";
+				$sql .= ", date_creation";
 				$sql .= ", code_journal";
 				$sql .= ", journal_label";
 				$sql .= ", piece_num";
@@ -430,6 +430,11 @@ class BookKeeping extends CommonObject
 		if (empty($this->debit)) $this->debit = 0;
 		if (empty($this->credit)) $this->credit = 0;
 
+		$now = dol_now();
+		if (empty($this->date_create)) {
+		    $this->date_create = $now;
+		}
+
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -451,7 +456,7 @@ class BookKeeping extends CommonObject
 		$sql .= 'montant,';
 		$sql .= 'sens,';
 		$sql .= 'fk_user_author,';
-		$sql .= 'import_key,';
+		$sql .= 'date_creation,';
 		$sql .= 'code_journal,';
 		$sql .= 'journal_label,';
 		$sql .= 'piece_num,';
@@ -473,7 +478,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' ' . (! isset($this->montant) ? 'NULL' : $this->montant ). ',';
 		$sql .= ' ' . (! isset($this->sens) ? 'NULL' : "'" . $this->db->escape($this->sens) . "'") . ',';
 		$sql .= ' ' . $user->id . ',';
-		$sql .= ' ' . (! isset($this->import_key) ? 'NULL' : "'" . $this->db->escape($this->import_key) . "'") . ',';
+		$sql .= ' ' . "'" . $this->db->idate($this->date_create) . "',";
 		$sql .= ' ' . (empty($this->code_journal) ? 'NULL' : "'" . $this->db->escape($this->code_journal) . "'") . ',';
 		$sql .= ' ' . (empty($this->journal_label) ? 'NULL' : "'" . $this->db->escape($this->journal_label) . "'") . ',';
 		$sql .= ' ' . (empty($this->piece_num) ? 'NULL' : $this->db->escape($this->piece_num)).',';
