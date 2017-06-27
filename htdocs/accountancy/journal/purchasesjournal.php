@@ -109,7 +109,7 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 }
 if ($date_start && $date_end)
 	$sql .= " AND f.datef >= '" . $db->idate($date_start) . "' AND f.datef <= '" . $db->idate($date_end) . "'";
-if ($in_bookkeeping == 'yes')    
+if ($in_bookkeeping == 'yes')
 	$sql .= " AND (f.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='supplier_invoice') )";
 $sql .= " ORDER BY f.datef";
 
@@ -467,7 +467,7 @@ if ($action == 'export_csv') {
 				print '"' . $journal_label . '"' ;
 				print "\n";
 			}
-			
+
 		}
 	}
 
@@ -513,7 +513,7 @@ if (empty($action) || $action == 'view') {
 	else {
 	    print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 	}
-	print '<input type="button" class="butAction" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
+	print '<input type="button" class="butAction" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 	print '</div>';
 
 	print '

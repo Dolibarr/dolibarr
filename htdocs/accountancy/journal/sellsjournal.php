@@ -114,7 +114,7 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 $sql .= " AND fd.product_type IN (0,1)";
 if ($date_start && $date_end)
 	$sql .= " AND f.datef >= '" . $db->idate($date_start) . "' AND f.datef <= '" . $db->idate($date_end) . "'";
-if ($in_bookkeeping == 'yes')    
+if ($in_bookkeeping == 'yes')
 	$sql .= " AND (f.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='customer_invoice') )";
 $sql .= " ORDER BY f.datef";
 
@@ -408,7 +408,7 @@ if ($action == 'export_csv') {
 
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 	$sell_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
-	
+
 
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
@@ -424,7 +424,7 @@ if ($action == 'export_csv') {
 			$invoicestatic->ref = $val["ref"];
 
 			$date = dol_print_date($val["date"], 'day');
-		
+
 			foreach ( $tabttc[$key] as $k => $mt ) {
 				print '"' . $key . '"' . $sep;
                 print '"' . $date . '"' . $sep;
@@ -445,7 +445,7 @@ if ($action == 'export_csv') {
 			foreach ( $tabht[$key] as $k => $mt ) {
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch(null, $k, true);
-				
+
 
 				if ($mt) {
 					print '"' . $key . '"' . $sep;
@@ -466,9 +466,9 @@ if ($action == 'export_csv') {
 
 			// VAT
 			foreach ( $tabtva[$key] as $k => $mt ) {
-			
-			
-			
+
+
+
 				if ($mt) {
 					print '"' . $key . '"' . $sep;
                     print '"' . $date . '"' . $sep;
@@ -523,7 +523,7 @@ if (empty($action) || $action == 'view') {
 	else {
 	   print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 	}
-	print '<input type="button" class="butAction" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
+	print '<input type="button" class="butAction" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 	print '</div>';
 
 	print '
