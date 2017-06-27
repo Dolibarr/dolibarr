@@ -4332,7 +4332,7 @@ class Form
 	 *                                            Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
      *                  					      Sinon la TVA proposee par defaut=0. Fin de regle.
      *  @param	bool	     $options_only		  Return HTML options lines only (for ajax treatment)
-     *  @param  int          $mode                1=Add code into key in select list
+     *  @param  int          $mode                0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
      *  @return	string
      */
     function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false, $mode=0)

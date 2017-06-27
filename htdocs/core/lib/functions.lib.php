@@ -3891,7 +3891,7 @@ function getTaxesFromId($vatrowid)
  *  @param	Societe	$buyer         		Company object
  *  @param	Societe	$seller        		Company object
  *  @param  int     $firstparamisid     1 if first param is id into table (use this if you can)
- *  @return	array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
+ *  @return	array    	  				array(localtax_type1(1-6/0 if not found), rate localtax1, localtax_type1, rate localtax2, accountancycodecust, accountancycodesupp)
  */
 function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisid=0)
 {
@@ -3927,22 +3927,22 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 		{
 			if (! isOnlyOneLocalTax(1))
 			{
-				return array($obj->localtax1_type, get_localtax($vatrate, $local, $buyer, $seller), $obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				return array($obj->localtax1_type, get_localtax($vatrate, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 			}
 			else
 			{
-				return array($obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				return array($obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell, $obj->accountancy_code_buy);
 			}
 		}
 		elseif ($local == 2)
 		{
 			if (! isOnlyOneLocalTax(2))
 			{
-				return array($obj->localtax2_type, get_localtax($vatrate, $local, $buyer, $seller),$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				return array($obj->localtax2_type, get_localtax($vatrate, $local, $buyer, $seller),$obj->accountancy_code_sell, $obj->accountancy_code_buy);
 			}
 			else
 			{
-				return array($obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				return array($obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell, $obj->accountancy_code_buy);
 			}
 		}
 		else
@@ -3951,22 +3951,22 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 			{
 				if(! isOnlyOneLocalTax(2))
 				{
-					return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller),$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+					return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller), $obj->accountancy_code_sell,$obj->accountancy_code_buy);
 				}
 				else
 				{
-					return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+					return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, $obj->localtax2, $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 				}
 			}
 			else
 			{
 				if(! isOnlyOneLocalTax(2))
 				{
-					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type,get_localtax($vatrate, 2, $buyer, $seller) ,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 				}
 				else
 				{
-					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2, $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 				}
 			}
 		}

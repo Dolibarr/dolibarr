@@ -113,7 +113,7 @@ if (empty($reshook))
 	    // If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
 	    if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
 	    {
-	        // We look into database using code
+	        // We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in create product.
 	        $vatratecode=$reg[1];
 	        // Get record from code
 	        $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
@@ -1819,7 +1819,10 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print "<td>" . "</td>";
 
 		print '<td align="center">' . $langs->trans($object->price_base_type) . "</td>";
-		print '<td align="right">' . vatrate($object->tva_tx, true, $object->recuperableonly) . "</td>";
+		print '<td align="right">';
+		print vatrate($object->tva_tx, true, $object->recuperableonly);
+		print $object->default_vat_code?' ('.$object->default_vat_code.')':'';
+		print "</td>";
 		print '<td align="right">' . price($object->price) . "</td>";
 		print '<td align="right">' . price($object->price_ttc) . "</td>";
 		print '<td align="right">' . price($object->price_min) . '</td>';

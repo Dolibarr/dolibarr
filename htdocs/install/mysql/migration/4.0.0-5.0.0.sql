@@ -270,3 +270,8 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10
 
 
 ALTER TABLE llx_events MODIFY COLUMN ip varchar(250);
+
+
+UPDATE llx_bank SET label= '(SupplierInvoicePayment)' WHERE label= 'Règlement fournisseur';
+UPDATE llx_bank SET label= '(CustomerInvoicePayment)' WHERE label= 'Règlement client';
+
