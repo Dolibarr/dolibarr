@@ -497,12 +497,12 @@ if ($resql)
             print '</td>';
         }
 
-		// User to do
+		// User owner
 		print '<td align="left">';
 		if ($obj->fk_user_action > 0)
 		{
 			$userstatic->fetch($obj->fk_user_action);
-			print $userstatic->getNomUrl(1);
+			print $userstatic->getNomUrl(-1);
 		}
 		else print '&nbsp;';
 		print '</td>';
