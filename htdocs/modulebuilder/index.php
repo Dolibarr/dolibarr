@@ -246,11 +246,11 @@ if ($dirins && $action == 'confirm_delete')
 
         if ($result > 0)
         {
-            setEventMessages($langs->trans("DirDeleted"), null);
+            setEventMessages($langs->trans("DirWasRemoved", $modulelowercase), null);
         }
         else
         {
-            setEventMessages($langs->trans("NothingDeleted"), null, 'warnings');
+            setEventMessages($langs->trans("PurgeNothingToDelete"), null, 'warnings');
         }
     }
 
