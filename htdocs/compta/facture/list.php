@@ -551,7 +551,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql.= $db->plimit($limit,$offset);
+$sql.= $db->plimit($limit + 1,$offset);
 //print $sql;
 
 $resql = $db->query($sql);
@@ -591,7 +591,6 @@ if ($resql)
     
     $i = 0;
     print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    
 	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$massactionbutton,$num,$nbtotalofrecords,'title_accountancy.png');
 
 	if ($massaction == 'presend')
