@@ -31,6 +31,15 @@
 
 -- Requests to clean corrupted data
 
+-- VMYSQL4.1 INSERT IGNORE INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif) SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author from llx_product_batch as pb, llx_product_stock as ps, llx_entrepot as e WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid;
+-- -- a tester VPGSQL9.5 INSERT IGNORE INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif) SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author from llx_product_batch as pb, llx_product_stock as ps, llx_entrepot as e WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid ON CONFLICT DO NOTHING;
+-- -- avant 9.5 faire en variant x pour qu'au 2eme passage, le premier doublon soit dans la tabel cible
+-- -- INSERT INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif) 
+-- -- SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author 
+-- -- from llx_product_batch as pb, llx_product_stock as ps, llx_entrepot as e
+-- -- WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid 
+-- -- AND NOT EXISTS (SELECT 1 FROM llx_product_lot as b WHERE b.fk_product=ps.fk_product and pb.batch=b.batch) LIMIT x
+
 
 UPDATE llx_user set api_key = null where api_key = '';
 
@@ -98,6 +107,8 @@ update llx_stock_mouvement set batch = null where batch = 'Non défini';
 DELETE FROM llx_product_lot WHERE fk_product NOT IN (select rowid from llx_product); 
 DELETE FROM llx_product_stock WHERE fk_product NOT IN (select rowid from llx_product); 
 DELETE FROM llx_product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM llx_product_batch as pb);
+
+
 
 -- Merge splitted lines into one in table llx_product_batch 
 DROP TABLE tmp_llx_product_batch;
@@ -356,4 +367,3 @@ drop table tmp_c_shipment_mode;
 -- Backport a change of value into the hourly rate. 
 -- update llx_projet_task_time as ptt set ptt.thm = (SELECT thm from llx_user as u where ptt.fk_user = u.rowid) where (ptt.thm is null)
 
-  

@@ -245,7 +245,7 @@ function dol_shutdown()
  *  @param	string	$check	     Type of check
  *                                  ''=no check (deprecated)
  *                                  'none'=no check (only for param that should have very rich content)
- *                                  'int'=check it's numeric
+ *                                  'int'=check it's numeric (integer or float)
  *                                  'alpha'=check it's text and sign
  *                                  'aZ'=check it's a-z only
  *                                  'aZ09'=check it's simple alpha string (recommended for keys)
