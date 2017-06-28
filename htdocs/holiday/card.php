@@ -792,7 +792,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         if (empty($user->rights->holiday->write_all))
         {
         	print $form->select_dolusers($fuserid, 'useridbis', 0, '', 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-        	print '<input type="hidden" name="fuserid" value="'.$fuserid.'">';
+        	print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
         }
         else print $form->select_dolusers(GETPOST('fuserid')?GETPOST('fuserid'):$user->id,'fuserid',0,'',0);
         print '</td>';
