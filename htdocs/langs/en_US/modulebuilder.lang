@@ -34,3 +34,4 @@ PageForList=PHP page for list of record
 PageForCreateEditView=PHP page to create/edit/view a record
 PathToModulePackage=Path to zip of module/application package
 SpaceOrSpecialCharAreNotAllowed=Spaces or special characters are not allowed.
+PackageFileNotYetGenerated=Package file not yet generated

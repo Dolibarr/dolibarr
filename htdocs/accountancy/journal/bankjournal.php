@@ -72,10 +72,10 @@ $date_startyear = GETPOST('date_startyear');
 $date_endmonth = GETPOST('date_endmonth');
 $date_endday = GETPOST('date_endday');
 $date_endyear = GETPOST('date_endyear');
-$action = GETPOST('action','aZ09');
+$in_bookkeeping = GETPOST('in_bookkeeping');
 
 $now = dol_now();
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action','alpha');
 
 // Security check
 if ($user->societe_id > 0 && empty($id_journal))
@@ -121,6 +121,8 @@ $sql .= " WHERE ba.fk_accountancy_journal=" . $id_journal;
 $sql .= ' AND ba.entity IN ('.getEntity('bank_account', 0).')';		// We don't share object for accountancy
 if ($date_start && $date_end)
 	$sql .= " AND b.dateo >= '" . $db->idate($date_start) . "' AND b.dateo <= '" . $db->idate($date_end) . "'";
+if ($in_bookkeeping == 'yes')
+	$sql .= " AND (b.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
 $sql .= " ORDER BY b.datev";
 
 $object = new Account($db);
@@ -366,6 +368,7 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = $val["fk_bank"];
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->label_operation = $val["label"];
+					$bookkeeping->label_compte = $langs->trans("Bank");
 					$bookkeeping->montant = ($mt < 0 ? - $mt : $mt);
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt >= 0 ? $mt : 0);
@@ -473,6 +476,18 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->date_create = $now;
 
 					if (in_array($tabtype[$key], array('sc', 'payment_sc'))) {   // If payment is payment of social contribution
+						$sqlmid = 'SELECT ch.libelle, t.libelle as labelc';
+						$sqlmid .= " FROM " . MAIN_DB_PREFIX . "chargesociales ch ";
+						$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementcharge as paych ON  paych.fk_charge=ch.rowid";
+						$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "c_chargesociales as t ON  ch.fk_type=t.id";
+						$sqlmid .= " WHERE paych.fk_bank=" . $key;
+						dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+						$resultmid = $db->query($sqlmid);
+						if ($resultmid) {
+        					$objmid = $db->fetch_object($resultmid);
+        					$bookkeeping->label_compte = $objmid->labelc;
+        					$bookkeeping->doc_ref = $objmid->libelle ;
+						}
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->numero_compte = $k;
 					} else if ($tabtype[$key] == 'payment') {	// If payment is payment of customer invoice, we get ref of invoice
@@ -597,7 +612,6 @@ if (! $error && $action == 'writebookkeeping') {
 }
 
 // Export
-/*
 if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
@@ -606,165 +620,101 @@ if ($action == 'export_csv') {
 	$companystatic = new Client($db);
 	$userstatic = new User($db);
 
-	// Model Cegid Expert Export
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2)
-	{
-		$sep = ";";
+    // Bank
+	foreach ( $tabpay as $key => $val ) {
+		$date = dol_print_date($db->jdate($val["date"]), 'day');
 
-		foreach ( $tabpay as $key => $val ) {
-			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
-
-			$reflabel = $val["ref"];
-			if ($reflabel == '(SupplierInvoicePayment)') {
-				$reflabel = $langs->trans('Supplier');
-			}
-			if ($reflabel == '(CustomerInvoicePayment)') {
-				$reflabel = $langs->trans('Customer');
-			}
-			if ($reflabel == '(SocialContributionPayment)') {
-				$reflabel = $langs->trans('SocialContribution');
-			}
-			if ($reflabel == '(DonationPayment)') {
-				$reflabel = $langs->trans('Donation');
-			}
-			if ($reflabel == '(SubscriptionPayment)') {
-				$reflabel = $langs->trans('Subscription');
-			}
-			if ($reflabel == '(ExpenseReportPayment)') {
-				$reflabel = $langs->trans('Employee');
-			}
-
-			$companystatic->id = $tabcompany[$key]['id'];
-			$companystatic->name = $tabcompany[$key]['name'];
-
-			$userstatic->id = $tabuser[$key]['id'];
-			$userstatic->lastname = $tabuser[$key]['lastname'];
-			$userstatic->firstname = $tabuser[$key]['firstname'];
-
-			// Bank
-			foreach ( $tabbq[$key] as $k => $mt ) {
-				print $date . $sep;
-				print $journal . $sep;
-				print length_accountg(html_entity_decode($k)) . $sep;
-				print $sep;
-				print ($mt < 0 ? 'C' : 'D') . $sep;
-				print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-				if ($companystatic->name == '') {
-					print $langs->trans('Bank')." - ". utf8_decode($val["ref"]) . $sep;
-				} else {
-					print $langs->trans("Bank") .' - '.utf8_decode($companystatic->name) . $sep;
-				}
-				print utf8_decode($reflabel) . $sep;
-				print "\n";
-			}
-
-			// Third party
-			if (is_array($tabtp[$key])) {
-				foreach ( $tabtp[$key] as $k => $mt ) {
-					if ($mt) {
-						print $date . $sep;
-						print $journal . $sep;
-						if ($tabtype[$key] == 'payment') {
-							print length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . $sep;
-							print length_accounta(html_entity_decode($k)) . $sep;
-						} else if ($tabtype[$key] == 'payment_supplier') {
-							print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . $sep;
-							print length_accounta(html_entity_decode($k)) . $sep;
-						} else {
-							print length_accountg(html_entity_decode($k)) . $sep;
-							print $sep;
-						}
-						print ($mt < 0 ? 'D' : 'C') . $sep;
-						print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-						if ($companystatic->name == '') {
-							print $langs->trans('ThirdParty')." - ". utf8_decode($val["ref"]) . $sep;
-						} else {
-							print $langs->trans('ThirdParty')." - ". utf8_decode($companystatic->name) . $sep;
-						}
-						print utf8_decode($reflabel) . $sep;
-						print "\n";
-					}
-				}
-			} else {
-				foreach ( $tabbq[$key] as $k => $mt ) {
-					print $date . $sep;
-					print $journal . $sep;
-					print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . $sep;
-					print $sep;
-					print ($mt < 0 ? 'D' : 'C') . $sep;
-					print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-					if ($companystatic->name == '') {
-						print $langs->trans('ThirdParty')." - ". utf8_decode($val["ref"]) . $sep;
-					} else {
-						print $langs->trans('ThirdParty')." - ". utf8_decode($companystatic->name) . $sep;
-					}
-					print utf8_decode($reflabel) . $sep;
-					print "\n";
-				}
-			}
+		$reflabel = $val["ref"];
+		if ($reflabel == '(SupplierInvoicePayment)') {
+			$reflabel = $langs->trans('Supplier');
 		}
-	} else {
-		// Model Classic Export
-		foreach ( $tabpay as $key => $val ) {
-			$date = dol_print_date($db->jdate($val["date"]), 'day');
+		if ($reflabel == '(CustomerInvoicePayment)') {
+			$reflabel = $langs->trans('Customer');
+		}
+		if ($reflabel == '(SocialContributionPayment)') {
+			$reflabel = $langs->trans('SocialContribution');
+		}
+		if ($reflabel == '(DonationPayment)') {
+			$reflabel = $langs->trans('Donation');
+		}
+		if ($reflabel == '(SubscriptionPayment)') {
+			$reflabel = $langs->trans('Subscription');
+		}
+		if ($reflabel == '(ExpenseReportPayment)') {
+			$reflabel = $langs->trans('Employee');
+		}
 
-			$companystatic->id = $tabcompany[$key]['id'];
-			$companystatic->name = $tabcompany[$key]['name'];
+		$companystatic->id = $tabcompany[$key]['id'];
+		$companystatic->name = $tabcompany[$key]['name'];
 
-			// Bank
-			foreach ( $tabbq[$key] as $k => $mt ) {
-				print '"' . $journal . '"' . $sep;
-				print '"' . $date . '"' . $sep;
-				print '"' . $val["type_payment"] . '"' . $sep;
-				print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-				if ($companystatic->name == '') {
-					print '"' . $langs->trans('Bank') . " - " . utf8_decode($val["ref"]) . '"' . $sep;
-				} else {
-					print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
-				}
-				print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
-				print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
-				print "\n";
-			}
-
-			// Third party
-			if (is_array($tabtp[$key])) {
-				foreach ( $tabtp[$key] as $k => $mt ) {
-					if ($mt) {
-						print '"' . $journal . '"' . $sep;
-						print '"' . $date . '"' . $sep;
-						print '"' . $val["type_payment"] . '"' . $sep;
-						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-						if ($companystatic->name == '') {
-							print '"' . $langs->trans('ThirdParty') . " - " . utf8_decode($val["ref"]) . '"' . $sep;
-						} else {
-							print '"' . $langs->trans('ThirdParty') . " - " . utf8_decode($companystatic->name) . '"' . $sep;
-						}
-						print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
-						print '"' . ($mt >= 0 ? price($mt) : '') . '"';
-						print "\n";
-					}
-				}
+		// Bank
+		foreach ( $tabbq[$key] as $k => $mt ) {
+			print '"' . $journal . '"' . $sep;
+			print '"' . $date . '"' . $sep;
+			print '"' . $val["type_payment"] . '"' . $sep;
+			print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+			print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+			print "  " . $sep;
+			if ($companystatic->name == '') {
+				print '"' . $langs->trans('Bank') . " - " . utf8_decode($reflabel) . '"' . $sep;
 			} else {
-				foreach ( $tabbq[$key] as $k => $mt ) {
+				print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
+			}
+			print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
+			print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
+			print "\n";
+		}
+
+		// Third party
+		if (is_array($tabtp[$key])) {
+			foreach ( $tabtp[$key] as $k => $mt ) {
+				if ($mt) {
 					print '"' . $journal . '"' . $sep;
 					print '"' . $date . '"' . $sep;
-					print '"' . $val["ref"] . '"' . $sep;
-					print '"' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . '"' . $sep;
-					if ($companystatic->name == '') {
-						print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($val["ref"]) . '"' . $sep;
+					print '"' . $val["type_payment"] . '"' . $sep;
+					print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+
+					if ($tabtype[$key] == 'payment_supplier') {
+					print '"' . $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER . '"' . $sep;
+					} else if($tabtype[$key] == 'payment') {
+					print '"' . $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER . '"' . $sep;
 					} else {
-						print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
+					print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+					}
+
+
+
+					print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+					if ($companystatic->name == '') {
+						print '"' . $langs->trans('ThirdParty') . " - " . utf8_decode($reflabel) . '"' . $sep;
+					} else {
+						print '"' . $langs->trans('ThirdParty') . " - " . utf8_decode($companystatic->name) . '"' . $sep;
 					}
 					print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 					print '"' . ($mt >= 0 ? price($mt) : '') . '"';
 					print "\n";
 				}
 			}
+		} else {
+			foreach ( $tabbq[$key] as $k => $mt ) {
+				print '"' . $journal . '"' . $sep;
+				print '"' . $date . '"' . $sep;
+				print '"' . $val["ref"] . '"' . $sep;
+				print '"' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . '"' . $sep;
+				print '"' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . '"' . $sep;
+				print "  " . $sep;
+				if ($companystatic->name == '') {
+					print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($reflabel) . '"' . $sep;
+				} else {
+					print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
+				}
+				print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
+				print '"' . ($mt >= 0 ? price($mt) : '') . '"';
+				print "\n";
+			}
 		}
 	}
 }
-*/
 
 
 /*
@@ -802,6 +752,7 @@ if (empty($action) || $action == 'view') {
 
 	print '<div class="tabsAction tabsActionNoBottom">';
 	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
+	print '<input type="button" class="butAction" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 	print '</div>';
 
 	// TODO Avoid using js. We can use a direct link with $param
@@ -861,6 +812,9 @@ if (empty($action) || $action == 'view') {
 			$reflabel = $langs->trans('Subscription');
 		}
 		if ($reflabel == '(ExpenseReportPayment)') {
+			$reflabel = $langs->trans('Employee');
+		}
+		if ($reflabel == '(payment_salary)') {
 			$reflabel = $langs->trans('Employee');
 		}
 

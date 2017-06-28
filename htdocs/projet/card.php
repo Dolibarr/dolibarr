@@ -339,10 +339,10 @@ if (empty($reshook))
 		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
 	    $outputlangs = $langs;
-	    if (GETPOST('lang_id'))
+	    if (GETPOST('lang_id','aZ09'))
 	    {
 	        $outputlangs = new Translate("",$conf);
-	        $outputlangs->setDefaultLang(GETPOST('lang_id'));
+	        $outputlangs->setDefaultLang(GETPOST('lang_id','aZ09'));
 	    }
 	    $result= $object->generateDocument($object->modelpdf, $outputlangs);
 	    if ($result <= 0)
