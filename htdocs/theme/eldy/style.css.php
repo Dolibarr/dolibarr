@@ -76,6 +76,8 @@ else header('Cache-Control: no-cache');
 if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) { ob_start("ob_gzhandler"); }
 
 if (GETPOST('theme','alpha')) $conf->theme=GETPOST('theme','alpha');  // If theme was forced on URL
+if (GETPOST('lang','aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL
+
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
@@ -265,7 +267,7 @@ input.select2-input {
 	border-bottom:  solid 1px rgba(0,0,0,.2) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
 
-.liste_titre input[name=monthvalid], .liste_titre input[name=search_smonth], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre input[name=month_lim] {
+.liste_titre input[name=monthvalid], .liste_titre input[name=search_smonth], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre select[name=month], .liste_titre input[name=month_lim] {
 	margin-right: 4px;
 }
 input[type=submit] {
@@ -281,7 +283,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-family: <?php print $fontlist ?>;
     outline: none;
     margin: 0px 0px 0px 0px;
-    border-bottom: solid 1px rgba(0,0,0,.4);
+    border-bottom: solid 1px rgba(0,0,0,.2);
 }
 
 input {
@@ -340,9 +342,9 @@ input.buttongen {
 	vertical-align: middle;
 }
 span.timesheetalreadyrecorded input {
-    /*font-size: smaller;*/
     border: none;
-    /*background:	transparent;*/
+    border-bottom: solid 1px rgba(0,0,0,0.4);
+    margin-right: 1px !important;
 }
 
 select.flat, form.flat select {
@@ -363,8 +365,10 @@ select.flat, form.flat select {
 .opacitytransp {
 	opacity: 0;
 }
-select:invalid { color: gray; }
-	input:disabled {
+select:invalid {
+	color: gray;
+}
+input:disabled {
 	background:#ddd;
 }
 
@@ -662,10 +666,17 @@ div.myavailability {
 	margin-bottom: 12px;
 }
 
+
 /* For the long description of module */
 .moduledesclong p img, .moduledesclong p a img {
     max-width: 90% !important;
     height: auto !important;
+}
+.imgdoc {
+    margin: 18px;
+    border: 1px solid #ccc;
+    box-shadow: 1px 1px 25px #aaa;
+    max-width: calc(100% - 56px);
 }
 
 
@@ -689,7 +700,7 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
     overflow-x: auto;
 }
 div.fiche>form>div.div-table-responsive {
-    min-height: 390px;
+    min-height: 392px;
 }
 
 .flexcontainer {
@@ -790,6 +801,8 @@ div.fiche>form>div.div-table-responsive {
 /* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
+	.divmainbodylarge { margin-left: 20px !important; margin-right: 20px !important; }
+
     .tdoverflowonsmartphone {
         max-width: 0;
         overflow: hidden;
@@ -853,6 +866,7 @@ div.fiche>form>div.div-table-responsive {
 
 	div.divphotoref {
 		padding-right: 5px;
+	    padding-bottom: 5px;
 	}
     img.photoref, div.photoref {
     	border: none;
@@ -988,7 +1002,7 @@ div.fiche {
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:($dol_hide_leftmenu?'6':'26')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'16':'6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'16':'12')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
 	<?php if (! empty($conf->dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
 }
@@ -1083,6 +1097,9 @@ div.nopadding {
 #pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
+}
+.pictoobjectwidth {
+	width: 14px;
 }
 .pictosubstatus {
     padding-left: 2px;
@@ -1718,6 +1735,7 @@ img.userphotosmall {			/* size for user photo in lists */
     height: 12px;
     background-size: contain;
     vertical-align: middle;
+    background-color: #FFF;
 }
 .span-icon-user {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>);
@@ -1782,6 +1800,7 @@ a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { 
 font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; }
 a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; white-space: nowrap; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
+li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; text-decoration: none; }
 
@@ -2238,7 +2257,8 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 }
 div .tdtop {
     vertical-align: top !important;
-	padding-top: 5px !important;
+	padding-top: 8px !important;
+	padding-bottom: 2px !important;
 	padding-bottom: 0px;
 }
 
@@ -2683,7 +2703,7 @@ input.liste_titre {
 }
 
 .noborder tr.liste_total, .noborder tr.liste_total td, tr.liste_total, form.liste_total {
-	/* background: #F0F0F0; */
+	/* height: 32px; */
 }
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
     color: #552266;
@@ -2809,6 +2829,9 @@ div.tabBar .noborder {
         float: left;
     	padding-left: 5px;
     }
+    .boxstats {
+        width: 100px;
+    }
 }
 
 .boxstats:hover {
@@ -2848,7 +2871,7 @@ span.dashboardlineko {
     padding: 1px 2px 1px 2px;
     border-radius: .25em;
 
-    background-color: #af4705;
+    background-color: #9f4705;
     padding: 0px 5px 0px 5px;
     top: -26px;
 }
@@ -3069,7 +3092,8 @@ div.titre {
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }
 
-#divsubscribe { width: 700px; }
+.divmainbodylarge { margin-left: 40px; margin-right: 40px; }
+#divsubscribe { max-width: 900px; }
 #tablesubscribe { width: 100%; }
 
 
@@ -4027,11 +4051,14 @@ a span.select2-chosen
 .css-searchselectcombo ul.select2-results {
 	max-height:	none;
 }
-.select2-container-multi.select2-container-disabled .select2-choices {
+.select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;
 	background-image: none;
 	border: none;
 	cursor: default;
+}
+.select2-container-disabled .select2-choice .select2-arrow b {
+	opacity: 0.5;
 }
 .select2-container-multi .select2-choices .select2-search-choice {
   margin-bottom: 3px;
@@ -4177,7 +4204,7 @@ dl.dropdown {
     position:absolute;
     top:2px;
     list-style:none;
-    max-height: 300px;
+    max-height: 270px;
     overflow: auto;
 }
 .dropdown span.value {

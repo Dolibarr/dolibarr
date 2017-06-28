@@ -44,11 +44,11 @@ $search_email		= GETPOST('search_email','alpha');
 $type				= GETPOST('type','alpha');
 $status				= GETPOST('status','alpha');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -79,7 +79,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter_x") || GETP
 }
 
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('membertypecard','globalcard'));
 
 
@@ -173,7 +173,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
-	$sql.= " WHERE d.entity IN (".getEntity().")";
+	$sql.= " WHERE d.entity IN (".getEntity('adherent').")";
 
 	$result = $db->query($sql);
 	if ($result)
@@ -278,6 +278,7 @@ if ($action == 'create')
 	// Other attributes
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		print $object->showOptionals($extrafields,'edit');
@@ -336,14 +337,8 @@ if ($rowid > 0)
 		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 		print nl2br($object->mail_valid)."</td></tr>";
 
-		// Other attributes
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
-		{
-			// View extrafields
-			print $object->showOptionals($extrafields);
-		}
+    	// Other attributes
+    	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
         print '</div>';
@@ -386,7 +381,7 @@ if ($rowid > 0)
 		$sql.= " t.libelle as type, t.subscription";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql.= " WHERE d.fk_adherent_type = t.rowid ";
-		$sql.= " AND d.entity IN (".getEntity().")";
+		$sql.= " AND d.entity IN (".getEntity('adherent').")";
 		$sql.= " AND t.rowid = ".$object->id;
 		if ($sall)
 		{
@@ -674,6 +669,11 @@ if ($rowid > 0)
 		// Other attributes
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		{
+		    print $object->showOptionals($extrafields,'edit');
+		}
 
 		print '</table>';
 

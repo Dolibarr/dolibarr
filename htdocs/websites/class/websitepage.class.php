@@ -205,7 +205,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.tms as date_modification";
 
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
-		//$sql .= ' WHERE entity IN ('.getEntity('website', 1).')';       // entity is on website level
+		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
 		$sql .= ' WHERE 1 = 1';
 		if (null !== $website_id) {
 		    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";

@@ -45,6 +45,21 @@ class box_actions extends ModeleBoxes
 
 
 	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB	$db      	Database handler
+	 *  @param	string	$param		More parameters
+	 */
+	function __construct($db,$param='')
+	{
+	    global $user;
+
+	    $this->db = $db;
+
+	    $this->hidden = ! ($user->rights->agenda->myactions->read);
+	}
+
+	/**
      *  Load data for box to show them later
      *
      *  @param	int		$max        Maximum number of records to load
@@ -156,8 +171,8 @@ class box_actions extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'align' => 'left',
-                'text' => $langs->trans("ReadPermissionNotAllowed"),
+                'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
             );
 		}
 	}
@@ -173,8 +188,8 @@ class box_actions extends ModeleBoxes
     function showBox($head = null, $contents = null, $nooutput=0)
     {
 		global $langs, $conf;
-		parent::showBox($this->info_box_head, $this->info_box_contents);
-		$out='';
+		$out = parent::showBox($this->info_box_head, $this->info_box_contents);
+
         if (! empty($conf->global->SHOW_DIALOG_HOMEPAGE))
         {
 			$actioncejour=false;
@@ -191,7 +206,7 @@ class box_actions extends ModeleBoxes
 						// on affiche que les évènement du jours ou passé
 						// qui ne sont pas à 100%
 						$actioncejour=true;
-						
+
 						// TR
 						$logo=$contents[$line][0]['logo'];
 						$label=$contents[$line][1]['text'];

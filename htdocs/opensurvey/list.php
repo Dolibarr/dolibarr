@@ -42,7 +42,7 @@ $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -133,7 +133,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 }
-$sql.= " WHERE p.entity = ".getEntity('survey',1);
+$sql.= " WHERE p.entity = ".getEntity('survey');
 if ($status == 'expired') $sql.=" AND date_fin < '".$db->idate($now)."'";
 if ($status == 'opened') $sql.=" AND date_fin >= '".$db->idate($now)."'";
 if ($search_ref) $sql.=natural_search("p.id_sondage", $search_ref);

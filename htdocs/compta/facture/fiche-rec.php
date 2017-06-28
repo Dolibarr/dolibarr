@@ -76,7 +76,7 @@ $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='f.titre';
@@ -93,7 +93,7 @@ if (($id > 0 || $ref) && $action != 'create' && $action != 'add')
 	}
 }
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('invoicereccard','globalcard'));
 $extrafields = new ExtraFields($db);
 
@@ -545,8 +545,8 @@ if (empty($reshook))
     		{
     			$outputlangs = $langs;
     			$newlang = '';
-    			if (empty($newlang) && GETPOST('lang_id'))
-    				$newlang = GETPOST('lang_id');
+    			if (empty($newlang) && GETPOST('lang_id','aZ09'))
+    				$newlang = GETPOST('lang_id','aZ09');
     			if (empty($newlang))
     				$newlang = $object->thirdparty->default_lang;
     			if (! empty($newlang))
@@ -625,7 +625,7 @@ if (empty($reshook))
     			    // Define output language
     			    $outputlangs = $langs;
     			    $newlang = '';
-    			    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+    			    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
     			    if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     			    if (! empty($newlang)) {
     				$outputlangs = new Translate("", $conf);
@@ -810,8 +810,8 @@ if (empty($reshook))
                         // Define output language
                         $outputlangs = $langs;
                         $newlang = '';
-                        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id'))
-                            $newlang = GETPOST('lang_id');
+                        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09'))
+                            $newlang = GETPOST('lang_id','aZ09');
                             if ($conf->global->MAIN_MULTILANGS && empty($newlang))
                                 $newlang = $object->thirdparty->default_lang;
                                 if (! empty($newlang)) {

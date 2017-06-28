@@ -120,7 +120,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE p.fk_statut = 0";
 	$sql.= " AND p.fk_soc = s.rowid";
-	$sql.= " AND p.entity IN (".getEntity('propal', 1).")";
+	$sql.= " AND p.entity IN (".getEntity('propal').")";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 	$resql=$db->query($sql);
@@ -183,7 +183,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 	$sql.= " WHERE p.fk_soc = s.rowid";
 	$sql.= " AND p.fk_statut = c.id";
 	$sql.= " AND p.fk_statut = 1";
-	$sql.= " AND p.entity IN (".getEntity('propal', 1).")";
+	$sql.= " AND p.entity IN (".getEntity('propal').")";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
 	$sql.= " ORDER BY p.rowid DESC";

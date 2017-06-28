@@ -38,11 +38,11 @@ $type=GETPOST("type","int");
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 if (! $sortfield) $sortfield="c";
 if (! $sortorder) $sortorder="DESC";
 $offset = $limit * $page ;
@@ -114,7 +114,7 @@ $infoprod=array();
 $sql  = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, SUM(pd.qty) as c";
 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
-$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 $sql.= " AND p.rowid = pd.fk_product";
 if ($type !== '') {
 	$sql.= " AND fk_product_type = ".$type;

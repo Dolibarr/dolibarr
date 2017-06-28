@@ -52,7 +52,7 @@ $result = restrictedArea($user, 'banque', '', '', '');
 
 $object = new PaymentVarious($db);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('variouscard','globalcard'));
 
 
@@ -74,7 +74,7 @@ if ($action == 'add' && empty($cancel))
 	$datep=dol_mktime(12,0,0, GETPOST("datepmonth"), GETPOST("datepday"), GETPOST("datepyear"));
 	$datev=dol_mktime(12,0,0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
 	if (empty($datev)) $datev=$datep;
-	
+
 	$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
 	$object->datev=$datev;
 	$object->datep=$datep;
@@ -207,7 +207,7 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("NewVariousPayment"),'', 'title_accountancy.png');
 
 	dol_fiche_head('', '');
-	
+
 	print '<table class="border" width="100%">';
 
 	// Date payment
@@ -274,7 +274,7 @@ if ($action == 'create')
 		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1, '');
         print '</td></tr>';
 	}
-	else // For external software 
+	else // For external software
 	{
 		print '<tr><td>'.$langs->trans("AccountAccounting").'</td>';
 		print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code" value="'.$accountancy_code.'">';
@@ -282,8 +282,9 @@ if ($action == 'create')
 	}
 
 	// Other attributes
-	$parameters=array('colspan' => ' colspan="1"');
+	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print '</table>';
 
@@ -315,7 +316,7 @@ if ($id)
 	print '<table class="border" width="100%">';
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-	
+
     print "<tr>";
 	print '<td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
@@ -372,14 +373,14 @@ if ($id)
 	}
 
 	// Other attributes
-	$parameters=array('colspan' => ' colspan="1"');
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	$parameters=array('socid'=>$object->id);
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
 
 	dol_fiche_end();
 
-	
+
 	/*
 	 * Action buttons
 	 */

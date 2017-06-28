@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2017	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,11 +40,11 @@ $action=GETPOST('action','alpha');
 
 $mode = GETPOST('mode')?GETPOST('mode'):'createform';   // 'createform', 'filters', 'sortorder', 'focus'
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -59,6 +60,9 @@ $defaulturl=preg_replace('/^\//', '', $defaulturl);
 $urlpage = GETPOST('urlpage');
 $key = GETPOST('key');
 $value = GETPOST('value');
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('admindefaultvalues','globaladmin'));
 
 
 /*
@@ -182,29 +186,29 @@ $formadmin = new FormAdmin($db);
 $wikihelp='EN:Setup|FR:Paramétrage|ES:Configuración';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
-print load_fiche_titre($langs->trans("DefaultValues"),'','title_setup');
+$param='&mode='.$mode;
 
-print $langs->trans("DefaultValuesDesc")."<br>\n";
-print "<br>\n";
-
-print $langs->trans("EnableDefaultValues").' ';
+$enabledisablehtml.= $langs->trans("EnableDefaultValues").' ';
 if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
 {
     // Button off, click to enable
-    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&amp;value=1">';
-    print img_picto($langs->trans("Disabled"),'switch_off');
-    print '</a>';
+    $enabledisablehtml.= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=1'.$param.'">';
+    $enabledisablehtml.= img_picto($langs->trans("Disabled"),'switch_off');
+    $enabledisablehtml.= '</a>';
 }
 else
 {
     // Button on, click to disable
-    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&amp;value=0">';
-    print img_picto($langs->trans("Activated"),'switch_on');
-    print '</a>';
+    $enabledisablehtml.= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=0'.$param.'">';
+    $enabledisablehtml.= img_picto($langs->trans("Activated"),'switch_on');
+    $enabledisablehtml.= '</a>';
 }
-print "<br><br>\n";
 
-$param='&mode='.$mode;
+print load_fiche_titre($langs->trans("DefaultValues"), $enabledisablehtml, 'title_setup');
+
+print $langs->trans("DefaultValuesDesc")."<br>\n";
+print "<br>\n";
+
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($optioncss != '')  $param.='&optioncss='.$optioncss;

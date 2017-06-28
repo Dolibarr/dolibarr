@@ -107,7 +107,7 @@ $total=0;
 $sql = "SELECT s.rowid, s.client, s.fournisseur";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= ' WHERE s.entity IN ('.getEntity('societe', 1).')';
+$sql.= ' WHERE s.entity IN ('.getEntity('societe').')';
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)	$sql.= " AND s.rowid = ".$socid;
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur <> 1 OR s.client <> 0)";    // client=0, fournisseur=0 must be visible
@@ -184,7 +184,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
 	$sql.= " WHERE c.type = 2";
 	if (! is_numeric($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) $sql.= " AND c.label like '".$db->escape($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)."'";
-	$sql.= " AND c.entity IN (".getEntity('category',1).")";
+	$sql.= " AND c.entity IN (".getEntity('category').")";
 	$sql.= " GROUP BY c.label";
 	$total=0;
 	$result = $db->query($sql);
@@ -248,7 +248,7 @@ $sql.= ", s.logo";
 $sql.= ", s.canvas, s.tms as datem, s.status as status";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= ' WHERE s.entity IN ('.getEntity('societe', 1).')';
+$sql.= ' WHERE s.entity IN ('.getEntity('societe').')';
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)	$sql.= " AND s.rowid = ".$socid;
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur != 1 OR s.client != 0)";

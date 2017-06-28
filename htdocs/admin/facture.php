@@ -616,7 +616,7 @@ if (! empty($conf->banque->enabled))
     $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
     $sql.= " WHERE clos = 0";
     $sql.= " AND courant = 1";
-    $sql.= " AND entity IN (".getEntity('bank_account', 1).")";
+    $sql.= " AND entity IN (".getEntity('bank_account').")";
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -661,7 +661,7 @@ $sql = "SELECT rowid, label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 $sql.= " WHERE clos = 0";
 $sql.= " AND courant = 1";
-$sql.= " AND entity IN (".getEntity('bank_account', 1).")";
+$sql.= " AND entity IN (".getEntity('bank_account').")";
 $var=True;
 $resql=$db->query($sql);
 if ($resql)
@@ -731,7 +731,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 else
 {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_notes');
     print $doleditor->Create();
 }
 print '</td><td align="right">';

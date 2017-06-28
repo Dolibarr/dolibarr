@@ -103,7 +103,7 @@ class Warehouses extends DolibarrApi
         
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('stock', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('stock').')';
         // Add sql filters
         if ($sqlfilters) 
         {

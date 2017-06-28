@@ -20,7 +20,7 @@ create table llx_default_values
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity          integer DEFAULT 1 NOT NULL,		-- multi company id
-  type			  varchar(10),                      -- 'createform', 'filters', 'sortorder'
+  type			  varchar(10),                      -- 'createform', 'filters', 'sortorder', 'focus', 'transform'
   user_id         integer DEFAULT 0 NOT NULL,       -- 0 or user id
   page            varchar(255),                     -- relative url of page
   param           varchar(255),                     -- parameter

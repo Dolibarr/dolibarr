@@ -861,6 +861,13 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 		$substitutionarray['__FROM_EMAIL__']=$fromcompany->email;
 		complete_substitutions_array($substitutionarray, $outputlangs, $object);
 		$newfreetext=make_substitutions($conf->global->$paramfreetext, $substitutionarray, $outputlangs);
+
+		// Make a change into HTML code to allow to include images from medias directory.
+		// <img alt="" src="/dolibarr_dev/htdocs/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
+		// become
+		// <img alt="" src="'.DOL_DATA_ROOT.'/media/image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
+		$newfreetext=preg_replace('/(<img.*src=")[^\"]*viewimage\.php[^\"]*modulepart=medias[^\"]*file=([^\"]*)("[^\/]*\/>)/', '\1'.DOL_DATA_ROOT.'/medias/\2\3', $newfreetext);
+
 		$line.=$outputlangs->convToOutputCharset($newfreetext);
 	}
 
@@ -1061,10 +1068,10 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	// Show page nb only on iso languages (so default Helvetica font)
 	if (strtolower(pdf_getPDFFont($outputlangs)) == 'helvetica')
 	{
-		$pdf->SetXY(-20,-$posy);
+		$pdf->SetXY($dims['wk']-$dims['rm']-15, -$posy);
 		//print 'xxx'.$pdf->PageNo().'-'.$pdf->getAliasNbPages().'-'.$pdf->getAliasNumPage();exit;
-		if (empty($conf->global->MAIN_USE_FPDF)) $pdf->MultiCell(13, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
-		else $pdf->MultiCell(13, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
+		if (empty($conf->global->MAIN_USE_FPDF)) $pdf->MultiCell(15, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
+		else $pdf->MultiCell(15, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
 	}
 
 	return $marginwithfooter;

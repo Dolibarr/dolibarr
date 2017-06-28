@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +49,7 @@ class modMyModule extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 500000;		// TODO Go on page http://wiki.dolibarr.org/index.php/List_of_modules_id to reserve id number for your module
+		$this->numero = 500000;		// TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve id number for your module
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'mymodule';
 
@@ -62,14 +61,16 @@ class modMyModule extends DolibarrModules
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '001', 'label' => $langs->trans("MyOwnFamily")));
 
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		// Module label (no space allowed), used if translation string 'ModuleMyModuleName' not found (MyModue is name of module).
 		$this->name = preg_replace('/^mod/i','',get_class($this));
-		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
+		// Module description, used if translation string 'ModuleMyModuleDesc' not found (MyModue is name of module).
 		$this->description = "MyModuleDescription";
+		// Used only if file README.md and README-LL.md not found.
 		$this->descriptionlong = "MyModuleDescription (Long)";
+
 		$this->editor_name = 'Editor name';
 		$this->editor_url = 'https://www.example.com';
-		
+
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = '1.0';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
@@ -112,6 +113,8 @@ class modMyModule extends DolibarrModules
 		$this->phpmin = array(5,0);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("mymodule@mymodule");
+		$this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation_ext = array();                 // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -151,7 +154,7 @@ class modMyModule extends DolibarrModules
         	$conf->mymodule=new stdClass();
         	$conf->mymodule->enabled=0;
         }
-        
+
         // Dictionaries
 		$this->dictionaries=array();
         /* Example:
@@ -169,8 +172,9 @@ class modMyModule extends DolibarrModules
         );
         */
 
+
         // Boxes
-		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
+		// Add here list of php file(s) stored in core/boxes that contains class to show a widget.
         $this->boxes = array();			// List of boxes
 		// Example:
 		//$this->boxes=array(
@@ -179,24 +183,38 @@ class modMyModule extends DolibarrModules
 		//    2=>array('file'=>'myboxc.php@mymodule','note'=>'')
 		//);
 
+
 		// Cronjobs
 		$this->cronjobs = array();			// List of cron jobs entries to add
 		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'test'=>true),
 		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'test'=>true)
 		// );
 
+
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
-		$r=0;
 
-		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
-		// Example:
-		// $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		// $this->rights[$r][1] = 'Permision label';	// Permission label
-		// $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $r++;
+		$r=0;
+		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read objects of My Module';	// Permission label
+		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+
+		$r++;
+		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create/Update objects of My Module';	// Permission label
+		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'create';				// In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+
+		$r++;
+		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete objects of My Module';	// Permission label
+		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'delete';				// In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add

@@ -112,21 +112,21 @@ if (empty($reshook))
 		$result = $object->setValueFrom('eatby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) dol_print_error($db, $object->error);
 	}
-    
+
 	if ($action == 'setsellby' && $user->rights->stock->creer)
 	{
 	    $newvalue=dol_mktime(12, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
 		$result = $object->setValueFrom('sellby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) dol_print_error($db, $object->error);
 	}
-	
+
 	if ($action == 'update_extras')
     {
         // Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
         $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
         if ($ret < 0) $error++;
-    
+
         if (! $error)
         {
             // Actions on extra fields (by external module or standard code)
@@ -142,11 +142,11 @@ if (empty($reshook))
             } else if ($reshook < 0)
                 $error++;
         }
-    
+
         if ($error)
             $action = 'edit_extras';
     }
-    
+
 	// Action to add record
 	if ($action == 'add')
 	{
@@ -160,7 +160,7 @@ if (empty($reshook))
 		$error=0;
 
 		/* object_prop_getpost_prop */
-		
+
     	$object->entity=GETPOST('entity','int');
     	$object->fk_product=GETPOST('fk_product','int');
     	$object->batch=GETPOST('batch','alpha');
@@ -204,7 +204,7 @@ if (empty($reshook))
 	if ($action == 'update' && ! GETPOST('cancel'))
 	{
 		$error=0;
-		
+
     	$object->entity=GETPOST('entity','int');
     	$object->fk_product=GETPOST('fk_product','int');
     	$object->batch=GETPOST('batch','alpha');
@@ -283,7 +283,7 @@ if ($action == 'create')
 
 	print '<table class="border centpercent">'."\n";
 	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
-	// 
+	//
     print '<tr><td class="fieldrequired">'.$langs->trans("Fieldentity").'</td><td><input class="flat" type="text" name="entity" value="'.GETPOST('entity').'"></td></tr>';
     print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_product").'</td><td><input class="flat" type="text" name="fk_product" value="'.GETPOST('fk_product').'"></td></tr>';
     print '<tr><td class="fieldrequired">'.$langs->trans("Fieldbatch").'</td><td><input class="flat" type="text" name="batch" value="'.GETPOST('batch').'"></td></tr>';
@@ -305,28 +305,31 @@ if ($action == 'create')
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
 	$res = $object->fetch_optionals($object->id, $extralabels);
-	
+
     //print load_fiche_titre($langs->trans("Batch"));
-    
+
     $head = productlot_prepare_head($object);
-	dol_fiche_head($head, 'card', $langs->trans("Batch"), 0, 'barcode');
-	
-	    
+	dol_fiche_head($head, 'card', $langs->trans("Batch"), -1, 'barcode');
+
+
 	if ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteBatch'), $langs->trans('ConfirmDeleteBatch'), 'confirm_delete', '', 0, 1);
 		print $formconfirm;
 	}
-	
-	
+
+
 	$linkback = '<a href="' . DOL_URL_ROOT . '/product/stock/productlot_list.php' . '">' . $langs->trans("BackToList") . '</a>';
-	
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'batch');
-	
+
+    $shownav = 1;
+    if ($user->societe_id && ! in_array('batch', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+	dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'batch');
+
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
     print '<table class="border centpercent">'."\n";
-	
+
 	// Product
     print '<tr><td class="titlefield">'.$langs->trans("Product").'</td><td>';
     $producttmp = new Product($db);
@@ -341,7 +344,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     print $form->editfieldval($langs->trans('Eatby'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
     print '</td>';
     print '</tr>';
-    
+
     // Sell by
     print '<tr><td>';
     print $form->editfieldkey($langs->trans('Sellby'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
@@ -349,15 +352,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     print $form->editfieldval($langs->trans('Sellby'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
     print '</td>';
     print '</tr>';
-    
+
     // Other attributes
     $cols = 2;
     include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-    
+
 	print '</table>';
-	
+
 	print '</div>';
-	
+
 	dol_fiche_end();
 
 
@@ -381,8 +384,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 */
 	}
 	print '</div>'."\n";
-	
-	
+
+
 	print '<a href="'.DOL_URL_ROOT.'/product/reassortlot.php?sref='.urlencode($producttmp->ref).'&search_batch='.urlencode($object->batch).'">'.$langs->trans("ShowCurrentStockOfLot").'</a><br>';
 	print '<br>';
 	print '<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?search_product_ref='.urlencode($producttmp->ref).'&search_batch='.urlencode($object->batch).'">'.$langs->trans("ShowLogOfMovementIfLot").'</a><br>';

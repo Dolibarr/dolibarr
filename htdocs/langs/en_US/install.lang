@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values
 KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
 KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
 KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

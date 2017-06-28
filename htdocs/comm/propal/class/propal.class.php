@@ -1276,7 +1276,7 @@ class Propal extends CommonObject
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
         $sql.= " WHERE p.fk_statut = c.id";
-        $sql.= " AND p.entity IN (".getEntity('propal', 1).")";
+        $sql.= " AND p.entity IN (".getEntity('propal').")";
         if ($ref) $sql.= " AND p.ref='".$ref."'";
         else $sql.= " AND p.rowid=".$rowid;
 
@@ -1884,7 +1884,7 @@ class Propal extends CommonObject
             {
             	$this->oldcopy= clone $this;
             	$this->fk_availability = $id;
-            	$this->availability_id = $availability_id;
+            	$this->availability_id = $id;
             }
 
             if (! $notrigger && empty($error))
@@ -2305,7 +2305,7 @@ class Propal extends CommonObject
                	if (! empty($conf->global->MAIN_MULTILANGS))
                	{
                		$outputlangs = new Translate("",$conf);
-               		$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $this->thirdparty->default_lang);
+               		$newlang=(GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $this->thirdparty->default_lang);
                		$outputlangs->setDefaultLang($newlang);
                	}
                	//$ret=$object->fetch($id);    // Reload to get new records
@@ -2499,7 +2499,7 @@ class Propal extends CommonObject
         if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql.= " WHERE p.entity IN (".getEntity('propal', 1).")";
+        $sql.= " WHERE p.entity IN (".getEntity('propal').")";
         $sql.= " AND p.fk_soc = s.rowid";
         $sql.= " AND p.fk_statut = c.id";
         if (! $user->rights->societe->client->voir && ! $socid) //restriction
@@ -3025,7 +3025,7 @@ class Propal extends CommonObject
             $sql.= " WHERE sc.fk_user = " .$user->id;
             $clause = " AND";
         }
-        $sql.= $clause." p.entity IN (".getEntity('propal', 1).")";
+        $sql.= $clause." p.entity IN (".getEntity('propal').")";
         if ($mode == 'opened') $sql.= " AND p.fk_statut = ".self::STATUS_VALIDATED;
         if ($mode == 'signed') $sql.= " AND p.fk_statut = ".self::STATUS_SIGNED;
         if ($user->societe_id) $sql.= " AND p.fk_soc = ".$user->societe_id;
@@ -3096,7 +3096,7 @@ class Propal extends CommonObject
         $prodids = array();
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
-        $sql.= " WHERE entity IN (".getEntity('product', 1).")";
+        $sql.= " WHERE entity IN (".getEntity('product').")";
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -3194,7 +3194,7 @@ class Propal extends CommonObject
             $sql.= " WHERE sc.fk_user = " .$user->id;
             $clause = "AND";
         }
-        $sql.= " ".$clause." p.entity IN (".getEntity('propal', 1).")";
+        $sql.= " ".$clause." p.entity IN (".getEntity('propal').")";
 
         $resql=$this->db->query($sql);
         if ($resql)

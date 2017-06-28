@@ -53,7 +53,7 @@ class Categorie extends CommonObject
 	const TYPE_PROJECT = 6;
     const TYPE_BANK_LINE = 'bank_line';
 	public $picto = 'category';
-    
+
 
 	/**
 	 * @var array ID mapping from type string
@@ -195,7 +195,7 @@ class Categorie extends CommonObject
 		}
 		else
 		{
-			$sql.= " WHERE label = '".$this->db->escape($label)."' AND entity IN (".getEntity('category',1).")";
+			$sql.= " WHERE label = '".$this->db->escape($label)."' AND entity IN (".getEntity('category').")";
 			if ($type) $sql.= " AND type = '".$this->db->escape($type)."'";
 		}
 
@@ -557,7 +557,7 @@ class Categorie extends CommonObject
 		        $error++;
 		    }
 		}
-		
+
 		if (! $error)
 		{
 			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_lang";
@@ -814,7 +814,7 @@ class Categorie extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			while ($rec = $this->db->fetch_array($resql)) 
+			while ($rec = $this->db->fetch_array($resql))
 			{
 			    if ($onlyids)
 			    {
@@ -903,7 +903,7 @@ class Categorie extends CommonObject
 		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE fk_parent != 0";
-		$sql.= " AND entity IN (".getEntity('category',1).")";
+		$sql.= " AND entity IN (".getEntity('category').")";
 
 		dol_syslog(get_class($this)."::load_motherof", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -938,7 +938,7 @@ class Categorie extends CommonObject
 	 *
 	 * @return  array               Array of categories. this->cats and this->motherof are set.
 	 */
-	function get_full_arbo($type,$markafterid=0)
+	function get_full_arbo($type, $markafterid=0)
 	{
 	    global $conf, $langs;
 
@@ -1094,7 +1094,7 @@ class Categorie extends CommonObject
 	function get_all_categories($type=null, $parent=false)
 	{
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE entity IN (".getEntity('category',1).")";
+		$sql.= " WHERE entity IN (".getEntity('category').")";
 		if (! is_null($type))
 			$sql.= " AND type = ".$type;
 		if ($parent)
@@ -1129,7 +1129,7 @@ class Categorie extends CommonObject
 	{
 		$sql = "SELECT count(rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE entity IN (".getEntity('category',1).")";
+		$sql.= " WHERE entity IN (".getEntity('category').")";
 		$res = $this->db->query($sql);
 		if ($res)
 		{
@@ -1155,7 +1155,7 @@ class Categorie extends CommonObject
 		 */
 		$sql = "SELECT c.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c ";
-		$sql.= " WHERE c.entity IN (".getEntity('category',1).")";
+		$sql.= " WHERE c.entity IN (".getEntity('category').")";
 		$sql.= " AND c.type = ".$this->type;
 		$sql.= " AND c.fk_parent = ".$this->fk_parent;
 		$sql.= " AND c.label = '".$this->db->escape($this->label)."'";
@@ -1355,7 +1355,7 @@ class Categorie extends CommonObject
 		    $sql.= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c";
 		    $sql.= " WHERE a.lineid=".$id." AND a.fk_categ = c.rowid";
 		    $sql.= " ORDER BY c.label";
-		    
+
 		    $res = $this->db->query($sql);
 		    if ($res)
 		    {
@@ -1377,7 +1377,7 @@ class Categorie extends CommonObject
 		    {
 		        dol_print_error($this->db);
 		        return -1;
-		    }		    
+		    }
 		}
         else
         {
@@ -1385,7 +1385,7 @@ class Categorie extends CommonObject
     		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as ct, " . MAIN_DB_PREFIX . "categorie as c";
     		$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_" . $this->MAP_CAT_FK[$type] . " = " . (int) $id . " AND c.type = " . $this->MAP_ID[$type];
     		$sql .= " AND c.entity IN (" . getEntity( 'category', 1 ) . ")";
-    
+
     		$res = $this->db->query($sql);
     		if ($res)
     		{
@@ -1408,7 +1408,7 @@ class Categorie extends CommonObject
     			return -1;
     		}
         }
-    
+
         return $cats;
 	}
 
@@ -1434,7 +1434,7 @@ class Categorie extends CommonObject
 		$cats = array();
 
 		// For backward compatibility
-		if (is_numeric( $type )) {
+		if (is_numeric($type)) {
 			// We want to reverse lookup
 			$map_type = array_flip( $this->MAP_ID );
 			$type = $map_type[$type];
@@ -1782,8 +1782,8 @@ class Categorie extends CommonObject
 	{
 	    return '';
 	}
-	
-	
+
+
     /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.

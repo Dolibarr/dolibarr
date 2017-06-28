@@ -97,7 +97,7 @@ class MembersTypes extends DolibarrApi
 
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('adherent', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('adherent').')';
 
         // Add sql filters
         if ($sqlfilters)
@@ -274,7 +274,6 @@ class MembersTypes extends DolibarrApi
         unset($object->cotisation);
         unset($object->libelle);
 
-        unset($object->import_key);
         unset($object->array_options);
         unset($object->linkedObjectsIds);
         unset($object->context);

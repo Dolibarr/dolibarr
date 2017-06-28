@@ -44,7 +44,7 @@ if ($user->societe_id > 0)
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -64,7 +64,7 @@ if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PRE
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.fournisseur = 1";
 $sql.= " AND s.rowid = p.fk_soc";
-$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+$sql.= " AND s.entity IN (".getEntity('societe').")";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if (dol_strlen($stcomm)) {
