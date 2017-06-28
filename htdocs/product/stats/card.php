@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2017		Josep Llus Amador		<joseplluis@lliuretic.cat>
+ * Copyright (C) 2017		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
