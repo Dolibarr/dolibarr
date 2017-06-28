@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2017       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -383,7 +384,7 @@ if (! empty($conf->categorie->enabled))
 	require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
     $moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter.=$langs->trans('Categories'). ': ';
-	$moreforfilter.=$formother->select_categories(Categorie::TYPE_MEMBER,$search_categ,'search_categ',1);
+	$moreforfilter.=$formother->select_categories('member',$search_categ,'search_categ',1);
 	$moreforfilter.='</div>';
 }
 $parameters=array();
