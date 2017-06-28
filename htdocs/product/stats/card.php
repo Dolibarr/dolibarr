@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2017		Josep Llus Amador		<joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -192,7 +193,7 @@ if ($result || empty($id))
 		{
     		print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
     		//$moreforfilter.='<div class="divsearchfield">';
-    		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ',1);
+    		$moreforfilter.=$htmlother->select_categories('product',$search_categ,'search_categ',1);
     		//$moreforfilter.='</div>';
     		print $moreforfilter;
     		print '</td></tr>';
