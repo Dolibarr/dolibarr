@@ -129,15 +129,14 @@ class CompanyLibTest extends PHPUnit_Framework_TestCase
 
         $result=currency_name('USD');
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('United States Dollar',$result);
+        $this->assertEquals('US Dollars',$result,'Test to get currency name USD in default language '.$langs->defaultlang);
 
         $outputlangs=new Translate('', $conf);
         $outputlangs->setDefaultLang('fr_FR');
-        $outputlangs->load("dict");
 
         $result=currency_name('USD', 1, $outputlangs);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('USD - Dollars US',$result);
+        $this->assertEquals('USD - Dollars US',$result,'Test to get currency name USD in default language '.$outputlangs->getDefaultLang());
 
         return $result;
     }

@@ -37,7 +37,7 @@ $id = GETPOST('id', 'int');
 if ($user->societe_id > 0) {
 	accessforbidden();
 }
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 $mode = GETPOST('mode');
 $piece_num = GETPOST("piece_num");
 

@@ -1747,6 +1747,7 @@ img.login, img.printer, img.entity {
 	height: 16px;
     background-size: contain;
 	vertical-align: text-bottom;
+	background-color: #FFF;
 }
 img.userphoto {			/* size for user photo in lists */
     border-radius: 9px;

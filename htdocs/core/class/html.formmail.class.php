@@ -529,7 +529,7 @@ class FormMail extends Form
         				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
         				}
         				$withtoselected=GETPOST("receiver");     // Array of selected value
-        				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action') == 'presend')
+        				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action','aZ09') == 'presend')
         				{
         				    $withtoselected = array_keys($tmparray);
         				}

@@ -602,7 +602,7 @@ class Menubase
                     //$tabMenu[$b]['langs']       = $menu['langs'];
                     $tabMenu[$b]['fk_mainmenu'] = $menu['fk_mainmenu'];
                     $tabMenu[$b]['fk_leftmenu'] = $menu['fk_leftmenu'];
-                    $tabMenu[$b]['position']    = $menu['position'];
+                    $tabMenu[$b]['position']    = (int) $menu['position'];
 
                     $b++;
                 }

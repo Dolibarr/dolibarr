@@ -245,7 +245,7 @@ function dol_shutdown()
  *  @param	string	$check	     Type of check
  *                                  ''=no check (deprecated)
  *                                  'none'=no check (only for param that should have very rich content)
- *                                  'int'=check it's numeric
+ *                                  'int'=check it's numeric (integer or float)
  *                                  'alpha'=check it's text and sign
  *                                  'aZ'=check it's a-z only
  *                                  'aZ09'=check it's simple alpha string (recommended for keys)
@@ -746,7 +746,8 @@ function dol_string_unaccent($str)
 }
 
 /**
- *	Clean a string from all punctuation characters to use it as a ref or login
+ *	Clean a string from all punctuation characters to use it as a ref or login.
+ *  This is a more complete function than dol_sanitizeFileName.
  *
  *	@param	string	$str            	String to clean
  * 	@param	string	$newstr				String to replace forbidden chars with
@@ -757,7 +758,7 @@ function dol_string_unaccent($str)
  */
 function dol_string_nospecial($str,$newstr='_',$badcharstoreplace='')
 {
-	$forbidden_chars_to_replace=array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=");
+	$forbidden_chars_to_replace=array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=", '°');  // more complete than dol_sanitizeFileName
 	$forbidden_chars_to_remove=array();
 	if (is_array($badcharstoreplace)) $forbidden_chars_to_replace=$badcharstoreplace;
 	//$forbidden_chars_to_remove=array("(",")");

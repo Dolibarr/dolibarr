@@ -32,7 +32,7 @@
 /*
  * Add file in email form
  */
-if (GETPOST('addfile'))
+if (GETPOST('addfile','alpha'))
 {
 	$trackid = GETPOST('trackid','aZ09');
 
@@ -68,7 +68,7 @@ if (! empty($_POST['removedfile']) && empty($_POST['removAll']))
 /*
  * Remove all files in email form
  */
-if (GETPOST('removAll'))
+if (GETPOST('removAll','alpha'))
 {
 	$trackid = GETPOST('trackid','aZ09');
 
