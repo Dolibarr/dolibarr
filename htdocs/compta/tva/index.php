@@ -4,6 +4,8 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2017	   Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2017	   Olivier Geffroy		<jeff@jeffinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +90,7 @@ function pt ($db, $sql, $date)
             print '<td class="nowrap">'.$obj->dm."</td>\n";
             $total = $total + $obj->mm;
 
-            print '<td class="nowrap" align="right">'.price($obj->mm)."</td><td >&nbsp;</td>\n";
+            print '<td class="nowrap" align="right">'.price(price2num($obj->mm,1))."</td><td >&nbsp;</td>\n";
             print "</tr>\n";
 
             $i++;
@@ -181,7 +183,7 @@ for ($m = 1 ; $m < 13 ; $m++ )
         $x_coll+=$val['vat'];
     }
     $subtotalcoll = $subtotalcoll + $x_coll;
-    print "<td class=\"nowrap\" align=\"right\">".price($x_coll)."</td>";
+    print "<td class=\"nowrap\" align=\"right\">".price(price2num($x_coll,1))."</td>";
 
     $x_paye = 0;
     foreach($coll_listbuy as $vatrate=>$val)
@@ -189,13 +191,13 @@ for ($m = 1 ; $m < 13 ; $m++ )
         $x_paye+=$val['vat'];
     }
     $subtotalpaye = $subtotalpaye + $x_paye;
-    print "<td class=\"nowrap\" align=\"right\">".price($x_paye)."</td>";
+    print "<td class=\"nowrap\" align=\"right\">".price(price2num($x_paye,1))."</td>";
 
     $diff = $x_coll - $x_paye;
     $total = $total + $diff;
     $subtotal = $subtotal + $diff;
 
-    print "<td class=\"nowrap\" align=\"right\">".price($diff)."</td>\n";
+    print "<td class=\"nowrap\" align=\"right\">".price(price2num($diff,1))."</td>\n";
     print "<td>&nbsp;</td>\n";
     print "</tr>\n";
 
@@ -203,9 +205,9 @@ for ($m = 1 ; $m < 13 ; $m++ )
     if ($i > 2) {
         print '<tr class="liste_total">';
         print '<td align="right"><a href="quadri_detail.php?leftmenu=tax_vat&q='.($m/3).'&year='.$y.'">'.$langs->trans("SubTotal").'</a>:</td>';
-        print '<td class="nowrap" align="right">'.price($subtotalcoll).'</td>';
-        print '<td class="nowrap" align="right">'.price($subtotalpaye).'</td>';
-        print '<td class="nowrap" align="right">'.price($subtotal).'</td>';
+        print '<td class="nowrap" align="right">'.price(price2num($subtotalcoll,1)).'</td>';
+        print '<td class="nowrap" align="right">'.price(price2num($subtotalpaye,1)).'</td>';
+        print '<td class="nowrap" align="right">'.price(price2num($subtotal,1)).'</td>';
         print '<td>&nbsp;</td></tr>';
         $i = 0;
         $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
@@ -226,14 +228,56 @@ print load_fiche_titre($langs->trans("VATPaid"), '', '');
  * Payed
  */
 
-$sql = "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm";
+$sql = "SELECT SUM(amount) as mm, date_format(f.datep,'%Y-%m') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."tva as f";
 $sql.= " WHERE f.entity = ".$conf->entity;
-$sql.= " AND f.datev >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-$sql.= " AND f.datev <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+$sql.= " AND f.datep >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+$sql.= " AND f.datep <= '".$db->idate(dol_get_last_day($y,12,false))."'";
 $sql.= " GROUP BY dm ORDER BY dm ASC";
 
 pt($db, $sql,$langs->trans("Year")." $y");
+
+print load_fiche_titre($langs->trans("VATRecap"), '', ''); // need to add translation
+/*
+ * Recap
+ */
+
+$sql1 = "SELECT SUM(amount) as mm, date_format(f.datev,'%Y') as dm";
+$sql1.= " FROM ".MAIN_DB_PREFIX."tva as f";
+$sql1.= " WHERE f.entity = ".$conf->entity;
+$sql1.= " AND f.datev >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+$sql1.= " AND f.datev <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+$sql1.= " GROUP BY dm ORDER BY dm ASC";
+
+ $result = $db->query($sql1);
+    if ($result)
+    {
+	$obj = $db->fetch_object($result);
+        print '<table class="noborder" width="100%">';
+       		
+			print "<tr>";
+			print '<td align="right">'.$langs->trans("VATDue").'</td>'; // need to add translation
+			print '<td class="nowrap" align="right">'.price(price2num($total,1)).'</td>';
+			print "</tr>\n";
+
+			print "<tr>";
+			print '<td align="right">'.$langs->trans("VATPaid").'</td>'; 
+			print '<td class="nowrap" align="right">'.price(price2num($obj->mm,1))."</td><td >&nbsp;</td>\n";
+            print "</tr>\n";
+			
+			
+			
+			$restopay = $total - $obj->mm ;
+			print "<tr>";
+			print '<td align="right">'.$langs->trans("VATRestopay").'</td>'; // need to add translation
+			print '<td class="nowrap" align="right">'.price(price2num($restopay,1)).'</td>';
+			print "</tr>\n";
+			
+			print '</table>';
+        
+		}
+
+
 
 
 print '</div></div>';

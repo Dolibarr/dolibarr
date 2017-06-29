@@ -46,7 +46,7 @@ $langs->load("main");
 $langs->load("accountancy");
 
 $id_journal = GETPOST('id_journal', 'int');
-$action = GETPOST('action','alpha');
+$action = GETPOST('action','aZ09');
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -404,7 +404,7 @@ if ($action == 'writebookkeeping') {
 $form = new Form($db);
 
 // Export
-if ($action == 'export_csv') {
+if ($action == 'exportcsv') {
 
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 	$sell_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
@@ -529,7 +529,7 @@ if (empty($action) || $action == 'view') {
 	print '
 	<script type="text/javascript">
 		function launch_export() {
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("export_csv");
+			$("div.fiche div.tabBar form input[name=\"action\"]").val("exportcsv");
 			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
 			$("div.fiche div.tabBar form input[name=\"action\"]").val("");
 		}

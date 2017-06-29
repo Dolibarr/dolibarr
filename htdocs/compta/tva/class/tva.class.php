@@ -182,7 +182,7 @@ class Tva extends CommonObject
 		$sql.= " note='".$this->db->escape($this->note)."',";
 		$sql.= " fk_bank=".$this->fk_bank.",";
 		$sql.= " fk_user_creat=".$this->fk_user_creat.",";
-		$sql.= " fk_user_modif=".$this->fk_user_modif."";
+		$sql.= " fk_user_modif=".$user->id.""; // not sure for the fix, but it's working, no more error sql
 
 
         $sql.= " WHERE rowid=".$this->id;
