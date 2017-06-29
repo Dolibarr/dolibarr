@@ -3243,7 +3243,8 @@ class Commande extends CommonOrder
                 $response->nbtodo++;
 
                 $generic_commande->statut = $obj->fk_statut;
-                $generic_commande->date_livraison = $obj->delivery_date;
+                $generic_commande->date_commande = $this->db->jdate($obj->date_commande);
+                $generic_commande->date_livraison = $this->db->jdate($obj->delivery_date);
 
                 if ($generic_commande->hasDelay()) {
 		            $response->nbtodolate++;
