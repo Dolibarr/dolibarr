@@ -52,6 +52,8 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 $search_vat = GETPOST('search_vat', 'alpha');
+$search_country = GETPOST('search_country', 'alpha');
+$search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
@@ -94,6 +96,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_amount = '';
 	$search_account = '';
 	$search_vat = '';
+	$search_country = '';
+	$search_tvaintra = '';
 }
 
 if (is_array($changeaccount) && count($changeaccount) > 0) {
@@ -149,13 +153,15 @@ print '<script type="text/javascript">
 /*
  * Supplier Invoice lines
  */
-$sql = "SELECT f.rowid as facid, f.ref as facnumber, f.ref_supplier, f.libelle as invoice_label, f.datef,";
+$sql = "SELECT f.rowid as facid, f.ref as facnumber, f.ref_supplier, f.libelle as invoice_label, f.datef, f.fk_soc,";
 $sql.= " l.rowid, l.fk_product, l.description, l.total_ht , l.qty, l.tva_tx, aa.label, aa.account_number, ";
-$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type";
-$sql.= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
-$sql.= " , " . MAIN_DB_PREFIX . "accounting_account as aa";
-$sql.= " , " . MAIN_DB_PREFIX . "facture_fourn_det as l";
-$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
+$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, co.label as country, s.tva_intra";
+$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as l";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = l.fk_code_ventilation";
+$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = l.fk_facture_fourn";
+$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as co ON co.rowid = s.fk_pays ";
 $sql.= " WHERE f.rowid = l.fk_facture_fourn and f.fk_statut >= 1 AND l.fk_code_ventilation <> 0 ";
 $sql.= " AND aa.rowid = l.fk_code_ventilation";
 if ($search_lineid) {
@@ -181,6 +187,12 @@ if (strlen(trim($search_account))) {
 }
 if (strlen(trim($search_vat))) {
 	$sql .= natural_search("l.tva_tx", $search_vat, 1);
+}
+if (strlen(trim($search_country))) {
+	$sql .= " AND (co.label like'" . $search_country . "%')";
+}
+if (strlen(trim($search_tvaintra))) {
+	$sql .= " AND (s.tva_intra like'" . $search_tvaintra . "%')";
 }
 $sql .= " AND f.entity IN (" . getEntity('facture_fourn', 0) . ")";  // We don't share object for accountancy
 
@@ -256,6 +268,8 @@ if ($result) {
 	print '<td class="liste_titre" align="right"><input type="text" class="right flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tavintra" value="' . dol_escape_htmltag($search_tavintra) . '"></td>';
     print '<td class="liste_titre" align="center">';
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
@@ -273,6 +287,8 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "l.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Country"), $_SERVER["PHP_SELF"], "co.label", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("VATIntra"), $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, 'align="center"', $sortfield, $sortorder);
     $checkpicto=$form->showCheckAddButtons();
 	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
 	print "</tr>\n";
@@ -325,7 +341,8 @@ if ($result) {
 		print $codecompta . ' <a href="./card.php?id=' . $objp->rowid . '">';
 		print img_edit();
 		print '</a></td>';
-
+		print '<td align="right">' . $objp->country .'</td>';
+		print '<td align="center">' . $objp->tva_intra . '</td>';
 		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
 
 		print "</tr>";
