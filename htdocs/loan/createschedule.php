@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 global $user;
 
 $loanid = GETPOST('loanid', 'int');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 $object = new Loan($db);
 $object->fetch($loanid);
