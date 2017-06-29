@@ -738,7 +738,7 @@ if (empty($action) || $action == 'view') {
 	$builddate = time();
 	//$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
-	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
+	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("AlreadyInGeneralLedger").' '. $form->selectyesno('in_bookkeeping',$in_bookkeeping,0);
 
 	$varlink = 'id_journal=' . $id_journal;
 
