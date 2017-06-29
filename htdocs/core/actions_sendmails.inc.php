@@ -32,7 +32,7 @@
 /*
  * Add file in email form
  */
-if (GETPOST('addfile'))
+if (GETPOST('addfile','alpha'))
 {
 	$trackid = GETPOST('trackid','aZ09');
 
@@ -68,7 +68,7 @@ if (! empty($_POST['removedfile']) && empty($_POST['removAll']))
 /*
  * Remove all files in email form
  */
-if (GETPOST('removAll'))
+if (GETPOST('removAll','alpha'))
 {
 	$trackid = GETPOST('trackid','aZ09');
 
@@ -447,7 +447,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("MailTo")), null, 'warnings');
-			dol_syslog('Try to send email with no recipiend defined', LOG_WARNING);
+			dol_syslog('Try to send email with no recipient defined', LOG_WARNING);
 			$action = 'presend';
 		}
 	}

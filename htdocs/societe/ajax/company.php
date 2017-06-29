@@ -37,6 +37,7 @@ $filter=GETPOST('filter','alpha');
 $outjson=(GETPOST('outjson','int') ? GETPOST('outjson','int') : 0);
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('id', 'int');
+$showtype=GETPOST('showtype','int');
 
 
 /*
@@ -87,9 +88,9 @@ else
 	$searchkey=(($id && GETPOST($id, 'alpha'))?GETPOST($id, 'alpha'):(($htmlname && GETPOST($htmlname, 'alpha'))?GETPOST($htmlname, 'alpha'):''));
 
 	if (! $searchkey) return;
-	
+
 	$form = new Form($db);
-	$arrayresult=$form->select_thirdparty_list(0,$htmlname,$filter,1,0,0,null,$searchkey,$outjson);
+	$arrayresult=$form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson);
 
 	$db->close();
 

@@ -50,6 +50,7 @@ $result = restrictedArea($user,'societe',$socid,'');
 
 $search_all=trim(GETPOST('sall', 'alphanohtml'));
 $search_nom=trim(GETPOST("search_nom"));
+$search_alias=trim(GETPOST("search_alias"));
 $search_nom_only=trim(GETPOST("search_nom_only"));
 $search_barcode=trim(GETPOST("sbarcode"));
 $search_customer_code=trim(GETPOST('search_customer_code'));
@@ -70,7 +71,7 @@ $search_idprof5=trim(GETPOST('search_idprof5'));
 $search_idprof6=trim(GETPOST('search_idprof6'));
 $search_sale=trim(GETPOST("search_sale",'int'));
 $search_categ=trim(GETPOST("search_categ",'int'));
-$search_country=GETPOST("search_country",'int');
+$search_country=GETPOST("search_country",'intcomma');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_status=GETPOST("search_status",'int');
 $search_type=GETPOST('search_type','alpha');
@@ -151,7 +152,8 @@ $checkedprofid6=0;
 $checkprospectlevel=(in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $checkstcomm=(in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $arrayfields=array(
-    's.nom'=>array('label'=>"Company", 'checked'=>1),
+    's.nom'=>array('label'=>"ThirdPartyName", 'checked'=>1),
+    's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1),
     's.barcode'=>array('label'=>"Gencod", 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
     's.code_client'=>array('label'=>"CustomerCodeShort", 'checked'=>$checkedcustomercode),
     's.code_fournisseur'=>array('label'=>"SupplierCodeShort", 'checked'=>$checkedsuppliercode, 'enabled'=>(! empty($conf->fournisseur->enabled))),
@@ -210,6 +212,7 @@ if (empty($reshook))
     if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
     {
         $search_nom='';
+        $search_alias='';
         $search_categ=0;
         $search_sale='';
     	$search_barcode="";
@@ -406,6 +409,7 @@ if ($search_categ > 0)    $sql.= " AND cs.fk_categorie = ".$db->escape($search_c
 if ($search_categ == -2)  $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_all)      $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_nom)      $sql.= natural_search("s.nom",$search_nom);
+if ($search_alias)    $sql.= natural_search("s.name_alias",$search_alias);
 if ($search_nom_only) $sql.= natural_search("s.nom",$search_nom_only);
 if ($search_customer_code) $sql.= natural_search("s.code_client",$search_customer_code);
 if ($search_supplier_code) $sql.= natural_search("s.code_fournisseur",$search_supplier_code);
@@ -488,37 +492,38 @@ llxHeader('',$langs->trans("ThirdParty"),$help_url);
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-if ($search_all != '') $param = "&amp;sall=".urlencode($search_all);
-if ($sall != '') $param .= "&amp;sall=".urlencode($sall);
-if ($search_categ > 0) $param.='&amp;search_categ='.urlencode($search_categ);
-if ($search_sale > 0)	$param.='&amp;search_sale='.urlencode($search_sale);
-if ($search_nom != '') $param.= "&amp;search_nom=".urlencode($search_nom);
-if ($search_town != '') $param.= "&amp;search_town=".urlencode($search_town);
-if ($search_zip != '') $param.= "&amp;search_zip=".urlencode($search_zip);
-if ($search_phone != '') $param.= "&amp;search_phone=".urlencode($search_phone);
-if ($search_email != '') $param.= "&amp;search_email=".urlencode($search_email);
-if ($search_url != '') $param.= "&amp;search_url=".urlencode($search_url);
-if ($search_state != '') $param.= "&amp;search_state=".urlencode($search_state);
-if ($search_country != '') $param.= "&amp;search_country=".urlencode($search_country);
-if ($search_customer_code != '') $param.= "&amp;search_customer_code=".urlencode($search_customer_code);
-if ($search_supplier_code != '') $param.= "&amp;search_supplier_code=".urlencode($search_supplier_code);
-if ($search_account_customer_code != '') $param.= "&amp;search_account_customer_code=".urlencode($search_account_customer_code);
-if ($search_account_supplier_code != '') $param.= "&amp;search_account_supplier_code=".urlencode($search_account_supplier_code);
-if ($search_barcode != '') $param.= "&amp;sbarcode=".urlencode($search_barcode);
-if ($search_idprof1 != '') $param.= '&amp;search_idprof1='.urlencode($search_idprof1);
-if ($search_idprof2 != '') $param.= '&amp;search_idprof2='.urlencode($search_idprof2);
-if ($search_idprof3 != '') $param.= '&amp;search_idprof3='.urlencode($search_idprof3);
-if ($search_idprof4 != '') $param.= '&amp;search_idprof4='.urlencode($search_idprof4);
-if ($search_idprof5 != '') $param.= '&amp;search_idprof5='.urlencode($search_idprof5);
-if ($search_idprof6 != '') $param.= '&amp;search_idprof6='.urlencode($search_idprof6);
-if ($search_country != '') $param.='&amp;search_country='.urlencode($search_country);
-if ($search_type_thirdparty != '') $param.='&amp;search_type_thirdparty='.urlencode($search_type_thirdparty);
-if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
-if ($search_status != '') $param.='&amp;search_status='.urlencode($search_status);
+if ($search_all != '') $param = "&sall=".urlencode($search_all);
+if ($sall != '') $param .= "&sall=".urlencode($sall);
+if ($search_categ > 0) $param.='&search_categ='.urlencode($search_categ);
+if ($search_sale > 0)	$param.='&search_sale='.urlencode($search_sale);
+if ($search_nom != '') $param.= "&search_nom=".urlencode($search_nom);
+if ($search_alias != '') $param.= "&search_alias=".urlencode($search_alias);
+if ($search_town != '') $param.= "&search_town=".urlencode($search_town);
+if ($search_zip != '') $param.= "&search_zip=".urlencode($search_zip);
+if ($search_phone != '') $param.= "&search_phone=".urlencode($search_phone);
+if ($search_email != '') $param.= "&search_email=".urlencode($search_email);
+if ($search_url != '') $param.= "&search_url=".urlencode($search_url);
+if ($search_state != '') $param.= "&search_state=".urlencode($search_state);
+if ($search_country != '') $param.= "&search_country=".urlencode($search_country);
+if ($search_customer_code != '') $param.= "&search_customer_code=".urlencode($search_customer_code);
+if ($search_supplier_code != '') $param.= "&search_supplier_code=".urlencode($search_supplier_code);
+if ($search_account_customer_code != '') $param.= "&search_account_customer_code=".urlencode($search_account_customer_code);
+if ($search_account_supplier_code != '') $param.= "&search_account_supplier_code=".urlencode($search_account_supplier_code);
+if ($search_barcode != '') $param.= "&sbarcode=".urlencode($search_barcode);
+if ($search_idprof1 != '') $param.= '&search_idprof1='.urlencode($search_idprof1);
+if ($search_idprof2 != '') $param.= '&search_idprof2='.urlencode($search_idprof2);
+if ($search_idprof3 != '') $param.= '&search_idprof3='.urlencode($search_idprof3);
+if ($search_idprof4 != '') $param.= '&search_idprof4='.urlencode($search_idprof4);
+if ($search_idprof5 != '') $param.= '&search_idprof5='.urlencode($search_idprof5);
+if ($search_idprof6 != '') $param.= '&search_idprof6='.urlencode($search_idprof6);
+if ($search_country != '') $param.='&search_country='.urlencode($search_country);
+if ($search_type_thirdparty != '') $param.='&search_type_thirdparty='.urlencode($search_type_thirdparty);
+if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+if ($search_status != '') $param.='&search_status='.urlencode($search_status);
 if ($search_stcomm != '') $param.='&search_stcomm='.$search_stcomm;
 if ($search_level_from != '') $param.='&search_level_from='.$search_level_from;
 if ($search_level_to != '') $param.='&search_level_to='.$search_level_to;
-if ($type != '') $param.='&amp;type='.urlencode($type);
+if ($type != '') $param.='&type='.urlencode($type);
 // Add $param from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -631,6 +636,12 @@ if (! empty($arrayfields['s.nom']['checked']))
 	print '<td class="liste_titre">';
 	if (! empty($search_nom_only) && empty($search_nom)) $search_nom=$search_nom_only;
 	print '<input class="flat searchstring" type="text" name="search_nom" size="8" value="'.dol_escape_htmltag($search_nom).'">';
+	print '</td>';
+}
+if (! empty($arrayfields['s.name_alias']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input class="flat searchstring" type="text" name="search_alias" size="8" value="'.dol_escape_htmltag($search_alias).'">';
 	print '</td>';
 }
 // Barcode
@@ -882,6 +893,7 @@ print "</tr>\n";
 
 print '<tr class="liste_titre">';
 if (! empty($arrayfields['s.nom']['checked']))                     print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+if (! empty($arrayfields['s.name_alias']['checked']))              print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"],"s.name_alias","",$param,"",$sortfield,$sortorder);
 if (! empty($arrayfields['s.barcode']['checked']))                 print_liste_field_titre($arrayfields['s.barcode']['label'], $_SERVER["PHP_SELF"], "s.barcode",$param,'','',$sortfield,$sortorder);
 if (! empty($arrayfields['s.code_client']['checked']))             print_liste_field_titre($arrayfields['s.code_client']['label'],$_SERVER["PHP_SELF"],"s.code_client","",$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['s.code_fournisseur']['checked']))        print_liste_field_titre($arrayfields['s.code_fournisseur']['label'],$_SERVER["PHP_SELF"],"s.code_fournisseur","",$param,'',$sortfield,$sortorder);
@@ -948,7 +960,6 @@ while ($i < min($num, $limit))
 	$companystatic->code_compta_fournisseur=$obj->code_compta_fournisseur;
 
    	$companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
-   	$companystatic->name_alias=$obj->name_alias;
 
 	print '<tr class="oddeven">';
 	if (! empty($arrayfields['s.nom']['checked']))
@@ -957,6 +968,14 @@ while ($i < min($num, $limit))
 		print $companystatic->getNomUrl(1,'',100);
 		print "</td>\n";
         if (! $i) $totalarray['nbfield']++;
+	}
+	if (! empty($arrayfields['s.name_alias']['checked']))
+	{
+	    $companystatic->name_alias=$obj->name_alias;   // Added after the getNomUrl
+	    print '<td class="tdoverflowmax200">';
+	    print $companystatic->name_alias;
+	    print "</td>\n";
+	    if (! $i) $totalarray['nbfield']++;
 	}
 	// Barcode
     if (! empty($arrayfields['s.barcode']['checked']))
