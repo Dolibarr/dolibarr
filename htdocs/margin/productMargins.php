@@ -43,12 +43,19 @@ $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
+$result=restrictedArea($user,'margins');
 
 $mesg = '';
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-if (! $sortorder) $sortorder="ASC";
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 if (! $sortfield)
 {
 	if ($id > 0)
@@ -62,12 +69,6 @@ if (! $sortfield)
 	    $sortorder="ASC";
 	}
 }
-
-$page = GETPOST("page",'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 $startdate=$enddate='';
 
@@ -202,16 +203,16 @@ if ($result)
 	$num = $db->num_rows($result);
 
 	print '<br>';
-	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=".$id,$sortfield,$sortorder,'',$num,$num,'');
+	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "&amp;id=".$id, $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
 	//var_dump($conf->global->MARGIN_TYPE);
 	if ($conf->global->MARGIN_TYPE == "1")
 	    $labelcostprice=$langs->trans('BuyingPrice');
 	else   // value is 'costprice' or 'pmp'
 	    $labelcostprice=$langs->trans('CostPrice');
-	    
+
 	$moreforfilter='';
-	
+
 	$i = 0;
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -260,7 +261,7 @@ if ($result)
 				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
 
-			
+
 
 			print '<tr class="oddeven">';
 			if ($id > 0) {
@@ -308,7 +309,7 @@ if ($result)
 	}
 
 	// affichage totaux marges
-	
+
 	$totalMargin = $cumul_vente - $cumul_achat;
 
 	$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';

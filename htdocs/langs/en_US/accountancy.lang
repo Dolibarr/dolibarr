@@ -221,6 +221,7 @@ ErrorAccountingJournalIsAlreadyUse=This journal is already use
 ## Export
 Exports=Exports
 Export=Export
+ExportDraftJournal=Export draft journal
 Modelcsv=Model of export
 OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
 Selectmodelcsv=Select a model of export

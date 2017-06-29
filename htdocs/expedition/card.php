@@ -109,7 +109,6 @@ $hookmanager->initHooks(array('expeditioncard','globalcard'));
 $permissiondellink=$user->rights->expedition->livraison->creer;	// Used by the include of actions_dellink.inc.php
 
 
-
 /*
  * Actions
  */
@@ -195,8 +194,8 @@ if (empty($reshook))
 
 	    $object->note				= GETPOST('note','alpha');
 	    $object->origin				= $origin;
-	    $object->origin_id			= $origin_id;
-            $object->fk_project         = GETPOST('projectid');
+        $object->origin_id			= $origin_id;
+        $object->fk_project         = GETPOST('projectid','int');
 	    $object->weight				= GETPOST('weight','int')==''?"NULL":GETPOST('weight','int');
 	    $object->sizeH				= GETPOST('sizeH','int')==''?"NULL":GETPOST('sizeH','int');
 	    $object->sizeW				= GETPOST('sizeW','int')==''?"NULL":GETPOST('sizeW','int');
@@ -214,7 +213,7 @@ if (empty($reshook))
 
 	    $object->socid					= $objectsrc->socid;
 	    $object->ref_customer			= '';                   // We don't use $objectsrc->ref_client, this is ref or order not shipment
-	    $object->model_pdf				= GETPOST('model');
+	    $object->model_pdf				= GETPOST('model','alpha');
 	    $object->date_delivery			= $date_delivery;	    // Date delivery planed
 	    $object->fk_delivery_address	= $objectsrc->fk_delivery_address;
 	    $object->shipping_method_id		= GETPOST('shipping_method_id','int');
@@ -453,7 +452,7 @@ if (empty($reshook))
 	    	{
 	    		$outputlangs = $langs;
 	    		$newlang = '';
-	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
 	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 	    		if (! empty($newlang)) {
 	    			$outputlangs = new Translate("", $conf);
@@ -550,7 +549,7 @@ if (empty($reshook))
 	    // Define output language
 	    $outputlangs = $langs;
 	    $newlang='';
-	    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
+	    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
 	    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$shipment->thirdparty->default_lang;
 	    if (! empty($newlang))
 	    {
@@ -704,7 +703,7 @@ if ($action == 'create')
             // Project
             if (! empty($conf->projet->enabled))
             {
-                $projectid = GETPOST('projectid')?GETPOST('projectid'):0;
+                $projectid = GETPOST('projectid','int')?GETPOST('projectid','int'):0;
                 if ($origin == 'project') $projectid = ($originid ? $originid : 0);
 
                 $langs->load("projects");
@@ -890,6 +889,7 @@ if ($action == 'create')
                 if (! empty($line->date_start)) $type=1;
                 if (! empty($line->date_end)) $type=1;
 
+                print '<!-- line '.$line->rowid.' for product -->'."\n";
                 print '<tr class="oddeven">'."\n";
 
                 // Product label
@@ -979,7 +979,7 @@ if ($action == 'create')
 						print '<td align="center">';
 						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
-                            if (GETPOST('qtyl'.$indiceAsked)) $defaultqty=GETPOST('qtyl'.$indiceAsked);
+                            if (GETPOST('qtyl'.$indiceAsked, 'int')) $defaultqty=GETPOST('qtyl'.$indiceAsked, 'int');
                             print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 							print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 						}
@@ -1107,8 +1107,8 @@ if ($action == 'create')
 					// ship from multiple locations
 					if (empty($conf->productbatch->enabled) || ! $product->hasbatch())
 					{
-					    print '<td></td><td></td></tr>';	// end line and start a new one for each warehouse
 					    print '<!-- Case warehouse not already known and product does not need lot -->';
+					    print '<td></td><td></td></tr>'."\n";	// end line and start a new one for each warehouse
 
 						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 						$subj=0;
@@ -1195,7 +1195,8 @@ if ($action == 'create')
 					}
 					else
 					{
-						print '<td></td><td></td></tr>';	// end line and start a new one for lot/serial
+					    print '<!-- Case warehouse not already known and product need lot -->';
+					    print '<td></td><td></td></tr>';	// end line and start a new one for lot/serial
 
 						$subj=0;
 						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
@@ -1222,6 +1223,7 @@ if ($action == 'create')
 									//var_dump($dbatch);
 									$batchStock = + $dbatch->qty;		// To get a numeric
 									$deliverableQty = min($quantityToBeDelivered,$batchStock);
+									if ($deliverableQty < 0) $deliverableQty = 0;
 									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested)?$bc[$var]:'').'><td colspan="3"></td><td align="center">';
 									print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
 									print '</td>';
@@ -1233,8 +1235,11 @@ if ($action == 'create')
 									print '<!-- Show details of lot -->';
 									print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
 									//print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
-									$productlotObject->fetch(0, $line->fk_product, $dbatch->batch);
-									print $langs->trans("Batch").': '.$productlotObject->getNomUrl(1);
+									//print $line->fk_product.' - '.$dbatch->batch;
+									print $langs->trans("Batch").': ';
+									$result = $productlotObject->fetch(0, $line->fk_product, $dbatch->batch);
+									if ($result > 0) print $productlotObject->getNomUrl(1);
+									else print 'TableLotIncompleteRunRepair';
 									print ' ('.$dbatch->qty.')';
 									//print $langs->trans("DetailBatchFormat", 'ee'.$dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
 									$quantityToBeDelivered -= $deliverableQty;
@@ -1350,7 +1355,7 @@ else if ($id || $ref)
 		$res = $object->fetch_optionals($object->id, $extralabels);
 
 		$head=shipping_prepare_head($object);
-		dol_fiche_head($head, 'shipping', $langs->trans("Shipment"), 0, 'sending');
+		dol_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, 'sending');
 
 		$formconfirm='';
 
@@ -1762,7 +1767,7 @@ else if ($id || $ref)
 			$object->fetch_thirdparty();
 			$outputlangs = $langs;
 			$newlang='';
-			if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
+			if (empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
 			if (empty($newlang)) $newlang=$object->thirdparty->default_lang;
 			if (! empty($newlang))
 			{
@@ -1817,6 +1822,7 @@ else if ($id || $ref)
 		// Loop on each product to send/sent
 		for ($i = 0 ; $i < $num_prod ; $i++)
 		{
+		    print '<!-- origin line id = '.$lines[$i]->origin_line_id.' -->'; // id of order line
 			print '<tr class="oddeven">';
 
 			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
@@ -1889,14 +1895,14 @@ else if ($id || $ref)
     			        $j = 0;
     			        foreach($val as $shipmentline_id=> $shipmentline_var)
     			        {
-    			            if ($shipmentline_id == $lines[$i]->rowid) continue; // We want to show only "other shipments"
+    			            if ($shipmentline_var['shipment_id'] == $lines[$i]->fk_expedition) continue; // We want to show only "other shipments"
 
     			            $j++;
     			            if ($j > 1) print '<br>';
     			            $shipment_static->fetch($shipmentline_var['shipment_id']);
     			            print $shipment_static->getNomUrl(1);
     			            print ' - '.$shipmentline_var['qty_shipped'];
-    			            $htmltext=$langs->trans("DateValidation").' : '.dol_print_date($shipmentline_var['date_valid'], 'dayhour');
+    			            $htmltext=$langs->trans("DateValidation").' : '.(empty($shipmentline_var['date_valid'])?$langs->trans("Draft"):dol_print_date($shipmentline_var['date_valid'], 'dayhour'));
     			            if (! empty($conf->stock->enabled) && $shipmentline_var['warehouse'] > 0)
     			            {
     			                $warehousestatic->fetch($shipmentline_var['warehouse']);

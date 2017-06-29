@@ -1,41 +1,54 @@
-API REST howto
-==============
+API REST
+========
 
-This directory contains files to make Dolibarr a server of REST Web Services.
-It depends on external library Restler.
+## Integrate your ERP with any other applications using Dolibarr APIs
+ 
+This module provides the service to make Dolibarr a server of REST Web Services. It depends on external library Restler.
+
+Extract any data or push insert, update or delete record using our new REST APIs. Using standard HTTP and Json format, it is compatible with any language (PHP, Java, Ruby, Python, C#, C++, JavaScript, JQuery, Basic, ...). Use the embedded APIs explorer tool to test APIs or get generated URLs to use in your own code.
 
 
-Explore the api
----------------
+<div align="center">
+  <img class="imgdoc" src="https://www.dolibarr.org//images/doc_apirest.png" alt="Dolibarr API explorer"/>
+</div>
 
-You can explore API method by using web interface : https://**yourdolibarr.tld**/mydolibarr/api/admin/explorer.php (replace **yourdolibarr.tld** by real hostname of your Dolibarr installation)
 
-Access to the API
+
+Explore the APIs
+----------------
+
+You can explore all available APIs by using the API explorer : [**yourdolibarr.tld**/api/index.php/explorer](../api/index.php/explorer) (replace **yourdolibarr.tld** by real hostname of your Dolibarr installation)
+
+
+Access to an API
 -----------------
 
-> **Warning : access to the API should (or better : must!) be secured with SSL connection**
+> **Warning : access to any API should (or better : must!) be secured with SSL connection**
 
-To access to the API you need a token to identify. When you access the API for the first time, you need to log in with user name and password to get a token. **Only**  this token will allow to access API with.
+To access to the API you need a token to identify. **Only**  this token will allow to access API with.
+The token is dedicated to a user and it **must** be put into requests as **DOLAPIKEY** parameter in HTTP header (or among URL parameters, but this is less secured). 
 
-To log in with the API, use this uri : https://**yourdolibarr.tld**/mydolibarr/api/index.php/login?login=**username**&password=**password** (replace bold strings with real values)
+To get a token you can:
 
-The token will be saved by Dolibarr for next user accesses to the API and it **must** be put into request uri as **api_key** parameter. 
+* Edit the user card to set the value of token. Each user can have a different token.
+* or Call the *login* API with login and password. This will return the value of token for the user used to login.
 
 Then call other services with
 
-https://**yourdolibarr.tld**/mydolibarr/api/index.php/otherservice?api_key=**api_key**
+https://**yourdolibarr.tld**/mydolibarr/api/index.php/otherservice?DOLAPIKEY=**api_key**
 
 
-Develop the API
----------------
+Develop an API
+--------------
 
 The API uses Lucarast Restler framework. Please check documentation https://www.luracast.com/products/restler and examples http://help.luracast.com/restler/examples/ 
+
 Github contains also usefull informations : https://github.com/Luracast/Restler
 
-To implement it into Dolibarr, we need to create a specific class for object we want to use. A skeleton file is available into /dev directory : *skeleton_api_class.class.php* 
+To implement it into Dolibarr, you need to create a specific class for object we want to use. A skeleton file is available into /modulebuilder/class directory : *api_mymodule_class.class.php* 
 The API class file must be put into object class directory, with specific file name. By example, API class file for '*myobject*' must be put as : /htdocs/*myobject*/class/api_*myobject*.class.php. Class must be named  **MyobjectApi**.
 
-If a module provide several object, use a different name for '*myobject*' and put the file into the same directory. 
+If a module provide several object, use a different name for *'myobject'* and put the file into the same directory. 
 
 **Define url for methods**
 

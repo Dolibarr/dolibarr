@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/AdminLibTest.php
+ *      \file       test/phpunit/CompanyLibTest.php
  *      \ingroup    test
  *      \brief      PHPUnit test
  *      \remarks    To run this script as CLI:  phpunit filename.php
@@ -27,7 +27,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/admin.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/company.lib.php';
 
 if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class AdminLibTest extends PHPUnit_Framework_TestCase
+class CompanyLibTest extends PHPUnit_Framework_TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -115,11 +115,11 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testVersionCompare
+     * testNameCurrency
      *
      * @return	void
      */
-    public function testVersionCompare()
+    public function testNameCurrency()
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -127,42 +127,17 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $result=versioncompare(array(3,1,-4),array(3,1,1));
+        $result=currency_name('USD');
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(-3,$result);
-        $result=versioncompare(array(3,1,0),array(3,1,1));
+        $this->assertEquals('US Dollars',$result,'Test to get currency name USD in default language '.$langs->defaultlang);
+
+        $outputlangs=new Translate('', $conf);
+        $outputlangs->setDefaultLang('fr_FR');
+
+        $result=currency_name('USD', 1, $outputlangs);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(-3,$result);
-        $result=versioncompare(array(3,1,0),array(3,2,0));
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals(-2,$result);
-        $result=versioncompare(array(3,1,0),array(3,1,0));
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals(0,$result);
+        $this->assertEquals('USD - Dollars US',$result,'Test to get currency name USD in default language '.$outputlangs->getDefaultLang());
 
         return $result;
     }
-
-    /**
-     * testEnableModule
-     *
-     * @return  void
-     */
-    public function testEnableModule()
-    {
-    	global $conf, $db, $langs, $user;
-
-		require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
-		print "Enable module modExpenseReport";
-		$moduledescriptor=new modExpenseReport($db);
-		$moduledescriptor->init();
-		$conf->setValues($db);
-
-		require_once dirname(__FILE__).'/../../htdocs/core/modules/modApi.class.php';
-		print "Enable module modAPI";
-		$moduledescriptor=new modApi($db);
-		$moduledescriptor->init();
-		$conf->setValues($db);
-    }
-
 }

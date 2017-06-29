@@ -37,7 +37,7 @@ $id = GETPOST('id', 'int');
 if ($user->societe_id > 0) {
 	accessforbidden();
 }
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 $mode = GETPOST('mode');
 $piece_num = GETPOST("piece_num");
 
@@ -500,8 +500,7 @@ if ($action == 'create') {
 				print "</tr>\n";
 
 				foreach ( $book->linesmvt as $line ) {
-					$var = ! $var;
-					print '<tr' . $bc[$var] . '>';
+					print '<tr class="oddeven">';
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
 

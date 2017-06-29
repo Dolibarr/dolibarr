@@ -457,7 +457,7 @@ if ($sql_select)
 
 				$outputlangs = $langs;
 				$newlang='';
-				if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+				if (empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
 				if (empty($newlang)) $newlang=$object->default_lang;
 				if (! empty($newlang))
 				{

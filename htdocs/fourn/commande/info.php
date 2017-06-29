@@ -100,7 +100,7 @@ $now=dol_now();
 $head = ordersupplier_prepare_head($object);
 
 
-dol_fiche_head($head, 'info', $langs->trans("SupplierOrder"), 0, 'order');
+dol_fiche_head($head, 'info', $langs->trans("SupplierOrder"), -1, 'order');
 
 
 // Supplier order card
@@ -197,7 +197,7 @@ if (!empty($object->id))
     $param='&id='.$object->id;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-    
+
     print load_fiche_titre($langs->trans("ActionsOnOrder"),'','');
 
     // List of actions on element

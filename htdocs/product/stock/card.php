@@ -181,6 +181,8 @@ if ($action == 'create')
 {
 	print load_fiche_titre($langs->trans("NewWarehouse"));
 
+	dol_set_focus('input[name="libelle"]');
+
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -477,7 +479,7 @@ else
 						}
 					}
 
-					
+
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print '<tr class="oddeven">';
 					print "<td>";

@@ -178,9 +178,6 @@ $buttonreset = '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?ye
 
 $y = $year_current;
 
-$var = true;
-
-
 print '<br>';
 
 print_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');

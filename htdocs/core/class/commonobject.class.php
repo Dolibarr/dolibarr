@@ -1486,7 +1486,7 @@ abstract class CommonObject
     		$fieldname = 'multicurrency_code';
 
     		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-    		$sql .= ' SET '.$fieldname.' = "'.$this->db->escape($code).'"';
+    		$sql .= ' SET '.$fieldname." = '".$this->db->escape($code)."'";
     		$sql .= ' WHERE rowid='.$this->id;
 
     		if ($this->db->query($sql))
@@ -3510,7 +3510,7 @@ abstract class CommonObject
 
 					$outputlangs = $langs;
 					$newlang='';
-					if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+					if (empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
 					if (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && empty($newlang)) $newlang=$this->thirdparty->default_lang;		// For language to language of customer
 					if (! empty($newlang))
 					{

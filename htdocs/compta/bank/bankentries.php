@@ -108,7 +108,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder='ASC';
-if (! $sortfield) $sortfield='b.datev';
+if (! $sortfield) $sortfield='b.datev, b.dateo, b.rowid';
 
 $mode_balance_ok=false;
 //if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid'))    // TODO Manage balance when account not selected
@@ -436,6 +436,7 @@ if ($id > 0 || ! empty($ref))
                 print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
             }
         }
+
         print '</div>';
     }
 }
@@ -636,6 +637,7 @@ if ($resql)
 //	    print '</td></tr></table>';
 	}
 
+
 	/// ajax to adjust value date with plus and less picto
 	print '
     <script type="text/javascript">
@@ -716,6 +718,7 @@ if ($resql)
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
 
 	print '<tr class="liste_titre_filter">';
 	if (! empty($arrayfields['b.rowid']['checked']))
@@ -855,7 +858,7 @@ if ($resql)
                 exit;
             }
 
-            //Loop on each record
+            // Loop on each record before
             $sign = 1;
             $i = 0;
             $sqlforbalance='SELECT SUM(b.amount) as balance';
@@ -865,7 +868,7 @@ if ($resql)
             $sqlforbalance.= " WHERE b.fk_account = ba.rowid";
             $sqlforbalance.= " AND ba.entity IN (".getEntity('bank_account').")";
             $sqlforbalance.= " AND b.fk_account = ".$account;
-            $sqlforbalance.= " AND b.datev < '" . $db->idate($db->jdate($objp->dv)) . "'";
+            $sqlforbalance.= " AND (b.datev < '" . $db->idate($db->jdate($objp->dv)) . "' OR (b.datev = '" . $db->idate($db->jdate($objp->dv)) . "' AND (b.dateo < '".$db->idate($db->jdate($objp->do))."' OR (b.dateo = '".$db->idate($db->jdate($objp->do))."' AND b.rowid < ".$objp->rowid."))))";
             $resqlforbalance = $db->query($sqlforbalance);
             //print $sqlforbalance;
             if ($resqlforbalance)

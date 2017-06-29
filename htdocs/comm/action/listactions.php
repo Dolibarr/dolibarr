@@ -80,7 +80,7 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
+if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $limit * $page ;
 if (! $sortorder)
 {
@@ -338,6 +338,17 @@ if ($resql)
     if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
     print $nav;
 
+    if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
+    {
+        $newparam.='&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
+
+        //$param='month='.$monthshown.'&year='.$year;
+        $hourminsec='100000';
+        $link = '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'">';
+        $link.= $langs->trans("NewAction");
+        $link.= '</a>';
+    }
+
     print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $link, $num, -1 * $nbtotalofrecords, '', 0, $nav, '', $limit);
 
     $moreforfilter='';
@@ -497,12 +508,12 @@ if ($resql)
             print '</td>';
         }
 
-		// User to do
+		// User owner
 		print '<td align="left">';
 		if ($obj->fk_user_action > 0)
 		{
 			$userstatic->fetch($obj->fk_user_action);
-			print $userstatic->getNomUrl(1);
+			print $userstatic->getNomUrl(-1);
 		}
 		else print '&nbsp;';
 		print '</td>';
