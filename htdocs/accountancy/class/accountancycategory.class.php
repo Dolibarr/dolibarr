@@ -173,12 +173,12 @@ class AccountancyCategory
 	/**
 	 * Function to add an accounting account in an accounting category
 	 *
-	 * @param int $id_cat Id category
-	 * @param array $cpts list of accounts array
+	 * @param	int		$cat_id		Id category
+	 * @param	array	$cpts		list of accounts array
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return	int					<0 if KO, >0 if OK
 	 */
-	public function updateAccAcc($id_cat, $cpts = array()) {
+	public function updateAccAcc($cat_id, $cpts = array()) {
 		global $conf;
 		$error = 0;
 
@@ -206,7 +206,7 @@ class AccountancyCategory
 			if (array_key_exists(length_accountg($obj->account_number), $cpts))
 			{
 				$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account";
-				$sql .= " SET fk_accounting_category=" . $id_cat;
+				$sql .= " SET fk_accounting_category=" . $cat_id;
 				$sql .= " WHERE rowid=".$obj->rowid;
 				dol_syslog(__METHOD__, LOG_DEBUG);
 				$resqlupdate = $this->db->query($sql);
@@ -539,7 +539,7 @@ class AccountancyCategory
 	/**
 	 * get cpts of category
 	 *
-	 * @param	int		$id_cat		Id category
+	 * @param	int		$cat_id		Id category
 	 * @return	array				Result in table
 	 */
 	public function getCptsCat($cat_id) {
