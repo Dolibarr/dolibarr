@@ -829,31 +829,31 @@ else
     			}
 
 				// Number of buy prices
- 			    if (! empty($arrayfields['p.numbuyprice']['checked']))
-    			{
-        			print  '<td align="right">';
-    			    if ($obj->tobuy)
-        			{
-    					if (($productFournList = $product_fourn->list_product_fournisseur_price($product_fourn->id)) > 0)
-    					{
-    						$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1, $productFournList);
-    						print $form->textwithpicto(count($productFournList),$htmltext);
-    					}
-        			}
-        			print '</td>';
-    			}
+				if (! empty($arrayfields['p.numbuyprice']['checked']))
+				{
+					print  '<td align="right">';
+					if ($obj->tobuy)
+					{
+						if (($productFournList = $product_fourn->list_product_fournisseur_price($product_fourn->id)) > 0)
+						{
+							$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1, $productFournList);
+							print $form->textwithpicto(count($productFournList),$htmltext);
+						}
+					}
+					print '</td>';
+				}
 
 				// WAP
- 			    if (! empty($arrayfields['p.pmp']['checked']))
-    			{
-        			print  '<td align="right">';
-    			    if ($obj->tobuy)
-        			{
-    					print price($product_static->pmp, 1, $langs, 1, 2, 1, 'auto');
-        			}
-        			print '</td>';
-    			}
-
+				if (! empty($arrayfields['p.pmp']['checked']))
+				{
+					print  '<td class="nowrap" align="right">';
+					if ($obj->tobuy)
+					{
+						print price($product_static->pmp, 1, $langs, 1, 2, 2, 'auto');
+					}
+					print '</td>';
+				}
+				
     		    // Limit alert
 		        if (! empty($arrayfields['p.seuil_stock_alerte']['checked']))
         		{
