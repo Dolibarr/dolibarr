@@ -223,7 +223,8 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	function getLibStatut($mode=0,$alreadypaid=-1)
 	{
-		return $this->LibStatut($this->paye,$this->statut,$mode,$alreadypaid,$this->type);
+		$paiement = $this->getSommePaiement();
+		return $this->LibStatut($this->paye,$this->statut,$mode,$paiement,$this->type);
 	}
 
 	/**
