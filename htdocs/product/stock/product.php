@@ -655,7 +655,7 @@ if ($id > 0 || $ref)
 		{
 		    if ($found) $helpondiff.='<br>'; else $found=1;
 		    $helpondiff.=$langs->trans("ProductQtyInCustomersOrdersRunning").': '.$object->stats_commande['qty'];
-		    $result=$object->load_stats_commande(0,'0');
+		    $result=$object->load_stats_commande(0,'0', 1);
 		    if ($result < 0) dol_print_error($db,$object->error);
 		    $helpondiff.=' ('.$langs->trans("ProductQtyInDraft").': '.$object->stats_commande['qty'].')';
 		}
@@ -664,7 +664,7 @@ if ($id > 0 || $ref)
 		if (! empty($conf->expedition->enabled))
 		{
 		    if ($found) $helpondiff.='<br>'; else $found=1;
-		    $result=$object->load_stats_sending(0,'2');
+		    $result=$object->load_stats_sending(0,'2', 1);
 		    $helpondiff.=$langs->trans("ProductQtyInShipmentAlreadySent").': '.$object->stats_expedition['qty'];
 		}
 
@@ -672,9 +672,9 @@ if ($id > 0 || $ref)
 		if (! empty($conf->fournisseur->enabled))
 		{
 		    if ($found) $helpondiff.='<br>'; else $found=1;
-		    $result=$object->load_stats_commande_fournisseur(0,'3,4');
+		    $result=$object->load_stats_commande_fournisseur(0,'3,4', 1);
 		    $helpondiff.=$langs->trans("ProductQtyInSuppliersOrdersRunning").': '.$object->stats_commande_fournisseur['qty'];
-		    $result=$object->load_stats_commande_fournisseur(0,'0,1,2');
+		    $result=$object->load_stats_commande_fournisseur(0,'0,1,2', 1);
 		    if ($result < 0) dol_print_error($db,$object->error);
 		    $helpondiff.=' ('.$langs->trans("ProductQtyInDraftOrWaitingApproved").': '.$object->stats_commande_fournisseur['qty'].')';
 		}
