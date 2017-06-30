@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /* Copyright (C) 2007-2010  Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010  Jean Heimburger			<jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent			<jmenent@2byte.es>
@@ -246,7 +246,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
-					$bookkeeping->credit = ($mt < 0) ? $mt : 0;
+					$bookkeeping->credit = ($mt < 0) ? -$mt : 0;
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
@@ -292,7 +292,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
-						$bookkeeping->debit = ($mt < 0) ? $mt : 0;
+						$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
 						$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 						$bookkeeping->code_journal = $journal;
 						$bookkeeping->journal_label = $journal_label;
@@ -338,7 +338,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT").' '.join(', ',$def_tva[$key][$k]);
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
-					$bookkeeping->debit = ($mt < 0) ? $mt : 0;
+					$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
 					$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;

@@ -230,7 +230,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
-					$bookkeeping->debit = ($mt <= 0) ? $mt : 0;
+					$bookkeeping->debit = ($mt <= 0) ? -$mt : 0;
 					$bookkeeping->credit = ($mt > 0) ? $mt : 0;
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
@@ -280,7 +280,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
-						$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
+						$bookkeeping->credit = ($mt <= 0) ? -$mt : 0;
 						$bookkeeping->code_journal = $journal;
 						$bookkeeping->journal_label = $journal_label;
 						$bookkeeping->fk_user_author = $user->id;
@@ -327,7 +327,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
-					$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
+					$bookkeeping->credit = ($mt <= 0) ? -$mt : 0;
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
