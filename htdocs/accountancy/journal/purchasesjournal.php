@@ -43,7 +43,7 @@ $langs->load("main");
 $langs->load("accountancy");
 
 $id_journal = GETPOST('id_journal', 'int');
-$action = GETPOST('action','alpha');
+$action = GETPOST('action','aZ09');
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
