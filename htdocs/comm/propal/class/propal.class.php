@@ -254,7 +254,7 @@ class Propal extends CommonObject
             $tva_npr = get_default_npr($mysoc,$this->thirdparty,$prod->id);
             if (empty($tva_tx)) $tva_npr=0;
             $vat_src_code = '';     // May be defined into tva_tx
-            
+
             $localtax1_tx = get_localtax($tva_tx,1,$mysoc,$this->thirdparty,$tva_npr);
             $localtax2_tx = get_localtax($tva_tx,2,$mysoc,$this->thirdparty,$tva_npr);
 
@@ -433,7 +433,7 @@ class Propal extends CommonObject
 
         // Check parameters
         if ($type < 0) return -1;
-      
+
         if ($this->statut == self::STATUS_DRAFT)
         {
             $this->db->begin();
@@ -1392,17 +1392,17 @@ class Propal extends CommonObject
             return -1;
         }
     }
-	
+
 	/**
 	 * Load array lines
-	 * 
+	 *
 	 * @param		int		$only_product	Return only physical products
 	 * @return		int						<0 if KO, >0 if OK
 	 */
 	function fetch_lines($only_product=0)
 	{
 		$this->lines=array();
-		
+
 		$sql = 'SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,';
 		$sql.= ' d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,';
 		$sql.= ' d.fk_unit,';
@@ -1422,7 +1422,7 @@ class Propal extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 			$num = $this->db->num_rows($result);
-			
+
 			$i = 0;
 			while ($i < $num)
 			{
@@ -1489,9 +1489,9 @@ class Propal extends CommonObject
 				//print "xx $i ".$this->lines[$i]->fk_product;
 				$i++;
 			}
-			
+
 			$this->db->free($result);
-			
+
 			return 1;
 		}
 		else
@@ -2779,7 +2779,7 @@ class Propal extends CommonObject
     function availability($availability_id, $notrigger=0)
     {
         global $user;
-        
+
         if ($this->statut >= self::STATUS_DRAFT)
         {
         	$error=0;
@@ -3277,13 +3277,14 @@ class Propal extends CommonObject
     /**
      *	Return clicable link of object (with eventually picto)
      *
-     *	@param      int		$withpicto		Add picto into link
-     *	@param      string	$option			Where point the link ('expedition', 'document', ...)
-     *	@param      string	$get_params    	Parametres added to url
-     *  @param	    int   	$notooltip		1=Disable tooltip
-     *	@return     string          		String with URL
+     *	@param      int		$withpicto		          Add picto into link
+     *	@param      string	$option			          Where point the link ('expedition', 'document', ...)
+     *	@param      string	$get_params    	          Parametres added to url
+     *  @param	    int   	$notooltip		          1=Disable tooltip
+     *  @param      int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return     string          		          String with URL
      */
-    function getNomUrl($withpicto=0,$option='', $get_params='', $notooltip=0)
+    function getNomUrl($withpicto=0, $option='', $get_params='', $notooltip=0, $save_lastsearch_value=-1)
     {
         global $langs, $conf, $user;
 
@@ -3317,6 +3318,14 @@ class Propal extends CommonObject
             }
             if ($option == 'document') {
                 $url = DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params;
+            }
+
+            if ($option != 'nolink')
+            {
+                // Add param to save lastsearch_values or not
+                $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+                if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+                if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
             }
         }
 
@@ -3352,9 +3361,9 @@ class Propal extends CommonObject
     function getLinesArray()
     {
         // TODO Duplicate with fetch_lines ? Wich one to keep ?
-        
+
         $this->lines = array();
-        
+
         $sql = 'SELECT pt.rowid, pt.label as custom_label, pt.description, pt.fk_product, pt.fk_remise_except,';
         $sql.= ' pt.qty, pt.vat_src_code, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
         $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code, pt.localtax1_tx, pt.localtax2_tx,';
