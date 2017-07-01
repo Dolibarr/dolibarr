@@ -80,9 +80,9 @@ $object_statut=GETPOST('propal_statut');
 $sall=GETPOST('sall', 'alphanohtml');
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 
-$day=GETPOST("day","int");
-$month=GETPOST("month","int");
-$year=GETPOST("year","int");
+$search_day=GETPOST("search_day","int");
+$search_month=GETPOST("search_month","int");
+$search_year=GETPOST("search_year","int");
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -197,9 +197,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_type='';
 	$search_country='';
 	$search_type_thirdparty='';
-	$year='';
-    $month='';
-    $day='';
+	$search_year='';
+    $search_month='';
+    $search_day='';
 	$viewstatut='';
 	$object_statut='';
 	$toselect='';
@@ -295,18 +295,18 @@ if ($viewstatut != '' && $viewstatut != '-1')
 {
 	$sql.= ' AND p.fk_statut IN ('.$db->escape($viewstatut).')';
 }
-if ($month > 0)
+if ($search_month > 0)
 {
-    if ($year > 0 && empty($day))
-    $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
-    else if ($year > 0 && ! empty($day))
-    $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+    if ($search_year > 0 && empty($search_day))
+    $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
+    else if ($search_year > 0 && ! empty($search_day))
+    $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
     else
-    $sql.= " AND date_format(p.datep, '%m') = '".$db->escape($month)."'";
+    $sql.= " AND date_format(p.datep, '%m') = '".$db->escape($search_month)."'";
 }
-else if ($year > 0)
+else if ($search_year > 0)
 {
-	$sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+	$sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 }
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$db->escape($search_sale);
 if ($search_user > 0)
@@ -369,8 +369,8 @@ if ($resql)
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 	if ($sall)				 $param.='&sall='.urlencode($sall);
-	if ($month)              $param.='&month='.urlencode($month);
-	if ($year)               $param.='&year='.urlencode($year);
+	if ($search_month)              $param.='&search_month='.urlencode($search_month);
+	if ($search_year)               $param.='&search_year='.urlencode($search_year);
     if ($search_ref)         $param.='&search_ref='.urlencode($search_ref);
     if ($search_refcustomer) $param.='&search_refcustomer='.urlencode($search_refcustomer);
     if ($search_societe)     $param.='&search_societe='.urlencode($search_societe);
@@ -613,11 +613,10 @@ if ($resql)
 	{
 	    print '<td class="liste_titre" colspan="1" align="center">';
     	//print $langs->trans('Month').': ';
-    	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-    	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+    	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
+    	print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
     	//print '&nbsp;'.$langs->trans('Year').': ';
-    	$syear = $year;
-    	$formother->select_year($syear,'year',1, 20, 5);
+    	$formother->select_year($search_year,'search_year',1, 20, 5);
     	print '</td>';
 	}
 	// Date end
@@ -755,7 +754,6 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-
     	$objectstatic->id=$obj->rowid;
     	$objectstatic->ref=$obj->ref;
 
@@ -768,7 +766,7 @@ if ($resql)
     		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
             // Picto + Ref
     		print '<td class="nobordernopadding nowrap">';
-    		print $objectstatic->getNomUrl(1);
+    		print $objectstatic->getNomUrl(1, '', '', 0, 1);
     		print '</td>';
             // Warning
             $warnornote='';
