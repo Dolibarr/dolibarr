@@ -206,7 +206,7 @@ if ($num2) {
 	print '<td colspan="3">' . $langs->trans('OtherOptions') . '</td>';
 	print "</tr>\n";
 
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV > AccountancyExport::EXPORT_TYPE_NORMAL)
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV > AccountancyExport::$EXPORT_TYPE_NORMAL)
 	{
 		print '<tr><td colspan="2" bgcolor="red"><b>' . $langs->trans('OptionsDeactivatedForThisExportModel') . '</b></td></tr>';
 	}

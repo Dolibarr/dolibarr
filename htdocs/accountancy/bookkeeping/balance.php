@@ -114,7 +114,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 if ($action == 'export_csv') {
 
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == AccountancyExport::EXPORT_TYPE_CEGID) $sep = ";";     // For CEGID, we force separator.
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == AccountancyExport::$EXPORT_TYPE_CEGID) $sep = ";";     // For CEGID, we force separator.
 
 	$journal = 'bookkepping';
 

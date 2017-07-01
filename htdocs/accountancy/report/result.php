@@ -80,16 +80,14 @@ $form = new Form($db);
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
 $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
 
-	$nom = $langs->trans("ReportInOut");
-	$nomlink = '';
-	$periodlink = '';
-	$exportlink = '';
-	$builddate = time();
-	$description = '';
-	$period = $langs->trans("Detail").' '. $form->selectyesno('simple_report',$simple_report,0) . " " .$textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear ;
-report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array (
-			'action' => ''
-	));
+$nom = $langs->trans("ReportInOut").', '.$langs->trans("ByAccounts");
+$nomlink = '';
+$periodlink = '';
+$exportlink = '';
+$builddate = time();
+$description = '';
+$period = $langs->trans("Detail").' '. $form->selectyesno('simple_report',$simple_report,0) . " " .$textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear ;
+report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
 
 $moreforfilter='';
 
@@ -131,7 +129,7 @@ $sommes = array();
 
 foreach($cats as $cat ){
 	if(!empty($cat['category_type'])){ // category calculed
-	
+
 		$formula = $cat['formula'];
 
 		print "<tr class='liste_titre'>";
@@ -143,13 +141,13 @@ foreach($cats as $cat ){
 		foreach($sommes as $code => $det){
 			$vars[$code] = $det['NP'];
 		}
-		
-		
+
+
 		$result = strtr($formula, $vars);
-		
-		
+
+
 		$r = $AccCat->calculate($result);
-		
+
 		print '<td align="right"><font color="blue">' . price($r) . '</td>';
 		$code = $cat['code']; // code categorie de calcule
 		$sommes[$code]['NP'] += $r;
@@ -160,11 +158,11 @@ foreach($cats as $cat ){
 				$vars[$code] = $det['N'];
 			}
 		}
-		
+
 		$result = strtr($formula, $vars);
-		
+
 		$r = $AccCat->calculate($result);
-		
+
 		print '<td align="right"><font color="blue">' . price($r) . '</td>';
 		$sommes[$code]['N'] += $r;
 
@@ -179,37 +177,37 @@ foreach($cats as $cat ){
 			$sommes[$code]['M'][$k] += $r;
 		}
 
-		
+
 		print "</tr>\n";
-		
-		
+
+
 	}else{ // normal category
-		
+
 		$totCat = array();
 		$totCat['M'] = array();
-	
+
 		// get cpts of category
 		$cpts = $AccCat->getCptsCat($cat['rowid']);
-		
-		
+
+
 		print "<tr class='liste_titre'>";
 		print '<td colspan="2">' . $cat['label'] . '</td>';
-		
+
 		foreach($cpts as $i => $cpt){
 			$var = ! $var;
 
 			$code = $cat['code'];
-			
+
 			// N-1
 			$return = $AccCat->getResult($cpt['account_number'], 0, $year_current -1, $cpt['dc']);
-			
+
 			if ($return < 0) {
 				setEventMessages(null, $AccCat->errors, 'errors');
 				$resultNP=0;
 			} else {
 				$resultNP=$AccCat->sdc;
 			}
-			
+
 			//N
 			$return = $AccCat->getResult($cpt['account_number'], 0, $year_current, $cpt['dc']);
 			if ($return < 0) {
@@ -218,7 +216,7 @@ foreach($cats as $cat ){
 			} else {
 				$resultN=$AccCat->sdc;
 			}
-			
+
 			$totCat['NP'] += $resultNP;
 			$totCat['N'] += $resultN;
 
@@ -231,33 +229,33 @@ foreach($cats as $cat ){
 					$resultM=$AccCat->sdc;
 				}
 				$totCat['M'][$k] += $resultM;
-				
+
 			}
 		}
-		
+
 		print '<td align="right">' . price($totCat['NP'])  . '</td>';
 		print '<td align="right">' . price($totCat['N']) . '</td>';
-		
+
 		foreach($totCat['M'] as $k => $v){
 			print '<td align="right">' . price($v) . '</td>';
-		}		
+		}
 		print "</tr>\n";
-		
+
 		foreach($cpts as $i => $cpt){
 			$var = ! $var;
 
 			$code = $cat['code'];
-			
+
 			// N-1
 			$return = $AccCat->getResult($cpt['account_number'], 0, $year_current -1, $cpt['dc']);
-			
+
 			if ($return < 0) {
 				setEventMessages(null, $AccCat->errors, 'errors');
 				$resultNP=0;
 			} else {
 				$resultNP=$AccCat->sdc;
 			}
-			
+
 			//N
 			$return = $AccCat->getResult($cpt['account_number'], 0, $year_current, $cpt['dc']);
 			if ($return < 0) {
@@ -266,7 +264,7 @@ foreach($cats as $cat ){
 			} else {
 				$resultN=$AccCat->sdc;
 			}
-			
+
 			$sommes[$code]['NP'] += $resultNP;
 			$sommes[$code]['N'] += $resultN;
 			print '<tr'. $bc[$var].'>';
@@ -294,7 +292,7 @@ foreach($cats as $cat ){
 			print "</tr>\n";
 		}
 	}
-	
+
 }
 
 print "</table>";
