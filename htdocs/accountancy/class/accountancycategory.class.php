@@ -173,12 +173,12 @@ class AccountancyCategory
 	/**
 	 * Function to add an accounting account in an accounting category
 	 *
-	 * @param int $id_cat Id category
-	 * @param array $cpts list of accounts array
+	 * @param	int		$cat_id		Id category
+	 * @param	array	$cpts		list of accounts array
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return	int					<0 if KO, >0 if OK
 	 */
-	public function updateAccAcc($id_cat, $cpts = array()) {
+	public function updateAccAcc($cat_id, $cpts = array()) {
 		global $conf;
 		$error = 0;
 
@@ -206,7 +206,7 @@ class AccountancyCategory
 			if (array_key_exists(length_accountg($obj->account_number), $cpts))
 			{
 				$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account";
-				$sql .= " SET fk_accounting_category=" . $id_cat;
+				$sql .= " SET fk_accounting_category=" . $cat_id;
 				$sql .= " WHERE rowid=".$obj->rowid;
 				dol_syslog(__METHOD__, LOG_DEBUG);
 				$resqlupdate = $this->db->query($sql);
@@ -429,7 +429,7 @@ class AccountancyCategory
 			return - 1;
 		}
 	}
-	
+
 	public function getCats() {
 		global $db, $langs, $user, $mysoc;
 
@@ -462,7 +462,7 @@ class AccountancyCategory
 			if ($num) {
 				while ( $i < $num ) {
 					$obj = $this->db->fetch_object($resql);
-					
+
 					$data[] = array (
 							'rowid' => $obj->rowid,
 							'code' => $obj->code,
@@ -483,10 +483,10 @@ class AccountancyCategory
 			return - 1;
 		}
 	}
-	
-	
-	// calcule 
-	
+
+
+	// calcule
+
 	const PATTERN = '/(?:\-?\d+(?:\.?\d+)?[\+\-\*\/])+\-?\d+(?:\.?\d+)?/';
 
 	const PARENTHESIS_DEPTH = 10;
@@ -535,11 +535,12 @@ class AccountancyCategory
 
 		return 0;
 	}
-	
+
 	/**
 	 * get cpts of category
 	 *
-	 * @return array       Result in table
+	 * @param	int		$cat_id		Id category
+	 * @return	array				Result in table
 	 */
 	public function getCptsCat($cat_id) {
 		global $mysoc;
@@ -554,7 +555,7 @@ class AccountancyCategory
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
 		$sql .= " WHERE t.fk_accounting_category = ".$cat_id;
 		$sql .= " ORDER BY t.account_number ";
-		
+
 		//echo $sql;
 
 		$resql = $this->db->query($sql);
@@ -582,5 +583,5 @@ class AccountancyCategory
 			return -1;
 		}
 	}
-	
+
 }
