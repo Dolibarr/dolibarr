@@ -23,7 +23,7 @@
 /**
  * \file htdocs/accountancy/customer/index.php
  * \ingroup Advanced accountancy
- * \brief Home customer ventilation
+ * \brief Home customer journalization page
  */
 
 require '../../main.inc.php';
@@ -58,7 +58,7 @@ if ($year == 0) {
 }
 
 // Validate History
-$action = GETPOST('action','alpha');
+$action = GETPOST('action','aZ09');
 
 
 
@@ -97,7 +97,7 @@ if ($action == 'validatehistory') {
 		$sql1 .= " AND fd.fk_code_ventilation = 0";
 	}
 
-	dol_syslog("htdocs/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
+	dol_syslog('htdocs/accountancy/customer/index.php');
 
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
@@ -173,7 +173,7 @@ print $langs->trans("DescVentilCustomer") . '<br>';
 print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")) . '<br>';
 print '<br>';
 //print '<div class="inline-block divButAction">';
-// TODO Remove this. Should be done into the repair.php script
+// TODO Remove this. Should be done always or into the repair.php script.
 if ($conf->global->MAIN_FEATURES_LEVEL > 1) print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
 //print '</div>';
 
@@ -189,7 +189,7 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 }
 $sql .= " AND f.entity IN (" . getEntity('facture', 0) . ")";	// We don't share object for accountancy
 
-dol_syslog("htdocs/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
+dol_syslog('htdocs/accountancy/customer/index.php');
 $result = $db->query($sql);
 if ($result) {
 	$row = $db->fetch_row($result);
@@ -233,7 +233,7 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 }
 $sql .= " GROUP BY fd.fk_code_ventilation,aa.account_number,aa.label";
 
-dol_syslog("htdocs/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
+dol_syslog('htdocs/accountancy/customer/index.php sql=' . $sql, LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -289,7 +289,7 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 $sql .= " AND aa.account_number IS NOT NULL";
 $sql .= " GROUP BY fd.fk_code_ventilation,aa.account_number,aa.label";
 
-dol_syslog("htdocs/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
+dol_syslog('htdocs/accountancy/customer/index.php');
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -347,7 +347,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 	dol_syslog('htdocs/accountancy/customer/index.php');
 	$resql = $db->query($sql);
 	if ($resql) {
-		$i = 0;
 		$num = $db->num_rows($resql);
 
 		while ($row = $db->fetch_row($resql)) {
@@ -357,7 +356,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 			}
 			print '<td align="right"><b>' . price($row[13]) . '</b></td>';
 			print '</tr>';
-			$i ++;
 		}
 		$db->free($resql);
 	} else {
@@ -365,6 +363,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 	}
 	print "</table>\n";
 
+	
 	if (! empty($conf->margin->enabled)) {
 		print "<br>\n";
 		print '<table class="noborder" width="100%">';
@@ -390,7 +389,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 			$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_DEPOSIT . "," . Facture::TYPE_SITUATION . ")";
 		}
 
-		dol_syslog('htdocs/accountancy/customer/index.php:: $sql=' . $sql);
+		dol_syslog('htdocs/accountancy/customer/index.php');
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
