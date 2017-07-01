@@ -884,8 +884,6 @@ class Societe extends CommonObject
 			$sql .= ', multicurrency_code = \''.$this->db->escape($this->multicurrency_code)."'";
             $sql .= " WHERE rowid = '" . $id ."'";
 
-
-            dol_syslog(get_class($this)."::Update", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -980,11 +978,12 @@ class Societe extends CommonObject
                 {
                     // Doublon
                     $this->error = $langs->trans("ErrorDuplicateField");
-                    $result =  -1;
+                    $result = -1;
                 }
                 else
                 {
-                    $result =  -2;
+                    $this->error = $this->db->lasterror();
+                    $result = -2;
                 }
                 $this->db->rollback();
                 return $result;
@@ -1886,7 +1885,7 @@ class Societe extends CommonObject
             $label.= '<u>' . $langs->trans("ShowMargin") . '</u>';
             $linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
         }
-        
+
         // By default
         if (empty($linkstart))
         {
@@ -1907,7 +1906,7 @@ class Societe extends CommonObject
             $label.= '<br><b>' . $langs->trans('CustomerAccountancyCode') . ':</b> '. $this->code_compta_client;
         if (! empty($conf->accounting->enabled) && $this->fournisseur)
             $label.= '<br><b>' . $langs->trans('SupplierAccountancyCode') . ':</b> '. $this->code_compta_fournisseur;
-            
+
         if (! empty($this->logo) && class_exists('Form'))
         {
             $label.= '</br><div class="photointooltip">';
@@ -1949,7 +1948,7 @@ class Societe extends CommonObject
             $linkstart='';
             $linkend='';
         }
-        
+
         if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$linkstart.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
@@ -3449,9 +3448,9 @@ class Societe extends CommonObject
                     return 0;
     			}
     		}
-    
+
     		$modelpath = "core/modules/societe/doc/";
-		
+
     		$result=$this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 
@@ -3472,7 +3471,7 @@ class Societe extends CommonObject
 	public function setCategories($categories, $type)
 	{
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-	    
+
 	    // Decode type
 		if ($type == 'customer') {
 			$type_id = Categorie::TYPE_CUSTOMER;
