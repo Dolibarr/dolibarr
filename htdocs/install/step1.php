@@ -312,14 +312,25 @@ if (! $error && $db->connected)
 // Define $defaultCharacterSet and $defaultDBSortingCollation
 if (! $error && $db->connected)
 {
-    if (!empty($db_create_database)) { // If we create database, we force default value
-    	$defaultCharacterSet=$db->forcecharset;
+    if (!empty($db_create_database))    // If we create database, we force default value
+    {
+        // Default values come from the database handler
+
+        $defaultCharacterSet=$db->forcecharset;
     	$defaultDBSortingCollation=$db->forcecollate;
     }
     else	// If already created, we take current value
     {
         $defaultCharacterSet=$db->getDefaultCharacterSetDatabase();
         $defaultDBSortingCollation=$db->getDefaultCollationDatabase();
+    }
+
+    // Force to avoid utf8mb4 because index on field char 255 reach limit of 767 char for indexes (example with mysql 5.6.34 = mariadb 10.0.29)
+    // TODO Remove this when utf8mb4 is supported
+    if ($defaultCharacterSet == 'utf8mb4' || $defaultDBSortingCollation == 'utf8mb4_unicode_ci')
+    {
+        $defaultCharacterSet = 'utf8';
+        $defaultDBSortingCollation = 'utf8_unicode_ci';
     }
 
     print '<input type="hidden" name="dolibarr_main_db_character_set" value="'.$defaultCharacterSet.'">';
