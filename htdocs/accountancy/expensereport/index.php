@@ -69,7 +69,7 @@ if ($action == 'validatehistory') {
 
 	// First clean corrupted data
 	$sqlclean = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
-	$sqlclean .= " SET erd.fk_code_ventilation = 0";
+	$sqlclean .= " SET fk_code_ventilation = 0";
 	$sqlclean .= ' WHERE erd.fk_code_ventilation NOT IN ';
 	$sqlclean .= '	(SELECT accnt.rowid ';
 	$sqlclean .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
@@ -93,6 +93,8 @@ if ($action == 'validatehistory') {
 		$sql1 .= " AND erd.fk_code_ventilation = 0";
 	}
 
+	dol_syslog('htdocs/accountancy/expensereport/index.php');
+	
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
 		$error ++;
@@ -107,7 +109,7 @@ if ($action == 'validatehistory') {
 	$db->begin();
 
 	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
-	$sql1 .= " SET erd.fk_code_ventilation = 0";
+	$sql1 .= " SET fk_code_ventilation = 0";
 	$sql1 .= ' WHERE erd.fk_code_ventilation NOT IN ';
 	$sql1 .= '	(SELECT accnt.rowid ';
 	$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
@@ -129,8 +131,9 @@ if ($action == 'validatehistory') {
 	$error = 0;
 	$db->begin();
 
+	// Now clean
 	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
-	$sql1.= " SET erd.fk_code_ventilation = 0";
+	$sql1.= " SET fk_code_ventilation = 0";
 	$sql1.= " WHERE erd.fk_expensereport IN ( SELECT er.rowid FROM " . MAIN_DB_PREFIX . "expensereport as er";
 	$sql1.= " WHERE er.date_debut >= '" . $db->idate(dol_get_first_day($year_current, 1, false)) . "'";
 	$sql1.= " AND er.date_debut <= '" . $db->idate(dol_get_last_day($year_current, 12, false)) . "'";
@@ -166,25 +169,25 @@ print $langs->trans("DescVentilExpenseReportMore", $langs->transnoentitiesnoconv
 print '<br>';
 
 //print '<div class="inline-block divButAction">';
-// TODO Remove this. Should be done always.
+// TODO Remove this. Should be done always or into the repair.php script.
 if ($conf->global->MAIN_FEATURES_LEVEL > 1) print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
 //print '</div>';
 
 
-$buttonbind = '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
-$buttonreset = '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
 
 
 
 $y = $year_current;
 
-print '<br>';
+$buttonbind = '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
+$buttonreset = '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
+
 
 print_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
 
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width="200" align="left">' . $langs->trans("Account") . '</td>';
+print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
 print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
 for($i = 1; $i <= 12; $i ++) {
     print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
@@ -196,7 +199,7 @@ $sql .= "  " . $db->ifsql('aa.label IS NULL', "'".$langs->trans('NotMatch')."'",
 for($i = 1; $i <= 12; $i ++) {
     $sql .= "  SUM(" . $db->ifsql('MONTH(er.date_debut)=' . $i, 'erd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
 }
-$sql .= " ROUND(SUM(erd.total_ht),2) as total";
+$sql .= " SUM(erd.total_ht) as total";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport_det as erd";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expensereport as er ON er.rowid = erd.fk_expensereport";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = erd.fk_code_ventilation";
@@ -237,7 +240,7 @@ print_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), $buttonreset, '
 
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width="200" align="left">' . $langs->trans("Account") . '</td>';
+print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
 print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
 for($i = 1; $i <= 12; $i ++) {
     print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
@@ -260,7 +263,7 @@ $sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";     // We d
 $sql .= " AND aa.account_number IS NOT NULL";
 $sql .= " GROUP BY erd.fk_code_ventilation,aa.account_number,aa.label";
 
-dol_syslog('/accountancy/expensereport/index.php:: sql=' . $sql);
+dol_syslog('htdocs/accountancy/expensereport/index.php');
 $resql = $db->query($sql);
 if ($resql) {
     $num = $db->num_rows($resql);
@@ -304,7 +307,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     for($i = 1; $i <= 12; $i ++) {
     	$sql .= " SUM(" . $db->ifsql('MONTH(er.date_create)=' . $i, 'erd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
     }
-    $sql .= " ROUND(SUM(erd.total_ht),2) as total";
+    $sql .= " SUM(erd.total_ht) as total";
     $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport_det as erd";
     $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expensereport as er ON er.rowid = erd.fk_expensereport";
     $sql .= " WHERE er.date_debut >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
@@ -312,14 +315,12 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     $sql .= " AND er.fk_statut > 0 ";
     $sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";     // We don't share object for accountancy
     
-    dol_syslog('/accountancy/expensereport/index.php:: sql=' . $sql);
+    dol_syslog('htdocs/accountancy/expensereport/index.php');
     $resql = $db->query($sql);
     if ($resql) {
     	$num = $db->num_rows($resql);
     
     	while ( $row = $db->fetch_row($resql)) {
-    
-    
     		print '<tr><td>' . $row[0] . '</td>';
     			for($i = 1; $i <= 12; $i ++) {
     			print '<td align="right">' . price($row[$i]) . '</td>';

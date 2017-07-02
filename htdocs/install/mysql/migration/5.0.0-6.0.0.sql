@@ -46,6 +46,9 @@ ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_spy tinyint NOT NULL DEFAULT
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN sujet TEXT;
 
 
+ALTER TABLE llx_socpeople MODIFY COLUMN zip varchar(25);
+
+
 ALTER TABLE llx_extrafields ADD COLUMN fieldcomputed text;
 ALTER TABLE llx_extrafields ADD COLUMN fielddefault varchar(255);
 
