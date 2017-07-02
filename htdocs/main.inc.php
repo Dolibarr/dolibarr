@@ -199,12 +199,17 @@ $sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
 session_name($sessionname);
 session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
-session_start();
-if (ini_get('register_globals'))    // Deprecated in 5.3 and removed in 5.4. To solve bug in using $_SESSION
+// This create lock released until session_write_close() or end of page.
+// We need this lock as long as we read/write $_SESSION ['vars']. We can close released when finished.
+if (! defined('NOSESSION'))
 {
-    foreach ($_SESSION as $key=>$value)
+    session_start();
+    if (ini_get('register_globals'))    // Deprecated in 5.3 and removed in 5.4. To solve bug in using $_SESSION
     {
-        if (isset($GLOBALS[$key])) unset($GLOBALS[$key]);
+        foreach ($_SESSION as $key=>$value)
+        {
+            if (isset($GLOBALS[$key])) unset($GLOBALS[$key]);
+        }
     }
 }
 
