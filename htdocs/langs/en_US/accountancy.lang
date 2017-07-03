@@ -28,6 +28,7 @@ OverviewOfAmountOfLinesBound=Overview of amount of lines already bound to accoun
 OtherInfo=Other information
 DeleteCptCategory=Remove accounting account from group
 ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group ?
+AlreadyInGeneralLedger=Already journalized in ledgers
 
 AccountancyArea=Accountancy area
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
@@ -142,6 +143,7 @@ NumPiece=Piece number
 TransactionNumShort=Num. transaction
 AccountingCategory=Accounting account groups
 GroupByAccountAccounting=Group by accounting account
+ByAccounts=By accounts
 NotMatch=Not Set
 DeleteMvt=Delete Ledger lines
 DelYear=Year to delete

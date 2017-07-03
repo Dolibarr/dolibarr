@@ -110,15 +110,15 @@ function tree_showpad(&$fulltree,$key,$silent=0)
  *  @param  int	    $rang   		Level of element
  *  @param	string	$iddivjstree	Id to use for parent ul element
  *  @param  int     $donoresetalreadyloaded     Do not reset global array $donoresetalreadyloaded used to avoid to go down on an aleady processed record
- *  @param  int     $showfk         Show fk links to parent into label
+ *  @param  int     $showfk         1=show fk_links to parent into label  (used by menu editor only)
  *  @return	void
  */
 function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetalreadyloaded=0, $showfk=0)
 {
     global $tree_recur_alreadyadded;
-    
+
     if ($rang == 0 && empty($donoresetalreadyloaded)) $tree_recur_alreadyadded=array();
-    
+
     if ($rang == 0)
 	{
 		// Test also done with jstree and dynatree (not able to have <a> inside label)
@@ -138,8 +138,8 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetal
 
 		print '<ul id="'.$iddivjstree.'">';
 	}
-	
-	if ($rang > 50)	
+
+	if ($rang > 50)
 	{
 	    return;	// Protect against infinite loop. Max 50 depth
 	}
@@ -154,19 +154,31 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetal
 		if ($tab[$x]['fk_menu'] != -1 && $tab[$x]['fk_menu'] == $pere['rowid'])
 		{
 		    //print 'rang='.$rang.'-x='.$x." rowid=".$tab[$x]['rowid']." tab[x]['fk_leftmenu'] = ".$tab[$x]['fk_leftmenu']." leftmenu pere = ".$pere['leftmenu']."<br>\n";
-			if (empty($ulprinted) && ! empty($pere['rowid'])) 
-			{ 
+			if (empty($ulprinted) && ! empty($pere['rowid']))
+			{
     		    if (! empty($tree_recur_alreadyadded[$tab[$x]['rowid']]))
     		    {
     		          dol_syslog('Error, record with id '.$tab[$x]['rowid'].' seems to be a child of record with id '.$pere['rowid'].' but it was already output. Complete field "leftmenu" and "mainmenu" on ALL records to avoid ambiguity.', LOG_WARNING);
     		          continue;
     		    }
-    			    
+
                 print '<ul'.(empty($pere['rowid'])?' id="treeData"':'').'>'; $ulprinted++;
 			}
 			print "\n".'<li '.($tab[$x]['statut']?' class="liuseractive"':'class="liuserdisabled"').'>';
-			print $tab[$x]['entry'];
-			if ($showfk) print '&nbsp; (fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
+			if ($showfk)
+			{
+			    print '<table class="nobordernopadding centpercent"><tr><td>';
+			    print '<strong> &nbsp; ';
+			    print $tab[$x]['title'];
+			    print '&nbsp; (fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
+			    print '</td><td align="right">';
+			    print $tab[$x]['buttons'];
+			    print '</td></tr></table>';
+			}
+			else
+			{
+			    print $tab[$x]['entry'];
+			}
 			//print ' -> A '.$tab[$x]['rowid'].' mainmenu='.$tab[$x]['mainmenu'].' leftmenu='.$tab[$x]['leftmenu'].' fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].'<br>'."\n";
 		    $tree_recur_alreadyadded[$tab[$x]['rowid']]=($rang + 1);
 			// And now we search all its sons of lower level
@@ -176,7 +188,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetal
 		elseif (! empty($tab[$x]['rowid']) && $tab[$x]['fk_menu'] == -1 && $tab[$x]['fk_mainmenu'] == $pere['mainmenu'] && $tab[$x]['fk_leftmenu'] == $pere['leftmenu'])
 		{
 		    //print 'rang='.$rang.'-x='.$x." rowid=".$tab[$x]['rowid']." tab[x]['fk_leftmenu'] = ".$tab[$x]['fk_leftmenu']." leftmenu pere = ".$pere['leftmenu']."<br>\n";
-		    if (empty($ulprinted) && ! empty($pere['rowid'])) 
+		    if (empty($ulprinted) && ! empty($pere['rowid']))
 		    {
 		        if (! empty($tree_recur_alreadyadded[$tab[$x]['rowid']]))
 		        {
@@ -184,12 +196,25 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetal
 		            //print 'Error, record with id '.$tab[$x]['rowid'].' seems to be a child of record with id '.$pere['rowid'].' but it was already output. Complete field "leftmenu" and "mainmenu" on ALL records to avoid ambiguity.';
                     continue;
 		        }
-		        
+
 		        print '<ul'.(empty($pere['rowid'])?' id="treeData"':'').'>'; $ulprinted++;
 		    }
 			print "\n".'<li '.($tab[$x]['statut']?' class="liuseractive"':'class="liuserdisabled"').'>';
-			print $tab[$x]['entry'];
-			if ($showfk) print '&nbsp; (fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
+			if ($showfk)
+			{
+			    print '<table class="nobordernopadding centpercent"><tr><td>';
+			    print '<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">';
+			    print $tab[$x]['title'];
+			    print '</a></strong>';
+			    print '&nbsp; (fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
+			    print '</td><td align="right">';
+			    print $tab[$x]['buttons'];
+			    print '</td></tr></table>';
+			}
+			else
+			{
+			    print $tab[$x]['entry'];
+			}
 			//print ' -> B '.$tab[$x]['rowid'].' mainmenu='.$tab[$x]['mainmenu'].' leftmenu='.$tab[$x]['leftmenu'].' fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].'<br>'."\n";
 			$tree_recur_alreadyadded[$tab[$x]['rowid']]=($rang + 1);
 			// And now we search all its sons of lower level

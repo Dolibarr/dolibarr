@@ -25,8 +25,7 @@
  * \brief 		List operation of book keeping
  */
 require '../../main.inc.php';
-
-// Class
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
@@ -47,11 +46,11 @@ $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETP
 $search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 
-if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt")) {
+if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
 	$action = 'delbookkeepingyear';
 }
-if (GETPOST("button_export_csv_x") || GETPOST("button_export_csv")) {
-	$action = 'export_csv';
+if (GETPOST("button_export_file_x") || GETPOST("button_export_file.x") || GETPOST("button_export_file")) {
+	$action = 'export_file';
 }
 
 $search_accountancy_code = GETPOST("search_accountancy_code");
@@ -99,7 +98,7 @@ $formother = new FormOther($db);
 $form = new Form($db);
 
 
-if ($action != 'export_csv' && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && empty($page)) {
+if ($action != 'export_file' && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && empty($page)) {
     $search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
     $search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
 }
@@ -261,9 +260,8 @@ if ($action == 'delmouvconfirm') {
 	}
 }
 
-if ($action == 'export_csv') {
-
-    include DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php';
+// Export into a file with format defined into setup
+if ($action == 'export_file') {
 
     $result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
 
@@ -356,9 +354,11 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
-$button = '<a class="butAction" name="button_export_csv" href="'.$_SERVER["PHP_SELF"].'?action=export_csv'.($param?'&'.$param:'').'">';
+$listofformat=AccountancyExport::getType();
+$button = '<a class="butAction" name="button_export_file" href="'.$_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:'').'">';
 if (count($filter)) $button.= $langs->trans("ExportFilteredList");
 else $button.= $langs->trans("ExportList");
+$button.=' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')';
 $button.= '</a>';
 
 $groupby = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php"">' . $langs->trans("GroupByAccountAccounting") . '</a>';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017	Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -335,7 +336,7 @@ if ($action == 'create')
 	if (! empty($conf->accounting->enabled))
 	{
 		// Accountancy_account_capital
-        print '<tr><td class="titlefieldcreate">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
+        print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
         print '<td>';
 		print $formaccounting->select_account($object->accountancy_account_capital, 'accountancy_account_capital', 1, '', 0, 1);
         print '</td></tr>';
@@ -415,7 +416,7 @@ if ($id > 0)
             print '<input type="hidden" name="id" value="'.$id.'">';
 		}
 
-		dol_fiche_head($head, 'card', $langs->trans("Loan"), 0, 'bill');
+		dol_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'bill');
 
 		print '<script type="text/javascript">' . "\n";
 		print '  	function popEcheancier() {' . "\n";
@@ -712,9 +713,9 @@ if ($id > 0)
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
-		}
 
-		if ($action == 'edit') print "</form>\n";
+		    print '</form>';
+		}
 
 		/*
 		 *   Buttons actions
