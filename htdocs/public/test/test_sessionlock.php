@@ -12,9 +12,10 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');		// If we don't ne
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');       // Do not load ajax.lib.php library
 if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
 // If you don't need session management (can't be logged if no session used). You must also set
-// NOCSRFCHECK, NOTOKENRENEWAL, NOLOGIN,
+// NOCSRFCHECK, NOTOKENRENEWAL, NOLOGIN
 // Disable module with GETPOST('disablemodules') won't work. Variable 'dol_...' will not be set.
 // $_SESSION are then simple vars if sessions are not active.
+// TODO We can close session with session_write_close() as soon as we just need read access.
 if (! defined("NOSESSION"))      define("NOSESSION",'1');
 
 define('REQUIRE_JQUERY_MULTISELECT','select2');
