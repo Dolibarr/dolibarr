@@ -88,7 +88,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 
 $idpays = $mysoc->country_id;
 
-$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.libelle,f.ref_supplier,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.libelle,f.ref_supplier, f.date_lim_reglement as dlf, ";
 $sql .= " fd.rowid as fdid, fd.description, fd.total_ttc, fd.tva_tx, fd.total_ht, fd.tva as total_tva, fd.product_type, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 $sql .= " p.accountancy_code_buy , aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
@@ -154,6 +154,7 @@ if ($result) {
 		}
 
 		$tabfac[$obj->rowid]["date"] = $db->jdate($obj->df);
+		$tabfac[$obj->rowid]["datereg"] = $db->jdate($obj->dlr);
 		$tabfac[$obj->rowid]["ref"] = $obj->ref_supplier . ' (' . $obj->ref . ')';
 		$tabfac[$obj->rowid]["refsologest"] = $obj->ref;
 		$tabfac[$obj->rowid]["refsuppliersologest"] = $obj->ref_supplier;
@@ -218,6 +219,7 @@ if ($action == 'writebookkeeping') {
 				if ($mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
+					$bookkeeping->date_lim_reglement = $val["datereg"];
 					$bookkeeping->doc_ref = $val["ref"];
 					$bookkeeping->date_create = $now;
 					$bookkeeping->doc_type = 'supplier_invoice';
@@ -230,7 +232,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
-					$bookkeeping->debit = ($mt <= 0) ? $mt : 0;
+					$bookkeeping->debit = ($mt <= 0) ? -$mt : 0;
 					$bookkeeping->credit = ($mt > 0) ? $mt : 0;
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
@@ -267,6 +269,7 @@ if ($action == 'writebookkeeping') {
 					if ($accountingaccount->fetch(null, $k, true)) {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
+						$bookkeeping->date_lim_reglement = $val["datereg"];
 						$bookkeeping->doc_ref = $val["ref"];
 						$bookkeeping->date_create = $now;
 						$bookkeeping->doc_type = 'supplier_invoice';
@@ -280,7 +283,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
-						$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
+						$bookkeeping->credit = ($mt <= 0) ? -$mt : 0;
 						$bookkeeping->code_journal = $journal;
 						$bookkeeping->journal_label = $journal_label;
 						$bookkeeping->fk_user_author = $user->id;
@@ -314,6 +317,7 @@ if ($action == 'writebookkeeping') {
 					// get compte id and label
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
+					$bookkeeping->date_lim_reglement = $val["datereg"];
 					$bookkeeping->doc_ref = $val["ref"];
 					$bookkeeping->date_create = $now;
 					$bookkeeping->doc_type = 'supplier_invoice';
@@ -327,7 +331,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
-					$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
+					$bookkeeping->credit = ($mt <= 0) ? -$mt : 0;
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
