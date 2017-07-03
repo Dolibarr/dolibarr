@@ -32,14 +32,15 @@
  *
  * Manage the different format accountancy export
  */
+
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+
 class AccountancyExport
 {
 	/**
-	 *
-	 * @var Type of export
+	 * @var Type of export. Defined by $conf->global->ACCOUNTING_EXPORT_MODELCSV
 	 */
-	public static $EXPORT_TYPE_NORMAL = 1;
+	public static $EXPORT_TYPE_NORMAL = 1;     // Classic CSV
 	public static $EXPORT_TYPE_CEGID = 2;
 	public static $EXPORT_TYPE_COALA = 3;
 	public static $EXPORT_TYPE_BOB50 = 4;
@@ -81,7 +82,7 @@ class AccountancyExport
 	}
 
 	/**
-	 * Get all export type are available
+	 * Array wit all export type available (key + label)
 	 *
 	 * @return array of type
 	 */

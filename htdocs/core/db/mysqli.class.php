@@ -857,6 +857,7 @@ class DoliDBMysqli extends DoliDB
      *	Return charset used to store data in current database (same result than using SELECT default_character_set_name FROM information_schema.SCHEMATA WHERE schema_name = "databasename";)
      *
      *	@return		string		Charset
+     *  @see getDefaultCollationDatabase
      */
     function getDefaultCharacterSetDatabase()
     {
@@ -867,7 +868,9 @@ class DoliDBMysqli extends DoliDB
             return $this->forcecharset;
         }
         $liste=$this->fetch_array($resql);
-        return $liste['Value'];
+        $tmpval = $liste['Value'];
+
+        return $tmpval;
     }
 
     /**
@@ -900,6 +903,7 @@ class DoliDBMysqli extends DoliDB
      *	Return collation used in current database
      *
      *	@return		string		Collation value
+     *  @see getDefaultCharacterSetDatabase
      */
     function getDefaultCollationDatabase()
     {
@@ -910,7 +914,9 @@ class DoliDBMysqli extends DoliDB
             return $this->forcecollate;
         }
         $liste=$this->fetch_array($resql);
-        return $liste['Value'];
+        $tmpval = $liste['Value'];
+
+        return $tmpval;
     }
 
     /**

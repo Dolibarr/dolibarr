@@ -142,33 +142,34 @@ if (! defined('NOREQUIREUSER'))
  * Load object $conf
  * After this, all parameters conf->global->CONSTANTS are loaded
  */
+
+// By default conf->entity is 1, but we change this if we ask another value.
+if (session_id() && ! empty($_SESSION["dol_entity"]))			// Entity inside an opened session
+{
+	$conf->entity = $_SESSION["dol_entity"];
+}
+else if (! empty($_ENV["dol_entity"]))							// Entity inside a CLI script
+{
+	$conf->entity = $_ENV["dol_entity"];
+}
+else if (isset($_POST["loginfunction"]) && GETPOST("entity"))	// Just after a login page
+{
+	$conf->entity = GETPOST("entity",'int');
+}
+else if (defined('DOLENTITY') && is_numeric(DOLENTITY))			// For public page with MultiCompany module
+{
+	$conf->entity = DOLENTITY;
+}
+else if (!empty($_COOKIE['DOLENTITY']))						    // For other application with MultiCompany module (TODO: We should remove this. entity to use should never be stored into client side)
+{
+	$conf->entity = $_COOKIE['DOLENTITY'];
+}
+
+// Sanitize entity
+if (! is_numeric($conf->entity)) $conf->entity=1;
+
 if (! defined('NOREQUIREDB'))
 {
-	// By default conf->entity is 1, but we change this if we ask another value.
-	if (session_id() && ! empty($_SESSION["dol_entity"]))			// Entity inside an opened session
-	{
-		$conf->entity = $_SESSION["dol_entity"];
-	}
-	else if (! empty($_ENV["dol_entity"]))							// Entity inside a CLI script
-	{
-		$conf->entity = $_ENV["dol_entity"];
-	}
-	else if (isset($_POST["loginfunction"]) && GETPOST("entity"))	// Just after a login page
-	{
-		$conf->entity = GETPOST("entity",'int');
-	}
-	else if (defined('DOLENTITY') && is_numeric(DOLENTITY))			// For public page with MultiCompany module
-	{
-		$conf->entity = DOLENTITY;
-	}
-	else if (!empty($_COOKIE['DOLENTITY']))						// For other application with MultiCompany module (TODO: We should remove this. entity to use should never be stored into client side)
-	{
-		$conf->entity = $_COOKIE['DOLENTITY'];
-	}
-
-	// Sanitize entity
-	if (! is_numeric($conf->entity)) $conf->entity=1;
-
 	//print "Will work with data into entity instance number '".$conf->entity."'";
 
 	// Here we read database (llx_const table) and define $conf->global->XXX var.

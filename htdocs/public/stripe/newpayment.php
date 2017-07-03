@@ -297,7 +297,7 @@ if ($action == 'charge')
     }
 
 	$_SESSION["onlinetoken"] = $stripeToken;
-    $_SESSION["FinalPaymentAmt"] = $amount;
+    $_SESSION["Payment_Amount"] = $amount;
     $_SESSION["currencyCodeType"] = $currency;
     $_SESSION["paymentType"] = '';
     $_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];  // Payer ip
