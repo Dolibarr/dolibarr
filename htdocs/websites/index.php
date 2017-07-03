@@ -727,7 +727,7 @@ if (count($object->records) > 0)
         print '<input type="text" id="previewsiteurl" class="minwidth200imp" name="previewsite" placeholder="'.$langs->trans("http://myvirtualhost").'" value="'.$virtualurl.'">';
         //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
         $htmltext=$langs->trans("SetHereVirtualHost", $dataroot);
-        print $form->textwithpicto('', $htmltext);
+        print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helpvirtualhost');
         print '</div>';
 
         $urlext=$virtualurl;
@@ -846,8 +846,8 @@ if (count($object->records) > 0)
             print '<div class="websiteinputurl">';
             print '<input type="text" id="previewpageurl" class="minwidth200imp" name="previewsite" value="'.$pagealias.'" disabled="disabled">';
             //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
-            $htmltext=$langs->trans("WEBSITE_PAGENAME", $pagealias);
-            print $form->textwithpicto('', $htmltext);
+            $htmltext=$langs->trans("PageNameAliasHelp", $langs->transnoentitiesnoconv("EditPageMeta"));
+            print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helppagealias');
             print '</div>';
 
             if (! empty($object->virtualhost))
