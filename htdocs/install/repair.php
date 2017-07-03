@@ -78,6 +78,7 @@ print 'Option clean_product_stock_batch (0 or \'test\' or \'confirmed\') is '.(G
 print 'Option set_empty_time_spent_amount (0 or \'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount','alpha')?GETPOST('set_empty_time_spent_amount','alpha'):'0').'<br>'."\n";
 print 'Option rebuild_product_thumbs (0 or \'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs','alpha')?GETPOST('rebuild_product_thumbs','alpha'):'0').'<br>'."\n";
 print 'Option force_disable_of_modules_not_found (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found','alpha')?GETPOST('force_disable_of_modules_not_found','alpha'):'0').'<br>'."\n";
+print 'Option force_utf8_on_tables, for mysql/mariadb only(0 or \'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables','alpha')?GETPOST('force_utf8_on_tables','alpha'):'0').'<br>'."\n";
 print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
@@ -888,6 +889,35 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 }
 
 
+
+
+// clean_old_module_entries: Clean data into const when files of module were removed without being
+// clean_linked_elements: Check and clean linked elements
+if ($ok && GETPOST('force_utf8_on_tables','alpha'))
+{
+    print '<tr><td colspan="2"><br>*** Force page code and collation with utf8 (for mysql/mariadb only)</td></tr>';
+
+    if ($db->type == "mysql")
+    {
+        $listoftables = $db->DDLListTables($db->database_name);
+
+        foreach($listoftables as $table)
+        {
+            print '<tr><td colspan="2">';
+            print $table;
+            $sql='ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci';
+            if (GETPOST('force_utf8_on_tables','alpha') == 'confirmed')
+            {
+                $db->query($sql);
+            }
+            print '</td></tr>';
+        }
+    }
+    else
+    {
+        print '<tr><td colspan="2">Not available with database type '.$db->type.'</td></tr>';
+    }
+}
 
 
 print '</table>';

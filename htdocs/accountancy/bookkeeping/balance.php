@@ -51,7 +51,7 @@ if ($search_accountancy_code_end == - 1) {
 	$search_accountancy_code_end = '';
 }
 
-if (GETPOST("button_export_csv_x") || GETPOST("button_export_csv")) {
+if (GETPOST("button_export_csv_x") || GETPOST("button_export_csv.x") || GETPOST("button_export_csv")) {
 	$action = 'export_csv';
 }
 
@@ -112,7 +112,10 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
  */
 
 if ($action == 'export_csv') {
+
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == AccountancyExport::$EXPORT_TYPE_CEGID) $sep = ";";     // For CEGID, we force separator.
+
 	$journal = 'bookkepping';
 
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
@@ -122,11 +125,7 @@ if ($action == 'export_csv') {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	foreach ( $object->lines as $line ) {
-
-		if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) {
-			$sep = ";";
-		}
+	foreach ($object->lines as $line) {
 		print length_accountg($line->numero_compte) . $sep;
 		print $line->debit . $sep;
 		print $line->credit . $sep;
@@ -157,7 +156,7 @@ else {
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 
-	$button = '<input type="submit" name="button_export_csv" class="butAction" value="' . $langs->trans("Export") . '" />';
+	$button = '<input type="submit" name="button_export_csv" class="butAction" value="' . $langs->trans("Export") . ' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
 	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $result, 'title_accountancy', 0, $button);
 
 	$moreforfilter = '';

@@ -49,7 +49,7 @@ function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, 
     top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
     print '<body id="mainbody">';
-    
+
     // top menu and left menu area
     if (empty($conf->dol_hide_topmenu))
     {
@@ -108,7 +108,7 @@ if (empty($action)) $action='preview';
  */
 
 if (GETPOST('refreshsite')) $pageid=0;      // If we change the site, we reset the pageid.
-if (GETPOST('refreshpage')) $action='preview'; 
+if (GETPOST('refreshpage')) $action='preview';
 
 
 // Add a collab page
@@ -146,7 +146,7 @@ if ($action == 'add')
 	{
 		$db->rollback();
 	}
-	
+
 	$action = 'preview';
 	$id = $objectpage->id;
 }
@@ -173,7 +173,7 @@ if ($action == 'delete')
         {
             $db->commit();
             setEventMessages($langs->trans("PageDeleted", $objectpage->pageurl, $website), null, 'mesgs');
-            
+
             header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website);
             exit;
         }
@@ -218,7 +218,7 @@ print '<div class="centpercent websitebar">';
 if (count($object->records) > 0)
 {
     // ***** Part for web sites
-    
+
     print '<div class="websiteselection hideonsmartphoneimp">';
     print $langs->trans("Website").': ';
     print '</div>';
@@ -252,20 +252,20 @@ if (count($object->records) > 0)
         $dataroot=DOL_DATA_ROOT.'/websites/'.$website;
         if (! empty($object->virtualhost)) $virtualurl=$object->virtualhost;
     }
-    
+
     if ($website && $action == 'preview')
     {
         $disabled='';
         if (empty($user->rights->websites->write)) $disabled=' disabled="disabled"';
-    
+
         print ' &nbsp; ';
-        
+
         //print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="editmedia">';
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
         print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
     }
-    
+
     print '</div>';
 
     // Button for websites
@@ -279,7 +279,7 @@ if (count($object->records) > 0)
         $htmltext=$langs->trans("SetHereVirtualHost", $dataroot);
         print $form->textwithpicto('', $htmltext);
         print '</div>';
-        
+
         $urlext=$virtualurl;
         $urlint=$urlwithroot.'/public/websites/index.php?website='.$website;
         //if (! empty($object->virtualhost))
@@ -288,7 +288,7 @@ if (count($object->records) > 0)
             print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:$langs->trans("VirtualHostUrlNotDefined")), 1, 'preview_ext');
             print '</a>';
         //}
-        
+
         print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint)).'">';
         print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint, $dataroot), 1, 'preview');
         print '</a>';
@@ -300,12 +300,12 @@ if (count($object->records) > 0)
         if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
         if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
     }
-    
+
     print '</div>';
 
 
     // ***** Part for pages
-    
+
     if ($website)
     {
         print '</div>';
@@ -313,13 +313,13 @@ if (count($object->records) > 0)
         $array=$objectpage->fetchAll($object->id);
         if (! is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
         $atleastonepage=(is_array($array) && count($array) > 0);
-        
+
         print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
         print '<div class="websiteselection hideonsmartphoneimp">';
         print $langs->trans("Page").': ';
         print '</div>';
         print '<div class="websiteselection">';
-        
+
         if ($action != 'add')
         {
             $out='';
@@ -336,7 +336,7 @@ if (count($object->records) > 0)
                     }
                     $pageid=$homepageid?$homepageid:$firstpageid;   // We choose home page and if not defined yet, we take first page
                 }
-    
+
                 foreach($array as $key => $valpage)
                 {
                     $out.='<option value="'.$key.'"';
@@ -359,16 +359,16 @@ if (count($object->records) > 0)
 
         print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
         //print $form->selectarray('page', $array);
-        
+
         if ($action == 'preview')
         {
             $disabled='';
             if (empty($user->rights->websites->write)) $disabled=' disabled="disabled"';
-        
+
             if ($pageid > 0)
             {
                 print ' &nbsp; ';
-                
+
                 if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
                 else print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
@@ -378,7 +378,7 @@ if (count($object->records) > 0)
                 print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage?'':' disabled="disabled"').'>';
             }
         }
-        
+
         print '</div>';
         print '<div class="websiteselection">';
         print '</div>';
@@ -389,17 +389,17 @@ if (count($object->records) > 0)
         {
             $websitepage = new WebSitePage($db);
             $websitepage->fetch($pageid);
-            
+
             $realpage=$urlwithroot.'/public/websites/index.php?website='.$website.'&page='.$pageid;
             $pagealias = $websitepage->pageurl;
-            
+
             print '<div class="websiteinputurl">';
             print '<input type="text" id="previewpageurl" class="minwidth200imp" name="previewsite" value="'.$pagealias.'" disabled="disabled">';
             //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
             $htmltext=$langs->trans("WEBSITE_PAGENAME", $pagealias);
             print $form->textwithpicto('', $htmltext);
             print '</div>';
-            
+
             if (! empty($object->virtualhost))
             {
                 $urlext=$virtualurl.'/'.$pagealias.'.php';
@@ -413,12 +413,12 @@ if (count($object->records) > 0)
                 print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $urlext?$urlext:$langs->trans("VirtualHostUrlNotDefined")), 1, 'preview_ext');
                 print '</a>';
             }
-            
+
             print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage)).'">';
-            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage, $dataroot), 1, 'preview'); 
+            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage, $dataroot), 1, 'preview');
             print '</a>';       // View page in new Tab
             //print '<input type="submit" class="button" name="previewpage" target="tab'.$website.'"value="'.$langs->trans("ViewPageInNewTab").'">';
-            
+
             // TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
         }
         if (! in_array($action, array('editcss','editmenu','create')))
@@ -427,7 +427,7 @@ if (count($object->records) > 0)
             if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
             if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
         }
-        
+
         print '</div>';
 
         if ($action == 'preview')
@@ -454,7 +454,7 @@ if (count($object->records) > 0)
                                 },
                                 context: document.body
                             });
-                    
+
                             jQuery("#previewsiteext").attr("href",newurl);
                             jQuery("#previewpageext").attr("href",newpage);
                         });
@@ -483,15 +483,15 @@ if ($action == 'editcontent')
     /*
      * Editing global variables not related to a specific theme
      */
-    
+
     $csscontent = @file_get_contents($filecss);
-    
+
     $contentforedit = '';
     /*$contentforedit.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
     $contentforedit.=$csscontent;
     $contentforedit.='</style>'."\n";*/
     $contentforedit .= $objectpage->content;
-    
+
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,ROWS_5,'90%');
     $doleditor->Create(0, '', false);

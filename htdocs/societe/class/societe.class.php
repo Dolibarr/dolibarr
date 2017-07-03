@@ -1002,21 +1002,22 @@ class Societe extends CommonObject
      *    @param	int		$rowid			Id of third party to load
      *    @param    string	$ref			Reference of third party, name (Warning, this can return several records)
      *    @param    string	$ref_ext       	External reference of third party (Warning, this information is a free field not provided by Dolibarr)
-     *    @param    string	$ref_int       	Internal reference of third party
+     *    @param    string	$ref_int       	Internal reference of third party (not used by dolibarr)
      *    @param    string	$idprof1		Prof id 1 of third party (Warning, this can return several records)
      *    @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
      *    @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
      *    @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
      *    @param    string	$idprof5		Prof id 5 of third party (Warning, this can return several records)
      *    @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
+     *    @param    string	$email   		Email (Warning, this can return several records)
      *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
      */
-    function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='',$idprof5='',$idprof6='')
+    function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='',$idprof5='',$idprof6='', $email='')
     {
         global $langs;
         global $conf;
 
-        if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6)) return -1;
+        if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email)) return -1;
 
         $sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
         $sql .= ', s.status';
@@ -1060,6 +1061,7 @@ class Societe extends CommonObject
         else if ($idprof4) $sql .= " WHERE s.idprof4 = '".$this->db->escape($idprof4)."' AND s.entity IN (".getEntity($this->element, 1).")";
         else if ($idprof5) $sql .= " WHERE s.idprof5 = '".$this->db->escape($idprof5)."' AND s.entity IN (".getEntity($this->element, 1).")";
         else if ($idprof6) $sql .= " WHERE s.idprof6 = '".$this->db->escape($idprof6)."' AND s.entity IN (".getEntity($this->element, 1).")";
+        else if ($email)   $sql .= " WHERE email = '".$this->db->escape($email)."' AND s.entity IN (".getEntity($this->element, 1).")";
 
         $resql=$this->db->query($sql);
         if ($resql)

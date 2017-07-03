@@ -579,6 +579,11 @@ elseif (! empty($module))
         $head2[$h][2] = 'description';
         $h++;
 
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=specifications&module='.$module;
+        $head2[$h][1] = $langs->trans("Specifications");
+        $head2[$h][2] = 'specifications';
+        $h++;
+
         $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module;
         $head2[$h][1] = $langs->trans("Objects");
         $head2[$h][2] = 'objects';
@@ -690,6 +695,13 @@ elseif (! empty($module))
         	print '</table>';
 
         	print '</div>';
+        }
+
+
+        if ($tab == 'specifications')
+        {
+            print $langs->trans("FeatureNotYetAvailable");
+
         }
 
         if ($tab == 'objects')
@@ -849,7 +861,6 @@ elseif (! empty($module))
         {
     		print $langs->trans("FeatureNotYetAvailable");
 
-
         }
 
         if ($tab == 'permissions')
@@ -900,7 +911,7 @@ elseif (! empty($module))
 			print '</div>';
         }
 
-        if ($tab == 'widget')
+        if ($tab == 'widgets')
         {
     		print $langs->trans("FeatureNotYetAvailable");
 
@@ -947,23 +958,47 @@ elseif (! empty($module))
             {
                 $FILENAMEZIP="module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2]?".".$arrayversion[2]:"").".zip";
                 $outputfile = $conf->admin->dir_temp.'/'.$FILENAMEZIP;
+
+                $FILENAMEDOC="module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2]?".".$arrayversion[2]:"").".md";
+                $outputfiledoc = $conf->admin->dir_temp.'/'.$FILENAMEDOC;
             }
 
+            print '<br>';
+
             print '<span class="fa fa-file"></span> '. $langs->trans("PathToModulePackage") . ' : ';
-            if (! dol_is_file($outputfile)) print '<strong>'.$langs->trans("PackageFileNotYetGenerated").'</strong>';
+            if (! dol_is_file($outputfile)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
             else {
                 print '<strong>'.$outputfile.'</strong>';
                 print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfile), 'dayhour').')';
             }
             print '</strong><br>';
 
-            print '<br><br>';
+            print '<br>';
 
         	print '<form name="generatepackage">';
         	print '<input type="hidden" name="action" value="generatepackage">';
         	print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
         	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
         	print '<input type="submit" class="button" value="'.$langs->trans("BuildPackage").'">';
+        	print '</form>';
+
+        	print '<br><br><br>';
+
+            print '<span class="fa fa-file"></span> '. $langs->trans("PathToModuleDocumentation") . ' : ';
+            if (! dol_is_file($outputfiledoc)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
+            else {
+                print '<strong>'.$outputfiledoc.'</strong>';
+                print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledoc), 'dayhour').')';
+            }
+            print '</strong><br>';
+
+            print '<br>';
+
+            print '<form name="generatepackage">';
+        	print '<input type="hidden" name="action" value="generatedoc">';
+        	print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
+        	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+        	print '<input type="submit" class="button" value="'.$langs->trans("BuildDocumentation").'">';
         	print '</form>';
         }
 

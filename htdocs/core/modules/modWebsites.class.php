@@ -42,15 +42,15 @@ class modWebsites extends DolibarrModules
 
         $this->db = $db;
         $this->numero = 10000;
-        
+
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
         $this->family = "portal";
         $this->module_position = 50;
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
-        $this->description = "Enable the public website with CMS features";
-        $this->version = 'development';                        // 'experimental' or 'dolibarr' or version
+        $this->description = "Enable to build and serve public websites with CMS features";
+        $this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
