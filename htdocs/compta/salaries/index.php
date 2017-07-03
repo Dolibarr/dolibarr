@@ -73,6 +73,12 @@ else
 	$typeid=$_REQUEST['typeid'];
 }
 
+
+
+/*
+ * Actions
+ */
+
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
 	$search_ref="";
@@ -81,6 +87,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_account='';
     $typeid="";
 }
+
 
 /*
  * View
@@ -160,14 +167,14 @@ if ($result)
 	print '<tr class="liste_titre_filter">';
 	// Ref
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" size="3" name="search_ref" value="'.$search_ref.'">';
+	print '<input class="flat" type="text" size="3" name="search_ref" value="'.$db->escape($search_ref).'">';
 	print '</td>';
 	// Employee
 	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" size="6" name="search_user" value="'.$search_user.'">';
+	print '<input class="flat" type="text" size="6" name="search_user" value="'.$db->escape($search_user).'">';
 	print '</td>';
 	// Label
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.$search_label.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.$db->escape($search_label).'"></td>';
 	// Date
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Type
@@ -182,7 +189,7 @@ if ($result)
 	    print '</td>';
     }
 	// Amount
-	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
+	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$db->escape($search_amount).'"></td>';
 
     print '<td class="liste_titre" align="right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);

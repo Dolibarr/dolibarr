@@ -25,7 +25,22 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_askpricesupplier fk_supplier_proposal integer NOT NULL;
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_adherent set datefin = NULL where DATE(STR_TO_DATE(datefin, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_adherent set datefin = NULL where DATE(STR_TO_DATE(datefin, '%Y-%m-%d')) IS NULL;
+
 -- VMYSQL4.1 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT '2001-01-01 00:00:00';
+-- VMYSQL4.1 ALTER TABLE llx_adherent MODIFY COLUMN datefin datetime NULL;
+
+-- To remove a default value for date that is not valid when field is not null
+-- VMYSQL4.1 ALTER TABLE llx_chargesociales MODIFY COLUMN date_ech datetime DEFAULT NULL;
+-- VMYSQL4.1 ALTER TABLE llx_chargesociales MODIFY COLUMN date_ech datetime NOT NULL;
+
+
+
 
 -- Clean corrupted values for tms
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
@@ -44,6 +59,9 @@ ALTER TABLE llx_opensurvey_sondage ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_comments tinyint NOT NULL DEFAULT 1;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_spy tinyint NOT NULL DEFAULT 1 AFTER allow_comments;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN sujet TEXT;
+
+
+ALTER TABLE llx_socpeople MODIFY COLUMN zip varchar(25);
 
 
 ALTER TABLE llx_extrafields ADD COLUMN fieldcomputed text;
@@ -328,6 +346,8 @@ ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_tx	     d
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price	 double(24,8) DEFAULT NULL;
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
 
+UPDATE TABLE llx_contrat set ref = rowid where ref is null or ref = '';
+
 create table llx_payment_various
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
@@ -498,7 +518,7 @@ CREATE TABLE llx_blockedlog_authority
 
 ALTER TABLE llx_blockedlog_authority ADD INDEX signature (signature);
 
--- VMYSQL4.1 INSERT IGNORE INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif) SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author from llx_product_batch as pb, llx_product_stock as ps, llx_entrepot as e WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid
+-- VMYSQL4.1 INSERT IGNORE INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif) SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author from llx_product_batch as pb, llx_product_stock as ps, llx_entrepot as e WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid;
 
 UPDATE llx_bank SET label= '(SupplierInvoicePayment)' WHERE label= 'Règlement fournisseur';
 UPDATE llx_bank SET label= '(CustomerInvoicePayment)' WHERE label= 'Règlement client';

@@ -88,7 +88,7 @@ if (empty($reshook))
         }
     }
 
-    
+
     if ($action == 'update' && ! $_POST["cancel"])
     {
     	// Modification
@@ -119,12 +119,12 @@ if (empty($reshook))
     			$error++;
     		}
     	}
-    
+
         $account->fetch($id);
         if (! $error)
         {
     	    $account->socid           = $object->id;
-    
+
     		$account->bank            = GETPOST('bank','alpha');
     		$account->label           = GETPOST('label','alpha');
     		$account->courant         = GETPOST('courant','alpha');
@@ -140,12 +140,12 @@ if (empty($reshook))
     		$account->owner_address   = GETPOST('owner_address','alpha');
     		$account->frstrecur       = GETPOST('frstrecur','alpha');
     		$account->rum             = GETPOST('rum','alpha');
-    		if (empty($account->rum)) 
+    		if (empty($account->rum))
     		{
     		    $account->rum = $prelevement->buildRumNumber($object->code_client, $account->datec, $account->id);
     		    $account->date_rum = dol_now();
     		}
-    		
+
     		$result = $account->update($user);
     		if (! $result)
     		{
@@ -158,18 +158,18 @@ if (empty($reshook))
     			{
     				$account->setAsDefault($id);	// This will make sure there is only one default rib
     			}
-    
+
     			$url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
     	        header('Location: '.$url);
     	        exit;
     		}
         }
     }
-    
+
     if ($action == 'add' && ! $_POST["cancel"])
     {
     	$error=0;
-    
+
     	if (! GETPOST('label'))
     	{
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
@@ -182,14 +182,14 @@ if (empty($reshook))
     		$action='create';
     		$error++;
     	}
-    
+
     	if (! $error)
     	{
     	    // Ajout
     	    $account = new CompanyBankAccount($db);
-    
+
     	    $account->socid           = $object->id;
-    
+
     	    $account->bank            = GETPOST('bank','alpha');
     		$account->label           = GETPOST('label','alpha');
     		$account->courant         = GETPOST('courant','alpha');
@@ -204,7 +204,7 @@ if (empty($reshook))
     		$account->proprio         = GETPOST('proprio','alpha');
     		$account->owner_address   = GETPOST('owner_address','alpha');
     		$account->frstrecur       = GETPOST('frstrecur');
-    
+
     		// This test can be done only once properties were set
     		if ($account->needIBAN() == 1)
     		{
@@ -221,7 +221,7 @@ if (empty($reshook))
     		        $error++;
     		    }
     		}
-    		
+
     		if (! $error)
     		{
     		    if (empty($account->rum))
@@ -229,7 +229,7 @@ if (empty($reshook))
     		        $account->rum = $prelevement->buildRumNumber($object->code_client, $account->datec, $account->id);
     		        $account->date_rum = dol_now();
     		    }
-    		    
+
     		    $result = $account->update($user);	// This will set the UMR number.
         	    // TODO Use create and include update into create method
         	    if (! $result)
@@ -246,7 +246,7 @@ if (empty($reshook))
     		}
     	}
     }
-    
+
     if ($action == 'setasdefault')
     {
         $account = new CompanyBankAccount($db);
@@ -262,7 +262,7 @@ if (empty($reshook))
     	    setEventMessages($db->lasterror, null, 'errors');
         }
     }
-    
+
     if ($action == 'confirm_delete' && $_GET['confirm'] == 'yes')
     {
     	$account = new CompanyBankAccount($db);
@@ -287,7 +287,7 @@ if (empty($reshook))
     }
 
     $savid=$id;
-    
+
     // Actions to build doc
     if ($action == 'builddocrib')
     {
@@ -352,7 +352,7 @@ if ($socid && $action != 'edit' && $action != "create")
         print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id."&ribid=".($ribid?$ribid:$id), $langs->trans("DeleteARib"), $langs->trans("ConfirmDeleteRib", $account->getRibLabel()), "confirm_delete", '', 0, 1);
     }
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
@@ -361,7 +361,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
-    
+
     print '<table class="border centpercent">';
 
     print '<tr><td class="titlefield">'.$langs->trans("LabelRIB").'</td>';
@@ -385,7 +385,7 @@ if ($socid && $action != 'edit' && $action != "create")
 			    } else {
 			        $content.= ' '.img_picto($langs->trans("ValueIsValid"),'info');
 			    }
-			}				
+			}
 		} elseif ($val == 'BankAccountNumberKey') {
 			$content = $account->cle_rib;
 		} elseif ($val == 'IBAN') {
@@ -429,7 +429,7 @@ if ($socid && $action != 'edit' && $action != "create")
     print '</div>';
 
 	print '<br>';
-	
+
     /*
      * List of bank accounts
      */
@@ -469,7 +469,7 @@ if ($socid && $action != 'edit' && $action != "create")
             print '<td>';
             $string='';
             foreach ($rib->getFieldsToShow() as $val) {
-            
+
                 if ($val == 'BankCode') {
                     $string .= $rib->code_banque.' ';
                 } elseif ($val == 'BankAccountNumber') {
@@ -491,8 +491,8 @@ if ($socid && $action != 'edit' && $action != "create")
 			    } else {
 			        $string.= ' '.img_picto($langs->trans("ValueIsValid"),'info');
 			    }
-			}				
-            
+			}
+
             print $string;
             print '</td>';
             // IBAN
@@ -536,13 +536,13 @@ if ($socid && $action != 'edit' && $action != "create")
                 print img_picto($langs->trans("Enabled"),'on');
             }
             print '</td>';
-            
+
             // Generate doc
             print '<td align="center">';
-             
+
             $buttonlabel = $langs->trans("BuildDoc");
             $forname='builddocrib'.$rib->id;
-             
+
             include_once DOL_DOCUMENT_ROOT.'/core/modules/bank/modules_bank.php';
             $modellist=ModeleBankAccountDoc::liste_modeles($db);
             $out = '';
@@ -553,7 +553,7 @@ if ($socid && $action != 'edit' && $action != "create")
                 $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                 $out.= '<input type="hidden" name="socid" value="'.$object->id.'">';
                 $out.= '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
-    
+
                 if (is_array($modellist) && count($modellist) == 1)    // If there is only one element
                 {
                     $arraykeys=array_keys($modellist);
@@ -561,7 +561,7 @@ if ($socid && $action != 'edit' && $action != "create")
                 }
                 $out.= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth100');
                 $out.= ajax_combobox('modelrib'.$rib->id);
-                 
+
                 // Language code (if multilang)
                 if ($conf->global->MAIN_MULTILANGS)
                 {
@@ -589,7 +589,7 @@ if ($socid && $action != 'edit' && $action != "create")
             }
             print $out;
             print '</td>';
-            
+
             // Edit/Delete
             print '<td align="right">';
             if ($user->rights->societe->creer)
@@ -605,7 +605,7 @@ if ($socid && $action != 'edit' && $action != "create")
            		print '</a>';
             }
         	print '</td>';
-        	
+
 	        print '</tr>';
         }
 
@@ -622,32 +622,32 @@ if ($socid && $action != 'edit' && $action != "create")
     }
 
     dol_fiche_end();
-    
-    
-    
+
+
+
     if ($socid && $action != 'edit' && $action != 'create')
     {
         /*
          * Barre d'actions
          */
         print '<div class="tabsAction">';
-    
+
         if ($user->rights->societe->creer)
         {
             print '<a class="butAction" href="rib.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
         }
-    
+
         print '</div>';
     }
 
-    
+
 
 
     if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
     {
         print '<div class="fichecenter"><div class="fichehalfleft">';
         print '<a name="builddoc"></a>'; // ancre
-    
+
         /*
          * Documents generes
          */
@@ -655,16 +655,16 @@ if ($socid && $action != 'edit' && $action != "create")
         $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
         $genallowed=$user->rights->societe->creer;
         $delallowed=$user->rights->societe->supprimer;
-    
+
         $var=true;
-    
+
         print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
-    
+
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-    
-    
+
+
         print '</div></div></div>';
-    
+
         print '<br>';
     }
     /*
@@ -772,12 +772,12 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
     	// RUM
     	print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
     	print '<td><input size="30" type="text" name="rum" value="'.dol_escape_htmltag($account->rum).'"></td></tr>';
-    
+
     	print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
     	$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
     	print $form->selectarray("frstrecur", $tblArraychoice, dol_escape_htmltag(GETPOST('frstrecur')?GETPOST('frstrecur'):$account->frstrecur), 0);
     	print '</td></tr>';
-    
+
     	print '</table>';
     }
 
@@ -869,7 +869,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     	// RUM
     	print '<tr><td class="titlefieldcreate">'.$langs->trans("RUM").'</td>';
     	print '<td>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
-    
+
     	print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
     	$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
     	print $form->selectarray("frstrecur", $tblArraychoice, (isset($_POST['frstrecur'])?GETPOST('frstrecur'):'FRST'), 0);

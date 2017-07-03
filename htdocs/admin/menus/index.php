@@ -289,11 +289,11 @@ if ($conf->use_javascript_ajax)
 	  - la chaine a afficher
 	ie: data[]= array (index, index parent, chaine )
 	*/
-    
+
 	//il faut d'abord declarer un element racine de l'arbre
 
     $data[] = array('rowid'=>0,'fk_menu'=>-1,'title'=>"racine",'mainmenu'=>'','leftmenu'=>'','fk_mainmenu'=>'','fk_leftmenu'=>'');
-    
+
 	//puis tous les elements enfants
 
 	$sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.module";
@@ -313,6 +313,7 @@ if ($conf->use_javascript_ajax)
 		{
 			if (! empty($menu['langs'])) $langs->load($menu['langs']);
 			$titre = $langs->trans($menu['titre']);
+
 			$data[] = array(
 				'rowid'=>$menu['rowid'],
 			    'module'=>$menu['module'],
@@ -329,28 +330,33 @@ if ($conf->use_javascript_ajax)
 						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> '.
 						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> '.
 						'&nbsp; &nbsp; &nbsp;'.
-						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Monter","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Descendre","1downarrow").'</a>'.
-						'</td></tr></table>'
+						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Up","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down","1downarrow").'</a>'.
+						'</td></tr></table>',
+			    'buttons'=>'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.img_edit('default',0,'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> '.
+						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> '.
+						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> '.
+						'&nbsp; &nbsp; &nbsp;'.
+						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Up","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down","1downarrow").'</a>'
 			);
 			$i++;
 		}
 	}
 
 	global $tree_recur_alreadyadded;       // This var was def into tree_recur
-	
+
 	// Appelle de la fonction recursive (ammorce)
 	// avec recherche depuis la racine.
 	//var_dump($data);
 	tree_recur($data, $data[0], 0, 'iddivjstree');  // $data[0] is virtual record 'racine'
-	
+
 
 	print '</td>';
-	
+
 	print '</tr>';
-	
+
 	print '</table>';
-	
-	
+
+
 	// Process remaining records (records that are not linked to root by any path)
     $remainingdata = array();
 	foreach($data as $datar)
@@ -358,30 +364,30 @@ if ($conf->use_javascript_ajax)
 	    if (empty($datar['rowid']) || $tree_recur_alreadyadded[$datar['rowid']]) continue;
 	    $remainingdata[] = $datar;
 	}
-	
+
 	if (count($remainingdata))
 	{
     	print '<table class="noborder centpercent">';
-    	
+
     	print '<tr class="liste_titre">';
     	print '<td>'.$langs->trans("NotTopTreeMenuPersonalized").'</td>';
     	print '<td align="right"></td>';
     	print '</tr>';
-    	
+
     	print '<tr>';
-    	print '<td colspan="2">';	
-    	
+    	print '<td colspan="2">';
+
     	foreach($remainingdata as $datar)
     	{
             $father = array('rowid'=>$datar['rowid'],'title'=>"???",'mainmenu'=>$datar['fk_mainmenu'],'leftmenu'=>$datar['fk_leftmenu'],'fk_mainmenu'=>'','fk_leftmenu'=>'');
     	    //print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
     	    tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);
     	}
-    
+
     	print '</td>';
-    
+
     	print '</tr>';
-    
+
     	print '</table>';
 	}
 
