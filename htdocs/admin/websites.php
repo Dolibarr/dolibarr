@@ -25,8 +25,10 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
 
 $langs->load("errors");
 $langs->load("admin");
@@ -35,7 +37,6 @@ $langs->load("website");
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
-$id=GETPOST('id','int');
 $rowid=GETPOST('rowid','alpha');
 
 $id=1;
@@ -135,7 +136,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
         }
     }
-    
+
     // Si verif ok et action add, on ajoute la ligne
     if ($ok && GETPOST('actionadd'))
     {
@@ -185,7 +186,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         if ($result)	// Add is ok
         {
             setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
-        	$_POST=array('id'=>$id);	// Clean $_POST array, we keep only
+        	unset($_POST);	// Clean $_POST array, we keep only
         }
         else
         {
@@ -203,6 +204,10 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     {
         if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
         else { $rowidcol="rowid"; }
+
+        $website=new Website($db);
+        $rowid=GETPOST('rowid','int');
+        $website->fetch($rowid);
 
         // Modify entry
         $sql = "UPDATE ".$tabname[$id]." SET ";
@@ -229,7 +234,17 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         dol_syslog("actionmodify", LOG_DEBUG);
         //print $sql;
         $resql = $db->query($sql);
-        if (! $resql)
+        if ($resql)
+        {
+            $newname = dol_sanitizeFileName(GETPOST('ref','aZ09'));
+            if ($newname != $website->ref)
+            {
+                $srcfile=DOL_DATA_ROOT.'/websites/'.$website->ref;
+                $destfile=DOL_DATA_ROOT.'/websites/'.$newname;
+                @rename($srcfile, $destfile);
+            }
+        }
+        else
         {
             setEventMessages($db->error(), null, 'errors');
         }
@@ -249,7 +264,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 
     $sql = "DELETE from ".MAIN_DB_PREFIX."website_pages WHERE fk_website ='".$rowid."'";
     $result = $db->query($sql);
-    
+
     $sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid ='".$rowid."'";
     $result = $db->query($sql);
     if (! $result)
@@ -321,7 +336,7 @@ print "<br>\n";
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&id='.$id, $langs->trans('DeleteWebsite'), $langs->trans('ConfirmDeleteWebsite'), 'confirm_delete','',0,1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid, $langs->trans('DeleteWebsite'), $langs->trans('ConfirmDeleteWebsite'), 'confirm_delete','',0,1);
 }
 //var_dump($elementList);
 
@@ -355,7 +370,7 @@ if ($id)
 
     $fieldlist=explode(',',$tabfield[$id]);
 
-    print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
+    print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder" width="100%">';
 
@@ -388,9 +403,7 @@ if ($id)
              if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
         }
 
-        if ($id == 4) print '<td></td>';
         print '<td colspan="4">';
-        print '<input type="hidden" name="id" value="'.$id.'">';
         print '</td>';
         print '</tr>';
 
@@ -444,19 +457,19 @@ if ($id)
         if ($num)
         {
             print '<br>';
-            
-            print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
+
+            print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="page" value="'.$page.'">';
             print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-            
+
             print '<table class="noborder" width="100%">';
-        
+
             // There is several pages
             if ($num > $listlimit)
             {
                 print '<tr class="none"><td align="right" colspan="'.(3+count($fieldlist)).'">';
-                print_fleche_navigation($page, $_SERVER["PHP_SELF"], '&id='.$id, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page+1).'</span></li>');
+                print_fleche_navigation($page, $_SERVER["PHP_SELF"], '', ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page+1).'</span></li>');
                 print '</td></tr>';
             }
 
@@ -486,11 +499,11 @@ if ($id)
                 // Affiche nom du champ
                 if ($showfield)
                 {
-                    print getTitleFieldOfList($valuetoshow,0,$_SERVER["PHP_SELF"],($sortable?$fieldlist[$field]:''),($page?'page='.$page.'&':'').'&id='.$id,"","align=".$align,$sortfield,$sortorder);
+                    print getTitleFieldOfList($valuetoshow,0,$_SERVER["PHP_SELF"],($sortable?$fieldlist[$field]:''),($page?'page='.$page.'&':''),"","align=".$align,$sortfield,$sortorder);
                 }
             }
 
-			print getTitleFieldOfList($langs->trans("Status"),0,$_SERVER["PHP_SELF"],"status",($page?'page='.$page.'&':'').'&id='.$id,"",'align="center"',$sortfield,$sortorder);
+			print getTitleFieldOfList($langs->trans("Status"),0,$_SERVER["PHP_SELF"],"status",($page?'page='.$page.'&':''),"",'align="center"',$sortfield,$sortorder);
             print getTitleFieldOfList('');
             print getTitleFieldOfList('');
             print '</tr>';
@@ -539,7 +552,7 @@ if ($id)
                     // Can an entry be erased or disabled ?
                     $iserasable=1;$isdisable=1;	// true by default
 
-                    $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?urlencode($obj->code):'').'&amp;id='.$id.'&amp;';
+                    $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?urlencode($obj->code):'').'&amp;';
 
                     // Active
                     print '<td align="center" class="nowrap">';
@@ -558,9 +571,9 @@ if ($id)
                 }
                 $i++;
             }
-            
+
             print '</table>';
-            
+
             print '</form>';
         }
     }

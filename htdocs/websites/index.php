@@ -414,7 +414,7 @@ if ($action == 'updatemeta')
             $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
             $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
             $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";
-            $tplcontent.= '<link rel="stylesheet" href="styles.css.php?website='.$website.'" type="text/css" />'."\n";
+            $tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
             $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
             $tplcontent.= '</header>'."\n";
 
@@ -451,6 +451,15 @@ if ($action == 'updatemeta')
 if ($action == 'updatecontent' || GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))
 {
     $object->fetch(0, $website);
+
+    // Check symlink to medias and restore it if ko
+    $pathtomedias=DOL_DATA_ROOT.'/medias';
+    $pathtomediasinwebsite=$pathofwebsite.'/medias';
+    if (! is_link(dol_osencode($pathtomediasinwebsite)))
+    {
+        dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+        symlink($pathtomedias, $pathtomediasinwebsite);
+    }
 
     /*if (GETPOST('savevirtualhost') && $object->virtualhost != GETPOST('previewsite'))
     {
@@ -558,7 +567,7 @@ if ($action == 'updatecontent' || GETPOST('refreshsite') || GETPOST('refreshpage
         	    $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
         	    $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
         	    $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";
-        	    $tplcontent.= '<link rel="stylesheet" href="styles.css.php?website='.$website.'" type="text/css" />'."\n";
+        	    $tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
         	    $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
         	    $tplcontent.= '</header>'."\n";
 
