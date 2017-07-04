@@ -172,7 +172,7 @@ while ($i < min($num,$limit))
 
 	$opensurvey_static->id=$obj->id_sondage;
 	$opensurvey_static->status=$obj->status;
-	
+
 	print '<tr>';
 	print '<td>';
 	print '<a href="'.dol_buildpath('/opensurvey/card.php',1).'?id='.$obj->id_sondage.'">'.img_picto('','object_opensurvey').' '.$obj->id_sondage.'</a>';
@@ -198,17 +198,25 @@ while ($i < min($num,$limit))
 	print '</td>';
 
 	print'<td align="right">'.$nbuser.'</td>'."\n";
-	
+
 	print '<td align="center">'.dol_print_date($db->jdate($obj->date_fin),'day');
 	if ($db->jdate($obj->date_fin) < time()) { print ' ('.$langs->trans("Expired").')'; }
 	print '</td>';
 
 	print'<td align="center">'.$opensurvey_static->getLibStatut(5).'</td>'."\n";
-	
+
 	print'<td align="center"></td>'."\n";
 
 	print '</tr>'."\n";
 	$i++;
+}
+
+// If no record found
+if ($num == 0)
+{
+    $colspan=8;
+    //foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
 print '</table>'."\n";
