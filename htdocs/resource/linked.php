@@ -665,6 +665,25 @@ else if ($element_id && $element_type) //Show linked resources to this element
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	$res_tree = $object->getFullTree($element_id, $element_type, true);
+    
+    //Call hook
+    $parameters=array(
+        'tree'=>$res_tree,
+        'element_id'=>$element_id,
+        'element_type'=>$element_type,
+    );
+    $action='';
+    $reshook=$hookmanager->executeHooks('linkedResourcesTree', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+    if ($reshook < 0)
+    {
+        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    }
+    elseif ($reshook == 0 && !empty($hookmanager->resArray))
+    {
+        if (isset($hookmanager->resArray)) $res_tree = $hookmanager->resArray;
+    }
+    
+	//Show warning
 	$roots = $object->getAvailableRoots($res_tree, 1);
 	if ((count($roots['available']) + count($roots['notavailable'])) > 0 && $roots['need'] > 0) {
 		print '<div class="warning">'.$langs->trans('WarningResourcesNotAvailable').'</div>';
