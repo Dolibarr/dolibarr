@@ -447,9 +447,10 @@ class Categorie extends CommonObject
 	 * 	Delete a category from database
 	 *
 	 * 	@param	User	$user		Object user that ask to delete
-	 *	@return	int <0 KO >0 OK
+     *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return	int                 <0 KO >0 OK
 	 */
-	function delete($user)
+	function delete($user, $notrigger=0)
 	{
 		global $conf,$langs;
 
@@ -461,6 +462,14 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::remove");
 
 		$this->db->begin();
+
+		if (! $error && ! $notrigger)
+		{
+		    // Call trigger
+		    $result=$this->call_trigger('CATEGORY_DELETE',$user);
+		    if ($result < 0) $error++;
+		    // End call triggers
+		}
 
 		/* FIX #1317 : Check for child category and move up 1 level*/
 		if (! $error)
@@ -580,25 +589,16 @@ class Categorie extends CommonObject
 				$this->error=$this->db->lasterror();
 				$error++;
 			}
-			else
+		}
+
+		// Removed extrafields
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		{
+			$result=$this->deleteExtraFields();
+			if ($result < 0)
 			{
-				// Removed extrafields
-				if (! $error)
-				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-					{
-						$result=$this->deleteExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-							dol_syslog(get_class($this)."::delete erreur ".$this->error, LOG_ERR);
-						}
-					}
-				}
-                // Call trigger
-                $result=$this->call_trigger('CATEGORY_DELETE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				$error++;
+				dol_syslog(get_class($this)."::delete erreur ".$this->error, LOG_ERR);
 			}
 		}
 
