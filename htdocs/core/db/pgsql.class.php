@@ -1048,8 +1048,11 @@ class DoliDBPgsql extends DoliDB
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
-		if ($field_desc['type'] != 'int' && preg_match("/^[^\s]/i",$field_desc['value']))
-		$sql .= "(".$field_desc['value'].")";
+		if(preg_match("/^[^\s]/i",$field_desc['value']))
+		    if (! in_array($field_desc['type'],array('int','date','datetime')))
+		    {
+		        $sql.= "(".$field_desc['value'].")";
+		    }
 		if (preg_match("/^[^\s]/i",$field_desc['attribute']))
 		$sql .= " ".$field_desc['attribute'];
 		if (preg_match("/^[^\s]/i",$field_desc['null']))
