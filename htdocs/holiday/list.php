@@ -66,7 +66,7 @@ $year_end        = GETPOST('year_end');
 $search_employe  = GETPOST('search_employe');
 $search_valideur = GETPOST('search_valideur');
 $search_statut   = GETPOST('select_statut');
-$type            = GETPOST('type','int'); 
+$type            = GETPOST('type','int');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -138,7 +138,7 @@ if($year_start > 0) {
     }
 } else {
     if($month_start > 0) {
-        $filter.= " AND date_format(cp.date_debut, '%m') = '$month_start'";
+        $filter.= " AND date_format(cp.date_debut, '%m') = '".$db->escape($month_start)."'";
     }
 }
 
@@ -153,7 +153,7 @@ if($year_end > 0) {
     }
 } else {
     if($month_end > 0) {
-        $filter.= " AND date_format(cp.date_fin, '%m') = '$month_end'";
+        $filter.= " AND date_format(cp.date_fin, '%m') = '".$db->escape($month_end)."'";
     }
 }
 
@@ -168,7 +168,7 @@ if($year_create > 0) {
     }
 } else {
     if($month_create > 0) {
-        $filter.= " AND date_format(cp.date_create, '%m') = '$month_create'";
+        $filter.= " AND date_format(cp.date_create, '%m') = '".$db->escape($month_create)."'";
     }
 }
 
@@ -194,7 +194,7 @@ if (!empty($sall))
 
 if (empty($user->rights->holiday->read_all)) $filter.=' AND cp.fk_user IN ('.join(',',$childids).')';
 
-if ($type) $filter.=' AND cp.fk_type IN ('.$type.')';
+if ($type > 0) $filter.=' AND cp.fk_type IN ('.$db->escape($type).')';
 
 // Récupération de l'ID de l'utilisateur
 $user_id = $user->id;
@@ -206,17 +206,18 @@ if ($id > 0)
 	$fuser->getrights();
 	$user_id = $fuser->id;
 }
+
 // Récupération des congés payés de l'utilisateur ou de tous les users
 if (empty($user->rights->holiday->read_all) || $id > 0)
 {
-	$holiday_payes = $holiday->fetchByUser($user_id,$order,$filter);	// Load array $holiday->holiday
+	$result = $holiday->fetchByUser($user_id,$order,$filter);	// Load array $holiday->holiday
 }
 else
 {
-    $holiday_payes = $holiday->fetchAll($order,$filter);	// Load array $holiday->holiday
+    $result = $holiday->fetchAll($order,$filter);	// Load array $holiday->holiday
 }
 // Si erreur SQL
-if ($holiday_payes == '-1')
+if ($result == '-1')
 {
     print load_fiche_titre($langs->trans('CPTitreMenu'), '', 'title_hrm.png');
 
@@ -232,6 +233,20 @@ $num = count($holiday->holiday);
 $form = new Form($db);
 $formother = new FormOther($db);
 
+$param='';
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if ($optioncss != '') $param.='&optioncss='.$optioncss;
+
+print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
+if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
+
 if ($id > 0)
 {
 	$title = $langs->trans("User");
@@ -242,11 +257,9 @@ if ($id > 0)
 
     dol_banner_tab($fuser,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
-
     print '<div class="underbanner clearboth"></div>';
 
     print '<br>';
-
 }
 else
 {
@@ -273,17 +286,7 @@ print $out;
 dol_fiche_end();
 
 
-if ($id > 0) print '</br>';
-
-
-print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="list">';
-print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
-if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
+if ($id > 0) print '<br>';
 
 if ($sall)
 {
@@ -302,7 +305,7 @@ print '</td>';
 
 // DATE CREATE
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="month_create" value="'.$month_create.'">';
+print '<input class="flat" type="text" size="1" maxlength="2" name="month_create" value="'.dol_escape_htmltag($month_create).'">';
 $formother->select_year($year_create,'year_create',1, $min_year, 0);
 print '</td>';
 
@@ -310,14 +313,14 @@ print '</td>';
 if ($user->rights->holiday->write_all)
 {
     print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($search_employe,"search_employe",1,"",0,'','',0,32,0,'',0,'','maxwidth200');
+    print $form->select_dolusers($search_employe,"search_employe",1,"",0,'','',0,0,0,'',0,'','maxwidth200');
     print '</td>';
 }
 else
 {
     //print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($user->id,"search_employe",1,"",1,'','',0,32,0,'',0,'','maxwidth200');
+    print $form->select_dolusers($user->id,"search_employe",1,"",1,'','',0,0,0,'',0,'','maxwidth200');
     print '</td>';
 }
 
@@ -331,7 +334,7 @@ if($user->rights->holiday->write_all)
     $valideurobjects = $validator->listUsersForGroup($excludefilter);
     $valideurarray = array();
     foreach($valideurobjects as $val) $valideurarray[$val->id]=$val->id;
-    print $form->select_dolusers($search_valideur,"search_valideur",1,"",0,$valideurarray,'', 0, 32,0,'',0,'','maxwidth200');
+    print $form->select_dolusers($search_valideur,"search_valideur",1,"",0,$valideurarray,'', 0, 0, 0, '', 0, '', 'maxwidth200');
     print '</td>';
 }
 else
@@ -357,13 +360,13 @@ print '<td class="liste_titre">&nbsp;</td>';
 
 // DATE DEBUT
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.$month_start.'">';
+print '<input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.dol_escape_htmltag($month_start).'">';
 $formother->select_year($year_start,'year_start',1, $min_year, $max_year);
 print '</td>';
 
 // DATE FIN
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
+print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.dol_escape_htmltag($month_end).'">';
 $formother->select_year($year_end,'year_end',1, $min_year, $max_year);
 print '</td>';
 
@@ -381,16 +384,16 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",'','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateCreateCP"),$_SERVER["PHP_SELF"],"cp.date_create","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"cp.fk_user","",'','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("ValidatorCP"),$_SERVER["PHP_SELF"],"cp.fk_validator","",'','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','','','align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",'','align="right"',$sortfield,$sortorder);
-print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("DateCreateCP"),$_SERVER["PHP_SELF"],"cp.date_create","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"cp.fk_user","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("ValidatorCP"),$_SERVER["PHP_SELF"],"cp.fk_validator","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','',$pram,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",$param,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
 // Lines
@@ -408,7 +411,7 @@ if (! empty($holiday->holiday))
 		$userstatic->login=$infos_CP['user_login'];
 		$userstatic->statut=$infos_CP['user_statut'];
 		$userstatic->photo=$infos_CP['user_photo'];
-		
+
 		// Valideur
 		$approbatorstatic->id=$infos_CP['fk_validator'];
 		$approbatorstatic->lastname=$infos_CP['validator_lastname'];
@@ -416,7 +419,7 @@ if (! empty($holiday->holiday))
 		$approbatorstatic->login=$infos_CP['validator_login'];
 		$approbatorstatic->statut=$infos_CP['validator_statut'];
 		$approbatorstatic->photo=$infos_CP['validator_photo'];
-		
+
 		$date = $infos_CP['date_create'];
 
 		print '<tr class="oddeven">';
@@ -446,15 +449,16 @@ if (! empty($holiday->holiday))
 }
 
 // Si il n'y a pas d'enregistrement suite à une recherche
-if($holiday_payes == '2')
+if ($result == '2')
 {
-    print '<tr '.$bc[false].'>';
+    print '<tr>';
     print '<td colspan="10" class="opacitymedium">'.$langs->trans('NoRecordFound').'</td>';
     print '</tr>';
 }
 
 print '</table>';
 print '</div>';
+
 print '</form>';
 
 /*if ($user_id == $user->id)

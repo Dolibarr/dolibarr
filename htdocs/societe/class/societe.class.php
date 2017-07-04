@@ -1002,21 +1002,22 @@ class Societe extends CommonObject
      *    @param	int		$rowid			Id of third party to load
      *    @param    string	$ref			Reference of third party, name (Warning, this can return several records)
      *    @param    string	$ref_ext       	External reference of third party (Warning, this information is a free field not provided by Dolibarr)
-     *    @param    string	$ref_int       	Internal reference of third party
+     *    @param    string	$ref_int       	Internal reference of third party (not used by dolibarr)
      *    @param    string	$idprof1		Prof id 1 of third party (Warning, this can return several records)
      *    @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
      *    @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
      *    @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
      *    @param    string	$idprof5		Prof id 5 of third party (Warning, this can return several records)
      *    @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
+     *    @param    string	$email   		Email (Warning, this can return several records)
      *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
      */
-    function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='',$idprof5='',$idprof6='')
+    function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='',$idprof5='',$idprof6='', $email='')
     {
         global $langs;
         global $conf;
 
-        if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6)) return -1;
+        if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email)) return -1;
 
         $sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
         $sql .= ', s.status';
@@ -1060,9 +1061,9 @@ class Societe extends CommonObject
         else if ($idprof4) $sql .= " WHERE s.idprof4 = '".$this->db->escape($idprof4)."' AND s.entity IN (".getEntity($this->element, 1).")";
         else if ($idprof5) $sql .= " WHERE s.idprof5 = '".$this->db->escape($idprof5)."' AND s.entity IN (".getEntity($this->element, 1).")";
         else if ($idprof6) $sql .= " WHERE s.idprof6 = '".$this->db->escape($idprof6)."' AND s.entity IN (".getEntity($this->element, 1).")";
+        else if ($email)   $sql .= " WHERE email = '".$this->db->escape($email)."' AND s.entity IN (".getEntity($this->element, 1).")";
 
         $resql=$this->db->query($sql);
-        dol_syslog(get_class($this)."::fetch ".$sql);
         if ($resql)
         {
             $num=$this->db->num_rows($resql);
@@ -1196,11 +1197,7 @@ class Societe extends CommonObject
                 $result = 1;
 
                 // Retreive all extrafield for thirdparty
-                // fetch optionals attributes and labels
-                require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-                $extrafields=new ExtraFields($this->db);
-                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-               	$this->fetch_optionals($this->id,$extralabels);
+               	$this->fetch_optionals();
             }
             else
 			{
@@ -1248,7 +1245,7 @@ class Societe extends CommonObject
 
     	// Generation requete recherche
     	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
-    	$sql.= " WHERE entity IN (".getEntity('category',1).")";
+    	$sql.= " WHERE entity IN (".getEntity('category').")";
     	if (! empty($type))
     	{
     		if ($type == 1 || $type == 2)
@@ -1695,7 +1692,7 @@ class Societe extends CommonObject
 
         $sql = "SELECT DISTINCT u.rowid, u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
-        if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+        if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
         {
         	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
         	$sql.= " WHERE ((ug.fk_user = sc.fk_user";
@@ -1843,16 +1840,16 @@ class Societe extends CommonObject
     			&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
     			|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
     			)
-    		) 
+    		)
     		$code = $this->code_client . ' - ';
 
     		if (($this->fournisseur) && (! empty ( $this->code_fournisseur ))
     			&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
     			|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
     			)
-    		) 
+    		)
     		$code .= $this->code_fournisseur . ' - ';
-    
+
     		if ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1)
     			$name =$code.' '.$name;
     		else
@@ -1870,7 +1867,7 @@ class Societe extends CommonObject
             $label.= Form::showphoto('societe', $this, 80, 0, 0, 'photowithmargin', 'mini');
             $label.= '</div><div style="clear: both;"></div>';
         }
-        
+
         $label.= '<div class="centpercent">';
 
         if ($option == 'customer' || $option == 'compta' || $option == 'category' || $option == 'category_supplier')
@@ -1903,7 +1900,7 @@ class Societe extends CommonObject
             $label.= '<u>' . $langs->trans("ShowMargin") . '</u>';
             $linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
         }
-        
+
         // By default
         if (empty($linkstart))
         {
@@ -1924,13 +1921,13 @@ class Societe extends CommonObject
             $label.= '<br><b>' . $langs->trans('CustomerAccountancyCode') . ':</b> '. $this->code_compta_client;
         if (! empty($conf->accounting->enabled) && $this->fournisseur)
             $label.= '<br><b>' . $langs->trans('SupplierAccountancyCode') . ':</b> '. $this->code_compta_fournisseur;
-            
+
         $label.= '</div>';
 
         // Add type of canvas
         $linkstart.=(!empty($this->canvas)?'&canvas='.$this->canvas:'');
         // Add param to save lastsearch_values or not
-        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0); 
+        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
         if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
         if ($add_save_lastsearch_values) $linkstart.='&save_lastsearch_values=1';
         $linkstart.='"';
@@ -1965,7 +1962,7 @@ class Societe extends CommonObject
             $linkstart='';
             $linkend='';
         }
-        
+
         if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$linkstart.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
@@ -2640,7 +2637,7 @@ class Societe extends CommonObject
         }
 
          //Verify duplicate entries
-        $sql  = "SELECT COUNT(*) as idprof FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$value."' AND entity IN (".getEntity('societe',1).")";
+        $sql  = "SELECT COUNT(*) as idprof FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$value."' AND entity IN (".getEntity('societe').")";
         if($socid) $sql .= " AND rowid <> ".$socid;
         $resql = $this->db->query($sql);
         if ($resql)
@@ -3352,7 +3349,7 @@ class Societe extends CommonObject
 	{
 	    $table='propal';
 	    if ($mode == 'supplier') $table = 'supplier_proposal';
-	    
+
 	    $sql  = "SELECT rowid, total_ht, total as total_ttc, fk_statut FROM ".MAIN_DB_PREFIX.$table." as f";
 	    $sql .= " WHERE fk_soc = ". $this->id;
 
@@ -3376,7 +3373,7 @@ class Societe extends CommonObject
 	    else
 	        return array();
 	}
-	
+
 	/**
 	 *  Return amount of order not paid and total
 	 *
@@ -3387,7 +3384,7 @@ class Societe extends CommonObject
 	{
 	    $table='commande';
 	    if ($mode == 'supplier') $table = 'commande_fournisseur';
-	     
+
 	    $sql  = "SELECT rowid, total_ht, total_ttc, fk_statut FROM ".MAIN_DB_PREFIX.$table." as f";
 	    $sql .= " WHERE fk_soc = ". $this->id;
 
@@ -3411,7 +3408,7 @@ class Societe extends CommonObject
 	    else
 	        return array();
 	}
-	
+
 	/**
 	 *  Return amount of bill not paid and total
 	 *
@@ -3422,7 +3419,7 @@ class Societe extends CommonObject
 	{
 	    $table='facture';
 	    if ($mode == 'supplier') $table = 'facture_fourn';
-	     
+
 	    /* Accurate value of remain to pay is to sum remaintopay for each invoice
 	     $paiement = $invoice->getSommePaiement();
 	     $creditnotes=$invoice->getSumCreditNotesUsed();
@@ -3455,7 +3452,7 @@ class Societe extends CommonObject
 	            $tmpobject->id=$obj->rowid;
 	            if ($obj->fk_statut != 0                                           // Not a draft
 	                && ! ($obj->fk_statut == 3 && $obj->close_code == 'replaced')  // Not a replaced invoice
-	                )                                                      
+	                )
 	            {
 	                $outstandingTotal+= $obj->total_ht;
 	                $outstandingTotalIncTax+= $obj->total_ttc;
@@ -3474,12 +3471,12 @@ class Societe extends CommonObject
 	        }
 	        return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
 	    }
-	    else 
+	    else
 	    {
 	        return array();
 	    }
 	}
-	
+
 	/**
 	 *  Return amount of bill not paid
 	 *
@@ -3502,7 +3499,7 @@ class Societe extends CommonObject
 	    //$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
 	    $sql .= " AND fk_statut <> 3";		// Not abandonned
 	    $sql .= " AND fk_statut <> 2";		// Not clasified as paid
-	
+
 	    dol_syslog("get_OutstandingBill", LOG_DEBUG);
 	    $resql=$this->db->query($sql);
 	    if ($resql)
@@ -3522,7 +3519,7 @@ class Societe extends CommonObject
 	    else
 	        return 0;
 	}
-	
+
 	/**
 	 * Return label of status customer is prospect/customer
 	 *
@@ -3592,9 +3589,9 @@ class Societe extends CommonObject
                     return 0;
     			}
     		}
-    
+
     		$modelpath = "core/modules/societe/doc/";
-		
+
     		$result=$this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 
@@ -3615,7 +3612,7 @@ class Societe extends CommonObject
 	public function setCategories($categories, $type)
 	{
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-	    
+
 	    // Decode type
 		if ($type == 'customer') {
 			$type_id = Categorie::TYPE_CUSTOMER;

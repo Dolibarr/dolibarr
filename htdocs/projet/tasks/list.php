@@ -43,7 +43,7 @@ $id=GETPOST('id','int');
 $search_all=GETPOST('search_all', 'alphanohtml');
 $search_categ=GETPOST("search_categ",'alpha');
 $search_project=GETPOST('search_project');
-if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus'])) 
+if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus']))
 {
     if ($search_all != '') $search_projectstatus=-1;
     else $search_projectstatus=1;
@@ -70,7 +70,7 @@ $search_eyear	= GETPOST('search_eyear','int');
 // Initialize context for list
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'tasklist';
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
@@ -85,11 +85,11 @@ if (!$user->rights->projet->lire) accessforbidden();
 
 $diroutputmassaction=$conf->projet->dir_output . '/tasks/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -173,14 +173,14 @@ if (empty($reshook))
         $toselect='';
         $search_array_options=array();
     }
-    
+
     // Mass actions
     $objectclass='Task';
     $objectlabel='Tasks';
     $permtoread = $user->rights->projet->lire;
     $permtodelete = $user->rights->projet->supprimer;
     $uploaddir = $conf->projet->dir_output.'/tasks';
-    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';    
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 if (empty($search_projectstatus) && $search_projectstatus == '') $search_projectstatus=1;
@@ -268,7 +268,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 if ($search_project_user > 0)  $sql.=", ".MAIN_DB_PREFIX."element_contact as ecp";
 if ($search_task_user > 0)     $sql.=", ".MAIN_DB_PREFIX."element_contact as ect";
 $sql.= " WHERE t.fk_projet = p.rowid";
-$sql.= " AND p.entity IN (".getEntity('project',1).')';
+$sql.= " AND p.entity IN (".getEntity('project').')';
 if (! $user->rights->projet->all->lire) $sql.=" AND p.rowid IN (".($projectsListId?$projectsListId:'0').")";    // public and assigned to projects, or restricted to company for external users
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
@@ -322,7 +322,7 @@ foreach ($search_array_options as $key => $val)
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
     if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -396,7 +396,7 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 }
-    
+
 // List of mass actions available
 $arrayofmassactions =  array(
 //    'presend'=>$langs->trans("SendByMail"),
@@ -442,7 +442,7 @@ if (! empty($conf->categorie->enabled))
     require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
     $moreforfilter.='<div class="divsearchfield">';
     $moreforfilter.=$langs->trans('ProjectCategories'). ': ';
-    $moreforfilter.=$formother->select_categories('project',$search_categ,'search_categ',1);
+    $moreforfilter.=$formother->select_categories('project', $search_categ, 'search_categ', 1, 'maxwidth300');
     $moreforfilter.='</div>';
 }
 
@@ -451,7 +451,7 @@ $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ' ';
 $includeonly='';
 if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
-$moreforfilter.=$form->select_dolusers($search_project_user?$search_project_user:'', 'search_project_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth300');
+$moreforfilter.=$form->select_dolusers($search_project_user?$search_project_user:'', 'search_project_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter.='</div>';
 
 // If the user can view users
@@ -459,7 +459,7 @@ $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('TasksWithThisUserAsContact'). ': ';
 $includeonly='';
 if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
-$moreforfilter.=$form->select_dolusers($search_task_user, 'search_task_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth300');
+$moreforfilter.=$form->select_dolusers($search_task_user, 'search_task_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter.='</div>';
 
 if (! empty($moreforfilter))
@@ -544,7 +544,7 @@ if (! empty($arrayfields['t.progress']['checked'])) print '<td class="liste_titr
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-    foreach($extrafields->attribute_label as $key => $val) 
+    foreach($extrafields->attribute_label as $key => $val)
     {
         if (! empty($arrayfields["ef.".$key]['checked']))
         {
@@ -649,7 +649,7 @@ while ($i < min($num,$limit))
 	$projectstatic->public = $obj->public;
 	$projectstatic->statut = $obj->projectstatus;
 	$projectstatic->datee = $db->jdate($obj->projectdatee);
-	
+
 	$userAccess = $projectstatic->restrictedProjectArea($user);    // why this ?
 	if ($userAccess >= 0)
 	{
@@ -663,7 +663,7 @@ while ($i < min($num,$limit))
     		if ($object->hasDelay()) print img_warning("Late");
     	    print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
-    	}        	 
+    	}
 	    // Label
     	if (! empty($arrayfields['t.label']['checked']))
     	{
@@ -730,7 +730,7 @@ while ($i < min($num,$limit))
     	    print '</td>';
     	    if (! $i) $totalarray['nbfield']++;
     	}
-    	
+
     	// Planned workload
     	if (! empty($arrayfields['t.planned_workload']['checked']))
     	{
@@ -764,7 +764,7 @@ while ($i < min($num,$limit))
             if (! $i) $totalarray['nbfield']++;
 		    if (! $i) $totalarray['totaldurationeffectivefield']=$totalarray['nbfield'];
 		    $totalarray['totaldurationeffective'] += $obj->duration_effective;
-    	}    		
+    	}
 	    // Calculated progress
     	if (! empty($arrayfields['t.progress_calculated']['checked']))
     	{
@@ -777,7 +777,7 @@ while ($i < min($num,$limit))
     		print '</td>';
             if (! $i) $totalarray['nbfield']++;
             if (! $i) $totalarray['totalprogress_calculated']=$totalarray['nbfield'];
-    	}    		
+    	}
 	    // Declared progress
     	if (! empty($arrayfields['t.progress']['checked']))
     	{
@@ -843,13 +843,13 @@ while ($i < min($num,$limit))
         }
         print '</td>';
         if (! $i) $totalarray['nbfield']++;
-		
+
 		print "</tr>\n";
-    
+
 		//print projectLinesa();
 	}
 
-	$i++;    
+	$i++;
 }
 
 // Show total line

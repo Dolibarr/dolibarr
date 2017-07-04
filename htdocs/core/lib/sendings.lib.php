@@ -184,7 +184,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 	//if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."livraisondet as ld ON ld.fk_livraison = l.rowid  AND obj.rowid = ld.fk_origin_line";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 	//TODO Add link to expeditiondet_batch
-	$sql.= " WHERE e.entity IN (".getEntity('expedition', 1).")";
+	$sql.= " WHERE e.entity IN (".getEntity('expedition').")";
 	$sql.= " AND obj.fk_".$origin." = ".$origin_id;
 	$sql.= " AND obj.rowid = ed.fk_origin_line";
 	$sql.= " AND ed.fk_expedition = e.rowid";

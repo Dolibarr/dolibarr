@@ -41,7 +41,7 @@ if ($user->id == $id)	// A user can always read its own card
 }
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('usercard','globalcard'));
 
 /*

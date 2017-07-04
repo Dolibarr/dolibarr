@@ -26,27 +26,31 @@ InvoiceLabel=Description de la facture
 OverviewOfAmountOfLinesNotBound=Vue d'ensemble du nombre de lignes non reliées à un compte comptable
 OverviewOfAmountOfLinesBound=Vue d'ensemble du nombre de lignes liées à un compte comptable
 OtherInfo=Autre information
+DeleteCptCategory=Supprimer le code comptable du groupe
+ConfirmDeleteCptCategory=Êtes-vous sur de vouloir supprimer ce compte comptable du groupe comptable ?
 
 AccountancyArea=Espace comptabilité
 AccountancyAreaDescIntro=L'utilisation du module de comptabilité se fait en plusieurs étapes:
 AccountancyAreaDescActionOnce=Les actions suivantes sont habituellement exécutées une seule fois, ou une fois par an ...
-AccountancyAreaDescActionOnceBis=Les prochaines étapes doivent être faites pour vous faire gagner du temps à l'avenir en vous proposant le bon compte comptable par défaut lors de la journalisation (écrire des enregistrements dans les journaux et Grand Livre)
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you the correct default accounting account when making the journalization (writing record in Journals and General ledger)
 AccountancyAreaDescActionFreq=Les actions suivantes sont habituellement exécutées chaque mois, semaine, ou jour pour les très grandes entreprises ...
+
+AccountancyAreaDescJournalSetup=STEP %s: Create or check content of your journal list from menu %s
 AccountancyAreaDescChartModel=Etape %s: Créer un modèle de plan de compte depuis le menu %s
 AccountancyAreaDescChart=Etape %s: Créer ou vérifier le contenu de votre plan de compte depuis le menu %s
-AccountancyAreaDescBank=Etape %s: Vérifier que la liaison entre les comptes bancaires et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, rendez-vous sur la fiche de chaque compte financier. Vous pouvez commencer à partir de la page %s.
-AccountancyAreaDescVat=Etape %s: Vérifiez que la liaison entre le paiement de la TVA et le compte comptable est faite. Compléter les liaisons manquantes. Vous pouvez définir les comptes comptables à utiliser pour chaque taux de TVA sur la page %s.
-AccountancyAreaDescExpenseReport=Etape %s: Vérifiez que la liaison entre le type de notes de frais et le compte comptable est faite. Compléter les liaisons manquantes. Vous pouvez définir les comptes comptables à utiliser pour chaque type de ligne de note de frais sur la page %s.
-AccountancyAreaDescSal=Etape %s: Vérifier que la liaison entre les paiements de salaires et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
-AccountancyAreaDescContrib=Etape %s: Vérifier que la liaison entre les dépenses spéciales (cotisations sociales ou fiscales) et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
-AccountancyAreaDescDonation=Etape %s: Vérifier que la liaison entre les paiements de dons et le compte comptable est faite. Compléter les liaisons manquantes. Vous pouvez définir le compte dédié pour cela à partir de l'entrée de menu %s.
-AccountancyAreaDescMisc=Etape %s: Vérifier que la liaison par défaut entre les lignes de transactions diverses et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
-AccountancyAreaDescProd=Etape %s: Vérifier que la liaison entre les produits/services et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
-AccountancyAreaDescLoan=Etape %s: Vérifier que la liaison entre les paiements de prêts et les comptes comptables est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
 
-AccountancyAreaDescCustomer=Etape %s: Vérifier que la liaison entre les lignes de factures client existantes et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
-AccountancyAreaDescSupplier=Etape %s: Vérifier que la liaison entre les lignes de factures fournisseurs existantes et le compte comptable est faite. Compléter les liaisons manquantes. Pour cela, vous pouvez utiliser l'entrée de menu %s.
-AccountancyAreaDescWriteRecords=Etape %s: Ecrire les transactions dans le Grand Livre. Pour cela, aller sur chaque Journal, et cliquer sur le bouton "Enregistrer les opérations dans le Grand Livre".
+AccountancyAreaDescVat=STEP %s: Define accounting accounts for each VAT Rates. For this, use the menu entry %s.
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of expense report. For this, use the menu entry %s.
+AccountancyAreaDescSal=STEP %s: Define default accounting accounts for payment of salaries. For this, use the menu entry %s.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expences (miscellaneous taxes). For this, use the menu entry %s.
+AccountancyAreaDescDonation=STEP %s: Define default accounting accounts for donation. For this, use the menu entry %s.
+AccountancyAreaDescMisc=STEP %s: Define default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
+AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s.
+AccountancyAreaDescBank=Etape %s: Définissez les comptes comptables de chaque compte bancaire ou financier. Vous pouvez commencer à partir de la page %s.
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your products/services. For this, use the menu entry %s.
+
+AccountancyAreaDescBind=STEP %s: Check the binding between existing %s lines and accounting account is done, so application will be able to journalize transactions in Ledger in one click. Complete missing bindings. For this, use the menu entry %s.
+AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the Ledger. For this, go into menu <strong>%s</strong>, and click into button <strong>%s</strong>.
 AccountancyAreaDescAnalyze=Etape %s: Ajouter ou modifier les opérations existantes et générer des rapports et des exportations.
 
 AccountancyAreaDescClosePeriod=Etape %s: Fermer la période pour ne plus pouvoir faire de modification à l'avenir.
@@ -57,6 +61,10 @@ ChangeAndLoad=Changer et charger
 Addanaccount=Ajouter un compte comptable
 AccountAccounting=Compte comptable
 AccountAccountingShort=Compte
+SubledgerAccount=Subledger Account
+subledger_account=Subledger Account
+ShowAccountingAccount=Afficher le compte comptable
+ShowAccountingJournal=Afficher le journal
 AccountAccountingSuggest=Code comptable suggéré
 MenuDefaultAccounts=Comptes par défaut
 MenuVatAccounts=Compte TVA
@@ -71,8 +79,8 @@ SuppliersVentilation=Liaison factures fournisseur
 ExpenseReportsVentilation=Liaison notes de frais
 CreateMvts=Créer nouvelle transaction
 UpdateMvts=Modification d'une transaction
-WriteBookKeeping=Ventiler les opérations dans le Grand Livre
-Bookkeeping=Grand livre
+WriteBookKeeping=Journalize transactions in Ledger
+Bookkeeping=Ledger
 AccountBalance=Balance des comptes
 
 CAHTF=Total achat fournisseur HT
@@ -103,9 +111,9 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Commencez le tri de la page "Liens réalis
 
 ACCOUNTING_LENGTH_DESCRIPTION=Tronquer la description des produits & services dans les listes à n caractères (Idéalement = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Tronquer la description du compte des produits & services dans les listes à n caractères (Idéalement = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Longueur des comptes généraux
-ACCOUNTING_LENGTH_AACCOUNT=Longueur des comptes tiers
-ACCOUNTING_MANAGE_ZERO=Ajouter des 0  à la fin des codes comptables. Fonctionnalité nécessaire pour certains pays. Désactivée par défaut. Si vous positionnez cette option à Oui, il vous faut aussi définir les 2 paramètres suivants (sinon celui-ci sera ignoré)
+ACCOUNTING_LENGTH_GACCOUNT=Longueur des comptes de la comptabilité générale (Si vous définissez la valeur à 6 ici, le compte « 706 » apparaîtra comme « 706000 » à l'écran)
+ACCOUNTING_LENGTH_AACCOUNT=Longueur des comptes comptables de Tiers (Si vous définissez la valeur à 6 ici, le compte « 401 » apparaîtra comme « 401000 » à l'écran)
+ACCOUNTING_MANAGE_ZERO=Permettre de gérer un nombre différent de zéro à la fin d'un compte comptable. Nécessaire par certains pays (comme la Suisse). Si conservé à Non (par défaut), vous pouvez définir les 2 paramètres suivants pour demander à l'application d'ajouter des zéros virtuels.
 BANK_DISABLE_DIRECT_INPUT=Désactiver la saisie directe de transactions en banque
 
 ACCOUNTING_SELL_JOURNAL=Journal des ventes
@@ -132,19 +140,19 @@ Sens=Sens
 Codejournal=Journal
 NumPiece=Numéro de pièce
 TransactionNumShort=Num. transaction
-AccountingCategory=Catégorie comptable
+AccountingCategory=Groupes de comptes comptables
 GroupByAccountAccounting=Grouper par compte comptable
 NotMatch=Non défini
-DeleteMvt=Supprimer les lignes du grand livre
+DeleteMvt=Delete Ledger lines
 DelYear=Année à supprimer
 DelJournal=Journal à supprimer
-ConfirmDeleteMvt=Cela supprimera toutes les lignes du Grand Livre pour l'année et/ou un journal spécifique. Au moins un critère est requis.
-ConfirmDeleteMvtPartial=Ceci va supprimer la(les) ligne(s) sélectionnée(s) du Grand Livre
-DelBookKeeping=Supprimer l'enregistrement du grand livre
+ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criteria is required.
+ConfirmDeleteMvtPartial=This will delete the selected line(s) of the Ledger
+DelBookKeeping=Delete record of the Ledger
 FinanceJournal=Journal de trésorerie
 ExpenseReportsJournal=Journal des notes de frais
 DescFinanceJournal=Journal de trésorerie comprenant tous les types de paiements par compte bancaire / caisse
-DescJournalOnlyBindedVisible=Ceci est une vue des enregistrements qui sont liés à un compte comptable produits et qui peuvent être enregistrés dans le Grand Livre.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to products/services accountancy account and can be recorded into the Ledger.
 VATAccountNotDefined=Compte de la TVA non défini
 ThirdpartyAccountNotDefined=Compte pour le tiers non défini
 ProductAccountNotDefined=Compte pour le produit non défini
@@ -156,13 +164,13 @@ NewAccountingMvt=Nouvelle transaction
 NumMvts=Numéro de transaction
 ListeMvts=Liste des mouvements
 ErrorDebitCredit=Débit et crédit ne peuvent pas avoir la même valeur en même temps.
-
+AddCompteFromBK=Ajouter un code comptable au groupe
 ReportThirdParty=Liste des comptes tiers
 DescThirdPartyReport=Consultez ici la liste des tiers clients et fournisseurs et leurs codes comptables
 ListAccounts=Liste des comptes comptables
 
 Pcgtype=Classe de compte
-Pcgsubtype=Sous classe de compte
+Pcgsubtype=Sous-classe de compte
 
 TotalVente=Total chiffre affaires hors taxe
 TotalMarge=Total marge
@@ -186,9 +194,9 @@ AutomaticBindingDone=Liaison automatique faite
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas détruire de compte comptable car il est utilisé
 MvtNotCorrectlyBalanced=Le mouvement n'est pas équilibré. Crédit = %s. Débit = %s
 FicheVentilation=Fiche lien
-GeneralLedgerIsWritten=Les opérations ont été inscrites dans le grand livre
-GeneralLedgerSomeRecordWasNotRecorded=Certaines des opérations n'ont pu être enregistrées.
-NoNewRecordSaved=Aucun nouvel enregistrement sauvegardé
+GeneralLedgerIsWritten=Transactions are written in the Ledger
+GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be dispatched. If there is no other error message, this is probably because they were already dispatched.
+NoNewRecordSaved=Pas de nouvelle ligne liée
 ListOfProductsWithoutAccountingAccount=Liste des produits non liés à un compte comptable
 ChangeBinding=Changer les liens
 
@@ -196,6 +204,18 @@ ChangeBinding=Changer les liens
 ApplyMassCategories=Application en masse des catégories
 AddAccountFromBookKeepingWithNoCategories=Ajouter les comptes sans groupes
 CategoryDeleted=Le groupe de comptes comptables a été supprimé
+AccountingJournals=Journaux comptables
+AccountingJournal=Journal comptable
+NewAccountingJournal=Nouveau journal comptable
+ShowAccoutingJournal=Afficher le journal
+Code=Code
+Nature=Nature
+AccountingJournalType1=Opérations Diverses
+AccountingJournalType2=Ventes
+AccountingJournalType3=Achats
+AccountingJournalType4=Banque
+AccountingJournalType9=A-nouveaux
+ErrorAccountingJournalIsAlreadyUse=Le journal est déjà utilisé
 
 ## Export
 Exports=Exports
@@ -211,6 +231,7 @@ Modelcsv_ciel=Export vers Sage Ciel Compta ou Compta Evolution
 Modelcsv_quadratus=Export vers Quadratus QuadraCompta
 Modelcsv_ebp=Export vers EBP
 Modelcsv_cogilog=Export vers Cogilog
+Modelcsv_agiris=Export vers Agiris (Test)
 ChartofaccountsId=Id plan comptable
 
 ## Tools - Init accounting account on product / service
@@ -235,11 +256,12 @@ Calculated=Calculé
 Formula=Formule
 
 ## Error
-ErrorNoAccountingCategoryForThisCountry=Pas de catégories comptable disponibles pour le pays %s (Voir Accueil - Configuration - Dictionnaires)
+SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
+ErrorNoAccountingCategoryForThisCountry=Pas de catégories de regroupement comptable disponibles pour le pays %s (Voir Accueil - Configuration - Dictionnaires)
 ExportNotSupported=Le format de l'export n'est pas supporté par cette page
 BookeppingLineAlreayExists=Lignes dejà existantes dans le grand livre
-
+NoJournalDefined=Pas de journal défini
 Binded=Lignes liées
 ToBind=Lignes à lier
 
-WarningReportNotReliable=Attention, ce rapport ne se fonde pas sur le Grand Livre, donc n'est pas précis pour l'instant. Il sera remplacé par un rapport plus fiable dans une prochaine version.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. It will be replaced by a more complete report in a next version.

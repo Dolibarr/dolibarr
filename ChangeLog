@@ -6,6 +6,8 @@ English Dolibarr ChangeLog
 
 For developers:
 NEW: Add a lot of API REST: dictionaryevents, memberstypes, ...
+NEW: Big refactorization of multicompany transverse mode.
+NEW: getEntity function use true $shared value by default.
 
 WARNING: 
 
@@ -15,12 +17,64 @@ Following changes may create regression for some external modules, but were nece
 * The page societe/soc.php was renamed into societe/card.php to match page naming conventions.
 * The page compta/facture.php was renamed into compta/facture/card.php to match page naming conventions.
 * The signature of method ->delete() of class Product and PriceExpression was changed from 
-  ->delete($id, notrigger) to ->delete(User, notrigger) to match standard dev rules.
+  ->delete(id, notrigger) to ->delete(User, notrigger) to match standard dev rules.
+* The signature of method ->delete() of class Adherent was changed from 
+  ->delete(id) to ->delete(id, User, notrigger) to match standard dev rules.
 * Removed CommonObject::displayMarginInfos (was deprecated in 3.8). Use same method into
   html.formmargin.class.php
 * Removed Societe::set_commnucation_level (was deprecated in 4.0). Was not used.
 * Removed the trigger file of PAYPAL module that stored data that was not used by Dolibarr. The trigger event still
   exists, but if an external module need action on it, it must provides itself its trigger file.
+* Use $conf->global->MULTICOMPANY_TRANSVERSE_MODE instead $conf->multicompany->transverse_mode
+* Use getEntity('xxx') instead getEntity('xxx', 1) and use getEntity('xxx', 0) instead getEntity('xxx')
+* The hook formObjectOptions was not implemented correctly in previous version. Sometimes, you had to return output 
+content by doing a print into function, sometimes by returning content into "resprint". This has been fixed to follow
+hook specifications so you must return output into "resprint".
+
+
+***** ChangeLog for 5.0.4 compared to 5.0.3 *****
+FIX: #5640 Prices of a predefined product/service were incorrect under certain circumstances
+FIX: #6541 since 4.0.4 to 5.0.0 autofill zip/town not working
+FIX: #6880 #6925
+FIX: #6885
+FIX: #6926
+FIX: #7003
+FIX: #7012
+FIX: #7040
+FIX: #7048 #6075
+FIX: Can set supplier invoice to billed.
+FIX: Can't create invoice if PO disapproved
+FIX: contratligne update
+FIX: CVE-2017-7886
+FIX: default param
+FIX: Line of invoices not inserted when using POS module and VAT NPR.
+FIX: origin & originid on supplierproposal
+FIX: Redirect to payment page from member subscription page failed if a unique security key was defined.
+FIX: REST api to get project when user has permission to read all.
+FIX: situation_progress param default value must be 100 and not 0
+FIX: SQL injection on user/index.php parameter search_statut.
+FIX: vat code not saved during product creation.
+FIX: Warnings
+
+***** ChangeLog for 5.0.3 compared to 5.0.2 *****
+FIX: #6677 Expired contracts dashboard box does not show the name of the thirdparty
+FIX: #6813
+FIX: 6863
+FIX: #6877
+FIX: #6881
+FIX: Better sanitizing of search all parameter.
+FIX: Correction with author and validator user on orders
+FIX: dialog window with md theme must not be hidden by left menu part.
+FIX: doactions hook missing in invoice model page
+FIX: Fullname when member is a moral entity with no name.
+FIX: Link to files on bank account tab broken with multicompany FIX: Link to preview on thirdparty broken with multicompany
+FIX: New vat code not correctly implemented if "1 price per customer".
+FIX: Pagination of invoices
+FIX: pagination on resources
+FIX: REST API not possible to add agendaevents
+FIX: situation invoice broken due to the all percent application form inside addline form
+FIX: SQL injection on user/index.php parameter search_statut.
+FIX: XSS
 
 ***** ChangeLog for 5.0.2 compared to 5.0.1 *****
 FIX: #6468 + Fix missing translation
@@ -234,7 +288,29 @@ Dolibarr better:
 - Method commande->set_availability(user, availability_id) removed from commande class, use method commande->availability(availability_id, notrigger).
 
 Dolibarr 5.0 was frozen before PHP 7.1 was released. Unit tests are successful on PHP 7.1 but we don't have enough
-feedback to confirm all application is compatible. Current officiel supported PHP versions are PHP 5.3 to 7.0.
+feedback to confirm whole application is compatible. Current officiel supported PHP versions are PHP 5.3 to 7.0.
+
+
+***** ChangeLog for 4.0.6 to 4.0.5 *****
+FIX: #6613 Default subject for Supplier proposal emails is filled with a non-existing key
+FIX: #6623 User card shows "Return to list" link even if the user has no rights to list users
+FIX: #6636 Complete fix
+FIX: #6669 User with no permission to edit customer invoices can see a edit button in project entry
+FIX: #6671 Cannot remove thirdparty type with "#" in its name
+FIX: #6673 Missing "nature" table header in thirdparty list
+FIX: #6675 Restricted user with no agenda permissions can see a button to create appointment in thirdparty contact list
+FIX: #6677 Expired contracts dashboard box does not show the name of the thirdparty
+FIX: #6679 User with restricted supplier invoice permissions can edit project, payment conditions, payment mode
+FIX: #6680 User with restricted supplier invoice permissions sees "reopen" button even if he has no permission to do it
+FIX: #6813
+FIX: Correction with author and validator user on orders
+FIX: doactions hook missing in invoice model page
+FIX: dont get empty "Incoterms : - " string if no incoterm
+FIX: dont lose supplier ref if no supplier price in database
+FIX: forgotten parameter for right multicompany use
+FIX: global $dateSelector isn't the good one, then date selector on objectline_create tpl was hidden
+FIX: limit+1 dosn't show Total line
+FIX: supplier order line were always created with rang = 0
 
 
 ***** ChangeLog for 4.0.5 to 4.0.4 *****

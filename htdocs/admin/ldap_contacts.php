@@ -39,7 +39,7 @@ if (!$user->admin)
   accessforbidden();
 
 $action = GETPOST('action','aZ09');
-  
+
 /*
  * Actions
  */
@@ -49,7 +49,7 @@ if ($action == 'setvalue' && $user->admin)
 	$error=0;
 
 	$db->begin();
-	
+
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_DN',GETPOST("contactdn"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_OBJECT_CLASS',GETPOST("objectclass"),'chaine',0,'',$conf->entity)) $error++;
 
@@ -73,7 +73,7 @@ if ($action == 'setvalue' && $user->admin)
     $key=GETPOST("key");
     if ($key) $valkey=$conf->global->$key;
     if (! dolibarr_set_const($db, 'LDAP_KEY_CONTACTS',$valkey,'chaine',0,'',$conf->entity)) $error++;
-    
+
     if (! $error)
     {
     	$db->commit();
@@ -107,7 +107,7 @@ if (! function_exists("ldap_connect"))
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-dol_fiche_head($head, 'contacts', $langs->trans("LDAPSetup"));
+dol_fiche_head($head, 'contacts', $langs->trans("LDAPSetup"), -1);
 
 
 print $langs->trans("LDAPDescContact").'<br>';

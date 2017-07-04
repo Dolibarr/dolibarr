@@ -34,8 +34,8 @@ if (empty($conf->global->EXTERNALSITE_URL))
 	llxFooter();
 }
 
-$mainmenu=GETPOST('mainmenu', 'alpha');
-$leftmenu=GETPOST('leftmenu', 'alpha');
+$mainmenu=GETPOST('mainmenu', "aZ09");
+$leftmenu=GETPOST('leftmenu', "aZ09");
 $idmenu=GETPOST('idmenu', 'int');
 $theme=GETPOST('theme', 'alpha');
 $codelang=GETPOST('lang', 'aZ09');

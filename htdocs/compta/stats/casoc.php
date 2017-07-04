@@ -201,7 +201,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays,";
 	$sql.= " sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
-	if ($selected_cat === -2)	// Without any category 
+	if ($selected_cat === -2)	// Without any category
 	{
 	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
 	}
@@ -219,7 +219,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($date_start && $date_end) {
 	    $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
-	if ($selected_cat === -2)	// Without any category  
+	if ($selected_cat === -2)	// Without any category
 	{
 	    $sql.=" AND cs.fk_soc is null";
 	}
@@ -239,7 +239,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql.= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
 	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if ($selected_cat === -2)	// Without any category 
+	if ($selected_cat === -2)	// Without any category
 	{
 	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
 	}
@@ -253,7 +253,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($date_start && $date_end) {
 	    $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}
-	if ($selected_cat === -2)	// Without any category  
+	if ($selected_cat === -2)	// Without any category
 	{
 	    $sql.=" AND cs.fk_soc is null";
 	}
@@ -306,7 +306,7 @@ if ($modecompta != 'CREANCES-DETTES') {
 	$sql.= " WHERE pf.rowid IS NULL";
 	$sql.= " AND p.fk_bank = b.rowid";
 	$sql.= " AND b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+	$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	$sql.= " GROUP BY socid, name";
 	$sql.= " ORDER BY name";
@@ -360,7 +360,28 @@ print '<td colspan="7" align="right">';
 print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 print '</td>';
 print '</tr>';
-    // Array titles
+
+print '<tr class="liste_titre">';
+print '<td class="liste_titre" align="left">';
+print '<input class="flat" size="6" type="text" name="search_societe" value="'.$search_societe.'">';
+print '</td>';
+print '<td class="liste_titre" align="left">';
+print '<input class="flat" size="6" type="text" name="search_zip" value="'.$search_zip.'">';
+print '</td>';
+print '<td class="liste_titre" align="left">';
+print '<input class="flat" size="6" type="text" name="search_town" value="'.$search_town.'">';
+print '</td>';
+print '<td class="liste_titre" align="left">';
+print $form->select_country($search_country, 'search_country');
+//print '<input class="flat" size="6" type="text" name="search_country" value="'.$search_country.'">';
+print '</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '</tr>';
+
+// Array titles
 print "<tr class='liste_titre'>";
 print_liste_field_titre(
 	$langs->trans("Company"),
@@ -442,27 +463,6 @@ print_liste_field_titre(
 	);
 print "</tr>\n";
 
-print '<tr class="liste_titre">';
-print '<td class="liste_titre" align="left">';
-print '<input class="flat" size="6" type="text" name="search_societe" value="'.$search_societe.'">';
-print '</td>';
-print '<td class="liste_titre" align="left">';
-print '<input class="flat" size="6" type="text" name="search_zip" value="'.$search_zip.'">';
-print '</td>';
-print '<td class="liste_titre" align="left">';
-print '<input class="flat" size="6" type="text" name="search_town" value="'.$search_town.'">';
-print '</td>';
-print '<td class="liste_titre" align="left">';
-print $form->select_country($search_country, 'search_country');
-//print '<input class="flat" size="6" type="text" name="search_country" value="'.$search_country.'">';
-print '</td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '</tr>';
-
-$var=true;
 
 if (count($amount)) {
 	$arrayforsort=$name;
@@ -517,7 +517,7 @@ if (count($amount)) {
 	}
 
 	foreach($arrayforsort as $key=>$value) {
-		
+
 		print '<tr class="oddeven">';
 
 		// Third party

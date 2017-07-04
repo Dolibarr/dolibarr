@@ -92,7 +92,7 @@ class AccountancyCategory
 	public function getCptBK($id) {
 		global $conf;
 
-		$sql = "SELECT t.numero_compte, t.label_compte, t.doc_ref";
+		$sql = "SELECT t.numero_compte, t.label_operation, t.doc_ref";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as t";
 		$sql .= " WHERE t.numero_compte NOT IN (";
 		$sql .= " SELECT t.account_number";
@@ -104,7 +104,7 @@ class AccountancyCategory
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " AND aa.active = 1)";
-		$sql .= " GROUP BY t.numero_compte, t.label_compte, t.doc_ref";
+		$sql .= " GROUP BY t.numero_compte, t.label_operation, t.doc_ref";
 		$sql .= " ORDER BY t.numero_compte";
 
 		$this->lines_CptBk = array ();
@@ -138,7 +138,7 @@ class AccountancyCategory
 	 */
 	public function getAccountsWithNoCategory($id) {
 	    global $conf;
-	
+
 	    $sql = "SELECT aa.account_number as numero_compte, aa.label as label_compte";
 	    $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
 	    $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
@@ -147,9 +147,9 @@ class AccountancyCategory
 	    $sql .= " AND aa.active = 1";
 	    $sql .= " GROUP BY aa.account_number, aa.label";
 	    $sql .= " ORDER BY aa.account_number, aa.label";
-	
+
 	    $this->lines_CptBk = array ();
-	
+
 	    dol_syslog(__METHOD__, LOG_DEBUG);
 	    $resql = $this->db->query($sql);
 	    if ($resql) {
@@ -159,17 +159,17 @@ class AccountancyCategory
 	                $this->lines_cptbk[] = $obj;
 	            }
 	        }
-	
+
 	        return $num;
 	    } else {
 	        $this->error = "Error " . $this->db->lasterror();
 	        $this->errors[] = $this->error;
 	        dol_syslog(__METHOD__ . " " . implode(',' . $this->errors), LOG_ERR);
-	
+
 	        return - 1;
 	    }
 	}
-	
+
 	/**
 	 * Function to add an accounting account in an accounting category
 	 *
@@ -191,7 +191,7 @@ class AccountancyCategory
 		$sql .= " AND aa.active = 1";
 
 		$this->db->begin();
-		
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
@@ -201,9 +201,9 @@ class AccountancyCategory
 			return -1;
 		}
 
-		while ( $obj = $this->db->fetch_object($resql)) 
+		while ( $obj = $this->db->fetch_object($resql))
 		{
-			if (array_key_exists(length_accountg($obj->account_number), $cpts)) 
+			if (array_key_exists(length_accountg($obj->account_number), $cpts))
 			{
 				$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account";
 				$sql .= " SET fk_accounting_category=" . $id_cat;
@@ -332,7 +332,7 @@ class AccountancyCategory
 	}
 
 	/**
-	 * Function to show result of an accounting account from the general ledger with a sens and a period
+	 * Function to show result of an accounting account from the ledger with a direction and a period
 	 *
 	 * @param int $cpt Id accounting account
 	 * @param string $month Specifig month - Can be empty
@@ -429,4 +429,159 @@ class AccountancyCategory
 			return - 1;
 		}
 	}
+
+	public function getCats() {
+		global $db, $langs, $user, $mysoc;
+
+		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
+			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
+			exit();
+		}
+
+		if (! empty($mysoc->country_id)) {
+			$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
+			$sql .= " WHERE c.active = 1 ";
+			$sql .= " AND c.fk_country = " . $mysoc->country_id;
+			$sql .= " ORDER BY c.position ASC";
+		} else {
+			$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c, " . MAIN_DB_PREFIX . "c_country as co";
+			$sql .= " WHERE c.active = 1 AND c.fk_country = co.rowid";
+			$sql .= " AND co.code = '" . $mysoc->country_code . "'";
+			$sql .= " ORDER BY c.position ASC";
+		}
+
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$i = 0;
+			$obj = '';
+			$num = $this->db->num_rows($resql);
+			$data = array ();
+			if ($num) {
+				while ( $i < $num ) {
+					$obj = $this->db->fetch_object($resql);
+
+					$data[] = array (
+							'rowid' => $obj->rowid,
+							'code' => $obj->code,
+							'position' => $obj->position,
+							'label' => $obj->label,
+							'formula' => $obj->formula,
+							'category_type' => $obj->category_type
+					);
+					$i ++;
+				}
+			}
+			return $data;
+		} else {
+			$this->error = "Error " . $this->db->lasterror();
+			$this->errors[] = $this->error;
+			dol_syslog(__METHOD__ . " " . implode(',', $this->errors), LOG_ERR);
+
+			return - 1;
+		}
+	}
+
+
+	// calcule
+
+	const PATTERN = '/(?:\-?\d+(?:\.?\d+)?[\+\-\*\/])+\-?\d+(?:\.?\d+)?/';
+
+	const PARENTHESIS_DEPTH = 10;
+
+	public function calculate($input){
+		if(strpos($input, '+') != null || strpos($input, '-') != null || strpos($input, '/') != null || strpos($input, '*') != null){
+			//  Remove white spaces and invalid math chars
+			$input = str_replace(',', '.', $input);
+			$input = preg_replace('[^0-9\.\+\-\*\/\(\)]', '', $input);
+
+			//  Calculate each of the parenthesis from the top
+			$i = 0;
+			while(strpos($input, '(') || strpos($input, ')')){
+				$input = preg_replace_callback('/\(([^\(\)]+)\)/', 'self::callback', $input);
+
+				$i++;
+				if($i > self::PARENTHESIS_DEPTH){
+					break;
+				}
+			}
+
+			//  Calculate the result
+			if(preg_match(self::PATTERN, $input, $match)){
+				return $this->compute($match[0]);
+			}
+
+			return 0;
+		}
+
+		return $input;
+	}
+
+	private function compute($input){
+		$compute = create_function('', 'return '.$input.';');
+
+		return 0 + $compute();
+	}
+
+	private function callback($input){
+		if(is_numeric($input[1])){
+			return $input[1];
+		}
+		elseif(preg_match(self::PATTERN, $input[1], $match)){
+			return $this->compute($match[0]);
+		}
+
+		return 0;
+	}
+
+	/**
+	 * get cpts of category
+	 *
+	 * @param  int     $cat_id     Category id
+	 * @return array               Result in table
+	 */
+	public function getCptsCat($cat_id) {
+		global $mysoc;
+		$sql = "";
+
+		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
+			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
+			exit();
+		}
+
+		$sql = "SELECT t.rowid, t.account_number, t.label as name_cpt";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
+		$sql .= " WHERE t.fk_accounting_category = ".$cat_id;
+		$sql .= " ORDER BY t.account_number ";
+
+		//echo $sql;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$i = 0;
+			$obj = '';
+			$num = $this->db->num_rows($resql);
+			$data = array ();
+			if ($num) {
+				while ( $obj = $this->db->fetch_object($resql) ) {
+					$name_cat = $obj->name_cat;
+					$data[] = array (
+							'id' => $obj->rowid,
+							'account_number' => $obj->account_number,
+							'name_cpt' => $obj->name_cpt,
+					);
+					$i ++;
+				}
+			}
+			return $data;
+		} else {
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
+
+			return -1;
+		}
+	}
+
 }

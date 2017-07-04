@@ -113,14 +113,14 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 		}
 
 		$nom=substr(GETPOST("nom"),0,64);
-		
+
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom as name';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_user_studs';
 		$sql.= " WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."' ORDER BY id_users";
 		$resql = $db->query($sql);
 		if (! $resql) dol_print_error($db);
-		
+
 		$num_rows = $db->num_rows($resql);
 		if ($num_rows > 0)
 		{
@@ -739,7 +739,7 @@ if ($comments)
 if ($object->allow_comments) {
 	print '<div class="addcomment">' .$langs->trans("AddACommentForPoll") . "<br>\n";
 
-	print '<textarea name="comment" rows="2" cols="60"></textarea><br>'."\n";
+	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent"></textarea><br>'."\n";
 	print $langs->trans("Name") .': ';
 	print '<input type="text" name="commentuser" maxlength="64" /> &nbsp; '."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";

@@ -76,14 +76,14 @@ class Interfaces
             global $db;
             $user = new User($db);
         }
-        
+
         $nbfile = $nbtotal = $nbok = $nbko = 0;
 
         $files = array();
         $modules = array();
         $orders = array();
 		$i=0;
-		
+
 		$dirtriggers=array_merge(array('/core/triggers'),$conf->modules_parts['triggers']);
         foreach($dirtriggers as $reldir)
         {
@@ -106,7 +106,7 @@ class Interfaces
 						$part3=$reg[3];
 
                         $nbfile++;
-                        
+
                         // Check if trigger file is disabled by name
                         if (preg_match('/NORUN$/i',$file)) continue;
                         // Check if trigger file is for a particular module
@@ -132,7 +132,7 @@ class Interfaces
                             dol_syslog(get_class($this)."::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger", $newdir."/".$file, $fullpathfiles[$modName]), LOG_WARNING);
                             continue;
                         }
-                        
+
                         try {
                             //print 'Todo for '.$modName." : ".$newdir.'/'.$file."\n";
                             include_once $newdir.'/'.$file;
@@ -142,7 +142,7 @@ class Interfaces
                         {
                             dol_syslog('ko for '.$modName." ".$e->getMessage()."\n", LOG_ERR);
                         }
-                        
+
                         $modules[$i] = $modName;
                         $files[$i] = $file;
                         $fullpathfiles[$modName] = $newdir.'/'.$file;
@@ -155,7 +155,7 @@ class Interfaces
         }
 
         asort($orders);
-        
+
         // Loop on each trigger
         foreach ($orders as $key => $value)
         {
@@ -226,9 +226,10 @@ class Interfaces
      *  Return list of triggers. Function used by admin page htdoc/admin/triggers.
      *  List is sorted by trigger filename so by priority to run.
      *
-     * 	@return	array					Array list of triggers
+     *	@param	array		$forcedirtriggers		null=All default directories. This parameter is used by modulebuilder module only.
+     * 	@return	array								Array list of triggers
      */
-    function getTriggersList()
+    function getTriggersList($forcedirtriggers=null)
     {
         global $conf, $langs;
 
@@ -241,11 +242,15 @@ class Interfaces
         $i = 0;
 
         $dirtriggers=array_merge(array('/core/triggers/'),$conf->modules_parts['triggers']);
+        if (is_array($forcedirtriggers))
+        {
+        	$dirtriggers=$forcedirtriggers;
+        }
+
         foreach($dirtriggers as $reldir)
         {
             $dir=dol_buildpath($reldir,0);
             $newdir=dol_osencode($dir);
-            //print "xx".$dir;exit;
 
             // Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php at each call)
             if (! is_dir($newdir)) continue;

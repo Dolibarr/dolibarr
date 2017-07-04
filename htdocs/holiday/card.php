@@ -248,7 +248,7 @@ if ($action == 'update')
 			$object->halfday = $halfday;
 
 			// Update
-			$verif = $object->update($user->id);
+			$verif = $object->update($user);
             if ($verif > 0)
             {
                 header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -285,7 +285,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 		// Si l'utilisateur à le droit de lire cette demande, il peut la supprimer
 		if ($canedit)
 		{
-			$result=$object->delete($object->id);
+			$result=$object->delete($user);
 		}
 		else
 		{
@@ -318,7 +318,7 @@ if ($action == 'confirm_send')
     {
         $object->statut = 2;
 
-        $verif = $object->update($user->id);
+        $verif = $object->update($user);
 
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
         if ($verif > 0)
@@ -419,7 +419,7 @@ if ($action == 'confirm_valid')
         $object->fk_user_valid = $user->id;
         $object->statut = 3;
 
-        $verif = $object->update($user->id);
+        $verif = $object->update($user);
 
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
         if ($verif > 0)
@@ -506,7 +506,7 @@ if ($action == 'confirm_refuse')
             $object->statut = 5;
             $object->detail_refuse = $_POST['detail_refuse'];
 
-            $verif = $object->update($user->id);
+            $verif = $object->update($user);
 
             // Si pas d'erreur SQL on redirige vers la fiche de la demande
             if ($verif > 0)
@@ -570,14 +570,43 @@ if ($action == 'confirm_refuse')
     }
 }
 
+
+// Si Validation de la demande
+if ($action == 'confirm_draft' && GETPOST('confirm') == 'yes')
+{
+    $object = new Holiday($db);
+    $object->fetch($id);
+
+    $oldstatus = $object->statut;
+    $object->statut = 1;
+
+    $result = $object->update($user);
+    if ($result < 0)
+    {
+        $error = $langs->trans('ErrorBackToDraft');
+    }
+
+    if (! $error)
+    {
+        $db->commit();
+
+        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+        exit;
+    }
+    else
+    {
+        $db->rollback();
+    }
+}
+
 // Si Validation de la demande
 if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
 {
     $object = new Holiday($db);
     $object->fetch($id);
 
-    // Si statut en attente de validation et valideur = utilisateur
-    if (($object->statut == 2 || $object->statut == 3) && ($user->id == $object->fk_validator || $user->id == $object->fk_user))
+    // Si statut en attente de validation et valideur = valideur ou utilisateur, ou droits de faire pour les autres
+    if (($object->statut == 2 || $object->statut == 3) && ($user->id == $object->fk_validator || $user->id == $object->fk_user || ! empty($user->rights->holiday->write_all)))
     {
     	$db->begin();
 
@@ -586,7 +615,7 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
         $object->fk_user_cancel = $user->id;
         $object->statut = 4;
 
-        $result = $object->update($user->id);
+        $result = $object->update($user);
 
         if ($result >= 0 && $oldstatus == 3)	// holiday was already validated, status 3, so we must increase back sold
         {
@@ -995,6 +1024,12 @@ else
                     print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 1, 1);
                 }
 
+                // Si back to draft
+                if ($action == 'backtodraft')
+                {
+                    print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleSetToDraft"),$langs->trans("ConfirmSetToDraft"),"confirm_draft", '', 1, 1);
+                }
+
                 $head=holiday_prepare_head($object);
 
 
@@ -1006,17 +1041,17 @@ else
                     print '<input type="hidden" name="id" value="'.$object->id.'" />'."\n";
                 }
 
-                dol_fiche_head($head,'card',$langs->trans("CPTitreMenu"),0,'holiday');
+                dol_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday');
 
                 $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php">'.$langs->trans("BackToList").'</a>';
-                
+
                 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
-                
-                
+
+
                 print '<div class="fichecenter">';
                 print '<div class="fichehalfleft">';
                 print '<div class="underbanner clearboth"></div>';
-                
+
                 print '<table class="border centpercent">';
                 print '<tbody>';
 
@@ -1118,9 +1153,9 @@ else
                 print '</div>';
                 print '<div class="fichehalfright">';
                 print '<div class="ficheaddleft">';
-                
+
                 print '<div class="underbanner clearboth"></div>';
-                
+
 				// Info workflow
                 print '<table class="border centpercent">'."\n";
                 print '<tbody>';
@@ -1177,12 +1212,12 @@ else
                 print '</div>';
                 print '</div>';
                 print '</div>';
-                
+
                 print '<div class="clearboth"></div>';
-                
+
                 dol_fiche_end();
 
-                
+
                 if ($action == 'edit' && $object->statut == 1)
                 {
                     print '<div align="center">';
@@ -1214,16 +1249,29 @@ else
                     	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
                     }
 
-                    if ($user->id == $object->fk_validator && $object->statut == 2)
+                    if ($object->statut == 2)
                     {
-                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid" class="butAction">'.$langs->trans("Approve").'</a>';
-                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=refuse" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
+                        if ($user->id == $object->fk_validator)
+                        {
+                            print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid" class="butAction">'.$langs->trans("Approve").'</a>';
+                            print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=refuse" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
+                        }
+                        else
+                        {
+                            print '<a href="#" class="butActionRefused" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("Approve").'</a>';
+                            print '<a href="#" class="butActionRefused" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("ActionRefuseCP").'</a>';
+                        }
                     }
 
-                    if (($user->id == $object->fk_validator || $user->id == $object->fk_user) && ($object->statut == 2 || $object->statut == 3))	// Status validated or approved
+                    if (($user->id == $object->fk_validator || $user->id == $object->fk_user || ! empty($user->rights->holiday->write_all)) && ($object->statut == 2 || $object->statut == 3))	// Status validated or approved
                     {
                     	if (($object->date_debut > dol_now()) || $user->admin) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
                     	else print '<a href="#" class="butActionRefused" title="'.$langs->trans("HolidayStarted").'">'.$langs->trans("ActionCancelCP").'</a>';
+                    }
+
+                    if ($canedit && $object->statut == 4)
+                    {
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=backtodraft" class="butAction">'.$langs->trans("SetToDraft").'</a>';
                     }
 
                     print '</div>';

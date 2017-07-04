@@ -46,7 +46,7 @@ class Contrat extends CommonObject
 	public $fk_element='fk_contrat';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='contract';
-    
+
 	/**
 	 * {@inheritdoc}
 	 */
@@ -504,7 +504,7 @@ class Contrat extends CommonObject
 		if ($ref)
 		{
 			$sql.= " WHERE ref='".$this->db->escape($ref)."'";
-			$sql.= " AND entity IN (".getEntity('contract').")";
+			$sql.= " AND entity IN (".getEntity('contract', 0).")";
 		}
 		else $sql.= " WHERE rowid=".$id;
 
@@ -530,7 +530,7 @@ class Contrat extends CommonObject
 				$this->fin_validite				= $this->db->jdate($result["fin_validite"]);
 				$this->date_cloture				= $this->db->jdate($result["date_cloture"]);
 
-				
+
 				$this->user_author_id			= $result["fk_user_author"];
 
 				$this->commercial_signature_id	= $result["fk_commercial_signature"];
@@ -613,7 +613,7 @@ class Contrat extends CommonObject
 
 		$this->lines=array();
         $pos = 0;
-		
+
 		// Selectionne les lignes contrats liees a un produit
 		$sql = "SELECT p.label as product_label, p.description as product_desc, p.ref as product_ref,";
 		$sql.= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
@@ -1858,7 +1858,7 @@ class Contrat extends CommonObject
 		$url = DOL_URL_ROOT.'/contrat/card.php?id='.$this->id;
         $picto = 'contract';
         $label = '';
-        
+
         if ($user->rights->contrat->lire) {
             $label = '<u>'.$langs->trans("ShowContract").'</u>';
             $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
@@ -1874,7 +1874,7 @@ class Contrat extends CommonObject
                 $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
             }
         }
-        
+
         $linkclose='';
         if (empty($notooltip) && $user->rights->contrat->lire)
         {
@@ -1890,7 +1890,7 @@ class Contrat extends CommonObject
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
-		
+
 		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$linkstart.$this->ref.$linkend;
@@ -2180,7 +2180,7 @@ class Contrat extends CommonObject
 		$prodids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE entity IN (".getEntity('product', 1).")";
+		$sql.= " WHERE entity IN (".getEntity('product').")";
 		$sql.= " AND tosell = 1";
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2225,7 +2225,11 @@ class Contrat extends CommonObject
 			$line->total_ht=90;
 			$line->total_ttc=107.64;	// 90 * 1.196
 			$line->total_tva=17.64;
-            if ($num_prods > 0)
+			$line->date_ouverture = dol_now() - 200000;
+			$line->date_ouverture_prevue = dol_now() - 500000;
+			$line->date_fin_validite = dol_now() + 500000;
+			$line->date_cloture = dol_now() - 100000;
+			if ($num_prods > 0)
             {
 				$prodid = mt_rand(1, $num_prods);
 				$line->fk_product=$prodids[$prodid];
@@ -2233,11 +2237,6 @@ class Contrat extends CommonObject
 			$this->lines[$xnbp]=$line;
 			$xnbp++;
 		}
-
-		$this->amount_ht      = $xnbp*100;
-		$this->total_ht       = $xnbp*100;
-		$this->total_tva      = $xnbp*19.6;
-		$this->total_ttc      = $xnbp*119.6;
 	}
 
 	/**
@@ -2750,6 +2749,8 @@ class ContratLigne extends CommonObjectLine
 		if (empty($this->total_ht)) $this->total_ht = 0;
 		if (empty($this->total_tva)) $this->total_tva = 0;
 		if (empty($this->total_ttc)) $this->total_ttc = 0;
+		if (empty($this->localtax1_tx)) $this->localtax1_tx = 0;
+		if (empty($this->localtax2_tx)) $this->localtax2_tx = 0;
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -2916,7 +2917,7 @@ class ContratLigne extends CommonObjectLine
 
 		// Insertion dans la base
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
-		$sql.= " (fk_contrat, label, description, fk_product, qty, tva_tx,";
+		$sql.= " (fk_contrat, label, description, fk_product, qty, vat_src_code, tva_tx,";
 		$sql.= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice,";
 		$sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc,";
 		$sql.= " info_bits,";

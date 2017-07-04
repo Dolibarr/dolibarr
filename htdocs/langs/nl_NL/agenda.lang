@@ -2,6 +2,7 @@
 IdAgenda=ID gebeurtenis
 Actions=Acties
 Agenda=Agenda
+TMenuAgenda=Agenda
 Agendas=Agenda's
 LocalAgenda=Interne kalender
 ActionsOwnedBy=Actie gevraagd door
@@ -47,6 +48,7 @@ InvoiceDeleteDolibarr=Factuur %s verwijderd
 InvoicePaidInDolibarr=Factuur %s gewijzigd naar betaald
 InvoiceCanceledInDolibarr=Factuur %s geannuleerd
 MemberValidatedInDolibarr=Lid %s gevalideerd
+MemberModifiedInDolibarr=Lid %s gewijzigd
 MemberResiliatedInDolibarr=Lidmaatschap %s beëindigd
 MemberDeletedInDolibarr=Lid %s verwijderd
 MemberSubscriptionAddedInDolibarr=Abonnement voor lid %s toegevoegd
@@ -74,6 +76,7 @@ ProposalDeleted=Voorstel verwijderd
 OrderDeleted=Bestelling verwijderd
 InvoiceDeleted=Factuur verwijderd
 ##### End agenda events #####
+AgendaModelModule=Document sjablonen voor evenement
 DateActionStart=Startdatum
 DateActionEnd=Einddatum
 AgendaUrlOptions1=U kunt ook de volgende parameters gebruiken om te filteren:

@@ -73,7 +73,7 @@ $user_arbo = $userstatic->get_full_tree(0, ($search_statut != '' && $search_stat
 
 if (! is_array($user_arbo) && $user_arbo < 0)
 {
-    setEventMessages($userstatic->error, $userstatic->errors, 'warnings');    
+    setEventMessages($userstatic->error, $userstatic->errors, 'warnings');
 }
 else
 {
@@ -97,24 +97,21 @@ foreach($fulltree as $key => $val)
 	$userstatic->admin=$val['admin'];
 	$userstatic->entity=$val['entity'];
 	$userstatic->photo=$val['photo'];
-	
+
 	$entity=$val['entity'];
 	$entitystring='';
 
 	// TODO Set of entitystring should be done with a hook
-	if (is_object($mc))
+	if (! empty($conf->multicompany->enabled) && is_object($mc))
 	{
-		if (! empty($conf->multicompany->enabled))
+		if (empty($entity))
 		{
-			if (empty($entity))
-			{
-				$entitystring=$langs->trans("AllEntities");
-			}
-			else
-			{
-				$mc->getInfo($entity);
-				$entitystring=$mc->label;
-			}
+			$entitystring=$langs->trans("AllEntities");
+		}
+		else
+		{
+			$mc->getInfo($entity);
+			$entitystring=$mc->label;
 		}
 	}
 
@@ -128,7 +125,7 @@ foreach($fulltree as $key => $val)
 		$li.=img_picto($langs->trans("Administrator"),'star');
 	}
 	$li.=' ('.$val['login'].($entitystring?' - '.$entitystring:'').')';
-	
+
 	$data[] = array(
 		'rowid'=>$val['rowid'],
 		'fk_menu'=>$val['fk_user'],

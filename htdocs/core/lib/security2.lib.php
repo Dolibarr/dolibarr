@@ -144,10 +144,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	$dol_url_root = DOL_URL_ROOT;
 
-	$php_self = $_SERVER['PHP_SELF'];
-	$php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
-	if (! preg_match('/mainmenu=/',$php_self)) $php_self.=(preg_match('/\?/',$php_self)?'&':'?').'mainmenu=home';
-
 	// Title
 	$appli=constant('DOL_APPLICATION_TITLE');
 	$title=$appli.' '.constant('DOL_VERSION');
@@ -265,15 +261,11 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$main_home='';
 	if (! empty($conf->global->MAIN_HOME))
 	{
-		$i=0;
-		while (preg_match('/__\(([a-zA-Z|@]+)\)__/i',$conf->global->MAIN_HOME,$reg) && $i < 100)
-		{
-			$tmp=explode('|',$reg[1]);
-			if (! empty($tmp[1])) $langs->load($tmp[1]);
-			$conf->global->MAIN_HOME=preg_replace('/__\('.preg_quote($reg[1]).'\)__/i',$langs->trans($tmp[0]),$conf->global->MAIN_HOME);
-			$i++;
-		}
-		$main_home=dol_htmlcleanlastbr($conf->global->MAIN_HOME);
+	    $substitutionarray=getCommonSubstitutionArray($langs);
+	    complete_substitutions_array($substitutionarray, $langs);
+	    $texttoshow = make_substitutions($conf->global->MAIN_HOME, $substitutionarray, $langs);
+
+		$main_home=dol_htmlcleanlastbr($texttoshow);
 	}
 
 	// Google AD
@@ -415,7 +407,7 @@ function encodedecode_dbpassconf($level=0)
 			fflush($fp);
 			fclose($fp);
 			clearstatcache();
-			
+
 			// It's config file, so we set read permission for creator only.
 			// Should set permission to web user and groups for users used by batch
 			//@chmod($file, octdec('0600'));

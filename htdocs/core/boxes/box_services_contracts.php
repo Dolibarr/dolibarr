@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 /**
  *      \file       htdocs/core/boxes/box_services_contracts.php
  *		\ingroup    produits,services
- *      \brief      Module de generation de l'affichage de la box services_vendus
+ *      \brief      Widget of sells products
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -42,6 +42,21 @@ class box_services_contracts extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
+
+	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB  $db         Database handler
+	 *  @param  string  $param      More parameters
+	 */
+	function __construct($db,$param)
+	{
+	    global $user;
+
+	    $this->db=$db;
+
+	    $this->hidden=! ($user->rights->service->lire && $user->rights->contrat->lire);
+	}
 
 	/**
 	 *  Load data into info_box_contents array to show array later.
@@ -109,7 +124,7 @@ class box_services_contracts extends ModeleBoxes
 					$thirdpartytmp->id = $objp->socid;
 
 					// Multilangs
-					if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
+					if (! empty($conf->global->MAIN_MULTILANGS) && $objp->product_id > 0) // if option multilang is on
 					{
 						$sqld = "SELECT label";
 						$sqld.= " FROM ".MAIN_DB_PREFIX."product_lang";
@@ -161,8 +176,10 @@ class box_services_contracts extends ModeleBoxes
 			}
 		}
 		else {
-			$this->info_box_contents[0][0] = array('td' => '',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
+			$this->info_box_contents[0][0] = array(
+			    'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
 		}
 
 	}
@@ -173,11 +190,11 @@ class box_services_contracts extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

@@ -34,18 +34,17 @@ $langs->load("bills");
 $langs->load("products");
 $langs->load("margins");
 
-// Security check
-
-if ($user->rights->margins->read->all) {
-	$agentid = GETPOST('agentid', 'int');
-} else {
-	$agentid = $user->id;
-}
-
 $mesg = '';
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield)
 {
@@ -54,11 +53,6 @@ if (! $sortfield)
 	else
 	    $sortfield="u.lastname";
 }
-$page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 $startdate=$enddate='';
 
@@ -66,6 +60,23 @@ if (!empty($_POST['startdatemonth']))
   $startdate  = dol_mktime(0, 0, 0, $_POST['startdatemonth'],  $_POST['startdateday'],  $_POST['startdateyear']);
 if (!empty($_POST['enddatemonth']))
   $enddate  = dol_mktime(23, 59, 59, $_POST['enddatemonth'],  $_POST['enddateday'],  $_POST['enddateyear']);
+
+// Security check
+if ($user->rights->margins->read->all) {
+  $agentid = GETPOST('agentid', 'int');
+} else {
+  $agentid = $user->id;
+}
+$result=restrictedArea($user,'margins');
+
+
+/*
+ * Actions
+ */
+
+// None
+
+
 
 /*
  * View
@@ -130,7 +141,7 @@ $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
 $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ", ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE f.fk_soc = s.rowid";
-$sql.= ' AND f.entity IN ('.getEntity('facture', 1).')';
+$sql.= ' AND f.entity IN ('.getEntity('facture').')';
 $sql.= " AND sc.fk_soc = f.fk_soc";
 $sql.= " AND (d.product_type = 0 OR d.product_type = 1)";
 if (! empty($conf->global->AGENT_CONTACT_TYPE))
@@ -138,7 +149,7 @@ if (! empty($conf->global->AGENT_CONTACT_TYPE))
 else
 	$sql .= " AND sc.fk_user = u.rowid";
 $sql.= " AND f.fk_statut > 0";
-$sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
+$sql.= ' AND s.entity IN ('.getEntity('societe').')';
 $sql.= " AND d.fk_facture = f.rowid";
 if ($agentid > 0) {
 	if (! empty($conf->global->AGENT_CONTACT_TYPE))
@@ -170,13 +181,13 @@ if ($result)
 	$num = $db->num_rows($result);
 
 	print '<br>';
-	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num,$num,'');
+	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
 	if ($conf->global->MARGIN_TYPE == "1")
 	    $labelcostprice=$langs->trans('BuyingPrice');
 	else   // value is 'costprice' or 'pmp'
 	    $labelcostprice=$langs->trans('CostPrice');
-	
+
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";
 
@@ -220,7 +231,7 @@ if ($result)
 				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
 
-			
+
 
 			print '<tr class="oddeven">';
 			if ($agentid > 0) {

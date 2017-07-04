@@ -58,7 +58,7 @@ if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page","int");
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 if (! $sortorder) $sortorder="ASC";
@@ -118,7 +118,7 @@ $langs->load("agenda");
 $langs->load("other");
 $langs->load("commercial");
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agenda'));
 
 
@@ -423,8 +423,8 @@ else 									// If javascript off
 	$newparam=$param;   // newparam is for birthday links
     $newparam=preg_replace('/showbirthday=[0-1]/i','showbirthday='.(empty($showbirthday)?1:0),$newparam);
     if (! preg_match('/showbirthday=/i',$newparam)) $newparam.='&showbirthday=1';
-    $link='<a href="'.$_SERVER['PHP_SELF'];
-    $link.='?'.$newparam;
+    $link='<a href="'.dol_escape_htmltag($_SERVER['PHP_SELF']);
+    $link.='?'.dol_escape_htmltag($newparam);
     $link.='">';
     if (empty($showbirthday)) $link.=$langs->trans("AgendaShowBirthdayEvents");
     else $link.=$langs->trans("AgendaHideBirthdayEvents");
@@ -456,7 +456,7 @@ if ($resourceid > 0) $sql.=", ".MAIN_DB_PREFIX."element_resources as r";
 if ($filtert > 0 || $usergroup > 0) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 if ($usergroup > 0) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
 $sql.= ' WHERE a.fk_action = ca.id';
-$sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
+$sql.= ' AND a.entity IN ('.getEntity('agenda').')';
 // Condition on actioncode
 if (! empty($actioncode))
 {
@@ -648,7 +648,7 @@ if ($showbirthday)
     $sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
     $sql.= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.$user->id.'))';
-    $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
+    $sql.= " AND sp.entity IN (".getEntity('societe').")";
     if ($action == 'show_day')
     {
         $sql.= ' AND MONTH(birthday) = '.$month;
@@ -1070,7 +1070,7 @@ if (empty($action) || $action == 'show_month')      // View by month
     }
     echo "</table>\n";
     echo '<form id="move_event" action="" method="POST"><input type="hidden" name="action" value="mupdate">';
-    echo '<input type="hidden" name="backtopage" value="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'">';
+    echo '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
     echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     echo '<input type="hidden" name="newdate" id="newdate">' ;
     echo '</form>';
@@ -1124,7 +1124,7 @@ elseif ($action == 'show_week') // View by week
 
     echo "</table>\n";
     echo '<form id="move_event" action="" method="POST"><input type="hidden" name="action" value="mupdate">';
-    echo '<input type="hidden" name="backtopage" value="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'">';
+    echo '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
     echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     echo '<input type="hidden" name="newdate" id="newdate">' ;
     echo '</form>';
@@ -1188,7 +1188,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     global $cachethirdparties, $cachecontacts, $cacheusers, $colorindexused;
 
     $dateint = sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day);
-    
+
     print "\n";
 
     // Line with title of day
@@ -1247,7 +1247,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     if (in_array($user->id, $keysofuserassigned))
                     {
                     $nummytasks++; $cssclass='family_mytasks';
-                    
+
                     if (empty($cacheusers[$event->userownerid]))
                     {
                     	$newuser=new User($db);
@@ -1255,7 +1255,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     	$cacheusers[$event->userownerid]=$newuser;
                     }
                     //var_dump($cacheusers[$event->userownerid]->color);
-                    
+
                     // We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
                     if (! empty($cacheusers[$event->userownerid]->color)) $color=$cacheusers[$event->userownerid]->color;
                     }
@@ -1277,10 +1277,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     }
                     else
                	    {
-                    	$numother++; 
+                    	$numother++;
                     	$color=($event->icalcolor?$event->icalcolor:-1);
                     	$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other');
-    
+
                         if (empty($cacheusers[$event->userownerid]))
                         {
                         	$newuser=new User($db);
@@ -1288,7 +1288,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         	$cacheusers[$event->userownerid]=$newuser;
                         }
                         //var_dump($cacheusers[$event->userownerid]->color);
-    
+
                        	// We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
                        	if (! empty($cacheusers[$event->userownerid]->color)) $color=$cacheusers[$event->userownerid]->color;
                     }
@@ -1364,9 +1364,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     print '">';
                     print '<tr>';
                     print '<td class="tdoverflow nobottom centpercent '.($nowrapontd?'nowrap ':'').'cal_event'.($event->type_code == 'BIRTHDAY'?' cal_event_birthday':'').'">';
-                    
+
                     $daterange='';
-                    
+
                     if ($event->type_code == 'BIRTHDAY') // It's a birthday
                     {
                         print $event->getNomUrl(1,$maxnbofchar,'cal_event','birthday','contact');
@@ -1426,9 +1426,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         // Show title
                         $titletoshow = $daterange;
                         $titletoshow.=($titletoshow?' ':'').$event->libelle;
-                        
+
                         if ($event->type_code == 'ICALEVENT') print $titletoshow;
-                        else 
+                        else
                         {
                             $savlabel=$event->libelle;
                             $event->libelle=$titletoshow;
@@ -1449,11 +1449,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                                 $newuser->fetch($tmpid);
                                 $cacheusers[$tmpid]=$newuser;
                             }
-                            
+
                             $listofusertoshow.=$cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'valigntextbottom');
                         }
                         print $listofusertoshow;
-                        
+
                         if ($event->type_code == 'ICALEVENT') print '<br>('.dol_trunc($event->icalname,$maxnbofchar).')';
 
                         // If action related to company / contact
@@ -1506,7 +1506,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     if ($event->type_code != 'BIRTHDAY' && $event->type_code != 'ICALEVENT')
                     {
                         $withstatus=1;
-                        if ($event->percentage >= 0) $withstatus=2; 
+                        if ($event->percentage >= 0) $withstatus=2;
                     }
                     print '<td class="nobottom right nowrap cal_event_right'.($withstatus >= 2 ?' cal_event_right_status':'').'">';
                     if ($withstatus) print $event->getLibStatut(3,1);

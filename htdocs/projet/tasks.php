@@ -42,7 +42,7 @@ $backtopage=GETPOST('backtopage','alpha');
 $cancel=GETPOST('cancel');
 
 $search_user_id = GETPOST('search_user_id', 'int');
-    
+
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
@@ -64,7 +64,7 @@ $socid=0;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projecttaskcard','globalcard'));
 
 $progress=GETPOST('progress', 'int');
@@ -97,7 +97,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	//$date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear'],'user');
 	$date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
 	$date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
-	
+
 	if (! $cancel)
 	{
 		if (empty($taskref))
@@ -139,7 +139,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$task->date_start = $date_start;
 			$task->date_end = $date_end;
 			$task->progress = $progress;
-			
+
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields_task->setOptionalsFromPost($extralabels_task,$task);
 
@@ -224,26 +224,26 @@ if ($id > 0 || ! empty($ref))
     if ($search_user_id > 0) $param.='&search_user_id='.dol_escape_htmltag($search_user_id);
 
     // Project card
-    
+
     $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-    
+
     $morehtmlref='<div class="refidno">';
     // Title
     $morehtmlref.=$object->title;
     // Thirdparty
-    if ($object->thirdparty->id > 0) 
+    if ($object->thirdparty->id > 0)
     {
         $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
     }
     $morehtmlref.='</div>';
-    
+
     // Define a complementary filter for search of next/prev ref.
     if (! $user->rights->projet->all->lire)
     {
         $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
         $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
     }
-    
+
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
     print '<div class="fichecenter">';
@@ -286,7 +286,7 @@ if ($id > 0 || ! empty($ref))
     print ($end?$end:'?');
     if ($object->hasDelay()) print img_warning("Late");
     print '</td></tr>';
-    
+
     // Budget
     print '<tr><td>'.$langs->trans("Budget").'</td><td>';
     if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,1,0,0,$conf->currency);
@@ -295,16 +295,16 @@ if ($id > 0 || ! empty($ref))
     // Other attributes
     $cols = 2;
     include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-    
+
     print '</table>';
-    
+
     print '</div>';
     print '<div class="fichehalfright">';
     print '<div class="ficheaddleft">';
     print '<div class="underbanner clearboth"></div>';
-    
+
     print '<table class="border" width="100%">';
-    
+
     // Description
     print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
     print nl2br($object->description);
@@ -316,13 +316,13 @@ if ($id > 0 || ! empty($ref))
         print $form->showCategories($object->id,'project',1);
         print "</td></tr>";
     }
-    
+
     print '</table>';
-    
+
     print '</div>';
     print '</div>';
     print '</div>';
-    
+
     print '<div class="clearboth"></div>';
 
 
@@ -341,7 +341,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '<input type="hidden" name="action" value="createtask">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if (! empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
-	
+
 	dol_fiche_head('');
 
 	print '<table class="border" width="100%">';
@@ -413,6 +413,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Other options
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 	if (empty($reshook) && ! empty($extrafields_task->attribute_label))
 	{
 		print $object->showOptionals($extrafields_task,'edit');
@@ -460,7 +461,7 @@ else if ($id > 0 || ! empty($ref))
 
 	print '</div>';
 
-	
+
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -470,12 +471,12 @@ else if ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-	
+
 	$title=$langs->trans("ListOfTasks");
 	$linktotasks='<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?projectid='.$object->id.'&withproject=1">'.$langs->trans("GoToListOfTimeConsumed").'</a>';
 	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
 	print load_fiche_titre($title,$linktotasks,'title_generic.png');
-	
+
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$filteronthirdpartyid = $socid;
@@ -483,7 +484,7 @@ else if ($id > 0 || ! empty($ref))
 	// We load also tasks limited to a particular user
 	$tmpuser=new User($db);
 	if ($search_user_id > 0) $tmpuser->fetch($search_user_id);
-	
+
 	$tasksrole=($tmpuser->id > 0 ? $taskstatic->getUserRolesForProjectsOrTasks(0, $tmpuser, $object->id, 0) : '');
 	//var_dump($tasksarray);
 	//var_dump($tasksrole);
@@ -494,7 +495,7 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	print '<table id="tablelines" class="noborder" width="100%">';
-	
+
 	if (count($tasksarray) > 0)
 	{
     	// Link to switch in "my task" / "all task"
@@ -509,7 +510,7 @@ else if ($id > 0 || ! empty($ref))
         print $searchpicto;
         print '</td>';
 	}
-	
+
 	print '<tr class="liste_titre nodrag nodrop">';
 	// print '<td>'.$langs->trans("Project").'</td>';
 	print '<td width="100">'.$langs->trans("RefTask").'</td>';
@@ -522,7 +523,7 @@ else if ($id > 0 || ! empty($ref))
 	print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 	print '<td>&nbsp;</td>';
 	print "</tr>\n";
-	
+
 	if (count($tasksarray) > 0)
 	{
 	    // Show all lines in taskarray (recursive function to go down on tree)
@@ -533,11 +534,11 @@ else if ($id > 0 || ! empty($ref))
 	{
 		print '<tr class="oddeven"><td colspan="9" class="opacitymedium">'.$langs->trans("NoTasks").'</td></tr>';
 	}
-	
+
 	print "</table>";
 
 	print '</form>';
-	
+
 
 	// Test if database is clean. If not we clean it.
 	//print 'mode='.$_REQUEST["mode"].' $nboftaskshown='.$nboftaskshown.' count($tasksarray)='.count($tasksarray).' count($tasksrole)='.count($tasksrole).'<br>';

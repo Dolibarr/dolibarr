@@ -81,6 +81,8 @@ class AllTests
         //$suite->addTestSuite('CoreTest');
         require_once dirname(__FILE__).'/AdminLibTest.php';
         $suite->addTestSuite('AdminLibTest');
+        require_once dirname(__FILE__).'/CompanyLibTest.php';
+        $suite->addTestSuite('CompanyLibTest');
         require_once dirname(__FILE__).'/DateLibTest.php';
         $suite->addTestSuite('DateLibTest');
         //require_once dirname(__FILE__).'/DateLibTzFranceTest.php';
@@ -107,7 +109,7 @@ class AllTests
         $suite->addTestSuite('CodingSqlTest');
         require_once dirname(__FILE__).'/CodingPhpTest.php';
         $suite->addTestSuite('CodingPhpTest');
-        
+
         require_once dirname(__FILE__).'/SecurityTest.php';
         $suite->addTestSuite('SecurityTest');
 
@@ -121,7 +123,7 @@ class AllTests
         $suite->addTestSuite('BuildDocTest');
         require_once dirname(__FILE__).'/CMailFileTest.php';
         $suite->addTestSuite('CMailFileTest');
-        
+
         require_once dirname(__FILE__).'/CommonObjectTest.php';
         $suite->addTestSuite('CommonObjectTest');
 
@@ -181,7 +183,7 @@ class AllTests
         $suite->addTestSuite('HolidayTest');
         require_once dirname(__FILE__).'/ExpenseReportTest.php';
         $suite->addTestSuite('ExpenseReportTest');
-        
+
         require_once dirname(__FILE__).'/EntrepotTest.php';
         $suite->addTestSuite('EntrepotTest');
         require_once dirname(__FILE__).'/MouvementStockTest.php';
@@ -192,7 +194,7 @@ class AllTests
 
         require_once dirname(__FILE__).'/RestAPIUserTest.php';
         $suite->addTestSuite('RestAPIUserTest');
- 
+
         require_once dirname(__FILE__).'/WebservicesProductsTest.php';
         $suite->addTestSuite('WebservicesProductsTest');
         require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';

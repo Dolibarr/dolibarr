@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+BoxLoginInformation=Login information
 BoxLastRssInfos=Rss informacije
 BoxLastProducts=Latest %s products/services
 BoxProductsAlertStock=Stock alerts for products
@@ -25,8 +26,8 @@ BoxTitleLastSuppliers=Latest %s recorded suppliers
 BoxTitleLastModifiedSuppliers=Latest %s modified suppliers
 BoxTitleLastModifiedCustomers=Latest %s modified customers
 BoxTitleLastCustomersOrProspects=Latest %s customers or prospects
-BoxTitleLastCustomerBills=Latest %s customer invoices
-BoxTitleLastSupplierBills=Latest %s supplier invoices
+BoxTitleLastCustomerBills=Posljednjih %s faktura kupaca
+BoxTitleLastSupplierBills=Posljednjih %s faktura dobavljača
 BoxTitleLastModifiedProspects=Latest %s modified prospects
 BoxTitleLastModifiedMembers=Latest %s members
 BoxTitleLastFicheInter=Latest %s modified interventions
@@ -82,3 +83,4 @@ ForCustomersOrders=Narudžbe kupaca
 ForProposals=Prijedlozi
 LastXMonthRolling=The latest %s month rolling
 ChooseBoxToAdd=Add widget to your dashboard
+BoxAdded=Widget was added in your dashboard

@@ -115,7 +115,7 @@ class ProductApi extends DolibarrApi
 
         $sql ="SELECT rowid, ref, ref_ext";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-        $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+        $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 		
         // Show products
         if ($mode == 1) $sql.= " AND p.fk_product_type = 0";
@@ -198,7 +198,7 @@ class ProductApi extends DolibarrApi
         $sql = "SELECT rowid, ref, ref_ext";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p, ";
         $sql.= MAIN_DB_PREFIX."categorie_product as c";
-        $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+        $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 
         // Select products of given category
         $sql.= " AND c.fk_categorie = ".$db->escape($category);

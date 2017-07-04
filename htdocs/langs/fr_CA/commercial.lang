@@ -1,4 +1,10 @@
 # Dolibarr language file - Source file is en_US - commercial
 DeleteAction=Supprimer l'événement
 NewAction=Nouvel événement
-ActionAC_OTH_AUTO=Autre (evênements insérés automatiquement)
+ConfirmDeleteAction=Êtes-vous sûr de vouloir supprimer cet événement?
+ActionOnCompany=Société associée
+ActionOnContact=Contact connexe
+ThirdPartiesOfSaleRepresentative=Personnes tierces ayant un représentant commercial
+LastDoneTasks=Dernières %s actions complétées
+LastActionsToDo=Le plus ancien %s actions non complétées
+ActionAC_OTH_AUTO=Événements insérés automatiquement

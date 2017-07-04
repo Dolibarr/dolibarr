@@ -56,7 +56,7 @@ $result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -100,7 +100,7 @@ if ($object->id > 0)
 
 	$head = ordersupplier_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans('SupplierOrder'), 0, 'order');
+	dol_fiche_head($head, 'documents', $langs->trans('SupplierOrder'), -1, 'order');
 
 
 	// Construit liste des fichiers
@@ -114,7 +114,7 @@ if ($object->id > 0)
 	// Supplier order card
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-	
+
 	$morehtmlref='<div class="refidno">';
 	// Ref supplier
 	$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
@@ -155,13 +155,13 @@ if ($object->id > 0)
 	    }
 	}
 	$morehtmlref.='</div>';
-			
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);	
 
-	
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	
+
 	print '<table class="border" width="100%">';
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
@@ -170,8 +170,8 @@ if ($object->id > 0)
 	print "</div>\n";
 
 	dol_fiche_end();
-	
-	
+
+
 	$modulepart = 'commande_fournisseur';
 	$permission = $user->rights->fournisseur->commande->creer;
 	$permtoedit = $user->rights->fournisseur->commande->creer;

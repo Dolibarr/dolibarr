@@ -1,6 +1,5 @@
 <?php
-/* <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) <year>  <name of author>
+/* Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +83,7 @@ class MyBox extends ModeleBoxes
 	 */
 	public function __construct(DoliDB $db, $param = '')
 	{
-		global $langs;
+		global $user, $conf, $langs;
 		$langs->load("boxes");
 		$langs->load('mymodule@mymodule');
 
@@ -93,6 +92,9 @@ class MyBox extends ModeleBoxes
 		$this->boxlabel = $langs->transnoentitiesnoconv("MyBox");
 
 		$this->param = $param;
+
+		//$this->enabled = $conf->global->FEATURES_LEVEL > 0;         // Condition when module is enabled or not
+		//$this->hidden = ! ($user->rights->mymodule->myobject->read);   // Condition when module is visible by user (test on permission)
 	}
 
 	/**
