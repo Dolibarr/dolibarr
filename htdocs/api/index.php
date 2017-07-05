@@ -206,7 +206,7 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
 }
 
 // Call one APIs or one definition of an API
-if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' && preg_match('/^\/resources.json\/(.+)$/', $reg[2], $regbis))))
+if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' && preg_match('/^\/resources.json\/(.+)$/', $reg[2], $regbis) && $regbis[1] != 'root')))
 {
     $module = $reg[1];
     if ($module == 'explorer')  // If we call page to explore details of a service
