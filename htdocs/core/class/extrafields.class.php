@@ -759,7 +759,11 @@ class ExtraFields
 		$list=$this->attribute_list[$key];
 		$hidden=$this->attribute_hidden[$key];
 
-		if ($computed) return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
+		if ($computed)
+		{
+		    if ($keysuffix != 'search_') return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
+		    else return '';
+		}
 
 		if (empty($showsize))
 		{

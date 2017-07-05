@@ -58,7 +58,7 @@ $socid=0;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (!$user->rights->projet->lire) accessforbidden();
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -69,7 +69,7 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='t.task_date,t.task_datehour,t.rowid';
 if (! $sortorder) $sortorder='DESC';
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projecttaskcard','globalcard'));
 
 $object = new Task($db);
@@ -805,7 +805,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
                if (! empty($arrayfields["ef.".$key]['checked']))
                {
     				$align=$extrafields->getAlignFlag($key);
-    				print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+        			$sortonfield = "ef.".$key;
+        			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+        			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
                }
     	   }
     	}*/

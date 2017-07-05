@@ -27,6 +27,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/keypad.php';
 
+$error=GETPOST('error');
+
 // Test if already logged
 if ( $_SESSION['uid'] <= 0 )
 {
@@ -54,9 +56,7 @@ print '<body>'."\n";
 
 if (!empty($error))
 {
-	print $error;
-	print '</body></html>';
-	exit;
+	dol_htmloutput_events();
 }
 
 print '<div class="conteneur">'."\n";

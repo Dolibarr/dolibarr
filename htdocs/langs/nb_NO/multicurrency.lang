@@ -1,0 +1,18 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+MultiCurrency=Multivaluta
+ErrorAddRateFail=Feil i ny rate
+ErrorAddCurrencyFail=Feil i ny valuta
+ErrorDeleteCurrencyFail=Feil, sletting mislykkes
+multicurrency_syncronize_error=Synkroniseringsfeil: %s
+multicurrency_useOriginTx=Når et objekt er opprettet fra et annet, behold den opprinnelige raten til kildeobjektet (ellers bruk den nye kjente rate)
+CurrencyLayerAccount=CurrencyLayer API
+CurrencyLayerAccount_help_to_synchronize=Du må opprette en konto på deres nettside for å bruke denne funksjonaliteten. <br /> Få din <b> API-nøkkel </b> <br /> Hvis du bruker en gratis konto, kan du ikke endre <b> valutakilden </b> (USD som standard) <br /> Men hvis hovedvalutaen din ikke er USD, kan du bruke <b> alternativ valutakilde </b> for å tvinge annen hovedvaluta <br /> <br /> Du er begrenset til 1000 synkroniseringer per måned
+multicurrency_appId=API-nøkkel
+multicurrency_appCurrencySource=Valutakilde
+multicurrency_alternateCurrencySource= Alternativ valutakilde
+CurrenciesUsed=Valutaer brukt
+CurrenciesUsed_help_to_add=Legg til de forskjellige valutaer og priser du må bruke i dine <b> tilbud </b>, <b> bestillinger </b>, osv.
+rate=rate
+MulticurrencyReceived=Mottatt, originalvaluta
+MulticurrencyRemainderToTake=Restbeløp, opprinnelig valuta
+MulticurrencyPaymentAmount=Beløp, original valuta

@@ -122,7 +122,7 @@ class HookManager
      *                                          All types can also return some values into an array ->results that will be finaly merged into this->resArray for caller.
      * 											$this->error or this->errors are also defined by class called by this function if error.
      */
-	function executeHooks($method, $parameters=false, &$object='', &$action='')
+	function executeHooks($method, $parameters=array(), &$object='', &$action='')
 	{
         if (! is_array($this->hooks) || empty($this->hooks)) return '';
 
@@ -238,7 +238,7 @@ class HookManager
                     // Generic hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
                     else
 					{
-                    	// TODO. this should be done into the method of hook by returning nothing
+                    	// TODO. this test should be done into the method of hook by returning nothing
                     	if (is_array($parameters) && ! empty($parameters['special_code']) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) continue;
 
                     	//dol_syslog("Call method ".$method." of class ".get_class($actionclassinstance).", module=".$module.", hooktype=".$hooktype, LOG_DEBUG);
@@ -246,7 +246,7 @@ class HookManager
 
                     	if (! empty($actionclassinstance->results) && is_array($actionclassinstance->results)) $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
                     	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
-                    	// TODO dead code to remove (do not enable this, but fix hook instead): result must not be a string. we must use $actionclassinstance->resprints to return a string
+                    	// TODO dead code to remove (do not enable this, but fix hook instead): result must not be a string but an int. you must use $actionclassinstance->resprints to return a string
                     	if (! is_array($resaction) && ! is_numeric($resaction))
                     	{
                     		dol_syslog('Error: Bug into hook '.$method.' of module class '.get_class($actionclassinstance).'. Method must not return a string but an int (0=OK, 1=Replace, -1=KO) and set string into ->resprints', LOG_ERR);

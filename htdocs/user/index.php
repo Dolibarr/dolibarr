@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
@@ -46,7 +46,7 @@ if ($user->societe_id > 0)
 $mode = GETPOST("mode", 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
@@ -60,7 +60,7 @@ if (! $sortorder) $sortorder="ASC";
 // Initialize context for list
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userlist';
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
@@ -204,7 +204,7 @@ else
 }
 if ($socid > 0) $sql.= " AND u.fk_soc = ".$socid;
 //if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
-if ($search_supervisor > 0)   $sql.= " AND u.fk_user = ".$db->escape($search_supervisor);
+if ($search_supervisor > 0)   $sql.= " AND u.fk_user IN (".$db->escape($search_supervisor).")";
 if ($search_thirdparty != '') $sql.= natural_search(array('s.nom'), $search_thirdparty);
 if ($search_login != '')      $sql.= natural_search("u.login", $search_login);
 if ($search_lastname != '')   $sql.= natural_search("u.lastname", $search_lastname);
@@ -360,9 +360,12 @@ if (! empty($arrayfields['u.entity']['checked']))
 {
     print '<td class="liste_titre"></td>';
 }
+// Supervisor
 if (! empty($arrayfields['u.fk_user']['checked']))
 {
-    print '<td class="liste_titre"></td>';
+    print '<td class="liste_titre">';
+    print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', 0, 0, 0, 0, '', 0, '', 'maxwidth200');
+    print '</td>';
 }
 if (! empty($arrayfields['u.datelastlogin']['checked']))
 {
@@ -448,7 +451,9 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
         if (! empty($arrayfields["ef.".$key]['checked']))
         {
             $align=$extrafields->getAlignFlag($key);
-            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+			$sortonfield = "ef.".$key;
+			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
         }
     }
 }
@@ -465,6 +470,7 @@ print "</tr>\n";
 
 
 $i = 0;
+$totalarray=array();
 while ($i < min($num,$limit))
 {
     $obj = $db->fetch_object($result);
@@ -497,32 +503,39 @@ while ($i < min($num,$limit))
         	print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
         }
         print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     if (! empty($arrayfields['u.lastname']['checked']))
 	{
 	      print '<td>'.$obj->lastname.'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     if (! empty($arrayfields['u.firstname']['checked']))
 	{
 	  print '<td>'.$obj->firstname.'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     if (! empty($arrayfields['u.gender']['checked']))
 	{
 	  print '<td>';
 	  if ($obj->gender) print $langs->trans("Gender".$obj->gender);
 	  print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     if (! empty($arrayfields['u.employee']['checked']))
 	{
 	  print '<td>'.yn($obj->employee).'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['u.accountancy_code']['checked']))
 	{
 	  print '<td>'.$obj->accountancy_code.'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     if (! empty($arrayfields['u.email']['checked']))
 	{
 	  print '<td>'.$obj->email.'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['u.fk_soc']['checked']))
 	{
@@ -543,6 +556,7 @@ while ($i < min($num,$limit))
         	print $langs->trans("InternalUser");
         }
         print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     // Multicompany enabled
 	if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
@@ -560,6 +574,7 @@ while ($i < min($num,$limit))
         		print $mc->label;
         	}
         	print '</td>';
+            if (! $i) $totalarray['nbfield']++;
 		}
     }
     // Supervisor
@@ -589,17 +604,20 @@ while ($i < min($num,$limit))
             }
         }
         print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 
     // Date last login
     if (! empty($arrayfields['u.datelastlogin']['checked']))
 	{
         print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datelastlogin),"dayhour").'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
     // Date previous login
     if (! empty($arrayfields['u.datepreviouslogin']['checked']))
 	{
         print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datepreviouslogin),"dayhour").'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 
 	// Extra fields
@@ -616,6 +634,7 @@ while ($i < min($num,$limit))
 				$tmpkey='options_'.$key;
 				print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
 				print '</td>';
+                if (! $i) $totalarray['nbfield']++;
 			}
 	   }
 	}
@@ -629,6 +648,7 @@ while ($i < min($num,$limit))
         print '<td align="center">';
         print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
         print '</td>';
+        if (! $i) $totalarray['nbfield']++;
     }
     // Date modification
     if (! empty($arrayfields['u.tms']['checked']))
@@ -636,17 +656,21 @@ while ($i < min($num,$limit))
         print '<td align="center">';
         print dol_print_date($db->jdate($obj->date_update), 'dayhour');
         print '</td>';
+        if (! $i) $totalarray['nbfield']++;
     }
     // Status
     if (! empty($arrayfields['u.statut']['checked']))
     {
-	  $userstatic->statut=$obj->statut;
-      print '<td align="center">'.$userstatic->getLibStatut(3).'</td>';
+	   $userstatic->statut=$obj->statut;
+       print '<td align="center">'.$userstatic->getLibStatut(3).'</td>';
+       if (! $i) $totalarray['nbfield']++;
     }
     // Action column
     print '<td></td>';
+    if (! $i) $totalarray['nbfield']++;
 
     print "</tr>\n";
+
     $i++;
 }
 

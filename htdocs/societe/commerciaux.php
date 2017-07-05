@@ -114,7 +114,7 @@ if (! empty($socid))
 
 	dol_fiche_head($head, 'salesrepresentative', $langs->trans("ThirdParty"), -1, 'company');
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
@@ -174,7 +174,8 @@ if (! empty($socid))
 
  			$parameters=array('socid'=>$object->id);
         	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$obj,$action);    // Note that $action and $object may have been modified by hook
-      		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+            print $hookmanager->resPrint;
+        	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
       		$tmpuser->id = $obj->rowid;
       		$tmpuser->firstname = $obj->firstname;

@@ -400,7 +400,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
     // Define output language (Here it is not used because we do only merging existing PDF)
     $outputlangs = $langs;
     $newlang='';
-    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
     if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
     if (! empty($newlang))
     {
@@ -536,7 +536,7 @@ if (! $error && $massaction == 'delete' && $permtodelete)
         $result=$objecttmp->fetch($toselectid);
         if ($result > 0)
         {
-            if ($objecttmp->element == 'societe') $result = $objecttmp->delete($objecttmp->id, $user, 1);
+            if (in_array($objecttmp->element, array('societe','member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
             else $result = $objecttmp->delete($user);
             if ($result <= 0)
             {

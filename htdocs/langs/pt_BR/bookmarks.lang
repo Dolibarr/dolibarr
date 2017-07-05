@@ -1,15 +1,9 @@
 # Dolibarr language file - Source file is en_US - bookmarks
 AddThisPageToBookmarks=Adicionar essa página aos marcadores
-Bookmark=Marcador
-Bookmarks=Marcadores
-NewBookmark=Novo marcador
-ShowBookmark=Mostrar marcador
 OpenANewWindow=Abrir uma nova janela
 ReplaceWindow=Substituir atual janela
 BookmarkTargetReplaceWindowShort=Atual janela
-BookmarkTitle=Título do marcador
 BehaviourOnClick=Comportamento quando a URL é clicada
-CreateBookmark=Criar marcador
 SetHereATitleForLink=Colocar título para o marcador
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Usar uma URL externa ou uma URL do Dolibarr
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Escolha se página vinculada deve abrir em uma nova janela ou não

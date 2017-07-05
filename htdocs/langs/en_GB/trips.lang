@@ -2,7 +2,6 @@
 TripsAndExpensesStatistics=Expense report statistics
 CompanyVisited=Company visited
 FeesKilometersOrAmout=Amount or Miles
-ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
 TripNDF=Information expense report
 TF_METRO=Tube
 ErrorDoubleDeclaration=You have submitted another expense report in a similar date range.

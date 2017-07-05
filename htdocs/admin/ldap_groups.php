@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -38,7 +38,7 @@ $langs->load("errors");
 
 if (!$user->admin)
   accessforbidden();
-  
+
 $action = GETPOST('action','aZ09');
 
 
@@ -50,7 +50,7 @@ if ($action == 'setvalue' && $user->admin)
 {
 	$error=0;
 	$db->begin();
-	
+
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_DN',GETPOST("group"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS',GETPOST("objectclass"),'chaine',0,'',$conf->entity)) $error++;
 
@@ -64,7 +64,7 @@ if ($action == 'setvalue' && $user->admin)
     $key=GETPOST("key");
     if ($key) $valkey=$conf->global->$key;
     if (! dolibarr_set_const($db, 'LDAP_KEY_GROUPS',$valkey,'chaine',0,'',$conf->entity)) $error++;
-    
+
     if (! $error)
     {
     	$db->commit();
@@ -96,7 +96,7 @@ if (! function_exists("ldap_connect"))
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-dol_fiche_head($head, 'groups', $langs->trans("LDAPSetup"));
+dol_fiche_head($head, 'groups', $langs->trans("LDAPSetup"), -1);
 
 
 print $langs->trans("LDAPDescGroups").'<br>';

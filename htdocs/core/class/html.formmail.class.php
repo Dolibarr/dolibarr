@@ -288,14 +288,15 @@ class FormMail extends Form
 				$outputlangs->load('other');
 			}
 
-        	// Get message template
+        	// Get message template for $this->param["models"] into c_email_templates
 			$model_id=0;
         	if (array_key_exists('models_id',$this->param))
         	{
         		$model_id=$this->param["models_id"];
         	}
         	$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
-			//var_dump($arraydefaultmessage);
+			//var_dump($this->param["models"]);
+        	//var_dump($arraydefaultmessage);
 
         	$out.= "\n".'<!-- Begin form mail --><div id="mailformdiv"></div>'."\n";
         	if ($this->withform == 1)
@@ -527,7 +528,12 @@ class FormMail extends Form
         				{
         				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
         				}
-        				$out.= $form->multiselectarray("receiver", $tmparray, GETPOST("receiver"), null, null, 'inline-block minwidth500', null, "");
+        				$withtoselected=GETPOST("receiver");     // Array of selected value
+        				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action','aZ09') == 'presend')
+        				{
+        				    $withtoselected = array_keys($tmparray);
+        				}
+        				$out.= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
         			}
         		}
         		$out.= "</td></tr>\n";
@@ -555,7 +561,8 @@ class FormMail extends Form
         				{
         				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
         				}
-        				$out.= $form->multiselectarray("receivercc", $tmparray, GETPOST("receivercc"), null, null, 'inline-block minwidth500',null, "");
+        				$withtoccselected=GETPOST("receivercc");     // Array of selected value
+        				$out.= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500',null, "");
         			}
         		}
         		$out.= "</td></tr>\n";
@@ -583,8 +590,8 @@ class FormMail extends Form
         				{
         				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
         				}
-        				//$out.= $form->selectarray("receiverccc", $this->withtoccc, GETPOST("receiverccc"), 1);
-        				$out.= $form->multiselectarray("receiverccc", $tmparray, GETPOST("receiverccc"), null, null, null,null, "90%");
+        				$withtocccselected=GETPOST("receiverccc");     // Array of selected value
+        				$out.= $form->multiselectarray("receiverccc", $tmparray, $withtocccselected, null, null, null,null, "90%");
         			}
         		}
 
@@ -876,6 +883,7 @@ class FormMail extends Form
 	        	elseif ($type_template=='shipping_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendShipping"); }
 	        	elseif ($type_template=='fichinter_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendFichInter"); }
 	        	elseif ($type_template=='thirdparty')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
+	        	elseif ($type_template=='user')				        { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentUser"); }
 
 	        	$ret['label']='default';
 	        	$ret['topic']='';

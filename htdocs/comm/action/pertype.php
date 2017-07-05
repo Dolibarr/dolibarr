@@ -140,7 +140,7 @@ $langs->load("agenda");
 $langs->load("other");
 $langs->load("commercial");
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agenda'));
 
 
@@ -572,7 +572,7 @@ $newparam=preg_replace('/showbirthday_=/i','showbirthday=',$newparam);	// Restor
 $newparam.='&viewweek=1';
 
 echo '<form id="move_event" action="" method="POST"><input type="hidden" name="action" value="mupdate">';
-echo '<input type="hidden" name="backtopage" value="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'">';
+echo '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
 echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 echo '<input type="hidden" name="newdate" id="newdate">' ;
 echo '</form>';

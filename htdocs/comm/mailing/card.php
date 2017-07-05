@@ -52,7 +52,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('mailingcard','globalcard'));
 
 // Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
@@ -718,6 +718,7 @@ if ($action == 'create')
 	// Other attributes
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		print $object->showOptionals($extrafields,'edit');
@@ -1009,7 +1010,8 @@ else
 			// Affichage formulaire de TEST
 			if ($action == 'test')
 			{
-				print load_fiche_titre($langs->trans("TestMailing"));
+			    print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
+			    print load_fiche_titre($langs->trans("TestMailing"));
 
 				// Create l'objet formulaire mail
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -1153,6 +1155,7 @@ else
 			// Other attributes
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            print $hookmanager->resPrint;
 			if (empty($reshook) && ! empty($extrafields->attribute_label))
 			{
 				print $object->showOptionals($extrafields,'edit');

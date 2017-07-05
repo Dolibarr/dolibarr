@@ -69,7 +69,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycard','globalcard'));
 
 if ($action == 'view' && $object->fetch($socid)<=0)
@@ -582,6 +582,7 @@ if (empty($reshook))
 
                 	if (! empty($backtopage))
                 	{
+                	    if (preg_match('/\?/', $backtopage)) $backtopage.='&socid='.$object->id;
                		    header("Location: ".$backtopage);
                     	exit;
                 	}
@@ -1065,7 +1066,7 @@ else
 	    print '<td class="maxwidthonsmartphone">';
 	    $selected=isset($_POST['client'])?GETPOST('client'):$object->client;
         print '<select class="flat" name="client" id="customerprospect">';
-        if (GETPOST("type") == '') print '<option value="-1"></option>';
+        if (GETPOST("type") == '') print '<option value="-1">&nbsp;</option>';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($selected==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) print '<option value="3"'.($selected==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
         if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1"'.($selected==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
@@ -1765,8 +1766,9 @@ else
                     $formcompany->select_localtax(1,$object->localtax1_value, "lt1");
                     print '</span>';
                 }
+                print '</td>';
 
-                print '</td><td>'.fieldLabel($langs->transcountry("LocalTax2IsUsed",$mysoc->country_code),'localtax2assuj_value').'</td><td>';
+                print '<td>'.fieldLabel($langs->transcountry("LocalTax2IsUsed",$mysoc->country_code),'localtax2assuj_value').'</td><td>';
                 print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
                 if  (! isOnlyOneLocalTax(2))
                 {
@@ -1998,7 +2000,7 @@ else
 
         dol_htmloutput_errors($error,$errors);
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
@@ -2461,7 +2463,9 @@ else
 			$action='send';
 			$modelmail='thirdparty';
 
-			//print '<br>';
+    		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
+    		print '<div class="clearboth"></div>';
+    		print '<br>';
 			print load_fiche_titre($langs->trans($titreform));
 
 			dol_fiche_head();

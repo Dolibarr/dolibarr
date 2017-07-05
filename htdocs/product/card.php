@@ -113,7 +113,7 @@ $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype,$objcanvas);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productcard','globalcard'));
 
 
@@ -221,12 +221,43 @@ if (empty($reshook))
             else
             	$object->price_min = GETPOST('price_min');
 
-            $object->tva_tx                = str_replace('*','',GETPOST('tva_tx'));
-            $object->tva_npr               = preg_match('/\*/',GETPOST('tva_tx'))?1:0;
+	        $tva_tx_txt = GETPOST('tva_tx', 'alpha');           // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
 
-            // local taxes.
-            $object->localtax1_tx 			   = get_localtax($object->tva_tx,1);
-            $object->localtax2_tx 			   = get_localtax($object->tva_tx,2);
+	        // We must define tva_tx, npr and local taxes
+	        $vatratecode = '';
+	        $tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
+	        $npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
+	        $localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
+	        // If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+	        if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
+	        {
+	            // We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in update price.
+	            $vatratecode=$reg[1];
+	            // Get record from code
+	            $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+	            $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+	            $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
+	            $sql.= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+	            $sql.= " AND t.code ='".$vatratecode."'";
+	            $resql=$db->query($sql);
+	            if ($resql)
+	            {
+	                $obj = $db->fetch_object($resql);
+	                $npr = $obj->recuperableonly;
+	                $localtax1 = $obj->localtax1;
+	                $localtax2 = $obj->localtax2;
+	                $localtax1_type = $obj->localtax1_type;
+	                $localtax2_type = $obj->localtax2_type;
+	            }
+	        }
+
+	        $object->default_vat_code = $vatratecode;
+	        $object->tva_tx = $tva_tx;
+	        $object->tva_npr = $npr;
+	        $object->localtax1_tx = $localtax1;
+	        $object->localtax2_tx = $localtax2;
+	        $object->localtax1_type = $localtax1_type;
+	        $object->localtax2_type = $localtax2_type;
 
             $object->type               	 = $type;
             $object->status             	 = GETPOST('statut');
@@ -865,6 +896,8 @@ else
         	$modCodeProduct = new $module();
         }
 
+        dol_set_focus('input[name="ref"]');
+
         print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add">';
@@ -886,7 +919,7 @@ else
         print '<tr>';
         $tmpcode='';
 		if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$type);
-        print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
+        print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
         if ($refalreadyexists)
         {
             print $langs->trans("RefAlreadyExists");
@@ -1047,6 +1080,7 @@ else
         // Other attributes
         $parameters=array('cols' => 3);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
         	print $object->showOptionals($extrafields,'edit',$parameters);
@@ -1098,7 +1132,8 @@ else
 
             // VAT
             print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-            print $form->load_tva("tva_tx",-1,$mysoc,'');
+            $defaultva=get_default_tva($mysoc, $mysoc);
+            print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
             print '</td></tr>';
 
             print '</table>';
@@ -1366,6 +1401,7 @@ else
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'cols'=>3);
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            print $hookmanager->resPrint;
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
             	print $object->showOptionals($extrafields,'edit');
@@ -1455,7 +1491,10 @@ else
             $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
             $object->next_prev_filter=" fk_product_type = ".$object->type;
 
-            dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
+            $shownav = 1;
+            if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+            dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
 
             print '<div class="fichecenter">';
@@ -1993,6 +2032,8 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
     $genallowed=$user->rights->produit->creer;
     $delallowed=$user->rights->produit->supprimer;
+
+    $var=true;
 
     print $formfile->showdocuments($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
     $somethingshown=$formfile->numoffiles;

@@ -6,8 +6,8 @@ English Dolibarr ChangeLog
 
 For developers:
 NEW: Add a lot of API REST: dictionaryevents, memberstypes, ...
-NEW: Big refactorization of multicompany transverse mode
-NEW: getEntity function use true $shared value by default
+NEW: Big refactorization of multicompany transverse mode.
+NEW: getEntity function use true $shared value by default.
 
 WARNING: 
 
@@ -17,7 +17,9 @@ Following changes may create regression for some external modules, but were nece
 * The page societe/soc.php was renamed into societe/card.php to match page naming conventions.
 * The page compta/facture.php was renamed into compta/facture/card.php to match page naming conventions.
 * The signature of method ->delete() of class Product and PriceExpression was changed from 
-  ->delete($id, notrigger) to ->delete(User, notrigger) to match standard dev rules.
+  ->delete(id, notrigger) to ->delete(User, notrigger) to match standard dev rules.
+* The signature of method ->delete() of class Adherent was changed from 
+  ->delete(id) to ->delete(id, User, notrigger) to match standard dev rules.
 * Removed CommonObject::displayMarginInfos (was deprecated in 3.8). Use same method into
   html.formmargin.class.php
 * Removed Societe::set_commnucation_level (was deprecated in 4.0). Was not used.
@@ -25,6 +27,34 @@ Following changes may create regression for some external modules, but were nece
   exists, but if an external module need action on it, it must provides itself its trigger file.
 * Use $conf->global->MULTICOMPANY_TRANSVERSE_MODE instead $conf->multicompany->transverse_mode
 * Use getEntity('xxx') instead getEntity('xxx', 1) and use getEntity('xxx', 0) instead getEntity('xxx')
+* The hook formObjectOptions was not implemented correctly in previous version. Sometimes, you had to return output 
+content by doing a print into function, sometimes by returning content into "resprint". This has been fixed to follow
+hook specifications so you must return output into "resprint".
+
+
+***** ChangeLog for 5.0.4 compared to 5.0.3 *****
+FIX: #5640 Prices of a predefined product/service were incorrect under certain circumstances
+FIX: #6541 since 4.0.4 to 5.0.0 autofill zip/town not working
+FIX: #6880 #6925
+FIX: #6885
+FIX: #6926
+FIX: #7003
+FIX: #7012
+FIX: #7040
+FIX: #7048 #6075
+FIX: Can set supplier invoice to billed.
+FIX: Can't create invoice if PO disapproved
+FIX: contratligne update
+FIX: CVE-2017-7886
+FIX: default param
+FIX: Line of invoices not inserted when using POS module and VAT NPR.
+FIX: origin & originid on supplierproposal
+FIX: Redirect to payment page from member subscription page failed if a unique security key was defined.
+FIX: REST api to get project when user has permission to read all.
+FIX: situation_progress param default value must be 100 and not 0
+FIX: SQL injection on user/index.php parameter search_statut.
+FIX: vat code not saved during product creation.
+FIX: Warnings
 
 ***** ChangeLog for 5.0.3 compared to 5.0.2 *****
 FIX: #6677 Expired contracts dashboard box does not show the name of the thirdparty

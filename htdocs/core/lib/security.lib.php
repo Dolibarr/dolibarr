@@ -147,7 +147,9 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
     $readok=1; $nbko=0;
     foreach ($featuresarray as $feature)	// first we check nb of test ko
     {
-    	if (! empty($user->societe_id) && ! empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && ! in_array($feature,$listofmodules))	// If limits on modules for external users, module must be into list of modules for external users
+        $featureforlistofmodule=$feature;
+        if ($featureforlistofmodule == 'produit') $featureforlistofmodule='product';
+        if (! empty($user->societe_id) && ! empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && ! in_array($featureforlistofmodule,$listofmodules))	// If limits on modules for external users, module must be into list of modules for external users
     	{
     		$readok=0; $nbko++;
     		continue;
@@ -401,9 +403,9 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		else if (in_array($feature,$checksoc))	// We check feature = checksoc
 		{
 			// If external user: Check permission for external users
-			if ($user->societe_id > 0)
+			if ($user->socid > 0)
 			{
-				if ($user->societe_id <> $objectid) return false;
+				if ($user->socid <> $objectid) return false;
 			}
 			// If internal user: Check permission for internal users that are restricted on their objects
 			else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))

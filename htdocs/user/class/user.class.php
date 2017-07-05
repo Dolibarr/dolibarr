@@ -221,7 +221,7 @@ class User extends CommonObject
 			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 				$sql.= " WHERE u.entity IS NOT NULL";    // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			else
-				$sql.= " WHERE u.entity IN (0, ".$conf->entity.")";
+				$sql.= " WHERE u.entity IN (0, ".($entity!=''?$entity:$conf->entity).")";   // search in entity provided in parameter
 		}
 
 		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba
@@ -236,6 +236,7 @@ class User extends CommonObject
 		{
 			$sql.= " AND u.rowid = ".$id;
 		}
+        $sql.= " ORDER BY u.entity ASC";    // Avoid random result when there is 2 login in 2 different entities
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -310,8 +311,8 @@ class User extends CommonObject
 				$this->fk_member            = $obj->fk_member;
 				$this->fk_user        		= $obj->fk_user;
 
-				// Protection when module multicompany was set, admin was set to first entity and the module disabled,
-				// then this admin user must be admin for all entities.
+				// Protection when module multicompany was set, admin was set to first entity and then, the module was disabled,
+				// in such case, this admin user must be admin for ALL entities.
 				if (empty($conf->multicompany->enabled) && $this->admin && $this->entity == 1) $this->entity = 0;
 
 				// Retreive all extrafield for thirdparty
@@ -2096,9 +2097,9 @@ class User extends CommonObject
 	      	$paddafterimage='';
 			if (abs($withpictoimg) == 1) $paddafterimage='style="margin-right: 3px;"';
         	// Only picto
-			if ($withpictoimg > 0) $picto='<div class="inline-block nopadding '.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</div>';
+			if ($withpictoimg > 0) $picto='<!-- picto user --><div class="inline-block nopadding '.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</div>';
         	// Picto must be a photo
-			else $picto='<div class="inline-block nopadding '.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg==-3?'small':''), 'mini', 0, 1).'</div>';
+			else $picto='<!-- picto photo user --><div class="inline-block nopadding '.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg==-3?'small':''), 'mini', 0, 1).'</div>';
             $result.=$picto;
 		}
 		if ($withpictoimg > -2 && $withpictoimg != 2)

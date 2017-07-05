@@ -13,7 +13,6 @@ VirtualDiffersFromPhysical=According to stock movement options, physical stock (
 RuleForStockReplenishment=Rule for stock replenishment
 SelectProductWithNotNullQty=Select at least one product with a quantity not null and a supplier
 ReplenishmentOrdersDesc=This is a list of all open supplier orders including predefined products. Only open orders with predefined products which may affect stocks, are visible here.
-RecordMovement=Record transfer
 StockMustBeEnoughForInvoice=Stock levels must be sufficient to add product/service to invoice. (Check it is done on current real stock when adding a line into the invoice whatever the rule is for automatic stock change)
 StockMustBeEnoughForShipment=Stock levels must be sufficient to add product/service for shipment. (Check it is done on current real stock when adding a line into Shipment whatever the rule is for automatic stock change)
 IsInPackage=Packaged

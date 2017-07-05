@@ -81,7 +81,7 @@ $socid='';
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('invoicesuppliercard','globalcard'));
 
 $object=new FactureFournisseur($db);
@@ -198,7 +198,7 @@ if (empty($reshook))
 	            {
                     $outputlangs = $langs;
                     $newlang = '';
-                    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+                    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
                     if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
                     if (! empty($newlang)) {
                         $outputlangs = new Translate("", $conf);
@@ -218,7 +218,7 @@ if (empty($reshook))
 	{
 	    $object->fetch($id);
 	    $object->fetch_thirdparty();
-	    $result=$object->delete($id);
+	    $result=$object->delete($user);
 	    if ($result > 0)
 	    {
 	        header('Location: list.php');
@@ -239,8 +239,8 @@ if (empty($reshook))
 			// Define output language
 			/*$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id'))
-				$newlang = GETPOST('lang_id');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09'))
+				$newlang = GETPOST('lang_id','aZ09');
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 				$newlang = $object->thirdparty->default_lang;
 			if (! empty($newlang)) {
@@ -286,8 +286,8 @@ if (empty($reshook))
 		    // Define output language
 		    $outputlangs = $langs;
 		    $newlang = '';
-		    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id'))
-		        $newlang = GETPOST('lang_id');
+		    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09'))
+		        $newlang = GETPOST('lang_id','aZ09');
 		        if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 		            $newlang = $object->thirdparty->default_lang;
 		            if (! empty($newlang)) {
@@ -1064,7 +1064,7 @@ if (empty($reshook))
 	    	{
 	    		$outputlangs = $langs;
 	    		$newlang = '';
-	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
 	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 	    		if (! empty($newlang)) {
 	    			$outputlangs = new Translate("", $conf);
@@ -1146,7 +1146,7 @@ if (empty($reshook))
 	    	{
 	    		$outputlangs = $langs;
 	    		$newlang = '';
-	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
 	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 	    		if (! empty($newlang)) {
 	    			$outputlangs = new Translate("", $conf);
@@ -1445,7 +1445,7 @@ if ($action == 'create')
     }
     else
     {
-        print $form->select_company($societe->id, 'socid', 's.fournisseur = 1', 'SelectThirdParty');
+        print $form->select_company($societe->id, 'socid', 's.fournisseur = 1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
         // reload page to retrieve supplier informations
         if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE))
         {
@@ -1824,6 +1824,7 @@ if ($action == 'create')
     // Other options
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
     // Bouton "Create Draft"
     print "</table>\n";
@@ -2659,7 +2660,7 @@ else
 	            {
 	                if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->fournisseur->supplier_invoice_advance->send)
 	                {
-	                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a></div>';
+	                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a></div>';
 	                }
 	                else print '<div class="inline-block divButAction"><span class="butActionRefused">'.$langs->trans('SendByMail').'</a></div>';
 	            }
@@ -2835,7 +2836,8 @@ else
                 $file=$fileparams['fullname'];
             }
 
-			print '<div class="clearboth"></div>';
+			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
+            print '<div class="clearboth"></div>';
             print '<br>';
             print load_fiche_titre($langs->trans('SendBillByMail'));
 

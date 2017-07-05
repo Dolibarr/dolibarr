@@ -78,7 +78,7 @@ $langs->load("interventions");
 $langs->load("contracts");
 $langs->load("products");
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('consumptionthirdparty'));
 
 
@@ -114,7 +114,7 @@ if (empty($socid))
 $head = societe_prepare_head($object);
 dol_fiche_head($head, 'consumption', $langs->trans("ThirdParty"), -1, 'company');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
@@ -365,7 +365,7 @@ if ($sql_select)
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
     print '</td>';
-    print '<td class="liste_titre nowrap">'; // date
+    print '<td class="liste_titre nowrap center">'; // date
     print $formother->select_month($month?$month:-1,'month',1);
     $formother->select_year($year?$year:-1,'year',1, 20, 1);
     print '</td>';
@@ -457,7 +457,7 @@ if ($sql_select)
 
 				$outputlangs = $langs;
 				$newlang='';
-				if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+				if (empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
 				if (empty($newlang)) $newlang=$object->default_lang;
 				if (! empty($newlang))
 				{

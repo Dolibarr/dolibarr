@@ -50,7 +50,7 @@ $socid=0;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (! $user->rights->projet->lire) accessforbidden();
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projecttaskcard','globalcard'));
 
 $object = new Task($db);
@@ -162,10 +162,10 @@ if ($action == 'builddoc' && $user->rights->projet->creer)
 	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
 	$outputlangs = $langs;
-	if (GETPOST('lang_id'))
+	if (GETPOST('lang_id','aZ09'))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang(GETPOST('lang_id'));
+		$outputlangs->setDefaultLang(GETPOST('lang_id','aZ09'));
 	}
 	$result= $object->generateDocument($object->modelpdf, $outputlangs);
 	if ($result <= 0)
@@ -408,6 +408,7 @@ if ($id > 0 || ! empty($ref))
 			// Other options
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+            print $hookmanager->resPrint;
 			if (empty($reshook) && ! empty($extrafields->attribute_label))
 			{
 				print $object->showOptionals($extrafields,'edit');

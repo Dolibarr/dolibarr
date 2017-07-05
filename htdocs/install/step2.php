@@ -86,7 +86,7 @@ if (! is_writable($conffile))
 
 if ($action == "set")
 {
-    print '<h3>'.$langs->trans("Database").'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/database.svg" width="20" alt="Database"> '.$langs->trans("Database").'</h3>';
 
     print '<table cellspacing="0" style="padding: 4px 4px 4px 0px" border="0" width="100%">';
     $error=0;

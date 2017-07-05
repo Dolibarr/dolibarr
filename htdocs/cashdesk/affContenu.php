@@ -34,8 +34,8 @@ if ( $_GET['id'] == 'NOUV' )
 // Recuperation, s'il existe, de l'objet contenant les infos de la vente en cours ...
 if (isset($_SESSION['serObjFacturation']))
 {
-	$obj_facturation = unserialize($_SESSION['serObjFacturation']);
-	unset($_SESSION['serObjFacturation']);
+    $obj_facturation = unserialize($_SESSION['serObjFacturation']);
+    unset($_SESSION['serObjFacturation']);
 }
 else
 {
@@ -43,7 +43,7 @@ else
 	$obj_facturation = new Facturation();
 }
 
-
+// $obj_facturation contains data for all invoice total + selection of current product
 
 $obj_facturation->calculTotaux();	// Redefine prix_total_ttc, prix_total_ht et montant_tva from $_SESSION['poscart']
 

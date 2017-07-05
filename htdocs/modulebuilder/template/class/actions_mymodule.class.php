@@ -1,6 +1,5 @@
 <?php
-/* <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) <year>  <name of author>
+/* Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +28,20 @@
  */
 class ActionsMyModule
 {
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    /**
+     * @var string Error
+     */
+    public $error = '';
+    /**
+     * @var array Errors
+     */
+    public $errors = array();
+
+
 	/**
 	 * @var array Hook results. Propagated to $hookmanager->resArray for later reuse
 	 */
@@ -39,16 +52,15 @@ class ActionsMyModule
 	 */
 	public $resprints;
 
-	/**
-	 * @var array Errors
-	 */
-	public $errors = array();
 
 	/**
 	 * Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	public function __construct()
+	public function __construct($db)
 	{
+	    $this->db = $db;
 	}
 
 	/**

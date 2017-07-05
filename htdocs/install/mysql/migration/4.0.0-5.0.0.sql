@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 4.0.0 or higher.
+-- when current version is 5.0.0 or higher.
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
@@ -271,3 +271,8 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10
 
 
 ALTER TABLE llx_events MODIFY COLUMN ip varchar(250);
+
+
+UPDATE llx_bank SET label= '(SupplierInvoicePayment)' WHERE label= 'Règlement fournisseur';
+UPDATE llx_bank SET label= '(CustomerInvoicePayment)' WHERE label= 'Règlement client';
+

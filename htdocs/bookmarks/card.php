@@ -39,6 +39,7 @@ $id=GETPOST("id");
 $action=GETPOST("action","alpha");
 $title=GETPOST("title","alpha");
 $url=GETPOST("url","alpha");
+$urlsource=GETPOST("urlsource","alpha");
 $target=GETPOST("target","alpha");
 $userid=GETPOST("userid","int");
 $position=GETPOST("position","int");
@@ -64,7 +65,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	if (GETPOST("cancel"))
 	{
-		if (empty($backtopage)) $backtopage=(GETPOST("urlsource")?GETPOST("urlsource"):((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
+		if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
 		header("Location: ".$backtopage);
 		exit;
 	}
@@ -97,7 +98,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 		if ($res > 0)
 		{
-			if (empty($backtopage)) $backtopage=(GETPOST("urlsource")?GETPOST("urlsource"):DOL_URL_ROOT.'/bookmarks/list.php');
+			if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
 			header("Location: ".$backtopage);
 			exit;
 		}
@@ -120,6 +121,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 		$action = $invertedaction;
 	}
 }
+
 
 /*
  * View
@@ -153,15 +155,15 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("NewBookmark"));
 
-	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
+	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"), 0, 'bookmark');
 
 	print '<table class="border" width="100%">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input id="titlebookmark" class="flat minwidth100" name="title" value="'.$title.'"></td><td class="hideonsmartphone">'.$langs->trans("SetHereATitleForLink").'</td></tr>';
 	dol_set_focus('#titlebookmark');
-	
+
 	// Url
-	print '<tr><td class="fieldrequired">'.$langs->trans("UrlOrLink").'</td><td><input class="flat quatrevingtpercent" name="url" value="'.$url.'"></td><td class="hideonsmartphone">'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("UrlOrLink").'</td><td><input class="flat quatrevingtpercent" name="url" value="'.dol_escape_htmltag($url).'"></td><td class="hideonsmartphone">'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</td></tr>';
 
 	// Target
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
@@ -219,14 +221,14 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	}
 
 
-	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
+	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, 'bookmark');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans("BackToList").'</a>';
-	
+
     dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', '', 0);
 
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border" width="100%">';
 
@@ -304,7 +306,7 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	print '</table>';
 
 	print '</div>';
-	
+
 	dol_fiche_end();
 
 	if ($action == 'edit')
