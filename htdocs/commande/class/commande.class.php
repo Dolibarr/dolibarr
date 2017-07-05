@@ -706,10 +706,10 @@ class Commande extends CommonOrder
 
         // Clean parameters
         $this->brouillon = 1;		// set command as draft
-		
+
 		// $date_commande is deprecated
         $date = ($this->date_commande ? $this->date_commande : $this->date);
-		
+
 		// Multicurrency (test on $this->multicurrency_tx because we sould take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $date);
 		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
@@ -1468,7 +1468,7 @@ class Commande extends CommonOrder
             $tva_npr = get_default_npr($mysoc,$this->thirdparty,$prod->id);
             if (empty($tva_tx)) $tva_npr=0;
             $vat_src_code = '';     // May be defined into tva_tx
-            
+
             $localtax1_tx=get_localtax($tva_tx,1,$this->thirdparty,$mysoc,$tva_npr);
             $localtax2_tx=get_localtax($tva_tx,2,$this->thirdparty,$mysoc,$tva_npr);
 
@@ -1798,7 +1798,7 @@ class Commande extends CommonOrder
                 $line->product_type     = $objp->product_type;
                 $line->qty              = $objp->qty;
 
-                $line->vat_src_code     = $objp->vat_src_code; 
+                $line->vat_src_code     = $objp->vat_src_code;
                 $line->tva_tx           = $objp->tva_tx;
 	            $line->localtax1_tx     = $objp->localtax1_tx;
                 $line->localtax2_tx     = $objp->localtax2_tx;
@@ -3106,7 +3106,7 @@ class Commande extends CommonOrder
         $error = 0;
 
         dol_syslog(get_class($this) . "::delete ".$this->id, LOG_DEBUG);
-        
+
         $this->db->begin();
 
         if (! $error && ! $notrigger)
@@ -3369,23 +3369,32 @@ class Commande extends CommonOrder
     /**
      *	Return clicable link of object (with eventually picto)
      *
-     *	@param      int			$withpicto      Add picto into link
-     *	@param      int			$option         Where point the link (0=> main card, 1,2 => shipment)
-     *	@param      int			$max          	Max length to show
-     *	@param      int			$short			???
-     *  @param	    int   	    $notooltip		1=Disable tooltip
-     *	@return     string          			String with URL
+     *	@param      int			$withpicto                Add picto into link
+     *	@param      int			$option                   Where point the link (0=> main card, 1,2 => shipment)
+     *	@param      int			$max          	          Max length to show
+     *	@param      int			$short			          ???
+     *  @param	    int   	    $notooltip		          1=Disable tooltip
+     *  @param      int         $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return     string          			          String with URL
      */
-    function getNomUrl($withpicto=0,$option=0,$max=0,$short=0,$notooltip=0)
+    function getNomUrl($withpicto=0, $option=0, $max=0, $short=0, $notooltip=0, $save_lastsearch_value=-1)
     {
         global $conf, $langs, $user;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
-        
+
         $result='';
 
         if (! empty($conf->expedition->enabled) && ($option == 1 || $option == 2)) $url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
         else $url = DOL_URL_ROOT.'/commande/card.php?id='.$this->id;
+
+        if ($option !== 'nolink')
+        {
+            // Add param to save lastsearch_values or not
+            $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+            if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+            if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
 
         if ($short) return $url;
 
@@ -3418,7 +3427,7 @@ class Commande extends CommonOrder
 		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
 		    $linkclose.=' class="classfortooltip"';
 		}
-		
+
         $linkstart = '<a href="'.$url.'"';
         $linkstart.=$linkclose.'>';
         $linkend='</a>';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,16 +52,16 @@ $search_numero_compte_end = GETPOST('search_numero_compte_end', 'alpha');
 if ($search_numero_compte_end == - 1) {
 	$search_numero_compte_end = '';
 }
-$search_code_tiers = GETPOST('search_code_tiers', 'alpha');
-$search_code_tiers_start = GETPOST('search_code_tiers_start', 'alpha');
-if ($search_code_tiers_start == - 1) {
-	$search_code_tiers_start = '';
+$search_subledger_account = GETPOST('search_subledger_account', 'alpha');
+$search_subledger_account_start = GETPOST('search_subledger_account_start', 'alpha');
+if ($search_subledger_account_start == - 1) {
+	$search_subledger_account_start = '';
 }
-$search_code_tiers_end = GETPOST('search_code_tiers_end', 'alpha');
-if ($search_code_tiers_end == - 1) {
-	$search_code_tiers_end = '';
+$search_subledger_account_end = GETPOST('search_subledger_account_end', 'alpha');
+if ($search_subledger_account_end == - 1) {
+	$search_subledger_account_end = '';
 }
-$search_label_compte = GETPOST('search_label_compte', 'alpha');
+$search_label_operation = GETPOST('search_label_operation', 'alpha');
 $search_sens = GETPOST('search_sens', 'alpha');
 $search_code_journal = GETPOST('search_code_journal', 'alpha');
 
@@ -81,16 +81,19 @@ if ($sortfield == "")
 
 $offset = $limit * $page;
 
-llxHeader('', $langs->trans("Bookkeeping"));
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+/*
+ * Actions
+ */
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
 	$search_doc_type = "";
 	$search_doc_date = "";
 	$search_doc_ref = "";
 	$search_numero_compte = "";
-	$search_code_tiers = "";
-	$search_label_compte = "";
+	$search_subledger_account = "";
+	$search_label_operation = "";
 	$search_sens = "";
 	$search_code_journal = "";
 }
@@ -129,21 +132,21 @@ if (! empty($search_numero_compte_end)) {
 	$filter['t.numero_compte<='] = $search_numero_compte_end;
 	$options .= '&amp;search_numero_compte_end=' . $search_numero_compte_end;
 }
-if (! empty($search_code_tiers)) {
-	$filter['t.code_tiers'] = $search_code_tiers;
-	$options .= '&amp;search_code_tiers=' . $search_code_tiers;
+if (! empty($search_subledger_account)) {
+	$filter['t.subledger_account'] = $search_subledger_account;
+	$options .= '&amp;search_subledger_account=' . $search_subledger_account;
 }
-if (! empty($search_code_tiers_start)) {
-	$filter['t.code_tiers>='] = $search_code_tiers_start;
-	$options .= '&amp;search_code_tiers_start=' . $search_code_tiers_start;
+if (! empty($search_subledger_account_start)) {
+	$filter['t.subledger_account>='] = $search_subledger_account_start;
+	$options .= '&amp;search_subledger_account_start=' . $search_subledger_account_start;
 }
-if (! empty($search_code_tiers_end)) {
-	$filter['t.code_tiers<='] = $search_code_tiers_end;
-	$options .= '&amp;search_code_tiers_end=' . $search_code_tiers_end;
+if (! empty($search_subledger_account_end)) {
+	$filter['t.subledger_account<='] = $search_subledger_account_end;
+	$options .= '&amp;search_subledger_account_end=' . $search_subledger_account_end;
 }
-if (! empty($search_label_compte)) {
-	$filter['t.label_compte'] = $search_label_compte;
-	$options .= '&amp;search_label_compte=' . $search_label_compte;
+if (! empty($search_label_operation)) {
+	$filter['t.label_operation'] = $search_label_operation;
+	$options .= '&amp;search_label_operation=' . $search_label_operation;
 }
 if (! empty($search_sens)) {
 	$filter['t.sens'] = $search_sens;
@@ -154,9 +157,12 @@ if (! empty($search_code_journal)) {
 	$options .= '&amp;search_code_journal=' . $search_code_journal;
 }
 
+
 /*
- * Mode List
+ * Actions
  */
+
+llxHeader('', $langs->trans("Bookkeeping"));
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -188,9 +194,9 @@ print $formaccounting->select_account($search_numero_compte_end, 'search_numero_
 print '</div>';
 print '<div class="liste_titre">';
 print $langs->trans('From') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
-print $formaccounting->select_auxaccount($search_code_tiers_start, 'search_code_tiers_start', 1);
+print $formaccounting->select_auxaccount($search_subledger_account_start, 'search_subledger_account_start', 1);
 print $langs->trans('To') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
-print $formaccounting->select_auxaccount($search_code_tiers_end, 'searchcode_tiers_end', 1);
+print $formaccounting->select_auxaccount($search_subledger_account_end, 'search_subledger_account_end', 1);
 print '</div>';
 print "<table class=\"noborder\" width=\"100%\">";
 
@@ -200,8 +206,8 @@ print_liste_field_titre($langs->trans("Doctype"), $_SERVER['PHP_SELF'], "t.doc_t
 print_liste_field_titre($langs->trans("Date"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("AccountAccounting"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("ThirdPartyAccount"), $_SERVER['PHP_SELF'], "t.code_tiers", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_compte", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("ThirdPartyAccount"), $_SERVER['PHP_SELF'], "t.subledger_account", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_operation", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Amount"), $_SERVER['PHP_SELF'], "t.montant", "", $options, 'align="center"', $sortfield, $sortorder);
@@ -232,11 +238,11 @@ print '<input type="text" size=6 class="flat" name="search_numero_compte" value=
 print '</td>';
 
 print '<td class="liste_titre">';
-print '<input type="text" size=6 class="flat" name="search_code_tiers" value="' . $search_code_tiers . '"/>';
+print '<input type="text" size=6 class="flat" name="search_subledger_account" value="' . $search_subledger_account . '"/>';
 print '</td>';
 
 print '<td class="liste_titre">';
-print '<input type="text" size=6 class="flat" name="search_label_compte" value="' . $search_label_compte . '"/>';
+print '<input type="text" size=6 class="flat" name="search_label_operation" value="' . $search_label_operation . '"/>';
 print '</td>';
 
 print '<td class="liste_titre">';
@@ -264,8 +270,6 @@ print '</td>';
 
 print "</tr>\n";
 
-$var = True;
-
 foreach ( $object->lines as $line ) {
 
 	print '<tr class="oddeven">';
@@ -274,8 +278,8 @@ foreach ( $object->lines as $line ) {
 	print '<td align="center">' . dol_print_date($line->doc_date) . '</td>';
 	print '<td>' . $line->doc_ref . '</td>';
 	print '<td>' . length_accountg($line->numero_compte) . '</td>';
-	print '<td>' . length_accounta($line->code_tiers) . '</td>';
-	print '<td>' . $line->label_compte . '</td>';
+	print '<td>' . length_accounta($line->subledger_account) . '</td>';
+	print '<td>' . $line->label_operation . '</td>';
 	print '<td align="right">' . price($line->debit) . '</td>';
 	print '<td align="right">' . price($line->credit) . '</td>';
 	print '<td align="right">' . price($line->montant) . '</td>';

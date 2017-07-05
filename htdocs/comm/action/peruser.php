@@ -86,12 +86,12 @@ $status=GETPOST("status");
 $type=GETPOST("type");
 $maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
-if (GETPOST('actioncode','array')) 
+if (GETPOST('actioncode','array'))
 {
     $actioncode=GETPOST('actioncode','array',3);
     if (! count($actioncode)) $actioncode='0';
 }
-else 
+else
 {
     $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
@@ -579,7 +579,7 @@ $newparam=preg_replace('/showbirthday_=/i','showbirthday=',$newparam);	// Restor
 $newparam.='&viewweek=1';
 
 echo '<form id="move_event" action="" method="POST"><input type="hidden" name="action" value="mupdate">';
-echo '<input type="hidden" name="backtopage" value="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'">';
+echo '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
 echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 echo '<input type="hidden" name="newdate" id="newdate">' ;
 echo '</form>';
@@ -729,8 +729,8 @@ foreach ($usernames as $username)
 {
 	$var = ! $var;
 	echo "<tr>";
-	echo '<td class="cal_current_month cal_peruserviewname'.($var?' cal_impair':'').'">';
-	print $username->getNomUrl(-1,'',0,0,24,1,'');
+	echo '<td class="tdoverflowmax100 cal_current_month cal_peruserviewname'.($var?' cal_impair':'').'">';
+	print $username->getNomUrl(-1,'',0,0,20,1,'');
 	print '</td>';
 	$tmpday = $sav;
 

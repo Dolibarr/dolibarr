@@ -41,7 +41,6 @@ DocModelAuroreDescription=Modelo completo de solicitud (logo...)
 CommercialAsk=Solicitud de precio
 DefaultModelSupplierProposalToBill=Plantilla por defecto cuando cierra una solicitud de precio (aceptada)
 DefaultModelSupplierProposalClosed=Plantilla por defecto cuando cierra una solicitud de precio (rechazada)
-ListOfSupplierProposal=Lista de solicitudes de presupuestos a proveedores
 ListSupplierProposalsAssociatedProject=Lista de presupuestos a proveedor asociados con el proyecto
 SupplierProposalsToClose=Presupuestos a proveedor a cerrar
 SupplierProposalsToProcess=Presupuestos a proveedor a procesar

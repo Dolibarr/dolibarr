@@ -1,19 +1,19 @@
 # Dolibarr language file - Source file is en_US - install
-InstallEasy=Just follow the instructions step by step.
-MiscellaneousChecks=Prerequisites check
-ConfFileExists=Configuration file <b>%s</b> exists.
-ConfFileDoesNotExistsAndCouldNotBeCreated=Configuration file <b>%s</b> does not exist and could not be created !
-ConfFileCouldBeCreated=Configuration file <b>%s</b> could be created.
-ConfFileIsNotWritable=Configuration file <b>%s</b> is not writable. Check permissions. For first install, your web server must be granted to be able to write into this file during configuration process ("chmod 666" for example on a Unix like OS).
-ConfFileIsWritable=Configuration file <b>%s</b> is writable.
-ConfFileReload=Reload all information from configuration file.
-PHPSupportSessions=This PHP supports sessions.
-PHPSupportPOSTGETOk=This PHP supports variables POST and GET.
-PHPSupportPOSTGETKo=It's possible your PHP setup does not support variables POST and/or GET. Check your parameter <b>variables_order</b> in php.ini.
-PHPSupportGD=This PHP support GD graphical functions.
+InstallEasy=Pratite instrukcije korak po korak.
+MiscellaneousChecks=Provjera preduvjeta
+ConfFileExists=Konfiguracijska datoteka<b>%s</b> postoji.
+ConfFileDoesNotExistsAndCouldNotBeCreated=Konfiguracijska datoteka <b>%s</b> ne postoji i ne može biti napravljena !
+ConfFileCouldBeCreated=Konfiguracijska datoteka <b>%s</b> se može napraviti.
+ConfFileIsNotWritable=Po konfiguracijskoj datoteci <b>%s</b> se ne može pisati. Provjerite dozvole. Za prvu instalaciju, vaš web server mora dopustiti pisanje u ovu datoteku tokom procesa konfiguracije ("chmod 666" naprimjer na OS poput Unixa).
+ConfFileIsWritable=Konfiguracijska datoteka <b>%s</b> je slobodna za pisanje.
+ConfFileReload=Napuni sve informacije iz konfiguracijske datoteke.
+PHPSupportSessions=Ovaj PHP podržava sesije.
+PHPSupportPOSTGETOk=Ovaj PHP podržava varijable POST i GET.
+PHPSupportPOSTGETKo=Moguće je da vaše PHP postavke ne podržavaju varijable POST i/ili GET. Provjerite vaš parametar <b>variables_order</b> u php.ini.
+PHPSupportGD=Ovaj PHP podržava GD grafičke funkcije.
 PHPSupportCurl=This PHP support Curl.
-PHPSupportUTF8=This PHP support UTF8 functions.
-PHPMemoryOK=Your PHP max session memory is set to <b>%s</b>. This should be enough.
+PHPSupportUTF8=Ovaj PHP podržava UTF8 funkcije.
+PHPMemoryOK=Vaša maksimalna memorija za PHP  sesiju je postavljena na <b>%s</b>. To bi trebalo biti dovoljno.
 PHPMemoryTooLow=Your PHP max session memory is set to <b>%s</b> bytes. This should be too low. Change your <b>php.ini</b> to set <b>memory_limit</b> parameter to at least <b>%s</b> bytes.
 Recheck=Click here for a more significative test
 ErrorPHPDoesNotSupportSessions=Your PHP installation does not support sessions. This feature is required to make Dolibarr working. Check your PHP setup.
@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values
 KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
 KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
 KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

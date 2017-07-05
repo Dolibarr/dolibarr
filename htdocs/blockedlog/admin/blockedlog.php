@@ -17,7 +17,7 @@
 
 /**
  *	\file       htdocs/blockedlog/admin/blockedlog.php
- *  \ingroup    system
+ *  \ingroup    blockedlog
  *  \brief      Page setup for blockedlog module
  */
 
@@ -31,12 +31,13 @@ $langs->load("other");
 $langs->load("blockedlog");
 
 if (! $user->admin) accessforbidden();
-  
+
 $action = GETPOST('action','alpha');
 
 /*
  * Actions
  */
+
 if (preg_match('/set_(.*)/',$action,$reg))
 {
 	$code=$reg[1];
@@ -77,7 +78,7 @@ $form=new Form($db);
 llxHeader('',$langs->trans("BlockedLogSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("ModuleSetup").' BlockedLog',$linkback);
+print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'),$linkback);
 
 $head=blockedlogadmin_prepare_head();
 
@@ -95,13 +96,11 @@ print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td class="titlefield">';
-print $langs->trans("EntityKey").'</td><td align="center">';
-
+print $langs->trans("CompanyInitialKey").'</td><td>';
 print $block_static->getSignature();
-
 print '</td></tr>';
 
-if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
+if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
 	// Example with a yes / no select
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';

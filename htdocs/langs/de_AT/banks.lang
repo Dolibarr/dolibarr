@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - banks
 MenuBankCash=Überweisung/Bar
 BankName=Banknamen
-FinancialAccount=Konto
 BankAccount=Kontonummer
 BankAccounts=Kontonummern
 AccountRef=Referenznummer

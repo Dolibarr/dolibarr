@@ -61,7 +61,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
 		dol_print_error($db);
 	}
 }
-	
+
 if (preg_match('/del_(.*)/',$action,$reg))
 {
 	$code=$reg[1];
@@ -79,7 +79,7 @@ if (preg_match('/del_(.*)/',$action,$reg))
 if ($action == 'add_currency')
 {
 	$langs->loadCacheCurrencies('');
-	
+
 	$code = GETPOST('code', 'alpha');
 	$rate = GETPOST('rate', 'alpha');
 	$currency = new MultiCurrency($db);
@@ -96,23 +96,23 @@ if ($action == 'add_currency')
 elseif ($action == 'update_currency')
 {
 	$submit = GETPOST('submit', 'alpha');
-	
+
 	if ($submit == $langs->trans('Modify'))
 	{
 		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
 		$rate = GETPOST('rate', 'float');
 		$currency = new MultiCurrency($db);
-		
+
 		if ($currency->fetch($fk_multicurrency) > 0)
 		{
 			$currency->updateRate($rate);
-		}	
+		}
 	}
 	elseif ($submit == $langs->trans('Delete'))
 	{
 		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
 		$currency = new MultiCurrency($db);
-		
+
 		if ($currency->fetch($fk_multicurrency) > 0)
 		{
 			if ($currency->delete() > 0) setEventMessages($langs->trans('RecordDeleted'), array());
@@ -120,14 +120,14 @@ elseif ($action == 'update_currency')
 		}
 	}
 }
-elseif ($action == 'synchronize') 
+elseif ($action == 'synchronize')
 {
 	$response = GETPOST('response');
 	$response = json_decode($response);
-	
+
 	if ($response->success)
 	{
-		MultiCurrency::syncRates($response);	
+		MultiCurrency::syncRates($response);
 	}
 	else
 	{
@@ -159,19 +159,12 @@ $page_name = "MultiCurrencySetup";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">'
-    . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
 print_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
 $head = multicurrencyAdminPrepareHead();
-dol_fiche_head(
-    $head,
-    'settings',
-    $langs->trans("ModuleSetup"),
-    0,
-    "multicurrency"
-);
+dol_fiche_head($head, 'settings', $langs->trans("ModuleSetup"), -1, "multicurrency");
 
 // Setup page goes here
 $form=new Form($db);
@@ -225,7 +218,7 @@ print '</form>';
 print '</td></tr>';
 */
 
-/* TODO uncomment when the functionality will integrated 
+/* TODO uncomment when the functionality will integrated
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_modifyRateApplication").'</td>';
@@ -258,9 +251,9 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print $langs->trans("Value").'&nbsp;<input type="button" id="bt_sync" class="button" onclick="javascript:getRates();" value="'.$langs->trans('Synchronize').'" />';
 	print '</form>';
 	print '</td></tr>';
-	
-	
-	
+
+
+
 	print '<tr class="oddeven">';
 	print '<td><a target="_blank" href="https://currencylayer.com">'.$langs->transnoentitiesnoconv("multicurrency_appId").'</a></td>';
 	print '<td align="center" width="20">&nbsp;</td>';
@@ -272,8 +265,8 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</form>';
 	print '</td></tr>';
-	
-	
+
+
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->transnoentitiesnoconv("multicurrency_appCurrencySource").'</td>';
 	print '<td align="center" width="20">&nbsp;</td>';
@@ -285,8 +278,8 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</form>';
 	print '</td></tr>';
-	
-	
+
+
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->transnoentitiesnoconv("multicurrency_alternateCurrencySource").'</td>';
 	print '<td align="center" width="20">&nbsp;</td>';
@@ -298,7 +291,7 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</form>';
 	print '</td></tr>';
-	
+
 	print '</table>';
 	print '<br />';
 }
@@ -333,8 +326,8 @@ print '</td></form></tr>';
 foreach ($TCurrency as &$currency)
 {
 	if($currency->code == $conf->currency) continue;
-	
-	
+
+
 	print '<tr class="oddeven">';
 	print '<td>'.$currency->code.' - '.$currency->name.'</td>';
 	print '<td align="center" width="20">&nbsp;</td>';
@@ -362,7 +355,7 @@ print '
 		{
 			$("#bt_sync").attr("disabled", true);
 			var url_sync = "http://apilayer.net/api/live?access_key='.$conf->global->MULTICURRENCY_APP_ID.'&format=1'.(!empty($conf->global->MULTICURRENCY_APP_SOURCE) ? '&source='.$conf->global->MULTICURRENCY_APP_SOURCE : '').'";
-			
+
 			$.ajax({
 				url: url_sync,
 				dataType: "jsonp"

@@ -690,6 +690,7 @@ class FormFile
             {
                 $headershown=1;
                 $out.= '<div class="titre">'.$titletoshow.'</div>'."\n";
+                $out.= '<div class="div-table-responsive-no-min">';
                 $out.= '<table class="noborder" summary="listofdocumentstable" id="'.$modulepart.'_table" width="100%">'."\n";
             }
 
@@ -712,7 +713,7 @@ class FormFile
 					$out.= '<td class="tdoverflowmax300">';
                     $tmp = $this->showPreview($file,$modulepart,$relativepath,0,$param);
                     $out.= ($tmp?$tmp.' ':'');
-					$out.= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
+					$out.= '<a class="documentdownload" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
 					$mime=dol_mimetype($relativepath,'',0);
 					if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
 					$out.= ' target="_blank">';
@@ -1001,6 +1002,7 @@ class FormFile
 			    print '<input type="hidden" name="id" value="'.$object->id.'">';
 			    print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
+
 			print '<div class="div-table-responsive-no-min">';
 			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborder':'liste').'">'."\n";
 
@@ -1105,8 +1107,6 @@ class FormFile
 						&& $file['name'] != '..'
 						&& ! preg_match('/\.meta$/i',$file['name']))
 				{
-
-
 					if ($filearray[$key]['rowid'] > 0) $lastrowid = $filearray[$key]['rowid'];
 
 					$editline=0;

@@ -125,7 +125,7 @@ if ($action=='filemerge')
 		$filetomerge_file_array = GETPOST('filetoadd');
 
 		if ($conf->global->MAIN_MULTILANGS) {
-			$lang_id = GETPOST('lang_id');
+			$lang_id = GETPOST('lang_id','aZ09');
 		}
 
 		// Delete all file already associated
@@ -245,7 +245,7 @@ if ($object->id)
     	$filetomerge = new Propalmergepdfproduct($db);
 
     	if ($conf->global->MAIN_MULTILANGS) {
-    		$lang_id = GETPOST('lang_id');
+    		$lang_id = GETPOST('lang_id','aZ09');
     		$result = $filetomerge->fetch_by_product($object->id, $lang_id);
     	} else {
     		$result = $filetomerge->fetch_by_product($object->id);

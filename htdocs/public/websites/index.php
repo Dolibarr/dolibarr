@@ -67,23 +67,51 @@ if (empty($pageid))
 {
     require_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
     require_once DOL_DOCUMENT_ROOT.'/websites/class/websitepage.class.php';
-    
+
     $object=new Website($db);
     $object->fetch(0, $website);
-    
-    $objectpage=new WebsitePage($db);
-    $array=$objectpage->fetchAll($object->id);
-    
-    if (count($array) > 0)
+    if (empty($object->id))
     {
-        $firstrep=reset($array);
-        $pageid=$firstrep->id;
+        if (empty($pageid))
+        {
+            // Return header 404
+            header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
+
+            include DOL_DOCUMENT_ROOT.'/public/error-404.php';
+            exit;
+        }
+    }
+
+    $objectpage=new WebsitePage($db);
+
+    if ($object->fk_default_home > 0)
+    {
+        $result=$objectpage->fetch($object->fk_default_home);
+        if ($result > 0)
+        {
+            $pageid = $objectpage->id;
+        }
+    }
+
+    if (empty($pageid))
+    {
+        $array=$objectpage->fetchAll($object->id);
+        if (is_array($array) && count($array) > 0)
+        {
+            $firstrep=reset($array);
+            $pageid=$firstrep->id;
+        }
     }
 }
 if (empty($pageid))
 {
+    // Return header 404
+    header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
+
     $langs->load("website");
     print $langs->trans("PreviewOfSiteNotYetAvailable");
+
+    include DOL_DOCUMENT_ROOT.'/public/error-404.php';
     exit;
 }
 
@@ -95,7 +123,7 @@ if ($pageid == 'css')   // No more used ?
     header('Content-type: text/css');
     // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
     //if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
-    //else 
+    //else
     header('Cache-Control: no-cache');
     $original_file=$dolibarr_main_data_root.'/websites/'.$website.'/styles.css.php';
 }
@@ -136,9 +164,13 @@ $original_file_osencoded=dol_osencode($original_file);	// New file name encoded 
 // This test if file exists should be useless. We keep it to find bug more easily
 if (! file_exists($original_file_osencoded))
 {
+    // Return header 404
+    header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
+
     $langs->load("website");
     print $langs->trans("RequestedPageHasNoContentYet", $pageid);
-    //dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+
+    include DOL_DOCUMENT_ROOT.'/public/error-404.php';
     exit;
 }
 

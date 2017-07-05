@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 /**
  *      \file       htdocs/core/boxes/box_services_contracts.php
  *		\ingroup    produits,services
- *      \brief      Module de generation de l'affichage de la box services_vendus
+ *      \brief      Widget of sells products
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -124,7 +124,7 @@ class box_services_contracts extends ModeleBoxes
 					$thirdpartytmp->id = $objp->socid;
 
 					// Multilangs
-					if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
+					if (! empty($conf->global->MAIN_MULTILANGS) && $objp->product_id > 0) // if option multilang is on
 					{
 						$sqld = "SELECT label";
 						$sqld.= " FROM ".MAIN_DB_PREFIX."product_lang";

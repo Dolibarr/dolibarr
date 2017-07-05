@@ -44,6 +44,7 @@ ErrorFailedToWriteInDir=Failed to write in directory %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 ErrorUserCannotBeDelete=User cannot be deleted. May be it is associated to Dolibarr entities.
 ErrorFieldsRequired=Some required fields were not filled.
+ErrorSubjectIsRequired=The email topic is required
 ErrorFailedToCreateDir=Failed to create a directory. Check that Web server user has permissions to write into Dolibarr documents directory. If parameter <b>safe_mode</b> is enabled on this PHP, check that Dolibarr php files owns to web server user (or group).
 ErrorNoMailDefinedForThisUser=No mail defined for this user
 ErrorFeatureNeedJavascript=This feature need javascript to be activated to work. Change this in setup - display.
@@ -182,6 +183,7 @@ ErrorFailedToLoadLoginFileForMode=Failed to get the login key for mode '%s'.
 ErrorModuleNotFound=File of module was not found.
 ErrorFieldAccountNotDefinedForBankLine=Value for Accounting account not defined for source line id %s (%s)
 ErrorFieldAccountNotDefinedForInvoiceLine=Value for Accounting account not defined for invoice id %s (%s)
+ErrorFieldAccountNotDefinedForLine=Value for Accounting account not defined for the line (%s)
 ErrorBankStatementNameMustFollowRegex=Error, bank statement name must follow the following syntax rule %s
 ErrorPhpMailDelivery=Check that you don't use a too high number of recipients and that your email content is not similar to a Spam. Ask also your administrator to check firewall and server logs files for a more complete information.
 ErrorUserNotAssignedToTask=User must be assigned to task to be able to enter time consumed.
@@ -191,6 +193,7 @@ ErrorFilenameDosNotMatchDolibarrPackageRules=The name of the module package (<st
 ErrorDuplicateTrigger=Error, duplicate trigger name %s. Already loaded from %s.
 ErrorNoWarehouseDefined=Error, no warehouses defined.
 ErrorBadLinkSourceSetButBadValueForRef=The link you use is not valid. A 'source' for payment is defined, but value for 'ref' is not valid. 
+ErrorTooManyErrorsProcessStopped=Too many errors. Process was stopped.
 
 # Warnings
 WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.  

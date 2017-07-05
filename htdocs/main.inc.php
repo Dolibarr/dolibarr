@@ -97,8 +97,9 @@ function test_sql_and_script_inject($val, $type)
     $sql_inj += preg_match('/<script/i', $val);
     if (! defined('NOSTYLECHECK')) $sql_inj += preg_match('/<style/i', $val);
     $sql_inj += preg_match('/base[\s]+href/si', $val);
-    $sql_inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='>' onmouseover=alert(1)>
-    $sql_inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='>' onerror = alert(1)>
+    $sql_inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+    $sql_inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='...' onerror = alert(1)>
+    $sql_inj += preg_match('/onfocus\s*=/i', $val);       // onfocus can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
     if ($type == 1)
     {
         $sql_inj += preg_match('/javascript:/i', $val);
@@ -198,12 +199,17 @@ $sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
 session_name($sessionname);
 session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
-session_start();
-if (ini_get('register_globals'))    // Deprecated in 5.3 and removed in 5.4. To solve bug in using $_SESSION
+// This create lock released until session_write_close() or end of page.
+// We need this lock as long as we read/write $_SESSION ['vars']. We can close released when finished.
+if (! defined('NOSESSION'))
 {
-    foreach ($_SESSION as $key=>$value)
+    session_start();
+    if (ini_get('register_globals'))    // Deprecated in 5.3 and removed in 5.4. To solve bug in using $_SESSION
     {
-        if (isset($GLOBALS[$key])) unset($GLOBALS[$key]);
+        foreach ($_SESSION as $key=>$value)
+        {
+            if (isset($GLOBALS[$key])) unset($GLOBALS[$key]);
+        }
     }
 }
 
@@ -650,9 +656,13 @@ if (! defined('NOLOGIN'))
 	       if (! empty($_GET['save_lastsearch_values']))    // Keep $_GET here
 	       {
                $relativepathstring = preg_replace('/\?.*$/','',$_SERVER["HTTP_REFERER"]);
-	           if (constant('DOL_MAIN_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_MAIN_URL_ROOT'),'/').'/', '', $relativepathstring);
-	           $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+               $relativepathstring = preg_replace('/^https?:\/\/[^\/]*/','',$relativepathstring);     // Get full path except host server
+               // Clean $relativepathstring
+   	           if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
                $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+               $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+               //var_dump($relativepathstring);
+
                if (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
                {
                    $_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
@@ -1486,14 +1496,14 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		// Link to print main content area
 	    if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && empty($conf->browser->phone))
 	    {
-	        $qs=$_SERVER["QUERY_STRING"];
+	        $qs=dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
 			foreach($_POST as $key=>$value) {
-				if($key!=='action' && !is_array($value))$qs.='&'.$key.'='.urlencode($value);
+				if ($key!=='action' && !is_array($value)) $qs.='&'.$key.'='.urlencode($value);
 			}
 
 			$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
-	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
+	        $text ='<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
 	        //$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
 	        $text.='<span class="fa fa-print atoplogin"></span>';
 	        $text.='</a>';
@@ -1891,7 +1901,7 @@ if (! function_exists("llxFooter"))
      */
     function llxFooter($comment='',$zone='private')
     {
-        global $conf, $langs, $user;
+        global $conf, $langs, $user, $object;
         global $delayedhtmlcontent;
 
         // Global html output events ($mesgs, $errors, $warnings)
@@ -2025,6 +2035,40 @@ if (! function_exists("llxFooter"))
                 });
                 </script>';
         }
+
+        // Wrapper to add log when clicking on download or preview
+        if (! empty($conf->blockedlog->enabled) && is_object($object) && $object->id > 0 && $object->statut > 0)
+        {
+            if (in_array($object->element, array('facture')))       // Restrict for the moment to element 'facture'
+            {
+                print "\n<!-- JS CODE TO ENABLE log when making a download or a preview of a document -->\n";
+                ?>
+    			<script type="text/javascript">
+    			jQuery(document).ready(function () {
+    				$('a.documentpreview').click(function() {
+    					$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
+    							, {
+    								id:<?php echo $object->id; ?>
+    								, element:'<?php echo $object->element ?>'
+    								, action:'DOC_PREVIEW'
+    							}
+    					);
+    				});
+    				$('a.documentdownload').click(function() {
+    					$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
+    							, {
+    								id:<?php echo $object->id; ?>
+    								, element:'<?php echo $object->element ?>'
+    								, action:'DOC_DOWNLOAD'
+    							}
+    					);
+    				});
+    			});
+    			</script>
+				<?php
+    		}
+       	}
+
 
 		// A div for the address popup
 		print "\n<!-- A div to allow dialog popup -->\n";

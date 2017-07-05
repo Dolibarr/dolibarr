@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014-2016 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
@@ -121,7 +121,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 		$db->rollback();
 		setEventMessages($db->lasterror(), null, 'errors');
 	}
-	
+
 	$account_parent = '';   // Protection to avoid to mass apply it a second time
 }
 
@@ -240,7 +240,7 @@ if ($result) {
 	if ($search_tvaintra)
 		$param .= "&search_tvaintra=" . $search_tvaintra;
 
-	
+
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -249,7 +249,7 @@ if ($result) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
-	
+
 	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 	print $langs->trans("DescVentilDoneCustomer") . '<br>';
 
@@ -317,7 +317,7 @@ if ($result) {
 		print '<td>' . $facture_static->getNomUrl(1) . '</td>';
 
 		print '<td align="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
-		
+
 		// Ref Product
 		print '<td>';
 		if ($product_static->id)
@@ -327,7 +327,7 @@ if ($result) {
 
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
-		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
+		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->description);
 		print '</td>';
 
@@ -355,7 +355,7 @@ if ($result) {
     if ($nbtotalofrecords > $limit) {
         print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, '', 0, '', '', $limit, 1);
     }
-    
+
     print '</form>';
 } else {
 	print $db->lasterror();

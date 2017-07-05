@@ -50,6 +50,7 @@ $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
 $rowid=GETPOST('rowid','alpha');
+$search_label=GETPOST('search_label','alpha');
 
 $allowed=$user->admin;
 if (! $allowed) accessforbidden();
@@ -66,7 +67,7 @@ $active = 1;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
+if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $listlimit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -77,10 +78,6 @@ $hookmanager->initHooks(array('emailtemplates'));
 // Name of SQL tables of dictionaries
 $tabname=array();
 $tabname[25]= MAIN_DB_PREFIX."c_email_templates";
-
-// Requests to extract data
-$tabsql=array();
-$tabsql[25]= "SELECT rowid   as rowid, label, type_template, private, position, topic, content_lines, content, active FROM ".MAIN_DB_PREFIX."c_email_templates WHERE entity IN (".getEntity('email_template').")";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -173,210 +170,222 @@ $id = 25;
  * Actions
  */
 
-if (GETPOST('button_removefilter') || GETPOST('button_removefilter.x') || GETPOST('button_removefilter_x'))
-{
-    //$search_country_id = '';
-}
+if (GETPOST('cancel')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
-// Actions add or modify an entry into a dictionary
-if (GETPOST('actionadd') || GETPOST('actionmodify'))
-{
-    $listfield=explode(',', str_replace(' ', '',$tabfield[$id]));
-    $listfieldinsert=explode(',',$tabfieldinsert[$id]);
-    $listfieldmodify=explode(',',$tabfieldinsert[$id]);
-    $listfieldvalue=explode(',',$tabfieldvalue[$id]);
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-    // Check that all fields are filled
-    $ok=1;
-    foreach ($listfield as $f => $value)
+if (empty($reshook))
+{
+    // Purge search criteria
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
     {
-        if ($value == 'content') continue;
-        if ($value == 'content_lines') continue;
-        if ($value == 'content') $value='content-'.$rowid;
-        if ($value == 'content_lines') $value='content_lines-'.$rowid;
-
-        if (! isset($_POST[$value]) || $_POST[$value]=='')
-        {
-            $ok=0;
-            $fieldnamekey=$listfield[$f];
-            // We take translate key of field
-            if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label'))  $fieldnamekey='Label';
-            if ($fieldnamekey == 'libelle_facture') $fieldnamekey = 'LabelOnDocuments';
-            if ($fieldnamekey == 'code') $fieldnamekey = 'Code';
-            if ($fieldnamekey == 'note') $fieldnamekey = 'Note';
-            if ($fieldnamekey == 'type') $fieldnamekey = 'Type';
-
-            setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
-        }
+        $search_label='';
+        $toselect='';
+        $search_array_options=array();
     }
 
-    // Si verif ok et action add, on ajoute la ligne
-    if ($ok && GETPOST('actionadd'))
+    // Actions add or modify an entry into a dictionary
+    if (GETPOST('actionadd') || GETPOST('actionmodify'))
     {
-        if ($tabrowid[$id])
+        $listfield=explode(',', str_replace(' ', '',$tabfield[$id]));
+        $listfieldinsert=explode(',',$tabfieldinsert[$id]);
+        $listfieldmodify=explode(',',$tabfieldinsert[$id]);
+        $listfieldvalue=explode(',',$tabfieldvalue[$id]);
+
+        // Check that all fields are filled
+        $ok=1;
+        foreach ($listfield as $f => $value)
         {
-            // Recupere id libre pour insertion
-            $newid=0;
-            $sql = "SELECT max(".$tabrowid[$id].") newid from ".$tabname[$id];
-            $result = $db->query($sql);
-            if ($result)
+            if ($value == 'content') continue;
+            if ($value == 'content_lines') continue;
+            if ($value == 'content') $value='content-'.$rowid;
+            if ($value == 'content_lines') $value='content_lines-'.$rowid;
+
+            if (! isset($_POST[$value]) || $_POST[$value]=='')
             {
-                $obj = $db->fetch_object($result);
-                $newid=($obj->newid + 1);
+                $ok=0;
+                $fieldnamekey=$listfield[$f];
+                // We take translate key of field
+                if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label'))  $fieldnamekey='Label';
+                if ($fieldnamekey == 'libelle_facture') $fieldnamekey = 'LabelOnDocuments';
+                if ($fieldnamekey == 'code') $fieldnamekey = 'Code';
+                if ($fieldnamekey == 'note') $fieldnamekey = 'Note';
+                if ($fieldnamekey == 'type') $fieldnamekey = 'Type';
 
-            } else {
-                dol_print_error($db);
+                setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
             }
         }
 
-        // Add new entry
-        $sql = "INSERT INTO ".$tabname[$id]." (";
-        // List of fields
-        if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert))
-        	$sql.= $tabrowid[$id].",";
-        $sql.= $tabfieldinsert[$id];
-        $sql.=",active)";
-        $sql.= " VALUES(";
+        // Si verif ok et action add, on ajoute la ligne
+        if ($ok && GETPOST('actionadd'))
+        {
+            if ($tabrowid[$id])
+            {
+                // Recupere id libre pour insertion
+                $newid=0;
+                $sql = "SELECT max(".$tabrowid[$id].") newid from ".$tabname[$id];
+                $result = $db->query($sql);
+                if ($result)
+                {
+                    $obj = $db->fetch_object($result);
+                    $newid=($obj->newid + 1);
 
-        // List of values
-        if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert))
-        	$sql.= $newid.",";
-        $i=0;
-        foreach ($listfieldinsert as $f => $value)
-        {
-            //var_dump($i.' - '.$listfieldvalue[$i].' - '.$_POST[$listfieldvalue[$i]].' - '.$value);
-            if ($value == 'entity') {
-            	$_POST[$listfieldvalue[$i]] = $conf->entity;
+                } else {
+                    dol_print_error($db);
+                }
             }
-            if ($i) $sql.=",";
-            if ($value == 'private' && ! is_numeric($_POST[$listfieldvalue[$i]])) $_POST[$listfieldvalue[$i]]='0';
-            if ($value == 'position' && ! is_numeric($_POST[$listfieldvalue[$i]])) $_POST[$listfieldvalue[$i]]='1';
-            if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";  // For vat, we want/accept code = ''
-            else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
-            $i++;
-        }
-        $sql.=",1)";
 
-        dol_syslog("actionadd", LOG_DEBUG);
-        $result = $db->query($sql);
-        if ($result)	// Add is ok
-        {
-            setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
-        	$_POST=array('id'=>$id);	// Clean $_POST array, we keep only
-        }
-        else
-        {
-            if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-                setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
+            // Add new entry
+            $sql = "INSERT INTO ".$tabname[$id]." (";
+            // List of fields
+            if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert))
+            	$sql.= $tabrowid[$id].",";
+            $sql.= $tabfieldinsert[$id];
+            $sql.=",active)";
+            $sql.= " VALUES(";
+
+            // List of values
+            if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert))
+            	$sql.= $newid.",";
+            $i=0;
+            foreach ($listfieldinsert as $f => $value)
+            {
+                //var_dump($i.' - '.$listfieldvalue[$i].' - '.$_POST[$listfieldvalue[$i]].' - '.$value);
+                if ($value == 'entity') {
+                	$_POST[$listfieldvalue[$i]] = $conf->entity;
+                }
+                if ($i) $sql.=",";
+                if ($value == 'private' && ! is_numeric($_POST[$listfieldvalue[$i]])) $_POST[$listfieldvalue[$i]]='0';
+                if ($value == 'position' && ! is_numeric($_POST[$listfieldvalue[$i]])) $_POST[$listfieldvalue[$i]]='1';
+                if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";  // For vat, we want/accept code = ''
+                else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+                $i++;
             }
-            else {
-                dol_print_error($db);
+            $sql.=",1)";
+
+            dol_syslog("actionadd", LOG_DEBUG);
+            $result = $db->query($sql);
+            if ($result)	// Add is ok
+            {
+                setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
+            	$_POST=array('id'=>$id);	// Clean $_POST array, we keep only
+            }
+            else
+            {
+                if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+                    setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
+                }
+                else {
+                    dol_print_error($db);
+                }
+            }
+        }
+
+        // Si verif ok et action modify, on modifie la ligne
+        if ($ok && GETPOST('actionmodify'))
+        {
+            if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
+            else { $rowidcol="rowid"; }
+
+            // Modify entry
+            $sql = "UPDATE ".$tabname[$id]." SET ";
+            // Modifie valeur des champs
+            if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldmodify))
+            {
+                $sql.= $tabrowid[$id]."=";
+                $sql.= "'".$db->escape($rowid)."', ";
+            }
+            $i = 0;
+            foreach ($listfieldmodify as $field)
+            {
+                if ($field == 'content') $_POST['content']=$_POST['content-'.$rowid];
+                if ($field == 'content_lines') $_POST['content_lines']=$_POST['content_lines-'.$rowid];
+                if ($field == 'entity') {
+                	$_POST[$listfieldvalue[$i]] = $conf->entity;
+                }
+                if ($i) $sql.=",";
+                $sql.= $field."=";
+                if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";  // For vat, we want/accept code = ''
+                else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+                $i++;
+            }
+            $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
+
+            dol_syslog("actionmodify", LOG_DEBUG);
+            //print $sql;
+            $resql = $db->query($sql);
+            if (! $resql)
+            {
+                setEventMessages($db->error(), null, 'errors');
             }
         }
     }
 
-    // Si verif ok et action modify, on modifie la ligne
-    if ($ok && GETPOST('actionmodify'))
+    if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
     {
         if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
         else { $rowidcol="rowid"; }
 
-        // Modify entry
-        $sql = "UPDATE ".$tabname[$id]." SET ";
-        // Modifie valeur des champs
-        if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldmodify))
-        {
-            $sql.= $tabrowid[$id]."=";
-            $sql.= "'".$db->escape($rowid)."', ";
-        }
-        $i = 0;
-        foreach ($listfieldmodify as $field)
-        {
-            if ($field == 'content') $_POST['content']=$_POST['content-'.$rowid];
-            if ($field == 'content_lines') $_POST['content_lines']=$_POST['content_lines-'.$rowid];
-            if ($field == 'entity') {
-            	$_POST[$listfieldvalue[$i]] = $conf->entity;
-            }
-            if ($i) $sql.=",";
-            $sql.= $field."=";
-            if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";  // For vat, we want/accept code = ''
-            else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
-            $i++;
-        }
-        $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
+        $sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
 
-        dol_syslog("actionmodify", LOG_DEBUG);
-        //print $sql;
-        $resql = $db->query($sql);
-        if (! $resql)
+        dol_syslog("delete", LOG_DEBUG);
+        $result = $db->query($sql);
+        if (! $result)
         {
-            setEventMessages($db->error(), null, 'errors');
+            if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
+            {
+                setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
+            }
+            else
+            {
+                dol_print_error($db);
+            }
         }
     }
-}
 
-if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
-{
-    if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
-    else { $rowidcol="rowid"; }
-
-    $sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
-
-    dol_syslog("delete", LOG_DEBUG);
-    $result = $db->query($sql);
-    if (! $result)
+    // activate
+    if ($action == $acts[0])
     {
-        if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
-        {
-            setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
+        if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
+        else { $rowidcol="rowid"; }
+
+        if ($rowid) {
+            $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'";
         }
-        else
+        elseif ($code) {
+            $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$code."'";
+        }
+
+        $result = $db->query($sql);
+        if (!$result)
+        {
+            dol_print_error($db);
+        }
+    }
+
+    // disable
+    if ($action == $acts[1])
+    {
+        if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
+        else { $rowidcol="rowid"; }
+
+        if ($rowid) {
+            $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'";
+        }
+        elseif ($code) {
+            $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$code."'";
+        }
+
+        $result = $db->query($sql);
+        if (!$result)
         {
             dol_print_error($db);
         }
     }
 }
-
-// activate
-if ($action == $acts[0])
-{
-    if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
-    else { $rowidcol="rowid"; }
-
-    if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'";
-    }
-    elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$_GET["code"]."'";
-    }
-
-    $result = $db->query($sql);
-    if (!$result)
-    {
-        dol_print_error($db);
-    }
-}
-
-// disable
-if ($action == $acts[1])
-{
-    if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
-    else { $rowidcol="rowid"; }
-
-    if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'";
-    }
-    elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$_GET["code"]."'";
-    }
-
-    $result = $db->query($sql);
-    if (!$result)
-    {
-        dol_print_error($db);
-    }
-}
-
 
 
 /*
@@ -412,12 +421,15 @@ dol_fiche_head($head, 'templates', '', -1);
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$_GET["code"].'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
 }
 //var_dump($elementList);
 
-// Complete requete recherche valeurs avec critere de tri
-$sql=$tabsql[$id];
+
+$sql="SELECT rowid as rowid, label, type_template, private, position, topic, content_lines, content, active";
+$sql.=" FROM ".MAIN_DB_PREFIX."c_email_templates";
+$sql.=" WHERE entity IN (".getEntity('email_template').")";
+if ($search_label) $sql.=natural_search('label', $search_label);
 
 if ($search_country_id > 0)
 {
@@ -572,9 +584,19 @@ if ($action != 'edit')
 
 
     $colspan=count($fieldlist)+1;
-    print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';	// Keep &nbsp; to have a line with enough height
+    //print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';	// Keep &nbsp; to have a line with enough height
 }
 
+print '</table>';
+print '</form>';
+
+print '<br>';
+
+print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
+
+print '<table class="noborder" width="100%">';
 
 // List of available record in database
 dol_syslog("htdocs/admin/dict", LOG_DEBUG);
@@ -599,8 +621,26 @@ if ($resql)
         print '</td></tr>';
     }
 
+
+    // Title line with search boxes
+    print '<tr class="liste_titre">';
+    $filterfound=0;
+    foreach ($fieldlist as $field => $value)
+    {
+        if ($value == 'label') print '<td class="liste_titre"><input type="text" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
+        elseif (! in_array($value, array('content', 'content_lines'))) print '<td class="liste_titre"></td>';
+    }
+    if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) print '<td class="liste_titre"></td>';
+    print '<td class="liste_titre"></td>';
+    // Action column
+    print '<td class="liste_titre" align="right">';
+    $searchpicto=$form->showFilterButtons();
+    print $searchpicto;
+    print '</td>';
+    print '</tr>';
+
     // Title of lines
-    print '<tr class="liste_titre'.($action != 'edit' ? ' liste_titre_add' : '').'">';
+    print '<tr class="liste_titre">';
     foreach ($fieldlist as $field => $value)
     {
         // Determine le nom du champ par rapport aux noms possibles
@@ -640,18 +680,6 @@ if ($resql)
     print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page?'page='.$page.'&':''), $param, 'align="center"', $sortfield, $sortorder);
     print getTitleFieldOfList('');
     print getTitleFieldOfList('');
-    print '</tr>';
-
-    // Title line with search boxes
-    print '<tr class="liste_titre">';
-    $filterfound=0;
-    foreach ($fieldlist as $field => $value)
-    {
-        if (! in_array($field, array('content', 'content_lines'))) print '<td class="liste_titre"></td>';
-    }
-    if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) print '<td class="liste_titre"></td>';
-    print '<td class="liste_titre"></td>';
-    print '<td class="liste_titre"></td>';
     print '</tr>';
 
     if ($num)

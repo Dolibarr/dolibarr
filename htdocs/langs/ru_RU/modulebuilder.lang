@@ -1,0 +1,24 @@
+# Dolibarr language file - Source file is en_US - loan
+ModuleBuilderDesc=This tools give you utilites to build or edit your own module.
+EnterNameOfModuleDesc=Enter name of the module to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+ModuleBuilderDesc2=Path were modules are generated/edited (first alternative directory defined into %s): <strong>%s</strong>
+ModuleBuilderDesc3=Generated/editable modules found: <strong>%s</strong> (they are detected as editable when the file <strong>%s</strong> exists in root of module directory).
+NewModule=New module
+ModuleKey=Key for new module
+ModuleInitialized=Module initialized
+ModuleBuilderDescdescription=Enter here all general information that describe your module
+ModuleBuilderDescobjects=Define here the new objects you want to manage with your module. A page to list them and a page to create/edit/view a card will be generated.
+ModuleBuilderDescmenus=This tab is dedicated to define menu entries provided by your module.
+ModuleBuilderDescpermissions=This tab is dedicated to define the new permissions you want to provide with your module.
+ModuleBuilderDesctriggers=This is the view of triggers provided by your module. To include code executed when a triggered business event is launched, just edit this file with your IDE.
+ModuleBuilderDeschooks=This tab is dedicated to hooks.
+ModuleBuilderDescwidgets=This tab is dedicated to manage/build widgets.
+ModuleBuilderDescbuildpackage=You can generate here a "ready to distribute" package file (a normalized .zip file) of your module. Just click on button to get your module package file.
+ModuleBuilderDescdangerzone=You can delete your module. WARNING: All files of module will be definetly lost !
+DangerZone=Danger zone
+BuildPackage=Build package
+ModuleIsNotActive=This module was not activated yet (go into Home-Setup-Module to make it live)
+ModuleIsLive=This module has been activated. Any change on it may break a current active feature.
+DescriptionLong=Long description
+EditorName=Name of editor
+EditorUrl=URL of editor

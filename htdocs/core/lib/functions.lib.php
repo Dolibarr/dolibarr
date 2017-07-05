@@ -245,7 +245,7 @@ function dol_shutdown()
  *  @param	string	$check	     Type of check
  *                                  ''=no check (deprecated)
  *                                  'none'=no check (only for param that should have very rich content)
- *                                  'int'=check it's numeric
+ *                                  'int'=check it's numeric (integer or float)
  *                                  'alpha'=check it's text and sign
  *                                  'aZ'=check it's a-z only
  *                                  'aZ09'=check it's simple alpha string (recommended for keys)
@@ -276,9 +276,11 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	if (empty($method) || $method == 3 || $method == 4)
 	{
     	$relativepathstring = $_SERVER["PHP_SELF"];
+    	// Clean $relativepathstring
     	if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
-    	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
     	$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+    	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+    	//var_dump($relativepathstring);
 
         // Code for search criteria persistence.
     	// Retrieve values if restore_lastsearch_values is set and there is saved values
@@ -407,9 +409,6 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	            break;
 	        case 'int':
 	            if (! is_numeric($out)) { $out=''; }
-	            break;
-	        case 'intcomma':
-	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
 	            break;
 	        case 'intcomma':
 	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
@@ -747,7 +746,8 @@ function dol_string_unaccent($str)
 }
 
 /**
- *	Clean a string from all punctuation characters to use it as a ref or login
+ *	Clean a string from all punctuation characters to use it as a ref or login.
+ *  This is a more complete function than dol_sanitizeFileName.
  *
  *	@param	string	$str            	String to clean
  * 	@param	string	$newstr				String to replace forbidden chars with
@@ -758,7 +758,7 @@ function dol_string_unaccent($str)
  */
 function dol_string_nospecial($str,$newstr='_',$badcharstoreplace='')
 {
-	$forbidden_chars_to_replace=array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=");
+	$forbidden_chars_to_replace=array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=", '°');  // more complete than dol_sanitizeFileName
 	$forbidden_chars_to_remove=array();
 	if (is_array($badcharstoreplace)) $forbidden_chars_to_replace=$badcharstoreplace;
 	//$forbidden_chars_to_remove=array("(",")");
@@ -3168,8 +3168,8 @@ function dol_print_error($db='',$error='',$errors=null)
 		$out.="<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"])?dol_htmlentities($_SERVER["HTTP_REFERER"],ENT_COMPAT,'UTF-8'):'')."<br>\n";
 		$out.="<b>".$langs->trans("MenuManager").":</b> ".(isset($conf->standard_menu)?$conf->standard_menu:'')."<br>\n";
 		$out.="<br>\n";
-		$syslog.="url=".$_SERVER["REQUEST_URI"];
-		$syslog.=", query_string=".$_SERVER["QUERY_STRING"];
+		$syslog.="url=".dol_escape_htmltag($_SERVER["REQUEST_URI"]);
+		$syslog.=", query_string=".dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 	}
 	else                              // Mode CLI
 	{
@@ -3456,7 +3456,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
  *	@param	string	    $titre				Title to show (required)
  *	@param	int   	    $page				Numero of page to show in navigation links (required)
  *	@param	string	    $file				Url of page (required)
- *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder)
+ *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder). Value must be 'urlencoded' before calling function.
  *	@param	string    	$sortfield       	Field to sort on ('' by default)
  *	@param	string	    $sortorder       	Order to sort ('' by default)
  *	@param	string	    $center          	String in the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction()
@@ -3767,7 +3767,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	{
 		if ($currency_code == 'auto') $currency_code=$conf->currency;
 
-		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN');
+		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN','PEN');
 		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
 		else
 		{
@@ -4099,29 +4099,49 @@ function get_localtax_by_third($local)
 
 
 /**
- *  Get vat rate and npr from id.
- *  You can call getLocalTaxesFromRate after to get other fields
+ *  Get vat main information from Id.
+ *  You can call getLocalTaxesFromRate after to get other fields.
  *
- *  @param	int      $vatrowid			Line ID into vat rate table.
- *  @return	array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
+ *  @param	int|string  $vatrate		    VAT ID or Rate. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
+ *  @param	Societe	    $buyer         		Company object
+ *  @param	Societe	    $seller        		Company object
+ *  @param  int         $firstparamisid     1 if first param is id into table (use this if you can)
+ *  @return	array       	  				array('rowid'=> , 'code'=> ...)
+ *  @see getLocalTaxesFromRate
  */
-function getTaxesFromId($vatrowid)
+function getTaxesFromId($vatrate, $buyer=null, $seller=null, $firstparamisid=1)
 {
     global $db, $mysoc;
 
-    dol_syslog("getTaxesFromId vatrowid=".$vatrowid);
+    dol_syslog("getTaxesFromId vatrowid=".$vatrate);
 
     // Search local taxes
-    $sql = "SELECT t.rowid, t.code, t.taux as rate, t.recuperableonly as npr";
+    $sql = "SELECT t.rowid, t.code, t.taux as rate, t.recuperableonly as npr, t.accountancy_code_sell, t.accountancy_code_buy";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t";
-    $sql.= " WHERE t.rowid ='".$vatrowid."'";
+    if ($firstparamisid) $sql.= " WHERE t.rowid = ".(int) $vatrate;
+    else
+    {
+        $vatratecleaned = $vatrate;
+        $vatratecode = '';
+        if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
+        {
+            $vatratecleaned = $reg[1];
+            $vatratecode = $reg[2];
+        }
+
+        $sql.=", ".MAIN_DB_PREFIX."c_country as c";
+        if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";    // local tax in spain use the buyer country ??
+        else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
+        $sql.= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
+        if ($vatratecode) $sql.= " AND t.code = '".$vatratecode."'";
+    }
 
     $resql=$db->query($sql);
     if ($resql)
     {
         $obj = $db->fetch_object($resql);
-
-        return array('rowid'=>$obj->rowid, 'code'=>$obj->code, 'rate'=>$obj->rate, 'npr'=>$obj->npr);
+        if ($obj) return array('rowid'=>$obj->rowid, 'code'=>$obj->code, 'rate'=>$obj->rate, 'npr'=>$obj->npr, 'accountancy_code_sell'=>$obj->accountancy_code_sell, 'accountancy_code_buy'=>$obj->accountancy_code_buy);
+        else return array();
     }
     else dol_print_error($db);
 
@@ -4135,12 +4155,13 @@ function getTaxesFromId($vatrowid)
  *  Instead this function must be called when adding a line to get the array of localtax and type, and then
  *  provide it to the function calcul_price_total.
  *
- *  @param	string  $vatrate			VAT Rate. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
- *  @param	int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
- *  @param	Societe	$buyer         		Company object
- *  @param	Societe	$seller        		Company object
- *  @param  int     $firstparamisid     1 if first param is id into table (use this if you can)
- *  @return	array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
+ *  @param	int|string  $vatrate			VAT ID or Rate. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
+ *  @param	int		    $local              Number of localtax (1 or 2, or 0 to return 1 & 2)
+ *  @param	Societe	    $buyer         		Company object
+ *  @param	Societe	    $seller        		Company object
+ *  @param  int         $firstparamisid     1 if first param is id into table (use this if you can)
+ *  @return	array    	    				array(localtax_type1(1-6/0 if not found), rate localtax1, localtax_type1, rate localtax2, accountancycodecust, accountancycodesupp)
+ *  @see getTaxesFromId
  */
 function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisid=0)
 {
@@ -4148,25 +4169,25 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 
 	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local);
 
-	$vatratecleaned = $vatrate;
-	$vatratecode = '';
-	if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
-	{
-	    $vatratecleaned = $reg[1];
-	    $vatratecode = $reg[2];
-	}
-
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t";
-	if ($firstparamisid) $sql.= " WHERE t.rowid ='".$vatrate."'";
+	if ($firstparamisid) $sql.= " WHERE t.rowid = ".(int) $vatrate;
 	else
 	{
+	    $vatratecleaned = $vatrate;
+	    $vatratecode = '';
+	    if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
+	    {
+	        $vatratecleaned = $reg[1];
+	        $vatratecode = $reg[2];
+	    }
+
 	    $sql.=", ".MAIN_DB_PREFIX."c_country as c";
     	if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";    // local tax in spain use the buyer country ??
     	else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
     	$sql.= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
-    	if ($vatratecode) $sql.= " AND t.code ='".$vatratecode."'";
+    	if ($vatratecode) $sql.= " AND t.code = '".$vatratecode."'";
 	}
 
 	$resql=$db->query($sql);
@@ -4177,22 +4198,22 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 		{
 			if (! isOnlyOneLocalTax(1))
 			{
-				return array($obj->localtax1_type, get_localtax($vatrate, $local, $buyer, $seller), $obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				return array($obj->localtax1_type, get_localtax($vatrate, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 			}
 			else
 			{
-				return array($obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				return array($obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell, $obj->accountancy_code_buy);
 			}
 		}
 		elseif ($local == 2)
 		{
 			if (! isOnlyOneLocalTax(2))
 			{
-				return array($obj->localtax2_type, get_localtax($vatrate, $local, $buyer, $seller),$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				return array($obj->localtax2_type, get_localtax($vatrate, $local, $buyer, $seller),$obj->accountancy_code_sell, $obj->accountancy_code_buy);
 			}
 			else
 			{
-				return array($obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				return array($obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell, $obj->accountancy_code_buy);
 			}
 		}
 		else
@@ -4201,22 +4222,22 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 			{
 				if(! isOnlyOneLocalTax(2))
 				{
-					return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller),$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+					return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller), $obj->accountancy_code_sell,$obj->accountancy_code_buy);
 				}
 				else
 				{
-					return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+					return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, $obj->localtax2, $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 				}
 			}
 			else
 			{
 				if(! isOnlyOneLocalTax(2))
 				{
-					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type,get_localtax($vatrate, 2, $buyer, $seller) ,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 				}
 				else
 				{
-					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2, $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 				}
 			}
 		}
@@ -6068,13 +6089,13 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 /**
  * Set focus onto field with selector
  *
- * @param 	string	$selector	Selector ('#id')
+ * @param 	string	$selector	Selector ('#id' or 'input[name="ref"]') to use to find the HTML input field that must get the autofocus. You must use a CSS selector, so unique id preceding with the '#' char.
  * @return	string				HTML code to set focus
  */
 function dol_set_focus($selector)
 {
-	print '<!-- Set focus onto a specific field -->'."\n";
-	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() { jQuery("'.$selector.'").focus(); });</script>'."\n";
+	print "\n".'<!-- Set focus onto a specific field -->'."\n";
+	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() { jQuery("'.dol_escape_js($selector).'").focus(); });</script>'."\n";
 }
 
 

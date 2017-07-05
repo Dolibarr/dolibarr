@@ -150,7 +150,7 @@ if ($action == 'builddoc')
 	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
     $outputlangs = $langs;
-    $newlang=GETPOST('lang_id','alpha');
+    $newlang=GETPOST('lang_id','aZ09');
     if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
     if (! empty($newlang))
     {

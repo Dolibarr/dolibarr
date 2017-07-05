@@ -208,8 +208,8 @@ if (empty($reshook))
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id'))
-				$newlang = GETPOST('lang_id');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09'))
+				$newlang = GETPOST('lang_id','aZ09');
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 				$newlang = $object->thirdparty->default_lang;
 			if (! empty($newlang)) {
@@ -801,8 +801,8 @@ if (empty($reshook))
 				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (empty($newlang) && GETPOST('lang_id'))
-						$newlang = GETPOST('lang_id');
+					if (empty($newlang) && GETPOST('lang_id','aZ09'))
+						$newlang = GETPOST('lang_id','aZ09');
 					if (empty($newlang))
 						$newlang = $object->thirdparty->default_lang;
 					if (! empty($newlang)) {
@@ -1015,8 +1015,8 @@ if (empty($reshook))
 					// Define output language
 					$outputlangs = $langs;
 					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id'))
-						$newlang = GETPOST('lang_id');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09'))
+						$newlang = GETPOST('lang_id','aZ09');
 					if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 						$newlang = $object->thirdparty->default_lang;
 					if (! empty($newlang)) {
@@ -1102,7 +1102,7 @@ if (empty($reshook))
 				{
 					$outputlangs = $langs;
 					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
 					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 					if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -1155,7 +1155,7 @@ if (empty($reshook))
 				{
 					$outputlangs = $langs;
 					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
 					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 					if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -1477,7 +1477,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '</td>';
 	} else {
 		print '<td>';
-		print $form->select_company('', 'socid', 's.client = 1 OR s.client = 3', 'SelectThirdParty');
+		print $form->select_company('', 'socid', 's.client = 1 OR s.client = 3', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		// reload page to retrieve customer informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
 		{
@@ -1915,7 +1915,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		// Order card
 
-		$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+		$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 
 		$morehtmlref='<div class="refidno">';
@@ -2621,6 +2621,19 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$outputlangs->load('commercial');
 			}
 
+			// Show email form
+
+			// By default if $action=='presend'
+			$titreform='SendOrderByMail';
+			$topicmail='';
+			if (empty($object->ref_client)) {
+			    $topicmail = $outputlangs->trans('SendOrderRef', '__ORDERREF__');
+			} else if (! empty($object->ref_client)) {
+			    $topicmail = $outputlangs->trans('SendOrderRef', '__ORDERREF__ (__REFCLIENT__)');
+			}
+			$action='send';
+			$modelmail='order_send';
+
 			// Build document if it not exists
 			if (! $file || ! is_readable($file)) {
 				$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -2635,7 +2648,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 			print '<div class="clearboth"></div>';
 			print '<br>';
-			print load_fiche_titre($langs->trans('SendOrderByMail'));
+			print load_fiche_titre($langs->trans($titreform));
 
 			dol_fiche_head('');
 
@@ -2662,11 +2675,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$formmail->withto = GETPOST('sendto') ? GETPOST('sendto') : $liste;
 			$formmail->withtocc = $liste;
 			$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
-			if (empty($object->ref_client)) {
-				$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__');
-			} else if (! empty($object->ref_client)) {
-				$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__ (__REFCLIENT__)');
-			}
+			$formmail->withtopic = $topicmail;
 			$formmail->withfile = 2;
 			$formmail->withbody = 1;
 			$formmail->withdeliveryreceipt = 1;
@@ -2696,8 +2705,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 			}
 
 			// Tableau des parametres complementaires
-			$formmail->param['action'] = 'send';
-			$formmail->param['models'] = 'order_send';
+			$formmail->param['action'] = $action;
+			$formmail->param['models'] = $modelmail;
 			$formmail->param['models_id']=GETPOST('modelmailselected','int');
 			$formmail->param['orderid'] = $object->id;
 			$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;

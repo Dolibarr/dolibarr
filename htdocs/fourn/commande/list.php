@@ -218,7 +218,7 @@ if (empty($reshook))
         $toselect='';
     	$search_project_ref='';
         $search_array_options=array();
-    
+
         // Mass actions
         $objectclass='Commande';
         $objectlabel='Orders';
@@ -235,54 +235,54 @@ if (empty($reshook))
     $permtodelete = $user->rights->fournisseur->commande->supprimer;
     $uploaddir = $conf->fournisseur->commande->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-    
+
     // TODO Move this into mass action include
-    if ($massaction == 'confirm_createbills') 
+    if ($massaction == 'confirm_createbills')
     {
         $orders = GETPOST('toselect');
         $createbills_onebythird = GETPOST('createbills_onebythird', 'int');
         $validate_invoices = GETPOST('valdate_invoices', 'int');
-         
+
         $TFact = array();
         $TFactThird = array();
-         
+
         $nb_bills_created = 0;
-         
+
         $db->begin();
-         
+
         foreach($orders as $id_order) {
-    
+
             $cmd = new Commande($db);
             if($cmd->fetch($id_order) <= 0) continue;
-    
+
             $object = new Facture($db);
             if(!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $object = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
             else {
-                 
+
                 $object->socid = $cmd->socid;
                 $object->type = Facture::TYPE_STANDARD;
                 $object->cond_reglement_id	= $cmd->cond_reglement_id;
                 $object->mode_reglement_id	= $cmd->mode_reglement_id;
                 $object->fk_project			= $cmd->fk_project;
-                 
+
                 $datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
                 if (empty($datefacture))
                 {
                     $datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
                 }
-                 
+
                 $object->date = $datefacture;
                 $object->origin    = 'commande';
                 $object->origin_id = $id_order;
-                 
+
                 $res = $object->create($user);
-                 
+
                 if($res > 0) $nb_bills_created++;
-                 
+
             }
-    
+
             if($object->id > 0) {
-                 
+
                 $db->begin();
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
                 $sql.= "fk_source";
@@ -295,7 +295,7 @@ if (empty($reshook))
                 $sql.= ", ".$object->id;
                 $sql.= ", '".$object->element."'";
                 $sql.= ")";
-    
+
                 if ($db->query($sql))
                 {
                     $db->commit();
@@ -304,17 +304,17 @@ if (empty($reshook))
                 {
                     $db->rollback();
                 }
-                 
+
                 $lines = $cmd->lines;
                 if (empty($lines) && method_exists($cmd, 'fetch_lines'))
                 {
                     $cmd->fetch_lines();
                     $lines = $cmd->lines;
                 }
-                 
+
                 $fk_parent_line=0;
                 $num=count($lines);
-                 
+
                 for ($i=0;$i<$num;$i++)
                 {
                     $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
@@ -404,42 +404,42 @@ if (empty($reshook))
                         }
                     }
                 }
-                 
+
             }
-             
+
             $cmd->classifyBilled($user);
-    
+
             if(!empty($createbills_onebythird) && empty($TFactThird[$cmd->socid])) $TFactThird[$cmd->socid] = $object;
             else $TFact[$object->id] = $object;
         }
-         
+
         // Build doc with all invoices
         $TAllFact = empty($createbills_onebythird) ? $TFact : $TFactThird;
         $toselect = array();
-         
+
         if(!empty($validate_invoices)) {
-    
+
             $massaction = $action = 'builddoc';
-    
+
             foreach($TAllFact as &$object) {
                 $object->validate($user);
                 $toselect[] = $object->id; // For builddoc action
-                 
+
                 // Fac builddoc
                 $upload_dir = $conf->facture->dir_output;
                 $permissioncreate=$user->rights->facture->creer;
                 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
             }
-    
+
             $objectclass='Facture';
             $objectlabel='Invoice';
             $permtoread = $user->rights->facture->lire;
             $permtodelete = $user->rights->facture->supprimer;
             $uploaddir = $conf->facture->dir_output;
             include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-    
+
         }
-         
+
         if (! $error)
         {
             $db->commit();
@@ -537,12 +537,11 @@ if ($billed != '' && $billed >= 0) $sql .= " AND cf.billed = ".$billed;
 //Required triple check because statut=0 means draft filter
 if (GETPOST('statut', 'alpha') !== '')
 {
-	$sql .= " AND cf.fk_statut IN (".GETPOST('statut', 'alpha').")";
+	$sql .= " AND cf.fk_statut IN (".$db->escape(GETPOST('statut', 'alpha')).")";
 }
 if ($search_status != '' && $search_status >= 0)
 {
-	if (strstr($search_status, ',')) $sql.=" AND cf.fk_statut IN (".$db->escape($search_status).")";
-	else $sql.=" AND cf.fk_statut = ".$search_status;
+	$sql.=" AND cf.fk_statut IN (".$db->escape($search_status).")";
 }
 if ($ordermonth > 0)
 {
@@ -573,11 +572,11 @@ else if ($deliveryyear > 0)
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
 if ($search_zip)   $sql.= natural_search("s.zip",$search_zip);
 if ($search_state) $sql.= natural_search("state.nom",$search_state);
-if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
-if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+if ($search_country) $sql .= " AND s.fk_pays IN (".$db->escape($search_country).')';
+if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
-if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
-if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='supplier_order' AND tc.source='internal' AND ec.element_id = cf.rowid AND ec.fk_socpeople = ".$search_user;
+if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$db->escape($search_sale);
+if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='supplier_order' AND tc.source='internal' AND ec.element_id = cf.rowid AND ec.fk_socpeople = ".$db->escape($search_user);
 if ($search_total_ht != '') $sql.= natural_search('cf.total_ht', $search_total_ht, 1);
 if ($search_total_vat != '') $sql.= natural_search('cf.tva', $search_total_vat, 1);
 if ($search_total_ttc != '') $sql.= natural_search('cf.total_ttc', $search_total_ttc, 1);
@@ -629,7 +628,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
-	
+
 	$param='';
 	if ($socid > 0)             $param.='&socid='.$socid;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
@@ -670,7 +669,7 @@ if ($resql)
 	if ($user->rights->fournisseur->commande->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
 	if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
-	
+
 	// Lignes des champs de filtre
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -688,7 +687,7 @@ if ($resql)
 	if ($massaction == 'presend')
 	{
 	    $langs->load("mails");
-	
+
 	    if (! GETPOST('cancel'))
 	    {
 	        $objecttmp=new CommandeFournisseur($db);
@@ -707,23 +706,23 @@ if ($resql)
 	            }
 	        }
 	    }
-	
+
 	    print '<input type="hidden" name="massaction" value="confirm_presend">';
-	
+
 	    dol_fiche_head(null, '', '');
-	
+
 	    $topicmail="SendOrderRef";
 	    $modelmail="order_send";
-	
+
 	    // Cree l'objet formulaire mail
 	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	    $formmail = new FormMail($db);
 	    $formmail->withform=-1;
 	    $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-	
+
 	    if($formmail->fromtype === 'user'){
 	        $formmail->fromid = $user->id;
-	
+
 	    }
 	    if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
 	    {
@@ -767,23 +766,23 @@ if ($resql)
 	    $formmail->substit['__REFCLIENT__']='__REFCLIENT__';	// We want to keep the tag
 	    $formmail->substit['__PERSONALIZED__']='';
 	    $formmail->substit['__CONTACTCIVNAME__']='';
-	
+
 	    // Tableau des parametres complementaires du post
 	    $formmail->param['action']=$action;
 	    $formmail->param['models']=$modelmail;
 	    $formmail->param['models_id']=GETPOST('modelmailselected','int');
 	    $formmail->param['id']=join(',',$arrayofselected);
 	    //$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-	
+
 	    print $formmail->get_form();
-	
+
 	    dol_fiche_end();
 	}
 	elseif ($massaction == 'createbills')
 	{
 	    //var_dump($_REQUEST);
 	    print '<input type="hidden" name="massaction" value="confirm_createbills">';
-	
+
 	    print '<table class="border" width="100%" >';
 	    print '<tr>';
 	    print '<td class="titlefieldmiddle">';
@@ -810,7 +809,7 @@ if ($resql)
 	    print '</td>';
 	    print '</tr>';
 	    print '</table>';
-	
+
 	    print '<br>';
 	    print '<div class="center">';
 	    print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomer').'">  ';
@@ -818,7 +817,7 @@ if ($resql)
 	    print '</div>';
 	    print '<br>';
 	}
-	
+
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -833,7 +832,7 @@ if ($resql)
         $langs->load("commercial");
         $moreforfilter.='<div class="divsearchfield">';
         $moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
-        $moreforfilter.=$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth300');
+        $moreforfilter.=$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth200');
         $moreforfilter.='</div>';
     }
     // If the user can view other users
@@ -841,7 +840,7 @@ if ($resql)
     {
         $moreforfilter.='<div class="divsearchfield">';
         $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
-        $moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+        $moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
         $moreforfilter.='</div>';
     }
     // If the user can view prospects other than his'
@@ -851,14 +850,14 @@ if ($resql)
         $moreforfilter.='<div class="divsearchfield">';
         $moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
         $cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-        $moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+        $moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
         $moreforfilter.='</div>';
     }
     $parameters=array();
     $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
     else $moreforfilter = $hookmanager->resPrint;
-    
+
     if (! empty($moreforfilter))
     {
         print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -1051,7 +1050,9 @@ if ($resql)
 	        if (! empty($arrayfields["ef.".$key]['checked']))
 	        {
 	            $align=$extrafields->getAlignFlag($key);
-	            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			$sortonfield = "ef.".$key;
+    			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
 	        }
 	    }
 	}
@@ -1065,8 +1066,8 @@ if ($resql)
 	if (! empty($arrayfields['cf.billed']['checked']))    print_liste_field_titre($arrayfields['cf.billed']['label'],$_SERVER["PHP_SELF"],'cf.billed','',$param,'align="center"',$sortfield,$sortorder,'');
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
-	
-	
+
+
 	$total=0;
 	$subtotal=0;
     $productstat_cache=array();
@@ -1081,7 +1082,7 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-		
+
 
         $objectstatic->id=$obj->rowid;
         $objectstatic->ref=$obj->ref;
@@ -1098,7 +1099,7 @@ if ($resql)
         if (! empty($arrayfields['cf.ref']['checked']))
         {
             print '<td class="nowrap">';
-            
+
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
             // Picto + Ref
             print '<td class="nobordernopadding nowrap">';
@@ -1110,10 +1111,10 @@ if ($resql)
     	    // Other picto tool
     	    print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->fournisseur->dir_output.'/commande' . '/' . dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->fournisseur->dir_output.'/commande/' . dol_sanitizeFileName($obj->ref);
 			print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
-			
+
 			print '</td>'."\n";
             if (! $i) $totalarray['nbfield']++;
         }
@@ -1319,18 +1320,18 @@ if ($resql)
 	     */
 	    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	    $urlsource.=str_replace('&amp;','&',$param);
-	
+
 	    $filedir=$diroutputmassaction;
 	    $genallowed=$user->rights->fournisseur->commande->lire;
 	    $delallowed=$user->rights->fournisseur->commande->lire;
-	
+
 	    print $formfile->showdocuments('massfilesarea_supplier_order','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
 	}
 	else
 	{
 	    print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
 	}
-	
+
 	$db->free($resql);
 }
 else

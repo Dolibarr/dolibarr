@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
@@ -104,7 +104,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 {
     $search_lineid = '';
     $search_ref = '';
-    $search_invoice = '';    
+    $search_invoice = '';
     $search_label = '';
     $search_desc = '';
     $search_amount = '';
@@ -146,10 +146,10 @@ if ($massaction == 'ventil') {
                 $sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
                 $sql .= " SET fk_code_ventilation = " . $monCompte;
                 $sql .= " WHERE rowid = " . $monId;
-    
+
                 $accountventilated = new AccountingAccount($db);
                 $accountventilated->fetch($monCompte, '');
-    
+
                 dol_syslog('accountancy/supplier/list.php:: sql=' . $sql, LOG_DEBUG);
                 if ($db->query($sql)) {
                     $msg.= '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '</font></div>';
@@ -159,7 +159,7 @@ if ($massaction == 'ventil') {
                     $ko++;
                 }
             }
-            
+
             $cpt++;
         }
         $msg.='</div>';
@@ -332,7 +332,7 @@ if ($result) {
 		$facturefourn_static->ref = $objp->ref;
 		$facturefourn_static->id = $objp->facid;
 		$facturefourn_static->type = $objp->type;
-		
+
 		$code_buy_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
 
@@ -356,7 +356,7 @@ if ($result) {
 
 		// $objp->code_buy_p is now code of product/service
 		// $objp->code_buy_l is now default code of product/service
-					
+
 		print '<tr class="oddeven">';
 
 		// Line id
@@ -381,7 +381,7 @@ if ($result) {
         // Description
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
-		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
+		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->description);
 		print '</td>';
 
@@ -422,7 +422,7 @@ if ($result) {
 
 	print '</table>';
 	print "</div>";
-	
+
 	print '</form>';
 } else {
 	print $db->error();

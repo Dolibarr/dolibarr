@@ -652,7 +652,12 @@ class DolibarrModules           // Can not be abstract, because we need to insta
             if ((float) DOL_VERSION >= 6.0)
             {
                 @include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
-                $content = dolMd2Html($content, 'parsedown', array('doc/'=>dol_buildpath('cabinetmed/doc/', 1)));
+                $content = dolMd2Html($content, 'parsedown',
+                    array(
+                        'doc/'=>dol_buildpath(strtolower($this->name).'/doc/', 1),
+                        'img/'=>dol_buildpath(strtolower($this->name).'/img/', 1),
+                        'images/'=>dol_buildpath(strtolower($this->name).'/imgages/', 1),
+                    ));
             }
             else
             {
@@ -672,6 +677,55 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                 }
 
                 $content = $langs->trans($this->descriptionlong);
+            }
+        }
+
+        return $content;
+    }
+
+    /**
+     * Gives the changelog. First check ChangeLog-la_LA.md then ChangeLog.md
+     *
+     * @return  string  Content of ChangeLog
+     */
+    function getChangeLog()
+    {
+        global $langs;
+        $langs->load("admin");
+
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
+        $filefound= false;
+
+        // Define path to file README.md.
+        // First check README-la_LA.md then README.md
+        $pathoffile = dol_buildpath(strtolower($this->name).'/ChangeLog-'.$langs->defaultlang.'.md', 0);
+        if (dol_is_file($pathoffile))
+        {
+            $filefound = true;
+        }
+        if (! $filefound)
+        {
+            $pathoffile = dol_buildpath(strtolower($this->name).'/ChangeLog.md', 0);
+            if (dol_is_file($pathoffile))
+            {
+                $filefound = true;
+            }
+        }
+
+        if ($filefound)     // Mostly for external modules
+        {
+            $content = file_get_contents($pathoffile);
+
+            if ((float) DOL_VERSION >= 6.0)
+            {
+                @include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
+                $content = dolMd2Html($content, 'parsedown', array('doc/'=>dol_buildpath(strtolower($this->name).'/doc/', 1)));
+            }
+            else
+            {
+                $content = nl2br($content);
             }
         }
 

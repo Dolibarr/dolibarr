@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016	Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	  	Juanjo Menent		<jmenent@2byte.es>
@@ -144,10 +144,10 @@ if ($massaction == 'ventil') {
                 $sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
                 $sql .= " SET fk_code_ventilation = " . $monCompte;
                 $sql .= " WHERE rowid = " . $monId;
-    
+
                 $accountventilated = new AccountingAccount($db);
                 $accountventilated->fetch($monCompte, '');
-    
+
                 dol_syslog("/accountancy/customer/list.php sql=" . $sql, LOG_DEBUG);
                 if ($db->query($sql)) {
                     $msg.= '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '</font></div>';
@@ -157,7 +157,7 @@ if ($massaction == 'ventil') {
                     $ko++;
                 }
             }
-            
+
             $cpt++;
         }
         $msg.='</div>';
@@ -375,10 +375,10 @@ if ($result) {
 
 		print '<td class="tdoverflowonsmartphone">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
-		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
+		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->description);
 		print '</td>';
-		
+
 		print '<td align="right">';
 		print price($objp->total_ht);
 		print '</td>';
@@ -404,7 +404,7 @@ if ($result) {
 		print '<td align="center">';
 		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
-		
+
 		print '<td align="center">';
 		print '<input type="checkbox" class="flat checkforselect" name="toselect[]"  value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
 		print '</td>';

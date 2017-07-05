@@ -31,6 +31,31 @@ Following changes may create regression for some external modules, but were nece
 content by doing a print into function, sometimes by returning content into "resprint". This has been fixed to follow
 hook specifications so you must return output into "resprint".
 
+
+***** ChangeLog for 5.0.4 compared to 5.0.3 *****
+FIX: #5640 Prices of a predefined product/service were incorrect under certain circumstances
+FIX: #6541 since 4.0.4 to 5.0.0 autofill zip/town not working
+FIX: #6880 #6925
+FIX: #6885
+FIX: #6926
+FIX: #7003
+FIX: #7012
+FIX: #7040
+FIX: #7048 #6075
+FIX: Can set supplier invoice to billed.
+FIX: Can't create invoice if PO disapproved
+FIX: contratligne update
+FIX: CVE-2017-7886
+FIX: default param
+FIX: Line of invoices not inserted when using POS module and VAT NPR.
+FIX: origin & originid on supplierproposal
+FIX: Redirect to payment page from member subscription page failed if a unique security key was defined.
+FIX: REST api to get project when user has permission to read all.
+FIX: situation_progress param default value must be 100 and not 0
+FIX: SQL injection on user/index.php parameter search_statut.
+FIX: vat code not saved during product creation.
+FIX: Warnings
+
 ***** ChangeLog for 5.0.3 compared to 5.0.2 *****
 FIX: #6677 Expired contracts dashboard box does not show the name of the thirdparty
 FIX: #6813

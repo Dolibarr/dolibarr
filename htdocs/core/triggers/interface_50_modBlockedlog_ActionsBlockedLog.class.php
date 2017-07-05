@@ -50,8 +50,9 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		if (empty($conf->blockedlog->enabled)) {
 			return 0;
 		}
-		
-		if($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED' || $action === 'BILL_SENTBYMAIL') {
+
+		if($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
+				|| $action === 'BILL_SENTBYMAIL' || $action === 'DOC_DOWNLOAD' || $action === 'DOC_PREVIEW') {
 			$amounts=  (double) $object->total_ttc;
 		}
 		else if($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_ADD_TO_BANK') {
@@ -61,8 +62,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 					$amounts+= price2num($amount);
 				}
 			}
-			
-			
+
+
 		}
 		else if(strpos($action,'PAYMENT')!==false) {
 			$amounts= (double) $object->amount;
@@ -70,25 +71,25 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		else {
 			return 0; // not implemented action log
 		}
-		
+
 		$b=new BlockedLog($this->db);
 		$b->action = $action;
 		$b->amounts= $amounts;
 		$b->setObjectData($object);
-		
+
 		$res = $b->create($user);
-		
+
 		if($res<0) {
 			setEventMessage($b->error,'errors');
-			
+
 			return -1;
 		}
 		else {
-			
+
 			return 1;
 		}
-		
-		
+
+
     }
 
 }

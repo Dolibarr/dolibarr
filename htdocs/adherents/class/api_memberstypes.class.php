@@ -274,7 +274,6 @@ class MembersTypes extends DolibarrApi
         unset($object->cotisation);
         unset($object->libelle);
 
-        unset($object->import_key);
         unset($object->array_options);
         unset($object->linkedObjectsIds);
         unset($object->context);

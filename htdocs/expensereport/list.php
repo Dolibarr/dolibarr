@@ -127,7 +127,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 
 
 /*
- * Actions 
+ * Actions
  */
 
 if (GETPOST('cancel')) { $action='list'; $massaction=''; }
@@ -320,7 +320,7 @@ if ($resql)
 
 	$title = $langs->trans("ListTripsAndExpenses");
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
-	
+
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -333,7 +333,7 @@ if ($resql)
 	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
 	else $moreforfilter = $hookmanager->resPrint;
-	
+
 	if (! empty($moreforfilter))
 	{
 	    print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -344,10 +344,10 @@ if ($resql)
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
-	
+
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-	
+
 	// Filters
 	print '<tr class="liste_titre_filter">';
 	if (! empty($arrayfields['d.ref']['checked']))
@@ -362,7 +362,7 @@ if ($resql)
         if ($user->rights->expensereport->readall || $user->rights->expensereport->lire_tous)
     	{
     		print '<td class="liste_titre maxwidthonspartphone" align="left">';
-    		print $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+    		print $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
     		print '</td>';
     	} else {
     		print '<td class="liste_titre">&nbsp;</td>';
@@ -452,7 +452,7 @@ if ($resql)
 	{
 	    print '<td class="liste_titre">';
 	    print '</td>';
-	}	
+	}
 	// Status
 	if (! empty($arrayfields['d.fk_statut']['checked']))
 	{
@@ -486,7 +486,9 @@ if ($resql)
 	        if (! empty($arrayfields["ef.".$key]['checked']))
 	        {
 	            $align=$extrafields->getAlignFlag($key);
-	            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			$sortonfield = "ef.".$key;
+    			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
 	        }
 	    }
 	}
@@ -498,7 +500,7 @@ if ($resql)
 	if (! empty($arrayfields['d.tms']['checked']))       print_liste_field_titre($arrayfields['d.tms']['label'],$_SERVER["PHP_SELF"],"d.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['d.fk_statut']['checked'])) print_liste_field_titre($arrayfields['d.fk_statut']['label'],$_SERVER["PHP_SELF"],"d.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
-	print "</tr>\n";	
+	print "</tr>\n";
 
 	$total_total_ht = 0;
 	$total_total_ttc = 0;
@@ -527,8 +529,8 @@ if ($resql)
 			$expensereportstatic->date_approve=$db->jdate($obj->date_approve);
 			$expensereportstatic->note_private=$obj->note_private;
 			$expensereportstatic->note_public=$obj->note_public;
-				
-			
+
+
 			print '<tr class="oddeven">';
 			// Ref
 			if (! empty($arrayfields['d.ref']['checked'])) {
@@ -615,7 +617,7 @@ if ($resql)
     		    if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
     		    $totalarray['totalttc'] += $obj->total_ttc;
             }
-    		
+
             // Extra fields
             if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
             {
@@ -682,7 +684,10 @@ if ($resql)
 	}
 	else
 	{
-		print '<tr '.$bc[false].'>'.'<td colspan="9" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	    $colspan=1;
+        foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+
+        print '<tr>'.'<td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 	}
 
 	// Show total line
@@ -723,11 +728,11 @@ if ($resql)
 	    // Show list of available documents
 	    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	    $urlsource.=str_replace('&amp;','&',$param);
-	
+
 	    $filedir=$diroutputmassaction;
 	    $genallowed=$user->rights->expensereport->lire;
 	    $delallowed=$user->rights->expensereport->lire;
-	
+
 	    print $formfile->showdocuments('massfilesarea_expensereport','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
 	}
 	else

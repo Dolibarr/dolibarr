@@ -223,7 +223,7 @@ class User extends CommonObject
 			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 				$sql.= " WHERE u.entity IS NOT NULL";    // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			else
-				$sql.= " WHERE u.entity IN (0, ".$conf->entity.")";
+				$sql.= " WHERE u.entity IN (0, ".($entity!=''?$entity:$conf->entity).")";   // search in entity provided in parameter
 		}
 
 		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba
@@ -238,6 +238,7 @@ class User extends CommonObject
 		{
 			$sql.= " AND u.rowid = ".$id;
 		}
+        $sql.= " ORDER BY u.entity ASC";    // Avoid random result when there is 2 login in 2 different entities
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -315,8 +316,8 @@ class User extends CommonObject
 				$this->default_range		= $obj->default_range;
 				$this->default_c_exp_tax_cat	= $obj->default_c_exp_tax_cat;
 
-				// Protection when module multicompany was set, admin was set to first entity and the module disabled,
-				// then this admin user must be admin for all entities.
+				// Protection when module multicompany was set, admin was set to first entity and then, the module was disabled,
+				// in such case, this admin user must be admin for ALL entities.
 				if (empty($conf->multicompany->enabled) && $this->admin && $this->entity == 1) $this->entity = 0;
 
 				// Retreive all extrafield for thirdparty

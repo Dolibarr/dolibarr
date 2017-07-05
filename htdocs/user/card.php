@@ -1689,13 +1689,11 @@ else
             }
             if ($action == 'presend')
             {
-                /*
-                 * Affiche formulaire mail
-                 */
+                // Show email form
 
                 // By default if $action=='presend'
                 $titreform='SendMail';
-                $topicmail='';
+                $topicmail=1;
                 $action='send';
                 $modelmail='user';
 
@@ -1710,9 +1708,8 @@ else
                 $newlang = '';
                 if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
                     $newlang = $_REQUEST['lang_id'];
-
-                if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-                    $newlang = $object->default_lang;
+                //if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+                //    $newlang = $object->thirdparty->default_lang;
 
                 // Cree l'objet formulaire mail
                 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -1731,7 +1728,7 @@ else
                     $formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'thi'.$object->id);
                 }
                 $formmail->withfrom=1;
-                $formmail->withtopic=1;
+                $formmail->withtopic=$topicmail;
                 $formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$object->email;
                 $formmail->withtofree=1;
                 $formmail->withtocc=1;
@@ -1741,37 +1738,9 @@ else
                 $formmail->withdeliveryreceipt=1;
                 $formmail->withcancel=1;
                 // Tableau des substitutions
-                //$formmail->setSubstitFromObject($object);
+                $formmail->setSubstitFromObject($object);
                 $formmail->substit['__LASTNAME__']=$object->lastname;
                 $formmail->substit['__FIRSTNAME__']=$object->firstname;
-                $formmail->substit['__SIGNATURE__']=$user->signature;
-                $formmail->substit['__PERSONALIZED__']='';
-
-                //Find the good contact adress
-                /*
-                $custcontact='';
-                $contactarr=array();
-                $contactarr=$object->liste_contact(-1,'external');
-
-                if (is_array($contactarr) && count($contactarr)>0)
-                {
-                foreach($contactarr as $contact)
-                {
-                if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
-
-                require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-
-                $contactstatic=new Contact($db);
-                $contactstatic->fetch($contact['id']);
-                $custcontact=$contactstatic->getFullName($langs,1);
-                }
-                }
-
-                if (!empty($custcontact)) {
-                $formmail->substit['__CONTACTCIVNAME__']=$custcontact;
-                }
-                }*/
-
 
                 // Tableau des parametres complementaires du post
                 $formmail->param['action']=$action;

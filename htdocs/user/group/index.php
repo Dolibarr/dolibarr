@@ -203,7 +203,7 @@ if ($resql)
     print '</div>';
     print "</form>\n";
 
-    $db->free();
+    $db->free($resql);
 }
 else
 {

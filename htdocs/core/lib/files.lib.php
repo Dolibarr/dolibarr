@@ -910,8 +910,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
     	}
 
     	// Security:
-    	// Disallow file with some extensions. We renamed them.
-    	// Car si on a mis le rep documents dans un rep de la racine web (pas bien), cela permet d'executer du code a la demande.
+    	// Disallow file with some extensions. We rename them.
+    	// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
     	if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
     	{
     	    $file_name.= '.noexe';
@@ -1825,8 +1825,20 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	    $lire='creer'; $read='write'; $download='upload';
 	}
 
+	// Wrapping for miscellaneous medias files
+	if ($modulepart == 'medias' && !empty($dolibarr_main_data_root))
+	{
+	    $accessallowed=1;
+	    $original_file=$dolibarr_main_data_root.'/medias/'.$original_file;
+	}
+	// Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
+	elseif ($modulepart == 'logs' && !empty($dolibarr_main_data_root))
+	{
+	    $accessallowed=($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.log$/', basename($original_file)));
+	    $original_file=$dolibarr_main_data_root.'/'.$original_file;
+	}
 	// Wrapping for some images
-	if (($modulepart == 'mycompany' || $modulepart == 'companylogo') && !empty($conf->mycompany->dir_output))
+	elseif (($modulepart == 'mycompany' || $modulepart == 'companylogo') && !empty($conf->mycompany->dir_output))
 	{
 		$accessallowed=1;
 		$original_file=$conf->mycompany->dir_output.'/logos/'.$original_file;
@@ -1912,7 +1924,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	elseif ($modulepart == 'orderstatssupplier' && !empty($conf->fournisseur->dir_output))
 	{
 		if ($fuser->rights->fournisseur->commande->{$lire}) $accessallowed=1;
-		$original_file=$conf->fournisseur->dir_output.'/commande/temp/'.$original_file;
+		$original_file=$conf->fournisseur->commande->dir_temp.'/'.$original_file;
 	}
 	// Wrapping pour les images des stats factures
 	elseif ($modulepart == 'billstats' && !empty($conf->facture->dir_temp))
@@ -2367,13 +2379,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	{
 		$accessallowed=1;
 		$original_file=$conf->fckeditor->dir_output.'/'.$original_file;
-	}
-
-	// Wrapping for miscellaneous medias files
-	elseif ($modulepart == 'medias' && !empty($dolibarr_main_data_root))
-	{
-	    $accessallowed=1;
-	    $original_file=$dolibarr_main_data_root.'/medias/'.$original_file;
 	}
 
 	// Wrapping for backups

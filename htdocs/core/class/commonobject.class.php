@@ -1486,7 +1486,7 @@ abstract class CommonObject
     		$fieldname = 'multicurrency_code';
 
     		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-    		$sql .= ' SET '.$fieldname.' = "'.$this->db->escape($code).'"';
+    		$sql .= ' SET '.$fieldname." = '".$this->db->escape($code)."'";
     		$sql .= ' WHERE rowid='.$this->id;
 
     		if ($this->db->query($sql))
@@ -3097,9 +3097,18 @@ abstract class CommonObject
                 $trueWeightUnit=pow(10, $weightUnit);
                 $totalWeight += $weight * $qty * $trueWeightUnit;
             }
-            else
-            {
-                $totalWeight += $weight * $qty;   // This may be wrong if we mix different units
+            else {
+		if ($weight_units == 99) {
+			// conversion 1 Pound = 0.45359237 KG
+			$trueWeightUnit = 0.45359237;
+			$totalWeight += $weight * $qty * $trueWeightUnit;
+		} elseif ($weight_units == 98) {
+			// conversion 1 Ounce = 0.0283495 KG
+			$trueWeightUnit = 0.0283495;
+			$totalWeight += $weight * $qty * $trueWeightUnit;
+		}
+		else
+                	$totalWeight += $weight * $qty;   // This may be wrong if we mix different units
             }
             if ($volume_units < 50)   // >50 means a standard unit (power of 10 of official unit), > 50 means an exotic unit (like inch)
             {
@@ -3501,7 +3510,7 @@ abstract class CommonObject
 
 					$outputlangs = $langs;
 					$newlang='';
-					if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+					if (empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
 					if (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && empty($newlang)) $newlang=$this->thirdparty->default_lang;		// For language to language of customer
 					if (! empty($newlang))
 					{

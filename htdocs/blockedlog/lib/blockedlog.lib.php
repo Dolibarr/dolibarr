@@ -32,17 +32,17 @@ function blockedlogadmin_prepare_head()
 
 	$h = 0;
 	$head = array();
-	
+
 	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php";
-	$head[$h][1] = $langs->trans("BlockedLog");
+	$head[$h][1] = $langs->trans("Setup");
 	$head[$h][2] = 'blockedlog';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/fingerprints.php";
 	$head[$h][1] = $langs->trans("Fingerprints");
 	$head[$h][2] = 'fingerprints';
 	$h++;
-	
+
 	$object=new stdClass();
 
     // Show more tabs from modules

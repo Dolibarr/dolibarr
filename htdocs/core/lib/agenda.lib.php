@@ -85,7 +85,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		{
 		    include_once DOL_DOCUMENT_ROOT . '/resource/class/html.formresource.class.php';
 		    $formresource=new FormResource($db);
-		    
+
     		// Resource
     		print '<tr>';
     		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
@@ -94,7 +94,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
             print $formresource->select_resource_list($resourceid, "resourceid", '', 1, 0, 0, null, '', 2);
     		print '</td></tr>';
 		}
-		
+
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions=new FormActions($db);
 
@@ -251,7 +251,7 @@ function show_array_actions_to_do($max=5)
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
-            
+
 
             print '<tr class="oddeven">';
 
@@ -347,7 +347,7 @@ function show_array_last_actions_done($max=5)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			
+
 
 			print '<tr class="oddeven">';
 
@@ -458,7 +458,7 @@ function actions_prepare_head($object)
 	{
 	    include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 	    $resource=new DolResource($db);
-	    
+
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
         $listofresourcelinked = $resource->getElementResources($object->element, $object->id);
         $nbResources=count($listofresourcelinked);
@@ -506,6 +506,11 @@ function calendars_prepare_head($param)
     $h = 0;
     $head = array();
 
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/listactions.php'.($param?'?'.$param:'');
+    $head[$h][1] = $langs->trans("ViewList");
+    $head[$h][2] = 'cardlist';
+    $h++;
+
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_day'.($param?'&'.$param:'');
     $head[$h][1] = $langs->trans("ViewDay");
     $head[$h][2] = 'cardday';
@@ -529,16 +534,12 @@ function calendars_prepare_head($param)
         $head[$h][2] = 'cardpertype';
         $h++;
     }
-    
+
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/peruser.php'.($param?'?'.$param:'');
     $head[$h][1] = $langs->trans("ViewPerUser");
     $head[$h][2] = 'cardperuser';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/listactions.php'.($param?'?'.$param:'');
-    $head[$h][1] = $langs->trans("ViewList");
-    $head[$h][2] = 'cardlist';
-    $h++;
 
 	$object=new stdClass();
 

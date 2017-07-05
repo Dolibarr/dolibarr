@@ -40,10 +40,29 @@ function printBookmarksList($aDb, $aLangs)
 
 	$langs->load("bookmarks");
 
-	$url= $_SERVER["PHP_SELF"].(! empty($_SERVER["QUERY_STRING"])?'?'.$_SERVER["QUERY_STRING"]:'');
-    
+	$url= $_SERVER["PHP_SELF"];
+
+	if (! empty($_SERVER["QUERY_STRING"]))
+	{
+	    $url.=(dol_escape_htmltag($_SERVER["QUERY_STRING"])?'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]):'');
+	}
+	else
+	{
+	    global $sortfield,$sortorder;
+	    $tmpurl='';
+	    // No urlencode, all param $url will be urlencoded later
+	    if ($sortfield) $tmpurl.=($tmpurl?'&':'').'sortfield='.$sortfield;
+	    if ($sortorder) $tmpurl.=($tmpurl?'&':'').'sortorder='.$sortorder;
+	    foreach($_POST as $key => $val)
+	    {
+            if (preg_match('/^search_/', $key) && $val != '') $tmpurl.=($tmpurl?'&':'').$key.'='.$val;
+	    }
+
+	    $url.=($tmpurl?'?'.$tmpurl:'');
+	}
+
 	$ret = '';
-	
+
 	// Menu bookmark
 	$ret.= '<div class="menu_top"></div>'."\n";
 
@@ -55,7 +74,8 @@ function printBookmarksList($aDb, $aLangs)
 	// Url to go on create new bookmark page
 	if ($user->rights->bookmark->creer)
 	{
-    	$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
+    	//$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
+	    $urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
     	$ret.= '<option value="newbookmark" class="optionblue" rel="'.dol_escape_htmltag($urltoadd).'">'.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks')).'...</option>';
 	}
 	// Menu with all bookmarks
@@ -83,12 +103,12 @@ function printBookmarksList($aDb, $aLangs)
 			dol_print_error($db);
 		}
 	}
-	
+
 	$ret.= '</select>';
 	$ret.= '</form>';
-	
+
 	$ret.=ajax_combobox('boxbookmark');
-	
+
 	$ret.='<script type="text/javascript">
         	$(document).ready(function () {';
 	$ret.='    jQuery("#boxbookmark").change(function() {
@@ -97,9 +117,9 @@ function printBookmarksList($aDb, $aLangs)
 	            if (! urltarget) { urltarget=""; }
                 jQuery("form#actionbookmark").attr("target",urltarget);
 	            jQuery("form#actionbookmark").attr("action",urlselected);
-	    
+
 	            console.log("We change select bookmark. We choose urlselected="+urlselected+" with target="+urltarget);
-	            
+
 	            // Method is POST for internal link, GET for external
 	            if (urlselected.startsWith(\'http\'))
 	            {
@@ -107,7 +127,7 @@ function printBookmarksList($aDb, $aLangs)
 	                jQuery("form#actionbookmark").attr("method",newmethod);
 	                console.log("We change method to newmethod="+newmethod);
 	            }
-	    
+
 	            jQuery("#actionbookmark").submit();
 	       });';
 	$ret.='})</script>';

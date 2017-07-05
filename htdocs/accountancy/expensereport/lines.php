@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>  
+ * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
- *   
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -94,13 +94,13 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 
 if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$error = 0;
-	
+
 	$db->begin();
-	
+
 	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
 	$sql1 .= " SET erd.fk_code_ventilation=" . GETPOST('account_parent');
 	$sql1 .= ' WHERE erd.rowid IN (' . implode(',', $changeaccount) . ')';
-	
+
 	dol_syslog('accountancy/expensereport/lines.php::changeaccount sql= ' . $sql1);
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
@@ -193,7 +193,7 @@ $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
-	
+
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -210,8 +210,8 @@ if ($result) {
 	if ($search_country)
 		$param .= "&search_country=" . $search_country;
 	if ($search_tvaintra)
-		$param .= "&search_tvaintra=" . $search_tvaintra;	
-	
+		$param .= "&search_tvaintra=" . $search_tvaintra;
+
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -220,7 +220,7 @@ if ($result) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
-	
+
 	print_barre_liste($langs->trans("ExpenseReportLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
 	print $langs->trans("DescVentilDoneExpenseReport") . '<br>';
@@ -273,7 +273,7 @@ if ($result) {
 
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
-		
+
 		print '<tr class="oddeven">';
 
 		print '<td>' . $objp->rowid . '</td>';
@@ -282,12 +282,12 @@ if ($result) {
 		print '<td>' . $expensereport_static->getNomUrl(1) . '</td>';
 
 		print '<td align="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
-		
+
 		print '<td class="tdoverflow">' . ($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code))) . '</td>';
 
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments));
-		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
+		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->comments);
 		print '</td>';
 
@@ -300,20 +300,20 @@ if ($result) {
 		print '<td align="left"><a href="./card.php?id=' . $objp->rowid . '">';
 		print img_edit();
 		print '</a></td>';
-		
+
 		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
-		
+
 		print "</tr>";
 		$i ++;
 	}
-	
+
 	print "</table>";
 	print "</div>";
-	
+
 	if ($nbtotalofrecords > $limit) {
 	    print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, '', 0, '', '', $limit, 1);
 	}
-	
+
 	print '</form>';
 } else {
 	print $db->error();

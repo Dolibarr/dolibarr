@@ -29,3 +29,8 @@ RessourceSuccessfullyDeleted=Recurs eliminat correctament
 DictionaryResourceType=Tipus de recurs
 
 SelectResource=Seleccionar recurs
+
+IdResource=Id resource
+AssetNumber=Número de serie
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Recursos
