@@ -17,11 +17,11 @@
  */
 
 /**
- *  \class      ModeleNumRefPayments
+ *  \class      ModeleNumRefSupplierPayments
  *  \brief      Payment numbering references mother class
  */
 
-abstract class ModeleNumRefPayments
+abstract class ModeleNumRefSupplierPayments
 {
 	var $error='';
 
