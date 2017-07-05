@@ -414,7 +414,7 @@ if ($action == 'updatemeta')
             $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
             $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
             $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";
-            $tplcontent.= '<link rel="stylesheet" href="styles.css.php?website='.$website.'" type="text/css" />'."\n";
+            $tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
             $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
             $tplcontent.= '</header>'."\n";
 
@@ -451,6 +451,15 @@ if ($action == 'updatemeta')
 if ($action == 'updatecontent' || GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))
 {
     $object->fetch(0, $website);
+
+    // Check symlink to medias and restore it if ko
+    $pathtomedias=DOL_DATA_ROOT.'/medias';
+    $pathtomediasinwebsite=$pathofwebsite.'/medias';
+    if (! is_link(dol_osencode($pathtomediasinwebsite)))
+    {
+        dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+        symlink($pathtomedias, $pathtomediasinwebsite);
+    }
 
     /*if (GETPOST('savevirtualhost') && $object->virtualhost != GETPOST('previewsite'))
     {
@@ -558,7 +567,7 @@ if ($action == 'updatecontent' || GETPOST('refreshsite') || GETPOST('refreshpage
         	    $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
         	    $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
         	    $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";
-        	    $tplcontent.= '<link rel="stylesheet" href="styles.css.php?website='.$website.'" type="text/css" />'."\n";
+        	    $tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
         	    $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
         	    $tplcontent.= '</header>'."\n";
 
@@ -718,7 +727,7 @@ if (count($object->records) > 0)
         print '<input type="text" id="previewsiteurl" class="minwidth200imp" name="previewsite" placeholder="'.$langs->trans("http://myvirtualhost").'" value="'.$virtualurl.'">';
         //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
         $htmltext=$langs->trans("SetHereVirtualHost", $dataroot);
-        print $form->textwithpicto('', $htmltext);
+        print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helpvirtualhost');
         print '</div>';
 
         $urlext=$virtualurl;
@@ -837,8 +846,8 @@ if (count($object->records) > 0)
             print '<div class="websiteinputurl">';
             print '<input type="text" id="previewpageurl" class="minwidth200imp" name="previewsite" value="'.$pagealias.'" disabled="disabled">';
             //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
-            $htmltext=$langs->trans("WEBSITE_PAGENAME", $pagealias);
-            print $form->textwithpicto('', $htmltext);
+            $htmltext=$langs->trans("PageNameAliasHelp", $langs->transnoentitiesnoconv("EditPageMeta"));
+            print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helppagealias');
             print '</div>';
 
             if (! empty($object->virtualhost))
