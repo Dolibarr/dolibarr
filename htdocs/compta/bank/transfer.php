@@ -50,6 +50,7 @@ if ($action == 'add')
 	$dateo = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
 	$label = GETPOST('label','alpha');
 	$amount= GETPOST('amount');
+	$amountto= GETPOST('amountto');
 
 	if (! $label)
 	{
@@ -71,6 +72,9 @@ if ($action == 'add')
 		$error=1;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferTo")), null, 'errors');
 	}
+
+
+
 	if (! $error)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -81,7 +85,18 @@ if ($action == 'add')
 		$accountto=new Account($db);
 		$accountto->fetch(GETPOST('account_to','int'));
 
-		if (($accountto->id != $accountfrom->id) && ($accountto->currency_code == $accountfrom->currency_code))
+		if ($accountto->currency_code == $accountfrom->currency_code) {
+			$amountto=$amount;
+		} else {
+			if (! $amountto)
+			{
+				$error=1;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AmountTo")), null, 'errors');
+			}
+		}
+
+
+		if (($accountto->id != $accountfrom->id) && empty($error))
 		{
 			$db->begin();
 
@@ -102,7 +117,7 @@ if ($action == 'add')
 
 			if (! $error) $bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1*price2num($amount), '', '', $user);
 			if (! ($bank_line_id_from > 0)) $error++;
-			if (! $error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
+			if (! $error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amountto), '', '', $user);
 			if (! ($bank_line_id_to > 0)) $error++;
 
 		    if (! $error) $result=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
@@ -137,6 +152,61 @@ if ($action == 'add')
 
 llxHeader();
 
+
+print '		<script type="text/javascript">
+        	$(document).ready(function () {
+    	  		$(".selectbankaccount").change(function() {
+        			var account1 = $("#selectaccount_from").val();
+        			var account2 = $("#selectaccount_to").val();
+        			var currencycode1="";
+        			var currencycode2="";
+
+					$.get("'.DOL_URL_ROOT.'/core/ajax/getaccountcurrency.php", {id: account1})
+						.done(function( data ) {
+							if (data != null)
+							{
+								var item= $.parseJSON(data);
+								if (item.num==-1) {
+									console.error("Error: "+item.error);
+								} else if (item.num!==0) {
+									currencycode1 = item.value;
+								}
+
+								$.get("'.DOL_URL_ROOT.'/core/ajax/getaccountcurrency.php", {id: account2})
+									.done(function( data ) {
+										if (data != null)
+										{
+											var item=$.parseJSON(data);
+											if (item.num==-1) {
+												console.error("Error: "+item.error);
+											} else if (item.num!==0) {
+												currencycode2 = item.value;
+											}
+
+											if (currencycode2!==currencycode1 && currencycode2!=="" && currencycode1!=="") {
+						        				$(".multicurrency").show();
+						        			} else {
+												$(".multicurrency").hide();
+											}
+										}
+									else {
+										console.error("Error: Ajax url has returned an empty page. Should be an empty json array.");
+									}
+			        			}).fail(function( data ) {
+									console.error("Error: has returned an empty page. Should be an empty json array.");
+								});
+							}
+							else {
+								console.error("Error: has returned an empty page. Should be an empty json array.");
+							}
+    	        	}).fail(function( data ) {
+						console.error("Error: has returned an empty page. Should be an empty json array.");
+					});
+        		});
+        	});
+    		</script>';
+
+
 $form=new Form($db);
 
 $account_from='';
@@ -165,6 +235,7 @@ print '<input type="hidden" name="action" value="add">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("Amount").'</td>';
+print '<td style="display:none" class="multicurrency">'.$langs->trans("AmountTo").'</td>';
 print '</tr>';
 
 $var=false;
@@ -181,6 +252,7 @@ $form->select_date((! empty($dateo)?$dateo:''),'','','','','add');
 print "</td>\n";
 print '<td><input name="label" class="flat quatrevingtpercent" type="text" value="'.$label.'"></td>';
 print '<td><input name="amount" class="flat" type="text" size="6" value="'.$amount.'"></td>';
+print '<td style="display:none" class="multicurrency"><input name="amountto" class="flat" type="text" size="6" value="'.$amountto.'"></td>';
 
 print "</table>";
 
