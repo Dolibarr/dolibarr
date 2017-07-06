@@ -573,7 +573,7 @@ else
     			print '&nbsp;';
     			print '</td>';
     		}
-			// Number buying Price
+			// WAP
 			if (! empty($arrayfields['p.pmp']['checked']))
     		{
     			print '<td class="liste_titre">';
