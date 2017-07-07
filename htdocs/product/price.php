@@ -33,6 +33,7 @@
  */
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/dynamic_price/class/price_expression.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/dynamic_price/class/price_parser.class.php';
@@ -759,12 +760,8 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		print '<td style="text-align: right">'.$langs->trans("MinPrice").'</td>';
 		print '</tr>';
 
-		$var=True;
-
 		for($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 		{
-		    $var = ! $var;
-
 			print '<tr class="oddeven">';
 
 			// Label of price
@@ -1244,11 +1241,8 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 		print '<tbody>';
 
-		$var = false;
 		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++)
 		{
-			$var = !$var;
-
 			print '<tr class="oddeven">';
 			print '<td>';
 			print $form->textwithpicto($langs->trans('SellingPrice') . ' ' . $i, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
@@ -1389,13 +1383,12 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
 
     		$notfirstlineforlevel=array();
 
-    		$var = True;
     		$i = 0;
     		while ($i < $num)
     		{
     			$objp = $db->fetch_object($result);
-    			$var = ! $var;
-    			print '<tr '. $bc[$var].'>';
+
+    			print '<tr class="oddeven">';
     			// Date
     			print "<td>" . dol_print_date($db->jdate($objp->dp), "dayhour") . "</td>";
 
@@ -1440,7 +1433,9 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     					print '<td align="right"></td>';
     				}
     			}
+
     			print '<td align="right">' . ($objp->price_base_type != 'TTC' ? price($objp->price_min) : '') . '</td>';
+
     			print '<td align="right">' . ($objp->price_base_type == 'TTC' ? price($objp->price_min_ttc) : '') . '</td>';
 
     			// User
@@ -1729,11 +1724,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 
-			$var = True;
-
 			foreach ($prodcustprice->lines as $line)
 			{
-				$var = ! $var;
 				print '<tr class="oddeven">';
 				// Date
 				$staticsoc = new Societe($db);
@@ -1748,6 +1740,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print '<td align="right">' . vatrate($tva_tx, true, $line->recuperableonly) . "</td>";
 				print '<td align="right">' . price($line->price) . "</td>";
 				print '<td align="right">' . price($line->price_ttc) . "</td>";
+
 				print '<td align="right">' . price($line->price_min) . '</td>';
 				print '<td align="right">' . price($line->price_min_ttc) . '</td>';
 
@@ -1757,6 +1750,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print '<td align="right">';
 				print $userstatic->getLoginUrl(1);
 				print '</td>';
+				print '</tr>';
 			}
 			print "</table>";
 		} else {
@@ -1788,24 +1782,14 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		print '<table class="noborder" width="100%">';
 
-		print '<tr class="liste_titre">';
-		print '<td>' . $langs->trans("ThirdParty") . '</td>';
-		print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
-		print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
-		print '<td align="right">' . $langs->trans("VATRate") . '</td>';
-		print '<td align="right">' . $langs->trans("HT") . '</td>';
-		print '<td align="right">' . $langs->trans("TTC") . '</td>';
-		print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
-		print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
-		print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
-		print '<td>&nbsp;</td>';
-		print '</tr>';
-
 		if (count($prodcustprice->lines) > 0 || $search_soc)
 		{
+		    $colspan=8;
+		    if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") $colspan++;
+
     		print '<tr class="liste_titre">';
     		print '<td class="liste_titre"><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
-    		print '<td class="liste_titre" colspan="8">&nbsp;</td>';
+    		print '<td class="liste_titre" colspan="'.$colspan.'">&nbsp;</td>';
     		// Print the search button
             print '<td class="liste_titre" align="right">';
             $searchpicto=$form->showFilterAndCheckAddButtons(0);
@@ -1814,10 +1798,41 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
     		print '</tr>';
 		}
 
-		$var = False;
-
+		print '<tr class="liste_titre">';
+		print '<td>' . $langs->trans("ThirdParty") . '</td>';
+		print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
+		print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
+		print '<td align="right">' . $langs->trans("VATRate") . '</td>';
+		print '<td align="right">' . $langs->trans("HT") . '</td>';
+		print '<td align="right">' . $langs->trans("TTC") . '</td>';
+		if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") print '<td align="right">' . $langs->trans("INCT") . '</td>';
+		print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
+		print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
+		print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
+		print '<td>&nbsp;</td>';
+		print '</tr>';
 
 		// Line for default price
+		if ($object->price_base_type=='HT')
+		{
+		    $pu=$object->price;
+		}
+		else
+		{
+		    $pu=$object->price_ttc;
+		}
+
+		// Local tax is not saved into table of product. We use value linked to VAT code.
+		$localtaxarray=getLocalTaxesFromRate($object->tva_tx.($object->default_vat_code?' ('.$object->default_vat_code.')':''), 0, $mysoc, $mysoc);
+		// Define part of HT, VAT, TTC
+		$resultarray=calcul_price_total(1, $pu, 0, $object->tva_tx, 1, 1, 0, $object->price_base_type, $object->recuperableonly, $object->type, $mysoc, $localtaxarray);
+		// Calcul du total ht sans remise
+		$total_ht = $resultarray[0];
+		$total_vat = $resultarray[1];
+		$total_localtax1 = $resultarray[9];
+		$total_localtax2 = $resultarray[10];
+		$total_ttc = $resultarray[2];
+
 		print '<tr class="oddeven">';
 		print "<td>" . $langs->trans("Default") . "</td>";
 		print "<td>" . "</td>";
@@ -1827,8 +1842,12 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print vatrate($object->tva_tx, true, $object->recuperableonly);
 		print $object->default_vat_code?' ('.$object->default_vat_code.')':'';
 		print "</td>";
+
 		print '<td align="right">' . price($object->price) . "</td>";
 		print '<td align="right">' . price($object->price_ttc) . "</td>";
+
+		if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") print '<td align="right">' . price($resultarray[2]) . '</td>';
+
 		print '<td align="right">' . price($object->price_min) . '</td>';
 		print '<td align="right">' . price($object->price_min_ttc) . '</td>';
 		print '<td align="right">';
@@ -1851,11 +1870,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		if (count($prodcustprice->lines) > 0)
 		{
-		    $var = false;
 			foreach ($prodcustprice->lines as $line)
 			{
-			    $var = ! $var;
-
 				print '<tr class="oddeven">';
 
 				// Date
@@ -1864,6 +1880,27 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 				$tva_tx = $line->default_vat_code ? $line->tva_tx.' ('.$line->default_vat_code.')' : $line->tva_tx;
 
+				// Line for default price
+				if ($object->price_base_type=='HT')
+				{
+				    $pu=$line->price;
+				}
+				else
+				{
+				    $pu=$line->price_ttc;
+				}
+
+				// Local tax is not saved into table of product. We use value linked to VAT code.
+				$localtaxarray=getLocalTaxesFromRate($object->tva_tx.($object->default_vat_code?' ('.$object->default_vat_code.')':''), 0, $mysoc, $mysoc);
+				// Define part of HT, VAT, TTC
+				$resultarray=calcul_price_total(1, $pu, 0, $object->tva_tx, 1, 1, 0, $object->price_base_type, $object->recuperableonly, $object->type, $mysoc, $localtaxarray);
+				// Calcul du total ht sans remise
+				$total_ht = $resultarray[0];
+				$total_vat = $resultarray[1];
+				$total_localtax1 = $resultarray[9];
+				$total_localtax2 = $resultarray[10];
+				$total_ttc = $resultarray[2];
+
 				print "<td>" . $staticsoc->getNomUrl(1) . "</td>";
 				print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
 
@@ -1871,6 +1908,9 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print '<td align="right">' . vatrate($tva_tx, true, $line->recuperableonly) . "</td>";
 				print '<td align="right">' . price($line->price) . "</td>";
 				print '<td align="right">' . price($line->price_ttc) . "</td>";
+
+				if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") print '<td align="right">' . price($resultarray[2]) . '</td>';
+
 				print '<td align="right">' . price($line->price_min) . '</td>';
 				print '<td align="right">' . price($line->price_min_ttc) . '</td>';
 
