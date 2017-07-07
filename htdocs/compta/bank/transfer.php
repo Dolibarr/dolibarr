@@ -37,6 +37,7 @@ if (! $user->rights->banque->transfer)
   accessforbidden();
 
 $action = GETPOST('action','alpha');
+$error = 0;
 
 
 /*
@@ -54,22 +55,22 @@ if ($action == 'add_confirm')
 
 	if (! $label)
 	{
-		$error=1;
+
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Description")), null, 'errors');
 	}
 	if (! $amount)
 	{
-		$error=1;
+		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 	}
 	if (! GETPOST('account_from','int'))
 	{
-		$error=1;
+		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferFrom")), null, 'errors');
 	}
 	if (! GETPOST('account_to','int'))
 	{
-		$error=1;
+		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferTo")), null, 'errors');
 	}
 	if (! $error)
@@ -86,7 +87,6 @@ if ($action == 'add_confirm')
 		{
 			$db->begin();
 
-			$error=0;
 			$bank_line_id_from=0;
 			$bank_line_id_to=0;
 			$result=0;
@@ -114,7 +114,7 @@ if ($action == 'add_confirm')
 
 			if (! $error)
 			{
-				$mesgs = $langs->trans("TransferFromToDone","<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>","<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->currency));
+				$mesgs = $langs->trans("TransferFromToDone","<a href=\"card.php?id=".$accountfrom->id."\">".$accountfrom->label."</a>","<a href=\"card.php?id=".$accountto->id."\">".$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->currency));
 				setEventMessages($mesgs, null, 'mesgs');
 				$db->commit();
 			}
@@ -126,6 +126,7 @@ if ($action == 'add_confirm')
 		}
 		else
 		{
+		    $error++;
 			setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers"), null, 'errors');
 		}
 	}
@@ -147,7 +148,7 @@ $label='';
 $amount='';
 $amount_to='';
 
-if($error)
+if ($error)
 {
 	$account_from =	GETPOST('account_from','int');
 	$account_to	= GETPOST('account_to','int');
@@ -163,7 +164,7 @@ print "<br><br>";
 print '<form name="add" method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-print '<input type="hidden" name="action" value="add">';
+print '<input type="hidden" name="action" value="add_confirm">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
