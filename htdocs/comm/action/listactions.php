@@ -241,6 +241,7 @@ if ($status == '50') { $sql.= " AND (a.percent > 0 AND a.percent < 100)"; }	// R
 if ($status == '100') { $sql.= " AND a.percent = 100"; }
 if ($status == 'done' || $status == '100') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
 if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
+if ($status == 'late') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100 AND a.datep < '".$db->idate($now)."'))"; }
 if ($search_title) $sql.=natural_search("a.label", $search_title);
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0)
