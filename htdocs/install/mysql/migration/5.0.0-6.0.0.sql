@@ -70,6 +70,10 @@ ALTER TABLE llx_extrafields ADD COLUMN fielddefault varchar(255);
 ALTER TABLE llx_c_typent MODIFY COLUMN libelle varchar(64); 
 
 
+ALTER TABLE llx_holiday ADD COLUMN ref	varchar(30) NULL;
+ALTER TABLE llx_holiday ADD COLUMN ref_ext	varchar(255);
+
+
 create table llx_notify_def_object
 (
   id				integer AUTO_INCREMENT PRIMARY KEY,
