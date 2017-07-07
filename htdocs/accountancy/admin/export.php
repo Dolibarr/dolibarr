@@ -38,7 +38,7 @@ $langs->load("admin");
 $langs->load("accountancy");
 
 // Security check
-if (empty($user->admin) || ! empty($user->rights->accountancy->chartofaccount))
+if (empty($user->admin) && empty($user->rights->accounting->chartofaccount))
 {
     accessforbidden();
 }
