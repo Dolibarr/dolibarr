@@ -846,14 +846,11 @@ else
 				// WAP
 				if (! empty($arrayfields['p.pmp']['checked']))
 				{
-					print  '<td class="nowrap" align="right">';
-					if ($obj->tobuy)
-					{
-						print price($product_static->pmp, 1, $langs, 1, 2, 2, 'auto');
-					}
+					print '<td class="nowrap" align="right">';
+					print price($product_static->pmp, 1, $langs);
 					print '</td>';
 				}
-				
+
     		    // Limit alert
 		        if (! empty($arrayfields['p.seuil_stock_alerte']['checked']))
         		{
