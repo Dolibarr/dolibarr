@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /* Copyright (C) 2007-2010  Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010  Jean Heimburger			<jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent			<jmenent@2byte.es>
@@ -28,6 +28,7 @@
  * \ingroup		Advanced accountancy
  * \brief		Page with sells journal
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';

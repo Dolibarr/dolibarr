@@ -3,7 +3,7 @@
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013      Florian Henry	      <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ $object->id = $socid;
 $object->fetch($socid);
 $form = new Form($db);
 
-$BookKeeping = new lettering($db); 
+$BookKeeping = new lettering($db);
 
 if ($sortorder == "") $sortorder = "ASC";
 if ($sortfield == "") $sortfield = "bk.rowid";
@@ -65,11 +65,11 @@ $formaccounting = new FormAccounting($db);
 if ($action == 'lettering') {
 
 	$result =  $BookKeeping->updatelettrage($_POST['ids']);
-	
-// 	var_dump($result); 
+
+// 	var_dump($result);
 	if( $result < 0 ){
 		setEventMessages('', $BookKeeping->errors, 'errors' );
-		$error++; 
+		$error++;
 
 	}
 }
@@ -77,29 +77,29 @@ if ($action == 'lettering') {
 if ($action == 'autolettrage') {
 
 	$result = $BookKeeping->LettrageTiers($socid);
-	
+
 	if( $result < 0 ){
 							setEventMessages('', $BookKeeping->errors, 'errors' );
-							$error++; 
+							$error++;
 
 						}
-						
+
 }
 
 
 llxHeader ( '', 'Compta - Grand Livre' );
-	
-	
+
+
 	/*
 	 * Affichage onglets
 	 */
 	$head = societe_prepare_head($object);
 
 	dol_htmloutput_mesg(is_numeric($error)?'':$error, $errors, 'error');
-	 
+
 	dol_fiche_head($head, 'TabAccounting', $langs->trans("ThirdParty"),0,'company');
-	
-	
+
+
 
 
 	print '<table width="100%" class="border">';
@@ -129,7 +129,7 @@ llxHeader ( '', 'Compta - Grand Livre' );
         print $form->editfieldval("CustomerAccountancyCode",'customeraccountancycode',$object->code_compta,$object,$user->rights->societe->creer);
         print '</td>';
         print '</tr>';
-	
+
 
 	// Address
 	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">';
@@ -147,41 +147,41 @@ llxHeader ( '', 'Compta - Grand Livre' );
 	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
 	else print ($img?$img.' ':'').$object->country;
 	print '</td></tr>';
-	
+
 	print '</table>';
-	
 
-    
 
-	
+
+
+
 	$sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, bk.code_tiers, bk.numero_compte , bk.label_compte, bk.debit , bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.lettering_code ";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
 	$sql .= " WHERE (bk.code_tiers =  '" . $object->code_compta . "' AND bk.numero_compte = '" .$conf->global->ACCOUNTING_ACCOUNT_CUSTOMER. "' )" ;
 
-	
+
 
 	if (dol_strlen ( $search_year  )) {
 		$sql .= " AND ( bk.doc_date BETWEEN  '" . $search_year . "-0-0' AND  '" . ($search_year+1). "-0-0' )";
 	}
 
-	
+
 	$sql .= " ORDER BY bk.lettering_code ASC, bk.doc_date ASC" ;//. $db->plimit ( $conf->liste_limit + 1, $offset );
-	
-// 	echo $sql; 
+
+// 	echo $sql;
 // 	dol_syslog ( "bookkeping:liste:create sql=" . $sql, LOG_DEBUG );
 	$resql = $db->query ( $sql );
 	if ($resql) {
 		$num = $db->num_rows ( $resql );
 		$i = 0;
-		
+
 
 		print '<form name="add" action="?socid='.$object->id.'" method="POST">';
 		print '<input type="hidden" name="action" value="lettering">';
 		print '<input type="hidden" name="socid" value="'.$object->id.'">';
-		
+
 		print "<table class=\"noborder\" width=\"100%\">";
 		print '<tr class="liste_titre">';
-			print '<td></td>'; 
+			print '<td></td>';
 		print_liste_field_titre ( $langs->trans ( "Doctype" ), "liste.php", "bk.doc_type" );
 		print_liste_field_titre ( $langs->trans ( "Docdate" ), "liste.php", "bk.doc_date" );
 		print_liste_field_titre ( $langs->trans ( "Docref" ), "liste.php", "bk.doc_ref" );
@@ -193,10 +193,10 @@ llxHeader ( '', 'Compta - Grand Livre' );
 //		print_liste_field_titre ( $langs->trans ( "Amount" ), "liste.php", "bk.montant" );
 //		print_liste_field_titre ( $langs->trans ( "Sens" ), "liste.php", "bk.sens" );
 		print_liste_field_titre ( $langs->trans ( "Codejournal" ), "liste.php", "bk.code_journal" );
-		print '<td></td>'; 
-		print '<td></td>'; 
+		print '<td></td>';
+		print '<td></td>';
 		print "</tr>\n";
-		
+
 		print '<tr class="liste_titre">';
 		print '<form action="" method="GET">';
 		print '<input type="hidden" name="socid" value="' . $_GET ["socid"] . '">';
@@ -218,29 +218,29 @@ llxHeader ( '', 'Compta - Grand Livre' );
 		print '<td>&nbsp;</td>';
 		print '</form>';
 		print '</tr>';
-		
+
 		$var = false;
-		
-		$debit = 0; 
-		$credit = 0; 
-		$solde = 0; 
-		$tmp = ''; 
+
+		$debit = 0;
+		$credit = 0;
+		$solde = 0;
+		$tmp = '';
 		while ( $i < $num ) {
 			$obj = $db->fetch_object ( $resql );
-			
+
 			if($tmp !=$obj->lettering_code || empty($tmp) )
 				$tmp =$obj->lettering_code;
-				
-			if($tmp !=$obj->lettering_code || empty($obj->lettering_code)) 
+
+			if($tmp !=$obj->lettering_code || empty($obj->lettering_code))
 				$var = ! $var;
-				
-				
-			$debit+= $obj->debit; 
-			$credit+= $obj->credit; 
-		
+
+
+			$debit+= $obj->debit;
+			$credit+= $obj->credit;
+
 			$solde+=($obj->credit-$obj->debit);
 			print "<tr $bc[$var]>";
-			
+
 			print '<td>' . $obj->rowid . '</td>';
 			if(empty($obj->lettering_code)){
 				print '<td><a href="'.dol_buildpath('/accountancy/bookkeeping/card.php', 1).'?piece_num=' . $obj->piece_num . '">';
@@ -249,9 +249,9 @@ llxHeader ( '', 'Compta - Grand Livre' );
 			}
 			else
 				print '<td>'.$obj->doc_type . '</td>' . "\n";
-			
-			
-			
+
+
+
 			print '<td>' . dol_print_date ( $db->jdate ( $obj->doc_date ), 'day' ) . '</td>';
 			print '<td>' . $obj->doc_ref . '</td>';
 // 			print '<td>' . $obj->numero_compte . '</td>';
@@ -263,24 +263,24 @@ llxHeader ( '', 'Compta - Grand Livre' );
 //			print '<td>' . $obj->sens . '</td>';
 			print '<td>' . $obj->code_journal . '</td>';
 			print '<td>' . round($solde, 2) . '</td>';
-			
+
 			if(empty($obj->lettering_code)){
 				print '<td><input type="checkbox" name="ids[]" value="' . $obj->rowid . '" /></td>';
 			}
 			else
 				print '<td>' . $obj->lettering_code . '</td>';
-				
-			print "</tr>\n";
-			
-			$i ++;
-			
 
-				
+			print "</tr>\n";
+
+			$i ++;
+
+
+
 
 		}
-		
-			print "<tr $bc[$var]>";
-			
+
+			print '<tr class="oddeven">';
+
 			print '<td colspan="4">Mouvement totaux</td>' . "\n";
 			print '<td></td>';
 	//		print '<td></td>';
@@ -292,7 +292,7 @@ llxHeader ( '', 'Compta - Grand Livre' );
 			print '<td></td>';
 			print '<td>&nbsp;</td>';
 			print "</tr>\n";
-			
+
 			print "<tr $bc[$var]>";
 			print '<td colspan="5">Solde Comptable</td>' . "\n";
 	//		print '<td></td>';
@@ -304,19 +304,19 @@ llxHeader ( '', 'Compta - Grand Livre' );
 			print '<td></td>';
 			print '<td>&nbsp;</td>';
 			print "</tr>\n";
-			
+
 		print "</table>";
-		
+
 		print '<input class="butAction" type="submit" value="lettering">';
 		print '<a class="butAction" href="?socid='.$object->id.'&action=autolettrage">auto lettering</a>';
 		print "</form>";
-		$db->free ( $resql );
+		$db->free($resql);
 	} else {
-		dol_print_error ( $db );
+		dol_print_error($db);
 	}
 
-	
+
 // End of page
 llxFooter();
 $db->close();
-?>
+

@@ -22,33 +22,34 @@
  * \ingroup   Accounting Expert
  * \brief     Fichier de la classe des comptes comptable
  */
-error_reporting(0); 
 
-dol_include_once ( "/accountancy/class/bookkeeping.class.php");
-dol_include_once ( "/societe/class/societe.class.php");
-dol_include_once ( "/core/lib/date.lib.php");  // see if not useless for dol(now)
+include_once DOL_DOCUMENT_ROOT."/accountancy/class/bookkeeping.class.php";
+include_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
+include_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 
-class lettering
-	extends BookKeeping {
 
-	
+/**
+ * Class lettering
+ */
+class lettering extends BookKeeping {
+
 	public function LettrageTiers($socid){
-	
-		$db = $this->db; 
-		
+
+		$db = $this->db;
+
 		$object = new Societe($this->db);
 		$object->id = $socid;
 		$object->fetch($socid);
 
 
-		if( $object->code_compta == '411CUSTCODE') 
-			$object->code_compta = ''; 
-			
-		if( $object->code_compta_fournisseur == '401SUPPCODE') 
-			$object->code_compta_fournisseur = ''; 
+		if( $object->code_compta == '411CUSTCODE')
+			$object->code_compta = '';
+
+		if( $object->code_compta_fournisseur == '401SUPPCODE')
+			$object->code_compta_fournisseur = '';
 
 
-			
+
 		$sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.lettering_code, bk.code_tiers, bk.numero_compte , bk.label_compte, bk.debit , bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.date_lettering ";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
 			$sql .= " WHERE code_journal = 'BQ' AND  ( ";
@@ -58,17 +59,17 @@ class lettering
 			$sql .= "  OR  ";
 		if(!empty($object->code_compta_fournisseur)  )
 		$sql .= "   bk.code_tiers = '" . $object->code_compta_fournisseur . "' ";
-		
+
 		$sql .= " ) AND ( bk.date_lettering ='' OR bk.date_lettering IS NULL ) AND bk.lettering_code  !='' ";
-		
+
 		$sql .= " GROUP BY bk.lettering_code  ";
-		
-		
+
+
 		$resql = $db->query ( $sql );
 		if ($resql) {
 			$num = $db->num_rows ( $resql );
 			$i = 0;
-			
+
 			while ( $i < $num ) {
 				$obj = $db->fetch_object ( $resql );
 				$i++;
@@ -84,7 +85,7 @@ class lettering
 						if(!empty($object->code_compta_fournisseur)  )
 							$sql .= "   bk.code_tiers = '" . $object->code_compta_fournisseur . "' ";
 						$sql .= " )  ";
-// echo $sql; 
+// echo $sql;
 					$resql2 = $db->query ( $sql );
 					if ($resql2) {
 						$num2 = $db->num_rows ( $resql2 );
@@ -95,25 +96,25 @@ class lettering
 							$i2++;
 							$ids[] = $obj2->rowid;
 						}
-						
-						
+
+
 						if(count($ids)  > 1 ){
 							$result =  $this->updatelettrage($ids);
-		
-						// 	var_dump($result); 
+
+						// 	var_dump($result);
 // 							if( $result < 0 ){
 // 								setEventMessages('', $BookKeeping->errors, 'errors' );
-// 								$error++; 
-// 
+// 								$error++;
+//
 // 							}
 						}
 					}
 			}
 		}
-			
-			
+
+
 		/**
-			Prise en charge des lettering complexe avec prelevment , virement 
+			Prise en charge des lettering complexe avec prelevment , virement
 		*/
 		$sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, bk.code_tiers, bk.numero_compte , bk.label_compte, bk.debit , bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.date_lettering, bu.url_id , bu.type ";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
@@ -125,29 +126,29 @@ class lettering
 			$sql .= "  OR  ";
 		if(!empty($object->code_compta_fournisseur)  )
 		$sql .= "   bk.code_tiers = '" . $object->code_compta_fournisseur . "' ";
-		
+
 		$sql .= " ) AND date_lettering ='' ";
 		$sql .= " GROUP BY bk.lettering_code  ";
-		
-// 		echo $sql; 
-// 		
+
+// 		echo $sql;
+//
 		$resql = $db->query ( $sql );
 		if ($resql) {
 			$num = $db->num_rows ( $resql );
 			$i = 0;
-			
+
 			while ( $i < $num ) {
 				$obj = $db->fetch_object ( $resql );
 				$ids = array();
 				$i++;
-				
-	// 			print_r($obj); 
-				
 
-					
-					if($obj->type =='payment_supplier' ) { 
+	// 			print_r($obj);
+
+
+
+					if($obj->type =='payment_supplier' ) {
 						$ids[] = $obj->rowid;
-						
+
 					$sql= 'SELECT bk.rowid, facf.ref, facf.ref_supplier, payf.fk_bank ';
 					$sql.= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf ";
 					$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON  payfacf.fk_facturefourn=facf.rowid";
@@ -166,12 +167,12 @@ class lettering
 						if(!empty($object->code_compta_fournisseur)  )
 							$sql .= "   bk.code_tiers = '" . $object->code_compta_fournisseur . "' ";
 						$sql .= " )  ";
-	// 					echo $sql; 
-	// 					exit; 
+	// 					echo $sql;
+	// 					exit;
 					}
 					elseif($obj->type =='payment' ){
 						$ids[] = $obj->rowid;
-						
+
 						$sql= 'SELECT bk.rowid,fac.facnumber , pay.fk_bank ';
 						$sql.= " FROM " . MAIN_DB_PREFIX . "facture fac ";
 						$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON  payfac.fk_facture=fac.rowid";
@@ -188,108 +189,108 @@ class lettering
 							$sql .= "   bk.code_tiers = '" . $object->code_compta_fournisseur . "' ";
 						$sql .= " )  ";
 
-	// 					echo $sql; 
+	// 					echo $sql;
 					}
-					
-					
-					
+
+
+
 					$resql2 = $db->query ( $sql );
 					if ($resql2) {
 						$num2 = $db->num_rows ( $resql2 );
 						$i2 = 0;
-						
+
 						while ( $i2 < $num2 ) {
 							$obj2 = $db->fetch_object ( $resql2 );
 							$i2++;
 							$ids[] = $obj2->rowid;
 						}
-						
-	// 					print_r($ids); 
+
+	// 					print_r($ids);
 	// 					exit;
 						if(count($ids)  > 1 ){
 							$result =  $this->updatelettrage($ids);
-		
-	// 						var_dump($result); 
+
+	// 						var_dump($result);
 // 							if( $result < 0 ){
 // 								setEventMessages('', $BookKeeping->errors, 'errors' );
-// 								$error++; 
-// 
+// 								$error++;
+//
 // 							}
 						}
-						
-	// 					exit; 
+
+	// 					exit;
 					}
 			}
 		}
 
 
 	}
-	
-	
+
+
 	public function updatelettrage($ids, $notrigger=false){
-		$error = 0; 
-		
+		$error = 0;
+
 		$sql = "SELECT lettering_code FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE ";
 		$sql .= " lettering_code != '' GROUP BY lettering_code ORDER BY lettering_code DESC limit 1;  ";
-// 		echo $sql; 
+// 		echo $sql;
 		$result = $this->db->query ( $sql );
 		if ($result) {
 			$obj = $this->db->fetch_object ( $result );
-			$lettre = (empty($obj->lettering_code)? 'AAA' : $obj->lettering_code ); 
+			$lettre = (empty($obj->lettering_code)? 'AAA' : $obj->lettering_code );
 			if(!empty($obj->lettering_code))
-				$lettre++; 
+				$lettre++;
 		}
 		else{
-			$this->errors[] = 'Error'.$this->db->lasterror();; 
+			$this->errors[] = 'Error'.$this->db->lasterror();;
 			$error++;
 		}
-// 			var_dump(__line__, $error); 
-		
+// 			var_dump(__line__, $error);
+
 		$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred   FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE ";
 		$sql .= " rowid IN (".implode(',', $ids).") ";
 		$result = $this->db->query ( $sql );
 		if ($result) {
 			$obj = $this->db->fetch_object ( $result );
-// 			print_r($obj); 
+// 			print_r($obj);
 			if( !(round(abs($obj->deb),2) === round(abs($obj->cred),2)) ){
-// 				echo $sql; 
-// 				print_r($obj); 
-				$this->errors[] = 'Total not exacts '.round(abs($obj->deb),2).' vs '. round(abs($obj->cred),2); 
-				$error++; 
+// 				echo $sql;
+// 				print_r($obj);
+				$this->errors[] = 'Total not exacts '.round(abs($obj->deb),2).' vs '. round(abs($obj->cred),2);
+				$error++;
 			}
 		}
 		else{
-			$this->errors[] = 'Erreur sql'.$this->db->lasterror();; 
+			$this->errors[] = 'Erreur sql'.$this->db->lasterror();;
 			$error++;
 		}
 
-		
+
 		// Update request
-		
+
 		$now = dol_now();
-		
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
 		$sql.= " lettering_code='".$lettre."'";
-		$sql.= " , date_lettering = " .$now ;  // todo correct date it's false 
+		$sql.= " , date_lettering = " .$now ;  // todo correct date it's false
 		$sql.= "  WHERE rowid IN (".implode(',', $ids).") ";
-// 		echo $sql ; 
-// 		
-// 		var_dump(__line__, $error); 
-// 		print_r($this->errors); 
-// 		exit; 
+// 		echo $sql ;
+//
+// 		var_dump(__line__, $error);
+// 		print_r($this->errors);
+// 		exit;
 		$this->db->begin();
-		
+
 			dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-		
+
 			if (! $error)
 			{
 				if (! $notrigger)
 				{
 					// Uncomment this and change MYOBJECT to your own tag if you
 					// want this action calls a trigger.
-		
+
 					//// Call triggers
 					//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 					//$interface=new Interfaces($this->db);
@@ -298,7 +299,7 @@ class lettering
 					//// End call triggers
 				}
 			}
-// 				var_dump(__line__, $error); 
+// 				var_dump(__line__, $error);
 			// Commit or rollback
 			if ($error)
 			{
@@ -308,8 +309,8 @@ class lettering
 // 					$this->error.=($this->error?', '.$errmsg:$errmsg);
 // 				}
 				$this->db->rollback();
-// 				echo $this->error; 
-// 						var_dump(__line__, $error); 
+// 				echo $this->error;
+// 						var_dump(__line__, $error);
 				return -1*$error;
 			}
 			else
@@ -318,10 +319,6 @@ class lettering
 				return 1;
 			}
 	}
-	
 
 }
 
-
-
-?>
