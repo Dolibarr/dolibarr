@@ -404,7 +404,7 @@ abstract class CommonDocGenerator
 		$array_key.'_already_creditnote'=>price2num($sumcreditnote),
 
 		$array_key.'_already_payed_all_locale'=>price(price2num($sumpayed + $sumdeposit + $sumcreditnote, 'MT'), 0, $outputlangs),
-		$array_key.'already_payed_all'=> price2num(($sumpayed + $sumdeposit + $sumcreditnote), 'MT'),
+		$array_key.'_already_payed_all'=> price2num(($sumpayed + $sumdeposit + $sumcreditnote), 'MT'),
 
 		// Remain to pay with all know infrmation (except open direct debit requests)
 		$array_key.'_remain_to_pay_locale'=>price(price2num($object->total_ttc - $sumpayed - $sumdeposit - $sumcreditnote, 'MT'), 0, $outputlangs),
